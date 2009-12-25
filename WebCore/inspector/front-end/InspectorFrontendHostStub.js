@@ -92,6 +92,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     hiddenPanels: function()
     {
         return "";
+    },
+
+    windowUnloading: function()
+    {
     }
 }
 

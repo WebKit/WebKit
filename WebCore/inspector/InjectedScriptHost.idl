@@ -40,7 +40,7 @@ module core {
         [Custom] DOMObject nodeForId(in long nodeId);
         [Custom] long wrapObject(in DOMObject object, in DOMString objectGroup);
         [Custom] DOMObject unwrapObject(in long objectId);
-        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean selectInUI);
+        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
 
         void addNodesToSearchResult(in DOMString nodeIds);
         long pushNodeByPathToFrontend(in DOMString path);

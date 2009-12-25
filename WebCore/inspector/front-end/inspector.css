@@ -1503,6 +1503,11 @@ body.inactive .placard.selected {
     text-decoration: none !important;
 }
 
+.elements-tree-editor {
+    -webkit-user-select: text;
+    -webkit-user-modify: read-write-plaintext-only;
+}
+
 .section .properties li.editing {
     margin-left: 10px;
     text-overflow: clip;

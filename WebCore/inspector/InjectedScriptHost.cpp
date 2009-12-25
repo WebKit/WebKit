@@ -111,13 +111,15 @@ ScriptValue InjectedScriptHost::unwrapObject(const String& objectId)
     return ScriptValue();
 }
 
-long InjectedScriptHost::pushNodePathToFrontend(Node* node, bool selectInUI)
+long InjectedScriptHost::pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI)
 {
     InspectorFrontend* frontend = inspectorFrontend();
     InspectorDOMAgent* domAgent = inspectorDOMAgent();
     if (!domAgent || !frontend)
         return 0;
     long id = domAgent->pushNodePathToFrontend(node);
+    if (withChildren)
+        domAgent->pushChildNodesToFrontend(id);
     if (selectInUI)
         frontend->updateFocusedNode(id);
     return id;

@@ -146,7 +146,7 @@ WebInspector.ElementsPanel.prototype = {
         this.updateBreadcrumb();
         this.treeOutline.updateSelection();
         if (this.recentlyModifiedNodes.length)
-            this._updateModifiedNodes();
+            this.updateModifiedNodes();
     },
 
     hide: function()
@@ -491,10 +491,10 @@ WebInspector.ElementsPanel.prototype = {
     {
         if ("_updateModifiedNodesTimeout" in this)
             return;
-        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 0);
+        this._updateModifiedNodesTimeout = setTimeout(this.updateModifiedNodes.bind(this), 0);
     },
 
-    _updateModifiedNodes: function()
+    updateModifiedNodes: function()
     {
         if ("_updateModifiedNodesTimeout" in this) {
             clearTimeout(this._updateModifiedNodesTimeout);

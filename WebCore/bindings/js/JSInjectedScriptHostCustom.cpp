@@ -162,7 +162,7 @@ JSValue JSInjectedScriptHost::unwrapObject(ExecState* exec, const ArgList& args)
 
 JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec, const ArgList& args)
 {
-    if (args.size() < 2)
+    if (args.size() < 3)
         return jsUndefined();
 
     JSQuarantinedObjectWrapper* wrapper = JSQuarantinedObjectWrapper::asWrapper(args.at(0));
@@ -173,8 +173,9 @@ JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec, const ArgL
     if (!node)
         return jsUndefined();
 
-    bool selectInUI = args.at(1).toBoolean(exec);
-    return jsNumber(exec, impl()->pushNodePathToFrontend(node, selectInUI));
+    bool withChildren = args.at(1).toBoolean(exec);
+    bool selectInUI = args.at(2).toBoolean(exec);
+    return jsNumber(exec, impl()->pushNodePathToFrontend(node, withChildren, selectInUI));
 }
 
 #if ENABLE(DATABASE)

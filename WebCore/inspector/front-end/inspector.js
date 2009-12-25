@@ -1623,7 +1623,7 @@ WebInspector.isBeingEdited = function(element)
     return element.__editing;
 }
 
-WebInspector.startEditing = function(element, committedCallback, cancelledCallback, context)
+WebInspector.startEditing = function(element, committedCallback, cancelledCallback, context, multiline)
 {
     if (element.__editing)
         return;
@@ -1684,7 +1684,10 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     }
 
     function keyDownEventListener(event) {
-        if (isEnterKey(event)) {
+        var isMetaOrCtrl = WebInspector.isMac() ?
+            event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey :
+            event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+        if (isEnterKey(event) && (!multiline || isMetaOrCtrl)) {
             editingCommitted.call(element);
             event.preventDefault();
             event.stopPropagation();

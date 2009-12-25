@@ -603,6 +603,7 @@ WebInspector.ElementsTreeElement.prototype = {
         contextMenu.appendSeparator();
 
         // Add node-related actions.
+        contextMenu.appendItem(WebInspector.UIString("Edit as HTML"), this._editAsHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
     },
@@ -717,6 +718,60 @@ WebInspector.ElementsTreeElement.prototype = {
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
 
         return true;
+    },
+
+    _startEditingAsHTML: function(commitCallback, initialValue)
+    {
+        if (this._htmlEditElement && WebInspector.isBeingEdited(this._htmlEditElement))
+            return true;
+
+        this._editing = true;
+
+        this._htmlEditElement = document.createElement("div");
+        this._htmlEditElement.className = "source-code elements-tree-editor";
+        this._htmlEditElement.textContent = initialValue;
+
+        // Hide header items.
+        var child = this.listItemElement.firstChild;
+        while (child) {
+            child.style.display = "none";
+            child = child.nextSibling;
+        }
+        // Hide children item.
+        if (this._childrenListNode)
+            this._childrenListNode.style.display = "none";
+        // Append editor.
+        this.listItemElement.appendChild(this._htmlEditElement);
+
+        this.updateSelection();
+
+        function commit()
+        {
+            commitCallback(this._htmlEditElement.textContent);
+            dispose.call(this);
+        }
+
+        function dispose()
+        {
+            delete this._editing;
+
+            // Remove editor.
+            this.listItemElement.removeChild(this._htmlEditElement);
+            delete this._htmlEditElement;
+            // Unhide children item.
+            if (this._childrenListNode)
+                this._childrenListNode.style.removeProperty("display");
+            // Unhide header items.
+            var child = this.listItemElement.firstChild;
+            while (child) {
+                child.style.removeProperty("display");
+                child = child.nextSibling;
+            }
+
+            this.updateSelection();
+        }
+
+        WebInspector.startEditing(this._htmlEditElement, commit.bind(this), dispose.bind(this), null, true);
     },
 
     _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
@@ -962,7 +1017,37 @@ WebInspector.ElementsTreeElement.prototype = {
         InspectorBackend.removeNode(callId, this.representedObject.id);
     },
 
-    _copyHTML: function(node)
+    _editAsHTML: function()
+    {
+        var treeOutline = this.treeOutline;
+        var node = this.representedObject;
+        var wasExpanded = this.expanded;
+
+        function selectNode(nodeId)
+        {
+            if (!nodeId)
+                return;
+
+            // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
+            WebInspector.panels.elements.updateModifiedNodes();
+
+            WebInspector.updateFocusedNode(nodeId);
+            if (wasExpanded) {
+                var newTreeItem = treeOutline.findTreeElement(WebInspector.domAgent.nodeForId(nodeId));
+                if (newTreeItem)
+                    newTreeItem.expand();
+            }
+        }
+
+        function commitChange(value)
+        {
+            InjectedScriptAccess.setOuterHTML(node.id, value, wasExpanded, selectNode.bind(this));
+        }
+
+        InjectedScriptAccess.getNodePropertyValue(node.id, "outerHTML", this._startEditingAsHTML.bind(this, commitChange));
+    },
+
+    _copyHTML: function()
     {
         InspectorBackend.copyNode(this.representedObject.id);
     }

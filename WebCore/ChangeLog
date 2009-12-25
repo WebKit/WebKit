@@ -1,3 +1,47 @@
+2009-12-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement Edit Inner HTML action.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32924
+
+        * English.lproj/localizedStrings.js:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::pushNodePathToFrontend):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::pushNodePathToFrontendCallback):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::pushNodePathToFrontend):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.show):
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodesSoon):
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML.commit):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML.dispose):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML):
+        ():
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.getNodePropertyValue):
+        (InjectedScript.setOuterHTML):
+        (InjectedScript.performSearch.addNodesToResults):
+        (InjectedScript._inspectObject):
+        (InjectedScript._copy):
+        (InjectedScript.pushNodeToFrontend):
+        * inspector/front-end/InjectedScriptAccess.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.hiddenPanels):
+        (.WebInspector.InspectorFrontendHostStub.prototype.windowUnloading):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.keyDownEventListener):
+        (WebInspector.startEditing):
+
 2009-12-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Timothy Hatcher.

@@ -510,6 +510,28 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
     }
 }
 
+InjectedScript.getNodePropertyValue = function(nodeId, propertyName)
+{
+    var node = InjectedScript._nodeForId(nodeId);
+    if (!node)
+        return false;
+    var result = node[propertyName];
+    return result !== undefined ? result : false;
+}
+
+InjectedScript.setOuterHTML = function(nodeId, value, expanded)
+{
+    var node = InjectedScript._nodeForId(nodeId);
+    if (!node)
+        return false;
+
+    var parent = node.parentNode;
+    var prevSibling = node.previousSibling;
+    node.outerHTML = value;
+    var newNode = prevSibling ? prevSibling.nextSibling : parent.firstChild;
+
+    return InjectedScriptHost.pushNodePathToFrontend(newNode, expanded, false);
+}
 
 InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
 {
@@ -646,7 +668,7 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery)
 
             node[searchResultsProperty] = true;
             InjectedScript._searchResults.push(node);
-            var nodeId = InjectedScriptHost.pushNodePathToFrontend(node, false);
+            var nodeId = InjectedScriptHost.pushNodePathToFrontend(node, false, false);
             nodeIds.push(nodeId);
         }
         InjectedScriptHost.addNodesToSearchResult(nodeIds.join(","));
@@ -891,7 +913,7 @@ InjectedScript._inspectObject = function(o)
     var inspectedWindow = InjectedScript._window();
     inspectedWindow.console.log(o);
     if (Object.type(o) === "node") {
-        InjectedScriptHost.pushNodePathToFrontend(o, true);
+        InjectedScriptHost.pushNodePathToFrontend(o, false, true);
     } else {
         switch (Object.describe(o)) {
             case "Database":
@@ -907,7 +929,7 @@ InjectedScript._inspectObject = function(o)
 InjectedScript._copy = function(o)
 {
     if (Object.type(o) === "node") {
-        var nodeId = InjectedScriptHost.pushNodePathToFrontend(o, false);
+        var nodeId = InjectedScriptHost.pushNodePathToFrontend(o, false, false);
         InjectedScriptHost.copyNode(nodeId);
     } else {
         InjectedScriptHost.copyText(o);
@@ -1048,7 +1070,7 @@ InjectedScript.pushNodeToFrontend = function(objectProxy)
     var object = InjectedScript._resolveObject(objectProxy);
     if (!object || Object.type(object) !== "node")
         return false;
-    return InjectedScriptHost.pushNodePathToFrontend(object, false);
+    return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
 }
 
 InjectedScript.nodeByPath = function(path)

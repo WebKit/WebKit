@@ -101,6 +101,7 @@ namespace WebCore {
         Node* nodeForId(long nodeId);
         Node* nodeForPath(const String& path);
         long pushNodePathToFrontend(Node* node);
+        void pushChildNodesToFrontend(long nodeId);
 
    private:
         void startListening(Document* document);
@@ -113,7 +114,6 @@ namespace WebCore {
         void unbind(Node* node, NodeToIdMap* nodesMap);
 
         bool pushDocumentToFrontend();
-        void pushChildNodesToFrontend(long nodeId);
 
         ScriptObject buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
         ScriptArray buildArrayForElementAttributes(Element* element);
