@@ -249,11 +249,13 @@
 #endif
 
 #if ENABLE(SVG_FONTS)
+#include "V8SVGFontElement.h"
 #include "V8SVGFontFaceElement.h"
 #include "V8SVGFontFaceFormatElement.h"
 #include "V8SVGFontFaceNameElement.h"
 #include "V8SVGFontFaceSrcElement.h"
 #include "V8SVGFontFaceUriElement.h"
+#include "V8SVGMissingGlyphElement.h"
 #endif
 
 #if ENABLE(SVG_FOREIGN_OBJECT)

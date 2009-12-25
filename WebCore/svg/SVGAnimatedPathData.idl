@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol] SVGAnimatedPathData {
+    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGAnimatedPathData {
         readonly attribute SVGPathSegList   pathSegList;
         readonly attribute SVGPathSegList   normalizedPathSegList;
         readonly attribute SVGPathSegList   animatedPathSegList;

@@ -1,3 +1,21 @@
+2009-12-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        DOMWindow is missing lots of SVG* constructor objects
+        https://bugs.webkit.org/show_bug.cgi?id=20430
+
+        Update LayoutTests after exposing several new SVG* constructor objects.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * svg/custom/global-constructors-expected.txt: Added.
+        * svg/custom/global-constructors.html: Added.
+        * svg/custom/script-tests/global-constructors.js: Added.
+        (shouldBeDefined):
+
 2009-12-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.

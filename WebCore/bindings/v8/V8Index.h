@@ -230,11 +230,13 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 
 #if ENABLE(SVG_FONTS)
 #define SVG_FONTS_ELEMENT_TYPES(V)                                      \
+    V(SVGFONTELEMENT, SVGFontElement)                                   \
     V(SVGFONTFACEELEMENT, SVGFontFaceElement)                           \
     V(SVGFONTFACEFORMATELEMENT, SVGFontFaceFormatElement)               \
     V(SVGFONTFACENAMEELEMENT, SVGFontFaceNameElement)                   \
     V(SVGFONTFACESRCELEMENT, SVGFontFaceSrcElement)                     \
-    V(SVGFONTFACEURIELEMENT, SVGFontFaceUriElement)
+    V(SVGFONTFACEURIELEMENT, SVGFontFaceUriElement)                     \
+    V(SVGMISSINGGLYPHELEMENT, SVGMissingGlyphElement)
 #else
 #define SVG_FONTS_ELEMENT_TYPES(V)
 #endif
