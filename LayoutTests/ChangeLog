@@ -1,3 +1,12 @@
+2009-12-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        LayoutTests/inspector/settings-set-get.html removed 
+        by r52547, it should be removed from skiplist.
+
+        * platform/qt/Skipped: inspector/settings-set-get.html removed.
+
 2009-12-24  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.
