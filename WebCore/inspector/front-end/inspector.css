@@ -498,6 +498,7 @@ body.drawer-visible #drawer {
     font-family: monospace;
     padding: 2px 0;
     overflow-y: overlay;
+    word-wrap: break-word;
     -webkit-user-select: text;
     -webkit-text-size-adjust: auto;
 }
