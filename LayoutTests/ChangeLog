@@ -1,3 +1,16 @@
+2009-12-24  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        Remove LayoutTests/storage/change-version.html from Qt Skipped list
+        
+        LayoutTests/storage/change-version.html now passes.
+        Probably related to the fix in https://bugs.webkit.org/show_bug.cgi?id=32437.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32917
+
+        * platform/qt/Skipped:
+
 2009-12-24  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Rubber-stamped by Simon Hausmann.

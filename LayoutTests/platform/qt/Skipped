@@ -5147,7 +5147,6 @@ http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-op
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
-storage/change-version.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
