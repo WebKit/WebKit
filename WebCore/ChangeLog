@@ -1,3 +1,30 @@
+2009-12-25  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32938
+
+        Cleans up XSSAuditor.
+
+        Currently, we pass various parameters through to XSSAuditor::findInRequest
+        that are used to determine how to decode the HTTP input parameters so that
+        we can perform a match against the script source. Instead, we have defined
+        a structure XSSAuditor::FindTask that can hold all of these parameters.
+
+        No functionality was changed. So, no new tests.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canEvaluate): Modified to use struct
+        XSSAuditor::FindTask.
+        (WebCore::XSSAuditor::canEvaluateJavaScriptURL): Ditto.
+        (WebCore::XSSAuditor::canCreateInlineEventListener): Ditto.
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc): Ditto.
+        (WebCore::XSSAuditor::canLoadObject): Ditto.
+        (WebCore::XSSAuditor::canSetBaseElementURL): Ditto.
+        (WebCore::XSSAuditor::findInRequest): Ditto.
+        * page/XSSAuditor.h:
+        (WebCore::XSSAuditor::FindTask::FindTask): Added.
+
 2009-12-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
