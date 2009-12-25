@@ -570,7 +570,7 @@ sub checkFrameworks
     push(@frameworks, "WebKit") if isAppleMacWebKit();
     for my $framework (@frameworks) {
         my $path = builtDylibPathForName($framework);
-        die "Can't find built framework at \"$path\".\n" unless -x $path;
+        die "Can't find built framework at \"$path\".\n" unless -e $path;
     }
 }
 

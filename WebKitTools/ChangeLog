@@ -1,3 +1,15 @@
+2009-12-25  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32682
+
+        Fixes an issue where checkFrameworks always dies with an error under Windows
+        since the clause "unless (-x $path)" is always satisfied because files under
+        Windows do not have an explict executable bit.
+
+        * Scripts/webkitdirs.pm:
+
 2009-12-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
