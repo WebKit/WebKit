@@ -1,3 +1,17 @@
+2009-12-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Skipping some flakey tests.
+        https://bugs.webkit.org/show_bug.cgi?id=32946
+
+        * platform/qt/Skipped:
+         - http/tests/cookies/simple-cookies-expired.html added.
+         - storage/database-lock-after-reload.html added.
+         - storage/empty-statement.html added.
+         - storage/execute-sql-args.html added.
+         - storage/hash-change-with-xhr.html added.
+
 2009-12-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
