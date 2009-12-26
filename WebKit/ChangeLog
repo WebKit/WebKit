@@ -1,3 +1,7 @@
+2009-12-25  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2009-12-18  Dan Bernstein  <mitz@apple.com>
 
         Updated localizable strings after r52368
