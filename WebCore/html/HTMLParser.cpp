@@ -951,6 +951,7 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
         gFunctionMap.set(rpTag.localName().impl(), &HTMLParser::rpCreateErrorCheck);
         gFunctionMap.set(rtTag.localName().impl(), &HTMLParser::rtCreateErrorCheck);
         gFunctionMap.set(sTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
+        gFunctionMap.set(sectionTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
         gFunctionMap.set(selectTag.localName().impl(), &HTMLParser::selectCreateErrorCheck);
         gFunctionMap.set(smallTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
         gFunctionMap.set(strikeTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);

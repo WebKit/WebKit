@@ -1,3 +1,20 @@
+2009-12-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML5 section element.
+        https://bugs.webkit.org/show_bug.cgi?id=32936
+
+        The new test file tests:
+        - <p> closing,
+        - Residual style, and
+        - FormatBlock.
+
+        * fast/html/script-tests/TEMPLATE.html: Added.
+        * fast/html/script-tests/section-element.js: Added.
+        * fast/html/section-element-expected.txt: Added.
+        * fast/html/section-element.html: Added.
+
 2009-12-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

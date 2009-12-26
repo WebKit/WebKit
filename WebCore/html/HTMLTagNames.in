@@ -92,6 +92,7 @@ ruby interfaceName=HTMLElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser, createWithNew
+section interfaceName=HTMLElement
 select constructorNeedsFormElement, createWithNew
 small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew

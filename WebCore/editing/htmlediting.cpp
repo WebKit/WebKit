@@ -488,6 +488,7 @@ bool validBlockTag(const AtomicString& blockTag)
         blockTags.add(navTag.localName());
         blockTags.add(pTag.localName());
         blockTags.add(preTag.localName());
+        blockTags.add(sectionTag.localName());
     }
     return blockTags.contains(blockTag);
 }

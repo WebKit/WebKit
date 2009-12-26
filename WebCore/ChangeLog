@@ -1,3 +1,24 @@
+2009-12-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement HTML5 section element.
+        https://bugs.webkit.org/show_bug.cgi?id=32936
+
+        <section> should behave the same as <nav>.
+
+        Test: fast/html/section-element.html
+
+        * css/html.css: Add section as a block element.
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag): Add sectionTag.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::tagPriority): Returns 5 for sectionTag.
+        (WebCore::blockTagList): Add sectionTag.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode): Add sectionTag.
+        * html/HTMLTagNames.in: Add section.
+
 2009-12-25  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
