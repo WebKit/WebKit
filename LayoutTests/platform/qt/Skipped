@@ -5132,3 +5132,7 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 # SVGFontFaceUriElement, SVGFontFaceFormatElement, SVGFontFaceNameElement, SVGForeignObjectElement
 # https://bugs.webkit.org/show_bug.cgi?id=32941
 svg/custom/global-constructors.html
+
+# DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
+# https://bugs.webkit.org/show_bug.cgi?id=32961
+http/tests/xmlhttprequest/failed-auth.html
