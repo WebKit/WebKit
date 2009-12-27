@@ -56,6 +56,7 @@ void initializeMainThreadPlatform()
     if (threadingWindowHandle)
         return;
 
+    HWND hWndParent = 0;
 #if PLATFORM(WINCE)
     WNDCLASS wcex;
     memset(&wcex, 0, sizeof(WNDCLASS));
@@ -70,10 +71,11 @@ void initializeMainThreadPlatform()
     RegisterClass(&wcex);
 #else
     RegisterClassEx(&wcex);
+    hWndParent = HWND_MESSAGE;
 #endif
 
     threadingWindowHandle = CreateWindow(kThreadingWindowClassName, 0, 0,
-       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, 0);
+       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, hWndParent, 0, 0, 0);
     threadingFiredMessage = RegisterWindowMessage(L"com.apple.WebKit.MainThreadFired");
 }
 

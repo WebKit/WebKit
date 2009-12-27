@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        WinCE buildfix (HWND_MESSAGE isn't supported there)
+
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
+2009-12-27  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Barth.
+
         Added a file with WinMain function to link agains in WinCE.
 
         * os-win32/WinMain.cpp: Added.
