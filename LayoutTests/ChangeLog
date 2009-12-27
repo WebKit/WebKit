@@ -2,6 +2,16 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        Remove successful tests from qt skipped list
+
+        https://bugs.webkit.org/show_bug.cgi?id=32948
+
+        * platform/qt/Skipped:
+
+2009-12-27  Robert Hogan  <robert@roberthogan.net>
+
+        Rubber-stamped by Simon Hausmann.
+
         Remove duplicate entries from Qt skipped list
 
         https://bugs.webkit.org/show_bug.cgi?id=32947
