@@ -1,3 +1,14 @@
+2009-12-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Make the qt build go fast
+        https://bugs.webkit.org/show_bug.cgi?id=32951
+
+        Make use of multiple cores, if available.
+
+        * Scripts/modules/webkitport.py:
+
 2009-12-25  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

@@ -115,6 +115,8 @@ class QtPort(WebKitPort):
     def build_webkit_command(cls):
         command = WebKitPort.build_webkit_command()
         command.append("--qt")
+        # FIXME: We should probably detect the number of cores.
+        command.append('--makeargs="-j8"')
         return command
 
 
