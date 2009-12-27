@@ -1,3 +1,17 @@
+2009-12-27  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32964
+
+        [bzt] Updated the unit test based on the change made in bug #32951.
+
+        The change made in bug #32951 added the command-line argument:
+        --makeargs="-j8" to the build-webkit command. However, the associated
+        unit test was not updated.
+
+        * Scripts/modules/webkitport_unittest.py:
+
 2009-12-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

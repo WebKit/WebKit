@@ -48,7 +48,7 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(QtPort.name(), "Qt")
         self.assertEquals(QtPort.flag(), "--port=qt")
         self.assertEquals(QtPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
-        self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt"])
+        self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt", '--makeargs="-j8"'])
 
     def test_chromium_port(self):
         self.assertEquals(ChromiumPort.name(), "Chromium")
