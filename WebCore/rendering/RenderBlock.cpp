@@ -3191,22 +3191,35 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     }
 
     // We also clear floats if we are too big to sit on the same line as a float (and wish to avoid floats by default).
-    // FIXME: Note that the remaining space checks aren't quite accurate, since you should be able to clear only some floats (the minimum # needed
-    // to fit) and not all (we should be using nextFloatBottomBelow and looping).
     int result = clearSet ? max(0, bottom - yPos) : 0;
     if (!result && child->avoidsFloats()) {
-        int widthAtCurrentHeight = lineWidth(yPos, false);
         int availableWidth = this->availableWidth();
-        if (widthAtCurrentHeight < availableWidth) {
-            int oldYPos = child->y();
-            int oldWidth = child->width();
-            child->setY(yPos);
+        if (child->minPrefWidth() > availableWidth)
+            return 0;
+
+        int y = yPos;
+        while (true) {
+            int widthAtY = lineWidth(y, false);
+            if (widthAtY == availableWidth)
+                return y - yPos;
+
+            int oldChildY = child->y();
+            int oldChildWidth = child->width();
+            child->setY(y);
             child->calcWidth();
-            if (child->width() > widthAtCurrentHeight && child->minPrefWidth() <= availableWidth)
-                result = max(0, floatBottom() - yPos);
-            child->setY(oldYPos);
-            child->setWidth(oldWidth);
+            int childWidthAtY = child->width();
+            child->setY(oldChildY);
+            child->setWidth(oldChildWidth);
+
+            if (childWidthAtY <= widthAtY)
+                return y - yPos;
+
+            y = nextFloatBottomBelow(y);
+            ASSERT(y >= yPos);
+            if (y < yPos)
+                break;
         }
+        ASSERT_NOT_REACHED();
     }
     return result;
 }

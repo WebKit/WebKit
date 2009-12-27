@@ -1,3 +1,15 @@
+2009-12-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r47255): Extra Large Amount of Empty Space
+        https://bugs.webkit.org/show_bug.cgi?id=32690
+
+        * fast/block/float/clear-to-fit-expected.checksum: Added.
+        * fast/block/float/clear-to-fit-expected.png: Added.
+        * fast/block/float/clear-to-fit-expected.txt: Added.
+        * fast/block/float/clear-to-fit.html: Added.
+
 2009-12-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
