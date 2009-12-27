@@ -1,3 +1,13 @@
+2009-12-27  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Barth.
+
+        Added a file with WinMain function to link agains in WinCE.
+
+        * os-win32/WinMain.cpp: Added.
+        (convertToUtf8):
+        (WinMain):
+
 2009-12-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed; revert of r52550.
