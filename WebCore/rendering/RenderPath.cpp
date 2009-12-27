@@ -196,7 +196,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
         fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
         if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
-            m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
+            m_markerBounds = drawMarkersIfNeeded(paintInfo, m_path);
 
         finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
@@ -254,15 +254,15 @@ struct MarkerData {
 };
 
 struct DrawMarkersData {
-    DrawMarkersData(GraphicsContext*, SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, double strokeWidth);
-    GraphicsContext* context;
+    DrawMarkersData(RenderObject::PaintInfo&, SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, double strokeWidth);
+    RenderObject::PaintInfo& paintInfo;
     int elementIndex;
     MarkerData previousMarkerData;
     SVGResourceMarker* midMarker;
 };
 
-DrawMarkersData::DrawMarkersData(GraphicsContext* c, SVGResourceMarker *start, SVGResourceMarker *mid, double strokeWidth)
-    : context(c)
+DrawMarkersData::DrawMarkersData(RenderObject::PaintInfo& pi, SVGResourceMarker* start, SVGResourceMarker* mid, double strokeWidth)
+    : paintInfo(pi)
     , elementIndex(0)
     , midMarker(mid)
 {
@@ -273,7 +273,7 @@ DrawMarkersData::DrawMarkersData(GraphicsContext* c, SVGResourceMarker *start, S
     previousMarkerData.type = Start;
 }
 
-static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
+static void drawMarkerWithData(RenderObject::PaintInfo& paintInfo, MarkerData& data)
 {
     if (!data.marker)
         return;
@@ -296,7 +296,7 @@ static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
             angle = inslope;
     }
 
-    data.marker->draw(context, FloatRect(), data.origin.x(), data.origin.y(), data.strokeWidth, angle);
+    data.marker->draw(paintInfo, data.origin.x(), data.origin.y(), data.strokeWidth, angle);
 }
 
 static inline void updateMarkerDataForElement(MarkerData& previousMarkerData, const PathElement* element)
@@ -343,7 +343,7 @@ static void drawStartAndMidMarkers(void* info, const PathElement* element)
 
     // Draw the marker for the previous element
     if (elementIndex != 0)
-        drawMarkerWithData(data.context, previousMarkerData);
+        drawMarkerWithData(data.paintInfo, previousMarkerData);
 
     // Update our marker data for this element
     updateMarkerDataForElement(previousMarkerData, element);
@@ -357,7 +357,7 @@ static void drawStartAndMidMarkers(void* info, const PathElement* element)
     data.elementIndex++;
 }
 
-FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect&, const Path& path) const
+FloatRect RenderPath::drawMarkersIfNeeded(PaintInfo& paintInfo, const Path& path) const
 {
     Document* doc = document();
 
@@ -394,13 +394,13 @@ FloatRect RenderPath::drawMarkersIfNeeded(GraphicsContext* context, const FloatR
         return FloatRect();
 
     double strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
-    DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
+    DrawMarkersData data(paintInfo, startMarker, midMarker, strokeWidth);
 
     path.apply(&data, drawStartAndMidMarkers);
 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
-    drawMarkerWithData(context, data.previousMarkerData);
+    drawMarkerWithData(paintInfo, data.previousMarkerData);
 
     // We know the marker boundaries, only after they're drawn!
     // Otherwhise we'd need to do all the marker calculation twice

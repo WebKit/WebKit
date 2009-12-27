@@ -1,3 +1,25 @@
+2009-12-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Cleanup RenderPath code, related to markers. Pass around
+        PaintInfo objects instead of GraphicsContext directly, to
+        avoid having to recreate a new PaintInfo object in
+        SVGResourceMarker::draw().
+
+        No layout test changes.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::drawMarkerWithData):
+        (WebCore::drawStartAndMidMarkers):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderPath.h:
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+        * svg/graphics/SVGResourceMarker.h:
+
 2009-12-27  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Eric Seidel.

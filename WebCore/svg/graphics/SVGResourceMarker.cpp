@@ -61,7 +61,7 @@ void SVGResourceMarker::setRef(double refX, double refY)
     m_refY = refY;
 }
 
-void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, double x, double y, double strokeWidth, double angle)
+void SVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, double x, double y, double strokeWidth, double angle)
 {
     if (!m_marker)
         return;
@@ -91,16 +91,12 @@ void SVGResourceMarker::draw(GraphicsContext* context, const FloatRect& rect, do
     if (m_useStrokeWidth)
         transform.scaleNonUniform(strokeWidth, strokeWidth);
 
-    // FIXME: PaintInfo should be passed into this method instead of being created here
-    // FIXME: bounding box fractions are lost
-    RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0, 0);
-
-    context->save();
-    context->concatCTM(transform);
+    paintInfo.context->save();
+    paintInfo.context->concatCTM(transform);
     m_marker->setDrawsContents(true);
-    m_marker->paint(info, 0, 0);
+    m_marker->paint(paintInfo, 0, 0);
     m_marker->setDrawsContents(false);
-    context->restore();
+    paintInfo.context->restore();
 
     m_cachedBounds = transform.mapRect(m_marker->absoluteClippedOverflowRect());
 
