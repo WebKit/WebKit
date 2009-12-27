@@ -2,7 +2,7 @@
 
         Reviewed by Sam Weinig.
 
-        REGRESSION (r47255): Extra Large Amount of Empty Space
+        <rdar://problem/7483622> REGRESSION (r47255): Extra Large Amount of Empty Space
         https://bugs.webkit.org/show_bug.cgi?id=32690
 
         Test: fast/block/float/clear-to-fit.html
