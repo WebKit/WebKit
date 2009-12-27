@@ -1,5 +1,13 @@
 2009-12-27  Daniel Bates  <dbates@webkit.org>
 
+        Unreviewed. Added missing file style_unittest.py that wasn't committed
+        in change set 52541 (http://trac.webkit.org/changeset/52541) as part of
+        the patch for bug #32592.
+
+        * Scripts/modules/style_unittest.py: Added.
+
+2009-12-27  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=32964
