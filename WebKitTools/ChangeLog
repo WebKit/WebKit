@@ -1,3 +1,14 @@
+2009-12-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        check-webkit-style should not mark moc files inclusion as errors
+        https://bugs.webkit.org/show_bug.cgi?id=32669
+
+        Add a new header type for moc files, and skip them when checking the order of header files.
+
+        * Scripts/modules/cpp_style.py:
+
 2009-12-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -123,6 +123,7 @@ for op, inv_replacement in [('==', 'NE'), ('!=', 'EQ'),
 _CONFIG_HEADER = 0
 _PRIMARY_HEADER = 1
 _OTHER_HEADER = 2
+_MOC_HEADER = 3
 
 
 # The regexp compilation caching is inlined in all regexp functions for
@@ -181,6 +182,7 @@ class _IncludeState(dict):
         _CONFIG_HEADER: 'WebCore config.h',
         _PRIMARY_HEADER: 'header this file implements',
         _OTHER_HEADER: 'other header',
+        _MOC_HEADER: 'moc file',
         }
     _SECTION_NAMES = {
         _INITIAL_SECTION: "... nothing.",
@@ -217,6 +219,8 @@ class _IncludeState(dict):
             return 'Header file should not contain WebCore config.h.'
         if header_type == _PRIMARY_HEADER and file_is_header:
             return 'Header file should not contain itself.'
+        if header_type == _MOC_HEADER:
+            return ''
 
         error_message = ''
         if self._section != self._OTHER_SECTION:
@@ -2226,6 +2230,13 @@ def _classify_include(filename, include, is_system, include_state):
     elif include_state.visited_primary_section() and target_base == include_base:
         return _PRIMARY_HEADER
 
+    # Qt's moc files do not follow the naming and ordering rules, so they should be skipped
+    if include.startswith('moc_') and include.endswith('.cpp'):
+        return _MOC_HEADER
+
+    if include.endswith('.moc'):
+        return _MOC_HEADER
+
     return _OTHER_HEADER
 
 
@@ -2296,7 +2307,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
                   'You should add a blank line after implementation file\'s own header.')
 
     # Check to make sure all headers besides config.h and the primary header are
-    # alphabetically sorted.
+    # alphabetically sorted. Skip Qt's moc files.
     if not error_message and header_type == _OTHER_HEADER:
          previous_line_number = line_number - 1;
          previous_line = clean_lines.lines[previous_line_number]
