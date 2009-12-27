@@ -132,10 +132,11 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
 
     if (!database->openAndVerifyVersion(e)) {
        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
-       document->removeOpenDatabase(database.get());
-       DatabaseTracker::tracker().removeOpenDatabase(database.get());
        return 0;
     }
+
+    DatabaseTracker::tracker().addOpenDatabase(database.get());
+    document->addOpenDatabase(database.get());
 
     DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin(), name, displayName, estimatedSize);
 
@@ -188,9 +189,6 @@ Database::Database(Document* document, const String& name, const String& expecte
     ASSERT(m_document->databaseThread());
 
     m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_mainThreadSecurityOrigin.get(), m_name);
-
-    DatabaseTracker::tracker().addOpenDatabase(this);
-    m_document->addOpenDatabase(this);
 }
 
 static void derefDocument(void* document)
@@ -462,10 +460,6 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         return false;
     }
 
-    m_opened = true;
-    if (m_document->databaseThread())
-        m_document->databaseThread()->recordDatabaseOpen(this);
-
     ASSERT(m_databaseAuthorizer);
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
     m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
@@ -524,6 +518,10 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         e = INVALID_STATE_ERR;
         return false;
     }
+
+    m_opened = true;
+    if (m_document->databaseThread())
+        m_document->databaseThread()->recordDatabaseOpen(this);
 
     return true;
 }

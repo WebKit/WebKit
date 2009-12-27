@@ -1,3 +1,27 @@
+2009-12-26  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52554.
+        http://trac.webkit.org/changeset/52554
+
+        https://bugs.webkit.org/show_bug.cgi?id=32955
+        The original change was covered under
+        https://bugs.webkit.org/show_bug.cgi?id=32913
+
+        r52554 was itself a rollout of r52536.
+        However it caused two layout tests to fail on Leopard:
+        storage/open-database-while-transaction-in-progress.html
+        svg/W3C-SVG-1.1/filters-conv-01-f.svg (no clue why?)
+
+        So I'm rolling out the rollout in an attempt to get the bots green.
+        r52554 did not explain why it was rolled out, so I do not know
+        what might fail for Chromium after this change.  I warned the folks
+        in #chromium that it was coming.
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+
 2009-12-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
