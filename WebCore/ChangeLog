@@ -2,6 +2,14 @@
 
         Reviewed by Eric Seidel.
 
+        WinCE buildfix (added missing header)
+
+        * platform/text/wince/TextBreakIteratorWince.cpp:
+
+2009-12-27  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Eric Seidel.
+
         Buildfix after r50760 and some style fixes.
 
         * rendering/RenderThemeWince.cpp:
