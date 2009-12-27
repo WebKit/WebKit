@@ -215,7 +215,7 @@ void SVGStyledElement::invalidateResourcesInAncestorChain() const
 
         SVGElement* element = static_cast<SVGElement*>(node);
         if (SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element->isStyled() ? element : 0)) {
-            if (SVGResource* resource = styledElement->canvasResource())
+            if (SVGResource* resource = styledElement->canvasResource(node->renderer()))
                 resource->invalidate();
         }
 

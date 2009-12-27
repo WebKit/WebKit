@@ -27,6 +27,7 @@
 #include "SVGStyledLocatableElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
+#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ namespace WebCore {
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual SVGResource* canvasResource();
+        virtual SVGResource* canvasResource(const RenderObject*);
 
         PassOwnPtr<ImageBuffer> drawMaskerContent(const FloatRect& targetRect, FloatRect& maskRect) const;
 
@@ -68,7 +69,7 @@ namespace WebCore {
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
 
-        RefPtr<SVGResourceMasker> m_masker;
+        HashMap<const RenderObject*, RefPtr<SVGResourceMasker> > m_masker;
     };
 
 } // namespace WebCore

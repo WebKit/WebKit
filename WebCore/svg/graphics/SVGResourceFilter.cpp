@@ -52,7 +52,7 @@ SVGResourceFilter::SVGResourceFilter(const SVGFilterElement* ownerElement)
     , m_savedContext(0)
     , m_sourceGraphicBuffer(0)
 {
-    m_filterBuilder.set(new SVGFilterBuilder());
+    m_filterBuilder.set(new SVGFilterBuilder());    
 }
 
 SVGResourceFilter::~SVGResourceFilter()
@@ -204,9 +204,9 @@ TextStream& SVGResourceFilter::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-SVGResourceFilter* getFilterById(Document* document, const AtomicString& id)
+SVGResourceFilter* getFilterById(Document* document, const AtomicString& id, const RenderObject* object)
 {
-    SVGResource* resource = getResourceById(document, id);
+    SVGResource* resource = getResourceById(document, id, object);
     if (resource && resource->isFilter())
         return static_cast<SVGResourceFilter*>(resource);
 

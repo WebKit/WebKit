@@ -160,7 +160,7 @@ void SVGFilterElement::buildFilter(const FloatRect& targetRect) const
     }
 }
 
-SVGResource* SVGFilterElement::canvasResource()
+SVGResource* SVGFilterElement::canvasResource(const RenderObject*)
 {
     if (!attached())
         return 0;

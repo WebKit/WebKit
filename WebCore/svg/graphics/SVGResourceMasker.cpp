@@ -76,9 +76,9 @@ TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-SVGResourceMasker* getMaskerById(Document* document, const AtomicString& id)
+SVGResourceMasker* getMaskerById(Document* document, const AtomicString& id, const RenderObject* object)
 {
-    SVGResource* resource = getResourceById(document, id);
+    SVGResource* resource = getResourceById(document, id, object);
     if (resource && resource->isMasker())
         return static_cast<SVGResourceMasker*>(resource);
 

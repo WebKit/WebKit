@@ -122,9 +122,9 @@ TextStream& SVGResourceMarker::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-SVGResourceMarker* getMarkerById(Document* document, const AtomicString& id)
+SVGResourceMarker* getMarkerById(Document* document, const AtomicString& id, const RenderObject* object)
 {
-    SVGResource* resource = getResourceById(document, id);
+    SVGResource* resource = getResourceById(document, id, object);
     if (resource && resource->isMarker())
         return static_cast<SVGResourceMarker*>(resource);
 

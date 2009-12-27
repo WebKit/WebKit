@@ -22,6 +22,7 @@
 #define SVGClipPathElement_h
 
 #if ENABLE(SVG)
+#include "RenderObject.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGResourceClipper.h"
@@ -45,7 +46,7 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-        virtual SVGResource* canvasResource();
+        virtual SVGResource* canvasResource(const RenderObject*);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGClipPathElement, SVGNames::clipPathTagString, SVGNames::clipPathUnitsAttrString, int, ClipPathUnits, clipPathUnits)

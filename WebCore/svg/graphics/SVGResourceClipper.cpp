@@ -125,9 +125,9 @@ TextStream& operator<<(TextStream& ts, const ClipData& d)
     return ts;
 }
 
-SVGResourceClipper* getClipperById(Document* document, const AtomicString& id)
+SVGResourceClipper* getClipperById(Document* document, const AtomicString& id, const RenderObject* object)
 {
-    SVGResource* resource = getResourceById(document, id);
+    SVGResource* resource = getResourceById(document, id, object);
     if (resource && resource->isClipper())
         return static_cast<SVGResourceClipper*>(resource);
 

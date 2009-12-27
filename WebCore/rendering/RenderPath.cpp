@@ -371,9 +371,9 @@ FloatRect RenderPath::drawMarkersIfNeeded(PaintInfo& paintInfo, const Path& path
     AtomicString midMarkerId(svgStyle->midMarker());
     AtomicString endMarkerId(svgStyle->endMarker());
 
-    SVGResourceMarker* startMarker = getMarkerById(doc, startMarkerId);
-    SVGResourceMarker* midMarker = getMarkerById(doc, midMarkerId);
-    SVGResourceMarker* endMarker = getMarkerById(doc, endMarkerId);
+    SVGResourceMarker* startMarker = getMarkerById(doc, startMarkerId, this);
+    SVGResourceMarker* midMarker = getMarkerById(doc, midMarkerId, this);
+    SVGResourceMarker* endMarker = getMarkerById(doc, endMarkerId, this);
 
     if (!startMarker && !startMarkerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(startMarkerId, styledElement);

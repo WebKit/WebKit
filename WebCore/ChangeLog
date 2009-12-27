@@ -1,3 +1,77 @@
+2009-12-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Mask result wrong, if two different objects call the same mask id
+        https://bugs.webkit.org/show_bug.cgi?id=32787
+
+        At the moment we create one resource per maskId. Some resources (like mask)
+        create ImageBuffers and depends on the properties of the RenderObject,
+        thus we can't use it for a second object.
+        This patch stores multiple mask resources for one maskId and different
+        RenderObject can use the same maskId.
+        Clipper, Filter and Patterns also need to store multiple resources later.
+
+        Test: svg/custom/mask-on-multiple-objects.svg
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderResources):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGFilterElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::canvasResource):
+        * svg/SVGGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        (WebCore::SVGMaskElement::canvasResource):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::canvasResource):
+        * svg/SVGPatternElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResourcesInAncestorChain):
+        * svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::canvasResource):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::getPaintServerById):
+        (WebCore::SVGPaintServer::fillPaintServer):
+        (WebCore::SVGPaintServer::strokePaintServer):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::getResourceById):
+        * svg/graphics/SVGResource.h:
+        * svg/graphics/SVGResourceClipper.cpp:
+        (WebCore::getClipperById):
+        * svg/graphics/SVGResourceClipper.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::getFilterById):
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::getMarkerById):
+        * svg/graphics/SVGResourceMarker.h:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::getMaskerById):
+        * svg/graphics/SVGResourceMasker.h:
+
 2009-12-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

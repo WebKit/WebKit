@@ -23,6 +23,7 @@
 #define SVGFilterElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "RenderObject.h"
 #include "SVGResourceFilter.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -42,7 +43,7 @@ namespace WebCore {
         SVGFilterElement(const QualifiedName&, Document*);
         virtual ~SVGFilterElement();
 
-        virtual SVGResource* canvasResource();
+        virtual SVGResource* canvasResource(const RenderObject*);
 
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 

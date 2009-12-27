@@ -521,7 +521,7 @@ void writeRenderResources(TextStream& ts, Node* parent)
             continue;
 
         SVGStyledElement* styled = static_cast<SVGStyledElement*>(svgElement);
-        RefPtr<SVGResource> resource(styled->canvasResource());
+        RefPtr<SVGResource> resource(styled->canvasResource(node->renderer()));
         if (!resource)
             continue;
 

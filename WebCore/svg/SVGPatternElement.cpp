@@ -263,7 +263,7 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
     return patternContainer;
 }
 
-SVGResource* SVGPatternElement::canvasResource()
+SVGResource* SVGPatternElement::canvasResource(const RenderObject*)
 {
     if (!m_resource)
         m_resource = SVGPaintServerPattern::create(this);

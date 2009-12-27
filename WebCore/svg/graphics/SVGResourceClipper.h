@@ -27,9 +27,9 @@
 #define SVGResourceClipper_h
 
 #if ENABLE(SVG)
-
-#include "SVGResource.h"
 #include "Path.h"
+#include "RenderObject.h"
+#include "SVGResource.h"
 
 namespace WebCore {
 
@@ -84,7 +84,7 @@ namespace WebCore {
     TextStream& operator<<(TextStream&, WindRule);
     TextStream& operator<<(TextStream&, const ClipData&);
 
-    SVGResourceClipper* getClipperById(Document*, const AtomicString&);
+    SVGResourceClipper* getClipperById(Document*, const AtomicString&, const RenderObject*);
 
 } // namespace WebCore
 

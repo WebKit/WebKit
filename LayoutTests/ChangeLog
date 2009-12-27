@@ -1,3 +1,19 @@
+2009-12-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Mask result wrong, if two different objects call the same mask id
+        https://bugs.webkit.org/show_bug.cgi?id=32787
+
+        Two rects with different sizes and positions call the same mask id. Both
+        rects should be masked to two circles, dependent on the properties of the
+        rects.
+
+        * platform/mac/svg/custom/mask-on-multiple-objects-expected.checksum: Added.
+        * platform/mac/svg/custom/mask-on-multiple-objects-expected.png: Added.
+        * platform/mac/svg/custom/mask-on-multiple-objects-expected.txt: Added.
+        * svg/custom/mask-on-multiple-objects.svg: Added.
+
 2009-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

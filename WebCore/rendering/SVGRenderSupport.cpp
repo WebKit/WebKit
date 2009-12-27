@@ -116,7 +116,7 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     Document* document = object->document();
 
 #if ENABLE(FILTERS)
-    SVGResourceFilter* newFilter = getFilterById(document, filterId);
+    SVGResourceFilter* newFilter = getFilterById(document, filterId, object);
     if (newFilter == rootFilter) {
         // Catch <text filter="url(#foo)">Test<tspan filter="url(#foo)">123</tspan></text>.
         // The filter is NOT meant to be applied twice in that case!
@@ -126,8 +126,8 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         filter = newFilter;
 #endif
 
-    SVGResourceClipper* clipper = getClipperById(document, clipperId);
-    SVGResourceMasker* masker = getMaskerById(document, maskerId);
+    SVGResourceClipper* clipper = getClipperById(document, clipperId, object);
+    SVGResourceMasker* masker = getMaskerById(document, maskerId, object);
 
     if (masker) {
         masker->addClient(styledElement);
@@ -235,7 +235,7 @@ FloatRect SVGRenderBase::computeContainerBoundingBox(const RenderObject* contain
 FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object)
 {
 #if ENABLE(FILTERS)
-    SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filter());
+    SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filter(), object);
     if (filter)
         return filter->filterBoundingBox();
 #else

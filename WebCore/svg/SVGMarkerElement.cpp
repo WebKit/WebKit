@@ -170,7 +170,7 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     m_marker->invalidate();
 }
 
-SVGResource* SVGMarkerElement::canvasResource()
+SVGResource* SVGMarkerElement::canvasResource(const RenderObject*)
 {
     if (!m_marker)
         m_marker = SVGResourceMarker::create();

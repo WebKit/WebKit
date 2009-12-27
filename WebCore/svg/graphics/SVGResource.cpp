@@ -160,7 +160,7 @@ TextStream& SVGResource::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-SVGResource* getResourceById(Document* document, const AtomicString& id)
+SVGResource* getResourceById(Document* document, const AtomicString& id, const RenderObject* object)
 {
     if (id.isEmpty())
         return 0;
@@ -171,7 +171,7 @@ SVGResource* getResourceById(Document* document, const AtomicString& id)
         svgElement = static_cast<SVGElement*>(element);
 
     if (svgElement && svgElement->isStyled())
-        return static_cast<SVGStyledElement*>(svgElement)->canvasResource();
+        return static_cast<SVGStyledElement*>(svgElement)->canvasResource(object);
 
     return 0;
 }

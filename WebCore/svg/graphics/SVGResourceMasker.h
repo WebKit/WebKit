@@ -29,6 +29,7 @@
 #if ENABLE(SVG)
 
 #include "GraphicsContext.h"
+#include "RenderObject.h"
 #include "SVGResource.h"
 
 #include <memory>
@@ -64,7 +65,7 @@ namespace WebCore {
         FloatRect m_maskRect;
     };
 
-    SVGResourceMasker* getMaskerById(Document*, const AtomicString&);
+    SVGResourceMasker* getMaskerById(Document*, const AtomicString&, const RenderObject* object);
 
 } // namespace WebCore
 

@@ -89,7 +89,7 @@ void SVGClipPathElement::childrenChanged(bool changedByParser, Node* beforeChang
     m_clipper->invalidate();
 }
 
-SVGResource* SVGClipPathElement::canvasResource()
+SVGResource* SVGClipPathElement::canvasResource(const RenderObject*)
 {
     if (!m_clipper)
         m_clipper = SVGResourceClipper::create();

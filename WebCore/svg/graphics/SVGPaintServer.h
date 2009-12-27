@@ -29,6 +29,7 @@
 #if ENABLE(SVG)
 
 #include "DashArray.h"
+#include "RenderObject.h"
 #include "SVGResource.h"
 
 #if PLATFORM(CG)
@@ -82,7 +83,7 @@ namespace WebCore {
 
     TextStream& operator<<(TextStream&, const SVGPaintServer&);
 
-    SVGPaintServer* getPaintServerById(Document*, const AtomicString&);
+    SVGPaintServer* getPaintServerById(Document*, const AtomicString&, const RenderObject*);
 
     void applyStrokeStyleToContext(GraphicsContext*, RenderStyle*, const RenderObject*);
     DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);

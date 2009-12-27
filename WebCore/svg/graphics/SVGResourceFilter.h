@@ -103,7 +103,7 @@ private:
     RefPtr<Filter> m_filter;
 };
 
-SVGResourceFilter* getFilterById(Document*, const AtomicString&);
+SVGResourceFilter* getFilterById(Document*, const AtomicString&, const RenderObject*);
 
 } // namespace WebCore
 
