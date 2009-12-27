@@ -100,9 +100,6 @@ http/tests/navigation/timerredirect-subframeload.html
 # Failing security tests
 http/tests/security/frame-loading-via-document-write.html
 
-# Missing DRT ability return a null request for willSendRequest redirect calls
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-
 # Failing test
 fast/canvas/quadraticCurveTo.xml
 
@@ -440,7 +437,6 @@ fast/box-sizing/percentage-height.html
 fast/css/acid2-pixel.html
 fast/css/acid2.html
 fast/css/ignore-text-zoom.html
-fast/css/ignore-text-zoom.html
 fast/dom/clientWidthAfterDocumentIsRemoved.html
 fast/dom/focus-contenteditable.html
 fast/dom/gc-10.html
@@ -635,7 +631,6 @@ svg/W3C-SVG-1.1/coords-trans-04-t.svg
 svg/W3C-SVG-1.1/coords-trans-05-t.svg
 svg/W3C-SVG-1.1/coords-trans-06-t.svg
 svg/W3C-SVG-1.1/coords-units-01-b.svg
-svg/W3C-SVG-1.1/coords-units-01-b.svg
 svg/W3C-SVG-1.1/coords-units-02-b.svg
 svg/W3C-SVG-1.1/coords-units-03-b.svg
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
@@ -687,8 +682,6 @@ svg/W3C-SVG-1.1/linking-uri-01-b.svg
 svg/W3C-SVG-1.1/linking-uri-02-b.svg
 svg/W3C-SVG-1.1/linking-uri-03-t.svg
 svg/W3C-SVG-1.1/masking-intro-01-f.svg
-svg/W3C-SVG-1.1/masking-intro-01-f.svg
-svg/W3C-SVG-1.1/masking-mask-01-b.svg
 svg/W3C-SVG-1.1/masking-mask-01-b.svg
 svg/W3C-SVG-1.1/masking-opacity-01-b.svg
 svg/W3C-SVG-1.1/masking-path-01-b.svg
@@ -728,10 +721,8 @@ svg/W3C-SVG-1.1/paths-data-15-t.svg
 svg/W3C-SVG-1.1/pservers-grad-01-b.svg
 svg/W3C-SVG-1.1/pservers-grad-02-b.svg
 svg/W3C-SVG-1.1/pservers-grad-03-b.svg
-svg/W3C-SVG-1.1/pservers-grad-03-b.svg
 svg/W3C-SVG-1.1/pservers-grad-04-b.svg
 svg/W3C-SVG-1.1/pservers-grad-05-b.svg
-svg/W3C-SVG-1.1/pservers-grad-06-b.svg
 svg/W3C-SVG-1.1/pservers-grad-06-b.svg
 svg/W3C-SVG-1.1/pservers-grad-07-b.svg
 svg/W3C-SVG-1.1/pservers-grad-08-b.svg
@@ -746,7 +737,6 @@ svg/W3C-SVG-1.1/pservers-grad-16-b.svg
 svg/W3C-SVG-1.1/pservers-grad-17-b.svg
 svg/W3C-SVG-1.1/pservers-grad-18-b.svg
 svg/W3C-SVG-1.1/pservers-grad-19-b.svg
-svg/W3C-SVG-1.1/pservers-pattern-01-b.svg
 svg/W3C-SVG-1.1/pservers-pattern-01-b.svg
 svg/W3C-SVG-1.1/render-elems-01-t.svg
 svg/W3C-SVG-1.1/render-elems-02-t.svg
@@ -938,12 +928,9 @@ svg/custom/mask-changes.svg
 svg/custom/mask-child-changes.svg
 svg/custom/mask-excessive-malloc.svg
 svg/custom/mask-inside-defs.svg
-svg/custom/mask-inside-defs.svg
 svg/custom/missing-xlink.svg
 svg/custom/non-circular-marker-reference.svg
 svg/custom/non-opaque-filters.svg
-svg/custom/non-opaque-filters.svg
-svg/custom/path-bad-data.svg
 svg/custom/path-bad-data.svg
 svg/custom/path-textPath-simulation.svg
 svg/custom/path-update.svg
@@ -951,8 +938,6 @@ svg/custom/path-update.svg
 svg/custom/pattern-cycle-detection.svg
 svg/custom/pattern-deep-referencing.svg
 svg/custom/pattern-in-defs.svg
-svg/custom/pattern-in-defs.svg
-svg/custom/pattern-y-offset.svg
 svg/custom/pattern-y-offset.svg
 svg/custom/percentage-rect2.svg
 svg/custom/percentage-rect.svg
@@ -1200,7 +1185,6 @@ fast/events/blur-focus-window-should-blur-focus-element.html
 fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
-fast/encoding/mailto-always-utf-8.html
 fast/events/access-key-self-destruct.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/contextmenu-scrolled-page-with-frame.html
@@ -4946,7 +4930,6 @@ inspector/elements-panel-structure.html
 inspector/evaluate-in-frontend.html
 
 # Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
-http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
 http/tests/xmlhttprequest/access-control-basic-allow-star.html
 http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
@@ -4970,7 +4953,6 @@ http/tests/misc/refresh-headers.php
 http/tests/misc/refresh-meta-with-newline.html
 http/tests/misc/text-refresh.html
 http/tests/misc/timer-vs-loading.html
-http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/misc/window-dot-stop.html
 
 # Skip failing http/tests/security tests
@@ -5056,7 +5038,6 @@ http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/cookies.html
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/methods-lower-case.html
 http/tests/xmlhttprequest/methods.html
