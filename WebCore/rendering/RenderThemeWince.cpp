@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "GraphicsContext.h"
+#include "NotImplemented.h"
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #endif
@@ -377,12 +378,12 @@ bool RenderThemeWince::paintSearchFieldCancelButton(RenderObject* o, const Rende
     IntRect cancelBounds(IntPoint(x, y), cancelSize);
     paintInfo.context->save();
     paintInfo.context->addRoundedRectClip(cancelBounds, cancelRadius, cancelRadius, cancelRadius, cancelRadius);
-    paintInfo.context->fillRect(cancelBounds, buttonColor);
+    paintInfo.context->fillRect(cancelBounds, buttonColor, DeviceColorSpace);
 
     // Draw the 'x'
     IntSize xSize(3, 3);
     IntRect xBounds(cancelBounds.location() + IntSize(3, 3), xSize);
-    paintInfo.context->setStrokeColor(Color::white);
+    paintInfo.context->setStrokeColor(Color::white, DeviceColorSpace);
     paintInfo.context->drawLine(xBounds.location(),  xBounds.location() + xBounds.size());
     paintInfo.context->drawLine(IntPoint(xBounds.right(), xBounds.y()),  IntPoint(xBounds.x(), xBounds.bottom()));
 
@@ -489,11 +490,11 @@ bool RenderThemeWince::paintSliderTrack(RenderObject* o, const RenderObject::Pai
     bool rc = RenderTheme::paintSliderTrack(o, i, r);
     IntPoint left = IntPoint(r.x() + 2, (r.y() + r.bottom()) / 2);
     i.context->save();
-    i.context->setStrokeColor(Color::gray);
-    i.context->setFillColor(Color::gray);
+    i.context->setStrokeColor(Color::gray, DeviceColorSpace);
+    i.context->setFillColor(Color::gray, DeviceColorSpace);
     i.context->fillRect(r);
 #if ENABLE(VIDEO)
-    HTMLMediaElement *mediaElement = mediaElementParent(o->node());
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {
         i.context->setStrokeColor(Color(0, 0xff, 0));
         IntPoint right = IntPoint(left.x() + mediaElement->percentLoaded() * (r.right() - r.x() - 4), (r.y() + r.bottom()) / 2);
@@ -501,7 +502,7 @@ bool RenderThemeWince::paintSliderTrack(RenderObject* o, const RenderObject::Pai
         left = right;
     }
 #endif
-    i.context->setStrokeColor(Color::black);
+    i.context->setStrokeColor(Color::black, DeviceColorSpace);
     i.context->drawLine(left, IntPoint(r.right() - 2, left.y()));
     i.context->restore();
     return rc;
@@ -511,10 +512,10 @@ bool RenderThemeWince::paintSliderThumb(RenderObject* o, const RenderObject::Pai
 {
     bool rc = RenderTheme::paintSliderThumb(o, i, r);
     i.context->save();
-    i.context->setStrokeColor(Color::black);
-    i.context->setFillColor(Color::black);
+    i.context->setStrokeColor(Color::black, DeviceColorSpace);
+    i.context->setFillColor(Color::black, DeviceColorSpace);
 #if ENABLE(VIDEO)
-    HTMLMediaElement *mediaElement = mediaElementParent(o->node());
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {
         float pt = (mediaElement->currentTime() - mediaElement->startTime()) / mediaElement->duration();
         FloatRect intRect = r;
@@ -574,7 +575,7 @@ bool RenderThemeWince::paintMediaFullscreenButton(RenderObject* o, const RenderO
 bool RenderThemeWince::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     bool rc = paintButton(o, paintInfo, r);
-    HTMLMediaElement *mediaElement = mediaElementParent(o->node());
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     bool muted = !mediaElement || mediaElement->muted();
     FloatRect imRect = r;
     imRect.inflate(-2);
@@ -604,7 +605,7 @@ bool RenderThemeWince::paintMediaPlayButton(RenderObject* o, const RenderObject:
     paintInfo.context->save();
     paintInfo.context->setStrokeColor(Color::black);
     paintInfo.context->setFillColor(Color::black);
-    HTMLMediaElement *mediaElement = mediaElementParent(o->node());
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     bool paused = !mediaElement || mediaElement->paused();
     if (paused) {
         float width = imRect.width();
