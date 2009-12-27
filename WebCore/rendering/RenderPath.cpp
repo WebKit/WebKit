@@ -190,14 +190,14 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     if (paintInfo.phase == PaintPhaseForeground) {
         PaintInfo savedInfo(paintInfo);
 
-        prepareToRenderSVGContent(this, paintInfo, boundingBox, filter);
-        if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
-            paintInfo.context->setShouldAntialias(false);
-        fillAndStrokePath(m_path, paintInfo.context, style(), this);
+        if (prepareToRenderSVGContent(this, paintInfo, boundingBox, filter)) {
+            if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
+                paintInfo.context->setShouldAntialias(false);
+            fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
-        if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
-            m_markerBounds = drawMarkersIfNeeded(paintInfo, m_path);
-
+            if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
+                m_markerBounds = drawMarkersIfNeeded(paintInfo, m_path);
+        }
         finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
 

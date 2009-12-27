@@ -41,7 +41,7 @@ namespace WebCore {
         // FIXME: These are only public for SVGRootInlineBox.
         // It's unclear if these should be exposed or not.  SVGRootInlineBox may
         // pass the wrong RenderObject* and boundingBox to these functions.
-        static void prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
+        static bool prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
         static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, SVGResourceFilter*&, GraphicsContext* savedContext);
 
     protected:

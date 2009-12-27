@@ -54,7 +54,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         // To be implemented by the specific rendering devices
-        void applyMask(GraphicsContext*, const FloatRect& boundingBox);
+        bool applyMask(GraphicsContext*, const FloatRect& boundingBox);
 
     private:
         SVGResourceMasker(const SVGMaskElement*);
@@ -63,6 +63,7 @@ namespace WebCore {
         
         OwnPtr<ImageBuffer> m_mask;
         FloatRect m_maskRect;
+        bool m_emptyMask;
     };
 
     SVGResourceMasker* getMaskerById(Document*, const AtomicString&, const RenderObject* object);

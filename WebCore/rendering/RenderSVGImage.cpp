@@ -157,16 +157,16 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
         PaintInfo savedInfo(paintInfo);
 
-        prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter);
+        if (prepareToRenderSVGContent(this, paintInfo, m_localBounds, filter)) {
+            FloatRect destRect = m_localBounds;
+            FloatRect srcRect(0, 0, image()->width(), image()->height());
 
-        FloatRect destRect = m_localBounds;
-        FloatRect srcRect(0, 0, image()->width(), image()->height());
+            SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
+            if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
+                adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
-        SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
-        if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-            adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
-
-        paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
+            paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
+        }
         finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
 

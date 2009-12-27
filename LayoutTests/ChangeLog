@@ -2,6 +2,28 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        SVG: Stop rendering of objects with empty mask and filter content
+        https://bugs.webkit.org/show_bug.cgi?id=32968
+
+        Check if the content is not drawn, if the mask clips the complete
+        content away.
+        mask-excessive-malloc needed an update. This patch stops rendering
+        if there is no content in mask. But it's intention is to test
+        big masking images.
+
+        * platform/mac/svg/custom/empty-mask-expected.checksum: Added.
+        * platform/mac/svg/custom/empty-mask-expected.png: Added.
+        * platform/mac/svg/custom/empty-mask-expected.txt: Added.
+        * platform/mac/svg/custom/mask-excessive-malloc-expected.checksum:
+        * platform/mac/svg/custom/mask-excessive-malloc-expected.png:
+        * platform/mac/svg/custom/mask-excessive-malloc-expected.txt:
+        * svg/custom/empty-mask.svg: Added.
+        * svg/custom/mask-excessive-malloc.svg:
+
+2009-12-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         SVG Mask result wrong, if two different objects call the same mask id
         https://bugs.webkit.org/show_bug.cgi?id=32787
 

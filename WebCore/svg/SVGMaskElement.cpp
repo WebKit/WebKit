@@ -133,7 +133,7 @@ void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, N
         it->second->invalidate();
 }
 
-PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& objectBoundingBox, FloatRect& maskDestRect) const
+PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& objectBoundingBox, FloatRect& maskDestRect, bool& emptyMask) const
 {    
     // Determine specified mask size
     if (maskUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
@@ -174,7 +174,14 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& objec
     repaintRect.intersect(maskDestRect);
     maskDestRect = repaintRect;
     IntRect maskImageRect = enclosingIntRect(maskDestRect);
+
     maskImageRect.setLocation(IntPoint());
+
+    // Don't create ImageBuffers with image size of 0
+    if (!maskImageRect.width() || !maskImageRect.height()) {
+        emptyMask = true;
+        return 0;
+    }
 
     // FIXME: This changes color space to linearRGB, the default color space
     // for masking operations in SVG. We need a switch for the other color-space
@@ -199,9 +206,6 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& objec
 
 
     maskImageContext->restore();
-
-    if (!maskImageRect.width() || !maskImageRect.height())
-        return maskImage.release();
 
     // create the luminance mask
     RefPtr<ImageData> imageData(maskImage->getUnmultipliedImageData(maskImageRect));

@@ -46,6 +46,7 @@ namespace WebCore {
 SVGResourceMasker::SVGResourceMasker(const SVGMaskElement* ownerElement)
     : SVGResource()
     , m_ownerElement(ownerElement)
+    , m_emptyMask(false)
 {
 }
 
@@ -57,17 +58,19 @@ void SVGResourceMasker::invalidate()
 {
     SVGResource::invalidate();
     m_mask.clear();
+    m_emptyMask = false;
 }
 
-void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
+bool SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
-    if (!m_mask)
-        m_mask = m_ownerElement->drawMaskerContent(boundingBox, m_maskRect);
+    if (!m_mask && !m_emptyMask)
+        m_mask = m_ownerElement->drawMaskerContent(boundingBox, m_maskRect, m_emptyMask);
 
     if (!m_mask)
-        return;
+        return false;
 
     context->clipToImageBuffer(m_maskRect, m_mask.get());
+    return true;
 }
 
 TextStream& SVGResourceMasker::externalRepresentation(TextStream& ts) const

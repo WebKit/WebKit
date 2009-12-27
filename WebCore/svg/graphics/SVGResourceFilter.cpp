@@ -86,13 +86,13 @@ bool SVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size)
     return matchesFilterSize;
 }
 
-void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObject* object)
+bool SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObject* object)
 {
     FloatRect targetRect = object->objectBoundingBox();
     m_ownerElement->buildFilter(targetRect);
 
     if (shouldProcessFilter(this))
-        return;
+        return false;
 
     // clip sourceImage to filterRegion
     FloatRect clippedSourceRect = targetRect;
@@ -122,7 +122,8 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
             m_filter->setFilterResolution(FloatSize(m_scaleX, m_scaleY));
             lastEffect->calculateEffectRect(m_filter.get());
         }
-    }
+    } else
+        return false;
 
     clippedSourceRect.scale(m_scaleX, m_scaleY);
 
@@ -132,7 +133,7 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
     OwnPtr<ImageBuffer> sourceGraphic(ImageBuffer::create(bufferRect.size(), LinearRGB));
     
     if (!sourceGraphic.get())
-        return;
+        return false;
 
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
     sourceGraphicContext->translate(-clippedSourceRect.x(), -clippedSourceRect.y());
@@ -142,13 +143,11 @@ void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const RenderObj
     m_savedContext = context;
 
     context = sourceGraphicContext;
+    return true;
 }
 
 void SVGResourceFilter::applyFilter(GraphicsContext*& context, const RenderObject* object)
 {
-    if (shouldProcessFilter(this))
-        return;
-
     if (!m_savedContext)
         return;
 

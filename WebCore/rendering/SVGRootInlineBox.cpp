@@ -575,18 +575,18 @@ void SVGRootInlineBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     FloatRect boundingBox(tx + x(), ty + y(), width(), height());
 
     // Initialize text rendering
-    SVGRenderBase::prepareToRenderSVGContent(renderer(), paintInfo, boundingBox, filter);
- 
-    // Render text, chunk-by-chunk
-    SVGRootInlineBoxPaintWalker walkerCallback(this, filter, paintInfo, tx, ty);
-    SVGTextChunkWalker<SVGRootInlineBoxPaintWalker> walker(&walkerCallback,
-                                                           &SVGRootInlineBoxPaintWalker::chunkPortionCallback,
-                                                           &SVGRootInlineBoxPaintWalker::chunkStartCallback,
-                                                           &SVGRootInlineBoxPaintWalker::chunkEndCallback,
-                                                           &SVGRootInlineBoxPaintWalker::chunkSetupFillCallback,
-                                                           &SVGRootInlineBoxPaintWalker::chunkSetupStrokeCallback);
+    if (SVGRenderBase::prepareToRenderSVGContent(renderer(), paintInfo, boundingBox, filter)) {
+        // Render text, chunk-by-chunk
+        SVGRootInlineBoxPaintWalker walkerCallback(this, filter, paintInfo, tx, ty);
+        SVGTextChunkWalker<SVGRootInlineBoxPaintWalker> walker(&walkerCallback,
+                                                               &SVGRootInlineBoxPaintWalker::chunkPortionCallback,
+                                                               &SVGRootInlineBoxPaintWalker::chunkStartCallback,
+                                                               &SVGRootInlineBoxPaintWalker::chunkEndCallback,
+                                                               &SVGRootInlineBoxPaintWalker::chunkSetupFillCallback,
+                                                               &SVGRootInlineBoxPaintWalker::chunkSetupStrokeCallback);
 
-    walkTextChunks(&walker);
+        walkTextChunks(&walker);
+    }
 
     // Finalize text rendering 
     SVGRenderBase::finishRenderSVGContent(renderer(), paintInfo, filter, savedInfo.context);

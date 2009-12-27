@@ -1,3 +1,44 @@
+2009-12-27  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG: Stop rendering of objects with empty mask and filter content
+        https://bugs.webkit.org/show_bug.cgi?id=32968
+
+        It's not neccessary to continue rendering of an object and its' childs
+        if the mask clips the complete content away.
+        The same for filters, if the filter rendering is discontinued or either
+        width or height are zero.
+        We might also stop rendering if repaintRectInLocalCoordinates is empty.
+        But it needs to be fixed first.
+
+        Test: svg/custom/empty-mask.svg
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGMaskElement.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::SVGResourceMasker):
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/SVGResourceMasker.h:
+
 2009-12-27  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Eric Seidel.
