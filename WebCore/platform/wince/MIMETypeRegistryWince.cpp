@@ -27,6 +27,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include <wtf/HashMap.h>
 #include <windows.h>
 #include <winreg.h>
 

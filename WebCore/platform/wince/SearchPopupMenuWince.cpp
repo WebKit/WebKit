@@ -21,6 +21,7 @@
 #include "SearchPopupMenu.h"
 
 #include "AtomicString.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
