@@ -117,6 +117,12 @@ ContextMenuItem::ContextMenuItem(GtkMenuItem* item)
         m_platformDescription.checked = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
     } else
         m_platformDescription.type = ActionType;
+#if GTK_CHECK_VERSION (2, 16, 0)
+    m_platformDescription.title = String::fromUTF8(gtk_menu_item_get_label(GTK_MENU_ITEM(item)));
+#else
+    GtkWidget* label = gtk_bin_get_child(GTK_BIN(item));
+    m_platformDescription.title = String::fromUTF8(gtk_label_get_label(GTK_LABEL(label)));
+#endif
 
     m_platformDescription.action = *static_cast<ContextMenuAction*>(g_object_get_data(G_OBJECT(item), WEBKIT_CONTEXT_MENU_ACTION));
 
@@ -205,13 +211,12 @@ void ContextMenuItem::setAction(ContextMenuAction action)
 
 String ContextMenuItem::title() const
 {
-    notImplemented();
-    return String();
+    return m_platformDescription.title;
 }
 
-void ContextMenuItem::setTitle(const String&)
+void ContextMenuItem::setTitle(const String& title)
 {
-    notImplemented();
+    m_platformDescription.title = title;
 }
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
