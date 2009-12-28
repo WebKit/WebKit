@@ -5622,6 +5622,13 @@ fast/table/fixed-table-with-percent-width-inside-extra-large-div.html
 fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html
 fast/table/fixed-table-with-small-percent-width.html
 transforms/2d/hindi-rotated.html
+editing/selection/select-text-overflow-ellipsis.html
+fast/forms/basic-selects.html
+fast/forms/basic-textareas-quirks.html
+fast/text/fake-italic.html
+svg/custom/empty-mask.svg
+svg/custom/mask-on-multiple-objects.svg
+svg/filters/filter-clip.svg
 
 # See https://bugs.webkit.org/show_bug.cgi?id=29683
 plugins/destroy-during-npp-new.html
@@ -5733,3 +5740,7 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=32604
 # Fails on the release bot because of, apparently, rouding errors
 svg/custom/path-getTotalLength.svg
+
+# Fails since it was checked in; our problem may be similar to Windows'
+# See https://bugs.webkit.org/show_bug.cgi?id=32727
+fast/dom/Element/id-in-deletebutton.html

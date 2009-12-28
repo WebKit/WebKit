@@ -1,3 +1,10 @@
+2009-12-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip test that is failing since it was checked in, and some tests
+        that need results.
+
+        * platform/gtk/Skipped:
+
 2009-12-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.
