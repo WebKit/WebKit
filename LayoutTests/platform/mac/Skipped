@@ -65,6 +65,7 @@ fast/dom/Geolocation
 # Skipped while Eric Carlson works on a fix.
 # https://bugs.webkit.org/show_bug.cgi?id=28221
 fast/layers/video-layer.html
+media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 

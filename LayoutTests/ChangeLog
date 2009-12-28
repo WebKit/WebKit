@@ -1,3 +1,13 @@
+2009-12-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam Barth.
+
+        Put media/audio-delete-while-step-button-clicked.html back in the mac skipped list because
+        I think it's making other media tests fail sporadically.
+
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+
 2009-12-27  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
