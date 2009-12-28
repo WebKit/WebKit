@@ -1,3 +1,9 @@
+2009-12-28  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Unreviewed, update my email address.
+
+        * Scripts/modules/committers.py:
+
 2009-12-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Adam Barth.

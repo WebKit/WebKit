@@ -150,7 +150,7 @@ reviewers_list = [
     Reviewer("Alp Toker", ["alp@nuanti.com", "alp@atoker.com", "alp@webkit.org"]),
     Reviewer("Anders Carlsson", ["andersca@apple.com", "acarlsson@apple.com"]),
     Reviewer("Antti Koivisto", ["koivisto@iki.fi", "antti@apple.com"]),
-    Reviewer("Ariya Hidayat", ["ariya.hidayat@trolltech.com", "ariya.hidayat@gmail.com", "ariya@webkit.org"]),
+    Reviewer("Ariya Hidayat", ["ariya.hidayat@gmail.com", "ariya@webkit.org"]),
     Reviewer("Beth Dakin", "bdakin@apple.com"),
     Reviewer("Brady Eidson", "beidson@apple.com"),
     Reviewer("Cameron Zwarich", ["zwarich@apple.com", "cwzwarich@apple.com", "cwzwarich@webkit.org"]),
