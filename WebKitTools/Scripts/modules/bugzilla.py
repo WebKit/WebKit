@@ -120,7 +120,7 @@ class Bugzilla(object):
         bug["reporter_email"] = str(soup.find("reporter").string)
         bug["assign_to_email"] = str(soup.find("assigned_to").string)
         bug["cc_emails"] = [str(element.string) for element in soup.findAll('cc')]
-        bug["attachments"] = [self._parse_attachment_element(element, bug_id) for element in soup.findAll('attachment')]
+        bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
         return bug
 
     def fetch_bug(self, bug_id):

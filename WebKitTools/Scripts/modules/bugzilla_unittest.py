@@ -141,6 +141,31 @@ class BugzillaTest(unittest.TestCase):
 
 Ignore this bug.  Just for testing failure modes of bugzilla-tool and the commit-queue.</thetext>
           </long_desc>
+          <attachment 
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+          > 
+            <attachid>45548</attachid> 
+            <date>2009-12-27 23:51 PST</date> 
+            <desc>Patch</desc> 
+            <filename>bug-32585-20091228005112.patch</filename> 
+            <type>text/plain</type> 
+            <size>10882</size> 
+            <attacher>mjs@apple.com</attacher> 
+            
+              <token>1261988248-dc51409e9c421a4358f365fa8bec8357</token> 
+              <data encoding="base64">SW5kZXg6IFdlYktpdC9tYWMvQ2hhbmdlTG9nCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+removed-because-it-was-really-long
+ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
+</data>        
+ 
+              <flag name="review"
+                    id="27602"
+                    status="?"
+                    setter="mjs@apple.com"
+               /> 
+          </attachment> 
     </bug>
 </bugzilla>
 """
@@ -150,7 +175,17 @@ Ignore this bug.  Just for testing failure modes of bugzilla-tool and the commit
         "cc_emails" : ["foo@bar.com", "example@example.com"],
         "reporter_email" : "eric@webkit.org",
         "assign_to_email" : "webkit-unassigned@lists.webkit.org",
-        "attachments" : [],
+        "attachments" : [{
+            'name': u'Patch',
+            'url': 'https://bugs.webkit.org/attachment.cgi?id=45548',
+            'is_obsolete': False,
+            'review': u'?',
+            'is_patch': True,
+            'attacher_email': 'mjs@apple.com',
+            'bug_id': 32585,
+            'type': 'text/plain',
+            'id': 45548
+        }],
     }
 
     def _assert_dictionaries_equal(self, actual, expected):
