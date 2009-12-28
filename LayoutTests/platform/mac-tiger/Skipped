@@ -81,3 +81,5 @@ inspector/console-tests.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
+
+media/audio-delete-while-step-button-clicked.html

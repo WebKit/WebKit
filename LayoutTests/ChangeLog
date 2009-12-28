@@ -2,6 +2,14 @@
 
         Rubber stamped by Adam Barth.
 
+        Add media/audio-delete-while-step-button-clicked.html back to the Tiger skipped list.
+
+        * platform/mac-tiger/Skipped:
+
+2009-12-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam Barth.
+
         Removed some tests from the skipped list that are not failing on my system.
 
         * platform/mac-snowleopard/Skipped:
