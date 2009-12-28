@@ -8,6 +8,7 @@ acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
 applet
 area
+article interfaceName=HTMLElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
 b interfaceName=HTMLElement
 base createWithNew

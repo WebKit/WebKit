@@ -1,3 +1,24 @@
+2009-12-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement HTML5 <article> element.
+        https://bugs.webkit.org/show_bug.cgi?id=32936
+
+        <article> should behave the same as <nav> and <section>.
+
+        Test: fast/html/article-element.html
+
+        * css/html.css: Add article as a block element.
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag): Add articleTag.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::tagPriority): Returns 5 for articleTag.
+        (WebCore::blockTagList): Add articleTag.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode): Add articleTag.
+        * html/HTMLTagNames.in: Add article.
+
 2009-12-27  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.

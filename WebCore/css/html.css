@@ -72,7 +72,7 @@ layer {
     display: block
 }
 
-nav, section {
+article, nav, section {
     display: block
 }
 
