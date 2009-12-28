@@ -235,7 +235,7 @@ void ScrollbarThemeQt::paintScrollCorner(ScrollView* scrollView, GraphicsContext
     }
 
 #if QT_VERSION < 0x040500
-    context->fillRect(rect, QApplication::palette().color(QPalette::Normal, QPalette::Window));
+    context->fillRect(rect, QApplication::palette().color(QPalette::Normal, QPalette::Window), DeviceColorSpace);
 #else
     StylePainter p(context);
     if (!p.isValid())

@@ -170,8 +170,10 @@ public:
     MainWindow(QString url = QString()): currentZoom(100)
     {
         setAttribute(Qt::WA_DeleteOnClose);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 5, 0)
         if (qgetenv("QTLAUNCHER_USE_ARGB_VISUALS").toInt() == 1)
             setAttribute(Qt::WA_TranslucentBackground);
+#endif
 
         QSplitter* splitter = new QSplitter(Qt::Vertical, this);
         setCentralWidget(splitter);

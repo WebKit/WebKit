@@ -48,6 +48,7 @@
 #include <QFileInfo>
 #include <QFocusEvent>
 #include <QFontDatabase>
+#include <QLocale>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>

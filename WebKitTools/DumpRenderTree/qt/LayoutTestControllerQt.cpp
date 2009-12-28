@@ -33,6 +33,7 @@
 #include "WorkQueue.h"
 #include "WorkQueueItemQt.h"
 #include <QDir>
+#include <QLocale>
 
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);

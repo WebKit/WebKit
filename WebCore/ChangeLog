@@ -1,3 +1,20 @@
+2009-12-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Fix build break for Qt 4.4
+        https://bugs.webkit.org/show_bug.cgi?id=30327
+
+        No new tests, as there is no new functionality.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clipOut): Use intersected() instead of
+        operator &, which was only introduced in Qt version 4.5.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paintScrollCorner): Pass ColorSpace
+        argument to fillColor() introduced in r50760
+
 2009-12-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.
