@@ -1,5 +1,14 @@
 2009-12-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Cameron Zwarich.
+
+        Skip fast/images/size-failure.html on SnowLeopard because it
+        tickles a CG bug that makes it time out.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-12-27  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dan Bernstein.
 
         fast/forms/basic-selects.html is failing on SnowLeopard
