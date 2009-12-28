@@ -3408,11 +3408,11 @@ DerivedSources/CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css
 
 # DOCTYPE strings
 DerivedSources/DocTypeStrings.cpp : $(WebCore)/html/DocTypeStrings.gperf
-	$(AM_V_GEN)$(GPERF) -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
+	$(AM_V_GEN)$(GPERF) -CEot -I -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards $(WebCore)/html/DocTypeStrings.gperf > $@
 
 # HTML entity names
 DerivedSources/HTMLEntityNames.c : $(WebCore)/html/HTMLEntityNames.gperf
-	$(AM_V_GEN)$(GPERF) -a -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
+	$(AM_V_GEN)$(GPERF) -a -I -L ANSI-C -C -G -c -o -t -k '*' -N findEntity -D -s 2 \
 	$(WebCore)/html/HTMLEntityNames.gperf > $@
 
 # color names
