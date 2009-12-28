@@ -1,4 +1,4 @@
 cron:
 - description: collect the garbage
   url: /gc
-  schedule: every 30 minutes
+  schedule: every 4 hours

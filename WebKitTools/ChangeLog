@@ -1,3 +1,16 @@
+2009-12-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [QueueStatusServer] Run gc cron job less often
+        https://bugs.webkit.org/show_bug.cgi?id=32958
+
+        Now that we've cleaned out the backlog of idle messages, we don't need
+        to run the gc job every half hour.  We could also stop logging the idle
+        messages, but this seems easier for the time being.
+
+        * QueueStatusServer/cron.yaml:
+
 2009-12-27  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
