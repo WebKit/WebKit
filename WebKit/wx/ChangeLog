@@ -1,3 +1,11 @@
+2009-12-28  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Use JS_NO_EXPORT for JSBase.h.
+
+        * wxwk-settings.bkl:
+
 2009-12-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] build fixes after recent changes.
