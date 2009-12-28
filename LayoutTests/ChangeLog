@@ -1,5 +1,20 @@
 2009-12-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Adam Barth.
+
+        Removed some tests from the skipped list that are not failing on my system.
+
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac/Skipped:
+        * platform/mac/fast/forms/menulist-style-color-expected.checksum: Added.
+        * platform/mac/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/mac/fast/forms/menulist-style-color-expected.txt: Added.
+        * platform/mac/plugins/qt-qwidget-plugin-expected.checksum: Added.
+        * platform/mac/plugins/qt-qwidget-plugin-expected.png: Added.
+        * platform/mac/plugins/qt-qwidget-plugin-expected.txt: Added.
+
+2009-12-27  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Cameron Zwarich.
 
         Skip fast/images/size-failure.html on SnowLeopard because it

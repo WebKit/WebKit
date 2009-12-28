@@ -66,10 +66,6 @@ media/unsupported-rtsp.html
 media/video-no-audio.html
 media/video-size-intrinsic-scale.html
 
-# Single tests that keeps failing on the SnowLeopard bot
-# https://bugs.webkit.org/show_bug.cgi?id=32271
-fast/forms/slider-delete-while-dragging-thumb.html
-
 #  Test times out due to CoreGraphics bug
 # <rdar://problem/7499927>
 fast/images/size-failure.html

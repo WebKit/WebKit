@@ -51,28 +51,13 @@ tables/mozilla_expected_failures/bugs/bug178855.xml
 fast/repaint/body-background-image.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=23927 LayoutTests for svg fail after TransformationMatrix changes
-svg/W3C-SVG-1.1/animate-elem-36-t.svg
-svg/W3C-SVG-1.1/animate-elem-80-t.svg
-svg/W3C-SVG-1.1/animate-elem-81-t.svg
 svg/W3C-SVG-1.1/animate-elem-82-t.svg
 svg/W3C-SVG-1.1/coords-trans-01-b.svg
-svg/W3C-SVG-1.1/coords-trans-02-t.svg
-svg/W3C-SVG-1.1/painting-marker-01-f.svg
-svg/W3C-SVG-1.1/pservers-grad-09-b.svg
-svg/W3C-SVG-1.1/pservers-grad-12-b.svg
-svg/W3C-SVG-1.1/pservers-grad-17-b.svg
-svg/W3C-SVG-1.1/struct-group-03-t.svg
-svg/carto.net/slider.svg
-svg/carto.net/tabgroup.svg
 svg/hixie/perf/001.xml
 svg/hixie/perf/002.xml
 
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 media/video-error-abort.html
-
-# New test with questionable results
-# See https://bugs.webkit.org/show_bug.cgi?id=28079 for explanation.
-fast/forms/menulist-style-color.html
 
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
@@ -80,7 +65,6 @@ fast/dom/Geolocation
 # Skipped while Eric Carlson works on a fix.
 # https://bugs.webkit.org/show_bug.cgi?id=28221
 fast/layers/video-layer.html
-media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-zoomed.html
 
@@ -104,10 +88,6 @@ fast/history/back-forward-reset-after-error-handling.html
 
 # Need to implement this in plugins code in WebKit
 plugins/reloadplugins-and-pages.html
-plugins/reloadplugins-no-pages.html
-
-# These test require Qt Widgets
-plugins/qt-qwidget-plugin.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
