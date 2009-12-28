@@ -124,6 +124,14 @@ class CreateReview(AbstractSequencedCommmand):
         return { "bug_id" : bug_id }
 
 
+class EditChangeLog(AbstractSequencedCommmand):
+    name = "edit-changelog"
+    help_text = "Opens modified ChangeLogs in $EDITOR"
+    steps = [
+        EditChangeLogStep,
+    ]
+
+
 class PostCommits(Command):
     name = "post-commits"
     show_in_main_help = True
