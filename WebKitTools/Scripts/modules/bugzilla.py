@@ -112,18 +112,29 @@ class Bugzilla(object):
         self._parse_attachment_flag(element, 'commit-queue', attachment, 'committer_email')
         return attachment
 
-    def fetch_attachments_from_bug(self, bug_id):
+    def _parse_bug_page(self, page):
+        soup = BeautifulSoup(page)
+        bug = {}
+        bug["id"] = int(soup.find("bug_id").string)
+        bug["title"] = unicode(soup.find("short_desc").string)
+        bug["reporter_email"] = str(soup.find("reporter").string)
+        bug["assign_to_email"] = str(soup.find("assigned_to").string)
+        bug["cc_emails"] = [str(element.string) for element in soup.findAll('cc')]
+        bug["attachments"] = [self._parse_attachment_element(element, bug_id) for element in soup.findAll('attachment')]
+        return bug
+
+    def fetch_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         log("Fetching: %s" % bug_url)
-
         page = self.browser.open(bug_url)
-        soup = BeautifulSoup(page)
+        return self._parse_bug_page(page)
 
-        attachments = []
-        for element in soup.findAll('attachment'):
-            attachment = self._parse_attachment_element(element, bug_id)
-            attachments.append(attachment)
-        return attachments
+    # This should be an attachments() method on a Bug object.
+    def fetch_attachments_from_bug(self, bug_id):
+        bug = self.fetch_bug(bug_id)
+        if not bug:
+            return None
+        return bug["attachments"]
 
     def _parse_bug_id_from_attachment_page(self, page):
         up_link = BeautifulSoup(page).find('link', rel='Up') # The "Up" relation happens to point to the bug.
@@ -155,18 +166,8 @@ class Bugzilla(object):
                 return attachment
         return None # This should never be hit.
 
-    def fetch_title_from_bug(self, bug_id):
-        bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
-        page = self.browser.open(bug_url)
-        soup = BeautifulSoup(page)
-        return soup.find('short_desc').string
-
     def fetch_patches_from_bug(self, bug_id):
-        patches = []
-        for attachment in self.fetch_attachments_from_bug(bug_id):
-            if attachment['is_patch'] and not attachment['is_obsolete']:
-                patches.append(attachment)
-        return patches
+        return [patch for patch in self.fetch_attachments_from_bug(bug_id) if patch['is_patch'] and not patch['is_obsolete']]
 
     # _view_source_link belongs in some sort of webkit_config.py module.
     def _view_source_link(self, local_path):
@@ -215,12 +216,10 @@ class Bugzilla(object):
         self._validate_committer(patch, reject_invalid_patches=False)
 
     def fetch_unreviewed_patches_from_bug(self, bug_id):
-        unreviewed_patches = []
-        for attachment in self.fetch_attachments_from_bug(bug_id):
-            if attachment.get('review') == '?' and not attachment['is_obsolete']:
-                unreviewed_patches.append(attachment)
-        return unreviewed_patches
+        return [patch for patch in self.fetch_attachments_from_bug(bug_id) if patch.get('review') == '?' and not patch['is_obsolete']]
 
+    # FIXME: fetch_reviewed_patches_from_bug and fetch_commit_queue_patches_from_bug
+    # should share more code and use list comprehensions.
     def fetch_reviewed_patches_from_bug(self, bug_id, reject_invalid_patches=False):
         reviewed_patches = []
         for attachment in self.fetch_attachments_from_bug(bug_id):
@@ -238,14 +237,8 @@ class Bugzilla(object):
     def _fetch_bug_ids_advanced_query(self, query):
         page = self.browser.open(query)
         soup = BeautifulSoup(page)
-
-        bug_ids = []
-        # Grab the cells in the first column (which happens to be the bug ids)
-        for bug_link_cell in soup('td', "first-child"): # tds with the class "first-child"
-            bug_link = bug_link_cell.find("a")
-            bug_ids.append(int(bug_link.string)) # the contents happen to be the bug id
-
-        return bug_ids
+        # The contents of the <a> inside the cells in the first column happen to be the bug id.
+        return [int(bug_link_cell.find("a").string) for bug_link_cell in soup('td', "first-child")]
 
     def _parse_attachment_ids_request_query(self, page):
         digits = re.compile("\d+")

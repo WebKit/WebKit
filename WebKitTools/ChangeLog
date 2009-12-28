@@ -1,3 +1,20 @@
+2009-12-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add more awesome bug-parsing logic to bugzilla.py in preparation for assign-to-committer command
+        https://bugs.webkit.org/show_bug.cgi?id=32980
+
+        * Scripts/modules/bugzilla.py:
+         - Add a new _parse_bug_page function and use it in fetch_attachments_from_bug
+         - Replace fetch_title_from_bug with a new fetch_bug call instead.
+         - Use list comprehensions where possible to reduce code duplication.
+        * Scripts/modules/bugzilla_unittest.py:
+         - Add a minimal bug parsing test.
+         - Share code between bug parsing and attachment parsing tests with _assert_dictionaries_equal
+        * Scripts/modules/commands/upload.py:
+         - Use fetch_bug(bug_id)["title"] instead of fetch_title_from_bug
+
 2009-12-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

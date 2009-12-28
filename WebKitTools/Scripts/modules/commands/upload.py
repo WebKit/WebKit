@@ -222,7 +222,7 @@ class MarkBugFixed(Command):
             needs_prompt = True
             (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(tool, bug_id, svn_revision)
 
-        log("Bug: <%s> %s" % (tool.bugs.short_bug_url_for_bug_id(bug_id), tool.bugs.fetch_title_from_bug(bug_id)))
+        log("Bug: <%s> %s" % (tool.bugs.short_bug_url_for_bug_id(bug_id), tool.bugs.fetch_bug(bug_id)["title"]))
         log("Revision: %s" % svn_revision)
 
         if options.open_bug:
