@@ -59,6 +59,7 @@ class CommandOptions(object):
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
     cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
     component = make_option("--component", action="store", type="string", dest="component", help="Component for the new bug.")
+    confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
 
 
 class AbstractStep(object):
@@ -160,6 +161,11 @@ class PrepareChangeLogStep(AbstractStep):
         self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
 
 
+class EditChangeLogStep(AbstractStep):
+    def run(self, state):
+        self._tool.user.edit(self._tool.scm().modified_changelogs())
+
+
 class ObsoletePatchesOnBugStep(AbstractStep):
     @classmethod
     def options(cls):
@@ -179,7 +185,32 @@ class ObsoletePatchesOnBugStep(AbstractStep):
             self._tool.bugs.obsolete_attachment(patch["id"])
 
 
-class PostDiffToBugStep(AbstractStep):
+class AbstractDiffStep(AbstractStep):
+    def diff(self, state):
+        diff = state.get("diff")
+        if not diff:
+            diff = self._tool.scm().create_patch()
+            state["diff"] = diff
+        return diff
+
+
+class ConfirmDiffStep(AbstractDiffStep):
+    @classmethod
+    def options(cls):
+        return [
+            CommandOptions.confirm,
+        ]
+
+    def run(self, state):
+        if not self._options.confirm:
+            return
+        diff = self.diff(state)
+        self._tool.user.page(diff)
+        if not self._tool.user.confirm():
+            error("User declined to continue.")
+
+
+class PostDiffToBugStep(AbstractDiffStep):
     @classmethod
     def options(cls):
         return [
@@ -189,7 +220,7 @@ class PostDiffToBugStep(AbstractStep):
         ]
 
     def run(self, state):
-        diff = state.get("diff") or self._tool.scm().create_patch()
+        diff = self.diff(state)
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
         description = self._options.description or "Patch"
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)

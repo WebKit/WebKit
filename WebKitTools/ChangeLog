@@ -1,5 +1,23 @@
 2009-12-28  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        [bzt] Create an ASAD command for uploading a patch
+        https://bugs.webkit.org/show_bug.cgi?id=32979
+
+        The create-review command goes through the whole process of preparing a
+        code review, including creating a bug, editing the ChangeLogs, and
+        uploading the patch.  It is indeed the All Sing, All Dance upload
+        command.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/upload.py:
+        * Scripts/modules/commands/upload_unittest.py:
+        * Scripts/modules/mock_bugzillatool.py:
+        * Scripts/modules/user.py:
+
+2009-12-28  Adam Barth  <abarth@webkit.org>
+
         Unreviewed "build" fix (with test!).
 
         * Scripts/modules/bugzilla.py:

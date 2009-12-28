@@ -36,7 +36,7 @@ import sys
 from optparse import make_option
 
 from modules.bugzilla import parse_bug_id
-from modules.buildsteps import PrepareChangeLogStep, CommandOptions, ObsoletePatchesOnBugStep, PostDiffToBugStep, PromptForBugOrTitleStep, CreateBugStep
+from modules.buildsteps import PrepareChangeLogStep, EditChangeLogStep, ConfirmDiffStep, CommandOptions, ObsoletePatchesOnBugStep, PostDiffToBugStep, PromptForBugOrTitleStep, CreateBugStep
 from modules.commands.download import AbstractSequencedCommmand
 from modules.comments import bug_comment_from_svn_revision
 from modules.grammar import pluralize
@@ -72,6 +72,7 @@ class PostDiff(AbstractSequencedCommmand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
+        ConfirmDiffStep,
         ObsoletePatchesOnBugStep,
         PostDiffToBugStep,
     ]
@@ -97,6 +98,25 @@ class PrepareDiff(AbstractSequencedCommmand):
         PromptForBugOrTitleStep,
         CreateBugStep,
         PrepareChangeLogStep,
+    ]
+
+    def _prepare_state(self, options, args, tool):
+        bug_id = args and args[0]
+        return { "bug_id" : bug_id }
+
+
+class CreateReview(AbstractSequencedCommmand):
+    name = "create-review"
+    help_text = "Adds a ChangeLog to the current diff and posts it to a (possibly new) bug"
+    argument_names = "[BUGID]"
+    steps = [
+        PromptForBugOrTitleStep,
+        CreateBugStep,
+        PrepareChangeLogStep,
+        EditChangeLogStep,
+        ConfirmDiffStep,
+        ObsoletePatchesOnBugStep,
+        PostDiffToBugStep,
     ]
 
     def _prepare_state(self, options, args, tool):

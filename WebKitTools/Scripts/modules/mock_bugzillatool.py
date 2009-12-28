@@ -147,6 +147,15 @@ class MockUser(object):
     def prompt(self, message):
         return "Mock user response"
 
+    def edit(self, files):
+        pass
+
+    def page(self, message):
+        pass
+
+    def confirm(self):
+        return True
+
 
 class MockStatusBot(object):
     def __init__(self):

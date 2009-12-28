@@ -26,6 +26,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import subprocess
+
 class User(object):
     def prompt(self, message):
         return raw_input(message)
+
+    def edit(self, files):
+        editor = os.environ.get("EDITOR") or "vi"
+        subprocess.call([editor] + files)
+
+    def page(self, message):
+        pager = os.environ.get("PAGER") or "less"
+        child_process = subprocess.Popen([pager], stdin=subprocess.PIPE)
+        child_process.communicate(input=message)
+
+    def confirm(self):
+        response = raw_input("\nContinue? [Y/n]: ")
+        return not response or response.lower() == "y"
