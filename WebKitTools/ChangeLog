@@ -1,5 +1,29 @@
 2009-12-27  Daniel Bates  <dbates@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32896
+
+        Fixes an issue where bugzilla-tool tries to read the username and password from
+        Git regardless of whether Git is installed. In particular, if Git is not
+        installed then bugzilla-tool dies (with a trace) when it attempts to query Git
+        for the authentication credentials to log into bugs.webkit.org.
+
+        Moreover, modifies Executive.run_command to catch and pass OSError exceptions to
+        the specified error handler. For instance, the specified error handler will now
+        be called when the command does not exist (i.e. OSError errno 2).
+
+        * Scripts/modules/credentials.py: Added check for Git.
+        * Scripts/modules/credentials_unittest.py: Added test method
+        test_read_credentials_with_SVN.
+        * Scripts/modules/executive.py: Modified method run_command to catch
+        OSError exceptions (i.e [Errno 2] No such file or directory) and call
+        the specified error handler.
+        * Scripts/modules/executive_unittest.py: Added.
+        * Scripts/run-webkit-unittests: Added import executive_unittest.py.
+
+2009-12-27  Daniel Bates  <dbates@webkit.org>
+
         Unreviewed. Added missing file style_unittest.py that wasn't committed
         in change set 52541 (http://trac.webkit.org/changeset/52541) as part of
         the patch for bug #32592.

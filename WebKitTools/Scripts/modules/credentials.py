@@ -30,17 +30,20 @@
 # Python module for reading stored web credentials from the OS.
 
 import getpass
+import os
 import platform
 import re
 
 from modules.executive import Executive
 from modules.logging import log
+from modules.scm import Git
 
 class Credentials(object):
-    def __init__(self, host, git_prefix=None, executive=None):
+    def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
         self.host = host
         self.git_prefix = git_prefix
         self.executive = executive or Executive()
+        self.cwd = cwd
 
     def _credentials_from_git(self):
         return [self._read_git_config("username"), self._read_git_config("password")]
@@ -78,7 +81,11 @@ class Credentials(object):
         return self._parse_security_tool_output(security_output)
 
     def read_credentials(self):
-        (username, password) = self._credentials_from_git()
+        username = None
+        password = None
+
+        if Git.in_working_directory(self.cwd):
+            (username, password) = self._credentials_from_git()
 
         if not username or not password:
             (username, password) = self._credentials_from_keychain(username)
