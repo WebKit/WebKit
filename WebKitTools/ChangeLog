@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Status bubble shouldn't be transparent for bots that haven't run yet
+        https://bugs.webkit.org/show_bug.cgi?id=32977
+
+        * QueueStatusServer/templates/statusbubble.html:
+
+2009-12-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [QueueStatusServer] Run gc cron job less often
         https://bugs.webkit.org/show_bug.cgi?id=32958
 
