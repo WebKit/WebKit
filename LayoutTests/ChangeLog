@@ -1,3 +1,22 @@
+2009-12-27  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Support upload progress events in XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=32969
+
+        Make QNetworkReplyHandler report the upload progress to the client.
+
+        Already covered by tests:
+        http/tests/xmlhttprequest/upload-onload-event.html
+        http/tests/xmlhttprequest/upload-onloadstart-event.html
+        http/tests/xmlhttprequest/upload-progress-events.html
+        http/tests/xmlhttprequest/upload-onprogress-event.html
+
+        which have been unskipped.
+
+        * platform/qt/Skipped:
+
 2009-12-27  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Adam Barth.

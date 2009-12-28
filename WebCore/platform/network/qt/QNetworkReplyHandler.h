@@ -62,6 +62,7 @@ private slots:
     void sendResponseIfNeeded();
     void forwardData();
     void sendQueuedItems();
+    void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
     void start();

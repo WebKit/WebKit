@@ -383,6 +383,18 @@ void QNetworkReplyHandler::forwardData()
     }
 }
 
+void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
+{
+    if (!m_resourceHandle)
+        return;
+
+    ResourceHandleClient* client = m_resourceHandle->client();
+    if (!client)
+        return;
+
+    client->didSendData(m_resourceHandle, bytesSent, bytesTotal);
+}
+
 void QNetworkReplyHandler::start()
 {
     m_shouldStart = false;
@@ -451,6 +463,11 @@ void QNetworkReplyHandler::start()
 
     connect(m_reply, SIGNAL(readyRead()),
             this, SLOT(forwardData()), SIGNAL_CONN);
+
+    if (m_resourceHandle->request().reportUploadProgress()) {
+        connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)),
+                this, SLOT(uploadProgress(qint64, qint64)), SIGNAL_CONN);
+    }
 
     // Make this a direct function call once we require 4.6.1+.
     connect(this, SIGNAL(processQueuedItems()),
