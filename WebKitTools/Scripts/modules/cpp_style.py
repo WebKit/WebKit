@@ -2216,6 +2216,13 @@ def _classify_include(filename, include, is_system, include_state):
     if filename.endswith('.h') and filename != include:
         return _OTHER_HEADER;
 
+    # Qt's moc files do not follow the naming and ordering rules, so they should be skipped
+    if include.startswith('moc_') and include.endswith('.cpp'):
+        return _MOC_HEADER
+
+    if include.endswith('.moc'):
+        return _MOC_HEADER
+
     # If the target file basename starts with the include we're checking
     # then we consider it the primary header.
     target_base = FileInfo(filename).base_name()
@@ -2229,13 +2236,6 @@ def _classify_include(filename, include, is_system, include_state):
     # probably was a false positive.
     elif include_state.visited_primary_section() and target_base == include_base:
         return _PRIMARY_HEADER
-
-    # Qt's moc files do not follow the naming and ordering rules, so they should be skipped
-    if include.startswith('moc_') and include.endswith('.cpp'):
-        return _MOC_HEADER
-
-    if include.endswith('.moc'):
-        return _MOC_HEADER
 
     return _OTHER_HEADER
 

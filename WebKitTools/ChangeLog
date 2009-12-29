@@ -1,3 +1,14 @@
+2009-12-29  Chang Shu  <Chang.Shu@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Move logic that handles Qt headers before primary headers
+        so that Qt headers won't be treated as primary headers by mistake.
+        https://bugs.webkit.org/show_bug.cgi?id=32991
+
+        * Scripts/modules/cpp_style.py:
+        * Scripts/modules/cpp_style_unittest.py:
+
 2009-12-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
