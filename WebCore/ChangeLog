@@ -1,3 +1,14 @@
+2009-12-28  Mike Moretti  <webkit9@mordent.com>
+
+        Reviewed by Darin Adler.
+
+        Fix bug 28245 - problem with inserting a span into a long text block causing a crash because of a null string
+
+        Test: fast/dom/insert-span-into-long-text-bug-28245.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2009-12-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.

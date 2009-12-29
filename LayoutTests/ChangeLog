@@ -1,3 +1,12 @@
+2009-12-28  Mike Moretti  <webkit9@mordent.com>
+
+        Reviewed by Darin Adler.
+
+        Fix bug 28245 - problem with inserting a span into a long text block causing a crash because of a null string
+
+        * fast/dom/insert-span-into-long-text-bug-28245-expected.txt: Added.
+        * fast/dom/insert-span-into-long-text-bug-28245.html: Added.
+
 2009-12-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip test that is failing since it was checked in, and some tests
