@@ -1,3 +1,15 @@
+2009-12-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Discard port from cookie domain when matching cookies.
+
+        WebKit cookies do not hold the port information, so we should match only hostnames.
+        https://bugs.webkit.org/show_bug.cgi?id=31787
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+
 2009-12-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

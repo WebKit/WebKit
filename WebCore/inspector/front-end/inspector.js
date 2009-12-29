@@ -985,9 +985,12 @@ WebInspector.updateResource = function(identifier, payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        var match = payload.documentURL.match(/^(http[s]?|file):\/\/([\/]*[^\/]+)/i);
-        if (match)
-            this.addCookieDomain(match[1].toLowerCase() === "file" ? "" : match[2]);
+        var match = payload.documentURL.match(WebInspector.URLRegExp);
+        if (match) {
+            var protocol = match[1].toLowerCase();
+            if (protocol.indexOf("http") === 0 || protocol === "file")
+                this.addCookieDomain(protocol === "file" ? "" : match[2]);
+        }
     }
 
     if (payload.didResponseChange) {
