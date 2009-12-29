@@ -42,8 +42,8 @@ public:
     void setDrawsContents(bool);
     bool drawsContents() const;
 
-protected:
     virtual void paint(PaintInfo&, int parentX, int parentY);
+    virtual FloatRect repaintRectInLocalCoordinates() const;
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -57,7 +57,6 @@ private:
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual FloatRect objectBoundingBox() const;
-    virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 

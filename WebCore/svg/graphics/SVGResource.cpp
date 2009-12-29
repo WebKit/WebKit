@@ -31,61 +31,30 @@
 #include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGStyledElement.h"
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
+typedef HashSet<SVGResource*> ResourceSet;
+
+static ResourceSet& resourceSet()
+{
+    DEFINE_STATIC_LOCAL(ResourceSet, set, ());
+    return set;
+}
+
 SVGResource::SVGResource()
 {
+    ASSERT(!resourceSet().contains(this));
+    resourceSet().add(this);
 }
 
-struct ResourceSet : Noncopyable {
-    ResourceSet() 
-    {
-        for (int i = 0; i < _ResourceTypeCount; i++)
-            resources[i] = 0;
-    }
-    SVGResource* resources[_ResourceTypeCount]; 
-};
-
-typedef HashMap<SVGStyledElement*, ResourceSet*> ResourceClientMap;
-
-static ResourceClientMap& clientMap()
-{
-    DEFINE_STATIC_LOCAL(ResourceClientMap, map, ());
-    return map;
-}
 
 SVGResource::~SVGResource()
 {
-    int type = -1;
-    HashSet<SVGStyledElement*>::iterator itr = m_clients.begin();
-    
-    for (; type < 0 && itr != m_clients.end(); ++itr) {
-        ResourceSet* target = clientMap().get(*itr);
-        if (!target)
-            continue;
-
-        for (int i = 0; i < _ResourceTypeCount; i++) {
-            if (target->resources[i] != this) 
-                continue;
-            type = i;
-            target->resources[i] = 0;
-            break;
-        }
-    }
-    
-    if (type < 0)
-        return;
-    
-    for (; itr != m_clients.end(); ++itr) {
-        ResourceSet* target = clientMap().get(*itr);
-        if (!target)
-            continue;
-        
-        if (target->resources[type] == this) 
-            target->resources[type] = 0;
-    }
+    ASSERT(resourceSet().contains(this));
+    resourceSet().remove(this);
 }
 
 void SVGResource::invalidate()
@@ -120,20 +89,15 @@ void SVGResource::invalidateClients(HashSet<SVGStyledElement*> clients)
 
 void SVGResource::removeClient(SVGStyledElement* item) 
 {
-    ResourceClientMap::iterator resourcePtr = clientMap().find(item);
-    if (resourcePtr == clientMap().end())
-        return;
-    
-    ResourceSet* set = resourcePtr->second;
-    ASSERT(set);
-    
-    clientMap().remove(resourcePtr);
-    
-    for (int i = 0; i < _ResourceTypeCount; i++)
-        if (set->resources[i])
-            set->resources[i]->m_clients.remove(item);
-    
-    delete set;
+    ResourceSet::iterator it = resourceSet().begin();
+    ResourceSet::iterator end = resourceSet().end();
+
+    for (; it != end; ++it) {
+        SVGResource* resource = *it;
+        if (!resource->m_clients.contains(item))
+            continue;
+        resource->m_clients.remove(item);
+    }
 }
 
 void SVGResource::addClient(SVGStyledElement* item)
@@ -142,17 +106,6 @@ void SVGResource::addClient(SVGStyledElement* item)
         return;
 
     m_clients.add(item);
-
-    ResourceSet* target = clientMap().get(item);
-    if (!target) 
-        target = new ResourceSet;
-
-    SVGResourceType type = resourceType();
-    if (SVGResource* oldResource = target->resources[type])
-        oldResource->m_clients.remove(item);
-
-    target->resources[type] = this;
-    clientMap().set(item, target);
 }
 
 TextStream& SVGResource::externalRepresentation(TextStream& ts) const

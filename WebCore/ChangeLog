@@ -1,3 +1,68 @@
+2009-12-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Marker code is buggy: referencePoint translation is off
+        https://bugs.webkit.org/show_bug.cgi?id=33012
+
+        Rewrite marker code, as it was buggy:
+        - Correct refX/refY handling (covered by new marker-referencePoint.svg test)
+        - Calculate marker bounds on layout time, instead of paint time, to deliver correct repaint rects
+        - Cleanup RenderPath code, which was cluttered by marker stuff (outlay in SVGMarkerLayoutInfo)
+        - Fix SVGResource assuming that there is only one resource per resource type per element. Markers
+          can have three different resources of the same type (three markers, start/mid/end markers)
+
+        Fixes all svg/custom/marker*.svg tests, that use dynamic updates (propagation failed before).
+        Test: svg/custom/marker-referencePoint.svg
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::setPath):
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::path):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::markerContentTransformation):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGMarkerLayoutInfo.cpp: Added.
+        (WebCore::SVGMarkerLayoutInfo::SVGMarkerLayoutInfo):
+        (WebCore::SVGMarkerLayoutInfo::~SVGMarkerLayoutInfo):
+        (WebCore::SVGMarkerLayoutInfo::initialize):
+        (WebCore::updateMarkerDataForElement):
+        (WebCore::recordMarkerData):
+        (WebCore::processStartAndMidMarkers):
+        (WebCore::SVGMarkerLayoutInfo::calculateBoundaries):
+        (WebCore::SVGMarkerLayoutInfo::drawMarkers):
+        * rendering/SVGMarkerLayoutInfo.h: Added.
+        (WebCore::MarkerData::):
+        (WebCore::MarkerData::MarkerData):
+        (WebCore::MarkerLayout::MarkerLayout):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::resourceSet):
+        (WebCore::SVGResource::SVGResource):
+        (WebCore::SVGResource::~SVGResource):
+        (WebCore::SVGResource::removeClient):
+        (WebCore::SVGResource::addClient):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::SVGResourceMarker):
+        (WebCore::SVGResourceMarker::markerBoundaries):
+        (WebCore::SVGResourceMarker::markerTransformation):
+        (WebCore::SVGResourceMarker::draw):
+        (WebCore::SVGResourceMarker::externalRepresentation):
+        * svg/graphics/SVGResourceMarker.h:
+        (WebCore::SVGResourceMarker::setRenderer):
+        (WebCore::SVGResourceMarker::setReferencePoint):
+        (WebCore::SVGResourceMarker::referencePoint):
+
 2009-12-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

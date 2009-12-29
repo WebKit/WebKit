@@ -27819,6 +27819,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\SVGMarkerLayoutInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGMarkerLayoutInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\SVGRenderSupport.cpp"
 				>
 			</File>

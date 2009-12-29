@@ -38,17 +38,17 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
 {
 }
 
-void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, int parentX, int parentY)
+TransformationMatrix RenderSVGViewportContainer::markerContentTransformation(const TransformationMatrix& contentTransformation, const FloatPoint& origin, float strokeWidth) const
 {
-    // FIXME: The if statement here evaluates to false. isEmpty() is exactly the same
-    // as what is on the right side, so it's basically !isEmpty && isEmpty. So this
-    // function does nothing.
+    // The 'origin' coordinate maps to SVGs refX/refY, given in coordinates relative to the viewport established by the marker
+    FloatPoint mappedOrigin = viewportTransform().mapPoint(origin);
 
-    // A value of zero disables rendering of the element. 
-    if (!m_viewport.isEmpty() && (m_viewport.width() <= 0. || m_viewport.height() <= 0.))
-        return;
+    TransformationMatrix transformation = contentTransformation;
+    if (strokeWidth != -1)
+        transformation.scaleNonUniform(strokeWidth, strokeWidth);
 
-    RenderSVGContainer::paint(paintInfo, parentX, parentY);
+    transformation.translate(-mappedOrigin.x(), -mappedOrigin.y());
+    return transformation;
 }
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
@@ -125,5 +125,3 @@ bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& poi
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

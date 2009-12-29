@@ -3,9 +3,9 @@ KCanvasResource {id="mark2" [type=MARKER] [angle=0.00] [ref x=4.00 y=4.00]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (235,271.88) size 330x103.12
-    RenderSVGViewportContainer {marker} at (338.12,271.88) size 123.75x11.25
-      RenderPath {path} at (338.12,271.88) size 123.75x11.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark2] [middle marker=mark2] [end marker=mark2] [data="M-5.00,-2.00 L0.00,-2.00 L5.00,-2.00"]
-    RenderSVGViewportContainer {marker} at (338.12,316.88) size 123.75x11.25
-      RenderPath {path} at (338.12,316.88) size 123.75x11.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
-    RenderPath {path} at (235,345) size 330x30 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
+  RenderSVGRoot {svg} at (235,225) size 330x150
+    RenderSVGViewportContainer {marker} at (338.12,271.88) size 123.75x56.25
+      RenderPath {path} at (338.12,271.88) size 123.75x56.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark2] [middle marker=mark2] [end marker=mark2] [data="M-5.00,-2.00 L0.00,-2.00 L5.00,-2.00"]
+    RenderSVGViewportContainer {marker} at (338.12,271.88) size 123.75x56.25
+      RenderPath {path} at (338.12,271.88) size 123.75x56.25 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
+    RenderPath {path} at (235,225) size 330x150 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
