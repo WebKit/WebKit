@@ -331,8 +331,6 @@ void FrameLoaderClientQt::dispatchDidPopStateWithinPage()
 
 void FrameLoaderClientQt::dispatchWillClose()
 {
-    if (dumpFrameLoaderCallbacks)
-        printf("%s - willCloseFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 }
 
 
@@ -599,9 +597,6 @@ String FrameLoaderClientQt::userAgent(const KURL& url)
 
 void FrameLoaderClientQt::dispatchDidReceiveIcon()
 {
-    if (dumpFrameLoaderCallbacks)
-        printf("%s - didReceiveIconForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
-
     if (m_webFrame) {
         emit m_webFrame->iconChanged();
     }
@@ -625,9 +620,6 @@ void FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* w
 {
     if (world != mainThreadNormalWorld())
         return;
-
-    if (dumpFrameLoaderCallbacks)
-        printf("%s - didClearWindowObjectForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
     if (m_webFrame)
         emit m_webFrame->javaScriptWindowObjectCleared();

@@ -29,20 +29,10 @@ http/tests/wml
 http/tests/uri/escaped-entity.html
 
 # Failing HTTP Loading tests
-http/tests/loading/bad-server-subframe.html
 http/tests/loading/bad-scheme-subframe.html
-http/tests/loading/basic-auth-resend-wrong-credentials.html
-http/tests/loading/basic.html
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
-http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
-http/tests/loading/location-hash-reload-cycle.html
-http/tests/loading/onload-vs-immediate-refresh.pl
-http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-methods.html
-http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/simple-subframe.html
-http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 
 # Failing Local tests
@@ -4834,7 +4824,6 @@ fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
-fast/loading/subframe-removes-itself.html
 platform/qt/fast/events/event-sender-keydown-frame.html
 plugins/netscape-plugin-setwindow-size-2.html
 security/set-form-autocomplete-attribute.html
@@ -4884,6 +4873,7 @@ userscripts
 
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow_unload_handler.html
@@ -5093,7 +5083,6 @@ fast/repaint/block-selection-gap-stale-cache-2.html
 fast/repaint/block-selection-gap-stale-cache.html
 fast/repaint/inline-overflow.html
 fast/repaint/inline-relative-positioned.html
-http/tests/loading/state-object-security-exception.html
 http/tests/local/file-url-sent-as-referer.html
 http/tests/misc/bubble-drag-events.html
 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html

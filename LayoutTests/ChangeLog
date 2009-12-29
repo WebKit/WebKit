@@ -1,3 +1,17 @@
+2009-12-29  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] DRT: Frame loader callbacks differ from the Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=32989
+
+        Remove messages from the callbacks that should not dump them to match
+        the expected results for the http/loading tests.
+
+        Unskip some http/loading tests which succeed now.
+
+        * platform/qt/Skipped:
+
 2009-12-29  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.
