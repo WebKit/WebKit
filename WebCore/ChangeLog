@@ -1,3 +1,18 @@
+2009-12-28  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove the macro ENABLE(XHTMLMP) for noscriptAreateErrorCheck in HTMLParser,
+        since with XHTMLMP enabled, it's not checking create Errors,  and then contents inside 
+        <noscript> are always parsed and rendered.
+        https://bugs.webkit.org/show_bug.cgi?id=32706
+
+        Tests: fast/parser/noscript-with-javascript-disabled.html
+               fast/parser/noscript-with-javascript-enabled.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode):
+
 2009-12-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -942,9 +942,7 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
         gFunctionMap.set(nobrTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
         gFunctionMap.set(noembedTag.localName().impl(), &HTMLParser::noembedCreateErrorCheck);
         gFunctionMap.set(noframesTag.localName().impl(), &HTMLParser::noframesCreateErrorCheck);
-#if !ENABLE(XHTMLMP)
         gFunctionMap.set(noscriptTag.localName().impl(), &HTMLParser::noscriptCreateErrorCheck);
-#endif
         gFunctionMap.set(olTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
         gFunctionMap.set(pTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
         gFunctionMap.set(plaintextTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
