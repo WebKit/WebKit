@@ -1,3 +1,53 @@
+2009-12-29  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52630.
+        http://trac.webkit.org/changeset/52630
+
+        Change caused layout tests failures and crashes.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::setPath):
+        (WebCore::RenderPath::path):
+        (WebCore::RenderPath::paint):
+        (WebCore::):
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::drawMarkerWithData):
+        (WebCore::updateMarkerDataForElement):
+        (WebCore::drawStartAndMidMarkers):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::paint):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGMarkerLayoutInfo.cpp: Removed.
+        * rendering/SVGMarkerLayoutInfo.h: Removed.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::SVGResource::SVGResource):
+        (WebCore::ResourceSet::ResourceSet):
+        (WebCore::clientMap):
+        (WebCore::SVGResource::~SVGResource):
+        (WebCore::SVGResource::removeClient):
+        (WebCore::SVGResource::addClient):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::SVGResourceMarker):
+        (WebCore::SVGResourceMarker::setMarker):
+        (WebCore::SVGResourceMarker::setRef):
+        (WebCore::SVGResourceMarker::draw):
+        (WebCore::SVGResourceMarker::cachedBounds):
+        (WebCore::SVGResourceMarker::externalRepresentation):
+        * svg/graphics/SVGResourceMarker.h:
+        (WebCore::SVGResourceMarker::refX):
+        (WebCore::SVGResourceMarker::refY):
+
 2009-12-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

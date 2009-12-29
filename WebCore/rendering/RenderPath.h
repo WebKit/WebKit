@@ -25,9 +25,9 @@
 #define RenderPath_h
 
 #if ENABLE(SVG)
+
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-#include "SVGMarkerLayoutInfo.h"
 #include "TransformationMatrix.h"
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class RenderPath : public RenderSVGModelObject {
 public:
     RenderPath(SVGStyledTransformableElement*);
 
-    const Path& path() const { return m_path; }
+    const Path& path() const;
 
 private:
     // Hit-detection seperated for the fill and the stroke
@@ -63,7 +63,7 @@ private:
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
-    void calculateMarkerBoundsIfNeeded() const;
+    FloatRect drawMarkersIfNeeded(PaintInfo&, const Path&) const;
 
 private:
     virtual TransformationMatrix localTransform() const;
@@ -71,8 +71,7 @@ private:
     mutable Path m_path;
     mutable FloatRect m_cachedLocalFillBBox;
     mutable FloatRect m_cachedLocalRepaintRect;
-    mutable FloatRect m_cachedLocalMarkerBBox;
-    mutable SVGMarkerLayoutInfo m_markerLayoutInfo;
+    FloatRect m_markerBounds;
     TransformationMatrix m_localTransform;
 };
 
@@ -95,3 +94,5 @@ void toRenderPath(const RenderPath*);
 
 #endif // ENABLE(SVG)
 #endif
+
+// vim:ts=4:noet

@@ -25,7 +25,6 @@
 #if ENABLE(SVG)
 #include "RenderPath.h"
 
-#include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
@@ -130,11 +129,9 @@ FloatRect RenderPath::repaintRectInLocalCoordinates() const
     }
 
     // Markers and filters can paint outside of the stroke path
-    if (m_cachedLocalMarkerBBox.isEmpty() && static_cast<SVGStyledElement*>(node())->supportsMarkers())
-        calculateMarkerBoundsIfNeeded();
-
-    m_cachedLocalRepaintRect.unite(m_cachedLocalMarkerBBox);
+    m_cachedLocalRepaintRect.unite(m_markerBounds);
     m_cachedLocalRepaintRect.unite(filterBoundingBoxForRenderer(this));
+
     return m_cachedLocalRepaintRect;
 }
 
@@ -143,7 +140,11 @@ void RenderPath::setPath(const Path& newPath)
     m_path = newPath;
     m_cachedLocalRepaintRect = FloatRect();
     m_cachedLocalFillBBox = FloatRect();
-    m_cachedLocalMarkerBBox = FloatRect();
+}
+
+const Path& RenderPath::path() const
+{
+    return m_path;
 }
 
 void RenderPath::layout()
@@ -195,7 +196,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
             fillAndStrokePath(m_path, paintInfo.context, style(), this);
 
             if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
-                m_markerLayoutInfo.drawMarkers(paintInfo);
+                m_markerBounds = drawMarkersIfNeeded(paintInfo, m_path);
         }
         finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
@@ -238,7 +239,127 @@ bool RenderPath::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, 
     return false;
 }
 
-void RenderPath::calculateMarkerBoundsIfNeeded() const
+enum MarkerType {
+    Start,
+    Mid,
+    End
+};
+
+struct MarkerData {
+    FloatPoint origin;
+    FloatPoint subpathStart;
+    double strokeWidth;
+    FloatPoint inslopePoints[2];
+    FloatPoint outslopePoints[2];
+    MarkerType type;
+    SVGResourceMarker* marker;
+};
+
+struct DrawMarkersData {
+    DrawMarkersData(RenderObject::PaintInfo&, SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, double strokeWidth);
+    RenderObject::PaintInfo& paintInfo;
+    int elementIndex;
+    MarkerData previousMarkerData;
+    SVGResourceMarker* midMarker;
+};
+
+DrawMarkersData::DrawMarkersData(RenderObject::PaintInfo& pi, SVGResourceMarker* start, SVGResourceMarker* mid, double strokeWidth)
+    : paintInfo(pi)
+    , elementIndex(0)
+    , midMarker(mid)
+{
+    previousMarkerData.origin = FloatPoint();
+    previousMarkerData.subpathStart = FloatPoint();
+    previousMarkerData.strokeWidth = strokeWidth;
+    previousMarkerData.marker = start;
+    previousMarkerData.type = Start;
+}
+
+static void drawMarkerWithData(RenderObject::PaintInfo& paintInfo, MarkerData& data)
+{
+    if (!data.marker)
+        return;
+
+    FloatPoint inslopeChange = data.inslopePoints[1] - FloatSize(data.inslopePoints[0].x(), data.inslopePoints[0].y());
+    FloatPoint outslopeChange = data.outslopePoints[1] - FloatSize(data.outslopePoints[0].x(), data.outslopePoints[0].y());
+
+    double inslope = rad2deg(atan2(inslopeChange.y(), inslopeChange.x()));
+    double outslope = rad2deg(atan2(outslopeChange.y(), outslopeChange.x()));
+
+    double angle = 0.0;
+    switch (data.type) {
+        case Start:
+            angle = outslope;
+            break;
+        case Mid:
+            angle = (inslope + outslope) / 2;
+            break;
+        case End:
+            angle = inslope;
+    }
+
+    data.marker->draw(paintInfo, data.origin.x(), data.origin.y(), data.strokeWidth, angle);
+}
+
+static inline void updateMarkerDataForElement(MarkerData& previousMarkerData, const PathElement* element)
+{
+    FloatPoint* points = element->points;
+    
+    switch (element->type) {
+    case PathElementAddQuadCurveToPoint:
+        // TODO
+        previousMarkerData.origin = points[1];
+        break;
+    case PathElementAddCurveToPoint:
+        previousMarkerData.inslopePoints[0] = points[1];
+        previousMarkerData.inslopePoints[1] = points[2];
+        previousMarkerData.origin = points[2];
+        break;
+    case PathElementMoveToPoint:
+        previousMarkerData.subpathStart = points[0];
+    case PathElementAddLineToPoint:
+        previousMarkerData.inslopePoints[0] = previousMarkerData.origin;
+        previousMarkerData.inslopePoints[1] = points[0];
+        previousMarkerData.origin = points[0];
+        break;
+    case PathElementCloseSubpath:
+        previousMarkerData.inslopePoints[0] = previousMarkerData.origin;
+        previousMarkerData.inslopePoints[1] = points[0];
+        previousMarkerData.origin = previousMarkerData.subpathStart;
+        previousMarkerData.subpathStart = FloatPoint();
+    }
+}
+
+static void drawStartAndMidMarkers(void* info, const PathElement* element)
+{
+    DrawMarkersData& data = *reinterpret_cast<DrawMarkersData*>(info);
+
+    int elementIndex = data.elementIndex;
+    MarkerData& previousMarkerData = data.previousMarkerData;
+
+    FloatPoint* points = element->points;
+
+    // First update the outslope for the previous element
+    previousMarkerData.outslopePoints[0] = previousMarkerData.origin;
+    previousMarkerData.outslopePoints[1] = points[0];
+
+    // Draw the marker for the previous element
+    if (elementIndex != 0)
+        drawMarkerWithData(data.paintInfo, previousMarkerData);
+
+    // Update our marker data for this element
+    updateMarkerDataForElement(previousMarkerData, element);
+
+    if (elementIndex == 1) {
+        // After drawing the start marker, switch to drawing mid markers
+        previousMarkerData.marker = data.midMarker;
+        previousMarkerData.type = Mid;
+    }
+
+    data.elementIndex++;
+}
+
+FloatRect RenderPath::drawMarkersIfNeeded(PaintInfo& paintInfo, const Path& path) const
 {
     Document* doc = document();
 
@@ -246,10 +367,8 @@ void RenderPath::calculateMarkerBoundsIfNeeded() const
     ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
 
     SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(svgElement);
-    if (!styledElement->supportsMarkers())
-        return;
-
     const SVGRenderStyle* svgStyle = style()->svgStyle();
+
     AtomicString startMarkerId(svgStyle->startMarker());
     AtomicString midMarkerId(svgStyle->midMarker());
     AtomicString endMarkerId(svgStyle->endMarker());
@@ -274,11 +393,32 @@ void RenderPath::calculateMarkerBoundsIfNeeded() const
         endMarker->addClient(styledElement);
 
     if (!startMarker && !midMarker && !endMarker)
-        return;
+        return FloatRect();
 
-    float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
-    m_markerLayoutInfo.initialize(startMarker, midMarker, endMarker, strokeWidth);
-    m_cachedLocalMarkerBBox = m_markerLayoutInfo.calculateBoundaries(m_path);
+    double strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
+    DrawMarkersData data(paintInfo, startMarker, midMarker, strokeWidth);
+
+    path.apply(&data, drawStartAndMidMarkers);
+
+    data.previousMarkerData.marker = endMarker;
+    data.previousMarkerData.type = End;
+    drawMarkerWithData(paintInfo, data.previousMarkerData);
+
+    // We know the marker boundaries, only after they're drawn!
+    // Otherwhise we'd need to do all the marker calculation twice
+    // once here (through paint()) and once in absoluteClippedOverflowRect().
+    FloatRect bounds;
+
+    if (startMarker)
+        bounds.unite(startMarker->cachedBounds());
+
+    if (midMarker)
+        bounds.unite(midMarker->cachedBounds());
+
+    if (endMarker)
+        bounds.unite(endMarker->cachedBounds());
+
+    return bounds;
 }
 
 }

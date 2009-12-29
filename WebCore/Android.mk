@@ -630,7 +630,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/SVGCharacterLayoutInfo.cpp \
 	rendering/SVGInlineFlowBox.cpp \
 	rendering/SVGInlineTextBox.cpp \
-	rendering/SVGMarkerLayoutInfo.cpp \
 	rendering/SVGRenderSupport.cpp \
 	rendering/SVGRenderTreeAsText.cpp \
 	rendering/SVGRootInlineBox.cpp
