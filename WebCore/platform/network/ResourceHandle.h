@@ -170,7 +170,7 @@ public:
     friend LRESULT __stdcall ResourceHandleWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
-#if PLATFORM(QT) || USE(CURL) || USE(SOUP)
+#if PLATFORM(QT) || USE(CURL) || USE(SOUP) || PLATFORM(ANDROID)
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 

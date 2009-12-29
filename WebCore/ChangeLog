@@ -1,3 +1,20 @@
+2009-12-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        On Android, ResourceHandle instances make use of a pointer to a
+        ResourceLoaderAndroid pointer. This needs to be stored in order to later cancel
+        the load, if necessary. Since this pointer is an internal implementation
+        details of ResourceHandle on Android, it needs to be stored in the
+        ResourceHandleInternal class. This patch adds this pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=32873
+
+        No new tests needed, this is platform-specific code.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+
 2009-12-28  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by Maciej Stachowiak.
