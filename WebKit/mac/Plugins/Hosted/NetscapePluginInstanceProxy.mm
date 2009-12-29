@@ -72,9 +72,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class NetscapePluginInstanceProxy::PluginRequest {
+class NetscapePluginInstanceProxy::PluginRequest : public RefCounted<NetscapePluginInstanceProxy::PluginRequest> {
 public:
-    PluginRequest(uint32_t requestID, NSURLRequest *request, NSString *frameName, bool allowPopups)
+    static PassRefPtr<PluginRequest> create(uint32_t requestID, NSURLRequest* request, NSString* frameName, bool allowPopups)
+    {
+        return adoptRef(new PluginRequest(requestID, request, frameName, allowPopups));
+    }
+
+    uint32_t requestID() const { return m_requestID; }
+    NSURLRequest* request() const { return m_request.get(); }
+    NSString* frameName() const { return m_frameName.get(); }
+    bool allowPopups() const { return m_allowPopups; }
+    
+private:
+    PluginRequest(uint32_t requestID, NSURLRequest* request, NSString* frameName, bool allowPopups)
         : m_requestID(requestID)
         , m_request(request)
         , m_frameName(frameName)
@@ -82,15 +93,9 @@ public:
     {
     }
     
-    uint32_t requestID() const { return m_requestID; }
-    NSURLRequest *request() const { return m_request.get(); }
-    NSString *frameName() const { return m_frameName.get(); }
-    bool allowPopups() const { return m_allowPopups; }
-    
-private:
     uint32_t m_requestID;
-    RetainPtr<NSURLRequest *> m_request;
-    RetainPtr<NSString *> m_frameName;
+    RetainPtr<NSURLRequest*> m_request;
+    RetainPtr<NSString*> m_frameName;
     bool m_allowPopups;
 };
 
@@ -212,6 +217,10 @@ void NetscapePluginInstanceProxy::destroy()
     
     m_inDestroy = true;
     
+    FrameLoadMap::iterator end = m_pendingFrameLoads.end();
+    for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(); it != end; ++it)
+        [(it->first) _setInternalLoadDelegate:nil];
+
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID);
  
     // If the plug-in host crashes while we're waiting for a reply, the last reference to the instance proxy
@@ -517,8 +526,33 @@ void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
     if (JSString) {
         ASSERT(!frame || [m_pluginView webFrame] == frame);
         evaluateJavaScript(pluginRequest);
-    } else
+    } else {
         [frame loadRequest:request];
+
+        // Check if another plug-in view or even this view is waiting for the frame to load.
+        // If it is, tell it that the load was cancelled because it will be anyway.
+        WebHostedNetscapePluginView *view = [frame _internalLoadDelegate];
+        if (view != nil) {
+            ASSERT([view isKindOfClass:[WebHostedNetscapePluginView class]]);
+            [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
+        }
+        m_pendingFrameLoads.set(frame, pluginRequest);
+        [frame _setInternalLoadDelegate:m_pluginView];
+    }
+
+}
+
+void NetscapePluginInstanceProxy::webFrameDidFinishLoadWithReason(WebFrame* webFrame, NPReason reason)
+{
+    FrameLoadMap::iterator it = m_pendingFrameLoads.find(webFrame);
+    ASSERT(it != m_pendingFrameLoads.end());
+        
+    PluginRequest* pluginRequest = it->second.get();
+    _WKPHLoadURLNotify(m_pluginHostProxy->port(), m_pluginID, pluginRequest->requestID(), reason);
+ 
+    m_pendingFrameLoads.remove(it);
+
+    [webFrame _setInternalLoadDelegate:nil];
 }
 
 void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginRequest)
@@ -557,14 +591,13 @@ void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstance
     ASSERT(!m_pluginRequests.isEmpty());
     ASSERT(m_pluginView);
     
-    PluginRequest* request = m_pluginRequests.first();
+    RefPtr<PluginRequest> request = m_pluginRequests.first();
     m_pluginRequests.removeFirst();
     
     if (!m_pluginRequests.isEmpty())
         m_requestTimer.startOneShot(0);
     
-    performRequest(request);
-    delete request;
+    performRequest(request.get());
 }
     
 NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool allowPopups, uint32_t& requestID)
@@ -616,8 +649,8 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_INVALID_PARAM;
         }
 
-        PluginRequest* pluginRequest = new PluginRequest(requestID, request, target, allowPopups);
-        m_pluginRequests.append(pluginRequest);
+        RefPtr<PluginRequest> pluginRequest = PluginRequest::create(requestID, request, target, allowPopups);
+        m_pluginRequests.append(pluginRequest.release());
         m_requestTimer.startOneShot(0);
     } else {
         RefPtr<HostedNetscapePluginStream> stream = HostedNetscapePluginStream::create(this, requestID, request);

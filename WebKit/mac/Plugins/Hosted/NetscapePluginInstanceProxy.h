@@ -49,11 +49,13 @@ namespace JSC {
     }
 }
 @class WebHostedNetscapePluginView;
+@class WebFrame;
 
 namespace WebKit {
 
 class HostedNetscapePluginStream;
 class NetscapePluginHostProxy;
+class PluginRequest;
 class ProxyInstance;
     
 class NetscapePluginInstanceProxy : public RefCounted<NetscapePluginInstanceProxy> {
@@ -257,10 +259,12 @@ public:
         return std::auto_ptr<T>(static_cast<T*>(reply));
     }
     
-private:
-    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView *, bool fullFramePlugin);
+    void webFrameDidFinishLoadWithReason(WebFrame*, NPReason);
 
-    NPError loadRequest(NSURLRequest *, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
+private:
+    NetscapePluginInstanceProxy(NetscapePluginHostProxy*, WebHostedNetscapePluginView*, bool fullFramePlugin);
+
+    NPError loadRequest(NSURLRequest*, const char* cTarget, bool currentEventIsUserGesture, uint32_t& streamID);
     
     class PluginRequest;
     void performRequest(PluginRequest*);
@@ -274,7 +278,7 @@ private:
 
     void requestTimerFired(WebCore::Timer<NetscapePluginInstanceProxy>*);
     WebCore::Timer<NetscapePluginInstanceProxy> m_requestTimer;
-    Deque<PluginRequest*> m_pluginRequests;
+    Deque<RefPtr<PluginRequest> > m_pluginRequests;
     
     HashMap<uint32_t, RefPtr<HostedNetscapePluginStream> > m_streams;
 
@@ -313,6 +317,9 @@ private:
     bool m_pluginIsWaitingForDraw;
     
     RefPtr<HostedNetscapePluginStream> m_manualStream;
+
+    typedef HashMap<WebFrame*, RefPtr<PluginRequest> > FrameLoadMap;
+    FrameLoadMap m_pendingFrameLoads;
 };
     
 } // namespace WebKit

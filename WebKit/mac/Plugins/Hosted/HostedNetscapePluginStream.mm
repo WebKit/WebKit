@@ -183,7 +183,7 @@ void HostedNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*,
     startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
 }
 
-static NPReason reasonForError(NSError *error)
+NPReason HostedNetscapePluginStream::reasonForError(NSError *error)
 {
     if (!error)
         return NPRES_DONE;

@@ -1,3 +1,36 @@
+2009-12-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        plugins/get-url-with-iframe-target.html fails on SnowLeopard (64-bit)
+        https://bugs.webkit.org/show_bug.cgi?id=32982
+        
+        This test has been failing on SnowLeopard since it was landed.
+        
+        The problem is that we never delivered the notification for
+        NPN_GetURLNotify, in the frame-targeting case, for out-of-process
+        plugins on Mac.
+        
+        I implemented support for this based on how in-process Mac plugins
+        do it.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::reasonForError):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::create):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::PluginRequest):
+        (WebKit::NetscapePluginInstanceProxy::destroy):
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        (WebKit::NetscapePluginInstanceProxy::webFrameDidFinishLoadWithReason):
+        (WebKit::NetscapePluginInstanceProxy::requestTimerFired):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebHostedNetscapePluginView webFrame:didFinishLoadWithError:]):
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

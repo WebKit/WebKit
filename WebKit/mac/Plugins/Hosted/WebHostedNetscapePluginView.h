@@ -59,6 +59,9 @@ namespace WebKit {
             element:(PassRefPtr<WebCore::HTMLPlugInElement>)element;
 
 - (void)pluginHostDied;
+
+- (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason;
+
 @end
 
 #endif // USE(PLUGIN_HOST_PROCESS)

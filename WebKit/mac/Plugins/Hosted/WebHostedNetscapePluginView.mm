@@ -441,6 +441,20 @@ extern "C" {
     _proxy->checkIfAllowedToLoadURLResult(checkID, (policy == PolicyUse));
 }
 
+- (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason
+{
+    if (_isStarted && _proxy)
+        _proxy->webFrameDidFinishLoadWithReason(webFrame, reason);
+}
+
+- (void)webFrame:(WebFrame *)webFrame didFinishLoadWithError:(NSError *)error
+{
+    NPReason reason = NPRES_DONE;
+    if (error)
+        reason = HostedNetscapePluginStream::reasonForError(error);
+    [self webFrame:webFrame didFinishLoadWithReason:reason];
+}
+
 @end
 
 #endif
