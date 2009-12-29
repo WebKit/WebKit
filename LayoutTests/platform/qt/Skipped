@@ -1060,10 +1060,6 @@ fast/forms/slider-delete-while-dragging-thumb.html
 # ------ web archive support
 svg/custom/image-with-prefix-in-webarchive.svg
 
-# ------- storage support
-# Missing LayoutTestController implementations and database related delegate callback
-storage/domstorage/localstorage/iframe-events.html
-
 # Tests that currently fail but perhaps used to work at some point.
 fast/dom/open-and-close-by-DOM.html
 fast/dom/Window/new-window-opener.html
@@ -1083,7 +1079,6 @@ fast/forms/menulist-width-change.html
 # reference, so we don't introduce regressions.
 editing/deleting/5144139-2.html
 editing/deleting/5300379.html
-editing/deleting/5408255.html
 editing/deleting/delete-block-merge-contents-001.html
 editing/deleting/delete-block-merge-contents-019.html
 editing/deleting/delete-block-merge-contents-020.html
@@ -1155,7 +1150,6 @@ fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/Range/range-expand.html
 fast/dynamic/move-node-with-selection.html
 fast/dynamic/selection-highlight-adjust.html
-fast/events/blur-focus-window-should-blur-focus-element.html
 fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
@@ -1494,7 +1488,6 @@ css2.1/t1204-reset-00-c-o.html
 css2.1/t1204-reset-01-c-o.html
 css2.1/t1204-reset-02-c-o.html
 css2.1/t1204-root-e.html
-css2.1/t1205-c566-list-stl-00-e-ag.html
 css2.1/t1401-c531-color-00-a.html
 css2.1/t1402-c45-bg-canvas-00-b.html
 css2.1/t1601-c547-indent-00-b-a.html
@@ -4824,18 +4817,12 @@ fast/loader/null-request-after-willSendRequest.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 platform/qt/fast/events/event-sender-keydown-frame.html
-plugins/netscape-plugin-setwindow-size-2.html
 security/set-form-autocomplete-attribute.html
 svg/custom/svg-fonts-in-text-controls.html
 svg/custom/text-dom-removal.svg
 svg/custom/use-clipped-transform.svg
 svg/dom/length-list-parser.html
 editing/selection/extend-selection-after-double-click.html
-
-# Intermittent failure of these two animation related tests
-# https://bugs.webkit.org/show_bug.cgi?id=27912
-animations/change-keyframes.html
-transitions/zero-duration-with-non-zero-delay-end.html
 
 # Printing related layout test failure has no results, but obvious error message
 # https://bugs.webkit.org/show_bug.cgi?id=27913
@@ -5069,13 +5056,8 @@ media/media-can-play-ogg.html
 
 # Bunch of tests failing since a while on the Qt slave. Please investigate.
 css1/classification/white_space.html
-css1/font_properties/font.html
-fast/backgrounds/body-generated-image-propagated-to-root.html
-fast/backgrounds/repeat/mask-negative-offset-repeat.html
-fast/backgrounds/repeat/negative-offset-repeat.html
 fast/block/positioning/relative-positioned-inline-container.html
 fast/frames/frame-navigation.html
-fast/frames/frameset-style-recalc.html
 fast/repaint/block-selection-gap-in-composited-layer.html
 fast/repaint/block-selection-gap-in-table-cell.html
 fast/repaint/block-selection-gap-stale-cache-2.html
