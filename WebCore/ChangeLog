@@ -1,3 +1,18 @@
+2009-12-29  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        Add Android hook to NetworkStateNotifier class
+        so that the Java side can notify WebCore when the
+        network state changes.
+        https://bugs.webkit.org/show_bug.cgi?id=32871
+
+        No new tests required, this is platform code.
+
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/android/NetworkStateNotifierAndroid.cpp: Added.
+        (WebCore::NetworkStateNotifier::networkStateChange):
+
 2009-12-29  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52630.

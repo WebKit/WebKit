@@ -85,6 +85,10 @@ private:
 #elif PLATFORM(CHROMIUM)
     NetworkStateNotifierPrivate p;
 
+#elif PLATFORM(ANDROID)
+public:
+    void networkStateChange(bool online);
+
 #elif PLATFORM(QT) && ENABLE(QT_BEARER)
     friend class NetworkStateNotifierPrivate;
     NetworkStateNotifierPrivate* p;
