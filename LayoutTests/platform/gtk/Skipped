@@ -5745,3 +5745,7 @@ svg/custom/path-getTotalLength.svg
 # Fails since it was checked in; our problem may be similar to Windows'
 # See https://bugs.webkit.org/show_bug.cgi?id=32727
 fast/dom/Element/id-in-deletebutton.html
+
+# Fails after after r52559
+# See https://bugs.webkit.org/show_bug.cgi?id=33014
+fast/dom/prototype-inheritance-2.html

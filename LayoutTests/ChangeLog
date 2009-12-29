@@ -1,3 +1,13 @@
+2009-12-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Fails fast/dom/prototype-inheritance-2.html after r52559
+        https://bugs.webkit.org/show_bug.cgi?id=33014
+
+        Skipping test that is failing after r52559 until we figure out why
+        the constructors are not showing up for us.
+
+        * platform/gtk/Skipped:
+
 2009-12-29  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
