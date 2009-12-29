@@ -800,12 +800,11 @@ void GraphicsContext::clipPath(WindRule clipRule)
  * RenderTheme handles drawing focus on widgets which 
  * need it.
  */
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
 
     if (!rects.size())

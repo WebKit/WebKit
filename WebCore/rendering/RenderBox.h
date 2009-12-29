@@ -74,7 +74,7 @@ public:
 
     // Bounds of the outline box in absolute coords. Respects transforms
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/) const;
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     // Use this with caution! No type checking is done!
     RenderBox* previousSiblingBox() const;

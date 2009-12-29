@@ -54,7 +54,7 @@ private:
 
     virtual void layout();
 
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     virtual FloatRect objectBoundingBox() const;
 

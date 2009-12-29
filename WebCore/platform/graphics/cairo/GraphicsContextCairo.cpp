@@ -606,12 +606,11 @@ void GraphicsContext::clipPath(WindRule clipRule)
     cairo_clip(cr);
 }
 
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
 
     cairo_t* cr = m_data->cr;
@@ -632,14 +631,14 @@ void GraphicsContext::drawFocusRing(const Color& color)
     cairo_set_line_width(cr, 2.0f);
     setPlatformStrokeStyle(DottedStroke);
 #else
-    int radius = (focusRingWidth() - 1) / 2;
+    int radius = (width - 1) / 2;
     for (unsigned i = 0; i < rectCount; i++)
         addPath(Path::createRoundedRectangle(rects[i], FloatSize(radius, radius)));
 
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     Color ringColor(color.red(), color.green(), color.blue(), 127);
     setColor(cr, ringColor);
-    cairo_set_line_width(cr, focusRingWidth());
+    cairo_set_line_width(cr, width);
     setPlatformStrokeStyle(SolidStroke);
 #endif
 

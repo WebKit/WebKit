@@ -1,3 +1,78 @@
+2009-12-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move the focus ring rect array, width and offset out of GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=33028
+
+        * platform/graphics/GraphicsContext.cpp: Removed initFocusRing(),
+        clearFocusRing(), focusRingBoundingRect(), addFocusRingRect(),
+        focusRingWidth(), focusRingOffset(), and focusRingRects().
+        * platform/graphics/GraphicsContext.h: Ditto. Added the focus ring rect
+        vector, width and offset as parameters to drawFocusRing().
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState): Cleaned up style.
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate): Removed
+        m_focusRingRects, m_focusRingWidth and m_focusRingOffset.
+        * platform/graphics/IntRect.cpp:
+        (WebCore::unionRect): Added this helper function.
+        * platform/graphics/IntRect.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): 
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawFocusRing): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRects): Updated for new prototype.
+        Added empty rect checks that were previously done in
+        GraphicsContext::addFocusRingRect().
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addFocusRingRects): Ditto.
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addFocusRingRects): Ditto.
+        (WebCore::RenderInline::paintOutline): Collect focus ring rects into a
+        vector and pass it to drawFocusRing(). Use unionRect() instead of
+        focusRingBoundingRect().
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline): Ditto.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::addFocusRingRects): Changed to take a
+        Vector<IntRect> to which the rects are added.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::addFocusRingRects): Updated for new prototype.
+        Added empty rect check that was previously done in
+        GraphicsContext::addFocusRingRect().
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addFocusRingRects): Updated for new prototype.
+        Added empty rect check that was previously done in
+        GraphicsContext::addFocusRingRect().
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::addFocusRingRects): Updated for new prototype.
+        Added empty rect check that was previously done in
+        GraphicsContext::addFocusRingRect().
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects): Updated for new prototype.
+        Added empty rect check that was previously done in
+        GraphicsContext::addFocusRingRect().
+        * rendering/RenderTextControl.h:
+
 2009-12-28  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -59,7 +59,7 @@ private:
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 

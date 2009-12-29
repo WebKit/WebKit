@@ -750,7 +750,7 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const IntSize& offsetInContainer, TransformationMatrix&) const;
     
-    virtual void addFocusRingRects(GraphicsContext*, int /*tx*/, int /*ty*/) { };
+    virtual void addFocusRingRects(Vector<IntRect>&, int /*tx*/, int /*ty*/) { };
 
     IntRect absoluteOutlineBounds() const
     {

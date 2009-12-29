@@ -932,13 +932,15 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderInline::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
         int top = max(root->lineTop(), curr->y());
         int bottom = min(root->lineBottom(), curr->y() + curr->height());
-        graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + top, curr->width(), bottom - top));
+        IntRect rect(tx + curr->x(), ty + top, curr->width(), bottom - top);
+        if (!rect.isEmpty())
+            rects.append(rect);
     }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -949,17 +951,17 @@ void RenderInline::addFocusRingRects(GraphicsContext* graphicsContext, int tx, i
                 pos = curr->localToAbsolute();
             else if (curr->isBox())
                 pos.move(toRenderBox(curr)->x(), toRenderBox(curr)->y());
-           curr->addFocusRingRects(graphicsContext, pos.x(), pos.y());
+           curr->addFocusRingRects(rects, pos.x(), pos.y());
         }
     }
 
     if (continuation()) {
         if (continuation()->isInline())
-            continuation()->addFocusRingRects(graphicsContext, 
+            continuation()->addFocusRingRects(rects, 
                                               tx - containingBlock()->x() + continuation()->containingBlock()->x(),
                                               ty - containingBlock()->y() + continuation()->containingBlock()->y());
         else
-            continuation()->addFocusRingRects(graphicsContext, 
+            continuation()->addFocusRingRects(rects, 
                                               tx - containingBlock()->x() + toRenderBox(continuation())->x(),
                                               ty - containingBlock()->y() + toRenderBox(continuation())->y());
     }
@@ -976,13 +978,12 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
         if (!oc.isValid())
             oc = style()->color();
 
-        graphicsContext->initFocusRing(ow, style()->outlineOffset());
-        addFocusRingRects(graphicsContext, tx, ty);
+        Vector<IntRect> focusRingRects;
+        addFocusRingRects(focusRingRects, tx, ty);
         if (style()->outlineStyleIsAuto())
-            graphicsContext->drawFocusRing(oc);
+            graphicsContext->drawFocusRing(focusRingRects, ow, style()->outlineOffset(), oc);
         else
-            addPDFURLRect(graphicsContext, graphicsContext->focusRingBoundingRect());
-        graphicsContext->clearFocusRing();
+            addPDFURLRect(graphicsContext, unionRect(focusRingRects));
     }
 
     if (style()->outlineStyleIsAuto() || style()->outlineStyle() == BNONE)

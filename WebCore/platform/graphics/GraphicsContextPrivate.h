@@ -48,7 +48,7 @@ namespace WebCore {
             , shadowBlur(0)
             , shadowsIgnoreTransforms(false)
 #if PLATFORM(CAIRO)
-            , globalAlpha(1.0f)
+            , globalAlpha(1)
 #endif
         {
         }
@@ -87,17 +87,12 @@ namespace WebCore {
     class GraphicsContextPrivate : public Noncopyable {
     public:
         GraphicsContextPrivate()
-            : m_focusRingWidth(0)
-            , m_focusRingOffset(0)
-            , m_updatingControlTints(false)
+            : m_updatingControlTints(false)
         {
         }
 
         GraphicsContextState state;
         Vector<GraphicsContextState> stack;
-        Vector<IntRect> m_focusRingRects;
-        int m_focusRingWidth;
-        int m_focusRingOffset;
         bool m_updatingControlTints;
     };
 

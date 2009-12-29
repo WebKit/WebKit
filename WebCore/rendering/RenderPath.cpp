@@ -209,9 +209,11 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 
 // This method is called from inside paintOutline() since we call paintOutline()
 // while transformed to our coord system, return local coords
-void RenderPath::addFocusRingRects(GraphicsContext* graphicsContext, int, int) 
+void RenderPath::addFocusRingRects(Vector<IntRect>& rects, int, int) 
 {
-    graphicsContext->addFocusRingRect(enclosingIntRect(repaintRectInLocalCoordinates()));
+    IntRect rect = enclosingIntRect(repaintRectInLocalCoordinates());
+    if (!rect.isEmpty())
+        rects.append(rect);
 }
 
 bool RenderPath::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

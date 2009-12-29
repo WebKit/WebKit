@@ -1002,7 +1002,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
     ExcludeClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.right(), trRect.bottom());
 }
 
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (!m_data->m_opacity || paintingDisabled())
         return;
@@ -1011,10 +1011,9 @@ void GraphicsContext::drawFocusRing(const Color& color)
     if (!m_data->m_dc)
         return;
 
-    int radius = (focusRingWidth() - 1) / 2;
-    int offset = radius + focusRingOffset();
+    int radius = (width - 1) / 2;
+    offset += radius;
 
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
     IntRect finalFocusRect;
     for (unsigned i = 0; i < rectCount; i++) {

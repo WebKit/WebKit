@@ -204,12 +204,11 @@ void GraphicsContext::clip(const FloatRect& rect)
     m_data->m_view->ConstrainClippingRegion(&region);
 }
 
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
 
     // FIXME: maybe we should implement this with BShape?

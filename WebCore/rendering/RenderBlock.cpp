@@ -5008,7 +5008,7 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     return IntRect(x, y, caretWidth, height);
 }
 
-void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -5020,16 +5020,19 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
         bool prevInlineHasLineBox = toRenderInline(inlineContinuation()->node()->renderer())->firstLineBox(); 
         int topMargin = prevInlineHasLineBox ? collapsedMarginTop() : 0;
         int bottomMargin = nextInlineHasLineBox ? collapsedMarginBottom() : 0;
-        graphicsContext->addFocusRingRect(IntRect(tx, ty - topMargin, 
-                                                  width(), height() + topMargin + bottomMargin));
-    } else
-        graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
+        IntRect rect(tx, ty - topMargin, width(), height() + topMargin + bottomMargin);
+        if (!rect.isEmpty())
+            rects.append(rect);
+    } else if (width() && height())
+        rects.append(IntRect(tx, ty, width(), height()));
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             int top = max(curr->lineTop(), curr->y());
             int bottom = min(curr->lineBottom(), curr->y() + curr->height());
-            graphicsContext->addFocusRingRect(IntRect(tx + curr->x(), ty + top, curr->width(), bottom - top));
+            IntRect rect(tx + curr->x(), ty + top, curr->width(), bottom - top);
+            if (!rect.isEmpty())
+                rects.append(rect);
         }
 
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -5041,13 +5044,13 @@ void RenderBlock::addFocusRingRects(GraphicsContext* graphicsContext, int tx, in
                     pos = curr->localToAbsolute();
                 else
                     pos = FloatPoint(tx + box->x(), ty + box->y());
-                box->addFocusRingRects(graphicsContext, pos.x(), pos.y());
+                box->addFocusRingRects(rects, pos.x(), pos.y());
             }
         }
     }
 
     if (inlineContinuation())
-        inlineContinuation()->addFocusRingRects(graphicsContext, 
+        inlineContinuation()->addFocusRingRects(rects, 
                                                 tx - x() + inlineContinuation()->containingBlock()->x(),
                                                 ty - y() + inlineContinuation()->containingBlock()->y());
 }

@@ -99,7 +99,7 @@ private:
     virtual bool avoidsFloats() const { return true; }
     void setInnerTextStyle(PassRefPtr<RenderStyle>);
     
-    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
 

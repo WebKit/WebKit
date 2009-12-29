@@ -124,17 +124,16 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& po
     CGContextDrawImage(m_data->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }
 
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    float radius = (focusRingWidth() - 1) / 2.0f;
-    int offset = radius + focusRingOffset();
+    float radius = (width - 1) / 2.0f;
+    offset += radius;
     CGColorRef colorRef = color.isValid() ? createCGColor(color) : 0;
 
     CGMutablePathRef focusRingPath = CGPathCreateMutable();
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));

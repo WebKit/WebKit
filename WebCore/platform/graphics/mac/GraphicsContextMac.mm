@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
-#import "../cg/GraphicsContextPlatformPrivateCG.h"
+#import "GraphicsContextPlatformPrivateCG.h"
 #import <AppKit/AppKit.h>
 #import <wtf/StdLibExtras.h>
 
@@ -43,19 +43,18 @@ namespace WebCore {
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
 
-void GraphicsContext::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    int radius = (focusRingWidth() - 1) / 2;
-    int offset = radius + focusRingOffset();
+    int radius = (width - 1) / 2;
+    offset += radius;
     RetainPtr<CGColorRef> colorRef;
     if (color.isValid())
         colorRef.adoptCF(createCGColor(color));
 
     RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
-    const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
