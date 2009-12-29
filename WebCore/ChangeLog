@@ -1,3 +1,35 @@
+2009-12-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        1. Changes the order in which some functions are called to match
+        the pre-r52536 order. Namely, when a new Database object is
+        created, DatabaseTracker::addOpenDatabase() is called in the
+        constructor, before doing anything else related to that database
+        (like trying to get a file handle to the database
+        file). Chromium's implementation depends on this ordering.
+        2. Changes Database::performOpenAndVerify() to close the open
+        handle to the database file immediately if the database version
+        does not match the expected one. The current behavior is to add
+        the Database object to a DatabaseThread collection and let the
+        database thread close the handle when it's destroyed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33005
+
+        All LayoutTests/storage tests pass in clean WebKit and Chromium
+        clients.
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase): Notify DatabaseTracker and
+        Document that a Database object is about to be destroyed (when a
+        database file cannot be opened, or its version doesn't match the
+        expected one).
+        (WebCore::Database::Database): Notify DatabaseTracker and Document
+        that a new Database object was created.
+        (WebCore::Database::performOpenAndVerify): If a database version
+        does not match the expected one, immediately close the open file
+        handle to the database file.
+
 2009-12-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

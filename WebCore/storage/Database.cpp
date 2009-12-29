@@ -131,12 +131,11 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
     RefPtr<Database> database = adoptRef(new Database(document, name, expectedVersion, displayName, estimatedSize));
 
     if (!database->openAndVerifyVersion(e)) {
-       LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
-       return 0;
+        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());
+        document->removeOpenDatabase(database.get());
+        DatabaseTracker::tracker().removeOpenDatabase(database.get());
+        return 0;
     }
-
-    DatabaseTracker::tracker().addOpenDatabase(database.get());
-    document->addOpenDatabase(database.get());
 
     DatabaseTracker::tracker().setDatabaseDetails(document->securityOrigin(), name, displayName, estimatedSize);
 
@@ -189,6 +188,9 @@ Database::Database(Document* document, const String& name, const String& expecte
     ASSERT(m_document->databaseThread());
 
     m_filename = DatabaseTracker::tracker().fullPathForDatabase(m_mainThreadSecurityOrigin.get(), m_name);
+
+    DatabaseTracker::tracker().addOpenDatabase(this);
+    m_document->addOpenDatabase(this);
 }
 
 static void derefDocument(void* document)
@@ -480,6 +482,8 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
                 if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
                     LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
                     e = INVALID_STATE_ERR;
+                    // Close the handle to the database file.
+                    m_sqliteDatabase.close();
                     return false;
                 }
             }
@@ -487,6 +491,8 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
             if (!getVersionFromDatabase(currentVersion)) {
                 LOG_ERROR("Failed to get current version from database %s", databaseDebugName().ascii().data());
                 e = INVALID_STATE_ERR;
+                // Close the handle to the database file.
+                m_sqliteDatabase.close();
                 return false;
             }
             if (currentVersion.length()) {
@@ -496,6 +502,8 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
                 if (!setVersionInDatabase(m_expectedVersion)) {
                     LOG_ERROR("Failed to set version %s in database %s", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
                     e = INVALID_STATE_ERR;
+                    // Close the handle to the database file.
+                    m_sqliteDatabase.close();
                     return false;
                 }
                 currentVersion = m_expectedVersion;
@@ -516,9 +524,13 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         LOG(StorageAPI, "page expects version %s from database %s, which actually has version name %s - openDatabase() call will fail", m_expectedVersion.ascii().data(),
             databaseDebugName().ascii().data(), currentVersion.ascii().data());
         e = INVALID_STATE_ERR;
+        // Close the handle to the database file.
+        m_sqliteDatabase.close();
         return false;
     }
 
+    // All checks passed and we still have a handle to this database file.
+    // Make sure DatabaseThread closes it when DatabaseThread goes away.
     m_opened = true;
     if (m_document->databaseThread())
         m_document->databaseThread()->recordDatabaseOpen(this);
