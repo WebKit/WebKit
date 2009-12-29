@@ -1028,7 +1028,12 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
         return 0;
 
     QWebFrameData frameData(m_frame->page(), m_frame, ownerElement, name);
-    frameData.url = url;
+
+    if (url.isEmpty())
+        frameData.url = blankURL();
+    else
+        frameData.url = url;
+
     frameData.referrer = referrer;
     frameData.allowsScrolling = allowsScrolling;
     frameData.marginWidth = marginWidth;

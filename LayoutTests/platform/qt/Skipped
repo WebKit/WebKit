@@ -124,7 +124,6 @@ svg/custom/glyph-setting-d-attribute.svg
 fast/canvas/canvas-getImageData.html
 
 # ------- crashes
-fast/loader/empty-embed-src-attribute.html
 fast/text/find-hidden-text.html
 
 # ========================================================================= #
