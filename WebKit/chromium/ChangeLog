@@ -1,3 +1,16 @@
+2009-12-28  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fixed isKeypadEvent behavior for chromium/Mac to correctly report
+        keyLocation as DOM_KEY_LOCATION_NUMPAD for numeric pad key events.
+        https://bugs.webkit.org/show_bug.cgi?id=28247
+
+        Test: fast/events/keydown-numpad-keys.html
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::isKeypadEvent):
+
 2009-12-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.

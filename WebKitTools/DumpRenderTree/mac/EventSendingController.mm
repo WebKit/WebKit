@@ -125,7 +125,7 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(contextClick)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
-            || aSelector == @selector(keyDown:withModifiers:)
+            || aSelector == @selector(keyDown:withModifiers:withLocation:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(mouseDown:)
             || aSelector == @selector(mouseMoveToX:Y:)
@@ -154,7 +154,7 @@ BOOL replayingSavedEvents;
         return @"enableDOMUIEventLogging";
     if (aSelector == @selector(fireKeyboardEventsToElement:))
         return @"fireKeyboardEventsToElement";
-    if (aSelector == @selector(keyDown:withModifiers:))
+    if (aSelector == @selector(keyDown:withModifiers:withLocation:))
         return @"keyDown";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
@@ -474,7 +474,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     savedMouseEvents = nil;
 }
 
-- (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers
+- (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
 {
     NSString *eventCharacter = character;
     if ([character isEqualToString:@"leftArrow"]) {
@@ -537,6 +537,9 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
                 modifierFlags |= NSCommandKeyMask;
         }
     }
+
+    if (keyLocation == DOM_KEY_LOCATION_NUMPAD)
+        modifierFlags |= NSNumericPadKeyMask;
 
     [[[mainFrame frameView] documentView] layout];
 

@@ -118,6 +118,9 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
 
+# No support for key event location in EventSender.
+fast/events/keydown-numpad-keys.html
+
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
 fast/events/option-tab.html

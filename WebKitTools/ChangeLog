@@ -1,3 +1,21 @@
+2009-12-28  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Extended EventSender.keyDown method to take another (3rd) argument
+        for indicating the keyLocation to make numeric pad key events testable.
+        Expected values for the argument is one of the KeyLocationCode
+        specified in DOM Level 3
+        (http://www.w3.org/TR/DOM-Level-3-Events/#events-keyboardevents).
+        https://bugs.webkit.org/show_bug.cgi?id=28247
+
+        Test: fast/events/keydown-numpad-keys.html
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2009-12-28  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Unreviewed, update my email address.
