@@ -1,3 +1,13 @@
+2009-12-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Rubber-stamped by Simon Hausmann and Holger Freyther.
+
+        [Qt] Remove WebKit/qt/WebKitPart empty directory
+
+        The content of the directory has been removed by r34888.
+
+        * WebKitPart: Removed.
+
 2009-12-29  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
