@@ -37,6 +37,32 @@ from modules.logging import log, error
 from modules.webkitport import WebKitPort
 from modules.changelogs import ChangeLog
 
+# FIXME: Why do some of these have "Step" in their name but not all?
+__all__ = [
+    "ApplyPatchStep",
+    "ApplyPatchWithLocalCommitStep",
+    "BuildStep",
+    "CheckStyleStep",
+    "CleanWorkingDirectoryStep",
+    "CleanWorkingDirectoryWithLocalCommitsStep",
+    "CloseBugForLandDiffStep",
+    "CloseBugStep",
+    "ClosePatchStep",
+    "CommitStep",
+    "CompleteRollout",
+    "CreateBugStep",
+    "EnsureBuildersAreGreenStep",
+    "EnsureLocalCommitIfNeeded",
+    "ObsoletePatchesOnBugStep",
+    "PostDiffToBugStep",
+    "PrepareChangeLogForRevertStep",
+    "PrepareChangeLogStep",
+    "PromptForBugOrTitleStep",
+    "RevertRevisionStep",
+    "RunTestsStep",
+    "UpdateChangeLogsWithReviewerStep",
+    "UpdateStep",
+]
 
 class CommandOptions(object):
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")

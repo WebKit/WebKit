@@ -179,7 +179,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
             'name': u'Patch',
             'url': 'https://bugs.webkit.org/attachment.cgi?id=45548',
             'is_obsolete': False,
-            'review': u'?',
+            'review': '?',
             'is_patch': True,
             'attacher_email': 'mjs@apple.com',
             'bug_id': 32585,

@@ -1,3 +1,29 @@
+2009-12-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add the start of a Bug object for bugzilla.py
+        https://bugs.webkit.org/show_bug.cgi?id=32995
+
+        This allowed us to get rid of some duplicated "is_obsolete" checks.
+
+        * Scripts/modules/bugzilla.py:
+         - Add a new Bug class, and move patches/unreviewed_patches filtering logic there.
+         - Add _fetch_bug_page for possible future mocking.
+           (I did not try to test fetch_*_from_bug now due to difficulties with our current validate_reviewer logic.)
+         - Rename fetch_bug to fetch_bug_dictionary and add a new fetch_bug which returns a Bug object.
+         - Use fetch_bug and attachments(), patches(), etc. instead of custom fetch_*_from_bug methods.
+         - Reduce code in fetch_patches_from_pending_commit_list and fetch_patches_from_review_queue
+           using list comprehensions. Use a sum(list, []) trick to flatten a list of lists into a single list.
+        * Scripts/modules/bugzilla_unittest.py:
+         - Remove an unneeded unicode string marker.
+        * Scripts/modules/buildsteps.py:
+         - define __all__ to include just the BuildSteps
+        * Scripts/modules/commands/download.py:
+         - import * now that we have an __all__ defined.
+        * Scripts/modules/commands/upload.py:
+         - Use fetch_bug_dictionary instead of fetch_bug.
+
 2009-12-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Ariya Hidayat.
