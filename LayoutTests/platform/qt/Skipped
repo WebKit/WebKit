@@ -430,7 +430,6 @@ fast/dom/gc-10.html
 fast/dom/isindex-002.html
 fast/dom/object-embed-plugin-scripting.html
 fast/dom/replaceChild.html
-fast/dom/Window/window-onFocus.html
 fast/dynamic/layer-hit-test-crash.html
 # seems to trigger some bugs/missing features in QTextCodec
 fast/encoding/char-encoding.html

@@ -1068,8 +1068,9 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent*)
     // and the focus frame. But don't tell the focus controller so that upon
     // focusInEvent() we can re-activate the frame.
     FocusController *focusController = page->focusController();
-    focusController->setActive(false);
+    // Call setFocused first so that window.onblur doesn't get called twice
     focusController->setFocused(false);
+    focusController->setActive(false);
 }
 
 void QWebPagePrivate::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)

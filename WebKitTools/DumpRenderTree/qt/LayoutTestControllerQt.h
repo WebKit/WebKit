@@ -113,6 +113,8 @@ public slots:
     void setPopupBlockingEnabled(bool enable);
     void setPOSIXLocale(const QString& locale);
     void resetLoadFinished() { m_loadFinished = false; }
+    void setWindowIsKey(bool isKey);
+    void setMainFrameIsFirstResponder(bool isFirst);
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);

@@ -89,6 +89,8 @@ public:
     QWebPage *createWindow();
     int windowCount() const;
 
+    void switchFocus(bool focused);
+
     WebPage *webPage() const { return m_page; }
 
 

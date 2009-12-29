@@ -287,6 +287,16 @@ void LayoutTestController::setPOSIXLocale(const QString& locale)
     QLocale::setDefault(qlocale);
 } 
 
+void LayoutTestController::setWindowIsKey(bool isKey)
+{
+    m_drt->switchFocus(isKey);
+}
+
+void LayoutTestController::setMainFrameIsFirstResponder(bool isFirst)
+{
+    //FIXME: only need this for the moment: https://bugs.webkit.org/show_bug.cgi?id=32990
+}
+
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString& animationName,
                                                                double time,
                                                                const QString& elementId)

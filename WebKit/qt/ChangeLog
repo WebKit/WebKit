@@ -1,3 +1,17 @@
+2009-12-29  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] fix fast/dom/Window/window-onFocus.html
+        
+        Add support for layouttestcontroller.windowIsKey to Qt DRT and fix issue where
+        window.onblur was getting dispatched twice from QtWebKit.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32990
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusOutEvent):
+
 2009-12-24  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Gustavo Noronha.
