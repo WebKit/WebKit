@@ -88,7 +88,7 @@ int HTMLElement::tagPriority() const
         return 0;
     if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag) || hasLocalName(rpTag) || hasLocalName(rtTag))
         return 3;
-    if (hasLocalName(articleTag) || hasLocalName(centerTag) || hasLocalName(nobrTag) || hasLocalName(rubyTag) || hasLocalName(navTag) || hasLocalName(sectionTag))
+    if (hasLocalName(articleTag) || hasLocalName(asideTag) || hasLocalName(centerTag) || hasLocalName(nobrTag) || hasLocalName(rubyTag) || hasLocalName(navTag) || hasLocalName(sectionTag))
         return 5; // Same as <div>.
     if (hasLocalName(noembedTag) || hasLocalName(noframesTag))
         return 10;
@@ -865,6 +865,7 @@ static HashSet<AtomicStringImpl*>* blockTagList()
     if (tagList.isEmpty()) {
         tagList.add(addressTag.localName().impl());
         tagList.add(articleTag.localName().impl());
+        tagList.add(asideTag.localName().impl());
         tagList.add(blockquoteTag.localName().impl());
         tagList.add(centerTag.localName().impl());
         tagList.add(ddTag.localName().impl());

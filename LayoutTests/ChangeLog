@@ -1,3 +1,19 @@
+2009-12-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement HTML5 <aside> element.
+        https://bugs.webkit.org/show_bug.cgi?id=32943
+
+        The new test file tests:
+        - <p> closing,
+        - Residual style, and
+        - FormatBlock.
+
+        * fast/html/aside-element-expected.txt: Added.
+        * fast/html/aside-element.html: Added.
+        * fast/html/script-tests/aside-element.js: Added.
+
 2009-12-29  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Failing media/video-seek-past-end-playing.html

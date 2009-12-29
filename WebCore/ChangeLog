@@ -1,3 +1,24 @@
+2009-12-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement HTML5 <aside> element.
+        https://bugs.webkit.org/show_bug.cgi?id=32943
+
+        <aside> should behave the same as <nav>, <section>, and <article>.
+
+        Test: fast/html/aside-element.html
+
+        * css/html.css: Add aside as a block element.
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag): Add asideTag.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::tagPriority): Returns 5 for asideTag.
+        (WebCore::blockTagList): Add asideTag.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode): Add asideTag.
+        * html/HTMLTagNames.in: Add aside.
+
 2009-12-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

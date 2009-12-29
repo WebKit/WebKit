@@ -9,6 +9,7 @@ address interfaceName=HTMLElement
 applet
 area
 article interfaceName=HTMLElement
+aside interfaceName=HTMLElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, createWithNew
 b interfaceName=HTMLElement
 base createWithNew
