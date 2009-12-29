@@ -784,7 +784,7 @@ static WebKitWebView* createWebView()
 
     if (webView) {
         WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-        webkit_web_view_set_settings (view, settings);
+        webkit_web_view_set_settings(view, settings);
     }
 
     return view;
