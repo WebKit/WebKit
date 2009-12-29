@@ -1,3 +1,18 @@
+2009-12-29  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32863
+        Make NodeList support call-as-function
+
+        Test: fast/dom/NodeList/nodelist-item-call-as-function.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::callAsFunctionCallback):
+
 2009-12-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1,3 +1,16 @@
+2009-12-29  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32863
+        Make NodeList support call-as-function.
+
+        * fast/dom/NodeList/nodelist-item-call-as-function-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-item-call-as-function.html: Added.
+        * fast/dom/NodeList/script-tests: Added.
+        * fast/dom/NodeList/script-tests/TEMPLATE.html: Added.
+        * fast/dom/NodeList/script-tests/nodelist-item-call-as-function.js: Added.
+
 2009-12-29  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.

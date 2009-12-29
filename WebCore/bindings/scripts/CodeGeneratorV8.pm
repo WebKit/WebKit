@@ -312,7 +312,7 @@ sub GenerateSpecialCaseHeaderDeclarations
 {
     my $dataNode = shift;
     
-    if ($dataNode->name eq "HTMLCollection" || $dataNode->name eq "HTMLAllCollection") {
+    if ($dataNode->name eq "HTMLCollection" || $dataNode->name eq "HTMLAllCollection" || $dataNode->name eq "NodeList") {
         push(@headerContent, "  static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
     }
 }

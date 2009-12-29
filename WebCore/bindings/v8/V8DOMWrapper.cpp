@@ -51,6 +51,7 @@
 #include "V8HTMLPlugInElementCustom.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
+#include "V8NodeList.h"
 #include "V8Proxy.h"
 #include "WebGLArray.h"
 #include "WebGLUniformLocation.h"
@@ -348,6 +349,9 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         instanceTemplate->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(NamedNodeMap), 0, 0, 0, collectionIndexedPropertyEnumerator<NamedNodeMap>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     }
+    case V8ClassIndex::NODELIST:
+        descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8NodeList::callAsFunctionCallback);
+        break;
 #if ENABLE(DOM_STORAGE)
     case V8ClassIndex::STORAGE:
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(Storage), USE_INDEXED_PROPERTY_SETTER(Storage), 0, USE_INDEXED_PROPERTY_DELETER(Storage));
