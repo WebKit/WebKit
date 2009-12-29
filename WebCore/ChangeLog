@@ -1,3 +1,19 @@
+2009-12-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Typed text in table not correctly redrawn on page with compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=32874
+        
+        Use the same test in RenderTableCell::computeRectForRepaint() that we use elsewhere
+        to decide when to use layoutState, which is to test for layoutStateEnabled()
+        and no repaint container.
+
+        Not possible to make a repaint test that exercises the problem, so no test.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeRectForRepaint):
+
 2009-12-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
