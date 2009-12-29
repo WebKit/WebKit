@@ -161,7 +161,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
             if (m_object->node() && m_object->node()->isElementNode())
                 element = static_cast<Element*>(m_object->node());
 
-            ASSERT(!element || element->document() && !element->document()->inPageCache());
+            ASSERT(!element || (element->document() && !element->document()->inPageCache()));
             if (!element)
                 return false;
 

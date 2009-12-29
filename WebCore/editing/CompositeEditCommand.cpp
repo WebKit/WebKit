@@ -1090,7 +1090,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     
     Position caretPos(caret.deepEquivalent());
     // A line break is either a br or a preserved newline.
-    ASSERT(caretPos.node()->hasTagName(brTag) || caretPos.node()->isTextNode() && caretPos.node()->renderer()->style()->preserveNewline());
+    ASSERT(caretPos.node()->hasTagName(brTag) || (caretPos.node()->isTextNode() && caretPos.node()->renderer()->style()->preserveNewline()));
     
     if (caretPos.node()->hasTagName(brTag)) {
         Position beforeBR(positionInParentBeforeNode(caretPos.node()));

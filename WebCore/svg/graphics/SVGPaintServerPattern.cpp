@@ -103,7 +103,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();
     bool isStroked = (type & ApplyToStrokeTargetType) && style->hasStroke();
 
-    ASSERT(isFilled && !isStroked || !isFilled && isStroked);
+    ASSERT((isFilled && !isStroked) || (!isFilled && isStroked));
 
     m_ownerElement->buildPattern(targetRect);
     if (!tile())

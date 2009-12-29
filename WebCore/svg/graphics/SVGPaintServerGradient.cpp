@@ -193,7 +193,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();
     bool isStroked = (type & ApplyToStrokeTargetType) && style->hasStroke();
 
-    ASSERT(isFilled && !isStroked || !isFilled && isStroked);
+    ASSERT((isFilled && !isStroked) || (!isFilled && isStroked));
 
     context->save();
 
