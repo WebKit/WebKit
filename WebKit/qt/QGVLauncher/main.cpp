@@ -296,9 +296,7 @@ public:
         if (!deducedUrl.isValid())
             deducedUrl = QUrl("http://" + url + "/");
 
-        urlEdit->setText(deducedUrl.toEncoded());
-        scene->webView()->load(deducedUrl);
-        scene->webView()->setFocus(Qt::OtherFocusReason);
+        loadURL(deducedUrl);
     }
 
     QWebPage* page() const
@@ -307,6 +305,23 @@ public:
     }
 
 protected slots:
+
+    void openFile()
+    {
+        static const QString filter("HTML Files (*.htm *.html);;Text Files (*.txt);;Image Files (*.gif *.jpg *.png);;All Files (*)");
+
+        QFileDialog fileDialog(this, tr("Open"), QString(), filter);
+        fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+        fileDialog.setFileMode(QFileDialog::ExistingFile);
+        fileDialog.setOptions(QFileDialog::ReadOnly);
+
+        if (fileDialog.exec()) {
+            QString selectedFile = fileDialog.selectedFiles()[0];
+            if (!selectedFile.isEmpty())
+                loadURL(QUrl::fromLocalFile(selectedFile));
+        }
+    }
+
     void changeLocation()
     {
         load(urlEdit->text());
@@ -368,6 +383,17 @@ public slots:
     }
 
 private:
+
+    void loadURL(const QUrl& url)
+    {
+        if (!url.isValid())
+            return;
+    
+        urlEdit->setText(url.toString());
+        scene->webView()->load(url);
+        scene->webView()->setFocus(Qt::OtherFocusReason);
+    }
+
     void buildUI()
     {
         QWebPage* page = scene->webView()->page();
@@ -384,6 +410,7 @@ private:
 
         QMenu* fileMenu = menuBar()->addMenu("&File");
         fileMenu->addAction("New Window", this, SLOT(newWindow()));
+        fileMenu->addAction("Open File...", this, SLOT(openFile()), QKeySequence(Qt::CTRL | Qt::Key_O));
         fileMenu->addAction("Clone view", this, SLOT(clone()));
         fileMenu->addAction("Close", this, SLOT(close()));
 

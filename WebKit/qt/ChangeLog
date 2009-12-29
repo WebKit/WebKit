@@ -1,3 +1,18 @@
+2009-12-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32925
+
+        Adds an Open File dialog to make it convenient to open a file
+        to view in the browser.
+
+        * QGVLauncher/main.cpp:
+        (MainWindow::load): Modified to call loadURL.
+        (MainWindow::openFile): Added.
+        (MainWindow::loadURL): Added.
+        (MainWindow::buildUI): Added menu item Open File.
+
 2009-12-29  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.

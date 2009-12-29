@@ -218,7 +218,7 @@ public:
         if (qurl.scheme().isEmpty())
             qurl = QUrl("http://" + url + "/");
         if (qurl.isValid()) {
-            urlEdit->setText(qurl.toEncoded());
+            urlEdit->setText(qurl.toString());
             view->load(qurl);
         }
 
@@ -332,17 +332,29 @@ public:
 
 protected slots:
 
+    void openFile()
+    {
+        static const QString filter("HTML Files (*.htm *.html);;Text Files (*.txt);;Image Files (*.gif *.jpg *.png);;All Files (*)");
+
+        QFileDialog fileDialog(this, tr("Open"), QString(), filter);
+        fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+        fileDialog.setFileMode(QFileDialog::ExistingFile);
+        fileDialog.setOptions(QFileDialog::ReadOnly);
+
+        if (fileDialog.exec()) {
+            QString selectedFile = fileDialog.selectedFiles()[0];
+            if (!selectedFile.isEmpty())
+                loadURL(QUrl::fromLocalFile(selectedFile));
+        }
+    }
+
     void changeLocation()
     {
         QString string = urlEdit->text();
         QUrl url = urlFromUserInput(string);
         if (url.scheme().isEmpty())
             url = QUrl("http://" + string + "/");
-        if (url.isValid()) {
-            urlEdit->setText(url.toEncoded());
-            view->load(url);
-            view->setFocus(Qt::OtherFocusReason);
-        }
+        loadURL(url);
     }
 
     void loadFinished()
@@ -486,6 +498,16 @@ private:
     QVector<int> zoomLevels;
     int currentZoom;
 
+    void loadURL(const QUrl& url)
+    {
+        if (!url.isValid())
+            return;
+    
+        urlEdit->setText(url.toString());
+        view->load(url);
+        view->setFocus(Qt::OtherFocusReason);
+    }
+
     // create the status bar, tool bar & menu
     void setupUI()
     {
@@ -517,6 +539,7 @@ private:
 
         QMenu* fileMenu = menuBar()->addMenu("&File");
         QAction* newWindow = fileMenu->addAction("New Window", this, SLOT(newWindow()));
+        fileMenu->addAction(tr("Open File..."), this, SLOT(openFile()), QKeySequence(Qt::CTRL | Qt::Key_O));
         fileMenu->addAction(tr("Print"), this, SLOT(print()), QKeySequence::Print);
         QAction* screenshot = fileMenu->addAction("Screenshot", this, SLOT(screenshot()));
         fileMenu->addAction("Close", this, SLOT(close()));
