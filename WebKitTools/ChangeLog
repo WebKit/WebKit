@@ -1,3 +1,14 @@
+2009-12-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32778
+
+        Changes $diffPercentage to be a number to resolve Perl
+        warning about comparing a string to a number.
+
+        * Scripts/run-webkit-tests:
+
 2009-12-29  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.

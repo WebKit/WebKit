@@ -708,7 +708,7 @@ for my $test (@tests) {
 
     my $actualPNG = "";
     my $diffPNG = "";
-    my $diffPercentage = "";
+    my $diffPercentage = 0;
     my $diffResult = "passed";
 
     my $actualHash = "";
@@ -762,12 +762,12 @@ for my $test (@tests) {
                 }
 
                 if (/^diff: (.+)% (passed|failed)/) {
-                    $diffPercentage = $1;
+                    $diffPercentage = $1 + 0;
                     $imageDifferences{$base} = $diffPercentage;
                     $diffResult = $2;
                 }
                 
-                if ($diffPercentage == 0) {
+                if (!$diffPercentage) {
                     printFailureMessageForTest($test, "pixel hash failed (but pixel test still passes)");
                 }
             } elsif ($verbose) {
