@@ -1,3 +1,20 @@
+2009-12-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix UI nits in the Audits panel.
+        https://bugs.webkit.org/show_bug.cgi?id=32932
+
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype._selectAllClicked):
+        (WebInspector.AuditLauncherView.prototype._createCategoryElement):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI.handleSelectAllClick):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditResultView):
+        (WebInspector.AuditRuleResultPane):
+        * inspector/front-end/audits.css:
+
 2009-12-29  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Dimitri Glazkov.

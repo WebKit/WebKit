@@ -103,13 +103,12 @@ WebInspector.AuditLauncherView.prototype = {
         this._runnerCallback(catIds, this._auditPresentStateElement.checked, profilingFinishedCallback.bind(this));
     },
 
-    _selectAllClicked: function(event)
+    _selectAllClicked: function(checkCategories)
     {
-        var shouldCheckCategoriesOn = event.target.checked;
         var childNodes = this._categoriesElement.childNodes;
         for (var i = 0, length = childNodes.length; i < length; ++i)
-            childNodes[i].firstChild.checked = shouldCheckCategoriesOn;
-        this._currentCategoriesCount = shouldCheckCategoriesOn ? this._totalCategoriesCount : 0;
+            childNodes[i].firstChild.checked = checkCategories;
+        this._currentCategoriesCount = checkCategories ? this._totalCategoriesCount : 0;
         this._updateButton();
     },
 
@@ -129,7 +128,6 @@ WebInspector.AuditLauncherView.prototype = {
         element = document.createElement("input");
         element.type = "checkbox";
         labelElement.appendChild(element);
-
         labelElement.appendChild(document.createTextNode(title));
 
         return labelElement;
@@ -141,10 +139,15 @@ WebInspector.AuditLauncherView.prototype = {
         this._headerElement.textContent = WebInspector.UIString("Select audits to run");
         this._contentElement.appendChild(this._headerElement);
 
+        function handleSelectAllClick(event)
+        {
+            this._selectAllClicked(event.target.checked);
+        }
         var categoryElement = this._createCategoryElement(WebInspector.UIString("Select All"), "");
         categoryElement.id = "audit-launcher-selectall";
         this._selectAllCheckboxElement = categoryElement.firstChild;
-        this._selectAllCheckboxElement.addEventListener("click", this._selectAllClicked.bind(this), false);
+        this._selectAllCheckboxElement.checked = true;
+        this._selectAllCheckboxElement.addEventListener("click", handleSelectAllClick.bind(this), false);
         this._contentElement.appendChild(categoryElement);
 
         this._categoriesElement = document.createElement("div");
@@ -191,6 +194,7 @@ WebInspector.AuditLauncherView.prototype = {
 
         this._contentElement.appendChild(this._buttonContainerElement);
 
+        this._selectAllClicked(this._selectAllCheckboxElement.checked);
         this.updateResourceTrackingState();
         this._updateButton();
         this.resize();

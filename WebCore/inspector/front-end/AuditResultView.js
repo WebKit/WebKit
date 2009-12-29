@@ -32,11 +32,7 @@ WebInspector.AuditResultView = function(categoryResults)
 {
     WebInspector.View.call(this);
 
-    this.element.addStyleClass("audit-result-view");
-
-    this.resultBarElement = document.createElement("div");
-    this.resultBarElement.id = "audit-resultbar";
-    this.element.appendChild(this.resultBarElement);
+    this.element.id = "audit-result-view";
 
     function entrySortFunction(a, b)
     {
@@ -50,7 +46,7 @@ WebInspector.AuditResultView = function(categoryResults)
         var entries = categoryResults[i].entries;
         if (entries) {
             entries.sort(entrySortFunction);
-            this.resultBarElement.appendChild(new WebInspector.AuditCategoryResultPane(categoryResults[i]).element);
+            this.element.appendChild(new WebInspector.AuditCategoryResultPane(categoryResults[i]).element);
         }
     }
 }
@@ -79,7 +75,6 @@ WebInspector.AuditRuleResultPane = function(ruleResult)
 
     for (var i = 0; i < ruleResult.children.length; ++i) {
         var section = new WebInspector.AuditRuleResultChildSection(ruleResult.children[i]);
-        section.expand();
         this.bodyElement.appendChild(section.element);
     }
 }
