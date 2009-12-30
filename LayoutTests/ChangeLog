@@ -1,3 +1,15 @@
+2009-12-30  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Rubber-stamped by Holger Hans Peter Freyther.
+
+        [Qt] Add expected files for the following new passing tests.
+
+        * platform/qt/editing/selection/select-text-overflow-ellipsis-expected.txt: Added.
+        * platform/qt/fast/block/float/in-margin-expected.txt: Copied from LayoutTests/platform/mac/fast/block/float/in-margin-expected.txt.
+        * platform/qt/fast/text/fake-italic-expected.txt: Added.
+        * platform/qt/svg/custom/empty-mask-expected.txt: Added.
+        * platform/qt/svg/filters/filter-source-position-expected.txt: Added.
+
 2009-12-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Dirk Schulze.
