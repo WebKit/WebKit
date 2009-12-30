@@ -39,12 +39,14 @@ namespace WebCore {
         RenderSVGImage(SVGImageElement*);
 
     private:
+        virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
         virtual const char* renderName() const { return "RenderSVGImage"; }
         virtual bool isSVGImage() const { return true; }
 
         virtual TransformationMatrix localToParentTransform() const { return m_localTransform; }
 
         virtual FloatRect objectBoundingBox() const;
+        virtual FloatRect strokeBoundingBox() const { return m_localBounds; }
         virtual FloatRect repaintRectInLocalCoordinates() const;
 
         virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
@@ -71,6 +73,7 @@ namespace WebCore {
 
         TransformationMatrix m_localTransform;
         FloatRect m_localBounds;
+        mutable FloatRect m_cachedLocalRepaintRect;
     };
 
 } // namespace WebCore

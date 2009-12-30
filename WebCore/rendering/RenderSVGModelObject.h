@@ -49,6 +49,8 @@ class RenderSVGModelObject : public RenderObject, protected SVGRenderBase {
 public:
     RenderSVGModelObject(SVGStyledElement*);
 
+    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
+
     virtual bool requiresLayer() const { return false; }
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);

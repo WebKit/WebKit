@@ -4,12 +4,12 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
-    RenderSVGContainer {g} at (10,10) size 467x276
-      RenderPath {rect} at (10,10) size 430x80 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
+    RenderSVGContainer {g} at (20,50) size 457x236
+      RenderPath {rect} at (117.50,50) size 258x40 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
       RenderSVGText {text} at (20,130) size 457x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-27) size 457x33
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 457.00: "clipPathUnits=objectBoundingBox"
-      RenderPath {rect} at (100,115.15) size 169.71x169.71 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M0.00,0.00 L120.00,0.00 L120.00,120.00 L0.00,120.00 Z"]
+      RenderPath {rect} at (184.85,157.57) size 84.85x84.85 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M0.00,0.00 L120.00,0.00 L120.00,120.00 L0.00,120.00 Z"]
       RenderSVGText {text} at (20,280) size 434x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-27) size 434x33
           chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 28 width 434.00: "clipPathUnits=userSpaceOnUse"

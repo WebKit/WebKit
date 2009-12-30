@@ -4,6 +4,7 @@
     Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
     Copyright (C) 2009, Google, Inc.
+    Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -138,6 +139,7 @@ void RenderSVGImage::layout()
     calcHeight();
 
     m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
+    m_cachedLocalRepaintRect = FloatRect();
 
     repainter.repaintAfterLayout();
     
@@ -212,12 +214,27 @@ FloatRect RenderSVGImage::objectBoundingBox() const
 
 FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 {
-    FloatRect repaintRect = m_localBounds;
+    // If we already have a cached repaint rect, return that
+    if (!m_cachedLocalRepaintRect.isEmpty())
+        return m_cachedLocalRepaintRect;
 
-    // Filters can paint outside the image content
-    repaintRect.unite(filterBoundingBoxForRenderer(this));
+    m_cachedLocalRepaintRect = m_localBounds;
 
-    return repaintRect;
+    // FIXME: We need to be careful here. We assume that there is no filter,
+    // clipper or masker if the rects are empty.
+    FloatRect rect = filterBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect = rect;
+
+    rect = clipperBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect.intersect(rect);
+
+    rect = maskerBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect.intersect(rect);
+
+    return m_cachedLocalRepaintRect;
 }
 
 void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)

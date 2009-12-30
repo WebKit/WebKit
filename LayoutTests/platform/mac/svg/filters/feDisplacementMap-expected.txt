@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderSVGImage {image} at (10,10) size 220x100 [filter=f1]
+    RenderSVGImage {image} at (10,10) size 100x100 [filter=f1]
     RenderSVGImage {image} at (130,10) size 100x100 [filter=f1]

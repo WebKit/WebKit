@@ -34,6 +34,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "GraphicsContext.h"
+#include "RenderObject.h"
 #include "SVGMaskElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderStyle.h"
@@ -61,10 +62,15 @@ void SVGResourceMasker::invalidate()
     m_emptyMask = false;
 }
 
-bool SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
+FloatRect SVGResourceMasker::maskerBoundingBox(const FloatRect& objectBoundingBox) const
+{
+    return m_ownerElement->maskBoundingBox(objectBoundingBox);
+}
+
+bool SVGResourceMasker::applyMask(GraphicsContext* context, const RenderObject* object)
 {
     if (!m_mask && !m_emptyMask)
-        m_mask = m_ownerElement->drawMaskerContent(boundingBox, m_maskRect, m_emptyMask);
+        m_mask = m_ownerElement->drawMaskerContent(object, m_maskRect, m_emptyMask);
 
     if (!m_mask)
         return false;

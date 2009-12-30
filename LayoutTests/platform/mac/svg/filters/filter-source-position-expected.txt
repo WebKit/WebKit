@@ -5,18 +5,18 @@ KCanvasResource {id="filter4" [type=FILTER]  [bounding box=at (-20.00%,-20.00%) 
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,20) size 240x240
+  RenderSVGRoot {svg} at (42,42) size 196x196
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGImage {image} at (20,20) size 110x110
-    RenderSVGContainer {use} at (20,20) size 110x110 [filter=filter1]
+    RenderSVGContainer {use} at (42,42) size 88x88 [filter=filter1]
       RenderSVGContainer {g} at (20,20) size 110x110
         RenderSVGImage {image} at (20,20) size 110x110
-    RenderSVGContainer {use} at (128,20) size 132x110 [filter=filter2]
+    RenderSVGContainer {use} at (128,42) size 110x88 [filter=filter2]
       RenderSVGContainer {g} at (150,20) size 110x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,0.00)}]
         RenderSVGImage {image} at (150,20) size 110x110
-    RenderSVGContainer {use} at (20,128) size 110x132 [filter=filter3]
+    RenderSVGContainer {use} at (42,128) size 88x110 [filter=filter3]
       RenderSVGContainer {g} at (20,150) size 110x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
         RenderSVGImage {image} at (20,150) size 110x110
-    RenderSVGContainer {use} at (128,128) size 132x132 [filter=filter4]
+    RenderSVGContainer {use} at (128,128) size 110x110 [filter=filter4]
       RenderSVGContainer {g} at (150,150) size 110x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,130.00)}]
         RenderSVGImage {image} at (150,150) size 110x110

@@ -3,6 +3,7 @@
                   2004, 2005, 2008 Rob Buis <buis@kde.org>
                   2005, 2007 Eric Seidel <eric@webkit.org>
                   2009 Google, Inc.
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -112,6 +113,24 @@ FloatRect RenderPath::objectBoundingBox() const
     return m_cachedLocalFillBBox;
 }
 
+FloatRect RenderPath::strokeBoundingBox() const
+{
+    if (m_path.isEmpty())
+        return FloatRect();
+
+    if (!m_cachedLocalStrokeBBox.isEmpty())
+        return m_cachedLocalStrokeBBox;
+
+    if (!style()->svgStyle()->hasStroke())
+        m_cachedLocalStrokeBBox = objectBoundingBox();
+    else {
+        BoundingRectStrokeStyleApplier strokeStyle(this, style());
+        m_cachedLocalStrokeBBox = m_path.strokeBoundingRect(&strokeStyle);
+    }
+
+    return m_cachedLocalStrokeBBox;
+}
+
 FloatRect RenderPath::repaintRectInLocalCoordinates() const
 {
     if (m_path.isEmpty())
@@ -121,16 +140,24 @@ FloatRect RenderPath::repaintRectInLocalCoordinates() const
     if (!m_cachedLocalRepaintRect.isEmpty())
         return m_cachedLocalRepaintRect;
 
-    if (!style()->svgStyle()->hasStroke())
-        m_cachedLocalRepaintRect = objectBoundingBox();
-    else {
-        BoundingRectStrokeStyleApplier strokeStyle(this, style());
-        m_cachedLocalRepaintRect = m_path.strokeBoundingRect(&strokeStyle);
-    }
+    m_cachedLocalRepaintRect = strokeBoundingBox();
 
     // Markers and filters can paint outside of the stroke path
     m_cachedLocalRepaintRect.unite(m_markerBounds);
-    m_cachedLocalRepaintRect.unite(filterBoundingBoxForRenderer(this));
+
+    // FIXME: We need to be careful here. We assume that there is no filter,
+    // clipper or masker if the rects are empty.
+    FloatRect rect = filterBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect = rect;
+
+    rect = clipperBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect.intersect(rect);
+
+    rect = maskerBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        m_cachedLocalRepaintRect.intersect(rect);
 
     return m_cachedLocalRepaintRect;
 }
@@ -139,6 +166,7 @@ void RenderPath::setPath(const Path& newPath)
 {
     m_path = newPath;
     m_cachedLocalRepaintRect = FloatRect();
+    m_cachedLocalStrokeBBox = FloatRect();
     m_cachedLocalFillBBox = FloatRect();
 }
 

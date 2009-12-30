@@ -27,6 +27,7 @@
 #define SVGResourceClipper_h
 
 #if ENABLE(SVG)
+#include "FloatRect.h"
 #include "Path.h"
 #include "RenderObject.h"
 #include "SVGResource.h"
@@ -76,9 +77,11 @@ namespace WebCore {
 
         // To be implemented by the specific rendering devices
         void applyClip(GraphicsContext*, const FloatRect& boundingBox) const;
+        FloatRect clipperBoundingBox(const FloatRect& oob);
     private:
         SVGResourceClipper();
         ClipDataList m_clipData;
+        FloatRect m_clipperBoundingBox;
     };
 
     TextStream& operator<<(TextStream&, WindRule);

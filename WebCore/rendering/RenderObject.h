@@ -52,6 +52,9 @@ class RenderLayer;
 class RenderTheme;
 class TransformState;
 class VisiblePosition;
+#if ENABLE(SVG)
+class SVGRenderBase;
+#endif
 
 /*
  *  The painting of a layer occurs in three distinct phases.  Each phase involves
@@ -320,6 +323,8 @@ public:
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGForeignObject() const { return false; }
+
+    virtual const SVGRenderBase* toSVGRenderBase() const;
 
     // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
     // This is used for all computation of objectBoundingBox relative units and by SVGLocateable::getBBox().

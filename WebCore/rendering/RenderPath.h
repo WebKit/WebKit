@@ -48,6 +48,8 @@ private:
     bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
 
     virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const;
+    virtual FloatRect markerBoundingBox() const { return m_markerBounds; }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual TransformationMatrix localToParentTransform() const;
@@ -70,6 +72,7 @@ private:
 
     mutable Path m_path;
     mutable FloatRect m_cachedLocalFillBBox;
+    mutable FloatRect m_cachedLocalStrokeBBox;
     mutable FloatRect m_cachedLocalRepaintRect;
     FloatRect m_markerBounds;
     TransformationMatrix m_localTransform;

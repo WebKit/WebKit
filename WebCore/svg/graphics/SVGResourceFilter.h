@@ -68,7 +68,7 @@ public:
     float scaleX() const { return m_scaleX; }
     float scaleY() const { return m_scaleY; }
 
-    FloatRect filterBoundingBox() { return m_filterBBox; }
+    FloatRect filterBoundingBox(const FloatRect& obb) const;
     void setFilterBoundingBox(const FloatRect& rect) { m_filterBBox = rect; }
 
     bool prepareFilter(GraphicsContext*&, const RenderObject*);

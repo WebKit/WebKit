@@ -27,6 +27,8 @@
 #if ENABLE(SVG)
 #include "RenderInline.h"
 
+#include "SVGRenderSupport.h"
+
 namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
@@ -38,6 +40,9 @@ public:
     // These are shared between RenderSVGTSpan and RenderSVGTextPath
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
+
+    virtual FloatRect objectBoundingBox() const { return FloatRect(); }
+    virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
     
 private:
     virtual InlineFlowBox* createInlineFlowBox();

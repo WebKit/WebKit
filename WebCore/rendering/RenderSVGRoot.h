@@ -60,6 +60,7 @@ private:
     bool strokeContains(const FloatPoint&) const;
 
     virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const { return computeContainerBoundingBox(this, true); }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
     // FIXME: Both of these overrides should be removed.

@@ -109,6 +109,23 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+FloatRect SVGFilterElement::filterBoundingBox(const FloatRect& objectBoundingBox) const
+{
+    FloatRect filterBBox;
+    if (filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        filterBBox = FloatRect(x().valueAsPercentage() * objectBoundingBox.width() + objectBoundingBox.x(),
+                               y().valueAsPercentage() * objectBoundingBox.height() + objectBoundingBox.y(),
+                               width().valueAsPercentage() * objectBoundingBox.width(),
+                               height().valueAsPercentage() * objectBoundingBox.height());
+    else
+        filterBBox = FloatRect(x().value(this),
+                               y().value(this),
+                               width().value(this),
+                               height().value(this));
+
+    return filterBBox;
+}
+
 void SVGFilterElement::buildFilter(const FloatRect& targetRect) const
 {
     bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;

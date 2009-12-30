@@ -3,6 +3,7 @@
                   2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
     Copyright (C) 2009 Google, Inc.  All rights reserved.
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -148,14 +149,28 @@ FloatRect RenderSVGContainer::objectBoundingBox() const
     return computeContainerBoundingBox(this, false);
 }
 
+FloatRect RenderSVGContainer::strokeBoundingBox() const
+{
+    return computeContainerBoundingBox(this, true);
+}
+
 // RenderSVGContainer is used for <g> elements which do not themselves have a
 // width or height, so we union all of our child rects as our repaint rect.
 FloatRect RenderSVGContainer::repaintRectInLocalCoordinates() const
 {
     FloatRect repaintRect = computeContainerBoundingBox(this, true);
 
-    // A filter on this container can paint outside of the union of the child repaint rects
-    repaintRect.unite(filterBoundingBoxForRenderer(this));
+    FloatRect rect = filterBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect = rect;
+
+    rect = clipperBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
+
+    rect = maskerBoundingBoxForRenderer(this);
+    if (!rect.isEmpty())
+        repaintRect.intersect(rect);
 
     return repaintRect;
 }

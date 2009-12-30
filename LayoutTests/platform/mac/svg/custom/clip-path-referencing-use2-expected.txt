@@ -1,5 +1,25 @@
 CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
 CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
+CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
 KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M0.00,0.00 L0.00,0.00 L0.00,0.00 L0.00,0.00 Z]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

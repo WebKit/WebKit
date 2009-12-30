@@ -45,6 +45,7 @@ public:
     virtual void layout();
 
     virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const { return borderBoxRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);

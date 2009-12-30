@@ -30,6 +30,7 @@
 
 #include "GraphicsContext.h"
 #include "RenderObject.h"
+#include "SVGMaskElement.h"
 #include "SVGResource.h"
 
 #include <memory>
@@ -53,8 +54,8 @@ namespace WebCore {
         virtual SVGResourceType resourceType() const { return MaskerResourceType; }
         virtual TextStream& externalRepresentation(TextStream&) const;
 
-        // To be implemented by the specific rendering devices
-        bool applyMask(GraphicsContext*, const FloatRect& boundingBox);
+        FloatRect maskerBoundingBox(const FloatRect&) const;
+        bool applyMask(GraphicsContext*, const RenderObject*);
 
     private:
         SVGResourceMasker(const SVGMaskElement*);

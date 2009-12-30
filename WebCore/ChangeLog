@@ -1,3 +1,88 @@
+2009-12-29  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Detailed boundingBoxes in SVG Renderer
+        https://bugs.webkit.org/show_bug.cgi?id=32815
+
+        Add new bounding boxes for strokes, filters, masker and clipper in SVG.
+        These new bounding boxes help to fix repaintRectInLocalCoordinates.
+        We calculate the smallest repaint rect considering the new bounding boxes
+        now, filters get the correct paint area, masker clip the mask image size
+        to the visible area of the target.
+
+        Tests: Many tests need an update. The changes in repaintRectInLocalCoordinates
+               affect the LayoutTests.     
+
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::strokeBoundingBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::toSVGRenderBase):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::strokeBoundingBox):
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::setPath):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::markerBoundingBox):
+        * rendering/RenderSVGBlock.h:
+        (WebCore::RenderSVGBlock::toSVGRenderBase):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::strokeBoundingBox):
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::toSVGRenderBase):
+        (WebCore::RenderSVGImage::strokeBoundingBox):
+        * rendering/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::objectBoundingBox):
+        (WebCore::RenderSVGInline::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::toSVGRenderBase):
+        * rendering/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::strokeBoundingBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::toSVGRenderBase):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::~SVGRenderBase):
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::clipperBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::maskerBoundingBoxForRenderer):
+        * rendering/SVGRenderSupport.h:
+        (WebCore::SVGRenderBase::toSVGRenderBase):
+        (WebCore::SVGRenderBase::strokeBoundingBox):
+        (WebCore::SVGRenderBase::markerBoundingBox):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::toSVGRenderBase):
+        (WebCore::SVGRootInlineBox::objectBoundingBox):
+        (WebCore::SVGRootInlineBox::repaintRectInLocalCoordinates):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::filterBoundingBox):
+        * svg/SVGFilterElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::maskBoundingBox):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGMaskElement.h:
+        * svg/graphics/SVGResourceClipper.cpp:
+        (WebCore::SVGResourceClipper::clipperBoundingBox):
+        * svg/graphics/SVGResourceClipper.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::filterBoundingBox):
+        (WebCore::shouldProcessFilter):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::maskerBoundingBox):
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/SVGResourceMasker.h:
+
 2009-12-29  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.

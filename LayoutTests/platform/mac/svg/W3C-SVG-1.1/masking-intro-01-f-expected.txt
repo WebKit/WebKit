@@ -3,12 +3,12 @@ KCanvasResource {id="two" [type=MASKER]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0) size 479x359.50
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGText {text} at (62,35) size 356x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-17) size 356x22
         chunk 1 (middle anchor) text run 1 at (62.50,35.00) startOffset 0 endOffset 51 width 355.00: "Testing stroke inclusion for 'clip-path' and 'mask'"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderPath {rect} at (150,0) size 200x200 [fill={[type=SOLID] [color=#00008B]}] [clip path="one"] [data="M150.00,0.00 L350.00,0.00 L350.00,200.00 L150.00,200.00 Z"]
+    RenderPath {rect} at (170,60) size 160x80 [fill={[type=SOLID] [color=#00008B]}] [clip path="one"] [data="M150.00,0.00 L350.00,0.00 L350.00,200.00 L150.00,200.00 Z"]
     RenderSVGText {text} at (50,110) size 111x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 111x18
         chunk 1 text run 1 at (50.00,110.00) startOffset 0 endOffset 19 width 111.00: "With a 'clip-path':"
