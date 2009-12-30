@@ -26,11 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import tempfile
 import unittest
 from modules.credentials import Credentials
 from modules.executive import Executive
 from modules.outputcapture import OutputCapture
-from modules.scm_unittest import SVNTestRepository
 from modules.mock import Mock
 
 class CredentialsTest(unittest.TestCase):
@@ -102,20 +103,17 @@ password: "SECRETSAUCE"
         credentials._read_git_config("foo")
         executive_mock.run_command.assert_called_with(["git", "config", "--get", "test_prefix.foo"], error_handler=Executive.ignore_error)
 
-    def test_read_credentials_with_SVN(self):
-        # Note, this test assumes that SVN is installed as listed on 
-        # <http://webkit.org/building/tools.html> as of 12/27/2009.
-
+    def test_read_credentials_without_git_repo(self):
         class FakeCredentials(Credentials):
             def _is_mac_os_x(self):
                 return True
             def _credentials_from_keychain(self, username):
                 return ["test@webkit.org", "SECRETSAUCE"]
 
-        SVNTestRepository.setup(self)
-        credentials = FakeCredentials("bugs.webkit.org", cwd=self.svn_checkout_path)
+        temp_dir_path = tempfile.mkdtemp(suffix="not_a_git_repo")
+        credentials = FakeCredentials("bugs.webkit.org", cwd=temp_dir_path)
         self.assertEqual(credentials.read_credentials(), ["test@webkit.org", "SECRETSAUCE"])
-        SVNTestRepository.tear_down(self)
+        os.rmdir(temp_dir_path)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,22 @@
 2009-12-29  Daniel Bates  <dbates@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33041
+
+        Speed up the test method test_read_credentials_with_SVN by not actually
+        creating an SVN repository to test against (by default). Instead, it is
+        sufficient to create a temporary directory that does not contain a Git
+        repository.
+
+        Also, renamed method test_read_credentials_with_SVN to
+        test_read_credentials_without_git_repo, to better reflect what it is
+        testing.
+
+        * Scripts/modules/credentials_unittest.py:
+
+2009-12-29  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Adam Barth.
 
         https://bugs.webkit.org/show_bug.cgi?id=33039
