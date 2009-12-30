@@ -29,18 +29,18 @@
  */
 
 #include "config.h"
-#include "Attr.h"
+#include "V8Attr.h"
 
+#include "Attr.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-ACCESSOR_SETTER(AttrValue)
+void V8Attr::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     Attr* imp = V8DOMWrapper::convertDOMWrapperToNode<Attr>(info.Holder());
     String attrValue = toWebCoreStringWithNullCheck(value);

@@ -29,8 +29,16 @@
  */
 
 #include "config.h"
-#include "Location.h"
+#include "V8Location.h"
 
+#include "CSSHelper.h"
+#include "Document.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "KURL.h"
+#include "Location.h"
+#include "PlatformString.h"
+#include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8CustomBinding.h"
@@ -38,14 +46,6 @@
 #include "V8Location.h"
 #include "V8Utilities.h"
 #include "V8Proxy.h"
-
-#include "PlatformString.h"
-#include "KURL.h"
-#include "Document.h"
-#include "FrameLoader.h"
-#include "ScriptController.h"
-#include "CSSHelper.h"
-#include "Frame.h"
 
 namespace WebCore {
 
@@ -59,7 +59,7 @@ namespace WebCore {
 // we're just making all these custom for now.  The functionality is simple
 // and mirrors JSLocationCustom.cpp.
 
-ACCESSOR_SETTER(LocationHash)
+void V8Location::hashAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.hash._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -82,7 +82,7 @@ ACCESSOR_SETTER(LocationHash)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationHost)
+void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.host._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -102,7 +102,7 @@ ACCESSOR_SETTER(LocationHost)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationHostname)
+void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.hostname._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -119,7 +119,7 @@ ACCESSOR_SETTER(LocationHostname)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationHref)
+void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.href._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -139,7 +139,7 @@ ACCESSOR_SETTER(LocationHref)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationPathname)
+void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.pathname._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -156,7 +156,7 @@ ACCESSOR_SETTER(LocationPathname)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationPort)
+void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.port._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -173,7 +173,7 @@ ACCESSOR_SETTER(LocationPort)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationProtocol)
+void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.protocol._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -190,7 +190,7 @@ ACCESSOR_SETTER(LocationProtocol)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_SETTER(LocationSearch)
+void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.search._set");
     v8::Handle<v8::Object> holder = info.Holder();
@@ -207,7 +207,7 @@ ACCESSOR_SETTER(LocationSearch)
     navigateIfAllowed(frame, url, false, false);
 }
 
-ACCESSOR_GETTER(LocationReload)
+v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.reload._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::reloadCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
@@ -225,7 +225,7 @@ ACCESSOR_GETTER(LocationReload)
     return privateTemplate->GetFunction();
 }
 
-ACCESSOR_GETTER(LocationReplace)
+v8::Handle<v8::Value> V8Location::replaceAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.replace._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::replaceCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
@@ -243,7 +243,7 @@ ACCESSOR_GETTER(LocationReplace)
     return privateTemplate->GetFunction();
 }
 
-ACCESSOR_GETTER(LocationAssign)
+v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.assign._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate =

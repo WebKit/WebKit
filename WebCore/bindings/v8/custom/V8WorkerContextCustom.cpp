@@ -54,13 +54,6 @@ ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications)
 }
 #endif
 
-ACCESSOR_GETTER(WorkerContextSelf)
-{
-    INC_STATS(L"DOM.WorkerContext.self._get");
-    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(info.Holder());
-    return WorkerContextExecutionProxy::convertWorkerContextToV8Object(workerContext);
-}
-
 v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singleShot)
 {
     WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());

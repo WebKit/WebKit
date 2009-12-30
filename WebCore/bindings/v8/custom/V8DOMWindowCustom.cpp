@@ -167,7 +167,7 @@ static v8::Handle<v8::Value> convertBase64(const String& str, bool encode)
     return v8String(String(outputCharacters.data(), outputCharacters.size()));
 }
 
-ACCESSOR_GETTER(DOMWindowEvent)
+v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
     if (holder.IsEmpty())
@@ -188,7 +188,7 @@ ACCESSOR_GETTER(DOMWindowEvent)
     return jsEvent;
 }
 
-ACCESSOR_SETTER(DOMWindowEvent)
+void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
     if (holder.IsEmpty())
@@ -206,20 +206,20 @@ ACCESSOR_SETTER(DOMWindowEvent)
     context->Global()->SetHiddenValue(eventSymbol, value);
 }
 
-ACCESSOR_GETTER(DOMWindowCrypto)
+v8::Handle<v8::Value> V8DOMWindow::cryptoAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     // FIXME: Implement me.
     return v8::Undefined();
 }
 
-ACCESSOR_SETTER(DOMWindowLocation)
+void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     V8Custom::WindowSetLocation(imp, toWebCoreString(value));
 }
 
 
-ACCESSOR_SETTER(DOMWindowOpener)
+void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
 
@@ -245,7 +245,7 @@ ACCESSOR_SETTER(DOMWindowOpener)
 
 #if ENABLE(VIDEO)
 
-ACCESSOR_GETTER(DOMWindowAudio)
+v8::Handle<v8::Value> V8DOMWindow::AudioAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     return V8DOMWrapper::getConstructor(V8ClassIndex::AUDIO, window);
@@ -325,13 +325,13 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache)
 }
 #endif
 
-ACCESSOR_GETTER(DOMWindowImage)
+v8::Handle<v8::Value> V8DOMWindow::ImageAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     return V8DOMWrapper::getConstructor(V8ClassIndex::IMAGE, window);
 }
 
-ACCESSOR_GETTER(DOMWindowOption)
+v8::Handle<v8::Value> V8DOMWindow::OptionAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     return V8DOMWrapper::getConstructor(V8ClassIndex::OPTION, window);

@@ -282,16 +282,32 @@ END
 END
     }
 
-
     foreach my $function (@{$dataNode->functions}) {
         my $name = $function->signature->name;
         push(@headerContent, <<END);
   static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
     }
+    
+    foreach my $attribute (@{$dataNode->attributes}) {
+        my $name = $attribute->signature->name;
+        my $attrExt = $attribute->signature->extendedAttributes;
+        if ($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"}
+            || $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) {
+            push(@headerContent, <<END);
+  static v8::Handle<v8::Value> ${name}AccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
+END
+        }
+        if ($attrExt->{"V8CustomSetter"} || $attrExt->{"CustomSetter"}
+            || $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) {
+            push(@headerContent, <<END);
+  static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
+END
+        }
+    }
 
     GenerateHeaderCustomCall($dataNode);
-    
+
     push(@headerContent, <<END);
 
  private:
@@ -314,6 +330,15 @@ sub GenerateHeaderCustomCall
     
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@headerContent, "  static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
+    }
+    if ($dataNode->name eq "Event") {
+        push(@headerContent, "  static v8::Handle<v8::Value> dataTransferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);\n");
+        push(@headerContent, "  static void valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);\n");
+    }
+    if ($dataNode->name eq "Location") {
+        push(@headerContent, "  static v8::Handle<v8::Value> assignAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);\n");
+        push(@headerContent, "  static v8::Handle<v8::Value> reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);\n");
+        push(@headerContent, "  static v8::Handle<v8::Value> replaceAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);\n");
     }
 }
 
@@ -1053,7 +1078,7 @@ sub GenerateSingleBatchedAttribute
         "";
     if ($customAccessor eq 1) {
         # use the naming convension, interface + (capitalize) attr name
-        $customAccessor = $interfaceName . $codeGenerator->WK_ucfirst($attrName);
+        $customAccessor = $interfaceName . "::" . $attrName;
     }
 
     my $getter;
@@ -1078,7 +1103,7 @@ sub GenerateSingleBatchedAttribute
         $constructorType =~ s/Constructor$//;
         my $constructorIndex = uc($constructorType);
         if ($customAccessor) {
-            $getter = "V8Custom::v8${customAccessor}AccessorGetter";
+            $getter = "V8${customAccessor}AccessorGetter";
         } else {
             $data = "V8ClassIndex::${constructorIndex}";
             $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
@@ -1094,12 +1119,12 @@ sub GenerateSingleBatchedAttribute
         # Custom Setter
         if ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
             $hasCustomSetter = 1;
-            $setter = "V8Custom::v8${customAccessor}AccessorSetter";
+            $setter = "V8${customAccessor}AccessorSetter";
         }
 
         # Custom Getter
         if ($attrExt->{"CustomGetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
-            $getter = "V8Custom::v8${customAccessor}AccessorGetter";
+            $getter = "V8${customAccessor}AccessorGetter";
         }
     }
 

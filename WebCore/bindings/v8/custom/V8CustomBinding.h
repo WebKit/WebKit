@@ -36,14 +36,6 @@
 
 struct NPObject;
 
-#define ACCESSOR_GETTER(NAME) \
-    v8::Handle<v8::Value> V8Custom::v8##NAME##AccessorGetter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
-#define ACCESSOR_SETTER(NAME) \
-    void V8Custom::v8##NAME##AccessorSetter(v8::Local<v8::String> name, \
-        v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
 #define INDEXED_PROPERTY_GETTER(NAME) \
     v8::Handle<v8::Value> V8Custom::v8##NAME##IndexedPropertyGetter( \
         uint32_t index, const v8::AccessorInfo& info)
@@ -184,16 +176,6 @@ namespace WebCore {
         static const int kWebSocketInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
 #endif
 
-#define DECLARE_PROPERTY_ACCESSOR_GETTER(NAME) \
-    static v8::Handle<v8::Value> v8##NAME##AccessorGetter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
-#define DECLARE_PROPERTY_ACCESSOR_SETTER(NAME)  \
-    static void v8##NAME##AccessorSetter(v8::Local<v8::String> name, \
-        v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
-#define DECLARE_PROPERTY_ACCESSOR(NAME) DECLARE_PROPERTY_ACCESSOR_GETTER(NAME); DECLARE_PROPERTY_ACCESSOR_SETTER(NAME)
-
 #define DECLARE_NAMED_PROPERTY_GETTER(NAME)  \
     static v8::Handle<v8::Value> v8##NAME##NamedPropertyGetter( \
         v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -244,15 +226,7 @@ namespace WebCore {
 
 #define DECLARE_ACCESSOR_RUNTIME_ENABLER(NAME) static bool v8##NAME##Enabled()
 
-        DECLARE_PROPERTY_ACCESSOR(CanvasRenderingContext2DStrokeStyle);
-        DECLARE_PROPERTY_ACCESSOR(CanvasRenderingContext2DFillStyle);
-        DECLARE_PROPERTY_ACCESSOR(DOMWindowEvent);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowCrypto);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowLocation);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(DOMWindowOpener);
-
 #if ENABLE(VIDEO)
-        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowAudio);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLMediaElement);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLAudioElement);
@@ -260,37 +234,12 @@ namespace WebCore {
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowMediaError);
 #endif
 
-        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowImage);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(DOMWindowOption);
-
-        DECLARE_PROPERTY_ACCESSOR(DocumentLocation);
-        DECLARE_PROPERTY_ACCESSOR(DocumentImplementation);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(EventSrcElement);
-        DECLARE_PROPERTY_ACCESSOR(EventReturnValue);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(EventDataTransfer);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(EventClipboardData);
-
-        DECLARE_PROPERTY_ACCESSOR(DOMWindowEventHandler);
-
-        DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLFrameElementSrc);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLFrameElementLocation);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(HTMLIFrameElementSrc);
-
-        DECLARE_PROPERTY_ACCESSOR_SETTER(AttrValue);
-
-        DECLARE_PROPERTY_ACCESSOR(HTMLOptionsCollectionLength);
-
-
-        DECLARE_PROPERTY_ACCESSOR(HTMLInputElementSelectionStart);
-        DECLARE_PROPERTY_ACCESSOR(HTMLInputElementSelectionEnd);
-
         DECLARE_NAMED_ACCESS_CHECK(Location);
         DECLARE_INDEXED_ACCESS_CHECK(History);
 
         DECLARE_NAMED_ACCESS_CHECK(History);
         DECLARE_INDEXED_ACCESS_CHECK(Location);
 
-        DECLARE_PROPERTY_ACCESSOR(HTMLDocumentAll);
         DECLARE_NAMED_PROPERTY_GETTER(HTMLDocument);
         DECLARE_NAMED_PROPERTY_DELETER(HTMLDocument);
 
@@ -316,39 +265,6 @@ namespace WebCore {
         DECLARE_CALLBACK(WebGLUnsignedIntArrayConstructor);
         DECLARE_CALLBACK(WebGLUnsignedShortArrayConstructor);
 #endif
-
-        DECLARE_PROPERTY_ACCESSOR_GETTER(ClipboardTypes);
-
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationProtocol);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationHost);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationHostname);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationPort);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationPathname);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationSearch);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationHash);
-        DECLARE_PROPERTY_ACCESSOR_SETTER(LocationHref);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(LocationAssign);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(LocationReplace);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(LocationReload);
-
-        // We actually only need this because WebKit has
-        // navigator.appVersion as custom. Our version just
-        // passes through.
-        DECLARE_PROPERTY_ACCESSOR(NavigatorAppVersion);
-
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnabort);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnerror);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnload);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnloadstart);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnprogress);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestOnreadystatechange);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestResponseText);
-
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnabort);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnerror);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnload);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnloadstart);
-        DECLARE_PROPERTY_ACCESSOR(XMLHttpRequestUploadOnprogress);
 
         DECLARE_NAMED_PROPERTY_GETTER(DOMWindow);
         DECLARE_INDEXED_PROPERTY_GETTER(DOMWindow);
@@ -408,13 +324,7 @@ namespace WebCore {
         DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray);
 #endif
 
-        DECLARE_PROPERTY_ACCESSOR_GETTER(MessageEventPorts);
-
-        DECLARE_PROPERTY_ACCESSOR(MessagePortOnmessage);
-        DECLARE_PROPERTY_ACCESSOR(MessagePortOnclose);
-
 #if ENABLE(DATAGRID)
-        DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);
         DECLARE_NAMED_PROPERTY_GETTER(DataGridColumnList);
 #endif
 
@@ -434,33 +344,16 @@ namespace WebCore {
         static v8::Handle<v8::Array> v8StorageNamedPropertyEnumerator(const v8::AccessorInfo& info);
 #endif
 
-#if ENABLE(SVG)
-        DECLARE_PROPERTY_ACCESSOR_GETTER(SVGLengthValue);
-#endif
-
 #if ENABLE(WORKERS)
-        DECLARE_PROPERTY_ACCESSOR(AbstractWorkerOnerror);
-
-        DECLARE_PROPERTY_ACCESSOR(DedicatedWorkerContextOnmessage);
-
-        DECLARE_PROPERTY_ACCESSOR(WorkerOnmessage);
         DECLARE_CALLBACK(WorkerConstructor);
-
-        DECLARE_PROPERTY_ACCESSOR_GETTER(WorkerContextSelf);
-        DECLARE_PROPERTY_ACCESSOR(WorkerContextOnerror);
 
 #if ENABLE(NOTIFICATIONS)
         DECLARE_ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications);
 #endif
 #endif // ENABLE(WORKERS)
 
-#if ENABLE(NOTIFICATIONS)
-        DECLARE_PROPERTY_ACCESSOR(NotificationEventHandler);
-#endif // ENABLE(NOTIFICATIONS)
-
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache);
-        DECLARE_PROPERTY_ACCESSOR(DOMApplicationCacheEventHandler);
 #endif
 
 #if ENABLE(SHARED_WORKERS)
@@ -473,24 +366,12 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-        DECLARE_PROPERTY_ACCESSOR(WebSocketOnopen);
-        DECLARE_PROPERTY_ACCESSOR(WebSocketOnmessage);
-        DECLARE_PROPERTY_ACCESSOR(WebSocketOnclose);
         DECLARE_CALLBACK(WebSocketConstructor);
         DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket);
 #endif
 
-        DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesAltitude);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesAltitudeAccuracy);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesHeading);
-        DECLARE_PROPERTY_ACCESSOR_GETTER(CoordinatesSpeed);
-
 #undef DECLARE_INDEXED_ACCESS_CHECK
 #undef DECLARE_NAMED_ACCESS_CHECK
-
-#undef DECLARE_PROPERTY_ACCESSOR_SETTER
-#undef DECLARE_PROPERTY_ACCESSOR_GETTER
-#undef DECLARE_PROPERTY_ACCESSOR
 
 #undef DECLARE_NAMED_PROPERTY_GETTER
 #undef DECLARE_NAMED_PROPERTY_SETTER
@@ -513,7 +394,6 @@ namespace WebCore {
 #if ENABLE(SVG)
         static V8ClassIndex::V8WrapperType DowncastSVGPathSeg(void* pathSeg);
 #endif
-    private:
         static void WindowSetLocation(DOMWindow*, const String&);
     };
 

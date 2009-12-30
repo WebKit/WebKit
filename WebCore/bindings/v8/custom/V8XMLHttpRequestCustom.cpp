@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-ACCESSOR_GETTER(XMLHttpRequestResponseText)
+v8::Handle<v8::Value> V8XMLHttpRequest::responseTextAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.XMLHttpRequest.responsetext._get");
     XMLHttpRequest* xmlHttpRequest = V8DOMWrapper::convertToNativeObject<XMLHttpRequest>(V8ClassIndex::XMLHTTPREQUEST, info.Holder());

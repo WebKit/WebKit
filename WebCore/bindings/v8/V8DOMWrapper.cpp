@@ -50,6 +50,7 @@
 #include "V8HTMLCollection.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
+#include "V8Location.h"
 #include "V8NodeList.h"
 #include "V8Proxy.h"
 #include "WebGLArray.h"
@@ -338,9 +339,9 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // instead of on the prototype object to insure that they cannot
         // be overwritten.
         v8::Local<v8::ObjectTemplate> instance = descriptor->InstanceTemplate();
-        instance->SetAccessor(v8::String::New("reload"), V8Custom::v8LocationReloadAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-        instance->SetAccessor(v8::String::New("replace"), V8Custom::v8LocationReplaceAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-        instance->SetAccessor(v8::String::New("assign"), V8Custom::v8LocationAssignAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+        instance->SetAccessor(v8::String::New("reload"), V8Location::reloadAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+        instance->SetAccessor(v8::String::New("replace"), V8Location::replaceAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+        instance->SetAccessor(v8::String::New("assign"), V8Location::assignAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
         break;
     }
     case V8ClassIndex::HISTORY:

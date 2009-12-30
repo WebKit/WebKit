@@ -1,3 +1,38 @@
+2009-12-30  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Auto-generate V8 bindings header declarations for
+        property accessor getter/setters, and remove a couple of
+        unnecessarily custom bindings that weren't properly declared
+        custom anyway.
+
+        * Android.v8bindings.mk: Remove V8NavigatorCustom.cpp.
+        * WebCore.gypi: Remove V8NavigatorCustom.cpp.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/custom/V8AttrCustom.cpp:
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        * bindings/v8/custom/V8CoordinatesCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        * bindings/v8/custom/V8EventCustom.cpp:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Removed.
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+
 2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

@@ -74,25 +74,25 @@ static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value)
     return 0;
 }
 
-ACCESSOR_GETTER(CanvasRenderingContext2DStrokeStyle)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     return toV8(impl->strokeStyle());
 }
 
-ACCESSOR_SETTER(CanvasRenderingContext2DStrokeStyle)
+void V8CanvasRenderingContext2D::strokeStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     impl->setStrokeStyle(toCanvasStyle(value));
 }
 
-ACCESSOR_GETTER(CanvasRenderingContext2DFillStyle)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::fillStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     return toV8(impl->fillStyle());
 }
 
-ACCESSOR_SETTER(CanvasRenderingContext2DFillStyle)
+void V8CanvasRenderingContext2D::fillStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     impl->setFillStyle(toCanvasStyle(value));

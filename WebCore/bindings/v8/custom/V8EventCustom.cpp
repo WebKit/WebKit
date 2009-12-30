@@ -29,25 +29,25 @@
  */
 
 #include "config.h"
-#include "Event.h"
+#include "V8Event.h"
 
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
+#include "Event.h"
 #include "MouseEvent.h"
-
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-ACCESSOR_SETTER(EventReturnValue)
+void V8Event::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
     event->setDefaultPrevented(!value->BooleanValue());
 }
 
-ACCESSOR_GETTER(EventDataTransfer)
+v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
 
@@ -57,7 +57,7 @@ ACCESSOR_GETTER(EventDataTransfer)
     return v8::Undefined();
 }
 
-ACCESSOR_GETTER(EventClipboardData)
+v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
 
@@ -65,18 +65,6 @@ ACCESSOR_GETTER(EventClipboardData)
         return V8DOMWrapper::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<ClipboardEvent*>(event)->clipboard());
 
     return v8::Undefined();
-}
-
-ACCESSOR_GETTER(EventSrcElement)
-{
-    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
-    return V8DOMWrapper::convertEventTargetToV8Object(event->target());
-}
-
-ACCESSOR_GETTER(EventReturnValue)
-{
-    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
-    return event->defaultPrevented() ? v8::False() : v8::True();
 }
 
 } // namespace WebCore

@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
+#include "V8HTMLFrameElement.h"
+
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
-
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
@@ -40,7 +41,7 @@ namespace WebCore {
 
 using namespace HTMLNames; 
 
-ACCESSOR_SETTER(HTMLFrameElementSrc)
+void V8HTMLFrameElement::srcAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
     String srcValue = toWebCoreStringWithNullCheck(value);
@@ -51,7 +52,7 @@ ACCESSOR_SETTER(HTMLFrameElementSrc)
     frame->setAttribute(srcAttr, srcValue); 
 }
 
-ACCESSOR_SETTER(HTMLFrameElementLocation)
+void V8HTMLFrameElement::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
     String locationValue = toWebCoreStringWithNullCheck(value);

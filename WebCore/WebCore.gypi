@@ -720,7 +720,6 @@
             'bindings/v8/custom/V8NamedNodeMapCustom.cpp',
             'bindings/v8/custom/V8NamedNodesCollection.cpp',
             'bindings/v8/custom/V8NamedNodesCollection.h',
-            'bindings/v8/custom/V8NavigatorCustom.cpp',
             'bindings/v8/custom/V8NodeCustom.cpp',
             'bindings/v8/custom/V8NodeFilterCustom.cpp',
             'bindings/v8/custom/V8NodeIteratorCustom.cpp',

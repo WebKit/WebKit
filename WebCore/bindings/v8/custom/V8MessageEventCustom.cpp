@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-ACCESSOR_GETTER(MessageEventPorts)
+v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.MessageEvent.ports");
     MessageEvent* event = V8DOMWrapper::convertToNativeObject<MessageEvent>(V8ClassIndex::MESSAGEEVENT, info.Holder());
