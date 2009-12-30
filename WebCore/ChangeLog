@@ -1,3 +1,17 @@
+2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Generate configuring undetectable collection.
+        https://bugs.webkit.org/show_bug.cgi?id=33063
+
+        Refactoring, covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added GenerateImplementationMasqueradeAsUndefined.
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Touched to keep IB-based builds happy.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate): Removed hand-configuring.
+
 2009-12-30  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1322,6 +1322,15 @@ sub GenerateImplementationCustomCall
     }
 }
 
+sub GenerateImplementationMasqueradesAsUndefined
+{
+    my $dataNode = shift;
+    if ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"})
+    {
+        push(@implContent, "  desc->InstanceTemplate()->MarkAsUndetectable();\n");
+    }
+}
+
 sub GenerateImplementation
 {
     my $object = shift;
@@ -1617,6 +1626,7 @@ END
     GenerateImplementationIndexer($dataNode, $indexer);
     GenerateImplementationNamedPropertyGetter($dataNode, $namedPropertyGetter);
     GenerateImplementationCustomCall($dataNode);
+    GenerateImplementationMasqueradesAsUndefined($dataNode);
 
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;

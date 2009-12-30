@@ -274,9 +274,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(ConstructorToString));
     descriptor->Set(GetToStringName(), toStringTemplate);
     switch (type) {
-    case V8ClassIndex::HTMLALLCOLLECTION:
-        descriptor->InstanceTemplate()->MarkAsUndetectable();
-        break;
     case V8ClassIndex::HTMLDOCUMENT: {
         // We add an extra internal field to all Document wrappers for
         // storing a per document DOMImplementation wrapper.
