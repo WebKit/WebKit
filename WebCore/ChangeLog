@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        Remove unused code from V8DOMWrapper.
+
+        * bindings/v8/V8DOMWrapper.cpp: Removed code that I added but it's no longer used.
+        * bindings/v8/V8DOMWrapper.h: Ditto.
+
+2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [V8] Generate configuring undetectable collection.
         https://bugs.webkit.org/show_bug.cgi?id=33063
 
