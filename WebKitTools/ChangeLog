@@ -1,3 +1,21 @@
+2009-12-29  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Fixed a bug in fixChangeLogPatch, made it work correctly in
+        more circumstances, and added unit tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32919
+
+        * Scripts/VCSUtils.pm:
+          Rewrote fixChangeLogPatch.
+          
+        * Scripts/VCSUtils_unittest.pl: Added.
+          Added 7 unit tests for fixChangeLogPatch.
+
+        * Scripts/test-webkit-perl: Added.
+          Added test harness for unit tests of Perl code.
+
 2009-12-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -1,4 +1,5 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
+# Copyright (C) 2009 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -356,64 +357,143 @@ sub gitdiff2svndiff($)
     return $_;
 }
 
-# The diff(1) command is greedy when matching lines, so a new ChangeLog entry will
-# have lines of context at the top of a patch when the existing entry has the same
-# date and author as the new entry.  Alter the ChangeLog patch so
-# that the added lines ("+") in the patch always start at the beginning of the
-# patch and there are no initial lines of context.
+# If possible, returns a ChangeLog patch equivalent to the given one,
+# but with the newest ChangeLog entry inserted at the top of the
+# file -- i.e. no leading context and all lines starting with "+".
+#
+# If given a patch string not representable as a patch with the above
+# properties, it returns the input back unchanged.
+#
+# WARNING: This subroutine can return an inequivalent patch string if
+# both the beginning of the new ChangeLog file matches the beginning
+# of the source ChangeLog, and the source beginning was modified.
+# Otherwise, it is guaranteed to return an equivalent patch string,
+# if it returns.
+#
+# Applying this subroutine to ChangeLog patches allows svn-apply to
+# insert new ChangeLog entries at the top of the ChangeLog file.
+# svn-apply uses patch with --fuzz=3 to do this. We need to apply
+# this subroutine because the diff(1) command is greedy when matching
+# lines. A new ChangeLog entry with the same date and author as the
+# previous will match and cause the diff to have lines of starting
+# context.
+#
+# This subroutine has unit tests in VCSUtils_unittest.pl.
 sub fixChangeLogPatch($)
 {
     my $patch = shift; # $patch will only contain patch fragments for ChangeLog.
 
     $patch =~ /(\r?\n)/;
     my $lineEnding = $1;
-    my @patchLines = split(/$lineEnding/, $patch);
+    my @lines = split(/$lineEnding/, $patch);
 
-    # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
-    my $dateLineRegexpString = '^\+(\d{4}-\d{2}-\d{2})' # Consume the leading '+' and the date.
-                             . '\s+(.+)\s+' # Consume the name.
-                             . '<([^<>]+)>$'; # And finally the email address.
+    my $i = 0; # We reuse the same index throughout.
 
-    # Figure out where the patch contents start and stop.
-    my $patchHeaderIndex;
-    my $firstContentIndex;
-    my $trailingContextIndex;
-    my $dateIndex;
-    my $patchEndIndex = scalar(@patchLines);
-    for (my $index = 0; $index < @patchLines; ++$index) {
-        my $line = $patchLines[$index];
-        if ($line =~ /^\@\@ -\d+,\d+ \+\d+,\d+ \@\@$/) { # e.g. @@ -1,5 +1,18 @@
-            if ($patchHeaderIndex) {
-                $patchEndIndex = $index; # We only bother to fix up the first patch fragment.
-                last;
-            }
-            $patchHeaderIndex = $index;
+    # Skip to beginning of first chunk.
+    for (; $i < @lines; ++$i) {
+        if (substr($lines[$i], 0, 1) eq "@") {
+            last;
         }
-        $firstContentIndex = $index if ($patchHeaderIndex && !$firstContentIndex && $line =~ /^\+[^+]/); # Only match after finding patchHeaderIndex, otherwise we'd match "+++".
-        $dateIndex = $index if ($line =~ /$dateLineRegexpString/);
-        $trailingContextIndex = $index if ($firstContentIndex && !$trailingContextIndex && $line =~ /^ /);
     }
-    my $contentLineCount = $trailingContextIndex - $firstContentIndex;
-    my $trailingContextLineCount = $patchEndIndex - $trailingContextIndex;
+    my $chunkStartIndex = ++$i;
 
-    # If we didn't find a date line in the content then this is not a patch we should try and fix.
-    return $patch if (!$dateIndex);
-
-    # We only need to do anything if the date line is not the first content line.
-    return $patch if ($dateIndex == $firstContentIndex);
-
-    # Write the new patch.
-    my $totalNewContentLines = $contentLineCount + $trailingContextLineCount;
-    $patchLines[$patchHeaderIndex] = "@@ -1,$trailingContextLineCount +1,$totalNewContentLines @@"; # Write a new header.
-    my @repeatedLines = splice(@patchLines, $dateIndex, $trailingContextIndex - $dateIndex); # The date line and all the content after it that diff saw as repeated.
-    splice(@patchLines, $firstContentIndex, 0, @repeatedLines); # Move the repeated content to the top.
-    foreach my $line (@repeatedLines) {
-        $line =~ s/^\+/ /;
+    # Optimization: do not process if new lines already begin the chunk.
+    if (substr($lines[$i], 0, 1) eq "+") {
+        return $patch;
     }
-    splice(@patchLines, $trailingContextIndex, $patchEndIndex, @repeatedLines); # Replace trailing context with the repeated content.
-    splice(@patchLines, $patchHeaderIndex + 1, $firstContentIndex - $patchHeaderIndex - 1); # Remove any leading context.
 
-    return join($lineEnding, @patchLines) . "\n"; # patch(1) expects an extra trailing newline.
+    # Skip to first line of newly added ChangeLog entry.
+    # For example, +2009-06-03  Eric Seidel  <eric@webkit.org>
+    my $dateStartRegEx = '^\+(\d{4}-\d{2}-\d{2})' # leading "+" and date
+                         . '\s+(.+)\s+' # name
+                         . '<([^<>]+)>$'; # e-mail address
+
+    for (; $i < @lines; ++$i) {
+        my $line = $lines[$i];
+        my $firstChar = substr($line, 0, 1);
+        if ($line =~ /$dateStartRegEx/) {
+            last;
+        } elsif ($firstChar eq " " or $firstChar eq "+") {
+            next;
+        }
+        return $patch; # Do not change if, for example, "-" or "@" found.
+    }
+    if ($i >= @lines) {
+        return $patch; # Do not change if date not found.
+    }
+    my $dateStartIndex = $i;
+
+    # Rewrite overlapping lines to lead with " ".
+    my @overlappingLines = (); # These will include a leading "+".
+    for (; $i < @lines; ++$i) {
+        my $line = $lines[$i];
+        if (substr($line, 0, 1) ne "+") {
+          last;
+        }
+        push(@overlappingLines, $line);
+        $lines[$i] = " " . substr($line, 1);
+    }
+
+    # Remove excess ending context, if necessary.
+    my $shouldTrimContext = 1;
+    for (; $i < @lines; ++$i) {
+        my $firstChar = substr($lines[$i], 0, 1);
+        if ($firstChar eq " ") {
+            next;
+        } elsif ($firstChar eq "@") {
+            last;
+        }
+        $shouldTrimContext = 0; # For example, if "+" or "-" encountered.
+        last;
+    }
+    my $deletedLineCount = 0;
+    if ($shouldTrimContext) { # Also occurs if end of file reached.
+        splice(@lines, $i - @overlappingLines, @overlappingLines);
+        $deletedLineCount = @overlappingLines;
+    }
+
+    # Work backwards, shifting overlapping lines towards front
+    # while checking that patch stays equivalent.
+    for ($i = $dateStartIndex - 1; $i >= $chunkStartIndex; --$i) {
+        my $line = $lines[$i];
+        if (substr($line, 0, 1) ne " ") {
+            next;
+        }
+        my $text = substr($line, 1);
+        my $newLine = pop(@overlappingLines);
+        if ($text ne substr($newLine, 1)) {
+            return $patch; # Unexpected difference.
+        }
+        $lines[$i] = "+$text";
+    }
+
+    # Finish moving whatever overlapping lines remain, and update
+    # the initial chunk range.
+    my $chunkRangeRegEx = '^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@$'; # e.g. @@ -2,6 +2,18 @@
+    if ($lines[$chunkStartIndex - 1] !~ /$chunkRangeRegEx/) {
+        # FIXME: Handle errors differently from ChangeLog files that
+        # are okay but should not be altered. That way we can find out
+        # if improvements to the script ever become necessary.
+        return $patch; # Error: unexpected patch string format.
+    }
+    my $skippedFirstLineCount = $1 - 1;
+    my $oldSourceLineCount = $2;
+    my $oldTargetLineCount = $3;
+
+    if (@overlappingLines != $skippedFirstLineCount) {
+        # This can happen, for example, when deliberately inserting
+        # a new ChangeLog entry earlier in the file.
+        return $patch;
+    }
+    # If @overlappingLines > 0, this is where we make use of the
+    # assumption that the beginning of the source file was not modified.
+    splice(@lines, $chunkStartIndex, 0, @overlappingLines);
+
+    my $sourceLineCount = $oldSourceLineCount + @overlappingLines - $deletedLineCount;
+    my $targetLineCount = $oldTargetLineCount + @overlappingLines - $deletedLineCount;
+    $lines[$chunkStartIndex - 1] = "@@ -1,$sourceLineCount +1,$targetLineCount @@";
+
+    return join($lineEnding, @lines) . "\n"; # patch(1) expects an extra trailing newline.
 }
 
 sub gitConfig($)
