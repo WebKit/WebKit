@@ -1,5 +1,20 @@
 2009-12-30  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        svg/custom/use-on-symbol-inside-pattern.svg is failing
+        https://bugs.webkit.org/show_bug.cgi?id=17393
+
+        Reenable the test. It isn't failing anymore.
+
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.checksum:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.png:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * svg/custom/use-on-symbol-inside-pattern.svg: Copied from LayoutTests/svg/custom/use-on-symbol-inside-pattern.svg-disabled.
+        * svg/custom/use-on-symbol-inside-pattern.svg-disabled: Removed.
+
+2009-12-30  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Eric Seidel.
 
         SVGResourceClipper needs to invalidate content
