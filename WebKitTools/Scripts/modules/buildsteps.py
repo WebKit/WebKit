@@ -149,7 +149,6 @@ class PromptForBugOrTitleStep(AbstractStep):
         # Otherwise we assume it's a bug subject.
         try:
             state["bug_id"] = int(user_response)
-            return int_value
         except ValueError, TypeError:
             state["bug_title"] = user_response
             # FIXME: This is kind of a lame description.
