@@ -1,5 +1,16 @@
 2009-12-30  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed test result fix.
+
+        Detailed boundingBoxes in SVG Renderer
+        https://bugs.webkit.org/show_bug.cgi?id=32815
+
+        Forgot to update this test.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-05-f-expected.txt:
+
+2009-12-30  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmmermann.
 
         Detailed boundingBoxes in SVG Renderer
