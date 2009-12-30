@@ -529,18 +529,16 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
     if (filename.startsWith("file:///"))
         filename = filename.substring(8);
 
-    if (!fileExists(filename))
+    long long size;
+    if (!getFileSize(filename, size))
         return NPERR_FILE_NOT_FOUND;
 
-    // FIXME - read the file data into buffer
     FILE* fileHandle = fopen((filename.utf8()).data(), "r");
-
     if (!fileHandle)
         return NPERR_FILE_NOT_FOUND;
 
-    //buffer.resize();
-
-    int bytesRead = fread(buffer.data(), 1, 0, fileHandle);
+    buffer.resize(size);
+    int bytesRead = fread(buffer.data(), 1, size, fileHandle);
 
     fclose(fileHandle);
 

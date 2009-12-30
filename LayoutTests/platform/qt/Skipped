@@ -21,7 +21,6 @@ http/tests/globalhistory
 http/tests/history
 http/tests/incremental
 http/tests/media
-http/tests/plugins
 http/tests/webarchive
 http/tests/wml
 
@@ -34,6 +33,9 @@ http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/redirect-methods.html
 http/tests/loading/simple-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
+
+# Failing plugins tests
+http/tests/plugins/npapi-response-headers.html
 
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
