@@ -66,7 +66,9 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGResourceClipper> create() { return adoptRef(new SVGResourceClipper); }
         virtual ~SVGResourceClipper();
-      
+
+        virtual void invalidate();
+
         void resetClipData();
         void addClipData(const Path&, WindRule, bool bboxUnits);
 
