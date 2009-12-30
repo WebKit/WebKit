@@ -39,6 +39,8 @@ from modules.logging import log
 from modules.scm import Git
 
 class Credentials(object):
+    keychain_entry_not_found = "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+
     def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
         self.host = host
         self.git_prefix = git_prefix
@@ -61,6 +63,8 @@ class Credentials(object):
         return platform.mac_ver()[0]
 
     def _parse_security_tool_output(self, security_output):
+        if security_output == self.keychain_entry_not_found:
+            return [None, None]
         username = self._keychain_value_with_label("^\s*\"acct\"<blob>=", security_output)
         password = self._keychain_value_with_label("^password: ", security_output)
         return [username, password]

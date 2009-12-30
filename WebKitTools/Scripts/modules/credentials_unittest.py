@@ -72,6 +72,10 @@ password: "SECRETSAUCE"
         credentials = Credentials("bugs.webkit.org")
         self.assertEqual(credentials._parse_security_tool_output(self.example_security_output), ["test@webkit.org", "SECRETSAUCE"])
 
+    def test_security_output_parse_entry_not_found(self):
+        credentials = Credentials("foo.example.com")
+        self.assertEqual(credentials._parse_security_tool_output(Credentials.keychain_entry_not_found), [None, None])
+
     def _assert_security_call(self, username=None):
         executive_mock = Mock()
         credentials = Credentials("example.com", executive=executive_mock)

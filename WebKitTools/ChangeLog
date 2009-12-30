@@ -1,3 +1,21 @@
+2009-12-29  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33039
+
+        [bzt] Fixes an issue where bugzilla-tool dies when the keychain lookup
+        fails to find an entry for bugs.webkit.org.
+        
+        Under Mac OS X, bugzilla-tool tries to query the keychain and Security
+        framework (via /usr/sbin/security) for an internet-password entry for
+        bugs.webkit.org so that it can use it to login to bugs.webkit.org.
+        However, if no such entry exists then bugzilla-tool dies with an error.
+
+        * Scripts/modules/credentials.py: Modified method _parse_security_tool_output to return
+        [None, None] if /usr/sbin/security cannot find keychain entry for bugs.webkit.org.
+        * Scripts/modules/credentials_unittest.py: Added method test_security_output_parse_entry_not_found.
+
 2009-12-29  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Adam Barth.
