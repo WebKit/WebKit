@@ -1,5 +1,23 @@
 2009-12-30  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Reviewed by Dirk Schulze.
+
+        [Qt] Expected files updated after r52647.
+
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt:
+        * platform/qt/svg/filters/feGaussianBlur-expected.txt:
+        * platform/qt/svg/filters/feMerge-expected.txt:
+        * platform/qt/svg/filters/feOffset-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt:
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/filters/subRegion-in-userSpace-expected.txt:
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt:
+
+2009-12-30  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] DataGrid support turned off by r52648. Expected files updated.
