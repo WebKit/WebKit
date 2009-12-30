@@ -728,7 +728,7 @@ int RenderTextControlSingleLine::selectedIndex() const
     return -1;
 }
 
-void RenderTextControlSingleLine::popupDidHide()
+void RenderTextControlSingleLine::popupDidHide(bool)
 {
     m_searchPopupIsVisible = false;
 }

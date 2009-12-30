@@ -1,3 +1,42 @@
+2009-12-30  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added ability for PopupMenuClient to signal when
+        a) selection changed, and
+        b) weather suggested value should be accepted when popup menu closes
+
+        No new tests since this new functionality (autocomplete suggestions)
+        is intentionally hidden from everything else than renderer.
+
+        * platform/PopupMenuClient.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::clearSelection):
+        (WebCore::PopupListBox::hidePopup):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::menuUnmapped):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::hidePopup):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::hide):
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::OnMenuItemSelected):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::popupDidHide):
+        * rendering/RenderMenuList.h:
+        (WebCore::RenderMenuList::selectionChanged):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::popupDidHide):
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::selectionChanged):
+
 2009-12-30  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

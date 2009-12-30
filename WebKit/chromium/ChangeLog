@@ -1,3 +1,26 @@
+2009-12-30  Zelidrag Hornung  <zelidrag@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Autocomplete in Chromium now offers suggestions within the input element as a user
+        a) types text that produces some autocomplete suggestions, and
+        b) scrolls through suggested values in the menu
+        The suggested value is rendered but not exposed through JS unti the
+        user makes the final selection.
+
+        No new tests since this new functionality (autocomplete suggestions)
+        is intentionally hidden from everything else than renderer.
+
+        * src/AutocompletePopupMenuClient.cpp:
+        (WebKit::AutocompletePopupMenuClient::initialize):
+        (WebKit::AutocompletePopupMenuClient::setInitialAutocompleteValue):
+        (WebKit::AutocompletePopupMenuClient::selectionChanged):
+        (WebKit::AutocompletePopupMenuClient::popupDidHide):
+        (WebKit::AutocompletePopupMenuClient::setTextFromItem):
+        (WebKit::AutocompletePopupMenuClient::resetLastFieldValue):
+        * src/AutocompletePopupMenuClient.h:
+
+
 2009-12-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Maciej Stachowiak.

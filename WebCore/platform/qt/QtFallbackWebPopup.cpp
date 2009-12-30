@@ -103,7 +103,7 @@ void QtFallbackWebPopup::hidePopup()
         return;
 
     m_popupVisible = false;
-    client()->popupDidHide();
+    client()->popupDidHide(true);
 }
 
 void QtFallbackWebPopup::activeChanged(int index)
