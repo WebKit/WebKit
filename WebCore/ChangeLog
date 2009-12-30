@@ -1,3 +1,13 @@
+2009-12-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt/Symbian build fix.
+
+        Don't build network state notifier support when building inside of Qt.
+        Otherwise the Qt build depends on an external module that itself depends
+        on Qt again.
+
+        * WebCore.pro:
+
 2009-12-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Dimitri Glazkov.
