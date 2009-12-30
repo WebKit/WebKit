@@ -1,3 +1,13 @@
+2009-12-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] DataGrid support turned off by r52648. Expected files updated.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: updated.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: updated.
+        * platform/qt/fast/js/global-constructors-expected.txt: updated.
+
 2009-12-30  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed test result fix.

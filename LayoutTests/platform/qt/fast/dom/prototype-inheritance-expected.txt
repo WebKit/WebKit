@@ -113,12 +113,6 @@ PASS inner.HTMLCollection.isInner is true
 PASS inner.HTMLCollection.constructor.isInner is true
 PASS inner.HTMLDListElement.isInner is true
 PASS inner.HTMLDListElement.constructor.isInner is true
-PASS inner.HTMLDataGridCellElement.isInner is true
-PASS inner.HTMLDataGridCellElement.constructor.isInner is true
-PASS inner.HTMLDataGridColElement.isInner is true
-PASS inner.HTMLDataGridColElement.constructor.isInner is true
-PASS inner.HTMLDataGridElement.isInner is true
-PASS inner.HTMLDataGridElement.constructor.isInner is true
 PASS inner.HTMLDirectoryElement.isInner is true
 PASS inner.HTMLDirectoryElement.constructor.isInner is true
 PASS inner.HTMLDivElement.isInner is true
