@@ -48,7 +48,6 @@
 #include "V8DOMWindow.h"
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
-#include "V8HTMLPlugInElementCustom.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
 #include "V8NodeList.h"
@@ -275,12 +274,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     descriptor->Set(GetToStringName(), toStringTemplate);
     switch (type) {
     case V8ClassIndex::HTMLALLCOLLECTION:
-        descriptor->InstanceTemplate()->MarkAsUndetectable(); // fall through
-    case V8ClassIndex::HTMLCOLLECTION:
-        descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
-        break;
-    case V8ClassIndex::HTMLOPTIONSCOLLECTION:
-        descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
+        descriptor->InstanceTemplate()->MarkAsUndetectable();
         break;
     case V8ClassIndex::HTMLDOCUMENT: {
         // We add an extra internal field to all Document wrappers for
@@ -308,14 +302,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         instanceTemplate->SetInternalFieldCount( V8Custom::kDocumentMinimumInternalFieldCount);
         break;
     }
-    case V8ClassIndex::HTMLAPPLETELEMENT:  // fall through
-    case V8ClassIndex::HTMLEMBEDELEMENT:  // fall through
-    case V8ClassIndex::HTMLOBJECTELEMENT:
-        // HTMLAppletElement, HTMLEmbedElement and HTMLObjectElement are
-        // inherited from HTMLPlugInElement, and they share the same property
-        // handling code.
-        descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLPlugInElement::defaultCallback);
-        break;
     case V8ClassIndex::STYLESHEET:  // fall through
     case V8ClassIndex::CSSSTYLESHEET: {
         // We add an extra internal field to hold a reference to
@@ -332,9 +318,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         instanceTemplate->SetInternalFieldCount(V8Custom::kNamedNodeMapInternalFieldCount);
         break;
     }
-    case V8ClassIndex::NODELIST:
-        descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8NodeList::callAsFunctionCallback);
-        break;
     case V8ClassIndex::DOMWINDOW: {
         descriptor->PrototypeTemplate()->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
         descriptor->SetHiddenPrototype(true);

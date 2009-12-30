@@ -29,13 +29,14 @@
 */
 
 #include "config.h"
-#include "V8HTMLPlugInElementCustom.h"
-
 #include "HTMLPlugInElement.h"
-#include "ScriptInstance.h"
 
+#include "ScriptInstance.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8HTMLAppletElement.h"
+#include "V8HTMLEmbedElement.h"
+#include "V8HTMLObjectElement.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
 
@@ -108,9 +109,21 @@ NAMED_PROPERTY_SETTER(HTMLObjectElement)
     return npObjectNamedSetter(name, value, info);
 }
 
-v8::Handle<v8::Value> V8HTMLPlugInElement::defaultCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLAppletElement::callAsFunctionCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.HTMLPluginElement()");
+    INC_STATS("DOM.HTMLAppletElement()");
+    return npObjectInvokeDefaultHandler(args);
+}
+
+v8::Handle<v8::Value> V8HTMLEmbedElement::callAsFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.HTMLEmbedElement()");
+    return npObjectInvokeDefaultHandler(args);
+}
+
+v8::Handle<v8::Value> V8HTMLObjectElement::callAsFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.HTMLObjectElement()");
     return npObjectInvokeDefaultHandler(args);
 }
 

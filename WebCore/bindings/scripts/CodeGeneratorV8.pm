@@ -290,7 +290,7 @@ END
 END
     }
 
-    GenerateSpecialCaseHeaderDeclarations($dataNode);
+    GenerateHeaderCustomCall($dataNode);
     
     push(@headerContent, <<END);
 
@@ -308,11 +308,11 @@ END
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
-sub GenerateSpecialCaseHeaderDeclarations
+sub GenerateHeaderCustomCall
 {
     my $dataNode = shift;
     
-    if ($dataNode->name eq "HTMLCollection" || $dataNode->name eq "HTMLAllCollection" || $dataNode->name eq "NodeList") {
+    if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@headerContent, "  static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
     }
 }
@@ -1280,6 +1280,23 @@ END
     push(@implContent, ");\n");
 }
 
+sub GenerateImplementationCustomCall
+{
+    my $dataNode = shift;
+    my $interfaceName = $dataNode->name;
+    my $hasCustomCall = $dataNode->extendedAttributes->{"CustomCall"};
+
+    # FIXME: Remove hard-coded HTMLOptionsCollection reference.
+    if ($interfaceName eq "HTMLOptionsCollection") {
+        $interfaceName = "HTMLCollection";
+        $hasCustomCall = 1;
+    }
+
+    if ($hasCustomCall) {
+        push(@implContent, "  desc->InstanceTemplate()->SetCallAsFunctionHandler(V8${interfaceName}::callAsFunctionCallback);\n");
+    }
+}
+
 sub GenerateImplementation
 {
     my $object = shift;
@@ -1574,6 +1591,7 @@ END
 
     GenerateImplementationIndexer($dataNode, $indexer);
     GenerateImplementationNamedPropertyGetter($dataNode, $namedPropertyGetter);
+    GenerateImplementationCustomCall($dataNode);
 
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;
