@@ -808,6 +808,8 @@
             'bindings/v8/V8DataGridDataSource.h',
             'bindings/v8/V8DOMMap.cpp',
             'bindings/v8/V8DOMMap.h',
+            'bindings/v8/V8DOMWindowShell.cpp',
+            'bindings/v8/V8DOMWindowShell.h',
             'bindings/v8/V8DOMWrapper.cpp',
             'bindings/v8/V8DOMWrapper.h',
             'bindings/v8/V8EventListenerList.cpp',

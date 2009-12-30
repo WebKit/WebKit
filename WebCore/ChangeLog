@@ -1,3 +1,79 @@
+2009-12-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [v8] Move world-specific state out of V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=33034
+
+        This is the first step towards unifying the V8 implementation of
+        isolated worlds with the JSC implementation.  We need an object to
+        encapulate all the world-specific bindings state.  Previoulsy, we used
+        V8Proxy for this purpose (along with a million other things), but
+        there's a one-to-one mapping between V8Proxy objects and Frame objects.
+
+        This patch takes the world-specific state and moves it to a new object,
+        affectionately called V8DOMWindowShell.  This object is the moral
+        equivalent of JSDOMWindowShell but with more data members because life
+        is more complicated in V8-land.
+
+        This patch is almost entirely code motion.  Future patches will clean
+        up this class as we use it to represent window shells in isolated
+        worlds as well as the main world.
+
+        * WebCore.gypi:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::updateSecurityOrigin):
+        (WebCore::ScriptController::haveInterpreter):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/v8/V8DOMWindowShell.cpp: Added.
+        (WebCore::handleFatalErrorInV8):
+        (WebCore::reportFatalErrorInV8):
+        (WebCore::reportUnsafeJavaScriptAccess):
+        (WebCore::V8DOMWindowShell::create):
+        (WebCore::V8DOMWindowShell::V8DOMWindowShell):
+        (WebCore::V8DOMWindowShell::isContextInitialized):
+        (WebCore::V8DOMWindowShell::disposeContextHandles):
+        (WebCore::V8DOMWindowShell::destroyGlobal):
+        (WebCore::V8DOMWindowShell::clearForClose):
+        (WebCore::V8DOMWindowShell::clearForNavigation):
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        (WebCore::V8DOMWindowShell::createNewContext):
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        (WebCore::V8DOMWindowShell::updateDocumentWrapper):
+        (WebCore::V8DOMWindowShell::clearDocumentWrapper):
+        (WebCore::V8DOMWindowShell::updateDocumentWrapperCache):
+        (WebCore::V8DOMWindowShell::clearDocumentWrapperCache):
+        (WebCore::V8DOMWindowShell::setSecurityToken):
+        (WebCore::V8DOMWindowShell::updateDocument):
+        (WebCore::V8DOMWindowShell::updateSecurityOrigin):
+        (WebCore::V8DOMWindowShell::getHiddenObjectPrototype):
+        (WebCore::V8DOMWindowShell::installHiddenObjectPrototype):
+        (WebCore::V8DOMWindowShell::createWrapperFromCacheSlowCase):
+        * bindings/v8/V8DOMWindowShell.h: Added.
+        (WebCore::V8DOMWindowShell::context):
+        (WebCore::V8DOMWindowShell::createWrapperFromCache):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getConstructorForContext):
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        (WebCore::V8DOMWrapper::convertDocumentToV8Object):
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):
+        * bindings/v8/V8IsolatedWorld.cpp:
+        (WebCore::V8IsolatedWorld::V8IsolatedWorld):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::~V8Proxy):
+        (WebCore::V8Proxy::handleOutOfMemory):
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::evaluateInNewContext):
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId):
+        (WebCore::V8Proxy::clearForClose):
+        (WebCore::V8Proxy::clearForNavigation):
+        (WebCore::V8Proxy::mainWorldContext):
+        (WebCore::V8Proxy::setContextDebugId):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::windowShell):
+        (WebCore::V8Proxy::extensions):
+
 2009-12-30  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.

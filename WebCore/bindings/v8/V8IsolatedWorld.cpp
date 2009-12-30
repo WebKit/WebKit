@@ -57,7 +57,8 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
     ++isolatedWorldCount;
 
     v8::HandleScope scope;
-    m_context = SharedPersistent<v8::Context>::create(proxy->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
+    // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
+    m_context = SharedPersistent<v8::Context>::create(proxy->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
     if (m_context->get().IsEmpty())
         return;
 
@@ -66,8 +67,9 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8Custom::kDOMWindowEnteredIsolatedWorldIndex, this);
 
-    V8Proxy::installHiddenObjectPrototype(m_context->get());
-    proxy->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
+    V8DOMWindowShell::installHiddenObjectPrototype(m_context->get());
+    // FIXME: This will go away once we have a windowShell for the isolated world.
+    proxy->windowShell()->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
 
     // Using the default security token means that the canAccess is always
     // called, which is slow.
