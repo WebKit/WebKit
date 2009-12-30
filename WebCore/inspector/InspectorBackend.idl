@@ -31,7 +31,7 @@
  */
 
 module core {
-    interface InspectorBackend {
+    interface [Conditional=INSPECTOR] InspectorBackend {
         void storeLastActivePanel(in DOMString panelName);
 
         void saveFrontendSettings(in DOMString settings);

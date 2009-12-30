@@ -31,7 +31,7 @@
  */
 
 module core {
-    interface InjectedScriptHost {
+    interface [Conditional=INSPECTOR] InjectedScriptHost {
         [Custom] DOMWindow inspectedWindow();
         [Custom] DOMObject wrapCallback(in DOMObject callback);
         void clearConsoleMessages();

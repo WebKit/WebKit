@@ -112,12 +112,16 @@ void InspectorClientQt::showWindow()
 {
     updateWindowTitle();
 
+#if ENABLE(INSPECTOR)
     m_inspectedWebPage->d->inspectorController()->setWindowVisible(true, true);
+#endif
 }
 
 void InspectorClientQt::closeWindow()
 {
+#if ENABLE(INSPECTOR)
     m_inspectedWebPage->d->inspectorController()->setWindowVisible(false);
+#endif
 }
 
 void InspectorClientQt::attachWindow()

@@ -31,7 +31,7 @@
  */
 
 module core {
-    interface InspectorFrontendHost {
+    interface [Conditional=INSPECTOR] InspectorFrontendHost {
         void loaded();
         void attach();
         void detach();

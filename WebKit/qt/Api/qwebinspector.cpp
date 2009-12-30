@@ -151,9 +151,11 @@ void QWebInspector::resizeEvent(QResizeEvent* event)
 /*! \reimp */
 void QWebInspector::showEvent(QShowEvent* event)
 {
+#if ENABLE(INSPECTOR)
     // Allows QWebInspector::show() to init the inspector.
     if (d->page)
         d->page->d->inspectorController()->show();
+#endif
 }
 
 /*! \reimp */
@@ -164,8 +166,10 @@ void QWebInspector::hideEvent(QHideEvent* event)
 /*! \reimp */
 void QWebInspector::closeEvent(QCloseEvent* event)
 {
+#if ENABLE(INSPECTOR)
     if (d->page)
         d->page->d->inspectorController()->setWindowVisible(false);
+#endif
 }
 
 /*! \internal */
