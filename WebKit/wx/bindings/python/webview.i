@@ -28,9 +28,12 @@
 %{
 #include "wx/wxPython/wxPython.h"
 #include "wx/wxPython/pyclasses.h"
-#include "WebFrame.h"
-#include "WebView.h"
+
 #include "WebBrowserShell.h"
+#include "WebFrame.h"
+#include "WebKitDefines.h"
+#include "WebSettings.h"
+#include "WebView.h"
 %}
 //---------------------------------------------------------------------------
 
@@ -39,13 +42,16 @@
 
 MAKE_CONST_WXSTRING(WebViewNameStr);
 
+MustHaveApp(wxWebBrowserShell);
 MustHaveApp(wxWebFrame);
 MustHaveApp(wxWebView);
-MustHaveApp(wxWebBrowserShell);
 
-%include WebFrame.h
-%include WebView.h
+%include WebKitDefines.h
+
 %include WebBrowserShell.h
+%include WebFrame.h
+%include WebSettings.h
+%include WebView.h
 
 %constant wxEventType wxEVT_WEBVIEW_BEFORE_LOAD;
 %constant wxEventType wxEVT_WEBVIEW_LOAD;

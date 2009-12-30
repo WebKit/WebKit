@@ -338,10 +338,6 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setDatabasesEnabled(true);
 #endif
 
-#if __WXMSW__ || __WXMAC__
-    settings->setPluginsEnabled(true);
-#endif
-
     m_isInitialized = true;
 
     return true;
@@ -965,4 +961,13 @@ void wxWebView::SetProxyInfo(const wxString& host,
     using WebCore::ResourceHandleManager;
     if (ResourceHandleManager* mgr = ResourceHandleManager::sharedInstance())
         mgr->setProxyInfo(host, port, curlProxyType(type), username, password);
+}
+
+wxWebSettings wxWebView::GetWebSettings()
+{
+    ASSERT(m_impl->page);
+    if (m_impl->page)
+        return wxWebSettings(m_impl->page->settings());
+    
+    return wxWebSettings();
 }

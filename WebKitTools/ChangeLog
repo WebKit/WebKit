@@ -1,3 +1,14 @@
+2009-12-30  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Alter a couple of default settings in the test app.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32956
+
+        * wx/browser/browser.cpp:
+        (MyApp::OnInit):
+
 2009-12-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

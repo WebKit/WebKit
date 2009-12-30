@@ -34,6 +34,8 @@
 #endif
 
 #include "WebFrame.h"
+#include "WebKitDefines.h"
+#include "WebSettings.h"
 
 class WebViewPrivate;
 class WebViewFrameData;
@@ -46,20 +48,6 @@ namespace WebCore {
     class ChromeClientWx;
     class FrameLoaderClientWx;
 }
-
-#ifndef SWIG
-
-#if !wxCHECK_VERSION(2,9,0) && wxCHECK_GCC_VERSION(4,0)
-#define WXDLLIMPEXP_WEBKIT __attribute__ ((visibility("default")))
-#elif WXMAKINGDLL_WEBKIT
-#define WXDLLIMPEXP_WEBKIT WXEXPORT
-#elif defined(WXUSINGDLL_WEBKIT)
-#define WXDLLIMPEXP_WEBKIT WXIMPORT
-#endif
-
-#else
-#define WXDLLIMPEXP_WEBKIT
-#endif // SWIG
 
 #ifndef SWIG
 extern WXDLLIMPEXP_WEBKIT const wxChar* wxWebViewNameStr;
@@ -213,6 +201,8 @@ public:
                              wxProxyType type = HTTP,
                              const wxString& username = wxEmptyString,
                              const wxString& password = wxEmptyString);
+
+    wxWebSettings GetWebSettings();
 
 protected:
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2008 Kevin Ollivier <kevino@theolliviers.com>
  *
  * All rights reserved.
  *
@@ -25,46 +25,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-// webkit includes
-#include "WebBrowserShell.h"
-#include "WebSettings.h"
-#include "WebView.h"
+#ifndef WebKitDefines_h
+#define WebKitDefines_h
 
-#include "wx/wxprec.h"
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
+#ifndef SWIG
+
+#if !wxCHECK_VERSION(2, 9, 0) && wxCHECK_GCC_VERSION(4, 0)
+#define WXDLLIMPEXP_WEBKIT __attribute__ ((visibility("default")))
+#elif defined(WXMAKINGDLL_WEBKIT)
+#define WXDLLIMPEXP_WEBKIT WXEXPORT
+#elif defined(WXUSINGDLL_WEBKIT)
+#define WXDLLIMPEXP_WEBKIT WXIMPORT
 #endif
 
-class MyApp : public wxApp
-{
-public:
+#else
+#define WXDLLIMPEXP_WEBKIT
+#endif // SWIG
 
-    virtual bool OnInit();
-};
-
-
-IMPLEMENT_APP(MyApp)
-
-bool MyApp::OnInit()
-{
-    wxInitAllImageHandlers();
-        
-    // create the main application window
-    // see WebKit/wx/WebFrame.cpp for how to write a shell around wxWebView.
-    wxWebBrowserShell *frame = new wxWebBrowserShell(_T("wxWebKit Test App"));
-
-#ifndef NDEBUG
-    frame->ShowDebugMenu(true);
-#endif
-
-    wxWebSettings settings = frame->webview->GetWebSettings();
-#if __WXMSW__ || __WXMAC__
-    settings.SetPluginsEnabled(true);
-#endif
-    settings.SetDatabasesEnabled(true);
-    settings.SetEditableLinkBehavior(wxEditableLinkOnlyLiveWithShiftKey);
-    frame->CentreOnScreen();
-    frame->Show(true);
-
-    return true;
-}
+#endif // WebKitDefines_h

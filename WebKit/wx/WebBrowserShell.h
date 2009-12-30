@@ -33,6 +33,7 @@
     #include "wx/wx.h"
 #endif
 
+#include "WebKitDefines.h"
 #include "WebView.h"
 #include <wx/srchctrl.h>
 
