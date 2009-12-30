@@ -160,7 +160,7 @@ void LayoutTestController::clearBackForwardList()
 QString LayoutTestController::pathToLocalResource(const QString& url)
 {
     // Function introduced in r28690.
-    return QLatin1String("file://") + QUrl(url).toLocalFile();
+    return QDir::toNativeSeparators(url);
 }
 
 void LayoutTestController::dumpEditingCallbacks()

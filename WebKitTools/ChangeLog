@@ -1,3 +1,17 @@
+2009-12-30  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] layoutTestController.pathToLocalResource() should return a path, not an URL
+        https://bugs.webkit.org/show_bug.cgi?id=33051
+
+        Moreover, its primary function is to normalize the path in regard of platform
+        specific directory separators. Therefore, it can simply make use of the
+        QDir::toNativeSeparators function.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::pathToLocalResource):
+
 2009-12-30  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix executable bits for r52646
