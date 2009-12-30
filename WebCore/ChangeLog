@@ -1,5 +1,13 @@
 2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, build fix.
+
+        [Chromium] Touch DerivedSourcesAllInOne to avoid clobbering IB-based builds.
+
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Added a line-break.
+
+2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Adam Barth.
 
         [V8] Generate configuring of call-as-function callbacks.
