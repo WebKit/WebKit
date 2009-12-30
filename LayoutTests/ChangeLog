@@ -1,3 +1,9 @@
+2009-12-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skipping isolatedWorld test - we still do not support that.
+
+        * platform/gtk/Skipped:
+
 2009-12-30  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Rubber-stamped by Holger Hans Peter Freyther.
