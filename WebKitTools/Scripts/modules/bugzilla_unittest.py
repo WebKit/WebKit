@@ -29,7 +29,7 @@
 import unittest
 
 from modules.committers import CommitterList, Reviewer, Committer
-from modules.bugzilla import Bugzilla, parse_bug_id
+from modules.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id
 from modules.outputcapture import OutputCapture
 
 from modules.BeautifulSoup import BeautifulSoup
@@ -223,6 +223,24 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         bugzilla = Bugzilla()
         self.assertEquals(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
 
+    def test_add_cc_to_bug(self):
+        bugzilla = Bugzilla()
+        bugzilla.browser = MockBrowser()
+        bugzilla.authenticate = lambda: None
+        expected_stderr = "Adding ['adam@example.com'] to the CC list for bug 42\n"
+        OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_stderr=expected_stderr)
+
+    def test_flag_permission_rejection_message(self):
+        bugzilla = Bugzilla()
+        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/modules/committers.py.
+
+- If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
+
+- If you have review rights please correct the error in WebKitTools/Scripts/modules/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
+        self.assertEqual(bugzilla._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
+
+
+class BugzillaQueriesTest(unittest.TestCase):
     _sample_request_page = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
                       "http://www.w3.org/TR/html4/loose.dtd">
@@ -271,25 +289,8 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 """
 
     def test_request_page_parsing(self):
-        bugzilla = Bugzilla()
-        self.assertEquals([40511, 40722, 40723], bugzilla._parse_attachment_ids_request_query(self._sample_request_page))
-
-    def test_add_cc_to_bug(self):
-        bugzilla = Bugzilla()
-        bugzilla.browser = MockBrowser()
-        bugzilla.authenticate = lambda: None
-        expected_stderr = "Adding ['adam@example.com'] to the CC list for bug 42\n"
-        OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_stderr=expected_stderr)
-
-    def test_flag_permission_rejection_message(self):
-        bugzilla = Bugzilla()
-        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/modules/committers.py.
-
-- If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
-
-- If you have review rights please correct the error in WebKitTools/Scripts/modules/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
-        self.assertEqual(bugzilla._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
-
+        queries = BugzillaQueries(None)
+        self.assertEquals([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
 
 if __name__ == '__main__':
     unittest.main()

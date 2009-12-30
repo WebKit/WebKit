@@ -133,7 +133,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         AbstractQueue.begin_work_queue(self)
 
     def next_work_item(self):
-        patches = self.tool.bugs.fetch_patches_from_commit_queue(reject_invalid_patches=True)
+        patches = self.tool.bugs.queries.fetch_patches_from_commit_queue(reject_invalid_patches=True)
         if not patches:
             self._update_status("Empty queue")
             return None
@@ -187,7 +187,7 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         return self.name
 
     def fetch_potential_patch_ids(self):
-        return self.tool.bugs.fetch_attachment_ids_from_review_queue()
+        return self.tool.bugs.queries.fetch_attachment_ids_from_review_queue()
 
     def status_server(self):
         return self.tool.status_bot

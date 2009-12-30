@@ -32,32 +32,53 @@ from modules.mock import Mock
 from modules.scm import CommitMessage
 from modules.bugzilla import Bug
 
-def _id_to_object_dictionary(objects):
+def _id_to_object_dictionary(*objects):
     dictionary = {}
     for thing in objects:
         dictionary[thing["id"]] = thing
     return dictionary
 
-class MockBugzilla(Mock):
-    patch1 = {
-        "id" : 197,
-        "bug_id" : 42,
-        "url" : "http://example.com/197",
-        "is_obsolete" : False,
-        "reviewer" : "Reviewer1",
-        "attacher_email" : "Contributer1",
-    }
-    patch2 = {
-        "id" : 128,
-        "bug_id" : 42,
-        "url" : "http://example.com/128",
-        "is_obsolete" : False,
-        "reviewer" : "Reviewer2",
-        "attacher_email" : "eric@webkit.org",
-    }
-    bug_server_url = "http://example.com"
-    unassigned_email = "unassigned@example.com"
+# FIXME: The ids shoudl be 1, 2, 3 instead of crazy numbers.
+_patch1 = {
+    "id" : 197,
+    "bug_id" : 42,
+    "url" : "http://example.com/197",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "reviewer" : "Reviewer1",
+    "attacher_email" : "Contributer1",
+}
+_patch2 = {
+    "id" : 128,
+    "bug_id" : 42,
+    "url" : "http://example.com/128",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "reviewer" : "Reviewer2",
+    "attacher_email" : "eric@webkit.org",
+}
 
+# This must be defined before we define the bugs, thus we don't use MockBugzilla.unassigned_email directly.
+_unassigned_email = "unassigned@example.com"
+
+# FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
+_bug1 = {
+    "id" : 42,
+    "assigned_to_email" : _unassigned_email,
+    "attachments" : [_patch1, _patch2],
+}
+_bug2 = {
+    "id" : 75,
+    "assigned_to_email" : "foo@foo.com",
+    "attachments" : [],
+}
+_bug3 = {
+    "id" : 76,
+    "assigned_to_email" : _unassigned_email,
+    "attachments" : [],
+}
+
+class MockBugzillaQueries(Mock):
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
 
@@ -65,52 +86,35 @@ class MockBugzilla(Mock):
         return [197, 128]
 
     def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
-        return [self.patch1, self.patch2]
+        return [_patch1, _patch2]
 
-    def fetch_bug_ids_from_needs_commit_list(self):
+    def fetch_bug_ids_from_pending_commit_list(self):
         return [42, 75, 76]
+    
+    def fetch_patches_from_pending_commit_list(self):
+        return [_patch1, _patch2]
 
-    bug1 = {
-        "id" : 42,
-        "assigned_to_email" : unassigned_email,
-        "attachments" : [patch1, patch2],
-    }
-    bug2 = {
-        "id" : 75,
-        "assigned_to_email" : "foo@foo.com",
-        "attachments" : [],
-    }
-    bug3 = {
-        "id" : 76,
-        "assigned_to_email" : unassigned_email,
-        "attachments" : [],
-    }
 
-    bug_cache = _id_to_object_dictionary([bug1, bug2, bug3])
+class MockBugzilla(Mock):
+    bug_server_url = "http://example.com"
+    unassigned_email = _unassigned_email
+    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3)
+    attachment_cache = _id_to_object_dictionary(_patch1, _patch2)
+    queries = MockBugzillaQueries()
 
     def fetch_bug(self, bug_id):
         return Bug(self.bug_cache.get(bug_id))
 
-    def fetch_patches_from_pending_commit_list(self):
-        return [self.patch1, self.patch2]
-
     def fetch_reviewed_patches_from_bug(self, bug_id):
-        if bug_id == 42:
-            return [self.patch1, self.patch2]
-        return []
-
-    def fetch_patches_from_bug(self, bug_id):
-        if bug_id == 42:
-            return [self.patch1, self.patch2]
-        return None
+        return self.fetch_patches_from_bug(bug_id) # Return them all for now.
 
     def fetch_attachment(self, attachment_id):
-        if attachment_id == 197:
-            return self.patch1
-        if attachment_id == 128:
-            return self.patch2
-        raise Exception("Bogus attachment_id in fetch_attachment.")
+        return self.attachment_cache[attachment_id] # This could be changed to .get() if we wish to allow failed lookups.
 
+    # NOTE: Functions below this are direct copies from bugzilla.py
+    def fetch_patches_from_bug(self, bug_id):
+        return self.fetch_bug(bug_id).patches()
+    
     def bug_url_for_bug_id(self, bug_id):
         return "%s/%s" % (self.bug_server_url, bug_id)
 

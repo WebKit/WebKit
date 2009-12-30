@@ -83,7 +83,7 @@ class AssignToCommitter(AbstractDeclarativeCommmand):
         self.tool.bugs.reassign_bug(bug_id, committer.bugzilla_email(), reassign_message)
 
     def execute(self, options, args, tool):
-        for bug_id in tool.bugs.fetch_bug_ids_from_needs_commit_list():
+        for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():
             self._assign_bug_to_last_patch_attacher(bug_id)
 
 

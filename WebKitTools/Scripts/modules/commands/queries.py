@@ -43,7 +43,7 @@ class BugsToCommit(Command):
         Command.__init__(self, "List bugs in the commit-queue")
 
     def execute(self, options, args, tool):
-        bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
+        bug_ids = tool.bugs.queries.fetch_bug_ids_from_commit_queue()
         for bug_id in bug_ids:
             print "%s" % bug_id
 
@@ -54,7 +54,7 @@ class PatchesToCommit(Command):
         Command.__init__(self, "List patches in the commit-queue")
 
     def execute(self, options, args, tool):
-        patches = tool.bugs.fetch_patches_from_commit_queue()
+        patches = tool.bugs.queries.fetch_patches_from_commit_queue()
         log("Patches in commit queue:")
         for patch in patches:
             print "%s" % patch["url"]
@@ -82,7 +82,7 @@ class PatchesToCommitQueue(Command):
         return not committer_record
 
     def execute(self, options, args, tool):
-        patches = tool.bugs.fetch_patches_from_pending_commit_list()
+        patches = tool.bugs.queries.fetch_patches_from_pending_commit_list()
         patches_needing_cq = filter(self._needs_commit_queue, patches)
         if options.bugs:
             bugs_needing_cq = map(lambda patch: patch['bug_id'], patches_needing_cq)
@@ -100,7 +100,7 @@ class PatchesToReview(Command):
         Command.__init__(self, "List patches that are pending review")
 
     def execute(self, options, args, tool):
-        patch_ids = tool.bugs.fetch_attachment_ids_from_review_queue()
+        patch_ids = tool.bugs.queries.fetch_attachment_ids_from_review_queue()
         log("Patches pending review:")
         for patch_id in patch_ids:
             print patch_id

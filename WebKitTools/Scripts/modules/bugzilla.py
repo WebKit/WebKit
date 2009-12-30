@@ -81,10 +81,71 @@ class Bug(object):
         return [patch for patch in self.patches() if patch.get("review") == "?"]
 
 
+# A container for all of the logic for making a parsing buzilla queries.
+class BugzillaQueries(object):
+    def __init__(self, bugzilla):
+        self.bugzila = bugzilla
+
+    def _load_query(self, query):
+        full_url = "%s%s" % (self.bugzilla.bug_server_url, query)
+        return self.bugzilla.browser.open(full_url)
+
+    def _fetch_bug_ids_advanced_query(self, query):
+        soup = BeautifulSoup(self._load_query(query))
+        # The contents of the <a> inside the cells in the first column happen to be the bug id.
+        return [int(bug_link_cell.find("a").string) for bug_link_cell in soup('td', "first-child")]
+
+    def _parse_attachment_ids_request_query(self, page):
+        digits = re.compile("\d+")
+        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
+        attachment_links = SoupStrainer("a", href=attachment_href)
+        return [int(digits.search(tag["href"]).group(0)) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
+
+    def _fetch_attachment_ids_request_query(self, query):
+        return self._parse_attachment_ids_request_query(self._load_query(query))
+
+    # List of all r+'d bugs.
+    def fetch_bug_ids_from_pending_commit_list(self):
+        needs_commit_query_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
+        return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
+
+    def fetch_patches_from_pending_commit_list(self):
+        # FIXME: This should not have to go through self.bugzilla
+        return sum([self.bugzilla.fetch_reviewed_patches_from_bug(bug_id) for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
+
+    def fetch_bug_ids_from_commit_queue(self):
+        commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
+        return self._fetch_bug_ids_advanced_query(commit_queue_url)
+
+    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
+        # FIXME: Once reject_invalid_patches is moved out of this function this becomes a simple list comprehension using fetch_bug_ids_from_commit_queue.
+        patches_to_land = []
+        for bug_id in self.fetch_bug_ids_from_commit_queue():
+            # FIXME: This should not have to go through self.bugzilla
+            patches = self.bugzilla.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
+            patches_to_land += patches
+        return patches_to_land
+
+    def _fetch_bug_ids_from_review_queue(self):
+        review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
+        return self._fetch_bug_ids_advanced_query(review_queue_url)
+
+    def fetch_patches_from_review_queue(self, limit=None):
+        # FIXME: We should probably have a self.fetch_bug to minimize the number of self.bugzilla calls.
+        return sum([self.bugzilla.fetch_bug(bug_id).unreviewed_patches() for bug_id in self._fetch_bug_ids_from_review_queue()[:limit]], []) # [:None] returns the whole array.
+
+    # FIXME: Why do we have both fetch_patches_from_review_queue and fetch_attachment_ids_from_review_queue??
+    # NOTE: This is also the only client of _fetch_attachment_ids_request_query
+    def fetch_attachment_ids_from_review_queue(self):
+        review_queue_url = "request.cgi?action=queue&type=review&group=type"
+        return self._fetch_attachment_ids_request_query(review_queue_url)
+
+
 class Bugzilla(object):
     def __init__(self, dryrun=False, committers=CommitterList()):
         self.dryrun = dryrun
         self.authenticated = False
+        self.queries = BugzillaQueries(self)
 
         # FIXME: We should use some sort of Browser mock object when in dryrun mode (to prevent any mistakes).
         self.browser = Browser()
@@ -250,51 +311,6 @@ class Bugzilla(object):
             if self._validate_committer(attachment, reject_invalid_patches):
                 commit_queue_patches.append(attachment)
         return commit_queue_patches
-
-    def _fetch_bug_ids_advanced_query(self, query):
-        page = self.browser.open(query)
-        soup = BeautifulSoup(page)
-        # The contents of the <a> inside the cells in the first column happen to be the bug id.
-        return [int(bug_link_cell.find("a").string) for bug_link_cell in soup('td', "first-child")]
-
-    def _parse_attachment_ids_request_query(self, page):
-        digits = re.compile("\d+")
-        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
-        attachment_links = SoupStrainer("a", href=attachment_href)
-        return [int(digits.search(tag["href"]).group(0)) for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
-
-    def _fetch_attachment_ids_request_query(self, query):
-        return self._parse_attachment_ids_request_query(self.browser.open(query))
-
-    def fetch_bug_ids_from_commit_queue(self):
-        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
-        return self._fetch_bug_ids_advanced_query(commit_queue_url)
-
-    # List of all r+'d bugs.
-    def fetch_bug_ids_from_needs_commit_list(self):
-        needs_commit_query_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
-        return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
-
-    def fetch_bug_ids_from_review_queue(self):
-        review_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
-        return self._fetch_bug_ids_advanced_query(review_queue_url)
-
-    def fetch_attachment_ids_from_review_queue(self):
-        review_queue_url = self.bug_server_url + "request.cgi?action=queue&type=review&group=type"
-        return self._fetch_attachment_ids_request_query(review_queue_url)
-
-    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
-        patches_to_land = []
-        for bug_id in self.fetch_bug_ids_from_commit_queue():
-            patches = self.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
-            patches_to_land += patches
-        return patches_to_land
-
-    def fetch_patches_from_pending_commit_list(self):
-        return sum([self.fetch_reviewed_patches_from_bug(bug_id) for bug_id in self.fetch_bug_ids_from_needs_commit_list()], [])
-
-    def fetch_patches_from_review_queue(self, limit=None):
-        return sum([self.fetch_bug(bug_id).unreviewed_patches() for bug_id in self.fetch_bug_ids_from_review_queue()[:limit]], []) # [:None] returns the whole array.
 
     def authenticate(self):
         if self.authenticated:

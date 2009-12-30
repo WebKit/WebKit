@@ -1,3 +1,30 @@
+2009-12-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out BugzillaQueries class from Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=33042
+
+        * Scripts/modules/bugzilla.py:
+         - Split out BugzillaQueries from Bugzilla.
+         - Try to isolate self.bugzilla usage into helper functions whenever possible.
+         - Add a bunch of FIXMEs.
+         - Rename fetch_bug_ids_from_needs_commit_list to fetch_bug_ids_from_pending_commit_list
+        * Scripts/modules/bugzilla_unittest.py:
+         - Create a new BugzillaQueriesTest testcase and move logic there.
+        * Scripts/modules/buildsteps_unittest.py:
+         - Use Bug 75 instead of 1 since bug 1 doesn't actually exist.
+        * Scripts/modules/commands/queries.py:
+         - Update to use bugzilla.queries
+        * Scripts/modules/commands/queues.py:
+         - Ditto.
+        * Scripts/modules/commands/upload.py:
+         - Ditto.
+        * Scripts/modules/mock_bugzillatool.py:
+         - Add a MockBugzillaQueries.
+         - Make patches and bugs global privates.
+         - Let _id_to_object_dictionary take a variable argument list instead of an array.
+
 2009-12-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

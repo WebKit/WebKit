@@ -38,8 +38,8 @@ class UpdateChangeLogsWithReviewerStepTest(unittest.TestCase):
     def test_guess_reviewer_from_bug(self):
         capture = OutputCapture()
         step = UpdateChangeLogsWithReviewerStep(MockBugzillaTool(), [])
-        expected_stderr = "0 reviewed patches on bug 1, cannot infer reviewer.\n"
-        capture.assert_outputs(self, step._guess_reviewer_from_bug, [1], expected_stderr=expected_stderr)
+        expected_stderr = "0 reviewed patches on bug 75, cannot infer reviewer.\n"
+        capture.assert_outputs(self, step._guess_reviewer_from_bug, [75], expected_stderr=expected_stderr)
 
 
 class StepsTest(unittest.TestCase):
