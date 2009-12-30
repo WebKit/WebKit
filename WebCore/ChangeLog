@@ -19,6 +19,29 @@
 
         Reviewed by Adam Barth.
 
+        [V8] Generate configuring of all indexers.
+        https://bugs.webkit.org/show_bug.cgi?id=33031
+
+        Refactorig, covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added generation of indexers for
+            special cases.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate): Removed custom tempalte configuration of
+            indexers.
+        * bindings/v8/custom/V8CustomBinding.h: Added decls for Applet, Embed, and Object
+            elements (these will be generated, too -- later.)
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        (WebCore::npObjectIndexedGetter): Moved common code to a separate method.
+        (WebCore::npObjectIndexedSetter): Ditto.
+        (WebCore::INDEXED_PROPERTY_GETTER): Added custom handlers for Applet, Embed, and Object
+          all calling the common method.
+        (WebCore::INDEXED_PROPERTY_SETTER): Ditto.
+
+2009-12-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
         [V8] Generate configuring of all named property getters/setters/enumerators.
         https://bugs.webkit.org/show_bug.cgi?id=32996
 

@@ -280,11 +280,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
         break;
     case V8ClassIndex::HTMLOPTIONSCOLLECTION:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLOptionsCollection), USE_INDEXED_PROPERTY_SETTER(HTMLOptionsCollection));
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
-        break;
-    case V8ClassIndex::HTMLSELECTELEMENT:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLSelectElement), USE_INDEXED_PROPERTY_SETTER(HTMLSelectElement), 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLSelectElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     case V8ClassIndex::HTMLDOCUMENT: {
         // We add an extra internal field to all Document wrappers for
@@ -318,11 +314,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // HTMLAppletElement, HTMLEmbedElement and HTMLObjectElement are
         // inherited from HTMLPlugInElement, and they share the same property
         // handling code.
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLPlugInElement), USE_INDEXED_PROPERTY_SETTER(HTMLPlugInElement));
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLPlugInElement::defaultCallback);
-        break;
-    case V8ClassIndex::HTMLFORMELEMENT:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLFormElement), 0, 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLFormElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     case V8ClassIndex::STYLESHEET:  // fall through
     case V8ClassIndex::CSSSTYLESHEET: {
@@ -338,23 +330,13 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
         ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
         instanceTemplate->SetInternalFieldCount(V8Custom::kNamedNodeMapInternalFieldCount);
-        instanceTemplate->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(NamedNodeMap), 0, 0, 0, collectionIndexedPropertyEnumerator<NamedNodeMap>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     }
     case V8ClassIndex::NODELIST:
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8NodeList::callAsFunctionCallback);
         break;
-#if ENABLE(DOM_STORAGE)
-    case V8ClassIndex::STORAGE:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(Storage), USE_INDEXED_PROPERTY_SETTER(Storage), 0, USE_INDEXED_PROPERTY_DELETER(Storage));
-        break;
-#endif
     case V8ClassIndex::DOMWINDOW: {
-        v8::Local<v8::Signature> defaultSignature = v8::Signature::New(descriptor);
-
-        descriptor->PrototypeTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(DOMWindow));
         descriptor->PrototypeTemplate()->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
-
         descriptor->SetHiddenPrototype(true);
 
         // Reserve spaces for references to location, history and

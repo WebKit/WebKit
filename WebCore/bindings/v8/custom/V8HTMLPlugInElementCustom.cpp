@@ -114,7 +114,7 @@ v8::Handle<v8::Value> V8HTMLPlugInElement::defaultCallback(const v8::Arguments& 
     return npObjectInvokeDefaultHandler(args);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLPlugInElement)
+v8::Handle<v8::Value> npObjectIndexedGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLPlugInElement.IndexedPropertyGetter");
     HTMLPlugInElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLPlugInElement>(info.Holder());
@@ -129,7 +129,7 @@ INDEXED_PROPERTY_GETTER(HTMLPlugInElement)
     return npObjectGetIndexedProperty(instance, index);
 }
 
-INDEXED_PROPERTY_SETTER(HTMLPlugInElement)
+v8::Handle<v8::Value> npObjectIndexedSetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLPlugInElement.IndexedPropertySetter");
     HTMLPlugInElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLPlugInElement>(info.Holder());
@@ -142,6 +142,42 @@ INDEXED_PROPERTY_SETTER(HTMLPlugInElement)
         return notHandledByInterceptor();
 
     return npObjectSetIndexedProperty(instance, index, value);
+}
+
+INDEXED_PROPERTY_GETTER(HTMLAppletElement)
+{
+    INC_STATS("DOM.HTMLAppletElement.IndexedPropertyGetter");
+    return npObjectIndexedGetter(index, info);
+}
+
+INDEXED_PROPERTY_GETTER(HTMLEmbedElement)
+{
+    INC_STATS("DOM.HTMLEmbedElement.IndexedPropertyGetter");
+    return npObjectIndexedGetter(index, info);
+}
+
+INDEXED_PROPERTY_GETTER(HTMLObjectElement)
+{
+    INC_STATS("DOM.HTMLObjectElement.IndexedPropertyGetter");
+    return npObjectIndexedGetter(index, info);
+}
+
+INDEXED_PROPERTY_SETTER(HTMLAppletElement)
+{
+    INC_STATS("DOM.HTMLAppletElement.IndexedPropertySetter");
+    return npObjectIndexedSetter(index, value, info);
+}
+
+INDEXED_PROPERTY_SETTER(HTMLEmbedElement)
+{
+    INC_STATS("DOM.HTMLEmbedElement.IndexedPropertySetter");
+    return npObjectIndexedSetter(index, value, info);
+}
+
+INDEXED_PROPERTY_SETTER(HTMLObjectElement)
+{
+    INC_STATS("DOM.HTMLObjectElement.IndexedPropertySetter");
+    return npObjectIndexedSetter(index, value, info);
 }
 
 } // namespace WebCore
