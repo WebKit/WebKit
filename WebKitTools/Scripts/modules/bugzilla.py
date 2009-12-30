@@ -69,6 +69,9 @@ class Bug(object):
     def __init__(self, bug_dictionary):
         self.bug_dictionary = bug_dictionary
 
+    def assigned_to_email(self):
+        return self.bug_dictionary["assigned_to_email"]
+
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
         if include_obsolete:
@@ -93,10 +96,11 @@ class Bugzilla(object):
         self.browser.set_handle_robots(False)
         self.committers = committers
 
-    # Defaults (until we support better option parsing):
+    # FIXME: Much of this should go into some sort of config module:
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host
+    unassigned_email = "webkit-unassigned@lists.webkit.org"
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         content_type = "&ctype=xml" if xml else ""
@@ -138,7 +142,7 @@ class Bugzilla(object):
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = unicode(soup.find("short_desc").string)
         bug["reporter_email"] = str(soup.find("reporter").string)
-        bug["assign_to_email"] = str(soup.find("assigned_to").string)
+        bug["assigned_to_email"] = str(soup.find("assigned_to").string)
         bug["cc_emails"] = [str(element.string) for element in soup.findAll('cc')]
         bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
         return bug
@@ -514,6 +518,22 @@ class Bugzilla(object):
             self.browser['comment'] = comment_text
         self.browser['bug_status'] = ['RESOLVED']
         self.browser['resolution'] = ['FIXED']
+        self.browser.submit()
+
+    def reassign_bug(self, bug_id, assignee, comment_text=None):
+        self.authenticate()
+
+        log("Assigning bug %s to %s" % (bug_id, assignee))
+        if self.dryrun:
+            log(comment_text)
+            return
+
+        self.browser.open(self.bug_url_for_bug_id(bug_id))
+        self.browser.select_form(name="changeform")
+        if comment_text:
+            log(comment_text)
+            self.browser["comment"] = comment_text
+        self.browser["assigned_to"] = assignee
         self.browser.submit()
 
     def reopen_bug(self, bug_id, comment_text):

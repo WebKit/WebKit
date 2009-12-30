@@ -37,6 +37,10 @@ class Committer:
             self.emails = email_or_emails
         self.can_review = False
 
+    # FIXME: We're assuming the first email is a valid bugzilla email, which might not be right.
+    def bugzilla_email(self):
+        return self.emails[0]
+
     def __str__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 

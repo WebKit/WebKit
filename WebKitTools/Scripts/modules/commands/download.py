@@ -40,16 +40,8 @@ from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
 from modules.grammar import pluralize
 from modules.logging import error, log
-from modules.multicommandtool import Command
+from modules.multicommandtool import AbstractDeclarativeCommmand, Command
 from modules.stepsequence import StepSequence
-
-
-# FIXME: Move this to a more general location.
-class AbstractDeclarativeCommmand(Command):
-    help_text = None
-    argument_names = None
-    def __init__(self, options):
-        Command.__init__(self, self.help_text, self.argument_names, options)
 
 
 # FIXME: Move this to a more general location.

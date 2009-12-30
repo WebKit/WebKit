@@ -38,6 +38,7 @@ from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_o
 from modules.grammar import pluralize
 from modules.logging import log
 
+
 class Command(object):
     name = None
     show_in_main_help = False
@@ -124,6 +125,15 @@ class Command(object):
         (options, args) = self.parse_args(args)
         # Some commands might require a dummy tool
         return self.check_arguments_and_execute(options, args)
+
+
+# FIXME: This should just be rolled into Command.  help_text and argument_names do not need to be instance variables.
+class AbstractDeclarativeCommmand(Command):
+    help_text = None
+    argument_names = None
+    def __init__(self, options=None):
+        Command.__init__(self, self.help_text, self.argument_names, options)
+
 
 class HelpPrintingOptionParser(OptionParser):
     def __init__(self, epilog_method=None, *args, **kwargs):

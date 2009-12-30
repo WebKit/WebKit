@@ -174,7 +174,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         "title" : u"bug to test bugzilla-tool and commit-queue failures",
         "cc_emails" : ["foo@bar.com", "example@example.com"],
         "reporter_email" : "eric@webkit.org",
-        "assign_to_email" : "webkit-unassigned@lists.webkit.org",
+        "assigned_to_email" : "webkit-unassigned@lists.webkit.org",
         "attachments" : [{
             'name': u'Patch',
             'url': 'https://bugs.webkit.org/attachment.cgi?id=45548',

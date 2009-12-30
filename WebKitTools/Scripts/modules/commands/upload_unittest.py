@@ -30,8 +30,15 @@ import unittest
 
 from modules.commands.commandtest import CommandsTest
 from modules.commands.upload import *
+from modules.mock_bugzillatool import MockBugzillaTool
 
 class UploadCommandsTest(CommandsTest):
+    def test_assign_to_committer(self):
+        tool = MockBugzillaTool()
+        expected_stderr = "Bug 75 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
+        self.assert_execute_outputs(AssignToCommitter(), [], expected_stderr=expected_stderr, tool=tool)
+        tool.bugs.reassign_bug.assert_called_with(42, "eric@webkit.org", "Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.")
+
     def test_obsolete_attachments(self):
         expected_stderr = "Obsoleting 2 old patches on bug 42\n"
         self.assert_execute_outputs(ObsoleteAttachments(), [42], expected_stderr=expected_stderr)

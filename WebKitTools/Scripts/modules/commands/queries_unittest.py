@@ -44,8 +44,8 @@ class QueryCommandsTest(CommandsTest):
         self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
 
     def test_patches_to_commit_queue(self):
-        expected_stdout = "http://example.com/197&action=edit\nhttp://example.com/128&action=edit\n"
-        expected_stderr = ""
+        expected_stdout = "http://example.com/197&action=edit\n"
+        expected_stderr = "128 committer = \"Eric Seidel\" <eric@webkit.org>\n"
         options = Mock()
         options.bugs = False
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)

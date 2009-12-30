@@ -30,7 +30,13 @@ import os
 
 from modules.mock import Mock
 from modules.scm import CommitMessage
+from modules.bugzilla import Bug
 
+def _id_to_object_dictionary(objects):
+    dictionary = {}
+    for thing in objects:
+        dictionary[thing["id"]] = thing
+    return dictionary
 
 class MockBugzilla(Mock):
     patch1 = {
@@ -47,9 +53,10 @@ class MockBugzilla(Mock):
         "url" : "http://example.com/128",
         "is_obsolete" : False,
         "reviewer" : "Reviewer2",
-        "attacher_email" : "Contributer2",
+        "attacher_email" : "eric@webkit.org",
     }
     bug_server_url = "http://example.com"
+    unassigned_email = "unassigned@example.com"
 
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
@@ -60,6 +67,30 @@ class MockBugzilla(Mock):
     def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
         return [self.patch1, self.patch2]
 
+    def fetch_bug_ids_from_needs_commit_list(self):
+        return [42, 75, 76]
+
+    bug1 = {
+        "id" : 42,
+        "assigned_to_email" : unassigned_email,
+        "attachments" : [patch1, patch2],
+    }
+    bug2 = {
+        "id" : 75,
+        "assigned_to_email" : "foo@foo.com",
+        "attachments" : [],
+    }
+    bug3 = {
+        "id" : 76,
+        "assigned_to_email" : unassigned_email,
+        "attachments" : [],
+    }
+
+    bug_cache = _id_to_object_dictionary([bug1, bug2, bug3])
+
+    def fetch_bug(self, bug_id):
+        return Bug(self.bug_cache.get(bug_id))
+
     def fetch_patches_from_pending_commit_list(self):
         return [self.patch1, self.patch2]
 
@@ -67,11 +98,6 @@ class MockBugzilla(Mock):
         if bug_id == 42:
             return [self.patch1, self.patch2]
         return []
-
-    def fetch_attachments_from_bug(self, bug_id):
-        if bug_id == 42:
-            return [self.patch1, self.patch2]
-        return None
 
     def fetch_patches_from_bug(self, bug_id):
         if bug_id == 42:
