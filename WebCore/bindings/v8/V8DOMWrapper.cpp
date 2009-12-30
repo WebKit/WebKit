@@ -280,7 +280,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
         break;
     case V8ClassIndex::HTMLOPTIONSCOLLECTION:
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLCollection));
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLOptionsCollection), USE_INDEXED_PROPERTY_SETTER(HTMLOptionsCollection));
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLCollection::callAsFunctionCallback);
         break;
@@ -288,8 +287,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLSelectElement), USE_INDEXED_PROPERTY_SETTER(HTMLSelectElement), 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLSelectElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     case V8ClassIndex::HTMLDOCUMENT: {
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLDocument), 0, 0, USE_NAMED_PROPERTY_DELETER(HTMLDocument));
-
         // We add an extra internal field to all Document wrappers for
         // storing a per document DOMImplementation wrapper.
         //
@@ -321,15 +318,10 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // HTMLAppletElement, HTMLEmbedElement and HTMLObjectElement are
         // inherited from HTMLPlugInElement, and they share the same property
         // handling code.
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLPlugInElement), USE_NAMED_PROPERTY_SETTER(HTMLPlugInElement));
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLPlugInElement), USE_INDEXED_PROPERTY_SETTER(HTMLPlugInElement));
         descriptor->InstanceTemplate()->SetCallAsFunctionHandler(V8HTMLPlugInElement::defaultCallback);
         break;
-    case V8ClassIndex::HTMLFRAMESETELEMENT:
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLFrameSetElement));
-        break;
     case V8ClassIndex::HTMLFORMELEMENT:
-        descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLFormElement));
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLFormElement), 0, 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLFormElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
     case V8ClassIndex::STYLESHEET:  // fall through
@@ -360,7 +352,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::DOMWINDOW: {
         v8::Local<v8::Signature> defaultSignature = v8::Signature::New(descriptor);
 
-        descriptor->PrototypeTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(DOMWindow));
         descriptor->PrototypeTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(DOMWindow));
         descriptor->PrototypeTemplate()->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
 

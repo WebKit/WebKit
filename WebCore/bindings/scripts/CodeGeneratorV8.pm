@@ -1176,13 +1176,21 @@ sub GenerateImplementationNamedPropertyGetter
     my $dataNode = shift;
     my $namedPropertyGetter = shift;
     my $interfaceName = $dataNode->name;
+    my $hasCustomGetter = $dataNode->extendedAttributes->{"HasOverridingNameGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
-    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $namedPropertyGetter;
+    # FIXME: Remove hard-coded HTMLOptionsCollection reference by changing HTMLOptionsCollection to not inherit
+    # from HTMLCollection per W3C spec (http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/html.html#HTMLOptionsCollection).
+    if ($interfaceName eq "HTMLOptionsCollection") {
+        $interfaceName = "HTMLCollection";
+        $hasCustomGetter = 1;
+    }
+
+    my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $hasCustomGetter || $namedPropertyGetter;
     if (!$hasGetter) {
         return;
     }
 
-    if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"}) {
+    if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"} && !$hasCustomGetter) {
         $implIncludes{"V8Collection.h"} = 1;
         my $type = $namedPropertyGetter->type;
         my $classIndex = uc($type);
@@ -1193,10 +1201,22 @@ END
     }
 
     my $hasSetter = $dataNode->extendedAttributes->{"DelegatingPutFunction"};
-    my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+    # FIXME: Try to remove hard-coded HTMLDocument reference by aligning handling of document.all with JSC bindings.
+    my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"} || $interfaceName eq "HTMLDocument";
     my $hasEnumerator = $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+    my $setOn = "Instance";
 
-    push(@implContent, "  desc->InstanceTemplate()->SetNamedPropertyHandler(V8Custom::v8${interfaceName}NamedPropertyGetter, ");
+    # V8 has access-check callback API (see ObjectTemplate::SetAccessCheckCallbacks) and it's used on DOMWindow
+    # instead of deleters or enumerators. In addition, the getter should be set on prototype template, to
+    # get implementation straight out of the DOMWindow prototype regardless of what prototype is actually set
+    # on the object.
+    if ($interfaceName eq "DOMWindow") {
+        $setOn = "Prototype";
+        $hasDeleter = 0;
+        $hasEnumerator = 0;
+    }
+
+    push(@implContent, "  desc->${setOn}Template()->SetNamedPropertyHandler(V8Custom::v8${interfaceName}NamedPropertyGetter, ");
     push(@implContent, $hasSetter ? "V8Custom::v8${interfaceName}NamedPropertySetter, " : "0, ");
     push(@implContent, "0 ,"); # NamedPropertyQuery -- not being used at the moment.
     push(@implContent, $hasDeleter ? "V8Custom::v8${interfaceName}NamedPropertyDeleter, " : "0, ");
