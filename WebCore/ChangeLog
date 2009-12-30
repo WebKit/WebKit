@@ -1,3 +1,19 @@
+2009-12-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32121
+        [Qt] Revert "Implement ImageDecoderQt::clearFrameBufferCache()" from r52516.
+
+        The implementation appears to either run into an ASSERT
+        or leak memory at runtime as the m_buffer, m_reader may
+        already exist. The bug was reopened and we do have a plan now.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::clearFrameBufferCache):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
 2009-12-30  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
