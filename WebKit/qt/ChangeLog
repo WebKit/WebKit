@@ -1,3 +1,14 @@
+2009-12-30  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Upstream Symbian def files from Qt 4.6.
+
+        These files define the ABI of QtWebKit on Symbian.
+
+        * symbian/bwins/QtWebKitu.def: Added.
+        * symbian/eabi/QtWebKitu.def: Added.
+
 2009-12-29  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Ariya Hidayat.

@@ -3433,3 +3433,17 @@ CONFIG(standalone_package):isEqual(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VER
             plugins/win/PaintHooks.asm
     }
 }
+
+symbian {
+    shared {
+        contains(MMP_RULES, defBlock) {
+            MMP_RULES -= defBlock
+
+            MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
+                    "DEFFILE ../WebKit/qt/symbian/bwins/$${TARGET}.def" \
+                    "$${LITERAL_HASH}elif defined EABI" \
+                    "DEFFILE ../WebKit/qt/symbian/eabi/$${TARGET}.def" \
+                    "$${LITERAL_HASH}endif"
+        }
+    }
+}
