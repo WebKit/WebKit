@@ -175,6 +175,9 @@ namespace WebCore {
         // Script state for the main world context.
         ScriptState* mainWorldScriptState();
 
+        // Returns ScriptState for current context.
+        static ScriptState* currentScriptState();
+
     private:
         Frame* m_frame;
         const String* m_sourceURL;

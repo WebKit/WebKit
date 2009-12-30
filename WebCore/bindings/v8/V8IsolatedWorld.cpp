@@ -91,4 +91,14 @@ V8IsolatedWorld::~V8IsolatedWorld()
     m_context->disposeHandle();
 }
 
+ScriptState* V8IsolatedWorld::scriptState()
+{
+    if (!m_scriptState) {
+        v8::HandleScope scope;
+        v8::Handle<v8::Context> context = m_context.get()->get();
+        m_scriptState.set(new ScriptState(V8Proxy::retrieveFrame(context), context));
+    }
+    return m_scriptState.get();
+}
+
 } // namespace WebCore

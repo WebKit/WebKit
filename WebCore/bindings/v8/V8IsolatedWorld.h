@@ -95,6 +95,8 @@ namespace WebCore {
 
         DOMDataStore* getDOMDataStore() const { return m_domDataStore.getStore(); }
 
+        ScriptState* scriptState();
+
     private:
         static v8::Handle<v8::Object> getGlobalObject(v8::Handle<v8::Context> context)
         {
@@ -113,6 +115,9 @@ namespace WebCore {
         // doesn't have visibility into the wrappers.  This handle simply helps
         // manage their lifetime.
         DOMDataStoreHandle m_domDataStore;
+
+        // FIXME: get rid of redundant m_context field. The context can be retrieved from the ScriptState.
+        OwnPtr<ScriptState> m_scriptState;
 
         static int isolatedWorldCount;
     };
