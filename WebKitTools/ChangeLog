@@ -1,3 +1,15 @@
+2009-12-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] post-diff requires reading to the end
+        https://bugs.webkit.org/show_bug.cgi?id=33036
+
+        Catch the IOError caused by not reading to the end of the diff.  We
+        don't have a good way to test this currently.
+
+        * Scripts/modules/user.py:
+
 2009-12-29  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Adam Barth.
