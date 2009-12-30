@@ -1,5 +1,13 @@
 2009-12-29  Eric Seidel  <eric@webkit.org>
 
+        Rubber-stamped by Adam Barth.
+
+        Remove unused BugzillaException.
+
+        * Scripts/modules/bugzilla.py:
+
+2009-12-29  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Need a script to assign bugs with r+ patches to committers for landing

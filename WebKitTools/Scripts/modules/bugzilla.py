@@ -59,10 +59,6 @@ def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
 
-class BugzillaError(Exception):
-    pass
-
-
 # FIXME: This class is kinda a hack for now.  It exists so we have one place
 # to hold bug logic, even if much of the code deals with dictionaries still.
 class Bug(object):
@@ -322,7 +318,7 @@ class Bugzilla(object):
         # If the resulting page has a title, and it contains the word "invalid" assume it's the login failure page.
         if match and re.search("Invalid", match.group(1), re.IGNORECASE):
             # FIXME: We could add the ability to try again on failure.
-            raise BugzillaError("Bugzilla login failed: %s" % match.group(1))
+            raise Exception("Bugzilla login failed: %s" % match.group(1))
 
         self.authenticated = True
 
@@ -372,7 +368,7 @@ class Bugzilla(object):
         if match:
             text_lines = BeautifulSoup(match.group('error_message')).findAll(text=True)
             error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
-        raise BugzillaError("Bug not created: %s" % error_message)
+        raise Exception("Bug not created: %s" % error_message)
 
     def create_bug(self, bug_title, bug_description, component=None, patch_file_object=None, patch_description=None, cc=None, mark_for_review=False, mark_for_commit_queue=False):
         self.authenticate()
