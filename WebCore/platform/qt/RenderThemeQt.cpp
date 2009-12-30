@@ -43,10 +43,10 @@
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "QWebPageClient.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "UserAgentStyleSheets.h"
-#include "QWebPageClient.h"
 #include "qwebpage.h"
 
 #include <QApplication>
@@ -477,7 +477,7 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     option.rect = r;
     option.state |= QStyle::State_Small;
 
-    ControlPart appearance = applyTheme(option, o);
+    ControlPart appearance = initializeCommonQStyleOptions(option, o);
     if (appearance == PushButtonPart || appearance == ButtonPart) {
         option.rect = inflateButtonRect(option.rect, qStyle());
         p.drawControl(QStyle::CE_PushButton, option);
@@ -513,7 +513,7 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     panel.features = QStyleOptionFrameV2::None;
 
     // Get the correct theme data for a text field
-    ControlPart appearance = applyTheme(panel, o);
+    ControlPart appearance = initializeCommonQStyleOptions(panel, o);
     if (appearance != TextFieldPart
         && appearance != SearchFieldPart
         && appearance != TextAreaPart
@@ -575,7 +575,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
     QStyleOptionComboBox opt;
     if (p.widget)
         opt.initFrom(p.widget);
-    applyTheme(opt, o);
+    initializeCommonQStyleOptions(opt, o);
 
     const QPoint topLeft = r.topLeft();
     p.painter->translate(topLeft);
@@ -615,7 +615,7 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
     QStyleOptionComboBox option;
     if (p.widget)
         option.initFrom(p.widget);
-    applyTheme(option, o);
+    initializeCommonQStyleOptions(option, o);
     option.rect = r;
 
     // for drawing the combo box arrow, rely only on the fallback style
@@ -712,7 +712,25 @@ bool RenderThemeQt::supportsFocus(ControlPart appearance) const
     }
 }
 
-ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) const
+static inline void setPaletteFromPageClientIfExists(QPalette &palette, const RenderObject *o)
+{
+    // If the webview has a custom palette, use it
+    Page* page = o->document()->page();
+    if (!page)
+        return;
+    Chrome* chrome = page->chrome();
+    if (!chrome)
+        return;
+    ChromeClient* chromeClient = chrome->client();
+    if (!chromeClient)
+        return;
+    QWebPageClient* pageClient = chromeClient->platformPageClient();
+    if (!pageClient)
+        return;
+    palette = pageClient->palette();
+}
+
+ControlPart RenderThemeQt::initializeCommonQStyleOptions(QStyleOption& option, RenderObject* o) const
 {
     // Default bits: no focus, no mouse over
     option.state &= ~(QStyle::State_HasFocus | QStyle::State_MouseOver);
@@ -724,19 +742,24 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
         // Readonly is supported on textfields.
         option.state |= QStyle::State_ReadOnly;
 
-    if (supportsFocus(o->style()->appearance()) && isFocused(o)) {
-        option.state |= QStyle::State_HasFocus;
-        option.state |= QStyle::State_KeyboardFocusChange;
-    }
+    option.direction = Qt::LeftToRight;
 
     if (isHovered(o))
         option.state |= QStyle::State_MouseOver;
 
-    option.direction = Qt::LeftToRight;
-    if (o->style() && o->style()->direction() == WebCore::RTL)
-        option.direction = Qt::RightToLeft;
+    setPaletteFromPageClientIfExists(option.palette, o);
+    RenderStyle* style = o->style();
+    if (!style)
+        return NoControlPart;
 
-    ControlPart result = o->style()->appearance();
+    ControlPart result = style->appearance();
+    if (supportsFocus(result) && isFocused(o)) {
+        option.state |= QStyle::State_HasFocus;
+        option.state |= QStyle::State_KeyboardFocusChange;
+    }
+
+    if (style->direction() == WebCore::RTL)
+        option.direction = Qt::RightToLeft;
 
     switch (result) {
     case PushButtonPart:
@@ -753,18 +776,9 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
             option.state |= QStyle::State_Raised;
         break;
     }
-    }
-
-    if (result == RadioPart || result == CheckboxPart)
+    case RadioPart:
+    case CheckboxPart:
         option.state |= (isChecked(o) ? QStyle::State_On : QStyle::State_Off);
-
-    // If the owner widget has a custom palette, use it
-    Page* page = o->document()->page();
-    if (page) {
-        ChromeClient* client = page->chrome()->client();
-        QWebPageClient* pageClient = client->platformPageClient();
-        if (pageClient)
-            option.palette = pageClient->palette();
     }
 
     return result;

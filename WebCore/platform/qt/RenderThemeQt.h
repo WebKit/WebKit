@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef RenderThemeQt_H
-#define RenderThemeQt_H
+#ifndef RenderThemeQt_h
+#define RenderThemeQt_h
 
 #include "RenderTheme.h"
 
@@ -132,7 +132,7 @@ private:
 private:
     bool supportsFocus(ControlPart) const;
 
-    ControlPart applyTheme(QStyleOption&, RenderObject*) const;
+    ControlPart initializeCommonQStyleOptions(QStyleOption&, RenderObject*) const;
 
     void setButtonPadding(RenderStyle*) const;
     void setPopupPadding(RenderStyle*) const;
@@ -180,4 +180,4 @@ private:
 
 }
 
-#endif
+#endif // RenderThemeQt_h
