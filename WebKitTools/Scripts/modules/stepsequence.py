@@ -28,7 +28,7 @@
 
 from modules.buildsteps import CommandOptions
 from modules.executive import ScriptError
-from modules.logging import log
+from modules.webkit_logging import log
 from modules.scm import CheckoutNeedsUpdate
 from modules.queueengine import QueueEngine
 

@@ -32,7 +32,7 @@ import re
 import urllib2
 
 # Import WebKit-specific modules.
-from modules.logging import log
+from modules.webkit_logging import log
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.

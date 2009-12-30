@@ -1,3 +1,31 @@
+2009-12-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        logging.py should be renamed to webkit_logging.py and eventually die
+        https://bugs.webkit.org/show_bug.cgi?id=33058
+
+        Change all imports of "logging" to webkit_logging,
+        except the ones which came from Google's cpp_lint.py and diff_parser.py
+        which clearly are assuming python's logging.py.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/buildbot.py:
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/download.py:
+        * Scripts/modules/commands/queries.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/commands/upload.py:
+        * Scripts/modules/credentials.py:
+        * Scripts/modules/executive.py:
+        * Scripts/modules/multicommandtool.py:
+        * Scripts/modules/queueengine.py:
+        * Scripts/modules/scm.py:
+        * Scripts/modules/statusbot.py:
+        * Scripts/modules/stepsequence.py:
+        * Scripts/modules/webkit_logging.py: Renamed from WebKitTools/Scripts/modules/logging.py.
+        * Scripts/modules/webkit_logging_unittest.py: Renamed from WebKitTools/Scripts/modules/logging_unittest.py.
+
 2009-12-30  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.

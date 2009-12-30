@@ -35,7 +35,7 @@ import platform
 import re
 
 from modules.executive import Executive
-from modules.logging import log
+from modules.webkit_logging import log
 from modules.scm import Git
 
 class Credentials(object):

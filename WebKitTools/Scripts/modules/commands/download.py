@@ -39,7 +39,7 @@ from modules.changelogs import ChangeLog
 from modules.comments import bug_comment_from_commit_text
 from modules.executive import ScriptError
 from modules.grammar import pluralize
-from modules.logging import error, log
+from modules.webkit_logging import error, log
 from modules.multicommandtool import AbstractDeclarativeCommmand, Command
 from modules.stepsequence import StepSequence
 

@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # WebKit's Python module for logging
+# This module is now deprecated in favor of python's built-in logging.py.
 
 import os
 import sys

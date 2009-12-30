@@ -33,7 +33,7 @@ from optparse import make_option
 
 from modules.buildbot import BuildBot
 from modules.committers import CommitterList
-from modules.logging import log
+from modules.webkit_logging import log
 from modules.multicommandtool import Command
 
 

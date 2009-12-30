@@ -41,7 +41,7 @@ from modules.commands.download import AbstractSequencedCommmand
 from modules.comments import bug_comment_from_svn_revision
 from modules.committers import CommitterList
 from modules.grammar import pluralize
-from modules.logging import error, log
+from modules.webkit_logging import error, log
 from modules.multicommandtool import Command, AbstractDeclarativeCommmand
 
 # FIXME: Requires unit test.

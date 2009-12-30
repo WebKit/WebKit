@@ -33,7 +33,7 @@ import tempfile
 import unittest
 
 from modules.executive import ScriptError
-from modules.logging import *
+from modules.webkit_logging import *
 
 class LoggingTest(unittest.TestCase):
 

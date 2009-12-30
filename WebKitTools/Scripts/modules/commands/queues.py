@@ -36,7 +36,7 @@ from StringIO import StringIO
 
 from modules.executive import ScriptError
 from modules.grammar import pluralize
-from modules.logging import error, log
+from modules.webkit_logging import error, log
 from modules.multicommandtool import Command
 from modules.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from modules.statusbot import StatusBot

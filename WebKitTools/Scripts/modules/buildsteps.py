@@ -33,7 +33,7 @@ from optparse import make_option
 
 from modules.comments import bug_comment_from_commit_text
 from modules.grammar import pluralize
-from modules.logging import log, error
+from modules.webkit_logging import log, error
 from modules.webkitport import WebKitPort
 from modules.changelogs import ChangeLog
 

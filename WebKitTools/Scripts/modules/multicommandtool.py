@@ -36,7 +36,7 @@ import sys
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
 from modules.grammar import pluralize
-from modules.logging import log
+from modules.webkit_logging import log
 
 
 class Command(object):

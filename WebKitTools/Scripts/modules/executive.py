@@ -32,7 +32,7 @@ import StringIO
 import subprocess
 import sys
 
-from modules.logging import tee
+from modules.webkit_logging import tee
 
 
 class ScriptError(Exception):

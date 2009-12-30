@@ -40,7 +40,7 @@ from modules.commands.queries import *
 from modules.commands.queues import *
 from modules.commands.upload import *
 from modules.executive import Executive
-from modules.logging import log
+from modules.webkit_logging import log
 from modules.multicommandtool import MultiCommandTool
 from modules.scm import detect_scm_system
 from modules.user import User

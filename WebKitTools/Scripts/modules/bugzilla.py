@@ -35,7 +35,7 @@ import subprocess
 from datetime import datetime # used in timestamp()
 
 # Import WebKit-specific modules.
-from modules.logging import error, log
+from modules.webkit_logging import error, log
 from modules.committers import CommitterList
 from modules.credentials import Credentials
 
