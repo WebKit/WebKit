@@ -1,3 +1,16 @@
+2009-12-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add a test for window.top and isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=33030
+
+        I wrote this test to investigate an issue that turns out is working
+        properly.  No sense wasting a perfectly good test, so we should add it.
+
+        * http/tests/security/isolatedWorld/top-properties-expected.txt: Added.
+        * http/tests/security/isolatedWorld/top-properties.html: Added.
+
 2009-12-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
