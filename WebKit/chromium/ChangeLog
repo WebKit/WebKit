@@ -1,3 +1,13 @@
+2009-12-30  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Delete ResourceRequest::securityInfo
+        https://bugs.webkit.org/show_bug.cgi?id=26847
+
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::initializeLoader):
+
 2009-12-30  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed.  Trivial Chromium build fix.

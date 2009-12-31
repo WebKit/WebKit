@@ -132,8 +132,7 @@ void WebWorkerBase::initializeLoader(const WebURL& url)
     int len = static_cast<int>(content.length());
     RefPtr<SharedBuffer> buf(SharedBuffer::create(content.data(), len));
     SubstituteData substData(buf, String("text/html"), String("UTF-8"), KURL());
-    ResourceRequest request(url, CString());
-    webFrame->frame()->loader()->load(request, substData, false);
+    webFrame->frame()->loader()->load(ResourceRequest(url), substData, false);
 
     // This document will be used as 'loading context' for the worker.
     m_loadingDocument = webFrame->frame()->document();
