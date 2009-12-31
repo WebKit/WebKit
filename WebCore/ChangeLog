@@ -5,6 +5,18 @@
         [GTK] context menu overriding API is very limited
         https://bugs.webkit.org/show_bug.cgi?id=27546
 
+        Only show font menu items in rich text areas in the GTK+ port.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
+2009-12-31  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] context menu overriding API is very limited
+        https://bugs.webkit.org/show_bug.cgi?id=27546
+
         Don't show spell checking menu items in text areas in the GTK+ port.
 
         * platform/ContextMenu.cpp:
