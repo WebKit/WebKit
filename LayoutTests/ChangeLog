@@ -1,3 +1,15 @@
+2009-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7503279> REGRESSION (r47440): Incomplete repaint at macworldexpo.com
+        https://bugs.webkit.org/show_bug.cgi?id=33067
+
+        * fast/repaint/table-cell-overflow-expected.checksum: Added.
+        * fast/repaint/table-cell-overflow-expected.png: Added.
+        * fast/repaint/table-cell-overflow-expected.txt: Added.
+        * fast/repaint/table-cell-overflow.html: Added.
+
 2009-12-30  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Anders Carlsson.
