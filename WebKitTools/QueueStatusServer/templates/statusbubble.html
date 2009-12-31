@@ -61,6 +61,11 @@ function statusDetail(patch_id) {
     title="{{ summary.qt_ews.status.date|timesince }} ago"{% endif %}>
   qt
 </div>
+<div class="status {{ summary.mac_ews.state }}"{% if summary.mac_ews.status %}
+    onclick="statusDetail({{ summary.attachment_id }})"
+    title="{{ summary.mac_ews.status.date|timesince }} ago"{% endif %}>
+  mac
+</div>
 <div class="status {{ summary.gtk_ews.state }}"{% if summary.gtk_ews.status %}
     onclick="statusDetail({{ summary.attachment_id }})"
     title="{{ summary.gtk_ews.status.date|timesince }} ago"{% endif %}>

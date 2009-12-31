@@ -79,11 +79,12 @@ class Attachment(object):
         table = {
             "Pass" : "pass",
             "Fail" : "fail",
-            "Error" : "error",
         }
         state = table.get(status.message)
         if state:
             return state
+        if status.message.startswith("Error:"):
+            return "error"
         if status:
             return "pending"
         return None

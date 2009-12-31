@@ -1,5 +1,19 @@
 2009-12-31  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Show mac-ews status on QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=33076
+
+        Also make error status purple.
+
+        * QueueStatusServer/model/attachment.py:
+        * QueueStatusServer/model/queues.py:
+        * QueueStatusServer/templates/dashboard.html:
+        * QueueStatusServer/templates/statusbubble.html:
+
+2009-12-31  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.
 
         [bzt] REGRESSION: Bugzila is a typo
