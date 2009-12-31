@@ -68,6 +68,17 @@ class Build(AbstractSequencedCommmand):
     ]
 
 
+class BuildAndTest(AbstractSequencedCommmand):
+    name = "build-and-test"
+    help_text = "Update working copy, build, and run the tests"
+    steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        BuildStep,
+        RunTestsStep,
+    ]
+
+
 class LandDiff(AbstractSequencedCommmand):
     name = "land-diff"
     help_text = "Land the current working directory diff and updates the associated bug if any"

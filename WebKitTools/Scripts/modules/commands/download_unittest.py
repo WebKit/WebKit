@@ -51,6 +51,10 @@ class DownloadCommandsTest(CommandsTest):
         expected_stderr = "Updating working directory\nBuilding WebKit\n"
         self.assert_execute_outputs(Build(), [], options=self._default_options(), expected_stderr=expected_stderr)
 
+    def test_build_and_test(self):
+        expected_stderr = "Updating working directory\nBuilding WebKit\n"
+        self.assert_execute_outputs(BuildAndTest(), [], options=self._default_options(), expected_stderr=expected_stderr)
+
     def test_apply_attachment(self):
         options = self._default_options()
         options.update = True
