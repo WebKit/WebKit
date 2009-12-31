@@ -1,3 +1,9 @@
+2009-12-31  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Fix the unit tests!
+
+        * Scripts/run-webkit-unittests:
+
 2009-12-30  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

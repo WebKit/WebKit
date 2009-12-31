@@ -44,11 +44,11 @@ from modules.credentials_unittest import *
 from modules.cpp_style_unittest import *
 from modules.diff_parser_unittest import *
 from modules.executive_unittest import *
-from modules.logging_unittest import *
 from modules.multicommandtool_unittest import *
 from modules.queueengine_unittest import *
 from modules.style_unittest import *
 from modules.text_style_unittest import *
+from modules.webkit_logging_unittest import *
 from modules.webkitport_unittest import *
 
 if __name__ == "__main__":
