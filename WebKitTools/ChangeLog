@@ -1,5 +1,16 @@
 2009-12-31  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        [bzt] REGRESSION: Bugzila is a typo
+        https://bugs.webkit.org/show_bug.cgi?id=33074
+
+        Eric should test his code before landing!  :)
+
+        * Scripts/modules/bugzilla.py:
+
+2009-12-31  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Fix the unit tests!
 
         * Scripts/run-webkit-unittests:

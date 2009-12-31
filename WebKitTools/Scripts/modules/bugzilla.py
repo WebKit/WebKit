@@ -84,7 +84,7 @@ class Bug(object):
 # A container for all of the logic for making a parsing buzilla queries.
 class BugzillaQueries(object):
     def __init__(self, bugzilla):
-        self.bugzila = bugzilla
+        self.bugzilla = bugzilla
 
     def _load_query(self, query):
         full_url = "%s%s" % (self.bugzilla.bug_server_url, query)
