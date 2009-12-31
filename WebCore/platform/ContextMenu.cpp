@@ -472,10 +472,12 @@ void ContextMenu::populate()
         if (!inPasswordField) {
             appendItem(*separatorItem());
 #ifndef BUILDING_ON_TIGER
+#if !PLATFORM(GTK)
             ContextMenuItem SpellingAndGrammarMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
                 contextMenuItemTagSpellingMenu());
             createAndAppendSpellingAndGrammarSubMenu(m_hitTestResult, SpellingAndGrammarMenuItem);
             appendItem(SpellingAndGrammarMenuItem);
+#endif
 #else
             ContextMenuItem SpellingMenuItem(SubmenuType, ContextMenuItemTagSpellingMenu, 
                 contextMenuItemTagSpellingMenu());
