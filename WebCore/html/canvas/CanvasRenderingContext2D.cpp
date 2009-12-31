@@ -42,7 +42,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "FloatConversion.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
