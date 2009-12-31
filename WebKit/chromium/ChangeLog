@@ -1,3 +1,12 @@
+2009-12-30  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed.  Trivial Chromium build fix.
+
+        Add static_cast<unsigned>() to fix signed/unsigned comparison warning.
+
+        * src/AutocompletePopupMenuClient.cpp:
+        (WebKit::AutocompletePopupMenuClient::selectionChanged):
+
 2009-12-30  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by Dimitri Glazkov.

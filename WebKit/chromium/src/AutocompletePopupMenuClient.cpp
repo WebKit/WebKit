@@ -130,7 +130,7 @@ void AutocompletePopupMenuClient::valueChanged(unsigned listIndex, bool fireEven
 
 void AutocompletePopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
 {
-    if (listIndex != -1) {
+    if (listIndex != static_cast<unsigned>(-1)) {
         m_textField->setSuggestedValue(m_suggestions[listIndex]);
         m_textField->setSelectionRange(m_typedFieldValue.length(),
                                        m_suggestions[listIndex].length());
