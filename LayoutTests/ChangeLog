@@ -1,3 +1,17 @@
+2010-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Scrollbar of overflow:scroll div in compositing layer fails to render
+        https://bugs.webkit.org/show_bug.cgi?id=32439
+
+        Test for compositing layers with scrollbars, and a resize control.
+        
+        * compositing/overflow/scrollbar-painting.html: Added.
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.checksum: Added.
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.png: Added.
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.txt: Added.
+
 2009-12-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,21 @@
+2010-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Scrollbar of overflow:scroll div in compositing layer fails to render
+        https://bugs.webkit.org/show_bug.cgi?id=32439
+        
+        When deciding whether a RenderLayer needs backing store, check whether it has
+        overflow controls that need painting.
+
+        Test: compositing/overflow/scrollbar-painting.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasOverflowControls):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+
 2009-12-31  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha Silva.

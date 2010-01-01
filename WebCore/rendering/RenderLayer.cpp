@@ -1701,6 +1701,11 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
     return localPoint - bottomRight;
 }
 
+bool RenderLayer::hasOverflowControls() const
+{
+    return m_hBar || m_vBar || m_scrollCorner || renderer()->style()->resize() != RESIZE_NONE;
+}
+
 void RenderLayer::positionOverflowControls(int tx, int ty)
 {
     if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))

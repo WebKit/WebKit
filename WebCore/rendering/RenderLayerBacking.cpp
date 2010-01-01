@@ -566,6 +566,10 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (hasBoxDecorations(style))
         return false;
 
+    // If we have scrollbars or a resizer, need backing store to paint them into.
+    if (m_owningLayer->hasOverflowControls())
+        return false;
+    
     // If we have got this far and the renderer has no children, then we're ok.
     if (!renderObject->firstChild())
         return true;
