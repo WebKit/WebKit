@@ -10,5 +10,11 @@ print "<!DOCTYPE html>\n";
 print "<html>\n";
 print "<body>\n";
 print $cgi->param('q');
+if ($cgi->param('notifyDone')) {
+    print "<script>\n";
+    print "if (window.layoutTestController)\n";
+    print "    layoutTestController.notifyDone();\n";
+    print "</script>\n";
+}
 print "</body>\n";
 print "</html>\n";

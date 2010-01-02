@@ -1,3 +1,20 @@
+2010-01-02  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33107
+
+        Removes the use of window.setTimeout from the XSSAuditor tests:
+        get-from-iframe.html and post-from-iframe.html by having the
+        script echo-intertag.pl (called by these tests) call
+        layoutTestController.notifyDone().
+
+        * http/tests/security/xssAuditor/get-from-iframe.html: Removes call of window.setTimeout.
+        * http/tests/security/xssAuditor/post-from-iframe.html: Ditto.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl: If the query argument
+        notifyDone is found, then the script will generate a JavaScript script to call
+        layoutTestController.notifyDone().
+
 2010-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

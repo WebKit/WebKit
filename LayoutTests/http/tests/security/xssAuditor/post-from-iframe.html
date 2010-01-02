@@ -10,14 +10,8 @@ if (window.layoutTestController) {
 }
 window.onload = function()
 {
-    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","q=<script>alert(/XSS/)<\/script>","POST");
-    window.setTimeout(done, 100);
+    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","notifyDone=1&q=<script>alert(/XSS/)<\/script>","POST");
 };
-function done()
-{
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
 </script>
 </head>
 <body>
