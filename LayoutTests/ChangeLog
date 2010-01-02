@@ -2,6 +2,26 @@
 
         Reviewed by Adam Barth.
 
+        https://bugs.webkit.org/show_bug.cgi?id=33109
+
+        Cleans up the XSSAuditor test directory by removing unnecessary test scripts.
+
+        The patch for bug #33107 added notifyDone() functionality to the script
+        echo-intertag.pl. So, we can substitute this script for scripts echo-intertag-and-notify.php,
+        echo-intertag-post-and-notify.pl, and echo-intertag-post.pl.
+
+        * http/tests/security/xssAuditor/link-opens-new-window.html: Modified to call script echo-intertag.pl.
+        * http/tests/security/xssAuditor/resources/echo-intertag-and-notify.php: Removed.
+        * http/tests/security/xssAuditor/resources/echo-intertag-post-and-notify.pl: Removed.
+        * http/tests/security/xssAuditor/resources/echo-intertag-post.pl: Removed.
+        * http/tests/security/xssAuditor/script-tag-post-control-char.html: Modified to call script echo-intertag.pl.
+        * http/tests/security/xssAuditor/script-tag-post-null-char.html: Modified to call script echo-intertag.pl.
+        * http/tests/security/xssAuditor/script-tag-post.html: Modified to call script echo-intertag.pl.
+
+2010-01-02  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
         https://bugs.webkit.org/show_bug.cgi?id=33107
 
         Removes the use of window.setTimeout from the XSSAuditor tests:
