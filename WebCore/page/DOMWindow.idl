@@ -274,7 +274,6 @@ module window {
         // attribute EventListener onbeforeprint;
         // attribute EventListener onformchange;
         // attribute EventListener onforminput;
-        // attribute EventListener onpopstate;
         // attribute EventListener onreadystatechange;
         // attribute EventListener onredo;
         // attribute EventListener onshow;

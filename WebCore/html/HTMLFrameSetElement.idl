@@ -54,7 +54,6 @@ module html {
         // Not implemented yet.
         // attribute [DontEnum] EventListener onafterprint;
         // attribute [DontEnum] EventListener onbeforeprint;
-        // attribute [DontEnum] EventListener onpopstate;
         // attribute [DontEnum] EventListener onredo;
         // attribute [DontEnum] EventListener onundo;
 #endif
