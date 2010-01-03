@@ -2,6 +2,7 @@
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
+# Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -116,10 +117,9 @@ my %removeDirectoryIgnoreList = (
     '_svn' => 1,
 );
 
-my $globalExitCode = 0;
+my $globalExitStatus = 0;
 
-my $pathScriptWasRunFrom = Cwd::getcwd();
-my $pathForRepositoryRoot = determineVCSRoot();
+my $repositoryRootPath = determineVCSRoot();
 
 my %checkedDirectories;
 my %copiedFiles;
@@ -193,7 +193,7 @@ for $patch (@patches) {
 
 removeDirectoriesIfNeeded();
 
-exit $globalExitCode;
+exit $globalExitStatus;
 
 sub addDirectoriesIfNeeded($)
 {
@@ -224,25 +224,22 @@ sub addDirectoriesIfNeeded($)
     }
 }
 
+# Args:
+#   $patch: a patch string.
+#   $pathRelativeToRoot: the path of the file to be patched, relative to the
+#                        repository root. This should normally be the path
+#                        found in the patch's "Index:" line.
+#   $options: a reference to an array of options to pass to the patch command.
 sub applyPatch($$;$)
 {
-    my ($patch, $fullPath, $options) = @_;
-    chdir $pathForRepositoryRoot;
-    $options = [] if (! $options);
-    push @{$options}, "--force" if $force;
-    my $command = "patch " . join(" ", "-p0", @{$options});
-    open PATCH, "| $command" or die "Failed to patch $fullPath\n";
-    print PATCH $patch;
-    close PATCH;
-    chdir $pathScriptWasRunFrom;
+    my ($patch, $pathRelativeToRoot, $options) = @_;
 
-    my $exitCode = $? >> 8;
-    if ($exitCode) {
-        if (!$force) {
-            print "$command \"$fullPath\" returned $exitCode.  Pass --force to ignore patch failures.\n";
-            exit $exitCode;
-        }
-        $globalExitCode = $exitCode;
+    my $optionalArgs = {options => $options, ensureForce => $force};
+
+    my $exitStatus = runPatchCommand($patch, $repositoryRootPath, $pathRelativeToRoot, $optionalArgs);
+
+    if ($exitStatus) {
+        $globalExitStatus = $exitStatus;
     }
 }
 

@@ -70,6 +70,9 @@ my $vcBuildPath;
 my $windowsTmpPath;
 my $windowsSourceDir;
 
+# Defined in VCSUtils.
+sub exitStatus($);
+
 sub determineSourceDir
 {
     return if $sourceDir;
@@ -1600,15 +1603,6 @@ sub setPathForRunningWebKitApp
     return unless isAppleWinWebKit();
 
     $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
-}
-
-sub exitStatus($)
-{
-    my ($returnvalue) = @_;
-    if ($^O eq "MSWin32") {
-        return $returnvalue >> 8;
-    }
-    return WEXITSTATUS($returnvalue);
 }
 
 sub runSafari

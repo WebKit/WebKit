@@ -1,3 +1,36 @@
+2010-01-03  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Refactored svn-apply and svn-unapply to use a common "patch"
+        command method, and added unit tests for this new method.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33098
+
+        * Scripts/VCSUtils.pm:
+          - Added generateRunPatchCommand().
+          - Added runPatchCommand().
+          - Added exitStatus() from webkitdirs.pm to address FIXME.
+
+        * Scripts/VCSUtils_unittest.pl:
+          - Added 10 unit tests for generateRunPatchCommand().
+          - Added 4 unit tests for runPatchCommand().
+          - Added callSilently() method.
+
+        * Scripts/svn-apply:
+          - Refactored applyPatch().
+          - Removed $pathScriptWasRunFrom global variable.
+          - Addressed issue where "--force" option was getting added twice.
+
+        * Scripts/svn-unapply:
+          - Refactored applyPatch().
+          - Removed $pathScriptWasRunFrom global variable.
+          - Added support for --force option.
+          - Enhanced to return meaningful exit status.
+
+        * Scripts/webkitdirs.pm:
+          - Moved exitStatus() implementation to VCSUtils.pm.
+
 2009-12-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

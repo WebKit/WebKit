@@ -1,5 +1,5 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
-# Copyright (C) 2009 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ use warnings;
 use Cwd qw();  # "qw()" prevents warnings about redefining getcwd() with "use POSIX;"
 use File::Basename;
 use File::Spec;
+use POSIX;
 
 BEGIN {
     use Exporter   ();
@@ -48,6 +49,7 @@ BEGIN {
         &decodeGitBinaryPatch
         &determineSVNRoot
         &determineVCSRoot
+        &exitStatus
         &fixChangeLogPatch
         &gitBranch
         &gitdiff2svndiff
@@ -60,6 +62,7 @@ BEGIN {
         &makeFilePathRelative
         &normalizePath
         &pathRelativeToSVNRepositoryRootForPath
+        &runPatchCommand
         &svnRevisionForDirectory
         &svnStatus
     );
@@ -75,6 +78,20 @@ my $isGit;
 my $isGitBranchBuild;
 my $isSVN;
 my $svnVersion;
+
+# This method is for portability. Return the system-appropriate exit
+# status of a child process.
+#
+# Args: pass the child error status returned by the last pipe close,
+#       for example "$?".
+sub exitStatus($)
+{
+    my ($returnvalue) = @_;
+    if ($^O eq "MSWin32") {
+        return $returnvalue >> 8;
+    }
+    return WEXITSTATUS($returnvalue);
+}
 
 sub isGitDirectory($)
 {
@@ -94,7 +111,7 @@ sub gitBranch()
 {
     unless (defined $gitBranch) {
         chomp($gitBranch = `git symbolic-ref -q HEAD`);
-        $gitBranch = "" if main::exitStatus($?); # FIXME: exitStatus is defined in webkitdirs.pm
+        $gitBranch = "" if exitStatus($?);
         $gitBranch =~ s#^refs/heads/##;
         $gitBranch = "" if $gitBranch eq "master";
     }
@@ -494,6 +511,109 @@ sub fixChangeLogPatch($)
     $lines[$chunkStartIndex - 1] = "@@ -1,$sourceLineCount +1,$targetLineCount @@";
 
     return join($lineEnding, @lines) . "\n"; # patch(1) expects an extra trailing newline.
+}
+
+# This is a supporting method for runPatchCommand.
+#
+# Arg: the optional $args parameter passed to runPatchCommand (can be undefined).
+#
+# Returns ($patchCommand, $isForcing).
+#
+# This subroutine has unit tests in VCSUtils_unittest.pl.
+sub generateRunPatchCommand($)
+{
+    my ($passedArgsHashRef) = @_;
+
+    my $argsHashRef = { # Defaults
+        ensureForce => 0,
+        shouldReverse => 0,
+        options => []
+    };
+    
+    # Merges hash references. It's okay here if passed hash reference is undefined.
+    @{$argsHashRef}{keys %{$passedArgsHashRef}} = values %{$passedArgsHashRef};
+    
+    my $ensureForce = $argsHashRef->{ensureForce};
+    my $shouldReverse = $argsHashRef->{shouldReverse};
+    my $options = $argsHashRef->{options};
+
+    if (! $options) {
+        $options = [];
+    } else {
+        $options = [@{$options}]; # Copy to avoid side effects.
+    }
+
+    my $isForcing = 0;
+    if (grep /^--force$/, @{$options}) {
+        $isForcing = 1;
+    } elsif ($ensureForce) {
+        push @{$options}, "--force";
+        $isForcing = 1;
+    }
+
+    if ($shouldReverse) { # No check: --reverse should never be passed explicitly.
+        push @{$options}, "--reverse";
+    }
+
+    @{$options} = sort(@{$options}); # For easier testing.
+
+    my $patchCommand = join(" ", "patch -p0", @{$options});
+
+    return ($patchCommand, $isForcing);
+}
+
+# Apply the given patch using the patch(1) command.
+#
+# On success, return the resulting exit status. Otherwise, exit with the
+# exit status. If "--force" is passed as an option, however, then never
+# exit and always return the exit status.
+#
+# Args:
+#   $patch: a patch string.
+#   $repositoryRootPath: an absolute path to the repository root.
+#   $pathRelativeToRoot: the path of the file to be patched, relative to the
+#                        repository root. This should normally be the path
+#                        found in the patch's "Index:" line. It is passed
+#                        explicitly rather than reparsed from the patch
+#                        string for optimization purposes.
+#                            This is used only for error reporting. The
+#                        patch command gleans the actual file to patch
+#                        from the patch string.
+#   $args: a reference to a hash of optional arguments. The possible
+#          keys are --
+#            ensureForce: whether to ensure --force is passed (defaults to 0).
+#            shouldReverse: whether to pass --reverse (defaults to 0).
+#            options: a reference to an array of options to pass to the
+#                     patch command. The subroutine passes the -p0 option
+#                     no matter what. This should not include --reverse.
+#
+# This subroutine has unit tests in VCSUtils_unittest.pl.
+sub runPatchCommand($$$;$)
+{
+    my ($patch, $repositoryRootPath, $pathRelativeToRoot, $args) = @_;
+
+    my ($patchCommand, $isForcing) = generateRunPatchCommand($args);
+
+    # Temporarily change the working directory since the path found
+    # in the patch's "Index:" line is relative to the repository root
+    # (i.e. the same as $pathRelativeToRoot).
+    my $cwd = Cwd::getcwd();
+    chdir $repositoryRootPath;
+
+    open PATCH, "| $patchCommand" or die "Could not call \"$patchCommand\" for file \"$pathRelativeToRoot\": $!";
+    print PATCH $patch;
+    close PATCH;
+    my $exitStatus = exitStatus($?);
+
+    chdir $cwd;
+
+    if ($exitStatus && !$isForcing) {
+        print "Calling \"$patchCommand\" for file \"$pathRelativeToRoot\" returned " .
+              "status $exitStatus.  Pass --force to ignore patch failures.\n";
+        exit $exitStatus;
+    }
+
+    return $exitStatus;
 }
 
 sub gitConfig($)

@@ -2,6 +2,7 @@
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
+# Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -76,14 +77,22 @@ sub revertDirectories();
 sub unapplyPatch($$;$);
 sub unsetChangeLogDate($$);
 
+my $force = 0;
 my $showHelp = 0;
-if (!GetOptions("help!" => \$showHelp) || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] patch1 [patch2 ...]\n";
+
+my $optionParseSuccess = GetOptions(
+    "force!" => \$force,
+    "help!" => \$showHelp
+);
+
+if (!$optionParseSuccess || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] [--force] patch1 [patch2 ...]\n";
     exit 1;
 }
 
-my $pathScriptWasRunFrom = Cwd::getcwd();
-my $pathForRepositoryRoot = determineVCSRoot();
+my $globalExitStatus = 0;
+
+my $repositoryRootPath = determineVCSRoot();
 
 my @copiedFiles;
 my %directoriesToCheck;
@@ -142,7 +151,7 @@ if (isSVN()) {
     revertDirectories();
 }
 
-exit 0;
+exit $globalExitStatus;
 
 sub checksum($)
 {
@@ -228,7 +237,7 @@ sub patch($)
 
 sub revertDirectories()
 {
-    chdir $pathForRepositoryRoot;
+    chdir $repositoryRootPath;
     my %checkedDirectories;
     foreach my $path (reverse sort keys %directoriesToCheck) {
         my @dirs = File::Spec->splitdir($path);
@@ -258,16 +267,24 @@ sub revertDirectories()
     }
 }
 
+# Args:
+#   $patch: a patch string.
+#   $pathRelativeToRoot: the path of the file to be patched, relative to the
+#                        repository root. This should normally be the path
+#                        found in the patch's "Index:" line.
+#   $options: a reference to an array of options to pass to the patch command.
+#             Do not include --reverse in this array.
 sub unapplyPatch($$;$)
 {
-    my ($patch, $fullPath, $options) = @_;
-    chdir $pathForRepositoryRoot;
-    $options = [] if (! $options);
-    my $command = "patch " . join(" ", "-p0", "-R", @{$options});
-    open PATCH, "| $command" or die "Failed to patch $fullPath: $!";
-    print PATCH $patch;
-    close PATCH;
-    chdir $pathScriptWasRunFrom;
+    my ($patch, $pathRelativeToRoot, $options) = @_;
+
+    my $optionalArgs = {options => $options, ensureForce => $force, shouldReverse => 1};
+
+    my $exitStatus = runPatchCommand($patch, $repositoryRootPath, $pathRelativeToRoot, $optionalArgs);
+
+    if ($exitStatus) {
+        $globalExitStatus = $exitStatus;
+    }
 }
 
 sub unsetChangeLogDate($$)
