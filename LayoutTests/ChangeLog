@@ -1,3 +1,9 @@
+2010-01-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip test that fails on and off on the release bot.
+
+        * platform/gtk/Skipped:
+
 2010-01-02  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

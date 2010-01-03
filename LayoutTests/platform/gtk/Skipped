@@ -3693,6 +3693,7 @@ svg/custom/svg-fonts-in-text-controls.html
 svg/custom/use-elementInstance-event-target.svg
 svg/custom/use-elementInstance-methods.svg
 svg/custom/use-instanceRoot-event-listeners.xhtml
+svg/custom/use-on-symbol-inside-pattern.svg
 svg/custom/use-setAttribute-crash.svg
 #   Tests generating new results
 svg/W3C-SVG-1.1/animate-elem-02-t.svg
@@ -5731,3 +5732,6 @@ fast/dom/prototype-inheritance-2.html
 # Fails on and off locally, but always on the release bot
 # See https://bugs.webkit.org/show_bug.cgi?id=33015
 media/video-seek-past-end-playing.html
+
+# Fails on and off (more often fails) on the release bot
+media/event-attributes.html
