@@ -90,6 +90,8 @@ void FEMorphology::apply(Filter* filter)
     if (!getEffectContext())
         return;
 
+    setIsAlphaImage(m_in->isAlphaImage());
+
     if (!m_radiusX || !m_radiusY)
         return;
 

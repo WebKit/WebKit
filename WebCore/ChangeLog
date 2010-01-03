@@ -1,3 +1,26 @@
+2010-01-03  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Mark more filter effect as alphaImage if possible
+        https://bugs.webkit.org/show_bug.cgi?id=33111
+
+        Mark more effects as alphaImage if the previous effect is a
+        alphaImage. This can reduce the calculation on the next effect
+        like feGaussianBlur.
+        
+        Test: This changes don't affect any LayoutTests and can't be tested
+              somehow, since the changes are 'invisible'.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2010-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

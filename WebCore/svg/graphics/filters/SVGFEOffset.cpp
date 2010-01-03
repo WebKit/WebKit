@@ -74,6 +74,8 @@ void FEOffset::apply(Filter* filter)
     if (!filterContext)
         return;
 
+    setIsAlphaImage(m_in->isAlphaImage());
+
     FloatRect sourceImageRect = filter->sourceImageRect();
     sourceImageRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
 

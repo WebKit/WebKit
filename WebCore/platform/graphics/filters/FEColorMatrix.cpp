@@ -184,6 +184,7 @@ void FEColorMatrix::apply(Filter* filter)
             break;
         case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
             effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(srcPixelArray, imageData, m_values);
+            setIsAlphaImage(true);
             break;
     }
 

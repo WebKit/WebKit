@@ -58,6 +58,8 @@ void FETile::apply(Filter* filter)
     if (!filterContext)
         return;
 
+    setIsAlphaImage(m_in->isAlphaImage());
+
     IntRect tileRect = enclosingIntRect(m_in->scaledSubRegion());
 
     // Source input needs more attention. It has the size of the filterRegion but gives the
