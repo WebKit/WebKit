@@ -1,3 +1,13 @@
+2009-12-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable all HTML5 persistent features for QGVLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=33086
+
+        * QGVLauncher/main.cpp: Call enablePersistentStorage()
+        (main):
+
 2009-12-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
