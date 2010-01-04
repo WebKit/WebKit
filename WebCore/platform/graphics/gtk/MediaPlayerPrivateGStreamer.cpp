@@ -48,8 +48,6 @@
 #include <math.h>
 #include <wtf/gtk/GOwnPtr.h>
 
-#define SENTINEL (void*) 0
-
 using namespace std;
 
 namespace WebCore {
@@ -414,7 +412,7 @@ bool MediaPlayerPrivate::hasVideo() const
 {
     gint currentVideo = -1;
     if (m_playBin)
-        g_object_get(m_playBin, "current-video", &currentVideo, SENTINEL);
+        g_object_get(m_playBin, "current-video", &currentVideo, NULL);
     return currentVideo > -1;
 }
 
@@ -422,7 +420,7 @@ bool MediaPlayerPrivate::hasAudio() const
 {
     gint currentAudio = -1;
     if (m_playBin)
-        g_object_get(m_playBin, "current-audio", &currentAudio, SENTINEL);
+        g_object_get(m_playBin, "current-audio", &currentAudio, NULL);
     return currentAudio > -1;
 }
 
@@ -431,7 +429,7 @@ void MediaPlayerPrivate::setVolume(float volume)
     if (!m_playBin)
         return;
 
-    g_object_set(m_playBin, "volume", static_cast<double>(volume), SENTINEL);
+    g_object_set(m_playBin, "volume", static_cast<double>(volume), NULL);
 }
 
 void MediaPlayerPrivate::volumeChanged()
@@ -489,7 +487,7 @@ void MediaPlayerPrivate::setRate(float rate)
                           GST_SEEK_TYPE_SET, end))
         LOG_VERBOSE(Media, "Set rate to %f failed", rate);
     else
-        g_object_set(m_playBin, "mute", mute, SENTINEL);
+        g_object_set(m_playBin, "mute", mute, NULL);
 }
 
 int MediaPlayerPrivate::dataRate() const
@@ -636,7 +634,7 @@ void MediaPlayerPrivate::updateStates()
 
         m_networkState = MediaPlayer::Loaded;
 
-        g_object_get(m_playBin, "source", &m_source, SENTINEL);
+        g_object_get(m_playBin, "source", &m_source, NULL);
         if (!m_source)
             LOG_VERBOSE(Media, "m_source is 0");
         break;
@@ -927,7 +925,7 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     g_signal_connect(bus, "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
     gst_object_unref(bus);
 
-    g_object_set(m_playBin, "uri", url.utf8().data(), SENTINEL);
+    g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
 
     g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
 
@@ -939,16 +937,16 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     if (channel->state == WTFLogChannelOn) {
         m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-            g_object_set(m_fpsSink, "video-sink", m_videoSink, SENTINEL);
+            g_object_set(m_fpsSink, "video-sink", m_videoSink, NULL);
             g_object_ref_sink(m_fpsSink);
-            g_object_set(m_playBin, "video-sink", m_fpsSink, SENTINEL);
+            g_object_set(m_playBin, "video-sink", m_fpsSink, NULL);
         } else {
             m_fpsSink = 0;
-            g_object_set(m_playBin, "video-sink", m_videoSink, SENTINEL);
+            g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
             LOG(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
         }
     } else
-        g_object_set(m_playBin, "video-sink", m_videoSink, SENTINEL);
+        g_object_set(m_playBin, "video-sink", m_videoSink, NULL);
 
     g_signal_connect(m_videoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 }
