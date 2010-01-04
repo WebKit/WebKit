@@ -1,5 +1,44 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        Marker code is buggy: referencePoint translation is off
+        https://bugs.webkit.org/show_bug.cgi?id=33012
+
+        Update SVG test baseline, after rewriting marker support.
+
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-1-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-2-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-3-expected.txt:
+        * platform/mac/svg/custom/circular-marker-reference-4-expected.txt:
+        * platform/mac/svg/custom/js-late-marker-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-marker-creation-expected.txt:
+        * platform/mac/svg/custom/marker-changes-expected.checksum:
+        * platform/mac/svg/custom/marker-changes-expected.png:
+        * platform/mac/svg/custom/marker-changes-expected.txt:
+        * platform/mac/svg/custom/marker-child-changes-expected.checksum:
+        * platform/mac/svg/custom/marker-child-changes-expected.png:
+        * platform/mac/svg/custom/marker-child-changes-expected.txt:
+        * platform/mac/svg/custom/marker-default-width-height-expected.txt:
+        * platform/mac/svg/custom/marker-opacity-expected.checksum: Added.
+        * platform/mac/svg/custom/marker-opacity-expected.png: Added.
+        * platform/mac/svg/custom/marker-opacity-expected.txt: Added.
+        * platform/mac/svg/custom/marker-referencePoint-expected.checksum: Added.
+        * platform/mac/svg/custom/marker-referencePoint-expected.png: Added.
+        * platform/mac/svg/custom/marker-referencePoint-expected.txt: Added.
+        * platform/mac/svg/custom/marker-viewBox-changes-expected.checksum:
+        * platform/mac/svg/custom/marker-viewBox-changes-expected.png:
+        * platform/mac/svg/custom/marker-viewBox-changes-expected.txt:
+        * platform/mac/svg/custom/non-circular-marker-reference-expected.txt:
+        * platform/mac/svg/custom/shapes-supporting-markers-expected.txt:
+        * svg/custom/marker-opacity.svg: Added.
+        * svg/custom/marker-referencePoint.svg: Added.
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix typo in test name.
 
         * platform/win/Skipped:

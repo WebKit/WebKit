@@ -2141,6 +2141,8 @@ HEADERS += \
     rendering/SVGCharacterLayoutInfo.h \
     rendering/SVGInlineFlowBox.h \
     rendering/SVGInlineTextBox.h \
+    rendering/SVGMarkerData.h \
+    rendering/SVGMarkerLayoutInfo.h \
     rendering/SVGRenderSupport.h \
     rendering/SVGRenderTreeAsText.h \
     rendering/SVGRootInlineBox.h \
@@ -3117,6 +3119,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGCharacterLayoutInfo.cpp \
         rendering/SVGInlineFlowBox.cpp \
         rendering/SVGInlineTextBox.cpp \
+        rendering/SVGMarkerLayoutInfo.cpp \
         rendering/SVGRenderSupport.cpp \
         rendering/SVGRootInlineBox.cpp
 
