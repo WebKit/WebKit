@@ -736,3 +736,6 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 # http://webkit.org/b/32532 - Time out
 http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
 http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
+
+# Shows subtle 0.0 vs -0.0 difference in path debug string, see https://bugs.webkit.org/show_bug.cgi?id=17393
+svg/custom/use-on-symbol-inside-pattern.svg
