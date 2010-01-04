@@ -54,3 +54,10 @@ class EarlyWarningSytemTest(QueuesTest):
             "handle_unexpected_error" : "Mock error message\n",
         }
         self.assert_queue_outputs(GtkEWS(), expected_stderr=expected_stderr)
+
+    def test_mac_ews(self):
+        expected_stderr = {
+            "begin_work_queue" : "CAUTION: mac-ews will discard all local changes in \"%s\"\nRunning WebKit mac-ews.\n" % os.getcwd(),
+            "handle_unexpected_error" : "Mock error message\n",
+        }
+        self.assert_queue_outputs(MacEWS(), expected_stderr=expected_stderr)

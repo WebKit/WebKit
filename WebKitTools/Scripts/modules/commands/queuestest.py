@@ -45,6 +45,7 @@ class QueuesTest(unittest.TestCase):
     mock_work_item = {
         "id" : 1234,
         "bug_id" : 345,
+        "attacher_email": "adam@example.com",
     }
 
     def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, options=Mock(), tool=MockBugzillaTool()):

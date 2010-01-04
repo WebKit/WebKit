@@ -38,7 +38,7 @@ def _id_to_object_dictionary(*objects):
         dictionary[thing["id"]] = thing
     return dictionary
 
-# FIXME: The ids shoudl be 1, 2, 3 instead of crazy numbers.
+# FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
 _patch1 = {
     "id" : 197,
     "bug_id" : 42,

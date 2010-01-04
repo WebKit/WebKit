@@ -73,6 +73,10 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def _did_fail(self, patch):
         self._update_status(self._fail_status, patch)
 
+    def _did_error(self, patch, reason):
+        message = "%s: %s" % (self._error_status, reason)
+        self._update_status(message, patch)
+
     def queue_log_path(self):
         return "%s.log" % self.name
 
