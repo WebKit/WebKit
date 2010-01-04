@@ -31,6 +31,7 @@ import unittest
 from modules.committers import CommitterList, Reviewer, Committer
 from modules.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id
 from modules.outputcapture import OutputCapture
+from modules.mock import Mock
 
 from modules.BeautifulSoup import BeautifulSoup
 
@@ -291,6 +292,11 @@ class BugzillaQueriesTest(unittest.TestCase):
     def test_request_page_parsing(self):
         queries = BugzillaQueries(None)
         self.assertEquals([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
+
+    def test_load_query(self):
+        queries = BugzillaQueries(Mock())
+        queries._load_query("request.cgi?action=queue&type=review&group=type")
+
 
 if __name__ == '__main__':
     unittest.main()
