@@ -1,3 +1,15 @@
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue can wrongly reject patches if the buildbots are behind
+        https://bugs.webkit.org/show_bug.cgi?id=30098
+
+        Check to make sure we can currently build and test before trying to
+        land a patch.
+
+        * Scripts/webkitpy/commands/queues.py:
+
 2010-01-04  Adam Roben  <aroben@apple.com>
 
         Add a test harness for the Windows WebKit API, and a few tests

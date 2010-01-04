@@ -145,11 +145,28 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         self.log_progress([patch['id'] for patch in patches])
         return patches[0]
 
-    def should_proceed_with_work_item(self, patch):
+    def _can_build_and_test(self):
+        try:
+            self.run_bugzilla_tool(["build-and-test", "--force-clean", "--non-interactive", "--build-style=both", "--quiet"])
+        except ScriptError, e:
+            self._update_status("Unabled to successfully build and test", None)
+            return False
+        return True
+
+    def _builders_are_green(self):
         red_builders_names = self.tool.buildbot.red_core_builders_names()
         if red_builders_names:
             red_builders_names = map(lambda name: "\"%s\"" % name, red_builders_names) # Add quotes around the names.
             self._update_status("Builders [%s] are red. See http://build.webkit.org" % ", ".join(red_builders_names), None)
+            return False
+        return True
+
+    def should_proceed_with_work_item(self, patch):
+        if not self._builders_are_green():
+            return False
+        if not self._can_build_and_test():
+            return False
+        if not self._builders_are_green():
             return False
         self._update_status("Landing patch", patch)
         return True
@@ -157,7 +174,10 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def process_work_item(self, patch):
         try:
             self._cc_watchers(patch["bug_id"])
-            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch["id"]])
+            # We pass --no-update here because we've already validated
+            # that the current revision actually builds and passes the tests.
+            # If we update, we risk moving to a revision that doesn't!
+            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch["id"]])
             self._did_pass(patch)
         except ScriptError, e:
             self._did_fail(patch)
