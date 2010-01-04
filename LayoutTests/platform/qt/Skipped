@@ -105,7 +105,7 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 editing/text-iterator/basic-iteration.html
 
 # Fluctuating/flakey tests
-animations/transform-origin-vs-functions.html
+animations/3d/transform-origin-vs-functions.html
 animations/change-one-anim.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-scripting.html

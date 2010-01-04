@@ -1,3 +1,11 @@
+2010-01-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        [Qt] r52694 moved a test, but it isn't renamed in the skiplist.
+
+        * platform/qt/Skipped: animations/transform-origin-vs-functions.html renamed.
+
 2010-01-04  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Eric Seidel.
