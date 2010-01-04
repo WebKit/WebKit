@@ -29,7 +29,7 @@
 
 #include <errno.h>
 
-#if ENABLE(ASSEMBLER) && PLATFORM(MAC) && PLATFORM(X86_64)
+#if ENABLE(ASSEMBLER) && PLATFORM(MAC) && CPU(X86_64)
 
 #include "TCSpinLock.h"
 #include <mach/mach_init.h>

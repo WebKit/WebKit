@@ -27,7 +27,7 @@
 #include "JIT.h"
 
 // This probably does not belong here; adding here for now as a quick Windows build fix.
-#if ENABLE(ASSEMBLER) && PLATFORM(X86) && !PLATFORM(MAC)
+#if ENABLE(ASSEMBLER) && CPU(X86) && !PLATFORM(MAC)
 #include "MacroAssembler.h"
 JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;
 #endif

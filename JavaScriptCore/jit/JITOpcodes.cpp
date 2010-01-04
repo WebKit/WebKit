@@ -137,7 +137,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCode)), regT0);
     jump(regT0);
 
-#if PLATFORM(X86) || PLATFORM(ARM_TRADITIONAL)
+#if CPU(X86) || CPU(ARM_TRADITIONAL)
     Label nativeCallThunk = align();
     preserveReturnAddressAfterCall(regT0);
     emitPutToCallFrameHeader(regT0, RegisterFile::ReturnPC); // Push return address
@@ -148,7 +148,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT1);
     emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
     
-#if PLATFORM(X86)
+#if CPU(X86)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     /* We have two structs that we use to describe the stackframe we set up for our
@@ -248,7 +248,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     // Allocate stack space for our arglist
@@ -1601,7 +1601,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
     
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, X86Registers::ecx);
 
     // Allocate stack space for our arglist
@@ -1637,7 +1637,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     call(Address(X86Registers::esi, OBJECT_OFFSETOF(JSFunction, m_data)));
     
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-#elif PLATFORM(X86)
+#elif CPU(X86)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     /* We have two structs that we use to describe the stackframe we set up for our
@@ -1729,7 +1729,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
-#elif PLATFORM(ARM)
+#elif CPU(ARM)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     // Allocate stack space for our arglist

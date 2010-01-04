@@ -192,7 +192,7 @@ namespace JSC {
         // on x86/x86-64 it is ecx for performance reasons, since the
         // MacroAssembler will need to plant register swaps if it is not -
         // however the code will still function correctly.
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         static const RegisterID returnValueRegister = X86Registers::eax;
         static const RegisterID cachedResultRegister = X86Registers::eax;
         static const RegisterID firstArgumentRegister = X86Registers::edi;
@@ -210,7 +210,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
         static const FPRegisterID fpRegT2 = X86Registers::xmm2;
-#elif PLATFORM(X86)
+#elif CPU(X86)
         static const RegisterID returnValueRegister = X86Registers::eax;
         static const RegisterID cachedResultRegister = X86Registers::eax;
         // On x86 we always use fastcall conventions = but on
@@ -228,7 +228,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
         static const FPRegisterID fpRegT2 = X86Registers::xmm2;
-#elif PLATFORM(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
@@ -244,7 +244,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
@@ -436,7 +436,7 @@ namespace JSC {
         void emitSub32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
         void emitBinaryDoubleOp(OpcodeID, unsigned dst, unsigned op1, unsigned op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
-#if PLATFORM(X86)
+#if CPU(X86)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
         static const int patchOffsetPutByIdExternalLoad = 13;
@@ -465,7 +465,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 11;
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 4;
         static const int patchOffsetPutByIdExternalLoad = 16;
@@ -574,7 +574,7 @@ namespace JSC {
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID structure, RegisterID offset, RegisterID scratch);
         void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
         static const int patchOffsetPutByIdExternalLoad = 20;
@@ -597,7 +597,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 20;
         static const int patchOffsetMethodCheckProtoStruct = 30;
         static const int patchOffsetMethodCheckPutFunction = 50;
-#elif PLATFORM(X86)
+#elif CPU(X86)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
         static const int patchOffsetPutByIdExternalLoad = 13;
@@ -624,7 +624,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 11;
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
-#elif PLATFORM(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
         static const int patchOffsetPutByIdExternalLoad = 26;
@@ -647,7 +647,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 24;
         static const int patchOffsetMethodCheckProtoStruct = 34;
         static const int patchOffsetMethodCheckPutFunction = 58;
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 4;
         static const int patchOffsetPutByIdExternalLoad = 16;

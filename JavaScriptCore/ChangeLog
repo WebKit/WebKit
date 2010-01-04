@@ -2,6 +2,86 @@
 
         Reviewed by Adam Barth.
 
+        Reorganize, document and rename CPU() platform macros.
+        https://bugs.webkit.org/show_bug.cgi?id=33145
+        ExecutableAllocatorSymbian appears to have buggy ARM version check
+        https://bugs.webkit.org/show_bug.cgi?id=33138
+        
+        * wtf/Platform.h:
+        Rename all macros related to detection of particular CPUs or
+        classes of CPUs to CPU(), reorganize and document them.
+
+        All remaining changes are adapting to the renames, plus fixing the
+        second bug cited above.
+        
+        * assembler/ARMAssembler.cpp:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/X86Assembler.h:
+        (JSC::X86Registers::):
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::movl_mEAX):
+        (JSC::X86Assembler::movl_EAXm):
+        (JSC::X86Assembler::repatchLoadPtrToLEA):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        * jit/ExecutableAllocatorPosix.cpp:
+        * jit/ExecutableAllocatorSymbian.cpp:
+        (JSC::ExecutableAllocator::intializePageSize):
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::beginUninterruptedSequence):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        (JSC::JIT::emitCount):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+        * runtime/Collector.cpp:
+        (JSC::currentThreadStackBase):
+        (JSC::getPlatformThreadRegisters):
+        (JSC::otherThreadStackPointer):
+        * wrec/WREC.h:
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateReturnSuccess):
+        (JSC::WREC::Generator::generateReturnFailure):
+        * wrec/WRECGenerator.h:
+        * wtf/FastMalloc.cpp:
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        * wtf/Threading.h:
+        * wtf/dtoa.cpp:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+        * yarr/RegexJIT.h:
+
+2010-01-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
         Clean up COMPILER macros and remove unused ones.
         https://bugs.webkit.org/show_bug.cgi?id=33132
         

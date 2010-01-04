@@ -173,7 +173,7 @@ static String webkit_get_user_agent()
    // FIXME: platform/version detection can be shared.
 #if PLATFORM(DARWIN)
 
-#if PLATFORM(X86)
+#if CPU(X86)
     osVersion = g_strdup("Intel Mac OS X");
 #else
     osVersion = g_strdup("PPC Mac OS X");

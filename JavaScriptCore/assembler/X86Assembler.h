@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(ASSEMBLER) && (PLATFORM(X86) || PLATFORM(X86_64))
+#if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
 #include "AssemblerBuffer.h"
 #include <stdint.h>
@@ -50,7 +50,7 @@ namespace X86Registers {
         esi,
         edi,
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         r8,
         r9,
         r10,
@@ -118,12 +118,12 @@ private:
         OP_XOR_GvEv                     = 0x33,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         PRE_REX                         = 0x40,
 #endif
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         OP_MOVSXD_GvEv                  = 0x63,
 #endif
         PRE_OPERAND_SIZE                = 0x66,
@@ -296,7 +296,7 @@ public:
 
     // Arithmetic operations:
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
     void adcl_im(int imm, void* addr)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -346,7 +346,7 @@ public:
         }
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void addq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_ADD_EvGv, src, dst);
@@ -423,7 +423,7 @@ public:
         }
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void andq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_AND_EvGv, src, dst);
@@ -509,7 +509,7 @@ public:
         }
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void orq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_OR_EvGv, src, dst);
@@ -575,7 +575,7 @@ public:
         }
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void subq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_SUB_EvGv, src, dst);
@@ -641,7 +641,7 @@ public:
         }
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void xorq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_XOR_EvGv, src, dst);
@@ -689,7 +689,7 @@ public:
         m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void sarq_CLr(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SAR, dst);
@@ -789,7 +789,7 @@ public:
         m_formatter.immediate32(imm);
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void cmpq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_CMP_EvGv, src, dst);
@@ -897,7 +897,7 @@ public:
         m_formatter.immediate32(imm);
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void testq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_TEST_EvGv, src, dst);
@@ -971,7 +971,7 @@ public:
         m_formatter.oneByteOp(OP_XCHG_EvGv, src, dst);
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void xchgq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_XCHG_EvGv, src, dst);
@@ -1001,7 +1001,7 @@ public:
     void movl_mEAX(void* addr)
     {
         m_formatter.oneByteOp(OP_MOV_EAXOv);
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
 #else
         m_formatter.immediate32(reinterpret_cast<int>(addr));
@@ -1038,14 +1038,14 @@ public:
     void movl_EAXm(void* addr)
     {
         m_formatter.oneByteOp(OP_MOV_OvEAX);
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         m_formatter.immediate64(reinterpret_cast<int64_t>(addr));
 #else
         m_formatter.immediate32(reinterpret_cast<int>(addr));
 #endif
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void movq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_MOV_EvGv, src, dst);
@@ -1157,7 +1157,7 @@ public:
     {
         m_formatter.oneByteOp(OP_LEA, dst, base, offset);
     }
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void leaq_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_LEA, dst, base, offset);
@@ -1323,7 +1323,7 @@ public:
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, base, offset);
     }
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
     void cvtsi2sd_mr(void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1343,7 +1343,7 @@ public:
         m_formatter.twoByteOp(OP2_MOVD_EdVd, (RegisterID)src, dst);
     }
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     void movq_rr(XMMRegisterID src, RegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_66);
@@ -1369,7 +1369,7 @@ public:
         m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
     void movsd_mr(void* address, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1535,7 +1535,7 @@ public:
 
     static void repatchLoadPtrToLEA(void* where)
     {
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         // On x86-64 pointer memory accesses require a 64-bit operand, and as such a REX prefix.
         // Skip over the prefix byte.
         where = reinterpret_cast<char*>(where) + 1;
@@ -1679,7 +1679,7 @@ private:
             memoryModRM(reg, base, index, scale, offset);
         }
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
         void oneByteOp(OneByteOpcodeID opcode, int reg, void* address)
         {
             m_buffer.ensureSpace(maxInstructionSize);
@@ -1722,7 +1722,7 @@ private:
             memoryModRM(reg, base, index, scale, offset);
         }
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
         void twoByteOp(TwoByteOpcodeID opcode, int reg, void* address)
         {
             m_buffer.ensureSpace(maxInstructionSize);
@@ -1732,7 +1732,7 @@ private:
         }
 #endif
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         // Quad-word-sized operands:
         //
         // Used to format 64-bit operantions, planting a REX.w prefix.
@@ -1891,7 +1891,7 @@ private:
         static const RegisterID noBase = X86Registers::ebp;
         static const RegisterID hasSib = X86Registers::esp;
         static const RegisterID noIndex = X86Registers::esp;
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
         static const RegisterID noBase2 = X86Registers::r13;
         static const RegisterID hasSib2 = X86Registers::r12;
 
@@ -1967,7 +1967,7 @@ private:
         void memoryModRM(int reg, RegisterID base, int offset)
         {
             // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
             if ((base == hasSib) || (base == hasSib2)) {
 #else
             if (base == hasSib) {
@@ -1982,7 +1982,7 @@ private:
                     m_buffer.putIntUnchecked(offset);
                 }
             } else {
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
                 if (!offset && (base != noBase) && (base != noBase2))
 #else
                 if (!offset && (base != noBase))
@@ -2001,7 +2001,7 @@ private:
         void memoryModRM_disp32(int reg, RegisterID base, int offset)
         {
             // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
             if ((base == hasSib) || (base == hasSib2)) {
 #else
             if (base == hasSib) {
@@ -2018,7 +2018,7 @@ private:
         {
             ASSERT(index != noIndex);
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
             if (!offset && (base != noBase) && (base != noBase2))
 #else
             if (!offset && (base != noBase))
@@ -2033,7 +2033,7 @@ private:
             }
         }
 
-#if !PLATFORM(X86_64)
+#if !CPU(X86_64)
         void memoryModRM(int reg, void* address)
         {
             // noBase + ModRmMemoryNoDisp means noBase + ModRmMemoryDisp32!
@@ -2048,6 +2048,6 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && PLATFORM(X86)
+#endif // ENABLE(ASSEMBLER) && CPU(X86)
 
 #endif // X86Assembler_h

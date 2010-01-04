@@ -89,6 +89,195 @@
 #endif
 
 
+
+/* ==== CPU() - the target CPU architecture ==== */
+
+/* This also defines CPU(BIG_ENDIAN) or CPU(MIDDLE_ENDIAN) or neither, as appropriate. */
+
+
+/* CPU(ALPHA) - DEC Alpha */
+#if defined(__alpha__)
+#define WTF_CPU_ALPHA 1
+#endif
+
+/* CPU(IA64) - Itanium / IA-64 */
+#if defined(__ia64__)
+#define WTF_CPU_IA64 1
+#endif
+
+/* CPU(PPC) - PowerPC 32-bit */
+#if   defined(__ppc__)     \
+   || defined(__PPC__)     \
+   || defined(__powerpc__) \
+   || defined(__powerpc)   \
+   || defined(__POWERPC__) \
+   || defined(_M_PPC)      \
+   || defined(__PPC)
+#define WTF_CPU_PPC 1
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+
+/* CPU(PPC64) - PowerPC 64-bit */
+#if   defined(__ppc64__) \
+   || defined(__PPC64__)
+#define WTF_CPU_PPC64 1
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+
+/* CPU(SH4) - SuperH SH-4 */
+#if defined(__SH4__)
+#define WTF_CPU_SH4 1
+#endif
+
+/* CPU(SPARC32) - SPARC 32-bit */
+#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
+#define WTF_CPU_SPARC32 1
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+
+/* CPU(SPARC64) - SPARC 64-bit */
+#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
+#define WTF_CPU_SPARC64 1
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+
+/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
+#if CPU(SPARC32) || CPU(SPARC64)
+#define WTF_CPU_SPARC
+#endif
+
+/* CPU(X86) - i386 / x86 32-bit */
+#if   defined(__i386__) \
+   || defined(i386)     \
+   || defined(_M_IX86)  \
+   || defined(_X86_)    \
+   || defined(__THW_INTEL)
+#define WTF_CPU_X86 1
+#endif
+
+/* CPU(X86_64) - AMD64 / Intel64 / x86_64 64-bit */
+#if   defined(__x86_64__) \
+   || defined(_M_X64)
+#define WTF_CPU_X86_64 1
+#endif
+
+/* CPU(ARM) - ARM, any version*/
+#if   defined(arm) \
+   || defined(__arm__)
+#define WTF_CPU_ARM 1
+
+#if defined(__ARMEB__)
+#define WTF_CPU_BIG_ENDIAN 1
+
+#elif !defined(__ARM_EABI__) \
+   && !defined(__EABI__) \
+   && !defined(__VFP_FP__) \
+   && !defined(ANDROID)
+#define WTF_CPU_MIDDLE_ENDIAN 1
+
+#endif
+
+#define WTF_ARM_ARCH_AT_LEAST(N) (CPU(ARM) && WTF_ARM_ARCH_VERSION >= N)
+
+/* Set WTF_ARM_ARCH_VERSION */
+#if   defined(__ARM_ARCH_4__) \
+   || defined(__ARM_ARCH_4T__) \
+   || defined(__MARM_ARMV4__) \
+   || defined(_ARMV4I_)
+#define WTF_ARM_ARCH_VERSION 4
+
+#elif defined(__ARM_ARCH_5__) \
+   || defined(__ARM_ARCH_5T__) \
+   || defined(__ARM_ARCH_5E__) \
+   || defined(__ARM_ARCH_5TE__) \
+   || defined(__ARM_ARCH_5TEJ__) \
+   || defined(__MARM_ARMV5__)
+#define WTF_ARM_ARCH_VERSION 5
+
+#elif defined(__ARM_ARCH_6__) \
+   || defined(__ARM_ARCH_6J__) \
+   || defined(__ARM_ARCH_6K__) \
+   || defined(__ARM_ARCH_6Z__) \
+   || defined(__ARM_ARCH_6ZK__) \
+   || defined(__ARM_ARCH_6T2__) \
+   || defined(__ARMV6__)
+#define WTF_ARM_ARCH_VERSION 6
+
+#elif defined(__ARM_ARCH_7A__) \
+   || defined(__ARM_ARCH_7R__)
+#define WTF_ARM_ARCH_VERSION 7
+
+/* RVCT sets _TARGET_ARCH_ARM */
+#elif defined(__TARGET_ARCH_ARM)
+#define WTF_ARM_ARCH_VERSION __TARGET_ARCH_ARM
+
+#else
+#define WTF_ARM_ARCH_VERSION 0
+
+#endif
+
+/* Set WTF_THUMB_ARCH_VERSION */
+#if   defined(__ARM_ARCH_4T__)
+#define WTF_THUMB_ARCH_VERSION 1
+
+#elif defined(__ARM_ARCH_5T__) \
+   || defined(__ARM_ARCH_5TE__) \
+   || defined(__ARM_ARCH_5TEJ__)
+#define WTF_THUMB_ARCH_VERSION 2
+
+#elif defined(__ARM_ARCH_6J__) \
+   || defined(__ARM_ARCH_6K__) \
+   || defined(__ARM_ARCH_6Z__) \
+   || defined(__ARM_ARCH_6ZK__) \
+   || defined(__ARM_ARCH_6M__)
+#define WTF_THUMB_ARCH_VERSION 3
+
+#elif defined(__ARM_ARCH_6T2__) \
+   || defined(__ARM_ARCH_7__) \
+   || defined(__ARM_ARCH_7A__) \
+   || defined(__ARM_ARCH_7R__) \
+   || defined(__ARM_ARCH_7M__)
+#define WTF_THUMB_ARCH_VERSION 4
+
+/* RVCT sets __TARGET_ARCH_THUMB */
+#elif defined(__TARGET_ARCH_THUMB)
+#define WTF_THUMB_ARCH_VERSION __TARGET_ARCH_THUMB
+
+#else
+#define WTF_THUMB_ARCH_VERSION 0
+#endif
+
+
+/* CPU(ARMV5_OR_LOWER) - ARM instruction set v5 or earlier */
+/* On ARMv5 and below the natural alignment is required. 
+   And there are some other differences for v5 or earlier. */
+#if !defined(ARMV5_OR_LOWER) && !CPU_ARM_ARCH_AT_LEAST(6)
+#define WTF_CPU_ARMV5_OR_LOWER 1
+#endif
+
+
+/* CPU(ARM_TRADITIONAL) - Thumb2 is not available, only traditional ARM (v4 or greater) */
+/* CPU(ARM_THUMB2) - Thumb2 instruction set is available */
+/* Only one of these will be defined. */
+#if !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2)
+#  if defined(thumb2) || defined(__thumb2__) \
+  || ((defined(__thumb) || defined(__thumb__)) && WTF_THUMB_ARCH_VERSION == 4)
+#    define WTF_CPU_ARM_TRADITIONAL 0
+#    define WTF_CPU_ARM_THUMB2 1
+#  elif WTF_ARM_ARCH_AT_LEAST(4)
+#    define WTF_CPU_ARM_TRADITIONAL 1
+#    define WTF_CPU_ARM_THUMB2 0
+#  else
+#    error "Not supported ARM architecture"
+#  endif
+#elif CPU(ARM_TRADITIONAL) && CPU(ARM_THUMB2) /* Sanity Check */
+#  error "Cannot use both of WTF_CPU_ARM_TRADITIONAL and WTF_CPU_ARM_THUMB2 platforms"
+#endif // !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2)
+
+#endif /* ARM */
+
+
+
 /* Operating systems - low-level dependencies */
 
 /* PLATFORM(DARWIN) */
@@ -269,180 +458,6 @@
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
-/* CPU */
-
-/* PLATFORM(PPC) */
-#if   defined(__ppc__)     \
-   || defined(__PPC__)     \
-   || defined(__powerpc__) \
-   || defined(__powerpc)   \
-   || defined(__POWERPC__) \
-   || defined(_M_PPC)      \
-   || defined(__PPC)
-#define WTF_PLATFORM_PPC 1
-#define WTF_PLATFORM_BIG_ENDIAN 1
-#endif
-
-/* PLATFORM(SPARC32) */
-#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
-#define WTF_PLATFORM_SPARC32 1
-#define WTF_PLATFORM_BIG_ENDIAN 1
-#endif
-
-#if PLATFORM(SPARC32) || PLATFORM(SPARC64)
-#define WTF_PLATFORM_SPARC
-#endif
-
-/* PLATFORM(PPC64) */
-#if   defined(__ppc64__) \
-   || defined(__PPC64__)
-#define WTF_PLATFORM_PPC64 1
-#define WTF_PLATFORM_BIG_ENDIAN 1
-#endif
-
-/* PLATFORM(ARM) */
-#define PLATFORM_ARM_ARCH(N) (PLATFORM(ARM) && ARM_ARCH_VERSION >= N)
-
-#if   defined(arm) \
-   || defined(__arm__)
-#define WTF_PLATFORM_ARM 1
-
-#if defined(__ARMEB__)
-#define WTF_PLATFORM_BIG_ENDIAN 1
-
-#elif !defined(__ARM_EABI__) \
-   && !defined(__EABI__) \
-   && !defined(__VFP_FP__) \
-   && !defined(ANDROID)
-#define WTF_PLATFORM_MIDDLE_ENDIAN 1
-
-#endif
-
-/* Set ARM_ARCH_VERSION */
-#if   defined(__ARM_ARCH_4__) \
-   || defined(__ARM_ARCH_4T__) \
-   || defined(__MARM_ARMV4__) \
-   || defined(_ARMV4I_)
-#define ARM_ARCH_VERSION 4
-
-#elif defined(__ARM_ARCH_5__) \
-   || defined(__ARM_ARCH_5T__) \
-   || defined(__ARM_ARCH_5E__) \
-   || defined(__ARM_ARCH_5TE__) \
-   || defined(__ARM_ARCH_5TEJ__) \
-   || defined(__MARM_ARMV5__)
-#define ARM_ARCH_VERSION 5
-
-#elif defined(__ARM_ARCH_6__) \
-   || defined(__ARM_ARCH_6J__) \
-   || defined(__ARM_ARCH_6K__) \
-   || defined(__ARM_ARCH_6Z__) \
-   || defined(__ARM_ARCH_6ZK__) \
-   || defined(__ARM_ARCH_6T2__) \
-   || defined(__ARMV6__)
-#define ARM_ARCH_VERSION 6
-
-#elif defined(__ARM_ARCH_7A__) \
-   || defined(__ARM_ARCH_7R__)
-#define ARM_ARCH_VERSION 7
-
-/* RVCT sets _TARGET_ARCH_ARM */
-#elif defined(__TARGET_ARCH_ARM)
-#define ARM_ARCH_VERSION __TARGET_ARCH_ARM
-
-#else
-#define ARM_ARCH_VERSION 0
-
-#endif
-
-/* Set THUMB_ARM_VERSION */
-#if   defined(__ARM_ARCH_4T__)
-#define THUMB_ARCH_VERSION 1
-
-#elif defined(__ARM_ARCH_5T__) \
-   || defined(__ARM_ARCH_5TE__) \
-   || defined(__ARM_ARCH_5TEJ__)
-#define THUMB_ARCH_VERSION 2
-
-#elif defined(__ARM_ARCH_6J__) \
-   || defined(__ARM_ARCH_6K__) \
-   || defined(__ARM_ARCH_6Z__) \
-   || defined(__ARM_ARCH_6ZK__) \
-   || defined(__ARM_ARCH_6M__)
-#define THUMB_ARCH_VERSION 3
-
-#elif defined(__ARM_ARCH_6T2__) \
-   || defined(__ARM_ARCH_7__) \
-   || defined(__ARM_ARCH_7A__) \
-   || defined(__ARM_ARCH_7R__) \
-   || defined(__ARM_ARCH_7M__)
-#define THUMB_ARCH_VERSION 4
-
-/* RVCT sets __TARGET_ARCH_THUMB */
-#elif defined(__TARGET_ARCH_THUMB)
-#define THUMB_ARCH_VERSION __TARGET_ARCH_THUMB
-
-#else
-#define THUMB_ARCH_VERSION 0
-#endif
-
-/* On ARMv5 and below the natural alignment is required. */
-#if !defined(ARM_REQUIRE_NATURAL_ALIGNMENT) && ARM_ARCH_VERSION <= 5
-#define ARM_REQUIRE_NATURAL_ALIGNMENT 1
-#endif
-
-/* Defines two pseudo-platforms for ARM and Thumb-2 instruction set. */
-#if !defined(WTF_PLATFORM_ARM_TRADITIONAL) && !defined(WTF_PLATFORM_ARM_THUMB2)
-#  if defined(thumb2) || defined(__thumb2__) \
-  || ((defined(__thumb) || defined(__thumb__)) && THUMB_ARCH_VERSION == 4)
-#    define WTF_PLATFORM_ARM_TRADITIONAL 0
-#    define WTF_PLATFORM_ARM_THUMB2 1
-#  elif PLATFORM_ARM_ARCH(4)
-#    define WTF_PLATFORM_ARM_TRADITIONAL 1
-#    define WTF_PLATFORM_ARM_THUMB2 0
-#  else
-#    error "Not supported ARM architecture"
-#  endif
-#elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(ARM_THUMB2) /* Sanity Check */
-#  error "Cannot use both of WTF_PLATFORM_ARM_TRADITIONAL and WTF_PLATFORM_ARM_THUMB2 platforms"
-#endif // !defined(ARM_TRADITIONAL) && !defined(ARM_THUMB2)
-#endif /* ARM */
-
-/* PLATFORM(X86) */
-#if   defined(__i386__) \
-   || defined(i386)     \
-   || defined(_M_IX86)  \
-   || defined(_X86_)    \
-   || defined(__THW_INTEL)
-#define WTF_PLATFORM_X86 1
-#endif
-
-/* PLATFORM(X86_64) */
-#if   defined(__x86_64__) \
-   || defined(_M_X64)
-#define WTF_PLATFORM_X86_64 1
-#endif
-
-/* PLATFORM(IA64) */
-#if defined(__ia64__)
-#define WTF_PLATFORM_IA64 1
-#endif
-
-/* PLATFORM(ALPHA) */
-#if defined(__alpha__)
-#define WTF_PLATFORM_ALPHA 1
-#endif
-
-/* PLATFORM(SH4) */
-#if defined(__SH4__)
-#define WTF_PLATFORM_SH4 1
-#endif
-
-/* PLATFORM(SPARC64) */
-#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
-#define WTF_PLATFORM_SPARC64 1
-#define WTF_PLATFORM_BIG_ENDIAN 1
-#endif
 
 /* PLATFORM(WINCE) && PLATFORM(QT)
    We can not determine the endianess at compile time. For
@@ -510,7 +525,7 @@
 #define WTF_PLATFORM_CF 1
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && defined(__x86_64__)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && CPU(X86_64)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
 #endif
 #if !defined(ENABLE_MAC_JAVA_BRIDGE)
@@ -775,9 +790,9 @@
 #endif
 
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64)
-#if (PLATFORM(X86_64) && (PLATFORM(UNIX) || PLATFORM(WIN_OS))) || PLATFORM(IA64) || PLATFORM(ALPHA)
+#if (CPU(X86_64) && (PLATFORM(UNIX) || PLATFORM(WIN_OS))) || CPU(IA64) || CPU(ALPHA)
 #define WTF_USE_JSVALUE64 1
-#elif PLATFORM(ARM) || PLATFORM(PPC64)
+#elif CPU(ARM) || CPU(PPC64)
 #define WTF_USE_JSVALUE32 1
 #elif PLATFORM(WIN_OS) && COMPILER(MINGW)
 /* Using JSVALUE32_64 causes padding/alignement issues for JITStubArg
@@ -795,35 +810,35 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #if !defined(ENABLE_JIT)
 
 /* The JIT is tested & working on x86_64 Mac */
-#if PLATFORM(X86_64) && PLATFORM(MAC)
+#if CPU(X86_64) && PLATFORM(MAC)
     #define ENABLE_JIT 1
 /* The JIT is tested & working on x86 Mac */
-#elif PLATFORM(X86) && PLATFORM(MAC)
+#elif CPU(X86) && PLATFORM(MAC)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
+#elif CPU(ARM_THUMB2) && PLATFORM(IPHONE)
     #define ENABLE_JIT 1
 /* The JIT is tested & working on x86 Windows */
-#elif PLATFORM(X86) && PLATFORM(WIN)
+#elif CPU(X86) && PLATFORM(WIN)
     #define ENABLE_JIT 1
 #endif
 
 #if PLATFORM(QT)
-#if PLATFORM(X86_64) && PLATFORM(DARWIN)
+#if CPU(X86_64) && PLATFORM(DARWIN)
     #define ENABLE_JIT 1
-#elif PLATFORM(X86) && PLATFORM(DARWIN)
-    #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100
+#elif CPU(X86) && PLATFORM(DARWIN)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MSVC)
+#elif CPU(X86) && PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
+#elif CPU(X86) && PLATFORM(WIN_OS) && COMPILER(MSVC)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
-#elif PLATFORM(X86) && PLATFORM(LINUX) && GCC_VERSION >= 40100
+#elif CPU(X86) && PLATFORM(LINUX) && GCC_VERSION >= 40100
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX)
+#elif CPU(ARM_TRADITIONAL) && PLATFORM(LINUX)
     #define ENABLE_JIT 1
 #endif
 #endif /* PLATFORM(QT) */
@@ -845,9 +860,9 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #endif
 #endif
 
-#if PLATFORM(X86) && COMPILER(MSVC)
+#if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL __fastcall
-#elif PLATFORM(X86) && COMPILER(GCC)
+#elif CPU(X86) && COMPILER(GCC)
 #define JSC_HOST_CALL __attribute__ ((fastcall))
 #else
 #define JSC_HOST_CALL
@@ -867,19 +882,19 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #if !defined(ENABLE_YARR_JIT)
 
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
-#if (PLATFORM(X86) && PLATFORM(MAC)) \
- || (PLATFORM(X86_64) && PLATFORM(MAC)) \
- || (PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)) \
- || (PLATFORM(X86) && PLATFORM(WIN))
+#if (CPU(X86) && PLATFORM(MAC)) \
+ || (CPU(X86_64) && PLATFORM(MAC)) \
+ || (CPU(ARM_THUMB2) && PLATFORM(IPHONE)) \
+ || (CPU(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif
 
 #if PLATFORM(QT)
-#if (PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100) \
- || (PLATFORM(X86) && PLATFORM(WIN_OS) && COMPILER(MSVC)) \
- || (PLATFORM(X86) && PLATFORM(LINUX) && GCC_VERSION >= 40100) \
- || (PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX))
+#if (CPU(X86) && PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100) \
+ || (CPU(X86) && PLATFORM(WIN_OS) && COMPILER(MSVC)) \
+ || (CPU(X86) && PLATFORM(LINUX) && GCC_VERSION >= 40100) \
+ || (CPU(ARM_TRADITIONAL) && PLATFORM(LINUX))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif

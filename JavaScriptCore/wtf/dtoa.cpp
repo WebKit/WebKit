@@ -159,9 +159,9 @@
 #pragma warning(disable: 4554)
 #endif
 
-#if PLATFORM(BIG_ENDIAN)
+#if CPU(BIG_ENDIAN)
 #define IEEE_MC68k
-#elif PLATFORM(MIDDLE_ENDIAN)
+#elif CPU(MIDDLE_ENDIAN)
 #define IEEE_ARM
 #else
 #define IEEE_8087
@@ -262,7 +262,8 @@ typedef union { double d; uint32_t L[2]; } U;
 #define Pack_32
 #endif
 
-#if PLATFORM(PPC64) || PLATFORM(X86_64)
+#if CPU(PPC64) || CPU(X86_64)
+// FIXME: should we enable this on all 64-bit CPUs?
 // 64-bit emulation provided by the compiler is likely to be slower than dtoa own code on 32-bit hardware.
 #define USE_LONG_LONG
 #endif

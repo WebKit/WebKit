@@ -40,7 +40,7 @@ namespace JSC { namespace WREC {
 
 void Generator::generateEnter()
 {
-#if PLATFORM(X86)
+#if CPU(X86)
     // On x86 edi & esi are callee preserved registers.
     push(X86Registers::edi);
     push(X86Registers::esi);
@@ -71,7 +71,7 @@ void Generator::generateReturnSuccess()
     store32(index, Address(output, 4)); // match end
     
     // Restore callee save registers.
-#if PLATFORM(X86)
+#if CPU(X86)
     pop(X86Registers::esi);
     pop(X86Registers::edi);
 #endif
@@ -110,7 +110,7 @@ void Generator::generateReturnFailure()
     pop();
     move(Imm32(-1), returnRegister);
 
-#if PLATFORM(X86)
+#if CPU(X86)
     pop(X86Registers::esi);
     pop(X86Registers::edi);
 #endif

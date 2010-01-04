@@ -32,7 +32,7 @@
 
 #include <wtf/unicode/Unicode.h>
 
-#if COMPILER(GCC) && PLATFORM(X86)
+#if COMPILER(GCC) && CPU(X86)
 #define WREC_CALL __attribute__ ((regparm (3)))
 #else
 #define WREC_CALL

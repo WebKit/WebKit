@@ -30,19 +30,19 @@
 
 #if ENABLE(ASSEMBLER)
 
-#if PLATFORM(ARM_THUMB2)
+#if CPU(ARM_THUMB2)
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
 #include "MacroAssemblerARM.h"
 namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
 
-#elif PLATFORM(X86)
+#elif CPU(X86)
 #include "MacroAssemblerX86.h"
 namespace JSC { typedef MacroAssemblerX86 MacroAssemblerBase; };
 
-#elif PLATFORM(X86_64)
+#elif CPU(X86_64)
 #include "MacroAssemblerX86_64.h"
 namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; };
 
@@ -60,7 +60,7 @@ public:
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
     using MacroAssemblerBase::branch16;
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
@@ -133,7 +133,8 @@ public:
 
     // Ptr methods
     // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
-#if !PLATFORM(X86_64)
+    // FIXME: should this use a test for 32-bitness instead of this specific exception?
+#if !CPU(X86_64)
     void addPtr(RegisterID src, RegisterID dest)
     {
         add32(src, dest);

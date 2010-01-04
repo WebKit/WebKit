@@ -1172,7 +1172,7 @@ template <int BITS> class MapSelector {
 };
 
 #if defined(WTF_CHANGES)
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
 // On all known X86-64 platforms, the upper 16 bits are always unused and therefore 
 // can be excluded from the PageMap key.
 // See http://en.wikipedia.org/wiki/X86-64#Virtual_address_space_details

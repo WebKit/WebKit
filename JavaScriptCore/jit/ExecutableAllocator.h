@@ -180,17 +180,17 @@ public:
 #endif
 
 
-#if PLATFORM(X86) || PLATFORM(X86_64)
+#if CPU(X86) || CPU(X86_64)
     static void cacheFlush(void*, size_t)
     {
     }
-#elif PLATFORM(ARM_THUMB2) && PLATFORM(IPHONE)
+#elif CPU(ARM_THUMB2) && PLATFORM(IPHONE)
     static void cacheFlush(void* code, size_t size)
     {
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
     }
-#elif PLATFORM(ARM_THUMB2) && PLATFORM(LINUX)
+#elif CPU(ARM_THUMB2) && PLATFORM(LINUX)
     static void cacheFlush(void* code, size_t size)
     {
         asm volatile (
@@ -211,7 +211,7 @@ public:
     {
         User::IMB_Range(code, static_cast<char*>(code) + size);
     }
-#elif PLATFORM(ARM_TRADITIONAL) && PLATFORM(LINUX)
+#elif CPU(ARM_TRADITIONAL) && PLATFORM(LINUX)
     static void cacheFlush(void* code, size_t size)
     {
         asm volatile (

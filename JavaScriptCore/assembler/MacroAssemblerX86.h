@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(ASSEMBLER) && PLATFORM(X86)
+#if ENABLE(ASSEMBLER) && CPU(X86)
 
 #include "MacroAssemblerX86Common.h"
 

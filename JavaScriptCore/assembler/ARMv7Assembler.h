@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(ASSEMBLER) && PLATFORM(ARM_THUMB2)
+#if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
 #include "AssemblerBuffer.h"
 #include <wtf/Assertions.h>
@@ -1832,6 +1832,6 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM_THUMB2)
+#endif // ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
 #endif // ARMAssembler_h

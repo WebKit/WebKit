@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)
+#if ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)
 
 #include "ARMAssembler.h"
 
@@ -402,4 +402,4 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && PLATFORM(ARM_TRADITIONAL)
+#endif // ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)

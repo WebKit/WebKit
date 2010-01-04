@@ -37,7 +37,7 @@
 #include <pcre.h>
 struct JSRegExp; // temporary, remove when fallback is removed.
 
-#if PLATFORM(X86) && !COMPILER(MSVC)
+#if CPU(X86) && !COMPILER(MSVC)
 #define YARR_CALL __attribute__ ((regparm (3)))
 #else
 #define YARR_CALL

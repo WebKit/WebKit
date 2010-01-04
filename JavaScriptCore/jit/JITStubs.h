@@ -75,7 +75,7 @@ namespace JSC {
         ReturnAddressPtr returnAddress() { return ReturnAddressPtr(asPointer); }
     };
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     struct JITStackFrame {
         void* reserved; // Unused
         JITStubArg args[6];
@@ -99,7 +99,7 @@ namespace JSC {
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
         ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
     };
-#elif PLATFORM(X86)
+#elif CPU(X86)
 #if COMPILER(MSVC)
 #pragma pack(push)
 #pragma pack(4)
@@ -130,7 +130,7 @@ namespace JSC {
 #if COMPILER(MSVC)
 #pragma pack(pop)
 #endif // COMPILER(MSVC)
-#elif PLATFORM(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
     struct JITStackFrame {
         void* reserved; // Unused
         JITStubArg args[6];
@@ -158,7 +158,7 @@ namespace JSC {
         
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
     };
-#elif PLATFORM(ARM_TRADITIONAL)
+#elif CPU(ARM_TRADITIONAL)
     struct JITStackFrame {
         JITStubArg padding; // Unused
         JITStubArg args[7];
@@ -202,16 +202,16 @@ namespace JSC {
     #define STUB_ARGS_DECLARATION void** args
     #define STUB_ARGS (args)
 
-    #if PLATFORM(X86) && COMPILER(MSVC)
+    #if CPU(X86) && COMPILER(MSVC)
     #define JIT_STUB __fastcall
-    #elif PLATFORM(X86) && COMPILER(GCC)
+    #elif CPU(X86) && COMPILER(GCC)
     #define JIT_STUB  __attribute__ ((fastcall))
     #else
     #define JIT_STUB
     #endif
 #endif
 
-#if PLATFORM(X86_64)
+#if CPU(X86_64)
     struct VoidPtrPair {
         void* first;
         void* second;

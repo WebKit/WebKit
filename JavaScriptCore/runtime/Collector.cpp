@@ -539,7 +539,7 @@ static inline void* currentThreadStackBase()
 #if PLATFORM(DARWIN)
     pthread_t thread = pthread_self();
     return pthread_get_stackaddr_np(thread);
-#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(MSVC)
+#elif PLATFORM(WIN_OS) && CPU(X86) && COMPILER(MSVC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread
     NT_TIB* pTib;
@@ -548,10 +548,10 @@ static inline void* currentThreadStackBase()
         MOV pTib, EAX
     }
     return static_cast<void*>(pTib->StackBase);
-#elif PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#elif PLATFORM(WIN_OS) && CPU(X86_64) && COMPILER(MSVC)
     PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
     return reinterpret_cast<void*>(pTib->StackBase);
-#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(GCC)
+#elif PLATFORM(WIN_OS) && CPU(X86) && COMPILER(GCC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread
     NT_TIB* pTib;
@@ -823,21 +823,21 @@ typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
 #if PLATFORM(DARWIN)
 
-#if PLATFORM(X86)
+#if CPU(X86)
 typedef i386_thread_state_t PlatformThreadRegisters;
-#elif PLATFORM(X86_64)
+#elif CPU(X86_64)
 typedef x86_thread_state64_t PlatformThreadRegisters;
-#elif PLATFORM(PPC)
+#elif CPU(PPC)
 typedef ppc_thread_state_t PlatformThreadRegisters;
-#elif PLATFORM(PPC64)
+#elif CPU(PPC64)
 typedef ppc_thread_state64_t PlatformThreadRegisters;
-#elif PLATFORM(ARM)
+#elif CPU(ARM)
 typedef arm_thread_state_t PlatformThreadRegisters;
 #else
 #error Unknown Architecture
 #endif
 
-#elif PLATFORM(WIN_OS)&& PLATFORM(X86)
+#elif PLATFORM(WIN_OS)&& CPU(X86)
 typedef CONTEXT PlatformThreadRegisters;
 #else
 #error Need a thread register struct for this platform
@@ -847,19 +847,19 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 {
 #if PLATFORM(DARWIN)
 
-#if PLATFORM(X86)
+#if CPU(X86)
     unsigned user_count = sizeof(regs)/sizeof(int);
     thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif PLATFORM(X86_64)
+#elif CPU(X86_64)
     unsigned user_count = x86_THREAD_STATE64_COUNT;
     thread_state_flavor_t flavor = x86_THREAD_STATE64;
-#elif PLATFORM(PPC) 
+#elif CPU(PPC) 
     unsigned user_count = PPC_THREAD_STATE_COUNT;
     thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif PLATFORM(PPC64)
+#elif CPU(PPC64)
     unsigned user_count = PPC_THREAD_STATE64_COUNT;
     thread_state_flavor_t flavor = PPC_THREAD_STATE64;
-#elif PLATFORM(ARM)
+#elif CPU(ARM)
     unsigned user_count = ARM_THREAD_STATE_COUNT;
     thread_state_flavor_t flavor = ARM_THREAD_STATE;
 #else
@@ -875,7 +875,7 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     return user_count * sizeof(usword_t);
 // end PLATFORM(DARWIN)
 
-#elif PLATFORM(WIN_OS) && PLATFORM(X86)
+#elif PLATFORM(WIN_OS) && CPU(X86)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
@@ -890,13 +890,13 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 #if __DARWIN_UNIX03
 
-#if PLATFORM(X86)
+#if CPU(X86)
     return reinterpret_cast<void*>(regs.__esp);
-#elif PLATFORM(X86_64)
+#elif CPU(X86_64)
     return reinterpret_cast<void*>(regs.__rsp);
-#elif PLATFORM(PPC) || PLATFORM(PPC64)
+#elif CPU(PPC) || CPU(PPC64)
     return reinterpret_cast<void*>(regs.__r1);
-#elif PLATFORM(ARM)
+#elif CPU(ARM)
     return reinterpret_cast<void*>(regs.__sp);
 #else
 #error Unknown Architecture
@@ -904,11 +904,11 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 #else // !__DARWIN_UNIX03
 
-#if PLATFORM(X86)
+#if CPU(X86)
     return reinterpret_cast<void*>(regs.esp);
-#elif PLATFORM(X86_64)
+#elif CPU(X86_64)
     return reinterpret_cast<void*>(regs.rsp);
-#elif (PLATFORM(PPC) || PLATFORM(PPC64))
+#elif CPU(PPC) || CPU(PPC64)
     return reinterpret_cast<void*>(regs.r1);
 #else
 #error Unknown Architecture
@@ -917,7 +917,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #endif // __DARWIN_UNIX03
 
 // end PLATFORM(DARWIN)
-#elif PLATFORM(X86) && PLATFORM(WIN_OS)
+#elif CPU(X86) && PLATFORM(WIN_OS)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
 #else
 #error Need a way to get the stack pointer for another thread on this platform
