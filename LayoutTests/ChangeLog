@@ -1,3 +1,22 @@
+2010-01-03  Mario Bensi  <mbensi@pleyo.com>
+
+        Reviewed by Simon Fraser.
+
+        create 3d directory and move tests dependent of 3D Rendering in this
+        directory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33081
+
+        * animations/3d: Added.
+        * animations/3d/change-transform-in-end-event.html: Copied from LayoutTests/animations/change-transform-in-end-event.html.
+        * animations/3d/state-at-end-event-transform.html: Copied from LayoutTests/animations/state-at-end-event-transform.html.
+        * animations/3d/transform-origin-vs-functions-expected.txt: Copied from LayoutTests/animations/transform-origin-vs-functions-expected.txt.
+        * animations/3d/transform-origin-vs-functions.html: Copied from LayoutTests/animations/transform-origin-vs-functions.html.
+        * animations/change-transform-in-end-event.html: Removed.
+        * animations/state-at-end-event-transform.html: Removed.
+        * animations/transform-origin-vs-functions-expected.txt: Removed.
+        * animations/transform-origin-vs-functions.html: Removed.
+
 2010-01-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Skip test that fails on and off on the release bot.
