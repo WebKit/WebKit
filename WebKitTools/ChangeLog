@@ -1,3 +1,30 @@
+2010-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Make it easier to run submit-patch when previous run cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=33070
+
+        This patch renames create-review to submit-patch (as requested by
+        Maciej).
+
+        This patch makes it easier to run submit-patch after the user has
+        already cancelled a previous run of submit-patch by detecting when we
+        already have ChangeLogs and reading the bug number from them (and not
+        attempting to recreate them).  Aside from performance and the extra
+        edit step, this command should not subsume post-dif.
+
+        Also, added a --email command line argument so that the output of
+        prepare-ChangeLog makes sense when it can't find the user's email
+        address.
+
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/buildsteps.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/user.py:
+
 2010-01-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

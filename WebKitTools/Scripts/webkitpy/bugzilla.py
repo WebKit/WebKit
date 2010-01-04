@@ -351,8 +351,9 @@ class Bugzilla(object):
 
     def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False):
         self.authenticate()
-        
-        log('Adding patch "%s" to bug %s' % (description, bug_id))
+
+        log('Adding patch "%s" to %sshow_bug.cgi?id=%s' % (description, self.bug_server_url, bug_id))
+
         if self.dryrun:
             log(comment_text)
             return

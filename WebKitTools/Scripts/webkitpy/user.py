@@ -45,6 +45,8 @@ class User(object):
         except IOError, e:
             pass
 
-    def confirm(self):
-        response = raw_input("\nContinue? [Y/n]: ")
+    def confirm(self, message=None):
+        if not message:
+            message = "Continue?"
+        response = raw_input("%s [Y/n]: " % message)
         return not response or response.lower() == "y"

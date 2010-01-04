@@ -99,7 +99,17 @@ class ObsoleteAttachments(AbstractSequencedCommmand):
         return { "bug_id" : args[0] }
 
 
-class PostDiff(AbstractSequencedCommmand):
+class AbstractPatchUploadingCommand(AbstractSequencedCommmand):
+    def _bug_id(self, args, tool, state):
+        # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
+        bug_id = args and args[0]
+        if not bug_id:
+            state["diff"] = tool.scm().create_patch()
+            bug_id = parse_bug_id(state["diff"])
+        return bug_id
+
+
+class PostDiff(AbstractPatchUploadingCommand):
     name = "post-diff"
     help_text = "Attach the current working directory diff to a bug as a patch file"
     argument_names = "[BUGID]"
@@ -111,15 +121,10 @@ class PostDiff(AbstractSequencedCommmand):
     ]
 
     def _prepare_state(self, options, args, tool):
-        # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
         state = {}
-        bug_id = args and args[0]
-        if not bug_id:
-            state["diff"] = tool.scm().create_patch()
-            bug_id = parse_bug_id(state["diff"])
-        if not bug_id:
+        state["bug_id"] = self._bug_id(args, tool, state)
+        if not state["bug_id"]:
             error("No bug id passed and no bug url found in diff, can't post.")
-        state["bug_id"] = bug_id
         return state
 
 
@@ -138,9 +143,9 @@ class PrepareDiff(AbstractSequencedCommmand):
         return { "bug_id" : bug_id }
 
 
-class CreateReview(AbstractSequencedCommmand):
-    name = "create-review"
-    help_text = "Adds a ChangeLog to the current diff and posts it to a (possibly new) bug"
+class SubmitPatch(AbstractPatchUploadingCommand):
+    name = "submit-patch"
+    help_text = "Automates the process of uploading a patch for review"
     argument_names = "[BUGID]"
     steps = [
         PromptForBugOrTitleStep,
@@ -153,8 +158,9 @@ class CreateReview(AbstractSequencedCommmand):
     ]
 
     def _prepare_state(self, options, args, tool):
-        bug_id = args and args[0]
-        return { "bug_id" : bug_id }
+        state = {}
+        state["bug_id"] = self._bug_id(args, tool, state)
+        return state
 
 
 class EditChangeLog(AbstractSequencedCommmand):

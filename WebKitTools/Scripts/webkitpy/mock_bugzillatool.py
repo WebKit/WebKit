@@ -183,7 +183,7 @@ class MockUser(object):
     def page(self, message):
         pass
 
-    def confirm(self):
+    def confirm(self, message=None):
         return True
 
 

@@ -87,6 +87,7 @@ class CommandOptions(object):
     cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
     component = make_option("--component", action="store", type="string", dest="component", help="Component for the new bug.")
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
+    email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
 
 
 class AbstractStep(object):
@@ -106,6 +107,19 @@ class AbstractStep(object):
             return self._port
         self._port = WebKitPort.port(self._options.port)
         return self._port
+
+    _well_known_keys = {
+        "diff" : lambda self: self._tool.scm().create_patch(),
+        "changelogs" : lambda self: self._tool.scm().modified_changelogs(),
+    }
+
+    def cached_lookup(self, state, key, promise=None):
+        if state.get(key):
+            return state[key]
+        if not promise:
+            promise = self._well_known_keys.get(key)
+        state[key] = promise(self)
+        return state[key]
 
     @classmethod
     def options(cls):
@@ -177,19 +191,28 @@ class PrepareChangeLogStep(AbstractStep):
         return [
             CommandOptions.port,
             CommandOptions.quiet,
+            CommandOptions.email,
         ]
 
     def run(self, state):
+        if self.cached_lookup(state, "changelogs"):
+            return
         os.chdir(self._tool.scm().checkout_root)
         args = [self.port().script_path("prepare-ChangeLog")]
         if state["bug_id"]:
             args.append("--bug=%s" % state["bug_id"])
-        self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
+        if self._options.email:
+            args.append("--email=%s" % self._options.email)
+        try:
+            self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
+        except ScriptError, e:
+            error("Unable to prepare ChangeLogs.")
+        state["diff"] = None # We've changed the diff
 
 
 class EditChangeLogStep(AbstractStep):
     def run(self, state):
-        self._tool.user.edit(self._tool.scm().modified_changelogs())
+        self._tool.user.edit(self.cached_lookup(state, "changelogs"))
 
 
 class ObsoletePatchesOnBugStep(AbstractStep):
@@ -211,16 +234,7 @@ class ObsoletePatchesOnBugStep(AbstractStep):
             self._tool.bugs.obsolete_attachment(patch["id"])
 
 
-class AbstractDiffStep(AbstractStep):
-    def diff(self, state):
-        diff = state.get("diff")
-        if not diff:
-            diff = self._tool.scm().create_patch()
-            state["diff"] = diff
-        return diff
-
-
-class ConfirmDiffStep(AbstractDiffStep):
+class ConfirmDiffStep(AbstractStep):
     @classmethod
     def options(cls):
         return [
@@ -230,13 +244,13 @@ class ConfirmDiffStep(AbstractDiffStep):
     def run(self, state):
         if not self._options.confirm:
             return
-        diff = self.diff(state)
+        diff = self.cached_lookup(state, "diff")
         self._tool.user.page(diff)
-        if not self._tool.user.confirm():
+        if not self._tool.user.confirm("Was that diff correct?"):
             error("User declined to continue.")
 
 
-class PostDiffToBugStep(AbstractDiffStep):
+class PostDiffToBugStep(AbstractStep):
     @classmethod
     def options(cls):
         return [
@@ -246,7 +260,7 @@ class PostDiffToBugStep(AbstractDiffStep):
         ]
 
     def run(self, state):
-        diff = self.diff(state)
+        diff = self.cached_lookup(state, "diff")
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
         description = self._options.description or "Patch"
         self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
