@@ -32,6 +32,9 @@
 
 use Test::Simple tests => 21;
 
+use FindBin;
+use lib $FindBin::Bin; # so this script can be run from any directory.
+
 use VCSUtils;
 
 # Call a function while suppressing STDERR.

@@ -1,3 +1,26 @@
+2010-01-03  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added script to test both Perl and Python, and renamed
+        run-webkit-unittests to test-webkit-python.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33045
+
+        * Scripts/VCSUtils_unittest.pl:
+          - Tweaked so it can be run from outside Scripts directory.
+
+        * Scripts/run-webkit-unittests: Removed.
+          - Renamed to test-webkit-python.
+
+        * Scripts/test-webkit-perl:
+          - Tweaked so it can be run from outside Scripts directory.
+
+        * Scripts/test-webkit-python: Copied from Scripts/run-webkit-unittests.
+
+        * Scripts/test-webkit-scripts: Added.
+          - Runs both test-webkit-perl and test-webkit-python.
+
 2010-01-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

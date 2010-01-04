@@ -1,0 +1,83 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2009 Chris Jerdonek (chris.jerdonek@gmail.com)
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+# its contributors may be used to endorse or promote products derived
+# from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Tests WebKit Perl and Python scripts.
+
+Syntax: test-webkit-scripts [--all]
+
+    --all    Runs all available tests, including those suppressed
+             by default.
+"""
+
+import getopt
+import os
+import subprocess
+import sys
+
+def test_script(title, script_path, args=None):
+    """Run the given test command."""
+    print('Testing %s:' % title)
+
+    call_args = [script_path]
+    if args is not None:
+        call_args.extend(args)
+    subprocess.call(call_args)
+    print(70 * "*") # dividing line
+
+if __name__ == '__main__':
+
+    try:
+        (opts, filenames) = getopt.getopt(sys.argv[1:], '', ['help', 'all'])
+    except getopt.GetoptError:
+        print(__doc__)
+        sys.exit('Error: invalid option.')
+
+    should_include_all = False
+
+    for (opt, val) in opts:
+        if opt == '--help':
+            print(__doc__)
+            sys.exit()
+        elif opt == '--all':
+            should_include_all = True
+
+    # Use absolute paths so this script can be run from any directory.
+    scripts_directory = sys.path[0]
+
+    test_script('Perl scripts', os.path.join(scripts_directory, 'test-webkit-perl'))
+
+    test_script('Python scripts',
+                os.path.join(scripts_directory, 'test-webkit-python'),
+                ['--all'] if should_include_all else None)
+
+    # FIXME: Display a cumulative indication of success or failure.
+    #        In addition, call sys.exit() with 0 or 1 depending on that
+    #        cumulative success or failure.
+    print('Note: Perl and Python results appear separately above.')

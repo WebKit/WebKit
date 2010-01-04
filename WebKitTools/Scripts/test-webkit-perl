@@ -30,6 +30,11 @@
 
 # Runs unit tests of WebKit Perl code.
 
+use FindBin;
 use Test::Harness;
 
-runtests("VCSUtils_unittest.pl");
+# Use an absolute path so this script can be run from any directory.
+$scriptsDir = $FindBin::Bin;
+$scriptsDir =~ s|/+$||; # Remove trailing '/'
+
+runtests("$scriptsDir/VCSUtils_unittest.pl");
