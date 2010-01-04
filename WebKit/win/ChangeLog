@@ -1,3 +1,14 @@
+2010-01-04  Adam Roben  <aroben@apple.com>
+
+        Add WebKitAPITest
+
+        Fixes <http://webkit.org/b/33167>.
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcproj/WebKit.sln: Added WebKitAPITest.vcproj. It builds just
+        after DumpRenderTree.vcproj.
+
 2010-01-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan and Mark Rowe.

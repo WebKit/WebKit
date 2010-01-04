@@ -1,3 +1,81 @@
+2010-01-04  Adam Roben  <aroben@apple.com>
+
+        Add a test harness for the Windows WebKit API, and a few tests
+
+        We currently only have tests for a handful of bugs regarding WebView
+        destruction, but more tests can easily be added later. Eventually
+        we'll run these tests as part of run-webkit-tests.
+
+        Fixes <http://webkit.org/b/33167>.
+
+        Reviewed by Sam Weinig.
+
+        * WebKitAPITest/HostWindow.cpp: Added.
+        (WebKitAPITest::HostWindow::HostWindow): Initialize m_window.
+        (WebKitAPITest::HostWindow::~HostWindow): Destroy our window if
+        needed.
+        (WebKitAPITest::HostWindow::initialize): Create our window.
+        (WebKitAPITest::HostWindow::clientRect): Return our window's client
+        rect.
+        (WebKitAPITest::HostWindow::registerWindowClass): Does what it says.
+        (WebKitAPITest::HostWindow::wndProc): Just call through to
+        DefWindowProcW.
+
+        * WebKitAPITest/HostWindow.h: Added.
+        (WebKitAPITest::HostWindow::window): Simple getter.
+
+        * WebKitAPITest/Test.h: Added. This file defines some macros useful
+        for writing tests.
+
+        * WebKitAPITest/TestsController.cpp: Added.
+        (WebKitAPITest::TestsController::TestsController): Initialize our
+        members.
+        (WebKitAPITest::TestsController::shared): Return the shared instance.
+        (WebKitAPITest::TestsController::runAllTests): Run a message pump
+        until a WM_QUIT message is received, then return whether all tests
+        succeeded.
+        (WebKitAPITest::TestsController::addTest): Add the test to m_tests and
+        start running tests soon.
+        (WebKitAPITest::TestsController::testFailed): Record the failure and
+        print a message about it to stdout.
+        (WebKitAPITest::TestsController::runNextTest): If we don't have any
+        tests to run, post a WM_QUIT message to stop the message pump.
+        Otherwise, run the test and print whether it passed, then schedule the
+        next test.
+        (WebKitAPITest::TestsController::runNextTestSoon): Set a 0-delay timer
+        to run the next test.
+        (WebKitAPITest::TestsController::registerWindowClass): Does what it
+        says.
+        (WebKitAPITest::TestsController::wndProc): If the runNextTestTimer
+        fired, call runNextTest(). Pass everything else through to
+        DefWindowProcW.
+
+        * WebKitAPITest/TestsController.h: Added.
+
+        * WebKitAPITest/WebKitAPITest.vcproj: Added.
+
+        * WebKitAPITest/WebKitAPITestCommon.vsprops: Added.
+
+        * WebKitAPITest/main.cpp: Added.
+        (main): (Mostly) just calls TestsController::runAllTests.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp: Added.
+        (WebKitAPITest::WebKitCreateInstance): Helper function template to
+        call through to the real WebKitCreateInstance.
+        (WebKitAPITest::webViewCount): Helper function to call through to
+        IWebKitStatistics::webViewCount.
+        (WebKitAPITest::createWebView): Helper function to create a WebView
+        and put it inside a HostWindow.
+        (WebKitAPITest::runMessagePump): Helper function to run a message pump
+        for a specified number of milliseconds, or until a WM_QUIT message is
+        received.
+        (WebKitAPITest::CloseWithoutDestroyWindow): Test for
+        <http://webkit.org/b/32827>.
+        (WebKitAPITest::MainFrameAfterClose): Test for
+        <http://webkit.org/b/32868>.
+        (WebKitAPITest::NoCloseOrDestroyWindow): Test for
+        <http://webkit.org/b/33162>.
+
 2010-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by David Kilzer.
