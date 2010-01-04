@@ -1,5 +1,16 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed.  Update two win-specific test results, that showed up on the Windows Release/Debug slave.
+        Skip fast/frames/iframe-onload-remove-self-no-crash.html as it crashes the debug slave, filed bug.
+
+        All bots except SnowLeopard Leaks & GTK Linux Debug (32-bit) should turn to green now!
+
+        * platform/win/editing/selection/select-text-overflow-ellipsis-expected.txt:
+        * platform/win/fast/forms/basic-selects-expected.txt: Added.
+        * platform/win/Skipped:
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Bring back Tiger bot to green: svg/custom/use-on-symbol-inside-pattern.svg exposes a bug on both Tiger & Win.
         Reopened bug 17393 and skipping this test for now, as it requires a larger rework of Path::debugString().
 
