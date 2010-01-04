@@ -520,7 +520,7 @@ sub fixChangeLogPatch($)
 # Returns ($patchCommand, $isForcing).
 #
 # This subroutine has unit tests in VCSUtils_unittest.pl.
-sub generateRunPatchCommand($)
+sub generatePatchCommand($)
 {
     my ($passedArgsHashRef) = @_;
 
@@ -592,7 +592,7 @@ sub runPatchCommand($$$;$)
 {
     my ($patch, $repositoryRootPath, $pathRelativeToRoot, $args) = @_;
 
-    my ($patchCommand, $isForcing) = generateRunPatchCommand($args);
+    my ($patchCommand, $isForcing) = generatePatchCommand($args);
 
     # Temporarily change the working directory since the path found
     # in the patch's "Index:" line is relative to the repository root

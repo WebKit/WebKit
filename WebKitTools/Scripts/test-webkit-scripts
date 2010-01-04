@@ -71,10 +71,10 @@ if __name__ == '__main__':
     # Use absolute paths so this script can be run from any directory.
     scripts_directory = sys.path[0]
 
-    test_script('Perl scripts', os.path.join(scripts_directory, 'test-webkit-perl'))
+    test_script('Perl scripts', os.path.join(scripts_directory, 'test-webkitperl'))
 
     test_script('Python scripts',
-                os.path.join(scripts_directory, 'test-webkit-python'),
+                os.path.join(scripts_directory, 'test-webkitpy'),
                 ['--all'] if should_include_all else None)
 
     # FIXME: Display a cumulative indication of success or failure.

@@ -28,30 +28,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Unit tests of VCSUtils.pm.
+# Unit tests of VCSUtils::fixChangeLogPatch().
 
-use Test::Simple tests => 21;
-
-use FindBin;
-use lib $FindBin::Bin; # so this script can be run from any directory.
-
+use Test::Simple tests => 7;
 use VCSUtils;
 
-# Call a function while suppressing STDERR.
-sub callSilently($@) {
-    my ($func, @args) = @_;
-
-    open(OLDERR, ">&STDERR");
-    close(STDERR);
-    my @returnValue = &$func(@args);
-    open(STDERR, ">&OLDERR");
-    close(OLDERR); # FIXME: Is this necessary?
-
-    return @returnValue;
-}
-
-# fixChangeLogPatch
-#
 # The source ChangeLog for these tests is the following:
 # 
 # 2009-12-22  Alice  <alice@email.address>
@@ -307,118 +288,3 @@ $out = <<'END';
 END
 
 ok(fixChangeLogPatch($in) eq $out, $title);
-
-# Tests: generateRunPatchCommand
-
-# New test
-$title = "generateRunPatchCommand: Undefined optional arguments.";
-
-my $argsHashRef;
-my ($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0", $title);
-ok($isForcing == 0, $title);
-
-# New test
-$title = "generateRunPatchCommand: Undefined options.";
-
-my $options;
-$argsHashRef = {options => $options};
-($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0", $title);
-ok($isForcing == 0, $title);
-
-# New test
-$title = "generateRunPatchCommand: --force and no \"ensure force\".";
-
-$argsHashRef = {options => ["--force"]};
-($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0 --force", $title);
-ok($isForcing == 1, $title);
-
-# New test
-$title = "generateRunPatchCommand: no --force and \"ensure force\".";
-
-$argsHashRef = {ensureForce => 1};
-($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0 --force", $title);
-ok($isForcing == 1, $title);
-
-# New test
-$title = "generateRunPatchCommand: \"should reverse\".";
-
-$argsHashRef = {shouldReverse => 1};
-($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0 --reverse", $title);
-
-# New test
-$title = "generateRunPatchCommand: --fuzz=3, --force.";
-
-$argsHashRef = {options => ["--fuzz=3", "--force"]};
-($patchCommand, $isForcing) = VCSUtils::generateRunPatchCommand($argsHashRef);
-
-ok($patchCommand eq "patch -p0 --force --fuzz=3", $title);
-
-# Tests: runPatchCommand
-
-# New test
-$title = "runPatchCommand: Unsuccessful patch, forcing.";
-
-# Since $patch has no "Index:" path, passing this to runPatchCommand
-# should not affect any files.
-my $patch = <<'END';
-Garbage patch contents
-END
-
-# We call via callSilently() to avoid output like the following to STDERR:
-# patch: **** Only garbage was found in the patch input.
-$argsHashRef = {ensureForce => 1};
-$exitStatus = callSilently(\&runPatchCommand, $patch, ".", "file_to_patch.txt", $argsHashRef);
-
-ok($exitStatus != 0, $title);
-
-# New test
-$title = "runPatchCommand: New file, --dry-run.";
-
-# This file should not exist after the tests, but we take care with the
-# file name and contents just in case.
-my $fileToPatch = "temp_OK_TO_ERASE__README_FOR_MORE.txt";
-$patch = <<END;
-Index: $fileToPatch
-===================================================================
---- $fileToPatch	(revision 0)
-+++ $fileToPatch	(revision 0)
-@@ -0,0 +1,5 @@
-+This is a test file for WebKitTools/Scripts/VCSUtils_unittest.pl.
-+This file should not have gotten created on your system.
-+If it did, some unit tests don't seem to be working quite right:
-+It would be great if you could file a bug report. Thanks!
-+---------------------------------------------------------------------
-END
-
-# --dry-run prevents creating any files.
-# --silent suppresses the success message to STDOUT.
-$argsHashRef = {options => ["--dry-run", "--silent"]};
-$exitStatus = runPatchCommand($patch, ".", $fileToPatch, $argsHashRef);
-
-ok($exitStatus == 0, $title);
-
-# New test
-$title = "runPatchCommand: New file: \"$fileToPatch\".";
-
-$argsHashRef = {options => ["--silent"]};
-$exitStatus = runPatchCommand($patch, ".", $fileToPatch, $argsHashRef);
-
-ok($exitStatus == 0, $title);
-
-# New test
-$title = "runPatchCommand: Reverse new file (clean up previous).";
-
-$argsHashRef = {shouldReverse => 1,
-                options => ["--silent", "--remove-empty-files"]}; # To clean up.
-$exitStatus = runPatchCommand($patch, ".", $fileToPatch, $argsHashRef);
-ok($exitStatus == 0, $title);

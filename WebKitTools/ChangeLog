@@ -1,3 +1,34 @@
+2010-01-04  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Kilzer.
+
+        Divided the Perl unit tests into separate files and put
+        them in a separate directory, and renamed test-webkit-perl
+        to test-webkitperl.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33124
+
+        * Scripts/VCSUtils.pm:
+          - Renamed generateRunPatchCommand() to generatePatchCommand().
+
+        * Scripts/VCSUtils_unittest.pl: Removed.
+          - Divided into three files in Scripts/webkitperl/VCSUtils_unittest.
+
+        * Scripts/test-webkit-perl: Removed.
+          - Renamed to test-webkitperl.
+
+        * Scripts/test-webkit-scripts:
+          - Updated paths to test-webkitpy and test-webkitperl.
+
+        * Scripts/test-webkitperl: Copied from Scripts/test-webkit-perl.
+          - Added paths to new test files.
+
+        * Scripts/webkitperl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatch.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/generatePatchCommand.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/runPatchCommand.pl: Copied from Scripts/VCSUtils_unittest.pl.
+
 2010-01-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

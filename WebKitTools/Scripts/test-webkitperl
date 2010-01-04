@@ -32,9 +32,20 @@
 
 use FindBin;
 use Test::Harness;
+use lib $FindBin::Bin; # so this script can be run from any directory.
+use VCSUtils;
 
 # Use an absolute path so this script can be run from any directory.
 $scriptsDir = $FindBin::Bin;
 $scriptsDir =~ s|/+$||; # Remove trailing '/'
 
-runtests("$scriptsDir/VCSUtils_unittest.pl");
+# VCSUtils subroutines
+my @files = (
+    "fixChangeLogPatch.pl",
+    "generatePatchCommand.pl",
+    "runPatchCommand.pl",
+);
+
+@files = map "$scriptsDir/webkitperl/VCSUtils_unittest/$_", @files; # prepend
+
+runtests(@files);
