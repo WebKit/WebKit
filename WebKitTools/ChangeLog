@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] Move AbstractSequencedCommand to a more general location
+        https://bugs.webkit.org/show_bug.cgi?id=33137
+
+        I do what the FIXME tell me to do.
+
+        * Scripts/webkitpy/commands/abstractsequencedcommand.py: Added.
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/upload.py:
+
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Rename StatusBot to StatusServer
         https://bugs.webkit.org/show_bug.cgi?id=33139
 

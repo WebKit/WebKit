@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2009, Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 #
@@ -37,26 +36,13 @@ import webkitpy.steps as steps
 from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."
 from webkitpy.changelogs import ChangeLog
+from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommmand
 from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
 from webkitpy.multicommandtool import AbstractDeclarativeCommmand
 from webkitpy.stepsequence import StepSequence
-
-
-# FIXME: Move this to a more general location.
-class AbstractSequencedCommmand(AbstractDeclarativeCommmand):
-    steps = None
-    def __init__(self):
-        self._sequence = StepSequence(self.steps)
-        AbstractDeclarativeCommmand.__init__(self, self._sequence.options())
-
-    def _prepare_state(self, options, args, tool):
-        return None
-
-    def execute(self, options, args, tool):
-        self._sequence.run_and_handle_errors(tool, options, self._prepare_state(options, args, tool))
 
 
 class Build(AbstractSequencedCommmand):
