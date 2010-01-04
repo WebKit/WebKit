@@ -1,5 +1,11 @@
 2010-01-03  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.  Need to import ScriptError.
+
+        * Scripts/webkitpy/buildsteps.py:
+
+2010-01-03  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         [bzt] Make it easier to run submit-patch when previous run cancelled

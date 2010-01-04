@@ -32,6 +32,7 @@ import StringIO
 from optparse import make_option
 
 from webkitpy.comments import bug_comment_from_commit_text
+from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import log, error
 from webkitpy.webkitport import WebKitPort
