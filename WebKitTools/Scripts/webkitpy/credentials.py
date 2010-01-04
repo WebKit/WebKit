@@ -77,14 +77,17 @@ class Credentials(object):
             # Failed to either find a keychain entry or somekind of OS-related error
             # occured (for instance, couldn't find the /usr/sbin/security command).
             log("Could not find a keychain entry for %s." % self.host)
-            return [None, None]
+            return None
 
     def _credentials_from_keychain(self, username=None):
         if not self._is_mac_os_x():
             return [username, None]
 
         security_output = self._run_security_tool(username)
-        return self._parse_security_tool_output(security_output)
+        if security_output:
+            return self._parse_security_tool_output(security_output)
+        else:
+            return [None, None]
 
     def read_credentials(self):
         username = None

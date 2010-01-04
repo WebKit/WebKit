@@ -82,7 +82,7 @@ password: "SECRETSAUCE"
         # by the test case CredentialsTest._assert_security_call (below).
         outputCapture = OutputCapture()
         outputCapture.capture_output()
-        self.assertEqual(credentials._run_security_tool(), [None, None])
+        self.assertEqual(credentials._run_security_tool(), None)
         outputCapture.restore_output()
 
     def _assert_security_call(self, username=None):

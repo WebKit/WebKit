@@ -1,5 +1,14 @@
 2010-01-04  Daniel Bates  <dbates@webkit.org>
 
+        https://bugs.webkit.org/show_bug.cgi?id=33039
+        
+        Unreviewed fix.
+
+        * Scripts/webkitpy/credentials.py:
+        * Scripts/webkitpy/credentials_unittest.py:
+
+2010-01-04  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=33039
