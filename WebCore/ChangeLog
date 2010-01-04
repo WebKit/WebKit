@@ -1,3 +1,11 @@
+2010-01-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix standalone package builds.
+
+        * WebCore.pro: Moved logic for detecting standalone builds to WebKit.pri. Set DESTDIR for package builds.
+
 2010-01-04  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

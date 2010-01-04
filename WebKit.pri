@@ -1,5 +1,14 @@
 # Include file to make it easy to include WebKit into Qt projects
 
+# Detect that we are building as a standalone package by the presence of
+# either the generated files directory or as part of the Qt package through
+# QTDIR_build
+CONFIG(QTDIR_build): CONFIG += standalone_package
+else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
+
+CONFIG(standalone_package) {
+    OUTPUT_DIR=$$PWD
+}
 
 isEmpty(OUTPUT_DIR) {
     CONFIG(debug, debug|release) {

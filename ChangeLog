@@ -1,3 +1,12 @@
+2010-01-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix standalone package builds.
+
+        * WebKit.pri: Add logic for detecting standalone builds. Set OUTPUT_DIR to the top-level dir in that case.
+        * WebKit.pro: Don't build JSC and DRT for package builds.
+
 2010-01-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
