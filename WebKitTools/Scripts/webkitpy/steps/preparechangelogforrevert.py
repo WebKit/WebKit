@@ -42,5 +42,6 @@ class PrepareChangeLogForRevert(AbstractStep):
         # Second, make new ChangeLog entries for this rollout.
         # This could move to prepare-ChangeLog by adding a --revert= option.
         self._run_script("prepare-ChangeLog")
+        bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
         for changelog_path in changelog_paths:
-            ChangeLog(changelog_path).update_for_revert(state["revision"])
+            ChangeLog(changelog_path).update_for_revert(state["revision"], bug_url)

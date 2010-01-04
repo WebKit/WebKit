@@ -69,14 +69,17 @@ class ChangeLog:
         finally:
             changelog_file.close()
 
-    def update_for_revert(self, revision):
+    def update_for_revert(self, revision, bug_url=None):
         reviewed_by_regexp = re.compile('Reviewed by NOBODY \(OOPS!\)\.')
         removing_boilerplate = False
         # inplace=1 creates a backup file and re-directs stdout to the file
         for line in fileinput.FileInput(self.path, inplace=1):
             if reviewed_by_regexp.search(line):
                 print reviewed_by_regexp.sub("No review, rolling out r%s." % revision, line),
-                print "        %s\n" % view_source_url(revision)
+                print "        %s" % view_source_url(revision)
+                if bug_url:
+                    print "        %s" % bug_url
+                print # Add an extra new line after the rollout message.
                 # Remove all the ChangeLog boilerplate between the Reviewed by line and the first changed file.
                 removing_boilerplate = True
             elif removing_boilerplate:

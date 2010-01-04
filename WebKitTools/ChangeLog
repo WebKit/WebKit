@@ -1,3 +1,16 @@
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make bugzilla-tool rollout include a bug link in the ChangeLog entry
+        https://bugs.webkit.org/show_bug.cgi?id=33146
+
+        One more step towards better rollouts.
+
+        * Scripts/webkitpy/changelogs.py:
+        * Scripts/webkitpy/changelogs_unittest.py:
+        * Scripts/webkitpy/steps/preparechangelogforrevert.py:
+
 2010-01-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
