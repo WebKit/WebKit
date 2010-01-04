@@ -1,3 +1,16 @@
+2010-01-04  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Eric Seidel.
+
+        Updated license to match recommended header license.
+
+        * mathml/MathMLElement.cpp:
+        * mathml/MathMLElement.h:
+        * mathml/MathMLInlineContainerElement.cpp:
+        * mathml/MathMLInlineContainerElement.h:
+        * mathml/MathMLMathElement.cpp:
+        * mathml/MathMLMathElement.h:
+
 2010-01-04  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

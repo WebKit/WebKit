@@ -1,3 +1,16 @@
+2010-01-04  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Eric Seidel.
+
+        Added expected outputs for pixel tests that were missing.
+
+        * platform/mac/mathml/presentation/sub-expected.checksum: Added.
+        * platform/mac/mathml/presentation/sub-expected.png: Added.
+        * platform/mac/mathml/presentation/sup-expected.checksum: Added.
+        * platform/mac/mathml/presentation/sup-expected.png: Added.
+        * platform/mac/mathml/presentation/tables-expected.checksum: Added.
+        * platform/mac/mathml/presentation/tables-expected.png: Added.
+
 2010-01-04  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
