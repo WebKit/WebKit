@@ -1,3 +1,11 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan and Mark Rowe.
+
+        Updated copyright string
+
+        * Info.plist:
+
 2009-12-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey Proskuryakov.

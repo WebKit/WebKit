@@ -1,3 +1,12 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan and Mark Rowe.
+
+        Updated copyright string
+
+        * Info.plist:
+        * WebCore.vcproj/QTMovieWin.rc:
+
 2010-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

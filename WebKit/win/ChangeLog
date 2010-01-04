@@ -1,3 +1,11 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan and Mark Rowe.
+
+        Updated copyright string
+
+        * WebKit.vcproj/WebKit.rc:
+
 2009-12-22  Darin Adler  <darin@apple.com>
 
         Another try at fixing Windows build.

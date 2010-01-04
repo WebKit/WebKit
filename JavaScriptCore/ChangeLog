@@ -1,3 +1,13 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan and Mark Rowe.
+
+        Updated copyright string
+
+        * Info.plist:
+        * JavaScriptCore.vcproj/JavaScriptCore.resources/Info.plist:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.rc:
+
 2010-01-04  Adam Roben  <aroben@apple.com>
 
         No review, rolling out r52741.
