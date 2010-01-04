@@ -226,10 +226,8 @@ class PostCommits(AbstractDeclarativeCommmand):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
-# FIXME: Requires unit test.  Blocking issue: too complex for now.
 class MarkBugFixed(AbstractDeclarativeCommmand):
     name = "mark-bug-fixed"
-    show_in_main_help = True
     help_text = "Mark the specified bug as fixed"
     argument_names = "[SVN_REVISION]"
     def __init__(self):
@@ -268,17 +266,6 @@ class MarkBugFixed(AbstractDeclarativeCommmand):
 
         return (bug_id, svn_revision)
 
-    def _open_bug_in_web_browser(self, tool, bug_id):
-        if sys.platform == "darwin":
-            tool.executive.run_command(["open", tool.bugs.short_bug_url_for_bug_id(bug_id)])
-            return
-        log("WARNING: --open is only supported on Mac OS X.")
-
-    def _prompt_user_for_correctness(self, bug_id, svn_revision):
-        answer = raw_input("Is this correct (y/N)? ")
-        if not re.match("^\s*y(es)?", answer, re.IGNORECASE):
-            exit(1)
-
     def execute(self, options, args, tool):
         bug_id = options.bug_id
 
@@ -294,14 +281,15 @@ class MarkBugFixed(AbstractDeclarativeCommmand):
             needs_prompt = True
             (bug_id, svn_revision) = self._determine_bug_id_and_svn_revision(tool, bug_id, svn_revision)
 
-        log("Bug: <%s> %s" % (tool.bugs.short_bug_url_for_bug_id(bug_id), tool.bugs.fetch_bug_dictionary(bug_id)["title"]))
+        log("Bug: <%s> %s" % (tool.bugs.bug_url_for_bug_id(bug_id), tool.bugs.fetch_bug_dictionary(bug_id)["title"]))
         log("Revision: %s" % svn_revision)
 
         if options.open_bug:
-            self._open_bug_in_web_browser(tool, bug_id)
+            tool.user.open_url(tool.bugs.bug_url_for_bug_id(bug_id))
 
         if needs_prompt:
-            self._prompt_user_for_correctness(bug_id, svn_revision)
+            if not tool.user.confirm("Is this correct?"):
+                exit(1)
 
         bug_comment = bug_comment_from_svn_revision(svn_revision)
         if options.comment:
@@ -318,7 +306,6 @@ class MarkBugFixed(AbstractDeclarativeCommmand):
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
 class CreateBug(AbstractDeclarativeCommmand):
     name = "create-bug"
-    show_in_main_help = True
     help_text = "Create a bug from local changes or local commits"
     argument_names = "[COMMITISH]"
 
