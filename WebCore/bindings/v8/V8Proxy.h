@@ -207,11 +207,6 @@ namespace WebCore {
         // constructors.
         void evaluateInIsolatedWorld(int worldId, const Vector<ScriptSourceCode>& sources, int extensionGroup);
 
-        // Evaluate JavaScript in a new context. The script gets its own global scope
-        // and its own prototypes for intrinsic JavaScript objects (String, Array,
-        // and so-on). It shares the wrappers for all DOM nodes and DOM constructors.
-        void evaluateInNewContext(const Vector<ScriptSourceCode>&, int extensionGroup);
-
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
         // If cannot evalute the script, it returns an error.

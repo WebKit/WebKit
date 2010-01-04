@@ -90,8 +90,6 @@ public:
     virtual NPObject* windowObject() const;
     virtual void bindToWindowObject(const WebString& name, NPObject*);
     virtual void executeScript(const WebScriptSource&);
-    virtual void executeScriptInNewContext(
-        const WebScriptSource* sources, unsigned numSources, int extensionGroup);
     virtual void executeScriptInIsolatedWorld(
         int worldId, const WebScriptSource* sources, unsigned numSources,
         int extensionGroup);

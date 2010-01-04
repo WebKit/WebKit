@@ -309,56 +309,6 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
       world->destroy();
 }
 
-// FIXME: We should remove this function!
-void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int extensionGroup)
-{
-    windowShell()->initContextIfNeeded();
-
-    v8::HandleScope handleScope;
-
-    // Set up the DOM window as the prototype of the new global object.
-    v8::Handle<v8::Context> windowContext = windowShell()->context();
-    v8::Handle<v8::Object> windowGlobal = windowContext->Global();
-    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, windowGlobal);
-
-    ASSERT(V8DOMWrapper::convertDOMWrapperToNative<DOMWindow>(windowWrapper) == m_frame->domWindow());
-
-    v8::Persistent<v8::Context> context = windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup);
-    if (context.IsEmpty())
-        return;
-
-    v8::Context::Scope contextScope(context);
-
-    // Setup context id for JS debugger.
-    if (!setInjectedScriptContextDebugId(context)) {
-        context.Dispose();
-        return;
-    }
-
-    v8::Handle<v8::Object> global = context->Global();
-
-    v8::Handle<v8::String> implicitProtoString = v8::String::New("__proto__");
-    global->Set(implicitProtoString, windowWrapper);
-
-    // Give the code running in the new context a way to get access to the
-    // original context.
-    global->Set(v8::String::New("contentWindow"), windowGlobal);
-
-    m_frame->loader()->client()->didCreateIsolatedScriptContext();
-
-    // Run code in the new context.
-    for (size_t i = 0; i < sources.size(); ++i)
-        evaluate(sources[i], 0);
-
-    // Using the default security token means that the canAccess is always
-    // called, which is slow.
-    // FIXME: Use tokens where possible. This will mean keeping track of all
-    // created contexts so that they can all be updated when the document domain
-    // changes.
-    context->UseDefaultSecurityToken();
-    context.Dispose();
-}
-
 bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
 {
     // Setup context id for JS debugger.

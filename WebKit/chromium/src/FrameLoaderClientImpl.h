@@ -66,7 +66,7 @@ public:
     virtual void didCreateScriptContextForFrame();
     virtual void didDestroyScriptContextForFrame();
 
-    // A context untied to a frame was created (through evaluateInNewContext).
+    // A context untied to a frame was created (through evaluateInIsolatedWorld).
     // This context is not tied to the lifetime of its frame, and is destroyed
     // in garbage collection.
     virtual void didCreateIsolatedScriptContext();

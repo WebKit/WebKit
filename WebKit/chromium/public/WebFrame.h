@@ -195,17 +195,6 @@ public:
     // Executes script in the context of the current page.
     virtual void executeScript(const WebScriptSource&) = 0;
 
-    // Executes script in a new context associated with the frame. The
-    // script gets its own global scope and its own prototypes for
-    // intrinsic JS objects (String, Array, and so-on). It shares the
-    // wrappers for all DOM nodes and DOM constructors.  extensionGroup is
-    // an embedder-provided specifier that controls which v8 extensions are
-    // loaded into the new context - see WebKit::registerExtension for the
-    // corresponding specifier.
-    virtual void executeScriptInNewContext(const WebScriptSource* sources,
-                                           unsigned numSources,
-                                           int extensionGroup) = 0;
-
     // Executes JavaScript in a new world associated with the web frame.
     // The script gets its own global scope and its own prototypes for
     // intrinsic JavaScript objects (String, Array, and so-on). It also

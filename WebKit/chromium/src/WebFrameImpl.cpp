@@ -595,19 +595,6 @@ void WebFrameImpl::executeScript(const WebScriptSource& source)
         ScriptSourceCode(source.code, source.url, source.startLine));
 }
 
-void WebFrameImpl::executeScriptInNewContext(
-    const WebScriptSource* sourcesIn, unsigned numSources, int extensionGroup)
-{
-    Vector<ScriptSourceCode> sources;
-
-    for (unsigned i = 0; i < numSources; ++i) {
-        sources.append(ScriptSourceCode(
-            sourcesIn[i].code, sourcesIn[i].url, sourcesIn[i].startLine));
-    }
-
-    m_frame->script()->evaluateInNewContext(sources, extensionGroup);
-}
-
 void WebFrameImpl::executeScriptInIsolatedWorld(
     int worldId, const WebScriptSource* sourcesIn, unsigned numSources,
     int extensionGroup)

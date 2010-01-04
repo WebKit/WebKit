@@ -1,3 +1,23 @@
+2010-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove evaluateInNewContext (it's useless)
+        https://bugs.webkit.org/show_bug.cgi?id=33068
+
+        This function has no clients and makes life complicated.  Isolated
+        worlds won out over NewContext and there's not really any going back
+        now.
+
+        No new tests because this is all minus lines.
+
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertWindowToV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+
 2010-01-03  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.

@@ -90,12 +90,6 @@ namespace WebCore {
         // FIXME: Get rid of extensionGroup here.
         void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
 
-        // Executes JavaScript in a new context associated with the web frame. The
-        // script gets its own global scope and its own prototypes for intrinsic
-        // JavaScript objects (String, Array, and so-on). It shares the wrappers for
-        // all DOM nodes and DOM constructors.
-        void evaluateInNewContext(const Vector<ScriptSourceCode>&, int extensionGroup);
-
         // Masquerade 'this' as the windowShell.
         // This is a bit of a hack, but provides reasonable compatibility
         // with what JSC does as well.
