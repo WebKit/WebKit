@@ -39,11 +39,11 @@ from webkitpy.webkit_logging import error, log
 from webkitpy.committers import CommitterList
 from webkitpy.credentials import Credentials
 
-# WebKit includes a built copy of BeautifulSoup in Scripts/modules
+# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
 # so this import should always succeed.
 from .BeautifulSoup import BeautifulSoup, SoupStrainer
 
-from webkitpy.webkit_mechanize import Browser
+from mechanize import Browser
 
 def parse_bug_id(message):
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)

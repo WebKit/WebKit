@@ -1,3 +1,12 @@
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool should not require users to install mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=32635
+
+        * .gitignore: Ignore autoinstall.cache.d directory created by autoinstall.py
+
 2009-12-28  Estêvão Samuel Procópio  <tevaum@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

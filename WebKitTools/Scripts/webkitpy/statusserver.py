@@ -29,7 +29,7 @@
 # WebKit's Python module for interacting with the Commit Queue status page.
 
 from webkitpy.webkit_logging import log
-from webkitpy.webkit_mechanize import Browser
+from mechanize import Browser
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
 # so this import should always succeed.
