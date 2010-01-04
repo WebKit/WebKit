@@ -1,5 +1,11 @@
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY build fix for DRT, fix incorrect style include.
+
+        * wtf/HashFunctions.h:
+
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

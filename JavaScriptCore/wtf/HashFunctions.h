@@ -22,7 +22,7 @@
 #define WTF_HashFunctions_h
 
 #include "RefPtr.h"
-#include "wtf/unicode/Unicode.h"
+#include "Unicode.h"
 #include <stdint.h>
 
 namespace WTF {
