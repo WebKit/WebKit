@@ -1,5 +1,11 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix typo in test name.
+
+        * platform/win/Skipped:
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed.  Update two win-specific test results, that showed up on the Windows Release/Debug slave.
         Skip fast/frames/iframe-onload-remove-self-no-crash.html as it crashes the debug slave, filed bug.
 
