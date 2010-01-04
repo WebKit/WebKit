@@ -1,5 +1,11 @@
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=33163
