@@ -5,7 +5,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -563,7 +563,7 @@ void Frame::setCaretVisible(bool flag)
         return;
     clearCaretRectIfNeeded();
     m_caretVisible = flag;
-    selectionLayoutChanged();
+    selection()->setNeedsDisplayUpdate();
 }
 
 void Frame::clearCaretRectIfNeeded()
@@ -630,9 +630,17 @@ void Frame::setFocusedNodeIfNeeded()
 
 void Frame::selectionLayoutChanged()
 {
-    bool caretRectChanged = selection()->recomputeCaretRect();
+    selection()->setNeedsDisplayUpdate(false);
 
 #if ENABLE(TEXT_CARET)
+    static bool alreadyInSelectionLayoutChanged;
+    if (alreadyInSelectionLayoutChanged)
+        return;
+
+    alreadyInSelectionLayoutChanged = true;
+
+    bool caretRectChanged = selection()->recomputeCaretRect();
+
     bool caretBrowsing = settings() && settings()->caretBrowsingEnabled();
     bool shouldBlink = m_caretVisible
         && selection()->isCaret() && (selection()->isContentEditable() || caretBrowsing);
@@ -653,9 +661,8 @@ void Frame::selectionLayoutChanged()
             selection()->invalidateCaretRect();
         }
     }
-#else
-    if (!caretRectChanged)
-        return;
+
+    alreadyInSelectionLayoutChanged = false;
 #endif
 
     RenderView* view = contentRenderer();
@@ -691,8 +698,10 @@ void Frame::selectionLayoutChanged()
 void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
 #if ENABLE(TEXT_CARET)
-    ASSERT(m_caretVisible);
-    ASSERT(selection()->isCaret());
+    if (!m_caretVisible || !selection()->isCaret()) {
+        ASSERT(selection()->needsDisplayUpdate());
+        return;
+    }
     bool caretPaint = m_caretPaint;
     if (selection()->isCaretBlinkingSuspended() && caretPaint)
         return;
@@ -1252,6 +1261,8 @@ void Frame::setExcludeFromTextSearch(bool exclude)
 // returns FloatRect because going through IntRect would truncate any floats
 FloatRect Frame::selectionBounds(bool clipToVisibleContent) const
 {
+    m_doc->updateLayout();
+
     RenderView* root = contentRenderer();
     FrameView* view = m_view.get();
     if (!root || !view)

@@ -1,3 +1,16 @@
+2010-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Reentrancy problem with selection in some edge cases. 
+        https://bugs.webkit.org/show_bug.cgi?id=32842 
+        rdar://problem/7449974 
+
+        * fast/forms/selection-layout-reentry-strange-case-expected.txt: Added.
+        * fast/forms/selection-layout-reentry-strange-case.html: Added.
+        * platform/mac/accessibility/frame-with-title-expected.txt: Updated since 
+        the number of layouts is now different. 
+
 2010-01-04  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, revert r52745 and r52746 on behalf of Nikolas Zimmermann, as discussed on IRC.

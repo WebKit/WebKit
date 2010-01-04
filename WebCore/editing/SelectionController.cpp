@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,7 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
     , m_isDragCaretController(isDragCaretController)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
+    , m_needsDisplayUpdate(false)
 {
 }
 
@@ -145,7 +146,8 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     if (!s.isNone())
         m_frame->setFocusedNodeIfNeeded();
     
-    m_frame->selectionLayoutChanged();
+    setNeedsDisplayUpdate();
+
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
@@ -1299,6 +1301,20 @@ void SelectionController::setFocused(bool flag)
 bool SelectionController::isFocusedAndActive() const
 {
     return m_focused && m_frame->page() && m_frame->page()->focusController()->isActive();
+}
+
+void SelectionController::setNeedsDisplayUpdate(bool needsUpdate)
+{
+    if (m_needsDisplayUpdate == needsUpdate)
+        return;
+    m_needsDisplayUpdate = needsUpdate;
+
+    if (!m_needsDisplayUpdate)
+        return;
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+    view->scheduleRelayout();
 }
 
 #ifndef NDEBUG
