@@ -32,7 +32,7 @@ import os
 
 from optparse import make_option
 
-class WebKitPort():
+class WebKitPort(object):
     # We might need to pass scm into this function for scm.checkout_root
     @classmethod
     def script_path(cls, script_name):
@@ -62,8 +62,13 @@ class WebKitPort():
         return [cls.script_path("update-webkit")]
 
     @classmethod
-    def build_webkit_command(cls):
-        return [cls.script_path("build-webkit")]
+    def build_webkit_command(cls, build_style=None):
+        command = [cls.script_path("build-webkit")]
+        if build_style == "debug":
+            command.append("--debug")
+        if build_style == "release":
+            command.append("--release")
+        return command
 
     @classmethod
     def run_webkit_tests_command(cls):
@@ -90,8 +95,8 @@ class GtkPort(WebKitPort):
         return "--port=gtk"
 
     @classmethod
-    def build_webkit_command(cls):
-        command = WebKitPort.build_webkit_command()
+    def build_webkit_command(cls, build_style=None):
+        command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--gtk")
         return command
 
@@ -112,8 +117,8 @@ class QtPort(WebKitPort):
         return "--port=qt"
 
     @classmethod
-    def build_webkit_command(cls):
-        command = WebKitPort.build_webkit_command()
+    def build_webkit_command(cls, build_style=None):
+        command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--qt")
         # FIXME: We should probably detect the number of cores.
         command.append('--makeargs="-j8"')
@@ -136,7 +141,7 @@ class ChromiumPort(WebKitPort):
         return command
 
     @classmethod
-    def build_webkit_command(cls):
-        command = WebKitPort.build_webkit_command()
+    def build_webkit_command(cls, build_style=None):
+        command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--chromium")
         return command

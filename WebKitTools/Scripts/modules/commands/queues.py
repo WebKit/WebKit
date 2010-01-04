@@ -157,7 +157,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def process_work_item(self, patch):
         try:
             self._cc_watchers(patch["bug_id"])
-            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--quiet", patch["id"]])
+            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch["id"]])
             self._did_pass(patch)
         except ScriptError, e:
             self._did_fail(patch)

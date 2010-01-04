@@ -74,6 +74,7 @@ class CommandOptions(object):
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
     local_commit = make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch")
     build = make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test.")
+    build_style = make_option("--build-style", action="store", dest="build_style", default=None, help="Whether to build debug, release, or both.")
     test = make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests.")
     close_bug = make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing.")
     port = make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...).")
@@ -407,13 +408,21 @@ class BuildStep(AbstractStep):
         return [
             CommandOptions.build,
             CommandOptions.quiet,
+            CommandOptions.build_style,
         ]
+
+    def build(self, build_style):
+        self._tool.executive.run_and_throw_if_fail(self.port().build_webkit_command(build_style=build_style), self._options.quiet)
 
     def run(self, state):
         if not self._options.build:
             return
         log("Building WebKit")
-        self._tool.executive.run_and_throw_if_fail(self.port().build_webkit_command(), self._options.quiet)
+        if self._options.build_style == "both":
+            self.build("debug")
+            self.build("release")
+        else:
+            self.build(self._options.build_style)
 
 
 class CheckStyleStep(AbstractStep):

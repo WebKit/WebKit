@@ -1,3 +1,20 @@
+2010-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        commit-queue/bugzilla-tool should build both Debug and Release
+        https://bugs.webkit.org/show_bug.cgi?id=28450
+
+        Add a --build-style command that lets the master process tell the child
+        process to build both debug and release.  Eventually we want to teach
+        the test step to understand this option too, but that's a patch for
+        another day.
+
+        * Scripts/modules/buildsteps.py:
+        * Scripts/modules/commands/queues.py:
+        * Scripts/modules/webkitport.py:
+        * Scripts/modules/webkitport_unittest.py:
+
 2010-01-03  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Eric Seidel.
