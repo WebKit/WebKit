@@ -48,11 +48,11 @@ def git_diff_to_svn_diff(line):
     Args:
       line: A string representing a line of the diff.
     """
-    conversion_patterns = (("^diff --git a/(.+) b/(?P<FilePath>.+)", lambda matched: "Index: " + matched.group('FilePath') + "\n"),
+    conversion_patterns = (("^diff --git \w/(.+) \w/(?P<FilePath>.+)", lambda matched: "Index: " + matched.group('FilePath') + "\n"),
                            ("^new file.*", lambda matched: "\n"),
                            ("^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}", lambda matched: "===================================================================\n"),
-                           ("^--- a/(?P<FilePath>.+)", lambda matched: "--- " + matched.group('FilePath') + "\n"),
-                           ("^\+\+\+ b/(?P<FilePath>.+)", lambda matched: "+++ " + matched.group('FilePath') + "\n"))
+                           ("^--- \w/(?P<FilePath>.+)", lambda matched: "--- " + matched.group('FilePath') + "\n"),
+                           ("^\+\+\+ \w/(?P<FilePath>.+)", lambda matched: "+++ " + matched.group('FilePath') + "\n"))
 
     for pattern, conversion in conversion_patterns:
         matched = match(pattern, line)
@@ -69,7 +69,7 @@ def get_diff_converter(first_diff_line):
                        If this line is git formatted, we'll return a
                        converter from git to SVN.
     """
-    if match(r"^diff --git a/", first_diff_line):
+    if match(r"^diff --git \w/", first_diff_line):
         return git_diff_to_svn_diff
     return lambda input: input
 

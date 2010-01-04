@@ -28,6 +28,7 @@
 
 import unittest
 import diff_parser
+import re
 
 
 class DiffParserTest(unittest.TestCase):
@@ -82,11 +83,11 @@ index 0000000..6db26bd
 @@ -0,0 +1 @@
 +61a373ee739673a9dcd7bac62b9f182e
 \ No newline at end of file
-'''.splitlines()
+'''
 
-
-    def test_diff_parser(self):
-        parser = diff_parser.DiffParser(self._PATCH)
+    def test_diff_parser(self, parser = None):
+        if not parser:
+            parser = diff_parser.DiffParser(self._PATCH.splitlines())
         self.assertEquals(3, len(parser.files))
 
         self.assertTrue('WebCore/rendering/style/StyleFlexibleBoxData.h' in parser.files)
@@ -126,6 +127,20 @@ index 0000000..6db26bd
         self.assertEquals(1, len(diff.lines))
         self.assertEquals((0, 1), diff.lines[0][0:2])
 
+    def test_git_mnemonicprefix(self):
+        p = re.compile(r' ([a|b])/')
+
+        prefixes = [
+            { 'a' : 'i', 'b' : 'w' }, # git-diff (compares the (i)ndex and the (w)ork tree)
+            { 'a' : 'c', 'b' : 'w' }, # git-diff HEAD (compares a (c)ommit and the (w)ork tree)
+            { 'a' : 'c', 'b' : 'i' }, # git diff --cached (compares a (c)ommit and the (i)ndex)
+            { 'a' : 'o', 'b' : 'w' }, # git-diff HEAD:file1 file2 (compares an (o)bject and a (w)ork tree entity)
+            { 'a' : '1', 'b' : '2' }, # git diff --no-index a b (compares two non-git things (1) and (2))
+        ]
+
+        for prefix in prefixes:
+            patch = p.sub(lambda x: " %s/" % prefix[x.group(1)], self._PATCH)
+            self.test_diff_parser(diff_parser.DiffParser(patch.splitlines()))
 
 if __name__ == '__main__':
     unittest.main()

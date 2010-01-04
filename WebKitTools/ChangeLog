@@ -1,3 +1,19 @@
+2010-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by David Kilzer.
+
+        Add support for Git's "diff.mnemonicprefix" config option to WebKitTools
+
+        https://bugs.webkit.org/show_bug.cgi?id=32820
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+        * Scripts/test-webkitperl: Run gitdiff2svndiff test
+        * Scripts/webkitperl/VCSUtils_unittest/gitdiff2svndiff.pl: Added.
+        * Scripts/webkitpy/diff_parser.py:
+        * Scripts/webkitpy/diff_parser_unittest.py:
+
 2010-01-04  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by David Kilzer.

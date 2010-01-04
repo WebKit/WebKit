@@ -362,13 +362,13 @@ sub svnStatus($)
 sub gitdiff2svndiff($)
 {
     $_ = shift @_;
-    if (m#^diff --git a/(.+) b/(.+)#) {
+    if (m#^diff --git \w/(.+) \w/(.+)#) {
         return "Index: $1";
     } elsif (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
         return "===================================================================";
-    } elsif (m#^--- a/(.+)#) {
+    } elsif (m#^--- \w/(.+)#) {
         return "--- $1";
-    } elsif (m#^\+\+\+ b/(.+)#) {
+    } elsif (m#^\+\+\+ \w/(.+)#) {
         return "+++ $1";
     }
     return $_;

@@ -43,6 +43,7 @@ $scriptsDir =~ s|/+$||; # Remove trailing '/'
 my @files = (
     "fixChangeLogPatch.pl",
     "generatePatchCommand.pl",
+    "gitdiff2svndiff.pl",
     "runPatchCommand.pl",
 );
 

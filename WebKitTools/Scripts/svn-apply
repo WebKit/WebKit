@@ -133,7 +133,7 @@ my $patch;
 while (<>) {
     s/([\n\r]+)$//mg;
     my $eol = $1;
-    if (!defined($indexPath) && m#^diff --git a/#) {
+    if (!defined($indexPath) && m#^diff --git \w/#) {
         $filter = \&gitdiff2svndiff;
     }
     $_ = &$filter($_) if $filter;
