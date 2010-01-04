@@ -48,7 +48,7 @@
 namespace WebCore {
 
 #if ENABLE(NOTIFICATIONS)
-ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications)
+bool V8WorkerContext::WebkitNotificationsEnabled()
 {
     return RuntimeEnabledFeatures::notificationsEnabled();
 }

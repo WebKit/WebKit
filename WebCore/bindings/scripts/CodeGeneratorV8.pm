@@ -282,11 +282,17 @@ END
 END
     }
 
+    my @enabledAtRuntime;
     foreach my $function (@{$dataNode->functions}) {
         my $name = $function->signature->name;
+        my $attrExt = $function->signature->extendedAttributes;
+
         push(@headerContent, <<END);
   static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
+        if ($attrExt->{"EnabledAtRuntime"}) {
+            push(@enabledAtRuntime, $function);
+        }
     }
     
     foreach my $attribute (@{$dataNode->attributes}) {
@@ -304,8 +310,12 @@ END
   static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
 END
         }
+        if ($attrExt->{"EnabledAtRuntime"}) {
+            push(@enabledAtRuntime, $attribute);
+        }
     }
 
+    GenerateHeaderRuntimeEnablerDeclarations(@enabledAtRuntime);
     GenerateHeaderCustomCall($dataNode);
 
     push(@headerContent, <<END);
@@ -322,6 +332,25 @@ END
     push(@headerContent, "#endif // $className" . "_H\n");
 
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
+}
+
+sub GenerateHeaderRuntimeEnablerDeclarations
+{
+    my @enabledAtRuntime = @_;
+    
+    foreach my $runtime_attr (@enabledAtRuntime) {
+        my $enabledAtRuntimeConditionalString = GenerateConditionalString($runtime_attr->signature);
+        my $enabler = $codeGenerator->WK_ucfirst($runtime_attr->signature->name);
+        if ($enabledAtRuntimeConditionalString) {
+            push(@headerContent, "\n#if ${enabledAtRuntimeConditionalString}\n");
+        }
+        push(@headerContent, <<END);
+  static bool ${enabler}Enabled();
+END
+        if ($enabledAtRuntimeConditionalString) {
+            push(@headerContent, "#endif\n");
+        }
+    }
 }
 
 sub GenerateHeaderCustomCall
@@ -1610,10 +1639,10 @@ END
     
     # Setup the enable-at-runtime attrs if we have them
     foreach my $runtime_attr (@enabledAtRuntime) {
-        $enable_function = $interfaceName . $codeGenerator->WK_ucfirst($runtime_attr->signature->name);
+        $enable_function = $interfaceName . "::" . $codeGenerator->WK_ucfirst($runtime_attr->signature->name);
         my $conditionalString = GenerateConditionalString($runtime_attr->signature);
         push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "    if (V8Custom::v8${enable_function}Enabled()) {\n");
+        push(@implContent, "    if (V8${enable_function}Enabled()) {\n");
         push(@implContent, "        static const BatchedAttribute attrData =\\\n");
         GenerateSingleBatchedAttribute($interfaceName, $runtime_attr, ";", "    ");
         push(@implContent, <<END);
@@ -1653,8 +1682,8 @@ END
         my $conditional = "";
         if ($attrExt->{"EnabledAtRuntime"}) {
             # Only call Set()/SetAccessor() if this method should be enabled
-            $enable_function = $interfaceName . $codeGenerator->WK_ucfirst($function->signature->name);
-            $conditional = "if (V8Custom::v8${enable_function}Enabled())\n";
+            $enable_function = $interfaceName . "::" . $codeGenerator->WK_ucfirst($function->signature->name);
+            $conditional = "if (V8${enable_function}Enabled())\n";
         }
 
         if ($attrExt->{"DoNotCheckDomainSecurity"} &&

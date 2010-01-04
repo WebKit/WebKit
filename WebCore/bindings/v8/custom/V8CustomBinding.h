@@ -68,8 +68,6 @@ struct NPObject;
     bool V8Custom::v8##NAME##IndexedSecurityCheck(v8::Local<v8::Object> host, \
         uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
 
-#define ACCESSOR_RUNTIME_ENABLER(NAME) bool V8Custom::v8##NAME##Enabled()
-
 namespace WebCore {
 
     class DOMWindow;
@@ -224,16 +222,6 @@ namespace WebCore {
     static bool v8##NAME##IndexedSecurityCheck(v8::Local<v8::Object> host, \
         uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
 
-#define DECLARE_ACCESSOR_RUNTIME_ENABLER(NAME) static bool v8##NAME##Enabled()
-
-#if ENABLE(VIDEO)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLMediaElement);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLAudioElement);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLVideoElement);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowMediaError);
-#endif
-
         DECLARE_NAMED_ACCESS_CHECK(Location);
         DECLARE_INDEXED_ACCESS_CHECK(History);
 
@@ -328,13 +316,7 @@ namespace WebCore {
         DECLARE_NAMED_PROPERTY_GETTER(DataGridColumnList);
 #endif
 
-#if ENABLE(DATABASE)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowOpenDatabase);
-#endif
-
 #if ENABLE(DOM_STORAGE)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowLocalStorage);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowSessionStorage);
         DECLARE_INDEXED_PROPERTY_GETTER(Storage);
         DECLARE_INDEXED_PROPERTY_SETTER(Storage);
         DECLARE_INDEXED_PROPERTY_DELETER(Storage);
@@ -346,28 +328,14 @@ namespace WebCore {
 
 #if ENABLE(WORKERS)
         DECLARE_CALLBACK(WorkerConstructor);
-
-#if ENABLE(NOTIFICATIONS)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(WorkerContextWebkitNotifications);
-#endif
-#endif // ENABLE(WORKERS)
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache);
 #endif
 
 #if ENABLE(SHARED_WORKERS)
         DECLARE_CALLBACK(SharedWorkerConstructor);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker);
-#endif
-
-#if ENABLE(NOTIFICATIONS)
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebkitNotifications);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
         DECLARE_CALLBACK(WebSocketConstructor);
-        DECLARE_ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket);
 #endif
 
 #undef DECLARE_INDEXED_ACCESS_CHECK

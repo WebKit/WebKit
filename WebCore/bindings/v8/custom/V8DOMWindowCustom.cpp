@@ -251,27 +251,27 @@ v8::Handle<v8::Value> V8DOMWindow::AudioAccessorGetter(v8::Local<v8::String> nam
     return V8DOMWrapper::getConstructor(V8ClassIndex::AUDIO, window);
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowAudio)
+bool V8DOMWindow::AudioEnabled()
 {
     return MediaPlayer::isAvailable();
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLMediaElement)
+bool V8DOMWindow::HTMLMediaElementEnabled()
 {
     return MediaPlayer::isAvailable();
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLAudioElement)
+bool V8DOMWindow::HTMLAudioElementEnabled()
 {
     return MediaPlayer::isAvailable();
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowHTMLVideoElement)
+bool V8DOMWindow::HTMLVideoElementEnabled()
 {
     return MediaPlayer::isAvailable();
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowMediaError)
+bool V8DOMWindow::MediaErrorEnabled()
 {
     return MediaPlayer::isAvailable();
 }
@@ -279,47 +279,47 @@ ACCESSOR_RUNTIME_ENABLER(DOMWindowMediaError)
 #endif
 
 #if ENABLE(SHARED_WORKERS)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowSharedWorker)
+bool V8DOMWindow::SharedWorkerEnabled()
 {
     return SharedWorkerRepository::isAvailable();
 }
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowWebSocket)
+bool V8DOMWindow::WebSocketEnabled()
 {
     return WebSocket::isAvailable();
 }
 #endif
 
 #if ENABLE(DATABASE)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowOpenDatabase)
+bool V8DOMWindow::OpenDatabaseEnabled()
 {
     return WebCore::RuntimeEnabledFeatures::databaseEnabled();
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowLocalStorage)
+bool V8DOMWindow::LocalStorageEnabled()
 {
     return RuntimeEnabledFeatures::localStorageEnabled();
 }
 
-ACCESSOR_RUNTIME_ENABLER(DOMWindowSessionStorage)
+bool V8DOMWindow::SessionStorageEnabled()
 {
     return RuntimeEnabledFeatures::sessionStorageEnabled();
 }
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowWebkitNotifications)
+bool V8DOMWindow::WebkitNotificationsEnabled()
 {
     return RuntimeEnabledFeatures::notificationsEnabled();
 }
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-ACCESSOR_RUNTIME_ENABLER(DOMWindowApplicationCache)
+bool V8DOMWindow::ApplicationCacheEnabled()
 {
     return RuntimeEnabledFeatures::applicationCacheEnabled();
 }

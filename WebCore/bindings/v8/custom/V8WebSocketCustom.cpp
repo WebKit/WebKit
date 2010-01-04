@@ -147,15 +147,6 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
     return v8Boolean(ret);
 }
 
-v8::Handle<v8::Value> V8WebSocket::closeCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.close()");
-    WebSocket* webSocket = V8DOMWrapper::convertToNativeObject<WebSocket>(V8ClassIndex::WEBSOCKET, args.Holder());
-
-    webSocket->close();
-    return v8::Undefined();
-}
-
 }  // namespace WebCore
 
 #endif  // ENABLE(WEB_SOCKETS)
