@@ -409,10 +409,12 @@ private:
         bar->addWidget(urlEdit);
 
         QMenu* fileMenu = menuBar()->addMenu("&File");
-        fileMenu->addAction("New Window", this, SLOT(newWindow()));
-        fileMenu->addAction("Open File...", this, SLOT(openFile()), QKeySequence(Qt::CTRL | Qt::Key_O));
-        fileMenu->addAction("Clone view", this, SLOT(clone()));
-        fileMenu->addAction("Close", this, SLOT(close()));
+        fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
+        fileMenu->addAction("Open File...", this, SLOT(openFile()), QKeySequence::Open);
+        fileMenu->addAction("Clone Window", this, SLOT(clone()));
+        fileMenu->addAction("Close Window", this, SLOT(close()), QKeySequence::Close);
+        fileMenu->addSeparator();
+        fileMenu->addAction("Quit", QApplication::instance(), SLOT(closeAllWindows()), QKeySequence(Qt::CTRL | Qt::Key_Q));
 
         QMenu* viewMenu = menuBar()->addMenu("&View");
         viewMenu->addAction(page->action(QWebPage::Stop));
