@@ -34,13 +34,11 @@ import os
 import platform
 import re
 
-from webkitpy.executive import Executive
+from webkitpy.executive import Executive, ScriptError
 from webkitpy.webkit_logging import log
 from webkitpy.scm import Git
 
 class Credentials(object):
-    keychain_entry_not_found = "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
-
     def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
         self.host = host
         self.git_prefix = git_prefix
@@ -63,8 +61,6 @@ class Credentials(object):
         return platform.mac_ver()[0]
 
     def _parse_security_tool_output(self, security_output):
-        if security_output == self.keychain_entry_not_found:
-            return [None, None]
         username = self._keychain_value_with_label("^\s*\"acct\"<blob>=", security_output)
         password = self._keychain_value_with_label("^password: ", security_output)
         return [username, password]
@@ -75,7 +71,13 @@ class Credentials(object):
             security_command += ["-a", username]
 
         log("Reading Keychain for %s account and password.  Click \"Allow\" to continue..." % self.host)
-        return self.executive.run_command(security_command)
+        try:
+            return self.executive.run_command(security_command)
+        except ScriptError:
+            # Failed to either find a keychain entry or somekind of OS-related error
+            # occured (for instance, couldn't find the /usr/sbin/security command).
+            log("Could not find a keychain entry for %s." % self.host)
+            return [None, None]
 
     def _credentials_from_keychain(self, username=None):
         if not self._is_mac_os_x():

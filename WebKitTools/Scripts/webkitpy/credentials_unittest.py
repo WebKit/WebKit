@@ -75,7 +75,15 @@ password: "SECRETSAUCE"
 
     def test_security_output_parse_entry_not_found(self):
         credentials = Credentials("foo.example.com")
-        self.assertEqual(credentials._parse_security_tool_output(Credentials.keychain_entry_not_found), [None, None])
+        if not credentials._is_mac_os_x():
+            return # This test does not run on a non-Mac.
+
+        # Note, we ignore the captured output because it is already covered
+        # by the test case CredentialsTest._assert_security_call (below).
+        outputCapture = OutputCapture()
+        outputCapture.capture_output()
+        self.assertEqual(credentials._run_security_tool(), [None, None])
+        outputCapture.restore_output()
 
     def _assert_security_call(self, username=None):
         executive_mock = Mock()
