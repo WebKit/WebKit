@@ -1,3 +1,33 @@
+2010-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33157
+        Implement TextInput logging channel on Windows
+
+        * WebKitLogging.cpp: (WebKitInitializeLoggingChannelsIfNecessary):
+        * WebKitLogging.h:
+        Added a TextInput channel in place of unused Network one.
+
+        * WebView.cpp:
+        (WebView::WebViewWndProc): Changed onIMERequest to return result directly. We never forward
+        it to DefWindowProc, so there is no need to return an unused boolean result for "handled".
+        (WebView::onIMEStartComposition): Added logging.
+        (imeCompositionArgumentNames): A helper function for detailed logging in onIMEComposition.
+        (imeNotificationName): A helper function for detailed logging in onIMENotify.
+        (imeRequestName): A helper function for detailed logging in onIMERequest.
+        (WebView::onIMEComposition): Added logging.
+        (WebView::onIMEEndComposition): Ditto.
+        (WebView::onIMEChar): Ditto.
+        (WebView::onIMENotify): Ditto.
+        (WebView::onIMERequestCharPosition): Changed to return result directly.
+        (WebView::onIMERequestReconvertString): Ditto.
+        (WebView::onIMERequest): Changed to return result directly. Added logging.
+        (WebView::onIMESelect): Added logging.
+        (WebView::onIMESetContext): Added logging.
+
+        * WebView.h: onIMERequest functions now return result directly.
+
 2010-01-04  Adam Roben  <aroben@apple.com>
 
         Add WebKitAPITest

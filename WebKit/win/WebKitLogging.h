@@ -36,7 +36,7 @@
 #endif
 
 
-extern WTFLogChannel WebKitLogNetwork;
+extern WTFLogChannel WebKitLogTextInput;
 extern WTFLogChannel WebKitLogTiming;
 extern WTFLogChannel WebKitLogLoading;
 extern WTFLogChannel WebKitLogFontCache;

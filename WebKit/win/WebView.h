@@ -811,7 +811,7 @@ public:
     bool onIMEEndComposition();
     bool onIMEChar(WPARAM, LPARAM);
     bool onIMENotify(WPARAM, LPARAM, LRESULT*);
-    bool onIMERequest(WPARAM, LPARAM, LRESULT*);
+    LRESULT onIMERequest(WPARAM, LPARAM);
     bool onIMESelect(WPARAM, LPARAM);
     bool onIMESetContext(WPARAM, LPARAM);
     void selectionChanged();
@@ -904,8 +904,8 @@ protected:
     void closeWindowTimerFired(WebCore::Timer<WebView>*);
     void prepareCandidateWindow(WebCore::Frame*, HIMC);
     void updateSelectionForIME();
-    bool onIMERequestCharPosition(WebCore::Frame*, IMECHARPOSITION*, LRESULT*);
-    bool onIMERequestReconvertString(WebCore::Frame*, RECONVERTSTRING*, LRESULT*);
+    LRESULT onIMERequestCharPosition(WebCore::Frame*, IMECHARPOSITION*);
+    LRESULT onIMERequestReconvertString(WebCore::Frame*, RECONVERTSTRING*);
     bool developerExtrasEnabled() const;
 
     // AllWebViewSet functions

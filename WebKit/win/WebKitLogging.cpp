@@ -29,7 +29,7 @@
 #include "config.h"
 #include "WebKitLogging.h"
 
-WTFLogChannel WebKitLogNetwork =                { 0x00000010, "WebKitLogLevel", WTFLogChannelOff };
+WTFLogChannel WebKitLogTextInput =              { 0x00000010, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogTiming =                 { 0x00000020, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogLoading =                { 0x00000040, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogFontCache =              { 0x00000100, "WebKitLogLevel", WTFLogChannelOff };
@@ -78,6 +78,7 @@ void WebKitInitializeLoggingChannelsIfNecessary()
         return;
     haveInitializedLoggingChannels = true;
     
+    initializeLogChannel(&WebKitLogTextInput);
     initializeLogChannel(&WebKitLogTiming);
     initializeLogChannel(&WebKitLogLoading);
     initializeLogChannel(&WebKitLogFontCache);
