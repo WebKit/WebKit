@@ -143,9 +143,9 @@ See 'trivial-tool help COMMAND' for more information on a specific command.
 
 
     def test_command_help(self):
-        command_with_options = TrivialCommand(options=[make_option("--my_option")])
+        command_with_options = TrivialCommand(options=[make_option("--my_option")], long_help="LONG HELP")
         tool = TrivialTool(commands=[command_with_options])
-        expected_subcommand_help = "trivial [options]   help text\nOptions:\n  --my_option=MY_OPTION\n\n"
+        expected_subcommand_help = "trivial [options]   help text\n\nLONG HELP\n\nOptions:\n  --my_option=MY_OPTION\n\n"
         self._assert_tool_main_outputs(tool, ["tool", "help", "trivial"], expected_subcommand_help)
 
 

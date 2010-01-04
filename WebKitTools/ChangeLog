@@ -1,3 +1,17 @@
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Need support for longer text in per-command help
+        https://bugs.webkit.org/show_bug.cgi?id=33143
+
+        Add some minimal additional help to land-diff and
+        pave the way for adding better help to all commands.
+
+        * Scripts/webkitpy/commands/download.py: Add small amount of additional help to land-diff
+        * Scripts/webkitpy/multicommandtool.py: support long_help
+        * Scripts/webkitpy/multicommandtool_unittest.py: test long_help
+
 2010-01-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -80,6 +80,9 @@ class LandDiff(AbstractSequencedCommmand):
         steps.Commit,
         steps.CloseBugForLandDiff,
     ]
+    long_help = """land-diff commits the current working copy diff (just as svn or git commit would).
+land-diff will build and run the tests before committing.
+If a bug id is provided, or one can be found in the ChangeLog land-diff will update the bug after committing."""
 
     def _prepare_state(self, options, args, tool):
         return {

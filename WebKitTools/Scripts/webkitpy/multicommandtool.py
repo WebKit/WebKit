@@ -42,8 +42,9 @@ from webkitpy.webkit_logging import log
 class Command(object):
     name = None
     show_in_main_help = False
-    def __init__(self, help_text, argument_names=None, options=None, requires_local_commits=False):
+    def __init__(self, help_text, argument_names=None, options=None, long_help=None, requires_local_commits=False):
         self.help_text = help_text
+        self.long_help = long_help
         self.argument_names = argument_names
         self.required_arguments = self._parse_required_arguments(argument_names)
         self.options = options
@@ -112,7 +113,9 @@ class Command(object):
         return self.execute(options, args, tool) or 0
 
     def standalone_help(self):
-        help_text = self.name_with_arguments().ljust(len(self.name_with_arguments()) + 3) + self.help_text + "\n"
+        help_text = self.name_with_arguments().ljust(len(self.name_with_arguments()) + 3) + self.help_text + "\n\n"
+        if self.long_help:
+            help_text += "%s\n\n" % self.long_help
         help_text += self.option_parser.format_option_help(IndentedHelpFormatter())
         return help_text
 
@@ -131,8 +134,9 @@ class Command(object):
 class AbstractDeclarativeCommmand(Command):
     help_text = None
     argument_names = None
+    long_help = None
     def __init__(self, options=None, **kwargs):
-        Command.__init__(self, self.help_text, self.argument_names, options=options, **kwargs)
+        Command.__init__(self, self.help_text, self.argument_names, options=options, long_help=self.long_help, **kwargs)
 
 
 class HelpPrintingOptionParser(OptionParser):
