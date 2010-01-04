@@ -89,7 +89,11 @@
 #include "BindingURI.h"
 #endif
 
+#if COMPILER(WINSCW)
+#define compareEqual(t, u)      ((t) == (u))
+#else
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<T>(u); }
+#endif
 
 #define SET_VAR(group, variable, value) \
     if (!compareEqual(group->variable, value)) \

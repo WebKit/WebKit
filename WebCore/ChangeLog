@@ -1,3 +1,18 @@
+2010-01-04  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29048
+        [Qt] make RenderStyle.h compile in winscw compiler.
+
+        Change compareEqual to a macro in Winscw compiler to get around "illegal operand" 
+        error when compareEqual is defined as template.
+
+        The compiler bug is reported at:
+        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=10447
+
+        * rendering/style/RenderStyle.h:
+
 2010-01-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Simon Hausmann.
