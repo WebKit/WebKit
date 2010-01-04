@@ -1,5 +1,11 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Forgot to add SVGMarkerData.h / SVGMarkerLayoutInfo.(cpp,h) to Chromium build.
+
+        * WebCore.gypi:
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         Marker code is buggy: referencePoint translation is off
