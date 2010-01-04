@@ -84,8 +84,8 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     initializeThreading();
 
     JSLock lock(LockForReal);
-
     RefPtr<JSGlobalData> globalData = group ? PassRefPtr<JSGlobalData>(toJS(group)) : JSGlobalData::create();
+    APIEntryShim(globalData.get(), false);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
     globalData->makeUsableFromMultipleThreads();
@@ -108,12 +108,9 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    JSLock lock(exec);
+    APIEntryShim entryShim(exec);
 
     JSGlobalData& globalData = exec->globalData();
-
-    globalData.heap.registerThread();
-
     gcProtect(exec->dynamicGlobalObject());
     globalData.ref();
     return ctx;
@@ -122,7 +119,7 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    JSLock lock(exec);
+    APIEntryShim entryShim(exec, false);
 
     gcUnprotect(exec->dynamicGlobalObject());
 
@@ -141,8 +138,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap.registerThread();
-    JSLock lock(exec);
+    APIEntryShim entryShim(exec);
 
     // It is necessary to call toThisObject to get the wrapper object when used with WebCore.
     return toRef(exec->lexicalGlobalObject()->toThisObject(exec));
@@ -157,8 +153,7 @@ JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
 JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap.registerThread();
-    JSLock lock(exec);
+    APIEntryShim entryShim(exec);
 
     return toGlobalRef(exec->lexicalGlobalObject()->globalExec());
 }

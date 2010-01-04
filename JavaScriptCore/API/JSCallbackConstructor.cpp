@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCallbackConstructor.h"
 
+#include "APIShims.h"
 #include "APICast.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
@@ -66,7 +67,7 @@ static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, con
         JSValueRef exception = 0;
         JSObjectRef result;
         {
-            JSLock::DropAllLocks dropAllLocks(exec);
+            APICallbackShim callbackShim(exec);
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
         if (exception)
