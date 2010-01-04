@@ -244,21 +244,18 @@ class LandPatches(AbstractPatchLandingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
-# FIXME: Make Rollout more declarative.
-class Rollout(AbstractDeclarativeCommmand):
+class Rollout(AbstractSequencedCommmand):
     name = "rollout"
     show_in_main_help = True
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
     argument_names = "REVISION [BUGID]"
-    def __init__(self):
-        self._sequence = StepSequence([
-            CleanWorkingDirectoryStep,
-            UpdateStep,
-            RevertRevisionStep,
-            PrepareChangeLogForRevertStep,
-            CompleteRollout,
-        ])
-        AbstractDeclarativeCommmand.__init__(self, self._sequence.options())
+    steps = [
+        CleanWorkingDirectoryStep,
+        UpdateStep,
+        RevertRevisionStep,
+        PrepareChangeLogForRevertStep,
+        CompleteRollout,
+    ]
 
     @staticmethod
     def _parse_bug_id_from_revision_diff(tool, revision):
