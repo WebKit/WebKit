@@ -27,12 +27,13 @@
 #ifndef WTF_Platform_h
 #define WTF_Platform_h
 
-/* PLATFORM handles OS, operating environment, graphics API, and
+/* ==== PLATFORM handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
-   macros, policy decision macros, and top-level port definitions. */
+   macros, policy decision macros, and top-level port definitions. ==== */
 #define PLATFORM(WTF_FEATURE) (defined WTF_PLATFORM_##WTF_FEATURE  && WTF_PLATFORM_##WTF_FEATURE)
 
-/* == Platform adaptation macros: these describe properties of the target environment. */
+
+/* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
 /* COMPILER() - the compiler being used to build the project */
 #define COMPILER(WTF_FEATURE) (defined WTF_COMPILER_##WTF_FEATURE  && WTF_COMPILER_##WTF_FEATURE)
@@ -44,11 +45,49 @@
    virtual memory, not to choose a GUI toolkit */
 #define OS(WTF_FEATURE) (defined WTF_OS_##WTF_FEATURE  && WTF_OS_##WTF_FEATURE)
 
-/* == Policy decision macros: these define policy choices for a particular port. */
+
+/* ==== Policy decision macros: these define policy choices for a particular port. ==== */
+
 /* USE() - use a particular third-party library or optional OS service */
 #define USE(WTF_FEATURE) (defined WTF_USE_##WTF_FEATURE  && WTF_USE_##WTF_FEATURE)
 /* ENABLE() - turn on a specific feature of WebKit */
 #define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE  && ENABLE_##WTF_FEATURE)
+
+
+
+/* ==== COMPILER() - the compiler being used to build the project ==== */
+
+/* COMPILER(MSVC) */
+/* COMPILER(MSVC7) */
+#if defined(_MSC_VER)
+#define WTF_COMPILER_MSVC 1
+#if _MSC_VER < 1400
+#define WTF_COMPILER_MSVC7 1
+#endif
+#endif
+
+/* COMPILER(RVCT) */
+#if defined(__CC_ARM) || defined(__ARMCC__)
+#define WTF_COMPILER_RVCT 1
+#endif
+
+/* COMPILER(GCC) */
+/* --gnu option of the RVCT compiler also defines __GNUC__ */
+#if defined(__GNUC__) && !COMPILER(RVCT)
+#define WTF_COMPILER_GCC 1
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#endif
+
+/* COMPILER(MINGW) */
+#if defined(MINGW) || defined(__MINGW32__)
+#define WTF_COMPILER_MINGW 1
+#endif
+
+/* COMPILER(WINSCW) */
+#if defined(__WINSCW__)
+#define WTF_COMPILER_WINSCW 1
+#endif
+
 
 /* Operating systems - low-level dependencies */
 
@@ -419,50 +458,6 @@
 #   endif
 
 #   include <ce_time.h>
-#endif
-
-/* Compiler */
-
-/* COMPILER(MSVC) */
-#if defined(_MSC_VER)
-#define WTF_COMPILER_MSVC 1
-#if _MSC_VER < 1400
-#define WTF_COMPILER_MSVC7 1
-#endif
-#endif
-
-/* COMPILER(RVCT) */
-#if defined(__CC_ARM) || defined(__ARMCC__)
-#define WTF_COMPILER_RVCT 1
-#endif
-
-/* COMPILER(GCC) */
-/* --gnu option of the RVCT compiler also defines __GNUC__ */
-#if defined(__GNUC__) && !COMPILER(RVCT)
-#define WTF_COMPILER_GCC 1
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#endif
-
-/* COMPILER(MINGW) */
-#if defined(MINGW) || defined(__MINGW32__)
-#define WTF_COMPILER_MINGW 1
-#endif
-
-/* COMPILER(BORLAND) */
-/* not really fully supported - is this relevant any more? */
-#if defined(__BORLANDC__)
-#define WTF_COMPILER_BORLAND 1
-#endif
-
-/* COMPILER(CYGWIN) */
-/* not really fully supported - is this relevant any more? */
-#if defined(__CYGWIN__)
-#define WTF_COMPILER_CYGWIN 1
-#endif
-
-/* COMPILER(WINSCW) */
-#if defined(__WINSCW__)
-#define WTF_COMPILER_WINSCW 1
 #endif
 
 #if (PLATFORM(IPHONE) || PLATFORM(MAC) || PLATFORM(WIN) || (PLATFORM(QT) && PLATFORM(DARWIN) && !ENABLE(SINGLE_THREADED))) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
