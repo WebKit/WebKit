@@ -178,10 +178,11 @@ public:
     // Network -------------------------------------------------------------
 
     virtual void setCookies(
-        const WebURL& url, const WebURL& policyURL, const WebString& cookies) { }
-    virtual WebString cookies(const WebURL& url, const WebURL& policyURL) { return WebString(); }
-    virtual bool rawCookies(const WebURL& url, const WebURL& policyURL, WebVector<WebCookie>*) { return false; }
+        const WebURL& url, const WebURL& firstPartyForCookies, const WebString& cookies) { }
+    virtual WebString cookies(const WebURL& url, const WebURL& firstPartyForCookies) { return WebString(); }
+    virtual bool rawCookies(const WebURL& url, const WebURL& firstPartyForCookies, WebVector<WebCookie>*) { return false; }
     virtual void deleteCookie(const WebURL& url, const WebString& cookieName) { }
+    virtual bool cookiesEnabled(const WebURL& url, const WebURL& firstPartyForCookies) { return true; }
 
     // A suggestion to prefetch IP information for the given hostname.
     virtual void prefetchHostName(const WebString&) { }

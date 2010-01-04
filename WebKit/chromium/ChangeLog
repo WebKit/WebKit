@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        [Chromium] Implement CookieJarChromium::cookiesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=33123
+
+        Call out to the webKitClient() to see if cookies are enabled.  Also
+        remove some straggling references to policyURL!
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::setCookies):
+        (WebKit::WebKitClient::cookies):
+        (WebKit::WebKitClient::rawCookies):
+        (WebKit::WebKitClient::cookiesEnabled):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::cookiesEnabled):
+
+2010-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [Chromium] Remove evaluateInNewContext (it's useless)
         https://bugs.webkit.org/show_bug.cgi?id=33068
 

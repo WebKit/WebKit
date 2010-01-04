@@ -213,6 +213,12 @@ void ChromiumBridge::deleteCookie(const KURL& url, const String& cookieName)
     webKitClient()->deleteCookie(url, cookieName);
 }
 
+bool ChromiumBridge::cookiesEnabled(const KURL& url,
+                                    const KURL& firstPartyForCookies)
+{
+    return webKitClient()->cookiesEnabled(url, firstPartyForCookies);
+}
+
 // DNS ------------------------------------------------------------------------
 
 void ChromiumBridge::prefetchDNS(const String& hostname)
