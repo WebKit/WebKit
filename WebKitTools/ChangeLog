@@ -1,3 +1,16 @@
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove raw_input from queues in favor of user.prompt
+        https://bugs.webkit.org/show_bug.cgi?id=33140
+
+        This lets up properly mock out the user interaction instead of hacking
+        around it with the options.
+
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queuestest.py:
+
 2010-01-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

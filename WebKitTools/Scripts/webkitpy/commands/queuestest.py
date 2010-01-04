@@ -57,7 +57,7 @@ class QueuesTest(unittest.TestCase):
             args = []
         if not work_item:
             work_item = self.mock_work_item
-        options.confirm = False # FIXME: We should have a tool.user that we can mock.
+        tool.user.prompt = lambda message: "yes"
 
         queue.execute(options, args, tool, engine=MockQueueEngine)
 

@@ -86,7 +86,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def begin_work_queue(self):
         log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self.tool.scm().checkout_root))
         if self.options.confirm:
-            response = raw_input("Are you sure?  Type \"yes\" to continue: ")
+            response = self.tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
         log("Running WebKit %s." % self.name)
