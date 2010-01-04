@@ -1,5 +1,11 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Skipping plugins/get-url-with-iframe-target.html, filed bug 33154, cc'ing the original author.
+
+        * platform/mac-tiger/Skipped:
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Skipping http/tests/navigation/*iframe* on Tiger, just like it has been done for win.
 
         * platform/mac-tiger/Skipped:
