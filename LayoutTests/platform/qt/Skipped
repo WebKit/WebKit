@@ -1160,10 +1160,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
-fast/events/onchange-passwordfield.html
-fast/events/onchange-searchfield.html
-fast/events/onchange-textfield.html
-fast/events/onsearch-enter.html
 fast/forms/input-align-image.html
 fast/forms/input-align.html
 fast/forms/input-double-click-selection-gap-bug.html
@@ -1172,7 +1168,6 @@ fast/forms/input-text-option-delete.html
 fast/forms/legend-access-key.html
 fast/forms/slider-onchange-event.html
 fast/forms/textarea-rows-cols.html
-fast/forms/textfield-onchange-deletion.html
 fast/frames/onlyCommentInIFrame.html
 fast/inline/positionedLifetime.html
 fast/invalid/junk-data.xml

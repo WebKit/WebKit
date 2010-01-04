@@ -1,3 +1,14 @@
+2010-01-03  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] EventSender: add support for Enter key events
+        https://bugs.webkit.org/show_bug.cgi?id=33064
+
+        Unskip 5 tests that are fixed now.
+
+        * platform/qt/Skipped:
+
 2010-01-03  Mario Bensi  <mbensi@pleyo.com>
 
         Reviewed by Simon Fraser.
