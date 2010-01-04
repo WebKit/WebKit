@@ -81,3 +81,7 @@ inspector/console-tests.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
+
+# http://webkit.org/b/32532 - Time out
+http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
+http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
