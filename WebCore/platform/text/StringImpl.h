@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PtrAndFlags.h>
 #include <wtf/RefCounted.h>
@@ -102,8 +103,8 @@ public:
 
     unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
-    static unsigned computeHash(const UChar*, unsigned len);
-    static unsigned computeHash(const char*);
+    inline static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
+    inline static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
     
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
@@ -212,91 +213,6 @@ bool equalIgnoringCase(const UChar* a, const char* b, unsigned length);
 inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, a, length); }
 
 bool equalIgnoringNullity(StringImpl*, StringImpl*);
-
-// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-// or anything like that.
-const unsigned phi = 0x9e3779b9U;
-
-// Paul Hsieh's SuperFastHash
-// http://www.azillionmonkeys.com/qed/hash.html
-inline unsigned StringImpl::computeHash(const UChar* data, unsigned length)
-{
-    unsigned hash = phi;
-    
-    // Main loop.
-    for (unsigned pairCount = length >> 1; pairCount; pairCount--) {
-        hash += data[0];
-        unsigned tmp = (data[1] << 11) ^ hash;
-        hash = (hash << 16) ^ tmp;
-        data += 2;
-        hash += hash >> 11;
-    }
-    
-    // Handle end case.
-    if (length & 1) {
-        hash += data[0];
-        hash ^= hash << 11;
-        hash += hash >> 17;
-    }
-
-    // Force "avalanching" of final 127 bits.
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 2;
-    hash += hash >> 15;
-    hash ^= hash << 10;
-
-    // This avoids ever returning a hash code of 0, since that is used to
-    // signal "hash not computed yet", using a value that is likely to be
-    // effectively the same as 0 when the low bits are masked.
-    hash |= !hash << 31;
-    
-    return hash;
-}
-
-// Paul Hsieh's SuperFastHash
-// http://www.azillionmonkeys.com/qed/hash.html
-inline unsigned StringImpl::computeHash(const char* data)
-{
-    // This hash is designed to work on 16-bit chunks at a time. But since the normal case
-    // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
-    // were 16-bit chunks, which should give matching results
-
-    unsigned hash = phi;
-    
-    // Main loop
-    for (;;) {
-        unsigned char b0 = data[0];
-        if (!b0)
-            break;
-        unsigned char b1 = data[1];
-        if (!b1) {
-            hash += b0;
-            hash ^= hash << 11;
-            hash += hash >> 17;
-            break;
-        }
-        hash += b0;
-        unsigned tmp = (b1 << 11) ^ hash;
-        hash = (hash << 16) ^ tmp;
-        data += 2;
-        hash += hash >> 11;
-    }
-    
-    // Force "avalanching" of final 127 bits.
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 2;
-    hash += hash >> 15;
-    hash ^= hash << 10;
-
-    // This avoids ever returning a hash code of 0, since that is used to
-    // signal "hash not computed yet", using a value that is likely to be
-    // effectively the same as 0 when the low bits are masked.
-    hash |= !hash << 31;
-    
-    return hash;
-}
 
 static inline bool isSpaceOrNewline(UChar c)
 {

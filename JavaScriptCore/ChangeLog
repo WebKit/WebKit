@@ -1,5 +1,20 @@
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33163
+        Add string hashing functions to WTF.
+        Use WTF's string hashing functions from UStringImpl.
+
+        * JavaScriptCore.exp:
+        * runtime/UStringImpl.cpp:
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::computeHash):
+        * wtf/HashFunctions.h:
+        (WTF::stringHash):
+
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam "Shimmey Shimmey" Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=33158

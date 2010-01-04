@@ -1,3 +1,13 @@
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33163
+        Use WTF's string hashing functions from StringImpl.
+
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::computeHash):
+
 2010-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
