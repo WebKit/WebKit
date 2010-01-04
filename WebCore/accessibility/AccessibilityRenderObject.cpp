@@ -1502,6 +1502,9 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (isControl())
         return false;
     
+    if (ariaRole != UnknownRole)
+        return false;
+    
     // don't ignore labels, because they serve as TitleUIElements
     Node* node = m_renderer->node();
     if (node && node->hasTagName(labelTag))
@@ -1544,9 +1547,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         }
         return false;
     }
-    
-    if (ariaRole != UnknownRole)
-        return false;
     
     // make a platform-specific decision
     if (isAttachment())

@@ -1,3 +1,15 @@
+2010-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: any DIV with an aria role should not be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=33090
+
+        Test: platform/mac/accessibility/aria-divs-not-ignored.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2010-01-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
