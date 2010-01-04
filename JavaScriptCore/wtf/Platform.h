@@ -57,8 +57,8 @@
 
 /* ==== COMPILER() - the compiler being used to build the project ==== */
 
-/* COMPILER(MSVC) */
-/* COMPILER(MSVC7) */
+/* COMPILER(MSVC) Microsoft Visual C++ */
+/* COMPILER(MSVC7) Microsoft Visual C++ v7 or lower*/
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
 #if _MSC_VER < 1400
@@ -66,24 +66,24 @@
 #endif
 #endif
 
-/* COMPILER(RVCT) */
+/* COMPILER(RVCT)  - ARM RealView Compilation Tools */
 #if defined(__CC_ARM) || defined(__ARMCC__)
 #define WTF_COMPILER_RVCT 1
 #endif
 
-/* COMPILER(GCC) */
+/* COMPILER(GCC) - GNU Compiler Collection */
 /* --gnu option of the RVCT compiler also defines __GNUC__ */
 #if defined(__GNUC__) && !COMPILER(RVCT)
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #endif
 
-/* COMPILER(MINGW) */
+/* COMPILER(MINGW) - MinGW GCC */
 #if defined(MINGW) || defined(__MINGW32__)
 #define WTF_COMPILER_MINGW 1
 #endif
 
-/* COMPILER(WINSCW) */
+/* COMPILER(WINSCW) - CodeWarrior for Symbian emulator */
 #if defined(__WINSCW__)
 #define WTF_COMPILER_WINSCW 1
 #endif
