@@ -251,7 +251,7 @@
 /* CPU(ARMV5_OR_LOWER) - ARM instruction set v5 or earlier */
 /* On ARMv5 and below the natural alignment is required. 
    And there are some other differences for v5 or earlier. */
-#if !defined(ARMV5_OR_LOWER) && !CPU_ARM_ARCH_AT_LEAST(6)
+#if !defined(ARMV5_OR_LOWER) && !WTF_ARM_ARCH_AT_LEAST(6)
 #define WTF_CPU_ARMV5_OR_LOWER 1
 #endif
 

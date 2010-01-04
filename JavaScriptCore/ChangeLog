@@ -1,3 +1,9 @@
+2010-01-04  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, attempt to fix ARM bulid.
+
+        * wtf/Platform.h:
+
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Geoff Garen.
