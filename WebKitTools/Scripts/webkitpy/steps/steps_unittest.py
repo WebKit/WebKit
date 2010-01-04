@@ -1,19 +1,19 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-#
-#    * Redistributions of source code must retain the above copyright
+# 
+#     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above
+#     * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#    * Neither the name of Google Inc. nor the names of its
+#     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,18 +28,11 @@
 
 import unittest
 
-from webkitpy.buildsteps import UpdateChangeLogsWithReviewerStep, UpdateStep, PromptForBugOrTitleStep
+from webkitpy.steps.update import Update
+from webkitpy.steps.promptforbugortitle import PromptForBugOrTitle
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.mock import Mock
-
-
-class UpdateChangeLogsWithReviewerStepTest(unittest.TestCase):
-    def test_guess_reviewer_from_bug(self):
-        capture = OutputCapture()
-        step = UpdateChangeLogsWithReviewerStep(MockBugzillaTool(), [])
-        expected_stderr = "0 reviewed patches on bug 75, cannot infer reviewer.\n"
-        capture.assert_outputs(self, step._guess_reviewer_from_bug, [75], expected_stderr=expected_stderr)
 
 
 class StepsTest(unittest.TestCase):
@@ -55,9 +48,9 @@ class StepsTest(unittest.TestCase):
     def test_update_step(self):
         options = Mock()
         options.update = True
-        self._run_step(UpdateStep, options)
+        self._run_step(Update, options)
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockBugzillaTool()
         tool.user.prompt = lambda message: 42
-        self._run_step(PromptForBugOrTitleStep, tool=tool)
+        self._run_step(PromptForBugOrTitle, tool=tool)

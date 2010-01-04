@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -27,36 +26,44 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+from webkitpy.webkit_logging import log
+from webkitpy.webkitport import WebKitPort
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.cpp_style_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style_unittest import *
-from webkitpy.text_style_unittest import *
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
+class AbstractStep(object):
+    def __init__(self, tool, options):
+        self._tool = tool
+        self._options = options
+        self._port = None
 
-    unittest.main()
+    def _run_script(self, script_name, quiet=False, port=WebKitPort):
+        log("Running %s" % script_name)
+        # FIXME: This should use self.port()
+        self._tool.executive.run_and_throw_if_fail(port.script_path(script_name), quiet)
+
+    # FIXME: The port should live on the tool.
+    def port(self):
+        if self._port:
+            return self._port
+        self._port = WebKitPort.port(self._options.port)
+        return self._port
+
+    _well_known_keys = {
+        "diff" : lambda self: self._tool.scm().create_patch(),
+        "changelogs" : lambda self: self._tool.scm().modified_changelogs(),
+    }
+
+    def cached_lookup(self, state, key, promise=None):
+        if state.get(key):
+            return state[key]
+        if not promise:
+            promise = self._well_known_keys.get(key)
+        state[key] = promise(self)
+        return state[key]
+
+    @classmethod
+    def options(cls):
+        return []
+
+    def run(self, state):
+        raise NotImplementedError, "subclasses must implement"

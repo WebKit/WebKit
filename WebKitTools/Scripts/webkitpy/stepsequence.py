@@ -26,7 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.buildsteps import CommandOptions
+import webkitpy.steps as steps
+
 from webkitpy.executive import ScriptError
 from webkitpy.webkit_logging import log
 from webkitpy.scm import CheckoutNeedsUpdate
@@ -45,8 +46,8 @@ class StepSequence(object):
 
     def options(self):
         collected_options = [
-            CommandOptions.parent_command,
-            CommandOptions.quiet,
+            steps.Options.parent_command,
+            steps.Options.quiet,
         ]
         for step in self._steps:
             collected_options = collected_options + step.options()

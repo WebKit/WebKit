@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -27,36 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+from webkitpy.steps.abstractstep import AbstractStep
+from webkitpy.steps.options import Options
+from webkitpy.webkit_logging import error
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.cpp_style_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style_unittest import *
-from webkitpy.text_style_unittest import *
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
+class EnsureLocalCommitIfNeeded(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            Options.local_commit,
+        ]
 
-    unittest.main()
+    def run(self, state):
+        if self._options.local_commit and not self._tool.scm().supports_local_commits():
+            error("--local-commit passed, but %s does not support local commits" % self._tool.scm.display_name())

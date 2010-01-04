@@ -1,3 +1,51 @@
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [bzt] Move steps to a submodule
+        https://bugs.webkit.org/show_bug.cgi?id=33135
+
+        For great victory.  This will probably introduce some regressions
+        because our test coverage isn't perfect, but I've tried to be careful.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/buildsteps.py: Removed.
+        * Scripts/webkitpy/buildsteps_unittest.py: Removed.
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/steps/__init__.py: Added.
+        * Scripts/webkitpy/steps/abstractstep.py: Added.
+        * Scripts/webkitpy/steps/applypatch.py: Added.
+        * Scripts/webkitpy/steps/applypatchwithlocalcommit.py: Added.
+        * Scripts/webkitpy/steps/build.py: Added.
+        * Scripts/webkitpy/steps/checkstyle.py: Added.
+        * Scripts/webkitpy/steps/cleanworkingdirectory.py: Added.
+        * Scripts/webkitpy/steps/cleanworkingdirectorywithlocalcommits.py: Added.
+        * Scripts/webkitpy/steps/closebug.py: Added.
+        * Scripts/webkitpy/steps/closebugforlanddiff.py: Added.
+        * Scripts/webkitpy/steps/closepatch.py: Added.
+        * Scripts/webkitpy/steps/commit.py: Added.
+        * Scripts/webkitpy/steps/completerollout.py: Added.
+        * Scripts/webkitpy/steps/confirmdiff.py: Added.
+        * Scripts/webkitpy/steps/createbug.py: Added.
+        * Scripts/webkitpy/steps/editchangelog.py: Added.
+        * Scripts/webkitpy/steps/ensurebuildersaregreen.py: Added.
+        * Scripts/webkitpy/steps/ensurelocalcommitifneeded.py: Added.
+        * Scripts/webkitpy/steps/metastep.py: Added.
+        * Scripts/webkitpy/steps/obsoletepatches.py: Added.
+        * Scripts/webkitpy/steps/options.py: Added.
+        * Scripts/webkitpy/steps/postdiff.py: Added.
+        * Scripts/webkitpy/steps/preparechangelog.py: Added.
+        * Scripts/webkitpy/steps/preparechangelogforrevert.py: Added.
+        * Scripts/webkitpy/steps/promptforbugortitle.py: Added.
+        * Scripts/webkitpy/steps/revertrevision.py: Added.
+        * Scripts/webkitpy/steps/runtests.py: Added.
+        * Scripts/webkitpy/steps/steps_unittest.py: Added.
+        * Scripts/webkitpy/steps/update.py: Added.
+        * Scripts/webkitpy/steps/updatechangelogswithreview_unittests.py: Added.
+        * Scripts/webkitpy/steps/updatechangelogswithreviewer.py: Added.
+        * Scripts/webkitpy/stepsequence.py:
+
 2010-01-04  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -27,36 +26,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+from webkitpy.steps.build import Build
+from webkitpy.steps.commit import Commit
+from webkitpy.steps.metastep import MetaStep
+from webkitpy.steps.options import Options
+from webkitpy.webkit_logging import log
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.cpp_style_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style_unittest import *
-from webkitpy.text_style_unittest import *
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
+class CompleteRollout(MetaStep):
+    substeps = [
+        Build,
+        Commit,
+    ]
 
-    unittest.main()
+    @classmethod
+    def options(cls):
+        collected_options = cls._collect_options_from_steps(cls.substeps)
+        collected_options.append(Options.complete_rollout)
+        return collected_options
+
+    def run(self, state):
+        bug_id = state["bug_id"]
+        # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
+        # Once we trust rollout we will remove this option.
+        if not self._options.complete_rollout:
+            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
+            return
+
+        MetaStep.run(self, state)
+
+        if not bug_id:
+            log(state["commit_text"])
+            log("No bugs were updated or re-opened to reflect this rollout.")
+            return
+        # FIXME: I'm not sure state["commit_text"] is quite right here.
+        self._tool.bugs.reopen_bug(bug_id, state["commit_text"])

@@ -32,9 +32,10 @@ import os
 
 from optparse import make_option
 
+import webkitpy.steps as steps
+
 from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."
-from webkitpy.buildsteps import *
 from webkitpy.changelogs import ChangeLog
 from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.executive import ScriptError
@@ -62,9 +63,9 @@ class Build(AbstractSequencedCommmand):
     name = "build"
     help_text = "Update working copy and build"
     steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        BuildStep,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.Build,
     ]
 
 
@@ -72,10 +73,10 @@ class BuildAndTest(AbstractSequencedCommmand):
     name = "build-and-test"
     help_text = "Update working copy, build, and run the tests"
     steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        BuildStep,
-        RunTestsStep,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.Build,
+        steps.RunTests,
     ]
 
 
@@ -85,13 +86,13 @@ class LandDiff(AbstractSequencedCommmand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
-        EnsureBuildersAreGreenStep,
-        UpdateChangeLogsWithReviewerStep,
-        EnsureBuildersAreGreenStep,
-        BuildStep,
-        RunTestsStep,
-        CommitStep,
-        CloseBugForLandDiffStep,
+        steps.EnsureBuildersAreGreen,
+        steps.UpdateChangeLogsWithReviewer,
+        steps.EnsureBuildersAreGreen,
+        steps.Build,
+        steps.RunTests,
+        steps.Commit,
+        steps.CloseBugForLandDiff,
     ]
 
     def _prepare_state(self, options, args, tool):
@@ -169,10 +170,10 @@ class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     help_text = "Run check-webkit-style on the specified attachments"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        ApplyPatchStep,
-        CheckStyleStep,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.ApplyPatch,
+        steps.CheckStyle,
     ]
 
 
@@ -181,21 +182,21 @@ class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     help_text = "Apply and build patches from bugzilla"
     argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
     main_steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        ApplyPatchStep,
-        BuildStep,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.ApplyPatch,
+        steps.Build,
     ]
 
 
 class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
-        EnsureLocalCommitIfNeeded,
-        CleanWorkingDirectoryWithLocalCommitsStep,
-        UpdateStep,
+        steps.EnsureLocalCommitIfNeeded,
+        steps.CleanWorkingDirectoryWithLocalCommits,
+        steps.Update,
     ]
     main_steps = [
-        ApplyPatchWithLocalCommitStep,
+        steps.ApplyPatchWithLocalCommit,
     ]
 
 
@@ -215,18 +216,18 @@ class ApplyPatches(AbstractPatchApplyingCommand, ProcessBugsMixin):
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
-        EnsureBuildersAreGreenStep,
+        steps.EnsureBuildersAreGreen,
     ]
     main_steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        ApplyPatchStep,
-        EnsureBuildersAreGreenStep,
-        BuildStep,
-        RunTestsStep,
-        CommitStep,
-        ClosePatchStep,
-        CloseBugStep,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.ApplyPatch,
+        steps.EnsureBuildersAreGreen,
+        steps.Build,
+        steps.RunTests,
+        steps.Commit,
+        steps.ClosePatch,
+        steps.CloseBug,
     ]
 
 
@@ -250,11 +251,11 @@ class Rollout(AbstractSequencedCommmand):
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
     argument_names = "REVISION [BUGID]"
     steps = [
-        CleanWorkingDirectoryStep,
-        UpdateStep,
-        RevertRevisionStep,
-        PrepareChangeLogForRevertStep,
-        CompleteRollout,
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.RevertRevision,
+        steps.PrepareChangeLogForRevert,
+        steps.CompleteRollout,
     ]
 
     @staticmethod

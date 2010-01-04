@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -27,36 +26,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+import os
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.cpp_style_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style_unittest import *
-from webkitpy.text_style_unittest import *
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
+from webkitpy.steps.abstractstep import AbstractStep
+from webkitpy.steps.options import Options
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
 
-    unittest.main()
+class CleanWorkingDirectory(AbstractStep):
+    def __init__(self, tool, options, allow_local_commits=False):
+        AbstractStep.__init__(self, tool, options)
+        self._allow_local_commits = allow_local_commits
+
+    @classmethod
+    def options(cls):
+        return [
+            Options.force_clean,
+            Options.clean,
+        ]
+
+    def run(self, state):
+        os.chdir(self._tool.scm().checkout_root)
+        if not self._allow_local_commits:
+            self._tool.scm().ensure_no_local_commits(self._options.force_clean)
+        if self._options.clean:
+            self._tool.scm().ensure_clean_working_directory(force_clean=self._options.force_clean)
