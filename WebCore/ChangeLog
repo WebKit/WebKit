@@ -1,3 +1,22 @@
+2010-01-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Index validation code must always copy client data
+        https://bugs.webkit.org/show_bug.cgi?id=32748
+
+        Client data must always be copied during bufferData and
+        bufferSubData calls, because otherwise the data the GL uses to
+        draw may differ from that checked by the index validation code.
+
+        Test: fast/canvas/webgl/index-validation-copies-indices.html
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        (WebCore::WebGLBuffer::associateBufferData):
+        (WebCore::WebGLBuffer::associateBufferSubData):
+        * html/canvas/WebGLBuffer.h:
+
 2010-01-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

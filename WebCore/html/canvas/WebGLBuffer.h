@@ -67,7 +67,6 @@ namespace WebCore {
         RefPtr<WebGLArrayBuffer> m_elementArrayBuffer;
         unsigned m_elementArrayBufferByteLength;
         unsigned m_arrayBufferByteLength;
-        bool m_elementArrayBufferCloned;
 
         // Optimization for index validation. For each type of index
         // (i.e., UNSIGNED_SHORT), cache the maximum index in the
