@@ -36,7 +36,9 @@
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "SVGResource.h"
+#include "SVGResourceClipper.h"
+#include "SVGResourceFilter.h"
+#include "SVGResourceMasker.h"
 #include "SVGSVGElement.h"
 #include <wtf/Assertions.h>
 
@@ -202,8 +204,38 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
     // If we're the child of a resource element, be sure to invalidate it.
     invalidateResourcesInAncestorChain();
 
+    // If the element is using resources, invalidate them.
+    invalidateResources();
+
     // Invalidate all SVGElementInstances associated with us
     SVGElementInstance::invalidateAllInstancesOfElement(this);
+}
+
+void SVGStyledElement::invalidateResources()
+{
+    RenderObject* object = renderer();
+    if (!object)
+        return;
+
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    Document* document = this->document();
+
+    if (document->parsing())
+        return; 
+
+#if ENABLE(FILTERS)
+    SVGResourceFilter* filter = getFilterById(document, svgStyle->filter(), object);
+    if (filter)
+        filter->invalidate();
+#endif
+
+    SVGResourceMasker* masker = getMaskerById(document, svgStyle->maskElement(), object);
+    if (masker)
+        masker->invalidate();
+
+    SVGResourceClipper* clipper = getClipperById(document, svgStyle->clipPath(), object);
+    if (clipper)
+        clipper->invalidate();
 }
 
 void SVGStyledElement::invalidateResourcesInAncestorChain() const

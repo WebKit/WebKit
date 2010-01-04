@@ -60,7 +60,9 @@ namespace WebCore {
         // Centralized place to force a manual style resolution. Hacky but needed for now.
         PassRefPtr<RenderStyle> resolveStyle(RenderStyle* parentStyle);
 
-        void invalidateResourcesInAncestorChain() const;        
+        void invalidateResourcesInAncestorChain() const;
+        void invalidateResources();
+
         virtual void detach();
                                  
         void setInstanceUpdatesBlocked(bool);

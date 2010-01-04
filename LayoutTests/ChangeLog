@@ -1,3 +1,18 @@
+2010-01-04  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGResources don't invalidate if target object changes attributes
+        https://bugs.webkit.org/show_bug.cgi?id=33091
+
+        Check if SVG resources are invalidated, if target object changes
+        attributes.
+
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.checksum: Added.
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.png: Added.
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.txt: Added.
+        * svg/custom/resource-invalidate-on-target-update.svg: Added.
+
 2010-01-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Maciej Stachowiak.
