@@ -1,3 +1,25 @@
+2010-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repaint issues in text input under a scale transform
+        https://bugs.webkit.org/show_bug.cgi?id=32086
+        
+        When doing a subtree layout we have to look up the container chain to see if there
+        are any properties, such as transforms or reflections, that mean that we are unable
+        to use layoutState.
+
+        Test: fast/repaint/subtree-layoutstate-transform.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Call canUseLayoutStateForSubtree() to determine
+        whether it's OK to use layoutState.
+        
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::canUseLayoutStateForSubtree): New method that reports whether it's
+        OK to use layoutState when doing a subtree layout from the given root.
+
 2010-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

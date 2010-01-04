@@ -658,8 +658,14 @@ void FrameView::layout(bool allowSubtree)
 
     pauseScheduledEvents();
 
-    if (subtree)
-        root->view()->pushLayoutState(root);
+    bool disableLayoutState;
+    if (subtree) {
+        RenderView* view = root->view();
+        disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
+        view->pushLayoutState(root);
+        if (disableLayoutState)
+            view->disableLayoutState();
+    }
         
     m_midLayout = true;
     beginDeferredRepaints();
@@ -667,8 +673,12 @@ void FrameView::layout(bool allowSubtree)
     endDeferredRepaints();
     m_midLayout = false;
 
-    if (subtree)
-        root->view()->popLayoutState();
+    if (subtree) {
+        RenderView* view = root->view();
+        view->popLayoutState();
+        if (disableLayoutState)
+            view->enableLayoutState();
+    }
     m_layoutRoot = 0;
 
     m_frame->selection()->setNeedsLayout();
