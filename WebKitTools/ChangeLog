@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        [bzt] submit-pach should have a -o/--open option to open the bug after submit
+        https://bugs.webkit.org/show_bug.cgi?id=33136
+
+        Python makes this very easy.
+
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/steps/options.py:
+        * Scripts/webkitpy/steps/postdiff.py:
+        * Scripts/webkitpy/user.py:
+
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] Move steps to a submodule
         https://bugs.webkit.org/show_bug.cgi?id=33135
 

@@ -186,6 +186,9 @@ class MockUser(object):
     def confirm(self, message=None):
         return True
 
+    def open_url(self, url):
+        pass
+
 
 class MockStatusBot(object):
     def __init__(self):

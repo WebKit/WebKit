@@ -28,6 +28,7 @@
 
 import os
 import subprocess
+import webbrowser
 
 class User(object):
     def prompt(self, message):
@@ -50,3 +51,6 @@ class User(object):
             message = "Continue?"
         response = raw_input("%s [Y/n]: " % message)
         return not response or response.lower() == "y"
+
+    def open_url(self, url):
+        webbrowser.open(url)
