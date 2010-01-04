@@ -137,6 +137,7 @@ public:
     unsigned hash() const { if (!m_hash) m_hash = computeHash(data(), m_length); return m_hash; }
     unsigned computedHash() const { ASSERT(m_hash); return m_hash; } // fast path for Identifiers
     void setHash(unsigned hash) { ASSERT(hash == computeHash(data(), m_length)); m_hash = hash; } // fast path for Identifiers
+    bool isIdentifier() const { return m_identifierTable; }
     IdentifierTable* identifierTable() const { return m_identifierTable; }
     void setIdentifierTable(IdentifierTable* table) { ASSERT(!isStatic()); m_identifierTable = table; }
 

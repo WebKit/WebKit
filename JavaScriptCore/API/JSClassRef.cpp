@@ -82,12 +82,12 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 
 OpaqueJSClass::~OpaqueJSClass()
 {
-    ASSERT(!m_className.rep()->identifierTable());
+    ASSERT(!m_className.rep()->isIdentifier());
 
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = m_staticValues->begin(); it != end; ++it) {
-            ASSERT(!it->first->identifierTable());
+            ASSERT(!it->first->isIdentifier());
             delete it->second;
         }
         delete m_staticValues;
@@ -96,7 +96,7 @@ OpaqueJSClass::~OpaqueJSClass()
     if (m_staticFunctions) {
         OpaqueJSClassStaticFunctionsTable::const_iterator end = m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = m_staticFunctions->begin(); it != end; ++it) {
-            ASSERT(!it->first->identifierTable());
+            ASSERT(!it->first->isIdentifier());
             delete it->second;
         }
         delete m_staticFunctions;
@@ -147,7 +147,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
         staticValues = new OpaqueJSClassStaticValuesTable;
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
-            ASSERT(!it->first->identifierTable());
+            ASSERT(!it->first->isIdentifier());
             staticValues->add(UString::Rep::createCopying(it->first->data(), it->first->size()),
                               new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes));
         }
@@ -160,7 +160,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
         staticFunctions = new OpaqueJSClassStaticFunctionsTable;
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
-            ASSERT(!it->first->identifierTable());
+            ASSERT(!it->first->isIdentifier());
             staticFunctions->add(UString::Rep::createCopying(it->first->data(), it->first->size()),
                               new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes));
         }

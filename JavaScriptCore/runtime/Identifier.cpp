@@ -212,12 +212,12 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int le
 
 PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UString::Rep* r)
 {
-    ASSERT(!r->identifierTable());
+    ASSERT(!r->isIdentifier());
     if (r->size() == 1) {
         UChar c = r->data()[0];
         if (c <= 0xFF)
             r = globalData->smallStrings.singleCharacterStringRep(c);
-            if (r->identifierTable()) {
+            if (r->isIdentifier()) {
 #ifndef NDEBUG
                 checkSameIdentifierTable(globalData, r);
 #endif

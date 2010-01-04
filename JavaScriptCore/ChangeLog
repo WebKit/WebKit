@@ -1,5 +1,24 @@
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Geoff Garen.
+
+        Add an 'isIdentifier' to UStringImpl, use this where appropriate
+        (where previously 'identifierTable' was being tested).
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::addSlowCase):
+        * runtime/Identifier.h:
+        (JSC::Identifier::add):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::isIdentifier):
+
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY build fix for DRT, fix incorrect style include.
 
         * wtf/HashFunctions.h:
