@@ -46,8 +46,8 @@ import os
 import os.path
 import sys
 
-import modules.style as style
-from modules.scm import detect_scm_system
+import webkitpy.style as style
+from webkitpy.scm import detect_scm_system
 
 
 def main():

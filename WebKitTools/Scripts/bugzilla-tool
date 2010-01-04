@@ -32,18 +32,18 @@
 
 import os
 
-from modules.bugzilla import Bugzilla
-from modules.buildbot import BuildBot
-from modules.commands.download import *
-from modules.commands.early_warning_system import *
-from modules.commands.queries import *
-from modules.commands.queues import *
-from modules.commands.upload import *
-from modules.executive import Executive
-from modules.webkit_logging import log
-from modules.multicommandtool import MultiCommandTool
-from modules.scm import detect_scm_system
-from modules.user import User
+from webkitpy.bugzilla import Bugzilla
+from webkitpy.buildbot import BuildBot
+from webkitpy.commands.download import *
+from webkitpy.commands.early_warning_system import *
+from webkitpy.commands.queries import *
+from webkitpy.commands.queues import *
+from webkitpy.commands.upload import *
+from webkitpy.executive import Executive
+from webkitpy.webkit_logging import log
+from webkitpy.multicommandtool import MultiCommandTool
+from webkitpy.scm import detect_scm_system
+from webkitpy.user import User
 
 
 class BugzillaTool(MultiCommandTool):

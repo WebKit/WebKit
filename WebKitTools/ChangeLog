@@ -1,3 +1,113 @@
+2010-01-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename Scripts/modules to Scripts/webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=33128
+
+        Just search-replace and svn mv commands.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/check-webkit-style:
+        * Scripts/modules: Removed.
+        * Scripts/modules/BeautifulSoup.py: Removed.
+        * Scripts/modules/__init__.py: Removed.
+        * Scripts/modules/bugzilla.py: Removed.
+        * Scripts/modules/bugzilla_unittest.py: Removed.
+        * Scripts/modules/buildbot.py: Removed.
+        * Scripts/modules/buildbot_unittest.py: Removed.
+        * Scripts/modules/buildsteps.py: Removed.
+        * Scripts/modules/buildsteps_unittest.py: Removed.
+        * Scripts/modules/changelogs.py: Removed.
+        * Scripts/modules/changelogs_unittest.py: Removed.
+        * Scripts/modules/commands: Removed.
+        * Scripts/modules/commands/__init__.py: Removed.
+        * Scripts/modules/commands/commandtest.py: Removed.
+        * Scripts/modules/commands/download.py: Removed.
+        * Scripts/modules/commands/download_unittest.py: Removed.
+        * Scripts/modules/commands/early_warning_system.py: Removed.
+        * Scripts/modules/commands/early_warning_system_unittest.py: Removed.
+        * Scripts/modules/commands/queries.py: Removed.
+        * Scripts/modules/commands/queries_unittest.py: Removed.
+        * Scripts/modules/commands/queues.py: Removed.
+        * Scripts/modules/commands/queues_unittest.py: Removed.
+        * Scripts/modules/commands/queuestest.py: Removed.
+        * Scripts/modules/commands/upload.py: Removed.
+        * Scripts/modules/commands/upload_unittest.py: Removed.
+        * Scripts/modules/comments.py: Removed.
+        * Scripts/modules/committers.py: Removed.
+        * Scripts/modules/committers_unittest.py: Removed.
+        * Scripts/modules/cpp_style.py: Removed.
+        * Scripts/modules/cpp_style_unittest.py: Removed.
+        * Scripts/modules/credentials.py: Removed.
+        * Scripts/modules/credentials_unittest.py: Removed.
+        * Scripts/modules/diff_parser.py: Removed.
+        * Scripts/modules/diff_parser_unittest.py: Removed.
+        * Scripts/modules/executive.py: Removed.
+        * Scripts/modules/executive_unittest.py: Removed.
+        * Scripts/modules/grammar.py: Removed.
+        * Scripts/modules/mock.py: Removed.
+        * Scripts/modules/mock_bugzillatool.py: Removed.
+        * Scripts/modules/multicommandtool.py: Removed.
+        * Scripts/modules/multicommandtool_unittest.py: Removed.
+        * Scripts/modules/outputcapture.py: Removed.
+        * Scripts/modules/patchcollection.py: Removed.
+        * Scripts/modules/queueengine.py: Removed.
+        * Scripts/modules/queueengine_unittest.py: Removed.
+        * Scripts/modules/scm.py: Removed.
+        * Scripts/modules/scm_unittest.py: Removed.
+        * Scripts/modules/statusbot.py: Removed.
+        * Scripts/modules/stepsequence.py: Removed.
+        * Scripts/modules/style: Removed.
+        * Scripts/modules/style.py: Removed.
+        * Scripts/modules/style_unittest.py: Removed.
+        * Scripts/modules/text_style.py: Removed.
+        * Scripts/modules/text_style_unittest.py: Removed.
+        * Scripts/modules/user.py: Removed.
+        * Scripts/modules/webkit_logging.py: Removed.
+        * Scripts/modules/webkit_logging_unittest.py: Removed.
+        * Scripts/modules/webkit_mechanize.py: Removed.
+        * Scripts/modules/webkitport.py: Removed.
+        * Scripts/modules/webkitport_unittest.py: Removed.
+        * Scripts/test-webkit-python: Removed.
+        * Scripts/test-webkitpy: Copied from WebKitTools/Scripts/test-webkit-python.
+        * Scripts/validate-committer-lists:
+        * Scripts/webkitpy: Copied from WebKitTools/Scripts/modules.
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/bugzilla_unittest.py:
+        * Scripts/webkitpy/buildbot.py:
+        * Scripts/webkitpy/buildbot_unittest.py:
+        * Scripts/webkitpy/buildsteps.py:
+        * Scripts/webkitpy/buildsteps_unittest.py:
+        * Scripts/webkitpy/commands/commandtest.py:
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/download_unittest.py:
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/early_warning_system_unittest.py:
+        * Scripts/webkitpy/commands/queries.py:
+        * Scripts/webkitpy/commands/queries_unittest.py:
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+        * Scripts/webkitpy/commands/queuestest.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+        * Scripts/webkitpy/comments.py:
+        * Scripts/webkitpy/credentials.py:
+        * Scripts/webkitpy/credentials_unittest.py:
+        * Scripts/webkitpy/executive.py:
+        * Scripts/webkitpy/executive_unittest.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/multicommandtool.py:
+        * Scripts/webkitpy/multicommandtool_unittest.py:
+        * Scripts/webkitpy/queueengine.py:
+        * Scripts/webkitpy/queueengine_unittest.py:
+        * Scripts/webkitpy/scm.py:
+        * Scripts/webkitpy/scm_unittest.py:
+        * Scripts/webkitpy/statusbot.py:
+        * Scripts/webkitpy/stepsequence.py:
+        * Scripts/webkitpy/webkit_logging_unittest.py:
+        * Scripts/webkitpy/webkitport_unittest.py:
+
 2010-01-03  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Eric Seidel.
