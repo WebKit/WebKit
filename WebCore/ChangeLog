@@ -1,3 +1,10 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Windows build fix
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

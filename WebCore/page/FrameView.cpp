@@ -658,7 +658,7 @@ void FrameView::layout(bool allowSubtree)
 
     pauseScheduledEvents();
 
-    bool disableLayoutState;
+    bool disableLayoutState = false;
     if (subtree) {
         RenderView* view = root->view();
         disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
