@@ -39,7 +39,7 @@ from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
 from webkitpy.multicommandtool import Command
 from webkitpy.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
-from webkitpy.statusbot import StatusBot
+from webkitpy.statusserver import StatusServer
 from webkitpy.stepsequence import StepSequenceErrorHandler
 from webkitpy.queueengine import QueueEngine, QueueEngineDelegate
 
@@ -65,7 +65,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
             log("Failed to CC watchers: %s." % e)
 
     def _update_status(self, message, patch=None, results_file=None):
-        self.tool.status_bot.update_status(self.name, message, patch, results_file)
+        self.tool.status_server.update_status(self.name, message, patch, results_file)
 
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
@@ -109,7 +109,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def run_bugzilla_tool(self, args):
         bugzilla_tool_args = [self.tool.path()]
         # FIXME: This is a hack, we should have a more general way to pass global options.
-        bugzilla_tool_args += ["--status-host=%s" % self.tool.status_bot.statusbot_host]
+        bugzilla_tool_args += ["--status-host=%s" % self.tool.status_server.host]
         bugzilla_tool_args += map(str, args)
         self.tool.executive.run_and_throw_if_fail(bugzilla_tool_args)
 
@@ -123,7 +123,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error):
-        return tool.status_bot.update_status(cls.name, script_error.message, state["patch"], StringIO(script_error.output))
+        return tool.status_server.update_status(cls.name, script_error.message, state["patch"], StringIO(script_error.output))
 
 
 class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
@@ -172,7 +172,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def _error_message_for_bug(tool, status_id, script_error):
         if not script_error.output:
             return script_error.message_with_output()
-        results_link = tool.status_bot.results_url_for_status(status_id)
+        results_link = tool.status_server.results_url_for_status(status_id)
         return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
 
     @classmethod
@@ -194,7 +194,7 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         return self.tool.bugs.queries.fetch_attachment_ids_from_review_queue()
 
     def status_server(self):
-        return self.tool.status_bot
+        return self.tool.status_server
 
     # AbstractQueue methods
 

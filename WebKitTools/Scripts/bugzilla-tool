@@ -60,7 +60,7 @@ class BugzillaTool(MultiCommandTool):
         self.executive = Executive()
         self.user = User()
         self._scm = None
-        self.status_bot = StatusBot()
+        self.status_server = StatusServer()
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
@@ -95,7 +95,7 @@ class BugzillaTool(MultiCommandTool):
             self.scm().dryrun = True
             self.bugs.dryrun = True
         if options.status_host:
-            self.status_bot.set_host(options.status_host)
+            self.status_server.set_host(options.status_host)
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

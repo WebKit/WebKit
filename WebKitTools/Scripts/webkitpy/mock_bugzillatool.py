@@ -190,9 +190,9 @@ class MockUser(object):
         pass
 
 
-class MockStatusBot(object):
+class MockStatusServer(object):
     def __init__(self):
-        self.statusbot_host = "example.com"
+        self.host = "example.com"
 
     def patch_status(self, queue_name, patch_id):
         return None
@@ -208,7 +208,7 @@ class MockBugzillaTool():
         self.executive = Mock()
         self.user = MockUser()
         self._scm = MockSCM()
-        self.status_bot = MockStatusBot()
+        self.status_server = MockStatusServer()
 
     def scm(self):
         return self._scm

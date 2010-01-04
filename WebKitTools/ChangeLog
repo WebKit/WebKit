@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Rename StatusBot to StatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=33139
+
+        It's not a bot.  It's a server.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/queueengine.py:
+        * Scripts/webkitpy/statusbot.py: Removed.
+
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         [bzt] submit-pach should have a -o/--open option to open the bug after submit
         https://bugs.webkit.org/show_bug.cgi?id=33136
 

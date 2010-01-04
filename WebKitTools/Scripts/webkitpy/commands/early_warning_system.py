@@ -71,7 +71,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         # FIXME: This won't be right for ports that don't use build-webkit!
         if not script_error.command_name() == "build-webkit":
             return
-        results_link = tool.status_bot.results_url_for_status(status_id)
+        results_link = tool.status_server.results_url_for_status(status_id)
         message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"]["id"], cls.port_name, results_link)
         tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
 

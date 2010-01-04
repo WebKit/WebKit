@@ -257,7 +257,7 @@ class Bugzilla(object):
     def _flag_permission_rejection_message(self, setter_email, flag_name):
         committer_list = "WebKitTools/Scripts/webkitpy/committers.py" # This could be computed from CommitterList.__file__
         contribution_guidlines_url = "http://webkit.org/coding/contributing.html" # Should come from some webkit_config.py
-        queue_administrator = "eseidel@chromium.org" # This could be queried from the status_bot.
+        queue_administrator = "eseidel@chromium.org" # This could be queried from the status_server.
         queue_name = "commit-queue" # This could be queried from the tool.
         rejection_message = "%s does not have %s permissions according to %s." % (setter_email, flag_name, self._view_source_link(committer_list))
         rejection_message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (flag_name, contribution_guidlines_url)

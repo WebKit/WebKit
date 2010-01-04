@@ -36,7 +36,7 @@ from datetime import datetime, timedelta
 
 from webkitpy.executive import ScriptError
 from webkitpy.webkit_logging import log, OutputTee
-from webkitpy.statusbot import StatusBot
+from webkitpy.statusserver import StatusServer
 
 class QueueEngineDelegate:
     def queue_log_path(self):
