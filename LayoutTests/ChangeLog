@@ -1,5 +1,11 @@
 2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Attempt to mark all Gtk bots green again, as discussed with Gustavo Noronha Silva.
+
+        * platform/gtk/Skipped:
+
+2010-01-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Skipping plugins/get-url-with-iframe-target.html, filed bug 33154, cc'ing the original author.
 
         * platform/mac-tiger/Skipped:

@@ -104,8 +104,8 @@ accessibility/iframe-bastardization.html
 
 # Tests in animations/
 # Tests expecting new results
-animations/change-transform-in-end-event.html
-animations/state-at-end-event-transform.html
+animations/3d/change-transform-in-end-event.html
+animations/3d/state-at-end-event-transform.html
 animations/state-at-end-event.html
 
 # Tests in css1/ directory
@@ -4392,6 +4392,7 @@ svg/css/path-with-shadow.svg
 svg/css/stars-with-shadow.html
 svg/filters/shadow-on-filter.svg
 svg/filters/shadow-on-rect-with-filter.svg
+svg/custom/resource-invalidate-on-target-update.svg
 
 # Tests in tables/ directory
 #   Tests generating new results
@@ -5732,6 +5733,15 @@ fast/dom/prototype-inheritance-2.html
 # Fails on and off locally, but always on the release bot
 # See https://bugs.webkit.org/show_bug.cgi?id=33015
 media/video-seek-past-end-playing.html
+
+# Hits ASSERTION, see https://bugs.webkit.org/show_bug.cgi?id=33050
+fast/inline/inline-body-with-scrollbar-crash.html
+
+# Times out, see https://bugs.webkit.org/show_bug.cgi?id=33026
+http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
+
+# Crashes release bot, see https://bugs.webkit.org/show_bug.cgi?id=33152
+fast/profiler/dead-time.html
 
 # Fails on and off (more often fails) on the release bot
 media/event-attributes.html
