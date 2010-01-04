@@ -28,7 +28,7 @@
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"
 #elif USE(ICU_UNICODE)
-#include "UnicodeIcu.h"
+#include <wtf/unicode/icu/UnicodeIcu.h>
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WINCE_UNICODE)
