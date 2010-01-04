@@ -28,6 +28,15 @@
         bugzilla-tool should not require users to install mechanize
         https://bugs.webkit.org/show_bug.cgi?id=32635
 
+        * Scripts/webkitpy/__init__.py: Add missing declaration for ClientForm (which mechanize requires).
+
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool should not require users to install mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=32635
+
         Use the nifty "autoinstall" module from Daniel Krech:
         http://pypi.python.org/pypi/autoinstall/0.2
         http://code.google.com/p/pyautoinstall/
