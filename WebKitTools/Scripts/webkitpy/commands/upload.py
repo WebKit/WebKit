@@ -43,9 +43,9 @@ from webkitpy.comments import bug_comment_from_svn_revision
 from webkitpy.committers import CommitterList
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
+from webkitpy.mock import Mock
 from webkitpy.multicommandtool import AbstractDeclarativeCommmand
 
-# FIXME: Requires unit test.
 class CommitMessageForCurrentDiff(AbstractDeclarativeCommmand):
     name = "commit-message"
     help_text = "Print a commit message suitable for the uncommitted changes"

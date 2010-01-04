@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        Add missing unit test for CommitMessageForCurrentDiff
+        https://bugs.webkit.org/show_bug.cgi?id=33141
+
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Remove raw_input from queues in favor of user.prompt
         https://bugs.webkit.org/show_bug.cgi?id=33140
 

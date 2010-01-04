@@ -33,6 +33,14 @@ from webkitpy.commands.upload import *
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 
 class UploadCommandsTest(CommandsTest):
+    def test_commit_message_for_current_diff(self):
+        tool = MockBugzillaTool()
+        mock_commit_message_for_this_commit = Mock()
+        mock_commit_message_for_this_commit.message = lambda: "Mock message"
+        tool._scm.commit_message_for_this_commit = lambda: mock_commit_message_for_this_commit
+        expected_stdout = "Mock message\n"
+        self.assert_execute_outputs(CommitMessageForCurrentDiff(), [], expected_stdout=expected_stdout, tool=tool)
+
     def test_assign_to_committer(self):
         tool = MockBugzillaTool()
         expected_stderr = "Bug 75 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
