@@ -235,7 +235,7 @@ namespace JSC {
         union {
             EncodedJSValue asEncodedJSValue;
             double asDouble;
-#if PLATFORM(BIG_ENDIAN)
+#if CPU(BIG_ENDIAN)
             struct {
                 int32_t tag;
                 int32_t payload;

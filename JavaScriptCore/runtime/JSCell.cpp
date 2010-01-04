@@ -59,10 +59,10 @@ static const union {
     } doubles;
     
 } NaNInf = { {
-#if PLATFORM(BIG_ENDIAN)
+#if CPU(BIG_ENDIAN)
     { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 },
     { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 }
-#elif PLATFORM(MIDDLE_ENDIAN)
+#elif CPU(MIDDLE_ENDIAN)
     { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 },
     { 0, 0, 0xf0, 0x7f, 0, 0, 0, 0 }
 #else
