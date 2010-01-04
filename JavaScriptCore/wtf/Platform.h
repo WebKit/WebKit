@@ -27,11 +27,27 @@
 #ifndef WTF_Platform_h
 #define WTF_Platform_h
 
-/* PLATFORM handles OS, operating environment, graphics API, and CPU */
+/* PLATFORM handles OS, operating environment, graphics API, and
+   CPU. This macro will be phased out in favor of platform adaptation
+   macros, policy decision macros, and top-level port definitions. */
 #define PLATFORM(WTF_FEATURE) (defined WTF_PLATFORM_##WTF_FEATURE  && WTF_PLATFORM_##WTF_FEATURE)
+
+/* == Platform adaptation macros: these describe properties of the target environment. */
+
+/* COMPILER() - the compiler being used to build the project */
 #define COMPILER(WTF_FEATURE) (defined WTF_COMPILER_##WTF_FEATURE  && WTF_COMPILER_##WTF_FEATURE)
+/* CPU() - the target CPU architecture */
+#define CPU(WTF_FEATURE) (defined WTF_CPU_##WTF_FEATURE  && WTF_CPU_##WTF_FEATURE)
+/* HAVE() - specific system features (headers, functions or similar) that are present or not */
 #define HAVE(WTF_FEATURE) (defined HAVE_##WTF_FEATURE  && HAVE_##WTF_FEATURE)
+/* OS() - underlying operating system; only to be used for mandated low-level services like 
+   virtual memory, not to choose a GUI toolkit */
+#define OS(WTF_FEATURE) (defined WTF_OS_##WTF_FEATURE  && WTF_OS_##WTF_FEATURE)
+
+/* == Policy decision macros: these define policy choices for a particular port. */
+/* USE() - use a particular third-party library or optional OS service */
 #define USE(WTF_FEATURE) (defined WTF_USE_##WTF_FEATURE  && WTF_USE_##WTF_FEATURE)
+/* ENABLE() - turn on a specific feature of WebKit */
 #define ENABLE(WTF_FEATURE) (defined ENABLE_##WTF_FEATURE  && ENABLE_##WTF_FEATURE)
 
 /* Operating systems - low-level dependencies */
