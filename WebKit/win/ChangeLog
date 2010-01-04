@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=33161
+        Assertion failure in WebView when using Chinese Simplified IME
+
+        * WebView.cpp: (WebView::onIMERequestCharPosition): Changed the assertion into release mode
+        check. We can't make assertions about arguments passed from outside WebKit.
+
+2010-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=33157
         Implement TextInput logging channel on Windows
 

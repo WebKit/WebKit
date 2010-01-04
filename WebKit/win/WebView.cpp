@@ -5277,8 +5277,9 @@ bool WebView::onIMENotify(WPARAM wparam, LPARAM, LRESULT*)
 
 LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* charPos)
 {
+    if (charPos->dwCharPos && !targetFrame->editor()->hasComposition())
+        return 0;
     IntRect caret;
-    ASSERT(charPos->dwCharPos == 0 || targetFrame->editor()->hasComposition());
     if (RefPtr<Range> range = targetFrame->editor()->hasComposition() ? targetFrame->editor()->compositionRange() : targetFrame->selection()->selection().toNormalizedRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
