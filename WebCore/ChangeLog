@@ -1,3 +1,56 @@
+2010-01-04  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, revert r52745 and r52746 on behalf of Nikolas Zimmermann, as discussed on IRC.
+        Patch produced by 'git revert' and then reverting back ChangeLog files.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        (WebCore::RenderPath::setPath):
+        (WebCore::RenderPath::path):
+        (WebCore::RenderPath::paint):
+        (WebCore::):
+        (WebCore::DrawMarkersData::DrawMarkersData):
+        (WebCore::drawMarkerWithData):
+        (WebCore::updateMarkerDataForElement):
+        (WebCore::drawStartAndMidMarkers):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::markerBoundingBox):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::paint):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGMarkerData.h: Removed.
+        * rendering/SVGMarkerLayoutInfo.cpp: Removed.
+        * rendering/SVGMarkerLayoutInfo.h: Removed.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::SVGResource::SVGResource):
+        (WebCore::ResourceSet::ResourceSet):
+        (WebCore::clientMap):
+        (WebCore::SVGResource::~SVGResource):
+        (WebCore::SVGResource::removeClient):
+        (WebCore::SVGResource::addClient):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::SVGResourceMarker):
+        (WebCore::SVGResourceMarker::setMarker):
+        (WebCore::SVGResourceMarker::setRef):
+        (WebCore::SVGResourceMarker::draw):
+        (WebCore::SVGResourceMarker::cachedBounds):
+        (WebCore::SVGResourceMarker::externalRepresentation):
+        * svg/graphics/SVGResourceMarker.h:
+        (WebCore::SVGResourceMarker::refX):
+        (WebCore::SVGResourceMarker::refY):
+
 2010-01-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan and Mark Rowe.

@@ -38,8 +38,10 @@ namespace WebCore {
 
 SVGResourceMarker::SVGResourceMarker()
     : SVGResource()
+    , m_refX(0.0)
+    , m_refY(0.0)
     , m_angle(-1) // just like using setAutoAngle()
-    , m_renderer(0)
+    , m_marker(0)
     , m_useStrokeWidth(true)
 {
 }
@@ -48,20 +50,20 @@ SVGResourceMarker::~SVGResourceMarker()
 {
 }
 
-TransformationMatrix SVGResourceMarker::markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const
+void SVGResourceMarker::setMarker(RenderSVGViewportContainer* marker)
 {
-    ASSERT(m_renderer);
-
-    TransformationMatrix transform;
-    transform.translate(origin.x(), origin.y());
-    transform.rotate(m_angle == -1 ? angle : m_angle);
-    transform = m_renderer->markerContentTransformation(transform, m_referencePoint, m_useStrokeWidth ? strokeWidth : -1);
-    return transform;
+    m_marker = marker;
 }
 
-void SVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, const TransformationMatrix& transform)
+void SVGResourceMarker::setRef(double refX, double refY)
 {
-    if (!m_renderer)
+    m_refX = refX;
+    m_refY = refY;
+}
+
+void SVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, double x, double y, double strokeWidth, double angle)
+{
+    if (!m_marker)
         return;
 
     DEFINE_STATIC_LOCAL(HashSet<SVGResourceMarker*>, currentlyDrawingMarkers, ());
@@ -71,16 +73,39 @@ void SVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, const Transform
         return;
 
     currentlyDrawingMarkers.add(this);
-    ASSERT(!m_renderer->drawsContents());
+
+    TransformationMatrix transform;
+    transform.translate(x, y);
+    transform.rotate(m_angle > -1 ? m_angle : angle);
+
+    // refX and refY are given in coordinates relative to the viewport established by the marker, yet they affect
+    // the translation performed on the viewport itself.
+    TransformationMatrix viewportTransform;
+    if (m_useStrokeWidth)
+        viewportTransform.scaleNonUniform(strokeWidth, strokeWidth);
+    viewportTransform *= m_marker->viewportTransform();
+    double refX, refY;
+    viewportTransform.map(m_refX, m_refY, refX, refY);
+    transform.translate(-refX, -refY);
+
+    if (m_useStrokeWidth)
+        transform.scaleNonUniform(strokeWidth, strokeWidth);
 
     paintInfo.context->save();
     paintInfo.context->concatCTM(transform);
-    m_renderer->setDrawsContents(true);
-    m_renderer->paint(paintInfo, 0, 0);
-    m_renderer->setDrawsContents(false);
+    m_marker->setDrawsContents(true);
+    m_marker->paint(paintInfo, 0, 0);
+    m_marker->setDrawsContents(false);
     paintInfo.context->restore();
 
+    m_cachedBounds = transform.mapRect(m_marker->absoluteClippedOverflowRect());
+
     currentlyDrawingMarkers.remove(this);
+}
+
+FloatRect SVGResourceMarker::cachedBounds() const
+{
+    return m_cachedBounds;
 }
 
 TextStream& SVGResourceMarker::externalRepresentation(TextStream& ts) const
@@ -93,7 +118,7 @@ TextStream& SVGResourceMarker::externalRepresentation(TextStream& ts) const
     else
         ts << angle() << "]";
 
-    ts << " [ref x=" << m_referencePoint.x() << " y=" << m_referencePoint.y() << "]";
+    ts << " [ref x=" << refX() << " y=" << refY() << "]";
     return ts;
 }
 

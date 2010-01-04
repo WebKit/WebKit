@@ -175,15 +175,14 @@ SVGResource* SVGMarkerElement::canvasResource(const RenderObject*)
     if (!m_marker)
         m_marker = SVGResourceMarker::create();
 
-    ASSERT(renderer());
-    m_marker->setRenderer(toRenderSVGViewportContainer(renderer()));
+    m_marker->setMarker(toRenderSVGViewportContainer(renderer()));
 
     if (orientType() == SVG_MARKER_ORIENT_ANGLE)
         m_marker->setAngle(orientAngle().value());
     else
         m_marker->setAutoAngle();
 
-    m_marker->setReferencePoint(FloatPoint(refX().value(this), refY().value(this)));
+    m_marker->setRef(refX().value(this), refY().value(this));
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
 
     return m_marker.get();
