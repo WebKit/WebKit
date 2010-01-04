@@ -1,3 +1,19 @@
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make all commands AbstractDeclarativeCommmands instead of direct Command subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=33131
+
+        Evenetually we'll probably roll AbstractDeclarativeCommmand directly into Command
+        but for now we just deploy it everywhere and don't try to fix up the few valid uses
+        of Command.
+
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/queries.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/multicommandtool.py:
+
 2010-01-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed "build" fix.  Need to import ScriptError.

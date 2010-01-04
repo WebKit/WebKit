@@ -42,13 +42,12 @@ from webkitpy.comments import bug_comment_from_svn_revision
 from webkitpy.committers import CommitterList
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
-from webkitpy.multicommandtool import Command, AbstractDeclarativeCommmand
+from webkitpy.multicommandtool import AbstractDeclarativeCommmand
 
 # FIXME: Requires unit test.
-class CommitMessageForCurrentDiff(Command):
+class CommitMessageForCurrentDiff(AbstractDeclarativeCommmand):
     name = "commit-message"
-    def __init__(self):
-        Command.__init__(self, "Print a commit message suitable for the uncommitted changes")
+    help_text = "Print a commit message suitable for the uncommitted changes"
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
@@ -171,9 +170,12 @@ class EditChangeLog(AbstractSequencedCommmand):
     ]
 
 
-class PostCommits(Command):
+class PostCommits(AbstractDeclarativeCommmand):
     name = "post-commits"
     show_in_main_help = True
+    help_text = "Attach a range of local commits to bugs as patch files"
+    argument_names = "COMMITISH"
+    
     def __init__(self):
         options = [
             make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
@@ -183,7 +185,7 @@ class PostCommits(Command):
             CommandOptions.review,
             CommandOptions.request_commit,
         ]
-        Command.__init__(self, "Attach a range of local commits to bugs as patch files", "COMMITISH", options=options, requires_local_commits=True)
+        AbstractDeclarativeCommmand.__init__(self, options=options, requires_local_commits=True)
 
     def _comment_text_for_commit(self, options, commit_message, tool, commit_id):
         comment_text = None
@@ -224,9 +226,11 @@ class PostCommits(Command):
 
 
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
-class MarkBugFixed(Command):
+class MarkBugFixed(AbstractDeclarativeCommmand):
     name = "mark-bug-fixed"
     show_in_main_help = True
+    help_text = "Mark the specified bug as fixed"
+    argument_names = "[SVN_REVISION]"
     def __init__(self):
         options = [
             make_option("--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
@@ -234,7 +238,7 @@ class MarkBugFixed(Command):
             make_option("--open", action="store_true", default=False, dest="open_bug", help="Open bug in default web browser (Mac only)."),
             make_option("--update-only", action="store_true", default=False, dest="update_only", help="Add comment to the bug, but do not close it."),
         ]
-        Command.__init__(self, "Mark the specified bug as fixed", "[SVN_REVISION]", options=options)
+        AbstractDeclarativeCommmand.__init__(self, options=options)
 
     def _fetch_commit_log(self, tool, svn_revision):
         if not svn_revision:
@@ -311,9 +315,12 @@ class MarkBugFixed(Command):
 
 
 # FIXME: Requires unit test.  Blocking issue: too complex for now.
-class CreateBug(Command):
+class CreateBug(AbstractDeclarativeCommmand):
     name = "create-bug"
     show_in_main_help = True
+    help_text = "Create a bug from local changes or local commits"
+    argument_names = "[COMMITISH]"
+
     def __init__(self):
         options = [
             CommandOptions.cc,
@@ -322,7 +329,7 @@ class CreateBug(Command):
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review."),
         ]
-        Command.__init__(self, "Create a bug from local changes or local commits", "[COMMITISH]", options=options)
+        AbstractDeclarativeCommmand.__init__(self, options=options)
 
     def create_bug_from_commit(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)

@@ -34,13 +34,12 @@ from optparse import make_option
 from webkitpy.buildbot import BuildBot
 from webkitpy.committers import CommitterList
 from webkitpy.webkit_logging import log
-from webkitpy.multicommandtool import Command
+from webkitpy.multicommandtool import AbstractDeclarativeCommmand
 
 
-class BugsToCommit(Command):
+class BugsToCommit(AbstractDeclarativeCommmand):
     name = "bugs-to-commit"
-    def __init__(self):
-        Command.__init__(self, "List bugs in the commit-queue")
+    help_text = "List bugs in the commit-queue"
 
     def execute(self, options, args, tool):
         bug_ids = tool.bugs.queries.fetch_bug_ids_from_commit_queue()
@@ -48,10 +47,9 @@ class BugsToCommit(Command):
             print "%s" % bug_id
 
 
-class PatchesToCommit(Command):
+class PatchesToCommit(AbstractDeclarativeCommmand):
     name = "patches-to-commit"
-    def __init__(self):
-        Command.__init__(self, "List patches in the commit-queue")
+    help_text = "List patches in the commit-queue"
 
     def execute(self, options, args, tool):
         patches = tool.bugs.queries.fetch_patches_from_commit_queue()
@@ -60,13 +58,14 @@ class PatchesToCommit(Command):
             print "%s" % patch["url"]
 
 
-class PatchesToCommitQueue(Command):
+class PatchesToCommitQueue(AbstractDeclarativeCommmand):
     name = "patches-to-commit-queue"
+    help_text = "Patches which should be added to the commit queue"
     def __init__(self):
         options = [
             make_option("--bugs", action="store_true", dest="bugs", help="Output bug links instead of patch links"),
         ]
-        Command.__init__(self, "Patches which should be added to the commit queue", options=options)
+        AbstractDeclarativeCommmand.__init__(self, options=options)
 
     @staticmethod
     def _needs_commit_queue(patch):
@@ -94,10 +93,9 @@ class PatchesToCommitQueue(Command):
                 print "%s" % tool.bugs.attachment_url_for_id(patch["id"], action="edit")
 
 
-class PatchesToReview(Command):
+class PatchesToReview(AbstractDeclarativeCommmand):
     name = "patches-to-review"
-    def __init__(self):
-        Command.__init__(self, "List patches that are pending review")
+    help_text = "List patches that are pending review"
 
     def execute(self, options, args, tool):
         patch_ids = tool.bugs.queries.fetch_attachment_ids_from_review_queue()
@@ -106,10 +104,10 @@ class PatchesToReview(Command):
             print patch_id
 
 
-class ReviewedPatches(Command):
+class ReviewedPatches(AbstractDeclarativeCommmand):
     name = "reviewed-patches"
-    def __init__(self):
-        Command.__init__(self, "List r+'d patches on a bug", "BUGID")
+    help_text = "List r+'d patches on a bug"
+    argument_names = "BUGID"
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -118,11 +116,10 @@ class ReviewedPatches(Command):
             print "%s" % patch["url"]
 
 
-class TreeStatus(Command):
+class TreeStatus(AbstractDeclarativeCommmand):
     name = "tree-status"
     show_in_main_help = True
-    def __init__(self):
-        Command.__init__(self, "Print the status of the %s buildbots" % BuildBot.default_host)
+    help_text = "Print the status of the %s buildbots" % BuildBot.default_host
 
     def execute(self, options, args, tool):
         for builder in tool.buildbot.builder_statuses():

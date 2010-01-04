@@ -131,8 +131,8 @@ class Command(object):
 class AbstractDeclarativeCommmand(Command):
     help_text = None
     argument_names = None
-    def __init__(self, options=None):
-        Command.__init__(self, self.help_text, self.argument_names, options)
+    def __init__(self, options=None, **kwargs):
+        Command.__init__(self, self.help_text, self.argument_names, options=options, **kwargs)
 
 
 class HelpPrintingOptionParser(OptionParser):
@@ -155,14 +155,16 @@ class HelpPrintingOptionParser(OptionParser):
         return ""
 
 
-class HelpCommand(Command):
+class HelpCommand(AbstractDeclarativeCommmand):
     name = "help"
+    help_text = "Display information about this program or its subcommands"
+    argument_names = "[COMMAND]"
 
     def __init__(self):
         options = [
             make_option("-a", "--all-commands", action="store_true", dest="show_all_commands", help="Print all available commands"),
         ]
-        Command.__init__(self, "Display information about this program or its subcommands", "[COMMAND]", options=options)
+        AbstractDeclarativeCommmand.__init__(self, options)
         self.show_all_commands = False # A hack used to pass --all-commands to _help_epilog even though it's called by the OptionParser.
 
     def _help_epilog(self):

@@ -40,7 +40,7 @@ from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
-from webkitpy.multicommandtool import AbstractDeclarativeCommmand, Command
+from webkitpy.multicommandtool import AbstractDeclarativeCommmand
 from webkitpy.stepsequence import StepSequence
 
 
@@ -245,9 +245,11 @@ class LandPatches(AbstractPatchLandingCommand, ProcessBugsMixin):
 
 
 # FIXME: Make Rollout more declarative.
-class Rollout(Command):
+class Rollout(AbstractDeclarativeCommmand):
     name = "rollout"
     show_in_main_help = True
+    help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
+    argument_names = "REVISION [BUGID]"
     def __init__(self):
         self._sequence = StepSequence([
             CleanWorkingDirectoryStep,
@@ -256,7 +258,7 @@ class Rollout(Command):
             PrepareChangeLogForRevertStep,
             CompleteRollout,
         ])
-        Command.__init__(self, "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug", "REVISION [BUGID]", options=self._sequence.options())
+        AbstractDeclarativeCommmand.__init__(self, self._sequence.options())
 
     @staticmethod
     def _parse_bug_id_from_revision_diff(tool, revision):
