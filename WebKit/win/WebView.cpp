@@ -5255,8 +5255,15 @@ bool WebView::onIMEComposition(LPARAM lparam)
 bool WebView::onIMEEndComposition()
 {
     LOG(TextInput, "onIMEEndComposition");
-    if (m_inIMEComposition) 
+    // If the composition hasn't been confirmed yet, it needs to be cancelled.
+    // This happens after deleting the last character from inline input hole.
+    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    if (targetFrame && targetFrame->editor()->hasComposition())
+        targetFrame->editor()->confirmComposition(String());
+
+    if (m_inIMEComposition)
         m_inIMEComposition--;
+
     return true;
 }
 

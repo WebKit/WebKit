@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=33181
+        The first letter is not removed properly from inline input hole
+
+        * WebView.cpp: (WebView::onIMEEndComposition): If composition is ended before it was
+        confirmed, cancel it.
+
+2010-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=33161
         Assertion failure in WebView when using Chinese Simplified IME
 
