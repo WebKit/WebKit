@@ -23,12 +23,12 @@
 #ifndef WTF_UNICODE_H
 #define WTF_UNICODE_H
 
-#include <wtf/Assertions.h>
+#include "Assertions.h"
 
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"
 #elif USE(ICU_UNICODE)
-#include <wtf/unicode/icu/UnicodeIcu.h>
+#include "UnicodeIcu.h"
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WINCE_UNICODE)

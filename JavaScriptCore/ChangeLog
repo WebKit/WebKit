@@ -1,3 +1,9 @@
+2010-01-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (more speculative build fix).
+
+        * wtf/unicode/Unicode.h:
+
 2010-01-04  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, attempt to fix ARM bulid.
