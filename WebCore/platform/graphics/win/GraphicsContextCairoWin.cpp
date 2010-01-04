@@ -40,21 +40,26 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
 {
     // Put the HDC In advanced mode so it will honor affine transforms.
     SetGraphicsMode(hdc, GM_ADVANCED);
-    
+
+    cairo_surface_t* surface = 0;
+
     HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
 
     BITMAP info;
-    GetObject(bitmap, sizeof(info), &info);
-    ASSERT(info.bmBitsPixel == 32);
+    if (!GetObject(bitmap, sizeof(info), &info))
+        surface = cairo_win32_surface_create(hdc);
+    else {
+        ASSERT(info.bmBitsPixel == 32);
 
-    cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
+        surface = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
                                                CAIRO_FORMAT_ARGB32,
                                                info.bmWidth,
                                                info.bmHeight,
                                                info.bmWidthBytes);
+    }
 
-    cairo_t* context = cairo_create(image);
-    cairo_surface_destroy(image);
+    cairo_t* context = cairo_create(surface);
+    cairo_surface_destroy(surface);
 
     return context;
 }

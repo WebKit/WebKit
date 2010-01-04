@@ -1,3 +1,17 @@
+2010-01-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Correct debug assertion (and possible runtime errors) by
+        checking validity of bitmap settings used to create
+        the Windows Cairo contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=33164.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::createCairoContextWithHDC): Check validity of selected
+          OBJ_BITMAP retrieved, and only create 32-bit context when
+          a valid bitmap is provided.
+
 2010-01-04  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, revert r52745 and r52746 on behalf of Nikolas Zimmermann, as discussed on IRC.
