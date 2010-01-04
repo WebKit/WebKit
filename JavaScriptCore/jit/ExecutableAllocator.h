@@ -43,6 +43,12 @@
 #include <e32std.h>
 #endif
 
+#if PLATFORM(WINCE)
+// From pkfuncs.h (private header file from the Platform Builder)
+#define CACHE_SYNC_ALL 0x07F
+extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLength, DWORD dwFlags);
+#endif
+
 #define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
 
@@ -226,6 +232,11 @@ public:
             :
             : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
             : "r0", "r1", "r2");
+    }
+#elif PLATFORM(WINCE)
+    static void cacheFlush(void* code, size_t size)
+    {
+        CacheRangeFlush(code, size, CACHE_SYNC_ALL);
     }
 #else
     #error "The cacheFlush support is missing on this platform."
