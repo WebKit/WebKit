@@ -1,5 +1,11 @@
 2010-01-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed trivial Symbian build fix
+
+        * plugins/symbian/PluginViewSymbian.cpp: Add missing HostWindow.h inclusion
+
+2010-01-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Fix broken export macros in package builds.
