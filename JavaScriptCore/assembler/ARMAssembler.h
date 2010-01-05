@@ -138,11 +138,11 @@ namespace JSC {
             FSITOD = 0x0eb80bc0,
             FTOSID = 0x0ebd0b40,
             FMSTAT = 0x0ef1fa10,
-#if ARM_ARCH_VERSION >= 5
+#if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
             BKPT = 0xe120070,
 #endif
-#if ARM_ARCH_VERSION >= 7
+#if WTF_ARM_ARCH_AT_LEAST(7)
             MOVW = 0x03000000,
             MOVT = 0x03400000,
 #endif
@@ -342,7 +342,7 @@ namespace JSC {
             emitInst(static_cast<ARMWord>(cc) | MOV, rd, ARMRegisters::r0, op2);
         }
 
-#if ARM_ARCH_VERSION >= 7
+#if WTF_ARM_ARCH_AT_LEAST(7)
         void movw_r(int rd, ARMWord op2, Condition cc = AL)
         {
             ASSERT((op2 | 0xf0fff) == 0xf0fff);
@@ -530,7 +530,7 @@ namespace JSC {
             m_buffer.putInt(static_cast<ARMWord>(cc) | FMSTAT);
         }
 
-#if ARM_ARCH_VERSION >= 5
+#if WTF_ARM_ARCH_AT_LEAST(5)
         void clz_r(int rd, int rm, Condition cc = AL)
         {
             m_buffer.putInt(static_cast<ARMWord>(cc) | CLZ | RD(rd) | RM(rm));
@@ -539,7 +539,7 @@ namespace JSC {
 
         void bkpt(ARMWord value)
         {
-#if ARM_ARCH_VERSION >= 5
+#if WTF_ARM_ARCH_AT_LEAST(5)
             m_buffer.putInt(BKPT | ((value & 0xff0) << 4) | (value & 0xf));
 #else
             // Cannot access to Zero memory address
@@ -747,7 +747,7 @@ namespace JSC {
 
         static ARMWord getOp2(ARMWord imm);
 
-#if ARM_ARCH_VERSION >= 7
+#if WTF_ARM_ARCH_AT_LEAST(7)
         static ARMWord getImm16Op2(ARMWord imm)
         {
             if (imm <= 0xffff)

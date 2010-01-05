@@ -1,3 +1,18 @@
+2010-01-05  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Follow r52729 in ARMAssembler.
+        https://bugs.webkit.org/show_bug.cgi?id=33208
+
+        Use WTF_ARM_ARCH_AT_LEAST instead of ARM_ARCH_VERSION
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::encodeComplexImm): Move tmp declaration to ARMv7
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::bkpt):
+
 2010-01-05  Maciej Stachowiak  <mjs@apple.com>
 
         Unreviewed build fix for Gtk+
