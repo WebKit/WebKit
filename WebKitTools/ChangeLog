@@ -1,3 +1,22 @@
+2010-01-05  Adam Roben  <aroben@apple.com>
+
+        Add more WebViewDestruction tests
+
+        Fixes <http://webkit.org/b/33216>.
+
+        Reviewed by Eric Seidel.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        (WebKitAPITest::NoInitWithFrame):
+        (WebKitAPITest::CloseThenDestroyViewWindow):
+        (WebKitAPITest::DestroyViewWindowThenClose):
+        (WebKitAPITest::DestroyHostWindow):
+        (WebKitAPITest::DestroyHostWindowThenClose):
+        (WebKitAPITest::CloseThenDestroyHostWindow):
+        Added these tests that exercise tearing down a WebView in various
+        ways, all of which we eventually want to have work. Some of them
+        currently crash or leak.
+
 2010-01-05  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.
