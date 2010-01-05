@@ -131,6 +131,7 @@ namespace WebCore {
         bool isWhitespace(Node* node);
 
         Document* mainFrameDocument() const;
+        String documentURLString(Document* document) const;
         void discardBindings();
 
         InspectorFrontend* m_frontend;

@@ -1,3 +1,18 @@
+2010-01-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Provide the "documentURL" property for documents and frame owner elements
+
+        This is necessary to determine owner document URLs for nodes (all nodes have
+        the top-level document set as ownerDocument).
+        https://bugs.webkit.org/show_bug.cgi?id=33025
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+
 2010-01-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

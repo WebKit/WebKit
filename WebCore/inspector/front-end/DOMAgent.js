@@ -66,11 +66,14 @@ WebInspector.DOMNode = function(doc, payload) {
             this.ownerDocument.documentElement = this;
         if (!this.ownerDocument.body && this.nodeName === "BODY")
             this.ownerDocument.body = this;
+        if (payload.documentURL)
+            this.documentURL = payload.documentURL;
     } else if (this.nodeType === Node.DOCUMENT_TYPE_NODE) {
         this.publicId = payload.publicId;
         this.systemId = payload.systemId;
         this.internalSubset = payload.internalSubset;
-    }
+    } else if (this.nodeType === Node.DOCUMENT_NODE)
+        this.documentURL = payload.documentURL;
 }
 
 WebInspector.DOMNode.prototype = {
