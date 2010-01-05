@@ -1,3 +1,15 @@
+2010-01-05  Adam Roben  <aroben@apple.com>
+
+        Remove dead code in WebViewWndProc
+
+        Fixes <http://webkit.org/b/33218>.
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::WebViewWndProc): Removed a redundant isBeingDestroyed check.
+        We bail out much earlier in this function if isBeingDestroyed is true.
+
 2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of <select> elements is wrong

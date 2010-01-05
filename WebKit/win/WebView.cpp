@@ -1954,10 +1954,6 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
         // FIXME: We need to check WM_UNICHAR to support supplementary characters (that don't fit in 16 bits).
         case WM_SIZE:
-            if (webView->isBeingDestroyed())
-                // If someone has sent us this message while we're being destroyed, we should bail out so we don't crash.
-                break;
-
             if (lParam != 0) {
                 webView->deleteBackingStore();
 #if USE(ACCELERATED_COMPOSITING)
