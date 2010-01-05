@@ -95,6 +95,8 @@ public:
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
+    void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
+    bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
 private:
     CSSStyleSheet(Node* ownerNode, const String& href, const String& charset);
@@ -110,6 +112,7 @@ private:
     bool m_loadCompleted : 1;
     bool m_strictParsing : 1;
     bool m_isUserStyleSheet : 1;
+    bool m_hasSyntacticallyValidCSSHeader : 1;
 };
 
 } // namespace

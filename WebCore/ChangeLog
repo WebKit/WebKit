@@ -1,3 +1,39 @@
+2010-01-04  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adopt a more conservative approach for loading CSS cross-origin. When
+        loading CSS cross-origin, it must be start with valid CSS if the MIME
+        type is broken.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29820
+
+        Test: http/tests/security/cross-origin-css.html
+        Test: http/tests/security/cross-origin-css-in-xml.xml
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet): Enforce stricter load
+        requirements for cross-origin loads.
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet): Enforce stricter load
+        requirements for cross-origin loads.
+        * css/CSSStyleSheet.h:
+        * css/CSSStyleSheet.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSGrammar.y:
+        * css/CSSParser.h:
+        Add ability to tell whether the CSS parse started with a syntactically
+        valid CSS rule.
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText): Add ability to return
+        whether the MIME type was acceptable for CSS.
+        (WebCore::CachedCSSStyleSheet::canUseSheet): If requested, return
+        whether the MIME type was valid or not.
+        * dom/ProcessingInstruction.cpp
+        (WebCore::ProcessingInstruction::setCSSStyleSheet): Make use of strict
+        mode explicit and add comment.
+
 2010-01-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

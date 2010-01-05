@@ -204,7 +204,10 @@ void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& ch
 #endif
     RefPtr<CSSStyleSheet> newSheet = CSSStyleSheet::create(this, url, charset);
     m_sheet = newSheet;
-    parseStyleSheet(sheet->sheetText());
+    // We don't need the cross-origin security check here because we are
+    // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
+    // type.
+    parseStyleSheet(sheet->sheetText(true));
     newSheet->setTitle(m_title);
     newSheet->setMedia(MediaList::create(newSheet.get(), m_media));
     newSheet->setDisabled(m_alternate);

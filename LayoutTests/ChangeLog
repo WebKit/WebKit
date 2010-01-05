@@ -1,3 +1,23 @@
+2010-01-04  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=29820
+        Adopt a more conservative approach for loading CSS cross-origin.
+
+        * http/tests/security/cross-origin-css.html: Added.
+        * http/tests/security/cross-origin-css-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-xml.xml: Added.
+        * http/tests/security/cross-origin-css-in-xml-expected.txt: Added.
+        * http/tests/security/resources/xorigincss1.css: Added.
+        * http/tests/security/resources/xorigincss2.css: Added.
+        * http/tests/security/resources/xorigincss1.html: Added.
+        * http/tests/security/resources/xorigincss2.html: Added.
+        * http/tests/security/resources/xorigincss3.html: Added.
+        * http/tests/security/resources/xorigincss4.html: Added.
+        * http/tests/security/resources/xorigincss5.html: Added.
+        * http/tests/security/resources/xorigincss6.html: Added.
+
 2010-01-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

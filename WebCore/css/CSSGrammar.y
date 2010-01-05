@@ -386,7 +386,9 @@ valid_rule:
   ;
 
 rule:
-    valid_rule
+    valid_rule {
+        static_cast<CSSParser*>(parser)->m_hadSyntacticallyValidCSSRule = true;
+    }
   | invalid_rule
   | invalid_at
   ;
@@ -1477,8 +1479,12 @@ invalid_rule:
     ;
 
 invalid_block:
-    '{' error invalid_block_list error closing_brace
-  | '{' error closing_brace
+    '{' error invalid_block_list error closing_brace {
+        static_cast<CSSParser*>(parser)->invalidBlockHit();
+    }
+  | '{' error closing_brace {
+        static_cast<CSSParser*>(parser)->invalidBlockHit();
+    }
     ;
 
 invalid_block_list:

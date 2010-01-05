@@ -42,6 +42,7 @@ CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, con
     , m_loadCompleted(false)
     , m_strictParsing(!parentSheet || parentSheet->useStrictParsing())
     , m_isUserStyleSheet(parentSheet ? parentSheet->isUserStyleSheet() : false)
+    , m_hasSyntacticallyValidCSSHeader(true)
 {
 }
 
@@ -53,6 +54,7 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const String&
     , m_loadCompleted(false)
     , m_strictParsing(false)
     , m_isUserStyleSheet(false)
+    , m_hasSyntacticallyValidCSSHeader(true)
 {
 }
 
@@ -62,6 +64,7 @@ CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const Strin
     , m_charset(charset)
     , m_loadCompleted(false)
     , m_strictParsing(!ownerRule || ownerRule->useStrictParsing())
+    , m_hasSyntacticallyValidCSSHeader(true)
 {
     CSSStyleSheet* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
     m_doc = parentSheet ? parentSheet->doc() : 0;

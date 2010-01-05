@@ -1,0 +1,7 @@
+LINK Cross-origin, HTML, valid: rgb(255, 255, 0)
+LINK + IMPORT Cross-origin, HTML, invalid: rgba(0, 0, 0, 0)
+LINK Cross-origin, CSS, invalid: rgb(255, 255, 0)
+LINK Same-origin, HTML, invalid: rgb(255, 255, 0)
+IMPORT Cross-origin, HTML, valid: rgb(255, 255, 0)
+IMPORT Cross-origin, CSS, invalid: rgb(255, 255, 0)
+IMPORT Same-origin, HTML, invalid: rgb(255, 255, 0)

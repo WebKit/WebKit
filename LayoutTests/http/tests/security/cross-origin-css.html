@@ -1,0 +1,47 @@
+<html>
+<head>
+<link rel="stylesheet"
+      href="resources/redir.php?url=http://localhost:8000/security/resources/xorigincss1.html"></link>
+<link rel="stylesheet"
+      type="text/css"
+      href="resources/redir.php?url=http://localhost:8000/security/resources/xorigincss2.html"></link>
+<link rel="stylesheet"
+      href="resources/redir.php?url=http://localhost:8000/security/resources/xorigincss1.css"></link>
+<link rel="stylesheet"
+      href="resources/xorigincss3.html"></link>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.waitUntilDone();
+  layoutTestController.dumpAsText();
+}
+
+window.onload = function() {
+  ele = document.getElementById("id1");
+  ele.innerText = "LINK Cross-origin, HTML, valid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id2");
+  ele.innerText = "LINK + IMPORT Cross-origin, HTML, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id3");
+  ele.innerText = "LINK Cross-origin, CSS, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id4");
+  ele.innerText = "LINK Same-origin, HTML, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id5");
+  ele.innerText = "IMPORT Cross-origin, HTML, valid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id6");
+  ele.innerText = "IMPORT Cross-origin, CSS, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+  ele = document.getElementById("id7");
+  ele.innerText = "IMPORT Same-origin, HTML, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
+
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+</script>
+<style>
+/* Deliberately reuse the same file / class / id on this first one */
+@import "resources/redir.php?url=http://localhost:8000/security/resources/xorigincss2.html";
+@import "resources/redir.php?url=http://localhost:8000/security/resources/xorigincss4.html";
+@import "resources/redir.php?url=http://localhost:8000/security/resources/xorigincss2.css";
+@import "resources/xorigincss5.html";
+</style>
+</head>
+<body><div id="id1" class="id1"></div><div id="id2" class="id2"></div><div id="id3" class="id3"></div><div id="id4" class="id4"></div><div id="id5" class="id5"></div><div id="id6" class="id6"></div><div id="id7" class="id7"></div></body>
+</html>

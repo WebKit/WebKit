@@ -71,11 +71,11 @@ String CachedCSSStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
     
-const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType) const 
+const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValidMIMEType) const 
 { 
     ASSERT(!isPurgeable());
 
-    if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType))
+    if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType, hasValidMIMEType))
         return String();
     
     if (!m_decodedSheetText.isNull())
@@ -122,12 +122,12 @@ void CachedCSSStyleSheet::error()
     checkNotify();
 }
 
-bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType) const
+bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const
 {
     if (errorOccurred())
         return false;
         
-    if (!enforceMIMEType)
+    if (!enforceMIMEType && !hasValidMIMEType)
         return true;
 
     // This check exactly matches Firefox.  Note that we grab the Content-Type
@@ -138,7 +138,12 @@ bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType) const
     // This code defaults to allowing the stylesheet for non-HTTP protocols so
     // folks can use standards mode for local HTML documents.
     String mimeType = extractMIMETypeFromMediaType(response().httpHeaderField("Content-Type"));
-    return mimeType.isEmpty() || equalIgnoringCase(mimeType, "text/css") || equalIgnoringCase(mimeType, "application/x-unknown-content-type");
+    bool typeOK = mimeType.isEmpty() || equalIgnoringCase(mimeType, "text/css") || equalIgnoringCase(mimeType, "application/x-unknown-content-type");
+    if (hasValidMIMEType)
+        *hasValidMIMEType = typeOK;
+    if (!enforceMIMEType)
+        return true;
+    return typeOK;
 }
  
 }

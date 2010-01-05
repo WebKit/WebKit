@@ -139,6 +139,7 @@ CSSParser::CSSParser(bool strictParsing)
     , m_currentShorthand(0)
     , m_implicitShorthand(false)
     , m_hasFontFaceOnlyValues(false)
+    , m_hadSyntacticallyValidCSSRule(false)
     , m_defaultNamespace(starAtom)
     , m_data(0)
     , yy_start(1)
@@ -5231,6 +5232,12 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
     WebKitCSSKeyframeRule* keyframePtr = keyframe.get();
     m_parsedStyleObjects.append(keyframe.release());
     return keyframePtr;
+}
+
+void CSSParser::invalidBlockHit()
+{
+    if (m_styleSheet && !m_hadSyntacticallyValidCSSRule)
+        m_styleSheet->setHasSyntacticallyValidCSSHeader(false);
 }
 
 static int cssPropertyID(const UChar* propertyName, unsigned length)

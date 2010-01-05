@@ -260,6 +260,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
 
     bool strictParsing = !document()->inCompatMode();
     bool enforceMIMEType = strictParsing;
+    bool crossOriginCSS = false;
+    bool validMIMEType = false;
     bool needsSiteSpecificQuirks = document()->page() && document()->page()->settings()->needsSiteSpecificQuirks();
 
     // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
@@ -275,8 +277,19 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
     }
 #endif
 
-    String sheetText = sheet->sheetText(enforceMIMEType);
+    String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
     m_sheet->parseString(sheetText, strictParsing);
+
+    // If we're loading a stylesheet cross-origin, and the MIME type is not
+    // standard, require the CSS to at least start with a syntactically
+    // valid CSS rule.
+    // This prevents an attacker playing games by injecting CSS strings into
+    // HTML, XML, JSON, etc. etc.
+    if (!document()->securityOrigin()->canRequest(KURL(ParsedURLString, url)))
+        crossOriginCSS = true;
+
+    if (crossOriginCSS && !validMIMEType && !m_sheet->hasSyntacticallyValidCSSHeader())
+        m_sheet = CSSStyleSheet::create(this, url, charset);
 
     if (strictParsing && needsSiteSpecificQuirks) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
