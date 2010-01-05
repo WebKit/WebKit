@@ -45,6 +45,7 @@ javascriptcore_built_nosources += \
 
 javascriptcore_sources += \
 	JavaScriptCore/API/APICast.h \
+	JavaScriptCore/API/APIShims.h \
 	JavaScriptCore/API/JSBase.cpp \
 	JavaScriptCore/API/JSBasePrivate.h \
 	JavaScriptCore/API/JSCallbackConstructor.cpp \
@@ -211,6 +212,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/JSTypeInfo.h \
 	JavaScriptCore/runtime/WeakGCMap.h \
+	JavaScriptCore/runtime/WeakGCPtr.h \
 	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
 	JavaScriptCore/wrec/Escapes.h \

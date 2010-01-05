@@ -459,10 +459,11 @@ typelibs_DATA += $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.ty
 %.typelib: %.gir $(G_IR_COMPILER)
 	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(top_srcdir)/WebKit/gtk $< -o $@
 
-EXTRA_DIST += $(JSCORE_GIRSOURCES)
 CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
 
 endif
+
+EXTRA_DIST += WebKit/gtk/JSCore-1.0.gir
 
 WEBKIT_MARSHAL = $(GENSOURCES)/webkitmarshal
 WEBKIT_MARSHAL_LIST = $(top_srcdir)/WebKit/gtk/webkitmarshal.list

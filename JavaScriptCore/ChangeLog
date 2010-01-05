@@ -1,3 +1,9 @@
+2010-01-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add missing files to the build system - make distcheck build fix.
+
+        * GNUmakefile.am:
+
 2010-01-04  Gavin Barraclough <barraclough@apple.com>
 
         Reviewed by Sam Weinig, additional coding by Mark Rowe.
