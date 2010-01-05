@@ -1,3 +1,11 @@
+2010-01-04  Gavin Barraclough <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a forwarding header so that StringHashFunctions.h can be found.
+
+        * ForwardingHeaders/wtf/StringHashFunctions.h: Added.
+
 2010-01-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Ada Chan and Mark Rowe.

@@ -24,8 +24,8 @@
 
 #include "AtomicString.h"
 #include "PlatformString.h"
-#include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
+#include <wtf/StringHashFunctions.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {

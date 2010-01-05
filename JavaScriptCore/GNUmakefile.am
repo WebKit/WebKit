@@ -227,7 +227,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/ByteArray.cpp \
 	JavaScriptCore/wtf/ByteArray.h \
 	JavaScriptCore/wtf/CrossThreadRefCounted.h \
-	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/CurrentTime.cpp \
 	JavaScriptCore/wtf/CurrentTime.h \
 	JavaScriptCore/wtf/DateMath.cpp \
@@ -254,6 +253,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Noncopyable.h \
 	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
+	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/OwnPtrCommon.h \
 	JavaScriptCore/wtf/PassOwnPtr.h \
@@ -273,12 +273,13 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/SegmentedVector.h \
 	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \
+	JavaScriptCore/wtf/StringHashFunctions.h \
 	JavaScriptCore/wtf/TCPackedCache.h \
 	JavaScriptCore/wtf/TCPageMap.h \
 	JavaScriptCore/wtf/TCSpinLock.h \
 	JavaScriptCore/wtf/ThreadSpecific.h \
-	JavaScriptCore/wtf/Threading.h \
 	JavaScriptCore/wtf/Threading.cpp \
+	JavaScriptCore/wtf/Threading.h \
 	JavaScriptCore/wtf/ThreadingPthreads.cpp \
 	JavaScriptCore/wtf/TypeTraits.cpp \
 	JavaScriptCore/wtf/TypeTraits.h \
