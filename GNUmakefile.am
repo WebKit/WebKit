@@ -48,6 +48,7 @@ GTESTER_REPORT = gtester-report
 bin_PROGRAMS :=
 noinst_PROGRAMS :=
 noinst_HEADERS :=
+noinst_LTLIBRARIES :=
 lib_LIBRARIES :=
 IDL_BINDINGS :=
 TEST_PROGS :=
@@ -152,9 +153,8 @@ lib_LTLIBRARIES = \
 	libwebkit-1.0.la
 
 # Convenience libraries
-noinst_LTLIBRARIES = \
-	libJavaScriptCore.la \
-	libWebCore.la
+noinst_LTLIBRARIES += \
+	libJavaScriptCore.la
 
 # JavaScriptCore
 javascriptcore_cppflags += \
@@ -196,30 +196,12 @@ libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-# WebCore
-nodist_EXTRA_libWebCore_la_SOURCES = \
+# WebKit
+nodist_EXTRA_libwebkit_1_0_la_SOURCES = \
 	$(webcore_built_nosources)
 
-nodist_libWebCore_la_SOURCES = \
-	$(webcore_built_sources)
-
-libWebCore_la_SOURCES = \
-	$(webcore_sources) \
-	$(webcoregtk_sources)
-
-libWebCore_la_CXXFLAGS = \
-	$(global_cxxflags) \
-	$(corekit_cflags)
-
-libWebCore_la_CFLAGS = \
-	$(global_cflags) \
-	$(corekit_cflags)
-
-libWebCore_la_CPPFLAGS = \
-	$(corekit_cppflags)
-
-# WebKit
 nodist_libwebkit_1_0_la_SOURCES = \
+	$(webcore_built_sources) \
 	$(webkitgtk_built_sources)
 
 libwebkit_1_0_ladir = $(prefix)/include/webkit-1.0/webkit
@@ -228,6 +210,8 @@ libwebkit_1_0_la_HEADERS = \
 	WebKit/gtk/webkit/webkitenumtypes.h
 
 libwebkit_1_0_la_SOURCES = \
+	$(webcore_sources) \
+	$(webcoregtk_sources) \
 	$(webkitgtk_sources)
 
 libwebkit_1_0_la_CXXFLAGS = \
@@ -251,7 +235,6 @@ libwebkit_1_0_la_LDFLAGS = \
 libwebkit_1_0_la_LIBADD = \
 	-lpthread \
 	libJavaScriptCore.la \
-	libWebCore.la \
 	libWebCoreJS.la \
 	$(webcore_ldflags) \
 	$(CAIRO_LIBS) \

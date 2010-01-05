@@ -3523,6 +3523,12 @@ webcore_built_nosources += $(patsubst %.idl,DerivedSources/JS%.h,$(notdir $(IDL_
 
 webcore_built_nosources += $(patsubst %.idl,DerivedSources/JS%.cpp,$(notdir $(IDL_BINDINGS_JS)))
 
+webcore_built_objects = := $(patsubst %.cpp,%.lo,$(webcore_built_nosources))
+
+$(webcore_built_objects): AM_CPPFLAGS+=$(corekit_cppflags)
+
+$(webcore_built_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
+
 libWebCoreJS_objects := $(patsubst %.idl,DerivedSources/JS%.lo,$(notdir $(IDL_BINDINGS_JS)))
 
 libWebCoreJS_depfiles := $(patsubst %.idl,DerivedSources/$(DEPDIR)/JS%.Plo,$(notdir $(IDL_BINDINGS_JS)))
@@ -3532,9 +3538,9 @@ libWebCoreJS_depfiles += $(patsubst %.lo,$(DEPDIR)/%.Plo,$(libWebCoreJS_objects)
 
 -include $(libWebCoreJS_depfiles)
 
-$(libWebCoreJS_objects): AM_CPPFLAGS+=$(libWebCore_la_CPPFLAGS)
+$(libWebCoreJS_objects): AM_CPPFLAGS+=$(corekit_cppflags)
 
-$(libWebCoreJS_objects): AM_CXXFLAGS+=$(libWebCore_la_CXXFLAGS)
+$(libWebCoreJS_objects): AM_CXXFLAGS+=$(libwebkit_1_0_la_CXXFLAGS)
 
 libWebCoreJS.la: $(libWebCoreJS_objects)
 	$(CXXLINK) $(libWebCoreJS_objects) $(LIBS)

@@ -1,3 +1,16 @@
+2010-01-05  Gustavo Noronha Silva <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Based on idea and original patch by Evan Martin.
+
+        Remove libWebCore intermediate library, to improve link time.
+
+        [GTK] Build time must be reduced
+        https://bugs.webkit.org/show_bug.cgi?id=32921
+
+        * GNUmakefile.am:
+
 2010-01-05  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
