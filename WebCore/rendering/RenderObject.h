@@ -570,6 +570,8 @@ public:
     // Build an array of quads in absolute coords for line boxes
     virtual void absoluteQuads(Vector<FloatQuad>&) { }
 
+    void absoluteFocusRingQuads(Vector<FloatQuad>&);
+
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);
 

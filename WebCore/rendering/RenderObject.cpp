@@ -1076,6 +1076,23 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
     return result;
 }
 
+void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
+{
+    Vector<IntRect> rects;
+    // FIXME: addFocusRingRects() needs to be passed this transform-unaware
+    // localToAbsolute() offset here because RenderInline::addFocusRingRects()
+    // implicitly assumes that. This doesn't work correctly with transformed
+    // descendants.
+    FloatPoint absolutePoint = localToAbsolute();
+    addFocusRingRects(rects, absolutePoint.x(), absolutePoint.y());
+    size_t count = rects.size();
+    for (size_t i = 0; i < count; ++i) {
+        IntRect rect = rects[i];
+        rect.move(-absolutePoint.x(), -absolutePoint.y());
+        quads.append(localToAbsoluteQuad(FloatQuad(rect)));
+    }
+}
+
 void RenderObject::addAbsoluteRectForLayer(IntRect& result)
 {
     if (hasLayer())

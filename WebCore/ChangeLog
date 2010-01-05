@@ -1,3 +1,20 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6655695> REGRESSION: VoiceOver is not highlighting some web elements correctly
+        <rdar://problem/7397558> REGRESSION: AXImages inside of AXLink cause AXLink to have wrong bounds
+
+        Test: accessibility/dimensions-include-descendants.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect): Use absoluteFocusRingQuads()
+        for non-text renderers. The focus ring encompasses descendants, which is
+        what we want for the accessibility indicator.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteFocusRingQuads): Added.
+        * rendering/RenderObject.h:
+
 2010-01-04  Ojan Vafai  <ojan@ojanmacpro.sfo.corp.google.com>
 
         Reviewed by Dan Bernstein.

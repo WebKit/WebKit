@@ -1139,7 +1139,10 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
         obj = obj->node()->renderer();
     
     Vector<FloatQuad> quads;
-    obj->absoluteQuads(quads);
+    if (obj->isText())
+        obj->absoluteQuads(quads);
+    else
+        obj->absoluteFocusRingQuads(quads);
     const size_t n = quads.size();
     if (!n)
         return IntRect();

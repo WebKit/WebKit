@@ -1,3 +1,13 @@
+2010-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6655695> REGRESSION: VoiceOver is not highlighting some web elements correctly
+        <rdar://problem/7397558> REGRESSION: AXImages inside of AXLink cause AXLink to have wrong bounds
+
+        * accessibility/dimensions-include-descendants-expected.txt: Added.
+        * accessibility/dimensions-include-descendants.html: Added.
+
 2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of <select> elements is wrong
