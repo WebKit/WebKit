@@ -1,3 +1,17 @@
+2010-01-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Minor improvements to test-webkit-scripts, as suggested
+        by an earlier review.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33125
+
+        * Scripts/test-webkit-scripts:
+          - Used OptionParser class instead of getopt.getopt().
+          - Created main() method for __main__ block.
+          - Enclosed functions in a class.
+
 2010-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         No review. Fix DRT breakage on Tiger/Leopard.

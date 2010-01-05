@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (C) 2009 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,56 +28,58 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Tests WebKit Perl and Python scripts.
+"""Run unit tests of WebKit's Perl and Python scripts."""
 
-Syntax: test-webkit-scripts [--all]
+# The docstring above is passed as the "description" to the OptionParser
+# used in this script's __main__ block.
+#
+# For the command options supported by this script, see the code below
+# that instantiates the OptionParser class, or else pass --help
+# while running this script (since argument help is auto-generated).
 
-    --all    Runs all available tests, including those suppressed
-             by default.
-"""
-
-import getopt
 import os
 import subprocess
 import sys
+from optparse import OptionParser
 
-def test_script(title, script_path, args=None):
-    """Run the given test command."""
-    print('Testing %s:' % title)
+class ScriptsTester(object):
 
-    call_args = [script_path]
-    if args is not None:
-        call_args.extend(args)
-    subprocess.call(call_args)
-    print(70 * "*") # dividing line
+    """Supports running unit tests of WebKit scripts."""
+
+    def __init__(self, scripts_directory):
+        self.scripts_directory = scripts_directory
+
+    def script_path(self, script_file_name):
+        """Return an absolute path to the given script."""
+        return os.path.join(self.scripts_directory, script_file_name)
+
+    def run_test_script(self, script_title, script_path, args=None):
+        """Run the given test script."""
+        print('Testing %s:' % script_title)
+        call_args = [script_path]
+        if args:
+            call_args.extend(args)
+        subprocess.call(call_args)
+        print(70 * "*") # dividing line
+
+    def main(self):
+        parser = OptionParser(description=__doc__)
+        parser.add_option('-a', '--all', dest='all', action='store_true',
+                          default=False, help='run all available tests, '
+                          'including those suppressed by default')
+        (options, args) = parser.parse_args()
+
+        self.run_test_script('Perl scripts', self.script_path('test-webkitperl'))
+        self.run_test_script('Python scripts', self.script_path('test-webkitpy'),
+                             ['--all'] if options.all else None)
+
+        # FIXME: Display a cumulative indication of success or failure.
+        #        In addition, call sys.exit() with 0 or 1 depending on that
+        #        cumulative success or failure.
+        print('Note: Perl and Python results appear separately above.')
+
 
 if __name__ == '__main__':
-
-    try:
-        (opts, filenames) = getopt.getopt(sys.argv[1:], '', ['help', 'all'])
-    except getopt.GetoptError:
-        print(__doc__)
-        sys.exit('Error: invalid option.')
-
-    should_include_all = False
-
-    for (opt, val) in opts:
-        if opt == '--help':
-            print(__doc__)
-            sys.exit()
-        elif opt == '--all':
-            should_include_all = True
-
-    # Use absolute paths so this script can be run from any directory.
-    scripts_directory = sys.path[0]
-
-    test_script('Perl scripts', os.path.join(scripts_directory, 'test-webkitperl'))
-
-    test_script('Python scripts',
-                os.path.join(scripts_directory, 'test-webkitpy'),
-                ['--all'] if should_include_all else None)
-
-    # FIXME: Display a cumulative indication of success or failure.
-    #        In addition, call sys.exit() with 0 or 1 depending on that
-    #        cumulative success or failure.
-    print('Note: Perl and Python results appear separately above.')
+    # The scripts directory is the directory containing this file.
+    tester = ScriptsTester(os.path.dirname(__file__))
+    tester.main()
