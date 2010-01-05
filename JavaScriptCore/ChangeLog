@@ -1,3 +1,12 @@
+2010-01-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed build fix for Gtk+
+
+        Don't use // comments in Platform.h, at least some of them seem to make the version of GCC
+        used on the Gtk buildbot unhappy.
+
+        * wtf/Platform.h:
+
 2010-01-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Fisher.

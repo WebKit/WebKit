@@ -271,7 +271,7 @@
 #  endif
 #elif CPU(ARM_TRADITIONAL) && CPU(ARM_THUMB2) /* Sanity Check */
 #  error "Cannot use both of WTF_CPU_ARM_TRADITIONAL and WTF_CPU_ARM_THUMB2 platforms"
-#endif // !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2)
+#endif /* !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2) */
 
 #endif /* ARM */
 
@@ -294,7 +294,7 @@
 #ifdef __APPLE__
 #define WTF_OS_DARWIN 1
 
-// FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system
+/* FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system */
 #include <AvailabilityMacros.h>
 #if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 #define BUILDING_ON_TIGER 1
@@ -397,7 +397,7 @@
 
 /* Operating environments */
 
-// FIXME: these are all mixes of OS, operating environment and policy choices. */
+/* FIXME: these are all mixes of OS, operating environment and policy choices. */
 /* PLATFORM(CHROMIUM) */
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
@@ -422,7 +422,7 @@
 #endif
 
 /* PLATFORM(IPHONE) */
-// FIXME: this is sometimes used as an OS switch and sometimes for higher-level things
+/* FIXME: this is sometimes used as an OS switch and sometimes for higher-level things */
 #if (defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)
 #define WTF_PLATFORM_IPHONE 1
 #endif
@@ -440,8 +440,8 @@
 #endif
 
 /* PLATFORM(ANDROID) */
-// FIXME: this is sometimes used as an OS() switch, and other times to drive
-// policy choices
+/* FIXME: this is sometimes used as an OS() switch, and other times to drive
+   policy choices */
 #if defined(ANDROID)
 #define WTF_PLATFORM_ANDROID 1
 #endif
@@ -509,16 +509,16 @@
 #define ENABLE_WML                         1
 #define HAVE_ACCESSIBILITY                 0
 
-#define NOMINMAX       // Windows min and max conflict with standard macros
-#define NOSHLWAPI      // shlwapi.h not available on WinCe
+#define NOMINMAX       /* Windows min and max conflict with standard macros */
+#define NOSHLWAPI      /* shlwapi.h not available on WinCe */
 
-// MSDN documentation says these functions are provided with uspce.lib.  But we cannot find this file.
-#define __usp10__      // disable "usp10.h"
+/* MSDN documentation says these functions are provided with uspce.lib.  But we cannot find this file. */
+#define __usp10__      /* disable "usp10.h" */
 
-#define _INC_ASSERT    // disable "assert.h"
+#define _INC_ASSERT    /* disable "assert.h" */
 #define assert(x)
 
-// _countof is only included in CE6; for CE5 we need to define it ourself
+/* _countof is only included in CE6; for CE5 we need to define it ourself */
 #ifndef _countof
 #define _countof(x) (sizeof(x) / sizeof((x)[0]))
 #endif
@@ -585,8 +585,8 @@
 #define USE_SYSTEM_MALLOC 1
 #define ENABLE_MAC_JAVA_BRIDGE 1
 #define LOG_DISABLED 1
-// Prevents Webkit from drawing the caret in textfields and textareas
-// This prevents unnecessary invals.
+/* Prevents Webkit from drawing the caret in textfields and textareas
+   This prevents unnecessary invals. */
 #define ENABLE_TEXT_CARET 1
 #define ENABLE_JAVASCRIPT_DEBUGGER 0
 #endif
