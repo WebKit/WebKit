@@ -1,3 +1,29 @@
+2010-01-05  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] fix DRT link failures on --no-svg builds when only making changes to DRT
+        
+        If you're working from a --minimal or --no-svg build and make changes to the
+        DRT, then recompile, the build will fail.
+        
+        This is because the current behavior at build time is to assume that the
+        previous Qt build supported SVG and consequently delete libQtWebKit.so.
+        Unfortunately, just deleting libQtWebKit.so will not cause the library to
+        re-link. Instead the build will see libQtWebKit.so.4 and co., pass over the
+        linking phase, and attempt to link the DRT with libQtWebKit.so absent. This
+        results in a link failure on the DRT.
+        
+        Since re-linking libQtWebKit can take up to ten minutes and should be avoided
+        in cases where not actually required, remove the assumption that
+        the previous Qt build supported SVG, and amend the symbol detection to look for
+        a symbol name that is not present in SVG builds. Currently webkitdirs.pm looks
+        for 'SVGElement' but even non-SVG builds contain the symbol 'isSVGElement'.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32992
+
+        * Scripts/webkitdirs.pm:
+
 2010-01-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by David Kilzer.

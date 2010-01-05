@@ -621,15 +621,12 @@ sub hasSVGSupport
 {
     my $path = shift;
 
-    if (isQt()) {
-        return 1;
-    }
-    
     if (isWx()) {
         return 0;
     }
 
-    return libraryContainsSymbol($path, "SVGElement");
+    # We used to look for SVGElement but isSVGElement is a valid symbol in --no-svg builds.
+    return libraryContainsSymbol($path, "SVGDefsElement");
 }
 
 sub removeLibraryDependingOnSVG
