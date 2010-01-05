@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -46,7 +47,7 @@ void V8Attr::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     String attrValue = toWebCoreStringWithNullCheck(value);
     Element* ownerElement = imp->ownerElement();
 
-    if (ownerElement && !allowSettingSrcToJavascriptURL(ownerElement, imp->name(), attrValue))
+    if (ownerElement && !V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), ownerElement, imp->name(), attrValue))
         return;
 
     ExceptionCode ec = 0;

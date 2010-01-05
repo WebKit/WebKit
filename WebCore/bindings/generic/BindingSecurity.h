@@ -32,7 +32,10 @@
 #define BindingSecurity_h
 
 #include "BindingSecurityBase.h"
+#include "CSSHelper.h"
+#include "Element.h"
 #include "GenericBinding.h"
+#include "HTMLFrameElementBase.h"
 
 namespace WebCore {
 
@@ -50,6 +53,9 @@ public:
     // Check if it is safe to access the given node from the
     // current security context.
     static bool checkNodeSecurity(State<Binding>*, Node* target);
+
+    static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, String value);
+    static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, String name, String value);
 
 private:
     explicit BindingSecurity() {}
@@ -100,6 +106,25 @@ bool BindingSecurity<Binding>::checkNodeSecurity(State<Binding>* state, Node* no
         return false;
 
     return canAccessFrame(state, target, true);
+}
+
+template <class Binding>
+bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, String value)
+{
+    if (protocolIsJavaScript(deprecatedParseURL(value))) {
+        Node* contentDoc = frame->contentDocument();
+        if (contentDoc && !checkNodeSecurity(state, contentDoc))
+            return false;
+    }
+    return true;
+}
+
+template <class Binding>
+bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* state, Element* element, String name, String value)
+{
+    if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
+        return allowSettingFrameSrcToJavascriptUrl(state, static_cast<HTMLFrameElementBase*>(element), value);
+    return true;
 }
 
 }

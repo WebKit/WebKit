@@ -78,9 +78,6 @@ namespace WebCore {
     class String;
     class V8Proxy;
 
-    bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase*, String value);
-    bool allowSettingSrcToJavascriptURL(Element*, String name, String value);
-
     class V8Custom {
     public:
         // Constants.

@@ -1,3 +1,30 @@
+2010-01-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Move allowSetting{Frame}SrcToJavascriptUrl from V8Custom to BindingSecurity and
+        remove the v8-specific pieces.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33182
+
+        * bindings/BindingSecurity.h:
+        (WebCore::::allowSettingFrameSrcToJavascriptUrl): Moved from V8CustomBinding.cpp.
+        (WebCore::::allowSettingSrcToJavascriptURL): Moved from V8CustomBinding.cpp.
+        * bindings/v8/custom/V8AttrCustom.cpp:
+        (WebCore::V8Attr::valueAccessorSetter):
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::V8Element::setAttributeCallback):
+        (WebCore::V8Element::setAttributeNodeCallback):
+        (WebCore::V8Element::setAttributeNSCallback):
+        (WebCore::V8Element::setAttributeNodeNSCallback):
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        (WebCore::V8HTMLFrameElement::srcAccessorSetter):
+        (WebCore::V8HTMLFrameElement::locationAccessorSetter):
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
+        (WebCore::V8HTMLIFrameElement::srcAccessorSetter):
+
 2010-01-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

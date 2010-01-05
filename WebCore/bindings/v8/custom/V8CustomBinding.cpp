@@ -49,23 +49,6 @@
 
 namespace WebCore {
 
-bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase* frame, String value)
-{
-    if (protocolIs(deprecatedParseURL(value), "javascript")) {
-        Node* contentDoc = frame->contentDocument();
-        if (contentDoc && !V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), contentDoc))
-            return false;
-    }
-    return true;
-}
-
-bool allowSettingSrcToJavascriptURL(Element* element, String name, String value)
-{
-    if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
-        return allowSettingFrameSrcToJavascriptUrl(static_cast<HTMLFrameElementBase*>(element), value);
-    return true;
-}
-
 // --------------- Security Checks -------------------------
 INDEXED_ACCESS_CHECK(History)
 {
