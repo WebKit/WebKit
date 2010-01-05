@@ -120,6 +120,7 @@
 #include "SubstituteData.h"
 #include "TextAffinity.h"
 #include "TextIterator.h"
+#include "WebAnimationControllerImpl.h"
 #include "WebConsoleMessage.h"
 #include "WebDataSourceImpl.h"
 #include "WebDocument.h"
@@ -550,6 +551,11 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
             temp[i] = static_cast<HTMLFormElement*>(node);
     }
     results.swap(temp);
+}
+
+WebAnimationController* WebFrameImpl::animationController()
+{
+    return &m_animationController;
 }
 
 WebSecurityOrigin WebFrameImpl::securityOrigin() const
@@ -1482,6 +1488,7 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_framesScopingCount(-1)
     , m_scopingComplete(false)
     , m_nextInvalidateAfter(0)
+    , m_animationController(this)
 {
     ChromiumBridge::incrementStatsCounter(webFrameActiveCount);
     m_liveObjectCount++;
