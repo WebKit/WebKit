@@ -1,3 +1,13 @@
+2010-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added test for use of BarInfo object after a frame is no longer
+        associated with a web page.
+
+        * fast/dom/Window/BarInfo-after-frame-removed-expected.txt: Added.
+        * fast/dom/Window/BarInfo-after-frame-removed.html: Added.
+
 2010-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

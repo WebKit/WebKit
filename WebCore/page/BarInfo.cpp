@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,23 +60,25 @@ bool BarInfo::visible() const
 {
     if (!m_frame)
         return false;
+    Page* page = m_frame->page();
+    if (!page)
+        return false;
 
     switch (m_type) {
     case Locationbar:
-        return m_frame->page()->chrome()->toolbarsVisible();
-    case Toolbar:
-        return m_frame->page()->chrome()->toolbarsVisible();
     case Personalbar:
-        return m_frame->page()->chrome()->toolbarsVisible();
+    case Toolbar:
+        return page->chrome()->toolbarsVisible();
     case Menubar:
-        return m_frame->page()->chrome()->menubarVisible();
+        return page->chrome()->menubarVisible();
     case Scrollbars:
-        return m_frame->page()->chrome()->scrollbarsVisible();
+        return page->chrome()->scrollbarsVisible();
     case Statusbar:
-        return m_frame->page()->chrome()->statusbarVisible();
-    default:
-        return false;
+        return page->chrome()->statusbarVisible();
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore
