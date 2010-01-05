@@ -1,3 +1,27 @@
+2010-01-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of <https://bugs.webkit.org/show_bug.cgi?id=32568>.
+        Web Inspector: Context Menus should be used in more places.
+        
+        Add context menus to handle the interaction with breakpoints in the Source Frame. Currently
+        we use left click to add/disable/remove breakpoints, and left click to edit (for conditional
+        breakpoints), but this is hard to discover and behaves differently than Xcode.
+        
+        Change the behavior to be more like Xcode, left click adds a breakpoint if there isn't one, and
+        removes it if there is one.
+        
+        On the context menu, if there is no breakpoint there, we have Add Breakpoint, and Add Conditional
+        Breakpoint. If there is a breakpoint there, we add entries for Edit Breakpoint (edit
+        the condition), Remove Breakpoint, and Enable/Disable Breakpoint (based on the current state).
+
+        * English.lproj/localizedStrings.js: Added localized context menu entries.
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._documentContextMenu.addAndEditBreakpoint):
+        (WebInspector.SourceFrame.prototype._documentContextMenu): Added context menu entries and handlers.
+        (WebInspector.SourceFrame.prototype._documentMouseDown): Changed left click behavior (Add -> Remove).
+
 2010-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.

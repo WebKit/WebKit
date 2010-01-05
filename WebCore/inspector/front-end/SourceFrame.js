@@ -310,16 +310,37 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!event.target.hasStyleClass("webkit-line-number"))
             return;
-        var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
-        if (!sourceRow._breakpointObject && this.addBreakpointDelegate)
-            this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
-
-        var breakpoint = sourceRow._breakpointObject;
-        if (!breakpoint)
+        if (!this.addBreakpointDelegate)
             return;
 
-        this._editBreakpointCondition(event.target, sourceRow, breakpoint);
-        event.preventDefault();
+        var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
+        var contextMenu = new WebInspector.ContextMenu();
+        
+        if (!sourceRow._breakpointObject && this.addBreakpointDelegate) {
+            var lineNumber = this.lineNumberForSourceRow(sourceRow);
+            // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this.addBreakpointDelegate.bind(this, lineNumber));
+
+            function addConditionalBreakpoint() 
+            {
+                this.addBreakpointDelegate(lineNumber);
+                var breakpoint = sourceRow._breakpointObject;
+                if (breakpoint)
+                    this._editBreakpointCondition(event.target, sourceRow, breakpoint);
+            }
+
+            contextMenu.appendItem(WebInspector.UIString("Add Conditional Breakpoint..."), addConditionalBreakpoint.bind(this));
+        } else if (sourceRow._breakpointObject) {
+            // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
+            contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), WebInspector.panels.scripts.removeBreakpoint.bind(WebInspector.panels.scripts, sourceRow._breakpointObject));
+            contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint..."), this._editBreakpointCondition.bind(this, event.target, sourceRow, sourceRow._breakpointObject));
+            if (sourceRow._breakpointObject.enabled)
+                contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), function() { sourceRow._breakpointObject.enabled = false; });
+            else
+                contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), function() { sourceRow._breakpointObject.enabled = true; });
+        }
+        
+        contextMenu.show(event);
     },
 
     _documentMouseDown: function(event)
@@ -329,9 +350,7 @@ WebInspector.SourceFrame.prototype = {
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
             return;
         var sourceRow = event.target.enclosingNodeOrSelfWithNodeName("tr");
-        if (sourceRow._breakpointObject && sourceRow._breakpointObject.enabled)
-            sourceRow._breakpointObject.enabled = false;
-        else if (sourceRow._breakpointObject)
+        if (sourceRow._breakpointObject)
             WebInspector.panels.scripts.removeBreakpoint(sourceRow._breakpointObject);
         else if (this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
