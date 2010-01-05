@@ -30,6 +30,7 @@
 
 import fileinput # inplace file editing for set_reviewer_in_changelog
 import re
+import textwrap
 
 # FIMXE: This doesn't really belong in this file, but we don't have a better home for it yet.
 # Maybe eventually a webkit_config.py?
@@ -40,6 +41,8 @@ def view_source_url(revision_number):
 class ChangeLog:
     def __init__(self, path):
         self.path = path
+
+    _changelog_indent = " " * 8
 
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
     date_line_regexp = re.compile('^(\d{4}-\d{2}-\d{2})' # Consume the date.
@@ -69,17 +72,38 @@ class ChangeLog:
         finally:
             changelog_file.close()
 
-    def update_for_revert(self, revision, bug_url=None):
-        reviewed_by_regexp = re.compile('Reviewed by NOBODY \(OOPS!\)\.')
+    # _wrap_line and _wrap_lines exist to work around http://bugs.python.org/issue1859
+    def _wrap_line(self, line):
+        return textwrap.fill(line,
+                             width=70,
+                             initial_indent=self._changelog_indent,
+                             break_long_words=False, # Don't break urls which may be longer than width.
+                             subsequent_indent=self._changelog_indent)
+
+    # Workaround as suggested by guido in http://bugs.python.org/issue1859#msg60040
+    def _wrap_lines(self, message):
+        wrapped_lines = [self._wrap_line(line) for line in message.splitlines()]
+        return "\n".join(wrapped_lines)
+
+    # This probably does not belong in changelogs.py
+    def _message_for_revert(self, revision, reason, bug_url):
+        message = "No review, rolling out r%s.\n" % revision
+        message += "%s\n" % view_source_url(revision)
+        if bug_url:
+            message += "%s\n" % bug_url
+        message += "\n" # Add an extra new line after the rollout links, before any reason.
+        if reason:
+            message += "%s\n\n" % reason
+        return self._wrap_lines(message)
+
+    def update_for_revert(self, revision, reason, bug_url=None):
+        reviewed_by_regexp = re.compile("%sReviewed by NOBODY \(OOPS!\)\." % self._changelog_indent)
         removing_boilerplate = False
         # inplace=1 creates a backup file and re-directs stdout to the file
         for line in fileinput.FileInput(self.path, inplace=1):
             if reviewed_by_regexp.search(line):
-                print reviewed_by_regexp.sub("No review, rolling out r%s." % revision, line),
-                print "        %s" % view_source_url(revision)
-                if bug_url:
-                    print "        %s" % bug_url
-                print # Add an extra new line after the rollout message.
+                message_lines = self._message_for_revert(revision, reason, bug_url)
+                print reviewed_by_regexp.sub(message_lines, line),
                 # Remove all the ChangeLog boilerplate between the Reviewed by line and the first changed file.
                 removing_boilerplate = True
             elif removing_boilerplate:

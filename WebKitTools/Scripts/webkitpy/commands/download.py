@@ -238,12 +238,14 @@ class Rollout(AbstractSequencedCommmand):
     name = "rollout"
     show_in_main_help = True
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
-    argument_names = "REVISION [BUGID]"
+    argument_names = "REVISION REASON"
     steps = [
         steps.CleanWorkingDirectory,
         steps.Update,
         steps.RevertRevision,
         steps.PrepareChangeLogForRevert,
+        steps.EditChangeLog,
+        steps.ConfirmDiff,
         steps.CompleteRollout,
     ]
 
@@ -262,6 +264,7 @@ class Rollout(AbstractSequencedCommmand):
 
     def execute(self, options, args, tool):
         revision = args[0]
+        reason = args[1]
         bug_id = self._parse_bug_id_from_revision_diff(tool, revision)
         if options.complete_rollout:
             if bug_id:
@@ -270,7 +273,8 @@ class Rollout(AbstractSequencedCommmand):
                 log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
 
         state = {
-            "revision": revision,
-            "bug_id": bug_id,
+            "revision" : revision,
+            "bug_id" : bug_id,
+            "reason" : reason,
         }
         self._sequence.run_and_handle_errors(tool, options, state)

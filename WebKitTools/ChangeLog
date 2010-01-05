@@ -1,3 +1,16 @@
+2010-01-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla-tool rollout should require a reason
+        https://bugs.webkit.org/show_bug.cgi?id=30810
+
+        * Scripts/webkitpy/changelogs.py: Add support for a reason, add auto-wrapping logic.
+        * Scripts/webkitpy/changelogs_unittest.py: Test reason support.
+        * Scripts/webkitpy/commands/download.py: rollout now requires a reason, remove unused BUGID argument
+        * Scripts/webkitpy/commands/download_unittest.py: pass required reason
+        * Scripts/webkitpy/steps/preparechangelogforrevert.py: pass reason to update_for_revert
+
 2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: <select> elements should broadcast value change events

@@ -124,11 +124,30 @@ class ChangeLogsTest(unittest.TestCase):
         os.remove(changelog_path)
         self.assertEquals(actual_contents, expected_contents)
 
+    _revert_message = """        No review, rolling out r12345.
+        http://trac.webkit.org/changeset/12345
+        http://example.com/123
+
+        This is a very long reason which should be long enough so that
+        _message_for_revert will need to wrap it.  We'll also include
+        a
+        https://veryveryveryveryverylongbugurl.com/reallylongbugthingy.cgi?bug_id=12354
+        link so that we can make sure we wrap that right too.
+"""
+
+    def test_message_for_revert(self):
+        changelog = ChangeLog("/fake/path")
+        long_reason = "This is a very long reason which should be long enough so that _message_for_revert will need to wrap it.  We'll also include a https://veryveryveryveryverylongbugurl.com/reallylongbugthingy.cgi?bug_id=12354 link so that we can make sure we wrap that right too."
+        message = changelog._message_for_revert(12345, long_reason, "http://example.com/123")
+        self.assertEquals(message, self._revert_message)
+
     _revert_entry_with_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r12345.
         http://trac.webkit.org/changeset/12345
         http://example.com/123
+
+        Reason
 
         * Scripts/bugzilla-tool:
 '''
@@ -137,6 +156,8 @@ class ChangeLogsTest(unittest.TestCase):
 
         No review, rolling out r12345.
         http://trac.webkit.org/changeset/12345
+
+        Reason
 
         * Scripts/bugzilla-tool:
 '''
@@ -151,8 +172,8 @@ class ChangeLogsTest(unittest.TestCase):
         self.assertEquals(actual_entry, expected_entry)
 
     def test_update_for_revert(self):
-        self._assert_update_for_revert_output([12345], self._revert_entry_without_bug_url)
-        self._assert_update_for_revert_output([12345, "http://example.com/123"], self._revert_entry_with_bug_url)
+        self._assert_update_for_revert_output([12345, "Reason"], self._revert_entry_without_bug_url)
+        self._assert_update_for_revert_output([12345, "Reason", "http://example.com/123"], self._revert_entry_with_bug_url)
 
 if __name__ == '__main__':
     unittest.main()

@@ -44,4 +44,6 @@ class PrepareChangeLogForRevert(AbstractStep):
         self._run_script("prepare-ChangeLog")
         bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
         for changelog_path in changelog_paths:
-            ChangeLog(changelog_path).update_for_revert(state["revision"], bug_url)
+            # FIXME: Seems we should prepare the message outside of changelogs.py and then just pass in
+            # text that we want to use to replace the reviewed by line.
+            ChangeLog(changelog_path).update_for_revert(state["revision"], state["reason"], bug_url)
