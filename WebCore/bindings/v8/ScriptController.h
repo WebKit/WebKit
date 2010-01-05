@@ -43,161 +43,162 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    class DOMWrapperWorld;
-    class Event;
-    class Frame;
-    class HTMLPlugInElement;
-    class ScriptSourceCode;
-    class ScriptState;
-    class String;
-    class Widget;
-    class XSSAuditor;
 
-    class ScriptController {
-    public:
-        ScriptController(Frame*);
-        ~ScriptController();
+class DOMWrapperWorld;
+class Event;
+class Frame;
+class HTMLPlugInElement;
+class ScriptSourceCode;
+class ScriptState;
+class String;
+class Widget;
+class XSSAuditor;
 
-        // FIXME: V8Proxy should either be folded into ScriptController
-        // or this accessor should be made JSProxy*
-        V8Proxy* proxy() { return m_proxy.get(); }
+class ScriptController {
+public:
+    ScriptController(Frame*);
+    ~ScriptController();
 
-        ScriptValue executeScript(const ScriptSourceCode&);
-        ScriptValue executeScript(const String& script, bool forceUserGesture = false);
+    // FIXME: V8Proxy should either be folded into ScriptController
+    // or this accessor should be made JSProxy*
+    V8Proxy* proxy() { return m_proxy.get(); }
 
-        // Returns true if argument is a JavaScript URL.
-        bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
+    ScriptValue executeScript(const ScriptSourceCode&);
+    ScriptValue executeScript(const String& script, bool forceUserGesture = false);
 
-        // This function must be called from the main thread. It is safe to call it repeatedly.
-        static void initializeThreading();
+    // Returns true if argument is a JavaScript URL.
+    bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
 
-        // Evaluate a script file in the environment of this proxy.
-        // If succeeded, 'succ' is set to true and result is returned
-        // as a string.
-        ScriptValue evaluate(const ScriptSourceCode&);
+    // This function must be called from the main thread. It is safe to call it repeatedly.
+    static void initializeThreading();
 
-        void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
+    // Evaluate a script file in the environment of this proxy.
+    // If succeeded, 'succ' is set to true and result is returned
+    // as a string.
+    ScriptValue evaluate(const ScriptSourceCode&);
 
-        // Executes JavaScript in an isolated world. The script gets its own global scope,
-        // its own prototypes for intrinsic JavaScript objects (String, Array, and so-on),
-        // and its own wrappers for all DOM nodes and DOM constructors.
-        //
-        // If an isolated world with the specified ID already exists, it is reused.
-        // Otherwise, a new world is created.
-        //
-        // If the worldID is 0, a new world is always created.
-        //
-        // FIXME: Get rid of extensionGroup here.
-        void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
+    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
 
-        // Masquerade 'this' as the windowShell.
-        // This is a bit of a hack, but provides reasonable compatibility
-        // with what JSC does as well.
-        ScriptController* windowShell(DOMWrapperWorld*) { return this; }
-        ScriptController* existingWindowShell(DOMWrapperWorld*) { return this; }
+    // Executes JavaScript in an isolated world. The script gets its own global scope,
+    // its own prototypes for intrinsic JavaScript objects (String, Array, and so-on),
+    // and its own wrappers for all DOM nodes and DOM constructors.
+    //
+    // If an isolated world with the specified ID already exists, it is reused.
+    // Otherwise, a new world is created.
+    //
+    // If the worldID is 0, a new world is always created.
+    //
+    // FIXME: Get rid of extensionGroup here.
+    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
 
-        XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
+    // Masquerade 'this' as the windowShell.
+    // This is a bit of a hack, but provides reasonable compatibility
+    // with what JSC does as well.
+    ScriptController* windowShell(DOMWrapperWorld*) { return this; }
+    ScriptController* existingWindowShell(DOMWrapperWorld*) { return this; }
 
-        void collectGarbage();
+    XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
-        // Notify V8 that the system is running low on memory.
-        void lowMemoryNotification();
+    void collectGarbage();
 
-        // Creates a property of the global object of a frame.
-        void bindToWindowObject(Frame*, const String& key, NPObject*);
+    // Notify V8 that the system is running low on memory.
+    void lowMemoryNotification();
 
-        PassScriptInstance createScriptInstanceForWidget(Widget*);
+    // Creates a property of the global object of a frame.
+    void bindToWindowObject(Frame*, const String& key, NPObject*);
 
-        // Check if the javascript engine has been initialized.
-        bool haveInterpreter() const;
+    PassScriptInstance createScriptInstanceForWidget(Widget*);
 
-        bool isEnabled() const;
+    // Check if the javascript engine has been initialized.
+    bool haveInterpreter() const;
 
-        // FIXME: void* is a compile hack.
-        void attachDebugger(void*);
+    bool isEnabled() const;
 
-        // --- Static methods assume we are running VM in single thread, ---
-        // --- and there is only one VM instance.                        ---
+    // FIXME: void* is a compile hack.
+    void attachDebugger(void*);
 
-        // Returns the frame for the entered context. See comments in
-        // V8Proxy::retrieveFrameForEnteredContext() for more information.
-        static Frame* retrieveFrameForEnteredContext();
+    // --- Static methods assume we are running VM in single thread, ---
+    // --- and there is only one VM instance.                        ---
 
-        // Returns the frame for the current context. See comments in
-        // V8Proxy::retrieveFrameForEnteredContext() for more information.
-        static Frame* retrieveFrameForCurrentContext();
+    // Returns the frame for the entered context. See comments in
+    // V8Proxy::retrieveFrameForEnteredContext() for more information.
+    static Frame* retrieveFrameForEnteredContext();
 
-        // Check whether it is safe to access a frame in another domain.
-        static bool isSafeScript(Frame*);
+    // Returns the frame for the current context. See comments in
+    // V8Proxy::retrieveFrameForEnteredContext() for more information.
+    static Frame* retrieveFrameForCurrentContext();
 
-        // Pass command-line flags to the JS engine.
-        static void setFlags(const char* string, int length);
+    // Check whether it is safe to access a frame in another domain.
+    static bool isSafeScript(Frame*);
 
-        // Protect and unprotect the JS wrapper from garbage collected.
-        static void gcProtectJSWrapper(void*);
-        static void gcUnprotectJSWrapper(void*);
+    // Pass command-line flags to the JS engine.
+    static void setFlags(const char* string, int length);
 
-        void finishedWithEvent(Event*);
-        void setEventHandlerLineNumber(int lineNumber);
+    // Protect and unprotect the JS wrapper from garbage collected.
+    static void gcProtectJSWrapper(void*);
+    static void gcUnprotectJSWrapper(void*);
 
-        void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
-        bool processingUserGesture() const;
-        bool anyPageIsProcessingUserGesture() const;
+    void finishedWithEvent(Event*);
+    void setEventHandlerLineNumber(int lineNumber);
 
-        void setPaused(bool paused) { m_paused = paused; }
-        bool isPaused() const { return m_paused; }
+    void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
+    bool processingUserGesture() const;
+    bool anyPageIsProcessingUserGesture() const;
 
-        const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script.
+    void setPaused(bool paused) { m_paused = paused; }
+    bool isPaused() const { return m_paused; }
 
-        void clearWindowShell();
-        void updateDocument();
+    const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script.
 
-        void updateSecurityOrigin();
-        void clearScriptObjects();
-        void updatePlatformScriptObjects();
-        void cleanupScriptObjectsForPlugin(Widget*);
+    void clearWindowShell();
+    void updateDocument();
+
+    void updateSecurityOrigin();
+    void clearScriptObjects();
+    void updatePlatformScriptObjects();
+    void cleanupScriptObjectsForPlugin(Widget*);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
-        NPObject* windowScriptNPObject();
+    NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
+    NPObject* windowScriptNPObject();
 #endif
 
-        // Dummy method to avoid a bunch of ifdef's in WebCore.
-        void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*) { }
-        static void getAllWorlds(Vector<DOMWrapperWorld*>& worlds);
+    // Dummy method to avoid a bunch of ifdef's in WebCore.
+    void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*) { }
+    static void getAllWorlds(Vector<DOMWrapperWorld*>& worlds);
 
-        // Script state for the main world context.
-        ScriptState* mainWorldScriptState();
+    // Script state for the main world context.
+    ScriptState* mainWorldScriptState();
 
-        // Returns ScriptState for current context.
-        static ScriptState* currentScriptState();
+    // Returns ScriptState for current context.
+    static ScriptState* currentScriptState();
 
-    private:
-        Frame* m_frame;
-        const String* m_sourceURL;
+private:
+    Frame* m_frame;
+    const String* m_sourceURL;
 
-        bool m_inExecuteScript;
+    bool m_inExecuteScript;
 
-        bool m_processingTimerCallback;
-        bool m_paused;
+    bool m_processingTimerCallback;
+    bool m_paused;
 
-        OwnPtr<V8Proxy> m_proxy;
-        typedef HashMap<Widget*, NPObject*> PluginObjectMap;
+    OwnPtr<V8Proxy> m_proxy;
+    typedef HashMap<Widget*, NPObject*> PluginObjectMap;
 
-        // A mapping between Widgets and their corresponding script object.
-        // This list is used so that when the plugin dies, we can immediately
-        // invalidate all sub-objects which are associated with that plugin.
-        // The frame keeps a NPObject reference for each item on the list.
-        PluginObjectMap m_pluginObjects;
+    // A mapping between Widgets and their corresponding script object.
+    // This list is used so that when the plugin dies, we can immediately
+    // invalidate all sub-objects which are associated with that plugin.
+    // The frame keeps a NPObject reference for each item on the list.
+    PluginObjectMap m_pluginObjects;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        NPObject* m_windowScriptNPObject;
+    NPObject* m_windowScriptNPObject;
 #endif
-        // The XSSAuditor associated with this ScriptController.
-        OwnPtr<XSSAuditor> m_XSSAuditor;
+    // The XSSAuditor associated with this ScriptController.
+    OwnPtr<XSSAuditor> m_XSSAuditor;
 
-        // Script state for the main world context.
-        OwnPtr<ScriptState> m_mainWorldScriptState;
-    };
+    // Script state for the main world context.
+    OwnPtr<ScriptState> m_mainWorldScriptState;
+};
 
 } // namespace WebCore
 

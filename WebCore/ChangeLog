@@ -1,3 +1,20 @@
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Dimitri Glazkov.
+
+        Fix namespace indent for ScriptController.
+
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::proxy):
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::xssAuditor):
+        (WebCore::ScriptController::setProcessingTimerCallback):
+        (WebCore::ScriptController::setPaused):
+        (WebCore::ScriptController::isPaused):
+        (WebCore::ScriptController::sourceURL):
+        (WebCore::ScriptController::evaluateInWorld):
+
 2010-01-05  Rachel Petterson  <rlp@google.com>
 
         Reviewed by Simon Fraser.
