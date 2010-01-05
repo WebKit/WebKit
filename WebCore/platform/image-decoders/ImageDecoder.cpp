@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -34,17 +35,38 @@
 #include "SharedBuffer.h"
 #include "XBMImageDecoder.h"
 
+using namespace std;
+
 namespace WebCore {
+
+static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer, unsigned offset)
+{
+    unsigned bytesExtracted = 0;
+    const char* moreData;
+    while (unsigned moreDataLength = sharedBuffer.getSomeData(moreData, offset)) {
+        unsigned bytesToCopy = min(bufferLength - bytesExtracted, moreDataLength);
+        memcpy(buffer + bytesExtracted, moreData, bytesToCopy);
+        bytesExtracted += bytesToCopy;
+        if (bytesExtracted == bufferLength)
+            break;
+        offset += bytesToCopy;
+    }
+    return bytesExtracted;
+}
 
 ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 {
+    // XBMs require 8 bytes of info.
+    static const unsigned maxMarkerLength = 8;
+
+    char contents[maxMarkerLength];
+    unsigned length = copyFromSharedBuffer(contents, maxMarkerLength, data, 0);
+
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
-    int length = data.size();
     if (length < 4)
         return 0;
 
-    const unsigned char* uContents = (const unsigned char*)data.data();
-    const char* contents = data.data();
+    const unsigned char* uContents = reinterpret_cast<const unsigned char*>(contents);
 
     // GIFs begin with GIF8(7 or 9).
     if (strncmp(contents, "GIF8", 4) == 0)

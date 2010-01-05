@@ -1,3 +1,26 @@
+2010-01-05  Yong Li  <yoli@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Make PNG image decoder work with segmented SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=33213
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::isAllDataReceived):
+        (WebCore::ImageDecoder::setData):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::PNGImageReader):
+        (WebCore::PNGImageReader::close):
+        (WebCore::PNGImageReader::currentBufferSize):
+        (WebCore::PNGImageReader::setComplete):
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::decode):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+
 2010-01-05  Adam Barth  <abarth@webkit.org>
 
         Rubber stamped by Dimitri Glazkov.

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -200,6 +201,7 @@ namespace WebCore {
         ImageDecoder()
             : m_failed(false)
             , m_sizeAvailable(false)
+            , m_isAllDataReceived(false)
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
             , m_maxNumPixels(-1)
             , m_scaled(false)
@@ -218,7 +220,12 @@ namespace WebCore {
         virtual String filenameExtension() const = 0;
 
         // All specific decoder plugins must do something with the data they are given.
-        virtual void setData(SharedBuffer* data, bool allDataReceived) { m_data = data; }
+        bool isAllDataReceived() const { return m_isAllDataReceived; }
+        virtual void setData(SharedBuffer* data, bool allDataReceived)
+        {
+            m_data = data;
+            m_isAllDataReceived = allDataReceived;
+        }
 
         // Whether or not the size information has been decoded yet. This default
         // implementation just returns true if the size has been set and we have not
@@ -326,6 +333,7 @@ namespace WebCore {
 
         IntSize m_size;
         bool m_sizeAvailable;
+        bool m_isAllDataReceived;
     };
 
 } // namespace WebCore

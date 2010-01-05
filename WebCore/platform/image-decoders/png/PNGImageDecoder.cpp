@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * Portions are Copyright (C) 2001 mozilla.org
  *
@@ -75,6 +76,8 @@ public:
         , m_decodingSizeOnly(false)
         , m_interlaceBuffer(0)
         , m_hasAlpha(0)
+        , m_hasFinishedDecoding(false)
+        , m_currentBufferSize(0)
     {
         m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
         m_info = png_create_info_struct(m_png);
@@ -92,9 +95,14 @@ public:
         delete []m_interlaceBuffer;
         m_interlaceBuffer = 0;
         m_readOffset = 0;
+        m_hasFinishedDecoding = false;
     }
 
-    void decode(const Vector<char>& data, bool sizeOnly)
+    unsigned currentBufferSize() const { return m_currentBufferSize; }
+
+    void setComplete() { m_hasFinishedDecoding = true; }
+
+    void decode(const SharedBuffer& data, bool sizeOnly)
     {
         m_decodingSizeOnly = sizeOnly;
 
@@ -104,13 +112,17 @@ public:
             return;
         }
 
-        // Go ahead and assume we consumed all the data.  If we consume less, the
-        // callback will adjust our read offset accordingly.  Do not attempt to adjust the
-        // offset after png_process_data returns.
-        unsigned offset = m_readOffset;
-        unsigned remaining = data.size() - m_readOffset;
-        m_readOffset = data.size();
-        png_process_data(m_png, m_info, (png_bytep)(data.data()) + offset, remaining);
+        PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
+        const char* segment;
+        while (unsigned segmentLength = data.getSomeData(segment, m_readOffset)) {
+            m_readOffset += segmentLength;
+            m_currentBufferSize = m_readOffset;
+            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment)), segmentLength);
+            if ((sizeOnly && decoder->isSizeAvailable()) || m_hasFinishedDecoding)
+                break;
+        }
+        if (!m_hasFinishedDecoding && decoder->isAllDataReceived())
+            decoder->pngComplete();
     }
 
     bool decodingSizeOnly() const { return m_decodingSizeOnly; }
@@ -133,6 +145,8 @@ private:
     png_infop m_info;
     png_bytep m_interlaceBuffer;
     bool m_hasAlpha;
+    bool m_hasFinishedDecoding;
+    unsigned m_currentBufferSize;
 };
 
 PNGImageDecoder::PNGImageDecoder()
@@ -189,7 +203,7 @@ void PNGImageDecoder::decode(bool sizeOnly)
     if (m_failed)
         return;
 
-    m_reader->decode(m_data->buffer(), sizeOnly);
+    m_reader->decode(*m_data, sizeOnly);
     
     if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete)) {
         delete m_reader;
@@ -297,7 +311,7 @@ void PNGImageDecoder::headerAvailable()
 
     if (reader()->decodingSizeOnly()) {
         // If we only needed the size, halt the reader.     
-        reader()->setReadOffset(m_data->size() - png->buffer_size);
+        reader()->setReadOffset(reader()->currentBufferSize() - png->buffer_size);
         png->buffer_size = 0;
     }
 }
@@ -423,6 +437,8 @@ void pngComplete(png_structp png, png_infop info)
 
 void PNGImageDecoder::pngComplete()
 {
+    m_reader->setComplete();
+
     if (m_frameBufferCache.isEmpty())
         return;
 
