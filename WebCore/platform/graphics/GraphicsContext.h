@@ -71,7 +71,7 @@ typedef class PlatformContextSkia PlatformGraphicsContext;
 class BView;
 typedef BView PlatformGraphicsContext;
 struct pattern;
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
 typedef struct HDC__ PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
@@ -96,7 +96,7 @@ typedef unsigned char UInt8;
 
 namespace WebCore {
 
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
     class SharedBitmap;
     class SimpleFontData;
     class GlyphBuffer;
@@ -144,7 +144,7 @@ namespace WebCore {
         GraphicsContext(PlatformGraphicsContext*);
         ~GraphicsContext();
 
-#if !PLATFORM(WINCE) || PLATFORM(QT)
+#if !OS(WINCE) || PLATFORM(QT)
         PlatformGraphicsContext* platformContext() const;
 #endif
 
@@ -299,7 +299,7 @@ namespace WebCore {
         void concatCTM(const TransformationMatrix&);
         TransformationMatrix getCTM() const;
 
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);
         const TransformationMatrix& affineTransform() const;
         TransformationMatrix& affineTransform();
@@ -357,7 +357,7 @@ namespace WebCore {
         void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif
 
-#if (PLATFORM(QT) && defined(Q_WS_WIN)) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if (PLATFORM(QT) && defined(Q_WS_WIN)) || (PLATFORM(WX) && OS(WINDOWS))
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
         bool shouldIncludeChildWindows() const { return false; }

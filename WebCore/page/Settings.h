@@ -262,7 +262,7 @@ namespace WebCore {
         void setExperimentalNotificationsEnabled(bool);
         bool experimentalNotificationsEnabled() const { return m_experimentalNotificationsEnabled; }
 
-#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static void setShouldUseHighResolutionTimers(bool);
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
@@ -350,7 +350,7 @@ namespace WebCore {
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
 #endif
-#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static bool gShouldUseHighResolutionTimers;
 #endif
     };

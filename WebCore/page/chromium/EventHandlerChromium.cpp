@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 const double EventHandler::TextDragDelay = 0.15;
 #else
 const double EventHandler::TextDragDelay = 0.0;
@@ -147,14 +147,14 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 
 unsigned EventHandler::accessKeyModifiers()
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     return PlatformKeyboardEvent::CtrlKey | PlatformKeyboardEvent::AltKey;
 #else
     return PlatformKeyboardEvent::AltKey;
 #endif
 }
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 // GTK+ must scroll horizontally if the mouse pointer is on top of the
 // horizontal scrollbar while scrolling with the wheel.
 // This code comes from gtk/EventHandlerGtk.cpp.

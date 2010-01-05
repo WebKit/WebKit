@@ -64,31 +64,37 @@ using namespace std;
 
 namespace JSC {
 
-#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
+#if OS(DARWIN) || OS(WINDOWS)
 #define SYMBOL_STRING(name) "_" #name
 #else
 #define SYMBOL_STRING(name) #name
 #endif
 
-#if PLATFORM(IPHONE)
+#if OS(IPHONE_OS)
 #define THUMB_FUNC_PARAM(name) SYMBOL_STRING(name)
 #else
 #define THUMB_FUNC_PARAM(name)
 #endif
 
-#if PLATFORM(LINUX) && CPU(X86_64)
+#if OS(LINUX) && CPU(X86_64)
 #define SYMBOL_STRING_RELOCATION(name) #name "@plt"
 #else
 #define SYMBOL_STRING_RELOCATION(name) SYMBOL_STRING(name)
 #endif
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     // Mach-O platform
 #define HIDE_SYMBOL(name) ".private_extern _" #name
-#elif PLATFORM(AIX)
+#elif OS(AIX)
     // IBM's own file format
 #define HIDE_SYMBOL(name) ".lglobl " #name
-#elif PLATFORM(LINUX) || PLATFORM(FREEBSD) || PLATFORM(OPENBSD) || PLATFORM(SOLARIS) || (PLATFORM(HPUX) && CPU(IA64)) || PLATFORM(SYMBIAN) || PLATFORM(NETBSD)
+#elif   OS(LINUX)               \
+     || OS(FREEBSD)             \
+     || OS(OPENBSD)             \
+     || OS(SOLARIS)             \
+     || (OS(HPUX) && CPU(IA64)) \
+     || OS(SYMBIAN)             \
+     || OS(NETBSD)
     // ELF platform
 #define HIDE_SYMBOL(name) ".hidden " #name
 #else

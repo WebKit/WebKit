@@ -53,7 +53,7 @@ typedef SkPath PlatformPath;
 #elif PLATFORM(HAIKU)
 class BRegion;
 typedef BRegion PlatformPath;
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
 namespace WebCore {
     class PlatformPath;
 }

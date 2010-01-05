@@ -42,7 +42,7 @@
 #include <tchar.h>
 #include <windows.h>
 #include <windowsx.h>
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 #include <ResDefCE.h>
 #define MAKEPOINTS(l) (*((POINTS FAR *)&(l)))
 #endif
@@ -152,7 +152,7 @@ void PopupMenu::show(const IntRect& r, FrameView* view, int index)
     // Determine whether we should animate our popups
     // Note: Must use 'BOOL' and 'FALSE' instead of 'bool' and 'false' to avoid stack corruption with SystemParametersInfo
     BOOL shouldAnimate = FALSE;
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
     ::SystemParametersInfo(SPI_GETCOMBOBOXANIMATION, 0, &shouldAnimate, 0);
 
     if (shouldAnimate) {
@@ -579,7 +579,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         }
     }
     if (!m_bmp) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
         BitmapInfo bitmapInfo(true, clientRect().width(), clientRect().height());
 #else
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
@@ -714,7 +714,7 @@ void PopupMenu::registerClass()
     if (haveRegisteredWindowClass)
         return;
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     WNDCLASS wcex;
 #else
     WNDCLASSEX wcex;
@@ -735,7 +735,7 @@ void PopupMenu::registerClass()
 
     haveRegisteredWindowClass = true;
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     RegisterClass(&wcex);
 #else
     RegisterClassEx(&wcex);
@@ -745,7 +745,7 @@ void PopupMenu::registerClass()
 
 LRESULT CALLBACK PopupMenu::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     LONG longPtr = GetWindowLong(hWnd, 0);
 #else
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
@@ -758,7 +758,7 @@ LRESULT CALLBACK PopupMenu::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM wPa
         LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 
         // Associate the PopupMenu with the window.
-#if PLATFORM(WINCE)
+#if OS(WINCE)
         ::SetWindowLong(hWnd, 0, (LONG)createStruct->lpCreateParams);
 #else
         ::SetWindowLongPtr(hWnd, 0, (LONG_PTR)createStruct->lpCreateParams);
@@ -892,7 +892,7 @@ LRESULT PopupMenu::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
             }
 
             BOOL shouldHotTrack = FALSE;
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
             ::SystemParametersInfo(SPI_GETHOTTRACKING, 0, &shouldHotTrack, 0);
 #endif
 
@@ -989,7 +989,7 @@ LRESULT PopupMenu::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
             lResult = 0;
             break;
         }
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
         case WM_PRINTCLIENT:
             paint(clientRect(), (HDC)wParam);
             break;

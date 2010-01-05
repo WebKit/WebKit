@@ -51,7 +51,7 @@
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
 #include "TextCodecWince.h"
 #endif
 
@@ -230,7 +230,7 @@ static void buildBaseTextCodecMaps()
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
 #endif
 
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
     TextCodecWince::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecWince::registerBaseCodecs(addToTextCodecMap);
 #endif
@@ -258,7 +258,7 @@ static void extendTextCodecMaps()
     TextCodecGtk::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
     TextCodecWince::registerExtendedEncodingNames(addToTextEncodingNameMap);
     TextCodecWince::registerExtendedCodecs(addToTextCodecMap);
 #endif

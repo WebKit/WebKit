@@ -27,7 +27,7 @@
 
 #include "ExecutableAllocator.h"
 
-#if ENABLE(ASSEMBLER) && PLATFORM(UNIX) && !PLATFORM(SYMBIAN)
+#if ENABLE(ASSEMBLER) && OS(UNIX) && !OS(SYMBIAN)
 
 #include <sys/mman.h>
 #include <unistd.h>
@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-#if !(PLATFORM(MAC) && CPU(X86_64))
+#if !(OS(DARWIN) && CPU(X86_64))
 
 void ExecutableAllocator::intializePageSize()
 {
@@ -57,7 +57,7 @@ void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
     ASSERT_UNUSED(result, !result);
 }
 
-#endif // !(PLATFORM(MAC) && CPU(X86_64))
+#endif // !(OS(DARWIN) && CPU(X86_64))
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSeting setting)

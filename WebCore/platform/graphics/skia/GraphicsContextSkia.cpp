@@ -431,7 +431,7 @@ void GraphicsContext::clipToImageBuffer(const FloatRect& rect,
     if (paintingDisabled())
         return;
 
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     platformContext()->beginLayerClippedToImage(rect, imageBuffer);
 #endif
 }

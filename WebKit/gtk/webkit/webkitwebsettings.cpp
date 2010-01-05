@@ -37,7 +37,7 @@
 #include "PlatformString.h"
 
 #include <glib/gi18n-lib.h>
-#if PLATFORM(UNIX)
+#if OS(UNIX)
 #include <sys/utsname.h>
 #endif
 
@@ -160,7 +160,7 @@ static String webkit_get_user_agent()
 
 #if PLATFORM(X11)
     platform = g_strdup("X11");
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     platform = g_strdup("Windows");
 #elif PLATFORM(MAC)
     platform = g_strdup("Macintosh");
@@ -171,7 +171,7 @@ static String webkit_get_user_agent()
 #endif
 
    // FIXME: platform/version detection can be shared.
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 #if CPU(X86)
     osVersion = g_strdup("Intel Mac OS X");
@@ -179,14 +179,14 @@ static String webkit_get_user_agent()
     osVersion = g_strdup("PPC Mac OS X");
 #endif
 
-#elif PLATFORM(UNIX)
+#elif OS(UNIX)
     struct utsname name;
     if (uname(&name) != -1)
         osVersion = g_strdup_printf("%s %s", name.sysname, name.machine);
     else
         osVersion = g_strdup("Unknown");
 
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     // FIXME: Compute the Windows version
     osVersion = g_strdup("Windows");
 

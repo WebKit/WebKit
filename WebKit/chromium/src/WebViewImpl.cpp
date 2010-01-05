@@ -97,11 +97,11 @@
 #include "WebVector.h"
 #include "WebViewClient.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include "KeyboardCodesWin.h"
 #include "RenderThemeChromiumWin.h"
 #else
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 #include "RenderThemeChromiumLinux.h"
 #endif
 #include "KeyboardCodesPosix.h"
@@ -328,12 +328,12 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
 
     // Dispatch the contextmenu event regardless of if the click was swallowed.
     // On Windows, we handle it on mouse up, not down.
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     if (event.button == WebMouseEvent::ButtonRight
         || (event.button == WebMouseEvent::ButtonLeft
             && event.modifiers & WebMouseEvent::ControlKey))
         mouseContextMenu(event);
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
     if (event.button == WebMouseEvent::ButtonRight)
         mouseContextMenu(event);
 #endif
@@ -356,7 +356,7 @@ void WebViewImpl::mouseContextMenu(const WebMouseEvent& event)
     else
         targetFrame = m_page->focusController()->focusedOrMainFrame();
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     targetFrame->view()->setCursor(pointerCursor());
 #endif
 
@@ -372,7 +372,7 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
     // If the event was a middle click, attempt to copy text into the focused
     // frame. We execute this before we let the page have a go at the event
     // because the page may change what is focused during in its event handler.
@@ -413,7 +413,7 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     mainFrameImpl()->frame()->eventHandler()->handleMouseReleaseEvent(
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     // Dispatch the contextmenu event regardless of if the click was swallowed.
     // On Mac/Linux, we handle it on mouse down, not up.
     if (event.button == WebMouseEvent::ButtonRight)
@@ -453,11 +453,11 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     if (!handler)
         return keyEventDefault(event);
 
-#if PLATFORM(WIN_OS) || PLATFORM(LINUX)
+#if OS(WINDOWS) || OS(LINUX)
     const WebInputEvent::Type contextMenuTriggeringEventType =
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
         WebInputEvent::KeyUp;
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
         WebInputEvent::RawKeyDown;
 #endif
 
@@ -583,7 +583,7 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
 //
 // This function is an ugly copy/paste and should be cleaned up when the
 // WebKitWin version is cleaned: https://bugs.webkit.org/show_bug.cgi?id=20438
-#if PLATFORM(WIN_OS) || PLATFORM(LINUX)
+#if OS(WINDOWS) || OS(LINUX)
 // FIXME: implement on Mac
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
 {
@@ -594,7 +594,7 @@ bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)
         return false;
 
     IntPoint coords(-1, -1);
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     int rightAligned = ::GetSystemMetrics(SM_MENUDROPALIGNMENT);
 #else
     int rightAligned = 0;
@@ -1647,7 +1647,7 @@ bool WebViewImpl::isActive() const
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned activeColor,
                                      unsigned trackColor) {
-#if PLATFORM(LINUX)
+#if OS(LINUX)
     RenderThemeChromiumLinux::setScrollbarColors(inactiveColor,
                                                  activeColor,
                                                  trackColor);
@@ -1672,9 +1672,9 @@ bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
                                                  bool alt, bool meta,
                                                  WebNavigationPolicy* policy)
 {
-#if PLATFORM(WIN_OS) || PLATFORM(LINUX) || PLATFORM(FREEBSD)
+#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
     const bool newTabModifier = (button == 1) || ctrl;
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
     const bool newTabModifier = (button == 1) || meta;
 #endif
     if (!newTabModifier && !shift && !alt)

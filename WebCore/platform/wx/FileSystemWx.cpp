@@ -42,7 +42,7 @@
 #include <wx/filefn.h>
 #include <wx/filename.h>
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -127,9 +127,9 @@ int writeToFile(PlatformFileHandle, const char* data, int length)
 
 bool unloadModule(PlatformModule mod)
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     return ::FreeLibrary(mod);
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
     CFRelease(mod);
     return true;
 #else

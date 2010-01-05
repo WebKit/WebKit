@@ -25,7 +25,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN_OS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
+#if OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
 #define JS_EXPORTDATA __declspec(dllexport)
 #else
@@ -35,14 +35,14 @@
 #define JS_EXPORTDATA
 #endif
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 // If we don't define these, they get defined in windef.h. 
 // We want to use std::min and std::max
 #define max max
 #define min min
 
-#if !COMPILER(MSVC7) && !PLATFORM(WINCE)
+#if !COMPILER(MSVC7) && !OS(WINCE)
 // We need to define this before the first #include of stdlib.h or it won't contain rand_s.
 #ifndef _CRT_RAND_S
 #define _CRT_RAND_S
@@ -51,7 +51,7 @@
 
 #endif
 
-#if PLATFORM(FREEBSD) || PLATFORM(OPENBSD)
+#if OS(FREEBSD) || OS(OPENBSD)
 #define HAVE_PTHREAD_NP_H 1
 #endif
 

@@ -105,7 +105,7 @@ bool EditorClientImpl::isSelectTrailingWhitespaceEnabled()
 {
     if (m_webView->client())
         return m_webView->client()->isSelectTrailingWhitespaceEnabled();
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     return true;
 #else
     return false;
@@ -357,7 +357,7 @@ static const unsigned CtrlKey = 1 << 0;
 static const unsigned AltKey = 1 << 1;
 static const unsigned ShiftKey = 1 << 2;
 static const unsigned MetaKey = 1 << 3;
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 // Aliases for the generic key defintions to make kbd shortcuts definitions more
 // readable on OS X.
 static const unsigned OptionKey  = AltKey;
@@ -387,7 +387,7 @@ struct KeyPressEntry {
 static const KeyDownEntry keyDownEntries[] = {
     { VKEY_LEFT,   0,                  "MoveLeft"                             },
     { VKEY_LEFT,   ShiftKey,           "MoveLeftAndModifySelection"           },
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_LEFT,   OptionKey,          "MoveWordLeft"                         },
     { VKEY_LEFT,   OptionKey | ShiftKey,
         "MoveWordLeftAndModifySelection"                                      },
@@ -398,7 +398,7 @@ static const KeyDownEntry keyDownEntries[] = {
 #endif
     { VKEY_RIGHT,  0,                  "MoveRight"                            },
     { VKEY_RIGHT,  ShiftKey,           "MoveRightAndModifySelection"          },
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_RIGHT,  OptionKey,          "MoveWordRight"                        },
     { VKEY_RIGHT,  OptionKey | ShiftKey,
       "MoveWordRightAndModifySelection"                                       },
@@ -418,12 +418,12 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_HOME,   0,                  "MoveToBeginningOfLine"                },
     { VKEY_HOME,   ShiftKey,
         "MoveToBeginningOfLineAndModifySelection"                             },
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_LEFT,   CommandKey,         "MoveToBeginningOfLine"                },
     { VKEY_LEFT,   CommandKey | ShiftKey,
       "MoveToBeginningOfLineAndModifySelection"                               },
 #endif
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_UP,     CommandKey,         "MoveToBeginningOfDocument"            },
     { VKEY_UP,     CommandKey | ShiftKey,
         "MoveToBeginningOfDocumentAndModifySelection"                         },
@@ -434,7 +434,7 @@ static const KeyDownEntry keyDownEntries[] = {
 #endif
     { VKEY_END,    0,                  "MoveToEndOfLine"                      },
     { VKEY_END,    ShiftKey,           "MoveToEndOfLineAndModifySelection"    },
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_DOWN,   CommandKey,         "MoveToEndOfDocument"                  },
     { VKEY_DOWN,   CommandKey | ShiftKey,
         "MoveToEndOfDocumentAndModifySelection"                               },
@@ -443,7 +443,7 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_END,    CtrlKey | ShiftKey,
         "MoveToEndOfDocumentAndModifySelection"                               },
 #endif
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_RIGHT,  CommandKey,         "MoveToEndOfLine"                      },
     { VKEY_RIGHT,  CommandKey | ShiftKey,
         "MoveToEndOfLineAndModifySelection"                                   },
@@ -451,7 +451,7 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_BACK,   0,                  "DeleteBackward"                       },
     { VKEY_BACK,   ShiftKey,           "DeleteBackward"                       },
     { VKEY_DELETE, 0,                  "DeleteForward"                        },
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     { VKEY_BACK,   OptionKey,          "DeleteWordBackward"                   },
     { VKEY_DELETE, OptionKey,          "DeleteWordForward"                    },
 #else
@@ -473,7 +473,7 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_INSERT, CtrlKey,            "Copy"                                 },
     { VKEY_INSERT, ShiftKey,           "Paste"                                },
     { VKEY_DELETE, ShiftKey,           "Cut"                                  },
-#if !PLATFORM(DARWIN)
+#if !OS(DARWIN)
     // On OS X, we pipe these back to the browser, so that it can do menu item
     // blinking.
     { 'C',         CtrlKey,            "Copy"                                 },
@@ -600,13 +600,13 @@ bool EditorClientImpl::handleEditingKeyboardEvent(KeyboardEvent* evt)
         // unexpected behaviour
         if (ch < ' ')
             return false;
-#if !PLATFORM(WIN_OS)
+#if !OS(WINDOWS)
         // Don't insert ASCII character if ctrl w/o alt or meta is on.
         // On Mac, we should ignore events when meta is on (Command-<x>).
         if (ch < 0x80) {
             if (evt->keyEvent()->ctrlKey() && !evt->keyEvent()->altKey())
                 return false;
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
             if (evt->keyEvent()->metaKey())
             return false;
 #endif

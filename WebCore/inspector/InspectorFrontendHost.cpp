@@ -125,7 +125,7 @@ const String& InspectorFrontendHost::platform() const
 #else
     DEFINE_STATIC_LOCAL(const String, platform, ("mac-leopard"));
 #endif
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
 #else
     DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));

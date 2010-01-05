@@ -30,17 +30,17 @@
 #include <math.h>
 #include <stdlib.h>
 
-#if PLATFORM(SOLARIS)
+#if OS(SOLARIS)
 #include <ieeefp.h>
 #endif
 
-#if PLATFORM(OPENBSD)
+#if OS(OPENBSD)
 #include <sys/types.h>
 #include <machine/ieee.h>
 #endif
 
 #if COMPILER(MSVC)
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 #include <stdlib.h>
 #endif
 #include <limits>
@@ -62,7 +62,7 @@ const double piOverFourDouble = M_PI_4;
 const float piOverFourFloat = static_cast<float>(M_PI_4);
 #endif
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 // Work around a bug in the Mac OS X libc where ceil(-0.1) return +0.
 inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
@@ -71,7 +71,7 @@ inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
 
 #endif
 
-#if PLATFORM(SOLARIS)
+#if OS(SOLARIS)
 
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x) && !isnand(x); }
@@ -85,7 +85,7 @@ inline bool signbit(double x) { return x < 0.0; } // FIXME: Wrong for negative 0
 
 #endif
 
-#if PLATFORM(OPENBSD)
+#if OS(OPENBSD)
 
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x); }

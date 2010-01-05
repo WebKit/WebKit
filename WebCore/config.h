@@ -25,7 +25,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN_OS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
+#if OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
 #define JS_EXPORTDATA __declspec(dllexport)
 #else
@@ -47,7 +47,7 @@
 #define HAVE_FUNC_USLEEP 1
 #endif /* __APPLE__ */
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
@@ -73,7 +73,7 @@
 #endif
 #endif
 
-#endif /* PLATFORM(WIN_OS) */
+#endif /* OS(WINDOWS) */
 
 #if PLATFORM(ANDROID)
 #define WEBCORE_NAVIGATOR_VENDOR "Google Inc."
@@ -169,7 +169,7 @@
 #define WTF_USE_NEW_THEME 1
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
 #undef WIN32
 #undef _WIN32
 #undef SKIP_STATIC_CONSTRUCTORS_ON_GCC
@@ -187,10 +187,10 @@
 
 #if PLATFORM(CHROMIUM)
 
-#if !PLATFORM(DARWIN)
+#if !OS(DARWIN)
 // Define SKIA on non-Mac.
 #define WTF_PLATFORM_SKIA 1
-#endif /* !PLATFORM(DARWIN) */
+#endif /* !OS(DARWIN) */
 
 // Chromium uses this file instead of JavaScriptCore/config.h to compile
 // JavaScriptCore/wtf (chromium doesn't compile the rest of JSC). Therefore,

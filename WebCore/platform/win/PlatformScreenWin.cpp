@@ -54,7 +54,7 @@ static DEVMODE deviceInfoForWidget(Widget* widget)
     DEVMODE deviceInfo;
     deviceInfo.dmSize = sizeof(DEVMODE);
     deviceInfo.dmDriverExtra = 0;
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     if (!EnumDisplaySettings(0, ENUM_CURRENT_SETTINGS, &deviceInfo))
         deviceInfo.dmBitsPerPel = 16;
 #else
@@ -80,7 +80,7 @@ int screenDepthPerComponent(Widget* widget)
 
 bool screenIsMonochrome(Widget* widget)
 {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     // EnumDisplaySettings doesn't set dmColor in DEVMODE.
     return false;
 #else

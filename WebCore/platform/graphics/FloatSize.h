@@ -34,7 +34,7 @@
 typedef struct CGSize CGSize;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
@@ -80,7 +80,7 @@ public:
 #endif
 
 #if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
-        || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+        || (PLATFORM(CHROMIUM) && OS(DARWIN))
     explicit FloatSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif

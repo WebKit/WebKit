@@ -43,7 +43,7 @@
 // Default values for bison.
 #define YYDEBUG 0 // Set to 1 to debug a parse error.
 #define jscyydebug 0 // Set to 1 to debug a parse error.
-#if !PLATFORM(DARWIN)
+#if !OS(DARWIN)
 // Avoid triggering warnings in older bison by not setting this on the Darwin platform.
 // FIXME: Is this still needed?
 #define YYERROR_VERBOSE

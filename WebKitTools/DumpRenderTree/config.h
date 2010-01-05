@@ -32,7 +32,7 @@
 #include <wtf/FastMalloc.h>
 #endif
 
-#if PLATFORM(WIN_OS) && !COMPILER(GCC)
+#if OS(WINDOWS) && !COMPILER(GCC)
 #define JS_EXPORTDATA __declspec(dllimport)
 #define WEBKIT_EXPORTDATA __declspec(dllimport)
 #else

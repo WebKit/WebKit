@@ -33,7 +33,7 @@ namespace WebCore {
 class KURL;
 class String;
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 void replaceNewlinesWithWindowsStyleNewlines(String&);
 #endif
 void replaceNBSPWithSpace(String&);

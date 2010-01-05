@@ -71,7 +71,7 @@ public:
     // to the constructor.
     void setCanvas(skia::PlatformCanvas*);
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     // If false we're rendering to a GraphicsContext for a web page, if false
     // we're not (as is the case when rendering to a canvas object).
     // If this is true the contents have not been marked up with the magic
@@ -88,7 +88,7 @@ public:
     // |rect|. This layer is implicitly restored when the next restore is
     // invoked.
     // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     void beginLayerClippedToImage(const WebCore::FloatRect&,
                                   const WebCore::ImageBuffer*);
 #endif
@@ -168,7 +168,7 @@ public:
     bool isPrinting();
 
 private:
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
     void applyClipFromImage(const WebCore::FloatRect&, const SkBitmap&);
@@ -191,7 +191,7 @@ private:
     // Current path in global coordinates.
     SkPath m_path;
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     bool m_drawingToImageBuffer;
 #endif
 };

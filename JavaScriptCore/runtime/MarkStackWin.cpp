@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MarkStack.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 #include "windows.h"
 

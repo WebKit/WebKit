@@ -68,7 +68,7 @@ Color::Color(CGColorRef color)
     m_color = makeRGBA(r * 255, g * 255, b * 255, a * 255);
 }
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 CGColorRef createCGColor(const Color& c)
 {
@@ -89,7 +89,7 @@ CGColorRef createCGColor(const Color& c)
     return color;
 }
 
-#endif // PLATFORM(WIN_OS)
+#endif // OS(WINDOWS)
 
 }
 

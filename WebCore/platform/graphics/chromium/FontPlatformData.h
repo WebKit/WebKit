@@ -31,9 +31,9 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include "FontPlatformDataChromiumWin.h"
-#elif defined(__linux__)
+#elif OS(LINUX)
 #include "FontPlatformDataLinux.h"
 #endif
 

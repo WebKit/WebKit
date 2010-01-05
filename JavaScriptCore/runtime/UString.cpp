@@ -289,7 +289,7 @@ UString UString::from(long long i)
         *--p = '0';
     else if (i == std::numeric_limits<long long>::min()) {
         char minBuf[1 + sizeof(i) * 3];
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
         snprintf(minBuf, sizeof(minBuf) - 1, "%I64d", std::numeric_limits<long long>::min());
 #else
         snprintf(minBuf, sizeof(minBuf) - 1, "%lld", std::numeric_limits<long long>::min());

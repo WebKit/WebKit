@@ -32,11 +32,11 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include "Base64.h"
 #include "ChromiumBridge.h"
 #include "OpenTypeUtilities.h"
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
 #include "SkStream.h"
 #endif
 
@@ -45,9 +45,9 @@
 #include "OpenTypeSanitizer.h"
 #include "SharedBuffer.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include <objbase.h>
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
 #include <cstring>
 #endif
 
@@ -55,10 +55,10 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     if (m_fontReference)
         RemoveFontMemResourceEx(m_fontReference);
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
     if (m_fontReference)
         m_fontReference->unref();
 #endif
@@ -66,7 +66,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontRenderingMode mode)
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     ASSERT(m_fontReference);
 
     LOGFONT logFont;
@@ -99,7 +99,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
     HFONT hfont = CreateFontIndirect(&logFont);
     return FontPlatformData(hfont, size);
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
     ASSERT(m_fontReference);
     return FontPlatformData(m_fontReference, size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic());
 #else
@@ -108,7 +108,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 #endif
 }
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 // Creates a unique and unpredictable font name, in order to avoid collisions and to
 // not allow access from CSS.
 static String createUniqueFontName()
@@ -123,7 +123,7 @@ static String createUniqueFontName()
 }
 #endif
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 class RemoteFontStream : public SkStream {
 public:
     explicit RemoteFontStream(PassRefPtr<SharedBuffer> buffer)
@@ -180,7 +180,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     buffer = transcodeBuffer.get();
 #endif
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     // Introduce the font to GDI. AddFontMemResourceEx should be used with care, because it will pollute the process's
     // font namespace (Windows has no API for creating an HFONT from data without exposing the font to the
     // entire process first).
@@ -189,7 +189,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (!fontReference)
         return 0;
     return new FontCustomPlatformData(fontReference, fontName);
-#elif PLATFORM(LINUX)
+#elif OS(LINUX)
     RemoteFontStream* stream = new RemoteFontStream(buffer);
     SkTypeface* typeface = SkTypeface::CreateFromStream(stream);
     if (!typeface)

@@ -49,7 +49,7 @@ static void setNeedsReapplyStylesInAllFrames(Page* page)
 bool Settings::gShouldPaintNativeControls = true;
 #endif
 
-#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
 
@@ -104,7 +104,7 @@ Settings::Settings(Page* page)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
     , m_editingBehavior(
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         // (PLATFORM(MAC) is always false in Chromium, hence the extra condition.)
         EditingMacBehavior
 #else
@@ -533,7 +533,7 @@ void Settings::setPluginAllowedRunTime(unsigned runTime)
     m_page->pluginAllowedRunTimeChanged();
 }
 
-#if PLATFORM(WIN) || (PLATFORM(WIN_OS) && PLATFORM(WX))
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;

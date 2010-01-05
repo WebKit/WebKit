@@ -145,11 +145,11 @@
 #include <wtf/CurrentTime.h>
 
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 #include "LocalCurrentGraphicsContext.h"
 #endif
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 #include <gdk/gdk.h>
 #endif
 
@@ -1055,7 +1055,7 @@ WebString WebFrameImpl::selectionAsText() const
         return WebString();
 
     String text = range->text();
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     replaceNewlinesWithWindowsStyleNewlines(text);
 #endif
     replaceNBSPWithSpace(text);
@@ -1105,10 +1105,10 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
         return 0;
     }
 
-#if PLATFORM(WIN_OS) || PLATFORM(LINUX) || PLATFORM(FREEBSD)
+#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
     PlatformContextSkia context(canvas);
     GraphicsContext spool(&context);
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
     GraphicsContext spool(canvas);
     LocalCurrentGraphicsContext localContext(&spool);
 #endif

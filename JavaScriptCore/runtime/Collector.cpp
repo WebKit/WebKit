@@ -45,7 +45,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/VMTags.h>
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 #include <mach/mach_init.h>
 #include <mach/mach_port.h>
@@ -53,29 +53,29 @@
 #include <mach/thread_act.h>
 #include <mach/vm_map.h>
 
-#elif PLATFORM(SYMBIAN)
+#elif OS(SYMBIAN)
 #include <e32std.h>
 #include <e32cmn.h>
 #include <unistd.h>
 
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
 
 #include <windows.h>
 #include <malloc.h>
 
-#elif PLATFORM(HAIKU)
+#elif OS(HAIKU)
 
 #include <OS.h>
 
-#elif PLATFORM(UNIX)
+#elif OS(UNIX)
 
 #include <stdlib.h>
-#if !PLATFORM(HAIKU)
+#if !OS(HAIKU)
 #include <sys/mman.h>
 #endif
 #include <unistd.h>
 
-#if PLATFORM(SOLARIS)
+#if OS(SOLARIS)
 #include <thread.h>
 #else
 #include <pthread.h>
@@ -85,7 +85,7 @@
 #include <pthread_np.h>
 #endif
 
-#if PLATFORM(QNX)
+#if OS(QNX)
 #include <fcntl.h>
 #include <sys/procfs.h>
 #include <stdio.h>
@@ -109,16 +109,16 @@ const size_t ALLOCATIONS_PER_COLLECTION = 3600;
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
 #define MIN_ARRAY_SIZE (static_cast<size_t>(14))
 
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
 const size_t MAX_NUM_BLOCKS = 256; // Max size of collector heap set to 16 MB
 static RHeap* userChunk = 0;
 #endif
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 typedef mach_port_t PlatformThread;
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
 typedef HANDLE PlatformThread;
 #endif
 
@@ -149,7 +149,7 @@ Heap::Heap(JSGlobalData* globalData)
 {
     ASSERT(globalData);
     
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
     // Symbian OpenC supports mmap but currently not the MAP_ANON flag.
     // Using fastMalloc() does not properly align blocks on 64k boundaries
     // and previous implementation was flawed/incomplete.
@@ -167,7 +167,7 @@ Heap::Heap(JSGlobalData* globalData)
         if (!userChunk)
             CRASH();
     }
-#endif // PLATFORM(SYMBIAN)
+#endif // OS(SYMBIAN)
     
     memset(&m_heap, 0, sizeof(CollectorHeap));
     allocateBlock();
@@ -214,18 +214,18 @@ void Heap::destroy()
 
 NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     vm_address_t address = 0;
     vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE | VM_TAG_FOR_COLLECTOR_MEMORY, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
-#elif PLATFORM(SYMBIAN)
+#elif OS(SYMBIAN)
     // Allocate a 64 kb aligned CollectorBlock
     unsigned char* mask = reinterpret_cast<unsigned char*>(userChunk->Alloc(BLOCK_SIZE));
     if (!mask)
         CRASH();
     uintptr_t address = reinterpret_cast<uintptr_t>(mask);
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
     void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
 #if COMPILER(MINGW)
     void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
 #else
@@ -308,13 +308,13 @@ NEVER_INLINE void Heap::freeBlock(size_t block)
 
 NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
 {
-#if PLATFORM(DARWIN)    
+#if OS(DARWIN)    
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
-#elif PLATFORM(SYMBIAN)
+#elif OS(SYMBIAN)
     userChunk->Free(reinterpret_cast<TAny*>(block));
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
     VirtualFree(block, 0, MEM_RELEASE);
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
 #if COMPILER(MINGW)
     __mingw_aligned_free(block);
 #else
@@ -450,7 +450,7 @@ void Heap::shrinkBlocks(size_t neededBlocks)
         m_heap.blocks[i]->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 void* g_stackBase = 0;
 
 inline bool isPageWritable(void* page)
@@ -507,7 +507,7 @@ static void* getStackBase(void* previousFrame)
 }
 #endif
 
-#if PLATFORM(QNX)
+#if OS(QNX)
 static inline void *currentThreadStackBaseQNX()
 {
     static void* stackBase = 0;
@@ -536,10 +536,10 @@ static inline void *currentThreadStackBaseQNX()
 
 static inline void* currentThreadStackBase()
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     pthread_t thread = pthread_self();
     return pthread_get_stackaddr_np(thread);
-#elif PLATFORM(WIN_OS) && CPU(X86) && COMPILER(MSVC)
+#elif OS(WINDOWS) && CPU(X86) && COMPILER(MSVC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread
     NT_TIB* pTib;
@@ -548,10 +548,11 @@ static inline void* currentThreadStackBase()
         MOV pTib, EAX
     }
     return static_cast<void*>(pTib->StackBase);
-#elif PLATFORM(WIN_OS) && CPU(X86_64) && COMPILER(MSVC)
+#elif OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
+    // FIXME: why only for MSVC?
     PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
     return reinterpret_cast<void*>(pTib->StackBase);
-#elif PLATFORM(WIN_OS) && CPU(X86) && COMPILER(GCC)
+#elif OS(WINDOWS) && CPU(X86) && COMPILER(GCC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread
     NT_TIB* pTib;
@@ -559,18 +560,18 @@ static inline void* currentThreadStackBase()
           : "=r" (pTib)
         );
     return static_cast<void*>(pTib->StackBase);
-#elif PLATFORM(QNX)
+#elif OS(QNX)
     return currentThreadStackBaseQNX();
-#elif PLATFORM(SOLARIS)
+#elif OS(SOLARIS)
     stack_t s;
     thr_stksegment(&s);
     return s.ss_sp;
-#elif PLATFORM(OPENBSD)
+#elif OS(OPENBSD)
     pthread_t thread = pthread_self();
     stack_t stack;
     pthread_stackseg_np(thread, &stack);
     return stack.ss_sp;
-#elif PLATFORM(SYMBIAN)
+#elif OS(SYMBIAN)
     static void* stackBase = 0;
     if (stackBase == 0) {
         TThreadStackInfo info;
@@ -579,11 +580,11 @@ static inline void* currentThreadStackBase()
         stackBase = (void*)info.iBase;
     }
     return (void*)stackBase;
-#elif PLATFORM(HAIKU)
+#elif OS(HAIKU)
     thread_info threadInfo;
     get_thread_info(find_thread(NULL), &threadInfo);
     return threadInfo.stack_end;
-#elif PLATFORM(UNIX)
+#elif OS(UNIX)
     static void* stackBase = 0;
     static size_t stackSize = 0;
     static pthread_t stackThread;
@@ -591,7 +592,7 @@ static inline void* currentThreadStackBase()
     if (stackBase == 0 || thread != stackThread) {
         pthread_attr_t sattr;
         pthread_attr_init(&sattr);
-#if HAVE(PTHREAD_NP_H) || PLATFORM(NETBSD)
+#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
         // e.g. on FreeBSD 5.4, neundorf@kde.org
         pthread_attr_get_np(thread, &sattr);
 #else
@@ -605,7 +606,7 @@ static inline void* currentThreadStackBase()
         stackThread = thread;
     }
     return static_cast<char*>(stackBase) + stackSize;
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
     if (g_stackBase)
         return g_stackBase;
     else {
@@ -621,9 +622,9 @@ static inline void* currentThreadStackBase()
 
 static inline PlatformThread getCurrentPlatformThread()
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     return pthread_mach_thread_np(pthread_self());
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     return pthread_getw32threadhandle_np(pthread_self());
 #endif
 }
@@ -799,9 +800,9 @@ void Heap::markCurrentThreadConservatively(MarkStack& markStack)
 
 static inline void suspendThread(const PlatformThread& platformThread)
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     thread_suspend(platformThread);
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     SuspendThread(platformThread);
 #else
 #error Need a way to suspend threads on this platform
@@ -810,9 +811,9 @@ static inline void suspendThread(const PlatformThread& platformThread)
 
 static inline void resumeThread(const PlatformThread& platformThread)
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
     thread_resume(platformThread);
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     ResumeThread(platformThread);
 #else
 #error Need a way to resume threads on this platform
@@ -821,7 +822,7 @@ static inline void resumeThread(const PlatformThread& platformThread)
 
 typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 #if CPU(X86)
 typedef i386_thread_state_t PlatformThreadRegisters;
@@ -837,7 +838,7 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 #error Unknown Architecture
 #endif
 
-#elif PLATFORM(WIN_OS)&& CPU(X86)
+#elif OS(WINDOWS) && CPU(X86)
 typedef CONTEXT PlatformThreadRegisters;
 #else
 #error Need a thread register struct for this platform
@@ -845,7 +846,7 @@ typedef CONTEXT PlatformThreadRegisters;
 
 static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, PlatformThreadRegisters& regs)
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 #if CPU(X86)
     unsigned user_count = sizeof(regs)/sizeof(int);
@@ -873,9 +874,9 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
         CRASH();
     }
     return user_count * sizeof(usword_t);
-// end PLATFORM(DARWIN)
+// end OS(DARWIN)
 
-#elif PLATFORM(WIN_OS) && CPU(X86)
+#elif OS(WINDOWS) && CPU(X86)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
@@ -886,7 +887,7 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 
 static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 {
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 
 #if __DARWIN_UNIX03
 
@@ -916,8 +917,8 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 #endif // __DARWIN_UNIX03
 
-// end PLATFORM(DARWIN)
-#elif CPU(X86) && PLATFORM(WIN_OS)
+// end OS(DARWIN)
+#elif CPU(X86) && OS(WINDOWS)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
 #else
 #error Need a way to get the stack pointer for another thread on this platform

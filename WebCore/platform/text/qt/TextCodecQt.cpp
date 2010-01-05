@@ -97,7 +97,7 @@ String TextCodecQt::decode(const char* bytes, size_t length, bool flush, bool /*
     // We chop input buffer to smaller buffers to avoid excessive memory consumption
     // when the input buffer is big.  This helps reduce peak memory consumption in
     // mobile devices where system RAM is limited.
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
     static const int MaxInputChunkSize = 32 * 1024;
 #else
     static const int MaxInputChunkSize = 1024 * 1024;

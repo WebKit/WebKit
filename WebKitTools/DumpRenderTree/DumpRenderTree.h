@@ -46,7 +46,7 @@
 
 #include <string>
 
-#if !PLATFORM(OPENBSD)
+#if !OS(OPENBSD)
 std::wstring urlSuitableForTestResult(const std::wstring& url);
 #endif
 

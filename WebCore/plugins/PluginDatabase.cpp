@@ -320,7 +320,7 @@ void PluginDatabase::clear()
     m_preferredPlugins.clear();
 }
 
-#if (!PLATFORM(WINCE)) && (!PLATFORM(SYMBIAN)) && (!PLATFORM(WIN_OS) || !ENABLE(NETSCAPE_PLUGIN_API))
+#if (!OS(WINCE)) && (!OS(SYMBIAN)) && (!OS(WINDOWS) || !ENABLE(NETSCAPE_PLUGIN_API))
 // For Safari/Win the following three methods are implemented
 // in PluginDatabaseWin.cpp, but if we can use WebCore constructs
 // for the logic we should perhaps move it here under XP_WIN?
@@ -428,6 +428,6 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     }
 }
 
-#endif // !PLATFORM(SYMBIAN) && !PLATFORM(WIN_OS)
+#endif // !OS(SYMBIAN) && !OS(WINDOWS)
 
 }

@@ -49,7 +49,7 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if !PLATFORM(WIN_OS)
+#if !OS(WINDOWS)
 #include <sys/param.h>
 #define MAX_PATH MAXPATHLEN
 #endif

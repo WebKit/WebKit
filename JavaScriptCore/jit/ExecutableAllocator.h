@@ -34,12 +34,12 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(IPHONE)
+#if OS(IPHONE_OS)
 #include <libkern/OSCacheControl.h>
 #include <sys/mman.h>
 #endif
 
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
 #include <e32std.h>
 #endif
 
@@ -85,7 +85,7 @@ private:
     struct Allocation {
         char* pages;
         size_t size;
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
         RChunk* chunk;
 #endif
     };
@@ -190,13 +190,13 @@ public:
     static void cacheFlush(void*, size_t)
     {
     }
-#elif CPU(ARM_THUMB2) && PLATFORM(IPHONE)
+#elif CPU(ARM_THUMB2) && OS(IPHONE_OS)
     static void cacheFlush(void* code, size_t size)
     {
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
     }
-#elif CPU(ARM_THUMB2) && PLATFORM(LINUX)
+#elif CPU(ARM_THUMB2) && OS(LINUX)
     static void cacheFlush(void* code, size_t size)
     {
         asm volatile (
@@ -212,12 +212,12 @@ public:
             : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
             : "r0", "r1", "r2");
     }
-#elif PLATFORM(SYMBIAN)
+#elif OS(SYMBIAN)
     static void cacheFlush(void* code, size_t size)
     {
         User::IMB_Range(code, static_cast<char*>(code) + size);
     }
-#elif CPU(ARM_TRADITIONAL) && PLATFORM(LINUX)
+#elif CPU(ARM_TRADITIONAL) && OS(LINUX)
     static void cacheFlush(void* code, size_t size)
     {
         asm volatile (

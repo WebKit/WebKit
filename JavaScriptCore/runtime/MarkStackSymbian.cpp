@@ -20,7 +20,7 @@
 #include "config.h"
 #include "MarkStack.h"
 
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
 
 #include <e32hal.h>
 

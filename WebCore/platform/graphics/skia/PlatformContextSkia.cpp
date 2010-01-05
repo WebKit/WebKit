@@ -89,7 +89,7 @@ struct PlatformContextSkia::State {
     // color to produce a new output color.
     SkColor applyAlpha(SkColor) const;
 
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     // If non-empty, the current State is clipped to this image.
     SkBitmap m_imageBufferClip;
     // If m_imageBufferClip is non-empty, this is the region the image is clipped to.
@@ -143,7 +143,7 @@ PlatformContextSkia::State::State(const State& other)
     , m_lineJoin(other.m_lineJoin)
     , m_dash(other.m_dash)
     , m_textDrawingMode(other.m_textDrawingMode)
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     , m_imageBufferClip(other.m_imageBufferClip)
     , m_clip(other.m_clip)
 #endif
@@ -180,7 +180,7 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 // Danger: canvas can be NULL.
 PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
     : m_canvas(canvas)
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     , m_drawingToImageBuffer(false)
 #endif
 {
@@ -197,7 +197,7 @@ void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)
     m_canvas = canvas;
 }
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 void PlatformContextSkia::setDrawingToImageBuffer(bool value)
 {
     m_drawingToImageBuffer = value;
@@ -214,7 +214,7 @@ void PlatformContextSkia::save()
     m_stateStack.append(*m_state);
     m_state = &m_stateStack.last();
 
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     // The clip image only needs to be applied once. Reset the image so that we
     // don't attempt to clip multiple times.
     m_state->m_imageBufferClip.reset();
@@ -224,7 +224,7 @@ void PlatformContextSkia::save()
     canvas()->save();
 }
 
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
 void PlatformContextSkia::beginLayerClippedToImage(const WebCore::FloatRect& rect,
                                                    const WebCore::ImageBuffer* imageBuffer)
 {
@@ -272,7 +272,7 @@ void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
 
 void PlatformContextSkia::restore()
 {
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
     if (!m_state->m_imageBufferClip.empty()) {
         applyClipFromImage(m_state->m_clip, m_state->m_imageBufferClip);
         canvas()->restore();
@@ -575,7 +575,7 @@ bool PlatformContextSkia::isPrinting()
     return m_canvas->getTopPlatformDevice().IsVectorial();
 }
 
-#if defined(__linux__) || PLATFORM(WIN_OS)
+#if OS(LINUX) || OS(WINDOWS)
 void PlatformContextSkia::applyClipFromImage(const WebCore::FloatRect& rect, const SkBitmap& imageBuffer)
 {
     // NOTE: this assumes the image mask contains opaque black for the portions that are to be shown, as such we

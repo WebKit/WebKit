@@ -1,3 +1,101 @@
+2010-01-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Fisher.
+
+        Reorganize, document and rename OS() platform macros.
+        https://bugs.webkit.org/show_bug.cgi?id=33198
+
+        * wtf/Platform.h: Rename, reorganize and document OS() macros.
+
+        Adapt to name changes. Also fixed a few incorrect OS checks.
+
+        * API/JSContextRef.cpp:
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::isVFPPresent):
+        * assembler/MacroAssemblerX86Common.h:
+        * bytecode/SamplingTool.cpp:
+        * config.h:
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::~RegisterFile):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::grow):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        * jit/ExecutableAllocatorPosix.cpp:
+        * jit/ExecutableAllocatorSymbian.cpp:
+        * jit/ExecutableAllocatorWin.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITStubs.cpp:
+        * jsc.cpp:
+        (main):
+        * parser/Grammar.y:
+        * profiler/ProfileNode.cpp:
+        (JSC::getCount):
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlockPtr):
+        (JSC::currentThreadStackBase):
+        (JSC::getCurrentPlatformThread):
+        (JSC::suspendThread):
+        (JSC::resumeThread):
+        (JSC::getPlatformThreadRegisters):
+        (JSC::otherThreadStackPointer):
+        * runtime/Collector.h:
+        * runtime/DateConstructor.cpp:
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStackArray::shrinkAllocation):
+        * runtime/MarkStackPosix.cpp:
+        * runtime/MarkStackSymbian.cpp:
+        * runtime/MarkStackWin.cpp:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLastIndexOf):
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+        * runtime/UString.cpp:
+        (JSC::UString::from):
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/CurrentTime.cpp:
+        (WTF::lowResUTCTime):
+        * wtf/CurrentTime.h:
+        (WTF::getLocalTime):
+        * wtf/DateMath.cpp:
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::InitModule):
+        (WTF::TCMallocStats::):
+        * wtf/FastMalloc.h:
+        * wtf/MathExtras.h:
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+        * wtf/StringExtras.h:
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        * wtf/TCSystemAlloc.cpp:
+        * wtf/ThreadSpecific.h:
+        (WTF::::destroy):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        (WTF::isMainThread):
+        * wtf/ThreadingWin.cpp:
+        (WTF::wtfThreadEntryPoint):
+        (WTF::createThreadInternal):
+        * wtf/VMTags.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
 2010-01-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         Add missing files to the build system - make distcheck build fix.

@@ -59,7 +59,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if PLATFORM(WINCE) && !PLATFORM(QT)
+#if OS(WINCE) && !PLATFORM(QT)
 extern "C" size_t strftime(char * const s, const size_t maxsize, const char * const format, const struct tm * const t); //provided by libce
 #endif
 
@@ -197,7 +197,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 {
 #if HAVE(LANGINFO_H)
     static const nl_item formats[] = { D_T_FMT, D_FMT, T_FMT };
-#elif (PLATFORM(WINCE) && !PLATFORM(QT)) || PLATFORM(SYMBIAN)
+#elif (OS(WINCE) && !PLATFORM(QT)) || OS(SYMBIAN)
      // strftime() does not support '#' on WinCE or Symbian
     static const char* const formatStrings[] = { "%c", "%x", "%X" };
 #else

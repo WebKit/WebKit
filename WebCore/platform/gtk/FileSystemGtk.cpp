@@ -42,7 +42,7 @@ String filenameToString(const char* filename)
     if (!filename)
         return String();
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     return String::fromUTF8(filename);
 #else
     gchar* escapedString = g_uri_escape_string(filename, "/:", false);
@@ -54,7 +54,7 @@ String filenameToString(const char* filename)
 
 char* filenameFromString(const String& string)
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     return g_strdup(string.utf8().data());
 #else
     return g_uri_unescape_string(string.utf8().data(), 0);
@@ -64,7 +64,7 @@ char* filenameFromString(const String& string)
 // Converts a string to something suitable to be displayed to the user.
 String filenameForDisplay(const String& string)
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     return string;
 #else
     gchar* filename = filenameFromString(string);

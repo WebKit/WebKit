@@ -35,7 +35,7 @@
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
-#if PLATFORM(WIN) && !PLATFORM(WINCE)
+#if PLATFORM(WIN) && !OS(WINCE)
 #include <usp10.h>
 #endif
 
@@ -115,7 +115,7 @@ public:
     virtual String description() const;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     NSFont* getNSFont() const { return m_platformData.font(); }
 #endif
 
@@ -140,7 +140,7 @@ public:
 
 #if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
-#if !PLATFORM(WINCE)    // disable unused members to save space
+#if !OS(WINCE)    // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
@@ -162,7 +162,7 @@ private:
 
     void commonInit();
 
-#if PLATFORM(WIN) && !PLATFORM(WINCE)
+#if PLATFORM(WIN) && !OS(WINCE)
     void initGDIFont();
     void platformCommonDestroy();
     float widthForGDIGlyph(Glyph glyph) const;
@@ -227,7 +227,7 @@ private:
 
 #if PLATFORM(WIN)
     bool m_isSystemFont;
-#if !PLATFORM(WINCE)    // disable unused members to save space
+#if !OS(WINCE)    // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif

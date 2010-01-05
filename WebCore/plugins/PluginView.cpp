@@ -47,7 +47,7 @@
 #include "Page.h"
 #include "FocusController.h"
 #include "PlatformMouseEvent.h"
-#if PLATFORM(WIN_OS) && ENABLE(NETSCAPE_PLUGIN_API)
+#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginMessageThrottlerWin.h"
 #endif
 #include "PluginPackage.h"
@@ -125,7 +125,7 @@ void PluginView::setFrameRect(const IntRect& rect)
 
     updatePluginWidget();
 
-#if PLATFORM(WIN_OS) || PLATFORM(SYMBIAN)
+#if OS(WINDOWS) || OS(SYMBIAN)
     // On Windows and Symbian, always call plugin to change geometry.
     setNPWindowRect(rect);
 #elif defined(XP_UNIX)
@@ -310,7 +310,7 @@ void PluginView::stop()
 #ifdef XP_WIN
     // Unsubclass the window
     if (m_isWindowed) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
         WNDPROC currentWndProc = (WNDPROC)GetWindowLong(platformPluginWidget(), GWL_WNDPROC);
 
         if (currentWndProc == PluginViewWndProc)
@@ -803,14 +803,14 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #if defined(XP_UNIX) || defined(Q_WS_X11)
     , m_needsXEmbed(false)
 #endif
-#if PLATFORM(WIN_OS) && ENABLE(NETSCAPE_PLUGIN_API)
+#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginWndProc(0)
     , m_lastMessage(0)
     , m_isCallingPluginWndProc(false)
     , m_wmPrintHDC(0)
     , m_haveUpdatedPluginWidget(false)
 #endif
-#if (PLATFORM(QT) && PLATFORM(WIN_OS)) || defined(XP_MACOSX)
+#if (PLATFORM(QT) && OS(WINDOWS)) || defined(XP_MACOSX)
     , m_window(0)
 #endif
 #if defined(XP_MACOSX)
@@ -1210,7 +1210,7 @@ static const char* MozillaUserAgent = "Mozilla/5.0 ("
         "Windows; U; Windows NT 5.1;"
 #elif defined(XP_UNIX)
 // The Gtk port uses X11 plugins in Mac.
-#if PLATFORM(DARWIN) && PLATFORM(GTK)
+#if OS(DARWIN) && PLATFORM(GTK)
     "X11; U; Intel Mac OS X;"
 #else
     "X11; U; Linux i686;"

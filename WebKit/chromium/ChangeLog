@@ -1,3 +1,38 @@
+2010-01-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Fisher.
+
+        Reorganize, document and rename OS() platform macros.
+        https://bugs.webkit.org/show_bug.cgi?id=33198
+
+        Adapt to name changes.
+
+        * src/ChromiumBridge.cpp:
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::isSelectTrailingWhitespaceEnabled):
+        (WebKit::):
+        (WebKit::EditorClientImpl::handleEditingKeyboardEvent):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::createPlugin):
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::makeContextCurrent):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectionAsText):
+        (WebKit::WebFrameImpl::printPage):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::mouseContextMenu):
+        (WebKit::WebViewImpl::mouseUp):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::sendContextMenuEvent):
+        (WebKit::WebViewImpl::setScrollbarColors):
+        (WebKit::WebViewImpl::navigationPolicyFromMouseEvent):
+
 2010-01-04  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.

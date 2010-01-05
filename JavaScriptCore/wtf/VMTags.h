@@ -30,7 +30,7 @@
 
 // On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
 // in order to aid tools that inspect system memory use. 
-#if PLATFORM(DARWIN) && !defined(BUILDING_ON_TIGER)
+#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
 
 #include <mach/vm_statistics.h>
 
@@ -44,12 +44,12 @@
 #define VM_TAG_FOR_REGISTERFILE_MEMORY VM_MAKE_TAG(65)
 #endif // defined(VM_MEMORY_JAVASCRIPT_CORE) && defined(VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE) && defined(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR) && defined(VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR)
 
-#else // PLATFORM(DARWIN) && !defined(BUILDING_ON_TIGER)
+#else // OS(DARWIN) && !defined(BUILDING_ON_TIGER)
 
 #define VM_TAG_FOR_COLLECTOR_MEMORY -1
 #define VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY -1
 #define VM_TAG_FOR_REGISTERFILE_MEMORY -1
 
-#endif // PLATFORM(DARWIN) && !defined(BUILDING_ON_TIGER)
+#endif // OS(DARWIN) && !defined(BUILDING_ON_TIGER)
 
 #endif // VMTags_h

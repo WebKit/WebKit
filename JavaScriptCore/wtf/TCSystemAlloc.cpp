@@ -47,7 +47,7 @@
 #include <sys/types.h>
 #endif
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include "windows.h"
 #else
 #include <errno.h>

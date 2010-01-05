@@ -36,7 +36,7 @@
 #include <unicode/ucol.h>
 #include <string.h>
 
-#if PLATFORM(DARWIN)
+#if OS(DARWIN)
 #include "RetainPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -59,9 +59,9 @@ Collator::Collator(const char* locale)
 
 std::auto_ptr<Collator> Collator::userDefault()
 {
-#if PLATFORM(DARWIN) && PLATFORM(CF)
+#if OS(DARWIN) && PLATFORM(CF)
     // Mac OS X doesn't set UNIX locale to match user-selected one, so ICU default doesn't work.
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !PLATFORM(IPHONE)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !OS(IPHONE_OS)
     RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());
     CFStringRef collationOrder = (CFStringRef)CFLocaleGetValue(currentLocale.get(), kCFLocaleCollatorIdentifier);
 #else

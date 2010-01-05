@@ -55,13 +55,13 @@
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include "WebRect.h"
 #include "WebSandboxSupport.h"
 #include "WebThemeEngine.h"
 #endif
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 #include "WebSandboxSupport.h"
 #include "WebFontInfo.h"
 #endif
@@ -285,7 +285,7 @@ KURL ChromiumBridge::filePathToURL(const String& path)
 
 // Font -----------------------------------------------------------------------
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 bool ChromiumBridge::ensureFontLoaded(HFONT font)
 {
     WebSandboxSupport* ss = webKitClient()->sandboxSupport();
@@ -296,7 +296,7 @@ bool ChromiumBridge::ensureFontLoaded(HFONT font)
 }
 #endif
 
-#if PLATFORM(LINUX)
+#if OS(LINUX)
 String ChromiumBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters)
 {
     if (webKitClient()->sandboxSupport())
@@ -480,7 +480,7 @@ double ChromiumBridge::currentTime()
 
 // Theming --------------------------------------------------------------------
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 void ChromiumBridge::paintButton(
     GraphicsContext* gc, int part, int state, int classicState,

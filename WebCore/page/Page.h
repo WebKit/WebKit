@@ -31,7 +31,7 @@
 #include "SchedulePair.h"
 #endif
 
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
+#if PLATFORM(WIN) || (PLATFORM(WX) && OS(WINDOWS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
 typedef struct HINSTANCE__* HINSTANCE;
 #endif
 
@@ -204,7 +204,7 @@ namespace WebCore {
         void setDebugger(JSC::Debugger*);
         JSC::Debugger* debugger() const { return m_debugger; }
 
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
+#if PLATFORM(WIN) || (PLATFORM(WX) && OS(WINDOWS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
         // The global DLL or application instance used for all windows.
         static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
         static HINSTANCE instanceHandle() { return s_instanceHandle; }

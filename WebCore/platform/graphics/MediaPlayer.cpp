@@ -39,7 +39,7 @@
 
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
-#elif PLATFORM(WINCE) && !PLATFORM(QT)
+#elif OS(WINCE) && !PLATFORM(QT)
 #include "MediaPlayerPrivateWince.h"
 #elif PLATFORM(WIN)
 #include "MediaPlayerPrivateQuickTimeWin.h"

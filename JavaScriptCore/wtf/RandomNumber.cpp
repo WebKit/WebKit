@@ -34,7 +34,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 extern "C" {
 #include "wince/mt19937ar.c"
 }
@@ -66,10 +66,10 @@ double randomNumber()
     uint32_t bits;
     rand_s(&bits);
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
     uint32_t bits = arc4random();
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#elif PLATFORM(UNIX)
+#elif OS(UNIX)
     uint32_t part1 = random() & (RAND_MAX - 1);
     uint32_t part2 = random() & (RAND_MAX - 1);
     // random only provides 31 bits
@@ -80,9 +80,9 @@ double randomNumber()
     // Mask off the low 53bits
     fullRandom &= (1LL << 53) - 1;
     return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
     return genrand_res53();
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
     uint32_t part1 = rand() & (RAND_MAX - 1);
     uint32_t part2 = rand() & (RAND_MAX - 1);
     uint32_t part3 = rand() & (RAND_MAX - 1);

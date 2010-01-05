@@ -43,7 +43,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 // Building on 10.6 or later: kCGInterpolationMedium is defined in the CGInterpolationQuality enum.

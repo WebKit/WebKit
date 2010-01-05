@@ -176,7 +176,7 @@ namespace JSC {
     #if HAVE(MMAP)
         m_buffer = static_cast<Register*>(mmap(0, bufferLength, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, VM_TAG_FOR_REGISTERFILE_MEMORY, 0));
         if (m_buffer == MAP_FAILED) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
             fprintf(stderr, "Could not allocate register file: %d\n", GetLastError());
 #else
             fprintf(stderr, "Could not allocate register file: %d\n", errno);
@@ -186,7 +186,7 @@ namespace JSC {
     #elif HAVE(VIRTUALALLOC)
         m_buffer = static_cast<Register*>(VirtualAlloc(0, roundUpAllocationSize(bufferLength, commitSize), MEM_RESERVE, PAGE_READWRITE));
         if (!m_buffer) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
             fprintf(stderr, "Could not allocate register file: %d\n", GetLastError());
 #else
             fprintf(stderr, "Could not allocate register file: %d\n", errno);
@@ -196,7 +196,7 @@ namespace JSC {
         size_t committedSize = roundUpAllocationSize(maxGlobals * sizeof(Register), commitSize);
         void* commitCheck = VirtualAlloc(m_buffer, committedSize, MEM_COMMIT, PAGE_READWRITE);
         if (commitCheck != m_buffer) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
             fprintf(stderr, "Could not allocate register file: %d\n", GetLastError());
 #else
             fprintf(stderr, "Could not allocate register file: %d\n", errno);
@@ -242,7 +242,7 @@ namespace JSC {
         if (newEnd > m_commitEnd) {
             size_t size = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
             if (!VirtualAlloc(m_commitEnd, size, MEM_COMMIT, PAGE_READWRITE)) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
                 fprintf(stderr, "Could not allocate register file: %d\n", GetLastError());
 #else
                 fprintf(stderr, "Could not allocate register file: %d\n", errno);

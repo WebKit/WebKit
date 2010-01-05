@@ -33,7 +33,7 @@
 #include <wtf/PassOwnPtr.h>
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
-#if PLATFORM(CHROMIUM) && PLATFORM(WIN_OS)
+#if PLATFORM(CHROMIUM) && OS(WINDOWS)
 #undef NO_ERROR
 #endif
 

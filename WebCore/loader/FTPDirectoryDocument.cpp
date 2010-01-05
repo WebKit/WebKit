@@ -43,7 +43,7 @@
 #if PLATFORM(QT)
 #include <QDateTime>
 // On Windows, use the threadsafe *_r functions provided by pthread.
-#elif PLATFORM(WIN_OS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
+#elif OS(WINDOWS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
 #include <pthread.h>
 #endif
 
@@ -234,7 +234,7 @@ static struct tm *localTimeQt(const time_t *const timep, struct tm *result)
 }
 
 #define localtime_r(x, y) localTimeQt(x, y)
-#elif PLATFORM(WIN_OS) && !defined(localtime_r)
+#elif OS(WINDOWS) && !defined(localtime_r)
 #if defined(_MSC_VER) && (_MSC_VER >= 1400) 
 #define localtime_r(x, y) localtime_s((y), (x))
 #else /* !_MSC_VER */ 

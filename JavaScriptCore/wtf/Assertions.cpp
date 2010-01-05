@@ -35,7 +35,7 @@
 #include <CoreFoundation/CFString.h>
 #endif
 
-#if COMPILER(MSVC) && !PLATFORM(WINCE)
+#if COMPILER(MSVC) && !OS(WINCE)
 #ifndef WINVER
 #define WINVER 0x0500
 #endif
@@ -46,7 +46,7 @@
 #include <crtdbg.h>
 #endif
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 #include <winbase.h>
 #endif
 
@@ -82,7 +82,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
                 break;
 
             if (_vsnprintf(buffer, size, format, args) != -1) {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
                 // WinCE only supports wide chars
                 wchar_t* wideBuffer = (wchar_t*)malloc(size * sizeof(wchar_t));
                 if (wideBuffer == NULL)
@@ -105,7 +105,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         } while (size > 1024);
     }
 #endif
-#if PLATFORM(SYMBIAN)
+#if OS(SYMBIAN)
     vfprintf(stdout, format, args);
 #else
     vfprintf(stderr, format, args);
@@ -123,7 +123,7 @@ static void printf_stderr_common(const char* format, ...)
 
 static void printCallSite(const char* file, int line, const char* function)
 {
-#if PLATFORM(WIN) && !PLATFORM(WINCE) && defined _DEBUG
+#if OS(WIN) && !OS(WINCE) && defined _DEBUG
     _CrtDbgReport(_CRT_WARN, file, line, NULL, "%s\n", function);
 #else
     printf_stderr_common("(%s:%d %s)\n", file, line, function);

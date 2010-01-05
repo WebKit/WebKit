@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <wtf/DateMath.h>
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #include <windows.h>
 #endif
 
@@ -43,7 +43,7 @@ namespace JSC {
 
 static double getCount()
 {
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
     static LARGE_INTEGER frequency = {0};
     if (!frequency.QuadPart)
         QueryPerformanceFrequency(&frequency);

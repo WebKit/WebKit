@@ -88,7 +88,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     return 0;
 #else
     COMPtr<WCDataObject> dataObject;

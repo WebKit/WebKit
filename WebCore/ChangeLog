@@ -1,3 +1,166 @@
+2010-01-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Fisher.
+
+        Reorganize, document and rename OS() platform macros.
+        https://bugs.webkit.org/show_bug.cgi?id=33198
+
+        Adapt to name changes. Also fixed a few incorrect OS checks.
+
+        * accessibility/AccessibilityObject.h:
+        * config.h:
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::platform):
+        * loader/CachedFont.cpp:
+        * loader/FTPDirectoryDocument.cpp:
+        * loader/FTPDirectoryParser.cpp:
+        * page/EventHandler.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::setUseSecureKeyboardEntry):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform):
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * page/chromium/DragControllerChromium.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/FileSystem.h:
+        * platform/KeyboardCodes.h:
+        * platform/PurgeableBuffer.h:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::writeRange):
+        * platform/chromium/ClipboardUtilitiesChromium.cpp:
+        * platform/chromium/ClipboardUtilitiesChromium.h:
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PlatformKeyboardEventChromium.cpp:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::layout):
+        (WebCore::PopupMenu::show):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::mayFillWithSolidColor):
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::alternateFamilyName):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/chromium/FontCustomPlatformData.h:
+        * platform/graphics/chromium/FontPlatformData.h:
+        * platform/graphics/opentype/OpenTypeUtilities.cpp:
+        * platform/graphics/opentype/OpenTypeUtilities.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::PlatformContextSkia):
+        (PlatformContextSkia::save):
+        (PlatformContextSkia::restore):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        (WebCore::Icon::paint):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::filenameToString):
+        (WebCore::filenameFromString):
+        (WebCore::filenameForDisplay):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+        * platform/text/String.cpp:
+        (WebCore::String::format):
+        (WebCore::String::number):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::extendTextCodecMaps):
+        * platform/text/TextStream.cpp:
+        * platform/text/TextStream.h:
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::messageToEventType):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::deviceInfoForWidget):
+        (WebCore::screenIsMonochrome):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::paint):
+        (WebCore::PopupMenu::registerClass):
+        (WebCore::PopupMenu::PopupMenuWndProc):
+        (WebCore::PopupMenu::wndProc):
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime):
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::unloadModule):
+        * plugins/PluginDatabase.cpp:
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::compareFileVersion):
+        * plugins/PluginPackage.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addWindowsMediaPlayerPluginDirectory):
+        (WebCore::addMacromediaPluginDirectories):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::registerPluginView):
+        (WebCore::PluginView::wndProc):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paintIntoTransformedContext):
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::platformStart):
+
 2010-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

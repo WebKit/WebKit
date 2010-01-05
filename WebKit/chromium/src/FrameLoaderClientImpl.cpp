@@ -1325,7 +1325,7 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
     const String& mimeType,
     bool loadManually)
 {
-#if !PLATFORM(WIN_OS)
+#if !OS(WINDOWS)
     // WebCore asks us to make a plugin even if we don't have a
     // registered handler, with a comment saying it's so we can display
     // the broken plugin icon.  In Chromium, we normally register a

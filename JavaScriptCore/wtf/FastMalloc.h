@@ -194,7 +194,7 @@ using WTF::fastMallocForbid;
 using WTF::fastMallocAllow;
 #endif
 
-#if COMPILER(GCC) && PLATFORM(DARWIN)
+#if COMPILER(GCC) && OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
 #elif COMPILER(GCC)
 #define WTF_PRIVATE_INLINE inline __attribute__((always_inline))

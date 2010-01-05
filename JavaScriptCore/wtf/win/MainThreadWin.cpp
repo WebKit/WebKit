@@ -32,7 +32,7 @@
 
 #include "Assertions.h"
 #include "Threading.h"
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
 #include <windows.h>
 #endif
 
@@ -57,7 +57,7 @@ void initializeMainThreadPlatform()
         return;
 
     HWND hWndParent = 0;
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     WNDCLASS wcex;
     memset(&wcex, 0, sizeof(WNDCLASS));
 #else
@@ -67,7 +67,7 @@ void initializeMainThreadPlatform()
 #endif
     wcex.lpfnWndProc    = ThreadingWindowWndProc;
     wcex.lpszClassName  = kThreadingWindowClassName;
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     RegisterClass(&wcex);
 #else
     RegisterClassEx(&wcex);

@@ -328,7 +328,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
     drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, useLowQualityScale);
 }
 
-#if !PLATFORM(WINCE) || PLATFORM(QT)
+#if !OS(WINCE) || PLATFORM(QT)
 void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPoint& point, int from, int to)
 {
     if (paintingDisabled())

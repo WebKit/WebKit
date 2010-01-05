@@ -61,7 +61,7 @@
 
 #include "Platform.h"
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 #include <windows.h>
 #endif
 
@@ -69,11 +69,11 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(WIN_OS) && !PLATFORM(WINCE)
+#if OS(WINDOWS) && !OS(WINCE)
 #include <windows.h>
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
 #include <libkern/OSAtomic.h>
-#elif PLATFORM(ANDROID)
+#elif OS(ANDROID)
 #include <cutils/atomic.h>
 #elif COMPILER(GCC)
 #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
@@ -144,7 +144,7 @@ typedef GOwnPtr<GCond> PlatformCondition;
 typedef QT_PREPEND_NAMESPACE(QMutex)* PlatformMutex;
 typedef void* PlatformReadWriteLock; // FIXME: Implement.
 typedef QT_PREPEND_NAMESPACE(QWaitCondition)* PlatformCondition;
-#elif PLATFORM(WIN_OS)
+#elif OS(WINDOWS)
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;
     size_t m_recursionCount;
@@ -217,10 +217,10 @@ private:
     PlatformCondition m_condition;
 };
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-#if COMPILER(MINGW) || COMPILER(MSVC7) || PLATFORM(WINCE)
+#if COMPILER(MINGW) || COMPILER(MSVC7) || OS(WINCE)
 inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
 #else
@@ -228,13 +228,13 @@ inline int atomicIncrement(int volatile* addend) { return InterlockedIncrement(r
 inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
 #endif
 
-#elif PLATFORM(DARWIN)
+#elif OS(DARWIN)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
 inline int atomicIncrement(int volatile* addend) { return OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
 
-#elif PLATFORM(ANDROID)
+#elif OS(ANDROID)
 
 inline int atomicIncrement(int volatile* addend) { return android_atomic_inc(addend); }
 inline int atomicDecrement(int volatile* addend) { return android_atomic_dec(addend); }

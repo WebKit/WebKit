@@ -27,7 +27,7 @@
 #include <tchar.h>
 #include <windows.h>
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 // SHGFI_SHELLICONSIZE is not available on WINCE
 #define SHGFI_SHELLICONSIZE         0
 #endif
@@ -63,7 +63,7 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         return adoptRef(new Icon(sfi.hIcon));
     }
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     return 0;
 #else
     TCHAR buffer[MAX_PATH];    
@@ -86,7 +86,7 @@ void Icon::paint(GraphicsContext* context, const IntRect& r)
     if (context->paintingDisabled())
         return;
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     context->drawIcon(m_hIcon, r, DI_NORMAL);
 #else
     HDC hdc = context->getWindowsContext(r);

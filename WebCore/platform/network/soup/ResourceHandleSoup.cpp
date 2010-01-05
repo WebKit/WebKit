@@ -876,7 +876,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     url.setQuery(String());
     url.removePort();
 
-#if !PLATFORM(WIN_OS)
+#if !OS(WINDOWS)
     // we avoid the escaping for local files, because
     // g_filename_from_uri (used internally by GFile) has problems
     // decoding strings with arbitrary percent signs

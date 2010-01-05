@@ -27,7 +27,7 @@
 #if PLATFORM(QT)
 #include <QDateTime>
 // On Windows, use the threadsafe *_r functions provided by pthread.
-#elif PLATFORM(WIN_OS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
+#elif OS(WINDOWS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
 #include <pthread.h>
 #endif
 
@@ -49,7 +49,7 @@ static struct tm *gmtimeQt(const time_t *const timep, struct tm *result)
 }
 
 #define gmtime_r(x, y) gmtimeQt(x, y)
-#elif PLATFORM(WIN_OS) && !defined(gmtime_r)
+#elif OS(WINDOWS) && !defined(gmtime_r)
 #if defined(_MSC_VER) && (_MSC_VER >= 1400) 
 #define gmtime_r(x, y) gmtime_s((y), (x))
 #else /* !_MSC_VER */ 

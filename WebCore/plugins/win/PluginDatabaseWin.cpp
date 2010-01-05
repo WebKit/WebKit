@@ -38,7 +38,7 @@
 #define _countof(x) (sizeof(x)/sizeof(x[0]))
 #endif
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 // WINCE doesn't support Registry Key Access Rights. The parameter should always be 0
 #define KEY_ENUMERATE_SUB_KEYS 0
 
@@ -252,7 +252,7 @@ static inline void addMozillaPluginDirectories(Vector<String>& directories)
 
 static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& directories)
 {
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
     // The new WMP Firefox plugin is installed in \PFiles\Plugins if it can't find any Firefox installs
     WCHAR pluginDirectoryStr[_MAX_PATH + 1];
     DWORD pluginDirectorySize = ::ExpandEnvironmentStringsW(TEXT("%SYSTEMDRIVE%\\PFiles\\Plugins"), pluginDirectoryStr, _countof(pluginDirectoryStr));
@@ -355,7 +355,7 @@ exit:
 
 static inline void addMacromediaPluginDirectories(Vector<String>& directories)
 {
-#if !PLATFORM(WINCE)
+#if !OS(WINCE)
     WCHAR systemDirectoryStr[MAX_PATH];
 
     if (GetSystemDirectory(systemDirectoryStr, _countof(systemDirectoryStr)) == 0)

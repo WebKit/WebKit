@@ -83,7 +83,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 #import <Carbon/Carbon.h>
 #endif
 
@@ -922,12 +922,12 @@ bool Frame::isContentEditable() const
     return m_doc->inDesignMode();
 }
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 const short enableRomanKeyboardsOnly = -23;
 #endif
 void Frame::setUseSecureKeyboardEntry(bool enable)
 {
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     if (enable == IsSecureEventInputEnabled())
         return;
     if (enable) {

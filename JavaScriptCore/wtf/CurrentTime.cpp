@@ -33,7 +33,7 @@
 #include "config.h"
 #include "CurrentTime.h"
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 // Windows is first since we want to use hires timers, despite PLATFORM(CF)
 // being defined.
@@ -45,7 +45,7 @@
 #include <time.h>
 
 #if USE(QUERY_PERFORMANCE_COUNTER)
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 extern "C" time_t mktime(struct tm *t);
 #else
 #include <sys/timeb.h>
@@ -71,7 +71,7 @@ namespace WTF {
 
 const double msPerSecond = 1000.0;
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 
 #if USE(QUERY_PERFORMANCE_COUNTER)
 
@@ -123,7 +123,7 @@ static double highResUpTime()
 
 static double lowResUTCTime()
 {
-#if PLATFORM(WINCE)
+#if OS(WINCE)
     SYSTEMTIME systemTime;
     GetSystemTime(&systemTime);
     struct tm tmtime;

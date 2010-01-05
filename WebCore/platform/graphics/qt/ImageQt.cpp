@@ -213,7 +213,7 @@ void BitmapImage::checkForSolidColor()
     m_solidColor = QColor::fromRgba(framePixmap->toImage().pixel(0, 0));
 }
 
-#if PLATFORM(WIN_OS)
+#if OS(WINDOWS)
 PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
     return BitmapImage::create(new QPixmap(QPixmap::fromWinHBITMAP(hBitmap)));
