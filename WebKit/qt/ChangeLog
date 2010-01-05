@@ -1,3 +1,32 @@
+2010-01-05  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Drag & drop layout tests fail even when run manually
+        https://bugs.webkit.org/show_bug.cgi?id=33055
+
+        No new tests. Fix 3 layout tests when run manually.
+        fast/events/drag-and-drop.html
+        fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+        fast/events/drag-and-drop-fire-drag-dragover.html
+        Running these tests in DRT will be fixed in 31332.
+
+        * Api/qwebpage.cpp:
+        (dropActionToDragOp):
+        (dragOpToDropAction):
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+        Accept drag events even if they are not over a drop target. 
+        This is to ensure that drag events will continue to be delivered.
+
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::dragOperationToDropActions):
+        (WebCore::dropActionToDragOperation):
+        (WebCore::DragClientQt::startDrag):
+        Send dragEnd event.
+
 2010-01-04  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

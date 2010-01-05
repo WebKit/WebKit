@@ -27,6 +27,8 @@
 #include "DragClientQt.h"
 
 #include "ClipboardQt.h"
+#include "Frame.h"
+#include "PlatformMouseEvent.h"
 #include "qwebpage.h"
 
 #include <QDrag>
@@ -34,6 +36,32 @@
 
 
 namespace WebCore {
+
+static inline Qt::DropActions dragOperationsToDropActions(unsigned op)
+{
+    Qt::DropActions result = Qt::IgnoreAction;
+    if (op & DragOperationCopy)
+        result = Qt::CopyAction;
+    if (op & DragOperationMove)
+        result |= Qt::MoveAction;
+    if (op & DragOperationGeneric)
+        result |= Qt::MoveAction;
+    if (op & DragOperationLink)
+        result |= Qt::LinkAction;
+    return result;
+}
+
+static inline DragOperation dropActionToDragOperation(Qt::DropActions action)
+{
+    DragOperation result = DragOperationNone;
+    if (action & Qt::CopyAction)
+        result = DragOperationCopy;
+    if (action & Qt::LinkAction)
+        result = DragOperationLink;
+    if (action & Qt::MoveAction)
+        result = DragOperationMove;
+    return result;
+}
 
 DragDestinationAction DragClientQt::actionMaskForDrag(DragData*)
 {
@@ -58,7 +86,7 @@ void DragClientQt::willPerformDragSourceAction(DragSourceAction, const IntPoint&
 {
 }
 
-void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame*, bool)
+void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame* frame, bool)
 {
 #ifndef QT_NO_DRAGANDDROP
     QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
@@ -66,10 +94,16 @@ void DragClientQt::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Cli
     QWidget* view = m_webPage->view();
     if (view) {
         QDrag *drag = new QDrag(view);
-        if (clipboardData->hasImage())
+        if (clipboardData && clipboardData->hasImage())
             drag->setPixmap(qvariant_cast<QPixmap>(clipboardData->imageData()));
+        DragOperation dragOperationMask = DragOperationEvery;
+        clipboard->sourceOperation(dragOperationMask);
         drag->setMimeData(clipboardData);
-        drag->start();
+        Qt::DropAction actualDropAction = drag->exec(dragOperationsToDropActions(dragOperationMask));
+
+        // Send dragEnd event
+        PlatformMouseEvent me(m_webPage->view()->mapFromGlobal(QCursor::pos()), QCursor::pos(), LeftButton, MouseEventMoved, 0, false, false, false, false, 0);
+        frame->eventHandler()->dragSourceEndedAt(me, dropActionToDragOperation(actualDropAction));
     }
 #endif
 }
