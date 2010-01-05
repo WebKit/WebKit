@@ -132,6 +132,22 @@ using namespace std;
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
+#ifndef NSAccessibilityARIALiveAttribute
+#define NSAccessibilityARIALiveAttribute @"AXARIALive"
+#endif
+
+#ifndef NSAccessibilityARIAAtomicAttribute
+#define NSAccessibilityARIAAtomicAttribute @"AXARIAAtomic"
+#endif
+
+#ifndef NSAccessibilityARIARelevantAttribute
+#define NSAccessibilityARIARelevantAttribute @"AXARIARelevant"
+#endif
+
+#ifndef NSAccessibilityARIABusyAttribute
+#define NSAccessibilityARIABusyAttribute @"AXARIABusy"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -602,6 +618,17 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
 
     if (m_object->isDataTable() && static_cast<AccessibilityTable*>(m_object)->supportsSelectedRows())
         [additional addObject:NSAccessibilitySelectedRowsAttribute];        
+    
+    if (m_object->supportsARIALiveRegion()) {
+        [additional addObject:NSAccessibilityARIALiveAttribute];
+        [additional addObject:NSAccessibilityARIARelevantAttribute];
+    }
+        
+    // If an object is a child of a live region, then add these
+    if (m_object->isInsideARIALiveRegion()) {
+        [additional addObject:NSAccessibilityARIAAtomicAttribute];
+        [additional addObject:NSAccessibilityARIABusyAttribute];
+    }
     
     return additional;
 }
@@ -1816,6 +1843,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return dropEffectsArray;
     }
     
+    // ARIA Live region attributes.
+    if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
+        return m_object->ariaLiveRegionStatus();
+    if ([attributeName isEqualToString:NSAccessibilityARIARelevantAttribute])
+         return m_object->ariaLiveRegionRelevant();
+    if ([attributeName isEqualToString:NSAccessibilityARIAAtomicAttribute])
+        return [NSNumber numberWithBool:m_object->ariaLiveRegionAtomic()];
+    if ([attributeName isEqualToString:NSAccessibilityARIABusyAttribute])
+        return [NSNumber numberWithBool:m_object->ariaLiveRegionBusy()];
+    
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])
         return [NSValue valueWithPoint:m_object->clickPoint()];
@@ -2611,6 +2648,21 @@ static RenderObject* rendererForView(NSView* view)
     }
     
     return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
+}
+
+// These are used by DRT so that it can know when notifications are sent.
+typedef void (*AXPostedNotificationCallback)(id element, NSString* notification);
+static AXPostedNotificationCallback AXNotificationCallback = 0;
+
+- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function
+{
+    AXNotificationCallback = function;
+}
+
+- (void)accessibilityPostedNotification:(NSString *)notification
+{
+    if (AXNotificationCallback)
+        AXNotificationCallback(self, notification);
 }
 
 @end

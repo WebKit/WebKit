@@ -288,20 +288,27 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
     return objID;
 }
 
-void AXObjectCache::removeAXID(AccessibilityObject* obj)
+void AXObjectCache::removeAXID(AccessibilityObject* object)
 {
-    if (!obj)
+    if (!object)
         return;
     
-    AXID objID = obj->axObjectID();
+    AXID objID = object->axObjectID();
     if (!objID)
         return;
     ASSERT(!HashTraits<AXID>::isDeletedValue(objID));
     ASSERT(m_idsInUse.contains(objID));
-    obj->setAXObjectID(0);
+    object->setAXObjectID(0);
     m_idsInUse.remove(objID);
 }
 
+void AXObjectCache::contentChanged(RenderObject* renderer)
+{
+    AccessibilityObject* object = getOrCreate(renderer);
+    if (object)
+        object->contentChanged(); 
+}
+    
 void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
     if (!renderer)

@@ -32,7 +32,7 @@ var successfullyParsed = false;
           var succeeded = obj.isActionSupported("AXDecrement") == true;
           shouldBe("succeeded", "true");
 
-          var succeeded = obj.attributeValue("AXOrientation") == "AXVerticalOrientation";
+          var succeeded = obj.stringAttributeValue("AXOrientation") == "AXVerticalOrientation";
           shouldBe("succeeded", "true");
 
           // test the input slider
@@ -45,7 +45,7 @@ var successfullyParsed = false;
           var succeeded = obj.isActionSupported("AXDecrement") == true;
           shouldBe("succeeded", "true");
 
-          var succeeded = obj.attributeValue("AXOrientation") == "AXHorizontalOrientation";
+          var succeeded = obj.stringAttributeValue("AXOrientation") == "AXHorizontalOrientation";
           shouldBe("succeeded", "true");
 
     }

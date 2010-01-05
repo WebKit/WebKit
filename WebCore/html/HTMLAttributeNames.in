@@ -13,6 +13,8 @@ alink
 alt
 archive
 aria-activedescendant
+aria-atomic
+aria-busy
 aria-checked
 aria-controls
 aria-describedby
@@ -26,11 +28,13 @@ aria-label
 aria-labeledby
 aria-labelledby
 aria-level
+aria-live
 aria-multiselectable
 aria-orientation
 aria-owns
 aria-pressed
 aria-readonly
+aria-relevant
 aria-required
 aria-selected
 aria-valuemax

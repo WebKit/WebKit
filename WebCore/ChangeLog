@@ -1,3 +1,50 @@
+2010-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add ARIA "Live Region" support
+        https://bugs.webkit.org/show_bug.cgi?id=33117
+
+        Tests: platform/mac/accessibility/aria-liveregions-attributes.html
+               platform/mac/accessibility/aria-liveregions-notifications.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::contentChanged):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isChildOfARIALiveRegion):
+        (WebCore::AccessibilityObject::supportsARIALiveRegion):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::contentChanged):
+        (WebCore::AccessibilityObject::ariaLiveRegionStatus):
+        (WebCore::AccessibilityObject::ariaLiveRegionRelevant):
+        (WebCore::AccessibilityObject::ariaLiveRegionAtomic):
+        (WebCore::AccessibilityObject::ariaLiveRegionBusy):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::elementAttributeValue):
+        (WebCore::AccessibilityRenderObject::contentChanged):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionStatus):
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionRelevant):
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionAtomic):
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionBusy):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::areChildrenDirty):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectWrapper.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilitySetPostedNotificationCallback:]):
+        (-[AccessibilityObjectWrapper accessibilityPostedNotification:]):
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * html/HTMLAttributeNames.in:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+
 2010-01-04  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

@@ -27,11 +27,11 @@ var successfullyParsed = false;
           menu.focus();
 
           menu = accessibilityController.focusedElement;
-          var menuRole = menu.attributeValue("AXRoleDescription");
+          var menuRole = menu.stringAttributeValue("AXRoleDescription");
           shouldBe("menuRole.length > 0", "true");
 
           var menuItem = menu.childAtIndex(0);
-          var menuItemRole = menuItem.attributeValue("AXRoleDescription");
+          var menuItemRole = menuItem.stringAttributeValue("AXRoleDescription");
           shouldBe("menuItemRole.length > 0", "true");
     }
 

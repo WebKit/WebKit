@@ -1,3 +1,34 @@
+2010-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add ARIA "Live Region" support
+        https://bugs.webkit.org/show_bug.cgi?id=33117
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (indexOfChildCallback):
+        (boolAttributeValueCallback):
+        (stringAttributeValueCallback):
+        (addNotificationListenerCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::indexOfChild):
+        (AccessibilityUIElement::stringAttributeValue):
+        (AccessibilityUIElement::boolAttributeValue):
+        (AccessibilityUIElement::addNotificationListener):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::indexOfChild):
+        (AccessibilityUIElement::stringAttributeValue):
+        (AccessibilityUIElement::boolAttributeValue):
+        (_accessibilityNotificationCallback):
+        (AccessibilityUIElement::addNotificationListener):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::indexOfChild):
+        (AccessibilityUIElement::stringAttributeValue):
+        (AccessibilityUIElement::boolAttributeValue):
+        (AccessibilityUIElement::addNotificationListener):
+
 2010-01-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

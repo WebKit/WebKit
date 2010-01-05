@@ -207,6 +207,7 @@ public:
     
     virtual void detach();
     virtual void childrenChanged();
+    virtual void contentChanged();
     virtual void addChildren();
     virtual bool canHaveChildren() const;
     virtual void selectedChildren(AccessibilityChildrenVector&);
@@ -283,14 +284,20 @@ private:
 
     void ariaSelectedRows(AccessibilityChildrenVector&);
     
-    bool elementAttributeValue(const QualifiedName&);
+    bool elementAttributeValue(const QualifiedName&) const;
     void setElementAttributeValue(const QualifiedName&, bool);
     
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& name) const;
     
-    void markChildrenDirty() const { m_childrenDirty = true; }
-
+    virtual const AtomicString& ariaLiveRegionStatus() const;
+    virtual const AtomicString& ariaLiveRegionRelevant() const;
+    virtual bool ariaLiveRegionAtomic() const;
+    virtual bool ariaLiveRegionBusy() const;    
+    
+    void setNeedsToUpdateChildren() const { m_childrenDirty = true; }
+    bool needsToUpdateChildren() const { return m_childrenDirty; }
+    
     mutable AccessibilityRole m_roleForMSAA;
 };
     

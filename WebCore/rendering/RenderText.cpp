@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderText.h"
 
+#include "AXObjectCache.h"
 #include "CharacterNames.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
@@ -1015,6 +1016,10 @@ void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
     setTextInternal(text);
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownNotToUseFallbackFonts = false;
+    
+    AXObjectCache* axObjectCache = document()->axObjectCache();
+    if (axObjectCache->accessibilityEnabled())
+        axObjectCache->contentChanged(this);
 }
 
 int RenderText::lineHeight(bool firstLine, bool) const

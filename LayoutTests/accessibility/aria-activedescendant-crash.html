@@ -7,7 +7,7 @@
                     layoutTestController.dumpAsText();
                 document.getElementById('bt').focus();
                 if (window.accessibilityController)
-                    var test = accessibilityController.focusedElement.attributeValue("aria-activedescendant");
+                    var test = accessibilityController.focusedElement.stringAttributeValue("aria-activedescendant");
                 document.getElementById('bt').click();
             }
         </script>

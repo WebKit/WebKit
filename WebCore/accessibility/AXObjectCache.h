@@ -80,6 +80,9 @@ public:
     void attachWrapper(AccessibilityObject*);
     void childrenChanged(RenderObject*);
     void selectedChildrenChanged(RenderObject*);
+    // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
+    void contentChanged(RenderObject*);
+    
     void handleActiveDescendantChanged(RenderObject*);
     void handleAriaRoleChanged(RenderObject*);
     void handleFocusedUIElementChanged(RenderObject* oldFocusedRenderer, RenderObject* newFocusedRenderer);
@@ -110,6 +113,7 @@ public:
         AXSelectedTextChanged,
         AXValueChanged,
         AXScrolledToAnchor,
+        AXLiveRegionChanged,
         AXMenuListValueChanged,
     };
 

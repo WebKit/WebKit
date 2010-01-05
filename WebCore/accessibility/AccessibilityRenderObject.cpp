@@ -1754,12 +1754,12 @@ void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& at
     element->setAttribute(attributeName, (value) ? "true" : "false");        
 }
     
-bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attributeName)
+bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attributeName) const
 {
     if (!m_renderer)
         return false;
     
-    return equalIgnoringCase(getAttribute(attributeName).string(), "true");
+    return equalIgnoringCase(getAttribute(attributeName), "true");
 }
     
 void AccessibilityRenderObject::setIsExpanded(bool isExpanded)
@@ -2776,22 +2776,50 @@ bool AccessibilityRenderObject::canSetTextRangeAttributes() const
     return isTextControl();
 }
 
+void AccessibilityRenderObject::contentChanged()
+{
+    // If this element supports ARIA live regions, then notify the AT of changes.
+    for (RenderObject* renderParent = m_renderer->parent(); renderParent; renderParent = renderParent->parent()) {
+        AccessibilityObject* parent = m_renderer->document()->axObjectCache()->get(renderParent);
+        if (!parent)
+            continue;
+        
+        // If we find a parent that has ARIA live region on, send the notification and stop processing.
+        // The spec does not talk about nested live regions.
+        if (parent->supportsARIALiveRegion()) {
+            axObjectCache()->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
+            break;
+        }
+    }
+}
+    
 void AccessibilityRenderObject::childrenChanged()
 {
     // this method is meant as a quick way of marking dirty
     // a portion of the accessibility tree
-    
-    markChildrenDirty();
     
     if (!m_renderer)
         return;
     
     // Go up the render parent chain, marking children as dirty.
     // We can't rely on the accessibilityParent() because it may not exist and we must not create an AX object here either
-    for (RenderObject* renderParent = m_renderer->parent(); renderParent; renderParent = renderParent->parent()) {
+    // At the same time, process ARIA live region changes.
+    for (RenderObject* renderParent = m_renderer; renderParent; renderParent = renderParent->parent()) {
         AccessibilityObject* parent = m_renderer->document()->axObjectCache()->get(renderParent);
-        if (parent && parent->isAccessibilityRenderObject())
-            static_cast<AccessibilityRenderObject *>(parent)->markChildrenDirty();
+        if (!parent || !parent->isAccessibilityRenderObject())
+            continue;
+        
+        AccessibilityRenderObject* axParent = static_cast<AccessibilityRenderObject*>(parent);
+        // Only do work if the children haven't been marked dirty. This has the effect of blocking
+        // future live region change notifications until the AX tree has been accessed again. This
+        // is a good performance win for all parties.
+        if (!axParent->needsToUpdateChildren()) {
+            axParent->setNeedsToUpdateChildren();
+            
+            // If this element supports ARIA live regions, then notify the AT of changes.
+            if (axParent->supportsARIALiveRegion())
+                axObjectCache()->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
+        }
     }
 }
     
@@ -2876,7 +2904,55 @@ void AccessibilityRenderObject::addChildren()
         }
     }
 }
+        
+const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusAssertive, ("assertive"));
+    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusPolite, ("polite"));
+    DEFINE_STATIC_LOCAL(const AtomicString, liveRegionStatusOff, ("off"));
+    
+    const AtomicString& liveRegionStatus = getAttribute(aria_liveAttr);
+    // These roles have implicit live region status.
+    if (liveRegionStatus.isEmpty()) {
+        switch (roleValue()) {
+        case ApplicationAlertDialogRole:
+        case ApplicationAlertRole:
+            return liveRegionStatusAssertive;
+        case ApplicationLogRole:
+        case ApplicationStatusRole:
+            return liveRegionStatusPolite;
+        case ApplicationTimerRole:
+            return liveRegionStatusOff;
+        default:
+            break;
+        }
+    }
 
+    return liveRegionStatus;
+}
+
+const AtomicString& AccessibilityRenderObject::ariaLiveRegionRelevant() const
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, defaultLiveRegionRelevant, ("additions text"));
+    const AtomicString& relevant = getAttribute(aria_relevantAttr);
+
+    // Default aria-relevant = "additions text".
+    if (relevant.isEmpty())
+        return defaultLiveRegionRelevant;
+    
+    return relevant;
+}
+
+bool AccessibilityRenderObject::ariaLiveRegionAtomic() const
+{
+    return elementAttributeValue(aria_atomicAttr);    
+}
+
+bool AccessibilityRenderObject::ariaLiveRegionBusy() const
+{
+    return elementAttributeValue(aria_busyAttr);    
+}
+    
 void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& result)
 {
     // Get all the rows. 

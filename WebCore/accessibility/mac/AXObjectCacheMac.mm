@@ -35,6 +35,10 @@
 
 #import <wtf/PassRefPtr.h>
 
+#ifndef NSAccessibilityLiveRegionChangedNotification
+#define NSAccessibilityLiveRegionChangedNotification @"AXLiveRegionChanged"
+#endif
+
 // The simple Cocoa calls in this file don't throw exceptions.
 
 namespace WebCore {
@@ -66,9 +70,6 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             else
                 macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
             break;
-        case AXCheckedStateChanged:
-            macNotification = "AXCheckedStateChanged";
-            break;
         case AXFocusedUIElementChanged:
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
             break;
@@ -87,11 +88,19 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXValueChanged:
             macNotification = NSAccessibilityValueChangedNotification;
             break;
+        case AXLiveRegionChanged:
+            macNotification = NSAccessibilityLiveRegionChangedNotification;
+            break;
+        // Does not exist on Mac.
+        case AXCheckedStateChanged:
         default:
             return;
     }
     
     NSAccessibilityPostNotification(obj->wrapper(), macNotification);
+    
+    // Used by DRT to know when notifications are posted.
+    [obj->wrapper() accessibilityPostedNotification:macNotification];
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)

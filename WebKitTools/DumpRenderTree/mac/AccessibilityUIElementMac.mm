@@ -52,8 +52,11 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
-@interface NSObject (WebKitAccessibilityArrayCategory)
+typedef void (*AXPostedNotificationCallback)(id element, NSString* notification);
+
+@interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
+- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function;
 @end
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
@@ -237,6 +240,11 @@ AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
     return AccessibilityUIElement(element); 
 }
 
+unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
+{
+    return [m_element accessibilityIndexOfChild:element->platformUIElement()];
+}
+
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     Vector<AccessibilityUIElement> children;
@@ -337,12 +345,21 @@ JSStringRef AccessibilityUIElement::allAttributes()
     return [attributes createJSStringRef];
 }
 
-JSStringRef AccessibilityUIElement::attributeValue(JSStringRef attribute)
+JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
     if (![value isKindOfClass:[NSString class]])
         return NULL;
     return [value createJSStringRef];
+}
+
+bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
+{
+    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    if (![value isKindOfClass:[NSNumber class]])
+        return NULL;
+    
+    return [value boolValue];
 }
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
@@ -727,3 +744,26 @@ JSStringRef AccessibilityUIElement::url()
     NSURL *url = [m_element accessibilityAttributeValue:NSAccessibilityURLAttribute];
     return [[url absoluteString] createJSStringRef];    
 }
+
+// The JavaScript callback we'll use when we get a notification
+static JSObjectRef AXNotificationFunctionCallback = 0;
+
+static void _accessibilityNotificationCallback(id element, NSString* notification)
+{
+    if (!AXNotificationFunctionCallback)
+        return;
+    
+    JSValueRef argument = JSValueMakeString([mainFrame globalContext], JSStringCreateWithCFString((CFStringRef)notification));    
+    JSObjectCallAsFunction([mainFrame globalContext], AXNotificationFunctionCallback, NULL, 1, &argument, NULL);
+}
+
+bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
+{
+    if (!functionCallback)
+        return false;
+ 
+    AXNotificationFunctionCallback = functionCallback;
+    [platformUIElement() accessibilitySetPostedNotificationCallback:_accessibilityNotificationCallback];
+    return true;
+}
+
