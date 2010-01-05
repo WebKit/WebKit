@@ -1714,47 +1714,6 @@ class CppStyleTest(CppStyleTestBase):
                 '  [build/header_guard] [5]' % expected_guard),
             error_collector.result_list())
 
-        # No endif
-        error_collector = ErrorCollector(self.assert_)
-        cpp_style.process_file_data(file_path, 'h',
-                                    ['#ifndef %s' % expected_guard,
-                                     '#define %s' % expected_guard],
-                                    error_collector)
-        self.assertEquals(
-            1,
-            error_collector.result_list().count(
-                '#endif line should be "#endif // %s"'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # Commentless endif
-        error_collector = ErrorCollector(self.assert_)
-        cpp_style.process_file_data(file_path, 'h',
-                                    ['#ifndef %s' % expected_guard,
-                                     '#define %s' % expected_guard,
-                                     '#endif'],
-                                    error_collector)
-        self.assertEquals(
-            1,
-            error_collector.result_list().count(
-                '#endif line should be "#endif // %s"'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # Commentless endif for old-style guard
-        error_collector = ErrorCollector(self.assert_)
-        cpp_style.process_file_data(file_path, 'h',
-                                    ['#ifndef %s_' % expected_guard,
-                                     '#define %s_' % expected_guard,
-                                     '#endif'],
-                                    error_collector)
-        self.assertEquals(
-            1,
-            error_collector.result_list().count(
-                '#endif line should be "#endif // %s"'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
         # No header guard errors
         error_collector = ErrorCollector(self.assert_)
         cpp_style.process_file_data(file_path, 'h',
@@ -1777,12 +1736,6 @@ class CppStyleTest(CppStyleTestBase):
             1,
             error_collector.result_list().count(
                 '#ifndef header guard has wrong style, please use: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-        self.assertEquals(
-            1,
-            error_collector.result_list().count(
-                '#endif line should be "#endif // %s"'
                 '  [build/header_guard] [5]' % expected_guard),
             error_collector.result_list())
 

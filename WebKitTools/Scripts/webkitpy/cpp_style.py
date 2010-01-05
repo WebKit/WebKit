@@ -787,8 +787,6 @@ def check_for_header_guard(filename, lines, error):
     ifndef = None
     ifndef_line_number = 0
     define = None
-    endif = None
-    endif_line_number = 0
     for line_number, line in enumerate(lines):
         line_split = line.split()
         if len(line_split) >= 2:
@@ -799,10 +797,8 @@ def check_for_header_guard(filename, lines, error):
                 ifndef_line_number = line_number
             if not define and line_split[0] == '#define':
                 define = line_split[1]
-        # find the last occurrence of #endif, save entire line
-        if line.startswith('#endif'):
-            endif = line
-            endif_line_number = line_number
+            if define and ifndef:
+                break
 
     if not ifndef or not define or ifndef != define:
         error(filename, 0, 'build/header_guard', 5,
@@ -814,10 +810,6 @@ def check_for_header_guard(filename, lines, error):
     if ifndef != cppvar:
         error(filename, ifndef_line_number, 'build/header_guard', 5,
               '#ifndef header guard has wrong style, please use: %s' % cppvar)
-
-    if endif != ('#endif // %s' % cppvar):
-        error(filename, endif_line_number, 'build/header_guard', 5,
-              '#endif line should be "#endif // %s"' % cppvar)
 
 
 def check_for_unicode_replacement_characters(filename, lines, error):

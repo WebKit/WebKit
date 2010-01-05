@@ -1,3 +1,14 @@
+2010-01-05  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Having a comment for the #endif for a header guard is not required WebKit style.
+        https://bugs.webkit.org/show_bug.cgi?id=33214
+
+        * Scripts/webkitpy/cpp_style.py: removed the check and made the loop exit
+          early when it has all the needed information to continue.
+        * Scripts/webkitpy/cpp_style_unittest.py: removed the corresponding tests.
+
 2010-01-05  Adam Roben  <aroben@apple.com>
 
         Share more code in the WebViewDestruction tests
