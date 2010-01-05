@@ -115,7 +115,7 @@ class QueueEngine:
             except Exception, e:
                 traceback.print_exc()
                 # Don't try tell the status bot, in case telling it causes an exception.
-                self._sleep("Exception while preparing queue: %s." % e)
+                self._sleep("Exception while preparing queue")
         # Never reached.
         self._ensure_work_log_closed()
 

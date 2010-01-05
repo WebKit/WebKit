@@ -1,3 +1,22 @@
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix obscure queue crash in queueengine
+        https://bugs.webkit.org/show_bug.cgi?id=33196
+
+        Sometimes we get an exception that can't be stringified.  For example:
+
+        AttributeError: 'ParseError' object has no attribute 'msg'
+
+        In these cases, the whole queue dies because we're in the global
+        exception handler.  Instead of dieing here, we should just print a less
+        informative message to the console.  We're already printing the whole
+        backtrace anyway, so there's not much point to stringifying the
+        exception anyway.
+
+        * Scripts/webkitpy/queueengine.py:
+
 2010-01-05  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Darin Adler.
