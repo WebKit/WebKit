@@ -208,8 +208,8 @@ struct GIFImageReader {
               WebCore::GIFImageDecoder::GIFQuery query = WebCore::GIFImageDecoder::GIFFullQuery, unsigned haltAtFrame = -1);
 
 private:
-    void output_row();
-    int do_lzw(const unsigned char *q);
+    bool output_row();
+    bool do_lzw(const unsigned char *q);
 };
 
 #endif

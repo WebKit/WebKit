@@ -104,7 +104,7 @@ using WebCore::GIFImageDecoder;
 
 //******************************************************************************
 // Send the data to the display front-end.
-void GIFImageReader::output_row()
+bool GIFImageReader::output_row()
 {
   GIFFrameReader* gs = frame_reader;
 
@@ -154,13 +154,14 @@ void GIFImageReader::output_row()
 
   /* Protect against too much image data */
   if ((unsigned)drow_start >= gs->height)
-    return;
+    return true;
 
   // CALLBACK: Let the client know we have decoded a row.
-  if (clientptr && frame_reader)
-    clientptr->haveDecodedRow(images_count - 1, frame_reader->rowbuf, frame_reader->rowend,
-                              drow_start, drow_end - drow_start + 1,
-                              gs->progressive_display && gs->interlaced && gs->ipass > 1);
+  if (clientptr && frame_reader &&
+      !clientptr->haveDecodedRow(images_count - 1, frame_reader->rowbuf, frame_reader->rowend,
+                                 drow_start, drow_end - drow_start + 1,
+                                 gs->progressive_display && gs->interlaced && gs->ipass > 1))
+    return false;
 
   gs->rowp = gs->rowbuf;
 
@@ -207,15 +208,17 @@ void GIFImageReader::output_row()
       }
     } while (gs->irow > (gs->height - 1));
   }
+
+  return true;
 }
 
 //******************************************************************************
 /* Perform Lempel-Ziv-Welch decoding */
-int GIFImageReader::do_lzw(const unsigned char *q)
+bool GIFImageReader::do_lzw(const unsigned char *q)
 {
   GIFFrameReader* gs = frame_reader;
   if (!gs)
-    return 0;
+    return true;
 
   int code;
   int incode;
@@ -249,11 +252,12 @@ int GIFImageReader::do_lzw(const unsigned char *q)
   unsigned rows_remaining = gs->rows_remaining;
 
   if (rowp == rowend)
-    return 0;
+    return true;
 
 #define OUTPUT_ROW                                                  \
   PR_BEGIN_MACRO                                                        \
-    output_row();                                                     \
+    if (!output_row())                                                     \
+      return false;                                                        \
     rows_remaining--;                                                   \
     rowp = frame_reader->rowp;                                                    \
     if (!rows_remaining)                                                \
@@ -286,9 +290,7 @@ int GIFImageReader::do_lzw(const unsigned char *q)
       /* Check for explicit end-of-stream code */
       if (code == (clear_code + 1)) {
         /* end-of-stream should only appear after all image data */
-        if (rows_remaining != 0)
-          return -1;
-        return 0;
+        return rows_remaining == 0;
       }
 
       if (oldcode == -1) {
@@ -306,13 +308,13 @@ int GIFImageReader::do_lzw(const unsigned char *q)
         code = oldcode;
 
         if (stackp == stack + MAX_BITS)
-          return -1;
+          return false;
       }
 
       while (code >= clear_code)
       {
         if (code >= MAX_BITS || code == prefix[code])
-          return -1;
+          return false;
 
         // Even though suffix[] only holds characters through suffix[avail - 1],
         // allowing code >= avail here lets us be more tolerant of malformed
@@ -322,7 +324,7 @@ int GIFImageReader::do_lzw(const unsigned char *q)
         code = prefix[code];
 
         if (stackp == stack + MAX_BITS)
-          return -1;
+          return false;
       }
 
       *stackp++ = firstchar = suffix[code];
@@ -369,7 +371,7 @@ int GIFImageReader::do_lzw(const unsigned char *q)
   gs->rowp = rowp;
   gs->rows_remaining = rows_remaining;
 
-  return 0;
+  return true;
 }
 
 
@@ -438,7 +440,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     switch (state)
     {
     case gif_lzw:
-      if (do_lzw(q) < 0) {
+      if (!do_lzw(q)) {
         state = gif_error;
         break;
       }
