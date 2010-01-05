@@ -1,5 +1,20 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Make it safe to call IWebView::close when IWebView::initWithFrame
+        hasn't been called
+
+        Part of <http://webkit.org/b/32827> Crash when calling
+        IWebView::close, then releasing the WebView, without calling
+        DestroyWindow
+
+        Reviewed by Steve Falkenburg.
+
+        * WebView.cpp:
+        (WebView::close): Null-check m_page and m_preferences before using
+        them. They will be null if initWithFrame was never called.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Add assertions to catch double-destruction of WebViews earlier
 
         I basically copied the m_deletionHasBegun logic from WTF::RefCounted.

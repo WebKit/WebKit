@@ -102,6 +102,16 @@ TEST(WebViewDestruction, NoInitWithFrame)
     finishWebViewDestructionTest(webView, 0);
 }
 
+TEST(WebViewDestruction, CloseWithoutInitWithFrame)
+{
+    COMPtr<IWebView> webView;
+    TEST_ASSERT(SUCCEEDED(WebKitCreateInstance(__uuidof(WebView), &webView)));
+
+    TEST_ASSERT(SUCCEEDED(webView->close()));
+
+    finishWebViewDestructionTest(webView, 0);
+}
+
 // Tests that releasing a WebView without calling IWebView::close or DestroyWindow doesn't leak. <http://webkit.org/b/33162>
 TEST(WebViewDestruction, NoCloseOrDestroyViewWindow)
 {

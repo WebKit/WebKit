@@ -635,9 +635,10 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
     removeFromAllWebViewsSet();
 
-    Frame* frame = m_page->mainFrame();
-    if (frame)
-        frame->loader()->detachFromParent();
+    if (m_page) {
+        if (Frame* frame = m_page->mainFrame())
+            frame->loader()->detachFromParent();
+    }
 
     if (m_mouseOutTracker) {
         m_mouseOutTracker->dwFlags = TME_CANCEL;
@@ -668,17 +669,18 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
 
-    BSTR identifier = 0;
-    m_preferences->identifier(&identifier);
+    if (COMPtr<WebPreferences> preferences = m_preferences) {
+        BSTR identifier = 0;
+        preferences->identifier(&identifier);
 
-    COMPtr<WebPreferences> preferences = m_preferences;
-    m_preferences = 0;
-    preferences->didRemoveFromWebView();
-    // Make sure we release the reference, since WebPreferences::removeReferenceForIdentifier will check for last reference to WebPreferences
-    preferences = 0;
-    if (identifier) {
-        WebPreferences::removeReferenceForIdentifier(identifier);
-        SysFreeString(identifier);
+        m_preferences = 0;
+        preferences->didRemoveFromWebView();
+        // Make sure we release the reference, since WebPreferences::removeReferenceForIdentifier will check for last reference to WebPreferences
+        preferences = 0;
+        if (identifier) {
+            WebPreferences::removeReferenceForIdentifier(identifier);
+            SysFreeString(identifier);
+        }
     }
 
     deleteBackingStore();

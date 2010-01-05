@@ -1,5 +1,21 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Test that it's safe to call IWebView::close when
+        IWebView::initWithFrame hasn't been called
+
+        Part of <http://webkit.org/b/32827> Crash when calling
+        IWebView::close, then releasing the WebView, without calling
+        DestroyWindow
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        (WebKitAPITest::CloseWithoutInitWithFrame): Calls IWebView::close
+        without ever calling IWebView::initWithFrame and tests that we don't
+        crash or leak.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Add more WebViewDestruction tests
 
         Fixes <http://webkit.org/b/33216>.
