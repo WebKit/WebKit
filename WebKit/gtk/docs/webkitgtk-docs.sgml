@@ -29,6 +29,7 @@
     <xi:include href="xml/webkitsoupauthdialog.xml"/>
     <xi:include href="xml/webkitsecurityorigin.xml"/>
     <xi:include href="xml/webkitwebwindowfeatures.xml"/>
+    <xi:include href="xml/webkitcachemodel.xml"/>
   </chapter>
 
   <chapter>
@@ -95,5 +96,8 @@
   </index>
   <index id="index-1.1.17" role="1.1.17">
     <title>Index of new symbols in 1.1.17</title>
+  </index>
+  <index id="index-1.1.18" role="1.1.18">
+    <title>Index of new symbols in 1.1.18</title>
   </index>
 </book>

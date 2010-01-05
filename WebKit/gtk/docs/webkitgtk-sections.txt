@@ -58,6 +58,7 @@ WebKitWebBackForwardListClass
 <FILE>webkitwebhistoryitem</FILE>
 <TITLE>WebKitWebHistoryItem</TITLE>
 WebKitWebHistoryItem
+webkit_web_history_item_copy
 webkit_web_history_item_get_alternate_title
 webkit_web_history_item_get_last_visited_time
 webkit_web_history_item_get_original_uri
@@ -91,6 +92,7 @@ webkit_web_frame_get_global_context
 webkit_web_frame_get_horizontal_scrollbar_policy
 webkit_web_frame_get_load_status
 webkit_web_frame_get_name
+webkit_web_frame_get_network_response
 webkit_web_frame_get_parent
 webkit_web_frame_get_provisional_data_source
 webkit_web_frame_get_security_origin
@@ -419,6 +421,7 @@ webkit_web_view_get_encoding
 webkit_web_view_get_focused_frame
 webkit_web_view_get_full_content_zoom
 webkit_web_view_get_hit_test_result
+webkit_web_view_get_icon_uri
 webkit_web_view_get_inspector
 webkit_web_view_get_load_status
 webkit_web_view_get_main_frame
@@ -581,3 +584,9 @@ webkit_micro_version
 webkit_minor_version
 </SECTION>
 
+<SECTION>
+<FILE>webkitcachemodel</FILE>
+WebKitCacheModel
+webkit_get_cache_model
+webkit_set_cache_model
+</SECTION>

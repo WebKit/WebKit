@@ -1,3 +1,10 @@
+2010-01-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Updated docs for 1.1.18 release.
+
+        * docs/webkitgtk-docs.sgml:
+        * docs/webkitgtk-sections.txt:
+
 2010-01-05  Xan Lopez  <xlopez@igalia.com>
 
         Update for 1.1.18 release.
