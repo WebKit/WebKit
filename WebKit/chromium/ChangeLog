@@ -1,3 +1,9 @@
+2010-01-04  Darin Fisher  <darin@chromium.org>
+
+        Fix Chromium build bustage.
+
+        * src/WebAnimationControllerImpl.h:
+
 2010-01-04  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.
