@@ -43,7 +43,7 @@
 #include <e32std.h>
 #endif
 
-#if PLATFORM(WINCE)
+#if OS(WINCE)
 // From pkfuncs.h (private header file from the Platform Builder)
 #define CACHE_SYNC_ALL 0x07F
 extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLength, DWORD dwFlags);
@@ -233,7 +233,7 @@ public:
             : "r" (code), "r" (reinterpret_cast<char*>(code) + size)
             : "r0", "r1", "r2");
     }
-#elif PLATFORM(WINCE)
+#elif OS(WINCE)
     static void cacheFlush(void* code, size_t size)
     {
         CacheRangeFlush(code, size, CACHE_SYNC_ALL);
