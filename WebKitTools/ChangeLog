@@ -1,3 +1,16 @@
+2010-01-05  Adam Roben  <aroben@apple.com>
+
+        Fix WebKitCreateInstance helper
+
+        Part of <http://webkit.org/b/33212> Small fixes/improvements to
+        WebKitAPITest
+
+        Reviewed by Sam Weinig.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        (WebKitAPITest::WebKitCreateInstance): Pass the pointer straight
+        through, instead of taking its address.
+
 2010-01-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Fisher.
