@@ -156,6 +156,13 @@ class SubmitPatch(AbstractPatchUploadingCommand):
         steps.ObsoletePatches,
         steps.PostDiff,
     ]
+    long_help = """submit-patch uploads the current diff to bugs.webkit.org.
+    If no bug id is provided, submit-patch will create a bug.
+    If the current diff does not have a ChangeLog, submit-patch
+    will prepare a ChangeLog.  Once a patch is read, submit-patch
+    will open the ChangeLogs for editing using the command in the
+    EDITOR environment variable and will display the diff using the
+    command in the PAGER environment variable."""
 
     def _prepare_state(self, options, args, tool):
         state = {}

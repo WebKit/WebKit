@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        long_help for submit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=33184
+
+        * Scripts/webkitpy/commands/upload.py:
+
+2010-01-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         commit-queue can wrongly reject patches if the buildbots are behind
         https://bugs.webkit.org/show_bug.cgi?id=30098
 
