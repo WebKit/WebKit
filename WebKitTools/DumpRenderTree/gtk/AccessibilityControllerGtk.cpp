@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Jan Michael Alonzo
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,5 +71,9 @@ void AccessibilityController::setLogFocusEvents(bool)
 }
 
 void AccessibilityController::setLogScrollingStartEvents(bool)
+{
+}
+
+void AccessibilityController::setLogValueChangeEvents(bool)
 {
 }

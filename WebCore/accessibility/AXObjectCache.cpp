@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -341,7 +341,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
 }
     
 #if HAVE(ACCESSIBILITY)
-void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, bool postToElement)
+void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, bool postToElement, PostType postType)
 {
     // Notifications for text input objects are sent to that object.
     // All others are sent to the top WebArea.
@@ -369,9 +369,12 @@ void AXObjectCache::postNotification(RenderObject* renderer, AXNotification noti
     if (!obj)
         return;
 
-    m_notificationsToPost.append(make_pair(obj, notification));
-    if (!m_notificationPostTimer.isActive())
-        m_notificationPostTimer.startOneShot(0);
+    if (postType == PostAsynchronously) {
+        m_notificationsToPost.append(make_pair(obj, notification));
+        if (!m_notificationPostTimer.isActive())
+            m_notificationPostTimer.startOneShot(0);
+    } else
+        postPlatformNotification(obj.get(), notification);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)

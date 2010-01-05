@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,8 @@ struct TextMarkerData {
     EAffinity affinity;
 };
 
+enum PostType { PostSynchronously, PostAsynchronously };
+
 class AXObjectCache : public Noncopyable {
 public:
     AXObjectCache();
@@ -108,9 +110,10 @@ public:
         AXSelectedTextChanged,
         AXValueChanged,
         AXScrolledToAnchor,
+        AXMenuListValueChanged,
     };
-    
-    void postNotification(RenderObject*, AXNotification, bool postToElement);
+
+    void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);

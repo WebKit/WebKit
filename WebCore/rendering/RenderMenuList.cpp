@@ -1,7 +1,7 @@
 /*
  * This file is part of the select element renderer in WebCore.
  *
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderMenuList.h"
 
+#include "AXObjectCache.h"
 #include "CSSStyleSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -50,6 +51,7 @@ RenderMenuList::RenderMenuList(Element* element)
     , m_innerBlock(0)
     , m_optionsChanged(true)
     , m_optionsWidth(0)
+    , m_lastSelectedIndex(-1)
     , m_popup(0)
     , m_popupIsVisible(false)
 {
@@ -304,6 +306,18 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
     
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireOnChange);
+}
+
+void RenderMenuList::didSetSelectedIndex()
+{
+    int index = selectedIndex();
+    if (m_lastSelectedIndex == index)
+        return;
+
+    m_lastSelectedIndex = index;
+
+    if (AXObjectCache::accessibilityEnabled())
+        document()->axObjectCache()->postNotification(this, AXObjectCache::AXMenuListValueChanged, true, PostSynchronously);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const

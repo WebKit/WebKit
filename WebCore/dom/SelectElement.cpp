@@ -349,6 +349,8 @@ void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, 
         data.setUserDrivenChange(userDrivenChange);
         if (fireOnChangeNow)
             menuListOnChange(data, element);
+        if (RenderMenuList* menuList = toRenderMenuList(element->renderer()))
+            menuList->didSetSelectedIndex();
     }
 
     if (Frame* frame = element->document()->frame())

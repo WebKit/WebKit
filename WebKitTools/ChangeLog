@@ -1,3 +1,47 @@
+2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: <select> elements should broadcast value change events
+
+        https://bugs.webkit.org/show_bug.cgi?id=33088
+
+        <rdar://problem/7332364>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (logValueChangeEventsCallback):
+        Start logging value change events.
+        (AccessibilityController::getJSClass):
+        Add a "logValueChangeEvents" to the AccessibilityController's JS class
+        definition.
+        (AccessibilityController::resetToConsistentState):
+        Disable logging of value change events.
+
+        * DumpRenderTree/AccessibilityController.h:
+        Declare setLogValueChangeEvents(), and add a member variable for the
+        value change event hook.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::setLogValueChangeEvents):
+        Stubbed.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::setLogValueChangeEvents):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        Initialize new member var.
+        (AccessibilityController::~AccessibilityController):
+        Disable logging of value change events.
+        (logEventProc):
+        When we receive an EVENT_OBJECT_VALUECHANGE, log the name of the object
+        and its value.
+        (AccessibilityController::setLogValueChangeEvents):
+        If disabling logging, unhook the event, and clear the event hook
+        member var. Otherwise, query for the root element to enable
+        accessibility, and hook EVENT_OBJECT_VALUECHANGE.
+
 2010-01-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,13 @@ static JSValueRef logFocusEventsCallback(JSContextRef ctx, JSObjectRef, JSObject
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef logValueChangeEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
+{
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    controller->setLogValueChangeEvents(true);
+    return JSValueMakeUndefined(ctx);
+}
+
 static JSValueRef logScrollingStartEventsCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
 {
     AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
@@ -74,6 +81,7 @@ JSClassRef AccessibilityController::getJSClass()
 {
     static JSStaticFunction staticFunctions[] = {
         { "logFocusEvents", logFocusEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "logValueChangeEvents", logValueChangeEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "logScrollingStartEvents", logScrollingStartEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
@@ -95,5 +103,6 @@ JSClassRef AccessibilityController::getJSClass()
 void AccessibilityController::resetToConsistentState()
 {
     setLogFocusEvents(false);
+    setLogValueChangeEvents(false);
     setLogScrollingStartEvents(false);
 }
