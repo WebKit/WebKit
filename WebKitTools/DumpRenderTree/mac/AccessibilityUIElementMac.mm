@@ -57,6 +57,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification)
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function;
+- (NSUInteger)accessibilityIndexOfChild:(id)child;
 @end
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
