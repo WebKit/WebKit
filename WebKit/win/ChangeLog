@@ -1,5 +1,23 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Add assertions to catch double-destruction of WebViews earlier
+
+        I basically copied the m_deletionHasBegun logic from WTF::RefCounted.
+
+        Fixes <http://webkit.org/b/33219>.
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::WebView): Initialize m_deletionHasBegun
+        (WebView::AddRef): Assert that deletion hasn't already begun.
+        (WebView::Release): Assert that deletion hasn't already begun, then
+        record when deletion *does* begin.
+
+        * WebView.h: Added m_deletionHasBegun.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Remove dead code in WebViewWndProc
 
         Fixes <http://webkit.org/b/33218>.
@@ -71,6 +89,7 @@
         (WebView::onIMESetContext): Added logging.
 
         * WebView.h: onIMERequest functions now return result directly.
+
 
 2010-01-04  Adam Roben  <aroben@apple.com>
 
