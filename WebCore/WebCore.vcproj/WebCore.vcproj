@@ -42840,10 +42840,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\InspectorControllerStub.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
 					>
 				</File>

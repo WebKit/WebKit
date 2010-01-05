@@ -1,3 +1,12 @@
+2010-01-04  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        Delete an empty and unused JavaScript file.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/InspectorControllerStub.js: Removed.
+
 2010-01-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add a couple include dirs to the build.
