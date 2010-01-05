@@ -87,6 +87,13 @@ WebString WebNode::nodeValue() const
     return m_private->nodeValue();
 }
 
+bool WebNode::setNodeValue(const WebString& value)
+{
+    ExceptionCode exceptionCode = 0;
+    m_private->setNodeValue(value, exceptionCode);
+    return !exceptionCode;
+}
+
 WebNode::WebNode(const PassRefPtr<Node>& node)
     : m_private(static_cast<WebNodePrivate*>(node.releaseRef()))
 {

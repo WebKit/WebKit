@@ -44,7 +44,7 @@ class WebDocument;
 class WebFrame;
 class WebNodeList;
 
-// Provides readonly access to some properties of a DOM node.
+// Provides access to some properties of a DOM node.
 class WebNode {
 public:
     virtual ~WebNode() { reset(); }
@@ -87,6 +87,7 @@ public:
     WEBKIT_API WebNode parentNode() const;
     WEBKIT_API WebString nodeName() const;
     WEBKIT_API WebString nodeValue() const;
+    WEBKIT_API bool setNodeValue(const WebString&);
     // Deprecated. Use document().frame() instead.
     WEBKIT_API WebFrame* frame() const;
     WEBKIT_API WebDocument document() const;

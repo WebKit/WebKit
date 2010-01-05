@@ -39,7 +39,7 @@ namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {
-    // Provides readonly access to some properties of a DOM element node.
+    // Provides access to some properties of a DOM element node.
     class WebElement : public WebNode {
     public:
         WebElement() : WebNode() { }
@@ -48,9 +48,11 @@ namespace WebKit {
         WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
         void assign(const WebElement& e) { WebNode::assign(e); }
 
+        WEBKIT_API WebString tagName() const;
         WEBKIT_API bool hasTagName(const WebString&) const;
         WEBKIT_API bool hasAttribute(const WebString&) const;
         WEBKIT_API WebString getAttribute(const WebString&) const;
+        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
 
 #if WEBKIT_IMPLEMENTATION
         WebElement(const WTF::PassRefPtr<WebCore::Element>&);

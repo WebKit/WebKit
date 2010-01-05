@@ -1,3 +1,18 @@
+2010-01-04  Jay Campan  <jcampan@google.com>
+
+        Reviewed by Darin Fisher
+
+        Adding  more DOM API methods. They are needed for the upcoming
+        translate feature.
+
+        * public/WebElement.h:
+        * public/WebNode.h:
+        * src/WebElement.cpp:
+        (WebKit::WebElement::tagName):
+        (WebKit::WebElement::setAttribute):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::setNodeValue):
+
 2010-01-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
