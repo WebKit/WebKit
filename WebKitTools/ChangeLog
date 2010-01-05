@@ -1,5 +1,18 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Don't hang in WebKitAPITest if no messages have been posted
+
+        Part of <http://webkit.org/b/33212> Small fixes/improvements to
+        WebKitAPITest
+
+        Reviewed by Sam Weinig.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        (WebKitAPITest::runMessagePump): Use PeekMessage instead of GetMessage
+        to avoid hanging if no messages have been posted.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Fix WebKitCreateInstance helper
 
         Part of <http://webkit.org/b/33212> Small fixes/improvements to
