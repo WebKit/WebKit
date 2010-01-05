@@ -1,3 +1,20 @@
+2010-01-05  Rachel Petterson  <rlp@google.com>
+
+        Reviewed by Simon Fraser.
+
+        With Chris Marrin  <cmarrin@apple.com>.
+
+        New test for texImage2d and texSubImage2d cases 
+        New test for texImage2d using ImageData which tests rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=31562
+        Also bug: https://bugs.webkit.org/show_bug.cgi?id=31493
+
+        * fast/canvas/webgl/script-tests/texImageTest.js: Added.
+        * fast/canvas/webgl/texImage2DImageDataTest-expected.txt: Added.
+        * fast/canvas/webgl/texImage2DImageDataTest.html: Added.
+        * fast/canvas/webgl/texImageTest-expected.txt: Added.
+        * fast/canvas/webgl/texImageTest.html: Added.
+
 2010-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.
