@@ -1,3 +1,9 @@
+2010-01-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Skipping three new tests.
+
+        * platform/gtk/Skipped:
+
 2010-01-05  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Darin Adler.

@@ -2882,6 +2882,7 @@ fast/repaint/shadow-multiple-strict-horizontal.html
 fast/repaint/shadow-multiple-strict-vertical.html
 fast/repaint/shadow-multiple-vertical.html
 fast/repaint/static-to-positioned.html
+fast/repaint/subtree-layoutstate-transform.htm
 fast/repaint/subtree-root-clip-2.html
 fast/repaint/subtree-root-clip-3.html
 fast/repaint/subtree-root-clip.html
@@ -5654,6 +5655,8 @@ fast/multicol/single-line.html
 accessibility/aria-controls-with-tabs.html
 accessibility/aria-list-and-listitem.html
 accessibility/aria-presentational-role.html
+accessibility/aria-checkbox-checked.html
+accessibility/dimensions-include-descendants.html
 fast/overflow/line-clamp.html
 fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
