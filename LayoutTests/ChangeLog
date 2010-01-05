@@ -1,3 +1,11 @@
+2010-01-05  Chris Marrin  <cmarrin@apple.com>
+
+        Fixed a bug in testcase. Passing an empty array to texImage2D
+        now must be done with 'null' not '0'.
+
+        * fast/canvas/webgl/script-tests/texImageTest.js:
+        * fast/canvas/webgl/texImageTest-expected.txt:
+
 2010-01-05  Rachel Petterson  <rlp@google.com>
 
         Reviewed by Simon Fraser.

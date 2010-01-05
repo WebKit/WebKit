@@ -3,7 +3,7 @@ Test of texImage2d and texSubImage2d
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS context.texImage2D(context.TEXTURE_2D) threw exception SyntaxError: Syntax error.
-PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, 0) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, null) is undefined.
 PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, context.RGBA, context.UNSIGNED_BYTE, 0) threw exception SyntaxError: Syntax error.
 PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 2, 2, 0, context.RGBA, context.UNSIGNED_BYTE, array) is undefined.
 PASS context.texImage2D(context.TEXTURE_2D, 0, imageData, true) is undefined.

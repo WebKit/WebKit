@@ -9,7 +9,7 @@ var imageData = context2d.createImageData(64, 64);
 var array = new WebGLUnsignedByteArray([ 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255 ]);
 
 shouldThrow("context.texImage2D(context.TEXTURE_2D)");
-shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, 0)");
+shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, null)");
 shouldThrow("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, context.RGBA, context.UNSIGNED_BYTE, 0)");
 shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 2, 2, 0, context.RGBA, context.UNSIGNED_BYTE, array)");
 shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, imageData, true)");
