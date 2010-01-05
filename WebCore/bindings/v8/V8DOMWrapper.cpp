@@ -49,7 +49,7 @@
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
 #include "V8Index.h"
-#include "V8IsolatedWorld.h"
+#include "V8IsolatedContext.h"
 #include "V8Location.h"
 #include "V8NodeList.h"
 #include "V8Proxy.h"
@@ -790,11 +790,12 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
     if (descriptorType == V8ClassIndex::HTMLCOLLECTION && static_cast<HTMLCollection*>(impl)->type() == DocAll)
         descriptorType = V8ClassIndex::HTMLALLCOLLECTION;
 
-    if (V8IsolatedWorld::getEntered()) {
+    if (V8IsolatedContext::getEntered()) {
         // This effectively disables the wrapper cache for isolated worlds.
         proxy = 0;
         // FIXME: Do we need a wrapper cache for the isolated world?  We should
-        // see if the performance gains are worth while.
+        //        see if the performance gains are worth while.
+        // We'll get one once we give the isolated context a proper window shell.
     } else if (!proxy)
         proxy = V8Proxy::retrieve();
 

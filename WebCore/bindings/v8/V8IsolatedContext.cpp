@@ -30,9 +30,7 @@
 
 #include "config.h"
 
-#include "V8IsolatedWorld.h"
-
-#include <v8.h>
+#include "V8IsolatedContext.h"
 
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -40,22 +38,21 @@
 #include "ScriptController.h"
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
+#include <v8.h>
 
 namespace WebCore {
 
-int V8IsolatedWorld::isolatedWorldCount = 0;
 
-void V8IsolatedWorld::contextWeakReferenceCallback(v8::Persistent<v8::Value> object, void* isolated_world)
+void V8IsolatedContext::contextWeakReferenceCallback(v8::Persistent<v8::Value> object, void* isolatedContext)
 {
     // Our context is going away.  Time to clean up the world.
-    V8IsolatedWorld* world = static_cast<V8IsolatedWorld*>(isolated_world);
-    delete world;
+    V8IsolatedContext* context = static_cast<V8IsolatedContext*>(isolatedContext);
+    delete context;
 }
 
-V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
+V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
+    : m_world(IsolatedWorld::create())
 {
-    ++isolatedWorldCount;
-
     v8::HandleScope scope;
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
     m_context = SharedPersistent<v8::Context>::create(proxy->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
@@ -63,7 +60,7 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
         return;
 
     // Run code in the new context.
-    v8::Context::Scope context_scope(m_context->get());
+    v8::Context::Scope contextScope(m_context->get());
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8Custom::kDOMWindowEnteredIsolatedWorldIndex, this);
 
@@ -82,18 +79,17 @@ V8IsolatedWorld::V8IsolatedWorld(V8Proxy* proxy, int extensionGroup)
     proxy->frame()->loader()->client()->didCreateIsolatedScriptContext();
 }
 
-void V8IsolatedWorld::destroy()
+void V8IsolatedContext::destroy()
 {
     m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
 }
 
-V8IsolatedWorld::~V8IsolatedWorld()
+V8IsolatedContext::~V8IsolatedContext()
 {
-    --isolatedWorldCount;
     m_context->disposeHandle();
 }
 
-ScriptState* V8IsolatedWorld::scriptState()
+ScriptState* V8IsolatedContext::scriptState()
 {
     if (!m_scriptState) {
         v8::HandleScope scope;

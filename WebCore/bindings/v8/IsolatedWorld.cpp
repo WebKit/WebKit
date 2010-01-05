@@ -29,48 +29,20 @@
  */
 
 #include "config.h"
-#include "ScriptState.h"
-
-#include "Frame.h"
-#include "Node.h"
-#include "Page.h"
-#include "ScriptController.h"
-
-#include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
+#include "IsolatedWorld.h"
 
 namespace WebCore {
 
-ScriptState::ScriptState(Frame* frame)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(V8Proxy::mainWorldContext(frame)))
+int IsolatedWorld::isolatedWorldCount = 0;
+
+IsolatedWorld::IsolatedWorld()
 {
+    ++isolatedWorldCount;
 }
 
-ScriptState::ScriptState(Frame* frame, v8::Handle<v8::Context> context)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(context))
+IsolatedWorld::~IsolatedWorld()
 {
+    --isolatedWorldCount;
 }
 
-ScriptState::~ScriptState()
-{
-    m_context.Dispose();
-    m_context.Clear();
-}
-
-ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)
-{
-    // This should be never reached with V8 bindings (WebKit only uses it
-    // for non-JS bindings)
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
-{
-    // This should be only reached with V8 bindings from single process layout tests.
-    return page->mainFrame()->script()->mainWorldScriptState();
-}
-
-}
+} // namespace WebCore

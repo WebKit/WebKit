@@ -31,6 +31,7 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
+#include "DOMWrapperWorld.h"
 #include <v8.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -70,13 +71,8 @@ namespace WebCore {
     ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
     ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
 
-    DOMWrapperWorld* mainThreadNormalWorld();
     inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
     inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
-
-    // Dummy class to avoid a bunch of ifdef's in WebCore.
-    class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
-    };
 
 }
 

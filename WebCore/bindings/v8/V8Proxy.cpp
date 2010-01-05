@@ -51,7 +51,7 @@
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Index.h"
-#include "V8IsolatedWorld.h"
+#include "V8IsolatedContext.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
@@ -270,43 +270,44 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
     windowShell()->initContextIfNeeded();
 
     v8::HandleScope handleScope;
-    V8IsolatedWorld* world = 0;
+    V8IsolatedContext* isolatedContext = 0;
 
     if (worldID > 0) {
         IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
         if (iter != m_isolatedWorlds.end()) {
-            world = iter->second;
+            isolatedContext = iter->second;
         } else {
-            world = new V8IsolatedWorld(this, extensionGroup);
-            if (world->context().IsEmpty()) {
-                delete world;
+            isolatedContext = new V8IsolatedContext(this, extensionGroup);
+            if (isolatedContext->context().IsEmpty()) {
+                delete isolatedContext;
                 return;
             }
 
-            m_isolatedWorlds.set(worldID, world);
+            // FIXME: We should change this to using window shells to match JSC.
+            m_isolatedWorlds.set(worldID, isolatedContext);
 
             // Setup context id for JS debugger.
-            if (!setInjectedScriptContextDebugId(world->context())) {
+            if (!setInjectedScriptContextDebugId(isolatedContext->context())) {
                 m_isolatedWorlds.take(worldID);
-                delete world;
+                delete isolatedContext;
                 return;
             }
         }
     } else {
-        world = new V8IsolatedWorld(this, extensionGroup);
-        if (world->context().IsEmpty()) {
-            delete world;
+        isolatedContext = new V8IsolatedContext(this, extensionGroup);
+        if (isolatedContext->context().IsEmpty()) {
+            delete isolatedContext;
             return;
         }
     }
 
-    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(world->context());
+    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolatedContext->context());
     v8::Context::Scope context_scope(context);
     for (size_t i = 0; i < sources.size(); ++i)
       evaluate(sources[i], 0);
 
     if (worldID == 0)
-      world->destroy();
+      isolatedContext->destroy();
 }
 
 bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
@@ -658,8 +659,8 @@ v8::Local<v8::Context> V8Proxy::context(Frame* frame)
     if (context.IsEmpty())
         return v8::Local<v8::Context>();
 
-    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
-        context = v8::Local<v8::Context>::New(world->context());
+    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
+        context = v8::Local<v8::Context>::New(isolatedContext->context());
         if (frame != V8Proxy::retrieveFrame(context))
             return v8::Local<v8::Context>();
     }
@@ -669,8 +670,8 @@ v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 
 v8::Local<v8::Context> V8Proxy::context()
 {
-    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
-        RefPtr<SharedPersistent<v8::Context> > context = world->sharedContext();
+    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
+        RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
         if (m_frame != V8Proxy::retrieveFrame(context->get()))
             return v8::Local<v8::Context>();
         return v8::Local<v8::Context>::New(context->get());

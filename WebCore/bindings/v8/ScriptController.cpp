@@ -51,7 +51,7 @@
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
-#include "V8IsolatedWorld.h"
+#include "V8IsolatedContext.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
 #include "Widget.h"
@@ -369,8 +369,8 @@ ScriptState* ScriptController::mainWorldScriptState()
 
 ScriptState* ScriptController::currentScriptState()
 {
-    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered())
-        return world->scriptState();
+    if (V8IsolatedContext* context = V8IsolatedContext::getEntered())
+        return context->scriptState();
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     ASSERT(frame);
     return frame->script()->mainWorldScriptState();

@@ -28,49 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScriptState.h"
+#ifndef DOMWrapperWorld_h
+#define DOMWrapperWorld_h
 
-#include "Frame.h"
-#include "Node.h"
-#include "Page.h"
-#include "ScriptController.h"
-
-#include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-ScriptState::ScriptState(Frame* frame)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(V8Proxy::mainWorldContext(frame)))
-{
-}
+// This class represent a collection of DOM wrappers for a specific world.
+// The base class is pretty boring because the wrappers are actually stored
+// statically in V8DOMMap and garbage collected by V8 itself.
+class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
+public:
+    static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
 
-ScriptState::ScriptState(Frame* frame, v8::Handle<v8::Context> context)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(context))
-{
-}
+protected:
+    DOMWrapperWorld();
+};
 
-ScriptState::~ScriptState()
-{
-    m_context.Dispose();
-    m_context.Clear();
-}
+DOMWrapperWorld* mainThreadNormalWorld();
 
-ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)
-{
-    // This should be never reached with V8 bindings (WebKit only uses it
-    // for non-JS bindings)
-    ASSERT_NOT_REACHED();
-    return 0;
-}
+} // namespace WebCore
 
-ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
-{
-    // This should be only reached with V8 bindings from single process layout tests.
-    return page->mainFrame()->script()->mainWorldScriptState();
-}
-
-}
+#endif // DOMWrapperWorld_h

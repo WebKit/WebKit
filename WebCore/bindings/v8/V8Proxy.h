@@ -59,7 +59,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class String;
     class V8EventListener;
-    class V8IsolatedWorld;
+    class V8IsolatedContext;
     class WorldContextHandle;
 
     // FIXME: use standard logging facilities in WebCore.
@@ -401,7 +401,10 @@ namespace WebCore {
         // Note: although the pointer is raw, the instance is kept alive by a strong
         // reference to the v8 context it contains, which is not made weak until we
         // call world->destroy().
-        typedef HashMap<int, V8IsolatedWorld*> IsolatedWorldMap;
+        //
+        // FIXME: We want to eventually be holding window shells instead of the
+        //        IsolatedContext directly.
+        typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
         IsolatedWorldMap m_isolatedWorlds;
     };
 

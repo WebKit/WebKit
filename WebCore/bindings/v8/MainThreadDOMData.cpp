@@ -31,7 +31,7 @@
 #include "config.h"
 #include "MainThreadDOMData.h"
 
-#include "V8IsolatedWorld.h"
+#include "V8IsolatedContext.h"
 
 namespace WebCore {
 
@@ -53,9 +53,9 @@ DOMDataStore& MainThreadDOMData::getMainThreadStore()
     // so that it can be inlined by getCurrentMainThreadStore, which is
     // a hot spot in Dromaeo DOM tests.
     ASSERT(WTF::isMainThread());
-    V8IsolatedWorld* world = V8IsolatedWorld::getEntered();
-    if (UNLIKELY(world != 0))
-        return *world->getDOMDataStore();
+    V8IsolatedContext* context = V8IsolatedContext::getEntered();
+    if (UNLIKELY(context != 0))
+        return *context->world()->domDataStore();
     return m_defaultStore;
 }
 

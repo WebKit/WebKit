@@ -2,6 +2,63 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [V8] Separate DOMWrapperWorld from V8IsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=33087
+
+        This change separate DOMWrapperWorld and IsolatedWorld from
+        V8IsolatedWorld.  I've also renamed V8IsolatedWorld to
+        V8IsolatedContext in preparation for having more than one context in a
+        single isolated world.
+
+        This patch moves us closer to two goals:
+        1) Matching the structure of the JSC implementation of isolated worlds.
+        2) Letting scripts running in isolated contexts see into other iframes
+           (which requires having more than one context in an isolated world.)
+
+        * WebCore.gypi:
+        * bindings/v8/DOMWrapperWorld.cpp: Added.
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::mainThreadNormalWorld):
+        * bindings/v8/DOMWrapperWorld.h: Added.
+        (WebCore::DOMWrapperWorld::create):
+        * bindings/v8/IsolatedWorld.cpp: Added.
+        (WebCore::IsolatedWorld::IsolatedWorld):
+        (WebCore::IsolatedWorld::~IsolatedWorld):
+        * bindings/v8/IsolatedWorld.h: Added.
+        (WebCore::IsolatedWorld::create):
+        (WebCore::IsolatedWorld::count):
+        (WebCore::IsolatedWorld::domDataStore):
+        * bindings/v8/MainThreadDOMData.cpp:
+        (WebCore::MainThreadDOMData::getMainThreadStore):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::currentScriptState):
+        * bindings/v8/ScriptState.cpp:
+        * bindings/v8/ScriptState.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8IsolatedContext.cpp: Copied from WebCore/bindings/v8/V8IsolatedWorld.cpp.
+        (WebCore::V8IsolatedContext::contextWeakReferenceCallback):
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        (WebCore::V8IsolatedContext::destroy):
+        (WebCore::V8IsolatedContext::~V8IsolatedContext):
+        (WebCore::V8IsolatedContext::scriptState):
+        * bindings/v8/V8IsolatedContext.h: Copied from WebCore/bindings/v8/V8IsolatedWorld.h.
+        (WebCore::V8IsolatedContext::getEntered):
+        (WebCore::V8IsolatedContext::world):
+        * bindings/v8/V8IsolatedWorld.cpp: Removed.
+        * bindings/v8/V8IsolatedWorld.h: Removed.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::context):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::WorldContextHandle):
+
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [V8] Move createWindow into generic bindings so it can be shared with JSC
         https://bugs.webkit.org/show_bug.cgi?id=33201
 

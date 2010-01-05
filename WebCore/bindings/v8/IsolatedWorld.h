@@ -28,49 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScriptState.h"
+#ifndef IsolatedWorld_h
+#define IsolatedWorld_h
 
-#include "Frame.h"
-#include "Node.h"
-#include "Page.h"
-#include "ScriptController.h"
-
-#include <wtf/Assertions.h>
-#include <wtf/StdLibExtras.h>
+#include "DOMWrapperWorld.h"
+#include "V8DOMMap.h"
 
 namespace WebCore {
 
-ScriptState::ScriptState(Frame* frame)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(V8Proxy::mainWorldContext(frame)))
-{
-}
+// An DOMWrapperWorld other than the thread's normal world.
+class IsolatedWorld : public DOMWrapperWorld {
+public:
+    static PassRefPtr<IsolatedWorld> create() { return adoptRef(new IsolatedWorld()); }
+    static int count() { return isolatedWorldCount; }
 
-ScriptState::ScriptState(Frame* frame, v8::Handle<v8::Context> context)
-    : m_frame(frame)
-    , m_context(v8::Persistent<v8::Context>::New(context))
-{
-}
+    DOMDataStore* domDataStore() const { return m_domDataStore.getStore(); }
 
-ScriptState::~ScriptState()
-{
-    m_context.Dispose();
-    m_context.Clear();
-}
+protected:
+    IsolatedWorld();
+    ~IsolatedWorld();
 
-ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node* node)
-{
-    // This should be never reached with V8 bindings (WebKit only uses it
-    // for non-JS bindings)
-    ASSERT_NOT_REACHED();
-    return 0;
-}
+private:
+    // The backing store for the isolated world's DOM wrappers.  This class
+    // doesn't have visibility into the wrappers.  This handle simply helps
+    // manage their lifetime.
+    DOMDataStoreHandle m_domDataStore;
 
-ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
-{
-    // This should be only reached with V8 bindings from single process layout tests.
-    return page->mainFrame()->script()->mainWorldScriptState();
-}
+    static int isolatedWorldCount;
+};
 
-}
+} // namespace WebCore
+
+#endif // IsolatedWorld_h

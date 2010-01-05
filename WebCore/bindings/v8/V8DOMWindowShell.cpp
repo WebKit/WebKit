@@ -51,7 +51,6 @@
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Index.h"
-#include "V8IsolatedWorld.h"
 #include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
 
