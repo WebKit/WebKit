@@ -31,6 +31,7 @@
 
 #include <QApplication>
 #include <QEvent>
+#include <QEventLoop>
 #include <QMouseEvent>
 #include <QObject>
 #include <QPoint>
@@ -48,6 +49,7 @@ class EventSender : public QObject {
     Q_OBJECT
 public:
     EventSender(QWebPage* parent);
+    virtual bool eventFilter(QObject* watched, QEvent* event);
 
 public slots:
     void mouseDown(int button = 0);
@@ -69,10 +71,15 @@ public slots:
 
 private:
     void sendTouchEvent(QEvent::Type);
+    void sendOrQueueEvent(QEvent*);
+    void replaySavedEvents(bool flush);
     QPoint m_mousePos;
     Qt::MouseButtons m_mouseButtons;
     QWebPage* m_page;
     int m_timeLeap;
+    bool m_mouseButtonPressed;
+    bool m_drag;
+    QEventLoop* m_eventLoop;
     QWebFrame* frameUnderMouse() const;
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QList<QTouchEvent::TouchPoint> m_touchPoints;

@@ -31,6 +31,8 @@
 
 //#include <QtDebug>
 
+#include <QtTest/QtTest>
+
 #define KEYCODE_DEL         127
 #define KEYCODE_BACKSPACE   8
 #define KEYCODE_LEFTARROW   0xf702
@@ -38,11 +40,28 @@
 #define KEYCODE_UPARROW     0xf700
 #define KEYCODE_DOWNARROW   0xf701
 
+#define DRT_MESSAGE_DONE (QEvent::User + 1)
+
+struct DRTEventQueue {
+    QEvent* m_event;
+    int m_delay;
+};
+
+static DRTEventQueue eventQueue[1024];
+static unsigned endOfQueue;
+static unsigned startOfQueue;
 
 EventSender::EventSender(QWebPage* parent)
     : QObject(parent)
 {
     m_page = parent;
+    m_mouseButtonPressed = false;
+    m_drag = false;
+    memset(eventQueue, 0, sizeof(eventQueue));
+    endOfQueue = 0;
+    startOfQueue = 0;
+    m_eventLoop = 0;
+    m_page->view()->installEventFilter(this);
 }
 
 void EventSender::mouseDown(int button)
@@ -70,8 +89,8 @@ void EventSender::mouseDown(int button)
     m_mouseButtons |= mouseButton;
 
 //     qDebug() << "EventSender::mouseDown" << frame;
-    QMouseEvent event(QEvent::MouseButtonPress, m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
-    QApplication::sendEvent(m_page, &event);
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonPress, m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    sendOrQueueEvent(event);
 }
 
 void EventSender::mouseUp(int button)
@@ -99,21 +118,21 @@ void EventSender::mouseUp(int button)
     m_mouseButtons &= ~mouseButton;
 
 //     qDebug() << "EventSender::mouseUp" << frame;
-    QMouseEvent event(QEvent::MouseButtonRelease, m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
-    QApplication::sendEvent(m_page, &event);
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonRelease, m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+    sendOrQueueEvent(event);
 }
 
 void EventSender::mouseMoveTo(int x, int y)
 {
 //     qDebug() << "EventSender::mouseMoveTo" << x << y;
     m_mousePos = QPoint(x, y);
-    QMouseEvent event(QEvent::MouseMove, m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
-    QApplication::sendEvent(m_page, &event);
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseMove, m_mousePos, m_mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
+    sendOrQueueEvent(event);
 }
 
 void EventSender::leapForward(int ms)
 {
-    m_timeLeap += ms;
+    eventQueue[endOfQueue].m_delay = ms;
     //qDebug() << "EventSender::leapForward" << ms;
 }
 
@@ -374,4 +393,77 @@ redo:
     if (frame->geometry().contains(m_mousePos))
         return frame;
     return 0;
+}
+
+void EventSender::sendOrQueueEvent(QEvent* event)
+{
+    // Mouse move events are queued if 
+    // 1. A previous event was queued.
+    // 2. A delay was set-up by leapForward().
+    // 3. A call to mouseMoveTo while the mouse button is pressed could initiate a drag operation, and that does not return until mouseUp is processed. 
+    // To be safe and avoid a deadlock, this event is queued.
+    if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay && (!(m_mouseButtonPressed && (m_eventLoop && event->type() == QEvent::MouseButtonRelease)))) {
+        QApplication::sendEvent(m_page->view(), event);
+        delete event;
+        return;
+    }
+    eventQueue[endOfQueue++].m_event = event;
+    eventQueue[endOfQueue].m_delay = 0;
+    replaySavedEvents(event->type() != QEvent::MouseMove);
+}
+
+void EventSender::replaySavedEvents(bool flush)
+{
+    if (startOfQueue < endOfQueue) {
+        // First send all the events that are ready to be sent
+        while (!eventQueue[startOfQueue].m_delay && startOfQueue < endOfQueue) {
+            QEvent* ev = eventQueue[startOfQueue++].m_event;
+            QApplication::postEvent(m_page->view(), ev); // ev deleted by the system
+        }
+        if (startOfQueue == endOfQueue) {
+            // Reset the queue
+            startOfQueue = 0;
+            endOfQueue = 0;
+        } else {
+            QTest::qWait(eventQueue[startOfQueue].m_delay);
+            eventQueue[startOfQueue].m_delay = 0;
+        }
+    }
+    if (!flush)
+        return;
+
+    // Send a marker event, it will tell us when it is safe to exit the new event loop
+    QEvent* drtEvent = new QEvent((QEvent::Type)DRT_MESSAGE_DONE);
+    QApplication::postEvent(m_page->view(), drtEvent);
+
+    // Start an event loop for async handling of Drag & Drop
+    m_eventLoop = new QEventLoop;
+    m_eventLoop->exec();
+    delete m_eventLoop;
+    m_eventLoop = 0;
+}
+
+bool EventSender::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched != m_page->view())
+        return false;
+    switch (event->type()) {
+    case QEvent::Leave:
+        return true;
+    case QEvent::MouseButtonPress:
+        m_mouseButtonPressed = true;
+        break;
+    case QEvent::MouseMove:
+        if (m_mouseButtonPressed)
+            m_drag = true;
+        break;
+    case QEvent::MouseButtonRelease:
+        m_mouseButtonPressed = false;
+        m_drag = false;
+        break;
+    case DRT_MESSAGE_DONE:
+        m_eventLoop->exit();
+        return true;
+    }
+    return false;
 }

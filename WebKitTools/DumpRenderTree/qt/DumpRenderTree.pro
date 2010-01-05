@@ -20,7 +20,7 @@ DESTDIR = ../../../bin
 CONFIG += link_pkgconfig
 PKGCONFIG += fontconfig
 
-QT = core gui network
+QT = core gui network testlib
 macx: QT += xml
 
 HEADERS = $$BASEDIR/WorkQueue.h \
