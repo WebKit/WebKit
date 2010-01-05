@@ -1,3 +1,10 @@
+2010-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Build fix
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+
 2010-01-05  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Darin Adler.

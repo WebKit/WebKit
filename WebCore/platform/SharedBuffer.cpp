@@ -141,14 +141,14 @@ void SharedBuffer::append(const char* data, int length)
 
     for (;;) {
         memcpy(segment, data, bytesToCopy);
-        if (length == bytesToCopy)
+        if (static_cast<unsigned>(length) == bytesToCopy)
             break;
 
         length -= bytesToCopy;
         data += bytesToCopy;
         segment = allocateSegment();
         m_segments.append(segment);
-        bytesToCopy = length < segmentSize ? length : segmentSize;
+        bytesToCopy = static_cast<unsigned>(length) < segmentSize ? length : segmentSize;
     }
 }
 
