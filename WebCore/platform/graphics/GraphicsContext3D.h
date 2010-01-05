@@ -65,9 +65,6 @@ namespace WebCore {
     class WebGLShader;
     class WebGLTexture;
     class Image;
-    class HTMLVideoElement;
-    class ImageData;
-    class WebKitCSSMatrix;
 
     struct ActiveInfo {
         String name;
@@ -528,32 +525,14 @@ namespace WebCore {
 
         // These next several functions return an error code (0 if no errors) rather than using an ExceptionCode.
         // Currently they return -1 on any error.
-        int texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                       unsigned width, unsigned height, unsigned border,
-                       unsigned format, unsigned type, WebGLArray* pixels);
-        int texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                       unsigned width, unsigned height, unsigned border,
-                       unsigned format, unsigned type, ImageData* pixels);
-        int texImage2D(unsigned target, unsigned level, Image* image,
-                       bool flipY, bool premultiplyAlpha);
-        int texImage2D(unsigned target, unsigned level, HTMLVideoElement* video,
-                       bool flipY, bool premultiplyAlpha);
+        int texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels);
+        int texImage2D(unsigned target, unsigned level, Image* image, bool flipY, bool premultiplyAlpha);
 
         void texParameterf(unsigned target, unsigned pname, float param);
         void texParameteri(unsigned target, unsigned pname, int param);
 
-        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height,
-                          unsigned format, unsigned type, WebGLArray* pixels);
-        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height,
-                          unsigned format, unsigned type, ImageData* pixels);
-        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height, Image* image,
-                          bool flipY, bool premultiplyAlpha);
-        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                          unsigned width, unsigned height, HTMLVideoElement* video,
-                          bool flipY, bool premultiplyAlpha);
+        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels);
+        int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, Image* image, bool flipY, bool premultiplyAlpha);
 
         void uniform1f(long location, float x);
         void uniform1fv(long location, float* v, int size);

@@ -1,3 +1,42 @@
+2010-01-05  Rachel Petterson  <rlp@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement most cases of texImage2D and texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=31562
+        
+        This fix is with Chris Marrin  <cmarrin@apple.com>.
+        Also bug: https://bugs.webkit.org/show_bug.cgi?id=31493
+
+        From Chris:
+        This implements all cases except HTMLVideoElement. It changes
+        the bindings to accept all parameter forms of the call. Then
+        it plumbs the calls through WebGLRenderingContext down to
+        GraphicsContext3D for the actual implementation.
+
+        From Rachel:
+        This implements texImage2D for chromium. It also implements the V8
+        bindings for texSubImage2D and updates the V8 bindings for texImage2D.
+
+        Tests: fast/canvas/webgl/texImage2DImageDataTest.html
+                  fast/canvas/webgl/texImageTest.html
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::texImage2D):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::imageToTexture):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2010-01-04  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.

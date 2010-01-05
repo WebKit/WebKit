@@ -33,8 +33,11 @@
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
+#include "JSHTMLVideoElement.h"
+#include "JSImageData.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLFloatArray.h"
 #include "JSWebGLFramebuffer.h"
@@ -79,8 +82,7 @@ JSValue JSWebGLRenderingContext::bufferData(JSC::ExecState* exec, JSC::ArgList c
         static_cast<WebGLRenderingContext*>(impl())->bufferData(target, array, usage, ec);
     }
 
-    if (ec != 0)
-        setDOMException(exec, ec);
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 
@@ -97,8 +99,7 @@ JSValue JSWebGLRenderingContext::bufferSubData(JSC::ExecState* exec, JSC::ArgLis
     
     static_cast<WebGLRenderingContext*>(impl())->bufferSubData(target, offset, array, ec);
 
-    if (ec != 0)
-        setDOMException(exec, ec);
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 
@@ -307,27 +308,60 @@ JSValue JSWebGLRenderingContext::getVertexAttrib(ExecState* exec, const ArgList&
     return getObjectParameter(this, exec, args, kVertexAttrib);
 }
 
-// void texImage2DHTML(in unsigned long target, in unsigned long level, in HTMLImageElement image);
+//   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, in GLint border, in GLenum format, in GLenum type, in WebGLArray pixels);
+//   void texImage2D(in GLenum target, in GLint level, in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement canvas, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texImage2D(in GLenum target, in GLint level, in HTMLVideoElement video, [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
 JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec, const ArgList& args)
 { 
-    if (args.size() < 3)
+    if (args.size() < 3 || args.size() > 9)
         return throwError(exec, SyntaxError);
 
     ExceptionCode ec = 0;
+    
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());    
     unsigned target = args.at(0).toInt32(exec);
     if (exec->hadException())    
         return jsUndefined();
-        
+    
     unsigned level = args.at(1).toInt32(exec);
     if (exec->hadException())    
         return jsUndefined();
+
+    JSObject* o = 0;
     
-    if (args.size() > 5) {
-        // This must be the bare array case.
+    if (args.size() <= 5) {
+        // This is one of the last 4 forms. Param 2 can be ImageData or <img>, <canvas> or <video> element.
+        JSValue value = args.at(2);
+    
+        if (!value.isObject())
+            return throwError(exec, TypeError);
+        
+        o = asObject(value);
+        
+        bool flipY = args.at(3).toBoolean(exec);
+        bool premultiplyAlpha = args.at(4).toBoolean(exec);
+        
+        if (o->inherits(&JSImageData::s_info)) {
+            ImageData* data = static_cast<ImageData*>(static_cast<JSImageData*>(o)->impl());
+            context->texImage2D(target, level, data, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLImageElement::s_info)) {
+            HTMLImageElement* element = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
+            HTMLCanvasElement* element = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLCanvasElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
+            HTMLVideoElement* element = static_cast<HTMLVideoElement*>(static_cast<JSHTMLVideoElement*>(o)->impl());
+            context->texImage2D(target, level, element, flipY, premultiplyAlpha, ec);
+        } else
+            ec = TYPE_MISMATCH_ERR;
+    } else {
         if (args.size() != 9)
             return throwError(exec, SyntaxError);
-            
+
+        // This must be the WebGLArray case
         unsigned internalformat = args.at(2).toInt32(exec);
         if (exec->hadException())    
             return jsUndefined();
@@ -352,77 +386,122 @@ JSValue JSWebGLRenderingContext::texImage2D(ExecState* exec, const ArgList& args
         if (exec->hadException())    
             return jsUndefined();
 
-        WebGLArray* array = toWebGLArray(args.at(8));
-        if (exec->hadException())    
-            return jsUndefined();
+        JSValue value = args.at(8);
             
-        if (!array)
+        // For this case passing 0 (for a null array) is allowed
+        if (value.isNull())
+            context->texImage2D(target, level, internalformat, width, height, border, format, type, 0, ec);
+        else if (value.isObject()) {
+            o = asObject(value);
+            
+            if (o->inherits(&JSWebGLArray::s_info)) {
+                // FIXME: Need to check to make sure WebGLArray is a WebGLByteArray or WebGLShortArray,
+                // depending on the passed type parameter.
+                WebGLArray* obj = static_cast<WebGLArray*>(static_cast<JSWebGLArray*>(o)->impl());
+                context->texImage2D(target, level, internalformat, width, height, border, format, type, obj, ec);
+            } else
+                return throwError(exec, TypeError);
+        } else 
             return throwError(exec, TypeError);
-        
-        // FIXME: Need to check to make sure WebGLArray is a WebGLByteArray or WebGLShortArray,
-        // depending on the passed type parameter.
-        
-        context->texImage2D(target, level, internalformat, width, height, border, format, type, array, ec);
-        return jsUndefined();
     }
     
-    // The image parameter can be a <img> or <canvas> element.
-    JSValue value = args.at(2);
-    if (!value.isObject())
-        return throwError(exec, TypeError);
-    JSObject* o = asObject(value);
-    
-    bool flipY = (args.size() > 3) ? args.at(3).toBoolean(exec) : false;
-    bool premultiplyAlpha = (args.size() > 4) ? args.at(3).toBoolean(exec) : false;
-    
-    if (o->inherits(&JSHTMLImageElement::s_info)) {
-        HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl());
-        context->texImage2D(target, level, imgElt, flipY, premultiplyAlpha, ec);
-    } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
-        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl());
-        context->texImage2D(target, level, canvas, flipY, premultiplyAlpha, ec);
-    } else {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-    }
-    
+    setDOMException(exec, ec);
     return jsUndefined();    
 }
 
-// void texSubImage2DHTML(in unsigned long target, in unsigned long level, in unsigned long xoff, in unsigned long yoff, in unsigned long width, in unsigned long height, in HTMLImageElement image);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in GLsizei width, in GLsizei height, in GLenum format, in GLenum type, in WebGLArray pixels);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLImageElement image, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLCanvasElement canvas, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+//   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, in HTMLVideoElement video, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
 JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec, const ArgList& args)
 { 
-    if (args.size() < 7 || args.size() > 9)
+    if (args.size() < 5 || args.size() > 9)
         return throwError(exec, SyntaxError);
+
+    ExceptionCode ec = 0;
 
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());    
     unsigned target = args.at(0).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+
     unsigned level = args.at(1).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
     unsigned xoff = args.at(2).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
+    
     unsigned yoff = args.at(3).toInt32(exec);
-    unsigned width = args.at(4).toInt32(exec);
-    unsigned height = args.at(5).toInt32(exec);
+    if (exec->hadException())    
+        return jsUndefined();
     
-    // The image parameter can be a <img> or <canvas> element.
-    JSValue value = args.at(6);
-    if (!value.isObject())
-        return throwError(exec, TypeError);
-    JSObject* o = asObject(value);
+    JSObject* o = 0;
+        
+    if (args.size() <= 7) {
+        // This is one of the last 4 forms. Param 4 can be <img>, <canvas> or <video> element, of the format param.
+        JSValue value = args.at(4);
+
+        if (!value.isObject())
+            return throwError(exec, SyntaxError);
+
+        o = asObject(value);
+
+        bool flipY = args.at(5).toBoolean(exec);
+        bool premultiplyAlpha = args.at(6).toBoolean(exec);
+        
+        if (o->inherits(&JSImageData::s_info)) {
+            ImageData* data = static_cast<ImageData*>(static_cast<JSImageData*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, data, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLImageElement::s_info)) {
+            HTMLImageElement* element = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
+            HTMLCanvasElement* element = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLCanvasElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+        } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
+            HTMLVideoElement* element = static_cast<HTMLVideoElement*>(static_cast<JSHTMLVideoElement*>(o)->impl());
+            context->texSubImage2D(target, level, xoff, yoff, element, flipY, premultiplyAlpha, ec);
+        } else
+            ec = TYPE_MISMATCH_ERR;
+    } else {
+        // This must be the WebGLArray form
+        if (args.size() != 9)
+            return throwError(exec, SyntaxError);
+
+        unsigned width = args.at(4).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned height = args.at(5).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned format = args.at(6).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        unsigned type = args.at(7).toInt32(exec);
+        if (exec->hadException())    
+            return jsUndefined();
+        
+        JSValue value = args.at(8);
+        if (!value.isObject())
+            context->texSubImage2D(target, level, xoff, yoff, width, height, format, type, 0, ec);
+        else {
+            o = asObject(value);
+        
+            if (o->inherits(&JSWebGLArray::s_info)) {
+                WebGLArray* obj = static_cast<WebGLArray*>(static_cast<JSWebGLArray*>(o)->impl());
+                context->texSubImage2D(target, level, xoff, yoff, width, height, format, type, obj, ec);
+            } else
+                return throwError(exec, TypeError);
+        }
+    }
     
-    bool flipY = (args.size() > 3) ? args.at(3).toBoolean(exec) : false;
-    bool premultiplyAlpha = (args.size() > 4) ? args.at(3).toBoolean(exec) : false;
-    
-    ExceptionCode ec = 0;
-    if (o->inherits(&JSHTMLImageElement::s_info)) {
-        HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl());
-        context->texSubImage2D(target, level, xoff, yoff, width, height, imgElt, flipY, premultiplyAlpha, ec);
-    } else if (o->inherits(&JSHTMLCanvasElement::s_info)) {
-        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl());
-        context->texSubImage2D(target, level, xoff, yoff, width, height, canvas, flipY, premultiplyAlpha, ec);
-    } else
-        ec = TYPE_MISMATCH_ERR;
-    
-    if (ec != 0)
-        setDOMException(exec, ec);
+    setDOMException(exec, ec);
     return jsUndefined();    
 }
 
@@ -507,8 +586,8 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, co
             case f_vertexAttrib3v: context->vertexAttrib3fv(index, webGLArray.get()); break;
             case f_vertexAttrib4v: context->vertexAttrib4fv(index, webGLArray.get()); break;
         }
-        if (ec != 0)
-            setDOMException(exec, ec);
+        
+        setDOMException(exec, ec);
         return jsUndefined();
     }
     
@@ -529,8 +608,8 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, co
         case f_vertexAttrib3v: context->vertexAttrib3fv(index, array, size); break;
         case f_vertexAttrib4v: context->vertexAttrib4fv(index, array, size); break;
     }
-    if (ec != 0)
-        setDOMException(exec, ec);
+    
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 
@@ -557,8 +636,8 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, co
             case f_uniform4v: context->uniform4iv(location, webGLArray.get(), ec); break;
             default: break;
         }
-        if (ec != 0)
-            setDOMException(exec, ec);
+        
+        setDOMException(exec, ec);
         return jsUndefined();
     }
     
@@ -576,8 +655,8 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, co
         case f_uniform4v: context->uniform4iv(location, array, size, ec); break;
         default: break;
     }
-    if (ec != 0)
-        setDOMException(exec, ec);
+    
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 
@@ -606,8 +685,8 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
             case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, webGLArray.get(), ec); break;
             case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, webGLArray.get(), ec); break;
         }
-        if (ec != 0)
-            setDOMException(exec, ec);
+        
+        setDOMException(exec, ec);
         return jsUndefined();
     }
     
@@ -623,8 +702,8 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, array, size, ec); break;
         case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, array, size, ec); break;
     }
-    if (ec != 0)
-        setDOMException(exec, ec);
+    
+    setDOMException(exec, ec);
     return jsUndefined();
 }
 

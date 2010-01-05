@@ -609,8 +609,8 @@ module html {
         // Supported forms:
         //   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, 
         //                   in GLint border, in GLenum format, in GLenum type, in WebGLArray pixels);
-        //   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, 
-        //                   in GLint border, in GLenum format, in GLenum type, in ImageData pixels);
+        //   void texImage2D(in GLenum target, in GLint level, in ImageData pixels,
+        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
         //   void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image,
         //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
         //   void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement canvas,
@@ -623,18 +623,14 @@ module html {
         //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
         //                      in GLsizei width, in GLsizei height, 
         //                      in GLenum format, in GLenum type, in WebGLArray pixels);
+        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset,
+        //                      in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in GLsizei width, in GLsizei height, 
-        //                      in GLenum format, in GLenum type, in ImageData pixels);
+        //                      in HTMLImageElement image, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in GLsizei width, in GLsizei height, in HTMLImageElement image,
-        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+        //                      in HTMLCanvasElement canvas, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in GLsizei width, in GLsizei height, in HTMLCanvasElement canvas,
-        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in GLsizei width, in GLsizei height, in HTMLVideoElement video,
-        //                      [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
+        //                      in HTMLVideoElement video, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         [Custom] void texSubImage2D();
 
         void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);

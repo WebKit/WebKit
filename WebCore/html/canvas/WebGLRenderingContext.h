@@ -196,9 +196,8 @@ class WebKitCSSMatrix;
         void texImage2D(unsigned target, unsigned level, unsigned internalformat,
                         unsigned width, unsigned height, unsigned border,
                         unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode&);
-        void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                        unsigned width, unsigned height, unsigned border,
-                        unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, ImageData* pixels,
+                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
         void texImage2D(unsigned target, unsigned level, HTMLImageElement* image,
                         bool flipY, bool premultiplyAlpha, ExceptionCode&);
         void texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas,
@@ -213,17 +212,13 @@ class WebKitCSSMatrix;
                            unsigned width, unsigned height,
                            unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                           unsigned width, unsigned height,
-                           unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
+                           ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                           unsigned width, unsigned height, HTMLImageElement* image,
-                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+                           HTMLImageElement* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                           unsigned width, unsigned height, HTMLCanvasElement* canvas,
-                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+                           HTMLCanvasElement* canvas, bool flipY, bool premultiplyAlpha, ExceptionCode&);
         void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                           unsigned width, unsigned height, HTMLVideoElement* video,
-                           bool flipY, bool premultiplyAlpha, ExceptionCode&);
+                           HTMLVideoElement* video, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
         void uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode&);
         void uniform1fv(const WebGLUniformLocation* location, WebGLFloatArray* v, ExceptionCode&);
