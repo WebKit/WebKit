@@ -45,6 +45,8 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     if (result->m_buffer.size() != file.size())
         return 0;
 
+    result->m_size = result->m_buffer.size();
+
     file.read(result->m_buffer.data(), result->m_buffer.size());
     return result.release();
 }

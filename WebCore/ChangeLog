@@ -1,3 +1,35 @@
+2010-01-04  Yong Li  <yoli@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Let SharedBuffer use a group of memory segments internally.
+        It will merge the segments into a flat consecutive buffer only when
+        necessary.
+        https://bugs.webkit.org/show_bug.cgi?id=33178
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::allocateSegment):
+        (WebCore::freeSegment):
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::~SharedBuffer):
+        (WebCore::SharedBuffer::adoptVector):
+        (WebCore::SharedBuffer::size):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::copy):
+        (WebCore::SharedBuffer::buffer):
+        (WebCore::SharedBuffer::getSomeData):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::maybeTransferPlatformData):
+        * platform/haiku/SharedBufferHaiku.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/qt/SharedBufferQt.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2010-01-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed trivial Symbian build fix

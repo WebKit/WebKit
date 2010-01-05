@@ -57,6 +57,8 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
         goto exit;
     }
 
+    result->m_size = result->m_buffer.size();
+
     if (fread(result->m_buffer.data(), 1, fileStat.st_size, fileDescriptor) != fileStat.st_size)
         LOG_ERROR("Failed to fully read contents of file %s - errno(%i)", filePath.ascii().data(), errno);
 

@@ -47,6 +47,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
     result->m_buffer.resize(size);
     if (result->m_buffer.size() != size)
         return 0;
+    result->m_size = size;
 
     file.Read(result->m_buffer.data(), result->m_buffer.size());
     return result.release();
