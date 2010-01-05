@@ -105,4 +105,4 @@ bool BindingSecurityBase::canAccess(DOMWindow* activeWindow,
     return false;
 }
 
-}  // namespace WebCore
+} // namespace WebCore

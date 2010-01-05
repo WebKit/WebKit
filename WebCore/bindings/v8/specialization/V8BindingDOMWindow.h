@@ -28,34 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "V8BindingState.h"
+#ifndef V8BindingDOMWindow_h
+#define V8BindingDOMWindow_h
 
+#include "BindingDOMWindow.h"
+#include "GenericBinding.h"
 #include "V8Proxy.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-State<V8Binding>* State<V8Binding>::Only()
-{
-    DEFINE_STATIC_LOCAL(State, globalV8BindingState, ());
-    return &globalV8BindingState;
-}
+class V8Binding;
 
-DOMWindow* State<V8Binding>::getActiveWindow()
-{
-    v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
-    if (activeContext.IsEmpty()) {
-        // There is a single activation record on the stack, so that must
-        // be the activeContext.
-        activeContext = v8::Context::GetCurrent();
+class V8BindingDOMWindow : public BindingDOMWindow<V8Binding> {
+public:
+    static void storeDialogArgs(State<V8Binding>*, Frame* newFrame, v8::Handle<v8::Value> dialogArgs)
+    {
+        // Set dialog arguments on the global object of the new frame.
+        if (!dialogArgs.IsEmpty()) {
+            v8::Local<v8::Context> context = V8Proxy::context(newFrame);
+            if (!context.IsEmpty()) {
+                v8::Context::Scope scope(context);
+                context->Global()->Set(v8::String::New("dialogArguments"), dialogArgs);
+            }
+        }
     }
-    return V8Proxy::retrieveWindow(activeContext);
-}
+};
 
-void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
-{
-    V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportNow);
-}
+} // namespace WebCore
 
-}  // namespace WebCore
+#endif // V8BindingDOMWindow_h

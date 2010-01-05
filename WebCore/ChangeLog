@@ -1,3 +1,48 @@
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Move createWindow into generic bindings so it can be shared with JSC
+        https://bugs.webkit.org/show_bug.cgi?id=33201
+
+        This patch moves createWindow from V8-specific code into the generic
+        bindings so that is can be re-used by the JavaScriptCore bindings.  I
+        haven't actually moved the JSC bindings over to using this yet.
+
+        Also, I organized the generic bindings a bit more as it's becoming
+        clearer how things are going to shape up.  There are still some
+        question marks, but hopefully the answers will become clear as we
+        progress.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/generic/BindingDOMWindow.h: Added.
+        (WebCore::::createWindow):
+        * bindings/generic/BindingSecurity.h: Renamed from WebCore/bindings/BindingSecurity.h.
+        (WebCore::BindingSecurity::BindingSecurity):
+        (WebCore::::canAccessWindow):
+        (WebCore::::canAccessFrame):
+        (WebCore::::checkNodeSecurity):
+        * bindings/generic/BindingSecurityBase.cpp: Renamed from WebCore/bindings/BindingSecurityBase.cpp.
+        (WebCore::BindingSecurityBase::getDOMWindow):
+        (WebCore::BindingSecurityBase::getFrame):
+        (WebCore::BindingSecurityBase::canAccess):
+        * bindings/generic/BindingSecurityBase.h: Renamed from WebCore/bindings/BindingSecurityBase.h.
+        * bindings/generic/GenericBinding.h: Renamed from WebCore/bindings/GenericBinding.h.
+        (WebCore::):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/specialization/V8BindingDOMWindow.h: Added.
+        (WebCore::V8BindingDOMWindow::storeDialogArgs):
+        * bindings/v8/specialization/V8BindingState.cpp: Renamed from WebCore/bindings/v8/V8BindingState.cpp.
+        (WebCore::::Only):
+        (WebCore::::getActiveWindow):
+        (WebCore::::immediatelyReportUnsafeAccessTo):
+        * bindings/v8/specialization/V8BindingState.h: Renamed from WebCore/bindings/v8/V8BindingState.h.
+        (WebCore::):
+
 2010-01-05  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Darin Adler.

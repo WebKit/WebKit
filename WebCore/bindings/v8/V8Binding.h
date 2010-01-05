@@ -44,11 +44,16 @@ namespace WebCore {
     
     class EventListener;
     class EventTarget;
+    class V8BindingDOMWindow;
 
     // Instantiate binding template classes for V8.
-    class V8Binding {};
+    class V8Binding {
+    public:
+        typedef v8::Handle<v8::Value> Value;
+        typedef V8BindingDOMWindow DOMWindow;
+    };
     typedef BindingSecurity<V8Binding> V8BindingSecurity;
-    
+
     // A helper function extract native object pointer from a DOM wrapper
     // and cast to the specified type.
     void* v8DOMWrapperToNative(v8::Handle<v8::Object>);

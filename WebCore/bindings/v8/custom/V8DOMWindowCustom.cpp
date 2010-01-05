@@ -31,19 +31,11 @@
 #include "config.h"
 #include "V8DOMWindow.h"
 
-#include "V8Binding.h"
-#include "V8BindingState.h"
-#include "V8CustomBinding.h"
-#include "V8CustomEventListener.h"
-#include "V8MessagePortCustom.h"
-#include "V8Proxy.h"
-#include "V8Utilities.h"
-
 #include "Base64.h"
 #include "Chrome.h"
-#include "ExceptionCode.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
@@ -58,6 +50,14 @@
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include "Storage.h"
+#include "V8Binding.h"
+#include "V8BindingDOMWindow.h"
+#include "V8BindingState.h"
+#include "V8CustomBinding.h"
+#include "V8CustomEventListener.h"
+#include "V8MessagePortCustom.h"
+#include "V8Proxy.h"
+#include "V8Utilities.h"
 #if ENABLE(WEB_SOCKETS)
 #include "WebSocket.h"
 #endif
@@ -547,77 +547,6 @@ static HashMap<String, String> parseModalDialogFeatures(const String& featuresAr
     return map;
 }
 
-
-static Frame* createWindow(Frame* callingFrame,
-                           Frame* enteredFrame,
-                           Frame* openerFrame,
-                           const String& url,
-                           const String& frameName,
-                           const WindowFeatures& windowFeatures,
-                           v8::Local<v8::Value> dialogArgs)
-{
-    ASSERT(callingFrame);
-    ASSERT(enteredFrame);
-
-    // Sandboxed iframes cannot open new auxiliary browsing contexts.
-    if (callingFrame && callingFrame->loader()->isSandboxed(SandboxNavigation))
-        return 0;
-
-    ResourceRequest request;
-
-    // For whatever reason, Firefox uses the entered frame to determine
-    // the outgoingReferrer.  We replicate that behavior here.
-    String referrer = enteredFrame->loader()->outgoingReferrer();
-    request.setHTTPReferrer(referrer);
-    FrameLoader::addHTTPOriginIfNeeded(request, enteredFrame->loader()->outgoingOrigin());
-    FrameLoadRequest frameRequest(request, frameName);
-
-    // FIXME: It's much better for client API if a new window starts with a URL,
-    // here where we know what URL we are going to open. Unfortunately, this
-    // code passes the empty string for the URL, but there's a reason for that.
-    // Before loading we have to set up the opener, openedByDOM,
-    // and dialogArguments values. Also, to decide whether to use the URL
-    // we currently do an allowsAccessFrom call using the window we create,
-    // which can't be done before creating it. We'd have to resolve all those
-    // issues to pass the URL instead of "".
-
-    bool created;
-    // We pass in the opener frame here so it can be used for looking up the
-    // frame name, in case the active frame is different from the opener frame,
-    // and the name references a frame relative to the opener frame, for example
-    // "_self" or "_parent".
-    Frame* newFrame = callingFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
-    if (!newFrame)
-        return 0;
-
-    newFrame->loader()->setOpener(openerFrame);
-    newFrame->page()->setOpenedByDOM();
-
-    // Set dialog arguments on the global object of the new frame.
-    if (!dialogArgs.IsEmpty()) {
-        v8::Local<v8::Context> context = V8Proxy::context(newFrame);
-        if (!context.IsEmpty()) {
-            v8::Context::Scope scope(context);
-            context->Global()->Set(v8::String::New("dialogArguments"), dialogArgs);
-        }
-    }
-
-    if (!protocolIsJavaScript(url) || ScriptController::isSafeScript(newFrame)) {
-        KURL completedUrl =
-            url.isEmpty() ? KURL(ParsedURLString, "") : completeURL(url);
-        bool userGesture = processingUserGesture();
-
-        if (created)
-            newFrame->loader()->changeLocation(completedUrl, referrer, false, false, userGesture);
-        else if (!url.isEmpty())
-            newFrame->redirectScheduler()->scheduleLocationChange(completedUrl.string(), referrer, false, userGesture);
-    }
-
-    return newFrame;
-}
-
-
-
 v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.showModalDialog()");
@@ -683,7 +612,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
     windowFeatures.locationBarVisible = false;
     windowFeatures.fullscreen = false;
 
-    Frame* dialogFrame = createWindow(callingFrame, enteredFrame, frame, url, "", windowFeatures, dialogArgs);
+    Frame* dialogFrame = V8BindingDOMWindow::createWindow(V8BindingState::Only(), callingFrame, enteredFrame, frame, url, "", windowFeatures, dialogArgs);
     if (!dialogFrame)
         return v8::Undefined();
 
@@ -826,7 +755,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
         windowFeatures.ySet = false;
     }
 
-    frame = createWindow(callingFrame, enteredFrame, frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
+    frame = V8BindingDOMWindow::createWindow(V8BindingState::Only(), callingFrame, enteredFrame, frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
 
     if (!frame)
         return v8::Undefined();
