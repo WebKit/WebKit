@@ -1,3 +1,49 @@
+2010-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Selection-related code needs stricter rules about how it relates to layout
+        https://bugs.webkit.org/show_bug.cgi?id=32882
+
+        Covered by existing tests along with the new assertions.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Make sure that m_inStyleRecalc is
+        already false by the time post-attach callbacks are done so that
+        layout triggered inside those callbacks can work properly.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::layout): Added code to trigger a
+        layout when it's needed.
+        (WebCore::SelectionController::recomputeCaretRect): Removed unneeded
+        code to do nothing when FrameView is 0. Added an assertion that layout
+        is not needed at the time the function is called.
+        (WebCore::SelectionController::invalidateCaretRect): Added code to
+        trigger a layout when it's needed.
+        (WebCore::SelectionController::paintCaret): Added an assertion that
+        layout is not needed at the time the function is called.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus): Added. Helper function that expresses
+        the rule for which form control elements should auto-focus.
+        (WebCore::focusPostAttach): Added. Called post-attach to focus an
+        element if we discover it should be focused during attach.
+        (WebCore::HTMLFormControlElement::attach): Refactored code for
+        which elements need auto-focus into a separate function. Instead
+        of focusing right away, use the focusPostAttach function to focus
+        after attach is done. Also added calls to suspendPostAttachCallbacks
+        and resumePostAttachCallbacks so post-attach callbacks happen late
+        enough. Before, they could run inside the base attach function.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach): Added calls to
+        suspendPostAttachCallbacks and resumePostAttachCallbacks so
+        post-attach callbacks happen late enough
+
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection): Added code to trigger a layout
+        when it's needed.
+
 2010-01-04  Gavin Barraclough <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
