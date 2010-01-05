@@ -1,5 +1,27 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Share more code in the WebViewDestruction tests
+
+        Part of <http://webkit.org/b/33212> Small fixes/improvements to
+        WebKitAPITest
+
+        Reviewed by Sam Weinig.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp:
+        (WebKitAPITest::createAndInitializeWebView): Renamed from
+        createWebView. Now initializes the HostWindow and returns the
+        WebView's HWND via an out-parameter.
+        (WebKitAPITest::finishWebViewDestructionTest): Added. Code came from
+        the CloseWithoutDestroyWindow test.
+        (WebKitAPITest::CloseWithoutDestroyViewWindow): Renamed from
+        CloseWithoutDestroyWindow and changed to use the new functions.
+        (WebKitAPITest::MainFrameAfterClose): Changed to use the new
+        functions.
+        (WebKitAPITest::NoCloseOrDestroyViewWindow): Renamed from
+        NoCloseOrDestroyWindow and changed to use the new functions.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Don't show HostWindows by default
 
         This was making WebKitAPITest very flashy as windows appeared and
