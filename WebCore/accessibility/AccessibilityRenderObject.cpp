@@ -363,11 +363,21 @@ bool AccessibilityRenderObject::isChecked() const
     if (!m_renderer->node() || !m_renderer->node()->isElementNode())
         return false;
 
+    // First test for native checkedness semantics
     InputElement* inputElement = toInputElement(static_cast<Element*>(m_renderer->node()));
-    if (!inputElement)
-        return false;
+    if (inputElement)
+        return inputElement->isChecked();
 
-    return inputElement->isChecked();
+    // Else, if this is an ARIA checkbox or radio, respect the aria-checked attribute
+    AccessibilityRole ariaRole = ariaRoleAttribute();
+    if (ariaRole == RadioButtonRole || ariaRole == CheckBoxRole) {
+        if (equalIgnoringCase(getAttribute(aria_checkedAttr), "true"))
+            return true;
+        return false;
+    }
+
+    // Otherwise it's not checked
+    return false;
 }
 
 bool AccessibilityRenderObject::isHovered() const

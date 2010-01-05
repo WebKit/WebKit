@@ -255,7 +255,7 @@ JSStringRef AccessibilityUIElement::orientation() const
     return 0;
 }
 
-double AccessibilityUIElement::intValue()
+double AccessibilityUIElement::intValue() const
 {
     GValue value = { 0, { { 0 } } };
 
@@ -363,6 +363,11 @@ bool AccessibilityUIElement::isExpanded() const
 {
     // FIXME: implement
     return false;
+}
+
+bool AccessibilityUIElement::isChecked() const
+{
+    return intValue();
 }
 
 JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()

@@ -288,12 +288,21 @@ bool AccessibilityUIElement::isExpanded() const
     return false;
 }
 
+bool AccessibilityUIElement::isChecked() const
+{
+    VARIANT vState;
+    if (FAILED(m_element->get_accState(self(), &vState)))
+        return false;
+
+    return vState.lVal & STATE_SYSTEM_CHECKED;
+}
+
 JSStringRef AccessibilityUIElement::orientation() const
 {
     return 0;
 }
 
-double AccessibilityUIElement::intValue()
+double AccessibilityUIElement::intValue() const
 {
     BSTR valueBSTR;
     if (FAILED(m_element->get_accValue(self(), &valueBSTR)) || !valueBSTR)
