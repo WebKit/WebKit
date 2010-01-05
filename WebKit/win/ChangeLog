@@ -12,8 +12,9 @@
         WebView's host window (which actually resulted in the WebView's HWND
         leaking, and the crash in the below bug).
 
-        Fixes <http://webkit.org/b/32827> Crash when calling IWebView::close,
-        then releasing the WebView, without calling DestroyWindow
+        Fixes <rdar://problem/7374218> <http://webkit.org/b/32827> Crash when
+        calling IWebView::close, then releasing the WebView, without calling
+        DestroyWindow
 
         Fixes a few WebViewDestruction tests, too.
 
@@ -47,8 +48,8 @@
         Make it safe to call IWebView::close when IWebView::initWithFrame
         hasn't been called
 
-        Part of <http://webkit.org/b/32827> Crash when calling
-        IWebView::close, then releasing the WebView, without calling
+        Part of <rdar://problem/7374218> <http://webkit.org/b/32827> Crash
+        when IWebView::close, then releasing the WebView, without calling
         DestroyWindow
 
         Reviewed by Steve Falkenburg.
