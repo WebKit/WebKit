@@ -1,9 +1,3 @@
-2010-01-04  Gavin Barraclough  <barraclough@apple.com>
-
-        Reviewed by NOBODY (more speculative build fix).
-
-        * wtf/unicode/Unicode.h:
-
 2010-01-04  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, attempt to fix ARM bulid.
@@ -28,33 +22,6 @@
         (JSC::PropertyNameArray::add):
         * runtime/UStringImpl.h:
         (JSC::UStringImpl::isIdentifier):
-
-2010-01-04  Gavin Barraclough  <barraclough@apple.com>
-
-        Reviewed by NOBODY build fix for DRT, fix incorrect style include.
-
-        * wtf/HashFunctions.h:
-
-2010-01-04  Gavin Barraclough  <barraclough@apple.com>
-
-        Reviewed by NOBODY Windows build fix.
-
-        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
-
-2010-01-04  Gavin Barraclough  <barraclough@apple.com>
-
-        Reviewed by Sam Weinig.
-
-        https://bugs.webkit.org/show_bug.cgi?id=33163
-        Add string hashing functions to WTF.
-        Use WTF's string hashing functions from UStringImpl.
-
-        * JavaScriptCore.exp:
-        * runtime/UStringImpl.cpp:
-        * runtime/UStringImpl.h:
-        (JSC::UStringImpl::computeHash):
-        * wtf/HashFunctions.h:
-        (WTF::stringHash):
 
 2010-01-04  Gavin Barraclough  <barraclough@apple.com>
 

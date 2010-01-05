@@ -81,4 +81,97 @@ void UStringImpl::destroy()
     delete this;
 }
 
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+unsigned UStringImpl::computeHash(const UChar* s, int len)
+{
+    unsigned l = len;
+    uint32_t hash = PHI;
+    uint32_t tmp;
+
+    int rem = l & 1;
+    l >>= 1;
+
+    // Main loop
+    for (; l > 0; l--) {
+        hash += s[0];
+        tmp = (s[1] << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
+    }
+
+    // Handle end case
+    if (rem) {
+        hash += s[0];
+        hash ^= hash << 11;
+        hash += hash >> 17;
+    }
+
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
+
+    return hash;
+}
+
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+unsigned UStringImpl::computeHash(const char* s, int l)
+{
+    // This hash is designed to work on 16-bit chunks at a time. But since the normal case
+    // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
+    // were 16-bit chunks, which should give matching results
+
+    uint32_t hash = PHI;
+    uint32_t tmp;
+
+    size_t rem = l & 1;
+    l >>= 1;
+
+    // Main loop
+    for (; l > 0; l--) {
+        hash += static_cast<unsigned char>(s[0]);
+        tmp = (static_cast<unsigned char>(s[1]) << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
+    }
+
+    // Handle end case
+    if (rem) {
+        hash += static_cast<unsigned char>(s[0]);
+        hash ^= hash << 11;
+        hash += hash >> 17;
+    }
+
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
+
+    return hash;
+}
+
 }

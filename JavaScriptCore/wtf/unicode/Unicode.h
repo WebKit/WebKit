@@ -23,7 +23,7 @@
 #ifndef WTF_UNICODE_H
 #define WTF_UNICODE_H
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 
 #if USE(QT4_UNICODE)
 #include "qt4/UnicodeQt4.h"

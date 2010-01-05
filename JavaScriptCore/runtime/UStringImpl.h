@@ -27,7 +27,6 @@
 #define UStringImpl_h
 
 #include <wtf/CrossThreadRefCounted.h>
-#include <wtf/HashFunctions.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PossiblyNull.h>
 #include <wtf/unicode/Unicode.h>
@@ -161,9 +160,9 @@ public:
             memcpy(destination, source, numCharacters * sizeof(UChar));
     }
 
-    static unsigned computeHash(const UChar* s, int length) { ASSERT(length >= 0); return WTF::stringHash(s, length); }
-    static unsigned computeHash(const char* s, int length) { ASSERT(length >= 0); return WTF::stringHash(s, length); }
-    static unsigned computeHash(const char* s) { return WTF::stringHash(s); }
+    static unsigned computeHash(const UChar*, int length);
+    static unsigned computeHash(const char*, int length);
+    static unsigned computeHash(const char* s) { return computeHash(s, strlen(s)); }
 
     static UStringImpl& null() { return *s_null; }
     static UStringImpl& empty() { return *s_empty; }
