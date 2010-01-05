@@ -1,3 +1,18 @@
+2010-01-04  Ojan Vafai  <ojan@ojanmacpro.sfo.corp.google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove unnecessary division by a constant in SimpleFontDataMac.mm.
+        https://bugs.webkit.org/show_bug.cgi?id=33189
+
+        This was added in http://trac.webkit.org/changeset/8104 and seems like
+        it was just there to match the previously private function which we no
+        longer use.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+
 2010-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.

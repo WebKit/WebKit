@@ -55,8 +55,7 @@ using namespace std;
 namespace WebCore {
   
 const float smallCapsFontSizeMultiplier = 0.7f;
-const float contextDPI = 72.0f;
-static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (contextDPI / (contextDPI * unitsPerEm)); }
+static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x / unitsPerEm; }
 
 static bool initFontData(SimpleFontData* fontData)
 {
