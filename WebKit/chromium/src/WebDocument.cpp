@@ -81,6 +81,11 @@ WebURL WebDocument::baseURL() const
     return constUnwrap<Document>()->baseURL();
 }
 
+WebElement WebDocument::documentElement() const
+{
+    return WebElement(constUnwrap<Document>()->documentElement());
+}
+
 WebElement WebDocument::body() const
 {
     return WebElement(constUnwrap<Document>()->body());

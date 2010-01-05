@@ -104,6 +104,7 @@
 #include "PlatformContextSkia.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
+#include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ReplaceSelectionCommand.h"
@@ -354,6 +355,11 @@ WebFrame* WebFrame::fromFrameOwnerElement(const WebElement& element)
 WebString WebFrameImpl::name() const
 {
     return m_frame->tree()->name();
+}
+
+void WebFrameImpl::clearName()
+{
+    m_frame->tree()->clearName();
 }
 
 WebURL WebFrameImpl::url() const
@@ -1465,6 +1471,23 @@ WebString WebFrameImpl::contentAsText(size_t maxChars) const
 WebString WebFrameImpl::contentAsMarkup() const
 {
     return createFullMarkup(m_frame->document());
+}
+
+WebString WebFrameImpl::renderTreeAsText() const
+{
+    return externalRepresentation(m_frame);
+}
+
+WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
+{
+    if (!m_frame)
+        return WebString();
+
+    Element* element = m_frame->document()->getElementById(id);
+    if (!element)
+        return WebString();
+
+    return counterValueForElement(element);
 }
 
 // WebFrameImpl public ---------------------------------------------------------

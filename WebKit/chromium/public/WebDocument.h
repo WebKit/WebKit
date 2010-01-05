@@ -62,6 +62,7 @@ public:
     WEBKIT_API WebFrame* frame() const;
     WEBKIT_API bool isHTMLDocument() const;
     WEBKIT_API WebURL baseURL() const;
+    WEBKIT_API WebElement documentElement() const;
     WEBKIT_API WebElement body() const;
     WEBKIT_API WebElement head();
     WEBKIT_API WebNodeCollection all();

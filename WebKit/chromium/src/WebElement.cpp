@@ -82,5 +82,10 @@ bool WebElement::setAttribute(const WebString& attrName, const WebString& attrVa
     return !exceptionCode;
 }
 
+WebString WebElement::innerText() const
+{
+    return constUnwrap<Element>()->innerText();
+}
+
 } // namespace WebKit
 

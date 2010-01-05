@@ -97,6 +97,7 @@ public:
 
     // The name of this frame.
     virtual WebString name() const = 0;
+    virtual void clearName() = 0;
 
     // The url of the document loaded in this frame.  This is equivalent to
     // dataSource()->request().url().
@@ -112,6 +113,7 @@ public:
 
     // Return the frame's encoding.
     virtual WebString encoding() const = 0;
+
 
     // Geometry -----------------------------------------------------------
 
@@ -178,6 +180,7 @@ public:
     virtual void forms(WebVector<WebFormElement>&) const = 0;
 
     virtual WebAnimationController* animationController() = 0;
+
 
     // Scripting ----------------------------------------------------------
 
@@ -429,6 +432,7 @@ public:
     // of matches found during the scoping effort.
     virtual void resetMatchCount() = 0;
 
+
     // Password autocompletion ---------------------------------------------
 
     // Registers a listener for the specified user name input element. The
@@ -438,6 +442,7 @@ public:
     virtual void registerPasswordListener(
         WebInputElement,
         WebPasswordAutocompleteListener*) = 0;
+
 
     // Utility -------------------------------------------------------------
 
@@ -461,6 +466,14 @@ public:
     // Returns HTML text for the contents of this frame.  This is generated
     // from the DOM.
     virtual WebString contentAsMarkup() const = 0;
+
+    // Returns a text representation of the render tree.  This method is used
+    // to support layout tests.
+    virtual WebString renderTreeAsText() const = 0;
+
+    // Returns the counter value for the specified element.  This method is
+    // used to support layout tests.
+    virtual WebString counterValueForElementById(const WebString& id) const = 0;
 
 protected:
     ~WebFrame() { }
