@@ -35,7 +35,6 @@ CONFIG(standalone_package) {
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 } else {
-    !static: DEFINES += QT_MAKEDLL
 
     CONFIG(debug, debug|release) {
         isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated$${QMAKE_DIR_SEP}debug
@@ -47,7 +46,10 @@ CONFIG(standalone_package) {
 
 }
 
-!CONFIG(QTDIR_build): DESTDIR = $$OUTPUT_DIR/lib
+!CONFIG(QTDIR_build) {
+    DESTDIR = $$OUTPUT_DIR/lib
+    !static: DEFINES += QT_MAKEDLL
+}
 
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR${QMAKE_DIR_SEP}
 

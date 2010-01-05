@@ -1,3 +1,17 @@
+2010-01-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix broken export macros in package builds.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33202
+
+        Always define QT_MAKEDLL unless we're doing a static
+        build or we're building inside of Qt. When building
+        inside of Qt the correct define is pulled from qbase.pri.
+
+        * WebCore.pro:
+
 2010-01-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Fisher.
