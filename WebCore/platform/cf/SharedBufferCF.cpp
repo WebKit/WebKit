@@ -76,7 +76,7 @@ void SharedBuffer::maybeTransferPlatformData()
     if (!m_cfData)
         return;
     
-    ASSERT(m_size == 0);
+    ASSERT(!m_size);
         
     append((const char*)CFDataGetBytePtr(m_cfData.get()), CFDataGetLength(m_cfData.get()));
         
