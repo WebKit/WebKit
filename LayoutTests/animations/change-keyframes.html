@@ -30,7 +30,7 @@
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
       [null, 0.5, "box", "left", 200, 10],
-      [null, 0.5 + 0.5, "box", "top", 100, 10],
+      [null, 1, "box", "top", 100, 10],
     ];
 
     function findKeyframesRule(rule)
@@ -55,8 +55,8 @@
         keyframes.deleteRule("60%");
         keyframes.deleteRule("100%");
         keyframes.insertRule("0% { top: 50px; }");
-        keyframes.insertRule("40% { top: 100px; }");
-        keyframes.insertRule("60% { top: 100px; }");
+        keyframes.insertRule("30% { top: 100px; }");
+        keyframes.insertRule("50% { top: 100px; }");
         keyframes.insertRule("100% { top: 150px; }");
         document.getElementById('box').style.webkitAnimationName = "anim";
     }

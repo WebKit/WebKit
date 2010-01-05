@@ -1,3 +1,17 @@
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        LayoutTests/animations/change-keyframes.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33233
+
+        The timing calculation was just off. It was starting the
+        second animation at 600ms and then checking to be half-way
+        done with the 1 second animation at 1000ms. Instead, just
+        modify the animation to run a bit earlier.
+
+        * animations/change-keyframes.html:
+
 2010-01-05  Chris Marrin  <cmarrin@apple.com>
 
         Fixed a bug in testcase. Passing an empty array to texImage2D
