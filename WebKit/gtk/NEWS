@@ -1,4 +1,38 @@
 =================
+WebKitGTK+ 1.1.18
+=================
+
+What's new in WebKitGTK+ 1.1.18?
+
+  - Add methods to set and get a cache model in WebKitGTK+. We offer
+    two possibilites: document viewer (no caches are used) and browser
+    (similar to the previous defaults).
+  - Add WebKitWebSettings::enable-page-cache. Controls whether the
+    Page Cache is enabled or not. For details about what the page
+    cache is and does see
+    http://webkit.org/blog/427/webkit-page-cache-i-the-basics/
+    The page cache is disabled by default, since the gtk+ port still
+    presents some small bugs when it's enabled.
+  - Add WebKitWebSettings::enable-site-specific-quirks. Controls
+    whether a series of page-specific workarounds are used by WebKit.
+  - Use Content-Encoding support available in libsoup 2.28.2 and
+    newer.
+  - Add WebKitWebSettings::enable-default-context-menu. Controls
+    whether webkitgtk+ will show a default context menu on right click
+    in the view. Note that even with the property set to FALSE right
+    clicks can be handled by the page, either by actions or by
+    ad-hoc in-page context menus.
+  - Make the WebKitWebView::icon-loaded signal carry a string with the
+    favicon's URI. This is an API break, but the signal already had a
+    broken signature and was useless anyway, so it's extremely
+    unlikely that anybody was using it. Also, add the 'icon-uri'
+    property to the view, holding the URI for its current favicon.
+  - Respect Content-Disposition header in downloads (fixes downloads
+    in gmail).
+  - Various accessibility improvements.
+  - Many bugfixes.
+
+=================
 WebKitGTK+ 1.1.17
 =================
 

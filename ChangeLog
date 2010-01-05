@@ -1,3 +1,9 @@
+2010-01-05  Xan Lopez  <xlopez@igalia.com>
+
+        Bump for 1.1.18 release.
+
+        * configure.ac:
+
 2010-01-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         Fix JSCore-1.0.gir path to fix make distcheck.
