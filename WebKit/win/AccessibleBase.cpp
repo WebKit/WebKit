@@ -567,6 +567,8 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_GRAPHIC;
         case WebCore::ListItemRole:
             return ROLE_SYSTEM_LISTITEM;
+        case WebCore::PopUpButtonRole:
+            return ROLE_SYSTEM_COMBOBOX;
         default:
             // This is the default role for MSAA.
             return ROLE_SYSTEM_CLIENT;

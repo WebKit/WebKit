@@ -1,5 +1,16 @@
 2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        MSAA: Accessibility role of <select> elements is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=33192
+
+        Reviewed by Sam Weinig.
+
+        * platform/win/accessibility/select-element-role-expected.txt: Added.
+        * platform/win/accessibility/select-element-role.html: Added.
+
+2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
         MSAA: <select> elements should broadcast value change events
 
         https://bugs.webkit.org/show_bug.cgi?id=33088

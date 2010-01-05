@@ -1,3 +1,15 @@
+2010-01-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility role of <select> elements is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=33192
+
+        Reviewed by Sam Weinig.
+
+        * AccessibleBase.cpp:
+        (MSAARole):
+        Map WebCore::PopUpButtonRole to MSAA's ROLE_SYSTEM_COMBOBOX.
+
 2010-01-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
