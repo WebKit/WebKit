@@ -1,5 +1,21 @@
 2010-01-05  Adam Roben  <aroben@apple.com>
 
+        Don't show HostWindows by default
+
+        This was making WebKitAPITest very flashy as windows appeared and
+        disappeared.
+
+        Part of <http://webkit.org/b/33212> Small fixes/improvements to
+        WebKitAPITest
+
+        Reviewed by Sam Weinig.
+
+        * WebKitAPITest/HostWindow.cpp:
+        (WebKitAPITest::HostWindow::initialize): Removed the WS_VISIBLE style
+        from the window.
+
+2010-01-05  Adam Roben  <aroben@apple.com>
+
         Don't hang in WebKitAPITest if no messages have been posted
 
         Part of <http://webkit.org/b/33212> Small fixes/improvements to

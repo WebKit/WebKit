@@ -36,7 +36,7 @@ HostWindow::HostWindow()
 bool HostWindow::initialize()
 {
     registerWindowClass();
-    m_window = CreateWindowExW(0, hostWindowClassName, L"WebKitAPITest", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), 0);
+    m_window = CreateWindowExW(0, hostWindowClassName, L"WebKitAPITest", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), 0);
     return m_window;
 }
 
