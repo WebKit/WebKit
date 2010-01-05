@@ -88,7 +88,7 @@ public:
 
     bool isEmpty() const { return !size(); }
 
-    void append(const char*, int);
+    void append(const char*, unsigned);
     void clear();
     const char* platformData() const;
     unsigned platformDataSize() const;
