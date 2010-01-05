@@ -125,6 +125,7 @@ public:
     virtual AccessibilityObject* selectedRadioButton();
     virtual AccessibilityObject* selectedTabItem();
     virtual int layoutCount() const;
+    virtual double estimatedLoadingProgress() const;
     
     virtual AccessibilityObject* doAccessibilityHitTest(const IntPoint&) const;
     virtual AccessibilityObject* focusedUIElement() const;

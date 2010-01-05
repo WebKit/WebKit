@@ -1,3 +1,21 @@
+2010-01-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        AX: need a way to get the progress of a webpage load
+        https://bugs.webkit.org/show_bug.cgi?id=33221
+
+        Test: platform/mac/accessibility/estimated-progress.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::estimatedLoadingProgress):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::estimatedLoadingProgress):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2010-01-05  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

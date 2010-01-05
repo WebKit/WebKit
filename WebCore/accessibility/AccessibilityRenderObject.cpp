@@ -53,6 +53,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "NodeList.h"
+#include "ProgressTracker.h"
 #include "RenderButton.h"
 #include "RenderFieldset.h"
 #include "RenderFileUploadControl.h"
@@ -1573,6 +1574,21 @@ bool AccessibilityRenderObject::isLoaded() const
     return !m_renderer->document()->tokenizer();
 }
 
+double AccessibilityRenderObject::estimatedLoadingProgress() const
+{
+    if (!m_renderer)
+        return 0;
+    
+    if (isLoaded())
+        return 1.0;
+    
+    Page* page = m_renderer->document()->page();
+    if (!page)
+        return 0;
+    
+    return page->progress()->estimatedProgress();
+}
+    
 int AccessibilityRenderObject::layoutCount() const
 {
     if (!m_renderer->isRenderView())

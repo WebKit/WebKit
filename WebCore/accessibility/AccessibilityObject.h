@@ -330,6 +330,7 @@ public:
     virtual AccessibilityObject* selectedRadioButton() { return 0; }
     virtual AccessibilityObject* selectedTabItem() { return 0; }    
     virtual int layoutCount() const { return 0; }
+    virtual double estimatedLoadingProgress() const { return 0; }
     static bool isARIAControl(AccessibilityRole);
     static bool isARIAInput(AccessibilityRole);
     virtual bool supportsARIAOwns() const { return false; }

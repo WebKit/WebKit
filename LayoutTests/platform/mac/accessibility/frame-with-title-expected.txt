@@ -1,55 +1,12 @@
-AXRole: AXWebArea
-AXSubrole: (null)
-AXRoleDescription: HTML content
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXWebArea>
-AXSize: NSSize: {100, 100}
-AXTitle: 
-AXDescription: All Packages
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXWebArea>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXWebArea>
-AXLinkUIElements: <array of size 0>
-AXLoaded: 1
-AXLayoutCount: 4
-AXURL: about:blank
-
-
-AXRole: AXWebArea
-AXSubrole: (null)
-AXRoleDescription: HTML content
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXWebArea>
-AXSize: NSSize: {100, 100}
-AXTitle: 
-AXDescription: packageListFrame
-AXValue: 
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXWebArea>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: (null)
-AXEndTextMarker: (null)
-AXVisited: 0
-AXLinkedUIElements: (null)
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXWebArea>
-AXLinkUIElements: <array of size 0>
-AXLoaded: 1
-AXLayoutCount: 5
-AXURL: about:blank
-
-
   
+This test makes sure that a frame with a title will use that value instead of the name.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.focusedElement.description is 'AXDescription: All Packages'
+PASS accessibilityController.focusedElement.description is 'AXDescription: packageListFrame'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,30 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+var successfullyParsed = false;
 </script>
-<body>
-    
-    <div id="result"></div>
-    
-    <iframe id="frame1" src="image-map2.html" width=100 height=100 name="packageListFrame" title="All Packages">
-    </iframe>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
 
-    <iframe id="frame2" src="image-map2.html" width=100 height=100 name="packageListFrame" >
-    </iframe>
+<iframe id="frame1" src="image-map2.html" width=100 height=100 name="packageListFrame" title="All Packages">
+</iframe>
 
-    <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
+<iframe id="frame2" src="image-map2.html" width=100 height=100 name="packageListFrame" >
+</iframe>
 
-            var labeledItem = document.getElementById("frame1");
-            labeledItem.focus();
-            result.innerText += accessibilityController.focusedElement.allAttributes() + "\n\n"; 
+<p id="description"></p>
+<div id="console"></div>
 
-            var labeledItem = document.getElementById("frame2");
-            labeledItem.focus();
-            result.innerText += accessibilityController.focusedElement.allAttributes() + "\n\n"; 
-        }
-    </script>
+<script>
+
+    description("This test makes sure that a frame with a title will use that value instead of the name.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("frame1").focus();
+          shouldBe("accessibilityController.focusedElement.description", "'AXDescription: All Packages'");
+
+          document.getElementById("frame2").focus();
+          shouldBe("accessibilityController.focusedElement.description", "'AXDescription: packageListFrame'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

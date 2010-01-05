@@ -148,6 +148,10 @@ using namespace std;
 #define NSAccessibilityARIABusyAttribute @"AXARIABusy"
 #endif
 
+#ifndef NSAccessibilityLoadingProgressAttribute
+#define NSAccessibilityLoadingProgressAttribute @"AXLoadingProgress"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -717,6 +721,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [tempArray addObject:@"AXLinkUIElements"];
         [tempArray addObject:@"AXLoaded"];
         [tempArray addObject:@"AXLayoutCount"];
+        [tempArray addObject:NSAccessibilityLoadingProgressAttribute];
         [tempArray addObject:NSAccessibilityURLAttribute];
         webAreaAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
@@ -1427,15 +1432,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     
     if (m_object->isWebArea()) {
-        if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
+        if ([attributeName isEqualToString:@"AXLinkUIElements"]) {
             AccessibilityObject::AccessibilityChildrenVector links;
             static_cast<AccessibilityRenderObject*>(m_object)->getDocumentLinks(links);
             return convertToNSArray(links);
         }
-        if ([attributeName isEqualToString: @"AXLoaded"])
-            return [NSNumber numberWithBool: m_object->isLoaded()];
-        if ([attributeName isEqualToString: @"AXLayoutCount"])
-            return [NSNumber numberWithInt: m_object->layoutCount()];
+        if ([attributeName isEqualToString:@"AXLoaded"])
+            return [NSNumber numberWithBool:m_object->isLoaded()];
+        if ([attributeName isEqualToString:@"AXLayoutCount"])
+            return [NSNumber numberWithInt:m_object->layoutCount()];
+        if ([attributeName isEqualToString:NSAccessibilityLoadingProgressAttribute])
+            return [NSNumber numberWithDouble:m_object->estimatedLoadingProgress()];
     }
     
     if (m_object->isTextControl()) {

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<img src="resources/cake.png">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure the loading progress of a webpage can be retrieved.");
+
+    if (window.accessibilityController) {
+
+          var obj = accessibilityController.rootElement.childAtIndex(0);
+          shouldBe("obj.role", "'AXRole: AXWebArea'");
+          shouldBe("obj.isAttributeSupported('AXLoadingProgress')", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
