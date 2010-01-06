@@ -46,5 +46,5 @@ bool WebPluginHalterClient::shouldHaltPlugin(Node* pluginNode, bool isWindowed, 
 
 bool WebPluginHalterClient::enabled() const
 {
-    return [[m_webView UIDelegate] respondsToSelector:@selector(webView:shouldHaltPlugin:)];
+    return [[m_webView UIDelegate] respondsToSelector:@selector(webView:shouldHaltPlugin:isWindowed:pluginName:)];
 }
