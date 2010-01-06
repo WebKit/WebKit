@@ -804,10 +804,10 @@ void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
 bool V8Proxy::setContextDebugId(int debugId)
 {
     ASSERT(debugId > 0);
+    v8::HandleScope scope;
     v8::Local<v8::Context> context = m_frame->script()->mainWorldWindowShell()->localHandleForContext();
     if (context.IsEmpty())
         return false;
-    v8::HandleScope scope;
     if (!context->GetData()->IsUndefined())
         return false;
 

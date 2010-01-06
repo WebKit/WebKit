@@ -1,3 +1,13 @@
+2010-01-05  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Moving v8::HandleScope up above declaration of v8::Local to fix a
+        Chromium startup crash.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setContextDebugId):
+
 2010-01-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
