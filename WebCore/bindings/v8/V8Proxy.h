@@ -152,9 +152,6 @@ namespace WebCore {
 
         Frame* frame() { return m_frame; }
 
-        void clearForNavigation();
-        void clearForClose();
-
         // FIXME: Need comment. User Gesture related.
         bool inlineCode() const { return m_inlineCode; }
         void setInlineCode(bool value) { m_inlineCode = value; }
@@ -309,10 +306,6 @@ namespace WebCore {
         static bool sourceName(String& result);
 
         v8::Local<v8::Context> context();
-        v8::Local<v8::Context> mainWorldContext();
-
-        // FIXME: This should eventually take DOMWrapperWorld argument!
-        V8DOMWindowShell* windowShell() const { return m_windowShell.get(); }
 
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
@@ -335,12 +328,13 @@ namespace WebCore {
         // Report an unsafe attempt to access the given frame on the console.
         static void reportUnsafeAccessTo(Frame* target, DelayReporting delay);
 
+        // FIXME: This should move to ScriptController.
+        void resetIsolatedWorlds();
+
     private:
         // If m_recursionCount is 0, let LocalStorage know so we can release
         // the storage mutex.
         void releaseStorageMutex();
-
-        void resetIsolatedWorlds();
 
         // Returns false when we're out of memory in V8.
         bool setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
@@ -370,9 +364,6 @@ namespace WebCore {
 
         Frame* m_frame;
 
-        // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.
-        RefPtr<V8DOMWindowShell> m_windowShell;
-        
         // Utility context holding JavaScript functions used internally.
         static v8::Persistent<v8::Context> m_utilityContext;
 

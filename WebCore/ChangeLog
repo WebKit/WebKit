@@ -1,3 +1,50 @@
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] Move V8DOMWindowShell to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=33232
+
+        This patch moves V8DOMWindow shell to ScriptController, where the
+        window shells live in JSC land.  The next step will be to allow for
+        more than one window shell per script controller.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::updateSecurityOrigin):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::haveInterpreter):
+        (WebCore::ScriptController::mainWorldWindowShell):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::destroyWindowShell):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::~V8DOMWindowShell):
+        * bindings/v8/V8DOMWindowShell.h:
+        (WebCore::V8DOMWindowShell::localHandleForContext):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        (WebCore::V8DOMWrapper::convertDocumentToV8Object):
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::~V8Proxy):
+        (WebCore::V8Proxy::handleOutOfMemory):
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::setInjectedScriptContextDebugId):
+        (WebCore::V8Proxy::context):
+        (WebCore::V8Proxy::mainWorldContext):
+        (WebCore::V8Proxy::currentContext):
+        (WebCore::V8Proxy::setContextDebugId):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::adjustedContext):
+
 2010-01-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.

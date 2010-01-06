@@ -106,6 +106,7 @@ ScriptController::ScriptController(Frame* frame)
     , m_processingTimerCallback(false)
     , m_paused(false)
     , m_proxy(new V8Proxy(frame))
+    , m_windowShell(V8DOMWindowShell::create(frame))
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
 #endif
@@ -116,6 +117,7 @@ ScriptController::ScriptController(Frame* frame)
 ScriptController::~ScriptController()
 {
     m_proxy->disconnectFrame();
+    m_windowShell.clear();
 }
 
 void ScriptController::clearScriptObjects()
@@ -140,7 +142,7 @@ void ScriptController::clearScriptObjects()
 
 void ScriptController::updateSecurityOrigin()
 {
-    m_proxy->windowShell()->updateSecurityOrigin();
+    m_windowShell->updateSecurityOrigin();
 }
 
 void ScriptController::updatePlatformScriptObjects()
@@ -205,6 +207,8 @@ bool ScriptController::anyPageIsProcessingUserGesture() const
 
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources)
 {
+    // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
+    m_windowShell->initContextIfNeeded();
     m_proxy->evaluateInIsolatedWorld(worldID, sources, 0);
 }
 
@@ -291,7 +295,7 @@ void ScriptController::lowMemoryNotification()
 
 bool ScriptController::haveInterpreter() const
 {
-    return m_proxy->windowShell()->isContextInitialized();
+    return m_windowShell->isContextInitialized();
 }
 
 bool ScriptController::isEnabled() const
@@ -435,15 +439,32 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
     return npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(v8plugin), window);
 }
 
+V8DOMWindowShell* ScriptController::mainWorldWindowShell() const
+{
+    m_windowShell->initContextIfNeeded();
+    return m_windowShell.get();
+}
 
 void ScriptController::clearWindowShell()
 {
     m_mainWorldScriptState.clear();
+    m_proxy->resetIsolatedWorlds();
 
     // V8 binding expects ScriptController::clearWindowShell only be called
-    // when a frame is loading a new page. V8Proxy::clearForNavigation
+    // when a frame is loading a new page. V8DOMWindowShell::clearForNavigation
     // creates a new context for the new page.
-    m_proxy->clearForNavigation();
+    m_windowShell->clearForNavigation();
+}
+
+void ScriptController::clearForClose()
+{
+    m_windowShell->clearForClose();
+}
+
+void ScriptController::destroyWindowShell()
+{
+    m_windowShell->clearForClose();
+    m_windowShell->destroyGlobal();
 }
 
 void ScriptController::attachDebugger(void*)
@@ -453,7 +474,7 @@ void ScriptController::attachDebugger(void*)
 
 void ScriptController::updateDocument()
 {
-    m_proxy->windowShell()->updateDocument();
+    m_windowShell->updateDocument();
 }
 
 } // namespace WebCore

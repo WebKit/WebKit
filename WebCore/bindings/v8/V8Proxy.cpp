@@ -213,7 +213,6 @@ static void handleFatalErrorInV8()
 
 V8Proxy::V8Proxy(Frame* frame)
     : m_frame(frame)
-    , m_windowShell(V8DOMWindowShell::create(frame))
     , m_inlineCode(false)
     , m_timerCallback(false)
     , m_recursion(0)
@@ -222,8 +221,7 @@ V8Proxy::V8Proxy(Frame* frame)
 
 V8Proxy::~V8Proxy()
 {
-    clearForClose();
-    windowShell()->destroyGlobal();
+    resetIsolatedWorlds();
 }
 
 v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine)
@@ -246,13 +244,7 @@ bool V8Proxy::handleOutOfMemory()
     // Warning, error, disable JS for this frame?
     Frame* frame = V8Proxy::retrieveFrame(context);
 
-    V8Proxy* proxy = V8Proxy::retrieve(frame);
-    if (proxy) {
-        // Clean m_context, and event handlers.
-        proxy->clearForClose();
-
-        proxy->windowShell()->destroyGlobal();
-    }
+    frame->script()->destroyWindowShell();
 
     ChromiumBridge::notifyJSOutOfMemory(frame);
 
@@ -266,9 +258,6 @@ bool V8Proxy::handleOutOfMemory()
 
 void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
-    // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
-    windowShell()->initContextIfNeeded();
-
     v8::HandleScope handleScope;
     V8IsolatedContext* isolatedContext = 0;
 
@@ -314,7 +303,7 @@ bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetCont
 {
     // Setup context id for JS debugger.
     v8::Context::Scope contextScope(targetContext);
-    v8::Handle<v8::Context> context = windowShell()->context();
+    v8::Handle<v8::Context> context = m_frame->script()->mainWorldWindowShell()->localHandleForContext();
     if (context.IsEmpty())
         return false;
     int debugId = contextDebugId(context);
@@ -584,18 +573,6 @@ void V8Proxy::resetIsolatedWorlds()
     m_isolatedWorlds.clear();
 }
 
-void V8Proxy::clearForClose()
-{
-    resetIsolatedWorlds();
-    windowShell()->clearForClose();
-}
-
-void V8Proxy::clearForNavigation()
-{
-    resetIsolatedWorlds();
-    windowShell()->clearForNavigation();
-}
-
 void V8Proxy::setDOMException(int exceptionCode)
 {
     if (exceptionCode <= 0)
@@ -655,6 +632,7 @@ v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message)
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 {
+    // FIXME: Move this function to ScriptController.
     v8::Local<v8::Context> context = V8Proxy::mainWorldContext(frame);
     if (context.IsEmpty())
         return v8::Local<v8::Context>();
@@ -670,32 +648,28 @@ v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 
 v8::Local<v8::Context> V8Proxy::context()
 {
+    // FIXME: Move this function to ScriptController.
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered()) {
         RefPtr<SharedPersistent<v8::Context> > context = isolatedContext->sharedContext();
         if (m_frame != V8Proxy::retrieveFrame(context->get()))
             return v8::Local<v8::Context>();
         return v8::Local<v8::Context>::New(context->get());
     }
-    return mainWorldContext();
-}
-
-v8::Local<v8::Context> V8Proxy::mainWorldContext()
-{
-    windowShell()->initContextIfNeeded();
-    return v8::Local<v8::Context>::New(windowShell()->context());
+    return m_frame->script()->mainWorldWindowShell()->localHandleForContext();
 }
 
 v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
 {
-    V8Proxy* proxy = retrieve(frame);
-    if (!proxy)
+    // FIXME: Move this function to ScriptController.
+    if (!frame->script()->isEnabled())
         return v8::Local<v8::Context>();
 
-    return proxy->mainWorldContext();
+    return frame->script()->mainWorldWindowShell()->localHandleForContext();
 }
 
 v8::Local<v8::Context> V8Proxy::currentContext()
 {
+    // FIXME: Why does this function exist?
     return v8::Context::GetCurrent();
 }
 
@@ -830,7 +804,7 @@ void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
 bool V8Proxy::setContextDebugId(int debugId)
 {
     ASSERT(debugId > 0);
-    v8::Handle<v8::Context> context = windowShell()->context();
+    v8::Local<v8::Context> context = m_frame->script()->mainWorldWindowShell()->localHandleForContext();
     if (context.IsEmpty())
         return false;
     v8::HandleScope scope;

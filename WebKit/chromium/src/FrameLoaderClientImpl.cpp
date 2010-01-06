@@ -215,8 +215,8 @@ void FrameLoaderClientImpl::detachedFromParent3()
     // will cause a crash.  If you remove/modify this, just ensure that you can
     // go to a page and then navigate to a new page without getting any asserts
     // or crashes.
-    m_webFrame->frame()->script()->proxy()->clearForClose();
-    
+    m_webFrame->frame()->script()->clearForClose();
+
     // Stop communicating with the WebFrameClient at this point since we are no
     // longer associated with the Page.
     m_webFrame->dropClient();

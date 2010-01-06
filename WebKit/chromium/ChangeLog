@@ -1,3 +1,16 @@
+2010-01-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] Move V8DOMWindowShell to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=33232
+
+        Update FrameLoaderClientImpl.cpp to call clearForClose on
+        ScriptController instead of on V8Proxy.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::detachedFromParent3):
+
 2010-01-05  Rachel Petterson  <rlp@google.com>
 
         Reviewed by Adam Barth.

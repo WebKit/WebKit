@@ -53,9 +53,15 @@ void V8IsolatedContext::contextWeakReferenceCallback(v8::Persistent<v8::Value> o
 V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
     : m_world(IsolatedWorld::create())
 {
+    // FIXME: None of this code belongs here! Basically, ScriptController
+    // should create a new DOMWrapperWorld and a new windowShell and then
+    // evaluate the script.
+
+    V8DOMWindowShell* mainWorldWindowShell = proxy->frame()->script()->mainWorldWindowShell();
+
     v8::HandleScope scope;
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
-    m_context = SharedPersistent<v8::Context>::create(proxy->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
+    m_context = SharedPersistent<v8::Context>::create(mainWorldWindowShell->createNewContext(v8::Handle<v8::Object>(), extensionGroup));
     if (m_context->get().IsEmpty())
         return;
 
@@ -66,7 +72,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
 
     V8DOMWindowShell::installHiddenObjectPrototype(m_context->get());
     // FIXME: This will go away once we have a windowShell for the isolated world.
-    proxy->windowShell()->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
+    mainWorldWindowShell->installDOMWindow(m_context->get(), proxy->frame()->domWindow());
 
     // Using the default security token means that the canAccess is always
     // called, which is slow.
