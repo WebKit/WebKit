@@ -58,6 +58,21 @@
 
         Reviewed by Darin Adler.
 
+        animations/combo-transform-translate+scale.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33237
+
+        This test is rarely flaky, but sometimes the last value
+        is outside the tolerance. Make the tolerance for the last
+        value match the one before it. Specifically, since the
+        transform is 0,0 to 100,200, the tolerance for the second
+        part should be twice that of the first.
+
+        * animations/combo-transform-translate+scale.html:
+
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
         LayoutTests/animations/change-keyframes.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33233
 

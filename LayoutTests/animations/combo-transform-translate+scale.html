@@ -26,17 +26,14 @@
     }
     
     result = "PASS";
-    const defaultTolerance = 0.2;
-    
+
     const expected =  [ [ 1.25,0,0,1.75,25,50 ],
                         [ 1.5,0,0,2.5,50,100 ] ];
-    const tolerance = [ 0.2,0.2,0.2,0.2,5,5 ];
+    const tolerance = [ 0.2,0.2,0.2,0.2,5,10 ];
     const prop = [ "a", "b", "c", "d", "e", "f" ];
     
     function isEqual(actual, desired, tolerance)
     {
-        if (tolerance == undefined || tolerance == 0)
-            tolerance = defaultTolerance;
         var diff = Math.abs(actual - desired);
         return diff <= tolerance;
     }
