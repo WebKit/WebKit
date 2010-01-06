@@ -1,3 +1,15 @@
+2010-01-06  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52862.
+        http://trac.webkit.org/changeset/52862
+        https://bugs.webkit.org/show_bug.cgi?id=33258
+
+        Caused svg/W3C-SVG-1.1/linking-a-01-b.svg to crash on the
+        Leopard Release builder.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+
 2010-01-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Revert the part of my last commit touching Base.xcconfig, was not meant to be commited.
