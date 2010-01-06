@@ -1,3 +1,10 @@
+2010-01-06  Dan Bernstein  <mitz@apple.com>
+
+        Build fix
+
+        * runtime/Identifier.cpp:
+        (JSC::createIdentifierTableSpecificCallback):
+
 2010-01-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

@@ -272,7 +272,7 @@ ThreadSpecific<ThreadIdentifierTableData>* g_identifierTableSpecific = 0;
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
 pthread_once_t createIdentifierTableSpecificOnce = PTHREAD_ONCE_INIT;
-void createIdentifierTableSpecificCallback()
+static void createIdentifierTableSpecificCallback()
 {
     ASSERT(!g_identifierTableSpecific);
     g_identifierTableSpecific = new ThreadSpecific<ThreadIdentifierTableData>();
