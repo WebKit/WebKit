@@ -285,7 +285,7 @@ void createIdentifierTableSpecific()
 
 #else 
 
-void createDefaultDataSpecific()
+void createIdentifierTableSpecific()
 {
     ASSERT(!g_identifierTableSpecific);
     g_identifierTableSpecific = new ThreadSpecific<ThreadIdentifierTableData>();

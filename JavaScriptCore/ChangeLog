@@ -1,5 +1,12 @@
 2010-01-06  Gavin Barraclough  <barraclough@apple.com>
 
+        QT build fix.
+
+        * runtime/Identifier.cpp:
+        (JSC::createIdentifierTableSpecific):
+
+2010-01-06  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix part I.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
