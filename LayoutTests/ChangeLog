@@ -1,3 +1,21 @@
+2010-01-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Some script tests have wrappers that don't match their templates
+        https://bugs.webkit.org/show_bug.cgi?id=33239
+
+        * fast/dom/StyleSheet/get-stylesheet-byname.html: Updated to use
+        a standard test wrapper instead of a custom one.
+        * fast/dom/StyleSheet/script-tests/get-stylesheet-byname.js:
+        Changed test to not depend on a non-standard wrapper.
+        * fast/dom/StyleSheet/get-stylesheet-byname-expected.txt: Updated
+        results since I changed the test around.
+
+        * platform/mac/editing/selection/script-tests/TEMPLATE.html: Fix
+        incorrect path in template that broke the test when we called
+        make-script-test-wrappers.
+
 2010-01-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.
