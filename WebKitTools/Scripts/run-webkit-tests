@@ -143,10 +143,7 @@ my $showHelp = 0;
 my $stripEditingCallbacks = isCygwin();
 my $testHTTP = 1;
 my $testMedia = 1;
-my $testResultsDirectory = catfile(File::Spec->tmpdir(), "layout-test-results");
-my $layoutTestsSymLink = catfile(File::Spec->tmpdir(), "LayoutTests");
-my $httpdPidDir = catfile(File::Spec->tmpdir(), "WebKit");
-my $httpdPidFile = catfile($httpdPidDir, "httpd.pid");
+my $testResultsDirectory = "/tmp/layout-test-results";
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
 # DumpRenderTree has an internal timeout of 15 seconds, so this must be > 15.
@@ -404,7 +401,7 @@ if ($pixelTests) {
     }
 }
 
-system "ln", "-s", $testDirectory, $layoutTestsSymLink unless -x $layoutTestsSymLink;
+system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTests";
 
 my %ignoredFiles = ( "results.html" => 1 );
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
@@ -1352,10 +1349,10 @@ sub openHTTPDIfNeeded()
 {
     return if $isHttpdOpen;
 
-    mkdir $httpdPidDir;
+    mkdir "/tmp/WebKit";
     
-    if (-f $httpdPidFile) {
-        my $oldPid = `cat "$httpdPidFile"`;
+    if (-f "/tmp/WebKit/httpd.pid") {
+        my $oldPid = `cat /tmp/WebKit/httpd.pid`;
         chomp $oldPid;
         if (0 != kill 0, $oldPid) {
             print "\nhttpd is already running: pid $oldPid, killing...\n";
@@ -1434,22 +1431,7 @@ sub closeHTTPD()
     close HTTPDIN;
     close HTTPDOUT;
 
-    if (! -f $httpdPidFile) {
-        $isHttpdOpen = 0;
-        rmdir $httpdPidDir;
-        return;
-    }
-
-    my $httpdPid = `cat "$httpdPidFile"`;
-    kill 15, $httpdPid;
-    my $retryCount = 20;
-    while ((0 != kill 0, $httpdPid) && $retryCount) {
-        sleep 1;
-        --$retryCount;
-    }
-
-    print STDERR "Timed out waiting for httpd to terminate!\n" unless $retryCount;
-    rmdir $httpdPidDir;
+    kill 15, `cat /tmp/WebKit/httpd.pid` if -f "/tmp/WebKit/httpd.pid";
 
     $isHttpdOpen = 0;
 }
