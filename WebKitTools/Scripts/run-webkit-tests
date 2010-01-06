@@ -1434,7 +1434,11 @@ sub closeHTTPD()
     close HTTPDIN;
     close HTTPDOUT;
 
-    return unless -f $httpdPidFile;
+    if (! -f $httpdPidFile) {
+        $isHttpdOpen = 0;
+        rmdir $httpdPidDir;
+        return;
+    }
 
     my $httpdPid = `cat "$httpdPidFile"`;
     kill 15, $httpdPid;
