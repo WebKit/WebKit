@@ -73,6 +73,22 @@
 
         Reviewed by Darin Adler.
 
+        LayoutTests/animations/change-one-anim.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33234
+
+        As best I can tell, the animation is running faster than
+        the timeout is firing. Increase the tolerance to give 200ms
+        worth of wiggle room.
+
+        As further indication that this is just a race condition,
+        this test is considerably more flaky on debug bots.
+
+        * animations/change-one-anim.html:
+
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
         LayoutTests/animations/change-keyframes.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33233
 
