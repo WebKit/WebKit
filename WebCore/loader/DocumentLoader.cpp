@@ -596,8 +596,10 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
         SubstituteResource* resource = it->second.get();
         
         if (resource) {
+            SharedBuffer* data = resource->data();
+        
             loader->didReceiveResponse(resource->response());
-            loader->didReceiveData(*resource->data());
+            loader->didReceiveData(data->data(), data->size(), data->size(), true);
             loader->didFinishLoading();
         } else {
             // A null resource means that we should fail the load.

@@ -260,7 +260,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     if (frameLoader() && !frameLoader()->isStopping()) {
         if (m_substituteData.isValid()) {
             if (m_substituteData.content()->size())
-                ResourceLoader::didReceiveData(*m_substituteData.content());
+                didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
             if (frameLoader() && !frameLoader()->isStopping()) 
                 didFinishLoading();
         } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->representationExistsForURLScheme(url.protocol()))
