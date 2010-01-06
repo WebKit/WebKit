@@ -22,6 +22,7 @@
 #define Identifier_h
 
 #include "JSGlobalData.h"
+#include "ThreadSpecific.h"
 #include "UString.h"
 
 namespace JSC {
@@ -140,6 +141,67 @@ namespace JSC {
 
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);
+
+    struct ThreadIdentifierTableData {
+        ThreadIdentifierTableData()
+            : defaultIdentifierTable(0)
+            , currentIdentifierTable(0)
+        {
+        }
+
+        IdentifierTable* defaultIdentifierTable;
+        IdentifierTable* currentIdentifierTable;
+    };
+
+    extern WTF::ThreadSpecific<ThreadIdentifierTableData>* g_identifierTableSpecific;
+    void createIdentifierTableSpecific();
+
+    inline IdentifierTable* defaultIdentifierTable()
+    {
+        if (!g_identifierTableSpecific)
+            createIdentifierTableSpecific();
+        ThreadIdentifierTableData& data = **g_identifierTableSpecific;
+
+        return data.defaultIdentifierTable;
+    }
+
+    inline void setDefaultIdentifierTable(IdentifierTable* identifierTable)
+    {
+        if (!g_identifierTableSpecific)
+            createIdentifierTableSpecific();
+        ThreadIdentifierTableData& data = **g_identifierTableSpecific;
+
+        data.defaultIdentifierTable = identifierTable;
+    }
+
+    inline IdentifierTable* currentIdentifierTable()
+    {
+        if (!g_identifierTableSpecific)
+            createIdentifierTableSpecific();
+        ThreadIdentifierTableData& data = **g_identifierTableSpecific;
+
+        return data.currentIdentifierTable;
+    }
+
+    inline IdentifierTable* setCurrentIdentifierTable(IdentifierTable* identifierTable)
+    {
+        if (!g_identifierTableSpecific)
+            createIdentifierTableSpecific();
+        ThreadIdentifierTableData& data = **g_identifierTableSpecific;
+
+        IdentifierTable* oldIdentifierTable = data.currentIdentifierTable;
+        data.currentIdentifierTable = identifierTable;
+        return oldIdentifierTable;
+    }
+
+    inline void resetCurrentIdentifierTable()
+    {
+        if (!g_identifierTableSpecific)
+            createIdentifierTableSpecific();
+        ThreadIdentifierTableData& data = **g_identifierTableSpecific;
+
+        data.currentIdentifierTable = data.defaultIdentifierTable;
+    }
 
 } // namespace JSC
 

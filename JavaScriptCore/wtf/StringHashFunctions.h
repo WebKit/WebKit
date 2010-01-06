@@ -60,11 +60,13 @@ inline unsigned stringHash(const UChar* data, unsigned length)
     hash += hash >> 15;
     hash ^= hash << 10;
 
+    hash &= 0x7fffffff;
+
     // this avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet", using a value that is likely to be
     // effectively the same as 0 when the low bits are masked
     if (hash == 0)
-        hash = 0x80000000;
+        hash = 0x40000000;
 
     return hash;
 }
@@ -98,11 +100,13 @@ inline unsigned stringHash(const char* data, unsigned length)
     hash += hash >> 15;
     hash ^= hash << 10;
 
+    hash &= 0x7fffffff;
+
     // this avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet", using a value that is likely to be
     // effectively the same as 0 when the low bits are masked
     if (hash == 0)
-        hash = 0x80000000;
+        hash = 0x40000000;
 
     return hash;
 }
@@ -137,11 +141,13 @@ inline unsigned stringHash(const char* data)
     hash += hash >> 15;
     hash ^= hash << 10;
 
+    hash &= 0x7fffffff;
+
     // This avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet", using a value that is likely to be
     // effectively the same as 0 when the low bits are masked.
     if (hash == 0)
-        hash = 0x80000000;
+        hash = 0x40000000;
 
     return hash;
 }

@@ -46,7 +46,7 @@ void JSBase::Release()
 {
     if (--fRetainCount == 0)
     {
-        JSLock lock(LockForReal);
+        JSGlueAPIEntry entry;
         delete this;
     }
 }

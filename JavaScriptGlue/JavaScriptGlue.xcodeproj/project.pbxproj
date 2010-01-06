@@ -537,9 +537,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
-				BUILD_VARIANTS = (
-					normal,
-				);
+				BUILD_VARIANTS = normal;
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,

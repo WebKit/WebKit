@@ -93,8 +93,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
-        static PassRefPtr<JSGlobalData> create(bool isShared = false);
+        static PassRefPtr<JSGlobalData> create();
         static PassRefPtr<JSGlobalData> createLeaked();
+        static PassRefPtr<JSGlobalData> createNonDefault();
         ~JSGlobalData();
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
