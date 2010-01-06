@@ -1,3 +1,46 @@
+2010-01-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by David Levin.
+
+        Refactored check-webkit-style's argument parser to not rely
+        on global state, and improved its error handling and unit
+        test coverage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32966
+
+        * Scripts/check-webkit-style:
+          - Adjusted to use new argument parser.
+
+        * Scripts/webkitpy/cpp_style.py:
+          - Changed _CppStyleState to accept an array of filter rules
+            instead of a comma-delimited string.
+          - Eliminated cpp_style._DEFAULT_FILTER_RULES.
+          - Eliminated cpp_style._USAGE.
+
+        * Scripts/webkitpy/cpp_style_unittest.py:
+          - Updated test_filter() and test_default_filter().
+
+        * Scripts/webkitpy/style.py:
+          - Converted style._USAGE to create_usage().
+          - Corrected usage instructions by removing 0 as a valid
+            --verbose flag value.
+          - Removed use_webkit_styles().
+          - Added ProcessorOptions class.
+          - Added ArgumentDefaults class.
+          - Added ArgumentPrinter class.
+          - Removed parse_arguments and added ArgumentParser class.
+          - Moved exit_with_usage() and exit_with_categories() into
+            ArgumentParser.
+          - Refactored parse_arguments() as ArgumentParser.parse().
+          - Improved parser error handling.
+
+        * Scripts/webkitpy/style_unittest.py:
+          - Added DefaultArgumentsTest class.
+          - Addressed FIXME to check style.WEBKIT_FILTER_RULES
+            against style.STYLE_CATEGORIES.
+          - Added ArgumentPrinterTest class.
+          - Added ArgumentParserTest class and rewrote parser unit tests.
+
 2010-01-05  Adam Roben  <aroben@apple.com>
 
         Test that it's safe to call IWebView::close when

@@ -47,15 +47,6 @@ import sys
 import unicodedata
 
 
-_USAGE = ''
-
-
-# The default state of the category filter. This is overrided by the --filter=
-# flag. By default all errors are on, so only add here categories that should be
-# off by default (i.e., categories that must be enabled by the --filter= flags).
-# All entries here should start with a '-' or '+', as in the --filter= flag.
-_DEFAULT_FILTER_RULES = []
-
 # Headers that we consider STL headers.
 _STL_HEADERS = frozenset([
     'algobase.h', 'algorithm', 'alloc.h', 'bitset', 'deque', 'exception',
@@ -258,7 +249,7 @@ class _CppStyleState(object):
         self.verbose_level = 1  # global setting.
         self.error_count = 0    # global count of reported errors
         # filters to apply when emitting error messages
-        self.filters = _DEFAULT_FILTER_RULES[:]
+        self.filters = []
 
         # output format:
         # "emacs" - format that emacs can parse (default)
@@ -282,16 +273,18 @@ class _CppStyleState(object):
         error message.
 
         Args:
-          filters: A string of comma-separated filters (eg "+whitespace/indent").
-                   Each filter should start with + or -; else we die.
+          filters: A list of strings that are boolean filter rules used
+                   to determine whether a style category should be checked.
+                   Each string should start with + or -. An example
+                   string is "+whitespace/indent". The list includes any
+                   prepended default filter rules.
 
         Raises:
-          ValueError: The comma-separated filters did not all start with '+' or '-'.
-                      E.g. "-,+whitespace,-whitespace/indent,whitespace/badfilter"
+          ValueError: Not all filters started with '+' or '-'. For example,
+                      "-,+whitespace,-whitespace/indent,whitespace/badfilter"
         """
-        # Default filters always have less priority than the flag ones.
-        self.filters = _DEFAULT_FILTER_RULES[:]
-        for filter in filters.split(','):
+        self.filters = []
+        for filter in filters:
             clean_filter = filter.strip()
             if clean_filter:
                 self.filters.append(clean_filter)
@@ -344,8 +337,11 @@ def _set_filters(filters):
     error message.
 
     Args:
-      filters: A string of comma-separated filters (eg "whitespace/indent").
-               Each filter should start with + or -; else we die.
+      filters: A list of strings that are boolean filter rules used
+               to determine whether a style category should be checked.
+               Each string should start with + or -. An example
+               string is "+whitespace/indent". The list includes any
+               prepended default filter rules.
     """
     _cpp_style_state.set_filters(filters)
 

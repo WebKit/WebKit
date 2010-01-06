@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -51,11 +52,6 @@ from webkitpy.scm import detect_scm_system
 
 
 def main():
-    style.use_webkit_styles()
-
-    (files, flags) = style.parse_arguments(sys.argv[1:], ["git-commit="],
-                                           display_help=True)
-
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
     sys.stderr = codecs.StreamReaderWriter(sys.stderr,
@@ -63,10 +59,16 @@ def main():
                                            codecs.getwriter('utf8'),
                                            'replace')
 
-    if files and "--git-commit" in flags:
-        style.exit_with_usage('It is not possible to check files and a '
-                              'specific commit at the same time.',
-                              display_help=True)
+    defaults = style.ArgumentDefaults(style.DEFAULT_OUTPUT_FORMAT,
+                                      style.DEFAULT_VERBOSITY,
+                                      style.WEBKIT_FILTER_RULES)
+
+    parser = style.ArgumentParser(defaults)
+    (files, options) = parser.parse(sys.argv[1:])
+
+    # FIXME: Eliminate the need to call this function.
+    #        Options should be passed into process_file instead.
+    style.set_options(options)
 
     if files:
         for filename in files:
@@ -76,8 +78,8 @@ def main():
         cwd = os.path.abspath('.')
         scm = detect_scm_system(cwd)
 
-        if "--git-commit" in flags:
-            commit = flags["--git-commit"]
+        if options.git_commit:
+            commit = options.git_commit
             if '..' in commit:
                 # FIXME: If the range is a "...", the code should find the common ancestor and
                 # start there (see git diff --help for information about how ... usually works).

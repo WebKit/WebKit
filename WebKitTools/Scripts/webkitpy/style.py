@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,7 +30,6 @@
 """Front end of some style-checker modules."""
 
 # FIXME: Move more code from cpp_style to here.
-# check-webkit-style should not refer cpp_style directly.
 
 import getopt
 import os.path
@@ -40,22 +40,24 @@ import text_style
 from diff_parser import DiffParser
 
 
-# Default options
-_DEFAULT_VERBOSITY = 1
-_DEFAULT_OUTPUT_FORMAT = 'emacs'
+# These defaults are used by check-webkit-style.
+DEFAULT_VERBOSITY = 1
+DEFAULT_OUTPUT_FORMAT = 'emacs'
 
 
 # FIXME: For style categories we will never want to have, remove them.
 #        For categories for which we want to have similar functionality,
 #        modify the implementation and enable them.
-# FIXME: Add a unit test to ensure the corresponding categories
-#        are elements of _STYLE_CATEGORIES.
 #
-# For unambiguous terminology, we use "filter rule" rather than "filter"
-# for an individual boolean filter flag like "+foo". This allows us to 
-# reserve "filter" for what one gets by collectively applying all of 
-# the filter rules as specified by a --filter flag.
-_WEBKIT_FILTER_RULES = [
+# Throughout this module, we use "filter rule" rather than "filter"
+# for an individual boolean filter flag like "+foo". This allows us to
+# reserve "filter" for what one gets by collectively applying all of
+# the filter rules.
+#
+# The _WEBKIT_FILTER_RULES are prepended to any user-specified filter
+# rules. Since by default all errors are on, only include rules that
+# begin with a - sign.
+WEBKIT_FILTER_RULES = [
     '-build/endif_comment',
     '-build/include_what_you_use',  # <string> for std::string
     '-build/storage_class',  # const static
@@ -79,11 +81,20 @@ _WEBKIT_FILTER_RULES = [
     ]
 
 
+# FIXME: The STYLE_CATEGORIES show up in both file types cpp_style.py
+#        and text_style.py. Break this list into possibly overlapping
+#        sub-lists, and store each sub-list in the corresponding .py
+#        file. The file style.py can obtain the master list by taking
+#        the union. This will allow the unit tests for each file type
+#        to check that all of their respective style categories are
+#        represented -- without having to reference style.py or be
+#        aware of the existence of other file types.
+#
 # We categorize each style rule we print.  Here are the categories.
-# We want an explicit list so we can list them all in cpp_style --filter=.
+# We want an explicit list so we can display a full list to the user.
 # If you add a new error message with a new category, add it to the list
 # here!  cpp_style_unittest.py should tell you if you forget to do this.
-_STYLE_CATEGORIES = [
+STYLE_CATEGORIES = [
     'build/class',
     'build/deprecated',
     'build/endif_comment',
@@ -147,7 +158,14 @@ _STYLE_CATEGORIES = [
     ]
 
 
-_USAGE = """
+def _create_usage(defaults):
+    """Return the usage string to display for command help.
+
+    Args:
+      defaults: An ArgumentDefaults instance.
+
+    """
+    usage = """
 Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
         [--filter=-x,+y,...] [file] ...
 
@@ -171,8 +189,9 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
   Flags:
 
     verbose=#
-      A number 0-5 to restrict errors to certain verbosity levels.
-      Defaults to %(default_verbosity)s.
+      A number 1-5 that restricts output to errors with a confidence
+      score at or above this value. In particular, the value 1 displays
+      all errors. The default is %(default_verbosity)s.
 
     git-commit=<SingleCommit>
       Checks the style of everything from the given commit to the local tree.
@@ -204,108 +223,284 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
       %(program_name)s, along with which are enabled by default, pass
       the empty filter as follows:
          --filter=
-""" % {
-    'program_name': os.path.basename(sys.argv[0]),
-    'default_verbosity': _DEFAULT_VERBOSITY,
-    'default_output_format': _DEFAULT_OUTPUT_FORMAT
-    }
+""" % {'program_name': os.path.basename(sys.argv[0]),
+       'default_verbosity': defaults.verbosity,
+       'default_output_format': defaults.output_format}
+
+    return usage
 
 
-def use_webkit_styles():
-    """Configures this module for WebKit style."""
-    cpp_style._DEFAULT_FILTER_RULES = _WEBKIT_FILTER_RULES
+# This class should not have knowledge of the flag key names.
+class ProcessorOptions(object):
+
+    """A container to store options to use when checking style.
+
+    Attributes:
+      output_format: A string that is the output format. The supported
+                     output formats are "emacs" which emacs can parse
+                     and "vs7" which Microsoft Visual Studio 7 can parse.
+
+      verbosity: An integer 1-5 that restricts output to errors with a
+                 confidence score at or above this value.
+                 The default is 1, which displays all errors.
+
+      filter_rules: A list of strings that are boolean filter rules used
+                    to determine whether a style category should be checked.
+                    Each string should start with + or -. An example
+                    string is "+whitespace/indent". The list includes any
+                    prepended default filter rules. The default is the
+                    empty list, which includes all categories.
+
+      git_commit: A string representing the git commit to check.
+                  The default is None.
+
+      extra_flag_values: A string-string dictionary of all flag key-value
+                         pairs that are not otherwise represented by this
+                         class. The default is the empty dictionary.
+    """
+
+    def __init__(self, output_format, verbosity=1, filter_rules=None,
+                 git_commit=None, extra_flag_values=None):
+        if filter_rules is None:
+            filter_rules = []
+        if extra_flag_values is None:
+            extra_flag_values = {}
+
+        self.output_format = output_format
+        self.verbosity = verbosity
+        self.filter_rules = filter_rules
+        self.git_commit = git_commit
+        self.extra_flag_values = extra_flag_values
 
 
-def exit_with_usage(error_message, display_help=False):
-    """Exit and print a usage string with an optional error message.
+# FIXME: Eliminate the need for this function.
+#        Options should be passed into process_file instead.
+def set_options(options):
+    """Initialize global _CppStyleState instance.
+
+    This needs to be called before calling process_file.
 
     Args:
-      error_message: The optional error message.
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
+      options: A ProcessorOptions instance.
     """
-    if display_help:
-        sys.stderr.write(_USAGE)
-    if error_message:
-        sys.exit('\nFATAL ERROR: ' + error_message)
-    else:
-        sys.exit(1)
+    cpp_style._set_output_format(options.output_format)
+    cpp_style._set_verbose_level(options.verbosity)
+    cpp_style._set_filters(options.filter_rules)
 
 
-def exit_with_categories(display_help=False):
-    """Exit and print all style categories, along with the default filter.
+# This class should not have knowledge of the flag key names.
+class ArgumentDefaults(object):
 
-    These category names appear in error messages.  They can be filtered
-    using the --filter flag.
+    """A container to store default argument values.
 
-    Args:
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
+    Attributes:
+      output_format: A string that is the default output format.
+      verbosity: An integer that is the default verbosity level.
+      filter_rules: A list of strings that are boolean filter rules
+                    to prepend to any user-specified rules.
+
     """
-    if display_help:
-        sys.stderr.write('\nAll categories:\n')
-        for category in sorted(_STYLE_CATEGORIES):
-            sys.stderr.write('    ' + category + '\n')
 
-        sys.stderr.write('\nDefault filter rules**:\n')
-        for filter_rule in sorted(_WEBKIT_FILTER_RULES):
-            sys.stderr.write('    ' + filter_rule + '\n')
-        sys.stderr.write('\n**The command always evaluates the above '
-                         'rules, and before any --filter flag.\n\n')
-
-    sys.exit(0)
+    def __init__(self, default_output_format, default_verbosity,
+                 default_filter_rules):
+        self.output_format = default_output_format
+        self.verbosity = default_verbosity
+        self.filter_rules = default_filter_rules
 
 
-def parse_arguments(args, additional_flags=[], display_help=False):
-    """Parses the command line arguments.
+class ArgumentPrinter(object):
 
-    This may set the output format and verbosity level as side-effects.
+    """Supports the printing of check-webkit-style command arguments."""
 
-    Args:
-      args: The command line arguments:
-      additional_flags: A list of strings which specifies flags we allow.
-      display_help: Whether to display help output. Suppressing help
-                    output is useful for unit tests.
+    def _flag_pair_to_string(self, flag_key, flag_value):
+        return '--%(key)s=%(val)s' % {'key': flag_key, 'val': flag_value }
 
-    Returns:
-      A tuple of (filenames, flags)
+    def to_flag_string(self, options):
+        """Return a flag string yielding the given ProcessorOptions instance.
 
-      filenames: The list of filenames to lint.
-      flags: The dict of the flag names and the flag values.
+        This method orders the flag values alphabetically by the flag key.
+
+        Args:
+          options: A ProcessorOptions instance.
+
+        """
+        flags = options.extra_flag_values.copy()
+
+        flags['output'] = options.output_format
+        flags['verbose'] = options.verbosity
+        if options.filter_rules:
+            flags['filter'] = ','.join(options.filter_rules)
+        if options.git_commit:
+            flags['git-commit'] = options.git_commit
+
+        flag_string = ''
+        # Alphabetizing lets us unit test this method.
+        for key in sorted(flags.keys()):
+            flag_string += self._flag_pair_to_string(key, flags[key]) + ' '
+
+        return flag_string.strip()
+
+
+class ArgumentParser(object):
+
+    """Supports the parsing of check-webkit-style command arguments.
+
+    Attributes:
+      defaults: An ArgumentDefaults instance.
+      create_usage: A function that accepts an ArgumentDefaults instance
+                    and returns a string of usage instructions.
+                    This defaults to the function used to generate the
+                    usage string for check-webkit-style.
+      doc_print: A function that accepts a string parameter and that is
+                 called to display help messages. This defaults to
+                 sys.stderr.write().
+
     """
-    flags = ['help', 'output=', 'verbose=', 'filter='] + additional_flags
-    additional_flag_values = {}
-    try:
-        (opts, filenames) = getopt.getopt(args, '', flags)
-    except getopt.GetoptError:
-        exit_with_usage('Invalid arguments.', display_help)
 
-    verbosity = _DEFAULT_VERBOSITY
-    output_format = _DEFAULT_OUTPUT_FORMAT
-    filters = ''
+    def __init__(self, argument_defaults, create_usage=None, doc_print=None):
+        if create_usage is None:
+            create_usage = _create_usage
+        if doc_print is None:
+            doc_print = sys.stderr.write
 
-    for (opt, val) in opts:
-        if opt == '--help':
-            exit_with_usage(None, display_help)
-        elif opt == '--output':
-            if not val in ('emacs', 'vs7'):
-                exit_with_usage('The only allowed output formats are emacs and vs7.',
-                                display_help)
-            output_format = val
-        elif opt == '--verbose':
-            verbosity = int(val)
-        elif opt == '--filter':
-            filters = val
-            if not filters:
-                exit_with_categories(display_help)
+        self.defaults = argument_defaults
+        self.create_usage = create_usage
+        self.doc_print = doc_print
+
+    def _exit_with_usage(self, error_message=''):
+        """Exit and print a usage string with an optional error message.
+
+        Args:
+          error_message: A string that is an error message to print.
+        """
+        usage = self.create_usage(self.defaults)
+        self.doc_print(usage)
+        if error_message:
+            sys.exit('\nFATAL ERROR: ' + error_message)
         else:
-            additional_flag_values[opt] = val
+            sys.exit(1)
 
-    cpp_style._set_output_format(output_format)
-    cpp_style._set_verbose_level(verbosity)
-    cpp_style._set_filters(filters)
+    def _exit_with_categories(self):
+        """Exit and print the style categories and default filter rules."""
+        self.doc_print('\nAll categories:\n')
+        for category in sorted(STYLE_CATEGORIES):
+            self.doc_print('    ' + category + '\n')
 
-    return (filenames, additional_flag_values)
+        self.doc_print('\nDefault filter rules**:\n')
+        for filter_rule in sorted(self.defaults.filter_rules):
+            self.doc_print('    ' + filter_rule + '\n')
+        self.doc_print('\n**The command always evaluates the above rules, '
+                       'and before any --filter flag.\n\n')
+
+        sys.exit(0)
+
+    def _parse_filter_flag(self, flag_value):
+        """Parse the value of the --filter flag.
+
+        These filters are applied when deciding whether to emit a given
+        error message.
+
+        Args:
+          flag_value: A string of comma-separated filter rules, for
+                      example "-whitespace,+whitespace/indent".
+
+        """
+        filters = []
+        for uncleaned_filter in flag_value.split(','):
+            filter = uncleaned_filter.strip()
+            if not filter:
+                continue
+            filters.append(filter)
+        return filters
+
+    def parse(self, args, extra_flags=None):
+        """Parse the command line arguments to check-webkit-style.
+
+        Args:
+          args: A list of command-line arguments as returned by sys.argv[1:].
+          extra_flags: A list of flags whose values we want to extract, but
+                       are not supported by the ProcessorOptions class.
+                       An example flag "new_flag=". This defaults to the
+                       empty list.
+
+        Returns:
+          A tuple of (filenames, options)
+
+          filenames: The list of filenames to check.
+          options: A ProcessorOptions instance.
+
+        """
+        if extra_flags is None:
+            extra_flags = []
+
+        output_format = self.defaults.output_format
+        verbosity = self.defaults.verbosity
+        filter_rules = self.defaults.filter_rules
+
+        # The flags already supported by the ProcessorOptions class.
+        flags = ['help', 'output=', 'verbose=', 'filter=', 'git-commit=']
+
+        for extra_flag in extra_flags:
+            if extra_flag in flags:
+                raise ValueError('Flag \'%(extra_flag)s is duplicated '
+                                 'or already supported.' %
+                                 {'extra_flag': extra_flag})
+            flags.append(extra_flag)
+
+        try:
+            (opts, filenames) = getopt.getopt(args, '', flags)
+        except getopt.GetoptError:
+            # FIXME: Settle on an error handling approach: come up
+            #        with a consistent guideline as to when and whether
+            #        a ValueError should be raised versus calling
+            #        sys.exit when needing to interrupt execution.
+            self._exit_with_usage('Invalid arguments.')
+
+        extra_flag_values = {}
+        git_commit = None
+
+        for (opt, val) in opts:
+            if opt == '--help':
+                self._exit_with_usage()
+            elif opt == '--output':
+                output_format = val
+            elif opt == '--verbose':
+                verbosity = val
+            elif opt == '--git-commit':
+                git_commit = val
+            elif opt == '--filter':
+                if not val:
+                    self._exit_with_categories()
+                # Prepend the defaults.
+                filter_rules = filter_rules + self._parse_filter_flag(val)
+            else:
+                extra_flag_values[opt] = val
+
+        # Check validity of resulting values.
+        if filenames and (git_commit != None):
+            self._exit_with_usage('It is not possible to check files and a '
+                                  'specific commit at the same time.')
+
+        if output_format not in ('emacs', 'vs7'):
+            raise ValueError('Invalid --output value "%s": The only '
+                             'allowed output formats are emacs and vs7.' %
+                             output_format)
+
+        verbosity = int(verbosity)
+        if ((verbosity < 1) or (verbosity > 5)):
+            raise ValueError('Invalid --verbose value %s: value must '
+                             'be between 1-5.' % verbosity)
+
+        for rule in filter_rules:
+            if not (rule.startswith('+') or rule.startswith('-')):
+                raise ValueError('Invalid filter rule "%s": every rule '
+                                 'rule in the --filter flag must start '
+                                 'with + or -.' % rule)
+
+        options = ProcessorOptions(output_format, verbosity, filter_rules,
+                                   git_commit, extra_flag_values)
+
+        return (filenames, options)
 
 
 def process_file(filename):

@@ -41,14 +41,16 @@ import random
 import re
 import unittest
 import cpp_style
-# FIXME: Remove the need to import something from style.
-from style import _STYLE_CATEGORIES
+# FIXME: Remove the need to import something from style. See the
+#        FIXME notes near the STYLE_CATEGORIES definition for a
+#        suggestion on how to best do this.
+from style import STYLE_CATEGORIES
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
-# is in cpp_style._STYLE_CATEGORIES, to help keep that list up to date.
+# is in STYLE_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
-    _all_style_categories = _STYLE_CATEGORIES
+    _all_style_categories = STYLE_CATEGORIES
     # This a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
@@ -61,7 +63,7 @@ class ErrorCollector:
                  category, confidence, message):
         self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
-                        ' which is not in _STYLE_CATEGORIES' % (message, category))
+                        ' which is not in STYLE_CATEGORIES' % (message, category))
         self._seen_style_categories[category] = 1
         if cpp_style._should_print_error(category, confidence):
             self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
@@ -1571,7 +1573,7 @@ class CppStyleTest(CppStyleTestBase):
     def test_filter(self):
         old_filters = cpp_style._cpp_style_state.filters
         try:
-            cpp_style._cpp_style_state.set_filters('-,+whitespace,-whitespace/indent')
+            cpp_style._cpp_style_state.set_filters(['-', '+whitespace', '-whitespace/indent'])
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
@@ -1581,15 +1583,13 @@ class CppStyleTest(CppStyleTestBase):
         finally:
             cpp_style._cpp_style_state.filters = old_filters
 
-    def test_default_filter(self):
-        default_filter_rules = cpp_style._DEFAULT_FILTER_RULES
+    def test_filter_appending(self):
         old_filters = cpp_style._cpp_style_state.filters
-        cpp_style._DEFAULT_FILTER_RULES = [ '-whitespace' ]
         try:
             # Reset filters
-            cpp_style._cpp_style_state.set_filters('')
+            cpp_style._cpp_style_state.set_filters(['-whitespace'])
             self.assert_lint('// Hello there ', '')
-            cpp_style._cpp_style_state.set_filters('+whitespace/end_of_line')
+            cpp_style._cpp_style_state.set_filters(['-whitespace', '+whitespace/end_of_line'])
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
@@ -1597,7 +1597,6 @@ class CppStyleTest(CppStyleTestBase):
             self.assert_lint(' weird opening space', '')
         finally:
             cpp_style._cpp_style_state.filters = old_filters
-            cpp_style._DEFAULT_FILTER_RULES = default_filter_rules
 
     def test_unnamed_namespaces_in_headers(self):
         self.assert_language_rules_check(
