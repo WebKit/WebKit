@@ -55,9 +55,11 @@ class CompleteRollout(MetaStep):
 
         MetaStep.run(self, state)
 
+        commit_comment = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
+        comment_text = "Reverted r%s for reason:\n\n%s\n\n%s" % (state["revision"], state["reason"], commit_comment)
+
         if not bug_id:
-            log(state["commit_text"])
-            log("No bugs were updated or re-opened to reflect this rollout.")
+            log(comment_text)
+            log("No bugs were updated.")
             return
-        # FIXME: I'm not sure state["commit_text"] is quite right here.
-        self._tool.bugs.reopen_bug(bug_id, state["commit_text"])
+        self._tool.bugs.reopen_bug(bug_id, comment_text)

@@ -559,6 +559,13 @@ class Bugzilla(object):
 
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
-        self.browser['bug_status'] = ['REOPENED']
+        bug_status = self.browser.find_control("bug_status", type="select")
+        # This is a hack around the fact that ClientForm.ListControl seems to have no simpler way to ask
+        # if a control has an item named "REOPENED" without using exceptions for control flow.
+        possible_bug_statuses = map(lambda item: item.name, bug_status.items)
+        if "REOPENED" in possible_bug_statuses:
+            bug_status.value = ["REOPENED"]
+        else:
+            log("Did not reopen bug %s.  It appears to already be open with status %s." % (bug_id, bug_status.value))
         self.browser['comment'] = comment_text
         self.browser.submit()

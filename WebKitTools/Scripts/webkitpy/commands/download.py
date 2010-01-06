@@ -254,14 +254,6 @@ class Rollout(AbstractSequencedCommmand):
         original_diff = tool.scm().diff_for_revision(revision)
         return parse_bug_id(original_diff)
 
-    @staticmethod
-    def _reopen_bug_after_rollout(tool, bug_id, comment_text):
-        if bug_id:
-            tool.bugs.reopen_bug(bug_id, comment_text)
-        else:
-            log(comment_text)
-            log("No bugs were updated or re-opened to reflect this rollout.")
-
     def execute(self, options, args, tool):
         revision = args[0]
         reason = args[1]
