@@ -111,9 +111,7 @@ inline void arithmetic(const RefPtr<CanvasPixelArray>& srcPixelArrayA, CanvasPix
             unsigned char i1 = srcPixelArrayA->get(pixelOffset + channel);
             unsigned char i2 = srcPixelArrayB->get(pixelOffset + channel);
 
-            unsigned char result = scaledK1 * i1 * i2 + k2 * i1 + k3 * i2 + scaledK4;
-            if (channel == 3 && i1 == 0 && i2 == 0)
-                result = 0;
+            double result = scaledK1 * i1 * i2 + k2 * i1 + k3 * i2 + scaledK4;
             srcPixelArrayB->set(pixelOffset + channel, result);
         }
     }

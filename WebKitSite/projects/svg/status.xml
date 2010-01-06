@@ -6,7 +6,7 @@
     This is a seldom-updated summary document showing the current implementation status of SVG in WebKit.
     </p>
     <p>
-    Last update: Nov 5th, 2009.
+    Last update: Jan 5th, 2010.
     </p>
     <p>
     Note: this is not a full list of all SVG bugs, please see the <a href="https://bugs.webkit.org/buglist.cgi?query_format=advanced&amp;product=WebKit&amp;component=SVG&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">SVG bug list</a>.
@@ -293,13 +293,11 @@
                 <issues>
                     <issue>Tracking Bug <bug>26389</bug>.</issue>
                     <issue>Filters look grainy when scaled <bug>5526</bug></issue>
-                    <issue>Filters don't support filterRes <bug>6021</bug></issue>
                     <issue>Need support sources other than SourceGraphic <bug>6022</bug></issue>
                     <issue>Support 'color-interpolation-filters' and draw in correct colorspace <bug>6033</bug></issue>
                     <issue>Positional light problems <bug>10115</bug></issue>
                     <issue>Handle missing filter elements correctly <bug>12569</bug></issue>
                     <issue>Filter Effects being cleared and reloaded multiple times <bug>19388</bug></issue>
-                    <issue>Big filterRegions <bug>26380</bug></issue>
                 </issues>
             </element>
             <element>
@@ -338,7 +336,7 @@
             <element>
                 <name>feDisplacementMap</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDisplacementMapElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feFlood</name>
@@ -353,10 +351,7 @@
             <element>
                 <name>feImage</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feImageElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Does not support SVG fragment URLs <bug>12027</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feMerge</name>

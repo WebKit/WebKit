@@ -1,3 +1,40 @@
+2010-01-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feImage support
+        https://bugs.webkit.org/show_bug.cgi?id=31905
+
+        This implements the SVG Filter effect feImage with support of fragment urls.
+        It also includes a bug fix for feComposite. feComposite didn't cover values
+        bigger than 255 correctly on composite oeprator arithmetic.
+
+        Tests: There are already many feImage tests in trunk. They just needed updated
+               pixel test results.
+               The feComposite bug is covered by svg/W3C-SVG-1.1/filters-composite-02-b.svg
+               and depends on feImage.
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::arithmetic):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGImage.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::notifyFinished):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::transformRect):
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::create):
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFEImage.h:
+
 2010-01-06  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.

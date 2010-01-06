@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2010 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -156,6 +157,82 @@ bail_out:
         result = true;
 
     return aspectRatio;
+}
+
+void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRect)
+{
+    FloatSize imageSize = srcRect.size();
+    float origDestWidth = destRect.width();
+    float origDestHeight = destRect.height();
+    if (meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET) {
+        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
+        if (origDestHeight > (origDestWidth * widthToHeightMultiplier)) {
+            destRect.setHeight(origDestWidth * widthToHeightMultiplier);
+            switch (align()) {
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                destRect.setY(destRect.y() + origDestHeight / 2.0f - destRect.height() / 2.0f);
+                break;
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                destRect.setY(destRect.y() + origDestHeight - destRect.height());
+                break;
+            }
+        }
+        if (origDestWidth > (origDestHeight / widthToHeightMultiplier)) {
+            destRect.setWidth(origDestHeight / widthToHeightMultiplier);
+            switch (align()) {
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                destRect.setX(destRect.x() + origDestWidth / 2.0f - destRect.width() / 2.0f);
+                break;
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                destRect.setX(destRect.x() + origDestWidth - destRect.width());
+                break;
+            }
+        }
+    } else if (meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE) {
+        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
+        // if the destination height is less than the height of the image we'll be drawing
+        if (origDestHeight < (origDestWidth * widthToHeightMultiplier)) {
+            float destToSrcMultiplier = srcRect.width() / destRect.width();
+            srcRect.setHeight(destRect.height() * destToSrcMultiplier);
+            switch (align()) {
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                srcRect.setY(destRect.y() + imageSize.height() / 2.0f - srcRect.height() / 2.0f);
+                break;
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                srcRect.setY(destRect.y() + imageSize.height() - srcRect.height());
+                break;
+            }
+        }
+        // if the destination width is less than the width of the image we'll be drawing
+        if (origDestWidth < (origDestHeight / widthToHeightMultiplier)) {
+            float destToSrcMultiplier = srcRect.height() / destRect.height();
+            srcRect.setWidth(destRect.width() * destToSrcMultiplier);
+            switch (align()) {
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                srcRect.setX(destRect.x() + imageSize.width() / 2.0f - srcRect.width() / 2.0f);
+                break;
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
+            case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                srcRect.setX(destRect.x() + imageSize.width() - srcRect.width());
+                break;
+            }
+        }
+    }
 }
 
 TransformationMatrix SVGPreserveAspectRatio::getCTM(double logicX, double logicY,

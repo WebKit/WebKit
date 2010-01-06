@@ -59,7 +59,6 @@ namespace WebCore {
         virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
         virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
-        void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, const SVGPreserveAspectRatio&);
         
         virtual void layout();
         virtual void paint(PaintInfo&, int parentX, int parentY);

@@ -48,81 +48,6 @@ RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
 {
 }
 
-void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, const SVGPreserveAspectRatio& aspectRatio)
-{
-    float origDestWidth = destRect.width();
-    float origDestHeight = destRect.height();
-    if (aspectRatio.meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET) {
-        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
-        if (origDestHeight > (origDestWidth * widthToHeightMultiplier)) {
-            destRect.setHeight(origDestWidth * widthToHeightMultiplier);
-            switch (aspectRatio.align()) {
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
-                    destRect.setY(destRect.y() + origDestHeight / 2.0f - destRect.height() / 2.0f);
-                    break;
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                    destRect.setY(destRect.y() + origDestHeight - destRect.height());
-                    break;
-            }
-        }
-        if (origDestWidth > (origDestHeight / widthToHeightMultiplier)) {
-            destRect.setWidth(origDestHeight / widthToHeightMultiplier);
-            switch (aspectRatio.align()) {
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
-                    destRect.setX(destRect.x() + origDestWidth / 2.0f - destRect.width() / 2.0f);
-                    break;
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                    destRect.setX(destRect.x() + origDestWidth - destRect.width());
-                    break;
-            }
-        }
-    } else if (aspectRatio.meetOrSlice() == SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE) {
-        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
-        // if the destination height is less than the height of the image we'll be drawing
-        if (origDestHeight < (origDestWidth * widthToHeightMultiplier)) {
-            float destToSrcMultiplier = srcRect.width() / destRect.width();
-            srcRect.setHeight(destRect.height() * destToSrcMultiplier);
-            switch (aspectRatio.align()) {
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
-                    srcRect.setY(destRect.y() + image()->height() / 2.0f - srcRect.height() / 2.0f);
-                    break;
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                    srcRect.setY(destRect.y() + image()->height() - srcRect.height());
-                    break;
-            }
-        }
-        // if the destination width is less than the width of the image we'll be drawing
-        if (origDestWidth < (origDestHeight / widthToHeightMultiplier)) {
-            float destToSrcMultiplier = srcRect.height() / destRect.height();
-            srcRect.setWidth(destRect.width() * destToSrcMultiplier);
-            switch (aspectRatio.align()) {
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
-                    srcRect.setX(destRect.x() + image()->width() / 2.0f - srcRect.width() / 2.0f);
-                    break;
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
-                case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                    srcRect.setX(destRect.x() + image()->width() - srcRect.width());
-                    break;
-            }
-        }
-    }
-}
-
 void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
@@ -165,7 +90,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
             SVGImageElement* imageElt = static_cast<SVGImageElement*>(node());
             if (imageElt->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-                adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
+                imageElt->preserveAspectRatio().transformRect(destRect, srcRect);
 
             paintInfo.context->drawImage(image(), DeviceColorSpace, destRect, srcRect);
         }

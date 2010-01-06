@@ -23,12 +23,13 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "CachedResourceHandle.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGURIReference.h"
-#include "SVGLangSpace.h"
+#include "ImageBuffer.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFEImage.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
+#include "SVGLangSpace.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGURIReference.h"
 
 namespace WebCore {
 
@@ -48,6 +49,8 @@ namespace WebCore {
         virtual bool build(SVGResourceFilter*);
 
     private:
+        void requestImageResource();
+
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGNames::feImageTagString, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         // SVGURIReference
@@ -59,6 +62,7 @@ namespace WebCore {
                                        ExternalResourcesRequired, externalResourcesRequired)
 
         CachedResourceHandle<CachedImage> m_cachedImage;
+        OwnPtr<ImageBuffer> m_targetImage;
     };
 
 } // namespace WebCore

@@ -22,6 +22,7 @@
 #define SVGPreserveAspectRatio_h
 
 #if ENABLE(SVG)
+#include "FloatRect.h"
 #include "PlatformString.h"
 #include "SVGNames.h"
 
@@ -60,6 +61,8 @@ namespace WebCore {
 
         void setMeetOrSlice(unsigned short);
         unsigned short meetOrSlice() const;
+
+        void transformRect(FloatRect& destRect, FloatRect& srcRect);
         
         TransformationMatrix getCTM(double logicX, double logicY,
                                double logicWidth, double logicHeight,

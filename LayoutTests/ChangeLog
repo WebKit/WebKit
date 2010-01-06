@@ -1,3 +1,29 @@
+2010-01-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feImage support
+        https://bugs.webkit.org/show_bug.cgi?id=31905
+
+        The implementation of feImage requires pixel test result updates of the already
+        available tests.
+
+        There is also an update for svg/filters/feComposite.svg, since the patch also
+        fixed a bug in feComposite.
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.checksum:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.png:
+        * platform/mac/svg/filters/feComposite-expected.checksum:
+        * platform/mac/svg/filters/feComposite-expected.png:
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.checksum:
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.png:
+
 2010-01-06  Darin Adler  <darin@apple.com>
 
         Added file James Robinson provided to go with his fix for

@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2010 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,33 +24,26 @@
 #define SVGFEImage_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "CachedImage.h"
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
+#include "Image.h"
 #include "FilterEffect.h"
 #include "Filter.h"
+#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
-    class FEImage : public FilterEffect
-                     , public CachedResourceClient {
+    class FEImage : public FilterEffect {
     public:
-        static PassRefPtr<FEImage> create(CachedImage*);
-        virtual ~FEImage();
-
-        // FIXME: We need to support <svg> (RenderObject*) as well as image data.
-
-        CachedImage* cachedImage() const;
-        void setCachedImage(CachedImage*);
+        static PassRefPtr<FEImage> create(RefPtr<Image>, SVGPreserveAspectRatio);
 
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
         
     private:
-        FEImage(CachedImage*);
+        FEImage(RefPtr<Image>, SVGPreserveAspectRatio);
 
-        CachedResourceHandle<CachedImage> m_cachedImage;
+        RefPtr<Image> m_image;
+        SVGPreserveAspectRatio m_preserveAspectRatio;
     };
 
 } // namespace WebCore
