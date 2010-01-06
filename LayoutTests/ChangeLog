@@ -29,6 +29,21 @@
 
         Reviewed by Darin Adler.
 
+        animations/animation-drt-api-multiple-keyframes.html and animations/animation-drt-api.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33244
+
+        Both these tests have a race condition. They start looking
+        for the animation start after the node is already rendered.
+        Instead, set the animation just before looking for the animation
+        start.
+
+        * animations/animation-drt-api-multiple-keyframes.html:
+        * animations/animation-drt-api.html:
+
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
         LayoutTests/animations/change-keyframes.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33233
 

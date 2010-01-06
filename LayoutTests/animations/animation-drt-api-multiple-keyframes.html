@@ -15,7 +15,6 @@
       height: 200px;
       width: 200px;
       background-color: red;
-      -webkit-animation-name: anim;
       -webkit-animation-duration: 5s;
       -webkit-animation-timing-function: linear;
     }
@@ -45,6 +44,7 @@
 
     function startTest()
     {
+      document.getElementById("box").style.webkitAnimationName = "anim";
       waitForAnimationToStart(document.getElementById('box'), animationStarted);
     }
    </script>
