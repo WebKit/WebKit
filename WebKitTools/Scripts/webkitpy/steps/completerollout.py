@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.steps.build import Build
 from webkitpy.steps.commit import Commit
 from webkitpy.steps.metastep import MetaStep
