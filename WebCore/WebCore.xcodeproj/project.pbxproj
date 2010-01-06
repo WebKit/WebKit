@@ -62,6 +62,7 @@
 		08203AA00ED8C35300B8B61A /* WMLAccessElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */; };
 		082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */; };
 		082341C60FCF3A9500D75BD6 /* WMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */; };
+		08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 08385FF510F0186000BFE07B /* SVGMarkerData.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
 		083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */; };
@@ -88,6 +89,8 @@
 		087281560F26B9B600AFC596 /* OptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281520F26B9B600AFC596 /* OptionElement.h */; };
 		087281570F26B9B600AFC596 /* OptionGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087281530F26B9B600AFC596 /* OptionGroupElement.cpp */; };
 		087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281540F26B9B600AFC596 /* OptionGroupElement.h */; };
+		08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */; };
+		08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */; };
 		08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */; };
 		08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */; };
 		0878B1FD10874E3F00A55097 /* SVGAnimatedProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 0878B1F910874E3F00A55097 /* SVGAnimatedProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5278,6 +5281,7 @@
 		08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAccessElement.h; sourceTree = "<group>"; };
 		082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSelectElement.cpp; sourceTree = "<group>"; };
 		082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSelectElement.h; sourceTree = "<group>"; };
+		08385FF510F0186000BFE07B /* SVGMarkerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerData.h; sourceTree = "<group>"; };
 		083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlMultiLine.cpp; sourceTree = "<group>"; };
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
@@ -5302,6 +5306,8 @@
 		087281520F26B9B600AFC596 /* OptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionElement.h; sourceTree = "<group>"; };
 		087281530F26B9B600AFC596 /* OptionGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionGroupElement.cpp; sourceTree = "<group>"; };
 		087281540F26B9B600AFC596 /* OptionGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionGroupElement.h; sourceTree = "<group>"; };
+		08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMarkerLayoutInfo.cpp; sourceTree = "<group>"; };
+		08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerLayoutInfo.h; sourceTree = "<group>"; };
 		08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOnEventElement.cpp; sourceTree = "<group>"; };
 		08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOnEventElement.h; sourceTree = "<group>"; };
 		0878B1F910874E3F00A55097 /* SVGAnimatedProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedProperty.h; sourceTree = "<group>"; };
@@ -15560,6 +15566,9 @@
 				853CA9E30AEEC608002372DC /* SVGInlineFlowBox.h */,
 				AA0972CA0B6947A800A705E9 /* SVGInlineTextBox.cpp */,
 				AA0972CB0B6947A800A705E9 /* SVGInlineTextBox.h */,
+				08385FF510F0186000BFE07B /* SVGMarkerData.h */,
+				08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */,
+				08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */,
 				A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */,
 				A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */,
 				B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */,
@@ -18265,6 +18274,8 @@
 				BC56CB2310D5AC8000A77C64 /* GeolocationControllerClient.h in Headers */,
 				BC56CB2410D5AC8000A77C64 /* GeolocationError.h in Headers */,
 				BC56CB2510D5AC8000A77C64 /* GeolocationPosition.h in Headers */,
+				08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */,
+				08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20421,6 +20432,7 @@
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 				BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */,
+				08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

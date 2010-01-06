@@ -58,11 +58,6 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
 
 SVGMarkerElement::~SVGMarkerElement()
 {
-    // Call detach() here because if we wait until ~Node() calls it, we crash during
-    // RenderSVGViewportContainer destruction, as the renderer assumes that the element
-    // is still fully constructed. See <https://bugs.webkit.org/show_bug.cgi?id=21293>.
-    if (renderer())
-        detach();
 }
 
 TransformationMatrix SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
@@ -175,14 +170,15 @@ SVGResource* SVGMarkerElement::canvasResource(const RenderObject*)
     if (!m_marker)
         m_marker = SVGResourceMarker::create();
 
-    m_marker->setMarker(toRenderSVGViewportContainer(renderer()));
+    ASSERT(renderer());
+    m_marker->setRenderer(toRenderSVGViewportContainer(renderer()));
 
     if (orientType() == SVG_MARKER_ORIENT_ANGLE)
         m_marker->setAngle(orientAngle().value());
     else
         m_marker->setAutoAngle();
 
-    m_marker->setRef(refX().value(this), refY().value(this));
+    m_marker->setReferencePoint(FloatPoint(refX().value(this), refY().value(this)));
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
 
     return m_marker.get();

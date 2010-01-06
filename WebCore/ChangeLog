@@ -1,3 +1,92 @@
+2010-01-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Marker code is buggy: referencePoint translation is off
+        https://bugs.webkit.org/show_bug.cgi?id=33012
+
+        Rewrite marker code, as it had many issues:
+        - Correct refX/refY handling (covered by new marker-referencePoint.svg test)
+        - Calculate marker bounds on layout time, instead of paint time, to deliver correct repaint rects
+        - Cleanup RenderPath code, which was cluttered by marker stuff (outlay in SVGMarkerLayoutInfo)
+        - Fix SVGResource assuming that there is only one resource per resource type per element. Markers
+          can have three different resources of the same type (three markers, start/mid/end markers)
+
+        Filed bug 33115 (PathElementAddQuadCurveToPoint not handled for <marker>), which was just a TODO in the code before.
+
+        Fixes all svg/custom/marker*.svg tests, that use dynamic updates (propagation failed before).
+        Test: svg/custom/marker-referencePoint.svg
+              svg/custom/marker-opacity.svg
+              svg/custom/marker-strokeWidth-changes.svg
+
+        * Android.mk: Add SVGMarkerData.h / SVGMarkerLayoutInfo.(cpp,h) to build.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * page/FrameView.cpp: Notify RenderSVGRoot children about viewport size changes, just like it's handled for <body> in HTML.
+        (WebCore::FrameView::layout): This is important, as marker bounding boxes may depend on the current viewport size through relative coordinates used in <svg>.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::markerBoundingBox): Calculates and caches marker boundaries in the layout() phase.
+        (WebCore::RenderPath::repaintRectInLocalCoordinates): Use the cached marker bounding box during paint() time.
+        (WebCore::RenderPath::setPath): Clear marker boundaries upon path changes.
+        (WebCore::RenderPath::paint): Use SVGMarkerLayoutInfo::drawMarkers() instead of the local drawMarkersIfNeeded() function, which is gone now.
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded): Utilized by markerBoundingBox() to request SVGResourceMarker objects and calculate their boundaries.
+        * rendering/RenderPath.h: Store SVGMarkerLayoutInfo objects, and rename m_markerBounds to m_cachedLocalMarkerBBox for consistency.
+        (WebCore::RenderPath::path): Inline this accessor.
+        * rendering/RenderSVGContainer.h: Make paint() public (to be used from SVGResourceMarker), all other methods protected (to be used from RenderSVGViewportContainer).
+        * rendering/RenderSVGViewportContainer.cpp: Remove useless paint() override, as the comment in the code indicated.
+        (WebCore::RenderSVGViewportContainer::markerBoundaries): Maps the marker contents repaintRectInLocalCoordinates() into the final coordinate system (see code).
+        (WebCore::RenderSVGViewportContainer::markerContentTransformation): Add marker-specific helper method, allowing to make viewportTransform() private again.
+        * rendering/RenderSVGViewportContainer.h: Marking viewportTransform() private, it's never meant to be used outside this renderer.
+        * rendering/SVGMarkerData.h: Added. Refactored from existing RenderPath code, preserving original copyrights.
+        (WebCore::SVGMarkerData::): Helper struct for SVGMarkerLayoutInfo.
+        (WebCore::SVGMarkerData::origin): Holds the final computed destination of a marker.
+        (WebCore::SVGMarkerData::marker): Holds a pointer to the associated SVGResourceMarker object, which we're aiming to layout.
+        (WebCore::SVGMarkerData::currentAngle): Calculates the current angle for a certain marker type (start/mid/end) based upon the computed inslope/outslope values.
+        (WebCore::SVGMarkerData::updateTypeAndMarker): Helper method.
+        (WebCore::SVGMarkerData::updateOutslope): Ditto.
+        (WebCore::SVGMarkerData::updateMarkerDataForPathElement): Does the actual inslope/outslope calculation.
+        (WebCore::SVGMarkerData::updateInslope): Helper method.
+        * rendering/SVGMarkerLayoutInfo.cpp: Added. New approach to build marker layout info, this time correct during layout() time instead of paint() time.
+        (WebCore::SVGMarkerLayoutInfo::SVGMarkerLayoutInfo):
+        (WebCore::SVGMarkerLayoutInfo::~SVGMarkerLayoutInfo):
+        (WebCore::processStartAndMidMarkers): Static helper method used to visit each path element in order to calculate inslopes/outslopes (-> orientation angles)
+        (WebCore::SVGMarkerLayoutInfo::calculateBoundaries): Build list of MarkerLayout objects, used to query boundaries, and to paint markers during drawMarkers().
+        (WebCore::SVGMarkerLayoutInfo::drawMarkers): Cheap method walking existing MarkerLayout vector, drawing the individual RenderSVGViewportContainer of the markers.
+        (WebCore::SVGMarkerLayoutInfo::addLayoutedMarker): Helper method.
+        * rendering/SVGMarkerLayoutInfo.h: Added.
+        (WebCore::MarkerLayout::MarkerLayout): Helper struct storing a pair of SVGResourceMarker* and a TranformationMatrix.
+        (WebCore::SVGMarkerLayoutInfo::markerData): Public helper methods returning references to private member variables, used from processStartAndMidMarkers.
+        (WebCore::SVGMarkerLayoutInfo::midMarker): Ditto.
+        (WebCore::SVGMarkerLayoutInfo::elementIndex): Ditto.
+        * svg/SVGMarkerElement.cpp: Adopt to name change: setRef() -> setReferencePoint(). setMarker() -> setRenderer()
+        (WebCore::SVGMarkerElement::~SVGMarkerElement): Remove obsolete detach() hack, fixed by SVGUseElement changes.
+        (WebCore::SVGMarkerElement::canvasResource): Add ASSERT(renderer()) to clarify that canvasResource() is only meant to used after renderer creation.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::~SVGSVGElement): Remove obsolete detach() hack, fixed by SVGUseElement changes.
+        * svg/SVGUseElement.cpp: Rework buildPendingResource() to remove SVGSVGElement/SVGMarkerElement detach() hacks (called manually from destructors), see below.
+        (WebCore::SVGUseElement::buildPendingResource): Always detach() the shadow tree root element, before destructing it - this caused the regression with this patch before.
+        * svg/graphics/SVGResource.cpp: Instead of maintaining a global hashmap between SVGStyledElements and an array of possible SVGResources, use a HashSet of SVGResources
+                                        and directly scan the already existing list of clients for a certain SVGResource. This wrong approach has been introduced over two years
+                                        ago, making the assumption that there's only one resource type per element. Though markers can provide three resources of the same type
+                                        per element (all SVGResourceMarker objects, but in different rules: start/mid/end marker). That information is only available while painting.
+        (WebCore::resourceSet): Add global static HashSet<SVGResource*>.
+        (WebCore::SVGResource::SVGResource): Add us to the resourceSet.
+        (WebCore::SVGResource::~SVGResource): Remove us from resourceSet.
+        (WebCore::SVGResource::removeClient): Traverse all SVGResource clients and remove the passed SVGStyledElement from the client list (invoked by SVGStyledElement destructor).
+        (WebCore::SVGResource::addClient): Remove the offending part of the old approach, making the wrong assumption regarding resource types.
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::SVGResourceMarker):
+        (WebCore::SVGResourceMarker::markerTransformation): Create TransformationMatrix in the local marker content (RenderSVGViewportContainer) coordinate system, to position a marker.
+        (WebCore::SVGResourceMarker::draw): Simplify marker drawing a lot: used the passing TransformationMatrix (cached in SVGMarkerLayoutInfo) to draw the marker content renderer.
+        (WebCore::SVGResourceMarker::externalRepresentation): Adopt to refX/refY -> referencePoint changes.
+        * svg/graphics/SVGResourceMarker.h: Store a FloatPoint m_referecePoint instead of two refX/refY float values.
+        (WebCore::SVGResourceMarker::setRenderer): Renamed from setMarker().
+        (WebCore::SVGResourceMarker::setReferencePoint): Renamed from setRef().
+        (WebCore::SVGResourceMarker::referencePoint): New accessor replacing refX() / refY().
+
 2010-01-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

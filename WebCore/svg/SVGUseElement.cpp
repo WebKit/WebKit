@@ -346,6 +346,12 @@ void SVGUseElement::buildPendingResource()
     ASSERT(m_targetElementInstance);
     ASSERT(m_targetElementInstance->correspondingUseElement() == this);
 
+    // Safe destruction, of the old shadow tree root element
+    if (m_shadowTreeRootElement) {
+        m_shadowTreeRootElement->detach();
+        m_shadowTreeRootElement = 0;
+    }
+
     // Setup shadow tree root node
     m_shadowTreeRootElement = new SVGGElement(SVGNames::gTag, document());
     m_shadowTreeRootElement->setInDocument();

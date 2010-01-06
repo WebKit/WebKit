@@ -597,7 +597,8 @@ void FrameView::layout(bool allowSubtree)
     }
 
     if (!subtree) {
-        RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
+        Node* documentElement = document->documentElement();
+        RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
         Node* body = document->body();
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag)) {
@@ -612,8 +613,15 @@ void FrameView::layout(bool allowSubtree)
                 RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
                 applyOverflowToViewport(o, hMode, vMode);
             }
-        } else if (rootRenderer)
+        } else if (rootRenderer) {
+#if ENABLE(SVG)
+            if (documentElement->isSVGElement()) {
+                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
+                    rootRenderer->setChildNeedsLayout(true);
+            }
+#endif
             applyOverflowToViewport(rootRenderer, hMode, vMode);
+        }
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (m_firstLayout && !document->ownerElement())
             printf("Elapsed time before first layout: %d\n", document->elapsedTime());

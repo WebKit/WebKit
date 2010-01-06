@@ -2950,6 +2950,9 @@ webcore_sources += \
 	WebCore/rendering/SVGInlineFlowBox.h \
 	WebCore/rendering/SVGInlineTextBox.cpp \
 	WebCore/rendering/SVGInlineTextBox.h \
+	WebCore/rendering/SVGMarkerData.h \
+	WebCore/rendering/SVGMarkerLayoutInfo.cpp \
+	WebCore/rendering/SVGMarkerLayoutInfo.h \
 	WebCore/rendering/SVGRenderSupport.cpp \
 	WebCore/rendering/SVGRenderSupport.h \
 	WebCore/rendering/SVGRenderTreeAsText.cpp \
