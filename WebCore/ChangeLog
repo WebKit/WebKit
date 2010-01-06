@@ -1,3 +1,15 @@
+2010-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CDATA sections are merged into Text nodes when normalize() is used
+        https://bugs.webkit.org/show_bug.cgi?id=33191
+
+        Test: fast/dom/Node/normalize-with-cdata.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::normalize): Use nodeType instead of isTextNode.
+
 2010-01-05  James Robinson  <jamesr@google.com>
 
         Reviewed by Eric Seidel.

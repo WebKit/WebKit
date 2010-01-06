@@ -681,7 +681,7 @@ void Node::normalize()
 
         // Merge text nodes.
         while (Node* nextSibling = node->nextSibling()) {
-            if (!nextSibling->isTextNode())
+            if (nextSibling->nodeType() != TEXT_NODE)
                 break;
             RefPtr<Text> nextText = static_cast<Text*>(nextSibling);
 
