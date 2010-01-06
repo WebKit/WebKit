@@ -88,7 +88,7 @@ int HTMLElement::tagPriority() const
         return 0;
     if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag) || hasLocalName(rpTag) || hasLocalName(rtTag))
         return 3;
-    if (hasLocalName(articleTag) || hasLocalName(asideTag) || hasLocalName(centerTag) || hasLocalName(nobrTag) || hasLocalName(rubyTag) || hasLocalName(navTag) || hasLocalName(sectionTag))
+    if (hasLocalName(articleTag) || hasLocalName(asideTag) || hasLocalName(centerTag) || hasLocalName(footerTag) || hasLocalName(headerTag) || hasLocalName(nobrTag) || hasLocalName(rubyTag) || hasLocalName(navTag) || hasLocalName(sectionTag))
         return 5; // Same as <div>.
     if (hasLocalName(noembedTag) || hasLocalName(noframesTag))
         return 10;
@@ -874,6 +874,7 @@ static HashSet<AtomicStringImpl*>* blockTagList()
         tagList.add(dlTag.localName().impl());
         tagList.add(dtTag.localName().impl());
         tagList.add(fieldsetTag.localName().impl());
+        tagList.add(footerTag.localName().impl());
         tagList.add(formTag.localName().impl());
         tagList.add(h1Tag.localName().impl());
         tagList.add(h2Tag.localName().impl());
@@ -881,6 +882,7 @@ static HashSet<AtomicStringImpl*>* blockTagList()
         tagList.add(h4Tag.localName().impl());
         tagList.add(h5Tag.localName().impl());
         tagList.add(h6Tag.localName().impl());
+        tagList.add(headerTag.localName().impl());
         tagList.add(hrTag.localName().impl());
         tagList.add(isindexTag.localName().impl());
         tagList.add(layerTag.localName().impl());

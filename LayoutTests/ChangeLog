@@ -1,3 +1,23 @@
+2010-01-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement HTML5 <header> and <footer> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=32943
+
+        These test:
+        - <p> closing,
+        - No nesting restriction,
+        - Residual style, and
+        - FormatBlock.
+
+        * fast/html/footer-element-expected.txt: Added.
+        * fast/html/footer-element.html: Added.
+        * fast/html/header-element-expected.txt: Added.
+        * fast/html/header-element.html: Added.
+        * fast/html/script-tests/footer-element.js: Added.
+        * fast/html/script-tests/header-element.js: Added.
+
 2010-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

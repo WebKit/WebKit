@@ -43,6 +43,7 @@ em interfaceName=HTMLElement
 embed
 fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement, createWithNew
 font createWithNew
+footer interfaceName=HTMLElement
 form createWithNew
 frame
 frameset interfaceName=HTMLFrameSetElement, createWithNew
@@ -53,6 +54,7 @@ h4 interfaceName=HTMLHeadingElement, createWithNew
 h5 interfaceName=HTMLHeadingElement, createWithNew
 h6 interfaceName=HTMLHeadingElement, createWithNew
 head createWithNew
+header interfaceName=HTMLElement
 hr interfaceName=HTMLHRElement, createWithNew
 html createWithNew
 i interfaceName=HTMLElement

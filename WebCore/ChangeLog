@@ -1,3 +1,32 @@
+2010-01-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement HTML5 <header> and <footer> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=32943
+
+        <header> and <footer> should behave the same as <nav>, <section>,
+        <article>, and <aside>. The HTML parser doesn't need to restrict
+        the nesting of header/footer elements.
+
+        Tests: fast/html/footer-element.html
+               fast/html/header-element.html
+
+        * css/html.css: Add header/footer as block elements.
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag): Add headerTag and footerTag.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::tagPriority): Returns 5 for headerTag and footerTag.
+        (WebCore::blockTagList): Add headerTag and footerTag.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Rename isHeaderTag() to isHeadingTag()
+        (WebCore::HTMLParser::getNode): Add headerTag and footerTag.
+        (WebCore::HTMLParser::isHeadingTag): Renamed from isHeaderTag().
+        * html/HTMLParser.h:
+          - Rename isHeaderTag() to isHeadingTag()
+          - Remove non-existing popNestedHeaderTag().
+        * html/HTMLTagNames.in: Add header and footer.
+
 2010-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

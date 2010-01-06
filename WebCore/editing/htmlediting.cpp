@@ -481,12 +481,14 @@ bool validBlockTag(const AtomicString& blockTag)
         blockTags.add(divTag.localName());
         blockTags.add(dlTag.localName());
         blockTags.add(dtTag.localName());
+        blockTags.add(footerTag.localName());
         blockTags.add(h1Tag.localName());
         blockTags.add(h2Tag.localName());
         blockTags.add(h3Tag.localName());
         blockTags.add(h4Tag.localName());
         blockTags.add(h5Tag.localName());
         blockTags.add(h6Tag.localName());
+        blockTags.add(headerTag.localName());
         blockTags.add(navTag.localName());
         blockTags.add(pTag.localName());
         blockTags.add(preTag.localName());
