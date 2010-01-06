@@ -157,6 +157,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static int frameCount = 0;
+
 // Key for a StatsCounter tracking how many WebFrames are active.
 static const char* const webFrameActiveCount = "WebFrameActiveCount";
 
@@ -331,6 +333,11 @@ private:
 
 
 // WebFrame -------------------------------------------------------------------
+
+int WebFrame::instanceCount()
+{
+    return frameCount;
+}
 
 WebFrame* WebFrame::frameForEnteredContext()
 {
@@ -1492,8 +1499,6 @@ WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
 
 // WebFrameImpl public ---------------------------------------------------------
 
-int WebFrameImpl::m_liveObjectCount = 0;
-
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)
 {
     return adoptRef(new WebFrameImpl(client));
@@ -1514,13 +1519,13 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_animationController(this)
 {
     ChromiumBridge::incrementStatsCounter(webFrameActiveCount);
-    m_liveObjectCount++;
+    frameCount++;
 }
 
 WebFrameImpl::~WebFrameImpl()
 {
     ChromiumBridge::decrementStatsCounter(webFrameActiveCount);
-    m_liveObjectCount--;
+    frameCount--;
 
     cancelPendingScopingEffort();
     clearPasswordListeners();

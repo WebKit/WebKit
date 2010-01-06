@@ -69,6 +69,9 @@ template <typename T> class WebVector;
 
 class WebFrame {
 public:
+    // Returns the number of live WebFrame objects, used for leak checking.
+    WEBKIT_API static int instanceCount();
+
     // The two functions below retrieve the WebFrame instances relating the
     // currently executing JavaScript.  Since JavaScript can make function
     // calls across frames, though, we need to be more precise.
