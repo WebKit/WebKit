@@ -44,6 +44,20 @@
 
         Reviewed by Darin Adler.
 
+        LayoutTests/animations/change-keyframes-name.html and LayoutTests/animations/play-state.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33240
+
+        Increase the tolerances. They are infrequently flaky now.
+        Since these are just linear animations, I think the tolerance
+        is just too small.
+
+        * animations/change-keyframes-name.html:
+        * animations/play-state.html:
+
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
         LayoutTests/animations/change-keyframes.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33233
 
