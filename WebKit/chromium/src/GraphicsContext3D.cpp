@@ -1856,7 +1856,7 @@ int GraphicsContext3D::texImage2D(unsigned target,
                                   unsigned border,
                                   unsigned format,
                                   unsigned type,
-                                  WebGLArray* pixels)
+                                  void* pixels)
 {
     // FIXME: must do validation similar to JOGL's to ensure that
     // the incoming array is of the appropriate length.
@@ -1868,23 +1868,8 @@ int GraphicsContext3D::texImage2D(unsigned target,
                  border,
                  format,
                  type,
-                 pixels->baseAddress());
+                 pixels);
     return 0;
-}
-
-int GraphicsContext3D::texImage2D(unsigned target,
-                                  unsigned level,
-                                  unsigned internalformat,
-                                  unsigned width,
-                                  unsigned height,
-                                  unsigned border,
-                                  unsigned format,
-                                  unsigned type,
-                                  ImageData* pixels)
-{
-    // FIXME: implement.
-    notImplemented();
-    return -1;
 }
 
 // Remove premultiplied alpha from color channels.
@@ -2061,14 +2046,6 @@ int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image,
     return res;
 }
 
-int GraphicsContext3D::texImage2D(unsigned target, unsigned level, HTMLVideoElement* video,
-                                  bool flipY, bool premultiplyAlpha)
-{
-    // FIXME: implement.
-    notImplemented();
-    return -1;
-}
-
 GL_SAME_METHOD_3(TexParameterf, texParameterf, unsigned, unsigned, float);
 
 GL_SAME_METHOD_3(TexParameteri, texParameteri, unsigned, unsigned, int);
@@ -2081,7 +2058,7 @@ int GraphicsContext3D::texSubImage2D(unsigned target,
                                      unsigned height,
                                      unsigned format,
                                      unsigned type,
-                                     WebGLArray* pixels)
+                                     void* pixels)
 {
     // FIXME: implement.
     notImplemented();
@@ -2092,39 +2069,7 @@ int GraphicsContext3D::texSubImage2D(unsigned target,
                                      unsigned level,
                                      unsigned xoffset,
                                      unsigned yoffset,
-                                     unsigned width,
-                                     unsigned height,
-                                     unsigned format,
-                                     unsigned type,
-                                     ImageData* pixels)
-{
-    // FIXME: implement.
-    notImplemented();
-    return -1;
-}
-
-int GraphicsContext3D::texSubImage2D(unsigned target,
-                                     unsigned level,
-                                     unsigned xoffset,
-                                     unsigned yoffset,
-                                     unsigned width,
-                                     unsigned height,
                                      Image* image,
-                                     bool flipY,
-                                     bool premultiplyAlpha)
-{
-    // FIXME: implement.
-    notImplemented();
-    return -1;
-}
-
-int GraphicsContext3D::texSubImage2D(unsigned target,
-                                     unsigned level,
-                                     unsigned xoffset,
-                                     unsigned yoffset,
-                                     unsigned width,
-                                     unsigned height,
-                                     HTMLVideoElement* video,
                                      bool flipY,
                                      bool premultiplyAlpha)
 {
