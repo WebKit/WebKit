@@ -33,6 +33,7 @@
 
 #include "AtomicString.h"
 #include "DOMTimer.h"
+#include "Logging.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextEncoding.h"

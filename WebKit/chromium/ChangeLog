@@ -1,3 +1,9 @@
+2010-01-06  Darin Fisher  <darin@chromium.org>
+
+        Fix release build bustage.
+
+        * src/WebKit.cpp: Need to include Logging.h
+
 2010-01-05  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Adam Barth.
