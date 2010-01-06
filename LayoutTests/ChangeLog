@@ -1,3 +1,19 @@
+2010-01-05  James Robinson  <jamesr@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Typing in Google Wave repaints the whole screen
+        https://bugs.webkit.org/show_bug.cgi?id=32295
+
+        Add a repaint test to make sure that when mutations happen in a grandchild of a block element that has no in-flow children
+        the entire block element is not unnecessarily repainted.
+        The bug only shows up when running pixel tests.
+
+        * fast/repaint/block-no-inflow-children.html: Added.
+        * platform/mac/fast/repaint/block-no-inflow-children-expected.checksum: Added.
+        * platform/mac/fast/repaint/block-no-inflow-children-expected.png: Added.
+        * platform/mac/fast/repaint/block-no-inflow-children-expected.txt: Added.
+
 2010-01-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

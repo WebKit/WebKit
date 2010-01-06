@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009 Apple Inc. All right reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -843,6 +844,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool endOfInline = false;
         RenderObject* o = bidiFirst(this, 0, false);
         Vector<FloatWithRect> floats;
+        bool hasInlineChild = false;
         while (o) {
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 RenderBox* box = toRenderBox(o);
@@ -865,6 +867,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
+                hasInlineChild = true;
                 if (fullLayout || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, fullLayout);
                 o->setNeedsLayout(false);
@@ -881,7 +884,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool previousLineBrokeCleanly = true;
         RootInlineBox* startLine = determineStartPosition(firstLine, fullLayout, previousLineBrokeCleanly, resolver, floats, floatIndex);
 
-        if (fullLayout && !selfNeedsLayout()) {
+        if (fullLayout && hasInlineChild && !selfNeedsLayout()) {
             setNeedsLayout(true, false);  // Mark ourselves as needing a full layout. This way we'll repaint like
                                           // we're supposed to.
             RenderView* v = view();

@@ -1,3 +1,21 @@
+2010-01-05  James Robinson  <jamesr@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Typing in Google Wave repaints the whole screen
+        https://bugs.webkit.org/show_bug.cgi?id=32295
+
+        Marks a RenderBlock without block children for layout and painting when it has no line boxes only if it has inline immediate children.
+        The existing logic uses the existence of line boxes as a dirty flag to indicate that line boxes need to be regenerated.  This heuristic
+        fails when the RenderBlock does not have any in-flow children at all, causing the RenderBlock to get unnecessarily marked for layout and
+        painting.  This is particularly bad for common scrollbar manipulation tricks like putting one positioned div inside another - this
+        structure caused the entire outer div's bounds to get scheduled for a paint whenever there was any mutation of any descendant.
+
+        Test: LayoutTests/fast/repaint/block-no-inline-children.html (only shows up in pixel tests)
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2010-01-05  James Robinson  <jamesr@chromium.org>
 
         Reviewed by David Hyatt.
