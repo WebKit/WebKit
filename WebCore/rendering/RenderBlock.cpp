@@ -554,6 +554,10 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         anonBlock->deleteLineBoxTree();
         anonBlock->destroy();
     }
+
+    // If this was our last child be sure to clear out our line boxes.
+    if (childrenInline() && !firstChild())
+        lineBoxes()->deleteLineBoxes(renderArena());
 }
 
 bool RenderBlock::isSelfCollapsingBlock() const

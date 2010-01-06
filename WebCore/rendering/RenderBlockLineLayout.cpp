@@ -823,7 +823,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
-    bool fullLayout = !firstLineBox() || !firstChild() || selfNeedsLayout() || relayoutChildren;
+    bool fullLayout = !firstLineBox() || selfNeedsLayout() || relayoutChildren;
     if (fullLayout)
         lineBoxes()->deleteLineBoxes(renderArena());
 

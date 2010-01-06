@@ -1,3 +1,20 @@
+2010-01-05  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Cleans up line box clearing when a RenderBlock loses its last child.
+        https://bugs.webkit.org/show_bug.cgi?id=33228
+
+        The 'fullLayout' flag in RenderBlock::layoutInlineChildren() is pretty vague, hopefully this will be easier for the next person to figure out.
+
+
+        No new tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2010-01-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
