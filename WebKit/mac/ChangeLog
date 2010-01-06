@@ -1,3 +1,14 @@
+2010-01-06  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        First step toward:
+        <rdar://problem/6398111> Integrate hardware layers with out-of-process plug-ins layer hosting mechanism
+        
+        Small refactoring moving the PluginWidget class from WebKit to WebCore.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Use the WebCore version of PluginWidget.
+
 2010-01-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

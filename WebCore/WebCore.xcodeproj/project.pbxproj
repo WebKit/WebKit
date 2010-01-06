@@ -151,6 +151,8 @@
 		08E6E0F10EFF42BA00029FBF /* WMLFieldSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E6E0EF0EFF42BA00029FBF /* WMLFieldSetElement.cpp */; };
 		08E6E0F20EFF42BA00029FBF /* WMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E6E0F00EFF42BA00029FBF /* WMLFieldSetElement.h */; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0AFDAC3B10F5448300E1F3D2 /* PluginWidgetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AFDAC3A10F5448300E1F3D2 /* PluginWidgetMac.mm */; };
+		0AFDAC3D10F5448C00E1F3D2 /* PluginWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AFDAC3C10F5448C00E1F3D2 /* PluginWidget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B8C56D30F28627F000502E1 /* HTTPHeaderMap.cpp */; };
 		0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B9056150F2578BE0095FF6A /* DocumentThreadableLoader.cpp */; };
 		0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056160F2578BE0095FF6A /* DocumentThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
@@ -5357,6 +5359,8 @@
 		08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLElementFactory.cpp; sourceTree = "<group>"; };
 		08FB84B10ECE373300DC064E /* WMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLElementFactory.h; sourceTree = "<group>"; };
 		0A4844980CA44CB200B7BD48 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
+		0AFDAC3A10F5448300E1F3D2 /* PluginWidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginWidgetMac.mm; path = mac/PluginWidgetMac.mm; sourceTree = "<group>"; };
+		0AFDAC3C10F5448C00E1F3D2 /* PluginWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginWidget.h; sourceTree = "<group>"; };
 		0B8C56D30F28627F000502E1 /* HTTPHeaderMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderMap.cpp; sourceTree = "<group>"; };
 		0B9056150F2578BE0095FF6A /* DocumentThreadableLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentThreadableLoader.cpp; sourceTree = "<group>"; };
 		0B9056160F2578BE0095FF6A /* DocumentThreadableLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentThreadableLoader.h; sourceTree = "<group>"; };
@@ -10204,6 +10208,14 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		0AFDAC3610F5447400E1F3D2 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				0AFDAC3A10F5448300E1F3D2 /* PluginWidgetMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -11030,6 +11042,7 @@
 		5DCF83690D59157800953BC6 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				0AFDAC3610F5447400E1F3D2 /* mac */,
 				A9C6E4E10D745E05006442E9 /* MimeType.cpp */,
 				A9C6E4E20D745E05006442E9 /* MimeType.h */,
 				A9C6E65E0D7466F2006442E9 /* MimeType.idl */,
@@ -11049,6 +11062,7 @@
 				5DCF836C0D59159800953BC6 /* PluginInfoStore.h */,
 				1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */,
 				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
+				0AFDAC3C10F5448C00E1F3D2 /* PluginWidget.h */,
 			);
 			path = plugins;
 			sourceTree = "<group>";
@@ -18276,6 +18290,7 @@
 				BC56CB2510D5AC8000A77C64 /* GeolocationPosition.h in Headers */,
 				08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */,
 				08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */,
+				0AFDAC3D10F5448C00E1F3D2 /* PluginWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20433,6 +20448,7 @@
 				0C45342710CDBBFA00869157 /* JSWebGLUniformLocation.cpp in Sources */,
 				BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */,
 				08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */,
+				0AFDAC3B10F5448300E1F3D2 /* PluginWidgetMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

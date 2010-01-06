@@ -1,3 +1,19 @@
+2010-01-06  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Eric Carlson.
+        
+        First step toward:
+        <rdar://problem/6398111> Integrate hardware layers with out-of-process plug-ins layer hosting mechanism
+        
+        Small refactoring moving the PluginWidget class from WebKit to WebCore.          
+        * WebCore.xcodeproj/project.pbxproj: Added new source files and a "mac" group; exposes PluginWidget.h as a "Private" role
+        * platform/Widget.h: Added isPluginWidget(). 
+        (WebCore::Widget::isPluginWidget):
+        * plugins/PluginWidget.h: Added.
+        (WebCore::PluginWidget::isPluginWidget): Added as an interim solution until Mac plug-ins inheirt from PluginView.
+        * plugins/mac/PluginWidgetMac.mm: Added.
+        (WebCore::PluginWidget::invalidateRect): Added. Extracted from the old WebKit/FrameLoaderClientMac version of PluginWidget
+        
 2010-01-06  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r52862.

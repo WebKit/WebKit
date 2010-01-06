@@ -104,6 +104,7 @@
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/PluginWidget.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
@@ -1473,19 +1474,6 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     [attributes release];
     return view;
 }
-
-class PluginWidget : public Widget {
-public:
-    PluginWidget(NSView *view = 0)
-        : Widget(view)
-    {
-    }
-    
-    virtual void invalidateRect(const IntRect& rect)
-    {
-        [platformWidget() setNeedsDisplayInRect:rect];
-    }
-};
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
