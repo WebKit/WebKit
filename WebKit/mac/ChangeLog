@@ -1,9 +1,3 @@
-2010-01-06  Sam Weinig  <sam@webkit.org>
-
-        Attempt to fix non-Snow Leopard Mac build.
-
-        * WebCoreSupport/WebFrameLoaderClient.mm:
-
 2010-01-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Eric Carlson.

@@ -33,6 +33,8 @@ namespace WebCore {
 // this happens PluginWidget and PluginView can become one class. 
 class PluginWidget : public Widget {
 public:
+    PluginWidget(PlatformWidget widget = 0) : Widget(widget) { }
+
     virtual void invalidateRect(const IntRect&);
     virtual bool isPluginWidget() const { return true; }
 };
