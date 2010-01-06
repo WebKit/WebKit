@@ -659,7 +659,6 @@
             'bindings/v8/custom/V8CoordinatesCustom.cpp',
             'bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp',
             'bindings/v8/custom/V8ConsoleCustom.cpp',
-            'bindings/v8/custom/V8CustomBinding.cpp',
             'bindings/v8/custom/V8CustomBinding.h',
             'bindings/v8/custom/V8CustomEventListener.cpp',
             'bindings/v8/custom/V8CustomEventListener.h',

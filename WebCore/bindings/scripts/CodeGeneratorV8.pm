@@ -317,6 +317,13 @@ END
 
     GenerateHeaderRuntimeEnablerDeclarations(@enabledAtRuntime);
     GenerateHeaderCustomCall($dataNode);
+    
+    if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+        push(@headerContent, <<END);
+  static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
+  static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
+END
+    }
 
     push(@headerContent, <<END);
 
@@ -1567,7 +1574,7 @@ END
 
     my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
-        $access_check = "instance->SetAccessCheckCallbacks(V8Custom::v8${interfaceName}NamedSecurityCheck, V8Custom::v8${interfaceName}IndexedSecurityCheck, v8::Integer::New(V8ClassIndex::ToInt(V8ClassIndex::${classIndex})));";
+        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::ToInt(V8ClassIndex::${classIndex})));";
     }
 
     # For the DOMWindow interface, generate the shadow object template

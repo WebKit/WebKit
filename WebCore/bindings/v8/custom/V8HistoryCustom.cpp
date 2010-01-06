@@ -35,6 +35,7 @@
 #include "History.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
@@ -80,6 +81,22 @@ v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
     History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, args.Holder());
     history->stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
     return throwError(ec);
+}
+
+bool V8History::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
+{
+    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
+    // Only allow same origin access.
+    History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
+}
+
+bool V8History::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value> data)
+{
+    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
+    // Only allow same origin access.
+    History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
 }
 
 } // namespace WebCore

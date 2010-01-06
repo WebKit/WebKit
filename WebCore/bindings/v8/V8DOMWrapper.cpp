@@ -57,6 +57,10 @@
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
 
+#if ENABLE(SVG)
+#include "SVGPathSeg.h"
+#endif
+
 #include <algorithm>
 #include <utility>
 #include <v8.h>
@@ -97,6 +101,35 @@ static v8::Handle<v8::Value> ConstructorToString(const v8::Arguments& args)
 }
 
 #if ENABLE(SVG)
+
+static V8ClassIndex::V8WrapperType downcastSVGPathSeg(void* pathSeg)
+{
+    SVGPathSeg* realPathSeg = reinterpret_cast<SVGPathSeg*>(pathSeg);
+
+    switch (realPathSeg->pathSegType()) {
+    case SVGPathSeg::PATHSEG_CLOSEPATH:                    return V8ClassIndex::SVGPATHSEGCLOSEPATH;
+    case SVGPathSeg::PATHSEG_MOVETO_ABS:                   return V8ClassIndex::SVGPATHSEGMOVETOABS;
+    case SVGPathSeg::PATHSEG_MOVETO_REL:                   return V8ClassIndex::SVGPATHSEGMOVETOREL;
+    case SVGPathSeg::PATHSEG_LINETO_ABS:                   return V8ClassIndex::SVGPATHSEGLINETOABS;
+    case SVGPathSeg::PATHSEG_LINETO_REL:                   return V8ClassIndex::SVGPATHSEGLINETOREL;
+    case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:            return V8ClassIndex::SVGPATHSEGCURVETOCUBICABS;
+    case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:            return V8ClassIndex::SVGPATHSEGCURVETOCUBICREL;
+    case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:        return V8ClassIndex::SVGPATHSEGCURVETOQUADRATICABS;
+    case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:        return V8ClassIndex::SVGPATHSEGCURVETOQUADRATICREL;
+    case SVGPathSeg::PATHSEG_ARC_ABS:                      return V8ClassIndex::SVGPATHSEGARCABS;
+    case SVGPathSeg::PATHSEG_ARC_REL:                      return V8ClassIndex::SVGPATHSEGARCREL;
+    case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:        return V8ClassIndex::SVGPATHSEGLINETOHORIZONTALABS;
+    case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:        return V8ClassIndex::SVGPATHSEGLINETOHORIZONTALREL;
+    case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:          return V8ClassIndex::SVGPATHSEGLINETOVERTICALABS;
+    case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:          return V8ClassIndex::SVGPATHSEGLINETOVERTICALREL;
+    case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:     return V8ClassIndex::SVGPATHSEGCURVETOCUBICSMOOTHABS;
+    case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:     return V8ClassIndex::SVGPATHSEGCURVETOCUBICSMOOTHREL;
+    case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS: return V8ClassIndex::SVGPATHSEGCURVETOQUADRATICSMOOTHABS;
+    case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL: return V8ClassIndex::SVGPATHSEGCURVETOQUADRATICSMOOTHREL;
+    default:                                               return V8ClassIndex::INVALID_CLASS_INDEX;
+    }
+}
+
 v8::Handle<v8::Value> V8DOMWrapper::convertSVGElementInstanceToV8Object(SVGElementInstance* instance)
 {
     if (!instance)
@@ -128,7 +161,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertSVGObjectWithContextToV8Object(V8Clas
 
     // Special case: SVGPathSegs need to be downcast to their real type
     if (type == V8ClassIndex::SVGPATHSEG)
-        type = V8Custom::DowncastSVGPathSeg(object);
+        type = downcastSVGPathSeg(object);
 
     v8::Local<v8::Object> v8Object = instantiateV8Object(type, type, object);
     if (!v8Object.IsEmpty()) {
@@ -152,7 +185,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertSVGObjectWithContextToV8Object(V8Clas
     return result;
 }
 
-#endif
+#endif // ENABLE(SVG)
 
 #if ENABLE(3D_CANVAS)
 void V8DOMWrapper::setIndexedPropertiesToExternalArray(v8::Handle<v8::Object> wrapper,
@@ -309,7 +342,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         // Set access check callbacks, but turned off initially.
         // When a context is detached from a frame, turn on the access check.
         // Turning on checks also invalidates inline caches of the object.
-        instanceTemplate->SetAccessCheckCallbacks(V8Custom::v8DOMWindowNamedSecurityCheck, V8Custom::v8DOMWindowIndexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW), false);
+        instanceTemplate->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW), false);
         break;
     }
     case V8ClassIndex::LOCATION: {

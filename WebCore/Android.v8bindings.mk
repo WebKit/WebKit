@@ -92,7 +92,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8ClientRectListCustom.cpp \
 	bindings/v8/custom/V8ClipboardCustom.cpp \
 	bindings/v8/custom/V8CoordinatesCustom.cpp \
-	bindings/v8/custom/V8CustomBinding.cpp \
 	bindings/v8/custom/V8CustomEventListener.cpp \
 	bindings/v8/custom/V8CustomPositionCallback.cpp \
 	bindings/v8/custom/V8CustomPositionErrorCallback.cpp \

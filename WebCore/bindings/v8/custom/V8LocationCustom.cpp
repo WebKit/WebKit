@@ -342,7 +342,7 @@ v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
     return v8String(result);
 }
 
-INDEXED_ACCESS_CHECK(Location)
+bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::LOCATION);
     // Only allow same origin access
@@ -350,7 +350,7 @@ INDEXED_ACCESS_CHECK(Location)
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
 }
 
-NAMED_ACCESS_CHECK(Location)
+bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value> data)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::LOCATION);
     // Only allow same origin access

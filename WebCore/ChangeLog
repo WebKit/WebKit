@@ -1,3 +1,38 @@
+2010-01-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Generate header declarations for V8 binding security checks
+        and delete V8CustomBinding.cpp
+
+        * Android.v8bindings.mk: Removed V8CustomBinding.cpp.
+        * WebCore.gypi: Removed V8CustomBinding.cpp.
+        * bindings/scripts/CodeGeneratorV8.pm: Generate security check declarations.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::getTargetFrame): Moved from V8CustomBinding.cpp.
+        (WebCore::reportUnsafeJavaScriptAccess):
+        (WebCore::V8DOMWindowShell::createNewContext):
+        (WebCore::V8DOMWindowShell::setLocation): Moved from V8CustomBinding.cpp.
+        * bindings/v8/V8DOMWindowShell.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::downcastSVGPathSeg): Moved from V8CustomBinding.cpp.
+        (WebCore::V8DOMWrapper::convertSVGObjectWithContextToV8Object):
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/custom/V8CustomBinding.cpp: Removed.
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::locationAccessorSetter):
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+        (WebCore::V8DOMWindow::indexedSecurityCheck):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorSetter):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::indexedSecurityCheck):
+        (WebCore::V8History::namedSecurityCheck):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::indexedSecurityCheck):
+        (WebCore::V8Location::namedSecurityCheck):
+
 2010-01-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

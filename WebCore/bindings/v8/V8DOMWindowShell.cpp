@@ -36,6 +36,7 @@
 #include "DateExtension.h"
 #include "DocumentLoader.h"
 #include "DOMObjectsInclude.h"
+#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
@@ -83,9 +84,40 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     handleFatalErrorInV8();
 }
 
+// Returns the owner frame pointer of a DOM wrapper object. It only works for
+// these DOM objects requiring cross-domain access check.
+static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
+{
+    Frame* target = 0;
+    switch (V8ClassIndex::FromInt(data->Int32Value())) {
+    case V8ClassIndex::DOMWINDOW: {
+        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+        if (window.IsEmpty())
+            return target;
+
+        DOMWindow* targetWindow = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, window);
+        target = targetWindow->frame();
+        break;
+    }
+    case V8ClassIndex::LOCATION: {
+        History* history = V8DOMWrapper::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
+        target = history->frame();
+        break;
+    }
+    case V8ClassIndex::HISTORY: {
+        Location* location = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, host);
+        target = location->frame();
+        break;
+    }
+    default:
+        break;
+    }
+    return target;
+}
+
 static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
 {
-    Frame* target = V8Custom::GetTargetFrame(host, data);
+    Frame* target = getTargetFrame(host, data);
     if (target)
         V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportLater);
 }
@@ -301,7 +333,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
         return result;
 
     // Install a security handler with V8.
-    globalTemplate->SetAccessCheckCallbacks(V8Custom::v8DOMWindowNamedSecurityCheck, V8Custom::v8DOMWindowIndexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
+    globalTemplate->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
     globalTemplate->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
 
     // Used to avoid sleep calls in unload handlers.
@@ -514,6 +546,20 @@ v8::Local<v8::Object> V8DOMWindowShell::createWrapperFromCacheSlowCase(V8ClassIn
     return notHandledByInterceptor();
 }
 
+void V8DOMWindowShell::setLocation(DOMWindow* window, const String& relativeURL)
+{
+    Frame* frame = window->frame();
+    if (!frame)
+        return;
 
+    KURL url = completeURL(relativeURL);
+    if (url.isNull())
+        return;
+
+    if (!shouldAllowNavigation(frame))
+        return;
+
+    navigateIfAllowed(frame, url, false, false);
+}
 
 } // WebCore
