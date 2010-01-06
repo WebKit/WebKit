@@ -1479,11 +1479,6 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
 
 class NetscapePluginWidget : public PluginWidget {
 public:
-    NetscapePluginWidget(WebBaseNetscapePluginView *view)
-        : PluginWidget(view)
-    {
-    }
-    
     virtual void handleEvent(Event*)
     {
         Frame* frame = Frame::frameForWidget(this);
