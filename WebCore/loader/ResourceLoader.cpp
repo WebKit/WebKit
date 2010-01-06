@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,6 +252,16 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long leng
     // Could be an issue with a giant local file.
     if (m_sendResourceLoadCallbacks && m_frame)
         frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(lengthReceived));
+}
+
+void ResourceLoader::didReceiveData(const SharedBuffer& data)
+{
+    const char* segment;
+    unsigned offset = 0;
+    while (unsigned length = data.getSomeData(segment, offset)) {
+        offset += length;
+        didReceiveData(segment, static_cast<int>(length), offset, false);
+    }
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
