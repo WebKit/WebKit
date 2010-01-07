@@ -1,3 +1,22 @@
+2010-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33272
+        'abort' event still fired as a progress event
+
+        rdar://6710625
+        Test media/video-error-abort.html doesn't work
+
+        Test: http/tests/media/video-error-abort.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleEvent): Incorporate code from enqueueEvent.
+        (WebCore::HTMLMediaElement::loadInternal): Fix 'abort' event firing logic missed
+        in https://bugs.webkit.org/show_bug.cgi?id=30513. Change order of initialization 
+        to match spec wording.
+        * html/HTMLMediaElement.h: Remove enqueueEvent prototype.
+
 2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

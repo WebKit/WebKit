@@ -1,0 +1,20 @@
+
+Test before movie is open
+EXPECTED (video.error == 'null') OK
+
+'loadstart' event
+EXPECTED (video.error == 'null') OK
+RUN(video.load())
+
+'abort' event
+EXPECTED (video.error == 'null') OK
+EXPECTED (event.lengthComputable == 'undefined') OK
+
+'loadstart' event
+EXPECTED (video.error == 'null') OK
+
+'canplaythrough' event
+EXPECTED (video.error == 'null') OK
+
+END OF TEST
+

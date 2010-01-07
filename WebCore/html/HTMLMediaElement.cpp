@@ -56,7 +56,6 @@
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
-#include "ProgressEvent.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptEventListener.h"
@@ -300,12 +299,7 @@ void HTMLMediaElement::scheduleNextSourceChild()
 
 void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 {
-    enqueueEvent(Event::create(eventName, false, true));
-}
-
-void HTMLMediaElement::enqueueEvent(RefPtr<Event> event)
-{
-    m_pendingEvents.append(event);
+    m_pendingEvents.append(Event::create(eventName, false, true));
     if (!m_asyncEventTimer.isActive())
         m_asyncEventTimer.startOneShot(0);
 }
@@ -440,38 +434,19 @@ void HTMLMediaElement::prepareForLoad()
 
 void HTMLMediaElement::loadInternal()
 {
-    // 1 - If the load() method for this element is already being invoked, then abort these steps.
+    // If the load() method for this element is already being invoked, then abort these steps.
     if (m_processingLoad)
         return;
     m_processingLoad = true;
     
-    // Steps 2 and 3 were done in prepareForLoad()
-    
-    // 4 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, set
-    // the error attribute to a new MediaError object whose code attribute is set to
-    // MEDIA_ERR_ABORTED, fire a progress event called abort at the media element, in the
-    // context of the fetching process that is in progress for the element.
-    if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE) {
-        m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
+    // Steps 1 and 2 were done in prepareForLoad()
 
-        // fire synchronous 'abort'
-        bool totalKnown = m_player && m_player->totalBytesKnown();
-        unsigned loaded = m_player ? m_player->bytesLoaded() : 0;
-        unsigned total = m_player ? m_player->totalBytes() : 0;
-        dispatchEvent(ProgressEvent::create(eventNames().abortEvent, totalKnown, loaded, total));
-    }
+    // 3 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, queue
+    // a task to fire a simple event named abort at the media element.
+    if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE)
+        scheduleEvent(eventNames().abortEvent);
 
-    // 5
-    m_error = 0;
-    m_autoplaying = true;
-    m_playedTimeRanges = TimeRanges::create();
-    m_lastSeekTime = 0;
-    m_closedCaptionsVisible = false;
-
-    // 6
-    setPlaybackRate(defaultPlaybackRate());
-
-    // 7
+    // 4
     if (m_networkState != NETWORK_EMPTY) {
         m_networkState = NETWORK_EMPTY;
         m_readyState = HAVE_NOTHING;
@@ -482,9 +457,21 @@ void HTMLMediaElement::loadInternal()
             m_playing = false;
             m_player->seek(0);
         }
-        dispatchEvent(Event::create(eventNames().emptiedEvent, false, true));
+        scheduleEvent(eventNames().emptiedEvent);
     }
 
+    // 5 - Set the playbackRate attribute to the value of the defaultPlaybackRate attribute.
+    setPlaybackRate(defaultPlaybackRate());
+
+    // 6 - Set the error attribute to null and the autoplaying flag to true.
+    m_error = 0;
+    m_autoplaying = true;
+
+    m_playedTimeRanges = TimeRanges::create();
+    m_lastSeekTime = 0;
+    m_closedCaptionsVisible = false;
+
+    // 7 - Invoke the media element's resource selection algorithm.
     selectMediaResource();
     m_processingLoad = false;
 }
