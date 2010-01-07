@@ -1,5 +1,13 @@
 2010-01-07  Geoffrey Garen  <ggaren@apple.com>
 
+        Better build fix: use 'this->structure()', since 'structure' is a
+        PassRefPtr, and therefore null.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+
+2010-01-07  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: avoid a name conflict by using the local 'structure' instead
         of the member 'structure()'.
 
