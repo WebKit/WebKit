@@ -35,6 +35,7 @@
     <file>inspector.js</file>
     <file>InspectorBackendStub.js</file>
     <file>InspectorFrontendHostStub.js</file>
+    <file>JavaScriptHighlighterScheme.js</file>
     <file>JavaScriptSourceSyntaxHighlighter.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
@@ -70,6 +71,9 @@
     <file>StylesSidebarPane.js</file>
     <file>SummaryBar.js</file>
     <file>TestController.js</file>
+    <file>TextEditor.js</file>
+    <file>TextEditorHighlighter.js</file>
+    <file>TextEditorModel.js</file>
     <file>TextPrompt.js</file>
     <file>TimelineAgent.js</file>
     <file>TimelineGrid.js</file>

@@ -45,6 +45,7 @@ WebInspector.KeyboardShortcut.Modifiers = {
 
 WebInspector.KeyboardShortcut.KeyCodes = {
     Backspace: 8,
+    Tab: 9,
     Esc: 27,
     Space: 32,
     PageUp: 33,      // also NUM_NORTH_EAST
@@ -56,6 +57,7 @@ WebInspector.KeyboardShortcut.KeyCodes = {
     Right: 39,       // also NUM_EAST
     Down: 40,        // also NUM_SOUTH
     Delete: 46,
+    Zero: 48,
     F1: 112,
     F2: 113,
     F3: 114,
@@ -69,11 +71,13 @@ WebInspector.KeyboardShortcut.KeyCodes = {
     F11: 122,
     F12: 123,
     Semicolon: 186,    // ;
+    Plus: 187,         // +
     Comma: 188,        // ,
+    Minus: 189,        // -
     Period: 190,       // .
     Slash: 191,        // /
     Apostrophe: 192,   // `
-    SingleQuote: 222,  // '
+    SingleQuote: 222   // '
 };
 
 /**

@@ -3758,3 +3758,49 @@ ol.breakpoint-list {
 .webkit-html-js-node, .webkit-html-css-node {
     white-space: pre;
 }
+
+.text-editor {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    -webkit-user-select: text;
+    -webkit-user-modify: read-write-plaintext-only;
+}
+
+.text-editor-canvas {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.text-editor-container {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    overflow: auto;
+}
+
+.text-editor-sheet {
+    opacity: 0;
+}
+
+.text-editor-cursor {
+    -webkit-user-select: none;
+    -webkit-user-modify: none;
+    position: absolute;
+    top:0;
+    left:0;
+    width:1px;
+    height: 14px;
+    z-index: 20;
+    background-color: black;
+    pointer-events: none;
+}

@@ -42856,6 +42856,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\JavaScriptHighlighterScheme.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\JavaScriptSourceSyntaxHighlighter.js"
 					>
 				</File>
@@ -42989,6 +42993,18 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\TestController.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TextEditor.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TextEditorHighlighter.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TextEditorModel.js"
 					>
 				</File>
 				<File
