@@ -142,7 +142,7 @@ void EventSender::leapForward(int ms)
     //qDebug() << "EventSender::leapForward" << ms;
 }
 
-void EventSender::keyDown(const QString& string, const QStringList& modifiers)
+void EventSender::keyDown(const QString& string, const QStringList& modifiers, unsigned int location)
 {
     QString s = string;
     Qt::KeyboardModifiers modifs = 0;
@@ -157,6 +157,8 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers)
         else if (m == "metaKey")
             modifs |= Qt::MetaModifier;
     }
+    if (location == 3)
+        modifs |= Qt::KeypadModifier;
     int code = 0;
     if (string.length() == 1) {
         code = string.unicode()->unicode();

@@ -1,3 +1,12 @@
+2010-01-06  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove fast/events/keydown-numpad-key.html from the Skipped list.
+        https://bugs.webkit.org/show_bug.cgi?id=33250
+
+        * platform/qt/Skipped:
+
 2010-01-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.

@@ -442,7 +442,6 @@ fast/events/drag-in-frames.html
 fast/events/focusingUnloadedFrame.html
 fast/events/js-keyboard-event-creation.html
 fast/events/keydown-1.html
-fast/events/keydown-numpad-keys.html
 fast/events/keypress-insert-tab.html
 fast/events/mouseout-dead-node.html
 fast/events/ondragenter.html
