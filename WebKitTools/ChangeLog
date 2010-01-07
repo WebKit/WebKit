@@ -1,3 +1,16 @@
+2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        Wrong state and TouchLists in TouchEvents
+        https://bugs.webkit.org/show_bug.cgi?id=32878
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::touchStart):
+        (EventSender::touchEnd):
+        (EventSender::clearTouchPoints):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

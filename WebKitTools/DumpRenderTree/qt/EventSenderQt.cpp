@@ -330,7 +330,11 @@ void EventSender::setTouchModifier(const QString &modifier, bool enable)
 void EventSender::touchStart()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    sendTouchEvent(QEvent::TouchBegin);
+    if (!m_touchActive) {
+        sendTouchEvent(QEvent::TouchBegin);
+        m_touchActive = true;
+    } else
+        sendTouchEvent(QEvent::TouchUpdate);
 #endif
 }
 
@@ -345,8 +349,12 @@ void EventSender::touchEnd()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     for (int i = 0; i < m_touchPoints.count(); ++i)
-        m_touchPoints[i].setState(Qt::TouchPointReleased);
+        if (m_touchPoints[i].state() != Qt::TouchPointReleased) {
+            sendTouchEvent(QEvent::TouchUpdate);
+            return;
+        }
     sendTouchEvent(QEvent::TouchEnd);
+    m_touchActive = false;
 #endif
 }
 
@@ -355,6 +363,7 @@ void EventSender::clearTouchPoints()
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     m_touchPoints.clear();
     m_touchModifiers = Qt::KeyboardModifiers();
+    m_touchActive = false;
 #endif
 }
 

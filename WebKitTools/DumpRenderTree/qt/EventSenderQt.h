@@ -86,6 +86,7 @@ private:
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     Qt::KeyboardModifiers m_touchModifiers;
+    bool m_touchActive;
 #endif
 };
 #endif //  EventSenderQt_h

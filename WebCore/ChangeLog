@@ -1,3 +1,25 @@
+2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        Wrong state and TouchLists in TouchEvents
+        https://bugs.webkit.org/show_bug.cgi?id=32878
+
+        Touch events changed to match the API and semantics of iPhone and
+        Android. Each new touch point press dispatches a touchstart event with
+        the pressed touch point(s) in the changedTouches list, and a release
+        dispatches a touchend event with the released touch point(s) in
+        changedTouches. Moved points dispatch a touchmove event, with the moved
+        points in changedTouches. Old behaviour emitted only one touchstart when
+        the first point was pressed and one touchend when the last point was
+        released, and any events in between were touchmoves. New presses or
+        releases could only be detected by comparing the lists touches and
+        changedTouches.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/EventHandler.h:
+
 2010-01-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.

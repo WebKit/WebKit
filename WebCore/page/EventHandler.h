@@ -409,7 +409,6 @@ private:
     RefPtr<Node> m_touchEventTarget;
     IntPoint m_firstTouchScreenPos;
     IntPoint m_firstTouchPagePos;
-    RefPtr<TouchEvent> m_previousTouchEvent;
 #endif
 };
 

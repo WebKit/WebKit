@@ -49,6 +49,8 @@ function singleTouchSequence()
     shouldBe("lastEvent.shiftKey", "false");
     shouldBeEqualToString("lastEvent.touches[0].target.id", "touchtarget");
     verifyTouchPoint("touches", 0, 10, 10, 0);
+    verifyTouchPoint("changedTouches", 0, 10, 10, 0);
+    verifyTouchPoint("targetTouches", 0, 10, 10, 0);
 
     eventSender.updateTouchPoint(0, 20, 15);
     eventSender.setTouchModifier("shift", true);
@@ -65,6 +67,7 @@ function singleTouchSequence()
     eventSender.setTouchModifier("shift", false);
     eventSender.setTouchModifier("alt", false);
 
+    eventSender.releaseTouchPoint(0);
     eventSender.touchEnd();
 
     verifyTouchEvent("touchend", 0, 1, 0);
@@ -77,38 +80,37 @@ function multiTouchSequence()
 {
     debug("multi touch sequence");
 
+    debug("Two touchpoints pressed");
     eventSender.addTouchPoint(10, 10);
-    eventSender.touchStart();
-
-    verifyTouchEvent("touchstart", 1, 1, 1);
-    shouldBeEqualToString("lastEvent.touches[0].target.id", "touchtarget");
-    verifyTouchPoint("touches", 0, 10, 10, 0);
-
     eventSender.addTouchPoint(20, 30);
-    eventSender.touchMove();
-
-    verifyTouchEvent("touchmove", 2, 1, 2);
+    eventSender.touchStart();
+    verifyTouchEvent("touchstart", 2, 2, 2);
     verifyTouchPoint("touches", 0, 10, 10, 0);
     verifyTouchPoint("touches", 1, 20, 30, 1);
-    verifyTouchPoint("changedTouches", 0, 20, 30, 1);
+    verifyTouchPoint("changedTouches", 0, 10, 10, 0);
+    verifyTouchPoint("changedTouches", 1, 20, 30, 1);
+    verifyTouchPoint("targetTouches", 0, 10, 10, 0);
+    verifyTouchPoint("targetTouches", 1, 20, 30, 1);
 
+    debug("First touchpoint moved");
     eventSender.updateTouchPoint(0, 15, 15);
     eventSender.touchMove();
-
     verifyTouchEvent("touchmove", 2, 1, 2);
     verifyTouchPoint("touches", 0, 15, 15, 0);
     verifyTouchPoint("changedTouches", 0, 15, 15, 0);
     verifyTouchPoint("touches", 1, 20, 30, 1);
 
+    debug("First touchpoint is released");
     eventSender.releaseTouchPoint(0);
-    eventSender.touchMove();
-
-    verifyTouchEvent("touchmove", 1, 1, 1);
+    eventSender.touchEnd();
+    verifyTouchEvent("touchend", 1, 1, 1);
     verifyTouchPoint("touches", 0, 20, 30, 1);
     verifyTouchPoint("changedTouches", 0, 15, 15, 0);
+    verifyTouchPoint("targetTouches", 0, 20, 30, 1);
 
+    debug("Last remaining touchpoint is released");
+    eventSender.releaseTouchPoint(0);
     eventSender.touchEnd();
-
     verifyTouchEvent("touchend", 0, 1, 0);
     verifyTouchPoint("changedTouches", 0, 20, 30, 1);
 }
