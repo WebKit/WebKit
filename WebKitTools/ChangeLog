@@ -2,6 +2,17 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Check style before uploading a patch
+        https://bugs.webkit.org/show_bug.cgi?id=33314
+
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/steps/checkstyle.py:
+        * Scripts/webkitpy/steps/options.py:
+
+2010-01-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
         Add prepare and post to webkit-patch main help
         https://bugs.webkit.org/show_bug.cgi?id=33313
 

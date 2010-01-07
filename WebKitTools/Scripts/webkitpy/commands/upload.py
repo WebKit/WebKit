@@ -115,6 +115,7 @@ class Post(AbstractPatchUploadingCommand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
+        steps.CheckStyle,
         steps.ConfirmDiff,
         steps.ObsoletePatches,
         steps.PostDiff,
@@ -150,6 +151,7 @@ class Upload(AbstractPatchUploadingCommand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
+        steps.CheckStyle,
         steps.PromptForBugOrTitle,
         steps.CreateBug,
         steps.PrepareChangeLog,
