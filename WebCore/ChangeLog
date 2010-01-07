@@ -1,3 +1,17 @@
+2010-01-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Account for scale and current context position (as well as page
+        position) in the device context world transform passed to
+        plugins.  This is especially important for print surface DPI.
+        http://bugs.webkit.org/show_bug.cgi?id=32909.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext): Revise
+          world context handling to include scaling and translation
+          already set for the CTM.
+
 2010-01-07  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
