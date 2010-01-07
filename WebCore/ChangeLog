@@ -1,3 +1,12 @@
+2010-01-06  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Adjust incorrect comments after r40534.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markActiveObjectsForContext):
+
 2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed build fix for chromium.
