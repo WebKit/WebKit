@@ -1,3 +1,11 @@
+2010-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: avoid a name conflict by using the local 'structure' instead
+        of the member 'structure()'.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+
 2010-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix.
