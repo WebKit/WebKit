@@ -2,6 +2,16 @@
 
         Reviewed by Simon Fraser.
 
+        Third step of:
+        <rdar://problem/6398111> Integrate hardware layers with out-of-process plug-ins layer hosting mechanism
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:value:]): Add case for WKNVSupportsCompositingCoreAnimationPluginsBool.
+
+2010-01-06  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
         Second step of:
         <rdar://problem/6398111> Integrate hardware layers with out-of-process plug-ins layer hosting mechanism
 

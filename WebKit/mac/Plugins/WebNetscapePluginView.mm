@@ -81,6 +81,7 @@
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
+#define WKNVSupportsCompositingCoreAnimationPluginsBool 74656  /* TRUE if the browser supports hardware compositing of Core Animation plug-ins  */
 
 using namespace WebCore;
 using namespace WebKit;
@@ -2063,6 +2064,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             *(WKNBrowserContainerCheckFuncs **)value = browserContainerCheckFuncs();
             return NPERR_NO_ERROR;
         }
+#if USE(ACCELERATED_COMPOSITING)
+        case WKNVSupportsCompositingCoreAnimationPluginsBool:
+        {
+            *(NPBool *)value = [[[self webView] preferences] acceleratedCompositingEnabled];
+            return NPERR_NO_ERROR;
+        }
+#endif
         default:
             break;
     }
