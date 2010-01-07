@@ -3430,6 +3430,7 @@ http/tests/local/send-dragged-file.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
+http/tests/media/video-error-abort.html
 http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html
 http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
 http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html

@@ -1,3 +1,11 @@
+2010-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
+        Skip LayoutTests/http/tests/media/video-error-abort.html
+
+        * platform/gtk/Skipped:
+
 2010-01-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.
