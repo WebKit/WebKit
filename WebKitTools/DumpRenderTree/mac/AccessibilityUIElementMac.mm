@@ -28,6 +28,7 @@
 #import "AccessibilityUIElement.h"
 
 #import <Foundation/Foundation.h>
+#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebFrame.h>
@@ -759,8 +760,9 @@ static void _accessibilityNotificationCallback(id element, NSString* notificatio
 {
     if (!AXNotificationFunctionCallback)
         return;
-    
-    JSValueRef argument = JSValueMakeString([mainFrame globalContext], JSStringCreateWithCFString((CFStringRef)notification));    
+
+    JSRetainPtr<JSStringRef> jsNotification(Adopt, [notification createJSStringRef]);
+    JSValueRef argument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
     JSObjectCallAsFunction([mainFrame globalContext], AXNotificationFunctionCallback, NULL, 1, &argument, NULL);
 }
 

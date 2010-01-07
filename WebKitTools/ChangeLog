@@ -1,3 +1,13 @@
+2010-01-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Don't leak a JSStringRef within _accessibilityNotificationCallback.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (_accessibilityNotificationCallback): Have a JSRetainPtr adopt the JSStringRef so that it will be cleaned up
+        when it goes out of scope.
+
 2010-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
