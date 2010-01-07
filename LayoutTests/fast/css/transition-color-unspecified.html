@@ -8,7 +8,11 @@
 <script>
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
+
+    document.getElementById("test").addEventListener('webkitTransitionEnd', function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, false);
+
     document.getElementById("test").className = "";
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 100);
 </script>

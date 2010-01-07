@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        fast/css/transition-color-unspecified.html and fast/dom/HTMLObjectElement/object-as-frame.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33270
+
+        These both rely on setTimeouts where they should be using events.
+
+        * fast/css/transition-color-unspecified.html:
+        * fast/dom/HTMLObjectElement/object-as-frame.html:
+
+2010-01-06  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         platform/chromium/fast/dom/interval.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=33274
 

@@ -18,15 +18,24 @@ function runTests()
     shouldBe("window.frames.length", "2");
     shouldBe("window.frames[0].frameElement.name", '"frame"');
     shouldBe("window.frames[1].frameElement.name", '"obj"');
+
+    document.getElementsByName('frame')[0].onload = handleLoad;
+    document.getElementsByName('obj')[0].onload = handleLoad;
+
     debug("Loading '" + updatedFrameURL + "' in iframe...");
     debug("Loading '" + updatedObjectURL + "' in object...");
     open(updatedFrameURL, "frame");
     open(updatedObjectURL, "obj");
-    setTimeout("runMoreTests()", 200);
 }
 
-function runMoreTests()
+var numLoads = 0;
+
+function handleLoad()
 {
+    numLoads++;
+    if (numLoads < 2)
+        return;
+ 
     shouldBe("window.frames[0].location.toString()", '"' + updatedFrameURL + '"');
     shouldBe("window.frames[1].location.toString()", '"' + updatedObjectURL + '"');
     if (window.layoutTestController) {
