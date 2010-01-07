@@ -835,7 +835,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
     v8::Local<v8::Object> instance;
     if (proxy)
         // FIXME: Fix this to work properly with isolated worlds (see above).
-        instance = proxy->frame()->script()->mainWorldWindowShell()->createWrapperFromCache(descriptorType);
+        instance = proxy->windowShell()->createWrapperFromCache(descriptorType);
     else {
         v8::Local<v8::Function> function = getTemplate(descriptorType)->GetFunction();
         instance = SafeAllocation::newInstance(function);
@@ -1237,15 +1237,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document
     // instantiate a document wrapper.  Therefore, we get the proxy before
     // checking if the node already has a wrapper.
     V8Proxy* proxy = V8Proxy::retrieve(document->frame());
-    if (proxy) {
-        // This code looks wacky:
-        // 1) The test for |proxy| above is really a test whether JavaScript
-        //    is enabled in this frame.  I have no idea if that's needed.
-        // 2) Calling initContextIfNeeded here is redundant becase just
-        //    grabbing mainWorldWindowShell() already calls initContextIfNeeded.
-        // FIXME: I bet we can clean this up a bit!
-        proxy->frame()->script()->mainWorldWindowShell()->initContextIfNeeded();
-    }
+    if (proxy)
+        proxy->windowShell()->initContextIfNeeded();
 
     DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
     v8::Handle<v8::Object> wrapper = domNodeMap.get(document);
@@ -1334,10 +1327,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy
     domNodeMap.set(node, v8::Persistent<v8::Object>::New(result));
 
     if (isDocument) {
-        if (proxy) {
-            // FIXME: Don't we need to do this for every world?
-            proxy->frame()->script()->mainWorldWindowShell()->updateDocumentWrapper(result);
-        }
+        if (proxy)
+            proxy->windowShell()->updateDocumentWrapper(result);
 
         if (type == V8ClassIndex::HTMLDOCUMENT) {
             // Create marker object and insert it in two internal fields.

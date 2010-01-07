@@ -46,12 +46,7 @@ class V8DOMWindowShell : public RefCounted<V8DOMWindowShell> {
 public:
     static PassRefPtr<V8DOMWindowShell> create(Frame*);
 
-    virtual ~V8DOMWindowShell();
-
     v8::Handle<v8::Context> context() const { return m_context; }
-
-    // This method is slower than |context()|, but sometimes we need local handles.
-    v8::Local<v8::Context> localHandleForContext() const { return v8::Local<v8::Context>::New(m_context); }
 
     // Update document object of the frame.
     void updateDocument();
@@ -70,6 +65,7 @@ public:
 
     void clearForNavigation();
     void clearForClose();
+
     void destroyGlobal();
 
     static v8::Handle<v8::Value> getHiddenObjectPrototype(v8::Handle<v8::Context>);

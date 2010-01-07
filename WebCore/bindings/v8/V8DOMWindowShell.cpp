@@ -132,12 +132,6 @@ V8DOMWindowShell::V8DOMWindowShell(Frame* frame)
 {
 }
 
-V8DOMWindowShell::~V8DOMWindowShell()
-{
-    clearForClose();
-    destroyGlobal();
-}
-
 bool V8DOMWindowShell::isContextInitialized()
 {
     // m_context, m_global, and m_wrapperBoilerplates should
