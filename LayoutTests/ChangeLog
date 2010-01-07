@@ -1,3 +1,15 @@
+2010-01-06  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        platform/chromium/fast/dom/interval.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33274
+
+        We're seeing the debug bots take >100000 microseconds to stop
+        and Interval.
+
+        * platform/chromium/fast/dom/interval.html:
+
 2010-01-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

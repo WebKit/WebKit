@@ -59,7 +59,8 @@ function test() {
   pause(50);
   interval.stop();
   ms = interval.microseconds();
-  check("stop", ms > 0 && ms < 100000, "[ms: " + ms + "]");
+  // On debug bots we've seen times as high as 250000.
+  check("stop", ms > 0 && ms < 300000, "[ms: " + ms + "]");
 
   // Verify that the timer is really stopped.
   var ms2 = interval.microseconds();
