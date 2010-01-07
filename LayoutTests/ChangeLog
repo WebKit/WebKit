@@ -1,3 +1,16 @@
+2010-01-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Add page zooming support to Qt DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=32898
+
+        Patch by Kim Grönholm  <kim.gronholm@nomovok.com>,
+                 Diego Gonzalez <diego.gonzalez@openbossa.org> and
+                 Afonso Costa <afonso.costa@openbossa.org>
+
+        * platform/qt/Skipped:
+
 2010-01-06  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Treat.

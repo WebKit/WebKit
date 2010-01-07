@@ -40,6 +40,12 @@
 #define KEYCODE_UPARROW     0xf700
 #define KEYCODE_DOWNARROW   0xf701
 
+// Ports like Gtk and Windows expose a different approach for their zooming
+// API if compared to Qt: they have specific methods for zooming in and out,
+// as well as a settable zoom factor, while Qt has only a 'setZoomValue' method.
+// Hence Qt DRT adopts a fixed zoom-factor (1.2) for compatibility.
+#define ZOOM_STEP           1.2
+
 #define DRT_MESSAGE_DONE (QEvent::User + 1)
 
 struct DRTEventQueue {
@@ -376,6 +382,20 @@ void EventSender::sendTouchEvent(QEvent::Type type)
         }
     }
 #endif
+}
+
+void EventSender::zoomPageIn()
+{
+    QWebFrame* frame = m_page->mainFrame();
+    if (frame)
+        frame->setZoomFactor(frame->zoomFactor() * ZOOM_STEP);
+}
+
+void EventSender::zoomPageOut()
+{
+    QWebFrame* frame = m_page->mainFrame();
+    if (frame)
+        frame->setZoomFactor(frame->zoomFactor() / ZOOM_STEP);
 }
 
 QWebFrame* EventSender::frameUnderMouse() const
