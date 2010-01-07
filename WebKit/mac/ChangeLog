@@ -1,5 +1,19 @@
 2010-01-06  Kevin Decker  <kdecker@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Second step of:
+        <rdar://problem/6398111> Integrate hardware layers with out-of-process plug-ins layer hosting mechanism
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.h: Expose the CALayer of the plugin by adding -pluginLayer method.
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginLayer]): Added.
+        * Plugins/WebNetscapePluginView.h: Expose the CALayer of the plugin by adding -pluginLayer method.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView pluginLayer]): Added.
+
+2010-01-06  Kevin Decker  <kdecker@apple.com>
+
         Reviewed by Eric Carlson.
 
         First step toward:

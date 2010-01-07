@@ -26,15 +26,19 @@
 #define PluginWidget_h
 
 #include "Widget.h"
+#include "GraphicsLayer.h"
 
 namespace WebCore {
 
-// FIXME: The Mac plug-in code should inheirt from PluginView. When
-// this happens PluginWidget and PluginView can become one class. 
 class PluginWidget : public Widget {
+    
 public:
     PluginWidget(PlatformWidget widget = 0) : Widget(widget) { }
-
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer() const;
+#endif
+    
+private:
     virtual void invalidateRect(const IntRect&);
     virtual bool isPluginWidget() const { return true; }
 };

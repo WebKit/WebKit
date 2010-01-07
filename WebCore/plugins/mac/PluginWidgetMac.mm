@@ -25,6 +25,11 @@
 #include "config.h"
 #include "PluginWidget.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+@interface NSView (WebKitSecretsWebCoreKnowsAbout)
+- (CALayer *)pluginLayer;
+@end
+#endif
 namespace WebCore {
 
 void PluginWidget::invalidateRect(const IntRect& rect)
@@ -32,4 +37,13 @@ void PluginWidget::invalidateRect(const IntRect& rect)
     [platformWidget() setNeedsDisplayInRect:rect];
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* PluginWidget::platformLayer() const
+{
+    if (![platformWidget() respondsToSelector:@selector(pluginLayer)])
+        return 0;
+    
+    return [platformWidget() pluginLayer];   
+}
+#endif
 } // namespace WebCore
