@@ -5,7 +5,6 @@ RUN(video.currentTime = 0.5)
 
 EVENT(seeked)
 
-EXPECTED (seekedCount == '1') OK
 EXPECTED (video.seeking == 'false') OK
 EXPECTED (video.currentTime == '0.5') OK
 RUN(video.currentTime = 1)
@@ -13,7 +12,6 @@ EXPECTED (video.seeking == 'true') OK
 
 EVENT(seeked)
 
-EXPECTED (seekedCount == '2') OK
 EXPECTED (video.seeking == 'false') OK
 EXPECTED (video.currentTime == '1') OK
 RUN(video.currentTime = 1.5)
@@ -21,7 +19,6 @@ EXPECTED (video.seeking == 'true') OK
 
 EVENT(seeked)
 
-EXPECTED (seekedCount == '3') OK
 EXPECTED (video.seeking == 'false') OK
 EXPECTED (video.currentTime == '1.5') OK
 RUN(video.currentTime = 2)

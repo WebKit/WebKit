@@ -8,39 +8,26 @@
 <script>
 
     var seekedCount = 0;
-    var counter;
 
     function seeked()
     { 
         ++seekedCount; 
         consoleWrite("");
-    }
 
-    function someTimeLater()
-    {
-        testExpected("seekedCount", counter);
         testExpected("video.seeking", false);
-        testExpected("video.currentTime", counter * 0.5);
-        run("video.currentTime = " + (counter + 1) * 0.5);
+        testExpected("video.currentTime", seekedCount * 0.5);
+        run("video.currentTime = " + (seekedCount + 1) * 0.5);
         testExpected("video.seeking", true);
 
-        if (counter == 3)
-        {
-            consoleWrite("");
-            endTest();
-        }
-
-        ++counter;
         consoleWrite("");
+
+        if (seekedCount == 3)
+            endTest();
      }
 
     function canplaythrough() 
     {
         run("video.currentTime = 0.5");
-        counter = 1;
-        setTimeout(someTimeLater, 200) 
-        setTimeout(someTimeLater, 400) 
-        setTimeout(someTimeLater, 600) 
         consoleWrite("");
     }
     
