@@ -126,13 +126,13 @@ namespace JSC {
         
         bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == noOffset; }
 
-        JSCell* specificValue() { return m_specificValueInPrevious; }
         void despecifyDictionaryFunction(const Identifier& propertyName);
+        void disableSpecificFunctionTracking() { m_specificFunctionThrashCount = maxSpecificFunctionThrashCount; }
 
         void setEnumerationCache(JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
         JSPropertyNameIterator* enumerationCache() { return m_enumerationCache.get(); }
         void getEnumerablePropertyNames(PropertyNameArray&);
-
+        
     private:
         Structure(JSValue prototype, const TypeInfo&);
         
@@ -156,6 +156,7 @@ namespace JSC {
         void checkConsistency();
 
         bool despecifyFunction(const Identifier&);
+        void despecifyAllFunctions();
 
         PropertyMapHashTable* copyPropertyTable();
         void materializePropertyMap();
@@ -179,6 +180,8 @@ namespace JSC {
         static const signed char s_maxTransitionLength = 64;
 
         static const signed char noOffset = -1;
+
+        static const unsigned maxSpecificFunctionThrashCount = 3;
 
         TypeInfo m_typeInfo;
 
@@ -211,6 +214,8 @@ namespace JSC {
         unsigned m_attributesInPrevious : 7;
 #endif
         unsigned m_anonymousSlotsInPrevious : 6;
+        unsigned m_specificFunctionThrashCount : 2;
+        // 4 free bits
     };
 
     inline size_t Structure::get(const Identifier& propertyName)

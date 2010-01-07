@@ -1,3 +1,28 @@
+2010-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Safari memory usage skyrockets using new Google AdWords interface
+        https://bugs.webkit.org/show_bug.cgi?id=33343
+
+        The memory use was caused by the global object creating too many structures
+        as it thrashed between different specific functions.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::addAnonymousSlotsTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::despecifyAllFunctions):
+        * runtime/Structure.h:
+        (JSC::Structure::disableSpecificFunctionTracking): Track a thrash count
+        for specific functions. Disable specific function tracking once the
+        thrash count has been hit.
+
 2010-01-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

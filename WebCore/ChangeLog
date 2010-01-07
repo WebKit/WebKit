@@ -1,3 +1,15 @@
+2010-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Safari memory usage skyrockets using new Google AdWords interface
+        https://bugs.webkit.org/show_bug.cgi?id=33343
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase): Disabled specific function
+        tracking for the window object, since there's no way to do direct
+        method calls on the window object; they all go through the window shell.
+
 2010-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker, Darin Adler.
