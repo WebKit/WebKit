@@ -1222,6 +1222,11 @@ sub GenerateImplementationIndexer
     if ($interfaceName eq "HTMLOptionsCollection") {
         $hasGetter = 1;
     }
+    # FIXME: If the parent interface of $dataNode already has
+    # HasIndexGetter, we don't need to handle the getter here.
+    if ($interfaceName eq "WebKitCSSTransformValue") {
+        $hasGetter = 0;
+    }
 
     # FIXME: Investigate and remove this nastinesss. In V8, named property handling and indexer handling are apparently decoupled,
     # which means that object[X] where X is a number doesn't reach named property indexer. So we need to provide
