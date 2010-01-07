@@ -114,6 +114,7 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "StringBuffer.h"
 #include "StyleSheetList.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -323,6 +324,7 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_title("")
+    , m_rawTitle("")
     , m_titleSetExplicitly(false)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
     , m_executeScriptSoonTimer(this, &Document::executeScriptSoonTimerFired)
@@ -1064,8 +1066,67 @@ Element* Document::getElementByAccessKey(const String& key) const
     return m_elementsByAccessKey.get(key.impl());
 }
 
+/*
+ * Performs three operations:
+ *  1. Convert control characters to spaces
+ *  2. Trim leading and trailing spaces
+ *  3. Collapse internal whitespace.
+ */
+static inline String canonicalizedTitle(Document* document, const String& title)
+{
+    const UChar* characters = title.characters();
+    unsigned length = title.length();
+    unsigned i;
+
+    StringBuffer buffer(length);
+    unsigned builderIndex = 0;
+
+    // Skip leading spaces and leading characters that would convert to spaces
+    for (i = 0; i < length; ++i) {
+        UChar c = characters[i];
+        if (!(c <= 0x20 || c == 0x7F))
+            break;
+    }
+
+    if (i == length)
+        return "";
+
+    // Replace control characters with spaces, and backslashes with currency symbols, and collapse whitespace.
+    bool previousCharWasWS = false;
+    for (; i < length; ++i) {
+        UChar c = characters[i];
+        if (c <= 0x20 || c == 0x7F || (WTF::Unicode::category(c) & (WTF::Unicode::Separator_Line | WTF::Unicode::Separator_Paragraph))) {
+            if (previousCharWasWS)
+                continue;
+            buffer[builderIndex++] = ' ';
+            previousCharWasWS = true;
+        } else {
+            buffer[builderIndex++] = c;
+            previousCharWasWS = false;
+        }
+    }
+
+    // Strip trailing spaces
+    while (builderIndex > 0) {
+        --builderIndex;
+        if (buffer[builderIndex] != ' ')
+            break;
+    }
+
+    if (!builderIndex && buffer[builderIndex] == ' ')
+        return "";
+
+    buffer.shrink(builderIndex + 1);
+
+    // Replace the backslashes with currency symbols if the encoding requires it.
+    document->displayBufferModifiedByEncoding(buffer.characters(), buffer.length());
+    
+    return String::adopt(buffer);
+}
+
 void Document::updateTitle()
 {
+    m_title = canonicalizedTitle(this, m_rawTitle);
     if (Frame* f = frame())
         f->loader()->setTitle(m_title);
 }
@@ -1092,10 +1153,10 @@ void Document::setTitle(const String& title, Element* titleElement)
         m_titleElement = titleElement;
     }
 
-    if (m_title == title)
+    if (m_rawTitle == title)
         return;
 
-    m_title = title;
+    m_rawTitle = title;
     updateTitle();
 
     if (m_titleSetExplicitly && m_titleElement && m_titleElement->hasTagName(titleTag))
@@ -1120,8 +1181,8 @@ void Document::removeTitle(Element* titleElement)
             }
     }
 
-    if (!m_titleElement && !m_title.isEmpty()) {
-        m_title = "";
+    if (!m_titleElement && !m_rawTitle.isEmpty()) {
+        m_rawTitle = "";
         updateTitle();
     }
 }

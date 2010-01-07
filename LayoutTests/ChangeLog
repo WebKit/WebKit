@@ -1,3 +1,14 @@
+2010-01-07  Christian Sejersen  <christian.webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        document.title does not replace or remove space characters
+        https://bugs.webkit.org/show_bug.cgi?id=27032
+
+        * fast/dom/Document/document-title-get-expected.txt: Added.
+        * fast/dom/Document/document-title-get.html: Added.
+        * fast/dom/Document/script-tests/document-title-get.js: Added.
+
 2010-01-07  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

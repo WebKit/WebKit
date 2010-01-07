@@ -1,3 +1,32 @@
+2010-01-07  Christian Sejersen  <christian.webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        document.title does not replace or remove space characters
+        https://bugs.webkit.org/show_bug.cgi?id=27032
+
+        Test: fast/dom/Document/document-title-get.html
+
+        * dom/Document.cpp: 
+        (WebCore::Document::Document): 
+        Initialization of m_rawTitle
+        (WebCore::canonicalizedTitle): 
+        Moved from DocumentLoader.cpp with minor edits
+        (WebCore::Document::updateTitle): 
+        Ensures the title is canonicalized
+        (WebCore::Document::setTitle): 
+        Uses m_rawTitle instaed of m_title 
+        (WebCore::Document::removeTitle): 
+        Uses m_rawTitle instead of m_title
+        
+        * dom/Document.h: 
+        Added m_rawTitle that stores the passed in title, m_title now stores the 
+        canonicalized title
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setTitle): 
+        The title passed in is now canonicalized in Document.cpp
+
 2010-01-07  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.
