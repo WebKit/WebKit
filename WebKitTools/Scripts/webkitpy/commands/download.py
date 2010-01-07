@@ -187,6 +187,8 @@ class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     main_steps = [
         steps.ApplyPatchWithLocalCommit,
     ]
+    long_help = """Updates the working copy.
+Downloads and applies the patches, creating local commits if necessary."""
 
 
 class ApplyAttachment(AbstractPatchApplyingCommand, ProcessAttachmentsMixin):
@@ -218,6 +220,14 @@ class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
         steps.ClosePatch,
         steps.CloseBug,
     ]
+    long_help = """Checks to make sure builders are green.
+Updates the working copy.
+Applies the patch.
+Builds.
+Runs the layout tests.
+Commits the patch.
+Clears the flags on the patch.
+Closes the bug if no patches are marked for review."""
 
 
 class LandAttachment(AbstractPatchLandingCommand, ProcessAttachmentsMixin):
@@ -239,6 +249,12 @@ class Rollout(AbstractSequencedCommmand):
     show_in_main_help = True
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
     argument_names = "REVISION REASON"
+    long_help = """Updates the working copy.
+Applies the inverse diff for the provided revision.
+Creates an appropriate rollout ChangeLog, including a trac link and bug link.
+Opens the generated ChangeLogs in $EDITOR.
+Shows the prepared diff for confirmation.
+Commits the revert and updates the bug (including re-opening the bug if necessary)."""
     steps = [
         steps.CleanWorkingDirectory,
         steps.Update,

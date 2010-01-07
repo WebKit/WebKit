@@ -1,3 +1,19 @@
+2010-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add long_help for all common commands.
+        https://bugs.webkit.org/show_bug.cgi?id=33261
+
+        For now these long_helps are pretty basic.
+        These were all written to just explain the steps
+        that each command runs.  This style long_help could
+        be made easier by using:
+        https://bugs.webkit.org/show_bug.cgi?id=33257
+
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/queries.py:
+
 2010-01-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.
