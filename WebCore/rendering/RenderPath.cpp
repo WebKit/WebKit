@@ -214,13 +214,16 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;
-            
+
+    FloatRect boundingBox = repaintRectInLocalCoordinates();
+    if (!boundingBox.intersects(paintInfo.rect))
+        return;
+
     paintInfo.context->save();
     paintInfo.context->concatCTM(localToParentTransform());
 
     SVGResourceFilter* filter = 0;
 
-    FloatRect boundingBox = repaintRectInLocalCoordinates();
     if (paintInfo.phase == PaintPhaseForeground) {
         PaintInfo savedInfo(paintInfo);
 

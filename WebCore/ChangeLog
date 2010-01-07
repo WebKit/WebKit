@@ -1,3 +1,15 @@
+2009-10-18 Patrick Gansterer <paroga@paroga.com>
+
+        Reviewed by Dirk Schulze.
+
+        Improve DOM performance in large SVG files.
+        Check the dirty area before painting a path, which prevents unnecessary
+        clipping and changes to the GraphicsContext.
+        https://bugs.webkit.org/show_bug.cgi?id=30055
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2010-01-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
