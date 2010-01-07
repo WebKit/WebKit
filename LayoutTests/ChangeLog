@@ -1,3 +1,15 @@
+2010-01-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7488126> With text-rendering: optimizelegibility, sometimes lines run too long
+        https://bugs.webkit.org/show_bug.cgi?id=32794
+
+        * platform/mac/fast/text/line-breaking-with-kerning-expected.checksum: Added.
+        * platform/mac/fast/text/line-breaking-with-kerning-expected.png: Added.
+        * platform/mac/fast/text/line-breaking-with-kerning-expected.txt: Added.
+        * platform/mac/fast/text/line-breaking-with-kerning.html: Added.
+
 2010-01-06  Eric Seidel  <eric@webkit.org>
 
         No review.

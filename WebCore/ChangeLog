@@ -1,3 +1,17 @@
+2010-01-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7488126> With text-rendering: optimizelegibility, sometimes lines run too long
+        https://bugs.webkit.org/show_bug.cgi?id=32794
+
+        Test: platform/mac/fast/text/line-breaking-with-kerning.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): When kerning is enabled, include
+        the trailing space when measuring a word, then subtract its width. This
+        accounts for kerning between the last glyph of the word and the following space.
+
 2010-01-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Simon Fraser
