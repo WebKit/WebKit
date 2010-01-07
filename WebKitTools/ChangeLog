@@ -1,3 +1,14 @@
+2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reworked r52853 after r52876 rolled it out.
+        Chomp the pid variable before passing it to kill and read the contents of
+        the pidfile in a platform independent manner.
+        First pach of https://bugs.webkit.org/show_bug.cgi?id=33153.
+
+        * Scripts/run-webkit-tests:
+
 2010-01-07  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Adam Barth.
