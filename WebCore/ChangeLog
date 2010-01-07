@@ -1,5 +1,11 @@
 2010-01-07  Dan Bernstein  <mitz@apple.com>
 
+        Build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Made TypesettingFeatures.h private.
+
+2010-01-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         Added Font::typesettingFeatures() and deployed it

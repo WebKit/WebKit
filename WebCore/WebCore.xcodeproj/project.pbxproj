@@ -697,7 +697,7 @@
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
 		37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */; };
-		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; };
+		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
