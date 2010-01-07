@@ -147,6 +147,7 @@ my $testResultsDirectory = catfile(File::Spec->tmpdir(), "layout-test-results");
 my $layoutTestsSymLink = catfile(File::Spec->tmpdir(), "LayoutTests");
 my $httpdPidDir = catfile(File::Spec->tmpdir(), "WebKit");
 my $httpdPidFile = catfile($httpdPidDir, "httpd.pid");
+my $httpdPid;
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
 # DumpRenderTree has an internal timeout of 15 seconds, so this must be > 15.
@@ -1425,7 +1426,10 @@ sub openHTTPDIfNeeded()
     }
     
     die "Timed out waiting for httpd to start" unless $retryCount;
-    
+    open (PIDFILE, $httpdPidFile) || die "Cannot open HTTPD pid file.";
+    $httpdPid = <PIDFILE>;
+    chomp $httpdPid if $httpdPid;
+    close PIDFILE;
     $isHttpdOpen = 1;
 }
 
@@ -1436,10 +1440,6 @@ sub closeHTTPD()
     close HTTPDIN;
     close HTTPDOUT;
 
-    open (PIDFILE, $httpdPidFile);
-    my $httpdPid = <PIDFILE>;
-    chomp $httpdPid;
-    close PIDFILE;
     if ($httpdPid) {
         kill 15, $httpdPid;
         my $retryCount = 20;

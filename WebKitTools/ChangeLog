@@ -1,3 +1,12 @@
+2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Store HTTPD PID in a variable to fix warnings if for some reason the pidfile gets deleted before httpd terminates.
+        This should fix the occasional warnings for uninitialized values on the Mac bots.
+
+        * Scripts/run-webkit-tests:
+
 2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.
