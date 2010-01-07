@@ -58,7 +58,11 @@ public:
     void setNetworkStateChangedFunction(void (*)());
     
     bool onLine() const { return m_isOnLine; }
-    
+
+#if (PLATFORM(QT) && ENABLE(QT_BEARER))
+    void setNetworkAccessAllowed(bool);
+#endif
+
 private:    
     bool m_isOnLine;
     void (*m_networkStateChangedFunction)();

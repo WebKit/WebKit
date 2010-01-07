@@ -37,10 +37,12 @@ public:
     ~NetworkStateNotifierPrivate();
 public slots:
     void onlineStateChanged(bool);
+    void networkAccessPermissionChanged(bool);
 
 public:
     QtMobility::QNetworkConfigurationManager* m_configurationManager;
     bool m_online;
+    bool m_networkAccessAllowed;
     NetworkStateNotifier* m_notifier;
 };
 
