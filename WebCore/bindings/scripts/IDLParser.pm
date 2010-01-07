@@ -158,6 +158,7 @@ sub parseExtendedAttributes
         # Attributes with no value are set to be true
         $value = 1 unless defined $value;
         $attrs{$name} = $value;
+        die("Invalid extended attribute name: '$name'\n") if $name =~ /\s/;
     }
 
     return \%attrs;

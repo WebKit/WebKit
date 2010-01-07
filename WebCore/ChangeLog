@@ -1,5 +1,20 @@
 2010-01-07  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Some IDL files lack "," separators for extended attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=33190
+
+        To find such mistakes, IDLParser.pm rejects whitespace characters in
+        extended attribute names.
+
+        * bindings/scripts/IDLParser.pm:
+          parseExtendedAttributes rejects whitespace in a name.
+        * css/WebKitCSSTransformValue.idl: Add missing ",".
+        * dom/EventTarget.idl: ditto.
+
+2010-01-07  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Adam Barth.
 
         Fix an issue that CodeGeneratorV8.pm doesnt handle HasIndexGetter of

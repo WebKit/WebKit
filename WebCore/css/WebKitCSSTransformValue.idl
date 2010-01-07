@@ -29,7 +29,7 @@
 module css {
 
     interface [
-            HasIndexGetter
+            HasIndexGetter,
             InterfaceUUID=303fe632-5dcf-4472-b977-33a5481e1d12,
             ImplementationUUID=eb49e5c6-6075-45b8-b5c4-7e775c01e7c4
     ] WebKitCSSTransformValue : CSSValueList {
