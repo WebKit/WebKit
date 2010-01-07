@@ -2882,7 +2882,7 @@ fast/repaint/shadow-multiple-strict-horizontal.html
 fast/repaint/shadow-multiple-strict-vertical.html
 fast/repaint/shadow-multiple-vertical.html
 fast/repaint/static-to-positioned.html
-fast/repaint/subtree-layoutstate-transform.htm
+fast/repaint/subtree-layoutstate-transform.html
 fast/repaint/subtree-root-clip-2.html
 fast/repaint/subtree-root-clip-3.html
 fast/repaint/subtree-root-clip.html

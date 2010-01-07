@@ -1,3 +1,9 @@
+2010-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix.
+
+        * platform/gtk/Skipped: missing "l" suffix added to fast/repaint/subtree-layoutstate-transform.html
+
 2010-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.
