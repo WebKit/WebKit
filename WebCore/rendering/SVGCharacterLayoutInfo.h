@@ -298,8 +298,10 @@ struct SVGTextChunkWalkerBase {
     virtual void start(InlineBox*) = 0;
     virtual void end(InlineBox*) = 0;
     
+    virtual bool setupBackground(InlineBox*) = 0;
     virtual bool setupFill(InlineBox*) = 0;
     virtual bool setupStroke(InlineBox*) = 0;
+    virtual bool setupForeground(InlineBox*) = 0;
 };
 
 template<typename CallbackClass>
@@ -315,21 +317,27 @@ public:
     typedef void (CallbackClass::*SVGTextChunkStartCallback)(InlineBox* box);
     typedef void (CallbackClass::*SVGTextChunkEndCallback)(InlineBox* box);
 
+    typedef bool (CallbackClass::*SVGTextChunkSetupBackgroundCallback)(InlineBox* box);
     typedef bool (CallbackClass::*SVGTextChunkSetupFillCallback)(InlineBox* box);
     typedef bool (CallbackClass::*SVGTextChunkSetupStrokeCallback)(InlineBox* box);
+    typedef bool (CallbackClass::*SVGTextChunkSetupForegroundCallback)(InlineBox* box);
 
     SVGTextChunkWalker(CallbackClass* object,
                        SVGTextChunkWalkerCallback walker,
                        SVGTextChunkStartCallback start = 0,
                        SVGTextChunkEndCallback end = 0,
+                       SVGTextChunkSetupBackgroundCallback background = 0,
                        SVGTextChunkSetupFillCallback fill = 0,
-                       SVGTextChunkSetupStrokeCallback stroke = 0)
+                       SVGTextChunkSetupStrokeCallback stroke = 0,
+                       SVGTextChunkSetupForegroundCallback foreground = 0)
         : m_object(object)
         , m_walkerCallback(walker)
         , m_startCallback(start)
         , m_endCallback(end)
+        , m_setupBackgroundCallback(background)
         , m_setupFillCallback(fill)
         , m_setupStrokeCallback(stroke)
+        , m_setupForegroundCallback(foreground)
     {
         ASSERT(object);
         ASSERT(walker);
@@ -358,6 +366,15 @@ public:
             ASSERT_NOT_REACHED();
     }
 
+    virtual bool setupBackground(InlineBox* box)
+    {
+        if (m_setupBackgroundCallback)
+            return (*m_object.*m_setupBackgroundCallback)(box);
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     virtual bool setupFill(InlineBox* box)
     {
         if (m_setupFillCallback)
@@ -376,13 +393,24 @@ public:
         return false;
     }
 
+    virtual bool setupForeground(InlineBox* box)
+    {
+        if (m_setupForegroundCallback)
+            return (*m_object.*m_setupForegroundCallback)(box);
+
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
 private:
     CallbackClass* m_object;
     SVGTextChunkWalkerCallback m_walkerCallback;
     SVGTextChunkStartCallback m_startCallback;
     SVGTextChunkEndCallback m_endCallback;
+    SVGTextChunkSetupBackgroundCallback m_setupBackgroundCallback;
     SVGTextChunkSetupFillCallback m_setupFillCallback;
     SVGTextChunkSetupStrokeCallback m_setupStrokeCallback;
+    SVGTextChunkSetupForegroundCallback m_setupForegroundCallback;
 };
 
 struct SVGTextChunkLayoutInfo {

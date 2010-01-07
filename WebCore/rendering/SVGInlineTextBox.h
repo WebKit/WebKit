@@ -32,6 +32,20 @@ namespace WebCore {
     struct SVGChar;
     struct SVGTextDecorationInfo;
 
+    enum SVGTextPaintSubphase {
+        SVGTextPaintSubphaseBackground,
+        SVGTextPaintSubphaseGlyphFill,
+        SVGTextPaintSubphaseGlyphStroke,
+        SVGTextPaintSubphaseForeground
+    };
+
+    struct SVGTextPaintInfo {
+        SVGTextPaintInfo() : activePaintServer(0), subphase(SVGTextPaintSubphaseBackground) {}
+
+        SVGPaintServer* activePaintServer;
+        SVGTextPaintSubphase subphase;
+    };
+
     class SVGInlineTextBox : public InlineTextBox {
     public:
         SVGInlineTextBox(RenderObject* obj);
@@ -49,7 +63,7 @@ namespace WebCore {
         virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
 
         // SVGs custom paint text method
-        void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length, SVGPaintServer*);
+        void paintCharacters(RenderObject::PaintInfo&, int tx, int ty, const SVGChar&, const UChar* chars, int length, SVGTextPaintInfo&);
 
         // SVGs custom paint selection method
         void paintSelection(int boxStartOffset, const SVGChar&, const UChar*, int length, GraphicsContext*, RenderStyle*, const Font&);

@@ -1,3 +1,33 @@
+2010-01-06  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG background color on selected text goes wrong when text has
+        gradient stroke.
+        https://bugs.webkit.org/show_bug.cgi?id=33069
+
+        Introduced SVGTextPaintSubphase like as PaintPhase on html painting,
+        and paint background and foreground in separate subphase.
+
+        * svg/text/selection-background-color.xhtml: Added.        
+        * platform/mac/svg/text/selection-background-color-expected.checksum: Added.
+        * platform/mac/svg/text/selection-background-color-expected.png: Added.
+        * platform/mac/svg/text/selection-background-color-expected.txt: Added.
+        
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * platform/mac/svg/batik/text/textDecoration2-expected.checksum:
+        * platform/mac/svg/batik/text/textDecoration2-expected.png:
+        * platform/mac/svg/text/text-deco-01-b-expected.checksum:
+        * platform/mac/svg/text/text-deco-01-b-expected.png:
+        * platform/mac/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/mac/svg/text/text-spacing-01-b-expected.png:
+        * platform/mac/svg/text/text-text-03-b-expected.checksum:
+        * platform/mac/svg/text/text-text-03-b-expected.png:
+        * platform/mac/svg/text/text-text-08-b-expected.checksum:
+        * platform/mac/svg/text/text-text-08-b-expected.png:
+        Re-baselined due to painting algorithm change.
+
 2010-01-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.

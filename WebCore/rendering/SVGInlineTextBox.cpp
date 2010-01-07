@@ -324,7 +324,7 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
     return enclosingIntRect(walkerCallback.selectionRect());
 }
 
-void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int tx, int ty, const SVGChar& svgChar, const UChar* chars, int length, SVGPaintServer* activePaintServer)
+void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int tx, int ty, const SVGChar& svgChar, const UChar* chars, int length, SVGTextPaintInfo& textPaintInfo)
 {
     if (renderer()->style()->visibility() != VISIBLE || paintInfo.phase == PaintPhaseOutline)
         return;
@@ -356,7 +356,7 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
 
     // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
     // and marked text.
-    if (paintInfo.phase != PaintPhaseSelection && !isPrinting) {
+    if (paintInfo.phase != PaintPhaseSelection && !isPrinting && textPaintInfo.subphase == SVGTextPaintSubphaseBackground) {
 #if PLATFORM(MAC)
         // Custom highlighters go behind everything else.
         if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
@@ -376,29 +376,35 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
         }
     }
 
-    // Set a text shadow if we have one.
-    // FIXME: Support multiple shadow effects.  Need more from the CG API before
-    // we can do this.
-    bool setShadow = false;
-    if (styleToUse->textShadow()) {
-        paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
-                                     styleToUse->textShadow()->blur, styleToUse->textShadow()->color,
-                                     styleToUse->colorSpace());
-        setShadow = true;
-    }
+    if  (textPaintInfo.subphase == SVGTextPaintSubphaseGlyphFill || textPaintInfo.subphase == SVGTextPaintSubphaseGlyphStroke) {
+        // Set a text shadow if we have one.
+        // FIXME: Support multiple shadow effects.  Need more from the CG API before
+        // we can do this.
+        bool setShadow = false;
+        if (styleToUse->textShadow()) {
+            paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
+                                         styleToUse->textShadow()->blur, styleToUse->textShadow()->color,
+                                         styleToUse->colorSpace());
+            setShadow = true;
+        }
 
-    IntPoint origin((int) svgChar.x, (int) svgChar.y);
-    TextRun run = svgTextRunForInlineTextBox(chars, length, styleToUse, this, svgChar.x);
+        IntPoint origin((int) svgChar.x, (int) svgChar.y);
+        TextRun run = svgTextRunForInlineTextBox(chars, length, styleToUse, this, svgChar.x);
 
 #if ENABLE(SVG_FONTS)
-    // SVG Fonts need access to the paint server used to draw the current text chunk.
-    // They need to be able to call renderPath() on a SVGPaintServer object.
-    run.setActivePaintServer(activePaintServer);
+        // SVG Fonts need access to the paint server used to draw the current text chunk.
+        // They need to be able to call renderPath() on a SVGPaintServer object.
+        ASSERT(textPaintInfo.activePaintServer);
+        run.setActivePaintServer(textPaintInfo.activePaintServer);
 #endif
 
-    paintInfo.context->drawText(font, run, origin);
+        paintInfo.context->drawText(font, run, origin);
 
-    if (paintInfo.phase != PaintPhaseSelection) {
+        if (setShadow)
+            paintInfo.context->clearShadow();
+    }
+
+    if (paintInfo.phase != PaintPhaseSelection && textPaintInfo.subphase == SVGTextPaintSubphaseForeground) {
         paintDocumentMarkers(paintInfo.context, tx, ty, styleToUse, font, false);
 
         if (useCustomUnderlines) {
@@ -427,9 +433,6 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
         }
         
     }
-
-    if (setShadow)
-        paintInfo.context->clearShadow();
 
     if (!ctm.isIdentity())
         paintInfo.context->concatCTM(ctm.inverse());

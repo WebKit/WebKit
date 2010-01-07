@@ -1,3 +1,41 @@
+2010-01-06  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG background color on selected text goes wrong when text has
+        gradient stroke.
+        https://bugs.webkit.org/show_bug.cgi?id=33069
+
+        Introduced SVGTextPaintSubphase like as PaintPhase on html painting,
+        and paint background and foreground in separate subphase.
+        
+        Test: svg/text/selection-background-color.xhtml
+        
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkWalker::SVGTextChunkWalker):
+        Added m_setupBackgroundCallback, m_setupForegroundCallback
+        (WebCore::SVGTextChunkWalker::setupBackground):
+        (WebCore::SVGTextChunkWalker::setupForeground):
+        Added.
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        pass SVGTextPaintInfo instead of SVGPaintServer
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGTextPaintSubphase):
+        (WebCore::SVGTextPaintInfo::SVGTextPaintInfo):
+        Added.
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::walkTextChunks):
+        Invoke setupBackground() and setupForeground()
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupBackgroundCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupForegroundCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::activePaintServer):        
+        Added.
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupFillCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupStrokeCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::SVGRootInlineBox::paint):
+        
 2010-01-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.
