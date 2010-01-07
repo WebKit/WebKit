@@ -119,7 +119,7 @@ public:
             m_currentBufferSize = m_readOffset;
             png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment)), segmentLength);
             if ((sizeOnly && decoder->isSizeAvailable()) || m_hasFinishedDecoding)
-                break;
+                return;
         }
         if (!m_hasFinishedDecoding && decoder->isAllDataReceived())
             decoder->pngComplete();
