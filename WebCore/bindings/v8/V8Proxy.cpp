@@ -830,12 +830,8 @@ void V8Proxy::registerExtension(v8::Extension* extension, int extensionGroup)
 bool V8Proxy::setContextDebugId(int debugId)
 {
     ASSERT(debugId > 0);
-<<<<<<< HEAD
     v8::HandleScope scope;
-    v8::Local<v8::Context> context = m_frame->script()->mainWorldWindowShell()->localHandleForContext();
-=======
     v8::Handle<v8::Context> context = windowShell()->context();
->>>>>>> 99d3c27... 2010-01-05  Adam Barth  <abarth@webkit.org>
     if (context.IsEmpty())
         return false;
     if (!context->GetData()->IsUndefined())
