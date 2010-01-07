@@ -55,6 +55,13 @@ bool V8WorkerContext::WebkitNotificationsEnabled()
 }
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+bool V8WorkerContext::WebSocketEnabled()
+{
+    return WebSocket::isAvailable();
+}
+#endif
+
 v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singleShot)
 {
     WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());

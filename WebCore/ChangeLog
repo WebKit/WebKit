@@ -1,5 +1,13 @@
 2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed build fix for chromium.
+        Add "bool V8WorkerContext::WebSocketEnabled()"
+
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::WebSocketEnabled):
+
+2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewed build fix.
         remove wrong assertion
 
