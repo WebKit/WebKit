@@ -1,3 +1,16 @@
+2010-01-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add Chromium bots to the list of "core builders" (builders which stop the commit-queue when they turn red)
+        https://bugs.webkit.org/show_bug.cgi?id=33290
+
+        Add the Chromium builders to our list of core builders and test that our regexps work.
+        I also updated our regexp testing to make sure we cover all known builders at build.webkit.org.
+
+        * Scripts/webkitpy/buildbot.py:
+        * Scripts/webkitpy/buildbot_unittest.py:
+
 2010-01-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

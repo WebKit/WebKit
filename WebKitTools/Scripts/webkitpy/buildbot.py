@@ -44,9 +44,10 @@ class BuildBot:
         self.buildbot_host = host
         self.buildbot_server_url = "http://%s/" % self.buildbot_host
         
-        # If any of the Leopard build/test bots or the Windows builders are red we should not be landing patches.
-        # Other builders should be added to this list once they're known to be stable.
-        self.core_builder_names_regexps = [ 'Leopard', "Windows.*Build" ]
+        # If any Leopard builder/tester, Windows builder or Chromium builder is red we should not be landing patches.
+        # Other builders should be added to this list once they are known to be reliable.
+        # See https://bugs.webkit.org/show_bug.cgi?id=33296 and related bugs.
+        self.core_builder_names_regexps = [ "Leopard", "Windows.*Build", "Chromium" ]
 
     # If WebKit's buildbot has an XMLRPC interface we could use, we could do something more sophisticated here.
     # For now we just parse out the basics, enough to support basic questions like "is the tree green?"

@@ -110,18 +110,39 @@ class BuildBotTest(unittest.TestCase):
     def test_builder_name_regexps(self):
         buildbot = BuildBot()
 
+        # For complete testing, this list should match the list of builders at build.webkit.org:
         example_builders = [
-            { 'name': u'Leopard Debug (Build)', },
-            { 'name': u'Leopard Debug (Tests)', },
+            { 'name': u'Tiger Intel Release', },
+            { 'name': u'Leopard Intel Release (Build)', },
+            { 'name': u'Leopard Intel Release (Tests)', },
+            { 'name': u'Leopard Intel Debug (Build)', },
+            { 'name': u'Leopard Intel Debug (Tests)', },
+            { 'name': u'SnowLeopard Intel Release (Build)', },
+            { 'name': u'SnowLeopard Intel Release (Tests)', },
+            { 'name': u'SnowLeopard Intel Leaks', },
             { 'name': u'Windows Release (Build)', },
+            { 'name': u'Windows Release (Tests)', },
+            { 'name': u'Windows Debug (Build)', },
             { 'name': u'Windows Debug (Tests)', },
             { 'name': u'Qt Linux Release', },
+            { 'name': u'Gtk Linux Release', },
+            { 'name': u'Gtk Linux 32-bit Debug', },
+            { 'name': u'Gtk Linux 64-bit Debug', },
+            { 'name': u'Chromium Linux Release', },
+            { 'name': u'Chromium Mac Release', },
+            { 'name': u'Chromium Win Release', },
         ]
-        name_regexps = [ 'Leopard', "Windows.*Build" ]
+        name_regexps = [ "Leopard", "Windows.*Build", "Chromium" ]
         expected_builders = [
-            { 'name': u'Leopard Debug (Build)', },
-            { 'name': u'Leopard Debug (Tests)', },
+            { 'name': u'Leopard Intel Release (Build)', },
+            { 'name': u'Leopard Intel Release (Tests)', },
+            { 'name': u'Leopard Intel Debug (Build)', },
+            { 'name': u'Leopard Intel Debug (Tests)', },
             { 'name': u'Windows Release (Build)', },
+            { 'name': u'Windows Debug (Build)', },
+            { 'name': u'Chromium Linux Release', },
+            { 'name': u'Chromium Mac Release', },
+            { 'name': u'Chromium Win Release', },
         ]
 
         # This test should probably be updated if the default regexp list changes
