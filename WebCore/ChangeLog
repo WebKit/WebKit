@@ -1,3 +1,14 @@
+2010-01-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix linkage against Qt mobility API bearer management module
+
+        Use the documented .pro file syntax to link against the correct
+        library and (more importantly) get the include paths correct.
+
+        * WebCore.pro:
+
 2010-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Maciej Stachowiak.
