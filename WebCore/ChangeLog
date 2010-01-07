@@ -1,3 +1,14 @@
+2010-01-07  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Do not return strings whose handles are in near death state (that means
+        they might be GCed) or just empty.
+        https://bugs.webkit.org/show_bug.cgi?id=31180
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8ExternalString):
+
 2010-01-06  MORITA Hajime  <morrita@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
