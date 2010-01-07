@@ -1,3 +1,11 @@
+2010-01-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] The library version number of the first package release is 4.7.0.
+
+        * WebCore.pro:
+
 2010-01-07  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

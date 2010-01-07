@@ -31,6 +31,7 @@ CONFIG(standalone_package) {
     GENERATED_SOURCES_DIR = $$PWD/generated
 
     CONFIG(QTDIR_build):include($$QT_SOURCE_TREE/src/qbase.pri)
+    else: VERSION = 4.7.0
 
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
