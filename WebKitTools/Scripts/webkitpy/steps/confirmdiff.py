@@ -44,4 +44,4 @@ class ConfirmDiff(AbstractStep):
         diff = self.cached_lookup(state, "diff")
         self._tool.user.page(diff)
         if not self._tool.user.confirm("Was that diff correct?"):
-            error("User declined to continue.")
+            exit(1)
