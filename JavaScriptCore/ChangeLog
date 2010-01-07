@@ -2,6 +2,19 @@
 
         Reviewed by Holger Freyther.
 
+        [Mac] Build fix when FAST_MALLOC_MATCH_VALIDATION=1
+        https://bugs.webkit.org/show_bug.cgi?id=33312
+
+        Using of operator += cause compile error on Mac, so it is changed to
+        "= static_cast<AllocAlignmentInteger*>(old_ptr) + 1".
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::realloc):
+
+2010-01-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         [Qt] Build fix when FAST_MALLOC_MATCH_VALIDATION=1
         https://bugs.webkit.org/show_bug.cgi?id=33312
 
