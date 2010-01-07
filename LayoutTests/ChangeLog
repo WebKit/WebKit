@@ -1,3 +1,13 @@
+2010-01-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: contentEditable DIVs are not AX accessible
+        https://bugs.webkit.org/show_bug.cgi?id=33325
+
+        * accessibility/contenteditable-hidden-div-expected.txt: Added.
+        * accessibility/contenteditable-hidden-div.html: Added.
+
 2010-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.

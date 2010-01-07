@@ -1524,6 +1524,16 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (node && node->hasTagName(labelTag))
         return false;
     
+    // Anything that is content editable should not be ignored.
+    // However, one cannot just call node->isContentEditable() since that will ask if its parents
+    // are also editable. Only the top level content editable region should be exposed.
+    if (node && node->isElementNode()) {
+        Element* element = static_cast<Element*>(node);
+        const AtomicString& contentEditable = element->getAttribute(contenteditableAttr);
+        if (equalIgnoringCase(contentEditable, "true"))
+            return false;
+    }
+    
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
         return !toRenderBlock(m_renderer)->firstLineBox() && !mouseButtonListener();
     
@@ -2791,10 +2801,9 @@ bool AccessibilityRenderObject::canSetValueAttribute() const
     if (equalIgnoringCase(getAttribute(aria_readonlyAttr).string(), "true"))
         return false;
 
-    if (isWebArea() || isTextControl()) 
-        return !isReadOnly();
-
-    return isProgressIndicator() || isSlider();
+    // Any node could be contenteditable, so isReadOnly should be relied upon
+    // for this information for all elements.
+    return isProgressIndicator() || isSlider() || !isReadOnly();
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const
