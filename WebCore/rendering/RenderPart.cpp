@@ -31,6 +31,7 @@ namespace WebCore {
 
 RenderPart::RenderPart(Element* node)
     : RenderWidget(node)
+    , m_hasFallbackContent(false)
 {
     // init RenderObject attributes
     setInline(false);

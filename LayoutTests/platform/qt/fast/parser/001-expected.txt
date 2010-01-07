@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 49x19
           text run at (0,0) width 49: "Pre text"
           text run at (49,0) width 0: " "
-        RenderPartObject {OBJECT} at (0,19) size 300x300 [bgcolor=#008000]
+        RenderEmbeddedObject {OBJECT} at (0,19) size 300x300 [bgcolor=#008000]
         RenderText {#text} at (300,305) size 300x38
           text run at (300,305) width 0: " "
           text run at (0,324) width 79: "Also pre text"

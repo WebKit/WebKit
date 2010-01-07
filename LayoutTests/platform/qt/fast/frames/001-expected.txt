@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 84x84
       RenderText {#text} at (170,175) size 4x19
         text run at (170,175) width 4: " "
-      RenderPartObject {OBJECT} at (174,19) size 170x170 [border: (10px solid #FF0000)]
+      RenderEmbeddedObject {OBJECT} at (174,19) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
           RenderView at (0,0) size 100x100
         layer at (0,0) size 100x100
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 84x84
       RenderText {#text} at (344,175) size 4x19
         text run at (344,175) width 4: " "
-      RenderPartObject {OBJECT} at (348,19) size 170x170 [border: (10px solid #FF0000)]
+      RenderEmbeddedObject {OBJECT} at (348,19) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
           RenderView at (0,0) size 100x100
         layer at (0,0) size 100x100

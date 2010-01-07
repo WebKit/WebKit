@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (623,154) size 0x0
         RenderText {#text} at (163,294) size 158x18
           text run at (163,294) width 158: "This should be centered. "
-        RenderPartObject {OBJECT} at (321,158) size 300x150
+        RenderEmbeddedObject {OBJECT} at (321,158) size 300x150
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150

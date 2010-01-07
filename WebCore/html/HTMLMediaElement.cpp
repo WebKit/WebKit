@@ -239,7 +239,7 @@ bool HTMLMediaElement::rendererIsNeeded(RenderStyle* style)
 RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    return new (arena) RenderPartObject(this);
+    return new (arena) RenderEmbeddedObject(this);
 #else
     return new (arena) RenderMedia(this);
 #endif
@@ -1765,7 +1765,7 @@ void HTMLMediaElement::finishParsingChildren()
     
     document()->updateStyleIfNeeded();
     if (m_needWidgetUpdate && renderer())
-        toRenderPartObject(renderer())->updateWidget(true);
+        toRenderEmbeddedObject(renderer())->updateWidget(true);
 }
 
 #endif

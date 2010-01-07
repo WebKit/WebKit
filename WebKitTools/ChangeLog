@@ -1,3 +1,11 @@
+2010-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add proposed rename of HTMLPlugInImageElement to HTMLEmbeddedObjectElement.
+
+        * Scripts/do-webcore-rename:
+
 2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x157
         RenderText {#text} at (0,138) size 32x19
           text run at (0,138) width 32: "Hello"
-        RenderPartObject {OBJECT} at (32,0) size 302x152 [border: (1px solid #AAAAAA)]
+        RenderEmbeddedObject {OBJECT} at (32,0) size 302x152 [border: (1px solid #AAAAAA)]
         RenderText {#text} at (334,138) size 45x19
           text run at (334,138) width 45: " World!"
 caret: position 1 of child 1 {OBJECT} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

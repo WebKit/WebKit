@@ -4,7 +4,7 @@ layer at (0,0) size 800x271
   RenderBlock {HTML} at (0,0) size 800x271
     RenderBody {BODY} at (8,8) size 784x255
       RenderBlock (anonymous) at (0,0) size 784x158
-        RenderPartObject {OBJECT} at (0,0) size 249x154
+        RenderEmbeddedObject {OBJECT} at (0,0) size 249x154
         RenderText {#text} at (249,140) size 4x18
           text run at (249,140) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

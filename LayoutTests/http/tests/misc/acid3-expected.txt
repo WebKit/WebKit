@@ -226,7 +226,7 @@ layer at (639,17) size 20x20
     RenderText at (0,0) size 20x20
       text run at (0,0) width 20: "X"
 layer at (130,84) size 300x150
-  RenderPartObject {OBJECT} at (130,84) size 300x150
+  RenderEmbeddedObject {OBJECT} at (130,84) size 300x150
     layer at (0,0) size 300x150
       RenderView at (0,0) size 300x150
     layer at (0,0) size 300x16

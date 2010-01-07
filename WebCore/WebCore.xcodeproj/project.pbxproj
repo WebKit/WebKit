@@ -181,6 +181,8 @@
 		0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */; };
 		0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */; };
 		0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */; };
+		0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */; };
+		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
 		0F6ECD460F252F3700BDE271 /* CSSPropertyLonghand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */; };
 		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5396,6 +5398,8 @@
 		0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerCompositor.cpp; sourceTree = "<group>"; };
 		0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerBacking.h; sourceTree = "<group>"; };
 		0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerBacking.cpp; sourceTree = "<group>"; };
+		0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderEmbeddedObject.cpp; sourceTree = "<group>"; };
+		0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderEmbeddedObject.h; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
 		0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyLonghand.cpp; sourceTree = "<group>"; };
 		0F9C6F4B1073EF0400DED9BF /* WebCore.3DRendering.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.3DRendering.exp; sourceTree = "<group>"; };
@@ -15505,6 +15509,8 @@
 				A871DECD0A1530C700B12A68 /* RenderPartObject.h */,
 				853CA9EE0AEEC657002372DC /* RenderPath.cpp */,
 				853CA9EF0AEEC657002372DC /* RenderPath.h */,
+				0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */,
+				0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -18313,6 +18319,7 @@
 				5112247610CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h in Headers */,
 				5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */,
 				37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */,
+				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20473,6 +20480,7 @@
 				0AFDAC3B10F5448300E1F3D2 /* PluginWidgetMac.mm in Sources */,
 				5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */,
 				5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */,
+				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

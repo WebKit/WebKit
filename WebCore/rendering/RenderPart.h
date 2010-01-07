@@ -27,6 +27,10 @@
 
 namespace WebCore {
 
+// Renderer for frames via RenderPartObject, and plug-ins via RenderEmbeddedObject.
+
+// FIXME: This class is subclassed in RenderPartObject for iframes, which is in turn
+// subclassed in RenderEmbeddedObject for object and embed. This class itself could be removed.
 class RenderPart : public RenderWidget {
 public:
     RenderPart(Element*);

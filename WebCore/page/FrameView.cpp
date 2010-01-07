@@ -46,8 +46,8 @@
 #include "HTMLNames.h"
 #include "InspectorTimelineAgent.h"
 #include "OverflowEvent.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderPart.h"
-#include "RenderPartObject.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
@@ -752,15 +752,15 @@ void FrameView::layout(bool allowSubtree)
     m_nestedLayoutCount--;
 }
 
-void FrameView::addWidgetToUpdate(RenderPartObject* object)
+void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)
 {
     if (!m_widgetUpdateSet)
-        m_widgetUpdateSet.set(new HashSet<RenderPartObject*>);
+        m_widgetUpdateSet.set(new RenderEmbeddedObjectSet);
 
     m_widgetUpdateSet->add(object);
 }
 
-void FrameView::removeWidgetToUpdate(RenderPartObject* object)
+void FrameView::removeWidgetToUpdate(RenderEmbeddedObject* object)
 {
     if (!m_widgetUpdateSet)
         return;
@@ -1346,11 +1346,11 @@ bool FrameView::updateWidgets()
     if (m_nestedLayoutCount > 1 || !m_widgetUpdateSet || m_widgetUpdateSet->isEmpty())
         return true;
     
-    Vector<RenderPartObject*> objectVector;
+    Vector<RenderEmbeddedObject*> objectVector;
     copyToVector(*m_widgetUpdateSet, objectVector);
     size_t size = objectVector.size();
     for (size_t i = 0; i < size; ++i) {
-        RenderPartObject* object = objectVector[i];
+        RenderEmbeddedObject* object = objectVector[i];
         object->updateWidget(false);
         
         // updateWidget() can destroy the RenderPartObject, so we need to make sure it's

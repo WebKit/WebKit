@@ -1,3 +1,44 @@
+2010-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kevin Decker, Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33338
+        Create a renderer for <object> and <embed>
+        
+        Change RenderPartObject to RenderEmbeddedObject in test results.
+
+        * http/tests/misc/acid3-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003-expected.txt:
+        * platform/mac/editing/pasteboard/pasting-object-expected.txt:
+        * platform/mac/fast/block/basic/013-expected.txt:
+        * platform/mac/fast/block/float/4145535Crash-expected.txt:
+        * platform/mac/fast/dom/HTMLObjectElement/vspace-hspace-as-number-expected.txt:
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.txt:
+        * platform/mac/fast/frames/001-expected.txt:
+        * platform/mac/fast/invalid/residual-style-expected.txt:
+        * platform/mac/fast/parser/001-expected.txt:
+        * platform/mac/fast/replaced/007-expected.txt:
+        * platform/mac/fast/replaced/border-radius-clip-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/plugins/embed-attributes-style-expected.txt:
+        * platform/mac/plugins/netscape-dom-access-expected.txt:
+        * platform/mac/plugins/qt-qwidget-plugin-expected.txt:
+        * platform/mac/svg/custom/getsvgdocument-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/hixie/text/003-expected.txt:
+        * platform/qt/editing/pasteboard/pasting-object-expected.txt:
+        * platform/qt/fast/block/basic/013-expected.txt:
+        * platform/qt/fast/block/float/4145535Crash-expected.txt:
+        * platform/qt/fast/dom/HTMLObjectElement/vspace-hspace-as-number-expected.txt:
+        * platform/qt/fast/dynamic/flash-replacement-test-expected.txt:
+        * platform/qt/fast/frames/001-expected.txt:
+        * platform/qt/fast/parser/001-expected.txt:
+        * platform/qt/fast/replaced/007-expected.txt:
+        * platform/qt/fast/replaced/replaced-breaking-expected.txt:
+        * platform/qt/plugins/embed-attributes-style-expected.txt:
+        * platform/qt/plugins/netscape-dom-access-expected.txt:
+        * platform/qt/plugins/qt-qwidget-plugin-expected.txt:
+
 2010-01-07  Christian Sejersen  <christian.webkit@gmail.com>
 
         Reviewed by Darin Adler.

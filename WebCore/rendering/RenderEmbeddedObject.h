@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,35 +20,37 @@
  *
  */
 
-#ifndef RenderPartObject_h
-#define RenderPartObject_h
+#ifndef RenderEmbeddedObject_h
+#define RenderEmbeddedObject_h
 
-#include "RenderPart.h"
+#include "RenderPartObject.h"
 
 namespace WebCore {
 
-// Renderer for iframes. Is subclassed in RenderEmbeddedObject for object and embed.
-class RenderPartObject : public RenderPart {
+// Renderer for embeds and objects.
+class RenderEmbeddedObject : public RenderPartObject {
 public:
-    RenderPartObject(Element*);
+    RenderEmbeddedObject(Element*);
+    virtual ~RenderEmbeddedObject();
+
+    void updateWidget(bool onlyCreateNonNetscapePlugins);
 
 private:
-    virtual const char* renderName() const { return "RenderPartObject"; }
+    virtual const char* renderName() const { return "RenderEmbeddedObject"; }
+    virtual bool isEmbeddedObject() const { return true; }
 
     virtual void layout();
-
-    virtual void viewCleared();
 };
 
-inline RenderPartObject* toRenderPartObject(RenderObject* object)
+inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)
 {
-    ASSERT(!object || !strcmp(object->renderName(), "RenderPartObject"));
-    return static_cast<RenderPartObject*>(object);
+    ASSERT(!object || !strcmp(object->renderName(), "RenderEmbeddedObject"));
+    return static_cast<RenderEmbeddedObject*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderPartObject(const RenderPartObject*);
+void toRenderEmbeddedObject(const RenderEmbeddedObject*);
 
 } // namespace WebCore
 
-#endif // RenderPartObject_h
+#endif // RenderEmbeddedObject_h

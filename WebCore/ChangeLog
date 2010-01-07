@@ -1,5 +1,55 @@
 2010-01-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Kevin Decker, Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33338
+        Create a renderer for <object> and <embed>
+        
+        Add RenderEmbeddedObject, which derives from RenderPartObject, and is created for <object> and <embed>.
+        Instances of RenderPartObject are now only allocated for iframes.
+        
+        Move object/embed-related code from RenderPartObject to RenderEmbeddedObject.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add RenderEmbeddedObject.h/cpp
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::createRenderer): Create a RenderEmbeddedObject.
+        (WebCore::HTMLEmbedElement::updateWidget): Use toRenderEmbeddedObject()
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createRenderer): Make a RenderEmbeddedObject for the plugin-proxy case.
+        (WebCore::HTMLMediaElement::finishParsingChildren): Use toRenderEmbeddedObject() in the plugin-proxy code.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::createRenderer): Make a RenderEmbeddedObject
+        (WebCore::HTMLObjectElement::updateWidget): Use toRenderEmbeddedObject()
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addWidgetToUpdate):
+        (WebCore::FrameView::removeWidgetToUpdate):
+        (WebCore::FrameView::updateWidgets):
+        Objects in the m_widgetUpdateSet are only ever RenderEmbeddedObjects.
+        
+        * rendering/RenderEmbeddedObject.cpp: Added.
+        * rendering/RenderEmbeddedObject.h: Added.
+        Most of the code moved from RenderPartObject.
+        
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isEmbeddedObject): New method.
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart): Initialize m_hasFallbackContent here, rather than in the derived classes.
+        * rendering/RenderPart.h: Comments.
+        
+        * rendering/RenderPartObject.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::RenderPartObject): Clean up, code moved to base class, and removed object/embed-specific code.
+        (WebCore::RenderPartObject::layout): Removed object/embed-specific code.
+
+2010-01-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=33338

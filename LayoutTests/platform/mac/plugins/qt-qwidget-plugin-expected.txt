@@ -14,10 +14,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,102) size 784x34
         RenderText {#text} at (0,16) size 111x18
           text run at (0,16) width 111: "QT progress bar: "
-        RenderPartObject {OBJECT} at (111,0) size 300x30
+        RenderEmbeddedObject {OBJECT} at (111,0) size 300x30
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,136) size 784x34
         RenderText {#text} at (0,16) size 156x18
           text run at (0,16) width 156: "You should not see this: "
-        RenderPartObject {OBJECT} at (156,0) size 300x30
+        RenderEmbeddedObject {OBJECT} at (156,0) size 300x30
         RenderText {#text} at (0,0) size 0x0

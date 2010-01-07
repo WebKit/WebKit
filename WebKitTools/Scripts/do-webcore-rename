@@ -73,6 +73,8 @@ my %renames = (
 );
 
 my %renamesContemplatedForTheFuture = (
+    "HTMLPlugInImageElement" => "HTMLEmbeddedObjectElement",
+
     "DOMObject" => "JSDOMObject",
 
     "runtimeObjectGetter" => "pluginElementGetter",

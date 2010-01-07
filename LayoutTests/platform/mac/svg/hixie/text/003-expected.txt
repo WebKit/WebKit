@@ -7,7 +7,7 @@ layer at (0,0) size 800x402
         RenderText {#text} at (0,0) size 608x18
           text run at (0,0) width 608: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
       RenderBlock {P} at (0,34) size 784x160
-        RenderPartObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
+        RenderEmbeddedObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150
@@ -16,7 +16,7 @@ layer at (0,0) size 800x402
                 RenderSVGInlineText {#text} at (0,-1) size 4x2
                   chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 3.00: "PASS"
       RenderBlock {P} at (0,210) size 784x160
-        RenderPartObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
+        RenderEmbeddedObject {OBJECT} at (0,0) size 306x156 [border: (3px inset #000080)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150

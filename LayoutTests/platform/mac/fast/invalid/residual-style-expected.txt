@@ -292,7 +292,7 @@ layer at (0,0) size 785x3441
       RenderBlock (anonymous) at (0,1097) size 769x18
         RenderText {#text} at (0,0) size 65x18
           text run at (0,0) width 65: "EMBED: "
-        RenderPartObject {EMBED} at (65,14) size 0x0
+        RenderEmbeddedObject {EMBED} at (65,14) size 0x0
         RenderInline {FONT} at (0,0) size 171x18 [color=#008000]
           RenderText {#text} at (65,0) size 171x18
             text run at (65,0) width 171: "All of this should be green."
