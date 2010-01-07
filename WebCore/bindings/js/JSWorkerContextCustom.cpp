@@ -32,8 +32,10 @@
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "JSEventSourceConstructor.h"
 #include "JSMessageChannelConstructor.h"
 #include "JSMessagePort.h"
+#include "JSWebSocketConstructor.h"
 #include "JSWorkerLocation.h"
 #include "JSWorkerNavigator.h"
 #include "JSXMLHttpRequestConstructor.h"
@@ -42,10 +44,6 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include <interpreter/Interpreter.h>
-
-#if ENABLE(EVENTSOURCE)
-#include "JSEventSourceConstructor.h"
-#endif
 
 using namespace JSC;
 
@@ -92,6 +90,13 @@ JSValue JSWorkerContext::xmlHttpRequest(ExecState* exec) const
 {
     return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
 }
+
+#if ENABLE(WEB_SOCKETS)
+JSValue JSWorkerContext::webSocket(ExecState* exec) const
+{
+    return getDOMConstructor<JSWebSocketConstructor>(exec, this);
+}
+#endif
 
 JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
 {

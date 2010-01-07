@@ -43377,6 +43377,18 @@
 			Name="websockets"
 			>
 			<File
+				RelativePath="..\websockets\ThreadableWebSocketChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\ThreadableWebSocketChannel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\ThreadableWebSocketChannelClientWrapper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\WebSocket.cpp"
 				>
 			</File>
@@ -43402,6 +43414,14 @@
 			</File>
 			<File
 				RelativePath="..\websockets\WebSocketHandshake.h"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WorkerThreadableWebSocketChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WorkerThreadableWebSocketChannel.h"
 				>
 			</File>
 		</Filter>

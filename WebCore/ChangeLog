@@ -1,3 +1,50 @@
+2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add WebSocket feature in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=32214
+
+        Introduce ThreadableWebSocketChannel interface and add
+        WorkerThreadableWebSocketChannel for Worker.
+        WorkerThreadableWebSocketChannel uses WebSocketChannel in the
+        main thread, which is managed by Peer and communicated via Bridge.
+
+        Test: websocket/tests/workers/worker-simple.html
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebSocketConstructor.h:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::webSocket):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::convertEventTargetToV8Object):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8Custom::v8WebSocketConstructorCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * platform/CrossThreadCopier.h:
+        (WebCore::):
+        * websockets/ThreadableWebSocketChannel.cpp: Added.
+        * websockets/ThreadableWebSocketChannel.h: Added.
+        * websockets/ThreadableWebSocketChannelClientWrapper.h: Added.
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::didReceiveMessage):
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::refThreadableWebSocketChannel):
+        (WebCore::WebSocketChannel::derefThreadableWebSocketChannel):
+        * websockets/WebSocketChannelClient.h:
+        * websockets/WebSocketHandshake.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp: Added.
+        * websockets/WorkerThreadableWebSocketChannel.h: Added.
+        * workers/WorkerContext.idl:
+
 2010-01-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Darin Adler.

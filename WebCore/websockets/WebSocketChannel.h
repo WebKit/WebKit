@@ -34,6 +34,7 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "SocketStreamHandleClient.h"
+#include "ThreadableWebSocketChannel.h"
 #include "WebSocketHandshake.h"
 #include <wtf/RefCounted.h>
 
@@ -45,16 +46,16 @@ namespace WebCore {
     class SocketStreamError;
     class WebSocketChannelClient;
 
-    class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient {
+    class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
     public:
         static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
         virtual ~WebSocketChannel();
 
-        void connect();
-        bool send(const String& msg);
-        unsigned long bufferedAmount() const;
-        void close();
-        void disconnect(); // Will suppress didClose().
+        virtual void connect();
+        virtual bool send(const String& message);
+        virtual unsigned long bufferedAmount() const;
+        virtual void close();
+        virtual void disconnect(); // Will suppress didClose().
 
         virtual void didOpen(SocketStreamHandle*);
         virtual void didClose(SocketStreamHandle*);
@@ -63,8 +64,15 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
         virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 
+        using RefCounted<WebSocketChannel>::ref;
+        using RefCounted<WebSocketChannel>::deref;
+
+    protected:
+        virtual void refThreadableWebSocketChannel() { ref(); }
+        virtual void derefThreadableWebSocketChannel() { deref(); }
+
     private:
-        WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String&);
+        WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
 
         bool appendToBuffer(const char* data, int len);
         void skipBuffer(int len);
@@ -78,8 +86,8 @@ namespace WebCore {
         unsigned long m_unhandledBufferSize;
     };
 
-}  // namespace WebCore
+} // namespace WebCore
 
-#endif  // ENABLE(WEB_SOCKETS)
+#endif // ENABLE(WEB_SOCKETS)
 
-#endif  // WebSocketChannel_h
+#endif // WebSocketChannel_h

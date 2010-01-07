@@ -106,8 +106,8 @@ namespace WebCore {
         String m_setCookie2;
     };
 
-}  // namespace WebCore
+} // namespace WebCore
 
-#endif  // ENABLE(WEB_SOCKETS)
+#endif // ENABLE(WEB_SOCKETS)
 
-#endif  // WebSocketHandshake_h
+#endif // WebSocketHandshake_h

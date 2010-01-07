@@ -319,6 +319,12 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::convertEventTargetToV8Object(
     if (mp)
         return convertToV8Object(V8ClassIndex::MESSAGEPORT, mp);
 
+#if ENABLE(WEB_SOCKETS)
+    WebSocket* webSocket = target->toWebSocket();
+    if (webSocket)
+        return convertToV8Object(V8ClassIndex::WEBSOCKET, webSocket);
+#endif
+
     ASSERT_NOT_REACHED();
     return v8::Handle<v8::Value>();
 }

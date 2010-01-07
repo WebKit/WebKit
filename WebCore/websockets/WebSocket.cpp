@@ -44,6 +44,7 @@
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "StringBuilder.h"
+#include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
 #include <wtf/StdLibExtras.h>
 
@@ -148,7 +149,7 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
         return;
     }
 
-    m_channel = WebSocketChannel::create(scriptExecutionContext(), this, m_url, m_protocol);
+    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this, m_url, m_protocol);
     m_channel->connect();
 }
 
@@ -214,7 +215,6 @@ void WebSocket::didReceiveMessage(const String& msg)
     if (m_state != OPEN || !scriptExecutionContext())
         return;
     RefPtr<MessageEvent> evt = MessageEvent::create();
-    // FIXME: origin, lastEventId, source, messagePort.
     evt->initMessageEvent(eventNames().messageEvent, false, false, SerializedScriptValue::create(msg), "", "", 0, 0);
     dispatchEvent(evt);
 }

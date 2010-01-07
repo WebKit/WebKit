@@ -3386,6 +3386,15 @@ webcore_sources += \
 	WebCore/websockets/WebSocketHandshake.cpp \
 	WebCore/websockets/WebSocketHandshake.h
 
+if ENABLE_WORKERS
+webcore_sources += \
+	WebCore/websockets/ThreadableWebSocketChannel.cpp \
+	WebCore/websockets/ThreadableWebSocketChannel.h \
+	WebCore/websockets/ThreadableWebSocketChannelClientWrapper.h \
+	WebCore/websockets/WorkerThreadableWebSocketChannel.cpp \
+	WebCore/websockets/WorkerThreadableWebSocketChannel.h
+endif
+
 webcoregtk_sources += \
 	WebCore/platform/network/soup/SocketStreamError.h \
 	WebCore/platform/network/soup/SocketStreamHandle.h \

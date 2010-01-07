@@ -93,14 +93,9 @@ v8::Handle<v8::Value> V8Custom::v8WebSocketConstructorCallback(const v8::Argumen
         return throwError("Empty URL", V8Proxy::SyntaxError);
 
     // Get the script execution context.
-    ScriptExecutionContext* context = 0;
-    // TODO: Workers
-    if (!context) {
-        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-        if (!frame)
-            return throwError("WebSocket constructor's associated frame is not available", V8Proxy::ReferenceError);
-        context = frame->document();
-    }
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("WebSocket constructor's associated frame is not available", V8Proxy::ReferenceError);
 
     const KURL& url = context->completeURL(toWebCoreString(urlstring));
 

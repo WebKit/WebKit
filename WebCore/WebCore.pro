@@ -3222,6 +3222,12 @@ SOURCES += \
     platform/network/qt/SocketStreamHandleSoup.cpp \
     bindings/js/JSWebSocketCustom.cpp \
     bindings/js/JSWebSocketConstructor.cpp
+
+contains(DEFINES, ENABLE_WORKERS=1) {
+SOURCES += \
+    websockets/ThreadableWebSocketChannel.cpp \
+    websockets/WorkerThreadableWebSocketChannel.cpp
+}
 }
 
 # GENERATOR 1: IDL compiler

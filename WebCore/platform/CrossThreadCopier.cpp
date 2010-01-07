@@ -32,12 +32,18 @@
 
 #include "CrossThreadCopier.h"
 
+#include "KURL.h"
 #include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
+
+CrossThreadCopierBase<false, KURL>::Type CrossThreadCopierBase<false, KURL>::copy(const KURL& url)
+{
+    return url.copy();
+}
 
 CrossThreadCopierBase<false, String>::Type CrossThreadCopierBase<false, String>::copy(const String& str)
 {

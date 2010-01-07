@@ -968,6 +968,11 @@
 		510D4A4E103177A20049EA54 /* WebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A47103177A20049EA54 /* WebSocketChannel.cpp */; };
 		510D4A4F103177A20049EA54 /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A48103177A20049EA54 /* WebSocketChannel.h */; };
 		510D4A50103177A20049EA54 /* WebSocketChannelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A49103177A20049EA54 /* WebSocketChannelClient.h */; };
+		5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */; };
+		5112247410CFB8D8008099D7 /* ThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */; };
+		5112247610CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */; };
+		5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112247710CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp */; };
+		5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247910CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h */; };
 		5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5116D9750CF177BD00C2B84D /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23130DC160DA004F0032 /* LocalStorageTask.cpp */; };
 		511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23140DC160DA004F0032 /* LocalStorageTask.h */; };
@@ -6287,6 +6292,11 @@
 		510D4A47103177A20049EA54 /* WebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketChannel.cpp; sourceTree = "<group>"; };
 		510D4A48103177A20049EA54 /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannel.h; sourceTree = "<group>"; };
 		510D4A49103177A20049EA54 /* WebSocketChannelClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannelClient.h; sourceTree = "<group>"; };
+		5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
+		5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableWebSocketChannel.h; sourceTree = "<group>"; };
+		5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableWebSocketChannelClientWrapper.h; sourceTree = "<group>"; };
+		5112247710CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
+		5112247910CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
 		5116D9750CF177BD00C2B84D /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
 		511F23130DC160DA004F0032 /* LocalStorageTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageTask.cpp; sourceTree = "<group>"; };
 		511F23140DC160DA004F0032 /* LocalStorageTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageTask.h; sourceTree = "<group>"; };
@@ -11000,6 +11010,11 @@
 		518A34BD1026C831001B6896 /* websockets */ = {
 			isa = PBXGroup;
 			children = (
+				5112247910CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h */,
+				5112247710CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp */,
+				5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */,
+				5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */,
+				5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */,
 				518A34BE1026C831001B6896 /* WebSocket.cpp */,
 				518A34BF1026C831001B6896 /* WebSocket.h */,
 				518A34C01026C831001B6896 /* WebSocket.idl */,
@@ -18291,6 +18306,9 @@
 				08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */,
 				08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginWidget.h in Headers */,
+				5112247410CFB8D8008099D7 /* ThreadableWebSocketChannel.h in Headers */,
+				5112247610CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h in Headers */,
+				5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20449,6 +20467,8 @@
 				BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */,
 				08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */,
 				0AFDAC3B10F5448300E1F3D2 /* PluginWidgetMac.mm in Sources */,
+				5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */,
+				5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

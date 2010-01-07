@@ -28,26 +28,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocketChannelClient_h
-#define WebSocketChannelClient_h
+#include "config.h"
 
 #if ENABLE(WEB_SOCKETS)
 
+#include "ThreadableWebSocketChannel.h"
+
+#include "PlatformString.h"
+#include "ScriptExecutionContext.h"
+#include "ThreadableWebSocketChannelClientWrapper.h"
+#include "WebSocketChannel.h"
+#include "WebSocketChannelClient.h"
+#include "WorkerContext.h"
+#include "WorkerRunLoop.h"
+#include "WorkerThread.h"
+#include "WorkerThreadableWebSocketChannel.h"
+
+#include <wtf/PassRefPtr.h>
+
 namespace WebCore {
 
-    class WebSocketChannelClient {
-    public:
-        virtual ~WebSocketChannelClient() { }
-        virtual void didConnect() { }
-        virtual void didReceiveMessage(const String&) { }
-        virtual void didClose() { }
+static const char webSocketChannelMode[] = "webSocketChannelMode";
 
-    protected:
-        WebSocketChannelClient() { }
-    };
+PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol)
+{
+    ASSERT(context);
+    ASSERT(client);
+
+#if ENABLE(WORKERS)
+    if (context->isWorkerContext()) {
+        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
+        String mode = webSocketChannelMode;
+        mode.append(String::number(runLoop.createUniqueId()));
+        return WorkerThreadableWebSocketChannel::create(workerContext, client, mode, url, protocol);
+    }
+#endif // ENABLE(WORKERS)
+
+    ASSERT(context->isDocument());
+    return WebSocketChannel::create(context, client, url, protocol);
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocketChannelClient_h
