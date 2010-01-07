@@ -226,7 +226,6 @@ WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketC
     , m_taskMode(taskMode)
     , m_peer(0)
 {
-    ASSERT(context->isWorkerContext());
     ASSERT(m_workerClientWrapper.get());
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&Bridge::mainThreadCreateWebSocketChannel, this, m_workerClientWrapper, m_taskMode, url, protocol));

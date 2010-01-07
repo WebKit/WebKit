@@ -1,5 +1,13 @@
 2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed build fix.
+        remove wrong assertion
+
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+
+2010-01-06  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by David Levin.
 
         Add WebSocket feature in Worker
