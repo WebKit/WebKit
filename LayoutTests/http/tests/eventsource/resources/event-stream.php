@@ -38,7 +38,7 @@ ta: a message event with the name "message"
 
 <?php echo "data: a line ending with crlf\r\n"; ?>
 data: a line with a : (colon)
-<?php echo "data: a line with a \r (carriage return)\n"; ?>
+<?php echo "data: a line ending with cr\r"; ?>
 
 retry: 10000
 : reconnection time set to 10 seconds

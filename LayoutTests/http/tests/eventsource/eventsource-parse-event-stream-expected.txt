@@ -8,6 +8,6 @@ PASS: received event and lastEventId is still "1"
 PASS: received event and lastEventId has been cleared
 PASS: got open event from server
 PASS: received event and the event name has been reset
-PASS: received event with data that contains a colon and a carriage return
+PASS: received event with data that contains a colon
 DONE
 

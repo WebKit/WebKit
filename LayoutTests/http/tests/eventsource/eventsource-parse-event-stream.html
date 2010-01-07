@@ -49,8 +49,8 @@ es.onmessage = function (evt) {
                 log("PASS: received event and the event name has been reset");
             break;
         case 6:
-            if (evt.data == "a line ending with crlf\na line with a : (colon)\na line with a \r (carriage return)")
-                log("PASS: received event with data that contains a colon and a carriage return");
+            if (evt.data == "a line ending with crlf\na line with a : (colon)\na line ending with cr");
+                log("PASS: received event with data that contains a colon");
             break;
         default:
             log("FAIL: got unexpected event");
