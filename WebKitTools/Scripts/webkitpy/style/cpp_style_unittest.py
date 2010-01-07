@@ -41,10 +41,10 @@ import random
 import re
 import unittest
 import cpp_style
-# FIXME: Remove the need to import something from style. See the
+# FIXME: Remove the need to import something from checker. See the
 #        FIXME notes near the STYLE_CATEGORIES definition for a
 #        suggestion on how to best do this.
-from style import STYLE_CATEGORIES
+from checker import STYLE_CATEGORIES
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see

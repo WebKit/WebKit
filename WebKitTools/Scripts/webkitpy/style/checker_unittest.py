@@ -36,7 +36,7 @@
 
 import unittest
 
-import style
+import checker as style
 
 
 class DefaultArgumentsTest(unittest.TestCase):

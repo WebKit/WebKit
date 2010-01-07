@@ -1,3 +1,48 @@
+2010-01-07  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Moved style-related modules to webkitpy.style sub-package.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32971
+
+        * Scripts/check-webkit-style:
+          - Updated import statement.
+
+        * Scripts/test-webkitpy:
+          - Updated import statements.
+
+        * Scripts/webkitpy/cpp_style.py: Removed.
+          - Moved to webkitpy/style.
+
+        * Scripts/webkitpy/cpp_style_unittest.py: Removed.
+          - Moved to webkitpy/style.
+
+        * Scripts/webkitpy/style.py: Removed.
+          - Moved to webkitpy/style/checker.py.
+
+        * Scripts/webkitpy/style/__init__.py: Added.
+          - Added containing webkitpy directory to package search path.
+
+        * Scripts/webkitpy/style/checker.py: Copied from Scripts/webkitpy/style.py.
+        * Scripts/webkitpy/style/checker_unittest.py: Copied from Scripts/webkitpy/style_unittest.py.
+          - Updated import statement.
+
+        * Scripts/webkitpy/style/cpp_style.py: Copied from Scripts/webkitpy/cpp_style.py.
+        * Scripts/webkitpy/style/cpp_style_unittest.py: Copied from Scripts/webkitpy/cpp_style_unittest.py.
+          - Update import statement.
+
+        * Scripts/webkitpy/style/text_style.py: Copied from Scripts/webkitpy/text_style.py.
+        * Scripts/webkitpy/style/text_style_unittest.py: Copied from Scripts/webkitpy/text_style_unittest.py.
+        * Scripts/webkitpy/style_unittest.py: Removed.
+          - Moved to webkitpy/style/checker_unittest.py.
+
+        * Scripts/webkitpy/text_style.py: Removed.
+          - Moved to webkitpy/style.
+
+        * Scripts/webkitpy/text_style_unittest.py: Removed.
+          - Moved to webkitpy/style.
+
 2010-01-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.
