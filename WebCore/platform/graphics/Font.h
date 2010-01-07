@@ -29,6 +29,7 @@
 #include "TextRun.h"
 #include "FontDescription.h"
 #include "SimpleFontData.h"
+#include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
@@ -97,6 +98,12 @@ public:
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
+
+    TypesettingFeatures typesettingFeatures() const
+    {
+        TextRenderingMode textRenderingMode = m_fontDescription.textRenderingMode();
+        return textRenderingMode == OptimizeLegibility || textRenderingMode == GeometricPrecision ? Kerning | Ligatures : 0;
+    }
 
     FontFamily& firstFamily() { return m_fontDescription.firstFamily(); }
     const FontFamily& family() const { return m_fontDescription.family(); }

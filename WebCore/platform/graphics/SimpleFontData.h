@@ -28,7 +28,7 @@
 #include "FontPlatformData.h"
 #include "GlyphPageTreeNode.h"
 #include "GlyphWidthMap.h"
-#include "TextRenderingMode.h"
+#include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 
 #if USE(ATSUI)
@@ -121,7 +121,7 @@ public:
 
 #if USE(CORE_TEXT)
     CTFontRef getCTFont() const;
-    CFDictionaryRef getCFStringAttributes(TextRenderingMode) const;
+    CFDictionaryRef getCFStringAttributes(TypesettingFeatures) const;
 #endif
 
 #if USE(ATSUI)

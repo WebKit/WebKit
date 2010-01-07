@@ -1804,10 +1804,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             int wordSpacing = o->style()->wordSpacing();
             int lastSpaceWordSpacing = 0;
 
-            TextRenderingMode textRenderingMode = f.fontDescription().textRenderingMode();
             // Non-zero only when kerning is enabled, in which case we measure words with their trailing
             // space, then subtract its width.
-            int wordTrailingSpaceWidth = textRenderingMode == OptimizeLegibility || textRenderingMode == GeometricPrecision ? f.spaceWidth() + wordSpacing : 0;
+            int wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.spaceWidth() + wordSpacing : 0;
 
             int wrapW = tmpW + inlineWidth(o, !appliedStartWidth, true);
             int charWidth = 0;

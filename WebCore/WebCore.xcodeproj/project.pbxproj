@@ -697,6 +697,7 @@
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
 		37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */; };
+		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
@@ -5967,6 +5968,7 @@
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextControllerATSUI.cpp; sourceTree = "<group>"; };
 		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextControllerCoreText.cpp; sourceTree = "<group>"; };
+		37C28A6710F659CC008C7813 /* TypesettingFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypesettingFeatures.h; sourceTree = "<group>"; };
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
@@ -14309,6 +14311,7 @@
 				B23540F10D00782E002382FA /* StringTruncator.h */,
 				930FC6891072B9280045293E /* TextRenderingMode.h */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
+				37C28A6710F659CC008C7813 /* TypesettingFeatures.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
 				939B02ED0EA2DBC400C54570 /* WidthIterator.h */,
@@ -18309,6 +18312,7 @@
 				5112247410CFB8D8008099D7 /* ThreadableWebSocketChannel.h in Headers */,
 				5112247610CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h in Headers */,
 				5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */,
+				37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,34 @@
+2010-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added Font::typesettingFeatures() and deployed it
+
+        No change in funcitonality
+
+        * WebCore.xcodeproj/project.pbxproj: Added TypesettingFeatures.h.
+        * platform/graphics/Font.h:
+        (WebCore::Font::typesettingFeatures): Added. Determines the typesetting
+            features from the text redndering mode.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::canUseGlyphCache): Use typesettingFeatures().
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/TypesettingFeatures.h: Added.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::disableLigatures): Take TypesettingFeatures instead of
+            TextRenderingMode.
+        (WebCore::initializeATSUStyle): Ditto.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersATSUI):
+            Use typesettingFeatures().
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+            Ditto.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCFStringAttributes): Take
+            TypesettingFeatures instead of TextRenderingMode.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak): Use TypesettingFeatures().
+
 2010-01-07  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r52900.
