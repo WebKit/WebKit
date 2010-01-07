@@ -1,3 +1,44 @@
+2010-01-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [v8] Let ScriptController have more than one windowShell
+        https://bugs.webkit.org/show_bug.cgi?id=33243
+
+        This patch lets ScriptController have more than one windowShell.  We're
+        currently only using one of them (for the main world), but this patch
+        lets us use other ones for isolated worlds soon.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        * bindings/js/ScriptController.cpp:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::createWorld):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::updateSecurityOrigin):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::mainWorldWindowShell):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::destroyWindowShell):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::globalObject):
+        (WebCore::ScriptController::proxy):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::create):
+        (WebCore::V8DOMWindowShell::V8DOMWindowShell):
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):
+
 2010-01-06  Mark Rowe  <mrowe@apple.com>
 
         Fix the Mac build.
