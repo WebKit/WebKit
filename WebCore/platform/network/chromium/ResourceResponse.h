@@ -38,6 +38,7 @@ namespace WebCore {
         ResourceResponse()
             : m_isContentFiltered(false)
             , m_appCacheID(0)
+            , m_wasFetchedViaSpdy(false)
         {
         }
 
@@ -45,6 +46,7 @@ namespace WebCore {
             : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
             , m_isContentFiltered(false)
             , m_appCacheID(0)
+            , m_wasFetchedViaSpdy(false)
         {
         }
 
@@ -72,6 +74,12 @@ namespace WebCore {
             m_appCacheManifestURL = url;
         }
 
+        bool wasFetchedViaSpdy() const { return m_wasFetchedViaSpdy; }
+        void setWasFetchedViaSpdy(bool value)
+        {
+            m_wasFetchedViaSpdy = value;
+        }
+
     private:
         friend class ResourceResponseBase;
 
@@ -96,6 +104,8 @@ namespace WebCore {
         // The manifest url of the appcache this response was retrieved from, if any.
         // Note: only valid for main resource responses.
         KURL m_appCacheManifestURL;
+
+        bool m_wasFetchedViaSpdy;
     };
 
 } // namespace WebCore

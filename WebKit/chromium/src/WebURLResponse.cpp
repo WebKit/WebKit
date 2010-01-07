@@ -255,6 +255,16 @@ const ResourceResponse& WebURLResponse::toResourceResponse() const
     return *m_private->m_resourceResponse;
 }
 
+bool WebURLResponse::wasFetchedViaSpdy() const
+{
+    return m_private->m_resourceResponse->wasFetchedViaSpdy();
+}
+
+void WebURLResponse::setWasFetchedViaSpdy(bool value)
+{
+    m_private->m_resourceResponse->setWasFetchedViaSpdy(value);
+}
+
 void WebURLResponse::assign(WebURLResponsePrivate* p)
 {
     // Subclasses may call this directly so a self-assignment check is needed
