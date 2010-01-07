@@ -1,3 +1,15 @@
+2010-01-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Allow leading/trailing space for CSS nth-*() and lang().
+        https://bugs.webkit.org/show_bug.cgi?id=17248
+
+        For pseudo-classes :nth-*() and :lang(), space must be allowed after '(' and before ')'.
+        See the bug comments for why we don't allow space at other places.
+
+        * css/CSSGrammar.y:
+
 2010-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

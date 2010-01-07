@@ -1109,11 +1109,11 @@ pseudo:
         }
     }
     // used by :nth-*(ax+b)
-    | ':' FUNCTION NTH ')' {
+    | ':' FUNCTION maybe_space NTH maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::PseudoClass;
-        $$->setArgument($3);
+        $$->setArgument($4);
         $$->m_value = $2;
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
@@ -1127,11 +1127,11 @@ pseudo:
         }
     }
     // used by :nth-*
-    | ':' FUNCTION INTEGER ')' {
+    | ':' FUNCTION maybe_space INTEGER maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::PseudoClass;
-        $$->setArgument(String::number($3));
+        $$->setArgument(String::number($4));
         $$->m_value = $2;
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
@@ -1145,11 +1145,11 @@ pseudo:
         }
     }
     // used by :nth-*(odd/even) and :lang
-    | ':' FUNCTION IDENT ')' {
+    | ':' FUNCTION maybe_space IDENT maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::PseudoClass;
-        $$->setArgument($3);
+        $$->setArgument($4);
         $2.lower();
         $$->m_value = $2;
         CSSSelector::PseudoType type = $$->pseudoType();
