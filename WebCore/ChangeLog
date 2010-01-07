@@ -4,7 +4,7 @@
         http://trac.webkit.org/changeset/52877
         https://bugs.webkit.org/show_bug.cgi?id=33243
 
-        I screwedd up landing this patch and only partially applied the patch I
+        I screwed up landing this patch and only partially applied the patch I
         was trying to land.
 
         * bindings/ScriptControllerBase.cpp:
