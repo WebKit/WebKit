@@ -1,5 +1,11 @@
 2010-01-06  Eric Seidel  <eric@webkit.org>
 
+        No review, just adding Mike Belshe's new bugzilla email at his request.
+
+        * Scripts/webkitpy/committers.py:
+
+2010-01-06  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Rolling out r52869 and r52853 due to bot
         and local run-webkit-test failures
 
