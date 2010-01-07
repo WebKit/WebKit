@@ -1,3 +1,16 @@
+2010-01-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Build fix when FAST_MALLOC_MATCH_VALIDATION=1
+        https://bugs.webkit.org/show_bug.cgi?id=33312
+
+        Remove pByte (committed in r42344 from #20422), because pByte doesn't
+        exist and it is unnecessary.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::realloc):
+
 2010-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         QT build fix.
