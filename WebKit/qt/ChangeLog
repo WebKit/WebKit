@@ -1,3 +1,16 @@
+2010-01-07  Yongjun Zhang  <yongjun.zhang@nokia.com>, Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] need an API to suspend and resume active Javascript DOM objects.
+        https://bugs.webkit.org/show_bug.cgi?id=31673
+
+        Add suspend and resume DOM objects private API to QWebFrame.
+
+        * Api/qwebframe.cpp:
+        (qt_suspendActiveDOMObjects):
+        (qt_resumeActiveDOMObjects):
+
 2010-01-06  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

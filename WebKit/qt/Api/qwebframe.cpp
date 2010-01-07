@@ -220,6 +220,22 @@ QString QWEBKIT_EXPORT qt_drt_counterValueForElementById(QWebFrame* qFrame, cons
     return QString();
 }
 
+// Suspend active DOM objects in this frame.
+void QWEBKIT_EXPORT qt_suspendActiveDOMObjects(QWebFrame* qFrame)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    if (frame->document())
+        frame->document()->suspendActiveDOMObjects();
+}
+            
+// Resume active DOM objects in this frame.
+void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* qFrame)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    if (frame->document())
+        frame->document()->resumeActiveDOMObjects();
+}                        
+
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
                              WebCore::HTMLFrameOwnerElement* ownerFrameElement,
                              const WebCore::String& frameName)
