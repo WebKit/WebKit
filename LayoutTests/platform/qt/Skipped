@@ -233,6 +233,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 
 # Missing drag & drop functionality in DRT
 fast/images/drag-svg-as-image.html
+fast/forms/slider-delete-while-dragging-thumb.html
 
 # ------- missing eventSender.zoomPageIn
 fast/events/clientXY-in-zoom-and-scroll.html
@@ -478,7 +479,6 @@ fast/forms/password-doubleclick-selection.html
 fast/forms/search-rtl.html
 fast/forms/select-accesskey.html
 fast/forms/select-writing-direction-natural.html
-fast/forms/slider-mouse-events.html
 fast/forms/tabbing-input-iframe.html
 fast/forms/textAreaLineHeight.html
 fast/forms/textarea-scroll-height.html
@@ -1056,9 +1056,6 @@ svg/hixie/viewbox/004.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
 
-# ------- <video> support
-fast/forms/slider-delete-while-dragging-thumb.html
-
 # ------ web archive support
 svg/custom/image-with-prefix-in-webarchive.svg
 
@@ -1166,7 +1163,6 @@ fast/forms/input-double-click-selection-gap-bug.html
 fast/forms/input-radio-checked-tab.html
 fast/forms/input-text-option-delete.html
 fast/forms/legend-access-key.html
-fast/forms/slider-onchange-event.html
 fast/forms/textarea-rows-cols.html
 fast/frames/onlyCommentInIFrame.html
 fast/inline/positionedLifetime.html
@@ -2924,9 +2920,6 @@ fast/forms/select-selected.html
 fast/forms/select-size.html
 fast/forms/select-style.html
 fast/forms/select-visual-hebrew.html
-fast/forms/slider-padding.html
-fast/forms/slider-thumb-shared-style.html
-fast/forms/slider-thumb-stylability.html
 fast/forms/stuff-on-my-optgroup.html
 fast/forms/targeted-frame-submission.html
 fast/forms/textarea-align.html
@@ -4799,11 +4792,8 @@ fast/encoding/hebrew/logical.html
 fast/events/crash-on-mutate-during-drop.html
 fast/events/pointer-events-2.html
 fast/events/special-key-events-in-input-text.html
-fast/events/tabindex-focus-blur-all.html
 fast/forms/option-mouseevents.html
 fast/forms/search-abs-pos-cancel-button.html
-fast/forms/slider-transformed.html
-fast/forms/slider-zoomed.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
@@ -5100,3 +5090,10 @@ svg/custom/global-constructors.html
 # DRT sideeffect - this test make http/tests/xmlhttprequest/null-auth.php fail:
 # https://bugs.webkit.org/show_bug.cgi?id=32961
 http/tests/xmlhttprequest/failed-auth.html
+
+# Slider tests that need new results
+fast/forms/slider-padding.html
+fast/forms/slider-thumb-shared-style.html
+fast/forms/slider-thumb-stylability.html
+fast/forms/slider-zoomed.html
+fast/forms/slider-mouse-events.html

@@ -1,3 +1,24 @@
+2010-01-06  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Treat.
+
+        [Qt] RenderTheme: Missing support for native sliders
+
+        https://bugs.webkit.org/show_bug.cgi?id=33122
+
+        Implement painting of native slider controls in RenderTheme
+        and unskip a couple of layout tests that are passing after
+        this change.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintSliderTrack):
+        (WebCore::RenderThemeQt::adjustSliderTrackStyle):
+        (WebCore::RenderThemeQt::paintSliderThumb):
+        (WebCore::RenderThemeQt::adjustSliderThumbStyle):
+        (WebCore::RenderThemeQt::supportsFocus):
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQt.h:
+
 2010-01-06  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Darin Adler.

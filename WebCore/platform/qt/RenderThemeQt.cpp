@@ -45,6 +45,7 @@
 #include "Page.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
+#include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "UserAgentStyleSheets.h"
 #include "qwebpage.h"
@@ -59,6 +60,7 @@
 #include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QStyleOptionFrameV2>
+#include <QStyleOptionSlider>
 #include <QWidget>
 
 
@@ -629,15 +631,67 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
 bool RenderThemeQt::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& pi,
                                      const IntRect& r)
 {
-    notImplemented();
-    return RenderTheme::paintSliderTrack(o, pi, r);
+    StylePainter p(pi);
+    if (!p.isValid())
+       return true;
+
+    QStyleOptionSlider option;
+    if (p.widget)
+       option.initFrom(p.widget);
+    ControlPart appearance = initializeCommonQStyleOptions(option, o);
+
+    RenderSlider* renderSlider = toRenderSlider(o);
+    IntRect thumbRect = renderSlider->thumbRect();
+
+    option.rect = r;
+
+    int value;
+    if (appearance == SliderVerticalPart) {
+        option.maximum = r.height() - thumbRect.height();
+        value = thumbRect.y();
+    } else {
+        option.maximum = r.width() - thumbRect.width();
+        value = thumbRect.x();
+    }
+
+    value = QStyle::sliderValueFromPosition(0, option.maximum, value, option.maximum);
+
+    option.sliderValue = value;
+    option.sliderPosition = value;
+    if (appearance == SliderVerticalPart)
+        option.orientation = Qt::Vertical;
+
+    if (renderSlider->inDragMode()) {
+        option.activeSubControls = QStyle::SC_SliderHandle;
+        option.state |= QStyle::State_Sunken;
+    }
+
+    const QPoint topLeft = r.topLeft();
+    p.painter->translate(topLeft);
+    option.rect.moveTo(QPoint(0, 0));
+    option.rect.setSize(r.size());
+
+    p.drawComplexControl(QStyle::CC_Slider, option);
+    p.painter->translate(-topLeft);
+
+    return false;
+}
+
+void RenderThemeQt::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeQt::paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& pi,
                                      const IntRect& r)
 {
-    notImplemented();
-    return RenderTheme::paintSliderThumb(o, pi, r);
+    // We've already painted it in paintSliderTrack(), no need to do anything here.
+    return false;
+}
+
+void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(0);
 }
 
 bool RenderThemeQt::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& pi,
@@ -706,6 +760,8 @@ bool RenderThemeQt::supportsFocus(ControlPart appearance) const
     case MenulistPart:
     case RadioPart:
     case CheckboxPart:
+    case SliderHorizontalPart:
+    case SliderVerticalPart:
         return true;
     default: // No for all others...
         return false;
@@ -958,13 +1014,26 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const RenderObject::P
 
 void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == MediaSliderThumbPart) {
+    ControlPart part = o->style()->appearance();
+
+    if (part == MediaSliderThumbPart) {
         RenderStyle* parentStyle = o->parent()->style();
         Q_ASSERT(parentStyle);
 
         int parentHeight = parentStyle->height().value();
         o->style()->setWidth(Length(parentHeight / 3, Fixed));
         o->style()->setHeight(Length(parentHeight, Fixed));
+    } else if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
+        QStyleOptionSlider option;
+        if (part == SliderThumbVerticalPart)
+            option.orientation = Qt::Vertical;
+
+        QStyle* style = qStyle();
+
+        int width = style->pixelMetric(QStyle::PM_SliderLength, &option);
+        int height = style->pixelMetric(QStyle::PM_SliderThickness, &option);
+        o->style()->setWidth(Length(width, Fixed));
+        o->style()->setHeight(Length(height, Fixed));
     }
 }
 
