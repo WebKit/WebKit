@@ -34,30 +34,6 @@
 #include "V8Index.h"
 #include <v8.h>
 
-#define INDEXED_PROPERTY_GETTER(NAME) \
-    v8::Handle<v8::Value> V8Custom::v8##NAME##IndexedPropertyGetter( \
-        uint32_t index, const v8::AccessorInfo& info)
-
-#define INDEXED_PROPERTY_SETTER(NAME) \
-    v8::Handle<v8::Value> V8Custom::v8##NAME##IndexedPropertySetter( \
-        uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
-#define INDEXED_PROPERTY_DELETER(NAME) \
-    v8::Handle<v8::Boolean> V8Custom::v8##NAME##IndexedPropertyDeleter( \
-        uint32_t index, const v8::AccessorInfo& info)
-
-#define NAMED_PROPERTY_GETTER(NAME) \
-    v8::Handle<v8::Value> V8Custom::v8##NAME##NamedPropertyGetter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
-#define NAMED_PROPERTY_SETTER(NAME) \
-    v8::Handle<v8::Value> V8Custom::v8##NAME##NamedPropertySetter( \
-        v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
-#define NAMED_PROPERTY_DELETER(NAME) \
-    v8::Handle<v8::Boolean> V8Custom::v8##NAME##NamedPropertyDeleter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
 namespace WebCore {
     class V8Custom {
     public:
@@ -152,48 +128,8 @@ namespace WebCore {
         static const int kWebSocketInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
 #endif
 
-#define DECLARE_NAMED_PROPERTY_GETTER(NAME)  \
-    static v8::Handle<v8::Value> v8##NAME##NamedPropertyGetter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
-#define DECLARE_NAMED_PROPERTY_SETTER(NAME) \
-    static v8::Handle<v8::Value> v8##NAME##NamedPropertySetter( \
-        v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
-#define DECLARE_NAMED_PROPERTY_DELETER(NAME) \
-    static v8::Handle<v8::Boolean> v8##NAME##NamedPropertyDeleter( \
-        v8::Local<v8::String> name, const v8::AccessorInfo& info)
-
-#define USE_NAMED_PROPERTY_GETTER(NAME) V8Custom::v8##NAME##NamedPropertyGetter
-
-#define USE_NAMED_PROPERTY_SETTER(NAME) V8Custom::v8##NAME##NamedPropertySetter
-
-#define USE_NAMED_PROPERTY_DELETER(NAME) V8Custom::v8##NAME##NamedPropertyDeleter
-
-#define DECLARE_INDEXED_PROPERTY_GETTER(NAME) \
-    static v8::Handle<v8::Value> v8##NAME##IndexedPropertyGetter( \
-        uint32_t index, const v8::AccessorInfo& info)
-
-#define DECLARE_INDEXED_PROPERTY_SETTER(NAME) \
-    static v8::Handle<v8::Value> v8##NAME##IndexedPropertySetter( \
-        uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-
-#define DECLARE_INDEXED_PROPERTY_DELETER(NAME) \
-    static v8::Handle<v8::Boolean> v8##NAME##IndexedPropertyDeleter( \
-        uint32_t index, const v8::AccessorInfo& info)
-
-#define USE_INDEXED_PROPERTY_GETTER(NAME) V8Custom::v8##NAME##IndexedPropertyGetter
-
-#define USE_INDEXED_PROPERTY_SETTER(NAME) V8Custom::v8##NAME##IndexedPropertySetter
-
-#define USE_INDEXED_PROPERTY_DELETER(NAME) V8Custom::v8##NAME##IndexedPropertyDeleter
-
 #define DECLARE_CALLBACK(NAME) static v8::Handle<v8::Value> v8##NAME##Callback(const v8::Arguments& args)
-
 #define USE_CALLBACK(NAME) V8Custom::v8##NAME##Callback
-
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLDocument);
-        DECLARE_NAMED_PROPERTY_DELETER(HTMLDocument);
 
         DECLARE_CALLBACK(DOMParserConstructor);
         DECLARE_CALLBACK(HTMLAudioElementConstructor);
@@ -218,76 +154,6 @@ namespace WebCore {
         DECLARE_CALLBACK(WebGLUnsignedShortArrayConstructor);
 #endif
 
-        DECLARE_NAMED_PROPERTY_GETTER(DOMWindow);
-        DECLARE_INDEXED_PROPERTY_GETTER(DOMWindow);
-
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLFrameSetElement);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLFormElement);
-        DECLARE_NAMED_PROPERTY_GETTER(NodeList);
-        DECLARE_NAMED_PROPERTY_GETTER(NamedNodeMap);
-        DECLARE_NAMED_PROPERTY_GETTER(CSSStyleDeclaration);
-        DECLARE_NAMED_PROPERTY_SETTER(CSSStyleDeclaration);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLAppletElement);
-        DECLARE_NAMED_PROPERTY_SETTER(HTMLAppletElement);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLEmbedElement);
-        DECLARE_NAMED_PROPERTY_SETTER(HTMLEmbedElement);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLObjectElement);
-        DECLARE_NAMED_PROPERTY_SETTER(HTMLObjectElement);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLAppletElement);
-        DECLARE_INDEXED_PROPERTY_SETTER(HTMLAppletElement);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLEmbedElement);
-        DECLARE_INDEXED_PROPERTY_SETTER(HTMLEmbedElement);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLObjectElement);
-        DECLARE_INDEXED_PROPERTY_SETTER(HTMLObjectElement);
-
-        DECLARE_NAMED_PROPERTY_GETTER(StyleSheetList);
-        DECLARE_INDEXED_PROPERTY_GETTER(NamedNodeMap);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLFormElement);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLOptionsCollection);
-        DECLARE_INDEXED_PROPERTY_SETTER(HTMLOptionsCollection);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLSelectElement);
-        DECLARE_INDEXED_PROPERTY_GETTER(HTMLSelectElement);
-        DECLARE_INDEXED_PROPERTY_SETTER(HTMLSelectElement);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLAllCollection);
-        DECLARE_NAMED_PROPERTY_GETTER(HTMLCollection);
-
-#if ENABLE(3D_CANVAS)
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLByteArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLByteArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLFloatArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLFloatArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLIntArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLIntArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLShortArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLShortArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedByteArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedByteArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedIntArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedIntArray);
-
-        DECLARE_INDEXED_PROPERTY_GETTER(WebGLUnsignedShortArray);
-        DECLARE_INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray);
-#endif
-
-#if ENABLE(DATAGRID)
-        DECLARE_NAMED_PROPERTY_GETTER(DataGridColumnList);
-#endif
-
-#if ENABLE(DOM_STORAGE)
-        DECLARE_INDEXED_PROPERTY_GETTER(Storage);
-        DECLARE_INDEXED_PROPERTY_SETTER(Storage);
-        DECLARE_INDEXED_PROPERTY_DELETER(Storage);
-        DECLARE_NAMED_PROPERTY_GETTER(Storage);
-        DECLARE_NAMED_PROPERTY_SETTER(Storage);
-        DECLARE_NAMED_PROPERTY_DELETER(Storage);
-        static v8::Handle<v8::Array> v8StorageNamedPropertyEnumerator(const v8::AccessorInfo& info);
-#endif
-
 #if ENABLE(WORKERS)
         DECLARE_CALLBACK(WorkerConstructor);
 #endif
@@ -299,14 +165,6 @@ namespace WebCore {
 #if ENABLE(WEB_SOCKETS)
         DECLARE_CALLBACK(WebSocketConstructor);
 #endif
-
-#undef DECLARE_NAMED_PROPERTY_GETTER
-#undef DECLARE_NAMED_PROPERTY_SETTER
-#undef DECLARE_NAMED_PROPERTY_DELETER
-
-#undef DECLARE_INDEXED_PROPERTY_GETTER
-#undef DECLARE_INDEXED_PROPERTY_SETTER
-#undef DECLARE_INDEXED_PROPERTY_DELETER
 
 #undef DECLARE_CALLBACK
     };

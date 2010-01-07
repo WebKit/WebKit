@@ -73,37 +73,37 @@ static v8::Handle<v8::Value> npObjectNamedSetter(v8::Local<v8::String> name, v8:
     return npObjectSetNamedProperty(instance, name, value);
 }
 
-NAMED_PROPERTY_GETTER(HTMLAppletElement)
+v8::Handle<v8::Value> V8HTMLAppletElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLAppletElement.NamedPropertyGetter");
     return npObjectNamedGetter(name, info);
 }
 
-NAMED_PROPERTY_GETTER(HTMLEmbedElement)
+v8::Handle<v8::Value> V8HTMLEmbedElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLEmbedElement.NamedPropertyGetter");
     return npObjectNamedGetter(name, info);
 }
 
-NAMED_PROPERTY_GETTER(HTMLObjectElement)
+v8::Handle<v8::Value> V8HTMLObjectElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLObjectElement.NamedPropertyGetter");
     return npObjectNamedGetter(name, info);
 }
 
-NAMED_PROPERTY_SETTER(HTMLAppletElement)
+v8::Handle<v8::Value> V8HTMLAppletElement::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLAppletElement.NamedPropertySetter");
     return npObjectNamedSetter(name, value, info);
 }
 
-NAMED_PROPERTY_SETTER(HTMLEmbedElement)
+v8::Handle<v8::Value> V8HTMLEmbedElement::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLEmbedElement.NamedPropertySetter");
     return npObjectNamedSetter(name, value, info);
 }
 
-NAMED_PROPERTY_SETTER(HTMLObjectElement)
+v8::Handle<v8::Value> V8HTMLObjectElement::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLObjectElement.NamedPropertySetter");
     return npObjectNamedSetter(name, value, info);
@@ -157,37 +157,37 @@ v8::Handle<v8::Value> npObjectIndexedSetter(uint32_t index, v8::Local<v8::Value>
     return npObjectSetIndexedProperty(instance, index, value);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLAppletElement)
+v8::Handle<v8::Value> V8HTMLAppletElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLAppletElement.IndexedPropertyGetter");
     return npObjectIndexedGetter(index, info);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLEmbedElement)
+v8::Handle<v8::Value> V8HTMLEmbedElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLEmbedElement.IndexedPropertyGetter");
     return npObjectIndexedGetter(index, info);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLObjectElement)
+v8::Handle<v8::Value> V8HTMLObjectElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLObjectElement.IndexedPropertyGetter");
     return npObjectIndexedGetter(index, info);
 }
 
-INDEXED_PROPERTY_SETTER(HTMLAppletElement)
+v8::Handle<v8::Value> V8HTMLAppletElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLAppletElement.IndexedPropertySetter");
     return npObjectIndexedSetter(index, value, info);
 }
 
-INDEXED_PROPERTY_SETTER(HTMLEmbedElement)
+v8::Handle<v8::Value> V8HTMLEmbedElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLEmbedElement.IndexedPropertySetter");
     return npObjectIndexedSetter(index, value, info);
 }
 
-INDEXED_PROPERTY_SETTER(HTMLObjectElement)
+v8::Handle<v8::Value> V8HTMLObjectElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLObjectElement.IndexedPropertySetter");
     return npObjectIndexedSetter(index, value, info);

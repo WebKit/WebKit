@@ -29,12 +29,13 @@
  */
 
 #include "config.h"
-#include "HTMLFrameSetElement.h"
+#include "V8HTMLFrameSetElement.h"
 
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLFrameElement.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
 
@@ -44,7 +45,7 @@
 
 namespace WebCore {
 
-NAMED_PROPERTY_GETTER(HTMLFrameSetElement)
+v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFrameSetElement.NamedPropertyGetter");
     HTMLFrameSetElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameSetElement>(info.Holder());

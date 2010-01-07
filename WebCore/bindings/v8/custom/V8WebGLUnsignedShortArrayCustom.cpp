@@ -51,34 +51,6 @@ v8::Handle<v8::Value> V8Custom::v8WebGLUnsignedShortArrayConstructorCallback(con
     return constructWebGLArray<WebGLUnsignedShortArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY));
 }
 
-// Get the specified value from the array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid array range return "undefined".
-INDEXED_PROPERTY_GETTER(WebGLUnsignedShortArray)
-{
-    INC_STATS("DOM.WebGLUnsignedShortArray.IndexedPropertyGetter");
-    WebGLUnsignedShortArray* array = V8DOMWrapper::convertToNativeObject<WebGLUnsignedShortArray>(V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY, info.Holder());
-
-    if ((index < 0) || (index >= array->length()))
-        return v8::Undefined();
-    unsigned short result;
-    if (!array->get(index, result))
-        return v8::Undefined();
-    return v8::Number::New(result);
-}
-
-// Set the specified value in the array. Accesses outside the valid array range are silently ignored.
-INDEXED_PROPERTY_SETTER(WebGLUnsignedShortArray)
-{
-    INC_STATS("DOM.WebGLUnsignedShortArray.IndexedPropertySetter");
-    WebGLUnsignedShortArray* array = V8DOMWrapper::convertToNativeObject<WebGLUnsignedShortArray>(V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY, info.Holder());
-
-    if ((index >= 0) && (index < array->length())) {
-        if (!value->IsNumber())
-            return throwError("Could not convert value argument to a number");
-        array->set(index, value->NumberValue());
-    }
-    return value;
-}
-
 v8::Handle<v8::Value> V8WebGLUnsignedShortArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedShortArray.get()");

@@ -51,34 +51,6 @@ v8::Handle<v8::Value> V8Custom::v8WebGLByteArrayConstructorCallback(const v8::Ar
     return constructWebGLArray<WebGLByteArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLBYTEARRAY));
 }
 
-// Get the specified value from the byte buffer and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid byte buffer range return "undefined".
-INDEXED_PROPERTY_GETTER(WebGLByteArray)
-{
-    INC_STATS("DOM.WebGLByteArray.IndexedPropertyGetter");
-    WebGLByteArray* byteBuffer = V8DOMWrapper::convertToNativeObject<WebGLByteArray>(V8ClassIndex::WEBGLBYTEARRAY, info.Holder());
-
-    if ((index < 0) || (index >= byteBuffer->length()))
-        return v8::Undefined();
-    signed char result;
-    if (!byteBuffer->get(index, result))
-        return v8::Undefined();
-    return v8::Number::New(result);
-}
-
-// Set the specified value in the byte buffer. Accesses outside the valid byte buffer range are silently ignored.
-INDEXED_PROPERTY_SETTER(WebGLByteArray)
-{
-    INC_STATS("DOM.WebGLByteArray.IndexedPropertySetter");
-    WebGLByteArray* array = V8DOMWrapper::convertToNativeObject<WebGLByteArray>(V8ClassIndex::WEBGLBYTEARRAY, info.Holder());
-
-    if ((index >= 0) && (index < array->length())) {
-        if (!value->IsNumber())
-            return throwError("Could not convert value argument to a number");
-        array->set(index, value->NumberValue());
-    }
-    return value;
-}
-
 v8::Handle<v8::Value> V8WebGLByteArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLByteArray.get()");

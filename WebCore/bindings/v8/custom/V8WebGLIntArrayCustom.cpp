@@ -51,34 +51,6 @@ v8::Handle<v8::Value> V8Custom::v8WebGLIntArrayConstructorCallback(const v8::Arg
     return constructWebGLArray<WebGLIntArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLINTARRAY));
 }
 
-// Get the specified value from the integer array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid pixel buffer range return "undefined".
-INDEXED_PROPERTY_GETTER(WebGLIntArray)
-{
-    INC_STATS("DOM.WebGLIntArray.IndexedPropertyGetter");
-    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::WEBGLINTARRAY, info.Holder());
-
-    if ((index < 0) || (index >= array->length()))
-        return v8::Undefined();
-    int result;
-    if (!array->get(index, result))
-        return v8::Undefined();
-    return v8::Number::New(result);
-}
-
-// Set the specified value in the integer array. Accesses outside the valid integer array range are silently ignored.
-INDEXED_PROPERTY_SETTER(WebGLIntArray)
-{
-    INC_STATS("DOM.WebGLIntArray.IndexedPropertySetter");
-    WebGLIntArray* array = V8DOMWrapper::convertToNativeObject<WebGLIntArray>(V8ClassIndex::WEBGLINTARRAY, info.Holder());
-
-    if ((index >= 0) && (index < array->length())) {
-        if (!value->IsNumber())
-            return throwError("Could not convert value argument to a number");
-        array->set(index, value->NumberValue());
-    }
-    return value;
-}
-
 v8::Handle<v8::Value> V8WebGLIntArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.get()");

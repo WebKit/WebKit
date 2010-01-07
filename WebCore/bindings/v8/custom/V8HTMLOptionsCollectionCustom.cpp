@@ -114,7 +114,7 @@ void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v
     V8Proxy::setDOMException(ec);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLOptionsCollection)
+v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertyGetter");
     HTMLOptionsCollection* collection = V8DOMWrapper::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
@@ -126,7 +126,7 @@ INDEXED_PROPERTY_GETTER(HTMLOptionsCollection)
     return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
-INDEXED_PROPERTY_SETTER(HTMLOptionsCollection)
+v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertySetter");
     HTMLOptionsCollection* collection = V8DOMWrapper::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());

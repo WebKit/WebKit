@@ -1,3 +1,33 @@
+2010-01-07  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Generate V8 bindings header declarations for named and indexed accessors.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        * bindings/v8/custom/V8StyleSheetListCustom.cpp:
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+
 2010-01-07  Geoffrey Garen  <ggaren@apple.com>
 
         Better build fix: use 'this->structure()', since 'structure' is a

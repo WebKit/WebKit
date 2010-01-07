@@ -764,7 +764,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 }
 
 
-INDEXED_PROPERTY_GETTER(DOMWindow)
+v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMWindow.IndexedPropertyGetter");
 
@@ -784,7 +784,7 @@ INDEXED_PROPERTY_GETTER(DOMWindow)
 }
 
 
-NAMED_PROPERTY_GETTER(DOMWindow)
+v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMWindow.NamedPropertyGetter");
 

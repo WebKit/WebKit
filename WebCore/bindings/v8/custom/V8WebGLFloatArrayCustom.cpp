@@ -51,31 +51,6 @@ v8::Handle<v8::Value> V8Custom::v8WebGLFloatArrayConstructorCallback(const v8::A
     return constructWebGLArray<WebGLFloatArray>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLFLOATARRAY));
 }
 
-// Get the specified value from the array and return it wrapped as a JavaScript Number object to V8. Accesses outside the valid array range return "undefined".
-INDEXED_PROPERTY_GETTER(WebGLFloatArray)
-{
-    INC_STATS("DOM.WebGLFloatArray.IndexedPropertyGetter");
-    WebGLFloatArray* array = V8DOMWrapper::convertToNativeObject<WebGLFloatArray>(V8ClassIndex::WEBGLFLOATARRAY, info.Holder());
-
-    if ((index < 0) || (index >= array->length()))
-        return v8::Undefined();
-    float result;
-    if (!array->get(index, result))
-        return v8::Undefined();
-    return v8::Number::New(result);
-}
-
-// Set the specified value in the array. Accesses outside the valid array range are silently ignored.
-INDEXED_PROPERTY_SETTER(WebGLFloatArray)
-{
-    INC_STATS("DOM.WebGLFloatArray.IndexedPropertySetter");
-    WebGLFloatArray* array = V8DOMWrapper::convertToNativeObject<WebGLFloatArray>(V8ClassIndex::WEBGLFLOATARRAY, info.Holder());
-
-    if ((index >= 0) && (index < array->length()))
-        array->set(index, value->NumberValue());
-    return value;
-}
-
 v8::Handle<v8::Value> V8WebGLFloatArray::getCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.get()");

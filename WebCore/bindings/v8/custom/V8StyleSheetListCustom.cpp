@@ -29,16 +29,17 @@
  */
 
 #include "config.h"
+#include "V8StyleSheetList.h"
+
 #include "HTMLStyleElement.h"
 #include "StyleSheetList.h"
-
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
-NAMED_PROPERTY_GETTER(StyleSheetList)
+v8::Handle<v8::Value> V8StyleSheetList::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.StyleSheetList.NamedPropertyGetter");
 

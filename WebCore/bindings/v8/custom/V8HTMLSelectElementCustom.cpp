@@ -45,9 +45,9 @@
 
 namespace WebCore {
 
-NAMED_PROPERTY_GETTER(HTMLSelectElement)
+v8::Handle<v8::Value> V8HTMLSelectElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.HTMLSelectElement.NamedPropertySetter");
+    INC_STATS("DOM.HTMLSelectElement.NamedPropertyGetter");
     HTMLSelectElement* select = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());
     v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
 
@@ -73,7 +73,7 @@ NAMED_PROPERTY_GETTER(HTMLSelectElement)
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, list);
 }
 
-INDEXED_PROPERTY_GETTER(HTMLSelectElement)
+v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
@@ -84,7 +84,7 @@ INDEXED_PROPERTY_GETTER(HTMLSelectElement)
     return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
-INDEXED_PROPERTY_SETTER(HTMLSelectElement)
+v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLSelectElement.IndexedPropertySetter");
     HTMLSelectElement* select = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());

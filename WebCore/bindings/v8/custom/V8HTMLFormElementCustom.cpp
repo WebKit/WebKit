@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-INDEXED_PROPERTY_GETTER(HTMLFormElement)
+v8::Handle<v8::Value> V8HTMLFormElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFormElement.IndexedPropertyGetter");
     HTMLFormElement* form = V8DOMWrapper::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
@@ -51,8 +51,7 @@ INDEXED_PROPERTY_GETTER(HTMLFormElement)
     return V8DOMWrapper::convertNodeToV8Object(formElement.release());
 }
 
-
-NAMED_PROPERTY_GETTER(HTMLFormElement)
+v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFormElement.NamedPropertyGetter");
     HTMLFormElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
