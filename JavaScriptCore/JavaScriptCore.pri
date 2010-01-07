@@ -52,11 +52,6 @@ contains(JAVASCRIPTCORE_JIT,no) {
     DEFINES+=ENABLE_YARR=0
 }
 
-# In debug mode JIT disabled until crash fixed
-win32-* {
-    CONFIG(debug):!contains(DEFINES, ENABLE_JIT=1): DEFINES+=ENABLE_JIT=0
-}
-
 # Rules when JIT enabled (not disabled)
 !contains(DEFINES, ENABLE_JIT=0) {
     linux*-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {

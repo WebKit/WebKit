@@ -1,3 +1,11 @@
+2010-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Enable JIT in debug mode on win32 after r51141 fixed the crashes.
+
+        * JavaScriptCore.pri:
+
 2010-01-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Holger Freyther.
