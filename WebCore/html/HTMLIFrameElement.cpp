@@ -155,14 +155,6 @@ void HTMLIFrameElement::removedFromDocument()
     HTMLFrameElementBase::removedFromDocument();
 }
 
-void HTMLIFrameElement::attach()
-{
-    HTMLFrameElementBase::attach();
-
-    if (RenderPartObject* renderPartObject = toRenderPartObject(renderer()))
-        renderPartObject->updateWidget(false);
-}
-
 bool HTMLIFrameElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == srcAttr;

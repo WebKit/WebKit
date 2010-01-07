@@ -44,8 +44,6 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    virtual void attach();
-
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
