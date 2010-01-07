@@ -1301,6 +1301,8 @@ static bool fastDocumentTeardownEnabled()
     settings->setApplicationChromeMode([preferences applicationChromeModeEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
+        if ([location isEqualToString:@"apple-dashboard://stylesheet"])
+            location = @"file:///System/Library/PrivateFrameworks/DashboardClient.framework/Resources/widget.css";
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
         settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
