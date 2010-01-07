@@ -116,6 +116,7 @@ private:
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document, ConstructionType type)
     : StyledElement(tagName, document, type)
 {
+    ASSERT(tagName.localName().impl());
 }
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2010-01-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Use a static HashMap for HTMLElement::tagPriority().
+        https://bugs.webkit.org/show_bug.cgi?id=33269
+
+        The prior code compares AtomicStringImpl pointers 18 times at
+        worst. This change avoids it.
+
+        No new tests because this is just a refactoring.
+
+        * html/HTMLElement.cpp:
+        (WebCore::Empty1IntHashTraits): A HashTraits to return 1 as the empty value.
+        (WebCore::initializeTagPriorityMap): Initialization of a static HashMap.
+        (WebCore::HTMLElement::tagPriority): Use the static HashMap created by initializeTagPriorityMap().
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::HTMLElement): Add an assertion about non-null localName().
+
 2010-01-06  Mike Belshe  <mike@belshe.com>
 
         Add a flag to the ResourceResponse for tracking if a request was
