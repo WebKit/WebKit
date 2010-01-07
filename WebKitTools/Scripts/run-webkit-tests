@@ -1426,8 +1426,8 @@ sub openHTTPDIfNeeded()
     }
     
     die "Timed out waiting for httpd to start" unless $retryCount;
-    open (PIDFILE, $httpdPidFile) || die "Cannot open HTTPD pid file.";
-    $httpdPid = <PIDFILE>;
+
+    $httpdPid = <PIDFILE> if open(PIDFILE, $httpdPidFile);
     chomp $httpdPid if $httpdPid;
     close PIDFILE;
     $isHttpdOpen = 1;

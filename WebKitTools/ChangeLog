@@ -1,5 +1,11 @@
 2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
+        Unreviewed. Fix the Mac bots. Why is there no HTTPD PID file?
+
+        * Scripts/run-webkit-tests:
+
+2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
         Reviewed by Alexey Proskuryakov.
 
         Store HTTPD PID in a variable to fix warnings if for some reason the pidfile gets deleted before httpd terminates.
