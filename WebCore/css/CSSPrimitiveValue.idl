@@ -19,10 +19,7 @@
 
 module css {
 
-    interface [
-        InterfaceUUID=a286b0cb-4ff0-4482-aa6e-7c5fb39afaba,
-        ImplementationUUID=c310c84d-480f-4bbb-9187-28e00956ac47
-    ] CSSPrimitiveValue : CSSValue {
+    interface CSSPrimitiveValue : CSSValue {
 
         // UnitTypes
         const unsigned short CSS_UNKNOWN    = 0;
@@ -68,11 +65,8 @@ module css {
             raises(DOMException);
         Rect getRectValue()
             raises(DOMException);
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         RGBColor getRGBColorValue()
             raises(DOMException);
-#endif
-
     };
 
 }

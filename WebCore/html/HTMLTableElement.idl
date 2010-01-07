@@ -20,10 +20,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=3f9c6e17-ee0c-43de-94b0-2a21b19b612c,
-        ImplementationUUID=159bb8fe-ffee-4ff9-b507-76741118143f
-    ] HTMLTableElement : HTMLElement {
+    interface HTMLTableElement : HTMLElement {
 
         // could raise excepetions on setting.
                  attribute HTMLTableCaptionElement caption

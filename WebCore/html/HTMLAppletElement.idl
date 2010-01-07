@@ -24,9 +24,7 @@ module html {
         DelegatingPutFunction,
         DelegatingGetOwnPropertySlot,
         CustomCall,
-        HasOverridingNameGetter,
-        InterfaceUUID=9b5cb4a8-c156-4b55-afdb-c60938a4d1b1,
-        ImplementationUUID=56544372-675e-40dd-ba39-fa708a4c7678
+        HasOverridingNameGetter
     ] HTMLAppletElement : HTMLElement {
                  attribute [ConvertNullToNullString, Reflect] DOMString align;
                  attribute [ConvertNullToNullString, Reflect] DOMString alt;

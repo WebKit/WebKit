@@ -1,3 +1,120 @@
+2010-01-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove COM code generation stuff.
+        https://bugs.webkit.org/show_bug.cgi?id=32854
+
+        Remove the followings:
+        - CodeGeenratorCOM.pm, COM code generator,
+        - "#if !defined(LANGUAGE_COM) || !LANGUAGE_COM" in IDL files, and
+        - UUID attributes in IDL files.
+
+        * bindings/scripts/CodeGeneratorCOM.pm: Removed.
+        * css/CSSCharsetRule.idl:
+        * css/CSSFontFaceRule.idl:
+        * css/CSSImportRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPageRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRule.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleRule.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSUnknownRule.idl:
+        * css/CSSValue.idl:
+        * css/CSSValueList.idl:
+        * css/Counter.idl:
+        * css/MediaList.idl:
+        * css/RGBColor.idl:
+        * css/Rect.idl:
+        * css/StyleSheet.idl:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSKeyframeRule.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * css/WebKitCSSTransformValue.idl:
+        * dom/Attr.idl:
+        * dom/CDATASection.idl:
+        * dom/CharacterData.idl:
+        * dom/Comment.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/EntityReference.idl:
+        * dom/Event.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeList.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Text.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBlockquoteElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLDListElement.idl:
+        * html/HTMLDirectoryElement.idl:
+        * html/HTMLDivElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLHRElement.idl:
+        * html/HTMLHeadElement.idl:
+        * html/HTMLHeadingElement.idl:
+        * html/HTMLHtmlElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLIsIndexElement.idl:
+        * html/HTMLLIElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMenuElement.idl:
+        * html/HTMLMetaElement.idl:
+        * html/HTMLModElement.idl:
+        * html/HTMLOListElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLParagraphElement.idl:
+        * html/HTMLParamElement.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLQuoteElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTitleElement.idl:
+        * html/HTMLUListElement.idl:
+
 2010-01-07  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

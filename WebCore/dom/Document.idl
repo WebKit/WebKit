@@ -24,9 +24,7 @@ module core {
         CustomToJS,
         GenerateNativeConverter,
         CustomMarkFunction,
-        InlineGetOwnPropertySlot,
-        InterfaceUUID=48BB95FC-2D08-4c54-BE65-7558736A4CAE,
-        ImplementationUUID=FF5CBE81-F817-429c-A6C2-0CCCD2328062
+        InlineGetOwnPropertySlot
     ] Document : Node {
 
         // DOM Level 1 Core
@@ -80,7 +78,6 @@ module core {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString documentURI;
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // DOM Level 2 Events (DocumentEvents interface)
 
         Event              createEvent(in DOMString eventType)
@@ -128,7 +125,6 @@ module core {
                                                       in XPathResult inResult)
             raises(DOMException);
 #endif // ENABLE_XPATH
-#endif // !defined(LANGUAGE_COM)
 
         // Common extensions
 
@@ -170,9 +166,7 @@ module core {
                  attribute HTMLElement body
                      setter raises (DOMException);
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute HTMLHeadElement head;
-#endif
         readonly attribute HTMLCollection images;
         readonly attribute HTMLCollection applets;
         readonly attribute HTMLCollection links;
@@ -193,9 +187,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
 
         Element            elementFromPoint(in long x, in long y);
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         Range              caretRangeFromPoint(in long x, in long y);
-#endif
 
         // Mozilla extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -208,10 +200,8 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectedStylesheetSet;
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         CSSStyleDeclaration createCSSStyleDeclaration();
-#endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -229,10 +219,8 @@ module core {
                                                   
 #endif
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         [V8Custom] DOMObject getCSSCanvasContext(in DOMString contextId, in DOMString name, in long width, in long height);
-#endif
 #endif
 
         // HTML 5
@@ -251,7 +239,6 @@ module core {
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // Event handler DOM attributes
         attribute [DontEnum] EventListener onabort;
         attribute [DontEnum] EventListener onblur;
@@ -323,7 +310,6 @@ module core {
         attribute [DontEnum] EventListener ontouchstart;
         attribute [DontEnum] EventListener ontouchmove;
         attribute [DontEnum] EventListener ontouchend;
-#endif
 #endif
 #endif
     };

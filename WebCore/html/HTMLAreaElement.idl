@@ -20,10 +20,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=aac98729-47d3-4623-8c5b-004783af5bd6,
-        ImplementationUUID=f0631a41-5f55-40e5-a879-c09e663c26ba
-    ] HTMLAreaElement : HTMLElement {
+    interface HTMLAreaElement : HTMLElement {
         attribute [ConvertNullToNullString, Reflect=accesskey] DOMString accessKey;
         attribute [ConvertNullToNullString, Reflect] DOMString alt;
         attribute [ConvertNullToNullString, Reflect] DOMString coords;

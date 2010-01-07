@@ -28,9 +28,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         CustomMarkFunction,
-        HasIndexGetter,
-        InterfaceUUID=64c346a0-1e34-49d3-9472-57ec8e0fdccb,
-        ImplementationUUID=971a28e0-d0da-4570-9b71-e39fc2cf9a1b
+        HasIndexGetter
     ] CSSRuleList {
         readonly attribute unsigned long    length;
         CSSRule           item(in unsigned long index);

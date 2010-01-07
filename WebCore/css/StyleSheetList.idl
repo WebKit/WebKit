@@ -24,9 +24,7 @@ module stylesheets {
     interface [
         CustomMarkFunction,
         HasIndexGetter,
-        HasNameGetter,
-        InterfaceUUID=707da1d7-7c8f-42b1-bbbf-c009e429663f,
-        ImplementationUUID=5991ebaf-ce6c-42db-b1c8-fb34af8d5c76
+        HasNameGetter
     ] StyleSheetList {
         readonly attribute unsigned long    length;
         StyleSheet         item(in unsigned long index);

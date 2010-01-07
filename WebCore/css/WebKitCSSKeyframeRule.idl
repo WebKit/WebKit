@@ -29,10 +29,7 @@
 module css {
 
     // Introduced in DOM Level ?:
-    interface [
-        InterfaceUUID=87b7cde8-5818-4f68-b554-5382e6d9428c,
-        ImplementationUUID=b000d468-bb7a-4866-8946-5dea8b6a3c13
-    ] WebKitCSSKeyframeRule : CSSRule {
+    interface WebKitCSSKeyframeRule : CSSRule {
 
         attribute DOMString keyText;
         readonly attribute CSSStyleDeclaration style;

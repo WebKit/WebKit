@@ -23,9 +23,7 @@ module html {
     // FIXME: The W3C spec says that HTMLOptionsCollection should not have a parent class.
     interface [
         GenerateNativeConverter,
-        HasCustomIndexSetter,
-        InterfaceUUID=a03aaeac-e47d-4bb3-acb4-f1897ae74237,
-        ImplementationUUID=99c11fde-6f9f-44a4-a041-49a894c52e70
+        HasCustomIndexSetter
     ] HTMLOptionsCollection : HTMLCollection {
                  attribute long selectedIndex;
                  attribute [Custom] unsigned long length

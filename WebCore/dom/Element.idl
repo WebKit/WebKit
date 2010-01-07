@@ -23,9 +23,7 @@ module core {
     interface [
         CustomMarkFunction,
         GenerateNativeConverter,
-        InlineGetOwnPropertySlot,
-        InterfaceUUID=FEFE9C21-E58C-4b5b-821A-61A514613763,
-        ImplementationUUID=12E5B08E-A680-4baf-9D1E-108AEF7ABBFB
+        InlineGetOwnPropertySlot
     ] Element : Node {
 
         // DOM Level 1 Core
@@ -66,9 +64,7 @@ module core {
         [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                               in DOMString localName);
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute CSSStyleDeclaration style;
-#endif
 
         // Common extensions
 
@@ -109,7 +105,6 @@ module core {
         NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // WebKit extension, pending specification.
         boolean webkitMatchesSelector(in DOMString selectors)
             raises(DOMException);
@@ -120,7 +115,6 @@ module core {
         readonly attribute Element previousElementSibling;
         readonly attribute Element nextElementSibling;
         readonly attribute unsigned long childElementCount;
-#endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // CSSOM View Module API
@@ -134,7 +128,6 @@ module core {
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // Event handler DOM attributes
         attribute [DontEnum] EventListener onabort;
         attribute [DontEnum] EventListener onblur;
@@ -206,7 +199,6 @@ module core {
         attribute [DontEnum] EventListener ontouchstart;
         attribute [DontEnum] EventListener ontouchmove;
         attribute [DontEnum] EventListener ontouchend;
-#endif
 #endif
 #endif
     };

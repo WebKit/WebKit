@@ -20,10 +20,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=32265f2e-79b1-4e4e-b0d1-86b050298883,
-        ImplementationUUID=370c6318-f804-49f9-bc8a-46b99cd87399
-    ] HTMLIFrameElement : HTMLElement {
+    interface HTMLIFrameElement : HTMLElement {
 
                  attribute [ConvertNullToNullString, Reflect] DOMString       align;
                  attribute [ConvertNullToNullString, Reflect=frameborder] DOMString       frameBorder;
@@ -40,7 +37,6 @@ module html {
         // Introduced in DOM Level 2:
         readonly attribute [CheckFrameSecurity] Document        contentDocument;
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // Extensions
         readonly attribute DOMWindow contentWindow;
 
@@ -48,7 +44,6 @@ module html {
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
         [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
             raises(DOMException);
-#endif
 #endif
 #endif
 

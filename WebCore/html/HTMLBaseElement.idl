@@ -19,10 +19,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=e4112bea-13de-40f6-93d0-41e285ae1491,
-        ImplementationUUID=23cec074-660f-490a-996d-167d66c164d5
-    ] HTMLBaseElement : HTMLElement {
+    interface HTMLBaseElement : HTMLElement {
         attribute [ConvertNullToNullString, Reflect] DOMString href;
         attribute [ConvertNullToNullString, Reflect] DOMString target;
     };

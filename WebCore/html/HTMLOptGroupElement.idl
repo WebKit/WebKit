@@ -19,10 +19,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=18b0ea8c-d3ea-4b14-abd8-8e1d4269fffc,
-        ImplementationUUID=e26d8c4b-5181-4858-8231-f68ccbf819df
-    ] HTMLOptGroupElement : HTMLElement {
+    interface HTMLOptGroupElement : HTMLElement {
         attribute  boolean              disabled;
         attribute  [ConvertNullToNullString] DOMString            label;
     };

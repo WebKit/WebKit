@@ -27,9 +27,7 @@ module core {
         EventTarget,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
-        Polymorphic,
-        InterfaceUUID=84BA0D7A-7E3E-4a7b-B6FB-7653E8FB54ED,
-        ImplementationUUID=81B47FDB-94B0-40fd-8E0C-FB2A6E53CC04
+        Polymorphic
     ] Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget
@@ -134,7 +132,6 @@ module core {
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         [Custom] void addEventListener(in DOMString type, 
                                        in EventListener listener, 
                                        in boolean useCapture);
@@ -143,7 +140,6 @@ module core {
                                           in boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
-#endif
 #endif
     };
 

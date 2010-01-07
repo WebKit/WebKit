@@ -21,10 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [
-        InterfaceUUID=2f547f65-f8c4-4f13-8724-ed10ed79dcc4,
-        ImplementationUUID=1b5c24b3-8b6f-43a9-8891-654ba858f42f
-    ] CSSStyleSheet : stylesheets::StyleSheet {
+    interface CSSStyleSheet : stylesheets::StyleSheet {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
 

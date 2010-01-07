@@ -1,3 +1,13 @@
+2010-01-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove COM code generation files.
+        https://bugs.webkit.org/show_bug.cgi?id=32854
+
+        * WebKit.vcproj/DerivedSources.make: Removed.
+        * WebKit.vcproj/build-generated-files.sh: Removed.
+
 2010-01-05  Adam Roben  <aroben@apple.com>
 
         Make IWebView::close and destroying a WebView's HWND optional for

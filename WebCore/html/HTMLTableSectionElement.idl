@@ -21,9 +21,7 @@
 module html {
 
     interface [
-        GenerateNativeConverter,
-        InterfaceUUID=e0cf6b6a-9ba1-400f-b523-dbb22819dfb6,
-        ImplementationUUID=85329cf4-1eae-4245-a971-1bddb212a9c5
+        GenerateNativeConverter
     ] HTMLTableSectionElement : HTMLElement {
 
                  attribute [ConvertNullToNullString] DOMString       align;

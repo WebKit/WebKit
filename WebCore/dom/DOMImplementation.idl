@@ -20,10 +20,7 @@
 
 module core {
 
-    interface [
-        InterfaceUUID=B0CC344F-963C-4acc-9FC6-EB22649345E5,
-        ImplementationUUID=9E835092-2CA3-426b-826B-8272A8105E49
-    ] DOMImplementation {
+    interface DOMImplementation {
 
         // DOM Level 1
 
@@ -43,7 +40,6 @@ module core {
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
                                                          in DOMString media)
             raises(DOMException);
@@ -51,7 +47,6 @@ module core {
         // HTMLDOMImplementation interface from DOM Level 2 HTML
 
         HTMLDocument createHTMLDocument(in DOMString title);
-#endif
     };
 
 }

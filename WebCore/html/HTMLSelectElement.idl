@@ -22,9 +22,7 @@ module html {
 
     interface [
         HasIndexGetter,
-        HasCustomIndexSetter,
-        InterfaceUUID=99013cd3-d644-4bb5-86a3-2e743821383b,
-        ImplementationUUID=afe20462-588d-469a-9b4c-8879c4a461d5
+        HasCustomIndexSetter
     ] HTMLSelectElement : HTMLElement {
 
         readonly attribute DOMString       type;
@@ -40,9 +38,7 @@ module html {
 #endif
 
         readonly attribute HTMLFormElement form;
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         readonly attribute ValidityState   validity;
-#endif
         readonly attribute boolean         willValidate;
         readonly attribute DOMString       validationMessage;
         boolean            checkValidity();

@@ -20,10 +20,7 @@
 
 module html {
 
-    interface [
-        InterfaceUUID=4789afc6-2d9e-4f3b-8c27-12abc9d4a014,
-        ImplementationUUID=d2e16911-2f7e-4d58-a92c-94700d445b38
-    ] HTMLBodyElement : HTMLElement {
+    interface HTMLBodyElement : HTMLElement {
         attribute [ConvertNullToNullString, Reflect=alink] DOMString aLink;
         attribute [ConvertNullToNullString, Reflect] DOMString background;
         attribute [ConvertNullToNullString, Reflect=bgcolor] DOMString bgColor;
@@ -32,7 +29,6 @@ module html {
         attribute [ConvertNullToNullString, Reflect=vlink] DOMString vLink;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
         // Event handler attributes
         attribute [DontEnum] EventListener onbeforeunload;
         attribute [DontEnum] EventListener onhashchange;
@@ -59,7 +55,6 @@ module html {
         // attribute [DontEnum] EventListener onbeforeprint;
         // attribute [DontEnum] EventListener onredo;
         // attribute [DontEnum] EventListener onundo;
-#endif
 #endif
     };
 
