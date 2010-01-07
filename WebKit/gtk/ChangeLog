@@ -1,3 +1,15 @@
+2010-01-06  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30883
+        [Gtk] Implement AtkText for HTML elements which contain text
+
+        * tests/testatk.c
+        (test_webkit_atk_get_text_at_offset):
+        (test_webkit_atk_get_text_at_offset_forms):
+        (test_webkit_atk_get_text_at_offset_newlines):
+
 2010-01-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Updated docs for 1.1.18 release.

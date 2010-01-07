@@ -820,8 +820,11 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
     AccessibilityObject* coreObject = core(text);
     String ret;
     unsigned start = startOffset;
-    if (endOffset == -1)
+    if (endOffset == -1) {
         endOffset = coreObject->stringValue().length();
+        if (!endOffset)
+            endOffset = coreObject->textUnderElement().length();
+    }
     int length = endOffset - startOffset;
 
     if (coreObject->isTextControl())
@@ -903,11 +906,9 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
     if (!accObject)
         return 0;
-    RenderText* renderText = toRenderText(accObject->renderer());
-    if (!renderText)
-        return 0;
 
     // Create a string with the layout as it appears on the screen
+    // For text controls, we can get the text line by line.
     if (accObject->isTextControl()) {
         unsigned textLength = accObject->textLength();
         int lineNumber = 0;
@@ -922,15 +923,32 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
             range = accObject->doAXRangeForLine(++lineNumber);
         }
     } else {
-        InlineTextBox* box = renderText->firstTextBox();
-        while (box) {
-            gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
-            g_string_append(str, text);
-            // Newline chars in the source result in separate text boxes, so check
-            // before adding a newline in the layout. See bug 25415 comment #78.
-            if (!box->nextOnLineExists())
+        // For RenderBlocks, piece together the text from the RenderText objects they contain.
+        for (RenderObject* obj = accObject->renderer()->firstChild(); obj; obj = obj->nextSibling()) {
+            if (obj->isBR()) {
                 g_string_append(str, "\n");
-            box = box->nextTextBox();
+                continue;
+            }
+
+            RenderText* renderText = toRenderText(obj);
+            // Be sure we have a RenderText object we can work with.
+            if (!renderText || !obj->isText()) {
+                // Handle RenderInlines (and any other similiar RenderObjects).
+                renderText = toRenderText(obj->firstChild());
+                if (!renderText)
+                    continue;
+            }
+
+            InlineTextBox* box = renderText->firstTextBox();
+            while (box) {
+                gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
+                g_string_append(str, text);
+                // Newline chars in the source result in separate text boxes, so check
+                // before adding a newline in the layout. See bug 25415 comment #78.
+                if (!box->nextOnLineExists())
+                    g_string_append(str, "\n");
+                box = box->nextTextBox();
+            }
         }
     }
 
@@ -1610,11 +1628,13 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
 
     if (role == StaticTextRole)
         interfaceMask |= 1 << WAI_TEXT;
-    else if (coreObject->isAccessibilityRenderObject() && coreObject->isTextControl()) {
-        interfaceMask |= 1 << WAI_TEXT;
-        if (!coreObject->isReadOnly())
-            interfaceMask |= 1 << WAI_EDITABLE_TEXT;
-    }
+    else if (coreObject->isAccessibilityRenderObject())
+        if (coreObject->isTextControl()) {
+            interfaceMask |= 1 << WAI_TEXT;
+            if (!coreObject->isReadOnly())
+                interfaceMask |= 1 << WAI_EDITABLE_TEXT;
+        } else if (static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->childrenInline())
+            interfaceMask |= 1 << WAI_TEXT;
 
     // Image
     if (coreObject->isImage())

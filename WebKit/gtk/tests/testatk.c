@@ -221,8 +221,6 @@ static void test_webkit_atk_get_text_at_offset_forms(void)
     g_assert(obj);
     obj = atk_object_ref_accessible_child(obj, 0);
     g_assert(obj);
-    obj = atk_object_ref_accessible_child(obj, 0);
-    g_assert(obj);
 
     text_obj = ATK_TEXT(obj);
     g_assert(ATK_IS_TEXT(text_obj));
@@ -254,8 +252,6 @@ static void test_webkit_atk_get_text_at_offset(void)
     g_assert(obj);
     obj = atk_object_ref_accessible_child(obj, 0);
     g_assert(obj);
-    obj = atk_object_ref_accessible_child(obj, 0);
-    g_assert(obj);
 
     text_obj = ATK_TEXT(obj);
     g_assert(ATK_IS_TEXT(text_obj));
@@ -284,8 +280,6 @@ static void test_webkit_atk_get_text_at_offset_newlines(void)
 
     /* Get to the inner AtkText object */
     obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
-    g_assert(obj);
-    obj = atk_object_ref_accessible_child(obj, 0);
     g_assert(obj);
     obj = atk_object_ref_accessible_child(obj, 0);
     g_assert(obj);
