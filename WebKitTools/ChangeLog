@@ -1,3 +1,14 @@
+2010-01-07  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Created a module that runs the style package unit tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32973
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/style/unittests.py: Added.
+
 2010-01-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
