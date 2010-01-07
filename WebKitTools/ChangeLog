@@ -1,18 +1,3 @@
-2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
-
-        Unreviewed. Fix the Mac bots. Why is there no HTTPD PID file?
-
-        * Scripts/run-webkit-tests:
-
-2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
-
-        Reviewed by Alexey Proskuryakov.
-
-        Store HTTPD PID in a variable to fix warnings if for some reason the pidfile gets deleted before httpd terminates.
-        This should fix the occasional warnings for uninitialized values on the Mac bots.
-
-        * Scripts/run-webkit-tests:
-
 2010-01-07  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.
@@ -25,17 +10,6 @@
         (EventSender::touchEnd):
         (EventSender::clearTouchPoints):
         * DumpRenderTree/qt/EventSenderQt.h:
-
-2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
-
-        Reviewed by Kenneth Rohde Christiansen.
-
-        Reworked r52853 after r52876 rolled it out.
-        Chomp the pid variable before passing it to kill and read the contents of
-        the pidfile in a platform independent manner.
-        First pach of https://bugs.webkit.org/show_bug.cgi?id=33153.
-
-        * Scripts/run-webkit-tests:
 
 2010-01-07  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
