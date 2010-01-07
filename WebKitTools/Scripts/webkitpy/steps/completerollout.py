@@ -51,7 +51,7 @@ class CompleteRollout(MetaStep):
         # FIXME: Fully automated rollout is not 100% idiot-proof yet, so for now just log with instructions on how to complete the rollout.
         # Once we trust rollout we will remove this option.
         if not self._options.complete_rollout:
-            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff %s\" to commit the rollout." % bug_id)
+            log("\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"webkit-patch land %s\" to commit the rollout." % bug_id)
             return
 
         MetaStep.run(self, state)

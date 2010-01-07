@@ -42,7 +42,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
 
     def should_proceed_with_work_item(self, patch):
         try:
-            self.run_bugzilla_tool(["build", self.port.flag(), "--force-clean", "--quiet"])
+            self.run_webkit_patch(["build", self.port.flag(), "--force-clean", "--quiet"])
             self._update_status("Building", patch)
         except ScriptError, e:
             self._update_status("Unable to perform a build")
@@ -51,7 +51,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
 
     def process_work_item(self, patch):
         try:
-            self.run_bugzilla_tool([
+            self.run_webkit_patch([
                 "build-attachment",
                 self.port.flag(),
                 "--force-clean",

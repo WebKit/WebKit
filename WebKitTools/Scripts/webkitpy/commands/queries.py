@@ -118,7 +118,6 @@ class ReviewedPatches(AbstractDeclarativeCommmand):
 
 class TreeStatus(AbstractDeclarativeCommmand):
     name = "tree-status"
-    show_in_main_help = True
     help_text = "Print the status of the %s buildbots" % BuildBot.default_host
     long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder
 and displayes the status of each builder."""

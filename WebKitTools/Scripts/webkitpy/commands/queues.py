@@ -106,12 +106,12 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def handle_unexpected_error(self, work_item, message):
         raise NotImplementedError, "subclasses must implement"
 
-    def run_bugzilla_tool(self, args):
-        bugzilla_tool_args = [self.tool.path()]
+    def run_webkit_patch(self, args):
+        webkit_patch_args = [self.tool.path()]
         # FIXME: This is a hack, we should have a more general way to pass global options.
-        bugzilla_tool_args += ["--status-host=%s" % self.tool.status_server.host]
-        bugzilla_tool_args += map(str, args)
-        self.tool.executive.run_and_throw_if_fail(bugzilla_tool_args)
+        webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
+        webkit_patch_args += map(str, args)
+        self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     def log_progress(self, patch_ids):
         log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
@@ -147,7 +147,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
 
     def _can_build_and_test(self):
         try:
-            self.run_bugzilla_tool(["build-and-test", "--force-clean", "--non-interactive", "--build-style=both", "--quiet"])
+            self.run_webkit_patch(["build-and-test", "--force-clean", "--non-interactive", "--build-style=both", "--quiet"])
         except ScriptError, e:
             self._update_status("Unabled to successfully build and test", None)
             return False
@@ -177,7 +177,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
             # We pass --no-update here because we've already validated
             # that the current revision actually builds and passes the tests.
             # If we update, we risk moving to a revision that doesn't!
-            self.run_bugzilla_tool(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch["id"]])
+            self.run_webkit_patch(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch["id"]])
             self._did_pass(patch)
         except ScriptError, e:
             self._did_fail(patch)
@@ -255,7 +255,7 @@ class StyleQueue(AbstractReviewQueue):
 
     def process_work_item(self, patch):
         try:
-            self.run_bugzilla_tool(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
+            self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
             message = "%s ran check-webkit-style on attachment %s without any errors." % (self.name, patch["id"])
             self.tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=self.watchers)
             self._did_pass(patch)

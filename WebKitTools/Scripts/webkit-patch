@@ -46,7 +46,7 @@ from webkitpy.scm import detect_scm_system
 from webkitpy.user import User
 
 
-class BugzillaTool(MultiCommandTool):
+class WebKitPatch(MultiCommandTool):
     global_options = [
         make_option("--dry-run", action="store_true", dest="dry_run", default=False, help="do not touch remote servers"),
         make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
@@ -105,4 +105,4 @@ class BugzillaTool(MultiCommandTool):
 
 
 if __name__ == "__main__":
-    BugzillaTool().main()
+    WebKitPatch().main()

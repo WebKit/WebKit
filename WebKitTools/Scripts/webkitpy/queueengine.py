@@ -107,7 +107,7 @@ class QueueEngine:
                     # handled in the child process and we should just keep looping.
                     if e.exit_code == self.handled_error_code:
                         continue
-                    message = "Unexpected failure when landing patch!  Please file a bug against bugzilla-tool.\n%s" % e.message_with_output()
+                    message = "Unexpected failure when landing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output()
                     self._delegate.handle_unexpected_error(work_item, message)
             except KeyboardInterrupt, e:
                 log("\nUser terminated queue.")

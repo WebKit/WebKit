@@ -67,11 +67,11 @@ class DownloadCommandsTest(CommandsTest):
         options.update = True
         options.local_commit = True
         expected_stderr = "Updating working directory\n2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nProcessing patch 197 from bug 42.\nProcessing patch 128 from bug 42.\n"
-        self.assert_execute_outputs(ApplyPatches(), [42], options=options, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(ApplyFromBug(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_diff(self):
         expected_stderr = "Building WebKit\nUpdating bug 42\n"
-        self.assert_execute_outputs(LandDiff(), [42], options=self._default_options(), expected_stderr=expected_stderr)
+        self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_check_style(self):
         expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nRunning check-webkit-style\n"
@@ -87,10 +87,10 @@ class DownloadCommandsTest(CommandsTest):
 
     def test_land_patches(self):
         expected_stderr = "2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\nUpdating working directory\nProcessing patch 128 from bug 42.\nBuilding WebKit\n"
-        self.assert_execute_outputs(LandPatches(), [42], options=self._default_options(), expected_stderr=expected_stderr)
+        self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "Updating working directory\nRunning prepare-ChangeLog\n\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"bugzilla-tool land-diff 12345\" to commit the rollout.\n"
+        expected_stderr = "Updating working directory\nRunning prepare-ChangeLog\n\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"webkit-patch land 12345\" to commit the rollout.\n"
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_complete_rollout(self):

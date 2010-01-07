@@ -1,3 +1,28 @@
+2010-01-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugzilla-tool needs a new name
+        https://bugs.webkit.org/show_bug.cgi?id=28459
+
+        Rename bugzilla-tool to webkit-patch.  Also, rename some commands to
+        make more sense with the new name.
+
+        * Scripts/bugzilla-tool: Removed.
+        * Scripts/webkit-patch: Added.
+        * Scripts/webkit-tools-completion.sh:
+        * Scripts/webkitpy/bugzilla_unittest.py:
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/download_unittest.py:
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/queries.py:
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+        * Scripts/webkitpy/queueengine.py:
+        * Scripts/webkitpy/steps/completerollout.py:
+
 2010-01-07  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Eric Seidel.

@@ -49,18 +49,18 @@ class AbstractQueueTest(CommandsTest):
         self._assert_log_progress_output(["1","2","3"], "3 patches in test-queue [1, 2, 3]\n")
         self._assert_log_progress_output([1], "1 patch in test-queue [1]\n")
 
-    def _assert_run_bugzilla_tool(self, run_args):
+    def _assert_run_webkit_patch(self, run_args):
         queue = TestQueue()
         tool = MockBugzillaTool()
         queue.bind_to_tool(tool)
 
-        queue.run_bugzilla_tool(run_args)
+        queue.run_webkit_patch(run_args)
         expected_run_args = ["echo", "--status-host=example.com"] + map(str, run_args)
         tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
-    def test_run_bugzilla_tool(self):
-        self._assert_run_bugzilla_tool([1])
-        self._assert_run_bugzilla_tool(["one", 2])
+    def test_run_webkit_patch(self):
+        self._assert_run_webkit_patch([1])
+        self._assert_run_webkit_patch(["one", 2])
 
 
 class CommitQueueTest(QueuesTest):

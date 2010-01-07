@@ -66,8 +66,8 @@ class BuildAndTest(AbstractSequencedCommmand):
     ]
 
 
-class LandDiff(AbstractSequencedCommmand):
-    name = "land-diff"
+class Land(AbstractSequencedCommmand):
+    name = "land"
     help_text = "Land the current working directory diff and updates the associated bug if any"
     argument_names = "[BUGID]"
     show_in_main_help = True
@@ -80,9 +80,9 @@ class LandDiff(AbstractSequencedCommmand):
         steps.Commit,
         steps.CloseBugForLandDiff,
     ]
-    long_help = """land-diff commits the current working copy diff (just as svn or git commit would).
-land-diff will build and run the tests before committing.
-If a bug id is provided, or one can be found in the ChangeLog land-diff will update the bug after committing."""
+    long_help = """land commits the current working copy diff (just as svn or git commit would).
+land will build and run the tests before committing.
+If a bug id is provided, or one can be found in the ChangeLog land will update the bug after committing."""
 
     def _prepare_state(self, options, args, tool):
         return {
@@ -198,8 +198,8 @@ class ApplyAttachment(AbstractPatchApplyingCommand, ProcessAttachmentsMixin):
     show_in_main_help = True
 
 
-class ApplyPatches(AbstractPatchApplyingCommand, ProcessBugsMixin):
-    name = "apply-patches"
+class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
+    name = "apply-from-bug"
     help_text = "Apply reviewed patches from provided bugs to the local working directory"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
@@ -237,8 +237,8 @@ class LandAttachment(AbstractPatchLandingCommand, ProcessAttachmentsMixin):
     show_in_main_help = True
 
 
-class LandPatches(AbstractPatchLandingCommand, ProcessBugsMixin):
-    name = "land-patches"
+class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
+    name = "land-from-bug"
     help_text = "Land all patches on the given bugs, optionally building and testing them first"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True

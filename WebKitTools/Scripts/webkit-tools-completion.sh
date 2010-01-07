@@ -32,12 +32,12 @@
 #   Add a line like this to your .bashrc:
 #     source /path/to/WebKitCode/WebKitTools/Scripts/webkit-tools-completion.sh
 
-__bugzilla-tool_generate_reply()
+__webkit-patch_generate_reply()
 {
     COMPREPLY=( $(compgen -W "$1" -- "${COMP_WORDS[COMP_CWORD]}") )
 }
 
-_bugzilla-tool_complete()
+_webkit-patch_complete()
 {
     local command current_command="${COMP_WORDS[1]}"
     case "$current_command" in
@@ -50,41 +50,45 @@ _bugzilla-tool_complete()
     esac
 
     if [ $COMP_CWORD -eq 1 ]; then
-        __bugzilla-tool_generate_reply "--help apply-patches bugs-to-commit commit-message land-diff land-patches obsolete-attachments patches-to-commit post-commits post-diff reviewed-patches"
+        __webkit-patch_generate_reply "--help apply-from-bug bugs-to-commit commit-message land land-from-bug obsolete-attachments patches-to-commit post upload tree-status rollout reviewed-patches"
         return
     fi
 
     case "$command" in
-        apply-patches)
-            __bugzilla-tool_generate_reply "--force-clean --local-commit --no-clean --no-update"
+        apply-from-bug)
+            __webkit-patch_generate_reply "--force-clean --local-commit --no-clean --no-update"
             return
             ;;
         commit-message)
             return
             ;;
-        land-diff)
-            __bugzilla-tool_generate_reply "--no-build --no-close --no-test --reviewer= -r"
+        land)
+            __webkit-patch_generate_reply "--no-build --no-close --no-test --reviewer= -r"
             return
             ;;
-        land-patches)
-            __bugzilla-tool_generate_reply "--force-clean --no-build --no-clean --no-test"
+        land-from-bug)
+            __webkit-patch_generate_reply "--force-clean --no-build --no-clean --no-test"
             return
             ;;
         obsolete-attachments)
             return
             ;;
-        post-diff)
-            __bugzilla-tool_generate_reply "--description --no-obsolete --no-review -m"
+        post)
+            __webkit-patch_generate_reply "--description --no-obsolete --no-review --request-commit -m --open-bug"
+            return
+            ;;
+        upload)
+            __webkit-patch_generate_reply "--description --no-obsolete --no-review --request-commit --cc -m --open-bug"
             return
             ;;
         post-commits)
-            __bugzilla-tool_generate_reply "--bug-id= --no-comment --no-obsolete --no-review -b"
+            __webkit-patch_generate_reply "--bug-id= --no-comment --no-obsolete --no-review -b"
             return
             ;;
     esac
 }
 
-complete -F _bugzilla-tool_complete bugzilla-tool
+complete -F _webkit-patch_complete webkit-patch
 complete -W "--continue --fix-merged --help --no-continue --no-warnings --warnings -c -f -h -w" resolve-ChangeLogs
 complete -W "--bug --diff --git-commit --git-index --git-reviewer --help --no-update --no-write --open --update --write -d -h -o" prepare-ChangeLog
 complete -W "--clean --debug --help -h" build-webkit

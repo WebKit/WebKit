@@ -115,7 +115,7 @@ class BugzillaTest(unittest.TestCase):
     <bug>
           <bug_id>32585</bug_id>
           <creation_ts>2009-12-15 15:17 PST</creation_ts>
-          <short_desc>bug to test bugzilla-tool and commit-queue failures</short_desc>
+          <short_desc>bug to test webkit-patch and commit-queue failures</short_desc>
           <delta_ts>2009-12-27 21:04:50 PST</delta_ts>
           <reporter_accessible>1</reporter_accessible>
           <cclist_accessible>1</cclist_accessible>
@@ -138,9 +138,9 @@ class BugzillaTest(unittest.TestCase):
           <long_desc isprivate="0">
             <who name="Eric Seidel">eric@webkit.org</who>
             <bug_when>2009-12-15 15:17:28 PST</bug_when>
-            <thetext>bug to test bugzilla-tool and commit-queue failures
+            <thetext>bug to test webkit-patch and commit-queue failures
 
-Ignore this bug.  Just for testing failure modes of bugzilla-tool and the commit-queue.</thetext>
+Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-queue.</thetext>
           </long_desc>
           <attachment 
               isobsolete="0"
@@ -172,7 +172,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 """
     _expected_example_bug_parsing = {
         "id" : 32585,
-        "title" : u"bug to test bugzilla-tool and commit-queue failures",
+        "title" : u"bug to test webkit-patch and commit-queue failures",
         "cc_emails" : ["foo@bar.com", "example@example.com"],
         "reporter_email" : "eric@webkit.org",
         "assigned_to_email" : "webkit-unassigned@lists.webkit.org",
