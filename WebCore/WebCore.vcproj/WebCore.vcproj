@@ -27129,6 +27129,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderEmbeddedObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderEmbeddedObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderFieldset.cpp"
 				>
 			</File>

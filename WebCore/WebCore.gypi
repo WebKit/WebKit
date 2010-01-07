@@ -2979,6 +2979,8 @@
             'rendering/RenderCounter.h',
             'rendering/RenderDataGrid.cpp',
             'rendering/RenderDataGrid.h',
+            'rendering/RenderEmbeddedObject.cpp',
+            'rendering/RenderEmbeddedObject.h',
             'rendering/RenderFieldset.cpp',
             'rendering/RenderFieldset.h',
             'rendering/RenderFileUploadControl.cpp',
