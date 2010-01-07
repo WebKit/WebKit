@@ -1,3 +1,18 @@
+2010-01-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Adds the ability to increase the delay used when scheduling layout.
+        https://bugs.webkit.org/show_bug.cgi?id=32875
+
+        No new tests possible.
+
+        * dom/Document.cpp: Modified.
+        (WebCore::Document::Document): Modified. Initializes extra layout delay to zero.
+        (WebCore::Document::minimumLayoutDelay): Modified. Adds extra layout delay when calculating minimum layout delay.
+        * dom/Document.h: Modified.
+        (WebCore::Document::setExtraLayoutDelay): Added. Sets the extra layout delay.
+
 2010-01-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

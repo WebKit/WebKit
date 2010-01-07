@@ -531,6 +531,10 @@ public:
     void setParsing(bool);
     bool parsing() const { return m_bParsing; }
     int minimumLayoutDelay();
+
+    // This method is used by Android.
+    void setExtraLayoutDelay(int delay) { m_extraLayoutDelay = delay; }
+
     bool shouldScheduleLayout();
     int elapsedTime() const;
     
@@ -1089,6 +1093,10 @@ private:
     HashSet<RefPtr<HistoryItem> > m_associatedHistoryItems;
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
+    // This is used to increase the minimum delay between re-layouts. It is set
+    // using setExtraLayoutDelay to modify the minimum delay used at different
+    // points during the lifetime of the Document.
+    int m_extraLayoutDelay;
 
     Vector<std::pair<ScriptElementData*, CachedResourceHandle<CachedScript> > > m_scriptsToExecuteSoon;
     Timer<Document> m_executeScriptSoonTimer;

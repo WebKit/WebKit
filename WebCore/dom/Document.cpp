@@ -407,6 +407,7 @@ Document::Document(Frame* frame, bool isXHTML)
     m_processingLoadEvent = false;
     m_startTime = currentTime();
     m_overMinimumLayoutThreshold = false;
+    m_extraLayoutDelay = 0;
     
     initSecurityContext();
     initDNSPrefetch();
@@ -1818,13 +1819,13 @@ bool Document::shouldScheduleLayout()
 int Document::minimumLayoutDelay()
 {
     if (m_overMinimumLayoutThreshold)
-        return 0;
+        return m_extraLayoutDelay;
     
     int elapsed = elapsedTime();
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return max(0, cLayoutScheduleThreshold - elapsed);
+    return max(0, cLayoutScheduleThreshold - elapsed) + m_extraLayoutDelay;
 }
 
 int Document::elapsedTime() const
