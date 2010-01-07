@@ -36,7 +36,6 @@
 #include "DateExtension.h"
 #include "DocumentLoader.h"
 #include "DOMObjectsInclude.h"
-#include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "InspectorTimelineAgent.h"
@@ -123,14 +122,13 @@ static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessT
         V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportLater);
 }
 
-PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, DOMWrapperWorld* world)
+PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
 {
-    return adoptRef(new V8DOMWindowShell(frame, world));
+    return adoptRef(new V8DOMWindowShell(frame));
 }
 
-V8DOMWindowShell::V8DOMWindowShell(Frame* frame, DOMWrapperWorld* world)
+V8DOMWindowShell::V8DOMWindowShell(Frame* frame)
     : m_frame(frame)
-    , m_world(world)
 {
 }
 
@@ -313,8 +311,11 @@ void V8DOMWindowShell::initContextIfNeeded()
 
     setSecurityToken();
 
-    // FIXME: JSC doesn't seem to make this callback.
     m_frame->loader()->client()->didCreateScriptContextForFrame();
+
+    // FIXME: This is wrong. We should actually do this for the proper world once
+    // we do isolated worlds the WebCore way.
+    m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
 }
 
 v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Object> global, int extensionGroup)

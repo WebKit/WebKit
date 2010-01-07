@@ -51,40 +51,22 @@ class HTMLPlugInElement;
 class ScriptSourceCode;
 class ScriptState;
 class String;
-class V8DOMWindow;
 class Widget;
 class XSSAuditor;
 
 class ScriptController {
-    typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, RefPtr<V8DOMWindowShell> > ShellMap;
-
 public:
     ScriptController(Frame*);
     ~ScriptController();
 
-    static PassRefPtr<DOMWrapperWorld> createWorld();
+    // FIXME: V8Proxy should either be folded into ScriptController
+    // or this accessor should be made JSProxy*
+    V8Proxy* proxy() { return m_proxy.get(); }
 
-    V8DOMWindowShell* windowShell(DOMWrapperWorld* world)
-    {
-        ShellMap::iterator iter = m_windowShells.find(world);
-        return (iter != m_windowShells.end()) ? iter->second.get() : initScript(world);
-    }
-    V8DOMWindowShell* existingWindowShell(DOMWrapperWorld* world) const
-    {
-        ShellMap::const_iterator iter = m_windowShells.find(world);
-        return (iter != m_windowShells.end()) ? iter->second.get() : 0;
-    }
-    V8DOMWindow* globalObject(DOMWrapperWorld* world)
-    {
-        notImplemented();
-        return 0;
-    }
-
-    static void getAllWorlds(Vector<DOMWrapperWorld*>&);
+    V8DOMWindowShell* mainWorldWindowShell() const;
 
     ScriptValue executeScript(const ScriptSourceCode&);
     ScriptValue executeScript(const String& script, bool forceUserGesture = false);
-    ScriptValue executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture = false);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const KURL&, bool userGesture = false, bool replaceDocument = true);
@@ -92,18 +74,10 @@ public:
     // This function must be called from the main thread. It is safe to call it repeatedly.
     static void initializeThreading();
 
+    // Evaluate a script file in the environment of this proxy.
+    // If succeeded, 'succ' is set to true and result is returned
+    // as a string.
     ScriptValue evaluate(const ScriptSourceCode&);
-    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
-
-    // ==== End identical match with JSC's ScriptController === //
-
-    // FIXME: V8Proxy should either be folded into ScriptController
-    // or this accessor should be made JSProxy*
-    V8Proxy* proxy() { return m_proxy.get(); }
-
-    // FIXME: We should eventually remove all clients of this method. The
-    // problem is that some of them are in very hot code paths.
-    V8DOMWindowShell* mainWorldWindowShell();
 
     void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
 
@@ -119,6 +93,12 @@ public:
     // FIXME: Get rid of extensionGroup here.
     void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
 
+    // Masquerade 'this' as the windowShell.
+    // This is a bit of a hack, but provides reasonable compatibility
+    // with what JSC does as well.
+    ScriptController* windowShell(DOMWrapperWorld*) { return this; }
+    ScriptController* existingWindowShell(DOMWrapperWorld*) { return this; }
+
     XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
     void collectGarbage();
@@ -130,6 +110,9 @@ public:
     void bindToWindowObject(Frame*, const String& key, NPObject*);
 
     PassScriptInstance createScriptInstanceForWidget(Widget*);
+
+    // Check if the javascript engine has been initialized.
+    bool haveInterpreter() const;
 
     bool isEnabled() const;
 
@@ -187,6 +170,10 @@ public:
     NPObject* windowScriptNPObject();
 #endif
 
+    // Dummy method to avoid a bunch of ifdef's in WebCore.
+    void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*) { }
+    static void getAllWorlds(Vector<DOMWrapperWorld*>& worlds);
+
     // Script state for the main world context.
     ScriptState* mainWorldScriptState();
 
@@ -194,17 +181,7 @@ public:
     static ScriptState* currentScriptState();
 
 private:
-    V8DOMWindowShell* initScript(DOMWrapperWorld*);
-
-    ShellMap m_windowShells;
     Frame* m_frame;
-
-    // This is a cache of the main world's windowShell.  We have this
-    // because we need access to it during some wrapper operations that
-    // are performance sensitive.  Those call sites are wrong, but I'm
-    // waiting to remove them until the next patch.
-    RefPtr<V8DOMWindowShell> m_mainWorldWindowShell;
-
     const String* m_sourceURL;
 
     bool m_inExecuteScript;
@@ -214,6 +191,9 @@ private:
 
     // FIXME: V8Proxy should eventually be removed.
     OwnPtr<V8Proxy> m_proxy;
+
+    // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.
+    RefPtr<V8DOMWindowShell> m_windowShell;
 
     typedef HashMap<Widget*, NPObject*> PluginObjectMap;
 

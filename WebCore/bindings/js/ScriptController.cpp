@@ -446,4 +446,24 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
+ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
+{
+    ScriptSourceCode sourceCode(script, forceUserGesture ? KURL() : m_frame->loader()->url());
+
+    if (!isEnabled() || isPaused())
+        return ScriptValue();
+
+    bool wasInExecuteScript = m_inExecuteScript;
+    m_inExecuteScript = true;
+
+    ScriptValue result = evaluateInWorld(sourceCode, world);
+
+    if (!wasInExecuteScript) {
+        m_inExecuteScript = false;
+        Document::updateStyleForAllDocuments();
+    }
+
+    return result;
+}
+
 } // namespace WebCore
