@@ -1,3 +1,11 @@
+2010-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
+        Add executable bit to video-throttled-load cgi.
+
+        * http/tests/media/video-throttled-load.cgi: Added property svn:executable.
+
 2010-01-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix.
