@@ -43,7 +43,7 @@ class NetscapePluginHostManager {
 public:
     static NetscapePluginHostManager& shared();
     
-    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(WebNetscapePluginPackage *, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled);
+    PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(WebNetscapePluginPackage *, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled);
 
     void pluginHostDied(NetscapePluginHostProxy*);
 

@@ -102,9 +102,13 @@ extern "C" {
     ASSERT(!_proxy);
 
     NSString *userAgent = [[self webView] userAgentForURL:_baseURL.get()];
-
+    BOOL accleratedCompositingEnabled = false;
+#if USE(ACCELERATED_COMPOSITING)
+    accleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
+#endif
+    
     _proxy = NetscapePluginHostManager::shared().instantiatePlugin(_pluginPackage.get(), self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(), 
-                                                                   _mode == NP_FULL, _isPrivateBrowsingEnabled);
+                                                                   _mode == NP_FULL, _isPrivateBrowsingEnabled, accleratedCompositingEnabled);
     if (!_proxy) 
         return NO;
 

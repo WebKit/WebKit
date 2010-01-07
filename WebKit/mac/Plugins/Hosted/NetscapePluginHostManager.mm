@@ -215,7 +215,7 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
     }
 }
 
-PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled)
+PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(WebNetscapePluginPackage *pluginPackage, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
 {
     WebPreferences *preferences = [[pluginView webView] preferences];
     NetscapePluginHostProxy* hostProxy = hostForPackage(pluginPackage, [preferences usesProxiedOpenPanel]);
@@ -241,7 +241,8 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     
     [properties.get() setObject:[NSNumber numberWithBool:fullFrame] forKey:@"fullFrame"];
     [properties.get() setObject:[NSNumber numberWithBool:isPrivateBrowsingEnabled] forKey:@"privateBrowsingEnabled"];
-    
+    [properties.get() setObject:[NSNumber numberWithBool:isAcceleratedCompositingEnabled] forKey:@"acceleratedCompositingEnabled"];
+
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
     ASSERT(data);
     

@@ -1,3 +1,16 @@
+2010-01-07  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33331   
+        (WebHostedNetscapePluginView should pass acceleratedCompositingEnabled bool to NetscapePluginHostManager when instantiating plug-ins)
+        
+        * Plugins/Hosted/NetscapePluginHostManager.h: Modify method signature for instantiatePlugin to include acceleratedCompositingEnabled bool.
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]): Pass accelerated compositing status to NetscapePluginHostManage
+
 2010-01-06  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Simon Fraser.
