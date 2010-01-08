@@ -38,8 +38,13 @@ namespace WebCore {
         SVGTransformable();
         virtual ~SVGTransformable();
 
+        enum TransformParsingMode {
+            ClearList,
+            DoNotClearList
+        };
+
         static bool parseTransformAttribute(SVGTransformList*, const AtomicString& transform);
-        static bool parseTransformAttribute(SVGTransformList*, const UChar*& ptr, const UChar* end);
+        static bool parseTransformAttribute(SVGTransformList*, const UChar*& ptr, const UChar* end, TransformParsingMode mode = ClearList);
         static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
         
         TransformationMatrix getCTM(const SVGElement*) const;

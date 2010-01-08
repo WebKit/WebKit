@@ -36,6 +36,7 @@ namespace WebCore {
         virtual ~SVGTextPositioningElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
         bool isKnownAttribute(const QualifiedName&);
 

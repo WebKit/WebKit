@@ -1,3 +1,41 @@
+2010-01-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGTextElement & friends need to implement svgAttributeChanged
+        https://bugs.webkit.org/show_bug.cgi?id=33284
+
+        Implement svgAttributeChanged() for SVGTextElement & SVGTRefElement. As <text> element contain children,
+        childrenChanged() has to be implemented as well for SVGTextElement.
+
+        Simplify SVGTransformable::parseTransformAttribute() code, clearing lists in the beginning
+        and on error case, after parsing - previously the calling site had to take care of that.
+
+        Tests: svg/dynamic-updates/SVGTRefElement-dom-href-attr.html
+               svg/dynamic-updates/SVGTextElement-dom-transform-attr.html
+               svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html
+
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::parseMappedAttribute):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::parseMappedAttribute):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::parseMappedAttribute):
+        (WebCore::SVGTextElement::svgAttributeChanged):
+        (WebCore::SVGTextElement::childrenChanged):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * svg/SVGTransformable.h:
+
 2010-01-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adele Peterson.

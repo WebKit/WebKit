@@ -190,18 +190,23 @@ static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* en
 bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const AtomicString& transform)
 {
     const UChar* start = transform.characters();
-    const UChar* end = start + transform.length();
-    return parseTransformAttribute(list, start, end);
+    return parseTransformAttribute(list, start, start + transform.length());
 }
 
-bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const UChar*& currTransform, const UChar* end)
+bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)
 {
+    ExceptionCode ec = 0;
+    if (mode == ClearList) {
+        list->clear(ec);
+        ASSERT(!ec);
+    }
+
     bool delimParsed = false;
     while (currTransform < end) {
         delimParsed = false;
         unsigned short type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
         skipOptionalSpaces(currTransform, end);
-        
+
         if (!parseAndSkipType(currTransform, end, type))
             return false;
 
@@ -209,12 +214,11 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList* list, const UCh
         if (!parseTransformValue(type, currTransform, end, t))
             return false;
 
-        ExceptionCode ec = 0;
         list->appendItem(t, ec);
         skipOptionalSpaces(currTransform, end);
         if (currTransform < end && *currTransform == ',') {
             delimParsed = true;
-            currTransform++;
+            ++currTransform;
         }
         skipOptionalSpaces(currTransform, end);
     }

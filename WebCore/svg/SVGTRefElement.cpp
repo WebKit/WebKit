@@ -61,6 +61,17 @@ void SVGTRefElement::parseMappedAttribute(MappedAttribute* attr)
     SVGTextPositioningElement::parseMappedAttribute(attr);
 }
 
+void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGTextPositioningElement::svgAttributeChanged(attrName);
+
+    if (!renderer())
+        return;
+
+    if (SVGURIReference::isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
+}
+
 bool SVGTRefElement::childShouldCreateRenderer(Node* child) const
 {
     if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||

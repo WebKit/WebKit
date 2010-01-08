@@ -70,17 +70,13 @@ TransformationMatrix* SVGStyledTransformableElement::supplementalTransform()
 
 void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == SVGNames::transformAttr) {
+    if (SVGTransformable::isKnownAttribute(attr->name())) {
         SVGTransformList* localTransforms = transformBaseValue();
-
-        ExceptionCode ec = 0;
-        localTransforms->clear(ec);
- 
-        if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value()))
+        if (!SVGTransformable::parseTransformAttribute(localTransforms, attr->value())) {
+            ExceptionCode ec = 0;
             localTransforms->clear(ec);
-        else
-            setTransformBaseValue(localTransforms);
-    } else
+        }
+    } else 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
 }
 

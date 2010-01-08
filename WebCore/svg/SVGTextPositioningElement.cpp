@@ -24,6 +24,7 @@
 #include "SVGTextPositioningElement.h"
 
 #include "MappedAttribute.h"
+#include "RenderObject.h"
 #include "SVGLengthList.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
@@ -60,6 +61,17 @@ void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
         rotateBaseValue()->parse(attr->value());
     else
         SVGTextContentElement::parseMappedAttribute(attr);
+}
+
+void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGTextContentElement::svgAttributeChanged(attrName);
+
+    if (!renderer())
+        return;
+
+    if (isKnownAttribute(attrName))
+        renderer()->setNeedsLayout(true);
 }
 
 bool SVGTextPositioningElement::isKnownAttribute(const QualifiedName& attrName)

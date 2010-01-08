@@ -34,6 +34,7 @@ namespace WebCore {
         virtual ~SVGTRefElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         bool childShouldCreateRenderer(Node*) const;

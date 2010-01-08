@@ -1,3 +1,23 @@
+2010-01-07  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGTextElement & friends need to implement svgAttributeChanged
+        https://bugs.webkit.org/show_bug.cgi?id=33284
+
+        * svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTRefElement-dom-href-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-transform-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-transform-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-transform-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGTRefElement-dom-href-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-transform-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-transform-prop.js: Added.
+        (executeTest):
+
 2010-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.
