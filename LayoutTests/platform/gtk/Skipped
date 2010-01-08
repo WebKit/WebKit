@@ -5548,13 +5548,7 @@ fast/dom/Window/window-properties.html
 fast/xsl/sort-locale.xml
 
 # https://bugs.webkit.org/show_bug.cgi?id=30814
-storage/close-during-stress-test.html
-storage/domstorage/documentURI.html
-storage/test-authorizer.html
-storage/execute-sql-args.html
-storage/hash-change-with-xhr.html
-storage/database-lock-after-reload.html
-storage/domstorage/complex-keys.html
+storage
 
 # https://bugs.webkit.org/show_bug.cgi?id=30815
 http/tests/misc/isindex-with-no-form.html 
