@@ -1,3 +1,16 @@
+2010-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        r52976 revealed this failure by re-ordering tests.
+        r52980 corrected the expected results file, but Windows still fails,
+        presumably due to another test still affecting this one.
+
+        I do not have a windows build to test with, so skipping this
+        and filed bug https://bugs.webkit.org/show_bug.cgi?id=33374
+
+        * platform/win/Skipped: svg/W3C-SVG-1.1/filters-conv-01-f.svg skipped.
+
 2010-01-08  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

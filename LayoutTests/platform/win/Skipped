@@ -742,3 +742,7 @@ svg/custom/use-on-symbol-inside-pattern.svg
 
 # Crashes debug slave, see https://bugs.webkit.org/show_bug.cgi?id=33155
 fast/frames/iframe-onload-remove-self-no-crash.html
+
+# FIXME: This is the wrong test to skip.  It is believed some other test is affecting this test results.
+# See https://bugs.webkit.org/show_bug.cgi?id=33374
+svg/W3C-SVG-1.1/filters-conv-01-f.svg
