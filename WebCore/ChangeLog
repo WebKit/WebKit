@@ -1,3 +1,29 @@
+2010-01-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Regex-based syntax highlighting is slow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33330
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/JavaScriptHighlighterScheme.js: Removed.
+        * inspector/front-end/JavaScriptTokenizer.js: Added.
+        (WebInspector.JavaScriptTokenizer):
+        (WebInspector.JavaScriptTokenizer.prototype.set line):
+        (WebInspector.JavaScriptTokenizer.prototype.getCondition):
+        (WebInspector.JavaScriptTokenizer.prototype.setCondition):
+        (WebInspector.JavaScriptTokenizer.prototype._charAt):
+        (WebInspector.JavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/JavaScriptTokenizer.re2js: Added.
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.highlight):
+        (WebInspector.TextEditorHighlighter.prototype._lex):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-01-07  Mike Belshe  <mbelshe@chromium.org>
 
         Reviewed by Darin Adler.

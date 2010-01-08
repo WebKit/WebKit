@@ -35,8 +35,8 @@
     <file>inspector.js</file>
     <file>InspectorBackendStub.js</file>
     <file>InspectorFrontendHostStub.js</file>
-    <file>JavaScriptHighlighterScheme.js</file>
     <file>JavaScriptSourceSyntaxHighlighter.js</file>
+    <file>JavaScriptTokenizer.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>

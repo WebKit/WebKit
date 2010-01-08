@@ -32,100 +32,71 @@
 WebInspector.TextEditorHighlighter = function(textModel)
 {
     this._textModel = textModel;
-    this._highlighterScheme = new WebInspector.JavaScriptHighlighterScheme();
+    this._tokenizer = new WebInspector.JavaScriptTokenizer();
 
     this._styles = [];
-    this._styles[WebInspector.TextEditorHighlighter.TokenType.Comment] = "rgb(0, 116, 0)";
-    this._styles[WebInspector.TextEditorHighlighter.TokenType.String] = "rgb(196, 26, 22)";
-    this._styles[WebInspector.TextEditorHighlighter.TokenType.Keyword] = "rgb(170, 13, 145)";
-    this._styles[WebInspector.TextEditorHighlighter.TokenType.Number] = "rgb(28, 0, 207)";
-}
-
-WebInspector.TextEditorHighlighter.TokenType = {
-    Comment: 0,
-    String: 1,
-    Keyword: 2,
-    Number: 3
+    this._styles["comment"] = "rgb(0, 116, 0)";
+    this._styles["string"] = "rgb(196, 26, 22)";
+    this._styles["regex"] = "rgb(196, 26, 22)";
+    this._styles["keyword"] = "rgb(170, 13, 145)";
+    this._styles["number"] = "rgb(28, 0, 207)";
 }
 
 WebInspector.TextEditorHighlighter.prototype = {
     highlight: function(startLine, endLine)
     {
-        this._highlighterScheme.reset(this);
         // Rewind to the last highlighted line to gain proper highlighter context.
         while (startLine > 0 && !this._textModel.getAttribute(startLine - 1, 0, "highlighter-state"))
             startLine--;
 
         // Restore highlighter context taken from previous line.
         var state = this._textModel.getAttribute(startLine - 1, 0, "highlighter-state");
-        if (state) {
-            this.continueState = state.postContinueState;
-            this.lexState = state.postLexState;
-        }
-
+         if (state)
+             this._tokenizer.condition = state.postCondition;
+         else
+             this._tokenizer.condition = this._tokenizer.initialCondition;
         // Each line has associated state attribute with pre- and post-highlighter conditions.
         // Highlight lines from range until we find line precondition matching highlighter state.
         var damage = {};
         for (var i = startLine; i < endLine; ++i) {
             state = this._textModel.getAttribute(i, 0, "highlighter-state");
-            if (state && state.preContinueState === this.continueState && state.preLexState === this.lexState) {
+            if (state && state.preCondition === this._tokenizer.condition) {
                 // Following lines are up to date, no need re-highlight.
-                this.continueState = state.postContinueState;
-                this.lexState = state.postLexState;
+                this._tokenizer.condition = state.postCondition;
                 continue;
             }
 
             damage[i] = true;
 
             state = {};
-            state.preContinueState = this.continueState;
-            state.preLexState = this.lexState;
+            state.preCondition = this._tokenizer.condition;
 
             this._textModel.removeAttributes(i, "highlight");
-            var line = this._textModel.line(i);
-            for (var j = 0; j < line.length;)
-                j += this._lex(line.substring(j), i, j);
+            this._lex(this._textModel.line(i), i);
 
-            state.postContinueState = this.continueState;
-            state.postLexState = this.lexState;
+            state.postCondition = this._tokenizer.condition;
             this._textModel.addAttribute(i, 0, "highlighter-state", state);
         }
 
         state = this._textModel.getAttribute(endLine, 0, "highlighter-state");
 
-        if (state && (state.preContinueState !== this.continueState || state.preLexState !== this.lexState)) {
+        if (state && state.preCondition !== this._tokenizer.condition) {
             // Requested highlight range is over, but we did not recover. Invalidate tail highlighting.
             for (var i = endLine; i < this._textModel.linesCount; ++i)
                 this._textModel.removeAttributes(i, "highlighter-state");
         }
-
         return damage;
     },
 
-    _lex: function(codeFragment, line, column) {
-        var token = null;
-        for (var i = 0; i < this._highlighterScheme.rules.length; i++) {
-            var rule = this._highlighterScheme.rules[i];
-            var ruleContinueStateCondition = typeof rule.preContinueState !== "undefined" ? rule.preContinueState : this._highlighterScheme.ContinueState.None;
-            if (this.continueState !== ruleContinueStateCondition)
-                continue;
-            if (typeof rule.preLexState !== "undefined" && this.lexState !== rule.preLexState)
-                continue;
-
-            var match = rule.pattern.exec(codeFragment);
-            if (match) {
-                token = match[0];
-                if (token && (!rule.keywords || (token in rule.keywords))) {
-                    if (typeof rule.type === "number")
-                        this._textModel.addAttribute(line, column, "highlight", { length: token.length, style: this._styles[rule.type] });
-                    if (typeof rule.postLexState !== "undefined")
-                        this.lexState = rule.postLexState;
-                    if (typeof rule.postContinueState !== "undefined")
-                        this.continueState = rule.postContinueState;
-                    return token.length;
-                }
-            }
-        }
-        return 1;
+    _lex: function(line, lineNumber) {
+         this._tokenizer.line = line;
+         var column = 0;
+         do {
+             var newColumn = this._tokenizer.nextToken(column);
+             var tokenType = this._tokenizer.tokenType;
+             if (tokenType)
+                 this._textModel.addAttribute(lineNumber, column, "highlight", { length: newColumn - column, style: this._styles[tokenType] });
+             column = newColumn;
+         } while (column < line.length)
     }
 }
