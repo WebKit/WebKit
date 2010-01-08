@@ -53,28 +53,33 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
-typedef void (*AXPostedNotificationCallback)(id element, NSString* notification);
+typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
-- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function;
+- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 @end
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
+    , m_notificationFunctionCallback(0)
 {
     [m_element retain];
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
     : m_element(other.m_element)
+    , m_notificationFunctionCallback(0)
 {
     [m_element retain];
 }
 
 AccessibilityUIElement::~AccessibilityUIElement()
 {
+    // Make sure that our notification callback does not stick around.
+    if (m_notificationFunctionCallback)
+        [m_element accessibilitySetPostedNotificationCallback:0 withContext:0];
     [m_element release];
 }
 
@@ -753,17 +758,16 @@ JSStringRef AccessibilityUIElement::url()
     return [[url absoluteString] createJSStringRef];    
 }
 
-// The JavaScript callback we'll use when we get a notification
-static JSObjectRef AXNotificationFunctionCallback = 0;
-
-static void _accessibilityNotificationCallback(id element, NSString* notification)
+static void _accessibilityNotificationCallback(id element, NSString* notification, void* context)
 {
-    if (!AXNotificationFunctionCallback)
+    if (!context)
         return;
+
+    JSObjectRef functionCallback = static_cast<JSObjectRef>(context);
 
     JSRetainPtr<JSStringRef> jsNotification(Adopt, [notification createJSStringRef]);
     JSValueRef argument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
-    JSObjectCallAsFunction([mainFrame globalContext], AXNotificationFunctionCallback, NULL, 1, &argument, NULL);
+    JSObjectCallAsFunction([mainFrame globalContext], functionCallback, NULL, 1, &argument, NULL);
 }
 
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
@@ -771,8 +775,8 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     if (!functionCallback)
         return false;
  
-    AXNotificationFunctionCallback = functionCallback;
-    [platformUIElement() accessibilitySetPostedNotificationCallback:_accessibilityNotificationCallback];
+    m_notificationFunctionCallback = functionCallback;
+    [platformUIElement() accessibilitySetPostedNotificationCallback:_accessibilityNotificationCallback withContext:reinterpret_cast<void*>(m_notificationFunctionCallback)];
     return true;
 }
 

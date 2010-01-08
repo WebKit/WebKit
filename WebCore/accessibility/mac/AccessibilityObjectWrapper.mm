@@ -2658,18 +2658,21 @@ static RenderObject* rendererForView(NSView* view)
 }
 
 // These are used by DRT so that it can know when notifications are sent.
-typedef void (*AXPostedNotificationCallback)(id element, NSString* notification);
+// Since they are static, only one callback can be installed at a time (that's all DRT should need).
+typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 static AXPostedNotificationCallback AXNotificationCallback = 0;
+static void* AXPostedNotificationContext = 0;
 
-- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function
+- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context
 {
     AXNotificationCallback = function;
+    AXPostedNotificationContext = context;
 }
 
 - (void)accessibilityPostedNotification:(NSString *)notification
 {
     if (AXNotificationCallback)
-        AXNotificationCallback(self, notification);
+        AXNotificationCallback(self, notification, AXPostedNotificationContext);
 }
 
 @end

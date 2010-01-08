@@ -1,3 +1,17 @@
+2010-01-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(52819?): AXLoadComplete and AXLayoutComplete causes 4 tests fail on Snow Leopard Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=33300
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+        (_accessibilityNotificationCallback):
+        (AccessibilityUIElement::addNotificationListener):
+
 2010-01-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Hausmann.
