@@ -1,3 +1,16 @@
+2010-01-07  Mike Belshe  <mbelshe@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix Spdy casing to match style guide.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33326
+
+        * public/WebURLResponse.h:
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::wasFetchedViaSPDY):
+        (WebKit::WebURLResponse::setWasFetchedViaSPDY):
+
 2010-01-07  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

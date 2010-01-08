@@ -255,14 +255,14 @@ const ResourceResponse& WebURLResponse::toResourceResponse() const
     return *m_private->m_resourceResponse;
 }
 
-bool WebURLResponse::wasFetchedViaSpdy() const
+bool WebURLResponse::wasFetchedViaSPDY() const
 {
-    return m_private->m_resourceResponse->wasFetchedViaSpdy();
+    return m_private->m_resourceResponse->wasFetchedViaSPDY();
 }
 
-void WebURLResponse::setWasFetchedViaSpdy(bool value)
+void WebURLResponse::setWasFetchedViaSPDY(bool value)
 {
-    m_private->m_resourceResponse->setWasFetchedViaSpdy(value);
+    m_private->m_resourceResponse->setWasFetchedViaSPDY(value);
 }
 
 void WebURLResponse::assign(WebURLResponsePrivate* p)
