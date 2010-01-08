@@ -388,7 +388,6 @@ Color RenderMenuList::itemBackgroundColor(unsigned listIndex) const
 
 PopupMenuStyle RenderMenuList::menuStyle() const
 {
-
     RenderStyle* s = m_innerBlock ? m_innerBlock->style() : style();
     return PopupMenuStyle(s->color(), s->backgroundColor(), s->font(), s->visibility() == VISIBLE, s->textIndent(), s->direction());
 }
@@ -424,8 +423,19 @@ int RenderMenuList::clientPaddingLeft() const
     return paddingLeft();
 }
 
+const int endOfLinePadding = 2;
 int RenderMenuList::clientPaddingRight() const
 {
+    if (style()->appearance() == MenulistPart || style()->appearance() == MenulistButtonPart) {
+        // For these appearance values, the theme applies padding to leave room for the
+        // drop-down button. But leaving room for the button inside the popup menu itself
+        // looks strange, so we return a small default padding to avoid having a large empty
+        // space appear on the side of the popup menu.
+        return endOfLinePadding;
+    }
+
+    // If the appearance isn't MenulistPart, then the select is styled (non-native), so
+    // we want to return the user specified padding.
     return paddingRight();
 }
 

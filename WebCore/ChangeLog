@@ -1,3 +1,21 @@
+2010-01-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Padding in popup menu gets lost with styled <select> in Windows.
+        Fixes <rdar://7285538>, and <http://webkit.org/b/33235>.
+
+        [Win] Support padding-right on selects when webkit-appearance is off. Added a test
+        case for narrow selects with -webkit-appearance: none, and padding left and right to
+        show that both types of padding are honored.
+
+        * manual-tests/select-webkit-appearance-off-narrow-select.html: Added.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize): Use clientPaddingRight instead of a hardcoded constant.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::clientPaddingRight): If webkit-appearance is off, use padding-right instead of
+        the hardcoded constant.
+
 2010-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

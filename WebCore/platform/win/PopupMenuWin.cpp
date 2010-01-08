@@ -280,7 +280,6 @@ void PopupMenu::hide()
     ::PostMessage(m_popup, WM_NULL, 0, 0);
 }
 
-const int endOfLinePadding = 2;
 void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
 {
     // r is in absolute document coordinates, but we want to be in screen coordinates
@@ -326,9 +325,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
         popupWidth += ScrollbarTheme::nativeTheme()->scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
-    // Note: We can't add paddingRight() because that value includes the width
-    // of the dropdown button, so we must use our own endOfLinePadding constant.
-    popupWidth += max(0, endOfLinePadding - client()->clientInsetRight()) + max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+    popupWidth += max(0, client()->clientPaddingRight() - client()->clientInsetRight()) + max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
 
     // Leave room for the border
     popupWidth += 2 * popupWindowBorderWidth;
