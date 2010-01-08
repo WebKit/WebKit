@@ -1,3 +1,24 @@
+2010-01-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] loading test should use SoupServer instead of actual sites
+        https://bugs.webkit.org/show_bug.cgi?id=33353
+
+        Make all the loading tests use SoupServer, instead of fetching
+        stuff from the Internet.
+
+        * tests/testloading.c:
+        (server_callback):
+        (get_uri_for_path):
+        (test_loading_status):
+        (test_loading_error):
+        (test_loading_cancelled):
+        (load_wentback_status_changed_cb):
+        (load_error_test):
+        (test_loading_goback):
+        (main):
+
 2010-01-06  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
