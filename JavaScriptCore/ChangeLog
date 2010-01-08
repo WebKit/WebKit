@@ -1,5 +1,20 @@
 2010-01-08  Eric Seidel  <eric@webkit.org>
 
+        No review, rolling out r52983.
+        http://trac.webkit.org/changeset/52983
+        https://bugs.webkit.org/show_bug.cgi?id=33321
+
+        Broke 59 JavaScriptCore tests.  I don't think Kent knew about
+        run-javascriptcore-tests.  Sadly neither does the commit-bot,
+        yet.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExp.h:
+        (JSC::RegExp::flags):
+
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
         No review, rolling out r52981.
         http://trac.webkit.org/changeset/52981
         https://bugs.webkit.org/show_bug.cgi?id=33319
