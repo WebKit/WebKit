@@ -1,3 +1,13 @@
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        http/tests/uri/escaped-entity.html affects the output of svg/W3C-SVG-1.1/filters-conv-01-f.svg
+        https://bugs.webkit.org/show_bug.cgi?id=32294
+
+        * platform/mac/Skipped: Add http/tests/uri/escaped-entity.html to Skipped list since it affects later tests.
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt: Check in correct results.
+
 2010-01-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Fisher.
