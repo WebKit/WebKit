@@ -1,3 +1,25 @@
+2010-01-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        New baselines to reflect the smaller repaint areas caused by r52839
+        https://bugs.webkit.org/show_bug.cgi?id=33271
+
+        * platform/mac/fast/repaint/background-misaligned-expected.checksum:
+        * platform/mac/fast/repaint/background-misaligned-expected.png:
+        * platform/mac/fast/repaint/block-selection-gap-in-composited-layer-expected.checksum:
+        * platform/mac/fast/repaint/block-selection-gap-in-composited-layer-expected.png:
+        * platform/mac/fast/repaint/float-in-new-block-with-layout-delta-expected.checksum:
+        * platform/mac/fast/repaint/float-in-new-block-with-layout-delta-expected.png:
+        * platform/mac/fast/repaint/float-new-in-block-expected.checksum:
+        * platform/mac/fast/repaint/float-new-in-block-expected.png:
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.checksum:
+        * platform/mac/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/mac/fast/repaint/selected-replaced-expected.checksum:
+        * platform/mac/fast/repaint/selected-replaced-expected.png:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.checksum:
+        * platform/mac/fast/repaint/transform-replaced-shadows-expected.png:
+
 2010-01-08  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
