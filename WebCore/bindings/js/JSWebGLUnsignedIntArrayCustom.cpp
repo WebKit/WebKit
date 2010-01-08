@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSWebGLUnsignedIntArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
-    impl()->set(index, static_cast<unsigned int>(value.toInt32(exec)));
+    impl()->set(index, static_cast<unsigned int>(value.toUInt32(exec)));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WebGLUnsignedIntArray* object)

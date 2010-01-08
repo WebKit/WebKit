@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSWebGLFloatArray::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
-    impl()->set(index, static_cast<float>(value.toInt32(exec)));
+    impl()->set(index, static_cast<float>(value.toNumber(exec)));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WebGLFloatArray* object)

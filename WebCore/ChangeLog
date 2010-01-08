@@ -1,3 +1,17 @@
+2010-01-08  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        WebGLArray subclasses do the wrong conversion in indexSetter
+        https://bugs.webkit.org/show_bug.cgi?id=33350
+
+        Test: fast/canvas/webgl/array-setters.html
+
+        * bindings/js/JSWebGLFloatArrayCustom.cpp:
+        (WebCore::JSWebGLFloatArray::indexSetter):
+        * bindings/js/JSWebGLUnsignedIntArrayCustom.cpp:
+        (WebCore::JSWebGLUnsignedIntArray::indexSetter):
+
 2010-01-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

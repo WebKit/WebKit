@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test all permutations of WebGLArray setters to make sure values don't get truncated");
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=33350">https://bugs.webkit.org/show_bug.cgi?id=33350</a> : <code>WebGLArray subclasses do the wrong conversion in indexSetter</code>');
+
+var webGLArray = null;
+var array = null;
+
+function testSetters(typeName, low, high) {
+    var type = window[typeName];
+    webGLArray = new type(2);
+    array = [low, high];
+    debug("Testing " + typeName);
+    webGLArray.set(array);
+    shouldBe("webGLArray", "array");
+    shouldBe("webGLArray[0]", "array[0]");
+    shouldBe("webGLArray.get(0)", "array[0]");
+    shouldBe("webGLArray[1]", "array[1]");
+    shouldBe("webGLArray.get(1)", "array[1]");
+    webGLArray[0] = 0;
+    webGLArray[1] = 0;
+    shouldBe("webGLArray[0]", "0");
+    shouldBe("webGLArray.get(0)", "0");
+    shouldBe("webGLArray[1]", "0");
+    shouldBe("webGLArray.get(1)", "0");
+    webGLArray[0] = array[0];
+    shouldBe("webGLArray[0]", "array[0]");
+    shouldBe("webGLArray.get(0)", "array[0]");
+    webGLArray.set(1, array[1]);
+    shouldBe("webGLArray[1]", "array[1]");
+    shouldBe("webGLArray.get(1)", "array[1]");
+}
+
+testSetters("WebGLByteArray", -128, 127);
+testSetters("WebGLUnsignedByteArray", 0, 255);
+testSetters("WebGLShortArray", -32768, 32767);
+testSetters("WebGLUnsignedShortArray", 0, 65535);
+testSetters("WebGLIntArray", -2147483648, 2147483647);
+testSetters("WebGLUnsignedIntArray", 0, 4294967295);
+testSetters("WebGLFloatArray", -2.5, 3.5);
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

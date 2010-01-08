@@ -23,7 +23,7 @@ PASS negativeTest WebGLFloatArray SetFromWebGLArray
 PASS test WebGLFloatArray SetFromArray
 PASS test WebGLFloatArray Slice
 PASS negativeTest WebGLFloatArray Slice
-PASS test WebGLFloatArray BoundaryConditions(-500, -500, 500, 500)
+PASS test WebGLFloatArray BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
 PASS test WebGLIntArray SetAndGetPos10ToNeg10
 PASS test WebGLIntArray SetAndGetMethodsPos10ToNeg10
 PASS test WebGLIntArray ConstructWithArrayOfSignedValues
