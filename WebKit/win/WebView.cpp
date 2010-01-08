@@ -24,11 +24,12 @@
  */
 
 #include "config.h"
-#include "WebKitDLL.h"
+
 #include "WebView.h"
 
 #include "CFDictionaryPropertyBag.h"
 #include "DOMCoreClasses.h"
+#include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
 #include "SoftLinking.h"
 #include "WebBackForwardList.h"
@@ -46,6 +47,7 @@
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebKit.h"
+#include "WebKitDLL.h"
 #include "WebKitLogging.h"
 #include "WebKitStatisticsPrivate.h"
 #include "WebKitSystemBits.h"
@@ -58,17 +60,17 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValue.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/BString.h>
 #include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
-#include <WebCore/BString.h>
+#include <WebCore/CString.h>
 #include <WebCore/Cache.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CookieStorageWin.h>
-#include <WebCore/CString.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Document.h>
 #include <WebCore/DragController.h>
@@ -77,14 +79,16 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/FocusController.h>
 #include <WebCore/FloatQuad.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FrameWin.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/HitTestResult.h>
@@ -133,13 +137,13 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #endif
 
-#include <wtf/HashSet.h>
+#include <ShlObj.h>
 #include <comutil.h>
 #include <dimm.h>
 #include <oleacc.h>
-#include <ShlObj.h>
 #include <tchar.h>
 #include <windowsx.h>
+#include <wtf/HashSet.h>
 
 // Soft link functions for gestures and panning feedback
 SOFT_LINK_LIBRARY(USER32);
@@ -5654,6 +5658,40 @@ static String toString(BSTR bstr)
 static KURL toKURL(BSTR bstr)
 {
     return KURL(KURL(), toString(bstr));
+}
+
+void WebView::enterFullscreenForNode(Node* node)
+{
+    if (!node->hasTagName(HTMLNames::videoTag))
+        return;
+
+    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+
+    if (m_fullscreenController) {
+        if (m_fullscreenController->mediaElement() == videoElement) {
+            // The backend may just warn us that the underlaying plaftormMovie()
+            // has changed. Just force an update.
+            m_fullscreenController->setMediaElement(videoElement);
+            return; // No more to do.
+        }
+
+        // First exit Fullscreen for the old mediaElement.
+        m_fullscreenController->mediaElement()->exitFullscreen();
+        // This previous call has to trigger exitFullscreen,
+        // which has to clear m_fullscreenController.
+        ASSERT(!m_fullscreenController);
+    }
+
+    m_fullscreenController = new FullscreenVideoController;
+    m_fullscreenController->setMediaElement(videoElement);
+    m_fullscreenController->enterFullscreen();        
+}
+
+void WebView::exitFullscreen()
+{
+    if (m_fullscreenController)
+        m_fullscreenController->exitFullscreen();
+    m_fullscreenController = 0;
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(unsigned patternsCount, BSTR* patterns)

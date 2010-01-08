@@ -27,6 +27,7 @@
 #define QTMovieWin_h
 
 #include <Unicode.h>
+#include <windows.h>
 
 #ifdef QTMOVIEWIN_EXPORTS
 #define QTMOVIEWIN_API __declspec(dllexport)
@@ -43,6 +44,11 @@ public:
     virtual void movieLoadStateChanged(QTMovieWin*) = 0;
     virtual void movieTimeChanged(QTMovieWin*) = 0;
     virtual void movieNewImageAvailable(QTMovieWin*) = 0;
+};
+
+class QTMovieWinFullscreenClient {
+public:
+    virtual LRESULT fullscreenClientWndProc(HWND, UINT message, WPARAM, LPARAM) = 0;
 };
 
 enum {
@@ -104,8 +110,13 @@ public:
     static unsigned countSupportedTypes();
     static void getSupportedType(unsigned index, const UChar*& str, unsigned& len);
 
+    // Returns the full-screen window created
+    HWND enterFullscreen(QTMovieWinFullscreenClient*);
+    void exitFullscreen();
+
 private:
     void load(CFURLRef, bool preservesPitch);
+    static LRESULT fullscreenWndProc(HWND, UINT message, WPARAM, LPARAM);
 
     QTMovieWinPrivate* m_private;
     bool m_disabled;

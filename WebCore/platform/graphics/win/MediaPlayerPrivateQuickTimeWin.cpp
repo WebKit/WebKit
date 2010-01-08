@@ -88,6 +88,18 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 {
 }
 
+bool MediaPlayerPrivate::supportsFullscreen() const
+{
+    return true;
+}
+
+PlatformMedia MediaPlayerPrivate::platformMedia() const
+{
+    PlatformMedia p;
+    p.qtMovie = reinterpret_cast<QTMovie*>(m_qtMovie.get());
+    return p;
+}
+
 class TaskTimer : TimerBase {
 public:
     static void initialize();

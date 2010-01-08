@@ -179,6 +179,16 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         idr = IDR_ZOOM_OUT_CURSOR;
     else if (!strcmp(name, "verticalTextCursor"))
         idr = IDR_VERTICAL_TEXT_CURSOR;
+    else if (!strcmp(name, "fsVideoAudioVolumeHigh"))
+        idr = IDR_FS_VIDEO_AUDIO_VOLUME_HIGH;
+    else if (!strcmp(name, "fsVideoAudioVolumeLow"))
+        idr = IDR_FS_VIDEO_AUDIO_VOLUME_LOW;
+    else if (!strcmp(name, "fsVideoExitFullscreen"))
+        idr = IDR_FS_VIDEO_EXIT_FULLSCREEN;
+    else if (!strcmp(name, "fsVideoPause"))
+        idr = IDR_FS_VIDEO_PAUSE;
+    else if (!strcmp(name, "fsVideoPlay"))
+        idr = IDR_FS_VIDEO_PLAY;
     else
         return 0;
 

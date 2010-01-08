@@ -44,6 +44,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -773,3 +774,23 @@ COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
     m_webView->uiDelegate(&delegate);
     return delegate;
 }
+
+#if ENABLE(VIDEO)
+
+bool WebChromeClient::supportsFullscreenForNode(const Node* node)
+{
+    return node->hasTagName(HTMLNames::videoTag);
+}
+
+void WebChromeClient::enterFullscreenForNode(Node* node)
+{
+    m_webView->enterFullscreenForNode(node);
+}
+
+void WebChromeClient::exitFullscreenForNode(Node*)
+{
+    m_webView->exitFullscreen();
+}
+
+#endif
+

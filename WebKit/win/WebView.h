@@ -39,8 +39,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
-class WebFrame;
+class FullscreenVideoController;
 class WebBackForwardList;
+class WebFrame;
 class WebInspector;
 class WebInspectorClient;
 
@@ -868,6 +869,9 @@ public:
     void setRootChildLayer(WebCore::PlatformLayer* layer);
 #endif
 
+    void enterFullscreenForNode(WebCore::Node*);
+    void exitFullscreen();
+
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);
@@ -983,6 +987,8 @@ protected:
     long m_lastPanY;
     long m_xOverpan;
     long m_yOverpan;
+
+    OwnPtr<FullscreenVideoController> m_fullscreenController;
 
 #if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }

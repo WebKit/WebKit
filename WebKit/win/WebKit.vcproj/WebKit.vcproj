@@ -582,6 +582,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\FullscreenVideoController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\MarshallingHelpers.h"
 				>
 			</File>
@@ -891,6 +895,10 @@
 			</File>
 			<File
 				RelativePath="..\ForEachCoClass.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\FullscreenVideoController.cpp"
 				>
 			</File>
 			<File

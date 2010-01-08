@@ -1,3 +1,29 @@
+2010-01-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement full-screen video for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=31318
+        
+        This is mostly support logic for taking video
+        into and out of full-screen. It also contains the
+        QTMovieWin piece which adds support for the actual
+        full-screen window itself. Events from the window
+        are sent to the FullscreenVideosController for handling.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addData):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        (WebCore::MediaPlayerPrivate::supportsFullscreen):
+        (WebCore::MediaPlayerPrivate::platformMedia):
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWinPrivate::QTMovieWinPrivate):
+        (QTMovieWin::initializeQuickTime):
+        (QTMovieWin::_handleMessages):
+        (QTMovieWin::enterFullscreen):
+        (QTMovieWin::exitFullscreen):
+        * platform/graphics/win/QTMovieWin.h:
+
 2010-01-08  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Adam Barth.
