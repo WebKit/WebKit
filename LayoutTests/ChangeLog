@@ -1,3 +1,12 @@
+2010-01-08  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        The Windows Release bots were having trouble with the xmlhttprequest tests, so
+        they were skipped (r50280). They all currently pass on my machine, so unskipping them now.
+
+        * platform/win/Skipped:
+
 2010-01-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
