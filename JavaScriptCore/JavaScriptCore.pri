@@ -84,6 +84,9 @@ KEYWORDLUT_FILES += \
 JSCBISON += \
     parser/Grammar.y
 
+RVCT_STUB_FILES += \
+    jit/JITStubs.cpp
+
 SOURCES += \
     API/JSBase.cpp \
     API/JSCallbackConstructor.cpp \
@@ -263,3 +266,10 @@ jscbison.dependency_type = TYPE_C
 jscbison.CONFIG = target_predeps
 addExtraCompilerWithHeader(jscbison)
 
+# GENERATOR 3: JIT Stub functions for RVCT
+rvctstubs.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Generated${QMAKE_FILE_BASE}_RVCT.h
+rvctstubs.commands = perl $$PWD/create_rvct_stubs ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
+rvctstubs.depend = ${QMAKE_FILE_NAME}
+rvctstubs.input = RVCT_STUB_FILES
+rvctstubs.CONFIG += no_link
+addExtraCompiler(rvctstubs)
