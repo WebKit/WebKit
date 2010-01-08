@@ -65,7 +65,6 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern)
 
 inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const UString& flags)
     : m_pattern(pattern)
-    , m_flags(flags)
     , m_flagBits(0)
     , m_constructionError(0)
     , m_numSubpatterns(0)
