@@ -2021,11 +2021,7 @@ static float scaleFactor(HDC printDC, const IntRect& pageRect)
 static HDC hdcFromContext(PlatformGraphicsContext* pctx)
 {
     cairo_surface_t* surface = cairo_get_target(pctx);
-    HDC hdc = cairo_win32_surface_get_dc(surface);
-
-    SetGraphicsMode(hdc, GM_ADVANCED);
-
-    return hdc;
+    return cairo_win32_surface_get_dc(surface);
 }
 
 void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, float headerHeight)

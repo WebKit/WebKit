@@ -1,5 +1,15 @@
 2010-01-08  Brent Fulgham  <bfulgham@webkit.org>
 
+        Unreviewed correction. 
+
+        Accidentally left unnecessary modification to hdcFromContext
+        in when landing r52995.
+
+        * WebFrame.cpp:
+        (hdcFromContext): Back out unneeded modification.
+
+2010-01-08  Brent Fulgham  <bfulgham@webkit.org>
+
         Reviewed by Adam Roben.
 
         Use correct cairo surface data type for handling print operations.
