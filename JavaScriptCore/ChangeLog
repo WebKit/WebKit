@@ -1,3 +1,15 @@
+2010-01-08  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        RegExp.prototype.toString returns "//" for empty regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=33319
+
+        "//" starts a single-line comment, hence "/(?:)/" should be used, according to ECMA.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
 2010-01-08  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Darin Adler.
