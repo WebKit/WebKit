@@ -2221,6 +2221,20 @@ sub findTestsToRun
 
     @testsToRun = sort pathcmp @testsToRun;
 
+    my @httpTests;
+    my @websocketTests;
+    my @otherTests;
+    foreach my $test (@testsToRun) {
+        if ($test =~ /^http\//) {
+            push(@httpTests, $test);
+        } elsif ($test =~ /^websocket\//) {
+            push(@websocketTests, $test);
+        } else {
+            push(@otherTests, $test);
+        }
+    }
+    @testsToRun = (@otherTests, @httpTests, @websocketTests);
+
     # Reverse the tests
     @testsToRun = reverse @testsToRun if $reverseTests;
 

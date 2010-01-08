@@ -1,3 +1,11 @@
+2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Run the http and websocket tests after all other tests.
+
+        * Scripts/run-webkit-tests:
+
 2010-01-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
