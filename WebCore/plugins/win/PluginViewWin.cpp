@@ -79,6 +79,10 @@
 #define LOG_PLUGIN_NET_ERROR()
 #endif
 
+#if PLATFORM(CAIRO)
+#include <cairo-win32.h>
+#endif
+
 #if PLATFORM(QT)
 #include "QWebPageClient.h"
 #include <QWidget>
@@ -565,6 +569,14 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     IntPoint locationInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
 
     HDC hdc = context->getWindowsContext(frameRect(), false);
+
+#if PLATFORM(CAIRO)
+    // Must flush drawings up to this point to the backing metafile, otherwise the
+    // plugin region will be overwritten with any clear regions specified in the
+    // cairo-controlled portions of the rendering.
+    PlatformGraphicsContext* ctx = context->platformContext();
+    cairo_show_page(ctx);
+#endif
 
     XFORM originalTransform;
     GetWorldTransform(hdc, &originalTransform);

@@ -826,7 +826,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const RenderLayer*
         p->clip(clipRect);
         p->beginTransparencyLayer(renderer()->opacity());
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        p->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f));
+        p->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), DeviceColorSpace);
         p->fillRect(clipRect);
 #endif
     }

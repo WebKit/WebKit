@@ -1,3 +1,16 @@
+2010-01-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Use correct cairo surface data type for handling print operations.
+        https://bugs.webkit.org/show_bug.cgi?id=33022.
+
+        * WebFrame.cpp:
+        (scaleFactor): Handle 'scale = 0' case.
+        (WebFrame::spoolPage): Use scaleFactor helper function.  Account for
+         margin size in region passed to header/footer routines.
+        (WebFrame::spoolPages): Properly clean up Cairo surface.
+
 2010-01-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.

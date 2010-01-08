@@ -2011,13 +2011,21 @@ static float scaleFactor(HDC printDC, const IntRect& pageRect)
 {
     const IntRect& printRect = printerRect(printDC);
 
-    return static_cast<float>(printRect.width()) / static_cast<float>(pageRect.width());
+    float scale = static_cast<float>(printRect.width()) / static_cast<float>(pageRect.width());
+    if (!scale)
+       scale = 1.0;
+
+    return scale;
 }
 
 static HDC hdcFromContext(PlatformGraphicsContext* pctx)
 {
     cairo_surface_t* surface = cairo_get_target(pctx);
-    return cairo_win32_surface_get_dc(surface);
+    HDC hdc = cairo_win32_surface_get_dc(surface);
+
+    SetGraphicsMode(hdc, GM_ADVANCED);
+
+    return hdc;
 }
 
 void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, float headerHeight)
@@ -2048,15 +2056,27 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
 {
     Frame* coreFrame = core(this);
 
-    IntRect pageRect = m_pageRects[page];
-    IntRect printRect = printerRect(printDC);
+    const IntRect& pageRect = m_pageRects[page];
+    IntRect marginRect = printerMarginRect(printDC);
 
     cairo_save(pctx);
-    float scale = static_cast<float>(printRect.width()) / static_cast<float>(pageRect.width());
+    float scale = scaleFactor(printDC, pageRect);
     cairo_scale(pctx, scale, scale);
 
-    cairo_translate(pctx, -pageRect.x(), -pageRect.y()+headerHeight);
+    cairo_translate(pctx, -pageRect.x() + marginRect.x(), -pageRect.y() + marginRect.y() + headerHeight);
     coreFrame->view()->paintContents(spoolCtx, pageRect);
+
+    cairo_translate(pctx, pageRect.x() - marginRect.x(), pageRect.y() - marginRect.y() - headerHeight);
+
+    XFORM originalWorld;
+    ::GetWorldTransform(printDC, &originalWorld);
+
+    // Position world transform to account for margin
+    XFORM newWorld = originalWorld;
+    newWorld.eDx = scale * marginRect.x();
+    newWorld.eDy = scale * marginRect.y();
+
+    ::SetWorldTransform(printDC, &newWorld);
 
     if (headerHeight)
         drawHeader(pctx, ui, pageRect, headerHeight);
@@ -2064,7 +2084,10 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
     if (footerHeight)
         drawFooter(pctx, ui, pageRect, page, pageCount, headerHeight, footerHeight);
 
+    ::SetWorldTransform(printDC, &originalWorld);
+
     cairo_show_page(pctx);
+    ASSERT(!cairo_status(pctx));
     cairo_restore(pctx);
 }
 #endif
@@ -2132,6 +2155,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
 
 #if PLATFORM(CAIRO)
     cairo_destroy(pctx);
+    cairo_surface_finish(printSurface);
+    ASSERT(!cairo_surface_status(printSurface));
     cairo_surface_destroy(printSurface);
 #endif
 
