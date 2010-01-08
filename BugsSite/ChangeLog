@@ -1,3 +1,10 @@
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        Update data/params parameters
+
+        * data/params: Updated 'timezone' to turn off DST.  Updated
+        'usebugaliases' and 'usevotes' to turn them off.
+
 2010-01-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
