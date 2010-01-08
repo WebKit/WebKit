@@ -84,6 +84,7 @@ FloatRect RenderForeignObject::repaintRectInLocalCoordinates() const
 void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
 {
     rect = localToParentTransform().mapRect(rect);
+    inflateForShadow(style(), rect);
     RenderBlock::computeRectForRepaint(repaintContainer, rect, fixed);
 }
 

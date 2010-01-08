@@ -1,3 +1,21 @@
+2010-01-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=32757 Repaint bug 
+        with -webkit-shadow on svg shapes
+        -and-
+        <rdar://problem/7389149>
+
+        * fast/repaint/moving-shadow-on-container.html: Added.
+        * fast/repaint/moving-shadow-on-path.html: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.checksum: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.png: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.txt: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.checksum: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.png: Added.
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.txt: Added.
+
 2010-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

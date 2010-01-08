@@ -1,3 +1,29 @@
+2010-01-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=32757 Repaint bug 
+        with -webkit-shadow on svg shapes
+        -and-
+        <rdar://problem/7389149>
+
+        Inflate the repaintRect for the shadow using its extent.
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::computeRectForRepaint):
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::getSVGShadowExtent):
+        (WebCore::SVGRenderBase::inflateForShadow):
+        * rendering/SVGRenderSupport.h:
+
 2010-01-08  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -251,7 +251,7 @@ FloatRect RenderSVGRoot::objectBoundingBox() const
 
 FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 {
-    // FIXME: This does not include the border but it should!
+    // FIXME: This does not include the border or shadow but it should!
     return computeContainerBoundingBox(this, true);
 }
 
@@ -262,8 +262,10 @@ TransformationMatrix RenderSVGRoot::localTransform() const
 
 void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    // Apply our local transforms (except for x/y translation) and call RenderBox's method to handle all the normal CSS Box model bits
+    // Apply our local transforms (except for x/y translation), then our shadow, 
+    // and then call RenderBox's method to handle all the normal CSS Box model bits
     repaintRect = localToBorderBoxTransform().mapRect(repaintRect);
+    inflateForShadow(style(), repaintRect);
     RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
