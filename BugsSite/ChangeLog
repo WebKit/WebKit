@@ -1,5 +1,14 @@
 2010-01-08  David Kilzer  <ddkilzer@apple.com>
 
+        Included UNCONFIRMED bugs by default in advanced search query
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * data/params: Prepended 'bug_status=UNCONFIRMED&' to
+        'defaultquery' parameter.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
         FIX: Make patch status appear on reviewform.html.tmpl
 
         * template/en/custom/attachment/reviewform.html.tmpl: Check

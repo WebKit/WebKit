@@ -37,7 +37,7 @@
            'defaultopsys' => 'Mac OS X 10.5',
            'defaultplatform' => '',
            'defaultpriority' => 'P2',
-           'defaultquery' => 'bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&order=Importance&long_desc_type=substring',
+           'defaultquery' => 'bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&order=Importance&long_desc_type=substring',
            'defaultseverity' => 'Normal',
            'docs_urlbase' => 'docs/html/',
            'duplicate_or_move_bug_status' => 'RESOLVED',
