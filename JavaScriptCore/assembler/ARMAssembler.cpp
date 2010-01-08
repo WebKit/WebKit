@@ -34,39 +34,6 @@ namespace JSC {
 
 // Patching helpers
 
-ARMWord* ARMAssembler::getLdrImmAddress(ARMWord* insn, uint32_t* constPool)
-{
-    // Must be an ldr ..., [pc +/- imm]
-    ASSERT((*insn & 0x0f7f0000) == 0x051f0000);
-
-    if (constPool && (*insn & 0x1))
-        return reinterpret_cast<ARMWord*>(constPool + ((*insn & SDT_OFFSET_MASK) >> 1));
-
-    ARMWord addr = reinterpret_cast<ARMWord>(insn) + 2 * sizeof(ARMWord);
-    if (*insn & DT_UP)
-        return reinterpret_cast<ARMWord*>(addr + (*insn & SDT_OFFSET_MASK));
-    else
-        return reinterpret_cast<ARMWord*>(addr - (*insn & SDT_OFFSET_MASK));
-}
-
-void ARMAssembler::linkBranch(void* code, JmpSrc from, void* to, int useConstantPool)
-{
-    ARMWord* insn = reinterpret_cast<ARMWord*>(code) + (from.m_offset / sizeof(ARMWord));
-
-    if (!useConstantPool) {
-        int diff = reinterpret_cast<ARMWord*>(to) - reinterpret_cast<ARMWord*>(insn + 2);
-
-        if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {
-            *insn = B | getConditionalField(*insn) | (diff & BRANCH_MASK);
-            ExecutableAllocator::cacheFlush(insn, sizeof(ARMWord));
-            return;
-        }
-    }
-    ARMWord* addr = getLdrImmAddress(insn);
-    *addr = reinterpret_cast<ARMWord>(to);
-    ExecutableAllocator::cacheFlush(addr, sizeof(ARMWord));
-}
-
 void ARMAssembler::patchConstantPoolLoad(void* loadAddr, void* constPoolAddr)
 {
     ARMWord *ldr = reinterpret_cast<ARMWord*>(loadAddr);
@@ -388,10 +355,17 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
         // The last bit is set if the constant must be placed on constant pool.
         int pos = (*iter) & (~0x1);
         ARMWord* ldrAddr = reinterpret_cast<ARMWord*>(data + pos);
-        ARMWord offset = *getLdrImmAddress(ldrAddr);
-        if (offset != 0xffffffff) {
-            JmpSrc jmpSrc(pos);
-            linkBranch(data, jmpSrc, data + offset, ((*iter) & 1));
+        ARMWord* addr = getLdrImmAddress(ldrAddr);
+        if (*addr != 0xffffffff) {
+            if (!(*iter & 1)) {
+                int diff = reinterpret_cast<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
+
+                if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {
+                    *ldrAddr = B | getConditionalField(*ldrAddr) | (diff & BRANCH_MASK);
+                    continue;
+                }
+            }
+            *addr = reinterpret_cast<ARMWord>(data + *addr);
         }
     }
 
