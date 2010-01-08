@@ -90,4 +90,5 @@ typedef float CGFloat;
 #undef catch
 
 #define JS_EXPORTDATA
+#define JS_EXPORTCLASS
 #define WEBKIT_EXPORTDATA
