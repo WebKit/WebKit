@@ -61,8 +61,9 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     if (const JSStaticValue* staticValue = definition->staticValues) {
         m_staticValues = new OpaqueJSClassStaticValuesTable();
         while (staticValue->name) {
-            m_staticValues->add(UString::createFromUTF8(staticValue->name).rep()->ref(),
-                              new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes));
+            // Use a local variable here to sidestep an RVCT compiler bug.
+            StaticValueEntry* entry = new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes);
+            m_staticValues->add(UString::createFromUTF8(staticValue->name).rep()->ref(), entry);
             ++staticValue;
         }
     }
@@ -70,8 +71,9 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
     if (const JSStaticFunction* staticFunction = definition->staticFunctions) {
         m_staticFunctions = new OpaqueJSClassStaticFunctionsTable();
         while (staticFunction->name) {
-            m_staticFunctions->add(UString::createFromUTF8(staticFunction->name).rep()->ref(),
-                                 new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes));
+            // Use a local variable here to sidestep an RVCT compiler bug.
+            StaticFunctionEntry* entry = new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes);
+            m_staticFunctions->add(UString::createFromUTF8(staticFunction->name).rep()->ref(), entry);
             ++staticFunction;
         }
     }
@@ -148,8 +150,10 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
             ASSERT(!it->first->isIdentifier());
-            staticValues->add(UString::Rep::createCopying(it->first->data(), it->first->size()),
-                              new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes));
+            // Use a local variable here to sidestep an RVCT compiler bug.
+            StaticValueEntry* entry = new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes);
+            staticValues->add(UString::Rep::createCopying(it->first->data(), it->first->size()), entry);
+
         }
             
     } else
@@ -161,8 +165,9 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
             ASSERT(!it->first->isIdentifier());
-            staticFunctions->add(UString::Rep::createCopying(it->first->data(), it->first->size()),
-                              new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes));
+            // Use a local variable here to sidestep an RVCT compiler bug.
+            StaticFunctionEntry* entry = new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes);
+            staticFunctions->add(UString::Rep::createCopying(it->first->data(), it->first->size()), entry);
         }
             
     } else
