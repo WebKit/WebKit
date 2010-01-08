@@ -2221,19 +2221,23 @@ sub findTestsToRun
 
     @testsToRun = sort pathcmp @testsToRun;
 
-    my @httpTests;
-    my @websocketTests;
-    my @otherTests;
-    foreach my $test (@testsToRun) {
-        if ($test =~ /^http\//) {
-            push(@httpTests, $test);
-        } elsif ($test =~ /^websocket\//) {
-            push(@websocketTests, $test);
-        } else {
-            push(@otherTests, $test);
+    # We need to minimize the time when Apache and WebSocketServer is locked by tests
+    # so run them last if no explicit order was specified in the argument list.
+    if (!scalar @ARGV) {
+        my @httpTests;
+        my @websocketTests;
+        my @otherTests;
+        foreach my $test (@testsToRun) {
+            if ($test =~ /^http\//) {
+                push(@httpTests, $test);
+            } elsif ($test =~ /^websocket\//) {
+                push(@websocketTests, $test);
+            } else {
+                push(@otherTests, $test);
+            }
         }
+        @testsToRun = (@otherTests, @httpTests, @websocketTests);
     }
-    @testsToRun = (@otherTests, @httpTests, @websocketTests);
 
     # Reverse the tests
     @testsToRun = reverse @testsToRun if $reverseTests;

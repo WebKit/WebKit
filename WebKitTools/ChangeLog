@@ -1,3 +1,18 @@
+2010-01-08  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Only run http and websocket tests as last if no argument is given to be able to explicitly control the test order.
+
+        To be able to run multiple instances of run-webkit-tests besides each other on the same machine we need to minimize
+        the time when Apache and WebSocketServer is locked by tests.
+        Because closeHTTPD() and closeWebSocketServer() is only called at the end of the testing,
+        we need to run http and websocket tests after all other tests.
+        If one however explicitly specifies the tests to run in the argument list of run-webkit-tests
+        we need to preserve the given order.
+
+        * Scripts/run-webkit-tests:
+
 2010-01-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
