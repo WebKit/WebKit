@@ -128,6 +128,8 @@ void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
 
+    structure()->disableSpecificFunctionTracking();
+
     d()->globalData = Heap::heap(this)->globalData();
     d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), this, thisValue);
 

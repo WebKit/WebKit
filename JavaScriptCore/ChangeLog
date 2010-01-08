@@ -1,3 +1,14 @@
+2010-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a crash seen on the buildbots.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Disable specific function tracking here,
+        instead of in WebCore, to ensure that the disabling happens before a
+        specific function can be registered.
+
 2010-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Mac build fix.
