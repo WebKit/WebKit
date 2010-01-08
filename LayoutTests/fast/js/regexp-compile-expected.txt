@@ -19,7 +19,7 @@ PASS re.toString() is '/c/i'
 PASS re.compile(new RegExp('+')); threw exception SyntaxError: Invalid regular expression: nothing to repeat.
 PASS re.toString() is '/undefined/'
 PASS re.toString() is '/null/'
-PASS re.toString() is '/(?:)/'
+PASS re.toString() is '//'
 PASS re.toString() is '/z/'
 PASS re.lastIndex is 0
 PASS re.lastIndex is 1

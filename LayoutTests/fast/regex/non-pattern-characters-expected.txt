@@ -156,7 +156,7 @@ Testing regexp: /a}/gm
 PASS regexp.test('a}') is true
 PASS regexp.lastIndex is 2
 
-Testing regexp: /(?:)/gm
+Testing regexp: //gm
 PASS regexp.test('') is true
 PASS regexp.lastIndex is 0
 

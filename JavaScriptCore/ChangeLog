@@ -1,3 +1,15 @@
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r52981.
+        http://trac.webkit.org/changeset/52981
+        https://bugs.webkit.org/show_bug.cgi?id=33319
+
+        Caused two JS tests to start failing:
+        ecma_2/RegExp/properties-001.js and js1_2/regexp/toString.js
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
 2010-01-08  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

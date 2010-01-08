@@ -1,5 +1,20 @@
 2010-01-08  Eric Seidel  <eric@webkit.org>
 
+        No review, rolling out r52981.
+        http://trac.webkit.org/changeset/52981
+        https://bugs.webkit.org/show_bug.cgi?id=33319
+
+        Caused two JS tests to start failing:
+        ecma_2/RegExp/properties-001.js and js1_2/regexp/toString.js
+
+        * fast/js/kde/RegExp-expected.txt:
+        * fast/js/kde/script-tests/RegExp.js:
+        * fast/js/regexp-compile-expected.txt:
+        * fast/js/script-tests/regexp-compile.js:
+        * fast/regex/non-pattern-characters-expected.txt:
+
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         media/unsupported-tracks.html is failing on Snow Leopard Release bot

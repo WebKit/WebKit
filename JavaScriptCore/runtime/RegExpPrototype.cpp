@@ -114,8 +114,8 @@ JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec, JSObject*, JSValu
         postfix[index++] = 'i';
     if (asRegExpObject(thisValue)->get(exec, exec->propertyNames().multiline).toBoolean(exec))
         postfix[index] = 'm';
-    UString source = asRegExpObject(thisValue)->get(exec, exec->propertyNames().source).toString(exec);
-    return jsNontrivialString(exec, makeString("/", source.size() ? source : UString("(?:)"), postfix));
+    
+    return jsNontrivialString(exec, makeString("/", asRegExpObject(thisValue)->get(exec, exec->propertyNames().source).toString(exec), postfix));
 }
 
 } // namespace JSC

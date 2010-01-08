@@ -38,7 +38,7 @@ re.compile(null);
 shouldBe("re.toString()", "'/null/'");
 
 re.compile();
-shouldBe("re.toString()", "'/(?:)/'");
+shouldBe("re.toString()", "'//'"); // /(?:)/ in Firefox
 
 re.compile("z", undefined);
 shouldBe("re.toString()", "'/z/'");
