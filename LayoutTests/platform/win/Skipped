@@ -46,7 +46,7 @@ http/tests/security/cross-frame-access-protocol.html
 media/video-seek-past-end-paused.html
 
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
-media/video-error-abort.html
+http/tests/media/video-error-abort.html
 
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html

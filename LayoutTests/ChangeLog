@@ -1,5 +1,14 @@
 2010-01-08  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed trivial fix.
+
+        LayoutTests/media/video-error-abort.html moved to LayoutTests/http/tests/media/video-error-abort.html
+        by r52923, but wasn't renamed in this skiplist by this commit.
+
+        * platform/win/Skipped:
+
+2010-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Eric Seidel.
 
         r52976 revealed this failure by re-ordering tests.
