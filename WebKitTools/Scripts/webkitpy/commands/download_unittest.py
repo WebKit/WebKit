@@ -52,7 +52,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Build(), [], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_build_and_test(self):
-        expected_stderr = "Updating working directory\nBuilding WebKit\n"
+        expected_stderr = "Updating working directory\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
         self.assert_execute_outputs(BuildAndTest(), [], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_apply_attachment(self):
@@ -70,7 +70,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(ApplyFromBug(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_diff(self):
-        expected_stderr = "Building WebKit\nUpdating bug 42\n"
+        expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nUpdating bug 42\n"
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_check_style(self):
@@ -82,11 +82,27 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(BuildAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_land_attachment(self):
-        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\n"
+        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
         self.assert_execute_outputs(LandAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_land_patches(self):
-        expected_stderr = "2 reviewed patches found on bug 42.\nProcessing 2 patches from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\nUpdating working directory\nProcessing patch 128 from bug 42.\nBuilding WebKit\n"
+        expected_stderr = """2 reviewed patches found on bug 42.
+Processing 2 patches from 1 bug.
+Updating working directory
+Processing patch 197 from bug 42.
+Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+Updating working directory
+Processing patch 128 from bug 42.
+Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+"""
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):

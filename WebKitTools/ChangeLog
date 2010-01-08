@@ -1,3 +1,14 @@
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        run-javascriptcore-tests needs a --quiet flag
+        https://bugs.webkit.org/show_bug.cgi?id=33399
+
+        Until run-javascriptcore-tests has a --quiet flag, lets just stiffle the output in webkit-patch.
+
+        * Scripts/webkitpy/steps/runtests.py:
+
 2010-01-08  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Alexey Proskuryakov.
