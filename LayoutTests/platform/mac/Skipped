@@ -99,7 +99,3 @@ fast/events/basic-touch-events.html
 # This test is causing a log message to occur after the test, thus causing the next test after it to fail:
 # https://bugs.webkit.org/show_bug.cgi?id=33256
 fast/websockets/websocket-event-target.html
-
-# This test changes the output of svg/W3C-SVG-1.1/filters-conv-01-f.svg for unknown reasons.
-# https://bugs.webkit.org/show_bug.cgi?id=32294
-http/tests/uri/escaped-entity.html

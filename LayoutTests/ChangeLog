@@ -1,3 +1,17 @@
+2010-01-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32294
+        http/tests/uri/escaped-entity.html affects the output of svg/W3C-SVG-1.1/filters-conv-01-f.svg
+
+        Changed the test to not have any funky characters. Filed bug 33400 to track the underlying
+        problem with kerning.
+
+        * http/tests/uri/escaped-entity-expected.txt:
+        * http/tests/uri/escaped-entity.html:
+        * platform/mac/Skipped:
+
 2010-01-08  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
