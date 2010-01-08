@@ -97,7 +97,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 48
+%expect 53
 
 %nonassoc LOWEST_PREC
 
@@ -1208,6 +1208,9 @@ decl_list:
     declaration ';' maybe_space {
         $$ = $1;
     }
+    | declaration invalid_block_list maybe_space {
+        $$ = false;
+    }
     | declaration invalid_block_list ';' maybe_space {
         $$ = false;
     }
@@ -1324,6 +1327,9 @@ expr:
             }
             $$->addValue(p->sinkFloatingValue($3));
         }
+    }
+    | expr invalid_block_list {
+        $$ = 0;
     }
     | expr error {
         $$ = 0;

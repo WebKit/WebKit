@@ -1,3 +1,17 @@
+2010-01-08  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Skip invalid blocks in CSS property declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=31231
+        https://bugs.webkit.org/show_bug.cgi?id=26619
+
+        This patch makes the CSS parser skip property declarations containing invalid blocks.
+
+        Test: fast/css/parsing-error-recovery.html
+
+        * css/CSSGrammar.y:
+
 2010-01-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
