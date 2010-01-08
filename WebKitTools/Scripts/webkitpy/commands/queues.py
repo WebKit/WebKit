@@ -28,6 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import traceback
 import os
 
 from datetime import datetime
@@ -62,7 +63,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
         try:
             self.tool.bugs.add_cc_to_bug(bug_id, self.watchers)
         except Exception, e:
-            log("Failed to CC watchers: %s." % e)
+            traceback.print_exc()
+            log("Failed to CC watchers.")
 
     def _update_status(self, message, patch=None, results_file=None):
         self.tool.status_server.update_status(self.name, message, patch, results_file)
