@@ -20,35 +20,38 @@
 #ifndef QtAbstractWebPopup_h
 #define QtAbstractWebPopup_h
 
+#include <QFont>
+#include <QList>
 #include <QRect>
 
 namespace WebCore {
 
-class QtAbstractWebPopup;
 class PopupMenuClient;
-
-class QtAbstractWebPopupFactory {
-public:
-    virtual QtAbstractWebPopup* create(PopupMenuClient* client) = 0;
-};
 
 class QtAbstractWebPopup {
 public:
-    QtAbstractWebPopup(PopupMenuClient* client);
+    struct Item {
+        enum { Option, Group, Separator } type;
+        QString text;
+        QString toolTip;
+        bool enabled;
+    };
+
+    QtAbstractWebPopup();
     virtual ~QtAbstractWebPopup();
 
     virtual void show(const QRect& geometry, int selectedIndex) = 0;
     virtual void hide() = 0;
-
-    static void setFactory(QtAbstractWebPopupFactory* factory);
-    static QtAbstractWebPopup* create(PopupMenuClient* client);
+    virtual void populate(const QFont& font, const QList<Item>& items) = 0;
+    virtual void setParent(QWidget* parent) = 0;
 
 protected:
-    PopupMenuClient* client();
+    void popupDidHide(bool acceptSuggestions);
+    void valueChanged(int index);
 
 private:
+    friend class PopupMenu;
     PopupMenuClient* m_client;
-    static QtAbstractWebPopupFactory* m_factory;
 };
 
 }

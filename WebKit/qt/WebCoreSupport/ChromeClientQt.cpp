@@ -38,8 +38,9 @@
 #include "NotImplemented.h"
 #include "WindowFeatures.h"
 #include "DatabaseTracker.h"
-#include "SecurityOrigin.h"
+#include "QtFallbackWebPopup.h"
 #include "QWebPageClient.h"
+#include "SecurityOrigin.h"
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
@@ -463,6 +464,11 @@ void ChromeClientQt::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
 {
     // See the comment in WebCore/page/ChromeClient.h
     notImplemented();
+}
+
+QtAbstractWebPopup* ChromeClientQt::createPopup()
+{
+    return new QtFallbackWebPopup;
 }
 
 }

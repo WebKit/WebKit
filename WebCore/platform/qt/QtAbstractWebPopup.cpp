@@ -21,36 +21,29 @@
 #include "QtAbstractWebPopup.h"
 
 #include "PopupMenuClient.h"
-#include "QtFallbackWebPopup.h"
 
 
 namespace WebCore {
 
-QtAbstractWebPopupFactory* QtAbstractWebPopup::m_factory = 0;
-
-QtAbstractWebPopup::QtAbstractWebPopup(PopupMenuClient* client)
-    : m_client(client)
+QtAbstractWebPopup::QtAbstractWebPopup()
+    : m_client(0)
 {
-    Q_ASSERT(m_client);
 }
 
 QtAbstractWebPopup::~QtAbstractWebPopup()
 {
 }
 
-PopupMenuClient* QtAbstractWebPopup::client()
+void QtAbstractWebPopup::popupDidHide(bool acceptSuggestions)
 {
-    return m_client;
+    Q_ASSERT(m_client);
+    m_client->popupDidHide(acceptSuggestions);
 }
 
-void QtAbstractWebPopup::setFactory(QtAbstractWebPopupFactory* factory)
+void QtAbstractWebPopup::valueChanged(int index)
 {
-    m_factory = factory;
-}
-
-QtAbstractWebPopup* QtAbstractWebPopup::create(PopupMenuClient* client)
-{
-    return m_factory ? m_factory->create(client) : new QtFallbackWebPopup(client);
+    Q_ASSERT(m_client);
+    m_client->valueChanged(index);
 }
 
 } // namespace WebCore

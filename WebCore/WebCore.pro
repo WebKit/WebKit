@@ -1983,7 +1983,6 @@ HEADERS += \
     platform/qt/ClipboardQt.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QtAbstractWebPopup.h \
-    platform/qt/QtFallbackWebPopup.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/ScrollbarThemeQt.h \
     platform/Scrollbar.h \
@@ -2385,6 +2384,7 @@ HEADERS += \
     xml/XSLTProcessor.h \
     xml/XSLTUnicodeSort.h \
     $$PWD/../WebKit/qt/Api/qwebplugindatabase_p.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/platform/network/qt/DnsPrefetchHelper.h
 
@@ -2446,7 +2446,6 @@ SOURCES += \
     platform/qt/PlatformTouchPointQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QtAbstractWebPopup.cpp \
-    platform/qt/QtFallbackWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/ScrollbarQt.cpp \
     platform/qt/ScrollbarThemeQt.cpp \
@@ -2463,6 +2462,7 @@ SOURCES += \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp \
     plugins/qt/PluginDataQt.cpp \
+    ../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.cpp \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \

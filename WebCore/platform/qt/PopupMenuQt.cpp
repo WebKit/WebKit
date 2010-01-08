@@ -1,7 +1,7 @@
 /*
  * This file is part of the popup menu implementation for <select> elements in WebCore.
  *
- * Copyright (C) 2008, 2009 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008, 2009, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com 
  * Coypright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
@@ -26,17 +26,19 @@
 #include "config.h"
 #include "PopupMenu.h"
 
+#include "Chrome.h"
+#include "ChromeClientQt.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
+#include "QWebPageClient.h"
 #include "QtAbstractWebPopup.h"
-#include "QtFallbackWebPopup.h"
 
 namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
+    , m_popup(0)
 {
-    m_popup = QtAbstractWebPopup::create(client);
 }
 
 PopupMenu::~PopupMenu()
@@ -44,11 +46,47 @@ PopupMenu::~PopupMenu()
     delete m_popup;
 }
 
-void PopupMenu::show(const IntRect& r, FrameView* v, int index)
+static QList<QtAbstractWebPopup::Item> getItems(PopupMenuClient* client)
 {
-    QRect rect = r;
-    rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
-    m_popup->show(rect, index);
+    QList<QtAbstractWebPopup::Item> result;
+
+    int size = client->listSize();
+    for (int i = 0; i < size; ++i) {
+        QtAbstractWebPopup::Item item;
+
+        if (client->itemIsSeparator(i))
+            item.type = QtAbstractWebPopup::Item::Separator;
+        else if (client->itemIsLabel(i))
+            item.type = QtAbstractWebPopup::Item::Group;
+        else
+            item.type = QtAbstractWebPopup::Item::Option;
+
+        item.text = client->itemText(i);
+        item.toolTip = client->itemToolTip(i);
+        item.enabled = client->itemIsEnabled(i);
+        result.append(item);
+    }
+    return result;
+}
+
+void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
+{
+    ChromeClientQt* chromeClient = static_cast<ChromeClientQt*>(
+        view->frame()->page()->chrome()->client());
+    ASSERT(chromeClient);
+
+    if (!m_popup) {
+        m_popup = chromeClient->createPopup();
+        m_popup->m_client = m_popupClient;
+    }
+
+    m_popup->setParent(chromeClient->platformPageClient()->ownerWidget());
+    m_popup->populate(m_popupClient->menuStyle().font().font(),
+                      getItems(m_popupClient));
+
+    QRect bounds = rect;
+    bounds.moveTopLeft(view->contentsToWindow(rect.topLeft()));
+    m_popup->show(bounds, index);
 }
 
 void PopupMenu::hide()
