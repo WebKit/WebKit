@@ -1051,6 +1051,20 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
+void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID structure, RegisterID offset, RegisterID scratch)
+{
+    ASSERT(sizeof(((Structure*)0)->m_propertyStorageCapacity) == sizeof(int32_t));
+    ASSERT(sizeof(JSObject::inlineStorageCapacity) == sizeof(int32_t));
+
+    Jump notUsingInlineStorage = branch32(NotEqual, Address(structure, OBJECT_OFFSETOF(Structure, m_propertyStorageCapacity)), Imm32(JSObject::inlineStorageCapacity));
+    loadPtr(BaseIndex(base, offset, ScalePtr, OBJECT_OFFSETOF(JSObject, m_inlineStorage)), result);
+    Jump finishedLoad = jump();
+    notUsingInlineStorage.link(this);
+    loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_externalStorage)), scratch);
+    loadPtr(BaseIndex(scratch, offset, ScalePtr, 0), result);
+    finishedLoad.link(this);
+}
+
 void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
@@ -1475,20 +1489,6 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID res
         loadPtr(static_cast<void*>(protoPropertyStorage), temp);
         loadPtr(Address(temp, cachedOffset * sizeof(JSValue)), result);
     } 
-}
-
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID structure, RegisterID offset, RegisterID scratch)
-{
-    ASSERT(sizeof(((Structure*)0)->m_propertyStorageCapacity) == sizeof(int32_t));
-    ASSERT(sizeof(JSObject::inlineStorageCapacity) == sizeof(int32_t));
-
-    Jump notUsingInlineStorage = branch32(NotEqual, Address(structure, OBJECT_OFFSETOF(Structure, m_propertyStorageCapacity)), Imm32(JSObject::inlineStorageCapacity));
-    loadPtr(BaseIndex(base, offset, ScalePtr, OBJECT_OFFSETOF(JSObject, m_inlineStorage)), result);
-    Jump finishedLoad = jump();
-    notUsingInlineStorage.link(this);
-    loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_externalStorage)), scratch);
-    loadPtr(BaseIndex(scratch, offset, ScalePtr, 0), result);    
-    finishedLoad.link(this);
 }
 
 void JIT::testPrototype(Structure* structure, JumpList& failureCases)
