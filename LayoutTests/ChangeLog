@@ -1,3 +1,16 @@
+2010-01-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        transitions/cancel-transition.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33398
+
+        There's a race between the check() call and the final
+        setTimeout. Just remove the final setTimeout and put
+        its contents in the check call itself.
+
+        * transitions/cancel-transition.html:
+
 2010-01-08  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

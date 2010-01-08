@@ -85,6 +85,10 @@
                 result += "<span style='color:red'>FAIL(was:" + transform[4] + ", s/b:50)</span>";
             else
                 result += "<span style='color:green'>PASS</span>";
+            
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
 
         function start()
@@ -92,13 +96,6 @@
             document.getElementById("container").className = "run";
             setTimeout("cancelTransition()", 100);
             setTimeout("restartTransition()", 200);
-
-            window.setTimeout(function() {
-                document.getElementById('result').innerHTML = result;
-                if (window.layoutTestController)
-                layoutTestController.notifyDone();
-            },
-            500);
         }
     </script>
 <body onload="start()">
