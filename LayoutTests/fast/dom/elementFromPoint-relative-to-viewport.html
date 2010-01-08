@@ -39,7 +39,7 @@
 
     description('This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.');
 
-    function testElement(element, label, offsetX, offsetY, zoomOrNot) {
+    function testElement(element, label, offsetX, offsetY) {
         for (var i = 0; i < 25; ++i) {
             var item = document.createElement("div");
             item.className = "testItem";
@@ -81,25 +81,19 @@
 
         shouldBe(unscrolledBox, "'0'");
         shouldBe(scrolledDownBox, "'5'");
-        if (zoomOrNot == "zoom") {
-            shouldBe(scrolledRightBox, "'3'");
-            shouldBe(scrolledDownAndRightBox, "'8'");
-        } else {
-            shouldBe(scrolledRightBox, "'3'");
-            shouldBe(scrolledDownAndRightBox, "'8'");
-        }
+        shouldBe(scrolledRightBox, "'3'");
+        shouldBe(scrolledDownAndRightBox, "'8'");
     }
 
     var elementInitial = document.getElementById('test-initial');
     var elementOffscreen = document.getElementById('test-offscreen');
     var offset = elementInitial.getBoundingClientRect();
-    testElement(elementInitial, "Initial", offset.left, offset.top, "none");
-    testElement(elementOffscreen, "Offscreen", offset.left, offset.top + 1100, "none");
-    
+    testElement(elementInitial, "Initial", offset.left, offset.top);
+    testElement(elementOffscreen, "Offscreen", offset.left, offset.top + 1100);
+
     eventSender.zoomPageOut();
-    testElement(elementInitial, "Initial", offset.left, offset.top, "zoom");
-    
-    
+    testElement(elementInitial, "Initial", offset.left, offset.top);
+
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
