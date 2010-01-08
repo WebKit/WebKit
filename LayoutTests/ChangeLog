@@ -1,3 +1,16 @@
+2010-01-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        REGRESSION(52819?): AXLoadComplete and AXLayoutComplete causes 4 tests fail on Snow Leopard Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=33300
+
+        Skipping platform/mac/accessibility/aria-liveregions-notifications.html
+        to make the bots green until Chris Fleizach can fix the AX Notification system
+        to correctly unregister logging callbacks.
+
+        * platform/mac/Skipped:
+
 2010-01-07  Afonso R. Costa Jr.  <afonso.costa@openbossa.org>
 
         Reviewed by Darin Adler.

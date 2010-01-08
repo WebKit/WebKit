@@ -99,3 +99,7 @@ fast/events/basic-touch-events.html
 # This test is causing a log message to occur after the test, thus causing the next test after it to fail:
 # https://bugs.webkit.org/show_bug.cgi?id=33256
 fast/websockets/websocket-event-target.html
+
+# This test is causing later tests to fail
+# https://bugs.webkit.org/show_bug.cgi?id=33300
+platform/mac/accessibility/aria-liveregions-notifications.html
