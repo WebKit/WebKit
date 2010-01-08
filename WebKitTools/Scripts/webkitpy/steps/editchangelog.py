@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+
 from webkitpy.steps.abstractstep import AbstractStep
 
 
 class EditChangeLog(AbstractStep):
     def run(self, state):
+        os.chdir(self._tool.scm().checkout_root)
         self._tool.user.edit(self.cached_lookup(state, "changelogs"))

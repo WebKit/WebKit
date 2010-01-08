@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+
 from webkitpy.executive import ScriptError
 from webkitpy.steps.abstractstep import AbstractStep
 from webkitpy.steps.options import Options
@@ -42,6 +44,7 @@ class CheckStyle(AbstractStep):
     def run(self, state):
         if not self._options.check_style:
             return
+        os.chdir(self._tool.scm().checkout_root)
         try:
             self._run_script("check-webkit-style")
         except ScriptError, e:
