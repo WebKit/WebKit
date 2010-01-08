@@ -256,6 +256,19 @@
                                            attach_id = attachment.id %]<br>
         [% END %]
 
+[%# if WEBKIT_CHANGES %]
+        [% IF attachment.ispatch %]
+        <b><small>Bot Status:</small></b>
+
+        <div class="statusBubble">
+          <iframe src="https://webkit-commit-queue.appspot.com/status-bubble/[% attachment.id %]"
+                  style="width: 300px; height: 18px; border: none;" scrolling="no">
+          </iframe>
+        </div>
+        <br>
+        [% END %]
+[%# endif // WEBKIT_CHANGES %]
+
         <div id="smallCommentFrame">
           <b><small><label for="comment">Comment</label> (on the
           [%+ terms.bug %]):</small></b><br>

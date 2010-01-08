@@ -138,6 +138,15 @@
             | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
           [% END %]
           [% Hook.process("action") %]
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch %]
+          <div class="statusBubble">
+            <iframe src="https://webkit-commit-queue.appspot.com/status-bubble/[% attachment.id %]"
+                    style="width: 300px; height: 18px; border: none;" scrolling="no">
+            </iframe>
+          </div>
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
         </td>
       </tr>
     [% END %]

@@ -84,6 +84,17 @@
     [% END %]
 </td>
 <td>
+[% IF ispatch %]
+  <b><small>Bot Status:</small></b>
+
+  <div class="statusBubble">
+    <iframe src="https://webkit-commit-queue.appspot.com/status-bubble/[% attachment.id %]"
+            style="width: 300px; height: 18px; border: none;" scrolling="no">
+    </iframe>
+  </div>
+[% END %]
+</td>
+<td>
 Back to <a href="show_bug.cgi?id=[% attachment.bug_id %]" target="_top">[% terms.Bug %] #[% attachment.bug_id %]</a>
 </td>
 <td>
@@ -99,7 +110,7 @@ Back to <a href="show_bug.cgi?id=[% attachment.bug_id %]" target="_top">[% terms
 </td>
 </tr>
 <tr>
-<td colspan="4">
+<td colspan="5">
 Enter comments below:<br>
 <textarea id=comment name="comment" wrap="soft">[% quotedpatch FILTER html %]</textarea><br>
 </tr>

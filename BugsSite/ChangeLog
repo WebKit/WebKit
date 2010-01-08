@@ -1,3 +1,17 @@
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Show patch status in bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=33368
+
+        This patch adds an iframe to the show_bug page and the edit attachment
+        page that displays whether the attachment passed the various bots.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
 2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Kilzer.
