@@ -1,5 +1,13 @@
 2010-01-08  David Kilzer  <ddkilzer@apple.com>
 
+        FIX: Make patch status appear on reviewform.html.tmpl
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Check
+        attachment.ispatch (not just ispatch) when deciding whether
+        to display patch status.  Also update layout a bit.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
         Update data/params parameters
 
         * data/params: Updated 'timezone' to turn off DST.  Updated
