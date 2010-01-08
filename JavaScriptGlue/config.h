@@ -18,3 +18,4 @@
 #define WTF_USE_JSC !WTF_USE_V8
 
 #define JS_EXPORTDATA
+#define JS_EXPORTCLASS
