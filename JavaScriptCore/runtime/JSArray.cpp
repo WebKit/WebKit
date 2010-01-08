@@ -185,6 +185,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
 
 JSArray::~JSArray()
 {
+    ASSERT(vptr() == JSGlobalData::jsArrayVPtr);
     checkConsistency(DestructorConsistencyCheck);
 
     delete m_storage->m_sparseValueMap;

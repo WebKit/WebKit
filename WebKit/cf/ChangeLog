@@ -1,3 +1,15 @@
+2010-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33057
+        REGRESSION(r49365): typeof(xhr.responseText) != "string" in Windows
+
+        <rdar://problem/7296920> REGRESSION: WebKit fails to start PeaceKeeper benchmark
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Define JS_EXPORTCLASS. I'm not sure why this
+        isn't done in JSC globally for all possible clients, but keeping the current design for now.
+
 2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
 
         Reviewed by Timothy Hatcher.

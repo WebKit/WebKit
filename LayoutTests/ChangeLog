@@ -1,3 +1,16 @@
+2010-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33057
+        REGRESSION(r49365): typeof(xhr.responseText) != "string" in Windows
+
+        <rdar://problem/7296920> REGRESSION: WebKit fails to start PeaceKeeper benchmark
+
+        * fast/js/script-tests/webcore-string-comparison.js: Added.
+        * fast/js/webcore-string-comparison-expected.txt: Added.
+        * fast/js/webcore-string-comparison.html: Added.
+
 2010-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker, Darin Adler.

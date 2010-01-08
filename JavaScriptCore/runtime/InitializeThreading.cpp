@@ -49,6 +49,7 @@ static void initializeThreadingOnce()
 {
     WTF::initializeThreading();
     initializeUString();
+    JSGlobalData::storeVPtrs();
 #if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
     initializeDates();

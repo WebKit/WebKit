@@ -81,6 +81,8 @@ JSFunction::JSFunction(ExecState* exec, NonNullPassRefPtr<FunctionExecutable> ex
 
 JSFunction::~JSFunction()
 {
+    ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
+
     // JIT code for other functions may have had calls linked directly to the code for this function; these links
     // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
     // this memory is freed and may be reused (potentially for another, different JSFunction).

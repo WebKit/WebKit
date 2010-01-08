@@ -31,8 +31,10 @@
 #else
 #define JS_EXPORTDATA __declspec(dllimport)
 #endif
+#define JS_EXPORTCLASS JS_EXPORTDATA
 #else
 #define JS_EXPORTDATA
+#define JS_EXPORTCLASS
 #endif
 
 #if OS(WINDOWS)

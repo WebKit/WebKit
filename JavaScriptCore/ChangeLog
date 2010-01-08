@@ -1,3 +1,62 @@
+2010-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33057
+        REGRESSION(r49365): typeof(xhr.responseText) != "string" in Windows
+
+        <rdar://problem/7296920> REGRESSION: WebKit fails to start PeaceKeeper benchmark
+
+        Test: fast/js/webcore-string-comparison.html
+
+        In r49365, some code was moved from JSString.cpp to JSString.h, and as a result, WebCore
+        got a way to directly instantiate JSStrings over DLL borders. Since vftable for JSString was
+        not exported, objects created from WebCore got a different vptr, and JavaScriptCore
+        optimizations that relied on vptr of all JSString objects being equal failed.
+
+        * config.h: Added a JS_EXPORTCLASS macro for exporting classes. It's currently the same as
+        JS_EXPORTDATA, but it clearly needed a new name.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::createNonDefault):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        Store vptrs just once, no need to repeatedly pick and copy them. This makes it possible to
+        assert vptr correctness in object destructors (which don't have access to JSGlobalData,
+        and even Heap::heap(this) will fail for fake objects created from storeVPtrs()).
+
+        * runtime/JSArray.cpp: (JSC::JSArray::~JSArray): Assert that vptr is what we expect it to be.
+        It's important to assert in destructor, because MSVC changes the vptr after constructor
+        is invoked.
+        * runtime/JSByteArray.cpp: (JSC::JSByteArray::~JSByteArray): Ditto.
+        * runtime/JSByteArray.h: Ditto.
+        * runtime/JSFunction.h: Ditto.
+        * runtime/JSFunction.cpp: (JSC::JSFunction::~JSFunction): Ditto.
+
+        * runtime/JSCell.h: (JSC::JSCell::setVPtr): Added a method to substitute vptr for another
+        one.
+
+        * runtime/JSString.h: Export JSString class together with its vftable, and tell other
+        libraries tp import it. This is needed on platforms that have a separate JavaScriptCore
+        dynamic library - and on Mac, we already did the export via JavaScriptCore.exp.
+        (JSC::JSString::~JSString): Assert tha vptr is what we expect it to be.
+        (JSC::fixupVPtr): Store a previously saved primary vftable pointer (do nothing if building
+        JavaScriptCore itself).
+        (JSC::jsSingleCharacterString): Call fixupVPtr in case this is call across DLL boundary.
+        (JSC::jsSingleCharacterSubstring): Ditto.
+        (JSC::jsNontrivialString): Ditto.
+        (JSC::jsString): Ditto.
+        (JSC::jsSubstring): Ditto.
+        (JSC::jsOwnedString): Ditto.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export the new static
+        JSGlobalData members that are used in WebCore via inline functions.
+
 2010-01-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

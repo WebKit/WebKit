@@ -36,7 +36,7 @@ namespace JSC {
 
     class JSFunction : public InternalFunction {
         friend class JIT;
-        friend struct VPtrSet;
+        friend class JSGlobalData;
 
         typedef InternalFunction Base;
 
