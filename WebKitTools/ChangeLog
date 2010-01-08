@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Don't post style-queue pass messages to bugs
+        https://bugs.webkit.org/show_bug.cgi?id=33404
+
+        These messages aren't needed any more now that we have the status
+        bubble reporting pass events passively.
+
+        * Scripts/webkitpy/commands/queues.py:
+
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Optimize the number of CPUs used for building Qt and Gtk
         https://bugs.webkit.org/show_bug.cgi?id=33394
 

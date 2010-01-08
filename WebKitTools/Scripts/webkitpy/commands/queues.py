@@ -258,8 +258,6 @@ class StyleQueue(AbstractReviewQueue):
     def process_work_item(self, patch):
         try:
             self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
-            message = "%s ran check-webkit-style on attachment %s without any errors." % (self.name, patch["id"])
-            self.tool.bugs.post_comment_to_bug(patch["bug_id"], message, cc=self.watchers)
             self._did_pass(patch)
         except ScriptError, e:
             self._did_fail(patch)
