@@ -71,8 +71,20 @@ class WebKitPort(object):
         return command
 
     @classmethod
+    def run_javascriptcore_tests_command(cls):
+        return [cls.script_path("run-javascriptcore-tests")]
+
+    @classmethod
     def run_webkit_tests_command(cls):
         return [cls.script_path("run-webkit-tests")]
+
+    @classmethod
+    def run_python_unittests_command(cls):
+        return [cls.script_path("test-webkitpy")]
+
+    @classmethod
+    def run_perl_unittests_command(cls):
+        return [cls.script_path("test-webkitperl")]
 
 
 class MacPort(WebKitPort):

@@ -45,6 +45,12 @@ class RunTests(AbstractStep):
             return
         if not self._options.test:
             return
+
+        # Run the scripting unit tests first because they're quickest.
+        self._tool.executive.run_and_throw_if_fail(self.port().run_python_unittests_command())
+        self._tool.executive.run_and_throw_if_fail(self.port().run_perl_unittests_command())
+        self._tool.executive.run_and_throw_if_fail(self.port().run_javascriptcore_tests_command())
+
         args = self.port().run_webkit_tests_command()
         if self._options.non_interactive:
             args.append("--no-launch-safari")
@@ -52,3 +58,4 @@ class RunTests(AbstractStep):
         if self._options.quiet:
             args.append("--quiet")
         self._tool.executive.run_and_throw_if_fail(args)
+

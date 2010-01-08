@@ -1,3 +1,15 @@
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        commit-queue should run run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=33376
+
+        I also made it run the python and perl unit tests.
+
+        * Scripts/webkitpy/steps/runtests.py:
+        * Scripts/webkitpy/webkitport.py:
+
 2010-01-07  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
