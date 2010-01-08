@@ -65,6 +65,7 @@
 #include "RenderMenuList.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
+#include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -800,6 +801,14 @@ String AccessibilityRenderObject::textUnderElement() const
                 return String();
             return plainText(rangeOfContents(node).get());
         }
+    }
+    
+    // Sometimes text fragments don't have Node's associated with them (like when
+    // CSS content is used to insert text).
+    if (m_renderer->isText()) {
+        RenderText* renderTextObject = toRenderText(m_renderer);
+        if (renderTextObject->isTextFragment())
+            return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
     }
     
     // return the null string for anonymous text because it is non-trivial to get
