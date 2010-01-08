@@ -1,5 +1,24 @@
 2010-01-07  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Nikolas Zimmermann.
+
+        media/unsupported-tracks.html is failing on Snow Leopard Release bot
+        https://bugs.webkit.org/show_bug.cgi?id=32339
+
+        This is a speculative fix.  I do not have a Snow Leopard machine to test on
+        and I've not seen mention of someone being able to reproduce this locally.
+
+        Prevent watchdog timer from firing after a test completes but before
+        the next one starts, causing the error to appear in the next test.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Stop the watchdog before printing #EOF for the test content.
+        We only need to care about the JavaScript of the test running too long
+        or some hang in WebCore.  Any other failures will be covered by the calling
+        script's own watchdog timer.
+
+2010-01-07  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         commit-queue is stuck spinning due to exception

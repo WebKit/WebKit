@@ -1075,15 +1075,20 @@ void dump()
         } else
             printf("ERROR: nil result from %s", methodNameStringForFailedTest());
 
+        // Stop the watchdog thread before we leave this test to make sure it doesn't
+        // fire in between tests causing the next test to fail.
+        // This is a speculative fix for: https://bugs.webkit.org/show_bug.cgi?id=32339
+        invalidateAnyPreviousWaitToDumpWatchdog();
+
         if (printSeparators) {
             puts("#EOF");       // terminate the content block
             fputs("#EOF\n", stderr);
         }            
     }
-    
+
     if (dumpPixels && !dumpAsText)
         dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
-    
+
     puts("#EOF");   // terminate the (possibly empty) pixels block
 
     fflush(stdout);
