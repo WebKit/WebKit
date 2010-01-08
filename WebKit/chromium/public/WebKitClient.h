@@ -201,23 +201,23 @@ public:
 
     // If refresh is true, then cached information should not be used to
     // satisfy this call.
-    virtual void getPluginList(bool refresh, WebPluginListBuilder*) { };
+    virtual void getPluginList(bool refresh, WebPluginListBuilder*) { }
 
 
     // Profiling -----------------------------------------------------------
 
-    virtual void decrementStatsCounter(const char* name) { };
-    virtual void incrementStatsCounter(const char* name) { };
+    virtual void decrementStatsCounter(const char* name) { }
+    virtual void incrementStatsCounter(const char* name) { }
 
     // An event is identified by the pair (name, id).  The extra parameter
     // specifies additional data to log with the event.
-    virtual void traceEventBegin(const char* name, void* id, const char* extra) { };
-    virtual void traceEventEnd(const char* name, void* id, const char* extra) { };
+    virtual void traceEventBegin(const char* name, void* id, const char* extra) { }
+    virtual void traceEventEnd(const char* name, void* id, const char* extra) { }
 
     // Generic callback for reporting histogram data. Range is identified by the min, max pair.
     // By default, histogram is exponential, so that min=1, max=1000000, bucketCount=50 would do. Setting
     // linear to true would require bucket count to cover whole min-max range.
-    virtual void histogramCounts(const WebString& name, int sample, int min, int max, int bucketCount, bool linear) { };
+    virtual void histogramCounts(const WebString& name, int sample, int min, int max, int bucketCount, bool linear) { }
 
 
     // Resources -----------------------------------------------------------
