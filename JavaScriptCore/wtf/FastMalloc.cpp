@@ -191,13 +191,6 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 #if FORCE_SYSTEM_MALLOC
 
-#include <stdlib.h>
-#if !OS(WINDOWS)
-    #include <pthread.h>
-#else
-    #include "windows.h"
-#endif
-
 namespace WTF {
 
 TryMallocReturnValue tryFastMalloc(size_t n) 
