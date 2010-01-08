@@ -1356,12 +1356,11 @@ bail_out:
     setChildNeedsStyleRecalc(false);
     unscheduleStyleRecalc();
 
-    m_inStyleRecalc = false;
-
     if (view())
         view()->resumeScheduledEvents();
     RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
+    m_inStyleRecalc = false;
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
     if (m_closeAfterStyleRecalc) {

@@ -817,17 +817,11 @@ void SelectionController::layout()
         return;
     }
 
+    m_selection.start().node()->document()->updateStyleIfNeeded();
+    
     m_caretRect = IntRect();
         
     if (isCaret()) {
-        Document* document = m_selection.start().node()->document();
-
-        document->updateStyleIfNeeded();
-        if (FrameView* view = document->view()) {
-            if (view->needsLayout())
-                view->layout();
-        }
-
         VisiblePosition pos(m_selection.start(), m_selection.affinity());
         if (pos.isNotNull()) {
             ASSERT(pos.deepEquivalent().node()->renderer());
@@ -924,7 +918,9 @@ bool SelectionController::recomputeCaretRect()
     if (!m_frame)
         return false;
         
-    ASSERT(!m_frame->view() || !m_frame->view()->needsLayout());
+    FrameView* v = m_frame->document()->view();
+    if (!v)
+        return false;
 
     if (!m_needsLayout)
         return false;
@@ -960,12 +956,7 @@ void SelectionController::invalidateCaretRect()
     if (!isCaret())
         return;
 
-    Document* document = m_selection.start().node()->document();
-
-    if (FrameView* frameView = document->view()) {
-        if (frameView->needsLayout())
-            frameView->layout();
-    }
+    Document* d = m_selection.start().node()->document();
 
     // recomputeCaretRect will always return false for the drag caret,
     // because its m_frame is always 0.
@@ -985,16 +976,14 @@ void SelectionController::invalidateCaretRect()
     m_needsLayout = true;
 
     if (!caretRectChanged) {
-        if (RenderView* view = toRenderView(document->renderer()))
+        if (RenderView* view = toRenderView(d->renderer()))
             view->repaintRectangleInViewAndCompositedLayers(caretRepaintRect(), false);
     }
 }
 
 void SelectionController::paintCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect)
 {
-    ASSERT(!m_frame || !m_frame->view() || !m_frame->view()->needsLayout());
-
-    if (!isCaret())
+    if (! m_selection.isCaret())
         return;
 
     if (m_needsLayout)

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -987,8 +987,6 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
 
 void HTMLInputElement::attach()
 {
-    suspendPostAttachCallbacks();
-
     if (!m_inited) {
         if (!m_haveType)
             setInputType(getAttribute(typeAttr));
@@ -1011,8 +1009,6 @@ void HTMLInputElement::attach()
                 imageObj->setImageSizeForAltText();
         }
     }
-
-    resumePostAttachCallbacks();
 }
 
 void HTMLInputElement::detach()

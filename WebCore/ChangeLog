@@ -1,5 +1,24 @@
 2010-01-07  Stephanie Lewis  <slewis@apple.com>
 
+        Rolled out http://trac.webkit.org/changeset/52778 due to rolling
+        out http://trac.webkit.org/changeset/52756
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::paintCaret):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach):
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+
+2010-01-07  Stephanie Lewis  <slewis@apple.com>
+
         Rollout http://trac.webkit.org/changeset/52756 due to a large performance regression.
 
         * dom/Document.cpp:
