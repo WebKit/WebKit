@@ -1,3 +1,13 @@
+2010-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed, build fix.
+
+        Windows buid fix - disable warning 4251 (class needs to have dll-interface to be used by
+        clients of another class). WebCore doesn't use all methods of JSString, so
+        we don't export all classes clients could theoretically access via JSString.
+
+        * win/tools/vsprops/common.vsprops:
+
 2009-12-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Samuel Weinig.
