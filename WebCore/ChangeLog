@@ -1,3 +1,17 @@
+2010-01-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32987
+
+        Added ENABLE_XHTMLMP flag. Disabled by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * config.h:
+
 2010-01-07  Stephanie Lewis  <slewis@apple.com>
 
         Rolled out http://trac.webkit.org/changeset/52778 due to rolling

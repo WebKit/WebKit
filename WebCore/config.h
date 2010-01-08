@@ -94,6 +94,7 @@
 #define ENABLE_VIDEO 1
 #define ENABLE_WORKERS 1
 #define ENABLE_XBL 0
+#define ENABLE_XHTMLMP 0
 #define ENABLE_XPATH 0
 #define ENABLE_XSLT 0
 #define ENABLE_ARCHIVE 0

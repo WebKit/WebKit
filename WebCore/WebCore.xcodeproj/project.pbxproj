@@ -4605,6 +4605,8 @@
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
+		CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */; };
+		CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D01A27AD10C9BFD800026A42 /* SpaceSplitString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */; };
 		D01A27AE10C9BFD800026A42 /* SpaceSplitString.h in Headers */ = {isa = PBXBuildFile; fileRef = D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9825,6 +9827,8 @@
 		C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageEventDispatcher.h; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
+		CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNoScriptElement.cpp; sourceTree = "<group>"; };
+		CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNoScriptElement.h; sourceTree = "<group>"; };
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
@@ -12794,6 +12798,8 @@
 				1AE2AB070A1CE5CF00B42B25 /* HTMLModElement.idl */,
 				A8DF3FCD097FA0FB0052981B /* HTMLNameCollection.cpp */,
 				A8DF3FCC097FA0FB0052981B /* HTMLNameCollection.h */,
+				CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */,
+				CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */,
 				A871D4510A127CBC00B12A68 /* HTMLObjectElement.cpp */,
 				A871D4500A127CBC00B12A68 /* HTMLObjectElement.h */,
 				855542980AA4938800BA89F2 /* HTMLObjectElement.idl */,
@@ -18320,6 +18326,7 @@
 				5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */,
 				37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */,
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
+				CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20481,6 +20488,7 @@
 				5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */,
 				5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
+				CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1111,8 +1111,6 @@ webcore_sources += \
 	WebCore/html/HTMLQuoteElement.h \
 	WebCore/html/HTMLScriptElement.cpp \
 	WebCore/html/HTMLScriptElement.h \
-	WebCore/html/HTMLNoScriptElement.cpp \
-	WebCore/html/HTMLNoScriptElement.h \
 	WebCore/html/HTMLSelectElement.cpp \
 	WebCore/html/HTMLSelectElement.h \
 	WebCore/html/HTMLStyleElement.cpp \
@@ -2396,6 +2394,19 @@ webcore_libadd += \
 	-lgstpbutils-0.10
 
 endif # END ENABLE_VIDEO
+
+# ----
+# XHTML-MP Support
+# ----
+if ENABLE_XHTMLMP
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_XHTMLMP=1
+
+webcore_cppflags += -DENABLE_XHTMLMP=1
+
+webcore_sources += \
+	WebCore/html/HTMLNoScriptElement.cpp \
+	WebCore/html/HTMLNoScriptElement.h
+endif # END ENABLE_XHTMLMP
 
 # ----
 # XPath Support

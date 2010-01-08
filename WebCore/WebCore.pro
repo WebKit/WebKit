@@ -1088,7 +1088,6 @@ SOURCES += \
     html/HTMLPreElement.cpp \
     html/HTMLQuoteElement.cpp \
     html/HTMLScriptElement.cpp \
-    html/HTMLNoScriptElement.cpp \
     html/HTMLSelectElement.cpp \
     html/HTMLStyleElement.cpp \
     html/HTMLTableCaptionElement.cpp \
@@ -2909,6 +2908,9 @@ contains(DEFINES, ENABLE_WML=1) {
 
 contains(DEFINES, ENABLE_XHTMLMP=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XHTMLMP=1
+    
+    SOURCES += \
+        html/HTMLNoScriptElement.cpp
 }
 
 contains(DEFINES, ENABLE_QT_BEARER=1) {
