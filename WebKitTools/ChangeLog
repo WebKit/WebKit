@@ -15,6 +15,7 @@
         Reviewed by Darin Adler.
 
         Run the http and websocket tests after all other tests.
+        https://bugs.webkit.org/show_bug.cgi?id=33153
 
         * Scripts/run-webkit-tests:
 
