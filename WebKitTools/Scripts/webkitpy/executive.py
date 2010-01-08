@@ -98,6 +98,15 @@ class Executive(object):
         if exit_code:
             raise ScriptError(script_args=args, exit_code=exit_code, output=child_output)
 
+    @staticmethod
+    def cpu_count():
+        # This API exists only in Python 2.6 and higher.  :(
+        try:
+            import multiprocessing
+            return multiprocessing.cpu_count()
+        except (ImportError,NotImplementedError):
+            return 2 # This quantity is a lie but probably a reasonable guess for modern machines.
+
     # Error handlers do not need to be static methods once all callers are updated to use an Executive object.
     @staticmethod
     def default_error_handler(error):

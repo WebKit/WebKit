@@ -31,6 +31,8 @@
 import os
 
 from optparse import make_option
+from webkitpy.executive import Executive
+
 
 class WebKitPort(object):
     # We might need to pass scm into this function for scm.checkout_root
@@ -110,6 +112,7 @@ class GtkPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--gtk")
+        command.append('--makeargs="-j%s"' % Executive.cpu_count())
         return command
 
     @classmethod
@@ -132,8 +135,7 @@ class QtPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--qt")
-        # FIXME: We should probably detect the number of cores.
-        command.append('--makeargs="-j8"')
+        command.append('--makeargs="-j%s"' % Executive.cpu_count())
         return command
 
 

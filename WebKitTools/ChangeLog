@@ -1,3 +1,17 @@
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Optimize the number of CPUs used for building Qt and Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=33394
+
+        Instead of hardcoding the number 8, we should read the number of CPUs
+        from the environment.
+
+        * Scripts/webkitpy/executive.py:
+        * Scripts/webkitpy/webkitport.py:
+        * Scripts/webkitpy/webkitport_unittest.py:
+
 2010-01-08  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.

@@ -29,7 +29,9 @@
 
 import unittest
 
+from webkitpy.executive import Executive
 from webkitpy.webkitport import WebKitPort, MacPort, GtkPort, QtPort, ChromiumPort
+
 
 class WebKitPortTest(unittest.TestCase):
     def test_mac_port(self):
@@ -44,15 +46,15 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(GtkPort.name(), "Gtk")
         self.assertEquals(GtkPort.flag(), "--port=gtk")
         self.assertEquals(GtkPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests"), "--gtk"])
-        self.assertEquals(GtkPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--gtk"])
-        self.assertEquals(GtkPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--gtk"])
+        self.assertEquals(GtkPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--gtk", '--makeargs="-j%s"' % Executive.cpu_count()])
+        self.assertEquals(GtkPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--gtk", '--makeargs="-j%s"' % Executive.cpu_count()])
 
     def test_qt_port(self):
         self.assertEquals(QtPort.name(), "Qt")
         self.assertEquals(QtPort.flag(), "--port=qt")
         self.assertEquals(QtPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
-        self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt", '--makeargs="-j8"'])
-        self.assertEquals(QtPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--qt", '--makeargs="-j8"'])
+        self.assertEquals(QtPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--qt", '--makeargs="-j%s"' % Executive.cpu_count()])
+        self.assertEquals(QtPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--qt", '--makeargs="-j%s"' % Executive.cpu_count()])
 
     def test_chromium_port(self):
         self.assertEquals(ChromiumPort.name(), "Chromium")
