@@ -1,3 +1,21 @@
+2010-01-07  Stephanie Lewis  <slewis@apple.com>
+
+        Rollout http://trac.webkit.org/changeset/52756 due to a large performance regression.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::setSelection):
+        * editing/SelectionController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setCaretVisible):
+        (WebCore::Frame::selectionLayoutChanged):
+        (WebCore::Frame::caretBlinkTimerFired):
+        (WebCore::Frame::selectionBounds):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::needsLayout):
+
 2010-01-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

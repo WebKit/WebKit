@@ -1,3 +1,10 @@
+2010-01-07  Stephanie Lewis  <slewis@apple.com>
+
+        Rollout http://trac.webkit.org/changeset/52756 due to a large performance regression.
+
+        * fast/forms/selection-layout-reentry-strange-case-expected.txt: Removed.
+        * fast/forms/selection-layout-reentry-strange-case.html: Removed.
+
 2010-01-07  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
