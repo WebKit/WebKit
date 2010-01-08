@@ -17,8 +17,9 @@ layer at (8,42) size 640x480
 layer at (8,506) size 640x16
   RenderFlexibleBox (positioned) {DIV} at (0,464) size 640x16
     RenderButton {INPUT} at (0,0) size 16x16
-    RenderFlexibleBox {DIV} at (16,0) size 592x16
-      RenderSlider {INPUT} at (0,0) size 592x16
+    RenderFlexibleBox {DIV} at (16,0) size 576x16
+      RenderSlider {INPUT} at (0,0) size 576x16
         RenderBlock {DIV} at (2,1) size 13x14
+    RenderButton {INPUT} at (592,0) size 16x16
     RenderButton {INPUT} at (608,0) size 16x16
     RenderButton {INPUT} at (624,0) size 16x16

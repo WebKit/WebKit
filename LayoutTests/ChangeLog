@@ -1,3 +1,18 @@
+2010-01-08  Chris Marrin  <cmarrin@apple.com>
+
+        Fixed media test failures caused by http://trac.webkit.org/changeset/52998.
+        The media controller on Windows now has a full-screen button, which changes
+        the layout and therefore the test results. I regenerated them for
+        Windows.
+
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-drag-timebar-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/video-controls-rendering-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+
 2010-01-08  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Adam Roben.
