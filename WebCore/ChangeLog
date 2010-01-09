@@ -1,5 +1,22 @@
 2010-01-08  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Fix namespace indent for SecurityOrigin.h.
+
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::domainWasSetInDOM):
+        (WebCore::SecurityOrigin::protocol):
+        (WebCore::SecurityOrigin::host):
+        (WebCore::SecurityOrigin::domain):
+        (WebCore::SecurityOrigin::port):
+        (WebCore::SecurityOrigin::canLoadLocalResources):
+        (WebCore::SecurityOrigin::setSandboxFlags):
+        (WebCore::SecurityOrigin::isSandboxed):
+        (WebCore::SecurityOrigin::canAccessDatabase):
+        (WebCore::SecurityOrigin::canAccessStorage):
+        (WebCore::SecurityOrigin::):
+
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dmitry Titov.
 
         bindings/v8/DOMData is missing a virtual destructor
