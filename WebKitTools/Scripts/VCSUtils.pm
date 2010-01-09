@@ -32,6 +32,7 @@ use strict;
 use warnings;
 
 use Cwd qw();  # "qw()" prevents warnings about redefining getcwd() with "use POSIX;"
+use English; # for $POSTMATCH, etc.
 use File::Basename;
 use File::Spec;
 use POSIX;
@@ -359,17 +360,24 @@ sub svnStatus($)
     return $svnStatus;
 }
 
+# Convert a line of a git-formatted patch to SVN format, while
+# preserving any end-of-line characters.
 sub gitdiff2svndiff($)
 {
     $_ = shift @_;
-    if (m#^diff --git \w/(.+) \w/(.+)#) {
-        return "Index: $1";
-    } elsif (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
-        return "===================================================================";
-    } elsif (m#^--- \w/(.+)#) {
-        return "--- $1";
-    } elsif (m#^\+\+\+ \w/(.+)#) {
-        return "+++ $1";
+    
+    # \V is any character that is not vertical white space
+    if (m#^diff --git \w/(.+) \w/([^\r\n]+)#) {
+        return "Index: $1$POSTMATCH";
+    }
+    if (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
+        return "===================================================================$POSTMATCH";
+    }
+    if (m#^--- \w/([^\r\n]+)#) {
+        return "--- $1$POSTMATCH";
+    }
+    if (m#^\+\+\+ \w/([^\r\n]+)#) {
+        return "+++ $1$POSTMATCH";
     }
     return $_;
 }
