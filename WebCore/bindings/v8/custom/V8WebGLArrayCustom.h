@@ -174,9 +174,11 @@ v8::Handle<v8::Value> setWebGLArrayFromArray(T* webGLArray, const v8::Arguments&
         if (args.Length() == 2)
             offset = toInt32(args[1]);
         uint32_t length = toInt32(array->Get(v8::String::New("length")));
-        for (uint32_t i = 0; i < length; i++) {
-            webGLArray->set(offset + i, array->Get(v8::Integer::New(i))->NumberValue());
-        }
+        if (offset + length > webGLArray->length())
+            V8Proxy::setDOMException(INDEX_SIZE_ERR);
+        else
+            for (uint32_t i = 0; i < length; i++)
+                webGLArray->set(offset + i, array->Get(v8::Integer::New(i))->NumberValue());
     }
 
     return v8::Undefined();

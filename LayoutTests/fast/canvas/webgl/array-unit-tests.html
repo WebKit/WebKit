@@ -32,7 +32,7 @@ function fail(str) {
   if (str)
     exc = currentlyRunning + ': ' + str;
   else
-    exc = str;
+    exc = currentlyRunning;
   testFailed(exc);
 }
 
@@ -284,6 +284,28 @@ function testSetFromArray(type, name) {
   }
 }
 
+function negativeTestSetFromArray(type, name) {
+  running('negativeTest ' + name + ' SetFromArray');
+  try {
+    var array = new type([2, 3]);
+    try {
+      array.set([4, 5], 1);
+      fail();
+      return;
+    } catch (e) {
+    }
+    try {
+      array.set([4, 5, 6]);
+      fail();
+      return;
+    } catch (e) {
+    }
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
 function testSlice(type, name) {
   running('test ' + name + ' Slice');
   try {
@@ -430,6 +452,7 @@ function runTests() {
     testSetFromWebGLArray(type, name);
     negativeTestSetFromWebGLArray(type, name);
     testSetFromArray(type, name);
+    negativeTestSetFromArray(type, name);
     testSlice(type, name);
     negativeTestSlice(type, name);
     testBoundaryConditions(type,

@@ -1,3 +1,19 @@
+2010-01-08  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Passing array that is too large to set method of WebGLArrays does not throw an exception
+        https://bugs.webkit.org/show_bug.cgi?id=33352
+
+        Added needed range checks to JSC and V8 custom bindings. Expanded
+        preexisting test suite for WebGLArrays and updated its expected
+        results. Tested in WebKit and Chromium.
+
+        * fast/canvas/webgl/array-set-out-of-bounds-expected.txt: Added.
+        * fast/canvas/webgl/array-set-out-of-bounds.html: Added.
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2010-01-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
