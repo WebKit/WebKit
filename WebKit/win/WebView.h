@@ -988,7 +988,9 @@ protected:
     long m_xOverpan;
     long m_yOverpan;
 
+#if ENABLE(VIDEO)
     OwnPtr<FullscreenVideoController> m_fullscreenController;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }

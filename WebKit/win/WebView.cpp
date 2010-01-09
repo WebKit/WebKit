@@ -5665,6 +5665,7 @@ void WebView::enterFullscreenForNode(Node* node)
     if (!node->hasTagName(HTMLNames::videoTag))
         return;
 
+#if ENABLE(VIDEO)
     HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
 
     if (m_fullscreenController) {
@@ -5684,14 +5685,17 @@ void WebView::enterFullscreenForNode(Node* node)
 
     m_fullscreenController = new FullscreenVideoController;
     m_fullscreenController->setMediaElement(videoElement);
-    m_fullscreenController->enterFullscreen();        
+    m_fullscreenController->enterFullscreen();
+#endif
 }
 
 void WebView::exitFullscreen()
 {
+#if ENABLE(VIDEO)
     if (m_fullscreenController)
         m_fullscreenController->exitFullscreen();
     m_fullscreenController = 0;
+#endif
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(unsigned patternsCount, BSTR* patterns)

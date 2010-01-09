@@ -1,3 +1,14 @@
+2010-01-08  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix, no review.
+
+        Protect video control logic inside ENABLE(VIDEO).
+
+        * WebView.cpp:
+        (WebView::enterFullscreenForNode):
+        (WebView::exitFullscreen):
+        * WebView.h:
+
 2010-01-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Adam Roben.
