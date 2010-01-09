@@ -327,6 +327,9 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_rawTitle("")
     , m_titleSetExplicitly(false)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
+    , m_startTime(currentTime())
+    , m_overMinimumLayoutThreshold(false)
+    , m_extraLayoutDelay(0)
     , m_executeScriptSoonTimer(this, &Document::executeScriptSoonTimerFired)
     , m_xmlVersion("1.0")
     , m_xmlStandalone(false)
@@ -407,9 +410,6 @@ Document::Document(Frame* frame, bool isXHTML)
     resetActiveLinkColor();
 
     m_processingLoadEvent = false;
-    m_startTime = currentTime();
-    m_overMinimumLayoutThreshold = false;
-    m_extraLayoutDelay = 0;
     
     initSecurityContext();
     initDNSPrefetch();

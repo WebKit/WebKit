@@ -1,3 +1,16 @@
+2010-01-08  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Use member initialization syntax instead of assignment for member variables of Document used
+        for determining minimum layout delay.
+        https://bugs.webkit.org/show_bug.cgi?id=33316
+
+        No new tests, style change only.
+
+        * dom/Document.cpp: Modified.
+        (WebCore::Document::Document): Modified. Use initializer list for m_startTime, m_overMinimumLayoutThreshold and m_extraLayoutDelay.
+
 2010-01-08  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
