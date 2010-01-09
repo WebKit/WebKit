@@ -1,0 +1,46 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <title>Video with background color</title>
+  <style type="text/css" media="screen">
+    body {
+      outline: 10px solid transparent; /* affects layer sizes */
+    }
+    video, .wrapper {
+      display: block;
+      margin: 20px;
+      height: 180px;
+      width: 260px;
+      background-color: rgba(0, 0, 128, 0.5);
+    }
+  
+    .wrapper > img {
+      position: relative;
+      left: 30px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+  </script>
+</head>
+<body>
+
+  <div class="wrapper">
+    <img src="../resources/alpha-gradient-small.png">
+  </div>
+  <video src="../resources/alpha-gradient-small.mov" autoplay loop></video>
+
+  <p>Top and bottom should look the same.</p>
+
+  <script type="text/javascript" charset="utf-8">
+    var video = document.getElementsByTagName('video')[0];
+    video.addEventListener('canplaythrough', function() {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }, false);
+  </script>
+
+</body>
+</html>

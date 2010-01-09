@@ -149,12 +149,12 @@ private:
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;
     
-    // Returns true if this RenderLayer only has content that can be rendered directly
-    // by the compositing layer, without drawing (e.g. solid background color).
+    // Returns true if this compositing layer has no visible content.
     bool isSimpleContainerCompositingLayer() const;
-    // Returns true if we can optimize the RenderLayer to draw the replaced content
-    // directly into a compositing buffer
-    bool canUseDirectCompositing() const;
+    // Returns true if this layer has content that needs to be rendered by painting into the backing store.
+    bool containsPaintedContent() const;
+    // Returns true if the RenderLayer just contains an image that we can composite directly.
+    bool isDirectlyCompositedImage() const;
     void updateImageContents();
 
     bool rendererHasBackground() const;
@@ -179,7 +179,6 @@ private:
 
     IntRect m_compositedBounds;
 
-    bool m_hasDirectlyCompositedContent;
     bool m_artificiallyInflatedBounds;      // bounds had to be made non-zero to make transform-origin work
 };
 

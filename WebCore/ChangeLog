@@ -1,3 +1,47 @@
+2010-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebGL canvas paints background color twice
+        https://bugs.webkit.org/show_bug.cgi?id=33361
+
+        Clean up some logic around "directly composited" content: some images, video, and WebGL.
+
+        We previously set the GraphicsLayer background color to the CSS background color
+        in some cases where the box has no other decorations. However, the content 
+        layer's bounds do not correspond with the background box in many cases,
+        and we could end up both painting the background color, and setting it on the layer.
+        
+        Simplify this logic to never use layer background colors, and thus skip allocating
+        backing store only when the element has no visible box decorations.
+
+        Tests: compositing/images/direct-image-background-color.html
+               compositing/reflections/simple-composited-reflections.html
+               compositing/video/video-background-color.html
+               compositing/webgl/webgl-background-color.html
+               compositing/webgl/webgl-blending.html
+
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::is3DCanvas): Utility to determine if a RenderObject is a canvas with WebGL
+        (WebCore::RenderLayerBacking::RenderLayerBacking): Remove m_hasDirectlyCompositedContent.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): canUseDirectCompositing()
+        is renamed to isDirectlyCompositedImage() and only applies to images now. 
+        No longer set layer background color.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Just use hasPaintedContent()
+        as the argument to setDrawsContent().
+        (WebCore::hasBoxDecorationsOrBackground): Renamed.
+        (WebCore::RenderLayerBacking::hasNonCompositingContent):
+        (WebCore::hasBoxDecorationsOrBackgroundImage): Renamed from hasBoxDecorations().
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer): Moved test for
+        hasOverflowControls() into hasNonCompositingContent() and removed the FIXME comment.
+        (WebCore::RenderLayerBacking::containsPaintedContent): New method that decides
+        if the layer (and its non-composited children) has any content that must be painted into backing store.
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage): Renamed from canUseDirectCompositing()
+        and reduced to only apply to images.
+        (WebCore::RenderLayerBacking::rendererContentChanged): 3D canvas no longer falls under the
+        canUseDirectCompositing() scope.
+
 2010-01-08  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

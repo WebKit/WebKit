@@ -57,12 +57,20 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static bool hasBorderOutlineOrShadow(const RenderStyle*);
-static bool hasBoxDecorations(const RenderStyle*);
-static bool hasBoxDecorationsWithBackgroundImage(const RenderStyle*);
+static bool hasBoxDecorationsOrBackground(const RenderStyle*);
+static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
+
+static inline bool is3DCanvas(RenderObject* renderer)
+{
+#if ENABLE(3D_CANVAS)    
+    if (renderer->isCanvas())
+        return static_cast<HTMLCanvasElement*>(renderer->node())->is3D();
+#endif
+    return false;
+}
 
 RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
-    , m_hasDirectlyCompositedContent(false)
     , m_artificiallyInflatedBounds(false)
 {
     createGraphicsLayer();
@@ -186,29 +194,17 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (updateMaskLayer(m_owningLayer->renderer()->hasMask()))
         m_graphicsLayer->setMaskLayer(m_maskLayer.get());
 
-    m_hasDirectlyCompositedContent = false;
-    if (canUseDirectCompositing()) {
-        if (renderer()->isImage()) {
-            updateImageContents();
-            m_hasDirectlyCompositedContent = true;
-            m_graphicsLayer->setDrawsContent(false);
-        }
-#if ENABLE(3D_CANVAS)    
-        else if (renderer()->isCanvas()) {
-            HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
-            if (canvas->is3D()) {
-                WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(canvas->renderingContext());
-                if (context->graphicsContext3D()->platformGraphicsContext3D())
-                    m_graphicsLayer->setContentsToGraphicsContext3D(context->graphicsContext3D());
-            }
-        }
-#endif
+    if (isDirectlyCompositedImage())
+        updateImageContents();
 
-        if (rendererHasBackground())
-            m_graphicsLayer->setBackgroundColor(rendererBackgroundColor());
-        else
-            m_graphicsLayer->clearBackgroundColor();
+#if ENABLE(3D_CANVAS)    
+    if (is3DCanvas(renderer())) {
+        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
+        WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(canvas->renderingContext());
+        if (context->graphicsContext3D()->platformGraphicsContext3D())
+            m_graphicsLayer->setContentsToGraphicsContext3D(context->graphicsContext3D());
     }
+#endif
 
     return layerConfigChanged;
 }
@@ -351,8 +347,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
-    if (!m_hasDirectlyCompositedContent)
-        m_graphicsLayer->setDrawsContent(!isSimpleContainerCompositingLayer() && !paintingGoesToWindow() && !m_artificiallyInflatedBounds);
+    m_graphicsLayer->setDrawsContent(containsPaintedContent());
 }
 
 void RenderLayerBacking::updateInternalHierarchy()
@@ -498,12 +493,12 @@ static bool hasBorderOutlineOrShadow(const RenderStyle* style)
     return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow();
 }
 
-static bool hasBoxDecorations(const RenderStyle* style)
+static bool hasBoxDecorationsOrBackground(const RenderStyle* style)
 {
     return hasBorderOutlineOrShadow(style) || style->hasBackground();
 }
 
-static bool hasBoxDecorationsWithBackgroundImage(const RenderStyle* style)
+static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle* style)
 {
     return hasBorderOutlineOrShadow(style) || style->hasBackgroundImage();
 }
@@ -563,13 +558,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     // Reject anything that has a border, a border-radius or outline,
     // or any background (color or image).
     // FIXME: we could optimize layers for simple backgrounds.
-    if (hasBoxDecorations(style))
+    if (hasBoxDecorationsOrBackground(style))
         return false;
 
-    // If we have scrollbars or a resizer, need backing store to paint them into.
-    if (m_owningLayer->hasOverflowControls())
-        return false;
-    
     // If we have got this far and the renderer has no children, then we're ok.
     if (!renderObject->firstChild())
         return true;
@@ -584,7 +575,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         // Reject anything that has a border, a border-radius or outline,
         // or is not a simple background (no background, or solid color).
-        if (hasBoxDecorationsWithBackgroundImage(style))
+        if (hasBoxDecorationsOrBackgroundImage(style))
             return false;
         
         // Now look at the body's renderer.
@@ -595,7 +586,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         style = bodyObject->style();
         
-        if (hasBoxDecorationsWithBackgroundImage(style))
+        if (hasBoxDecorationsOrBackgroundImage(style))
             return false;
 
         // Ceck to see if all the body's children are compositing layers.
@@ -612,9 +603,11 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     return true;
 }
 
+// Conservative test for having no rendered children.
 bool RenderLayerBacking::hasNonCompositingContent() const
 {
-    // Conservative test for having no rendered children.
+    if (m_owningLayer->hasOverflowControls())
+        return true;
     
     // Some HTML can cause whitespace text nodes to have renderers, like:
     // <div>
@@ -631,7 +624,6 @@ bool RenderLayerBacking::hasNonCompositingContent() const
         }
     }
 
-    // FIXME: test for overflow controls.
     if (m_owningLayer->isStackingContext()) {
         // Use the m_hasCompositingDescendant bit to optimize?
         if (Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList()) {
@@ -665,51 +657,45 @@ bool RenderLayerBacking::hasNonCompositingContent() const
     return false;
 }
 
-// A layer can use direct compositing if the render layer's object is a replaced object and has no children.
-// This allows the GraphicsLayer to display the RenderLayer contents directly; it's used for images.
-bool RenderLayerBacking::canUseDirectCompositing() const
+bool RenderLayerBacking::containsPaintedContent() const
+{
+    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow() || m_artificiallyInflatedBounds)
+        return false;
+
+    if (isDirectlyCompositedImage())
+        return false;
+
+    // FIXME: we could optimize cases where the image, video or canvas is known to fill the border box entirely,
+    // and set background color on the layer in that case, instead of allocating backing store and painting.
+    if (renderer()->isVideo() || is3DCanvas(renderer()))
+        return hasBoxDecorationsOrBackground(renderer()->style());
+
+    return true;
+}
+
+// An image can be directly compositing if it's the sole content of the layer, and has no box decorations
+// that require painting. Direct compositing saves backing store.
+bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     RenderObject* renderObject = renderer();
-    
-    // Canvas3D is always direct composited
-#if ENABLE(3D_CANVAS)    
-    if (renderer()->isCanvas()) {
-        HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
-        return canvas->is3D();
-    }
-#endif
-
-    // Reject anything that isn't an image
-    if (!renderObject->isImage() && !renderObject->isVideo())
-        return false;
-    
-    if (renderObject->hasMask() || renderObject->hasReflection())
-        return false;
-
-    // Video can use an inner layer even if it has box decorations; we draw those into another layer.
-    if (renderObject->isVideo())
-        return true;
-    
-    // Reject anything that would require the image to be drawn via the GraphicsContext,
-    // like border, shadows etc. Solid background color is OK.
-    return !hasBoxDecorationsWithBackgroundImage(renderObject->style());
+    return renderObject->isImage()
+            && !renderObject->hasMask() && !renderObject->hasReflection()
+            && !hasBoxDecorationsOrBackground(renderObject->style());
 }
-    
+
 void RenderLayerBacking::rendererContentChanged()
 {
-    if (canUseDirectCompositing()) {
-        if (renderer()->isImage())
-            updateImageContents();
-        else {
-#if ENABLE(3D_CANVAS)    
-            if (renderer()->isCanvas()) {
-                HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
-                if (canvas->is3D())
-                    m_graphicsLayer->setGraphicsContext3DNeedsDisplay();
-            }
-#endif
-        }
+    if (isDirectlyCompositedImage()) {
+        updateImageContents();
+        return;
     }
+
+#if ENABLE(3D_CANVAS)    
+    if (is3DCanvas(renderer())) {
+        m_graphicsLayer->setGraphicsContext3DNeedsDisplay();
+        return;
+    }
+#endif
 }
 
 void RenderLayerBacking::updateImageContents()
