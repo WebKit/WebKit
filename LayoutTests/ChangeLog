@@ -1,5 +1,13 @@
 2010-01-08  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+        
+        Remove layout test that was committed by mistake.
+
+        * compositing/webgl/webgl-blending.html: Removed.
+
+2010-01-08  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         WebGL canvas paints background color twice
