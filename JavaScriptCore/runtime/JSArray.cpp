@@ -329,13 +329,24 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
         }
 
         // We miss some cases where we could compact the storage, such as a large array that is being filled from the end
-        // (which will only be compacted as we reach indices that are less than cutoff) - but this makes the check much faster.
+        // (which will only be compacted as we reach indices that are less than MIN_SPARSE_ARRAY_INDEX) - but this makes the check much faster.
         if ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)) {
             if (!map) {
                 map = new SparseArrayValueMap;
                 storage->m_sparseValueMap = map;
             }
-            map->set(i, value);
+
+            pair<SparseArrayValueMap::iterator, bool> result = map->add(i, value);
+            if (!result.second) { // pre-existing entry
+                result.first->second = value;
+                return;
+            }
+
+            size_t capacity = map->capacity();
+            if (capacity != storage->reportedMapCapacity) {
+                Heap::heap(this)->reportExtraMemoryCost((capacity - storage->reportedMapCapacity) * (sizeof(unsigned) + sizeof(JSValue)));
+                storage->reportedMapCapacity = capacity;
+            }
             return;
         }
     }

@@ -32,6 +32,7 @@ namespace JSC {
         unsigned m_numValuesInVector;
         SparseArrayValueMap* m_sparseValueMap;
         void* lazyCreationData; // A JSArray subclass can use this to fill the vector lazily.
+        size_t reportedMapCapacity;
         JSValue m_vector[1];
     };
 

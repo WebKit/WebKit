@@ -1,3 +1,20 @@
+2010-01-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Memory use grows grows possibly unbounded in this JavaScript Array test case
+        https://bugs.webkit.org/show_bug.cgi?id=31675
+
+        This fixes one observed bug in this test case, which is that
+        arrays don't report extra cost for the sparse value maps.
+
+        SunSpider reports a small speedup.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putSlowCase): Report extra memory cost for
+        the sparse value map.
+        * runtime/JSArray.h: 
+
 2010-01-08  Yong Li  <yoli@rim.com>
 
         Reviewed by Darin Adler.
