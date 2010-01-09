@@ -44,6 +44,10 @@ DOMData::DOMData()
 {
 }
 
+DOMData::~DOMData()
+{
+}
+
 DOMData* DOMData::getCurrent()
 {
     if (WTF::isMainThread())

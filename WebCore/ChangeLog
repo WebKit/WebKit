@@ -1,3 +1,25 @@
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dmitry Titov.
+
+        bindings/v8/DOMData is missing a virtual destructor
+        https://bugs.webkit.org/show_bug.cgi?id=33390
+
+        DOMData is the base class for ChildThreadDOMData and MainThreadDOMData classes
+        but it does not have a virtual destructor. While this isn't currently causing
+        any leaks, since there are no instances of ChildThreadDOMData or
+        MainThreadDOMData that are manipulated via a DOMData pointer, the ARM GCC
+        compiler generates the following compilation error:
+
+        "/WebCore/bindings/v8/DOMData.h:45: error: 'class WebCore::DOMData' has virtual
+        functions and accessible non-virtual destructor"
+
+        We therefore need to add a virtual destructor to DOMData.
+
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::~DOMData):
+        * bindings/v8/DOMData.h:
+
 2010-01-08  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
