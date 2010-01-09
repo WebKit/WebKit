@@ -35,7 +35,7 @@
   function viewPrettyPatch()
     {
       viewing_formatted_diff = !viewing_formatted_diff;
-      var src = "attachment.cgi?id=[% attachid %]";
+      var src = "attachment.cgi?id=[% attachment.id %]";
       var buttonText = "View Formatted Diff";
       if (viewing_formatted_diff) {
         src += "&action=prettypatch"
@@ -100,22 +100,20 @@
 [% END %]
 </td>
 <td>
-Back to <a href="show_bug.cgi?id=[% attachment.bug_id %]" target="_top">[% terms.Bug %] #[% attachment.bug_id %]</a>
-</td>
-<td>
-    [% IF ispatch %]
-      <script type="text/javascript">
-        <!--
+    <div>Back to <a href="show_bug.cgi?id=[% attachment.bug_id %]" target="_top">[% terms.Bug %] #[% attachment.bug_id %]</a></div>
+[% IF attachment.ispatch %]
+    <script type="text/javascript">
+    <!--
         if (typeof document.getElementById == "function") {
-          document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch();">View Plain Diff</button>');
+          document.write('<p><button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch();">View Plain Diff</button></p>');
         }
-        //-->
-      </script>
-    [% END %]
+    //-->
+    </script>
+[% END %]
 </td>
 </tr>
 <tr>
-<td colspan="5">
+<td colspan="4">
 Enter comments below:<br>
 <textarea id=comment name="comment" wrap="soft">[% quotedpatch FILTER html %]</textarea><br>
 </tr>

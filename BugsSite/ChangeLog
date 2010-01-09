@@ -1,5 +1,18 @@
 2010-01-08  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/33410> Fix "View Plain Diff"/"View Formatted Diff" button
+
+        Reviewed by Adam Barth.
+
+        This button was broken during a previous Bugzilla upgrade after
+        changes were made to the names of objects exposed on templates.
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Changed
+        attachid to attachment.id and ispatch to attachment.ispatch.
+        Also tweaked the format to use 4 table columns instead of 5.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
         Included UNCONFIRMED bugs by default in advanced search query
 
         Rubber-stamped by Alexey Proskuryakov.
