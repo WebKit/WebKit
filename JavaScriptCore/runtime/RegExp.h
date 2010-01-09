@@ -49,7 +49,6 @@ namespace JSC {
         bool multiline() const { return m_flagBits & Multiline; }
 
         const UString& pattern() const { return m_pattern; }
-        const UString& flags() const { return m_flags; }
 
         bool isValid() const { return !m_constructionError; }
         const char* errorMessage() const { return m_constructionError; }
@@ -66,7 +65,6 @@ namespace JSC {
         enum FlagBits { Global = 1, IgnoreCase = 2, Multiline = 4 };
 
         UString m_pattern; // FIXME: Just decompile m_regExp instead of storing this.
-        UString m_flags; // FIXME: Just decompile m_regExp instead of storing this.
         int m_flagBits;
         const char* m_constructionError;
         unsigned m_numSubpatterns;

@@ -1,3 +1,16 @@
+2010-01-08  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Don't store RegExp flags string representation
+        https://bugs.webkit.org/show_bug.cgi?id=33321
+
+        It's unused; the string representation is reconstructed from flags.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * runtime/RegExp.h:
+
 2010-01-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
