@@ -1,3 +1,17 @@
+2010-01-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32962
+        HTML tags are wrongfully parsed when setting innerHTML of a SCRIPT element
+
+        * fast/dom/css-innerHTML-expected.txt: Added.
+        * fast/dom/css-innerHTML.html: Added.
+        * fast/dom/script-innerHTML-expected.txt: Added.
+        * fast/dom/script-innerHTML-x-expected.txt: Added.
+        * fast/dom/script-innerHTML-x.xhtml: Added.
+        * fast/dom/script-innerHTML.html: Added.
+
 2010-01-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.

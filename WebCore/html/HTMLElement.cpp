@@ -375,6 +375,13 @@ static void replaceChildrenWithText(HTMLElement* element, const String& text, Ex
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
+    if (hasLocalName(scriptTag) || hasLocalName(styleTag)) {
+        // Script and CSS source shouldn't be parsed as HTML.
+        removeChildren();
+        appendChild(document()->createTextNode(html), ec);
+        return;
+    }
+
     RefPtr<DocumentFragment> fragment = createContextualFragment(html);
     if (!fragment) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
