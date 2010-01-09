@@ -352,7 +352,7 @@ GraphicsContext3DInternal::GLConnection::~GLConnection()
     dlclose(m_libGL);
 }
 
-#endif  // OS(LINUX)
+#endif // OS(LINUX)
 
 GraphicsContext3DInternal::VertexAttribPointerState::VertexAttribPointerState()
     : enabled(false)

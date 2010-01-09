@@ -106,19 +106,19 @@
 
 /* CPU(PPC) - PowerPC 32-bit */
 #if   defined(__ppc__)     \
-   || defined(__PPC__)     \
-   || defined(__powerpc__) \
-   || defined(__powerpc)   \
-   || defined(__POWERPC__) \
-   || defined(_M_PPC)      \
-   || defined(__PPC)
+    || defined(__PPC__)     \
+    || defined(__powerpc__) \
+    || defined(__powerpc)   \
+    || defined(__POWERPC__) \
+    || defined(_M_PPC)      \
+    || defined(__PPC)
 #define WTF_CPU_PPC 1
 #define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(PPC64) - PowerPC 64-bit */
 #if   defined(__ppc64__) \
-   || defined(__PPC64__)
+    || defined(__PPC64__)
 #define WTF_CPU_PPC64 1
 #define WTF_CPU_BIG_ENDIAN 1
 #endif
@@ -147,31 +147,31 @@
 
 /* CPU(X86) - i386 / x86 32-bit */
 #if   defined(__i386__) \
-   || defined(i386)     \
-   || defined(_M_IX86)  \
-   || defined(_X86_)    \
-   || defined(__THW_INTEL)
+    || defined(i386)     \
+    || defined(_M_IX86)  \
+    || defined(_X86_)    \
+    || defined(__THW_INTEL)
 #define WTF_CPU_X86 1
 #endif
 
 /* CPU(X86_64) - AMD64 / Intel64 / x86_64 64-bit */
 #if   defined(__x86_64__) \
-   || defined(_M_X64)
+    || defined(_M_X64)
 #define WTF_CPU_X86_64 1
 #endif
 
 /* CPU(ARM) - ARM, any version*/
 #if   defined(arm) \
-   || defined(__arm__)
+    || defined(__arm__)
 #define WTF_CPU_ARM 1
 
 #if defined(__ARMEB__)
 #define WTF_CPU_BIG_ENDIAN 1
 
 #elif !defined(__ARM_EABI__) \
-   && !defined(__EABI__) \
-   && !defined(__VFP_FP__) \
-   && !defined(ANDROID)
+    && !defined(__EABI__) \
+    && !defined(__VFP_FP__) \
+    && !defined(ANDROID)
 #define WTF_CPU_MIDDLE_ENDIAN 1
 
 #endif
@@ -180,30 +180,30 @@
 
 /* Set WTF_ARM_ARCH_VERSION */
 #if   defined(__ARM_ARCH_4__) \
-   || defined(__ARM_ARCH_4T__) \
-   || defined(__MARM_ARMV4__) \
-   || defined(_ARMV4I_)
+    || defined(__ARM_ARCH_4T__) \
+    || defined(__MARM_ARMV4__) \
+    || defined(_ARMV4I_)
 #define WTF_ARM_ARCH_VERSION 4
 
 #elif defined(__ARM_ARCH_5__) \
-   || defined(__ARM_ARCH_5T__) \
-   || defined(__ARM_ARCH_5E__) \
-   || defined(__ARM_ARCH_5TE__) \
-   || defined(__ARM_ARCH_5TEJ__) \
-   || defined(__MARM_ARMV5__)
+    || defined(__ARM_ARCH_5T__) \
+    || defined(__ARM_ARCH_5E__) \
+    || defined(__ARM_ARCH_5TE__) \
+    || defined(__ARM_ARCH_5TEJ__) \
+    || defined(__MARM_ARMV5__)
 #define WTF_ARM_ARCH_VERSION 5
 
 #elif defined(__ARM_ARCH_6__) \
-   || defined(__ARM_ARCH_6J__) \
-   || defined(__ARM_ARCH_6K__) \
-   || defined(__ARM_ARCH_6Z__) \
-   || defined(__ARM_ARCH_6ZK__) \
-   || defined(__ARM_ARCH_6T2__) \
-   || defined(__ARMV6__)
+    || defined(__ARM_ARCH_6J__) \
+    || defined(__ARM_ARCH_6K__) \
+    || defined(__ARM_ARCH_6Z__) \
+    || defined(__ARM_ARCH_6ZK__) \
+    || defined(__ARM_ARCH_6T2__) \
+    || defined(__ARMV6__)
 #define WTF_ARM_ARCH_VERSION 6
 
 #elif defined(__ARM_ARCH_7A__) \
-   || defined(__ARM_ARCH_7R__)
+    || defined(__ARM_ARCH_7R__)
 #define WTF_ARM_ARCH_VERSION 7
 
 /* RVCT sets _TARGET_ARCH_ARM */
@@ -220,22 +220,22 @@
 #define WTF_THUMB_ARCH_VERSION 1
 
 #elif defined(__ARM_ARCH_5T__) \
-   || defined(__ARM_ARCH_5TE__) \
-   || defined(__ARM_ARCH_5TEJ__)
+    || defined(__ARM_ARCH_5TE__) \
+    || defined(__ARM_ARCH_5TEJ__)
 #define WTF_THUMB_ARCH_VERSION 2
 
 #elif defined(__ARM_ARCH_6J__) \
-   || defined(__ARM_ARCH_6K__) \
-   || defined(__ARM_ARCH_6Z__) \
-   || defined(__ARM_ARCH_6ZK__) \
-   || defined(__ARM_ARCH_6M__)
+    || defined(__ARM_ARCH_6K__) \
+    || defined(__ARM_ARCH_6Z__) \
+    || defined(__ARM_ARCH_6ZK__) \
+    || defined(__ARM_ARCH_6M__)
 #define WTF_THUMB_ARCH_VERSION 3
 
 #elif defined(__ARM_ARCH_6T2__) \
-   || defined(__ARM_ARCH_7__) \
-   || defined(__ARM_ARCH_7A__) \
-   || defined(__ARM_ARCH_7R__) \
-   || defined(__ARM_ARCH_7M__)
+    || defined(__ARM_ARCH_7__) \
+    || defined(__ARM_ARCH_7A__) \
+    || defined(__ARM_ARCH_7R__) \
+    || defined(__ARM_ARCH_7M__)
 #define WTF_THUMB_ARCH_VERSION 4
 
 /* RVCT sets __TARGET_ARCH_THUMB */
@@ -260,7 +260,7 @@
 /* Only one of these will be defined. */
 #if !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2)
 #  if defined(thumb2) || defined(__thumb2__) \
-  || ((defined(__thumb) || defined(__thumb__)) && WTF_THUMB_ARCH_VERSION == 4)
+    || ((defined(__thumb) || defined(__thumb__)) && WTF_THUMB_ARCH_VERSION == 4)
 #    define WTF_CPU_ARM_TRADITIONAL 0
 #    define WTF_CPU_ARM_THUMB2 1
 #  elif WTF_ARM_ARCH_AT_LEAST(4)
@@ -317,8 +317,8 @@
 /* OS(IPHONE_OS) - iPhone OS */
 /* OS(MAC_OS_X) - Mac OS X (not including iPhone OS) */
 #if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED)  \
-   || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                   \
-   || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                   \
+    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
 #define WTF_OS_IPHONE_OS 1
 #elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
 #define WTF_OS_MAC_OS_X 1
@@ -379,19 +379,19 @@
 
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
-   || OS(ANDROID)          \
-   || OS(DARWIN)           \
-   || OS(FREEBSD)          \
-   || OS(HAIKU)            \
-   || OS(LINUX)            \
-   || OS(NETBSD)           \
-   || OS(OPENBSD)          \
-   || OS(QNX)              \
-   || OS(SOLARIS)          \
-   || OS(SYMBIAN)          \
-   || defined(unix)        \
-   || defined(__unix)      \
-   || defined(__unix__)
+    || OS(ANDROID)          \
+    || OS(DARWIN)           \
+    || OS(FREEBSD)          \
+    || OS(HAIKU)            \
+    || OS(LINUX)            \
+    || OS(NETBSD)           \
+    || OS(OPENBSD)          \
+    || OS(QNX)              \
+    || OS(SOLARIS)          \
+    || OS(SYMBIAN)          \
+    || defined(unix)        \
+    || defined(__unix)      \
+    || defined(__unix__)
 #define WTF_OS_UNIX 1
 #endif
 
@@ -897,18 +897,18 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
 #if (CPU(X86) && PLATFORM(MAC)) \
- || (CPU(X86_64) && PLATFORM(MAC)) \
- || (CPU(ARM_THUMB2) && PLATFORM(IPHONE)) \
- || (CPU(X86) && PLATFORM(WIN))
+    || (CPU(X86_64) && PLATFORM(MAC)) \
+    || (CPU(ARM_THUMB2) && PLATFORM(IPHONE)) \
+    || (CPU(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif
 
 #if PLATFORM(QT)
 #if (CPU(X86) && OS(WINDOWS) && COMPILER(MINGW) && GCC_VERSION >= 40100) \
- || (CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)) \
- || (CPU(X86) && OS(LINUX) && GCC_VERSION >= 40100) \
- || (CPU(ARM_TRADITIONAL) && OS(LINUX))
+    || (CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)) \
+    || (CPU(X86) && OS(LINUX) && GCC_VERSION >= 40100) \
+    || (CPU(ARM_TRADITIONAL) && OS(LINUX))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif

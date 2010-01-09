@@ -140,7 +140,7 @@ public:
 
 #if PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }
-#if !OS(WINCE)    // disable unused members to save space
+#if !OS(WINCE) // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
@@ -227,7 +227,7 @@ private:
 
 #if PLATFORM(WIN)
     bool m_isSystemFont;
-#if !OS(WINCE)    // disable unused members to save space
+#if !OS(WINCE) // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif

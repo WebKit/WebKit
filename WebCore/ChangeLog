@@ -1,3 +1,16 @@
+2010-01-08  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33417
+
+        Cleans up style errors exposed by the patch for bug #33198.
+
+        No functionality was changed. So, no new tests.
+
+        * platform/graphics/SimpleFontData.h:
+        * plugins/PluginPackage.cpp:
+
 2010-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
