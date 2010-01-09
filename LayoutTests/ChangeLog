@@ -1,3 +1,12 @@
+2010-01-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http/tests/xmlhttprequest/logout.html failed on Tiger Bot
+        https://bugs.webkit.org/show_bug.cgi?id=31412
+
+        * platform/mac-tiger/Skipped: After talking with Alexey, we're just gonna skip the failing test on Tiger.
+
 2010-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -94,3 +94,7 @@ svg/custom/use-on-symbol-inside-pattern.svg
 
 # https://bugs.webkit.org/show_bug.cgi?id=33323 - http/tests/media/video-error-abort.html times out
 http/tests/media/video-error-abort.html
+
+# Fails intermittently on Tiger Build Bot.
+# https://bugs.webkit.org/show_bug.cgi?id=31412
+http/tests/xmlhttprequest/logout.html
