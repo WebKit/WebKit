@@ -1,3 +1,29 @@
+2010-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        <rdar://problem/7525778> Font fallback kills SVG kerning
+        https://bugs.webkit.org/show_bug.cgi?id=33400
+
+        Test: platform/mac/fast/text/sticky-typesetting-features.html
+
+        Cache font attributes separately for different typesetting features.
+
+        * platform/graphics/SimpleFontData.h: Replaced single-element caches
+        with maps.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::disableLigatures): Added an ATSUStyle parameter.
+        (WebCore::initializeATSUStyle): Look up the ATSUStyle in the map and
+        initialize if necessary. Return the ATSUStyle.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersATSUI):
+        Use the ATSUStyle returned from initializeATSUStyle().
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy): Destroy the ATSUStyles in the
+        map.
+        (WebCore::SimpleFontData::getCFStringAttributes): Look up the attributes
+        dictionary in the map and initialize if necessary.
+
 2010-01-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Fix namespace indent for SecurityOrigin.h.
