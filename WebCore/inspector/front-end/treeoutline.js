@@ -776,6 +776,7 @@ TreeElement.prototype.select = function(supressOnSelect)
         this.treeOutline.selectedTreeElement.deselect();
 
     this.selected = true;
+    this.treeOutline._childrenListNode.focus();
     this.treeOutline.selectedTreeElement = this;
     if (this._listItemNode)
         this._listItemNode.addStyleClass("selected");

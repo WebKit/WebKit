@@ -227,6 +227,10 @@ WebInspector.ElementsPanel.prototype = {
 
         function selectLastSelectedNode(nodeId)
         {
+            if (this.focusedDOMNode) {
+                // Focused node has been explicitly set while reaching out for the last selected node.
+                return;
+            }
             var node = nodeId ? WebInspector.domAgent.nodeForId(nodeId) : 0;
             selectNode.call(this, node);
         }
