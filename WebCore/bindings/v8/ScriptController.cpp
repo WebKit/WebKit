@@ -294,12 +294,6 @@ bool ScriptController::haveInterpreter() const
     return m_proxy->windowShell()->isContextInitialized();
 }
 
-bool ScriptController::isEnabled() const
-{
-    Settings* settings = m_proxy->frame()->settings();
-    return m_proxy->frame()->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled() && !m_frame->loader()->isSandboxed(SandboxScripts));
-}
-
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     ASSERT(widget);
@@ -401,7 +395,7 @@ NPObject* ScriptController::windowScriptNPObject()
     if (m_windowScriptNPObject)
         return m_windowScriptNPObject;
 
-    if (isEnabled()) {
+    if (canExecuteScripts()) {
         // JavaScript is enabled, so there is a JavaScript window object.
         // Return an NPObject bound to the window object.
         m_windowScriptNPObject = createScriptObject(m_frame);
@@ -418,7 +412,7 @@ NPObject* ScriptController::windowScriptNPObject()
 NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
 {
     // Can't create NPObjects when JavaScript is disabled.
-    if (!isEnabled())
+    if (!canExecuteScripts())
         return createNoScriptObject();
 
     v8::HandleScope handleScope;

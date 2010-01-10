@@ -194,7 +194,7 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
         wxASSERT_MSG(hasLoaded, wxT("Document must be loaded before calling RunScript."));
         if (hasLoaded) {
             WebCore::ScriptController* controller = m_impl->frame->script();
-            bool jsEnabled = controller->isEnabled(); 
+            bool jsEnabled = controller->canExecuteScripts(); 
             wxASSERT_MSG(jsEnabled, wxT("RunScript requires JavaScript to be enabled."));
             if (jsEnabled) {
                 JSC::JSValue result = controller->executeScript(javascript, true).jsValue();

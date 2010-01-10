@@ -89,7 +89,7 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
         return;
 
     ScriptController* scriptController = frame->script();
-    if (!scriptController->isEnabled())
+    if (!scriptController->canExecuteScripts())
         return;
 
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext, m_isolatedWorld.get());
@@ -110,7 +110,7 @@ void JSLazyEventListener::parseCode(ScriptExecutionContext* executionContext) co
             return;
         // FIXME: Is this check needed for non-Document contexts?
         ScriptController* script = frame->script();
-        if (!script->isEnabled() || script->isPaused())
+        if (!script->canExecuteScripts() || script->isPaused())
             return;
     }
 

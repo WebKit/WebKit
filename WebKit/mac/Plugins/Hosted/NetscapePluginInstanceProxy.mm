@@ -696,7 +696,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame)
         return false;
     
-    if (!frame->script()->isEnabled())
+    if (!frame->script()->canExecuteScripts())
         objectID = 0;
     else
         objectID = idForObject(frame->script()->windowShell(pluginWorld())->window());
@@ -1201,7 +1201,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             if (!frame)
                 return false;
             
-            if (!frame->script()->isEnabled())
+            if (!frame->script()->canExecuteScripts())
                 return false;
 
             RefPtr<RootObject> rootObject = frame->script()->createRootObject(m_pluginView);
