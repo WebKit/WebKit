@@ -1,3 +1,14 @@
+2010-01-09  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33419
+
+        Removes the XSSAuditor tests from the Qt Skipped file since
+        we now can run these tests.
+
+        * platform/qt/Skipped:
+
 2010-01-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Nikolas Zimmermann.

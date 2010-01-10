@@ -1,3 +1,14 @@
+2010-01-09  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33419
+
+        Adds support for the XSSAuditor to the Qt DRT.
+
+        * Api/qwebsettings.cpp: Updated comment to reflect added key XSSAuditorEnabled.
+        * Api/qwebsettings.h: Adds settings key XSSAuditorEnabled.
+
 2010-01-08  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
