@@ -2,6 +2,37 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Introduce support for flexible line height in the text editor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33431
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype._offsetToLineNumber):
+        (WebInspector.TextEditor.prototype._lineNumberToOffset):
+        (WebInspector.TextEditor.prototype._lineHeight):
+        (WebInspector.TextEditor.prototype.reveal):
+        (WebInspector.TextEditor.prototype._textChanged):
+        (WebInspector.TextEditor.prototype._selectionChanged):
+        (WebInspector.TextEditor.prototype._updateSize):
+        (WebInspector.TextEditor.prototype._paintLines):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype._paintLineNumbers):
+        (WebInspector.TextEditor.prototype._paintCurrentLine):
+        (WebInspector.TextEditor.prototype._scroll):
+        (WebInspector.TextEditor.prototype._repaintOnScroll):
+        (WebInspector.TextEditor.prototype._caretForMouseEvent):
+        (WebInspector.TextEditor.prototype._handleNavigationKey):
+        (WebInspector.TextEditor.prototype._updateCursor):
+        (WebInspector.TextEditor.prototype._invalidateHighlight):
+        (WebInspector.TextEditor.prototype._paintSelection):
+        (WebInspector.TextEditor.prototype._initFont):
+        (WebInspector.TextCursor.prototype.setTextLineHeight):
+
+2010-01-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Do not repaint line numbers while editing within line.
 
         https://bugs.webkit.org/show_bug.cgi?id=33427
