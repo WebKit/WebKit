@@ -1,3 +1,21 @@
+2010-01-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Do not repaint line numbers while editing within line.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33427
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype._textChanged):
+        (WebInspector.TextEditor.prototype._selectionChanged):
+        (WebInspector.TextEditor.prototype._repaintAll):
+        (WebInspector.TextEditor.prototype._paintLines):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype._paintLineNumbers):
+        (WebInspector.TextEditor.prototype._updateCursor):
+        (WebInspector.TextEditor.prototype._copy):
+
 2010-01-10  Adam Barth  <abarth@webkit.org>
 
         Unreviewed whitespace fixes.

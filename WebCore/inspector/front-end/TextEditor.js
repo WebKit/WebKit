@@ -144,12 +144,18 @@ WebInspector.TextEditor.prototype = {
 
         this._invalidateHighlight(newRange.startLine);
         this._updateSize(newRange.startLine, Math.max(newRange.endLine, oldRange.endLine));
+        if (oldRange.linesCount !== newRange.linesCount)
+            this._paintLineNumbers();
         this._paint();
     },
 
     // WebInspector.TextSelectionModel listener
     _selectionChanged: function(oldRange, newRange)
     {
+        if (oldRange.isEmpty() && newRange.isEmpty() && oldRange.startLine === newRange.startLine) {
+            // Nothing to repaint.
+            return;
+        }
         this._invalidateLines(oldRange.startLine, oldRange.endLine + 1);
         this._invalidateLines(newRange.startLine, newRange.endLine + 1);
         this._paint();
@@ -197,6 +203,7 @@ WebInspector.TextEditor.prototype = {
     _repaintAll: function()
     {
         this._invalidateLines(0, this._textModel.linesCount);
+        this._paintLineNumbers();
         this._paint();
         this._updateCursor(this._selection.endLine, this._selection.endColumn);
     },
@@ -242,32 +249,27 @@ WebInspector.TextEditor.prototype = {
             WebInspector.log("Repaint %d:%d", firstLine, lastLine);
             this._ctx.fillStyle = "rgb(255,255,0)";
             var height = (lastLine - firstLine) * this._lineHeight;
-            this._ctx.fillRect(0, this._lineHeight * firstLine - this._scrollTop, this._canvas.width, height);
+            this._ctx.fillRect(this._lineNumberOffset - 1, this._lineHeight * firstLine - this._scrollTop, this._canvas.width - this._lineNumberOffset + 1, height);
             setTimeout(this._paintLinesContinuation.bind(this, firstLine, lastLine), 100);
         } else
             this._paintLinesContinuation(firstLine, lastLine);
     },
 
     _paintLinesContinuation: function(firstLine, lastLine) {
-        // Clear all.
-        var height = (lastLine - firstLine) * this._lineHeight;
-        this._ctx.fillStyle = "rgb(255,255,255)";
-        this._ctx.fillRect(0, this._lineHeight * firstLine - this._scrollTop, this._canvas.width, height);
-
-        lastLine = Math.min(lastLine, this._textModel.linesCount);
-
-        // Paint line numbers and separator.
-        this._ctx.fillStyle = "rgb(235,235,235)";
-        this._ctx.fillRect(this._lineNumberOffset - 2, 0, 1, this._canvas.width);
-        this._ctx.fillStyle = "rgb(155,155,155)";
-        for (var i = firstLine; i < lastLine; ++i)
-           this._ctx.fillText(i + 1, (this._lineNumberDigits - this._decimalDigits(i + 1) + 1) * this._digitWidth, this._lineHeight * (i + 1) - this._scrollTop);
-
         // Clip editor area.
         this._ctx.save();
         this._ctx.beginPath();
         this._ctx.rect(this._lineNumberOffset - 1, 0, this._canvas.width - this._lineNumberOffset + 1, this._canvas.height);
         this._ctx.clip();
+
+        // First clear the region, then update last line to fit model (this clears removed lines from the end of the document).
+        var height = (lastLine - firstLine) * this._lineHeight;
+        // Do not clear region when paintCurrentLine is likely to do all the necessary work.
+        if (firstLine + 1 != lastLine || this._selection.endLine != firstLine) {
+            this._ctx.fillStyle = "rgb(255,255,255)";
+            this._ctx.fillRect(0, this._lineHeight * firstLine - this._scrollTop, this._canvas.width, height);
+        }
+        lastLine = Math.min(lastLine, this._textModel.linesCount);
 
         if (this._selection.startLine === this._selection.endLine && firstLine <= this._selection.startLine && this._selection.startLine < lastLine)
             this._paintCurrentLine(this._selection.startLine);
@@ -309,6 +311,25 @@ WebInspector.TextEditor.prototype = {
             }
         }
         this._ctx.restore();
+    },
+
+    _paintLineNumbers: function()
+    {
+        this._ctx.font = this._font;
+        this._ctx.textBaseline = "bottom";
+
+        this._ctx.fillStyle = "rgb(255,255,255)";
+        this._ctx.fillRect(0, 0, this._lineNumberOffset - 3, this._canvas.height);
+
+        this._ctx.fillStyle = "rgb(235,235,235)";
+        this._ctx.fillRect(this._lineNumberOffset - 2, 0, 1, this._canvas.height);
+
+        var firstLine = Math.min(this._textModel.linesCount, Math.floor(this._scrollTop / this._lineHeight) - 1);
+        var lastLine = Math.min(this._textModel.linesCount, Math.ceil((this._scrollTop + this._canvas.height) / this._lineHeight) + 1);
+
+        this._ctx.fillStyle = "rgb(155,155,155)";
+        for (var i = firstLine; i < lastLine; ++i)
+           this._ctx.fillText(i + 1, (this._lineNumberDigits - this._decimalDigits(i + 1) + 1) * this._digitWidth, this._lineHeight * (i + 1) - this._scrollTop);
     },
 
     _paintCurrentLine: function(line)
@@ -549,7 +570,7 @@ WebInspector.TextEditor.prototype = {
 
     _updateCursor: function(line, column)
     {
-        if (line > this._textModel.linesCount)
+        if (line >= this._textModel.linesCount)
             return;
         var offset = this._columnToOffset(line, column);
         if (offset >= this._container.scrollLeft)
@@ -622,7 +643,7 @@ WebInspector.TextEditor.prototype = {
 
         e.preventDefault();
         e.clipboardData.clearData();
-        e.clipboardData.setData("text/plain", text);
+        e.clipboardData.setData("Text", text);
     },
 
     _beforeCut: function(e)
