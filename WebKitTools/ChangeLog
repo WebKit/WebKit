@@ -1,3 +1,10 @@
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed cosmetic change.  Remove the status bubble for mac-ews
+        because we don't have hardware for it at the moment.
+
+        * QueueStatusServer/templates/statusbubble.html:
+
 2010-01-09  Daniel Bates  <dbates@webkit.org>
 
         No review, rolling out r53044.
