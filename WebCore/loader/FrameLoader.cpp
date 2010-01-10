@@ -3917,14 +3917,14 @@ void FrameLoader::updateSandboxFlags()
 
     if (m_sandboxFlags == flags)
         return;
-        
+
     m_sandboxFlags = flags;
 
     m_frame->document()->updateSandboxFlags();
 
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->loader()->updateSandboxFlags();
- }
+}
 
 PassRefPtr<Widget> FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const HashMap<String, String>& args)
 {

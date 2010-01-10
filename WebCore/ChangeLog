@@ -1,3 +1,13 @@
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed whitespace fixes.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::setSandboxFlags):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateSandboxFlags):
+        * loader/FrameLoader.h:
+
 2010-01-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

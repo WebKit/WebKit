@@ -71,7 +71,7 @@ void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
         return;
 
     m_sandboxFlags = flags;
-    
+
     if (Frame* frame = contentFrame())
         frame->loader()->ownerElementSandboxFlagsChanged();
 }

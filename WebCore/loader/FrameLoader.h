@@ -253,7 +253,7 @@ public:
     void dispatchDocumentElementAvailable();
 
     void ownerElementSandboxFlagsChanged() { updateSandboxFlags(); }
-    
+
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
