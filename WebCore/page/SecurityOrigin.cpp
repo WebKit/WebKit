@@ -65,22 +65,24 @@ static URLSchemesMap& localSchemes()
     return localSchemes;
 }
 
-static URLSchemesMap& noAccessSchemes()
+static URLSchemesMap& schemesWithUniqueOrigins()
 {
-    DEFINE_STATIC_LOCAL(URLSchemesMap, noAccessSchemes, ());
+    DEFINE_STATIC_LOCAL(URLSchemesMap, schemesWithUniqueOrigins, ());
 
-    if (noAccessSchemes.isEmpty())
-        noAccessSchemes.add("data");
+    // This is a willful violation of HTML5.
+    // See https://bugs.webkit.org/show_bug.cgi?id=11885
+    if (schemesWithUniqueOrigins.isEmpty())
+        schemesWithUniqueOrigins.add("data");
 
-    return noAccessSchemes;
+    return schemesWithUniqueOrigins;
 }
 
 SecurityOrigin::SecurityOrigin(const KURL& url)
-    : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
+    : m_sandboxFlags(SandboxNone)
+    , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
-    , m_sandboxFlags(SandboxNone)
-    , m_noAccess(false)
+    , m_isUnique(false)
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
 {
@@ -90,7 +92,11 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
 
     // Some URLs are not allowed access to anything other than themselves.
     if (shouldTreatURLSchemeAsNoAccess(m_protocol))
-        m_noAccess = true;
+        m_isUnique = true;
+
+    // If this ASSERT becomes false in the future, please consider the impact
+    // of m_sandoxFlags on m_isUnique.
+    ASSERT(m_sandboxFlags == SandboxNone);
 
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
@@ -100,7 +106,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     if (m_canLoadLocalResources) {
         // Directories should never be readable.
         if (!url.hasPath() || url.path().endsWith("/"))
-            m_noAccess = true;
+            m_isUnique = true;
     }
 
     if (isDefaultPortForProtocol(m_port, m_protocol))
@@ -108,12 +114,12 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
-    : m_protocol(other->m_protocol.threadsafeCopy())
+    : m_sandboxFlags(other->m_sandboxFlags)
+    , m_protocol(other->m_protocol.threadsafeCopy())
     , m_host(other->m_host.threadsafeCopy())
     , m_domain(other->m_domain.threadsafeCopy())
     , m_port(other->m_port)
-    , m_sandboxFlags(other->m_sandboxFlags)
-    , m_noAccess(other->m_noAccess)
+    , m_isUnique(other->m_isUnique)
     , m_universalAccess(other->m_universalAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
@@ -153,15 +159,15 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     if (m_universalAccess)
         return true;
 
-    if (m_noAccess || other->m_noAccess || isSandboxed(SandboxOrigin) || other->isSandboxed(SandboxOrigin))
+    if (isUnique() || other->isUnique())
         return false;
 
     // Here are two cases where we should permit access:
     //
-    // 1) Neither document has set document.domain.  In this case, we insist
+    // 1) Neither document has set document.domain. In this case, we insist
     //    that the scheme, host, and port of the URLs match.
     //
-    // 2) Both documents have set document.domain.  In this case, we insist
+    // 2) Both documents have set document.domain. In this case, we insist
     //    that the documents have set document.domain to the same value and
     //    that the scheme of the URLs match.
     //
@@ -194,11 +200,11 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (m_universalAccess)
         return true;
 
-    if (m_noAccess || isSandboxed(SandboxOrigin))
+    if (isUnique())
         return false;
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
-    if (targetOrigin->m_noAccess)
+    if (targetOrigin->isUnique())
         return false;
 
     // We call isSameSchemeHostPort here instead of canAccess because we want
@@ -221,11 +227,12 @@ bool SecurityOrigin::taintsCanvas(const KURL& url) const
     if (canRequest(url))
         return false;
 
-    // This method exists because we treat data URLs as noAccess, contrary
-    // to the current (9/19/2009) draft of the HTML5 specification.  We still
-    // want to let folks paint data URLs onto untainted canvases, so we special
-    // case data URLs below.  If we change to match HTML5 w.r.t. data URL
-    // security, then we can remove this method in favor of !canRequest.
+    // This function exists because we treat data URLs as having a unique origin,
+    // contrary to the current (9/19/2009) draft of the HTML5 specification.
+    // We still want to let folks paint data URLs onto untainted canvases, so
+    // we special case data URLs below. If we change to match HTML5 w.r.t.
+    // data URL security, then we can remove this function in favor of
+    // !canRequest.
     if (url.protocolIs("data"))
         return false;
 
@@ -248,8 +255,8 @@ bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* 
 
 void SecurityOrigin::grantLoadLocalResources()
 {
-    // This method exists only to support backwards compatibility with older
-    // versions of WebKit.  Granting privileges to some, but not all, documents
+    // This function exists only to support backwards compatibility with older
+    // versions of WebKit. Granting privileges to some, but not all, documents
     // in a SecurityOrigin is a security hazard because the documents without
     // the privilege can obtain the privilege by injecting script into the
     // documents that have been granted the privilege.
@@ -260,6 +267,22 @@ void SecurityOrigin::grantLoadLocalResources()
 void SecurityOrigin::grantUniversalAccess()
 {
     m_universalAccess = true;
+}
+
+void SecurityOrigin::setSandboxFlags(SandboxFlags flags)
+{
+    m_sandboxFlags = flags;
+    if (isSandboxed(SandboxOrigin))
+        m_isUnique = true;
+
+    // Although you might think that we should set m_isUnique to false when
+    // flags doesn't contain SandboxOrigin, that's not actually the right
+    // behavior. We're supposed to freeze the origin of a document when it
+    // is created, even if the sandbox flags change after that point in time.
+    //
+    // FIXME: Our current behavior here is buggy because we need to
+    //        distinguish between the sandbox flags at creation and the
+    //        sandbox flags that might come about later.
 }
 
 bool SecurityOrigin::isLocal() const
@@ -282,7 +305,7 @@ String SecurityOrigin::toString() const
     if (isEmpty())
         return "null";
 
-    if (m_noAccess || isSandboxed(SandboxOrigin))
+    if (isUnique())
         return "null";
 
     if (m_protocol == "file")
@@ -440,12 +463,12 @@ bool SecurityOrigin::shouldTreatURLSchemeAsLocal(const String& scheme)
 
 void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
 {
-    noAccessSchemes().add(scheme);
+    schemesWithUniqueOrigins().add(scheme);
 }
 
 bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
-    return noAccessSchemes().contains(scheme);
+    return schemesWithUniqueOrigins().contains(scheme);
 }
 
 bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)

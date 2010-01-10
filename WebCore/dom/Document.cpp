@@ -3068,7 +3068,7 @@ String Document::cookie(ExceptionCode& ec) const
     // INVALID_STATE_ERR exception on getting if the Document has no
     // browsing context.
 
-    if (securityOrigin()->isSandboxed(SandboxOrigin)) {
+    if (!securityOrigin()->canAccessCookies()) {
         ec = SECURITY_ERR;
         return String();
     }
@@ -3089,7 +3089,7 @@ void Document::setCookie(const String& value, ExceptionCode& ec)
     // INVALID_STATE_ERR exception on setting if the Document has no
     // browsing context.
 
-    if (securityOrigin()->isSandboxed(SandboxOrigin)) {
+    if (!securityOrigin()->canAccessCookies()) {
         ec = SECURITY_ERR;
         return;
     }

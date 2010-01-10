@@ -2,6 +2,41 @@
 
         Reviewed by Darin Adler.
 
+        Unify origin sandbox flag with m_noAccess in SecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=32372
+
+        It turns out the SandboxOrigin bit is slightly different than the
+        unique origin concept because the sandbox bit is inherited by iframes.
+        These concepts are separate in the spec, so I think it's ok to keep
+        them separate in the implementation as well.
+
+        No new tests because there is no behavior change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+        * page/SecurityOrigin.cpp:
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::canAccess):
+        (WebCore::SecurityOrigin::canRequest):
+        (WebCore::SecurityOrigin::taintsCanvas):
+        (WebCore::SecurityOrigin::setSandboxFlags):
+        (WebCore::SecurityOrigin::toString):
+        (WebCore::SecurityOrigin::registerURLSchemeAsNoAccess):
+        (WebCore::SecurityOrigin::shouldTreatURLSchemeAsNoAccess):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessDatabase):
+        (WebCore::SecurityOrigin::canAccessStorage):
+        (WebCore::SecurityOrigin::canAccessCookies):
+        (WebCore::SecurityOrigin::isUnique):
+
+2010-01-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         ScriptController::isEnabled needs to be renamed
         https://bugs.webkit.org/show_bug.cgi?id=32063
 
