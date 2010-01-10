@@ -276,11 +276,6 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, enable);
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool enable)
-{
-    m_drt->webPage()->settings()->setAttribute(QWebSettings::XSSAuditorEnabled, enable);
-}
-
 void LayoutTestController::setPopupBlockingEnabled(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, !enable);

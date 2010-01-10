@@ -1,5 +1,17 @@
 2010-01-09  Daniel Bates  <dbates@webkit.org>
 
+        No review, rolling out r53044.
+        http://trac.webkit.org/changeset/53044
+        https://bugs.webkit.org/show_bug.cgi?id=33419
+        
+        We need to look into this some more because the Qt
+        bot is failing the XSSAuditor tests. See bug #33419
+        for more details.
+
+        * platform/qt/Skipped:
+
+2010-01-09  Daniel Bates  <dbates@webkit.org>
+
         No review, rolling out r53045.
         http://trac.webkit.org/changeset/53045
         https://bugs.webkit.org/show_bug.cgi?id=33440
