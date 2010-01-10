@@ -1,5 +1,15 @@
 2010-01-09  Daniel Bates  <dbates@webkit.org>
 
+        Rubber-stamped by Adam Barth.
+
+        Adds failing XSSAuditor tests to the Qt Skipped file
+        while we come up with a fix for them. See bug #33440
+        for more details.
+
+        * platform/qt/Skipped:
+
+2010-01-09  Daniel Bates  <dbates@webkit.org>
+
         Reviewed by Adam Barth.
 
         https://bugs.webkit.org/show_bug.cgi?id=33419
