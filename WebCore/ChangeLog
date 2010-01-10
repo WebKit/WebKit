@@ -1,3 +1,13 @@
+2010-01-09  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Inspector font for errors is ugly on non-OSX platforms
+        https://bugs.webkit.org/show_bug.cgi?id=33340
+
+        * css/view-source.css: Add a fallback to sans-serif on a CSS
+        selector that previously only listed Lucida Grande.
+
 2010-01-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Nikolas Zimmermann.

@@ -130,7 +130,7 @@ td {
     -webkit-border-fit: lines;
     min-height: 13px;
     font-size: 9px;
-    font-family: Lucida Grande;
+    font-family: Lucida Grande, sans-serif;
     font-weight: bold;
     margin: 6px 25px;
     padding: 0 7px 1px;
