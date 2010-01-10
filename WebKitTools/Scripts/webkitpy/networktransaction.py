@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
-#
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
@@ -27,35 +26,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+import time
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.networktransaction_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style.unittests import * # for check-webkit-style
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
+from mechanize import HTTPError
+from webkitpy.webkit_logging import log
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
 
-    unittest.main()
+class NetworkTimeout(Exception):
+    pass
+
+
+class NetworkTransaction(object):
+    def __init__(self, initial_backoff_seconds=10, grown_factor=1.1, timeout_seconds=5*60*60):
+        self._initial_backoff_seconds = initial_backoff_seconds
+        self._grown_factor = grown_factor
+        self._timeout_seconds = timeout_seconds
+
+    def run(self, request):
+        self._total_sleep = 0
+        self._backoff_seconds = self._initial_backoff_seconds
+        while True:
+            try:
+                return request()
+            except HTTPError, e:
+                self._check_for_timeout()
+                log("Received HTTP status %s from server.  Retrying in %s seconds..." % (e.code, self._backoff_seconds))
+                self._sleep()
+
+    def _check_for_timeout(self):
+        if self._total_sleep + self._backoff_seconds > self._timeout_seconds:
+            raise NetworkTimeout()
+
+    def _sleep(self):
+        time.sleep(self._backoff_seconds)
+        self._total_sleep += self._backoff_seconds
+        self._backoff_seconds *= self._grown_factor

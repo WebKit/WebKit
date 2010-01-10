@@ -1,3 +1,21 @@
+2010-01-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Retry writes to QueueStatusServer when we get 500 errors
+        https://bugs.webkit.org/show_bug.cgi?id=33412
+
+        This prevents the queues from failing to mark a patch as "pass" or
+        "fail" when AppEngine throws 500 errors.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/networktransaction.py: Added.
+        * Scripts/webkitpy/networktransaction_unittest.py: Added.
+        * Scripts/webkitpy/statusserver.py:
+        * Scripts/webkitpy/steps/closebugformarkbugfixed.py: Added.
+        * Scripts/webkitpy/steps/closebugregardlessofpatches.py: Added.
+        * Scripts/webkitpy/steps/findbugidfromsvnrevision.py: Added.
+
 2010-01-09  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/33430> Fix rounded borders in queue status on older Firefox and Safari browsers
