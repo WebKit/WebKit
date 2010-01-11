@@ -1,3 +1,12 @@
+2010-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        fast/text/international/japanese-kana-letters.html 
+        removed by r53078, so it should be removed from skiplist.
+
+        * platform/qt/Skipped: fast/text/international/japanese-kana-letters.html removed.
+
 2010-01-11  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Simon Fraser.

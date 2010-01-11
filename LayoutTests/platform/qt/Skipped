@@ -253,9 +253,6 @@ fast/images/icon-decoding.html
 # ------- missing private browsing support?
 plugins/private-browsing-mode.html
 
-# ------- missing japanese font support
-fast/text/international/japanese-kana-letters.html
-
 # ------- missing ruby annotation support for japanese fonts
 fast/ruby/ruby-empty-rt.html
 fast/ruby/ruby-length.html
