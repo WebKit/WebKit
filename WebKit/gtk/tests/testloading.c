@@ -175,6 +175,10 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
          * anything */
         fixture->has_been_provisional = TRUE;
         break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_assert(!fixture->has_been_committed);
+        fixture->has_been_committed = TRUE;
+        break;
     case WEBKIT_LOAD_FINISHED:
         g_assert(fixture->has_been_provisional);
         g_assert(fixture->has_been_load_error);
