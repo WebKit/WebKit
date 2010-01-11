@@ -38,6 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -91,6 +92,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -143,6 +145,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -195,6 +198,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				ProgramDataBaseFileName="$(OutDir)\$(TargetName).vc80.pdb"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
