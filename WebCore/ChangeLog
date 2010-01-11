@@ -1,3 +1,28 @@
+2010-01-08  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cannot focus on an empty editable span in a non editable div.
+        https://bugs.webkit.org/show_bug.cgi?id=33411
+        <rdar://problem/5982901>
+
+        We now allow to set the focus inside an empty inline element if it is the only
+        editable element inside non-editable content.
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate): Extended to allow positions in inline elements when
+        at the border between editable and non editable content.
+        (WebCore::Position::getInlineBoxAndOffset): Modified to be able to calculate the caret
+        position inside an empty inline.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): When merging, we don't always find a break
+        element, since now an editable inline is a VisiblePosition if it is at editability boundary.
+        * editing/VisibleSelection.h: Updated comment on the use of Position member variables
+        instead of VisiblePosition.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged): Changed to avoid multiple calls to upstream and
+        downstream on the same position.
+
 2010-01-06  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

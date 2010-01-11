@@ -589,10 +589,11 @@ void DeleteSelectionCommand::mergeParagraphs()
     // The rule for merging into an empty block is: only do so if its farther to the right.
     // FIXME: Consider RTL.
     if (!m_startsAtEmptyLine && isStartOfParagraph(mergeDestination) && startOfParagraphToMove.absoluteCaretBounds().x() > mergeDestination.absoluteCaretBounds().x()) {
-        ASSERT(mergeDestination.deepEquivalent().downstream().node()->hasTagName(brTag));
-        removeNodeAndPruneAncestors(mergeDestination.deepEquivalent().downstream().node());
-        m_endingPosition = startOfParagraphToMove.deepEquivalent();
-        return;
+        if (mergeDestination.deepEquivalent().downstream().node()->hasTagName(brTag)) {
+            removeNodeAndPruneAncestors(mergeDestination.deepEquivalent().downstream().node());
+            m_endingPosition = startOfParagraphToMove.deepEquivalent();
+            return;
+        }
     }
     
     // Block images, tables and horizontal rules cannot be made inline with content at mergeDestination.  If there is 

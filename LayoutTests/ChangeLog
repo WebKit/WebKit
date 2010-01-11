@@ -1,3 +1,16 @@
+2010-01-08  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cannot focus on an empty editable span in a non editable div.
+        https://bugs.webkit.org/show_bug.cgi?id=33411
+        <rdar://problem/5982901>
+
+        * editing/deleting/6026335-expected.txt: Updated to reflect the lack of extra break element.
+        * editing/selection/mixed-editability-10-expected.txt: Updated to cover the new case.
+        * editing/selection/mixed-editability-10.html: Updated to cover the new case.
+        * platform/mac/editing/deleting/5115601-expected.txt: Updated to reflect the lack of extra break element.
+
 2010-01-08  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

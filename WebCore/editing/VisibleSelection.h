@@ -114,7 +114,11 @@ private:
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
-    // FIXME: These should all be VisiblePositions
+    // We need to store these as Positions because VisibleSelection is
+    // used to store values in editing commands for use when
+    // undoing the command. We need to be able to create a selection that, while currently
+    // invalid, will be valid once the changes are undone.
+    
     Position m_base;   // Where the first click happened
     Position m_extent; // Where the end click happened
     Position m_start;  // Leftmost position when expanded to respect granularity

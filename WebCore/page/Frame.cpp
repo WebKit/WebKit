@@ -672,11 +672,13 @@ void Frame::selectionLayoutChanged()
         // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
         // and will fill the gap before 'bar'.
         Position startPos = selection.start();
-        if (startPos.downstream().isCandidate())
-            startPos = startPos.downstream();
+        Position candidate = startPos.downstream();
+        if (candidate.isCandidate())
+            startPos = candidate;
         Position endPos = selection.end();
-        if (endPos.upstream().isCandidate())
-            endPos = endPos.upstream();
+        candidate = endPos.upstream();
+        if (candidate.isCandidate())
+            endPos = candidate;
 
         // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
         // because we don't yet notify the SelectionController of text removal.

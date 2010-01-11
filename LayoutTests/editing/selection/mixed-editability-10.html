@@ -20,6 +20,10 @@
   <p>#5 DIV element empty</p>
   <div style="width:100px;background-color:#cee;text-align: center;" contenteditable="true" id="edit5">
   </div>
+  <p>#6 non editable DIV element with an editable empty span element</p>
+  <div id="nonedit6" style="width:100px;background-color:#cee;">
+    Hello:&nbsp;<span id="edit6" contenteditable="true"> </span>
+  </div>
   <ul id="console"></ul>
 </body>
 <script>
@@ -98,6 +102,12 @@ function automaticTest() {
         x = elem.offsetLeft;
         y = elem.offsetTop + elem.offsetHeight / 2;
         runTest(x, y, elem, 0, (elem.offsetLeft + elem.offsetWidth)/2 + 4);
+
+        // the div is non editable and contains an empty editable span
+        elem = document.getElementById("edit6");
+        x = document.getElementById("nonedit6").offsetLeft + document.getElementById("nonedit6").offsetWidth / 2;
+        y = document.getElementById("nonedit6").offsetTop + document.getElementById("nonedit6").offsetHeight / 2;
+        runTest(x, y, elem, 0, 0);
     }
 }
 
