@@ -265,7 +265,7 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     // Apply our local transforms (except for x/y translation), then our shadow, 
     // and then call RenderBox's method to handle all the normal CSS Box model bits
     repaintRect = localToBorderBoxTransform().mapRect(repaintRect);
-    inflateForShadow(style(), repaintRect);
+    style()->svgStyle()->inflateForShadow(repaintRect);
     RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 

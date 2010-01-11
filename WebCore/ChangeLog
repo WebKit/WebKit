@@ -1,3 +1,44 @@
+2010-01-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=33491 REGRESSION: 
+        Many SVG -webkit-shadow tests are currently failing (in the pixel 
+        tests)
+        -and-
+        <rdar://problem/7501200>
+
+        The real fix here is to call inflateForShadow() on the repaintRect 
+        in prepareToRenderSVGContent(). But in order to do that, I had to 
+        move inflateForShadow() to a different class since functions in 
+        SVGRenderBase cannot call each other. inflateForShadow() now exists 
+        in SVGRenderStyle which I think makes some sense because a similar 
+        function that returns a box shadow's extent exists on RenderStyle.
+
+        Now call inflateForShadow() through the SVGRenderStyle.
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::computeRectForRepaint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::computeRectForRepaint):
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::computeRectForRepaint):
+
+        No longer implement inflateForShadow() here.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent): Call new 
+        inflateForShadow() through the SVGRenderStyle
+        * rendering/SVGRenderSupport.h:
+
+        Implementation of inflateForShadow() now lives here.
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::getSVGShadowExtent):
+        (WebCore::SVGRenderStyle::inflateForShadow):
+        * rendering/style/SVGRenderStyle.h:
+
 2010-01-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

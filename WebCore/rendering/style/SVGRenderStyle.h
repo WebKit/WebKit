@@ -36,6 +36,7 @@ namespace WebCore {
 
     class RenderObject;
     class RenderStyle;
+    class IntRect;
 
     class SVGRenderStyle : public RefCounted<SVGRenderStyle> {    
     public:
@@ -45,6 +46,8 @@ namespace WebCore {
 
         bool inheritedNotEqual(const SVGRenderStyle*) const;
         void inheritFrom(const SVGRenderStyle*);
+
+        void inflateForShadow(IntRect&) const;
         
         bool operator==(const SVGRenderStyle&) const;
         bool operator!=(const SVGRenderStyle& o) const { return !(*this == o); }

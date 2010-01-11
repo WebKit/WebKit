@@ -30,10 +30,13 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
+#include "IntRect.h"
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "SVGStyledElement.h"
+
+using namespace std;
 
 namespace WebCore {
 
@@ -139,6 +142,45 @@ float SVGRenderStyle::cssPrimitiveToLength(const RenderObject* item, CSSValue* v
     }
 
     return primitive->computeLengthFloat(const_cast<RenderStyle*>(item->style()), item->document()->documentElement()->renderStyle());
+}
+
+
+static void getSVGShadowExtent(ShadowData* shadow, int& top, int& right, int& bottom, int& left)
+{
+    top = 0;
+    right = 0;
+    bottom = 0;
+    left = 0;
+
+    int blurAndSpread = shadow->blur + shadow->spread;
+
+    top = min(top, shadow->y - blurAndSpread);
+    right = max(right, shadow->x + blurAndSpread);
+    bottom = max(bottom, shadow->y + blurAndSpread);
+    left = min(left, shadow->x - blurAndSpread);
+}
+
+void SVGRenderStyle::inflateForShadow(IntRect& repaintRect) const
+{
+    ShadowData* svgShadow = shadow();
+    if (!svgShadow)
+        return;
+
+    int shadowTop;
+    int shadowRight;
+    int shadowBottom;
+    int shadowLeft;
+    getSVGShadowExtent(svgShadow, shadowTop, shadowRight, shadowBottom, shadowLeft);
+
+    int overflowLeft = repaintRect.x() + shadowLeft;
+    int overflowRight = repaintRect.right() + shadowRight;
+    int overflowTop = repaintRect.y() + shadowTop;
+    int overflowBottom = repaintRect.bottom() + shadowBottom;
+
+    repaintRect.setX(overflowLeft);
+    repaintRect.setY(overflowTop);
+    repaintRect.setWidth(overflowRight - overflowLeft);
+    repaintRect.setHeight(overflowBottom - overflowTop);
 }
 
 }

@@ -56,8 +56,6 @@ namespace WebCore {
         FloatRect clipperBoundingBoxForRenderer(const RenderObject*) const;
         FloatRect maskerBoundingBoxForRenderer(const RenderObject*) const;
 
-        virtual void inflateForShadow(RenderStyle*, IntRect&) const;
-
     protected:
         static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
         static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
