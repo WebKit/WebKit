@@ -159,7 +159,6 @@ void WebPage::resetSettings()
 {
     // After each layout test, reset the settings that may have been changed by
     // layoutTestController.overridePreference() or similar.
-
     settings()->resetFontSize(QWebSettings::DefaultFontSize);
     settings()->resetAttribute(QWebSettings::JavascriptCanOpenWindows);
     settings()->resetAttribute(QWebSettings::JavascriptEnabled);
@@ -167,6 +166,10 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
     settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
+
+    // globalSettings must be reset explicitly.
+    m_drt->layoutTestController()->setXSSAuditorEnabled(false);
+
     QWebSettings::setMaximumPagesInCache(0); // reset to default
 }
 

@@ -1,3 +1,19 @@
+2010-01-10  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Add enableXSSAuditor support to QWebSettings and DRT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33419
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-01-10  Adam Barth  <abarth@webkit.org>
 
         Unreviewed cosmetic change.  Remove the status bubble for mac-ews

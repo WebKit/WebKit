@@ -34,6 +34,7 @@
 #include "WorkQueueItemQt.h"
 #include <QDir>
 #include <QLocale>
+#include <qwebsettings.h>
 
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
@@ -295,6 +296,16 @@ void LayoutTestController::setWindowIsKey(bool isKey)
 void LayoutTestController::setMainFrameIsFirstResponder(bool isFirst)
 {
     //FIXME: only need this for the moment: https://bugs.webkit.org/show_bug.cgi?id=32990
+}
+
+void LayoutTestController::setXSSAuditorEnabled(bool enable)
+{
+    // Set XSSAuditorEnabled globally so that windows created by the test inherit it too.
+    // resetSettings() will call this to reset the page and global setting to false again.
+    // Needed by http/tests/security/xssAuditor/link-opens-new-window.html
+    QWebSettings* globalSettings = QWebSettings::globalSettings();
+    globalSettings->setAttribute(QWebSettings::XSSAuditorEnabled, enable);
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::XSSAuditorEnabled, enable);
 }
 
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString& animationName,

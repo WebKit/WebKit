@@ -204,12 +204,16 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::LocalStorageEnabled,
                                       global->attributes.value(QWebSettings::LocalStorageEnabled));
-                                                                                                                                  
         settings->setLocalStorageEnabled(value);
 
         value = attributes.value(QWebSettings::LocalContentCanAccessRemoteUrls,
                                       global->attributes.value(QWebSettings::LocalContentCanAccessRemoteUrls));
         settings->setAllowUniversalAccessFromFileURLs(value);
+
+        value = attributes.value(QWebSettings::XSSAuditorEnabled,
+                                      global->attributes.value(QWebSettings::XSSAuditorEnabled));
+        settings->setXSSAuditorEnabled(value);
+
         settings->setUsesPageCache(WebCore::pageCache()->capacity());
     } else {
         QList<QWebSettingsPrivate*> settings = *::allSettings();
@@ -354,6 +358,7 @@ QWebSettings* QWebSettings::globalSettings()
     \value LocalStorageDatabaseEnabled \e{This enum value is deprecated.} Use
         QWebSettings::LocalStorageEnabled instead.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
+    \value XSSAuditorEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
 */
 
 /*!

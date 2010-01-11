@@ -197,9 +197,6 @@ http/tests/security/feed-urls-from-remote.html
 # Missing layoutTestController.setWillSendRequestReturnsNullOnRedirect()
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
-# Missing layoutTestController.setXSSAuditorEnabled()
-http/tests/security/xssAuditor
-
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 http/tests/security/isolatedWorld
 
