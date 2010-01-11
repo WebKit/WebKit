@@ -6,7 +6,7 @@ This page tests that frames receive focus events when one of their child element
 main frame blurred
 iframe focused
 <input> in iframe focused
-<input> in frame blurred
+<input> in iframe blurred
 iframe blurred
 main frame focused
 <input> focused

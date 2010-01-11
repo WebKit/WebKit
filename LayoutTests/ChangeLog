@@ -1,5 +1,17 @@
 2010-01-10  Daniel Bates  <dbates@webkit.org>
 
+        Unreviewed, fix typo.
+        
+        Fixed typo in test LayoutTests/fast/events/frame-programmatic-focus.html.
+        The word "frame" should be "iframe" in the string "<input> in frame blurred"
+        based on the context of the test. In particular, the line "<input> in iframe focused"
+        and the use of an iframe in the test.
+
+        * fast/events/frame-programmatic-focus-expected.txt: 
+        * fast/events/frame-programmatic-focus.html:
+
+2010-01-10  Daniel Bates  <dbates@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Adding XSSAuditor test http/tests/security/xssAuditor/malformed-HTML.html
