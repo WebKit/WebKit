@@ -62,7 +62,7 @@ var WebInspector = {
     // 3 - ?port
     // 4 - ?path
     // 5 - ?fragment
-    URLRegExp: /^(http[s]?|file):\/\/([^\/:]+)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
+    URLRegExp: /^(http[s]?|file):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
 
     get platform()
     {

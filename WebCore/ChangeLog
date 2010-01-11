@@ -1,3 +1,20 @@
+2010-01-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Rewrite relative URLs in the ElementsTreeOutline to make them navigable
+
+        Targets for "src" and "href" attribute values in the Elements outline tree
+        are rewritten to full URLs whenever possible.
+        https://bugs.webkit.org/show_bug.cgi?id=33024
+
+        Test: inspector/elements-panel-rewrite-href.html
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._rewriteAttrHref):
+        (WebInspector.ElementsTreeElement.prototype._nodeTitleInfo):
+        * inspector/front-end/inspector.js:
+
 2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Attempt to fix windows builds, by removing the no-longer existant JSSVGPointListCustom.cpp from JSBindingsAllInOne.cpp.

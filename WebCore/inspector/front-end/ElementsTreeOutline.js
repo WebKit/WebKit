@@ -893,6 +893,40 @@ WebInspector.ElementsTreeElement.prototype = {
             this.createTooltipForImageNode(this.representedObject, callback);
     },
 
+    _rewriteAttrHref: function(node, hrefValue)
+    {
+        if (!hrefValue || hrefValue.indexOf("://") > 0)
+            return hrefValue;
+
+        var match;
+        var documentURL;
+        for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
+            if (frameOwnerCandidate.documentURL) {
+                documentURL = frameOwnerCandidate.documentURL;
+                break;
+            }
+        }
+        if (documentURL) {
+            match = documentURL.match(WebInspector.URLRegExp);
+            if (match) {
+                var path = hrefValue;
+                if (path.charAt(0) !== "/") {
+                    var documentPath = match[4] || "/";
+                    path = documentPath.substring(0, documentPath.lastIndexOf("/")) + "/" + path;
+                }
+                return match[1] + "://" + match[2] + (match[3] ? (":" + match[3]) : "") + path;
+            }
+        }
+
+        // documentURL not found or has bad value
+        for (var url in WebInspector.resourceURLMap) {
+            match = url.match(WebInspector.URLRegExp);
+            if (match && match[4] === hrefValue)
+                return url;
+        }
+        return hrefValue;
+    },
+
     _nodeTitleInfo: function(node, hasChildren, linkify, tooltipText)
     {
         var info = {title: "", hasChildren: hasChildren};
@@ -913,7 +947,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         var value = attr.value;
                         if (linkify && (attr.name === "src" || attr.name === "href")) {
                             var value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-                            info.title += linkify(attr.value, value, "webkit-html-attribute-value", node.nodeName.toLowerCase() == "a", tooltipText);
+                            info.title += linkify(this._rewriteAttrHref(node, attr.value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() == "a", tooltipText);
                         } else {
                             var value = value.escapeHTML();
                             value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
