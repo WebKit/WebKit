@@ -5744,3 +5744,7 @@ fast/profiler/dead-time.html
 
 # Fails on and off (more often fails) on the release bot
 media/event-attributes.html
+
+# Crashes on debug bots, but passes locally
+# See https://bugs.webkit.org/show_bug.cgi?id=33472
+plugins/iframe-shims.html
