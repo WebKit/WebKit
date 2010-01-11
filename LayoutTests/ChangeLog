@@ -1,3 +1,16 @@
+2010-01-08  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Test that document.referrer is properly preserved through a redirect.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33407
+
+        * http/tests/navigation/redirect-preserves-referrer-expected.txt: Added.
+        * http/tests/navigation/redirect-preserves-referrer.html: Added.
+        * http/tests/navigation/resources/redirect-to-referrer-check.pl: Added.
+        * http/tests/navigation/resources/referrer.html: Added.
+
 2010-01-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.
