@@ -1,3 +1,22 @@
+2010-01-11  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30883
+        [Gtk] Implement AtkText for HTML elements which contain text
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.h
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored):
+        (webkit_accessible_text_get_caret_offset):
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (SelectionController::notifyAccessibilityForSelectionChange)
+
+        Adjust the caret offset and object with focus to reflect the
+        unignored parent of the static text object which contains the
+        caret. This is necessary because the static text objects are
+        no longer being exposed to ATs.
+
 2010-01-11  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.

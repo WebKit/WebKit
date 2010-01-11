@@ -60,6 +60,8 @@ void webkit_accessible_detach (WebKitAccessible* accessible);
 
 AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible);
 
+WebCore::AccessibilityObject* objectAndOffsetUnignored(WebCore::AccessibilityObject* coreObject, int& offset, bool ignoreLinks);
+
 G_END_DECLS
 
 #endif // AccessibilityObjectWrapperAtk_h

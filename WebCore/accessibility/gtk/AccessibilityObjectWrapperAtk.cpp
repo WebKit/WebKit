@@ -980,8 +980,18 @@ static gunichar webkit_accessible_text_get_character_at_offset(AtkText* text, gi
 
 static gint webkit_accessible_text_get_caret_offset(AtkText* text)
 {
+    // coreObject is the unignored object whose offset the caller is requesting.
+    // focusedObject is the object with the caret. It is likely ignored -- unless it's a link.
+    AccessibilityObject* coreObject = core(text);
+    RenderObject* focusedNode = coreObject->selection().end().node()->renderer();
+    AccessibilityObject* focusedObject = coreObject->document()->axObjectCache()->getOrCreate(focusedNode);
+
+    int offset;
+    // Don't ignore links if the offset is being requested for a link.
+    AccessibilityObject* object = objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink());
+
     // TODO: Verify this for RTL text.
-    return core(text)->selection().end().offsetInContainerNode();
+    return offset;
 }
 
 static AtkAttributeSet* webkit_accessible_text_get_run_attributes(AtkText* text, gint offset, gint* start_offset, gint* end_offset)
@@ -1731,6 +1741,26 @@ AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible)
         return 0;
 
     return focusedObj->wrapper();
+}
+
+AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, int& offset, bool ignoreLinks)
+{
+    Node* endNode = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
+    int endOffset = coreObject->selection().end().offsetInContainerNode();
+
+    AccessibilityObject* realObject = coreObject;
+    if (realObject->accessibilityIsIgnored())
+        realObject = realObject->parentObjectUnignored();
+
+    if (ignoreLinks && realObject->isLink())
+        realObject = realObject->parentObjectUnignored();
+
+    RefPtr<Range> range = rangeOfContents(static_cast<AccessibilityRenderObject*>(realObject)->renderer()->node());
+    ExceptionCode ec = 0;
+    range->setEndBefore(endNode, ec);
+    offset = range->text().length() + endOffset;
+
+    return realObject;
 }
 
 #endif // HAVE(ACCESSIBILITY)
