@@ -33,7 +33,6 @@ import unittest
 from webkitpy.bugzilla_unittest import *
 from webkitpy.buildbot_unittest import *
 from webkitpy.changelogs_unittest import *
-from webkitpy.commands.abstractdiffcommand_unittest import *
 from webkitpy.commands.download_unittest import *
 from webkitpy.commands.early_warning_system_unittest import *
 from webkitpy.commands.upload_unittest import *

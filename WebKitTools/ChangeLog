@@ -1,3 +1,20 @@
+2010-01-11  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r53079.
+        http://trac.webkit.org/changeset/53079
+        https://bugs.webkit.org/show_bug.cgi?id=33197
+
+        Adam doens't think this actually works, and believe it caused
+        a regression https://bugs.webkit.org/show_bug.cgi?id=33488 so
+        rolling this out.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/commands/abstractdiffcommand.py: Removed.
+        * Scripts/webkitpy/commands/abstractdiffcommand_unittest.py: Removed.
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+
 2010-01-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Kilzer.

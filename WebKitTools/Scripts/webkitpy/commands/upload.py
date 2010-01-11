@@ -38,7 +38,6 @@ from optparse import make_option
 import webkitpy.steps as steps
 
 from webkitpy.bugzilla import parse_bug_id
-from webkitpy.commands.abstractdiffcommand import AbstractDiffCommand
 from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.comments import bug_comment_from_svn_revision
 from webkitpy.committers import CommitterList
@@ -100,7 +99,17 @@ class ObsoleteAttachments(AbstractSequencedCommand):
         return { "bug_id" : args[0] }
 
 
-class Post(AbstractDiffCommand):
+class AbstractPatchUploadingCommand(AbstractSequencedCommand):
+    def _bug_id(self, args, tool, state):
+        # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
+        bug_id = args and args[0]
+        if not bug_id:
+            state["diff"] = tool.scm().create_patch()
+            bug_id = parse_bug_id(state["diff"])
+        return bug_id
+
+
+class Post(AbstractPatchUploadingCommand):
     name = "post"
     help_text = "Attach the current working directory diff to a bug as a patch file"
     argument_names = "[BUGID]"
@@ -113,7 +122,8 @@ class Post(AbstractDiffCommand):
     ]
 
     def _prepare_state(self, options, args, tool):
-        state = { "bug_id" : self._bug_id(args, tool) }
+        state = {}
+        state["bug_id"] = self._bug_id(args, tool, state)
         if not state["bug_id"]:
             error("No bug id passed and no bug url found in diff, can't post.")
         return state
@@ -135,7 +145,7 @@ class Prepare(AbstractSequencedCommand):
         return { "bug_id" : bug_id }
 
 
-class Upload(AbstractDiffCommand):
+class Upload(AbstractPatchUploadingCommand):
     name = "upload"
     help_text = "Automates the process of uploading a patch for review"
     argument_names = "[BUGID]"
@@ -159,7 +169,8 @@ class Upload(AbstractDiffCommand):
     command in the PAGER environment variable."""
 
     def _prepare_state(self, options, args, tool):
-        state = { "bug_id" : self._bug_id(args, tool) }
+        state = {}
+        state["bug_id"] = self._bug_id(args, tool, state)
         return state
 
 

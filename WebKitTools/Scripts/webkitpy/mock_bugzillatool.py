@@ -156,14 +156,11 @@ class MockSCM(Mock):
     def commit_ids_from_commitish_arguments(self, args):
         return ["Commitish1", "Commitish2"]
 
-    def commit_message_for_this_commit(self):
-        return CommitMessage(["CommitMessage1", "https://bugs.webkit.org/show_bug.cgi?id=93"])
-
     def commit_message_for_local_commit(self, commit_id):
         if commit_id == "Commitish1":
-            return CommitMessage(["CommitMessage1", "https://bugs.webkit.org/show_bug.cgi?id=42"])
+            return CommitMessage("CommitMessage1\nhttps://bugs.example.org/show_bug.cgi?id=42\n")
         if commit_id == "Commitish2":
-            return CommitMessage(["CommitMessage2", "https://bugs.webkit.org/show_bug.cgi?id=75"])
+            return CommitMessage("CommitMessage2\nhttps://bugs.example.org/show_bug.cgi?id=75\n")
         raise Exception("Bogus commit_id in commit_message_for_local_commit.")
 
     def create_patch_from_local_commit(self, commit_id):
