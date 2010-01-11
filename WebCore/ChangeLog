@@ -1,5 +1,11 @@
 2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Attempt to fix windows builds, by removing the no-longer existant JSSVGPointListCustom.cpp from JSBindingsAllInOne.cpp.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Adam Roben & Dirk Schulze.
 
         svg <text> fails to update when setting x/y

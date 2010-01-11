@@ -115,7 +115,6 @@
 #include "JSSVGMatrixCustom.cpp"
 #include "JSSVGPathSegCustom.cpp"
 #include "JSSVGPathSegListCustom.cpp"
-#include "JSSVGPointListCustom.cpp"
 #include "JSSharedWorkerConstructor.cpp"
 #include "JSSharedWorkerCustom.cpp"
 #include "JSStorageCustom.cpp"
