@@ -36,7 +36,6 @@ Test page requirements:
 
 Function parameters:
     expected [required]: an array of arrays defining the expected parameter values for the recorded transition end events (see below)
-    timeout [required]: 
     callback [optional]: a function to be executed just before the test starts (none by default)
 
     Each sub-array must contain these items in this order:
@@ -46,7 +45,7 @@ Function parameters:
     - a boolean indicating if an event listener should be automatically added to the element to record the transition end event or if the script calls recordTransitionEndEvent() directly
 
 */
-function runTransitionTest(expected, timeout, callback)
+function runTransitionTest(expected, callback)
 {
   _expectedEventCount = expected.length;
 
@@ -135,21 +134,29 @@ function runTransitionTest(expected, timeout, callback)
         layoutTestController.notifyDone();
   }
 
-  function startTest(expected, timeout, callback)
+  function startTest(expected, callback)
   {
     if (callback)
       callback();
     
+    var maxTime = 0;
+
     for (var i=0; i < expected.length; ++i) {
       if (expected[i][3]) {
         var box = document.getElementById(expected[i][1]);
         box.addEventListener("webkitTransitionEnd", recordTransitionEndEvent, false);
       }
+
+      var time = expected[i][2];
+      if (time > maxTime)
+          maxTime = time;
     }
     
     _endFunction = function() { processEndEvents(expected); };
-    window.setTimeout(_endFunction, timeout * 1000);
+    // Add one second of fudge. We don't just use the run-webkit-tests timeout
+    // because processEndEvents gives more information on what failed.
+    window.setTimeout(_endFunction, maxTime * 1000 + 1000);
   }
   
-  window.addEventListener('load', function() { startTest(expected, timeout, callback) }, false);
+  window.addEventListener('load', function() { startTest(expected, callback) }, false);
 }

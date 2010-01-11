@@ -19,11 +19,10 @@
         document.getElementById('result').innerHTML = "Number of active transitions is (" + current + ") but was expecting (0)";
       layoutTestController.notifyDone();
     }
-    
+
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
-        window.setTimeout(checkRunning, 300);            
     }
   </script>
 </head>
@@ -32,6 +31,11 @@
 <div id="foo">This should not be continually firing transitions</span>
 
 <script type="text/javascript" charset="utf-8">
+
+    document.getElementById('foo').addEventListener('webkitTransitionEnd', function() {
+        checkRunning()
+    });
+
     document.getElementById("foo").className="trans";
 </script>
 
