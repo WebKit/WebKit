@@ -365,8 +365,7 @@ sub svnStatus($)
 sub gitdiff2svndiff($)
 {
     $_ = shift @_;
-    
-    # \V is any character that is not vertical white space
+
     if (m#^diff --git \w/(.+) \w/([^\r\n]+)#) {
         return "Index: $1$POSTMATCH";
     }
@@ -380,6 +379,88 @@ sub gitdiff2svndiff($)
         return "+++ $1$POSTMATCH";
     }
     return $_;
+}
+
+# Parse the next diff header from the given file handle, and advance
+# the file handle so the last line read is the first line after the
+# parsed header block.
+#
+# This subroutine dies if given leading junk.
+#
+# Args:
+#   $fileHandle: advanced so the last line read is the first line of the
+#                next diff header. For SVN-formatted diffs, this is the
+#                "Index:" line.
+#   $line: the line last read from $fileHandle
+#
+# Returns ($headerHashRef, $foundHeaderEnding, $lastReadLine):
+#   $headerHashRef: a hash reference representing a diff header
+#     copiedFromPath: the path in the "from" clause, if any.
+#     copiedFromVersion: the revision number in the "from" clause, if any.
+#     indexPath: the path in the "Index:" line.
+#     svnConvertedText: the header text converted to SVN format.
+#                       Unrecognized Git lines are left alone.
+#     version: the revision number of the source.
+#   $foundHeaderEnding: whether the last header block line was found.
+#                       This is a line beginning with "+++".
+#   $lastReadLine: the line last read from $fileHandle. If EOF has not
+#                  been reached, this is the first line after the
+#                  header ending.
+sub parseDiffHeader($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    my $filter;
+    if ($line =~ m#^diff --git #) {
+        $filter = \&gitdiff2svndiff;
+    }
+    $line = &$filter($line) if $filter;
+
+    my $indexPath;
+    if ($line =~ /^Index: ([^\r\n]+)/) {
+        $indexPath = $1;
+    } else {
+        die("Could not parse first line of diff header: \"$line\".");
+    }
+
+    my %header;
+
+    my $foundHeaderEnding = 0;
+    my $lastReadLine;
+    my $svnConvertedText = $line;
+    while (<$fileHandle>) {
+        # Temporarily strip off any end-of-line characters to simplify
+        # regex matching below.
+        s/([\n\r]+)$//;
+        my $eol = $1;
+
+        $_ = &$filter($_) if $filter;
+
+        # Fix paths on "diff", "---", and "+++" lines to match the
+        # leading index line.
+        s/\S+$/$indexPath/ if /^diff/; # FIXME: Can this ever occur? If so, include
+                                       #        a unit test. Otherwise, remove it.
+        s/^--- \S+/--- $indexPath/;
+        if (/^--- .+\(from (\S+):(\d+)\)$/) {
+            $header{copiedFromPath} = $1;
+            $header{copiedFromVersion} = $2 if ($2 != 0);
+        } elsif (/^--- .+\(revision (\d+)\)$/) {
+            $header{version} = $1 if ($1 != 0);
+        } elsif (s/^\+\+\+ \S+/+++ $indexPath/) {
+            $foundHeaderEnding = 1;
+        }
+
+        $svnConvertedText .= "$_$eol"; # Also restore EOL characters.
+        if ($foundHeaderEnding) {
+            $lastReadLine = <$fileHandle>;
+            last;
+        }
+    } # $lastReadLine is undef if while loop ran out.
+
+    $header{indexPath} = $indexPath;
+    $header{svnConvertedText} = $svnConvertedText;
+
+    return (\%header, $foundHeaderEnding, $lastReadLine);
 }
 
 # If possible, returns a ChangeLog patch equivalent to the given one,
