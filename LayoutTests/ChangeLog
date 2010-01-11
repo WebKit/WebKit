@@ -1,3 +1,13 @@
+2010-01-10  Daniel Bates  <dbates@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Adding XSSAuditor test http/tests/security/xssAuditor/malformed-HTML.html
+        to the Qt Skipped file as it times out. We need to look into test further.
+        See bug #33460 for more details.
+
+        * platform/qt/Skipped:
+
 2010-01-10  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

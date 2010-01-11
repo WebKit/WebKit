@@ -4929,6 +4929,9 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
 http/tests/security/originHeader/origin-header-for-empty.html
 
+# XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
+http/tests/security/xssAuditor/malformed-HTML.html
+
 # Skip xmlhttprequest tests
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
