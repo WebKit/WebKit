@@ -60,6 +60,7 @@ class CachedResource;
 class Database;
 class Document;
 class DocumentLoader;
+class Element;
 class GraphicsContext;
 class HitTestResult;
 class InjectedScriptHost;
@@ -187,6 +188,10 @@ public:
 
     void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
     void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
+    
+    void didInsertDOMNode(Node*);
+    void didRemoveDOMNode(Node*);
+    void didModifyDOMAttr(Element*);
                                                         
     void getCookies(long callId);
 

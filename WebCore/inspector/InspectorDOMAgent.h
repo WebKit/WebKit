@@ -98,6 +98,10 @@ namespace WebCore {
         void setDocument(Document* document);
         void releaseDanglingNodes();
 
+        void didInsertDOMNode(Node*);
+        void didRemoveDOMNode(Node*);
+        void didModifyDOMAttr(Element*);
+
         Node* nodeForId(long nodeId);
         Node* nodeForPath(const String& path);
         long pushNodePathToFrontend(Node* node);

@@ -1874,6 +1874,24 @@ void InspectorController::deleteCookie(const String& cookieName, const String& d
     }
 }
 
+void InspectorController::didInsertDOMNode(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didInsertDOMNode(node);
+}
+
+void InspectorController::didRemoveDOMNode(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didRemoveDOMNode(node);
+}
+
+void InspectorController::didModifyDOMAttr(Element* element)
+{
+    if (m_domAgent)
+        m_domAgent->didModifyDOMAttr(element);
+}
+
 }  // namespace WebCore
     
 #endif // ENABLE(INSPECTOR)
