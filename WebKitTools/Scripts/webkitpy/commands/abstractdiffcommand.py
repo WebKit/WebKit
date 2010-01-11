@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,36 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
+from webkitpy.bugzilla import parse_bug_id
+from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommand
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
-from webkitpy.changelogs_unittest import *
-from webkitpy.commands.abstractdiffcommand_unittest import *
-from webkitpy.commands.download_unittest import *
-from webkitpy.commands.early_warning_system_unittest import *
-from webkitpy.commands.upload_unittest import *
-from webkitpy.commands.queries_unittest import *
-from webkitpy.commands.queues_unittest import *
-from webkitpy.committers_unittest import *
-from webkitpy.credentials_unittest import *
-from webkitpy.diff_parser_unittest import *
-from webkitpy.executive_unittest import *
-from webkitpy.multicommandtool_unittest import *
-from webkitpy.networktransaction_unittest import *
-from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style.unittests import * # for check-webkit-style
-from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
 
-if __name__ == "__main__":
-    # FIXME: This is a hack, but I'm tired of commenting out the test.
-    #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-    if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        sys.argv.remove("--all")
-        from webkitpy.scm_unittest import *
-
-    unittest.main()
+class AbstractDiffCommand(AbstractSequencedCommand):
+    def _bug_id(self, args, tool):
+        # Perfer a bug id passed as an argument over a bug URL in the ChangeLogs.
+        bug_id = args and args[0]
+        if not bug_id:
+            bug_id = parse_bug_id(tool.scm().commit_message_for_this_commit().message())
+        return bug_id

@@ -1,3 +1,20 @@
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        bugzilla-tool submit-patch mistakenly picks up bug URLs in non-ChangeLog files
+        https://bugs.webkit.org/show_bug.cgi?id=33197
+
+        We should just search for bug numbers in the ChangeLogs instead of in
+        the whole diff.
+ 
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/commands/abstractdiffcommand.py: Added.
+        * Scripts/webkitpy/commands/abstractdiffcommand_unittest.py: Added.
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+
 2010-01-11  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by David Kilzer.

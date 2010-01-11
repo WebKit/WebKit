@@ -36,6 +36,7 @@ import webkitpy.steps as steps
 from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."
 from webkitpy.changelogs import ChangeLog
+from webkitpy.commands.abstractdiffcommand import AbstractDiffCommand
 from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.executive import ScriptError
@@ -66,7 +67,7 @@ class BuildAndTest(AbstractSequencedCommand):
     ]
 
 
-class Land(AbstractSequencedCommand):
+class Land(AbstractDiffCommand):
     name = "land"
     help_text = "Land the current working directory diff and updates the associated bug if any"
     argument_names = "[BUGID]"
@@ -88,7 +89,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
         return {
             "patch" : {
                 "id" : None,
-                "bug_id" : (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
+                "bug_id" : self._bug_id(args, tool),
             }
         }
 
@@ -268,6 +269,7 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
     @staticmethod
     def _parse_bug_id_from_revision_diff(tool, revision):
         original_diff = tool.scm().diff_for_revision(revision)
+        # FIXME: This is wrong because it picks up bug numbers outside of ChangeLogs
         return parse_bug_id(original_diff)
 
     def execute(self, options, args, tool):
