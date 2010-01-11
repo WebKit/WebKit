@@ -1,3 +1,16 @@
+2010-01-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Nikolas Zimmerman.
+
+        Bad DOM performance in large SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=30055
+
+        Cull RenderPaths before passing on to the underlying graphics system.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::nodeAtFloatPoint):
+
 2010-01-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
