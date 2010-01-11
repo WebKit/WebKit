@@ -1,3 +1,12 @@
+2010-01-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Have "Paste and Match Style" fire the dom paste event.
+        https://bugs.webkit.org/show_bug.cgi?id=30639
+
+        * editing/execCommand/paste-and-match-style-event.html: Added.
+
 2010-01-10  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed, fix typo.
