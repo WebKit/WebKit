@@ -1098,6 +1098,11 @@ bool QWebFrame::scrollRecursively(int dx, int dy)
     return (scrolledHorizontal || scrolledVertical || scrolledOverflow);
 }
 
+bool QWEBKIT_EXPORT qtwebkit_webframe_scrollRecursively(QWebFrame* qFrame, int dx, int dy)
+{
+    return qFrame->scrollRecursively(dx, dy);
+}
+
 /*!
   \property QWebFrame::scrollPosition
   \since 4.5

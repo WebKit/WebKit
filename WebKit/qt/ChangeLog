@@ -1,3 +1,15 @@
+2010-01-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Add private API for QWebFrame scrolling, to maintain binary compatibility with Qt 4.6.
+
+        This is just a temporary addition until we have introduced #ifdefs to allow
+        safely removing the private API again.
+
+        * Api/qwebframe.cpp:
+        (qtwebkit_webframe_scrollRecursively):
+
 2010-01-10  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Adam Barth.
