@@ -22,13 +22,12 @@ window.onload = function () {
     log("Test begins");
 
     // The setTimeout handlers will get called after the
-    // event listeners, because setTimeout has a minimum wait time
-    // of 10ms while postMessage has no minimum wait time.
+    // event listeners.
     postMessage("Message1", "*");
-    setTimeout("log('setTimeout1')", 0);
     postMessage("Message2", "*");
-    setTimeout("log('setTimeout2')", 0);
     postMessage("Message3", "*");
+    setTimeout("log('setTimeout1')", 0);
+    setTimeout("log('setTimeout2')", 0);
     setTimeout(done, 0);
     log("Events queued");
 }
