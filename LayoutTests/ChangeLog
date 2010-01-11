@@ -1,3 +1,18 @@
+2010-01-10  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        RegExp.prototype.toString returns "//" for empty regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=33319
+
+        Add new test cases and adapt existing ones.
+
+        * fast/js/kde/RegExp-expected.txt:
+        * fast/js/kde/script-tests/RegExp.js:
+        * fast/js/regexp-compile-expected.txt:
+        * fast/js/script-tests/regexp-compile.js:
+        * fast/regex/non-pattern-characters-expected.txt:
+
 2010-01-10  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Adam Barth.

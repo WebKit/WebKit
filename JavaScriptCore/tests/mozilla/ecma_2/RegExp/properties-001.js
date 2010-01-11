@@ -56,8 +56,15 @@ function AddRegExpCases( re, s, g, i, m, l ) {
                  s,
                  re.source );
 
+/*
+ * http://bugzilla.mozilla.org/show_bug.cgi?id=225550 changed
+ * the behavior of toString() and toSource() on empty regexps.
+ * So branch if |s| is the empty string -
+ */
+    var S = s? s : '(?:)';
+
     AddTestCase( re + ".toString()",
-                 "/" + s +"/" + (g?"g":"") + (i?"i":"") +(m?"m":""),
+                 "/" + S +"/" + (g?"g":"") + (i?"i":"") +(m?"m":""),
                  re.toString() );
 
     AddTestCase( re + ".global",

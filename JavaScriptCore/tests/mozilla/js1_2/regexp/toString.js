@@ -41,7 +41,7 @@
     // var re = new RegExp(); re.toString()
 	var re = new RegExp();
 	testcases[count++] = new TestCase ( SECTION, "var re = new RegExp(); re.toString()",
-	                                    '//', re.toString());
+	                                    '/(?:)/', re.toString());
 
     // re = /.+/; re.toString();
     re = /.+/;

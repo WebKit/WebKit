@@ -1,3 +1,20 @@
+2010-01-10  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        RegExp.prototype.toString returns "//" for empty regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=33319
+
+        "//" starts a single-line comment, hence "/(?:)/" should be used, according to ECMA.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
+        * tests/mozilla/ecma_2/RegExp/properties-001.js:
+        (AddRegExpCases):
+        * tests/mozilla/js1_2/regexp/toString.js:
+        Update relevant Mozilla tests (Mozilla has had this behavior since November 2003).
+
 2010-01-10  Darin Adler  <darin@apple.com>
 
         * tests/mozilla/ecma/Array/15.4.1.1.js: Added property allow-tabs.

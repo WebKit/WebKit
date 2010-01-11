@@ -92,6 +92,10 @@ PASS /\u0061/.source is '\\u0061'
 PASS 'abc'.match(/\u0062/).toString() is 'b'
 FAIL Object.prototype.toString.apply(RegExp.prototype) should be [object RegExp]. Was [object RegExpPrototype].
 PASS typeof RegExp.prototype.toString() is 'string'
+PASS new RegExp().toString() is '/(?:)/'
+PASS (new RegExp('(?:)')).source is '(?:)'
+PASS /(?:)/.toString() is '/(?:)/'
+PASS /(?:)/.source is '(?:)'
 Done.
 PASS successfullyParsed is true
 

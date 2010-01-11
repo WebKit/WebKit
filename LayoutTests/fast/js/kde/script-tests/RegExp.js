@@ -148,5 +148,11 @@ shouldBe("Object.prototype.toString.apply(RegExp.prototype)",
 // it doesn't throw an exception
 shouldBe("typeof RegExp.prototype.toString()", "'string'");
 
+// Empty regular expressions have string representation /(?:)/
+shouldBe("new RegExp().toString()", "'/(?:)/'");
+shouldBe("(new RegExp('(?:)')).source", "'(?:)'");
+shouldBe("/(?:)/.toString()", "'/(?:)/'");
+shouldBe("/(?:)/.source", "'(?:)'");
+
 debug("Done.");
 successfullyParsed = true
