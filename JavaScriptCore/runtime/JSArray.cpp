@@ -152,6 +152,7 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength)
     m_storage->m_numValuesInVector = 0;
     m_storage->m_sparseValueMap = 0;
     m_storage->lazyCreationData = 0;
+    m_storage->reportedMapCapacity = 0;
 
     JSValue* vector = m_storage->m_vector;
     for (size_t i = 0; i < initialCapacity; ++i)
@@ -172,6 +173,8 @@ JSArray::JSArray(NonNullPassRefPtr<Structure> structure, const ArgList& list)
     m_vectorLength = initialCapacity;
     m_storage->m_numValuesInVector = initialCapacity;
     m_storage->m_sparseValueMap = 0;
+    m_storage->lazyCreationData = 0;
+    m_storage->reportedMapCapacity = 0;
 
     size_t i = 0;
     ArgList::const_iterator end = list.end();
