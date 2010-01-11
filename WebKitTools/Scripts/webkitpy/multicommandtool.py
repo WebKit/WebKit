@@ -131,7 +131,7 @@ class Command(object):
 
 
 # FIXME: This should just be rolled into Command.  help_text and argument_names do not need to be instance variables.
-class AbstractDeclarativeCommmand(Command):
+class AbstractDeclarativeCommand(Command):
     help_text = None
     argument_names = None
     long_help = None
@@ -159,7 +159,7 @@ class HelpPrintingOptionParser(OptionParser):
         return ""
 
 
-class HelpCommand(AbstractDeclarativeCommmand):
+class HelpCommand(AbstractDeclarativeCommand):
     name = "help"
     help_text = "Display information about this program or its subcommands"
     argument_names = "[COMMAND]"
@@ -168,7 +168,7 @@ class HelpCommand(AbstractDeclarativeCommmand):
         options = [
             make_option("-a", "--all-commands", action="store_true", dest="show_all_commands", help="Print all available commands"),
         ]
-        AbstractDeclarativeCommmand.__init__(self, options)
+        AbstractDeclarativeCommand.__init__(self, options)
         self.show_all_commands = False # A hack used to pass --all-commands to _help_epilog even though it's called by the OptionParser.
 
     def _help_epilog(self):

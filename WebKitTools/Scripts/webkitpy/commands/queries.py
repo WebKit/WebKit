@@ -34,10 +34,10 @@ from optparse import make_option
 from webkitpy.buildbot import BuildBot
 from webkitpy.committers import CommitterList
 from webkitpy.webkit_logging import log
-from webkitpy.multicommandtool import AbstractDeclarativeCommmand
+from webkitpy.multicommandtool import AbstractDeclarativeCommand
 
 
-class BugsToCommit(AbstractDeclarativeCommmand):
+class BugsToCommit(AbstractDeclarativeCommand):
     name = "bugs-to-commit"
     help_text = "List bugs in the commit-queue"
 
@@ -47,7 +47,7 @@ class BugsToCommit(AbstractDeclarativeCommmand):
             print "%s" % bug_id
 
 
-class PatchesToCommit(AbstractDeclarativeCommmand):
+class PatchesToCommit(AbstractDeclarativeCommand):
     name = "patches-to-commit"
     help_text = "List patches in the commit-queue"
 
@@ -58,14 +58,14 @@ class PatchesToCommit(AbstractDeclarativeCommmand):
             print "%s" % patch["url"]
 
 
-class PatchesToCommitQueue(AbstractDeclarativeCommmand):
+class PatchesToCommitQueue(AbstractDeclarativeCommand):
     name = "patches-to-commit-queue"
     help_text = "Patches which should be added to the commit queue"
     def __init__(self):
         options = [
             make_option("--bugs", action="store_true", dest="bugs", help="Output bug links instead of patch links"),
         ]
-        AbstractDeclarativeCommmand.__init__(self, options=options)
+        AbstractDeclarativeCommand.__init__(self, options=options)
 
     @staticmethod
     def _needs_commit_queue(patch):
@@ -93,7 +93,7 @@ class PatchesToCommitQueue(AbstractDeclarativeCommmand):
                 print "%s" % tool.bugs.attachment_url_for_id(patch["id"], action="edit")
 
 
-class PatchesToReview(AbstractDeclarativeCommmand):
+class PatchesToReview(AbstractDeclarativeCommand):
     name = "patches-to-review"
     help_text = "List patches that are pending review"
 
@@ -104,7 +104,7 @@ class PatchesToReview(AbstractDeclarativeCommmand):
             print patch_id
 
 
-class ReviewedPatches(AbstractDeclarativeCommmand):
+class ReviewedPatches(AbstractDeclarativeCommand):
     name = "reviewed-patches"
     help_text = "List r+'d patches on a bug"
     argument_names = "BUGID"
@@ -116,7 +116,7 @@ class ReviewedPatches(AbstractDeclarativeCommmand):
             print "%s" % patch["url"]
 
 
-class TreeStatus(AbstractDeclarativeCommmand):
+class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
     help_text = "Print the status of the %s buildbots" % BuildBot.default_host
     long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder

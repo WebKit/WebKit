@@ -26,15 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.multicommandtool import AbstractDeclarativeCommmand
+from webkitpy.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.stepsequence import StepSequence
 
 
-class AbstractSequencedCommmand(AbstractDeclarativeCommmand):
+class AbstractSequencedCommand(AbstractDeclarativeCommand):
     steps = None
     def __init__(self):
         self._sequence = StepSequence(self.steps)
-        AbstractDeclarativeCommmand.__init__(self, self._sequence.options())
+        AbstractDeclarativeCommand.__init__(self, self._sequence.options())
 
     def _prepare_state(self, options, args, tool):
         return None

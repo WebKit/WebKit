@@ -36,16 +36,16 @@ import webkitpy.steps as steps
 from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."
 from webkitpy.changelogs import ChangeLog
-from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommmand
+from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.comments import bug_comment_from_commit_text
 from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
-from webkitpy.multicommandtool import AbstractDeclarativeCommmand
+from webkitpy.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.stepsequence import StepSequence
 
 
-class Build(AbstractSequencedCommmand):
+class Build(AbstractSequencedCommand):
     name = "build"
     help_text = "Update working copy and build"
     steps = [
@@ -55,7 +55,7 @@ class Build(AbstractSequencedCommmand):
     ]
 
 
-class BuildAndTest(AbstractSequencedCommmand):
+class BuildAndTest(AbstractSequencedCommand):
     name = "build-and-test"
     help_text = "Update working copy, build, and run the tests"
     steps = [
@@ -66,7 +66,7 @@ class BuildAndTest(AbstractSequencedCommmand):
     ]
 
 
-class Land(AbstractSequencedCommmand):
+class Land(AbstractSequencedCommand):
     name = "land"
     help_text = "Land the current working directory diff and updates the associated bug if any"
     argument_names = "[BUGID]"
@@ -93,7 +93,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
         }
 
 
-class AbstractPatchProcessingCommand(AbstractDeclarativeCommmand):
+class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.
     #
@@ -244,7 +244,7 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
-class Rollout(AbstractSequencedCommmand):
+class Rollout(AbstractSequencedCommand):
     name = "rollout"
     show_in_main_help = True
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
