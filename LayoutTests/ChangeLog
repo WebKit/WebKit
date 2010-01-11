@@ -1,3 +1,13 @@
+2010-01-11  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33411
+        
+        Missing updated test result for gtk.
+
+        * platform/gtk/editing/deleting/5115601-expected.txt:
+
 2010-01-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
