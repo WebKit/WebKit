@@ -1,3 +1,13 @@
+2010-01-11  Darin Adler  <darin@apple.com>
+
+        Try to get find-kana and find-russian tests passing on Qt.
+
+        * platform/qt/fast/text/find-kana-expected.txt: Copied from fast/text/find-kana-expected.txt.
+        * platform/qt/fast/text/find-russian-expected.txt: Copied from fast/text/find-russian-expected.txt.
+        Changed to expect failures because text searching does not use
+        ICU's usearch on this platform, and the non-usearch code is much
+        less capable.
+
 2010-01-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
