@@ -7,8 +7,10 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 function runTest() {
+    // Schedule a return to the main event loop so that the javascript: URL
+    // has a chance to run.
+    setTimeout(done, 0);
     window.open("javascript:alert('FAIL')", "tg");
-    window.open("javascript:done()", "_self");
 }
 function done() {
     if (window.layoutTestController)
