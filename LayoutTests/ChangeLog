@@ -1,7 +1,12 @@
+2010-01-11  Darin Adler  <darin@apple.com>
+
+        Try to get find-kana test passing on Tiger and Leopard.
+
+        * platform/mac-leopard/fast/text/find-kana-expected.txt: Copied from fast/text/find-kana-expected.txt.
+        Changed to expect failures due to an older version of ICU on those platforms.
+
 2010-01-11  Brian Weinstein  <bweinstein@apple.com>
 
-        Reviewed by NOBODY.
-        
         Updated Windows expected results after r53085.
 
         * platform/win/editing/selection/mixed-editability-10-expected.txt:
