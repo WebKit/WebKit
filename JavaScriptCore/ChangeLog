@@ -1,3 +1,10 @@
+2010-01-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+        Remove extraneous entries from def file causing build warning.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-01-10  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.
