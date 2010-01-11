@@ -1,5 +1,25 @@
 2010-01-10  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Add defensive initialization of iframe sandbox flags
+        https://bugs.webkit.org/show_bug.cgi?id=32368
+
+        Test the mutating the allow-same-origin directive in the sandbox
+        attribute does not affect the current document (but does affect the
+        next document).
+
+        * http/tests/security/resources/sandboxed-iframe-origin-add-step1.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-origin-add-step2.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-origin-remove-step1.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-origin-remove-step2.html: Added.
+        * http/tests/security/sandboxed-iframe-origin-add-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-origin-add.html: Added.
+        * http/tests/security/sandboxed-iframe-origin-remove-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-origin-remove.html: Added.
+
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         http/tests/security/xss-DENIED-window-open-javascript-url.html timed out on Windows Debug Bot

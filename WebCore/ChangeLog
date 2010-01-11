@@ -1,3 +1,25 @@
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add defensive initialization of iframe sandbox flags
+        https://bugs.webkit.org/show_bug.cgi?id=32368
+
+        We now initialize the SecurityOrigin's sandbox state directly duing
+        construction.  This lets us properly set the isUnique bit.
+
+        Tests: http/tests/security/sandboxed-iframe-origin-add.html
+               http/tests/security/sandboxed-iframe-origin-remove.html
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::setSandboxFlags):
+        * page/SecurityOrigin.h:
+
 2010-01-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

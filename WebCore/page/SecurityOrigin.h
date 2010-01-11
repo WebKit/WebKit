@@ -49,7 +49,7 @@ class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
 public:
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
     static PassRefPtr<SecurityOrigin> createFromString(const String&);
-    static PassRefPtr<SecurityOrigin> create(const KURL&);
+    static PassRefPtr<SecurityOrigin> create(const KURL&, SandboxFlags = SandboxNone);
     static PassRefPtr<SecurityOrigin> createEmpty();
 
     // Create a deep copy of this SecurityOrigin. This method is useful
@@ -187,7 +187,7 @@ public:
     static void resetOriginAccessWhiteLists();
 
 private:
-    explicit SecurityOrigin(const KURL&);
+    SecurityOrigin(const KURL&, SandboxFlags);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     SandboxFlags m_sandboxFlags;

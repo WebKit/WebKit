@@ -77,26 +77,18 @@ static URLSchemesMap& schemesWithUniqueOrigins()
     return schemesWithUniqueOrigins;
 }
 
-SecurityOrigin::SecurityOrigin(const KURL& url)
-    : m_sandboxFlags(SandboxNone)
+SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
+    : m_sandboxFlags(sandboxFlags)
     , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
     , m_host(url.host().isNull() ? "" : url.host().lower())
     , m_port(url.port())
-    , m_isUnique(false)
+    , m_isUnique(isSandboxed(SandboxOrigin) || shouldTreatURLSchemeAsNoAccess(m_protocol))
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
 {
     // These protocols do not create security origins; the owner frame provides the origin
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = "";
-
-    // Some URLs are not allowed access to anything other than themselves.
-    if (shouldTreatURLSchemeAsNoAccess(m_protocol))
-        m_isUnique = true;
-
-    // If this ASSERT becomes false in the future, please consider the impact
-    // of m_sandoxFlags on m_isUnique.
-    ASSERT(m_sandboxFlags == SandboxNone);
 
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
@@ -131,11 +123,11 @@ bool SecurityOrigin::isEmpty() const
     return m_protocol.isEmpty();
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, SandboxFlags sandboxFlags)
 {
     if (!url.isValid())
-        return adoptRef(new SecurityOrigin(KURL()));
-    return adoptRef(new SecurityOrigin(url));
+        return adoptRef(new SecurityOrigin(KURL(), sandboxFlags));
+    return adoptRef(new SecurityOrigin(url, sandboxFlags));
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createEmpty()
@@ -271,18 +263,11 @@ void SecurityOrigin::grantUniversalAccess()
 
 void SecurityOrigin::setSandboxFlags(SandboxFlags flags)
 {
+    // Although you might think that we should set m_isUnique based on
+    // SandboxOrigin, that's not actually the right behavior. We're supposed to
+    // freeze the origin of a document when it is created, even if the sandbox
+    // flags change after that point in time.
     m_sandboxFlags = flags;
-    if (isSandboxed(SandboxOrigin))
-        m_isUnique = true;
-
-    // Although you might think that we should set m_isUnique to false when
-    // flags doesn't contain SandboxOrigin, that's not actually the right
-    // behavior. We're supposed to freeze the origin of a document when it
-    // is created, even if the sandbox flags change after that point in time.
-    //
-    // FIXME: Our current behavior here is buggy because we need to
-    //        distinguish between the sandbox flags at creation and the
-    //        sandbox flags that might come about later.
 }
 
 bool SecurityOrigin::isLocal() const

@@ -4340,10 +4340,8 @@ void Document::initSecurityContext()
     // loading URL.
     const KURL& url = m_frame->loader()->url();
     m_cookieURL = url;
-    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url));
+    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url, m_frame->loader()->sandboxFlags()));
 
-    updateSandboxFlags();
- 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
