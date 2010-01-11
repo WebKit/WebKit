@@ -610,10 +610,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     // See <rdar://problem/5380697> .  This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
     if (!redirectResponse)
         return newRequest;
-    
-    LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%p", m_handle, connection, [newRequest description], redirectResponse);
 
-    if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)redirectResponse statusCode] == 307) {
+#if !LOG_DISABLED
+    if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]])
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%d, Location:<%@>", m_handle, connection, [newRequest description], static_cast<int>([(id)redirectResponse statusCode]), [[(id)redirectResponse allHeaderFields] objectForKey:@"Location"]);
+    else
+        LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
+#endif
+
+    if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)redirectResponse statusCode] == 307) {
         String originalMethod = m_handle->request().httpMethod();
         if (!equalIgnoringCase(originalMethod, String([newRequest HTTPMethod]))) {
             NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
