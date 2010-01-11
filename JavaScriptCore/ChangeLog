@@ -1,3 +1,11 @@
+2010-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Enable JIT and YARR_JIT if (CPU(X86_64) && OS(LINUX) && GCC_VERSION >= 40100)
+
+        * wtf/Platform.h:
+
 2010-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Alexey Proskuryakov.
