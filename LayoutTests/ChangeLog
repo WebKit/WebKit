@@ -1,3 +1,21 @@
+2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Adam Roben & Dirk Schulze.
+
+        svg <text> fails to update when setting x/y
+        https://bugs.webkit.org/show_bug.cgi?id=22384
+
+        Add simple tests covering SVGLengthList & SVGNumberList updates.
+
+        * platform/mac/svg/custom/text-xy-updates-SVGList-expected.checksum: Added.
+        * platform/mac/svg/custom/text-xy-updates-SVGList-expected.png: Added.
+        * platform/mac/svg/custom/text-xy-updates-SVGList-expected.txt: Added.
+        * svg/custom/text-xy-updates-SVGList.xhtml: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-rotate-prop.js: Added.
+        (executeTest):
+
 2010-01-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

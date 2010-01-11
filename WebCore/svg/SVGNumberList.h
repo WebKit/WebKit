@@ -29,7 +29,7 @@ namespace WebCore {
 
     class String;
 
-    class SVGNumberList : public SVGList<float> {
+    class SVGNumberList : public SVGPODList<float> {
     public:
         static PassRefPtr<SVGNumberList> create(const QualifiedName& attributeName) { return adoptRef(new SVGNumberList(attributeName)); }
         virtual ~SVGNumberList();

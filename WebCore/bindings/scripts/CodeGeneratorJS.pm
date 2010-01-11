@@ -1588,8 +1588,28 @@ sub GenerateImplementation
                 push(@implContent, "        return jsUndefined();\n");
             }
 
+            # Special case for JSSVGLengthList / JSSVGTransformList / JSSVGPointList / JSSVGNumberList
+            # Instead of having JSSVG*Custom.cpp implementations for the SVGList interface for all of these
+            # classes, we directly forward the calls to JSSVGPODListCustom, which centralizes the otherwise
+            # duplicated code for the JSSVG*List classes mentioned above.
+            my $svgPODListType;
+            if ($implClassName =~ /SVG.*List/) {
+                $svgPODListType = $implClassName;
+                $svgPODListType =~ s/List$//;
+                $svgPODListType = "" unless $codeGenerator->IsPodType($svgPODListType);
+                
+                # Ignore additional (non-SVGList) SVGTransformList methods, that are not handled through JSSVGPODListCustom
+                $svgPODListType = "" if $functionImplementationName =~ /createSVGTransformFromMatrix/;
+                $svgPODListType = "" if $functionImplementationName =~ /consolidate/;
+            }
+
             if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
                 push(@implContent, "    return castedThisObj->" . $functionImplementationName . "(exec, args);\n");
+            } elsif ($svgPODListType) {
+                $implIncludes{"JS${svgPODListType}.h"} = 1;
+                $implIncludes{"JSSVGPODListCustom.h"} = 1;
+                push(@implContent, "    return JSSVGPODListCustom::$functionImplementationName<$className, " . GetNativeType($svgPODListType)
+                                 . ">(castedThisObj, exec, args, to" . $svgPODListType . ");\n");
             } else {
                 if ($podType) {
                     push(@implContent, "    JSSVGPODTypeWrapper<$podType>* wrapper = castedThisObj->impl();\n");

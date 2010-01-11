@@ -2938,8 +2938,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         bindings/js/JSSVGMatrixCustom.cpp \
         bindings/js/JSSVGPathSegCustom.cpp \
         bindings/js/JSSVGPathSegListCustom.cpp \
-        bindings/js/JSSVGPointListCustom.cpp \
-        bindings/js/JSSVGTransformListCustom.cpp \
         css/SVGCSSComputedStyleDeclaration.cpp \
         css/SVGCSSParser.cpp \
         css/SVGCSSStyleSelector.cpp \

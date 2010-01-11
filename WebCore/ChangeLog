@@ -1,3 +1,46 @@
+2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Adam Roben & Dirk Schulze.
+
+        svg <text> fails to update when setting x/y
+        https://bugs.webkit.org/show_bug.cgi?id=22384
+
+        Introduce JSSVGPODListCustom, refactoring the existing custom code for SVG POD type lists.
+        (Currently SVGTransformList/SVGPointList was handled correctly, and SVGLengthList/SVGNumberList not)
+
+        Remove the need for custom JSSVG*List.cpp implementations, but instead tweak CodeGeneratorJS.pm,
+        to call into the new JSSVGPODListCustom methods. Fixes dynamic updates of the SVGTextElement
+        'rotate' & 'x'/'y' SVG DOM properties.
+
+        Tests: svg/custom/text-xy-updates-SVGList.xhtml
+               svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html
+  
+        * Android.jscbindings.mk: Remove old files from build, add the new header.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSSVGPODListCustom.h: Copied from bindings/js/JSSVGTransformListCustom.cpp. Refactored code to be sharable between all JSSVG*List classes.
+        (WebCore::JSSVGPODListCustom::finishGetter):
+        (WebCore::JSSVGPODListCustom::finishSetter):
+        (WebCore::JSSVGPODListCustom::finishSetterReadOnlyResult):
+        (WebCore::JSSVGPODListCustom::clear):
+        (WebCore::JSSVGPODListCustom::initialize):
+        (WebCore::JSSVGPODListCustom::getItem):
+        (WebCore::JSSVGPODListCustom::insertItemBefore):
+        (WebCore::JSSVGPODListCustom::replaceItem):
+        (WebCore::JSSVGPODListCustom::removeItem):
+        (WebCore::JSSVGPODListCustom::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp: Removed.
+        * bindings/js/JSSVGTransformListCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm: Forward any SVGList call on POD list types to the new JSSVGPODListCustom.
+        * svg/SVGNumberList.cpp: Make SVGNumberList a SVGPODList, instead of a SVGList, to make dynamic updates work.
+        (WebCore::SVGNumberList::SVGNumberList):
+        * svg/SVGNumberList.h:
+        * svg/SVGPointList.idl: Remove JSCCustom markers everywhere.
+        * svg/SVGTransformList.idl: Ditto.
+
 2010-01-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

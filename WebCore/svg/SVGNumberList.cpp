@@ -28,7 +28,7 @@
 namespace WebCore {
 
 SVGNumberList::SVGNumberList(const QualifiedName& attributeName)
-    : SVGList<float>(attributeName)
+    : SVGPODList<float>(attributeName)
 {
 }
 
