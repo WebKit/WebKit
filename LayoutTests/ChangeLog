@@ -1,3 +1,55 @@
+2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber-stamped by Dirk Schulze.
+
+        Update SVG test baseline, after the SVG text painting changes, a while ago.
+        The differences are all below <0.1%, and only show up when running with --tolerance 0.
+
+        * platform/mac/svg/W3C-SVG-1.1/text-deco-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.png:
+        * platform/mac/svg/batik/text/textDecoration2-expected.checksum:
+        * platform/mac/svg/batik/text/textDecoration2-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.checksum:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/mac/svg/batik/text/textProperties-expected.checksum:
+        * platform/mac/svg/batik/text/textProperties-expected.png:
+        * platform/mac/svg/batik/text/textStyles-expected.checksum:
+        * platform/mac/svg/batik/text/textStyles-expected.png:
+        * platform/mac/svg/batik/text/verticalText-expected.checksum:
+        * platform/mac/svg/batik/text/verticalText-expected.png:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/mac/svg/text/selection-background-color-expected.checksum:
+        * platform/mac/svg/text/selection-background-color-expected.png:
+        * platform/mac/svg/text/text-align-04-b-expected.checksum:
+        * platform/mac/svg/text/text-align-04-b-expected.png:
+        * platform/mac/svg/text/text-deco-01-b-expected.checksum:
+        * platform/mac/svg/text/text-deco-01-b-expected.png:
+        * platform/mac/svg/text/text-path-01-b-expected.checksum:
+        * platform/mac/svg/text/text-path-01-b-expected.png:
+        * platform/mac/svg/text/text-text-01-b-expected.checksum:
+        * platform/mac/svg/text/text-text-01-b-expected.png:
+        * platform/mac/svg/text/text-text-03-b-expected.checksum:
+        * platform/mac/svg/text/text-text-03-b-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.checksum:
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-07-t-expected.checksum:
+        * platform/mac/svg/text/text-text-07-t-expected.png:
+        * platform/mac/svg/text/text-text-08-b-expected.checksum:
+        * platform/mac/svg/text/text-text-08-b-expected.png:
+
 2010-01-11  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Antti Koivisto.
