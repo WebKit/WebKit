@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,10 +73,16 @@ public:
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 
 private:
+    bool isBadMatch(const UChar*, size_t length) const;
+
     String m_target;
     Vector<UChar> m_buffer;
     size_t m_overlap;
     bool m_atBreak;
+
+    bool m_targetRequiresKanaWorkaround;
+    Vector<UChar> m_normalizedTarget;
+    mutable Vector<UChar> m_normalizedMatch;
 
 #else
 
@@ -1489,9 +1495,213 @@ static inline void unlockSearcher()
 #endif
 }
 
+// ICU's search ignores the distinction between small kana letters and ones
+// that are not small, and also characters that differ only in the voicing
+// marks when considering only primary collation strength diffrences.
+// This is not helpful for end users, since these differences make words
+// distinct, so for our purposes we need these to be considered.
+// The Unicode folks do not think the collation algorithm should be
+// changed. To work around this, we would like to tailor the ICU searcher,
+// but we can't get that to work yet. So instead, we check for cases where
+// these differences occur, and skip those matches.
+
+// We refer to the above technique as the "kana workaround". The next few
+// functions are helper functinos for the kana workaround.
+
+static inline bool isKanaLetter(UChar character)
+{
+    // Hiragana letters.
+    if (character >= 0x3041 && character <= 0x3096)
+        return true;
+
+    // Katakana letters.
+    if (character >= 0x30A1 && character <= 0x30FA)
+        return true;
+    if (character >= 0x31F0 && character <= 0x31FF)
+        return true;
+
+    // Halfwidth katakana letters.
+    if (character >= 0xFF66 && character <= 0xFF9D && character != 0xFF70)
+        return true;
+
+    return false;
+}
+
+static inline bool isSmallKanaLetter(UChar character)
+{
+    ASSERT(isKanaLetter(character));
+
+    switch (character) {
+    case 0x3041: // HIRAGANA LETTER SMALL A
+    case 0x3043: // HIRAGANA LETTER SMALL I
+    case 0x3045: // HIRAGANA LETTER SMALL U
+    case 0x3047: // HIRAGANA LETTER SMALL E
+    case 0x3049: // HIRAGANA LETTER SMALL O
+    case 0x3063: // HIRAGANA LETTER SMALL TU
+    case 0x3083: // HIRAGANA LETTER SMALL YA
+    case 0x3085: // HIRAGANA LETTER SMALL YU
+    case 0x3087: // HIRAGANA LETTER SMALL YO
+    case 0x308E: // HIRAGANA LETTER SMALL WA
+    case 0x3095: // HIRAGANA LETTER SMALL KA
+    case 0x3096: // HIRAGANA LETTER SMALL KE
+    case 0x30A1: // KATAKANA LETTER SMALL A
+    case 0x30A3: // KATAKANA LETTER SMALL I
+    case 0x30A5: // KATAKANA LETTER SMALL U
+    case 0x30A7: // KATAKANA LETTER SMALL E
+    case 0x30A9: // KATAKANA LETTER SMALL O
+    case 0x30C3: // KATAKANA LETTER SMALL TU
+    case 0x30E3: // KATAKANA LETTER SMALL YA
+    case 0x30E5: // KATAKANA LETTER SMALL YU
+    case 0x30E7: // KATAKANA LETTER SMALL YO
+    case 0x30EE: // KATAKANA LETTER SMALL WA
+    case 0x30F5: // KATAKANA LETTER SMALL KA
+    case 0x30F6: // KATAKANA LETTER SMALL KE
+    case 0x31F0: // KATAKANA LETTER SMALL KU
+    case 0x31F1: // KATAKANA LETTER SMALL SI
+    case 0x31F2: // KATAKANA LETTER SMALL SU
+    case 0x31F3: // KATAKANA LETTER SMALL TO
+    case 0x31F4: // KATAKANA LETTER SMALL NU
+    case 0x31F5: // KATAKANA LETTER SMALL HA
+    case 0x31F6: // KATAKANA LETTER SMALL HI
+    case 0x31F7: // KATAKANA LETTER SMALL HU
+    case 0x31F8: // KATAKANA LETTER SMALL HE
+    case 0x31F9: // KATAKANA LETTER SMALL HO
+    case 0x31FA: // KATAKANA LETTER SMALL MU
+    case 0x31FB: // KATAKANA LETTER SMALL RA
+    case 0x31FC: // KATAKANA LETTER SMALL RI
+    case 0x31FD: // KATAKANA LETTER SMALL RU
+    case 0x31FE: // KATAKANA LETTER SMALL RE
+    case 0x31FF: // KATAKANA LETTER SMALL RO
+    case 0xFF67: // HALFWIDTH KATAKANA LETTER SMALL A
+    case 0xFF68: // HALFWIDTH KATAKANA LETTER SMALL I
+    case 0xFF69: // HALFWIDTH KATAKANA LETTER SMALL U
+    case 0xFF6A: // HALFWIDTH KATAKANA LETTER SMALL E
+    case 0xFF6B: // HALFWIDTH KATAKANA LETTER SMALL O
+    case 0xFF6C: // HALFWIDTH KATAKANA LETTER SMALL YA
+    case 0xFF6D: // HALFWIDTH KATAKANA LETTER SMALL YU
+    case 0xFF6E: // HALFWIDTH KATAKANA LETTER SMALL YO
+    case 0xFF6F: // HALFWIDTH KATAKANA LETTER SMALL TU
+        return true;
+    }
+    return false;
+}
+
+enum VoicedSoundMarkType { NoVoicedSoundMark, VoicedSoundMark, SemiVoicedSoundMark };
+
+static inline VoicedSoundMarkType composedVoicedSoundMark(UChar character)
+{
+    ASSERT(isKanaLetter(character));
+
+    switch (character) {
+    case 0x304C: // HIRAGANA LETTER GA
+    case 0x304E: // HIRAGANA LETTER GI
+    case 0x3050: // HIRAGANA LETTER GU
+    case 0x3052: // HIRAGANA LETTER GE
+    case 0x3054: // HIRAGANA LETTER GO
+    case 0x3056: // HIRAGANA LETTER ZA
+    case 0x3058: // HIRAGANA LETTER ZI
+    case 0x305A: // HIRAGANA LETTER ZU
+    case 0x305C: // HIRAGANA LETTER ZE
+    case 0x305E: // HIRAGANA LETTER ZO
+    case 0x3060: // HIRAGANA LETTER DA
+    case 0x3062: // HIRAGANA LETTER DI
+    case 0x3065: // HIRAGANA LETTER DU
+    case 0x3067: // HIRAGANA LETTER DE
+    case 0x3069: // HIRAGANA LETTER DO
+    case 0x3070: // HIRAGANA LETTER BA
+    case 0x3073: // HIRAGANA LETTER BI
+    case 0x3076: // HIRAGANA LETTER BU
+    case 0x3079: // HIRAGANA LETTER BE
+    case 0x307C: // HIRAGANA LETTER BO
+    case 0x3094: // HIRAGANA LETTER VU
+    case 0x30AC: // KATAKANA LETTER GA
+    case 0x30AE: // KATAKANA LETTER GI
+    case 0x30B0: // KATAKANA LETTER GU
+    case 0x30B2: // KATAKANA LETTER GE
+    case 0x30B4: // KATAKANA LETTER GO
+    case 0x30B6: // KATAKANA LETTER ZA
+    case 0x30B8: // KATAKANA LETTER ZI
+    case 0x30BA: // KATAKANA LETTER ZU
+    case 0x30BC: // KATAKANA LETTER ZE
+    case 0x30BE: // KATAKANA LETTER ZO
+    case 0x30C0: // KATAKANA LETTER DA
+    case 0x30C2: // KATAKANA LETTER DI
+    case 0x30C5: // KATAKANA LETTER DU
+    case 0x30C7: // KATAKANA LETTER DE
+    case 0x30C9: // KATAKANA LETTER DO
+    case 0x30D0: // KATAKANA LETTER BA
+    case 0x30D3: // KATAKANA LETTER BI
+    case 0x30D6: // KATAKANA LETTER BU
+    case 0x30D9: // KATAKANA LETTER BE
+    case 0x30DC: // KATAKANA LETTER BO
+    case 0x30F4: // KATAKANA LETTER VU
+    case 0x30F7: // KATAKANA LETTER VA
+    case 0x30F8: // KATAKANA LETTER VI
+    case 0x30F9: // KATAKANA LETTER VE
+    case 0x30FA: // KATAKANA LETTER VO
+    case 0x30FE: // KATAKANA VOICED ITERATION MARK
+        return VoicedSoundMark;
+    case 0x3071: // HIRAGANA LETTER PA
+    case 0x3074: // HIRAGANA LETTER PI
+    case 0x3077: // HIRAGANA LETTER PU
+    case 0x307A: // HIRAGANA LETTER PE
+    case 0x307D: // HIRAGANA LETTER PO
+    case 0x30D1: // KATAKANA LETTER PA
+    case 0x30D4: // KATAKANA LETTER PI
+    case 0x30D7: // KATAKANA LETTER PU
+    case 0x30DA: // KATAKANA LETTER PE
+    case 0x30DD: // KATAKANA LETTER PO
+        return SemiVoicedSoundMark;
+    }
+    return NoVoicedSoundMark;
+}
+
+static inline bool isCombiningVoicedSoundMark(UChar character)
+{
+    switch (character) {
+    case 0x3099: // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK
+    case 0x309A: // COMBINING KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
+        return true;
+    }
+    return false;
+}
+
+static inline bool containsKanaLetters(const String& pattern)
+{
+    const UChar* characters = pattern.characters();
+    unsigned length = pattern.length();
+    for (unsigned i = 0; i < length; ++i) {
+        if (isKanaLetter(characters[i]))
+            return true;
+    }
+    return false;
+}
+
+static void normalizeCharacters(const UChar* characters, unsigned length, Vector<UChar>& buffer)
+{
+    ASSERT(length);
+
+    buffer.resize(length);
+
+    UErrorCode status = U_ZERO_ERROR;
+    size_t bufferSize = unorm_normalize(characters, length, UNORM_NFC, 0, buffer.data(), length, &status);
+    ASSERT(status == U_ZERO_ERROR || status == U_STRING_NOT_TERMINATED_WARNING || status == U_BUFFER_OVERFLOW_ERROR);
+    ASSERT(bufferSize);
+
+    buffer.resize(bufferSize);
+
+    if (status == U_ZERO_ERROR || status == U_STRING_NOT_TERMINATED_WARNING)
+        return;
+
+    status = U_ZERO_ERROR;
+    unorm_normalize(characters, length, UNORM_NFC, 0, buffer.data(), bufferSize, &status);
+    ASSERT(status == U_STRING_NOT_TERMINATED_WARNING);
+}
+
 inline SearchBuffer::SearchBuffer(const String& target, bool isCaseSensitive)
     : m_target(target)
     , m_atBreak(true)
+    , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
 {
     ASSERT(!m_target.isEmpty());
 
@@ -1521,6 +1731,10 @@ inline SearchBuffer::SearchBuffer(const String& target, bool isCaseSensitive)
     UErrorCode status = U_ZERO_ERROR;
     usearch_setPattern(searcher, m_target.characters(), targetLength, &status);
     ASSERT(status == U_ZERO_ERROR);
+
+    // The kana workaround requires a normalized copy of the target string.
+    if (m_targetRequiresKanaWorkaround)
+        normalizeCharacters(m_target.characters(), m_target.length(), m_normalizedTarget);
 }
 
 inline SearchBuffer::~SearchBuffer()
@@ -1558,6 +1772,59 @@ inline void SearchBuffer::reachedBreak()
     m_atBreak = true;
 }
 
+inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) const
+{
+    // This function implements the kana workaround. If usearch treats
+    // it as a match, but we do not want to, then it's a "bad match".
+    if (!m_targetRequiresKanaWorkaround)
+        return false;
+
+    // Normalize into a match buffer. We reuse a single buffer rather than
+    // creating a new one each time.
+    normalizeCharacters(match, matchLength, m_normalizedMatch);
+
+    const UChar* a = m_normalizedTarget.begin();
+    const UChar* aEnd = m_normalizedTarget.end();
+
+    const UChar* b = m_normalizedMatch.begin();
+    const UChar* bEnd = m_normalizedMatch.end();
+
+    while (true) {
+        // Skip runs of non-kana-letter characters. This is necessary so we can
+        // correctly handle strings where the target and match have different-length
+        // runs of characters that match, while still double checking the correctness
+        // of matches of kana letters with other kana letters.
+        while (a != aEnd && !isKanaLetter(*a))
+            ++a;
+        while (b != bEnd && !isKanaLetter(*b))
+            ++b;
+
+        // If we reached the end of either the target or the match, we should have
+        // reached the end of both; both should have the same number of kana letters.
+        if (a == aEnd || b == bEnd) {
+            ASSERT(a == aEnd);
+            ASSERT(b == bEnd);
+            return false;
+        }
+
+        // Check for differences in the kana letter character itself.
+        if (isSmallKanaLetter(*a) != isSmallKanaLetter(*b))
+            return true;
+        if (composedVoicedSoundMark(*a) != composedVoicedSoundMark(*b))
+            return true;
+        ++a;
+        ++b;
+
+        // Check for differences in combining voiced sound marks found after the letter.
+        while (a != aEnd && b != bEnd && isCombiningVoicedSoundMark(*a) && isCombiningVoicedSoundMark(*b)) {
+            if (*a != *b)
+                return true;
+            ++a;
+            ++b;
+        }
+    }
+}
+
 inline size_t SearchBuffer::search(size_t& start)
 {
     size_t size = m_buffer.size();
@@ -1577,6 +1844,8 @@ inline size_t SearchBuffer::search(size_t& start)
 
     int matchStart = usearch_first(searcher, &status);
     ASSERT(status == U_ZERO_ERROR);
+
+nextMatch:
     if (!(matchStart >= 0 && static_cast<size_t>(matchStart) < size)) {
         ASSERT(matchStart == USEARCH_DONE);
         return 0;
@@ -1591,12 +1860,22 @@ inline size_t SearchBuffer::search(size_t& start)
         return 0;
     }
 
+    size_t matchedLength = usearch_getMatchedLength(searcher);
+    ASSERT(matchStart + matchedLength <= size);
+
+    // If this match is "bad", move on to the next match.
+    if (isBadMatch(m_buffer.data() + matchStart, matchedLength)) {
+        matchStart = usearch_next(searcher, &status);
+        ASSERT(status == U_ZERO_ERROR);
+        goto nextMatch;
+    }
+
     size_t newSize = size - (matchStart + 1);
     memmove(m_buffer.data(), m_buffer.data() + matchStart + 1, newSize * sizeof(UChar));
     m_buffer.shrink(newSize);
 
     start = size - matchStart;
-    return usearch_getMatchedLength(searcher);
+    return matchedLength;
 }
 
 #else // !ICU_UNICODE

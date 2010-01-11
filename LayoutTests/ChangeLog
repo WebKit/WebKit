@@ -1,3 +1,27 @@
+2010-01-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: Japanese text search ignores small vs. large and voicing mark differences
+        https://bugs.webkit.org/show_bug.cgi?id=30437
+        rdar://problem/7214058
+
+        * fast/text/international/japanese-kana-letters-expected.txt: Removed.
+        * fast/text/international/japanese-kana-letters.html: Removed.
+
+        * fast/text/find-kana-expected.txt: Added.
+        * fast/text/find-kana.html: Added.
+        * fast/text/script-tests/find-kana.js: Added.
+        This includes all the tests that were in the old test removed above, with three
+        differences:
+            1) Moved out of "international" directory because Mitz wants to phase that
+               directory out.
+            2) Added more tests to cover more cases involving things like decomposed
+               characters and different voice marks.
+            3) Used script-tests, so results list passing tests as well as failing tests.
+        We could still test even more, but this should at least cover all the lines of
+        code in the current bug fix patch.
+
 2010-01-11  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Rubber-stamped by Holger Hans Peter Freyther.

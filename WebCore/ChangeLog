@@ -1,3 +1,27 @@
+2010-01-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION: Japanese text search ignores small vs. large and voicing mark differences
+        https://bugs.webkit.org/show_bug.cgi?id=30437
+        rdar://problem/7214058
+
+        Test: fast/text/find-kana.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::isKanaLetter): Added.
+        (WebCore::isSmallKanaLetter): Added.
+        (WebCore::composedVoicedSoundMark): Added.
+        (WebCore::isCombiningVoicedSoundMark): Added.
+        (WebCore::containsKanaLetters): Added.
+        (WebCore::normalizeCharacters): Added.
+        (WebCore::SearchBuffer::SearchBuffer): Initialize the data members
+        m_targetRequiresKanaWorkaround and m_normalizedTarget.
+        (WebCore::SearchBuffer::isBadMatch): Added. Checks for matches that
+        ICU's default collation considers correct, but we consider incorrect.
+        (WebCore::SearchBuffer::search): Added code to call isBadMatch and
+        move to the next match with usearch_next if the result is true.
+
 2010-01-11  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
