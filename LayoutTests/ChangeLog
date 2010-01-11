@@ -1,3 +1,12 @@
+2010-01-11  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonac.
+
+        Web Inspector: External resource relative URLs cannot be navigated to from the Elements panel
+        https://bugs.webkit.org/show_bug.cgi?id=33024
+
+        * platform/qt/Skipped: Skip this new test, Qt's DRT doesn't support evaluateInWebInspector()
+
 2010-01-11  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Eric Seidel.
