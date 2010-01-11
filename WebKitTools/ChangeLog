@@ -1,3 +1,15 @@
+2010-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Let webkit-patch work with options in $EDITOR
+        https://bugs.webkit.org/show_bug.cgi?id=33414
+
+        The $EDITOR evironment variable might have command line options like
+        bbedit -w.  This patch lets us run those $EDITORs.
+
+        * Scripts/webkitpy/user.py:
+
 2010-01-10  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Adam Barth.

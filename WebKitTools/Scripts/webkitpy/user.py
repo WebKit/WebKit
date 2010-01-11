@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import shlex
 import subprocess
 import webbrowser
 
@@ -36,7 +37,8 @@ class User(object):
 
     def edit(self, files):
         editor = os.environ.get("EDITOR") or "vi"
-        subprocess.call([editor] + files)
+        args = shlex.split(editor)
+        subprocess.call(args + files)
 
     def page(self, message):
         pager = os.environ.get("PAGER") or "less"
