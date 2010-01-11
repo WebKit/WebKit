@@ -1,4 +1,4 @@
-parse-only/jquery-1.3.2
-parse-only/mootools-1.2.2-core-nc
-parse-only/prototype-1.6.0.3
-parse-only/concat-jquery-mootools-prototype
+jquery-1.3.2
+mootools-1.2.2-core-nc
+prototype-1.6.0.3
+concat-jquery-mootools-prototype
