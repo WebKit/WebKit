@@ -1,3 +1,15 @@
+2010-01-11  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG radialGradient example radial-gradient-with-outstanding-focalPoint.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=32201
+
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum:
+        * platform/mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+
 2010-01-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver Hunt.
