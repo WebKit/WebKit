@@ -1,3 +1,13 @@
+2010-01-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Rollout renderpath culling as it once again breaks pixel tests.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        (WebCore::RenderPath::nodeAtFloatPoint):
+
 2010-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
