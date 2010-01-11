@@ -717,8 +717,9 @@ inspector/timeline-network-resource.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
-# This test requires touch support
+# These tests require touch support
 fast/events/basic-touch-events.html
+fast/events/touch-coords-in-zoom-and-scroll.html
 
 # XSS auditor tests intermittently time out <http://webkit.org/b/32528>
 http/tests/security/xss-DENIED-getSVGDocument-iframe.html

@@ -2563,9 +2563,12 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         if (target && target->isTextNode())
             target = target->parentNode();
 
+        int adjustedPageX = lroundf(framePoint.x() / m_frame->pageZoomFactor());
+        int adjustedPageY = lroundf(framePoint.y() / m_frame->pageZoomFactor());
+
         RefPtr<Touch> touch = Touch::create(m_frame, target, point.id(),
                                             point.screenPos().x(), point.screenPos().y(),
-                                            framePoint.x(), framePoint.y());
+                                            adjustedPageX, adjustedPageY);
 
         if (event.type() == TouchStart && !i) {
             m_touchEventTarget = target;

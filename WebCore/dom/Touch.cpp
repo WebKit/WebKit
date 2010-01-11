@@ -40,7 +40,7 @@ static int contentsX(Frame* frame)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollX();
+    return frameView->scrollX() / frame->pageZoomFactor();
 }
 
 static int contentsY(Frame* frame)
@@ -50,7 +50,7 @@ static int contentsY(Frame* frame)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    return frameView->scrollY();
+    return frameView->scrollY() / frame->pageZoomFactor();
 }
 
 Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, 
