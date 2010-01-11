@@ -1,3 +1,11 @@
+2010-01-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by NOBODY.
+        
+        Updated Windows expected results after r53085.
+
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+
 2010-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Adam Roben & Dirk Schulze.

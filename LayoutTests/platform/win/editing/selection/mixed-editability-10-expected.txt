@@ -12,6 +12,9 @@ Hello
 Hello World
 #5 DIV element empty
 
+#6 non editable DIV element with an editable empty span element
+
+Hello: 
 Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=40) is incorrect.
 Anchor ([object HTMLDivElement], 3 caret[0,0] refpos=75) is incorrect.
 Anchor ([object HTMLDivElement], 1 caret[0,0] refpos=43) is incorrect.
@@ -19,3 +22,4 @@ Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=8) is incorrect.
 Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=73) is incorrect.
 Anchor ([object HTMLDivElement], 3 caret[0,0] refpos=47) is incorrect.
 Anchor ([object HTMLDivElement], 0 caret[0,0] refpos=58) is incorrect.
+Anchor ([object HTMLElement], 0 caret[0,0] refpos=0) is correct.
