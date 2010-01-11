@@ -2083,100 +2083,20 @@ sub GetNativeTypeFromSignature
 sub IsRefPtrType
 {
     my $type = shift;
-    return 1 if $type eq "Attr";
-    return 1 if $type eq "CanvasBooleanArray";
-    return 1 if $type eq "CanvasGradient";
-    return 1 if $type eq "CanvasObject";
-    return 1 if $type eq "ClientRect";
-    return 1 if $type eq "ClientRectList";
-    return 1 if $type eq "CDATASection";
-    return 1 if $type eq "Comment";
-    return 1 if $type eq "CSSRule";
-    return 1 if $type eq "CSSStyleRule";
-    return 1 if $type eq "CSSCharsetRule";
-    return 1 if $type eq "CSSImportRule";
-    return 1 if $type eq "CSSMediaRule";
-    return 1 if $type eq "CSSFontFaceRule";
-    return 1 if $type eq "CSSPageRule";
-    return 1 if $type eq "CSSPrimitiveValue";
-    return 1 if $type eq "CSSStyleSheet";
-    return 1 if $type eq "CSSStyleDeclaration";
-    return 1 if $type eq "CSSValue";
-    return 1 if $type eq "CSSRuleList";
-    return 1 if $type eq "Database";
-    return 1 if $type eq "Document";
-    return 1 if $type eq "DocumentFragment";
-    return 1 if $type eq "DocumentType";
-    return 1 if $type eq "Element";
-    return 1 if $type eq "EntityReference";
-    return 1 if $type eq "Event";
-    return 1 if $type eq "EventListener";
-    return 1 if $type eq "FileList";
-    return 1 if $type eq "HTMLCollection";
-    return 1 if $type eq "HTMLAllCollection";
-    return 1 if $type eq "HTMLDocument";
-    return 1 if $type eq "HTMLElement";
-    return 1 if $type eq "HTMLOptionsCollection";
-    return 1 if $type eq "ImageData";
-    return 1 if $type eq "Media";
-    return 1 if $type eq "MediaError";
-    return 1 if $type eq "MimeType";
-    return 1 if $type eq "Node";
-    return 1 if $type eq "NodeList";
-    return 1 if $type eq "NodeFilter";
-    return 1 if $type eq "NodeIterator";
-    return 1 if $type eq "NSResolver";
-    return 1 if $type eq "Plugin";
-    return 1 if $type eq "ProcessingInstruction";
-    return 1 if $type eq "Range";
-    return 1 if $type eq "RGBColor";
-    return 1 if $type eq "Text";
-    return 1 if $type eq "TextMetrics";
-    return 1 if $type eq "TimeRanges";
-    return 1 if $type eq "TreeWalker";
-    return 1 if $type eq "WebGLActiveInfo";
-    return 1 if $type eq "WebGLArray";
-    return 1 if $type eq "WebGLArrayBuffer";
-    return 1 if $type eq "WebGLByteArray";
-    return 1 if $type eq "WebGLBuffer";
-    return 1 if $type eq "WebGLFloatArray";
-    return 1 if $type eq "WebGLFramebuffer";
-    return 1 if $type eq "WebGLIntArray";
-    return 1 if $type eq "WebGLProgram";
-    return 1 if $type eq "WebGLRenderbuffer";
-    return 1 if $type eq "WebGLShader";
-    return 1 if $type eq "WebGLShortArray";
-    return 1 if $type eq "WebGLTexture";
-    return 1 if $type eq "WebGLUniformLocation";
-    return 1 if $type eq "WebGLUnsignedByteArray";
-    return 1 if $type eq "WebGLUnsignedIntArray";
-    return 1 if $type eq "WebGLUnsignedShortArray";
-    return 1 if $type eq "WebKitCSSMatrix";
-    return 1 if $type eq "WebKitPoint";
-    return 1 if $type eq "XPathExpression";
-    return 1 if $type eq "XPathNSResolver";
-    return 1 if $type eq "XPathResult";
 
-    return 1 if $type eq "SVGElementInstance";
-    return 1 if $type eq "SVGElementInstanceList";
-    return 1 if $type =~ /^SVGPathSeg/;
+    return 0 if $type eq "boolean";
+    return 0 if $type eq "float";
+    return 0 if $type eq "int";
+    return 0 if $type eq "Date";
+    return 0 if $type eq "DOMString";
+    return 0 if $type eq "double";
+    return 0 if $type eq "short";
+    return 0 if $type eq "long";
+    return 0 if $type eq "unsigned";
+    return 0 if $type eq "unsigned long";
+    return 0 if $type eq "unsigned short";
 
-    return 1 if $type =~ /^SVGAnimated/;
-
-    return 0;
-}
-
-sub IsVideoClassName
-{
-    my $class = shift;
-    return 1 if $class eq "V8HTMLAudioElement";
-    return 1 if $class eq "V8HTMLMediaElement";
-    return 1 if $class eq "V8HTMLSourceElement";
-    return 1 if $class eq "V8HTMLVideoElement";
-    return 1 if $class eq "V8MediaError";
-    return 1 if $class eq "V8TimeRanges";
-
-    return 0;
+    return 1;
 }
 
 sub IsWorkerClassName
