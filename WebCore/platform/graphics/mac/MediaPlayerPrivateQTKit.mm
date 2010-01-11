@@ -449,7 +449,7 @@ void MediaPlayerPrivate::createQTMovieLayer()
         // later via acceleratedRenderingStateChanged().
         GraphicsLayer* videoGraphicsLayer = m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player);
         if (videoGraphicsLayer)
-            videoGraphicsLayer->setContentsToVideo((PlatformLayer *)m_qtVideoLayer.get());
+            videoGraphicsLayer->setContentsToMedia(m_qtVideoLayer.get());
     }
 #endif
 }
@@ -1404,7 +1404,7 @@ void MediaPlayerPrivate::acceleratedRenderingStateChanged()
     if (currentRenderingMode() == MediaRenderingMovieLayer) {
         GraphicsLayer* videoGraphicsLayer = m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player);
         if (videoGraphicsLayer)
-            videoGraphicsLayer->setContentsToVideo((PlatformLayer *)m_qtVideoLayer.get());
+            videoGraphicsLayer->setContentsToMedia(m_qtVideoLayer.get());
     }
 }
 #endif

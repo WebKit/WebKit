@@ -104,7 +104,7 @@ public:
     virtual void pauseAnimation(const String& keyframesName, double timeOffset);
     
     virtual void setContentsToImage(Image*);
-    virtual void setContentsToVideo(PlatformLayer*);
+    virtual void setContentsToMedia(PlatformLayer*);
 #if ENABLE(3D_CANVAS)
     virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
 #endif
@@ -178,7 +178,7 @@ private:
     void updateLayerBackgroundColor();
 
     void updateContentsImage();
-    void updateContentsVideo();
+    void updateContentsMediaLayer();
 #if ENABLE(3D_CANVAS)
     void updateContentsGraphicsContext3D();
 #endif
@@ -219,7 +219,7 @@ private:
         AnimationChanged = 1 << 15,
         DirtyRectsChanged = 1 << 16,
         ContentsImageChanged = 1 << 17,
-        ContentsVideoChanged = 1 << 18,
+        ContentsMediaLayerChanged = 1 << 18,
 #if ENABLE(3D_CANVAS)
         ContentsGraphicsContext3DChanged = 1 << 19,
 #endif
@@ -239,7 +239,7 @@ private:
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
         ContentsLayerForImage,
-        ContentsLayerForVideo
+        ContentsLayerForMedia
 #if ENABLE(3D_CANVAS)
         ,ContentsLayerForGraphicsLayer3D
 #endif

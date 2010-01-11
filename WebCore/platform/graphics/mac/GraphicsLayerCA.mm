@@ -728,15 +728,15 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
     noteLayerPropertyChanged(ContentsImageChanged);
 }
 
-void GraphicsLayerCA::setContentsToVideo(PlatformLayer* videoLayer)
+void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
 {
-    if (videoLayer != m_contentsLayer.get())
+    if (mediaLayer != m_contentsLayer.get())
         noteLayerPropertyChanged(ChildrenChanged);
 
-    m_contentsLayer = videoLayer;
-    noteLayerPropertyChanged(ContentsVideoChanged);
+    m_contentsLayer = mediaLayer;
+    noteLayerPropertyChanged(ContentsMediaLayerChanged);
 
-    m_contentsLayerPurpose = videoLayer ? ContentsLayerForVideo : NoContentsLayer;
+    m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
 }
 
 void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
@@ -798,8 +798,8 @@ void GraphicsLayerCA::commitLayerChanges()
     if (m_uncommittedChanges & ContentsImageChanged) // Needs to happen before ChildrenChanged
         updateContentsImage();
         
-    if (m_uncommittedChanges & ContentsVideoChanged) // Needs to happen before ChildrenChanged
-        updateContentsVideo();
+    if (m_uncommittedChanges & ContentsMediaLayerChanged) // Needs to happen before ChildrenChanged
+        updateContentsMediaLayer();
     
 #if ENABLE(3D_CANVAS)
     if (m_uncommittedChanges & ContentsGraphicsContext3DChanged) // Needs to happen before ChildrenChanged
@@ -1147,7 +1147,7 @@ void GraphicsLayerCA::updateContentsImage()
     }
 }
 
-void GraphicsLayerCA::updateContentsVideo()
+void GraphicsLayerCA::updateContentsMediaLayer()
 {
     // Video layer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {

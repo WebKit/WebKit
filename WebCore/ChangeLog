@@ -1,3 +1,25 @@
+2010-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allows plugins to participate in accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=33455
+
+        Part 1: rename setContentsToVideo() on GraphicsLayer to setContentsToMedia()
+        to make it more general. Rename associated enums and methods similarly.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToMedia):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToMedia):
+        (WebCore::GraphicsLayerCA::commitLayerChanges):
+        (WebCore::GraphicsLayerCA::updateContentsMediaLayer):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivate::acceleratedRenderingStateChanged):
+
 2010-01-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Nikolas Zimmerman.

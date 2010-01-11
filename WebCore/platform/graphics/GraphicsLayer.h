@@ -270,7 +270,7 @@ public:
     
     // Layer contents
     virtual void setContentsToImage(Image*) { }
-    virtual void setContentsToVideo(PlatformLayer*) { }
+    virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
     virtual void setContentsBackgroundColor(const Color&) { }
     
 #if ENABLE(3D_CANVAS)
