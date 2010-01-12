@@ -355,7 +355,7 @@ void PrintView(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     // FIXME: Need CoreGraphics implementation
     void* graphicsContext = 0;
-    for (size_t page = 0; page < pageCount; ++page) {
+    for (size_t page = 1; page <= pageCount; ++page) {
         ::StartPage(printDC);
         framePrivate->spoolPages(printDC, page, page, graphicsContext);
         ::EndPage(printDC);

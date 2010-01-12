@@ -1,3 +1,25 @@
+2010-01-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Extend WinLauncher example with better printing features.
+
+        * WinLauncher/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::webViewPrintingMarginRect): Provide slightly
+         larger margins.
+        (PrintWebUIDelegate::webViewHeaderHeight): Compute header height based
+         on text metrics.
+        (PrintWebUIDelegate::webViewFooterHeight): Compute footer height based
+         on text metrics.
+        (PrintWebUIDelegate::drawHeaderInRect): Write useful header, along
+         with separating line.
+        (PrintWebUIDelegate::drawFooterInRect):
+        * WinLauncher/PrintWebUIDelegate.h: Remove stubs.
+        * WinLauncher/WinLauncher.cpp:
+        (PrintView): Correct loop used to print individual pages.
+         Previously it started at 0, which is a wild-card to print all
+         pages at once.
+
 2010-01-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
