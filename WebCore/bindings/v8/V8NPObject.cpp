@@ -74,7 +74,7 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
     } else {
         // The holder object is not a subtype of HTMLPlugInElement, it must be an NPObject which has three
         // internal fields.
-        if (args.Holder()->InternalFieldCount() != V8Custom::kNPObjectInternalFieldCount)
+        if (args.Holder()->InternalFieldCount() != npObjectInternalFieldCount)
           return throwError("NPMethod called on non-NPObject", V8Proxy::ReferenceError);
 
         npObject = V8DOMWrapper::convertToNativeObject<NPObject>(V8ClassIndex::NPOBJECT, args.Holder());
@@ -357,7 +357,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     // can be used by DOM bindings.
     if (npObjectDesc.IsEmpty()) {
         npObjectDesc = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
-        npObjectDesc->InstanceTemplate()->SetInternalFieldCount(V8Custom::kNPObjectInternalFieldCount);
+        npObjectDesc->InstanceTemplate()->SetInternalFieldCount(npObjectInternalFieldCount);
         npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter, 0, 0, npObjectNamedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetIndexedPropertyHandler(npObjectIndexedPropertyGetter, npObjectIndexedPropertySetter, 0, 0, npObjectIndexedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetCallAsFunctionHandler(npObjectInvokeDefaultHandler);

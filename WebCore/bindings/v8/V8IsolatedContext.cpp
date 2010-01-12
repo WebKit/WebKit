@@ -62,7 +62,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
     // Run code in the new context.
     v8::Context::Scope contextScope(m_context->get());
 
-    getGlobalObject(m_context->get())->SetPointerInInternalField(V8Custom::kDOMWindowEnteredIsolatedWorldIndex, this);
+    getGlobalObject(m_context->get())->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, this);
 
     V8DOMWindowShell::installHiddenObjectPrototype(m_context->get());
     // FIXME: This will go away once we have a windowShell for the isolated world.

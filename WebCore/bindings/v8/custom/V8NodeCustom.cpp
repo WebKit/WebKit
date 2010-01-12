@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8Node::addEventListenerCallback(const v8::Arguments& args
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         node->addEventListener(type, listener, useCapture);
-        createHiddenDependency(args.Holder(), args[1], V8Custom::kNodeEventListenerCacheIndex);
+        createHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
     return v8::Undefined();
 }
@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8Node::removeEventListenerCallback(const v8::Arguments& a
         AtomicString type = v8ValueToAtomicWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         node->removeEventListener(type, listener.get(), useCapture);
-        removeHiddenDependency(args.Holder(), args[1], V8Custom::kNodeEventListenerCacheIndex);
+        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
 
     return v8::Undefined();

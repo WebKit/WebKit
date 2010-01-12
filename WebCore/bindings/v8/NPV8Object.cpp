@@ -37,6 +37,7 @@
 #include "V8CustomBinding.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
+#include "V8Index.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
 #include "bindings/npruntime.h"
@@ -47,6 +48,7 @@
 #include <v8.h>
 #include <wtf/StringExtras.h>
 
+using WebCore::npObjectInternalFieldCount;
 using WebCore::toV8Context;
 using WebCore::toV8Proxy;
 using WebCore::V8ClassIndex;
@@ -104,8 +106,8 @@ NPClass* npScriptObjectClass = &V8NPObjectClass;
 NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, WebCore::DOMWindow* root)
 {
     // Check to see if this object is already wrapped.
-    if (object->InternalFieldCount() == V8Custom::kNPObjectInternalFieldCount) {
-        v8::Local<v8::Value> typeIndex = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
+    if (object->InternalFieldCount() == npObjectInternalFieldCount) {
+        v8::Local<v8::Value> typeIndex = object->GetInternalField(WebCore::v8DOMWrapperTypeIndex);
         if (typeIndex->IsNumber() && typeIndex->Uint32Value() == V8ClassIndex::NPOBJECT) {
 
             NPObject* returnValue = V8DOMWrapper::convertToNativeObject<NPObject>(V8ClassIndex::NPOBJECT, object);

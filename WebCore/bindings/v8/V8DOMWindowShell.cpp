@@ -329,7 +329,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
     // Install a security handler with V8.
     globalTemplate->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
-    globalTemplate->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
+    globalTemplate->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
 
     // Used to avoid sleep calls in unload handlers.
     if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))

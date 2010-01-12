@@ -112,8 +112,8 @@ namespace WebCore {
         static void setDOMWrapper(v8::Handle<v8::Object> object, int type, void* cptr)
         {
             ASSERT(object->InternalFieldCount() >= 2);
-            object->SetPointerInInternalField(V8Custom::kDOMWrapperObjectIndex, cptr);
-            object->SetInternalField(V8Custom::kDOMWrapperTypeIndex, v8::Integer::New(type));
+            object->SetPointerInInternalField(v8DOMWrapperObjectIndex, cptr);
+            object->SetInternalField(v8DOMWrapperTypeIndex, v8::Integer::New(type));
         }
 
         static v8::Handle<v8::Object> lookupDOMWrapper(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)
@@ -130,7 +130,7 @@ namespace WebCore {
             v8::HandleScope handleScope;
             ASSERT(maybeDOMWrapper(object));
 #endif
-            return reinterpret_cast<C*>(object->GetPointerFromInternalField(V8Custom::kDOMWrapperObjectIndex));
+            return reinterpret_cast<C*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
         }
 
         template <class C>

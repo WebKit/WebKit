@@ -153,7 +153,7 @@ v8::Handle<v8::Value> V8WorkerContext::addEventListenerCallback(const v8::Argume
         bool useCapture = args[2]->BooleanValue();
         workerContext->addEventListener(type, listener, useCapture);
 
-        createHiddenDependency(args.Holder(), args[1], V8Custom::kWorkerContextRequestCacheIndex);
+        createHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
     return v8::Undefined();
 }
@@ -169,7 +169,7 @@ v8::Handle<v8::Value> V8WorkerContext::removeEventListenerCallback(const v8::Arg
         bool useCapture = args[2]->BooleanValue();
         workerContext->removeEventListener(type, listener.get(), useCapture);
 
-        removeHiddenDependency(args.Holder(), args[1], V8Custom::kWorkerContextRequestCacheIndex);
+        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
     return v8::Undefined();
 }

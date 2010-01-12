@@ -35,8 +35,8 @@
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-
 #include "V8Binding.h"
+#include "V8HTMLImageElement.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -53,7 +53,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
     v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLImageElementConstructor));
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
-    instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+    instance->SetInternalFieldCount(V8HTMLImageElement::internalFieldCount);
     result->SetClassName(v8::String::New("HTMLImageElement"));
     result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLIMAGEELEMENT));
 

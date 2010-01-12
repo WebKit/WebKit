@@ -265,9 +265,8 @@ sub GenerateHeader
     push(@headerContent, "#include <v8.h>\n");
     push(@headerContent, "#include <wtf/HashMap.h>\n");
     push(@headerContent, "#include \"StringHash.h\"\n");
-
-    push(@headerContent, "\nnamespace WebCore {\n\n");
-    push(@headerContent, "class V8ClassIndex;\n");
+    push(@headerContent, "#include \"V8Index.h\"\n");
+    push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\nclass $className {\n");
     push(@headerContent, <<END);
 
@@ -320,6 +319,7 @@ END
     GenerateHeaderRuntimeEnablerDeclarations(@enabledAtRuntime);
     GenerateHeaderNamedAndIndexedPropertyAccessors($dataNode);
     GenerateHeaderCustomCall($dataNode);
+    GenerateHeaderCustomInternalFieldIndices($dataNode);
     
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
         push(@headerContent, <<END);
@@ -342,6 +342,53 @@ END
     push(@headerContent, "#endif // $className" . "_H\n");
 
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
+}
+
+sub GetInternalFields
+{
+    my $dataNode = shift;
+    my $name = $dataNode->name;
+    
+    # FIXME: I am hideous and hard-coded.  Make me beautiful.
+    return ("cacheIndex", "implementationIndex") if ($name eq "Document") || ($name eq "SVGDocument");
+    return ("cacheIndex", "implementationIndex", "markerIndex", "shadowIndex") if $name eq "HTMLDocument";
+    return ("cacheIndex") if IsNodeSubType($dataNode);
+    return ("cacheIndex") if $name eq "XMLHttpRequest";
+    return ("cacheIndex") if $name eq "XMLHttpRequestUpload";
+    return ("cacheIndex") if $name eq "MessagePort";
+    return ("port1Index", "port2Index") if ($name eq "MessageChannel");
+    return ("cacheIndex") if $name eq "AbstractWorker";
+    return ("abstractWorkerCacheIndex", "cacheIndex") if $name eq "Worker";
+    return ("abstractWorkerCacheIndex", "cacheIndex") if $name eq "WorkerContext";
+    return ("abstractWorkerCacheIndex", "workerContextCacheIndex", "cacheIndex") if $name eq "DedicatedWorkerContext";
+    return ("abstractWorkerCacheIndex", "cacheIndex") if $name eq "SharedWorker";
+    return ("abstractWorkerCacheIndex", "workerContextCacheIndex", "cacheIndex") if $name eq "SharedWorkerContext";
+    return ("cacheIndex") if $name eq "Notification";
+    return ("cacheIndex") if $name eq "SVGElementInstance";
+    return ("consoleIndex", "historyIndex", "locationbarIndex", "menubarIndex", "navigatorIndex", "personalbarIndex",
+        "screenIndex", "scrollbarsIndex", "selectionIndex", "statusbarIndex", "toolbarIndex", "locationIndex",
+        "domSelectionIndex", "cacheIndex", "enteredIsolatedWorldIndex") if $name eq "DOMWindow";
+    return ("cacheIndex") if $name eq "DOMApplicationCache";
+    return ("cacheIndex") if $name eq "WebSocket";
+    return ("ownerNodeIndex") if ($name eq "StyleSheet") || ($name eq "CSSStyleSheet");
+    return ("ownerNodeIndex") if ($name eq "NamedNodeMap");
+    return ();
+}
+
+sub GenerateHeaderCustomInternalFieldIndices
+{
+    my $dataNode = shift;
+    my @customInternalFields = GetInternalFields($dataNode);
+    my $customFieldCounter = 0;
+    foreach my $customInternalField (@customInternalFields) {
+        push(@headerContent, <<END);
+  static const int ${customInternalField} = v8DefaultWrapperInternalFieldCount + ${customFieldCounter};
+END
+        $customFieldCounter++;
+    }
+    push(@headerContent, <<END);
+  static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + ${customFieldCounter};
+END
 }
 
 sub GenerateHeaderRuntimeEnablerDeclarations
@@ -472,28 +519,6 @@ sub IsNodeSubType
         return 1 if $parent eq "Node";
     }
     return 0;
-}
-
-sub GetHiddenDependencyIndex
-{
-    my $dataNode = shift;
-    my $attribute = shift;
-    my $name = $dataNode->name;
-    return "V8Custom::kNodeEventListenerCacheIndex" if IsNodeSubType($dataNode);
-    return "V8Custom::kSVGElementInstanceEventListenerCacheIndex" if $name eq "SVGElementInstance";
-    return "V8Custom::kAbstractWorkerRequestCacheIndex" if $name eq "AbstractWorker";
-    return "V8Custom::kWorkerRequestCacheIndex" if $name eq "Worker";
-    return "V8Custom::kDedicatedWorkerContextRequestCacheIndex" if $name eq "DedicatedWorkerContext";
-    return "V8Custom::kWorkerContextRequestCacheIndex" if $name eq "WorkerContext";
-    return "V8Custom::kWorkerContextRequestCacheIndex" if $name eq "SharedWorkerContext";
-    return "V8Custom::kMessagePortRequestCacheIndex" if $name eq "MessagePort";
-    return "V8Custom::kWebSocketCacheIndex" if $name eq "WebSocket";
-    return "V8Custom::kXMLHttpRequestCacheIndex" if $name eq "XMLHttpRequest";
-    return "V8Custom::kXMLHttpRequestCacheIndex" if $name eq "XMLHttpRequestUpload";
-    return "V8Custom::kDOMApplicationCacheCacheIndex" if $name eq "DOMApplicationCache";
-    return "V8Custom::kNotificationRequestCacheIndex" if $name eq "Notification";
-    return "V8Custom::kDOMWindowEventListenerCacheIndex" if $name eq "DOMWindow";
-    die "Unexpected name " . $name . " when generating " . $attribute;
 }
 
 sub HolderToNative
@@ -941,8 +966,7 @@ END
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
-            $cacheIndex = GetHiddenDependencyIndex($dataNode, $attrName);
-            push(@implContentDecls, "    transferHiddenDependency(holder, imp->$attrName(), value, $cacheIndex);\n");
+            push(@implContentDecls, "    transferHiddenDependency(holder, imp->$attrName(), value, V8${interfaceName}::cacheIndex);\n");
             push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate)");
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
@@ -1670,18 +1694,12 @@ END
         $parentClassIndex = uc($codeGenerator->StripModule($parent));
         last;
     }
-
-    # find the field count
-    my $fieldCount = "V8Custom::kDefaultWrapperInternalFieldCount";
-    if (IsNodeSubType($dataNode)) {
-        $fieldCount = "V8Custom::kNodeMinimumInternalFieldCount";
-    }
     
     # Generate the template configuration method
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc) {
   v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${interfaceName}\",
-      V8ClassIndex::$parentClassIndex, $fieldCount,
+      V8ClassIndex::$parentClassIndex, V8${interfaceName}::internalFieldCount,
 END
 
     # Set up our attributes if we have them

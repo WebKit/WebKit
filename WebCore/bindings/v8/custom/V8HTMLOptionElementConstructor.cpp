@@ -36,8 +36,8 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "Text.h"
-
 #include "V8Binding.h"
+#include "V8HTMLOptionElement.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -54,7 +54,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLOptionElementConstructor::GetTemplate
     v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLOptionElementConstructor));
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
-    instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+    instance->SetInternalFieldCount(V8HTMLOptionElement::internalFieldCount);
     result->SetClassName(v8::String::New("HTMLOptionElement"));
     result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLOPTIONELEMENT));
 

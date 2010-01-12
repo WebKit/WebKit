@@ -35,8 +35,8 @@
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-
 #include "V8Binding.h"
+#include "V8HTMLAudioElement.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -53,7 +53,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLAudioElementConstructor::GetTemplate(
     v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLAudioElementConstructor));
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
-    instance->SetInternalFieldCount(V8Custom::kNodeMinimumInternalFieldCount);
+    instance->SetInternalFieldCount(V8HTMLAudioElement::internalFieldCount);
     result->SetClassName(v8::String::New("HTMLAudioElement"));
     result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLAUDIOELEMENT));
 

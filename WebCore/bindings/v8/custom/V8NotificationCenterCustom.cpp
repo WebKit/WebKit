@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8Notification::addEventListenerCallback(const v8::Argumen
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         notification->addEventListener(type, listener, useCapture);
-        createHiddenDependency(args.Holder(), args[1], V8Custom::kNotificationRequestCacheIndex);
+        createHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
 
     return v8::Undefined();
@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8Notification::removeEventListenerCallback(const v8::Argu
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
         notification->removeEventListener(type, listener.get(), useCapture);
-        removeHiddenDependency(args.Holder(), args[1], V8Custom::kNotificationRequestCacheIndex);
+        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
     }
 
     return v8::Undefined();

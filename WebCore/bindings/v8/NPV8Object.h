@@ -30,11 +30,14 @@
 #ifndef NPV8Object_h
 #define NPV8Object_h
 
+#include "V8Index.h"
 #include "bindings/npruntime.h"
 #include <v8.h>
 
 namespace WebCore {
     class DOMWindow;
+
+    static const int npObjectInternalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 }
 
 extern NPClass* npScriptObjectClass;

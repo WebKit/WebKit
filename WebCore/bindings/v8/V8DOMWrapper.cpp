@@ -48,11 +48,15 @@
 #include "V8DOMWindow.h"
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
+#include "V8HTMLDocument.h"
 #include "V8Index.h"
 #include "V8IsolatedContext.h"
+#include "V8MessageChannel.h"
 #include "V8Location.h"
+#include "V8NamedNodeMap.h"
 #include "V8NodeList.h"
 #include "V8Proxy.h"
+#include "V8StyleSheet.h"
 #include "WebGLArray.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
@@ -288,56 +292,14 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(ConstructorToString));
     descriptor->Set(GetToStringName(), toStringTemplate);
     switch (type) {
-    case V8ClassIndex::HTMLDOCUMENT: {
-        // We add an extra internal field to all Document wrappers for
-        // storing a per document DOMImplementation wrapper.
-        //
-        // Additionally, we add two extra internal fields for
-        // HTMLDocuments to implement temporary shadowing of
-        // document.all. One field holds an object that is used as a
-        // marker. The other field holds the marker object if
-        // document.all is not shadowed and some other value if
-        // document.all is shadowed.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kNodeMinimumInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kHTMLDocumentInternalFieldCount);
-        break;
-    }
-#if ENABLE(SVG)
-    case V8ClassIndex::SVGDOCUMENT:  // fall through
-#endif
-    case V8ClassIndex::DOCUMENT: {
-        // We add an extra internal field to all Document wrappers for
-        // storing a per document DOMImplementation wrapper.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kNodeMinimumInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount( V8Custom::kDocumentMinimumInternalFieldCount);
-        break;
-    }
-    case V8ClassIndex::STYLESHEET:  // fall through
-    case V8ClassIndex::CSSSTYLESHEET: {
-        // We add an extra internal field to hold a reference to
-        // the owner node.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kStyleSheetInternalFieldCount);
-        break;
-    }
-    case V8ClassIndex::NAMEDNODEMAP: {
-        // We add an extra internal field to hold a reference to the owner node.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kNamedNodeMapInternalFieldCount);
-        break;
-    }
     case V8ClassIndex::DOMWINDOW: {
-        descriptor->PrototypeTemplate()->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
+        descriptor->PrototypeTemplate()->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
         descriptor->SetHiddenPrototype(true);
 
         // Reserve spaces for references to location, history and
         // navigator objects.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kDOMWindowInternalFieldCount);
+        instanceTemplate->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
 
         // Set access check callbacks, but turned off initially.
         // When a context is detached from a frame, turn on the access check.
@@ -355,104 +317,24 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         instance->SetAccessor(v8::String::New("assign"), V8Location::assignAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
         break;
     }
-    case V8ClassIndex::HISTORY:
-        break;
-
     case V8ClassIndex::MESSAGECHANNEL: {
-        // Reserve two more internal fields for referencing the port1
-        // and port2 wrappers. This ensures that the port wrappers are
-        // kept alive when the channel wrapper is.
         descriptor->SetCallHandler(USE_CALLBACK(MessageChannelConstructor));
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kMessageChannelInternalFieldCount);
         break;
     }
-
-    case V8ClassIndex::MESSAGEPORT: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kMessagePortInternalFieldCount);
-        break;
-    }
-
-#if ENABLE(NOTIFICATIONS)
-    case V8ClassIndex::NOTIFICATION: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kNotificationInternalFieldCount);
-        break;
-    }
-#endif // NOTIFICATIONS
-
-#if ENABLE(SVG)
-    case V8ClassIndex::SVGELEMENTINSTANCE: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kSVGElementInstanceInternalFieldCount);
-        break;
-    }
-#endif
 
 #if ENABLE(WORKERS)
-    case V8ClassIndex::ABSTRACTWORKER: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kAbstractWorkerInternalFieldCount);
-        break;
-    }
-
-    case V8ClassIndex::DEDICATEDWORKERCONTEXT: {
-        // Reserve internal fields for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kDedicatedWorkerContextInternalFieldCount);
-        break;
-    }
-
     case V8ClassIndex::WORKER: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kWorkerInternalFieldCount);
         descriptor->SetCallHandler(USE_CALLBACK(WorkerConstructor));
         break;
     }
-
-    case V8ClassIndex::WORKERCONTEXT: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kWorkerContextMinimumInternalFieldCount);
-        break;
-    }
-
 #endif // WORKERS
 
 #if ENABLE(SHARED_WORKERS)
     case V8ClassIndex::SHAREDWORKER: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kSharedWorkerInternalFieldCount);
         descriptor->SetCallHandler(USE_CALLBACK(SharedWorkerConstructor));
         break;
     }
-
-    case V8ClassIndex::SHAREDWORKERCONTEXT: {
-        // Reserve internal fields for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
-        instanceTemplate->SetInternalFieldCount(V8Custom::kSharedWorkerContextInternalFieldCount);
-        break;
-    }
 #endif // SHARED_WORKERS
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    case V8ClassIndex::DOMAPPLICATIONCACHE: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kDOMApplicationCacheFieldCount);
-        break;
-    }
-#endif
 
 #if ENABLE(3D_CANVAS)
     // The following objects are created from JavaScript.
@@ -492,9 +374,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         break;
 #if ENABLE(WEB_SOCKETS)
     case V8ClassIndex::WEBSOCKET: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kWebSocketInternalFieldCount);
         descriptor->SetCallHandler(USE_CALLBACK(WebSocketConstructor));
         break;
     }
@@ -503,16 +382,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->SetCallHandler(USE_CALLBACK(XMLSerializerConstructor));
         break;
     case V8ClassIndex::XMLHTTPREQUEST: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kXMLHttpRequestInternalFieldCount);
         descriptor->SetCallHandler(USE_CALLBACK(XMLHttpRequestConstructor));
-        break;
-    }
-    case V8ClassIndex::XMLHTTPREQUESTUPLOAD: {
-        // Reserve one more internal field for keeping event listeners.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kXMLHttpRequestInternalFieldCount);
         break;
     }
     case V8ClassIndex::XPATHEVALUATOR:
@@ -719,44 +589,44 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
             // reused by a new page.
             switch (type) {
             case V8ClassIndex::CONSOLE:
-                setHiddenWindowReference(static_cast<Console*>(impl)->frame(), V8Custom::kDOMWindowConsoleIndex, result);
+                setHiddenWindowReference(static_cast<Console*>(impl)->frame(), V8DOMWindow::consoleIndex, result);
                 break;
             case V8ClassIndex::HISTORY:
-                setHiddenWindowReference(static_cast<History*>(impl)->frame(), V8Custom::kDOMWindowHistoryIndex, result);
+                setHiddenWindowReference(static_cast<History*>(impl)->frame(), V8DOMWindow::historyIndex, result);
                 break;
             case V8ClassIndex::NAVIGATOR:
-                setHiddenWindowReference(static_cast<Navigator*>(impl)->frame(), V8Custom::kDOMWindowNavigatorIndex, result);
+                setHiddenWindowReference(static_cast<Navigator*>(impl)->frame(), V8DOMWindow::navigatorIndex, result);
                 break;
             case V8ClassIndex::SCREEN:
-                setHiddenWindowReference(static_cast<Screen*>(impl)->frame(), V8Custom::kDOMWindowScreenIndex, result);
+                setHiddenWindowReference(static_cast<Screen*>(impl)->frame(), V8DOMWindow::screenIndex, result);
                 break;
             case V8ClassIndex::LOCATION:
-                setHiddenWindowReference(static_cast<Location*>(impl)->frame(), V8Custom::kDOMWindowLocationIndex, result);
+                setHiddenWindowReference(static_cast<Location*>(impl)->frame(), V8DOMWindow::locationIndex, result);
                 break;
             case V8ClassIndex::DOMSELECTION:
-                setHiddenWindowReference(static_cast<DOMSelection*>(impl)->frame(), V8Custom::kDOMWindowDOMSelectionIndex, result);
+                setHiddenWindowReference(static_cast<DOMSelection*>(impl)->frame(), V8DOMWindow::domSelectionIndex, result);
                 break;
             case V8ClassIndex::BARINFO: {
                 BarInfo* barInfo = static_cast<BarInfo*>(impl);
                 Frame* frame = barInfo->frame();
                 switch (barInfo->type()) {
                 case BarInfo::Locationbar:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowLocationbarIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::locationbarIndex, result);
                     break;
                 case BarInfo::Menubar:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowMenubarIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::menubarIndex, result);
                     break;
                 case BarInfo::Personalbar:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowPersonalbarIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::personalbarIndex, result);
                     break;
                 case BarInfo::Scrollbars:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowScrollbarsIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::scrollbarsIndex, result);
                     break;
                 case BarInfo::Statusbar:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowStatusbarIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::statusbarIndex, result);
                     break;
                 case BarInfo::Toolbar:
-                    setHiddenWindowReference(frame, V8Custom::kDOMWindowToolbarIndex, result);
+                    setHiddenWindowReference(frame, V8DOMWindow::toolbarIndex, result);
                     break;
                 }
                 break;
@@ -778,7 +648,7 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
     if (context.IsEmpty())
         return;
 
-    ASSERT(internalIndex < V8Custom::kDOMWindowInternalFieldCount);
+    ASSERT(internalIndex < V8DOMWindow::internalFieldCount);
 
     v8::Handle<v8::Object> global = context->Global();
     // Look for real DOM wrapper.
@@ -791,7 +661,7 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
 V8ClassIndex::V8WrapperType V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-    v8::Handle<v8::Value> type = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
+    v8::Handle<v8::Value> type = object->GetInternalField(v8DOMWrapperTypeIndex);
     return V8ClassIndex::FromInt(type->Int32Value());
 }
 
@@ -857,13 +727,13 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
     if (!object->InternalFieldCount())
         return false;
 
-    ASSERT(object->InternalFieldCount() >= V8Custom::kDefaultWrapperInternalFieldCount);
+    ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
-    v8::Handle<v8::Value> type = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
+    v8::Handle<v8::Value> type = object->GetInternalField(v8DOMWrapperTypeIndex);
     ASSERT(type->IsInt32());
     ASSERT(V8ClassIndex::INVALID_CLASS_INDEX < type->Int32Value() && type->Int32Value() < V8ClassIndex::CLASSINDEX_END);
 
-    v8::Handle<v8::Value> wrapper = object->GetInternalField(V8Custom::kDOMWrapperObjectIndex);
+    v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
     ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
 
     return true;
@@ -886,12 +756,12 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, V8ClassIndex::V8
     if (!object->InternalFieldCount())
         return false;
 
-    ASSERT(object->InternalFieldCount() >= V8Custom::kDefaultWrapperInternalFieldCount);
+    ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
-    v8::Handle<v8::Value> wrapper = object->GetInternalField(V8Custom::kDOMWrapperObjectIndex);
+    v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
     ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
 
-    v8::Handle<v8::Value> type = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
+    v8::Handle<v8::Value> type = object->GetInternalField(v8DOMWrapperTypeIndex);
     ASSERT(type->IsInt32());
     ASSERT(V8ClassIndex::INVALID_CLASS_INDEX < type->Int32Value() && type->Int32Value() < V8ClassIndex::CLASSINDEX_END);
 
@@ -1336,10 +1206,10 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy
             // Create marker object and insert it in two internal fields.
             // This is used to implement temporary shadowing of
             // document.all.
-            ASSERT(result->InternalFieldCount() == V8Custom::kHTMLDocumentInternalFieldCount);
+            ASSERT(result->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
             v8::Local<v8::Object> marker = v8::Object::New();
-            result->SetInternalField(V8Custom::kHTMLDocumentMarkerIndex, marker);
-            result->SetInternalField(V8Custom::kHTMLDocumentShadowIndex, marker);
+            result->SetInternalField(V8HTMLDocument::markerIndex, marker);
+            result->SetInternalField(V8HTMLDocument::shadowIndex, marker);
         }
     }
 
@@ -1537,7 +1407,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertStyleSheetToV8Object(StyleSheet* shee
     Node* ownerNode = sheet->ownerNode();
     if (ownerNode) {
         v8::Handle<v8::Object> owner = v8::Handle<v8::Object>::Cast(convertNodeToV8Object(ownerNode));
-        result->SetInternalField(V8Custom::kStyleSheetOwnerNodeIndex, owner);
+        result->SetInternalField(V8StyleSheet::ownerNodeIndex, owner);
     }
 
     return result;
@@ -1685,7 +1555,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNamedNodeMapToV8Object(NamedNodeMap* 
     // Add a hidden reference from named node map to its owner node.
     if (Element* element = map->element()) {
         v8::Handle<v8::Object> owner = v8::Handle<v8::Object>::Cast(convertNodeToV8Object(element));
-        result->SetInternalField(V8Custom::kNamedNodeMapOwnerNodeIndex, owner);
+        result->SetInternalField(V8NamedNodeMap::ownerNodeIndex, owner);
     }
 
     return result;

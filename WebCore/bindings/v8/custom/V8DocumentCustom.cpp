@@ -115,10 +115,10 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
 // for the lifetime of the wrapper.
 v8::Handle<v8::Value> V8Document::implementationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    ASSERT(info.Holder()->InternalFieldCount() >= V8Custom::kDocumentMinimumInternalFieldCount);
+    ASSERT(info.Holder()->InternalFieldCount() >= internalFieldCount);
 
     // Check if the internal field already contains a wrapper.
-    v8::Local<v8::Value> implementation = info.Holder()->GetInternalField(V8Custom::kDocumentImplementationIndex);
+    v8::Local<v8::Value> implementation = info.Holder()->GetInternalField(V8Document::implementationIndex);
     if (!implementation->IsUndefined())
         return implementation;
 
@@ -127,7 +127,7 @@ v8::Handle<v8::Value> V8Document::implementationAccessorGetter(v8::Local<v8::Str
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::convertDOMImplementationToV8Object(document->implementation());
 
     // Store the wrapper in the internal field.
-    info.Holder()->SetInternalField(V8Custom::kDocumentImplementationIndex, wrapper);
+    info.Holder()->SetInternalField(implementationIndex, wrapper);
 
     return wrapper;
 }
