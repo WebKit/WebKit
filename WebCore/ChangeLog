@@ -1,3 +1,17 @@
+2010-01-12  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        Form Reset : Press Back Button and Reset , TextareaElemnt is not set to Default Value
+        https://bugs.webkit.org/show_bug.cgi?id=31539
+
+        Added manual test: manual-tests/textarea-reset-default-value.html.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::restoreFormControlState): set the value, rather than default value of a text area when restoring its state. This allows resetting a form with a textarea to work correctly after its state has been restored.
+        * manual-tests/resources/textarea-form-back-on-submit.html: Added.
+        * manual-tests/textarea-reset-default-value.html: Added.
+
 2010-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
