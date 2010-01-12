@@ -49,21 +49,16 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
             return False
         return True
 
-    def process_work_item(self, patch):
-        try:
-            self.run_webkit_patch([
-                "build-attachment",
-                self.port.flag(),
-                "--force-clean",
-                "--quiet",
-                "--non-interactive",
-                "--parent-command=%s" % self.name,
-                "--no-update",
-                patch["id"]])
-            self._did_pass(patch)
-        except ScriptError, e:
-            self._did_fail(patch)
-            raise e
+    def _review_patch(self, patch):
+        self.run_webkit_patch([
+            "build-attachment",
+            self.port.flag(),
+            "--force-clean",
+            "--quiet",
+            "--non-interactive",
+            "--parent-command=%s" % self.name,
+            "--no-update",
+            patch["id"]])
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):

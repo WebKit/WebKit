@@ -207,6 +207,9 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
     def __init__(self, options=None):
         AbstractQueue.__init__(self, options)
 
+    def _review_patch(self, patch):
+        raise NotImplementedError, "subclasses must implement"
+
     # PersistentPatchCollectionDelegate methods
 
     def collection_name(self):
@@ -234,7 +237,12 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         raise NotImplementedError, "subclasses must implement"
 
     def process_work_item(self, patch):
-        raise NotImplementedError, "subclasses must implement"
+        try:
+            self._review_patch(patch)
+            self._did_pass(patch)
+        except ScriptError, e:
+            self._did_fail(patch)
+            raise e
 
     def handle_unexpected_error(self, patch, message):
         log(message)
@@ -255,13 +263,8 @@ class StyleQueue(AbstractReviewQueue):
         self._update_status("Checking style", patch)
         return True
 
-    def process_work_item(self, patch):
-        try:
-            self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
-            self._did_pass(patch)
-        except ScriptError, e:
-            self._did_fail(patch)
-            raise e
+    def _review_patch(self, patch):
+        self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch["id"]])
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):

@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        Remove copy/paste code from subclasses of AbstractReviewQueue
+        https://bugs.webkit.org/show_bug.cgi?id=33525
+
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/queues.py:
+
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add Gustavo and Xan as gtk-ews watchers
         https://bugs.webkit.org/show_bug.cgi?id=33519
 
