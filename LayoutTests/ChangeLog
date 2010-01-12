@@ -1,3 +1,14 @@
+2010-01-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Threading problems with some of the tests
+        https://bugs.webkit.org/show_bug.cgi?id=30814
+
+        Skip another test which is hitting the SQLiteDatabase::sqliteHandle() threading ASSERT.
+
+        * platform/gtk/Skipped:
+
 2010-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Simon Hausmann.

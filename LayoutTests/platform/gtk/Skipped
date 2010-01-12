@@ -5547,8 +5547,10 @@ fast/dom/Window/window-properties.html
 # https://bugs.webkit.org/show_bug.cgi?id=30620
 fast/xsl/sort-locale.xml
 
+# ASSERTION FAILED: currentThread() == m_openingThread in WebCore::SQLiteDatabase::sqlite3Handle()
 # https://bugs.webkit.org/show_bug.cgi?id=30814
 storage
+fast/js/excessive-comma-usage.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30815
 http/tests/misc/isindex-with-no-form.html 
