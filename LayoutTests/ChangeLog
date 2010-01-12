@@ -1,5 +1,12 @@
 2010-01-11  Darin Adler  <darin@apple.com>
 
+        Try to get find-kana tests passing on Qt, Leopard, and Tiger.
+
+        * platform/mac-leopard/fast/text/find-kana-expected.txt: Expect more failures.
+        * platform/qt/fast/text/find-kana-expected.txt: Ditto.
+
+2010-01-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix handling of unusual kana sequences in search
