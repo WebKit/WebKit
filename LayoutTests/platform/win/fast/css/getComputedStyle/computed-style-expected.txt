@@ -205,7 +205,7 @@ text-anchor: start;
 writing-mode: lr-tb;
 glyph-orientation-horizontal: 0deg;
 glyph-orientation-vertical: auto;
--webkit-shadow: none;
+-webkit-svg-shadow: none;
 
 Other attributes that the computed style class supports:
 

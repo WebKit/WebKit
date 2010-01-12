@@ -17,7 +17,7 @@
 
         <rect id="masked" width="300" height="300" fill="url(#maskedGradient)" />
 
-        <mask id="mask_1" style="-webkit-shadow:5px 5px 5px grey">
+        <mask id="mask_1" style="-webkit-svg-shadow:5px 5px 5px grey">
             <circle cx="55" cy="55" r="50" fill="#ffffff" />
             <circle cx="55" cy="165" r="50" fill="#ffffff" />
             <circle cx="165" cy="55" r="50" fill="#ffffff" />

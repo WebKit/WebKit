@@ -7,5 +7,5 @@
 <feGaussianBlur stdDeviation="4 4" />
 </filter>
 </defs>
-<rect x="200" y="200" width="300" height="300" fill="green" style="filter:url(#filter);-webkit-shadow:-10px -10px 3px orange;"/>
+<rect x="200" y="200" width="300" height="300" fill="green" style="filter:url(#filter);-webkit-svg-shadow:-10px -10px 3px orange;"/>
 </svg>

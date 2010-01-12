@@ -257,7 +257,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
                 m_valueList->next();
         }
         break;
-    case CSSPropertyWebkitShadow:
+    case CSSPropertyWebkitSvgShadow:
         if (id == CSSValueNone)
             valid_primitive = true;
         else

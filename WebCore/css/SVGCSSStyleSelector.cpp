@@ -525,7 +525,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             // Silently ignoring this property for now
             // http://bugs.webkit.org/show_bug.cgi?id=6022
             break;
-        case CSSPropertyWebkitShadow: {
+        case CSSPropertyWebkitSvgShadow: {
             if (isInherit)
                 return svgstyle->setShadow(m_parentStyle->svgStyle()->shadow() ? new ShadowData(*m_parentStyle->svgStyle()->shadow()) : 0);
             if (isInitial || primitiveValue) // initial | none
@@ -546,7 +546,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
 
-            // -webkit-shadow does should not have a spread or style
+            // -webkit-svg-shadow does should not have a spread or style
             ASSERT(!item->spread);
             ASSERT(!item->style);
                 
