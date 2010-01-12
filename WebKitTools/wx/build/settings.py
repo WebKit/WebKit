@@ -263,7 +263,7 @@ def common_configure(conf):
     if build_port == "wx":
         update_wx_deps(conf, wk_root, msvc_version)
     
-        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1'])
+        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'JS_NO_EXPORT'])
 
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
