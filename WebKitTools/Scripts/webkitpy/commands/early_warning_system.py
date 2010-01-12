@@ -66,7 +66,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         is_svn_apply = script_error.command_name() == "svn-apply"
         status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
         if is_svn_apply:
-            QueueEngine.exit_after_handled_error(e)
+            QueueEngine.exit_after_handled_error(script_error)
         results_link = tool.status_server.results_url_for_status(status_id)
         message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"]["id"], cls.port_name, results_link)
         tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)

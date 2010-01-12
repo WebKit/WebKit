@@ -1,5 +1,12 @@
 2010-01-12  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed typo fix.  :(
+
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/queues.py:
+
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Add "error" to the right part of the message.
 
         * Scripts/webkitpy/commands/queues.py:
