@@ -1,0 +1,7 @@
+This tests the accessibility roles of multiselect elements and their option elements.
+
+PASS accessibilityController.focusedElement.role is "list"
+PASS accessibilityController.focusedElement.childAtIndex(0).role is "list item"
+
+
+

@@ -1,0 +1,34 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+    <script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<p>This tests the accessibility roles of multiselect elements and their option
+elements.</p>
+
+<p id="console"></p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<select id="selectElement" multiple title="selectElement">
+    <option SELECTED>Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+</select>
+
+<script>
+    if (window.layoutTestController && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        layoutTestController.dumpAsText();
+
+        document.getElementById("selectElement").focus();
+        shouldBe('accessibilityController.focusedElement.role', '"list"');
+        shouldBe('accessibilityController.focusedElement.childAtIndex(0).role', '"list item"');
+    }
+</script>
+</body>
+</html>

@@ -1,3 +1,14 @@
+2010-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Accessibility role of <select multiple> elements is wrong
+
+        https://bugs.webkit.org/show_bug.cgi?id=33522
+
+        Reviewed by Darin Adler.
+
+        * platform/win/accessibility/multiple-select-element-role-expected.txt: Added.
+        * platform/win/accessibility/multiple-select-element-role.html: Added.
+
 2010-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Nikolas Zimmermann.
