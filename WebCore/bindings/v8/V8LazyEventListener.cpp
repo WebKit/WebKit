@@ -54,7 +54,11 @@ V8LazyEventListener::V8LazyEventListener(const String& functionName, bool isSVGE
 
 v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
 {
-    v8::Local<v8::Function> handlerFunction = v8::Local<v8::Function>::Cast(getListenerObject(context));
+    v8::Local<v8::Object> listenerObject = getListenerObject(context);
+    if (listenerObject.IsEmpty())
+        return v8::Local<v8::Value>();
+
+    v8::Local<v8::Function> handlerFunction = v8::Local<v8::Function>::Cast(listenerObject);
     v8::Local<v8::Object> receiver = getReceiverObject(event);
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();

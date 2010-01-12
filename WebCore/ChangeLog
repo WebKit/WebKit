@@ -1,3 +1,15 @@
+2010-01-12  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a null check in case of an event handler with invalid syntax.
+
+        Should make fast/js/invalid-syntax--for-function.html not crash in
+        Chromium's test shell.
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::callListenerFunction): Check the listener object before using it.
+
 2010-01-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dimitri Glazkov.
