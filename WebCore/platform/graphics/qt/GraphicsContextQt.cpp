@@ -618,14 +618,14 @@ QPen GraphicsContext::pen()
     return p->pen();
 }
 
-static void inline drawFilledShadowPath(GraphicsContext* context, QPainter* p, const QPainterPath *path)
+static void inline drawFilledShadowPath(GraphicsContext* context, QPainter* p, const QPainterPath& path)
 {
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
     if (context->getShadow(shadowSize, shadowBlur, shadowColor)) {
         p->translate(shadowSize.width(), shadowSize.height());
-        p->fillPath(*path, QBrush(shadowColor));
+        p->fillPath(path, QBrush(shadowColor));
         p->translate(-shadowSize.width(), -shadowSize.height());
     }
 }
@@ -640,7 +640,7 @@ void GraphicsContext::fillPath()
     path.setFillRule(toQtFillRule(fillRule()));
 
     if (m_common->state.fillPattern || m_common->state.fillGradient || fillColor().alpha()) {
-        drawFilledShadowPath(this, p, &path);
+        drawFilledShadowPath(this, p, path);
         if (m_common->state.fillPattern) {
             TransformationMatrix affine;
             p->fillPath(path, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
@@ -751,7 +751,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     Path path = Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight);
     QPainter* p = m_data->p();
     drawFilledShadowPath(this, p, path.platformPath());
-    p->fillPath(*path.platformPath(), QColor(color));
+    p->fillPath(path.platformPath(), QColor(color));
 }
 
 void GraphicsContext::beginPath()
@@ -762,7 +762,7 @@ void GraphicsContext::beginPath()
 void GraphicsContext::addPath(const Path& path)
 {
     QPainterPath newPath = m_data->currentPath;
-    newPath.addPath(*(path.platformPath()));
+    newPath.addPath(path.platformPath());
     m_data->currentPath = newPath;
 }
 
@@ -1030,7 +1030,7 @@ void GraphicsContext::clip(const Path& path)
     if (paintingDisabled())
         return;
 
-    m_data->p()->setClipPath(*path.platformPath(), Qt::IntersectClip);
+    m_data->p()->setClipPath(path.platformPath(), Qt::IntersectClip);
 }
 
 void GraphicsContext::canvasClip(const Path& path)
@@ -1044,7 +1044,7 @@ void GraphicsContext::clipOut(const Path& path)
         return;
 
     QPainter* p = m_data->p();
-    QPainterPath clippedOut = *path.platformPath();
+    QPainterPath clippedOut = path.platformPath();
     QPainterPath newClip;
     newClip.setFillRule(Qt::OddEvenFill);
     if (p->hasClipping()) {

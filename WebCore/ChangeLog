@@ -1,3 +1,49 @@
+2010-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] WebCore::Path allocates QPainterPath unnecessarily on the heap
+        https://bugs.webkit.org/show_bug.cgi?id=33466
+
+        WebCore::Path is a pointer to a PlatformPath. In case of Qt that's a
+        QPainterPath, which itself is a pointer to the elements (QVector).
+        That creates unecessary allocations in PathQt.cpp.
+
+        Replaced the "PlatformPath* m_path;" with a PlatformPathPtr, which
+        is a plain QPainterPath.
+
+        * platform/graphics/Path.h:
+        (WebCore::Path::platformPath):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawFilledShadowPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::~Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::contains):
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::debugString):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+
 2010-01-12  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.
