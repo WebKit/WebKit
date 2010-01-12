@@ -1,3 +1,15 @@
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add experimental "land-safely" command to webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=33518
+
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+        * Scripts/webkitpy/steps/__init__.py:
+        * Scripts/webkitpy/steps/postdiffforcommit.py: Added.
+
 2010-01-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after introduction of JS_NO_EXPORT

@@ -56,6 +56,9 @@ class UploadCommandsTest(CommandsTest):
         expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\n"
         self.assert_execute_outputs(Post(), [42], expected_stderr=expected_stderr)
 
+    def test_post(self):
+        self.assert_execute_outputs(LandSafely(), [42])
+
     def test_prepare_diff_with_arg(self):
         self.assert_execute_outputs(Prepare(), [42])
 

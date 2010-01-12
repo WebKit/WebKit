@@ -108,6 +108,13 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
             bug_id = parse_bug_id(state["diff"])
         return bug_id
 
+    def _prepare_state(self, options, args, tool):
+        state = {}
+        state["bug_id"] = self._bug_id(args, tool, state)
+        if not state["bug_id"]:
+            error("No bug id passed and no bug url found in diff.")
+        return state
+
 
 class Post(AbstractPatchUploadingCommand):
     name = "post"
@@ -121,12 +128,15 @@ class Post(AbstractPatchUploadingCommand):
         steps.PostDiff,
     ]
 
-    def _prepare_state(self, options, args, tool):
-        state = {}
-        state["bug_id"] = self._bug_id(args, tool, state)
-        if not state["bug_id"]:
-            error("No bug id passed and no bug url found in diff, can't post.")
-        return state
+
+class LandSafely(AbstractPatchUploadingCommand):
+    name = "land-safely"
+    help_text = "Land the current diff via the commit-queue (Experimental)"
+    argument_names = "[BUGID]"
+    steps = [
+        steps.UpdateChangeLogsWithReviewer,
+        steps.PostDiffForCommit,
+    ]
 
 
 class Prepare(AbstractSequencedCommand):

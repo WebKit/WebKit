@@ -26,44 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import StringIO
 
-from webkitpy.changelogs import ChangeLog
-from webkitpy.grammar import pluralize
 from webkitpy.steps.abstractstep import AbstractStep
-from webkitpy.steps.options import Options
-from webkitpy.webkit_logging import log, error
 
-class UpdateChangeLogsWithReviewer(AbstractStep):
-    @classmethod
-    def options(cls):
-        return [
-            Options.reviewer,
-        ]
 
-    def _guess_reviewer_from_bug(self, bug_id):
-        patches = self._tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-        if len(patches) != 1:
-            log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
-            return None
-        patch = patches[0]
-        reviewer = patch["reviewer"]
-        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (reviewer, patch["id"], bug_id))
-        return reviewer
-
+class PostDiffForCommit(AbstractStep):
     def run(self, state):
-        bug_id = state.get("bug_id") or state["patch"]["bug_id"]
-        reviewer = self._options.reviewer
-        if not reviewer:
-            if not bug_id:
-                log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
-                return
-            reviewer = self._guess_reviewer_from_bug(bug_id)
-
-        if not reviewer:
-            log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
-            return
-
-        os.chdir(self._tool.scm().checkout_root)
-        for changelog_path in self._tool.scm().modified_changelogs():
-            ChangeLog(changelog_path).set_reviewer(reviewer)
+        self._tool.bugs.add_patch_to_bug(
+            state["bug_id"],
+            StringIO.StringIO(self.cached_lookup(state, "diff")),
+            "Patch for landing",
+            mark_for_review=False,
+            mark_for_commit_queue=True)
