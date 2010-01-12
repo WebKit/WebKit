@@ -128,6 +128,7 @@
 #include "PageTransitionEvent.h"
 #include "Plugin.h"
 #include "PluginArray.h"
+#include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
 #include "Range.h"

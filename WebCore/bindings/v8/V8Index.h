@@ -388,6 +388,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(PAGETRANSITIONEVENT, PageTransitionEvent)                         \
     V(PLUGIN, Plugin)                                                   \
     V(PLUGINARRAY, PluginArray)                                         \
+    V(POPSTATEEVENT, PopStateEvent)                                     \
     V(PROGRESSEVENT, ProgressEvent)                                     \
     V(RANGE, Range)                                                     \
     V(RANGEEXCEPTION, RangeException)                                   \

@@ -1177,6 +1177,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventToV8Object(Event* event)
         type = V8ClassIndex::MESSAGEEVENT;
     else if (event->isPageTransitionEvent())
         type = V8ClassIndex::PAGETRANSITIONEVENT;
+    else if (event->isPopStateEvent())
+        type = V8ClassIndex::POPSTATEEVENT;
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
             type = V8ClassIndex::XMLHTTPREQUESTPROGRESSEVENT;

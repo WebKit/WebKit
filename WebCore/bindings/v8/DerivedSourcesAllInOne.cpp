@@ -202,6 +202,7 @@
 #include "bindings/V8PageTransitionEvent.cpp"
 #include "bindings/V8Plugin.cpp"
 #include "bindings/V8PluginArray.cpp"
+#include "bindings/V8PopStateEvent.cpp"
 #include "bindings/V8PositionError.cpp"
 #include "bindings/V8ProcessingInstruction.cpp"
 #include "bindings/V8ProgressEvent.cpp"

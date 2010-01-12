@@ -724,6 +724,7 @@
             'bindings/v8/custom/V8NodeIteratorCustom.cpp',
             'bindings/v8/custom/V8NodeListCustom.cpp',
             'bindings/v8/custom/V8NotificationCenterCustom.cpp',
+            'bindings/v8/custom/V8PopStateEventCustom.cpp',
             'bindings/v8/custom/V8StorageCustom.cpp',
             'bindings/v8/custom/V8SQLResultSetRowListCustom.cpp',
             'bindings/v8/custom/V8SQLTransactionCustom.cpp',
