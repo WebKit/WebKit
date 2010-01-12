@@ -28,6 +28,7 @@
 
 import unittest
 
+from webkitpy.bugzilla import Attachment
 from webkitpy.mock import Mock
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
@@ -42,11 +43,11 @@ class MockQueueEngine(object):
 
 
 class QueuesTest(unittest.TestCase):
-    mock_work_item = {
+    mock_work_item = Attachment({
         "id" : 1234,
         "bug_id" : 345,
         "attacher_email": "adam@example.com",
-    }
+    }, None)
 
     def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, options=Mock(), tool=MockBugzillaTool()):
         if not expected_stdout:

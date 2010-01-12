@@ -59,7 +59,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
             "--non-interactive",
             "--parent-command=%s" % self.name,
             "--no-update",
-            patch["id"]])
+            patch.id()])
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
@@ -68,8 +68,8 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         if is_svn_apply:
             QueueEngine.exit_after_handled_error(script_error)
         results_link = tool.status_server.results_url_for_status(status_id)
-        message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"]["id"], cls.port_name, results_link)
-        tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
+        message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"].id(), cls.port_name, results_link)
+        tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
         exit(1)
 
 
@@ -103,7 +103,7 @@ class AbstractCommitterOnlyEWS(AbstractEarlyWarningSystem):
         self._committers = committers
 
     def process_work_item(self, patch):
-        if not self._committers.committer_by_email(patch["attacher_email"]):
+        if not self._committers.committer_by_email(patch.attacher_email()):
             self._did_error(patch, "%s cannot process patches from non-committers :(" % self.name)
             return
         AbstractEarlyWarningSystem.process_work_item(self, patch)

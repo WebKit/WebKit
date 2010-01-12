@@ -123,10 +123,11 @@ class SCM:
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
-        curl_process = subprocess.Popen(['curl', '--location', '--silent', '--show-error', patch['url']], stdout=subprocess.PIPE)
+        # FIXME: scm.py should not deal with fetching Attachment data.  Attachment should just have a .data() accessor.
+        curl_process = subprocess.Popen(['curl', '--location', '--silent', '--show-error', patch.url()], stdout=subprocess.PIPE)
         args = [self.script_path('svn-apply')]
-        if patch.get('reviewer'):
-            args += ['--reviewer', patch['reviewer']]
+        if patch.reviewer():
+            args += ['--reviewer', patch.reviewer().full_name]
         if force:
             args.append('--force')
 

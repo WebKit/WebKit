@@ -54,10 +54,10 @@ class StatusServer:
     def _add_patch(self, patch):
         if not patch:
             return
-        if patch.get('bug_id'):
-            self.browser['bug_id'] = str(patch['bug_id'])
-        if patch.get('id'):
-            self.browser['patch_id'] = str(patch['id'])
+        if patch.bug_id():
+            self.browser["bug_id"] = str(patch.bug_id())
+        if patch.id():
+            self.browser["patch_id"] = str(patch.id())
 
     def _add_results_file(self, results_file):
         if not results_file:

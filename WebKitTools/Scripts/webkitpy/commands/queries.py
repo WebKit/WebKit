@@ -55,7 +55,7 @@ class PatchesToCommit(AbstractDeclarativeCommand):
         patches = tool.bugs.queries.fetch_patches_from_commit_queue()
         log("Patches in commit queue:")
         for patch in patches:
-            print "%s" % patch["url"]
+            print patch.url()
 
 
 class PatchesToCommitQueue(AbstractDeclarativeCommand):
@@ -69,28 +69,27 @@ class PatchesToCommitQueue(AbstractDeclarativeCommand):
 
     @staticmethod
     def _needs_commit_queue(patch):
-        commit_queue_flag = patch.get("commit-queue")
-        if (commit_queue_flag and commit_queue_flag == '+'): # If it's already cq+, ignore the patch.
-            log("%s already has cq=%s" % (patch["id"], commit_queue_flag))
+        if patch.commit_queue() == "+": # If it's already cq+, ignore the patch.
+            log("%s already has cq=%s" % (patch.id(), patch.commit_queue()))
             return False
 
         # We only need to worry about patches from contributers who are not yet committers.
-        committer_record = CommitterList().committer_by_email(patch["attacher_email"])
+        committer_record = CommitterList().committer_by_email(patch.attacher_email())
         if committer_record:
-            log("%s committer = %s" % (patch["id"], committer_record))
+            log("%s committer = %s" % (patch.id(), committer_record))
         return not committer_record
 
     def execute(self, options, args, tool):
         patches = tool.bugs.queries.fetch_patches_from_pending_commit_list()
         patches_needing_cq = filter(self._needs_commit_queue, patches)
         if options.bugs:
-            bugs_needing_cq = map(lambda patch: patch['bug_id'], patches_needing_cq)
+            bugs_needing_cq = map(lambda patch: patch.bug_id(), patches_needing_cq)
             bugs_needing_cq = sorted(set(bugs_needing_cq))
             for bug_id in bugs_needing_cq:
                 print "%s" % tool.bugs.bug_url_for_bug_id(bug_id)
         else:
             for patch in patches_needing_cq:
-                print "%s" % tool.bugs.attachment_url_for_id(patch["id"], action="edit")
+                print "%s" % tool.bugs.attachment_url_for_id(patch.id(), action="edit")
 
 
 class PatchesToReview(AbstractDeclarativeCommand):
@@ -102,18 +101,6 @@ class PatchesToReview(AbstractDeclarativeCommand):
         log("Patches pending review:")
         for patch_id in patch_ids:
             print patch_id
-
-
-class ReviewedPatches(AbstractDeclarativeCommand):
-    name = "reviewed-patches"
-    help_text = "List r+'d patches on a bug"
-    argument_names = "BUGID"
-
-    def execute(self, options, args, tool):
-        bug_id = args[0]
-        patches_to_land = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-        for patch in patches_to_land:
-            print "%s" % patch["url"]
 
 
 class TreeStatus(AbstractDeclarativeCommand):

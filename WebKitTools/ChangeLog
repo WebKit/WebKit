@@ -1,3 +1,50 @@
+2010-01-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        bugzilla.py should have an Attachment object instead of passing around dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=31594
+
+        * Scripts/webkitpy/bugzilla.py:
+         - Add a new Attachment class, with accessor methods for all the necessary properties.
+         - Update Bug to carry a pointer back to bugzilla (attachments need to access Bugzilla for committer validation and url())
+         - Move reviewed_patches and commit_queued_patches out of Bugzilla custom methods and onto Bug
+         - Move committer validation logic into its own class.
+         - Committer rejection is only used in one place.  Make the new Bug reviewed_patches and commit_queued_patches
+           handle the common case (of returning "reviewer" or "committer" as None), and let CommitterValidation handle
+           the case where we want to reject patches in bugzilla.
+         - Simplify fetch_patches_from_commit_queue now that committer validation is simpler.
+         - Make all self.bugzilla.fetch_bug access go through BugzillaQueries._fetch_bug.
+         - Mark set_flag_on_attachment as non-private to denote that CommitterValidation depends on it.
+         - Move fetch_reviewed_patches_from_bug and fetch_commit_queue_patches_from_bug logic onto the Bug class.
+        * Scripts/webkitpy/bugzilla_unittest.py:
+         - Move test_flag_permission_rejection_message into a new CommitterValidationTest class.
+        * Scripts/webkitpy/commands/download.py:
+         - Store "bug_id" in state instead of making a fake patch object.
+         - Update to use Attachment and Bug objects.
+        * Scripts/webkitpy/commands/download_unittest.py:
+         - Update expected results now that our testing framework covers more code.
+        * Scripts/webkitpy/commands/early_warning_system.py: Update to use new Attachment class.
+        * Scripts/webkitpy/commands/queries.py: Remove unused ReviewedPatches class.
+        * Scripts/webkitpy/commands/queries_unittest.py: ditto.
+        * Scripts/webkitpy/commands/queues.py: Update to use new Attachment and CommitterValidator classes.
+        * Scripts/webkitpy/commands/queuestest.py: ditto.
+        * Scripts/webkitpy/commands/upload.py: ditto.
+        * Scripts/webkitpy/mock_bugzillatool.py:
+         - Now that more logic has moved into Attachment and Bug, we have to actually
+           provide real reviewer emails as well as real reviewer flags.
+         - Update mock methods to return Attachment objects.
+        * Scripts/webkitpy/scm.py: Update to use Attachment class.
+        * Scripts/webkitpy/scm_unittest.py: Update to use Attachment class.
+        * Scripts/webkitpy/statusserver.py: ditto.
+        * Scripts/webkitpy/steps/applypatch.py: ditto.
+        * Scripts/webkitpy/steps/applypatchwithlocalcommit.py: ditto.
+        * Scripts/webkitpy/steps/closebug.py: ditto.
+        * Scripts/webkitpy/steps/closebugforlanddiff.py: Handle either state["bug_id"] or state["patch"].bug_id()
+        * Scripts/webkitpy/steps/closepatch.py: Update to use Attachment class.
+        * Scripts/webkitpy/steps/obsoletepatches.py: ditto.
+        * Scripts/webkitpy/steps/updatechangelogswithreviewer.py: ditto.
+
 2010-01-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed typo fix.  :(

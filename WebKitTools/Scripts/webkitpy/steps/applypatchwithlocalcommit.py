@@ -40,4 +40,4 @@ class ApplyPatchWithLocalCommit(ApplyPatch):
         ApplyPatch.run(self, state)
         if self._options.local_commit:
             commit_message = self._tool.scm().commit_message_for_this_commit()
-            self._tool.scm().commit_locally_with_message(commit_message.message() or state["patch"]["name"])
+            self._tool.scm().commit_locally_with_message(commit_message.message() or state["patch"].name())

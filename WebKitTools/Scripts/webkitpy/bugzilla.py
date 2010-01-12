@@ -59,36 +59,115 @@ def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
 
+class Attachment(object):
+    def __init__(self, attachment_dictionary, bug):
+        self._attachment_dictionary = attachment_dictionary
+        self._bug = bug
+        self._reviewer = None
+        self._committer = None
+
+    def _bugzilla(self):
+        return self._bug._bugzilla
+
+    def id(self):
+        return int(self._attachment_dictionary.get("id"))
+
+    def attacher_is_committer(self):
+        return self._bugzilla.committers.committer_by_email(patch.attacher_email())
+
+    def attacher_email(self):
+        return self._attachment_dictionary.get("attacher_email")
+
+    def bug(self):
+        return self._bug
+
+    def bug_id(self):
+        return int(self._attachment_dictionary.get("bug_id"))
+
+    def is_patch(self):
+        return not not self._attachment_dictionary.get("is_patch")
+
+    def is_obsolete(self):
+        return not not self._attachment_dictionary.get("is_obsolete")
+
+    def name(self):
+        return self._attachment_dictionary.get("name")
+
+    def review(self):
+        return self._attachment_dictionary.get("review")
+
+    def commit_queue(self):
+        return self._attachment_dictionary.get("commit-queue")
+
+    def url(self):
+        # FIXME: This should just return self._bugzilla().attachment_url_for_id(self.id()).  scm_unittest.py depends on the current behavior.
+        return self._attachment_dictionary.get("url")
+
+    def _validate_flag_value(self, flag):
+        email = self._attachment_dictionary.get("%s_email" % flag)
+        if not email:
+            return None
+        committer = getattr(self._bugzilla().committers, "%s_by_email" % flag)(email)
+        if committer:
+            return committer
+        log("Warning, attachment %s on bug %s has invalid %s (%s)" % (self._attachment_dictionary['id'], self._attachment_dictionary['bug_id'], flag, email))
+
+    def reviewer(self):
+        if not self._reviewer:
+            self._reviewer = self._validate_flag_value("reviewer")
+        return self._reviewer
+
+    def committer(self):
+        if not self._committer:
+            self._committer = self._validate_flag_value("committer")
+        return self._committer
+
+
 # FIXME: This class is kinda a hack for now.  It exists so we have one place
 # to hold bug logic, even if much of the code deals with dictionaries still.
 class Bug(object):
-    def __init__(self, bug_dictionary):
+    def __init__(self, bug_dictionary, bugzilla):
         self.bug_dictionary = bug_dictionary
+        self._bugzilla = bugzilla
 
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
-        if include_obsolete:
-            return self.bug_dictionary["attachments"][:] # Return a copy in either case.
-        return [attachment for attachment in self.bug_dictionary["attachments"] if not attachment["is_obsolete"]]
+        attachments = self.bug_dictionary["attachments"]
+        if not include_obsolete:
+            attachments = filter(lambda attachment: not attachment["is_obsolete"], attachments)
+        return [Attachment(attachment, self) for attachment in attachments]
 
     def patches(self, include_obsolete=False):
-        return [patch for patch in self.attachments(include_obsolete) if patch["is_patch"]]
+        return [patch for patch in self.attachments(include_obsolete) if patch.is_patch()]
 
     def unreviewed_patches(self):
-        return [patch for patch in self.patches() if patch.get("review") == "?"]
+        return [patch for patch in self.patches() if patch.review() == "?"]
+
+    def reviewed_patches(self):
+        # Checking reviewer() ensures that it was both reviewed and has a valid reviewer.
+        return [patch for patch in self.patches() if patch.review() == "+" and patch.reviewer()]
+
+    def commit_queued_patches(self):
+        # Checking committer() ensures that it was both commit-queue+'d and has a valid committer.
+        return [patch for patch in self.patches() if patch.commit_queue() == "+" and patch.committer()]
 
 
 # A container for all of the logic for making a parsing buzilla queries.
 class BugzillaQueries(object):
     def __init__(self, bugzilla):
-        self.bugzilla = bugzilla
+        self._bugzilla = bugzilla
 
+    # Note: _load_query and _fetch_bug are the only two methods which access self._bugzilla.
     def _load_query(self, query):
-        full_url = "%s%s" % (self.bugzilla.bug_server_url, query)
-        return self.bugzilla.browser.open(full_url)
+        full_url = "%s%s" % (self._bugzilla.bug_server_url, query)
+        return self._bugzilla.browser.open(full_url)
+
+    def _fetch_bug(self, bug_id):
+        return self._bugzilla.fetch_bug(bug_id)
+
 
     def _fetch_bug_ids_advanced_query(self, query):
         soup = BeautifulSoup(self._load_query(query))
@@ -110,29 +189,21 @@ class BugzillaQueries(object):
         return self._fetch_bug_ids_advanced_query(needs_commit_query_url)
 
     def fetch_patches_from_pending_commit_list(self):
-        # FIXME: This should not have to go through self.bugzilla
-        return sum([self.bugzilla.fetch_reviewed_patches_from_bug(bug_id) for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
+        return sum([self._fetch_bug(bug_id).reviewed_patches() for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
 
     def fetch_bug_ids_from_commit_queue(self):
         commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
 
-    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
-        # FIXME: Once reject_invalid_patches is moved out of this function this becomes a simple list comprehension using fetch_bug_ids_from_commit_queue.
-        patches_to_land = []
-        for bug_id in self.fetch_bug_ids_from_commit_queue():
-            # FIXME: This should not have to go through self.bugzilla
-            patches = self.bugzilla.fetch_commit_queue_patches_from_bug(bug_id, reject_invalid_patches)
-            patches_to_land += patches
-        return patches_to_land
+    def fetch_patches_from_commit_queue(self):
+        return sum([self._fetch_bug(bug_id).commit_queued_patches() for bug_id in self.fetch_bug_ids_from_commit_queue()], [])
 
     def _fetch_bug_ids_from_review_queue(self):
         review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
         return self._fetch_bug_ids_advanced_query(review_queue_url)
 
     def fetch_patches_from_review_queue(self, limit=None):
-        # FIXME: We should probably have a self.fetch_bug to minimize the number of self.bugzilla calls.
-        return sum([self.bugzilla.fetch_bug(bug_id).unreviewed_patches() for bug_id in self._fetch_bug_ids_from_review_queue()[:limit]], []) # [:None] returns the whole array.
+        return sum([self._fetch_bug(bug_id).unreviewed_patches() for bug_id in self._fetch_bug_ids_from_review_queue()[:limit]], []) # [:None] returns the whole array.
 
     # FIXME: Why do we have both fetch_patches_from_review_queue and fetch_attachment_ids_from_review_queue??
     # NOTE: This is also the only client of _fetch_attachment_ids_request_query
@@ -141,17 +212,62 @@ class BugzillaQueries(object):
         return self._fetch_attachment_ids_request_query(review_queue_url)
 
 
+class CommitterValidator(object):
+    def __init__(self, bugzilla):
+        self._bugzilla = bugzilla
+
+    # _view_source_link belongs in some sort of webkit_config.py module.
+    def _view_source_link(self, local_path):
+        return "http://trac.webkit.org/browser/trunk/%s" % local_path
+
+    def _flag_permission_rejection_message(self, setter_email, flag_name):
+        committer_list = "WebKitTools/Scripts/webkitpy/committers.py" # This could be computed from CommitterList.__file__
+        contribution_guidlines_url = "http://webkit.org/coding/contributing.html" # Should come from some webkit_config.py
+        queue_administrator = "eseidel@chromium.org" # This could be queried from the status_server.
+        queue_name = "commit-queue" # This could be queried from the tool.
+        rejection_message = "%s does not have %s permissions according to %s." % (setter_email, flag_name, self._view_source_link(committer_list))
+        rejection_message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (flag_name, contribution_guidlines_url)
+        rejection_message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed)." % (flag_name, committer_list)
+        rejection_message += "  Due to bug 30084 the %s will require a restart after your change." % queue_name
+        rejection_message += "  Please contact %s to request a %s restart." % (queue_administrator, queue_name)
+        rejection_message += "  After restart the %s will correctly respect your %s rights." % (queue_name, flag_name)
+        return rejection_message
+
+    def _validate_setter_email(self, patch, result_key, rejection_function):
+        committer = getattr(patch, result_key)()
+        # If the flag is set, and we don't recognize the setter, reject the flag!
+        if patch._attachment_dictionary.get("%s_email" % result_key) and not committer:
+            rejection_function(patch.id(), self._flag_permission_rejection_message(setter_email, result_key))
+            return False
+        return True
+
+    def patches_after_rejecting_invalid_commiters_and_reviewers(self, patches):
+        validated_patches = []
+        for patch in patches:
+            if self._validate_setter_email(patch, "reviewer", self.reject_patch_from_review_queue) and self._validate_setter_email(patch, "committer", self.reject_patch_from_commit_queue):
+                validated_patches.append(patch)
+        return validated_patches
+
+    def reject_patch_from_commit_queue(self, attachment_id, additional_comment_text=None):
+        comment_text = "Rejecting patch %s from commit-queue." % attachment_id
+        self._bugzilla.set_flag_on_attachment(attachment_id, 'commit-queue', '-', comment_text, additional_comment_text)
+
+    def reject_patch_from_review_queue(self, attachment_id, additional_comment_text=None):
+        comment_text = "Rejecting patch %s from review queue." % attachment_id
+        self._bugzilla.set_flag_on_attachment(attachment_id, 'review', '-', comment_text, additional_comment_text)
+
+
 class Bugzilla(object):
     def __init__(self, dryrun=False, committers=CommitterList()):
         self.dryrun = dryrun
         self.authenticated = False
         self.queries = BugzillaQueries(self)
+        self.committers = committers
 
         # FIXME: We should use some sort of Browser mock object when in dryrun mode (to prevent any mistakes).
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script
         self.browser.set_handle_robots(False)
-        self.committers = committers
 
     # FIXME: Much of this should go into some sort of config module:
     bug_server_host = "bugs.webkit.org"
@@ -185,6 +301,7 @@ class Bugzilla(object):
         attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
         attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
         attachment['id'] = int(element.find('attachid').string)
+        # FIXME: No need to parse out the url here.
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
         attachment['name'] = unicode(element.find('desc').string)
         attachment['attacher_email'] = str(element.find('attacher').string)
@@ -215,7 +332,7 @@ class Bugzilla(object):
 
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
     def fetch_bug(self, bug_id):
-        return Bug(self.fetch_bug_dictionary(bug_id))
+        return Bug(self.fetch_bug_dictionary(bug_id), self)
 
     def _parse_bug_id_from_attachment_page(self, page):
         up_link = BeautifulSoup(page).find('link', rel='Up') # The "Up" relation happens to point to the bug.
@@ -230,8 +347,7 @@ class Bugzilla(object):
         page = self.browser.open(attachment_url)
         return self._parse_bug_id_from_attachment_page(page)
 
-    # This should really return an Attachment object
-    # which can lazily fetch any missing data.
+    # FIXME: This should just return Attachment(id), which should be able to lazily fetch needed data.
     def fetch_attachment(self, attachment_id):
         # We could grab all the attachment details off of the attachment edit page
         # but we already have working code to do so off of the bugs page, so re-use that.
@@ -239,78 +355,9 @@ class Bugzilla(object):
         if not bug_id:
             return None
         for attachment in self.fetch_bug(bug_id).attachments(include_obsolete=True):
-            # FIXME: Once we have a real Attachment class we shouldn't paper over this possible comparison failure
-            # and we should remove the int() == int() hacks and leave it just ==.
-            if int(attachment['id']) == int(attachment_id):
-                self._validate_committer_and_reviewer(attachment)
+            if attachment.id() == int(attachment_id):
                 return attachment
         return None # This should never be hit.
-
-    # fetch_patches_from_bug exists until we expose a Bug class outside of bugzilla.py
-    def fetch_patches_from_bug(self, bug_id):
-        return self.fetch_bug(bug_id).patches()
-
-    # _view_source_link belongs in some sort of webkit_config.py module.
-    def _view_source_link(self, local_path):
-        return "http://trac.webkit.org/browser/trunk/%s" % local_path
-
-    def _flag_permission_rejection_message(self, setter_email, flag_name):
-        committer_list = "WebKitTools/Scripts/webkitpy/committers.py" # This could be computed from CommitterList.__file__
-        contribution_guidlines_url = "http://webkit.org/coding/contributing.html" # Should come from some webkit_config.py
-        queue_administrator = "eseidel@chromium.org" # This could be queried from the status_server.
-        queue_name = "commit-queue" # This could be queried from the tool.
-        rejection_message = "%s does not have %s permissions according to %s." % (setter_email, flag_name, self._view_source_link(committer_list))
-        rejection_message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (flag_name, contribution_guidlines_url)
-        rejection_message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed)." % (flag_name, committer_list)
-        rejection_message += "  Due to bug 30084 the %s will require a restart after your change." % queue_name
-        rejection_message += "  Please contact %s to request a %s restart." % (queue_administrator, queue_name)
-        rejection_message += "  After restart the %s will correctly respect your %s rights." % (queue_name, flag_name)
-        return rejection_message
-
-    def _validate_setter_email(self, patch, result_key, lookup_function, rejection_function, reject_invalid_patches):
-        setter_email = patch.get(result_key + '_email')
-        if not setter_email:
-            return None
-
-        committer = lookup_function(setter_email)
-        if committer:
-            patch[result_key] = committer.full_name
-            return patch[result_key]
-
-        if reject_invalid_patches:
-            rejection_function(patch['id'], self._flag_permission_rejection_message(setter_email, result_key))
-        else:
-            log("Warning, attachment %s on bug %s has invalid %s (%s)" % (patch['id'], patch['bug_id'], result_key, setter_email))
-        return None
-
-    def _validate_reviewer(self, patch, reject_invalid_patches):
-        return self._validate_setter_email(patch, 'reviewer', self.committers.reviewer_by_email, self.reject_patch_from_review_queue, reject_invalid_patches)
-
-    def _validate_committer(self, patch, reject_invalid_patches):
-        return self._validate_setter_email(patch, 'committer', self.committers.committer_by_email, self.reject_patch_from_commit_queue, reject_invalid_patches)
-
-    # FIXME: This is a hack until we have a real Attachment object.
-    # _validate_committer and _validate_reviewer fill in the 'reviewer' and 'committer'
-    # keys which other parts of the code expect to be filled in.
-    def _validate_committer_and_reviewer(self, patch):
-        self._validate_reviewer(patch, reject_invalid_patches=False)
-        self._validate_committer(patch, reject_invalid_patches=False)
-
-    # FIXME: fetch_reviewed_patches_from_bug and fetch_commit_queue_patches_from_bug
-    # should share more code and use list comprehensions.
-    def fetch_reviewed_patches_from_bug(self, bug_id, reject_invalid_patches=False):
-        reviewed_patches = []
-        for attachment in self.fetch_bug(bug_id).attachments():
-            if self._validate_reviewer(attachment, reject_invalid_patches):
-                reviewed_patches.append(attachment)
-        return reviewed_patches
-
-    def fetch_commit_queue_patches_from_bug(self, bug_id, reject_invalid_patches=False):
-        commit_queue_patches = []
-        for attachment in self.fetch_reviewed_patches_from_bug(bug_id, reject_invalid_patches):
-            if self._validate_committer(attachment, reject_invalid_patches):
-                commit_queue_patches.append(attachment)
-        return commit_queue_patches
 
     def authenticate(self):
         if self.authenticated:
@@ -446,7 +493,7 @@ class Bugzilla(object):
         self.browser.submit()
 
     # FIXME: We need a way to test this on a live bugzilla instance.
-    def _set_flag_on_attachment(self, attachment_id, flag_name, flag_value, comment_text, additional_comment_text):
+    def set_flag_on_attachment(self, attachment_id, flag_name, flag_value, comment_text, additional_comment_text):
         self.authenticate()
 
         if additional_comment_text:
@@ -461,14 +508,6 @@ class Bugzilla(object):
         self.browser.set_value(comment_text, name='comment', nr=0)
         self._find_select_element_for_flag(flag_name).value = (flag_value,)
         self.browser.submit()
-
-    def reject_patch_from_commit_queue(self, attachment_id, additional_comment_text=None):
-        comment_text = "Rejecting patch %s from commit-queue." % attachment_id
-        self._set_flag_on_attachment(attachment_id, 'commit-queue', '-', comment_text, additional_comment_text)
-
-    def reject_patch_from_review_queue(self, attachment_id, additional_comment_text=None):
-        comment_text = "Rejecting patch %s from review queue." % attachment_id
-        self._set_flag_on_attachment(attachment_id, 'review', '-', comment_text, additional_comment_text)
 
     # FIXME: All of these bug editing methods have a ridiculous amount of copy/paste code.
     def obsolete_attachment(self, attachment_id, comment_text = None):

@@ -82,10 +82,21 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(BuildAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_land_attachment(self):
-        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
+        # FIXME: This expected result is imperfect, notice how it's seeing the same patch as still there after it thought it would have cleared the flags.
+        expected_stderr = """Processing 1 patch from 1 bug.
+Updating working directory
+Processing patch 197 from bug 42.
+Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
+"""
         self.assert_execute_outputs(LandAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_land_patches(self):
+        # FIXME: This expected result is imperfect, notice how it's seeing the same patch as still there after it thought it would have cleared the flags.
         expected_stderr = """2 reviewed patches found on bug 42.
 Processing 2 patches from 1 bug.
 Updating working directory
@@ -95,6 +106,7 @@ Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
+Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
 Updating working directory
 Processing patch 128 from bug 42.
 Building WebKit
@@ -102,6 +114,7 @@ Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
 Running run-webkit-tests
+Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patches to land from this bug.
 """
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 

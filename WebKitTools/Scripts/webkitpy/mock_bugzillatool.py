@@ -30,7 +30,8 @@ import os
 
 from webkitpy.mock import Mock
 from webkitpy.scm import CommitMessage
-from webkitpy.bugzilla import Bug
+from webkitpy.committers import CommitterList, Reviewer
+from webkitpy.bugzilla import Bug, Attachment
 
 def _id_to_object_dictionary(*objects):
     dictionary = {}
@@ -45,7 +46,8 @@ _patch1 = {
     "url" : "http://example.com/197",
     "is_obsolete" : False,
     "is_patch" : True,
-    "reviewer" : "Reviewer1",
+    "review" : "+",
+    "reviewer_email" : "foo@bar.com",
     "attacher_email" : "Contributer1",
 }
 _patch2 = {
@@ -54,7 +56,8 @@ _patch2 = {
     "url" : "http://example.com/128",
     "is_obsolete" : False,
     "is_patch" : True,
-    "reviewer" : "Reviewer2",
+    "review" : "+",
+    "reviewer_email" : "foo@bar.com",
     "attacher_email" : "eric@webkit.org",
 }
 
@@ -82,6 +85,10 @@ _bug3 = {
 }
 
 class MockBugzillaQueries(Mock):
+    def __init__(self, bugzilla):
+        Mock.__init__(self)
+        self._bugzilla = bugzilla
+
     def fetch_bug_ids_from_commit_queue(self):
         return [42, 75]
 
@@ -89,42 +96,45 @@ class MockBugzillaQueries(Mock):
         return [197, 128]
 
     def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
-        return [_patch1, _patch2]
+        return [self._bugzilla.fetch_attachment(_patch1["id"]), self._bugzilla.fetch_attachment(_patch2["id"])]
 
     def fetch_bug_ids_from_pending_commit_list(self):
         return [42, 75, 76]
     
     def fetch_patches_from_pending_commit_list(self):
-        return [_patch1, _patch2]
+        return [self._bugzilla.fetch_attachment(_patch1["id"]), self._bugzilla.fetch_attachment(_patch2["id"])]
 
 
+# FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork class we should mock that instead.
+# Most of this class is just copy/paste from Bugzilla.
 class MockBugzilla(Mock):
     bug_server_url = "http://example.com"
     unassigned_email = _unassigned_email
     bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3)
     attachment_cache = _id_to_object_dictionary(_patch1, _patch2)
-    queries = MockBugzillaQueries()
+
+    def __init__(self):
+        Mock.__init__(self)
+        self.queries = MockBugzillaQueries(self)
+        self.committers = CommitterList(reviewers=[Reviewer("Foo Bar", "foo@bar.com")])
 
     def fetch_bug(self, bug_id):
-        return Bug(self.bug_cache.get(bug_id))
-
-    def fetch_reviewed_patches_from_bug(self, bug_id):
-        return self.fetch_patches_from_bug(bug_id) # Return them all for now.
+        return Bug(self.bug_cache.get(bug_id), self)
 
     def fetch_attachment(self, attachment_id):
-        return self.attachment_cache[attachment_id] # This could be changed to .get() if we wish to allow failed lookups.
+        attachment_dictionary = self.attachment_cache[attachment_id] # This could be changed to .get() if we wish to allow failed lookups.
+        bug = self.fetch_bug(attachment_dictionary["bug_id"])
+        for attachment in bug.attachments(include_obsolete=True):
+            if attachment.id() == int(attachment_id):
+                return attachment
 
-    # NOTE: Functions below this are direct copies from bugzilla.py
-    def fetch_patches_from_bug(self, bug_id):
-        return self.fetch_bug(bug_id).patches()
-    
     def bug_url_for_bug_id(self, bug_id):
         return "%s/%s" % (self.bug_server_url, bug_id)
 
     def fetch_bug_dictionary(self, bug_id):
         return self.bug_cache.get(bug_id)
 
-    def attachment_url_for_id(self, attachment_id, action):
+    def attachment_url_for_id(self, attachment_id, action="view"):
         action_param = ""
         if action and action != "view":
             action_param = "&action=%s" % action

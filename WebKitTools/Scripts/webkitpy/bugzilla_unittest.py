@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.committers import CommitterList, Reviewer, Committer
-from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id
+from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.mock import Mock
 
@@ -48,6 +48,16 @@ class MockBrowser(object):
 
     def submit(self):
         pass
+
+class CommitterValidatorTest(unittest.TestCase):
+    def test_flag_permission_rejection_message(self):
+        validator = CommitterValidator(bugzilla=None)
+        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/committers.py.
+
+- If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
+
+- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
+        self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
 
 
 class BugzillaTest(unittest.TestCase):
@@ -178,7 +188,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         "assigned_to_email" : "webkit-unassigned@lists.webkit.org",
         "attachments" : [{
             'name': u'Patch',
-            'url': 'https://bugs.webkit.org/attachment.cgi?id=45548',
+            'url' : "https://bugs.webkit.org/attachment.cgi?id=45548",
             'is_obsolete': False,
             'review': '?',
             'is_patch': True,
@@ -230,15 +240,6 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         bugzilla.authenticate = lambda: None
         expected_stderr = "Adding ['adam@example.com'] to the CC list for bug 42\n"
         OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_stderr=expected_stderr)
-
-    def test_flag_permission_rejection_message(self):
-        bugzilla = Bugzilla()
-        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/committers.py.
-
-- If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
-
-- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
-        self.assertEqual(bugzilla._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
 
 
 class BugzillaQueriesTest(unittest.TestCase):

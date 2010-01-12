@@ -68,18 +68,18 @@ class AssignToCommitter(AbstractDeclarativeCommand):
             return
 
         # FIXME: This should call a reviewed_patches() method on bug instead of re-fetching.
-        reviewed_patches = self.tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        reviewed_patches = self.tool.bugs.fetch_bug(bug_id).reviewed_patches()
         if not reviewed_patches:
             log("Bug %s has no non-obsolete patches, ignoring." % bug_id)
             return
         latest_patch = reviewed_patches[-1]
-        attacher_email = latest_patch["attacher_email"]
+        attacher_email = latest_patch.attacher_email()
         committer = committers.committer_by_email(attacher_email)
         if not committer:
             log("Attacher %s is not a committer.  Bug %s likely needs commit-queue+." % (attacher_email, bug_id))
             return
 
-        reassign_message = "Attachment %s was posted by a committer and has review+, assigning to %s for commit." % (latest_patch["id"], committer.full_name)
+        reassign_message = "Attachment %s was posted by a committer and has review+, assigning to %s for commit." % (latest_patch.id(), committer.full_name)
         self.tool.bugs.reassign_bug(bug_id, committer.bugzilla_email(), reassign_message)
 
     def execute(self, options, args, tool):

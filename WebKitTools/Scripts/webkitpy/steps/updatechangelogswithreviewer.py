@@ -42,17 +42,17 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         ]
 
     def _guess_reviewer_from_bug(self, bug_id):
-        patches = self._tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        patches = self._tool.bugs.fetch_bug(bug_id).reviewed_patches()
         if len(patches) != 1:
             log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
             return None
         patch = patches[0]
-        reviewer = patch["reviewer"]
-        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (reviewer, patch["id"], bug_id))
-        return reviewer
+        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (patch.reviewer().full_name, patch.id(), bug_id))
+        return patch.reviewer().full_name
 
     def run(self, state):
-        bug_id = state.get("bug_id") or state["patch"]["bug_id"]
+        bug_id = state.get("bug_id") or state["patch"].bug_id()
+
         reviewer = self._options.reviewer
         if not reviewer:
             if not bug_id:

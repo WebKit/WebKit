@@ -59,10 +59,6 @@ class QueryCommandsTest(CommandsTest):
         expected_stderr = "Patches pending review:\n"
         self.assert_execute_outputs(PatchesToReview(), None, expected_stdout, expected_stderr)
 
-    def test_reviewed_patches(self):
-        expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
-        self.assert_execute_outputs(ReviewedPatches(), [42], expected_stdout)
-
     def test_tree_status(self):
         expected_stdout = "ok   : Builder1\nok   : Builder2\n"
         self.assert_execute_outputs(TreeStatus(), None, expected_stdout)

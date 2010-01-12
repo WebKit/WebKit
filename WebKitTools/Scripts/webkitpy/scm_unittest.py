@@ -40,6 +40,7 @@ import urllib
 from datetime import date
 from webkitpy.executive import Executive, run_command, ScriptError
 from webkitpy.scm import detect_scm_system, SCM, CheckoutNeedsUpdate, commit_error_handler
+from webkitpy.bugzilla import Attachment # FIXME: This should not be needed
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
@@ -168,7 +169,7 @@ class SCMTest(unittest.TestCase):
         patch['reviewer'] = 'Joe Cool'
         patch['bug_id'] = '12345'
         patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
-        return patch
+        return Attachment(patch, None) # FIXME: This is a hack, scm.py shouldn't be fetching attachment data.
 
     def _setup_webkittools_scripts_symlink(self, local_scm):
         webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))

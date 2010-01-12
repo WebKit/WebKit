@@ -86,10 +86,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
 
     def _prepare_state(self, options, args, tool):
         return {
-            "patch" : {
-                "id" : None,
-                "bug_id" : (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
-            }
+            "bug_id" : (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
         }
 
 
@@ -104,8 +101,7 @@ class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     def _collect_patches_by_bug(patches):
         bugs_to_patches = {}
         for patch in patches:
-            bug_id = patch["bug_id"]
-            bugs_to_patches[bug_id] = bugs_to_patches.get(bug_id, []) + [patch]
+            bugs_to_patches[patch.bug_id()] = bugs_to_patches.get(patch.bug_id(), []) + [patch]
         return bugs_to_patches
 
     def execute(self, options, args, tool):
@@ -148,7 +144,7 @@ class ProcessBugsMixin(object):
     def _fetch_list_of_patches_to_process(self, options, args, tool):
         all_patches = []
         for bug_id in args:
-            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+            patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
             log("%s found on bug %s." % (pluralize("reviewed patch", len(patches)), bug_id))
             all_patches += patches
         return all_patches
