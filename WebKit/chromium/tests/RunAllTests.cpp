@@ -28,30 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitTest_h
-#define WebKitTest_h
-
-#include <gtest/gtest.h>
+// FIXME: Avoid this source dependency on Chromium's base module.
+#include <base/test/test_suite.h>
 
 #include "WebKit.h"
 #include "WebKitClient.h"
 
-class WebKitTest : public testing::Test {
-public:
-    virtual void SetUp()
-    {
-        WebKit::initialize(&m_dummyClient);
-    }
-
-    virtual void TearDown()
-    {
-        WebKit::shutdown();
-    }
-
-private:
-    // WebKitClient has a protected destructor, so we need to subclass.
-    class DummyClient : public WebKit::WebKitClient {};
-    DummyClient m_dummyClient;
+// WebKitClient has a protected destructor, so we need to subclass.
+class DummyWebKitClient : public WebKit::WebKitClient {
 };
 
-#endif
+int main(int argc, char** argv)
+{
+    DummyWebKitClient dummyClient;
+    WebKit::initialize(&dummyClient);
+
+    int result = TestSuite(argc, argv).Run();
+
+    WebKit::shutdown();
+    return result;
+}

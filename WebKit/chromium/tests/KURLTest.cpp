@@ -33,8 +33,9 @@
 
 #include "config.h"
 
+#include <gtest/gtest.h>
+
 #include "KURL.h"
-#include "WebKitTest.h"
 
 namespace {
 
@@ -57,11 +58,8 @@ struct ComponentCase {
     const char* ref;
 };
 
-class KURLTest : public WebKitTest {
-};
-
 // Test the cases where we should be the same as WebKit's old KURL.
-TEST_F(KURLTest, SameGetters)
+TEST(KURLTest, SameGetters)
 {
     struct GetterCase {
         const char* url;
@@ -114,7 +112,7 @@ TEST_F(KURLTest, SameGetters)
 
 // Test a few cases where we're different just to make sure we give reasonable
 // output.
-TEST_F(KURLTest, DifferentGetters)
+TEST(KURLTest, DifferentGetters)
 {
     ComponentCase cases[] = {
         // url                                    protocol      host        port  user  pass    path                lastPath  query      ref
@@ -154,7 +152,7 @@ TEST_F(KURLTest, DifferentGetters)
 
 // Ensures that both ASCII and UTF-8 canonical URLs are handled properly and we
 // get the correct string object out.
-TEST_F(KURLTest, UTF8)
+TEST(KURLTest, UTF8)
 {
     const char asciiURL[] = "http://foo/bar#baz";
     WebCore::KURL asciiKURL(WebCore::ParsedURLString, asciiURL);
@@ -177,7 +175,7 @@ TEST_F(KURLTest, UTF8)
     EXPECT_TRUE(utf8KURL.string() == WebCore::String::fromUTF8(utf8URL));
 }
 
-TEST_F(KURLTest, Setters)
+TEST(KURLTest, Setters)
 {
     // Replace the starting URL with the given components one at a time and
     // verify that we're always the same as the old KURL.
@@ -263,7 +261,7 @@ TEST_F(KURLTest, Setters)
 
 // Tests that KURL::decodeURLEscapeSequences works as expected
 #if USE(GOOGLEURL)
-TEST_F(KURLTest, Decode)
+TEST(KURLTest, Decode)
 {
     struct DecodeCase {
         const char* input;
@@ -303,7 +301,7 @@ TEST_F(KURLTest, Decode)
 }
 #endif
 
-TEST_F(KURLTest, Encode)
+TEST(KURLTest, Encode)
 {
     // Also test that it gets converted to UTF-8 properly.
     char16 wideInputHelper[3] = { 0x4f60, 0x597d, 0 };
@@ -324,7 +322,7 @@ TEST_F(KURLTest, Encode)
     EXPECT_EQ(reference, output);
 }
 
-TEST_F(KURLTest, ResolveEmpty)
+TEST(KURLTest, ResolveEmpty)
 {
     WebCore::KURL emptyBase;
 
@@ -343,7 +341,7 @@ TEST_F(KURLTest, ResolveEmpty)
 
 // WebKit will make empty URLs and set components on them. kurl doesn't allow
 // replacements on invalid URLs, but here we do.
-TEST_F(KURLTest, ReplaceInvalid)
+TEST(KURLTest, ReplaceInvalid)
 {
     WebCore::KURL kurl;
 
@@ -390,7 +388,7 @@ TEST_F(KURLTest, ReplaceInvalid)
 #endif
 }
 
-TEST_F(KURLTest, Path)
+TEST(KURLTest, Path)
 {
     const char initial[] = "http://www.google.com/path/foo";
     WebCore::KURL kurl(WebCore::ParsedURLString, initial);
@@ -404,7 +402,7 @@ TEST_F(KURLTest, Path)
 
 // Test that setting the query to different things works. Thq query is handled
 // a littler differently than some of the other components.
-TEST_F(KURLTest, Query)
+TEST(KURLTest, Query)
 {
     const char initial[] = "http://www.google.com/search?q=awesome";
     WebCore::KURL kurl(WebCore::ParsedURLString, initial);
@@ -435,7 +433,7 @@ TEST_F(KURLTest, Query)
                  kurl.string().utf8().data());
 }
 
-TEST_F(KURLTest, Ref)
+TEST(KURLTest, Ref)
 {
     WebCore::KURL kurl(WebCore::ParsedURLString, "http://foo/bar#baz");
 
@@ -464,7 +462,7 @@ TEST_F(KURLTest, Ref)
     EXPECT_STREQ("http://foo/bar", cur.string().utf8().data());
 }
 
-TEST_F(KURLTest, Empty)
+TEST(KURLTest, Empty)
 {
     WebCore::KURL kurl;
 
@@ -537,7 +535,7 @@ TEST_F(KURLTest, Empty)
     EXPECT_FALSE(kurl7.string().isNull());
 }
 
-TEST_F(KURLTest, UserPass)
+TEST(KURLTest, UserPass)
 {
     const char* src = "http://user:pass@google.com/";
     WebCore::KURL kurl(WebCore::ParsedURLString, src);
@@ -556,7 +554,7 @@ TEST_F(KURLTest, UserPass)
     EXPECT_EQ("http://google.com/", kurl.string());
 }
 
-TEST_F(KURLTest, Offsets)
+TEST(KURLTest, Offsets)
 {
     const char* src1 = "http://user:pass@google.com/foo/bar.html?baz=query#ref";
     WebCore::KURL kurl1(WebCore::ParsedURLString, src1);
@@ -586,7 +584,7 @@ TEST_F(KURLTest, Offsets)
     EXPECT_EQ(11u, kurl3.pathAfterLastSlash());
 }
 
-TEST_F(KURLTest, DeepCopy)
+TEST(KURLTest, DeepCopy)
 {
     const char url[] = "http://www.google.com/";
     WebCore::KURL src(WebCore::ParsedURLString, url);
@@ -599,7 +597,7 @@ TEST_F(KURLTest, DeepCopy)
     EXPECT_NE(dest.utf8String().data(), src.utf8String().data());
 }
 
-TEST_F(KURLTest, ProtocolIs)
+TEST(KURLTest, ProtocolIs)
 {
     WebCore::KURL url1(WebCore::ParsedURLString, "foo://bar");
     EXPECT_TRUE(url1.protocolIs("foo"));

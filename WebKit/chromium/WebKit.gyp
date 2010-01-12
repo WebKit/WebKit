@@ -417,8 +417,7 @@
             ],
             'sources': [
                 'tests/KURLTest.cpp',
-                'tests/WebKitTest.h',
-                '<(chromium_src_dir)/base/test/run_all_unittests.cc',
+                'tests/RunAllTests.cpp',
             ],
         },
     ], # targets
