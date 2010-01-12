@@ -1,5 +1,15 @@
 2010-01-12  Philippe Normand  <pnormand@igalia.com>
 
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        [GTK] Failing media/video-seek-past-end-playing.html
+        https://bugs.webkit.org/show_bug.cgi?id=33015
+
+        * platform/gtk/Skipped: Skipping the test again, we need to kill
+        its last timer.
+
+2010-01-12  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Eric Carlson.
 
         [GTK] Failing media/video-seek-past-end-playing.html
