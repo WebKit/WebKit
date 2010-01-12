@@ -1,5 +1,16 @@
 2010-01-12  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Updated results for these tests which just have rounding errors.
+
+        * platform/mac/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-example-expected.png:
+        * platform/mac/svg/css/mask-with-shadow-expected.checksum:
+        * platform/mac/svg/css/mask-with-shadow-expected.png:
+
+2010-01-12  Beth Dakin  <bdakin@apple.com>
+
         This patch changes the name of -webkit-shadow to -webkit-svg-shadow 
         to avoid giving a custom property an overly-general name.
         <rdar://problem/7534590>
