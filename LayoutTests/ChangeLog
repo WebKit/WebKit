@@ -2,6 +2,18 @@
 
         Unreviewed, build fix.
 
+        Add media/video-poster-scale.html to GTK skipped list, it needs platform specific 
+        results (https://bugs.webkit.org/show_bug.cgi?id=33541). Fix test results on
+        OSX and Windows.
+
+        * media/video-poster-scale-expected.txt:
+        * media/video-poster-scale.html:
+        * platform/gtk/Skipped:
+
+2010-01-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
         Update test and results after r53146.
 
         * http/tests/security/local-video-poster-from-remote-expected.txt:

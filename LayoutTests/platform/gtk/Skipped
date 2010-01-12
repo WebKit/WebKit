@@ -3633,6 +3633,9 @@ media/media-fullscreen-not-in-document.html
 # Requires media engine closed caption support
 media/media-captions.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=33541 - Need platform specific results
+media/video-poster-scale.html
+
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work
 plugins/call-as-function-test.html
