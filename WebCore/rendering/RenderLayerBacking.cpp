@@ -41,9 +41,11 @@
 #include "HTMLNames.h"
 #include "InspectorTimelineAgent.h"
 #include "KeyframeList.h"
+#include "PluginWidget.h"
 #include "RenderBox.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -196,6 +198,11 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 
     if (isDirectlyCompositedImage())
         updateImageContents();
+
+    if (renderer()->isEmbeddedObject() && toRenderEmbeddedObject(renderer())->allowsAcceleratedCompositing()) {
+        PluginWidget* pluginWidget = static_cast<PluginWidget*>(toRenderEmbeddedObject(renderer())->widget());
+        m_graphicsLayer->setContentsToMedia(pluginWidget->platformLayer());
+    }
 
 #if ENABLE(3D_CANVAS)    
     if (is3DCanvas(renderer())) {

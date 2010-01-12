@@ -35,9 +35,17 @@ public:
 
     void updateWidget(bool onlyCreateNonNetscapePlugins);
 
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool allowsAcceleratedCompositing() const;
+#endif
+
 private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
+
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool requiresLayer() const;
+#endif
 
     virtual void layout();
 };

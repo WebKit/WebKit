@@ -33,12 +33,17 @@
 #include "HTMLParamElement.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "PluginWidget.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 #include "Text.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLVideoElement.h"
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "PluginWidget.h"
 #endif
 
 namespace WebCore {
@@ -56,6 +61,21 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
     if (frameView())
         frameView()->removeWidgetToUpdate(this);
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderEmbeddedObject::requiresLayer() const
+{
+    if (RenderPartObject::requiresLayer())
+        return true;
+    
+    return allowsAcceleratedCompositing();
+}
+
+bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
+{
+    return widget() && widget()->isPluginWidget() && static_cast<PluginWidget*>(widget())->platformLayer();
+}
+#endif
 
 static bool isURLAllowed(Document* doc, const String& url)
 {

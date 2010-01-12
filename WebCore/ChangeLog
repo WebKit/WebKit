@@ -1,3 +1,42 @@
+2010-01-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33455
+        Allows plugins to participate in accelerated compositing
+
+        For plugins using the CoreAnimation rendering mode, host their CALayers in the
+        accelerated compositing layer tree.
+        
+        This requires making normal flow RenderLayers for RenderEmbeddedObjects when they represent
+        a plugin using this mode.
+        
+        * WebCore.base.exp: Export Node::setNeedsStyleRecalc() for use by WebKit.
+        * WebCore.xcodeproj/project.pbxproj: Re-order files for sorting.
+
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::requiresLayer): Make a layer if the plugin is using
+        accelerated compositing mode.
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing): Asks whether the plugin has
+        a layer, via PluginWidget.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::isSelfPaintingLayer):
+        RenderEmbeddedObjects should be normal flow layers, and self-painting layers.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        Parent the plugin's layer in the GraphicsLayer when updating the layer configuration.
+        
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        RenderEmbeddedObjects that allow accelerated compositing trip accelerated compositing mode
+        for the page.
+
 2010-01-11  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

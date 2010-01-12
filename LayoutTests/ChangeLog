@@ -1,3 +1,19 @@
+2010-01-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33455
+        Allows plugins to participate in accelerated compositing
+        
+        Change the testcase to make the embeds position: relative so that the behavior
+        of the test is not affected by whether WebCore decides to put plugins into
+        RenderLayers.
+
+        * platform/mac/plugins/embed-attributes-style-expected.checksum:
+        * platform/mac/plugins/embed-attributes-style-expected.png:
+        * platform/mac/plugins/embed-attributes-style-expected.txt:
+        * plugins/embed-attributes-style.html:
+
 2010-01-11  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -1,3 +1,19 @@
+2010-01-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33455
+        Allows plugins to participate in accelerated compositing
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]): If accelerated compositing is
+        available, don't use a layer-backed NSView for plugins. Instead, tickle the
+        accelerated compositing code via setNeedsStyleRecalc(SyntheticStyleChange),
+        which will parent the plugin's layer in the accelerated compositing layer
+        tree.
+
 2010-01-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

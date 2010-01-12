@@ -1089,10 +1089,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
         if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
-            
+
             // The plug-in gives us a retained layer.
             _pluginLayer.adoptNS((CALayer *)value);
-            [self setWantsLayer:YES];
+
+            BOOL accleratedCompositingEnabled = false;
+#if USE(ACCELERATED_COMPOSITING)
+            accleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
+#endif
+            if (accleratedCompositingEnabled)
+                [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
+            else
+                [self setWantsLayer:YES];
             LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _pluginLayer.get());
         }
 

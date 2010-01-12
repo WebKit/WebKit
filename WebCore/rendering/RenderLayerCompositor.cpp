@@ -39,6 +39,7 @@
 #include "HTMLCanvasElement.h"
 #include "Page.h"
 #include "RenderLayerBacking.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -58,6 +59,8 @@ bool WebCoreHas3DRendering = true;
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 struct CompositingState {
     CompositingState(RenderLayer* compAncestor)
@@ -885,15 +888,17 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 // Use needsToBeComposited() to determine if a RL actually needs a compositing layer.
 // static
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) const
-{    
+{
+    RenderObject* renderer = layer->renderer();
     // The root layer always has a compositing layer, but it may not have backing.
     return (inCompositingMode() && layer->isRootLayer()) ||
-             requiresCompositingForTransform(layer->renderer()) ||
-             requiresCompositingForVideo(layer->renderer()) ||
-             requiresCompositingForCanvas(layer->renderer()) ||
-             layer->renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden ||
+             requiresCompositingForTransform(renderer) ||
+             requiresCompositingForVideo(renderer) ||
+             requiresCompositingForCanvas(renderer) ||
+             requiresCompositingForPlugin(renderer) ||
+             renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden ||
              clipsCompositingDescendants(layer) ||
-             requiresCompositingForAnimation(layer->renderer());
+             requiresCompositingForAnimation(renderer);
 }
 
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,
@@ -973,6 +978,11 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer)
     UNUSED_PARAM(renderer);
 #endif
     return false;
+}
+
+bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer) const
+{
+    return renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
 }
 
 bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* renderer) const

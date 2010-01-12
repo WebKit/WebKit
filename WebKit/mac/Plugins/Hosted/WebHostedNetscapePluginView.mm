@@ -116,7 +116,11 @@ extern "C" {
         _softwareRenderer = WKSoftwareCARendererCreate(_proxy->renderContextID());
     else {
         _pluginLayer = WKMakeRenderLayer(_proxy->renderContextID());
-        self.wantsLayer = YES;
+
+        if (accleratedCompositingEnabled)
+            [self element]->setNeedsStyleRecalc(SyntheticStyleChange);
+        else
+            self.wantsLayer = YES;
     }
     
     // Update the window frame.
