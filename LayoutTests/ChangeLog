@@ -1,3 +1,16 @@
+2010-01-12  Petri Latvala  <petri.latvala@nomovok.com>
+
+        Reviewed by Antti Koivisto.
+
+        fast/events/touch-coords-in-zoom-and-scroll-pretty-diff.html failed on buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=33465
+
+        A touchmove event is not dispatched if none of the touch points actually moved.
+        Changed the test to use touchstart instead.
+
+        * fast/events/touch/touch-coords-in-zoom-and-scroll.html:
+        * platform/qt/Skipped:
+
 2010-01-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Gustavo Noronha Silva.

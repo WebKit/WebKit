@@ -15,10 +15,12 @@
 <script>
     var event;
 
-    function sendTouchMove()
+    function sendTouchStart(x, y)
     {
         if (window.eventSender) {
-            eventSender.touchMove();
+            eventSender.clearTouchPoints();
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
         }
     }
 
@@ -57,15 +59,10 @@
         shouldBe("event.touches[0].pageY", "100");
     }
 
-    window.addEventListener("touchmove", base, false);
-
-    if (window.eventSender) {
-        eventSender.addTouchPoint(100, 100);
-        eventSender.touchStart();
-    }
+    window.addEventListener("touchstart", base, false);
     
-    sendTouchMove();
-    window.removeEventListener("touchmove", base, false);
+    sendTouchStart(100, 100);
+    window.removeEventListener("touchstart", base, false);
     
     // Just zoomed.
     function justZoomed(e)
@@ -77,11 +74,11 @@
         shouldBe("event.touches[0].pageX", "83");
         shouldBe("event.touches[0].pageY", "83");
     }
-    window.addEventListener("touchmove", justZoomed, false);
+    window.addEventListener("touchstart", justZoomed, false);
     zoomPageIn();
-    sendTouchMove();
+    sendTouchStart(100, 100);
     zoomPageOut();
-    window.removeEventListener("touchmove", justZoomed, false);
+    window.removeEventListener("touchstart", justZoomed, false);
 
     // Just scrolled.
     function justScrolled(e)
@@ -93,11 +90,11 @@
         shouldBe("event.touches[0].pageX", "150");
         shouldBe("event.touches[0].pageY", "150");
     }
-    window.addEventListener("touchmove", justScrolled, false);
+    window.addEventListener("touchstart", justScrolled, false);
     scrollPage(50, 50);
-    sendTouchMove();
+    sendTouchStart(100, 100);
     scrollPage(0, 0);
-    window.removeEventListener("touchmove", justScrolled, false);
+    window.removeEventListener("touchstart", justScrolled, false);
 
     // Zoomed and scrolled.
     function zoomedAndScrolled(e)
@@ -109,13 +106,13 @@
         shouldBe("event.touches[0].pageX", "133");
         shouldBe("event.touches[0].pageY", "133");
     }
-    window.addEventListener("touchmove", zoomedAndScrolled, false);
+    window.addEventListener("touchstart", zoomedAndScrolled, false);
     zoomPageIn();
     scrollPage(50, 50);
-    sendTouchMove();
+    sendTouchStart(100, 100);
     zoomPageOut();
     scrollPage(0, 0);
-    window.removeEventListener("touchmove", zoomedAndScrolled, false);
+    window.removeEventListener("touchstart", zoomedAndScrolled, false);
 
     if (window.eventSender) {
         eventSender.touchEnd();
