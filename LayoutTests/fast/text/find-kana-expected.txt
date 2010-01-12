@@ -5,19 +5,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Exact matches first as a baseline
 
+PASS canFind(decomposedHalfwidthKatakanaLetterBa, decomposedHalfwidthKatakanaLetterBa) is true
+PASS canFind(decomposedHalfwidthKatakanaLetterPa, decomposedHalfwidthKatakanaLetterPa) is true
+PASS canFind(decomposedHiraganaLetterBa, decomposedHiraganaLetterBa) is true
 PASS canFind(decomposedHiraganaLetterGa, decomposedHiraganaLetterGa) is true
+PASS canFind(decomposedHiraganaLetterPa, decomposedHiraganaLetterPa) is true
 PASS canFind(decomposedKatakanaLetterGa, decomposedKatakanaLetterGa) is true
 PASS canFind(decomposedLatinCapitalLetterAWithGrave, decomposedLatinCapitalLetterAWithGrave) is true
 PASS canFind(halfwidthKatakanaLetterA, halfwidthKatakanaLetterA) is true
+PASS canFind(halfwidthKatakanaLetterHa, halfwidthKatakanaLetterHa) is true
+PASS canFind(halfwidthKatakanaLetterKa, halfwidthKatakanaLetterKa) is true
 PASS canFind(halfwidthKatakanaLetterSmallA, halfwidthKatakanaLetterSmallA) is true
-PASS canFind(hiraganaLetterA, hiraganaLetterA) is true
 PASS canFind(hiraganaLetterA, hiraganaLetterA) is true
 PASS canFind(hiraganaLetterBa, hiraganaLetterBa) is true
 PASS canFind(hiraganaLetterGa, hiraganaLetterGa) is true
 PASS canFind(hiraganaLetterHa, hiraganaLetterHa) is true
 PASS canFind(hiraganaLetterKa, hiraganaLetterKa) is true
 PASS canFind(hiraganaLetterPa, hiraganaLetterPa) is true
+PASS canFind(hiraganaLetterSmallA, hiraganaLetterSmallA) is true
 PASS canFind(katakanaLetterA, katakanaLetterA) is true
+PASS canFind(katakanaLetterGa, katakanaLetterGa) is true
+PASS canFind(katakanaLetterKa, katakanaLetterKa) is true
 PASS canFind(katakanaLetterSmallA, katakanaLetterSmallA) is true
 PASS canFind(latinCapitalLetterAWithGrave, latinCapitalLetterAWithGrave) is true
 
@@ -55,14 +63,20 @@ PASS canFind(katakanaLetterSmallA, katakanaLetterA) is false
 
 Kana letters where the only difference is in voiced sound marks: Must *not* be treated as equal
 
+PASS canFind(decomposedHalfwidthKatakanaLetterBa, halfwidthKatakanaLetterHa) is false
+PASS canFind(decomposedHalfwidthKatakanaLetterPa, halfwidthKatakanaLetterHa) is false
 PASS canFind(decomposedHiraganaLetterBa, hiraganaLetterHa) is false
 PASS canFind(decomposedHiraganaLetterBa, hiraganaLetterPa) is false
 PASS canFind(decomposedHiraganaLetterGa, halfwidthKatakanaLetterKa) is false
 PASS canFind(decomposedHiraganaLetterGa, hiraganaLetterKa) is false
-PASS canFind(decomposedHiraganaLetterGa, hiraganaLetterKa) is false
 PASS canFind(decomposedHiraganaLetterPa, hiraganaLetterBa) is false
 PASS canFind(decomposedHiraganaLetterPa, hiraganaLetterHa) is false
+PASS canFind(decomposedKatakanaLetterGa, halfwidthKatakanaLetterKa) is false
+PASS canFind(decomposedKatakanaLetterGa, hiraganaLetterKa) is false
+PASS canFind(halfwidthKatakanaLetterHa, decomposedHalfwidthKatakanaLetterBa) is false
+PASS canFind(halfwidthKatakanaLetterHa, decomposedHalfwidthKatakanaLetterPa) is false
 PASS canFind(halfwidthKatakanaLetterKa, decomposedHiraganaLetterGa) is false
+PASS canFind(halfwidthKatakanaLetterKa, decomposedKatakanaLetterGa) is false
 PASS canFind(hiraganaLetterBa, decomposedHiraganaLetterPa) is false
 PASS canFind(hiraganaLetterBa, hiraganaLetterHa) is false
 PASS canFind(hiraganaLetterBa, hiraganaLetterPa) is false
@@ -72,7 +86,7 @@ PASS canFind(hiraganaLetterHa, decomposedHiraganaLetterPa) is false
 PASS canFind(hiraganaLetterHa, hiraganaLetterBa) is false
 PASS canFind(hiraganaLetterHa, hiraganaLetterPa) is false
 PASS canFind(hiraganaLetterKa, decomposedHiraganaLetterGa) is false
-PASS canFind(hiraganaLetterKa, decomposedHiraganaLetterGa) is false
+PASS canFind(hiraganaLetterKa, decomposedKatakanaLetterGa) is false
 PASS canFind(hiraganaLetterKa, hiraganaLetterGa) is false
 PASS canFind(hiraganaLetterPa, decomposedHiraganaLetterBa) is false
 PASS canFind(hiraganaLetterPa, hiraganaLetterBa) is false

@@ -1,3 +1,18 @@
+2010-01-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix handling of unusual kana sequences in search
+        https://bugs.webkit.org/show_bug.cgi?id=33506
+
+        * fast/text/find-kana-expected.txt: Updated.
+        * fast/text/script-tests/find-kana.js: Added new tests for sequences
+        that do not have composed equivalents. This is needed to test the code
+        that compares voice marks. The old test cases didn't cover the combining
+        character code path because normalizing to NFC combined all the sequences.
+        * platform/mac-leopard/fast/text/find-kana-expected.txt: Updated.
+        * platform/qt/fast/text/find-kana-expected.txt: Updated.
+
 2010-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker.
