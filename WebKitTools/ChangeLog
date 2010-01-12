@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        webkit-patch shouldn't waste my time for with a component prompt
+        https://bugs.webkit.org/show_bug.cgi?id=33521
+
+        The component field isn't very useful for bugs created with
+        webkit-patch because they're likely to be resolved quickly.  Instead of
+        always prompting for a component, we should just default to the "New
+        Bugs" component.  If the bug stays around for more than five minutes,
+        we can assign it a proper component.
+
+        * Scripts/webkitpy/bugzilla.py:
+
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add experimental "land-safely" command to webkit-patch
         https://bugs.webkit.org/show_bug.cgi?id=33518
 

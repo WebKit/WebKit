@@ -399,7 +399,9 @@ class Bugzilla(object):
         self.browser.select_form(name="Create")
         component_items = self.browser.find_control('component').items
         component_names = map(lambda item: item.name, component_items)
-        if not component or component not in component_names:
+        if not component:
+            component = "New Bugs"
+        if component not in component_names:
             component = self.prompt_for_component(component_names)
         self.browser['component'] = [component]
         if cc:
