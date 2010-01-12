@@ -56,14 +56,19 @@
     var UTC_JAN_1_2005 = TIME_2000 + TimeInYear(2000)+TimeInYear(2001)+
     TimeInYear(2002)+TimeInYear(2003)+TimeInYear(2004);
 
-    addTestCase( now );
 /*
+    // We don't use |now| because it fails every night at midnight.
+    // The test is more reproducable if we use concrete times.
+    addTestCase( now );
+
     addTestCase( TIME_YEAR_0 );
     addTestCase( TIME_1970 );
     addTestCase( TIME_1900 );
     addTestCase( TIME_2000 );
     addTestCase( UTC_FEB_29_2000 );
+*/
     addTestCase( UTC_JAN_1_2005 );
+/*
 
     testcases[tc++] = new TestCase( SECTION,
                                     "(new Date(NaN)).getDay()",

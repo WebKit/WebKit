@@ -61,14 +61,18 @@
 
     var DST_END_1998 = UTC( GetFirstSundayInNovember(TimeFromYear(1998)) + 2*msPerHour );
 
-    addTestCase( now );
 /*
+    // We don't use |now| because it fails every night at midnight.
+    // The test is more reproducable if we use concrete times.
+    addTestCase( now );
     addTestCase( TIME_YEAR_0 );
     addTestCase( TIME_1970 );
     addTestCase( TIME_1900 );
     addTestCase( TIME_2000 );
     addTestCase( UTC_FEB_29_2000 );
+*/
     addTestCase( UTC_JAN_1_2005 );
+/*
     addTestCase( DST_START_1998 );
     addTestCase( DST_START_1998-1 );
     addTestCase( DST_START_1998+1 );
