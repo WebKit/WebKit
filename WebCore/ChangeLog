@@ -1,3 +1,15 @@
+2010-01-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30883
+        [Gtk] Implement AtkText for HTML elements which contain text
+
+        Tweak/correction: Eliminate a needless variable.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_caret_offset):
+
 2010-01-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Geoffrey Garen.
