@@ -1,5 +1,11 @@
 2010-01-12  Darin Fisher  <darin@chromium.org>
 
+        Fixing chromium build bustage.
+
+        * bindings/v8/custom/V8PopStateEventCustom.cpp: Add V8Proxy.h include.
+
+2010-01-12  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Add V8 bindings for PopStateEvent.
