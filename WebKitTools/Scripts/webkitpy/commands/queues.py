@@ -125,10 +125,10 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
-        message = script_error.output
+        message = script_error.message
         if is_error:
             message = "Error: %s" % message
-        return tool.status_server.update_status(cls.name, script_error.message, state["patch"], StringIO(message))
+        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(script_error.output))
 
 
 class CommitQueue(AbstractQueue, StepSequenceErrorHandler):

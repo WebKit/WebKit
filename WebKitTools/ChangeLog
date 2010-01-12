@@ -1,5 +1,11 @@
 2010-01-12  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Add "error" to the right part of the message.
+
+        * Scripts/webkitpy/commands/queues.py:
+
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         EWS should show purple when svn-apply fails
