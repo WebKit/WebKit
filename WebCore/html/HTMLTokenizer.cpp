@@ -1672,7 +1672,7 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
 
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = m_doc->inspectorTimelineAgent())
-        timelineAgent->willWriteHTML();
+        timelineAgent->willWriteHTML(source.length());
 #endif
   
     Frame* frame = m_doc->frame();

@@ -96,9 +96,9 @@ void InspectorTimelineAgent::didPaint()
     didCompleteCurrentRecord(PaintTimelineRecordType);
 }
 
-void InspectorTimelineAgent::willWriteHTML()
+void InspectorTimelineAgent::willWriteHTML(unsigned length)
 {
-    pushCurrentRecord(TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds()), ParseHTMLTimelineRecordType);
+    pushCurrentRecord(TimelineRecordFactory::createParseHTMLRecord(m_frontend, currentTimeInMilliseconds(), length), ParseHTMLTimelineRecordType);
 }
 
 void InspectorTimelineAgent::didWriteHTML()

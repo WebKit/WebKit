@@ -86,7 +86,7 @@ namespace WebCore {
         void willPaint(const IntRect&);
         void didPaint();
 
-        void willWriteHTML();
+        void willWriteHTML(unsigned length);
         void didWriteHTML();
         
         void didInstallTimer(int timerId, int timeout, bool singleShot);

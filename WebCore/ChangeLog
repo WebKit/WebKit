@@ -1,3 +1,21 @@
+2010-01-12  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Adds source length to ParseHTMLRecords in the inspector timeline.
+        https://bugs.webkit.org/show_bug.cgi?id=33548
+
+        Test: inspector/timeline-parse-html.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createParseHTMLRecord):
+        * inspector/TimelineRecordFactory.h:
+
 2010-01-12  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler

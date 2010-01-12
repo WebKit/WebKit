@@ -68,6 +68,8 @@ namespace WebCore {
 
         static ScriptObject createPaintRecord(InspectorFrontend*, double startTime, const IntRect&);
 
+        static ScriptObject createParseHTMLRecord(InspectorFrontend*, double startTime, unsigned length);
+
     private:
         TimelineRecordFactory() { }
     };
