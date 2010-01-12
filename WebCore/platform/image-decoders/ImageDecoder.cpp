@@ -260,6 +260,16 @@ int ImageDecoder::lowerBoundScaledX(int origX, int searchStart)
     return getScaledValue<LowerBound>(m_scaledColumns, origX, searchStart);
 }
 
+int ImageDecoder::upperBoundScaledY(int origY, int searchStart)
+{
+    return getScaledValue<UpperBound>(m_scaledRows, origY, searchStart);
+}
+
+int ImageDecoder::lowerBoundScaledY(int origY, int searchStart)
+{
+    return getScaledValue<LowerBound>(m_scaledRows, origY, searchStart);
+}
+
 int ImageDecoder::scaledY(int origY, int searchStart)
 {
     return getScaledValue<Exact>(m_scaledRows, origY, searchStart);

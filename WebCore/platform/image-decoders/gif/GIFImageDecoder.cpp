@@ -246,7 +246,12 @@ void GIFImageDecoder::decode(GIFQuery query, unsigned haltAtFrame)
 // Callbacks from the GIF reader.
 bool GIFImageDecoder::sizeNowAvailable(unsigned width, unsigned height)
 {
-    return setSize(width, height);
+    if (!setSize(width, height))
+        return false;
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    prepareScaleDataIfNecessary();
+#endif
+    return true;
 }
 
 void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
@@ -268,10 +273,26 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
     RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
     buffer->setRect(frameRect);
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    if (m_scaled) {
+        int left = upperBoundScaledX(frameRect.x());
+        int right = lowerBoundScaledX(frameRect.right(), left);
+        int top = upperBoundScaledY(frameRect.y());
+        int bottom = lowerBoundScaledY(frameRect.bottom(), top);
+        buffer->setScaledRect(IntRect(left, top, right - left, bottom - top));
+    } else
+        buffer->setScaledRect(frameRect);
+#endif
     
     if (frameIndex == 0) {
         // This is the first frame, so we're not relying on any previous data.
-        if (!buffer->setSize(size().width(), size().height())) {
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        const IntSize& bufferSize = scaledSize();
+#else
+        const IntSize& bufferSize = size();
+#endif
+        if (!buffer->setSize(bufferSize.width(), bufferSize.height())) {
             m_failed = true;
             return false;
         }
@@ -301,12 +322,18 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+            const IntRect& prevRect = prevBuffer->scaledRect();
+            const IntSize& bufferSize = scaledSize();
+#else
             const IntRect& prevRect = prevBuffer->rect();
+            const IntSize& bufferSize = size();
+#endif
             if ((frameIndex == 0)
-                || prevRect.contains(IntRect(IntPoint(), size()))) {
+                || prevRect.contains(IntRect(IntPoint(), bufferSize))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
-                if (!buffer->setSize(size().width(), size().height())) {
+                if (!buffer->setSize(bufferSize.width(), bufferSize.height())) {
                     m_failed = true;
                     return false;
                 }
@@ -331,6 +358,27 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     return true;
 }
 
+static inline void copyOnePixel(const GIFImageDecoderPrivate* reader, const unsigned char* sourceAddr, unsigned char* colorMap,
+                                unsigned colorMapSize, bool writeTransparentPixels, RGBA32Buffer& buffer, int x, int  y, bool& sawAlpha)
+{
+    const unsigned char sourceValue = *sourceAddr;
+    if ((!reader->isTransparent() || (sourceValue != reader->transparentPixel())) && (sourceValue < colorMapSize)) {
+        const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
+        buffer.setRGBA(x, y, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
+    } else {
+        sawAlpha = true;
+        // We may or may not need to write transparent pixels to the buffer.
+        // If we're compositing against a previous image, it's wrong, and if
+        // we're writing atop a cleared, fully transparent buffer, it's
+        // unnecessary; but if we're decoding an interlaced gif and
+        // displaying it "Haeberli"-style, we must write these for passes
+        // beyond the first, or the initial passes will "show through" the
+        // later ones.
+        if (writeTransparentPixels)
+            buffer.setRGBA(x, y, 0, 0, 0, 0);
+    }
+}
+
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
                                      unsigned char* rowBuffer,
                                      unsigned char* rowEnd,
@@ -342,7 +390,7 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     // origin within the entire image size, i.e.
     // (m_reader->frameXOffset(), m_reader->frameYOffset()).
     int x = m_reader->frameXOffset();
-    const int y = m_reader->frameYOffset() + rowNumber;
+    int y = m_reader->frameYOffset() + rowNumber;
 
     // Sanity-check the arguments.
     if ((rowBuffer == 0) || (y >= size().height()))
@@ -360,32 +408,57 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
         return false;
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    int destYBegin = y;
+    int destYEnd = std::min(y + static_cast<int>(repeatCount), size().height());
+    int destXBegin = x;
+    int destXEnd = std::min(x + (rowEnd - rowBuffer), size().width());
+
+    if (m_scaled) {
+        destYBegin = upperBoundScaledY(destYBegin);
+        if (destYBegin < 0)
+            return true;
+        destYEnd = lowerBoundScaledY(destYEnd - 1, destYBegin + 1);
+        if (destYEnd < destYBegin)
+            return true;
+
+        destXBegin = upperBoundScaledX(destXBegin);
+        if (destXBegin < 0)
+            return true;
+        destXEnd = lowerBoundScaledX(destXEnd - 1, destXBegin + 1);
+        if (destXEnd < destXBegin)
+            return true;
+
+        ++destXEnd;
+        ++destYEnd;
+        x = destXBegin;
+        y = destYBegin;
+    }
+#endif
+
     // Write one row's worth of data into the frame.  There is no guarantee that
     // (rowEnd - rowBuffer) == (size().width() - m_reader->frameXOffset()), so
     // we must ensure we don't run off the end of either the source data or the
     // row's X-coordinates.
-    for (unsigned char* sourceAddr = rowBuffer; (sourceAddr != rowEnd) && (x < size().width()); ++sourceAddr, ++x) {
-        const unsigned char sourceValue = *sourceAddr;
-        if ((!m_reader->isTransparent() || (sourceValue != m_reader->transparentPixel())) && (sourceValue < colorMapSize)) {
-            const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
-            buffer.setRGBA(x, y, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
-        } else {
-            m_currentBufferSawAlpha = true;
-            // We may or may not need to write transparent pixels to the buffer.
-            // If we're compositing against a previous image, it's wrong, and if
-            // we're writing atop a cleared, fully transparent buffer, it's
-            // unnecessary; but if we're decoding an interlaced gif and
-            // displaying it "Haeberli"-style, we must write these for passes
-            // beyond the first, or the initial passes will "show through" the
-            // later ones.
-            if (writeTransparentPixels)
-                buffer.setRGBA(x, y, 0, 0, 0, 0);
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    if (m_scaled) {
+        for (; x < destXEnd; ++x) {
+            unsigned char* sourceAddr = rowBuffer + m_scaledColumns[x] - m_reader->frameXOffset();
+            copyOnePixel(m_reader, sourceAddr, colorMap, colorMapSize, writeTransparentPixels, buffer, x, y, m_currentBufferSawAlpha);
         }
-    }
+    } else
+#endif
+    for (unsigned char* sourceAddr = rowBuffer; sourceAddr < rowEnd && x < size().width(); ++sourceAddr, ++x)
+        copyOnePixel(m_reader, sourceAddr, colorMap, colorMapSize, writeTransparentPixels, buffer, x, y, m_currentBufferSawAlpha);
 
-    // Tell the frame to copy the row data if need be.
-    if (repeatCount > 1)
+     // Tell the frame to copy the row data if need be.
+    if (repeatCount > 1) {
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        buffer.copyRowNTimes(destXBegin, destXEnd, destYBegin, destYEnd);
+#else
         buffer.copyRowNTimes(m_reader->frameXOffset(), x, y, std::min(y + static_cast<int>(repeatCount), size().height()));
+#endif
+    }
 
     return true;
 }
@@ -405,7 +478,11 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
     if (!m_currentBufferSawAlpha) {
         // The whole frame was non-transparent, so it's possible that the entire
         // resulting buffer was non-transparent, and we can setHasAlpha(false).
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+        if (buffer.scaledRect().contains(IntRect(IntPoint(), scaledSize())))
+#else
         if (buffer.rect().contains(IntRect(IntPoint(), size())))
+#endif
             buffer.setHasAlpha(false);
         else if (frameIndex > 0) {
             // Tricky case.  This frame does not have alpha only if everywhere
@@ -430,7 +507,11 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
             // it had no alpha, and its rect is contained in the current frame's
             // rect, we know the current frame has no alpha.
             if ((prevBuffer->disposalMethod() == RGBA32Buffer::DisposeOverwriteBgcolor)
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+                && !prevBuffer->hasAlpha() && buffer.scaledRect().contains(prevBuffer->scaledRect()))
+#else
                 && !prevBuffer->hasAlpha() && buffer.rect().contains(prevBuffer->rect()))
+#endif
                 buffer.setHasAlpha(false);
         }
     }
