@@ -1,3 +1,84 @@
+2010-01-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        rdar://problem/5684062
+        https://bugs.webkit.org/show_bug.cgi?id=23094
+        Flash of white when switching from poster image to video playback
+        
+        https://bugs.webkit.org/show_bug.cgi?id=23140
+        <video> poster should scale like a video frame
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Only call updatePosterImage from one place
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement): m_shouldShowPosterImage -> m_shouldDisplayPoster.
+        (WebCore::HTMLVideoElement::createRenderer): Always create a RenderVideo.
+        (WebCore::HTMLVideoElement::attach): Call updatePosterImage before checking to see if we
+            should display the poster image. renderer() is never a RenderImage, don't need to check.
+            m_shouldShowPosterImage -> m_shouldDisplayPoster.
+        (WebCore::HTMLVideoElement::detach): m_shouldShowPosterImage -> m_shouldDisplayPoster.
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Cache poster attribute when it is set since
+            it is checked frequently. m_shouldShowPosterImage -> m_shouldDisplayPoster.
+        (WebCore::HTMLVideoElement::updatePosterImage): Don't bother looking at the network state, 
+            display the poster as long as the attribute is valid and the media engine says it hasn't
+            rendered a video frame. m_shouldShowPosterImage -> m_shouldDisplayPoster.
+        (WebCore::HTMLVideoElement::hasAvailableVideoFrame): New, ask the media engine if a video frame
+            is available to render.
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::poster):
+        (WebCore::HTMLVideoElement::shouldDisplayPoster):
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateRenderer): Call setCachedImage for render video too.
+
+        * manual-tests/video-player.html: Remove bit-rot from manual test so it works again.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::hasAvailableVideoFrame): New, ask the media engine if a video frame
+            is available to render.
+
+        * platform/graphics/MediaPlayer.h: Prototype for hasAvailableVideoFrame.
+        * platform/graphics/MediaPlayerPrivate.h: Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Declare hasAvailableVideoFrame, declare
+            all bool variables to aid packing.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: 
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_videoFrameHasDrawn. Cleanup
+            floating point initializers to match coding guidelines.
+        (WebCore::MediaPlayerPrivate::load): Initialize m_videoFrameHasDrawn.
+        (WebCore::MediaPlayerPrivate::hasAvailableVideoFrame): New.
+        (WebCore::MediaPlayerPrivate::repaint): Set m_videoFrameHasDrawn.
+
+        (WebCore::RenderImage::paintReplaced): Split part out into paint method.
+        (WebCore::RenderImage::paint): New.
+        * rendering/RenderImage.h: Declare paint. Make isWidthSpecified and isHeightSpecified protected
+            instead of private so RenderVideo can use them.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia): Inherit from RenderImage, not RenderReplaced
+        (WebCore::RenderMedia::destroy): Ditto.
+        (WebCore::RenderMedia::styleDidChange): Ditto.
+        (WebCore::RenderMedia::layout): Ditto.
+        (WebCore::RenderMedia::lowestPosition): Ditto.
+        (WebCore::RenderMedia::rightmostPosition): Ditto.
+        (WebCore::RenderMedia::leftmostPosition): Ditto.
+        * rendering/RenderMedia.h: Declare isImage and isRenderImage.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::intrinsicSizeChanged): New, call RenderVideo::intrinsicSizeChanged
+            when displaying a poster so it is sized correctly.
+        (WebCore::RenderVideo::imageChanged): Override so we can cache the image's intrisic size and
+        use it when we also know the movie's intrinsic size but still need to draw the poster.
+        (WebCore::RenderVideo::videoBox): Use the poster's intrinsic size when drawing the poster,
+        use the movie's intrinsic size when drawing frames.
+        (WebCore::RenderVideo::paintReplaced): Call RenderImage::paint when drawing the poster.
+        (WebCore::RenderVideo::videoElement): New.
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderVideo.h:
+        (WebCore::RenderVideo::minimumReplacedHeight): Added.
+
 2010-01-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Maciej Stachowiak.

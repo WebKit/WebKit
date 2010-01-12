@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -204,17 +204,18 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
-    , m_startedPlaying(false)
-    , m_isStreaming(false)
-    , m_visible(false)
     , m_rect()
     , m_scaleFactor(1, 1)
     , m_enabledTrackCount(0)
     , m_totalTrackCount(0)
+    , m_reportedDuration(-1)
+    , m_cachedDuration(-1)
+    , m_timeToRestore(-1)
+    , m_startedPlaying(false)
+    , m_isStreaming(false)
+    , m_visible(false)
     , m_hasUnsupportedTracks(false)
-    , m_reportedDuration(-1.0f)
-    , m_cachedDuration(-1.0f)
-    , m_timeToRestore(-1.0f)
+    , m_videoFrameHasDrawn(false)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -556,6 +557,7 @@ void MediaPlayerPrivate::load(const String& url)
         m_player->readyStateChanged();
     }
     cancelSeek();
+    m_videoFrameHasDrawn = false;
     
     [m_objcObserver.get() setDelayCallbacks:YES];
 
@@ -1086,6 +1088,20 @@ void MediaPlayerPrivate::setVisible(bool b)
     }
 }
 
+bool MediaPlayerPrivate::hasAvailableVideoFrame() const
+{
+    // When using a QTMovieLayer return true as soon as the movie reaches QTMovieLoadStatePlayable 
+    // because although we don't *know* when the first frame has decoded, by the time we get and 
+    // process the notificaiton a frame should have propagated the VisualContext and been set on
+    // the layer.
+    if (currentRenderingMode() == MediaRenderingMovieLayer)
+        return m_readyState >= MediaPlayer::HaveCurrentData;
+
+    // When using the software renderer QuickTime signals that a frame is available so we might as well
+    // wait until we know that a frame has been drawn.
+    return m_videoFrameHasDrawn;
+}
+
 void MediaPlayerPrivate::repaint()
 {
     if (m_hasUnsupportedTracks)
@@ -1100,6 +1116,7 @@ void MediaPlayerPrivate::repaint()
             m_timeStartedPlaying = [NSDate timeIntervalSinceReferenceDate];
     }
 #endif
+    m_videoFrameHasDrawn = true;
     m_player->repaint();
 }
 

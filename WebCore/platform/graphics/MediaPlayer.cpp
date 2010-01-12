@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,6 +259,11 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
         m_private.set(createNullMediaPlayer(this));
 }    
 
+bool MediaPlayer::hasAvailableVideoFrame() const
+{
+    return m_private->hasAvailableVideoFrame();
+}
+    
 bool MediaPlayer::canLoadPoster() const
 {
     return m_private->canLoadPoster();

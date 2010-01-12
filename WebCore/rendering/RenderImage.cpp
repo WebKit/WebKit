@@ -4,7 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -420,12 +420,24 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 #endif
 
         IntSize contentSize(cWidth, cHeight);
-        bool useLowQualityScaling = RenderImageScaleObserver::shouldImagePaintAtLowQuality(this, contentSize);
         IntRect rect(IntPoint(tx + leftBorder + leftPad, ty + topBorder + topPad), contentSize);
-        HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
-        CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
-        context->drawImage(image(cWidth, cHeight), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
+        paintIntoRect(context, rect);
     }
+}
+
+void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
+{
+    if (!hasImage() || errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
+        return;
+
+    Image* img = image(rect.width(), rect.height());
+    if (!img || img->isNull())
+        return;
+
+    HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
+    CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
+    bool useLowQualityScaling = RenderImageScaleObserver::shouldImagePaintAtLowQuality(this, rect.size());
+    context->drawImage(image(rect.width(), rect.height()), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
 }
 
 int RenderImage::minimumReplacedHeight() const

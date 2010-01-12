@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: line 24: ReferenceError: Can't find variable: testExpected
+layer at (0,0) size 785x619
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x619
+  RenderBlock {HTML} at (0,0) size 785x619
+    RenderBody {BODY} at (8,8) size 769x603
+      RenderText {#text} at (326,142) size 4x18
+        text run at (326,142) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (82,255) size 4x18
+        text run at (82,255) width 4: " "
+      RenderText {#text} at (168,255) size 4x18
+        text run at (168,255) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (56,585) size 4x18
+        text run at (56,585) width 4: " "
+      RenderText {#text} at (386,585) size 4x18
+        text run at (386,585) width 4: " "
+      RenderText {#text} at (716,585) size 4x18
+        text run at (716,585) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+layer at (8,8) size 326x156
+  RenderVideo {VIDEO} at (0,0) size 326x156 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]
+layer at (8,168) size 82x109
+  RenderVideo {VIDEO} at (0,160) size 82x109 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]
+layer at (94,168) size 82x109
+  RenderVideo {VIDEO} at (86,160) size 82x109 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]
+layer at (8,281) size 56x326
+  RenderVideo {VIDEO} at (0,273) size 56x326 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]
+layer at (68,361) size 326x246
+  RenderVideo {VIDEO} at (60,353) size 326x246 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]
+layer at (398,551) size 326x56
+  RenderVideo {VIDEO} at (390,543) size 326x56 [bgcolor=#EE00EE] [border: (3px solid #FF0000)]

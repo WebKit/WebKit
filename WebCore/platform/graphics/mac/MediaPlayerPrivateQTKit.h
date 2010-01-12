@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,6 +120,8 @@ private:
     void setVisible(bool);
     void setSize(const IntSize&);
     
+    virtual bool hasAvailableVideoFrame() const;
+
     void paint(GraphicsContext*, const IntRect&);
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 
@@ -176,18 +178,19 @@ private:
     Timer<MediaPlayerPrivate> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
-    bool m_startedPlaying;
-    bool m_isStreaming;
-    bool m_visible;
     IntRect m_rect;
     FloatSize m_scaleFactor;
     unsigned m_enabledTrackCount;
     unsigned m_totalTrackCount;
-    bool m_hasUnsupportedTracks;
     float m_reportedDuration;
     float m_cachedDuration;
     float m_timeToRestore;
     RetainPtr<QTMovieLayer> m_qtVideoLayer;
+    bool m_startedPlaying;
+    bool m_isStreaming;
+    bool m_visible;
+    bool m_hasUnsupportedTracks;
+    bool m_videoFrameHasDrawn;
 #if DRAW_FRAME_RATE
     int  m_frameCountWhilePlaying;
     double m_timeStartedPlaying;

@@ -1,4 +1,3 @@
-
 EXPECTED (video.getAttribute('poster') == 'content/greenbox.png') OK
 EXPECTED (relativeURL(video.poster) == 'content/greenbox.png') OK
 EXPECTED (video.getAttribute('poster') == 'content/abe.png') OK

@@ -37,10 +37,7 @@ function stoppedPlaying() {
 function updateProgress(ev) {
     if (!showProgress)
        return;
-    if (ev.total)
-        playButton.innerHTML = "Loading " + (100*ev.loaded/ev.total).toFixed(0) + "%";
-    else
-        playButton.innerHTML = "Loading...";
+    playButton.innerHTML = "Loading...";
     playButton.className = "videobutton videoloading";
 }
 function initVideo() {
@@ -90,12 +87,8 @@ function initVideo() {
     playButton.addEventListener("click", function () {
         if (videoElem.paused) {
             if (!videoElem.src)
-                //videoElem.src = "sample.mov";
                 videoElem.src = "http://movies.apple.com/movies/us/apple/ipoditunes/2007/touch/ads/apple_ipodtouch_touch_r640-9cie.mov";
-            if (videoElem.readyState == HTMLMediaElement.DATA_UNAVAILABLE)
-                videoElem.load();
-            if (videoElem.readyState == HTMLMediaElement.CAN_PLAY_THROUGH)
-                videoElem.play();
+            videoElem.play();
         } else
             videoElem.pause();
     } );
