@@ -1,36 +1,51 @@
+<html>
+    <body>
+
 <video loop controls></video>
 <p>Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.</p>
 <script src=media-file.js></script>
 <script src=video-test.js></script>
 <script>
+    var timeupdateEventCount = 0;
 
     waitForEvent('canplaythrough', function () { 
         testExpected("video.paused", true);
         run("video.play()");
         testExpected("video.paused", false);
-        setTimeout(timeCheck1, 200);
     });
 
-    function timeCheck1() 
+    function timeupdate()
     {
-        // make sure time is advancing, seek past end
-        consoleWrite("");
-        testExpected("video.paused", false);
-        testExpected("mediaElement.currentTime", 0, '>');
-        run("video.currentTime = 500");
-        setTimeout(timeCheck2, 200);
+        ++timeupdateEventCount;
+
+        // wait 2 timeupdate events so we are sure the media engine is
+        // playing the media.
+        if (timeupdateEventCount == 2) {
+           consoleWrite("");
+           testExpected("video.paused", false);
+           // make sure time is advancing and seek past end
+           testExpected("mediaElement.currentTime", 0, '>');
+           run("video.currentTime = 500");
+           setTimeout(seekCheck, 200);
+        }
     }
 
-    function timeCheck2() 
+    function seekCheck()
     {
         consoleWrite("");
         testExpected("video.paused", false);
         testExpected("mediaElement.currentTime", 0, '>');
         consoleWrite("");
+        // reset the counter to prevent infinite loop if the
+        // test is re-executed manually.
+        timeupdateEventCount = 0;
         endTest();
     }
 
+    mediaElement.addEventListener("timeupdate", timeupdate);
     var mediaFile = findMediaFile("video", "content/test");
     run("video.src = '" + mediaFile + "'");
     consoleWrite("");
 </script>
+    </body>
+</html>
