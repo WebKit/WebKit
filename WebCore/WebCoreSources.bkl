@@ -953,10 +953,6 @@ This file contains the list of files needed to build WebCore.
         platform/image-decoders/ico/ICOImageDecoder.cpp
     </set>
 
-    <set append="1" var="WEBCORE_SOURCES_XBM">
-        platform/image-decoders/xbm/XBMImageDecoder.cpp
-    </set>
-
     <set append="1" var="WEBCORE_SOURCES_RENDERING">
         rendering/AutoTableLayout.cpp
         rendering/break_lines.cpp

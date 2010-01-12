@@ -41,7 +41,6 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/image-decoders/ico \
 	-I$(srcdir)/WebCore/platform/image-decoders/jpeg \
 	-I$(srcdir)/WebCore/platform/image-decoders/png \
-	-I$(srcdir)/WebCore/platform/image-decoders/xbm \
 	-I$(srcdir)/WebCore/platform/mock \
 	-I$(srcdir)/WebCore/platform/network \
 	-I$(srcdir)/WebCore/platform/sql \
@@ -2034,8 +2033,6 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.h \
-	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
-	WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
 	WebCore/platform/network/soup/CookieJarSoup.cpp \
 	WebCore/platform/network/soup/CookieJarSoup.h \

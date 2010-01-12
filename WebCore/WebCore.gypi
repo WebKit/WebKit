@@ -2335,8 +2335,6 @@
             'platform/image-decoders/png/PNGImageDecoder.h',
             'platform/image-decoders/skia/ImageDecoderSkia.cpp',
             'platform/image-decoders/wx/ImageDecoderWx.cpp',
-            'platform/image-decoders/xbm/XBMImageDecoder.cpp',
-            'platform/image-decoders/xbm/XBMImageDecoder.h',
             'platform/image-decoders/zlib/crc32.h',
             'platform/image-decoders/zlib/deflate.h',
             'platform/image-decoders/zlib/inffast.h',
