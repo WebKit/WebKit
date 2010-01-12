@@ -1,3 +1,19 @@
+2010-01-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] couple fixes for signal emissions, and property notifications
+        https://bugs.webkit.org/show_bug.cgi?id=33428
+
+        Fix commitedLoad being called where it should not, causing it to
+        be called one time too many in some cases. We now match Qt's and
+        Mac's behavior here.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::finishedLoading):
+        * tests/testloading.c:
+        (load_error_status_changed_cb):
+
 2010-01-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

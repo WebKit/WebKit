@@ -840,9 +840,10 @@ String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
 
 void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
 {
-    if (!m_pluginView)
-        committedLoad(documentLoader, 0, 0);
-    else {
+    if (!m_pluginView) {
+        FrameLoader* loader = documentLoader->frameLoader();
+        loader->setEncoding(m_response.textEncodingName(), false);
+    } else {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
