@@ -33,6 +33,7 @@ from webkitpy.commands.queues import AbstractReviewQueue
 from webkitpy.committers import CommitterList
 from webkitpy.executive import ScriptError
 from webkitpy.webkitport import WebKitPort
+from webkitpy.queueengine import QueueEngine
 
 
 class AbstractEarlyWarningSystem(AbstractReviewQueue):
@@ -62,13 +63,14 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        status_id = cls._update_status_for_script_error(tool, state, script_error)
-        # FIXME: This won't be right for ports that don't use build-webkit!
-        if not script_error.command_name() == "build-webkit":
-            return
+        is_svn_apply = script_error.command_name() == "svn-apply"
+        status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
+        if is_svn_apply:
+            QueueEngine.exit_after_handled_error(e)
         results_link = tool.status_server.results_url_for_status(status_id)
         message = "Attachment %s did not build on %s:\nBuild output: %s" % (state["patch"]["id"], cls.port_name, results_link)
         tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
+        exit(1)
 
 
 class GtkEWS(AbstractEarlyWarningSystem):

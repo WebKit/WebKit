@@ -124,8 +124,11 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return engine(self.name, self).run()
 
     @classmethod
-    def _update_status_for_script_error(cls, tool, state, script_error):
-        return tool.status_server.update_status(cls.name, script_error.message, state["patch"], StringIO(script_error.output))
+    def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
+        message = script_error.output
+        if is_error:
+            message = "Error: %s" % message
+        return tool.status_server.update_status(cls.name, script_error.message, state["patch"], StringIO(message))
 
 
 class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
@@ -241,7 +244,8 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
             self._review_patch(patch)
             self._did_pass(patch)
         except ScriptError, e:
-            self._did_fail(patch)
+            if e.exit_code != QueueEngine.handled_error_code:
+                self._did_fail(patch)
             raise e
 
     def handle_unexpected_error(self, patch, message):
@@ -268,8 +272,10 @@ class StyleQueue(AbstractReviewQueue):
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        status_id = cls._update_status_for_script_error(tool, state, script_error)
-        if not script_error.command_name() == "check-webkit-style":
-            return
+        is_svn_apply = script_error.command_name() == "svn-apply"
+        status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
+        if is_svn_apply:
+            QueueEngine.exit_after_handled_error(e)
         message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"]["id"], cls.name, script_error.message_with_output(output_limit=3*1024))
         tool.bugs.post_comment_to_bug(state["patch"]["bug_id"], message, cc=cls.watchers)
+        exit(1)
