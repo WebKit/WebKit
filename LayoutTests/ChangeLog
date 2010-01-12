@@ -1,3 +1,16 @@
+2010-01-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Touch event layout tests should be in their own subdirectory, so that they can be easily skipped
+        https://bugs.webkit.org/show_bug.cgi?id=33526
+
+        Tests moved from fast/events to fast/events/touch by r53125,
+        relative resource paths should be adjuted to the new location.
+
+        * fast/events/touch/basic-touch-events.html: relative paths fixed.
+        * fast/events/touch/touch-coords-in-zoom-and-scroll.html: relative paths fixed.
+
 2010-01-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Simon Fraser.
