@@ -2922,6 +2922,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 stopLoadingSubframes();
                 pdl->stopLoading();
 
+                if (isReplacing())
+                    setDocumentLoader(m_provisionalDocumentLoader.get());
+
                 // Finish resetting the load state, but only if another load hasn't been started by the
                 // delegate callback.
                 if (pdl == m_provisionalDocumentLoader)

@@ -1,3 +1,24 @@
+2010-01-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix a crash in Chromium when receiving multipart/x-mixed-replace data.
+        If we stop a multipart load after ResourceLoader::didReceiveResponse
+        but before ResourceLoader::didReceiveData, we have a NULL document
+        loader because it has been moved back to the provisional state.  New
+        loads that happen after this will dereference the NULL document
+        loader.
+
+        Work around this by moving the provisional document loader back as
+        the document loader when the request is stopped.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31446
+
+        Test: http/tests/multipart/multipart-wait-before-boundary.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2010-01-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

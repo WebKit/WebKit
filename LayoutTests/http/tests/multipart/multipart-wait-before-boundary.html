@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        function childLoaded() {
+            setTimeout("window.frames['iframe'].location = 'resources/multipart-wait-before-boundary.php?done=1'", 0);
+        }
+        function success() {
+            if (window.layoutTestController) {
+                document.getElementById('status').innerHTML = 'SUCCESS';
+                layoutTestController.notifyDone();
+            }
+        }
+    </script>
+</head>
+<body>
+    <p id="status">RUNNING...</p>
+    <iframe id="iframe" src="resources/multipart-wait-before-boundary.php">
+</body>
+</html>
