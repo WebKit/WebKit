@@ -37,6 +37,7 @@
 #include "WebDownload.h"
 #include "WebError.h"
 #include "WebFrame.h"
+#include "WebGeolocationPosition.h"
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
 #include "WebIconDatabase.h"

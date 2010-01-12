@@ -1,3 +1,35 @@
+2010-01-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben, Sam Weinig.
+
+        Add Geolocation interfaces in WebKit for Windows.
+
+        * ForEachCoClass.h: Added WebGeolocationPosition.
+        * Interfaces/IWebError.idl:
+        * Interfaces/IWebGeolocationPosition.idl: Added.
+        * Interfaces/IWebGeolocationProvider.idl: Added.
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebGeolocationControllerClient.cpp: Added.
+        (WebGeolocationControllerClient::WebGeolocationControllerClient):
+        (WebGeolocationControllerClient::startUpdating):
+        (WebGeolocationControllerClient::stopUpdating):
+        (WebGeolocationControllerClient::lastPosition):
+        * WebCoreSupport/WebGeolocationControllerClient.h: Added.
+        * WebGeolocationPosition.cpp: Added IWebGeolocationPosition implementation.
+        * WebGeolocationPosition.h: Added IWebGeolocationPosition implementation.
+        * WebKit.vcproj/Interfaces.vcproj: Added IWebGeolocationPosition.idl, IWebGeolocationProvider.idl,
+        relocated JavaScriptCoreAPITypes.idl, WebScrollbarTypes.idl
+        * WebKit.vcproj/WebKit.vcproj: Added WebGeolocationPosition.h/.cpp, WebGeolocationControllerClient.h/cpp,        
+        * WebKitClassFactory.cpp: Add WebGeolocationPosition include.
+        * WebView.cpp:
+        (WebView::initWithFrame): Create WebGeolocationControllerClient if Geolocation is enabled.
+        (WebView::setGeolocationProvider): Added Geolocation-specific method.
+        (WebView::geolocationProvider): Added Geolocation-specific method.
+        (WebView::geolocationDidChangePosition): Added Geolocation-specific method.
+        (WebView::geolocationDidFailWithError): Added Geolocation-specific method.
+        * WebView.h: Added setGeolocationProvider, geolocationProvider, geolocationDidChangePosition, geolocationDidFailWithError.
+
 2010-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of <select multiple> elements is wrong

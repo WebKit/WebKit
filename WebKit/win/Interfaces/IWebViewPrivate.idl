@@ -219,4 +219,9 @@ interface IWebViewPrivate : IUnknown
     HRESULT isNodeHaltedPlugin([in] IDOMNode*, [retval, out] BOOL*);
     HRESULT restartHaltedPluginForNode([in] IDOMNode*);
     HRESULT hasPluginForNodeBeenHalted([in] IDOMNode*, [retval, out] BOOL*);
+
+    HRESULT setGeolocationProvider([in] IWebGeolocationProvider* locationProvider);
+    HRESULT geolocationProvider([out, retval] IWebGeolocationProvider** locationProvider);
+    HRESULT geolocationDidChangePosition([in] IWebGeolocationPosition* position);
+    HRESULT geolocationDidFailWithError([in] IWebError* error);
 }

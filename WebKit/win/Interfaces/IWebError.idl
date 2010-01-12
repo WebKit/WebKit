@@ -99,6 +99,15 @@ enum {
     WebKitErrorJavaUnavailable =                                202,
 };
 
+/*!
+    @enum
+    @abstract Geolocation errors
+    @constant WebKitErrorGeolocationLocationUnknown
+*/
+enum {
+    WebKitErrorGeolocationLocationUnknown  =                    300,
+};
+
 cpp_quote("#define WebKitErrorMIMETypeKey TEXT(\"WebKitErrorMIMETypeKey\")")
 cpp_quote("#define WebKitErrorPlugInNameKey TEXT(\"WebKitErrorPlugInNameKey\")")
 cpp_quote("#define WebKitErrorPlugInPageURLStringKey TEXT(\"WebKitErrorPlugInPageURLStringKey\")")

@@ -88,6 +88,8 @@ import "ocidl.idl";
 #include "IWebFrameLoadDelegatePrivate2.idl"
 #include "IWebFramePrivate.idl"
 #include "IWebFrameView.idl"
+#include "IWebGeolocationPosition.idl"
+#include "IWebGeolocationProvider.idl"
 #include "IWebHTMLRepresentation.idl"
 #include "IWebHTTPURLResponse.idl"
 #include "IWebHistory.idl"
@@ -284,5 +286,9 @@ library WebKit
     coclass WebSerializedJSValue {
         [default] interface IWebSerializedJSValue;
     }
-}
 
+    [uuid(67712611-83CF-4703-89FC-07A0E2A19C0D)]
+    coclass WebGeolocationPosition {
+        [default] interface IWebGeolocationPosition;
+    }
+}

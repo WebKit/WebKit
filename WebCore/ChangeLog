@@ -1,3 +1,11 @@
+2010-01-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Update all-in-one derived sources for Geolocation.
+
+        * DerivedSources.cpp: Add JSCoordinates.cpp, JSGeolocation.cpp, JSGeoposition.cpp, JSPositionError.cpp
+
 2010-01-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

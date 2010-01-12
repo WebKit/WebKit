@@ -666,6 +666,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebGeolocationPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebHistory.h"
 				>
 			</File>
@@ -1078,6 +1082,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebGeolocationPosition.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebHistory.cpp"
 				>
 			</File>
@@ -1463,6 +1471,14 @@
 			</File>
 			<File
 				RelativePath="..\WebCoreSupport\WebFrameLoaderClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebGeolocationControllerClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\WebGeolocationControllerClient.h"
 				>
 			</File>
 			<File

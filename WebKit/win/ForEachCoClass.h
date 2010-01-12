@@ -64,6 +64,7 @@
     macro(WebCookieManager) \
     macro(WebWorkersPrivate) \
     macro(WebScriptWorld) \
+    macro(WebGeolocationPosition) \
     // end of macro
 
 // Everything below this point is deprecated. Please do not use.
