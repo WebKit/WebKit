@@ -1,3 +1,9 @@
+2010-01-12  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-01-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
