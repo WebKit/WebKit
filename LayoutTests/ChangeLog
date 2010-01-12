@@ -1,3 +1,15 @@
+2010-01-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=33550 REGRESSION: 
+        -webkit-svg-shadow with opacity still over-clipped
+
+        * platform/mac/svg/css/shadow-and-opacity-expected.checksum: Added.
+        * platform/mac/svg/css/shadow-and-opacity-expected.png: Added.
+        * platform/mac/svg/css/shadow-and-opacity-expected.txt: Added.
+        * svg/css/shadow-and-opacity.svg: Added.
+
 2010-01-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Accessibility role of <select multiple> elements is wrong

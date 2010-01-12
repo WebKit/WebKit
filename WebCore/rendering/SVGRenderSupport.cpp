@@ -92,17 +92,20 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
+    ShadowData* shadow = svgStyle->shadow();
+    IntRect repaintIntRectWithShadow = enclosingIntRect(repaintRect);
+    if (shadow)
+        svgStyle->inflateForShadow(repaintIntRectWithShadow);
+
     // Setup transparency layers before setting up filters!
     float opacity = style->opacity(); 
     if (opacity < 1.0f) {
-        paintInfo.context->clip(enclosingIntRect(repaintRect));
+        paintInfo.context->clip(repaintIntRectWithShadow);
         paintInfo.context->beginTransparencyLayer(opacity);
     }
 
-    if (ShadowData* shadow = svgStyle->shadow()) {
-        IntRect shadowRect = enclosingIntRect(repaintRect);
-        svgStyle->inflateForShadow(shadowRect);
-        paintInfo.context->clip(shadowRect);
+    if (shadow) {
+        paintInfo.context->clip(repaintIntRectWithShadow);
         paintInfo.context->setShadow(IntSize(shadow->x, shadow->y), shadow->blur, shadow->color, style->colorSpace());
         paintInfo.context->beginTransparencyLayer(1.0f);
     }
