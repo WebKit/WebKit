@@ -64,6 +64,9 @@ namespace WebCore {
         void setCurrentEvent(Event*);
         Event* currentEvent() const;
 
+        void setInjectedScript(JSObject*);
+        JSObject* injectedScript() const;
+
         virtual void markChildren(JSC::MarkStack&);
 
         DOMWrapperWorld* world() { return d()->m_world.get(); }
@@ -74,6 +77,7 @@ namespace WebCore {
                 : JSGlobalObjectData(destructor)
                 , evt(0)
                 , m_world(world)
+                , m_injectedScript(0)
             {
             }
 
@@ -82,6 +86,7 @@ namespace WebCore {
 
             Event* evt;
             RefPtr<DOMWrapperWorld> m_world;
+            JSObject* m_injectedScript;
         };
 
     private:

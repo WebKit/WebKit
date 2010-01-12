@@ -1,3 +1,34 @@
+2010-01-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow creating injected script for the inspected script state. The InjectedScript is
+        cached on the inspected ExecState global object and will be garbage collected when the
+        object is collected. Each InjectedScript object is assigned unique id.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33469
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::markChildren):
+        (WebCore::JSDOMGlobalObject::setInjectedScript):
+        (WebCore::JSDOMGlobalObject::injectedScript):
+        * bindings/js/JSDOMGlobalObject.h: InjectedScript is cached on the global object as a
+        field that is not visible from the inspected code. This InjectedScript should be alive as long as
+        the global object is alive and should be accessible from Web Inspector's native code.
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObjectData::JSDOMGlobalObjectData):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::createInjectedScript): Creates injected script using the lexical global object of the
+        inspected ScriptState. Reference to the object is stored on the global DOM object.
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::injectedScriptForId):
+        (WebCore::InjectedScriptHost::discardInjectedScripts): This method is expected to be called when the
+        the InjectedScript are no longer needed. In particular, this should be called before frame navigation. 
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::setInjectedScriptSource): This allows to provide injected script source.
+        The source may be loaded in a platform specific way.
+
 2010-01-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

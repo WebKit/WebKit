@@ -72,6 +72,7 @@ namespace WebCore {
 
 InjectedScriptHost::InjectedScriptHost(InspectorController* inspectorController)
     : m_inspectorController(inspectorController)
+    , m_nextInjectedScriptId(1)
 {
 }
 
@@ -178,6 +179,16 @@ void InjectedScriptHost::reportDidDispatchOnInjectedScript(long callId, const St
 {
     if (InspectorFrontend* frontend = inspectorFrontend())
         frontend->didDispatchOnInjectedScript(callId, result, isException);
+}
+
+ScriptObject InjectedScriptHost::injectedScriptForId(long id)
+{
+    return m_idToInjectedScript.get(id);
+}
+
+void InjectedScriptHost::discardInjectedScripts()
+{
+    m_idToInjectedScript.clear();
 }
 
 InspectorDOMAgent* InjectedScriptHost::inspectorDOMAgent()

@@ -56,6 +56,9 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
     JSDOMConstructorMap::iterator end2 = constructors().end();
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
         markStack.append(it2->second);
+
+    if (d()->m_injectedScript)
+        markStack.append(d()->m_injectedScript);
 }
 
 PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSAttributeEventListener(JSValue val)
@@ -74,6 +77,16 @@ void JSDOMGlobalObject::setCurrentEvent(Event* evt)
 Event* JSDOMGlobalObject::currentEvent() const
 {
     return d()->evt;
+}
+
+void JSDOMGlobalObject::setInjectedScript(JSObject* injectedScript)
+{
+    d()->m_injectedScript = injectedScript;
+}
+
+JSObject* JSDOMGlobalObject::injectedScript() const
+{
+    return d()->m_injectedScript;
 }
 
 void JSDOMGlobalObject::destroyJSDOMGlobalObjectData(void* jsDOMGlobalObjectData)

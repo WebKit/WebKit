@@ -59,6 +59,7 @@
 #endif
 #include "TextIterator.h"
 #include "VisiblePosition.h"
+#include <parser/SourceCode.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <wtf/Vector.h>
@@ -72,6 +73,31 @@
 using namespace JSC;
 
 namespace WebCore {
+
+static ScriptObject createInjectedScript(const String& source, InjectedScriptHost* injectedScriptHost, ScriptState* scriptState, long id)
+{
+    SourceCode sourceCode = makeSource(source);
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSValue globalThisValue = scriptState->globalThisValue();
+    Completion comp = JSC::evaluate(scriptState, globalObject->globalScopeChain(), sourceCode, globalThisValue);
+    if (comp.complType() != JSC::Normal && comp.complType() != JSC::ReturnValue)
+        return ScriptObject();
+    JSValue functionValue = comp.value();
+    CallData callData;
+    CallType callType = functionValue.getCallData(callData);
+    if (callType == CallTypeNone)
+        return ScriptObject();
+
+    MarkedArgumentBuffer args;
+    args.append(toJS(scriptState, globalObject, injectedScriptHost));
+    args.append(globalThisValue);
+    args.append(jsNumber(scriptState, id));
+    JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
+    if (result.isObject())
+        return ScriptObject(scriptState, result.getObject());
+    return ScriptObject();
+}
 
 #if ENABLE(DATABASE)
 JSValue JSInjectedScriptHost::databaseForId(ExecState* exec, const ArgList& args)
@@ -214,6 +240,22 @@ JSValue JSInjectedScriptHost::selectDOMStorage(ExecState*, const ArgList& args)
     return jsUndefined();
 }
 #endif
+
+ScriptObject InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    JSObject* injectedScript = globalObject->injectedScript();
+    if (injectedScript)
+        return ScriptObject(scriptState, injectedScript);
+
+    ASSERT(!m_injectedScriptSource.isEmpty());
+    ScriptObject injectedScriptObject = createInjectedScript(m_injectedScriptSource, this, scriptState, m_nextInjectedScriptId);
+    globalObject->setInjectedScript(injectedScriptObject.jsObject());
+    m_idToInjectedScript.set(m_nextInjectedScriptId, injectedScriptObject);
+    m_nextInjectedScriptId++;
+    return injectedScriptObject;
+}
 
 } // namespace WebCore
 
