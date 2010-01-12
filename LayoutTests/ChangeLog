@@ -1,3 +1,19 @@
+2010-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        Touch event layout tests should be in their own subdirectory, so that they can be easily skipped
+        https://bugs.webkit.org/show_bug.cgi?id=33526
+
+        * fast/events/touch/basic-touch-events-expected.txt: Renamed from LayoutTests/fast/events/basic-touch-events-expected.txt.
+        * fast/events/touch/basic-touch-events.html: Renamed from LayoutTests/fast/events/basic-touch-events.html.
+        * fast/events/touch/touch-coords-in-zoom-and-scroll-expected.txt: Renamed from LayoutTests/fast/events/touch-coords-in-zoom-and-scroll-expected.txt.
+        * fast/events/touch/touch-coords-in-zoom-and-scroll.html: Renamed from LayoutTests/fast/events/touch-coords-in-zoom-and-scroll.html.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-01-11  Kent Tamura  <tkent@chromium.org>
 
         Unreviewd. Remove a duplicated line in an expectation file.

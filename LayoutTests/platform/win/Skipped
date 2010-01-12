@@ -718,8 +718,7 @@ inspector/timeline-network-resource.html
 media/media-can-play-ogg.html
 
 # These tests require touch support
-fast/events/basic-touch-events.html
-fast/events/touch-coords-in-zoom-and-scroll.html
+fast/events/touch
 
 # XSS auditor tests intermittently time out <http://webkit.org/b/32528>
 http/tests/security/xss-DENIED-getSVGDocument-iframe.html

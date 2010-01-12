@@ -94,5 +94,4 @@ plugins/reloadplugins-and-pages.html
 media/media-can-play-ogg.html
 
 # These tests require touch support
-fast/events/basic-touch-events.html
-fast/events/touch-coords-in-zoom-and-scroll.html
+fast/events/touch

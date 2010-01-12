@@ -5091,4 +5091,4 @@ fast/forms/slider-zoomed.html
 fast/forms/slider-mouse-events.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=33465
-fast/events/touch-coords-in-zoom-and-scroll.html
+fast/events/touch/touch-coords-in-zoom-and-scroll.html
