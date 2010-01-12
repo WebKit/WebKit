@@ -466,13 +466,13 @@ void Cache::removeFromLRUList(CachedResource* resource)
     if (resource->accessCount() == 0)
         return;
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     unsigned oldListIndex = resource->m_lruIndex;
 #endif
 
     LRUList* list = lruListFor(resource);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     // Verify that the list we got is the list we want.
     ASSERT(resource->m_lruIndex == oldListIndex);
 

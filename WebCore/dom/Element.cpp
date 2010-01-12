@@ -1444,7 +1444,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
 
 KURL Element::getURLAttribute(const QualifiedName& name) const
 {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     if (namedAttrMap) {
         if (Attribute* attribute = namedAttrMap->getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));

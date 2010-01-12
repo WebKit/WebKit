@@ -209,10 +209,9 @@ static void* runJavaScriptThread(void* arg)
 {
 #if !ASSERT_DISABLED
     BOOL isWindowObject = [storedWebScriptObject isKindOfClass:[DOMAbstractView class]];
-#endif
     JSObjectRef jsObject = [storedWebScriptObject JSObject];
     ASSERT((jsObject && isWindowObject) || (!jsObject && !isWindowObject));
-
+#endif
     [storedWebScriptObject callWebScriptMethod:@"" withArguments:nil];
     [storedWebScriptObject evaluateWebScript:@""];
     [storedWebScriptObject setValue:[WebUndefined undefined] forKey:@"key"];

@@ -1622,7 +1622,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_JSFunction)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     CallData callData;
     ASSERT(stackFrame.args[0].jsValue().getCallData(callData) == CallTypeJS);
 #endif
@@ -1871,7 +1871,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_construct_JSConstruct)
         VM_THROW_EXCEPTION();
     }
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     ConstructData constructData;
     ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
 #endif

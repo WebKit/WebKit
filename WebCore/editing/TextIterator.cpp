@@ -156,7 +156,7 @@ static inline Node* parentCrossingShadowBoundaries(Node* node)
     return node->shadowParentNode();
 }
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 
 static unsigned depthCrossingShadowBoundaries(Node* node)
 {

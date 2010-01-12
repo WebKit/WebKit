@@ -114,7 +114,7 @@ void RenderArena::free(size_t size, void* ptr)
     // Use standard free so that memory debugging tools work.
     RenderArenaDebugHeader* header = static_cast<RenderArenaDebugHeader*>(ptr) - 1;
     ASSERT(header->signature == signature);
-    ASSERT(header->size == size);
+    ASSERT_UNUSED(size, header->size == size);
     ASSERT(header->arena == this);
     header->signature = signatureDead;
     ::free(header);

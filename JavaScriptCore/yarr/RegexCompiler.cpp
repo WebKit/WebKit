@@ -708,7 +708,7 @@ const char* compileRegex(const UString& patternString, RegexPattern& pattern)
         unsigned numSubpatterns = pattern.m_numSubpatterns;
 
         constructor.reset();
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
         const char* error =
 #endif
             parse(constructor, patternString, numSubpatterns);

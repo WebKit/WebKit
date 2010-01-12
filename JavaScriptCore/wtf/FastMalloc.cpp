@@ -114,11 +114,13 @@ static void initializeIsForbiddenKey()
   pthread_key_create(&isForbiddenKey, 0);
 }
 
+#if !ASSERT_DISABLED
 static bool isForbidden()
 {
     pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
     return !!pthread_getspecific(isForbiddenKey);
 }
+#endif
 
 void fastMallocForbid()
 {
