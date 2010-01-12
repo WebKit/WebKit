@@ -1,3 +1,20 @@
+2010-01-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Safari shows an unneeded horizontal scrollbar on many websites.
+        Fixes <rdar://6321041> and <http://webkit.org/b/33555>.
+        
+        Added a test that shows no scrollbar in the case where a div has no children
+        and either a width or height of 0. Also updated results for a few tests which
+        this patch causes progressions for.
+
+        * fast/block/positioning/absolute-positioning-no-scrollbar-expected.txt: Added.
+        * fast/block/positioning/absolute-positioning-no-scrollbar.html: Added.
+        * fast/block/positioning/fixed-positioning-scrollbar-bug.html:
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.txt:
+        * platform/mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.txt:
+
 2010-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

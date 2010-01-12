@@ -2636,6 +2636,9 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
 
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
         return bottom;
+
+    if (!firstChild() && (!width() || !height()))
+        return bottom;
     
     if (!hasColumns()) {
         // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
@@ -2726,6 +2729,9 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     int right = includeSelf && height() > 0 ? width() : 0;
 
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return right;
+
+    if (!firstChild() && (!width() || !height()))
         return right;
 
     if (!hasColumns()) {
@@ -2820,6 +2826,9 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     int left = includeSelf && height() > 0 ? 0 : width();
     
     if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return left;
+
+    if (!firstChild() && (!width() || !height()))
         return left;
 
     if (!hasColumns()) {

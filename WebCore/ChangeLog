@@ -1,3 +1,21 @@
+2010-01-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Safari shows an unneeded horizontal scrollbar on many websites.
+        Fixes <rdar://6321041> and <http://webkit.org/b/33555>.
+        
+        If a div has no children, and its height or width are 0, we can ignore
+        it in our calculation of lowest, rightmost, and leftmost positions. This
+        calculation was causing horizontal scrollbars to be drawn when they weren't needed.
+
+        Test: fast/block/positioning/absolute-positioning-no-scrollbar.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition): Added check for no children and width or height 0.
+        (WebCore::RenderBlock::rightmostPosition): Ditto.
+        (WebCore::RenderBlock::leftmostPosition): Ditto.
+
 2010-01-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
