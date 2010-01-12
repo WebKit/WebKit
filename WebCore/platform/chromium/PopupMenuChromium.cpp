@@ -911,6 +911,10 @@ int PopupListBox::pointToRowIndex(const IntPoint& point)
 
 void PopupListBox::acceptIndex(int index)
 {
+    // Clear m_acceptedIndexOnAbandon once user accepts the selected index.
+    if (m_acceptedIndexOnAbandon >= 0)
+        m_acceptedIndexOnAbandon = -1;
+
     if (index >= numItems())
         return;
 

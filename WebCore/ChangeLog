@@ -1,3 +1,19 @@
+2010-01-11  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Clear m_acceptedIndexOnAbandon flag when user accepts the selected index.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33499
+
+        TEST: manual-tests/chromium/onchange-reload-popup.html
+        It should be covered by the above test. The current
+        test shell does not support sending keyboard events to popup
+        list so use manual test for it.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::acceptIndex):
+
 2010-01-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Eric Seidel.
