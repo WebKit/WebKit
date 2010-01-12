@@ -789,6 +789,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_requestTimer(this, &PluginView::requestTimerFired)
     , m_invalidateTimer(this, &PluginView::invalidateTimerFired)
     , m_popPopupsStateTimer(this, &PluginView::popPopupsStateTimerFired)
+    , m_mode(loadManually ? NP_FULL : NP_EMBED)
     , m_paramNames(0)
     , m_paramValues(0)
     , m_mimeType(mimeType)
@@ -847,8 +848,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 #if defined(XP_MACOSX)
     memset(&m_npCgContext, 0, sizeof(m_npCgContext));
 #endif
-
-    m_mode = m_loadManually ? NP_FULL : NP_EMBED;
 
     resize(size);
 }

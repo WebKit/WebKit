@@ -1,3 +1,15 @@
+2010-01-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed an uninitialized PluginView member (m_mode) which wasn't
+        set when constructed with a null PluginPackage*
+
+        https://bugs.webkit.org/show_bug.cgi?id=33468
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+
 2010-01-11  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
