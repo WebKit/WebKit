@@ -1,3 +1,22 @@
+2010-01-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit returns incorrect match count when first string match is on an element with user-select-none style
+        https://bugs.webkit.org/show_bug.cgi?id=33508
+        <rdar://problem/7482143>
+
+        If we use VisiblePosition to calculate the start of the new search range,
+        we skip all the nodes with user-select-none style, producing an incorrect
+        match count.
+        
+        No new tests: there are no API's available to Javascript to verify the
+        number of matches found.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText): Changed to use the end of the previous
+        result range as the start of the new search range.
+
 2010-01-12  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
