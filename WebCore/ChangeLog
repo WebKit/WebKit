@@ -1,3 +1,16 @@
+2010-01-12  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Changed ".sidebar" style to allow v-scroll to appear in
+        "Profiles" panel sidebar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33470
+
+        No new tests -- no code changed.
+
+        * inspector/front-end/inspector.css:
+
 2010-01-12  Adam Roben  <aroben@apple.com>
 
         Windows accelerated compositing build fix after r53110

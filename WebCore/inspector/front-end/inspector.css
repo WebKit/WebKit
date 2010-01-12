@@ -1815,7 +1815,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 .sidebar {
     position: absolute;
     top: 0;
-    min-height: 100%;
+    bottom: 0;
     left: 0;
     width: 200px;
     overflow-y: auto;
