@@ -1,3 +1,20 @@
+2010-01-12  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=31597
+
+        Make ICU's text breakiterator and string search use Chrome's UI
+        language instead of 'en-US' or the OS UI language.
+
+        As long as the webkit layout tests are run in en-US locale, there'd be 
+        no visible change.
+
+        * platform/text/chromium/TextBreakIteratorInternalICUChromium.cpp:
+        (UILanguage):
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+
 2010-01-12  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Dave Hyatt.
