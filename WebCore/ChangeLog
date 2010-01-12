@@ -1,3 +1,13 @@
+2010-01-12  Adam Roben  <aroben@apple.com>
+
+        Windows accelerated compositing build fix after r53110
+
+        * plugins/PluginWidget.h:
+        (WebCore::PluginWidget::platformLayer): Define platformLayer() for
+        non-Mac platforms that have accelerated compositing turned on. It
+        would probably be better to make PluginWidget not be used at all on
+        non-Mac platforms, but this fix is much simpler.
+
 2010-01-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
