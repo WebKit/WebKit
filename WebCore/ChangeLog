@@ -1,3 +1,17 @@
+2010-01-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Support injection of inspector scripts into the inspected context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33523
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::WeakReferenceCallback):
+        (WebCore::createInjectedScriptHostV8Wrapper):
+        (WebCore::createInjectedScript):
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+
 2010-01-12  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.
