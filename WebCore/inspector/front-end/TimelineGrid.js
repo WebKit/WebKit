@@ -62,7 +62,7 @@ WebInspector.TimelineGrid.prototype = {
         if (!force && this._currentDividerSlice === slice)
             return false;
 
-        if (!(typeof paddingLeft === "number"))
+        if (typeof paddingLeft !== "number")
             paddingLeft = 0;
         this._currentDividerSlice = slice;
 
@@ -71,7 +71,8 @@ WebInspector.TimelineGrid.prototype = {
         var divider = this._dividersElement.firstChild;
         var dividerLabelBar = this._dividersLabelBarElement.firstChild;
 
-        var clientWidth = this._dividersLabelBarElement.clientWidth - paddingLeft;
+        var dividersLabelBarElementClientWidth = this._dividersLabelBarElement.clientWidth;
+        var clientWidth = dividersLabelBarElementClientWidth - paddingLeft;
         for (var i = paddingLeft ? 0 : 1; i <= dividerCount; ++i) {
             if (!divider) {
                 divider = document.createElement("div");
@@ -85,6 +86,7 @@ WebInspector.TimelineGrid.prototype = {
                 dividerLabelBar._labelElement = label;
                 dividerLabelBar.appendChild(label);
                 this._dividersLabelBarElement.appendChild(dividerLabelBar);
+                dividersLabelBarElementClientWidth = this._dividersLabelBarElement.clientWidth;
             }
 
             if (i === dividerCount)
@@ -93,9 +95,8 @@ WebInspector.TimelineGrid.prototype = {
                 divider.removeStyleClass("last");
 
             var left = paddingLeft + clientWidth * (i / dividerCount);
-            var percentLeft = 100 * left / this._dividersLabelBarElement.clientWidth + "%";
-            divider.style.left = percentLeft;
-            dividerLabelBar.style.left = percentLeft;
+            var percentLeft = 100 * left / dividersLabelBarElementClientWidth;
+            this._setDividerAndBarLeft(divider, dividerLabelBar, percentLeft);
 
             if (!isNaN(slice))
                 dividerLabelBar._labelElement.textContent = calculator.formatValue(slice * i);
@@ -116,6 +117,15 @@ WebInspector.TimelineGrid.prototype = {
             dividerLabelBar = nextDivider;
         }
         return true;
+    },
+
+    _setDividerAndBarLeft: function(divider, dividerLabelBar, percentLeft)
+    {
+        var percentStyleLeft = parseFloat(divider.style.left);
+        if (!isNaN(percentStyleLeft) && Math.abs(percentStyleLeft - percentLeft) < 0.1)
+            return;
+        divider.style.left = percentLeft + "%";
+        dividerLabelBar.style.left = percentLeft + "%";
     },
 
     addEventDivider: function(divider)

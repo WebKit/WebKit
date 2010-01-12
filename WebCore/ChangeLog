@@ -1,3 +1,16 @@
+2010-01-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Optimize WebInspector.TimelineGrid.prototype.updateDividers()
+
+        DOM element property access and modification are slow and should be done as lazily as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=33536
+
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        (WebInspector.TimelineGrid.prototype._setDividerAndBarLeft):
+
 2010-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
