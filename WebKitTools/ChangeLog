@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Add Gustavo and Xan as gtk-ews watchers
+        https://bugs.webkit.org/show_bug.cgi?id=33519
+
+        * Scripts/webkitpy/commands/early_warning_system.py:
+
+2010-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         webkit-patch shouldn't waste my time for with a component prompt
         https://bugs.webkit.org/show_bug.cgi?id=33521
 
