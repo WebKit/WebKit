@@ -1574,7 +1574,7 @@ sub buildChromium($@)
         $result = buildChromiumVisualStudioProject("WebKit/chromium/WebKit.sln", $clean);
     } elsif (isLinux()) {
         # Linux build - build using make.
-        $ result = buildChromiumMakefile("WebKit/chromium/", "webkit", $clean);
+        $ result = buildChromiumMakefile("WebKit/chromium/", "all", $clean);
     } else {
         print STDERR "This platform is not supported by chromium.\n";
     }
