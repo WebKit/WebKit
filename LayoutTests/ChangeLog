@@ -1,3 +1,18 @@
+2010-01-12  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] XSL stylesheets can load documents from a different origin
+
+        https://bugs.webkit.org/show_bug.cgi?id=33423
+
+        Add two expected results for Qt:
+        QXmlQuery has a different behaviour with regard to loading failures
+        comparing to libxslt.
+
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-expected.txt:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt:
+
 2010-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Adam Barth.

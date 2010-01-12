@@ -1,3 +1,16 @@
+2010-01-12  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] XSL stylesheets can load documents from a different origin
+
+        https://bugs.webkit.org/show_bug.cgi?id=33423
+
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTUriResolver::XSLTUriResolver):
+        (WebCore::XSLTUriResolver::resolve):
+        (WebCore::XSLTProcessor::transformToString):
+
 2010-01-12  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.
