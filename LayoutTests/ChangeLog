@@ -1,3 +1,9 @@
+2010-01-11  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewd. Remove a duplicated line in an expectation file.
+
+        * platform/mac-leopard/fast/text/find-kana-expected.txt:
+
 2010-01-11  Darin Adler  <darin@apple.com>
 
         Try to get find-kana tests passing on Qt, Leopard, and Tiger.

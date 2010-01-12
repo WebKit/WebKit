@@ -69,7 +69,6 @@ PASS canFind(decomposedHiraganaLetterBa, hiraganaLetterHa) is false
 PASS canFind(decomposedHiraganaLetterBa, hiraganaLetterPa) is false
 PASS canFind(decomposedHiraganaLetterGa, halfwidthKatakanaLetterKa) is false
 PASS canFind(decomposedHiraganaLetterGa, hiraganaLetterKa) is false
-PASS canFind(decomposedHiraganaLetterGa, hiraganaLetterKa) is false
 PASS canFind(decomposedHiraganaLetterPa, hiraganaLetterBa) is false
 PASS canFind(decomposedHiraganaLetterPa, hiraganaLetterHa) is false
 PASS canFind(decomposedKatakanaLetterGa, halfwidthKatakanaLetterKa) is false
