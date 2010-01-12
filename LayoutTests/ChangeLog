@@ -1,3 +1,16 @@
+2010-01-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        media/video-error-does-not-exist.html failed on Snow Leopard Release Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33434
+
+        Add another media test to the skipped list.
+        I expect these are all timing out for the same reason.
+        We just don't know the reason yet.
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-01-12  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Barth.

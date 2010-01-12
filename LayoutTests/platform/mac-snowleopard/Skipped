@@ -66,9 +66,11 @@ media/unsupported-rtsp.html
 media/video-no-audio.html
 media/video-size-intrinsic-scale.html
 
-# This test is occasionally timing out on SnowLeopard
+# These are occasionally timing out on SnowLeopard
 # https://bugs.webkit.org/show_bug.cgi?id=32339
 media/unsupported-tracks.html
+# https://bugs.webkit.org/show_bug.cgi?id=33434
+media/video-error-does-not-exist.html
 
 #  Test times out due to CoreGraphics bug
 # <rdar://problem/7499927>
