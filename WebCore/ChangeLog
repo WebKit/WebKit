@@ -1,3 +1,19 @@
+2010-01-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Debug bots crashing in plugins/iframe-shims.html
+        https://bugs.webkit.org/show_bug.cgi?id=33472
+
+        Call computeOffsetInContainerNode() instead of
+        offsetInContainerNode(), since we are not sure this is always
+        parent-anchored.
+
+        plugins/iframe-shims.html no longer ASSERTS
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (objectAndOffsetUnignored):
+
 2010-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker.
