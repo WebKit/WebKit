@@ -67,8 +67,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
             log("Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
             return
 
-        # FIXME: This should call a reviewed_patches() method on bug instead of re-fetching.
-        reviewed_patches = self.tool.bugs.fetch_bug(bug_id).reviewed_patches()
+        reviewed_patches = bug.reviewed_patches()
         if not reviewed_patches:
             log("Bug %s has no non-obsolete patches, ignoring." % bug_id)
             return

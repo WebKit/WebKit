@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        AssignToCommitter does not need to fetch bugs twice
+        https://bugs.webkit.org/show_bug.cgi?id=33530
+
+        This is a no-brainer patch now that we've added Bug.reviewed_patches
+
+        * Scripts/webkitpy/commands/upload.py:
+
+2010-01-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         bugzilla.py should have an Attachment object instead of passing around dictionaries
         https://bugs.webkit.org/show_bug.cgi?id=31594
 
