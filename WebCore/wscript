@@ -36,6 +36,7 @@ if build_port == "wx":
                # wxTimer on Windows has a bug that causes it to eat crashes in callbacks
                # so we need to use the Win port's implementation until the wx bug fix is
                # widely available (it was fixed in 2.8.10).
+               'platform/graphics/win/TransformationMatrixWin.cpp',
                'platform/win/SharedTimerWin.cpp',
                # Use the Windows plugin architecture
                'page/win/PageWin.cpp',
