@@ -247,6 +247,11 @@ bool ScriptController::processingUserGestureEvent() const
             // keyboard events
             || type == eventNames().keydownEvent || type == eventNames().keypressEvent
             || type == eventNames().keyupEvent
+#if ENABLE(TOUCH_EVENTS)
+            // touch events
+            || type == eventNames().touchstartEvent || type == eventNames().touchmoveEvent
+            || type == eventNames().touchendEvent
+#endif
             // other accepted events
             || type == eventNames().selectEvent || type == eventNames().changeEvent
             || type == eventNames().focusEvent || type == eventNames().blurEvent
