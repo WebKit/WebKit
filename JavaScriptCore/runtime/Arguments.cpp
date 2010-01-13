@@ -204,6 +204,19 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     return JSObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
 }
 
+void Arguments::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    if (mode == IncludeDontEnumProperties) {
+        for (unsigned i = 0; i < d->numArguments; ++i) {
+            if (!d->deletedArguments || !d->deletedArguments[i])
+                propertyNames.add(Identifier(exec, UString::from(i)));
+        }
+        propertyNames.add(exec->propertyNames().callee);
+        propertyNames.add(exec->propertyNames().length);
+    }
+    JSObject::getOwnPropertyNames(exec, propertyNames, mode);
+}
+
 void Arguments::put(ExecState* exec, unsigned i, JSValue value, PutPropertySlot& slot)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {

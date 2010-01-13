@@ -44,8 +44,8 @@ public:
     virtual CallType getCallData(CallData&);
     virtual ConstructType getConstructData(ConstructData&);
 
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
-    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
+    virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
     void invalidate();
 

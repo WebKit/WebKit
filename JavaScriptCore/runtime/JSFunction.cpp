@@ -208,6 +208,17 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
         return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
     }
     
+void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    if (!isHostFunction() && (mode == IncludeDontEnumProperties)) {
+        propertyNames.add(exec->propertyNames().arguments);
+        propertyNames.add(exec->propertyNames().callee);
+        propertyNames.add(exec->propertyNames().caller);
+        propertyNames.add(exec->propertyNames().length);
+    }
+    Base::getOwnPropertyNames(exec, propertyNames, mode);
+}
+
 void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (isHostFunction()) {

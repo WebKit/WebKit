@@ -647,7 +647,7 @@ sub GenerateHeader
 
     # Custom getPropertyNames function exists on DOMWindow
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n");
+        push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;
     }
 
@@ -656,7 +656,7 @@ sub GenerateHeader
 
     # Custom getOwnPropertyNames function
     if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
-        push(@headerContent, "    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n");
+        push(@headerContent, "    virtual void getOwnPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
 
@@ -1538,13 +1538,13 @@ sub GenerateImplementation
     }
 
     if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
-        push(@implContent, "void ${className}::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)\n");
+        push(@implContent, "void ${className}::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(impl())->length(); ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         }
-        push(@implContent, "     Base::getOwnPropertyNames(exec, propertyNames);\n");
+        push(@implContent, "     Base::getOwnPropertyNames(exec, propertyNames, mode);\n");
         push(@implContent, "}\n\n");
     }
 

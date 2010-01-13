@@ -51,6 +51,11 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
 
+    enum EnumerationMode {
+        ExcludeDontEnumProperties,
+        IncludeDontEnumProperties
+    };
+
     class Structure : public RefCounted<Structure> {
     public:
         friend class JIT;
@@ -131,7 +136,7 @@ namespace JSC {
 
         void setEnumerationCache(JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
         JSPropertyNameIterator* enumerationCache() { return m_enumerationCache.get(); }
-        void getEnumerablePropertyNames(PropertyNameArray&);
+        void getPropertyNames(PropertyNameArray&, EnumerationMode mode);
         
     private:
         Structure(JSValue prototype, const TypeInfo&);

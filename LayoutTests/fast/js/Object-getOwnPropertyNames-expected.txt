@@ -1,0 +1,90 @@
+Test to ensure correct behaviour of Object.getOwnPropertyNames
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSortedOwnPropertyNames({}) is []
+PASS getSortedOwnPropertyNames({a:null}) is ['a']
+PASS getSortedOwnPropertyNames({a:null, b:null}) is ['a', 'b']
+PASS getSortedOwnPropertyNames({b:null, a:null}) is ['a', 'b']
+PASS getSortedOwnPropertyNames({__proto__:{a:null}}) is []
+PASS getSortedOwnPropertyNames({__proto__:[1,2,3]}) is []
+PASS getSortedOwnPropertyNames(Object.create({}, { 'a': { 'value': 1, 'enumerable': false } })) is ['a']
+PASS getSortedOwnPropertyNames(Object.create([1,2,3], { 'a': { 'value': 1, 'enumerable': false } })) is ['a']
+PASS getSortedOwnPropertyNames(new Function()) is ['arguments', 'callee', 'caller', 'length', 'name']
+PASS getSortedOwnPropertyNames((function(){var x=new Function();x.__proto__=[1,2,3];return x;})()) is ['arguments', 'callee', 'caller', 'length', 'name']
+PASS getSortedOwnPropertyNames(new String('')) is ['length']
+PASS getSortedOwnPropertyNames(new String('a')) is ['0', 'length']
+PASS getSortedOwnPropertyNames(new String('abc')) is ['0', '1', '2', 'length']
+PASS getSortedOwnPropertyNames((function(){var x=new String('');x.__proto__=[1,2,3];return x;})()) is ['length']
+PASS getSortedOwnPropertyNames([]) is ['length']
+PASS getSortedOwnPropertyNames([null]) is ['0', 'length']
+PASS getSortedOwnPropertyNames([null,null]) is ['0','1', 'length']
+PASS getSortedOwnPropertyNames([null,null,,,,null]) is ['0','1','5', 'length']
+PASS getSortedOwnPropertyNames((function(){var x=[];x.__proto__=[1,2,3];return x;})()) is ['length']
+PASS getSortedOwnPropertyNames(new Date()) is []
+PASS getSortedOwnPropertyNames((function(){var x=new Date();x.__proto__=[1,2,3];return x;})()) is []
+PASS getSortedOwnPropertyNames(new RegExp('foo')) is ['global', 'ignoreCase', 'lastIndex', 'multiline', 'source']
+PASS getSortedOwnPropertyNames((function(){var x=new RegExp();x.__proto__=[1,2,3];return x;})()) is ['global', 'ignoreCase', 'lastIndex', 'multiline', 'source']
+PASS getSortedOwnPropertyNames(argumentsObject()) is ['callee', 'length']
+PASS getSortedOwnPropertyNames(argumentsObject(1)) is ['0', 'callee', 'length']
+PASS getSortedOwnPropertyNames(argumentsObject(1,2,3)) is ['0', '1', '2', 'callee', 'length']
+PASS getSortedOwnPropertyNames((function(){arguments.__proto__=[1,2,3];return arguments;})()) is ['callee', 'length']
+PASS getSortedOwnPropertyNames(parseInt) is ['length', 'name']
+PASS getSortedOwnPropertyNames(parseFloat) is ['length', 'name']
+PASS getSortedOwnPropertyNames(isNaN) is ['length', 'name']
+PASS getSortedOwnPropertyNames(isFinite) is ['length', 'name']
+PASS getSortedOwnPropertyNames(escape) is ['length', 'name']
+PASS getSortedOwnPropertyNames(unescape) is ['length', 'name']
+PASS getSortedOwnPropertyNames(decodeURI) is ['length', 'name']
+PASS getSortedOwnPropertyNames(decodeURIComponent) is ['length', 'name']
+PASS getSortedOwnPropertyNames(encodeURI) is ['length', 'name']
+PASS getSortedOwnPropertyNames(encodeURIComponent) is ['length', 'name']
+PASS getSortedOwnPropertyNames(Object) is ['create', 'defineProperties', 'defineProperty', 'getOwnPropertyDescriptor', 'getOwnPropertyNames', 'getPrototypeOf', 'keys', 'length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Object.prototype) is ['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf']
+PASS getSortedOwnPropertyNames(Function) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Function.prototype) is ['apply', 'call', 'constructor', 'length', 'name', 'toString']
+PASS getSortedOwnPropertyNames(Array) is ['isArray', 'length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Array.prototype) is ['concat', 'constructor', 'every', 'filter', 'forEach', 'indexOf', 'join', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']
+PASS getSortedOwnPropertyNames(String) is ['fromCharCode', 'length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(String.prototype) is ['anchor', 'big', 'blink', 'bold', 'charAt', 'charCodeAt', 'concat', 'constructor', 'fixed', 'fontcolor', 'fontsize', 'indexOf', 'italics', 'lastIndexOf', 'length', 'link', 'localeCompare', 'match', 'replace', 'search', 'slice', 'small', 'split', 'strike', 'sub', 'substr', 'substring', 'sup', 'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toString', 'toUpperCase', 'trim', 'trimLeft', 'trimRight', 'valueOf']
+PASS getSortedOwnPropertyNames(Boolean) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Boolean.prototype) is ['constructor', 'toString', 'valueOf']
+PASS getSortedOwnPropertyNames(Number) is ['MAX_VALUE', 'MIN_VALUE', 'NEGATIVE_INFINITY', 'NaN', 'POSITIVE_INFINITY', 'length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Number.prototype) is ['constructor', 'toExponential', 'toFixed', 'toLocaleString', 'toPrecision', 'toString', 'valueOf']
+PASS getSortedOwnPropertyNames(Date) is ['UTC', 'length', 'name', 'now', 'parse', 'prototype']
+PASS getSortedOwnPropertyNames(Date.prototype) is ['constructor', 'getDate', 'getDay', 'getFullYear', 'getHours', 'getMilliseconds', 'getMinutes', 'getMonth', 'getSeconds', 'getTime', 'getTimezoneOffset', 'getUTCDate', 'getUTCDay', 'getUTCFullYear', 'getUTCHours', 'getUTCMilliseconds', 'getUTCMinutes', 'getUTCMonth', 'getUTCSeconds', 'getYear', 'setDate', 'setFullYear', 'setHours', 'setMilliseconds', 'setMinutes', 'setMonth', 'setSeconds', 'setTime', 'setUTCDate', 'setUTCFullYear', 'setUTCHours', 'setUTCMilliseconds', 'setUTCMinutes', 'setUTCMonth', 'setUTCSeconds', 'setYear', 'toDateString', 'toGMTString', 'toISOString', 'toJSON', 'toLocaleDateString', 'toLocaleString', 'toLocaleTimeString', 'toString', 'toTimeString', 'toUTCString', 'valueOf']
+PASS getSortedOwnPropertyNames(RegExp) is ['$&', "$'", '$*', '$+', '$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9', '$_', '$`', 'input', 'lastMatch', 'lastParen', 'leftContext', 'length', 'multiline', 'name', 'prototype', 'rightContext']
+PASS getSortedOwnPropertyNames(RegExp.prototype) is ['compile', 'constructor', 'exec', 'test', 'toString']
+PASS getSortedOwnPropertyNames(Error) is ['length', 'name', 'prototype']
+PASS getSortedOwnPropertyNames(Error.prototype) is ['constructor', 'message', 'name', 'toString']
+PASS getSortedOwnPropertyNames(Math) is ['E', 'LN10', 'LN2', 'LOG10E', 'LOG2E', 'PI', 'SQRT1_2', 'SQRT2', 'abs', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'exp', 'floor', 'log', 'max', 'min', 'pow', 'random', 'round', 'sin', 'sqrt', 'tan']
+PASS getSortedOwnPropertyNames(JSON) is ['parse', 'stringify']
+PASS globalPropertyNames.indexOf('NaN') != -1 is true
+PASS globalPropertyNames.indexOf('Infinity') != -1 is true
+PASS globalPropertyNames.indexOf('undefined') != -1 is true
+PASS globalPropertyNames.indexOf('parseInt') != -1 is true
+PASS globalPropertyNames.indexOf('parseFloat') != -1 is true
+PASS globalPropertyNames.indexOf('isNaN') != -1 is true
+PASS globalPropertyNames.indexOf('isFinite') != -1 is true
+PASS globalPropertyNames.indexOf('escape') != -1 is true
+PASS globalPropertyNames.indexOf('unescape') != -1 is true
+PASS globalPropertyNames.indexOf('decodeURI') != -1 is true
+PASS globalPropertyNames.indexOf('decodeURIComponent') != -1 is true
+PASS globalPropertyNames.indexOf('encodeURI') != -1 is true
+PASS globalPropertyNames.indexOf('encodeURIComponent') != -1 is true
+PASS globalPropertyNames.indexOf('Object') != -1 is true
+PASS globalPropertyNames.indexOf('Function') != -1 is true
+PASS globalPropertyNames.indexOf('Array') != -1 is true
+PASS globalPropertyNames.indexOf('String') != -1 is true
+PASS globalPropertyNames.indexOf('Boolean') != -1 is true
+PASS globalPropertyNames.indexOf('Number') != -1 is true
+PASS globalPropertyNames.indexOf('Date') != -1 is true
+PASS globalPropertyNames.indexOf('RegExp') != -1 is true
+PASS globalPropertyNames.indexOf('Error') != -1 is true
+PASS globalPropertyNames.indexOf('Math') != -1 is true
+PASS globalPropertyNames.indexOf('JSON') != -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

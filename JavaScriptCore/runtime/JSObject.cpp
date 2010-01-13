@@ -42,7 +42,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
-static inline void getEnumerablePropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames)
+static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // Add properties from the static hashtables of properties
     for (; classInfo; classInfo = classInfo->parentClass) {
@@ -55,7 +55,7 @@ static inline void getEnumerablePropertyNames(ExecState* exec, const ClassInfo* 
         int hashSizeMask = table->compactSize - 1;
         const HashEntry* entry = table->table;
         for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key() && !(entry->attributes() & DontEnum))
+            if (entry->key() && (!(entry->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)))
                 propertyNames.add(entry->key());
         }
     }
@@ -425,9 +425,9 @@ bool JSObject::getPropertySpecificValue(ExecState*, const Identifier& propertyNa
     return false;
 }
 
-void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    getOwnPropertyNames(exec, propertyNames);
+    getOwnPropertyNames(exec, propertyNames, mode);
 
     if (prototype().isNull())
         return;
@@ -435,10 +435,10 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     JSObject* prototype = asObject(this->prototype());
     while(1) {
         if (prototype->structure()->typeInfo().overridesGetPropertyNames()) {
-            prototype->getPropertyNames(exec, propertyNames);
+            prototype->getPropertyNames(exec, propertyNames, mode);
             break;
         }
-        prototype->getOwnPropertyNames(exec, propertyNames);
+        prototype->getOwnPropertyNames(exec, propertyNames, mode);
         JSValue nextProto = prototype->prototype();
         if (nextProto.isNull())
             break;
@@ -446,10 +446,10 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     }
 }
 
-void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+void JSObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    m_structure->getEnumerablePropertyNames(propertyNames);
-    getEnumerablePropertyNames(exec, classInfo(), propertyNames);
+    m_structure->getPropertyNames(propertyNames, mode);
+    getClassPropertyNames(exec, classInfo(), propertyNames, mode);
 }
 
 bool JSObject::toBoolean(ExecState*) const

@@ -1,3 +1,41 @@
+2010-01-12  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        [ES5] Implement Object.getOwnPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=32242
+
+        Add new argument to reimplementations of getPropertyNames()
+        and getOwnPropertyNames(), and update the JS bindings generator.
+
+        Test: fast/js/Object-getOwnPropertyNames.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::getPropertyNames):
+        (WebCore::JSDOMWindowShell::getOwnPropertyNames):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertyNames):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::getPropertyNames):
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertyNames):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::getOwnPropertyNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertyNames):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getPropertyNames):
+        (JSC::RuntimeObjectImp::getOwnPropertyNames):
+        * bridge/runtime_object.h:
+
 2010-01-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Dave Hyatt.

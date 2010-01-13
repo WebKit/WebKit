@@ -82,6 +82,7 @@ namespace JSC {
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 

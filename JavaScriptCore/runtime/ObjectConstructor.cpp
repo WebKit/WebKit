@@ -36,6 +36,7 @@ ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
 
 static JSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorKeys(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState*, JSObject*, JSValue, const ArgList&);
@@ -52,6 +53,7 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, NonNullPassRefPtr<Structur
     
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().getPrototypeOf, objectConstructorGetPrototypeOf), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 2, exec->propertyNames().getOwnPropertyDescriptor, objectConstructorGetOwnPropertyDescriptor), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().getOwnPropertyNames, objectConstructorGetOwnPropertyNames), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 1, exec->propertyNames().keys, objectConstructorKeys), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 3, exec->propertyNames().defineProperty, objectConstructorDefineProperty), DontEnum);
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, prototypeFunctionStructure, 2, exec->propertyNames().defineProperties, objectConstructorDefineProperties), DontEnum);
@@ -123,6 +125,20 @@ JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec,
     description->putDirect(exec->propertyNames().configurable, jsBoolean(descriptor.configurable()), 0);
 
     return description;
+}
+
+// FIXME: Use the enumeration cache.
+JSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+{
+    if (!args.at(0).isObject())
+        return throwError(exec, TypeError, "Requested property names of a value that is not an object.");
+    PropertyNameArray properties(exec);
+    asObject(args.at(0))->getOwnPropertyNames(exec, properties, IncludeDontEnumProperties);
+    JSArray* names = constructEmptyArray(exec);
+    size_t numProperties = properties.size();
+    for (size_t i = 0; i < numProperties; i++)
+        names->push(exec, jsOwnedString(exec, properties[i].ustring()));
+    return names;
 }
 
 // FIXME: Use the enumeration cache.

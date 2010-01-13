@@ -121,7 +121,7 @@ bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned)
     return false;
 }
 
-void JSNotAnObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray&)
+void JSNotAnObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray&, EnumerationMode)
 {
     ASSERT_UNUSED(exec, exec->hadException() && exec->exception() == m_exception);
 }

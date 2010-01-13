@@ -313,20 +313,20 @@ CallType JSQuarantinedObjectWrapper::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-void JSQuarantinedObjectWrapper::getPropertyNames(ExecState*, PropertyNameArray& array)
+void JSQuarantinedObjectWrapper::getPropertyNames(ExecState*, PropertyNameArray& array, EnumerationMode mode)
 {
     if (!allowsGetPropertyNames())
         return;
     
-    m_unwrappedObject->getPropertyNames(unwrappedExecState(), array);
+    m_unwrappedObject->getPropertyNames(unwrappedExecState(), array, mode);
 }
 
-void JSQuarantinedObjectWrapper::getOwnPropertyNames(ExecState*, PropertyNameArray& array)
+void JSQuarantinedObjectWrapper::getOwnPropertyNames(ExecState*, PropertyNameArray& array, EnumerationMode mode)
 {
     if (!allowsGetPropertyNames())
         return;
 
-    m_unwrappedObject->getOwnPropertyNames(unwrappedExecState(), array);
+    m_unwrappedObject->getOwnPropertyNames(unwrappedExecState(), array, mode);
 }
 
 } // namespace WebCore

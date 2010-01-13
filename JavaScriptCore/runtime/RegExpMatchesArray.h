@@ -79,11 +79,11 @@ namespace JSC {
             return JSArray::deleteProperty(exec, propertyName);
         }
 
-        virtual void getOwnPropertyNames(ExecState* exec, PropertyNameArray& arr)
+        virtual void getOwnPropertyNames(ExecState* exec, PropertyNameArray& arr, EnumerationMode mode = ExcludeDontEnumProperties)
         {
             if (lazyCreationData())
                 fillArrayInstance(exec);
-            JSArray::getOwnPropertyNames(exec, arr);
+            JSArray::getOwnPropertyNames(exec, arr, mode);
         }
 
         void fillArrayInstance(ExecState*);

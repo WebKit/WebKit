@@ -1,3 +1,18 @@
+2010-01-12  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        [ES5] Implement Object.getOwnPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=32242
+
+        Add tests for Object.getOwnPropertyNames(o), both standard usage and cross origin.
+
+        * fast/js/Object-getOwnPropertyNames-expected.txt: Added.
+        * fast/js/Object-getOwnPropertyNames.html: Added.
+        * fast/js/script-tests/Object-getOwnPropertyNames.js: Added.
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+
 2010-01-12  Brian Weinstein  <bweinstein@apple.com>
 
         Add correct expected results after r53168 for GTK and Qt.

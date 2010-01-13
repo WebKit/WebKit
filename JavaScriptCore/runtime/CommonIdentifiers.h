@@ -50,6 +50,7 @@
     macro(get) \
     macro(getPrototypeOf) \
     macro(getOwnPropertyDescriptor) \
+    macro(getOwnPropertyNames) \
     macro(hasOwnProperty) \
     macro(ignoreCase) \
     macro(index) \

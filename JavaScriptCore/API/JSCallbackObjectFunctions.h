@@ -380,7 +380,7 @@ JSValue JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObject, 
 }
 
 template <class Base>
-void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
+void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(this);
@@ -397,7 +397,7 @@ void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameAr
             for (iterator it = staticValues->begin(); it != end; ++it) {
                 UString::Rep* name = it->first.get();
                 StaticValueEntry* entry = it->second;
-                if (entry->getProperty && !(entry->attributes & kJSPropertyAttributeDontEnum))
+                if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties)))
                     propertyNames.add(Identifier(exec, name));
             }
         }
@@ -408,13 +408,13 @@ void JSCallbackObject<Base>::getOwnPropertyNames(ExecState* exec, PropertyNameAr
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
                 UString::Rep* name = it->first.get();
                 StaticFunctionEntry* entry = it->second;
-                if (!(entry->attributes & kJSPropertyAttributeDontEnum))
+                if (!(entry->attributes & kJSPropertyAttributeDontEnum) || (mode == IncludeDontEnumProperties))
                     propertyNames.add(Identifier(exec, name));
             }
         }
     }
     
-    Base::getOwnPropertyNames(exec, propertyNames);
+    Base::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
 template <class Base>
