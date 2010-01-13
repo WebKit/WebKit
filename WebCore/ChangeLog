@@ -1,3 +1,15 @@
+2010-01-13  Miikka Heikkinen <miikka.heikkinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt/Symbian] Added missing vendor information to qtwebkit.sis
+
+        This information is necessary to Symbian sign the package.
+
+        http://bugreports.qt.nokia.com/browse/QTBUG-7290
+
+        * WebCore.pro:
+
 2010-01-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -9,6 +9,15 @@ symbian: {
 
     webkitlibs.sources = QtWebKit.dll
     webkitlibs.path = /sys/bin
+    vendorinfo = \
+        "; Localised Vendor name" \
+        "%{\"Nokia, Qt\"}" \
+        " " \
+        "; Unique Vendor name" \
+        ":\"Nokia, Qt\"" \
+        " "
+    webkitlibs.pkg_prerules = vendorinfo
+
     DEPLOYMENT += webkitlibs
 
     TARGET.UID3 = 0x200267C2
