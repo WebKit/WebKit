@@ -41,8 +41,7 @@ PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const Strin
     return StorageNamespaceImpl::localStorageNamespace(path, quota);
 }
 
-// The page argument is only used by the Chromium port.
-PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page*)
+PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace()
 {
     return StorageNamespaceImpl::sessionStorageNamespace();
 }

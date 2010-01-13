@@ -1,3 +1,15 @@
+2010-01-13  Jeremy Orlow  <jorlow@chromium.org>
+
+        No reviewer.  More or less a build fix.  My 53180 broke some 
+        stuff on the Chromium port so I'm reverting.
+
+        * page/Page.cpp:
+        (WebCore::Page::sessionStorage):
+        * storage/StorageNamespace.cpp:
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+        * storage/StorageNamespace.h:
+        (WebCore::StorageNamespace::~StorageNamespace):
+
 2010-01-13  Steve Block  <steveblock@google.com>
 
         Update appendClassName in jni_runtime.cpp to use WebCore::StringBuilder, rather than JSC::StringBuilder.
