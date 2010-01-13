@@ -307,7 +307,7 @@ public:
     operator wxGraphicsMatrix() const;
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))
     operator XFORM() const;
 #endif
 

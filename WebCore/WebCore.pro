@@ -2495,7 +2495,8 @@ SOURCES += \
     ../WebKit/qt/Api/qwebkitversion.cpp
 
 
-    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp
+    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp \
+                               platform/graphics/win/TransformationMatrixWin.cpp
 
     mac {
         SOURCES += \

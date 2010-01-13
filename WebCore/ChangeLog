@@ -1,3 +1,14 @@
+2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the build on Windows.
+
+        PluginViewWin.cpp requires the conversion operator from TransformationMatrix to XFORM.
+
+        * WebCore.pro: Build TransformationMatrixWin.cpp.
+        * platform/graphics/transforms/TransformationMatrix.h: Enable the conversion operator to XFORM.
+
 2010-01-13  Miikka Heikkinen <miikka.heikkinen@digia.com>
 
         Reviewed by Simon Hausmann.
