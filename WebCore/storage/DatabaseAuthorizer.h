@@ -104,7 +104,7 @@ private:
     bool m_lastActionChangedDatabase : 1;
     bool m_readOnly : 1;
 
-    HashSet<String> m_whitelistedFunctions;
+    HashSet<String, CaseFoldingHash> m_whitelistedFunctions;
 };
 
 } // namespace WebCore

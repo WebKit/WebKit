@@ -1,3 +1,17 @@
+2010-01-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactoring DatabaseAuthorizer to use a CaseFoldingHash function
+        for the set of whitelisted sqlite functions, and fixing some
+        indenting issues.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33612
+
+        * storage/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::allowFunction):
+        * storage/DatabaseAuthorizer.h:
+
 2010-01-13  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.
