@@ -2,6 +2,19 @@
 
         Reviewed by Beth Dakin.
 
+        This tests don't pass on Leopard but on Snow Leopard with tolereance of 0.
+        Created Leopard specific pixel test results since they do not fail.
+
+        * platform/mac-leopard/svg/css: Added.
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.checksum: Added.
+        * platform/mac-leopard/svg/css/composite-shadow-example-expected.png: Added.
+        * platform/mac-leopard/svg/css/group-with-shadow-expected.checksum: Added.
+        * platform/mac-leopard/svg/css/group-with-shadow-expected.png: Added.
+
+2010-01-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Beth Dakin.
+
         Add tests to check filter, mask, clip, opacity and marker ordering
         https://bugs.webkit.org/show_bug.cgi?id=14010
 
