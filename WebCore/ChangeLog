@@ -1,3 +1,18 @@
+2010-01-13  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        RenderObject::nextInPreOrderAfterChildren(RenderObject* stayWithin) does not stay within
+        https://bugs.webkit.org/show_bug.cgi?id=33600
+
+        No new tests as this fix affects mainly performance.
+        No test has been found yet that could evidence the bug in the layout
+        of a page, but the fix to bug 32884 exposes this bug on some pages
+        such as http://www.w3.org/Style/CSS/Test/CSS2.1/current/html4/counters-scope-implied-001.htm
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::nextInPreOrderAfterChildren):
+
 2010-01-13  Jeremy Orlow  <jorlow@chromium.org>
 
         No reviewer.  More or less a build fix.  My 53180 broke some 

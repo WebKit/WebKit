@@ -368,19 +368,14 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren(RenderObject* stayWithin
     if (this == stayWithin)
         return 0;
 
-    RenderObject* o;
-    if (!(o = nextSibling())) {
-        o = parent();
-        while (o && !o->nextSibling()) {
-            if (o == stayWithin)
-                return 0;
-            o = o->parent();
-        }
-        if (o)
-            o = o->nextSibling();
+    const RenderObject* current = this;
+    RenderObject* next;
+    while (!(next = current->nextSibling())) {
+        current = current->parent();
+        if (!current || current == stayWithin)
+            return 0;
     }
-
-    return o;
+    return next;
 }
 
 RenderObject* RenderObject::previousInPreOrder() const
