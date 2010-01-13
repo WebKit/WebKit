@@ -1,9 +1,9 @@
 if (self.postMessage)
     runTests();
 else
-    onconnect = handleConnect();
+    onconnect = handleConnect;
 
-function handleConnect(evevnt)
+function handleConnect(event)
 {
     // For shared workers, create a faux postMessage() API to send message back to the parent page.
     self.postMessage = function (message) { event.ports[0].postMessage(message); };
@@ -12,6 +12,7 @@ function handleConnect(evevnt)
 
 function runTests()
 {
+    var ws;
     try {
         postMessage("PASS: worker: init");
         if ('WebSocket' in self)

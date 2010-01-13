@@ -1,3 +1,14 @@
+2010-01-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a test of WebSockets for shared workers
+        https://bugs.webkit.org/show_bug.cgi?id=33285
+
+        * websocket/tests/workers/resources/worker-simple.js:
+        * websocket/tests/workers/shared-worker-simple-expected.txt: Added.
+        * websocket/tests/workers/shared-worker-simple.html: Added.
+
 2010-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
