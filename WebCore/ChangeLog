@@ -1,3 +1,17 @@
+2010-01-13  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Some objects in the global scope are not completed
+        https://bugs.webkit.org/show_bug.cgi?id=19119
+
+        Use Object.getOwnPropertyNames instead of for-in to provide completions, since
+        Object.getOwnPropertyNames reports both enumerable and non-enumerable properties.
+
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript._getPropertyNames):
+        (InjectedScript.getCompletions):
+
 2010-01-13  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.

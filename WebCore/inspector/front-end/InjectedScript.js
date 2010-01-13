@@ -533,6 +533,18 @@ InjectedScript.setOuterHTML = function(nodeId, value, expanded)
     return InjectedScriptHost.pushNodePathToFrontend(newNode, expanded, false);
 }
 
+InjectedScript._getPropertyNames = function(object, resultSet)
+{
+    for (var o = object; o; o = o.__proto__) {
+        try {
+            var names = Object.getOwnPropertyNames(o);
+            for (var i = 0; i < names.length; ++i)
+                resultSet[names[i]] = true;
+        } catch (e) {
+        }
+    }
+}
+
 InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
 {
     var props = {};
@@ -548,23 +560,16 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
             else {
                 // Evaluate into properties in scope of the selected call frame.
                 var scopeChain = callFrame.scopeChain;
-                for (var i = 0; i < scopeChain.length; ++i) {
-                    var scopeObject = scopeChain[i];
-                    try {
-                        for (var propertyName in scopeObject)
-                            props[propertyName] = true;
-                    } catch (e) {
-                    }
-                }
+                for (var i = 0; i < scopeChain.length; ++i)
+                    InjectedScript._getPropertyNames(scopeChain[i], props);
             }
         } else {
             if (!expression)
                 expression = "this";
             expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
         }
-        if (expressionResult)
-            for (var prop in expressionResult)
-                props[prop] = true;
+        if (typeof expressionResult == "object")
+            InjectedScript._getPropertyNames(expressionResult, props);
         if (includeInspectorCommandLineAPI)
             for (var prop in InjectedScript._window().console._inspectorCommandLineAPI)
                 if (prop.charAt(0) !== '_')
