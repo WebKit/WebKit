@@ -320,7 +320,7 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
         case SQLITE_DROP_VTABLE:
             return auth->dropVTable(parameter1, parameter2);
         case SQLITE_FUNCTION:
-            return auth->allowFunction(parameter1);
+            return auth->allowFunction(parameter2);
 #endif
         default:
             ASSERT_NOT_REACHED();

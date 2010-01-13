@@ -38,6 +38,7 @@ DatabaseAuthorizer::DatabaseAuthorizer()
     : m_securityEnabled(false)
 {
     reset();
+    addWhitelistedFunctions();
 }
 
 void DatabaseAuthorizer::reset()
@@ -45,6 +46,69 @@ void DatabaseAuthorizer::reset()
     m_lastActionWasInsert = false;
     m_lastActionChangedDatabase = false;
     m_readOnly = false;
+}
+
+void DatabaseAuthorizer::addWhitelistedFunctions()
+{
+    // SQLite functions used to help implement some operations
+    // ALTER TABLE helpers
+    m_whitelistedFunctions.add("sqlite_rename_table");
+    m_whitelistedFunctions.add("sqlite_rename_trigger");
+    // GLOB helpers
+    m_whitelistedFunctions.add("glob");
+
+    // SQLite core functions
+    m_whitelistedFunctions.add("abs");
+    m_whitelistedFunctions.add("changes");
+    m_whitelistedFunctions.add("coalesce");
+    m_whitelistedFunctions.add("glob");
+    m_whitelistedFunctions.add("ifnull");
+    m_whitelistedFunctions.add("hex");
+    m_whitelistedFunctions.add("last_insert_rowid");
+    m_whitelistedFunctions.add("length");
+    m_whitelistedFunctions.add("like");
+    m_whitelistedFunctions.add("lower");
+    m_whitelistedFunctions.add("ltrim");
+    m_whitelistedFunctions.add("max");
+    m_whitelistedFunctions.add("min");
+    m_whitelistedFunctions.add("nullif");
+    m_whitelistedFunctions.add("quote");
+    m_whitelistedFunctions.add("replace");
+    m_whitelistedFunctions.add("round");
+    m_whitelistedFunctions.add("rtrim");
+    m_whitelistedFunctions.add("soundex");
+    m_whitelistedFunctions.add("sqlite_source_id");
+    m_whitelistedFunctions.add("sqlite_version");
+    m_whitelistedFunctions.add("substr");
+    m_whitelistedFunctions.add("total_changes");
+    m_whitelistedFunctions.add("trim");
+    m_whitelistedFunctions.add("typeof");
+    m_whitelistedFunctions.add("upper");
+    m_whitelistedFunctions.add("zeroblob");
+
+    // SQLite date and time functions
+    m_whitelistedFunctions.add("date");
+    m_whitelistedFunctions.add("time");
+    m_whitelistedFunctions.add("datetime");
+    m_whitelistedFunctions.add("julianday");
+    m_whitelistedFunctions.add("strftime");
+
+    // SQLite aggregate functions
+    // max() and min() are already in the list
+    m_whitelistedFunctions.add("avg");
+    m_whitelistedFunctions.add("count");
+    m_whitelistedFunctions.add("group_concat");
+    m_whitelistedFunctions.add("sum");
+    m_whitelistedFunctions.add("total");
+
+    // SQLite FTS functions
+    m_whitelistedFunctions.add("snippet");
+    m_whitelistedFunctions.add("offsets");
+    m_whitelistedFunctions.add("optimize");
+
+    // SQLite ICU functions
+    // like(), lower() and upper() are already in the list
+    m_whitelistedFunctions.add("regexp");
 }
 
 int DatabaseAuthorizer::createTable(const String& tableName)
@@ -278,12 +342,12 @@ int DatabaseAuthorizer::allowDetach(const String&)
     return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
 }
 
-int DatabaseAuthorizer::allowFunction(const String&)
+int DatabaseAuthorizer::allowFunction(const String& functionName)
 {
-    // FIXME: Are there any of these we need to prevent?  One might guess current_date, current_time, current_timestamp because
-    // they would violate the "sandbox environment" part of 4.11.3, but scripts can generate the local client side information via
-    // javascript directly, anyways.  Are there any other built-ins we need to be worried about?
-    return SQLAuthAllow;
+  if (m_securityEnabled && !m_whitelistedFunctions.contains(functionName.lower()))
+    return SQLAuthDeny;
+
+  return SQLAuthAllow;
 }
 
 void DatabaseAuthorizer::disable()
