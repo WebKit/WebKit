@@ -130,6 +130,7 @@ CFStringRef WKCopyFullFontName(CGFontRef font);
 
 void WKSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void WKSetPatternPhaseInUserSpace(CGContextRef, CGPoint);
+CGAffineTransform WKGetUserToBaseCTM(CGContextRef);
 
 #ifndef BUILDING_ON_TIGER
 void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
