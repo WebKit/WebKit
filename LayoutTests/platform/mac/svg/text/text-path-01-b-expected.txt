@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (-15,-11.67) size 814.17x610.83
     RenderSVGContainer {g} at (-15,-11.67) size 712.17x497.50
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderPath {path} at (198.53,22.02) size 219.77x86.21 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
-        RenderPath {path} at (33.03,78.52) size 219.77x85.14 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
+        RenderPath {path} at (198.53,13.20) size 219.77x97.90 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
+        RenderPath {path} at (33.03,69.70) size 219.77x97.90 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
         RenderPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M113.00,233.00 L413.00,233.00"]
       RenderSVGContainer {g} at (280,-11.67) size 417.17x201.67
-        RenderSVGContainer {use} at (330.88,36.70) size 366.29x143.69
-          RenderSVGContainer {g} at (330.88,36.70) size 366.29x143.69
-            RenderPath {path} at (330.88,36.70) size 366.29x143.69 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
+        RenderSVGContainer {use} at (330.88,22) size 366.29x163.17
+          RenderSVGContainer {g} at (330.88,22) size 366.29x163.17
+            RenderPath {path} at (330.88,22) size 366.29x163.17 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
         RenderSVGText {text} at (203,27) size 205x121 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 205x121
             RenderSVGInlineText {#text} at (-35,-34) size 205x121
               chunk 1 text run 1 at (203.04,27.04) startOffset 0 endOffset 14 width 226.00: "Text on a path"
           RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGContainer {g} at (-15,81.67) size 500.83x270
-        RenderSVGContainer {use} at (55.04,130.86) size 366.29x141.90
-          RenderSVGContainer {g} at (55.04,130.86) size 366.29x141.90
-            RenderPath {path} at (55.04,130.86) size 366.29x141.90 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
+        RenderSVGContainer {use} at (55.04,116.17) size 366.29x163.17
+          RenderSVGContainer {g} at (55.04,116.17) size 366.29x163.17
+            RenderPath {path} at (55.04,116.17) size 366.29x163.17 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
         RenderSVGText {text} at (37,83) size 216x121 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 216x121
             RenderSVGTSpan {tspan} at (0,0) size 57x57

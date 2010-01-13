@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (20,26) size 410x465
+  RenderSVGRoot {svg} at (20,26) size 410x469
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderPath {path} at (14.95,7.04) size 315.11x30.91 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,0.00,1000.00,100.00 C1100.00,200.00,1200.00,300.00,1300.00,200.00 C1400.00,100.00,1500.00,0.00,1600.00,100.00 C1700.00,200.00,1800.00,300.00,1900.00,200.00 C2000.00,100.00,2100.00,0.00,2200.00,100.00"]
-    RenderSVGContainer {g} at (20,26) size 410x465
+      RenderPath {path} at (14.95,0) size 315.11x45 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,0.00,1000.00,100.00 C1100.00,200.00,1200.00,300.00,1300.00,200.00 C1400.00,100.00,1500.00,0.00,1600.00,100.00 C1700.00,200.00,1800.00,300.00,1900.00,200.00 C2000.00,100.00,2100.00,0.00,2200.00,100.00"]
+    RenderSVGContainer {g} at (20,26) size 410x469
       RenderSVGText {text} at (163,40) size 124x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 124x17
           chunk 1 (middle anchor) text run 1 at (163.00,40.00) startOffset 0 endOffset 18 width 124.00: "Vertical Text Test"
@@ -60,10 +60,10 @@ layer at (0,0) size 450x500
             chunk 1 (vertical) text run 2 at (396.00,159.00) startOffset 0 endOffset 10 height 170.00: "orientated"
         RenderSVGInlineText {#text} at (9,241) size 17x53
           chunk 1 (vertical) text run 3 at (383.00,320.00) startOffset 0 endOffset 8 height 136.00: " element"
-      RenderSVGContainer {g} at (51,455) size 319.11x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,450.00)}]
-        RenderSVGContainer {use} at (54.89,457.29) size 315.21x30.43
-          RenderSVGContainer {g} at (54.89,457.29) size 315.21x30.43
-            RenderPath {path} at (54.89,457.29) size 315.21x30.43 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,0.00,1000.00,100.00 C1100.00,200.00,1200.00,300.00,1300.00,200.00 C1400.00,100.00,1500.00,0.00,1600.00,100.00 C1700.00,200.00,1800.00,300.00,1900.00,200.00 C2000.00,100.00,2100.00,0.00,2200.00,100.00"]
+      RenderSVGContainer {g} at (51,450) size 319.11x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,450.00)}]
+        RenderSVGContainer {use} at (54.89,450) size 315.21x45
+          RenderSVGContainer {g} at (54.89,450) size 315.21x45
+            RenderPath {path} at (54.89,450) size 315.21x45 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,0.00,1000.00,100.00 C1100.00,200.00,1200.00,300.00,1300.00,200.00 C1400.00,100.00,1500.00,0.00,1600.00,100.00 C1700.00,200.00,1800.00,300.00,1900.00,200.00 C2000.00,100.00,2100.00,0.00,2200.00,100.00"]
         RenderSVGText {text} at (19,8) size 297x36 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 297x36
             RenderSVGInlineText {#text} at (-8,-3) size 297x36

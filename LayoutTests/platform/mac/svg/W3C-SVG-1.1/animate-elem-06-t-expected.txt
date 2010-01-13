@@ -9,8 +9,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (11,18) size 49x9 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-7) size 49x9
           chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 17 width 49.00: "'path' attribute."
-      RenderSVGContainer {g} at (42,135) size 420x177
-        RenderPath {path} at (87.78,154.48) size 303.44x105.55 [stroke={[type=SOLID] [color=#000000]}] [data="M15.00,43.00 C15.00,43.00,36.00,20.00,65.00,33.00"]
+      RenderSVGContainer {g} at (42,120) size 420x192
+        RenderPath {path} at (87.78,120) size 303.44x140.02 [stroke={[type=SOLID] [color=#000000]}] [data="M15.00,43.00 C15.00,43.00,36.00,20.00,65.00,33.00"]
         RenderPath {rect} at (57,195) size 66x66 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M10.00,33.00 L20.00,33.00 L20.00,43.00 L10.00,43.00 Z"]
         RenderSVGText {text} at (7,50) size 20x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 20x9
