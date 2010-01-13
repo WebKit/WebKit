@@ -1,3 +1,11 @@
+2010-01-13  Darin Adler  <darin@apple.com>
+
+        Ignore compiled Python in more of webkitpy.
+
+        * Scripts/webkitpy/commands: Added property svn:ignore.
+        * Scripts/webkitpy/steps: Added property svn:ignore.
+        * Scripts/webkitpy/style: Added property svn:ignore.
+
 2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
