@@ -1,3 +1,15 @@
+2010-01-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix an assert being triggered by how the Chromium port sets the
+        replacing flag for error pages.  This was caused by r53143.
+
+        Covered by existing Chromium UI tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2010-01-12  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Geoffrey Garen.

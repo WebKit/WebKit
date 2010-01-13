@@ -2922,7 +2922,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 stopLoadingSubframes();
                 pdl->stopLoading();
 
-                if (isReplacing())
+                // If we're in the middle of loading multipart data, we need to restore the document loader.
+                if (isReplacing() && !m_documentLoader.get())
                     setDocumentLoader(m_provisionalDocumentLoader.get());
 
                 // Finish resetting the load state, but only if another load hasn't been started by the
