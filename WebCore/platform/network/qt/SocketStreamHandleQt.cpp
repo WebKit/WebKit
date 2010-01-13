@@ -85,4 +85,4 @@ void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
     notImplemented();
 }
 
-}  // namespace WebCore
+} // namespace WebCore

@@ -3222,7 +3222,7 @@ SOURCES += \
     websockets/WebSocketHandshake.cpp \
     platform/network/SocketStreamErrorBase.cpp \
     platform/network/SocketStreamHandleBase.cpp \
-    platform/network/qt/SocketStreamHandleSoup.cpp \
+    platform/network/qt/SocketStreamHandleQt.cpp \
     bindings/js/JSWebSocketCustom.cpp \
     bindings/js/JSWebSocketConstructor.cpp
 

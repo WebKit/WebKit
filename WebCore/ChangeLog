@@ -1,3 +1,14 @@
+2010-01-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt][WebSocket] SocketStreamHandleSoup.cpp is misnamed
+        https://bugs.webkit.org/show_bug.cgi?id=33077
+
+        * WebCore.pro:
+        * platform/network/qt/SocketStreamHandleQt.cpp: Copied from WebCore/platform/network/qt/SocketStreamHandleSoup.cpp.
+        * platform/network/qt/SocketStreamHandleSoup.cpp: Removed.
+
 2010-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
