@@ -1,3 +1,19 @@
+2010-01-13  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32495
+
+        font-size:small with background-color causes text to get clipped.  Make sure to only paint within the lineTop/lineBottom of
+        a line for quirky inline flow boxes that didn't contribute to the overall height of the line. 
+        
+        Added fast/backgrounds/quirks-mode-line-boxes-backgrounds.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+
 2010-01-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.
