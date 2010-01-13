@@ -28,6 +28,8 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "CString.h"
+#include "StringBuilder.h"
 #include "jni_utility.h"
 #include "jni_utility_private.h"
 #include "runtime_array.h"
@@ -35,7 +37,6 @@
 #include "runtime_root.h"
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
-#include <runtime/StringBuilder.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -48,6 +49,7 @@
 
 using namespace JSC;
 using namespace JSC::Bindings;
+using namespace WebCore;
 
 
 JavaParameter::JavaParameter (JNIEnv *env, jstring type)
@@ -348,8 +350,8 @@ const char *JavaMethod::signature() const
             }
         }
         
-        UString signatureUString = signatureBuilder.release();
-        _signature = strdup(signatureUString.ascii());
+        String signatureString = signatureBuilder.toString();
+        _signature = strdup(signatureString.utf8().data());
     }
     
     return _signature;
