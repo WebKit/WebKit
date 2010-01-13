@@ -94,6 +94,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     , m_pluginHostPort(pluginHostPort)
     , m_isModal(false)
     , m_menuBarIsVisible(true)
+    , m_fullScreenWindowIsShowing(false)
     , m_pluginHostPSN(pluginHostPSN)
     , m_processingRequests(0)
     , m_shouldCacheMissingPropertiesAndMethods(shouldCacheMissingPropertiesAndMethods)
@@ -196,14 +197,42 @@ void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, v
 void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
 {
     m_menuBarIsVisible = visible;
-    
+
     [NSMenu setMenuBarVisible:visible];
-    if (visible) {
-        // Make ourselves the front app
-        ProcessSerialNumber psn;
-        GetCurrentProcess(&psn);
-        SetFrontProcess(&psn);
-    }
+}
+
+void NetscapePluginHostProxy::didEnterFullScreen() const
+{
+    SetFrontProcess(&m_pluginHostPSN);
+}
+
+void NetscapePluginHostProxy::didExitFullScreen() const
+{
+    // If the plug-in host is the current application then we should bring ourselves to the front when it exits full-screen mode.
+
+    ProcessSerialNumber frontProcess;
+    GetFrontProcess(&frontProcess);
+    Boolean isSameProcess = 0;
+    SameProcess(&frontProcess, &m_pluginHostPSN, &isSameProcess);
+    if (!isSameProcess)
+        return;
+
+    ProcessSerialNumber currentProcess;
+    GetCurrentProcess(&currentProcess);
+    SetFrontProcess(&currentProcess);
+}
+
+void NetscapePluginHostProxy::setFullScreenWindowIsShowing(bool isShowing)
+{
+    if (m_fullScreenWindowIsShowing == isShowing)
+        return;
+
+    m_fullScreenWindowIsShowing = isShowing;
+    if (m_fullScreenWindowIsShowing)
+        didEnterFullScreen();
+    else
+        didExitFullScreen();
+
 }
 
 void NetscapePluginHostProxy::applicationDidBecomeActive()
@@ -875,7 +904,18 @@ kern_return_t WKPCSetMenuBarVisible(mach_port_t clientPort, boolean_t menuBarVis
         return KERN_FAILURE;
 
     hostProxy->setMenuBarVisible(menuBarVisible);
-    
+
+    return KERN_SUCCESS;
+}
+
+kern_return_t WKPCSetFullScreenWindowIsShowing(mach_port_t clientPort, boolean_t fullScreenWindowIsShowing)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+
+    hostProxy->setFullScreenWindowIsShowing(fullScreenWindowIsShowing);
+
     return KERN_SUCCESS;
 }
 

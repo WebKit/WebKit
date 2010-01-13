@@ -50,10 +50,13 @@ public:
     void removePluginInstance(NetscapePluginInstanceProxy*);
 
     NetscapePluginInstanceProxy* pluginInstance(uint32_t pluginID);
-    
+
     bool isMenuBarVisible() const { return m_menuBarIsVisible; }
     void setMenuBarVisible(bool);
-    
+
+    bool isFullScreenWindowShowing() const { return m_fullScreenWindowIsShowing; }
+    void setFullScreenWindowIsShowing(bool);
+
     void setModal(bool);
 
     void applicationDidBecomeActive();
@@ -69,8 +72,11 @@ private:
 
     void beginModal();
     void endModal();
-    
-    static void deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info);
+
+    void didEnterFullScreen() const;
+    void didExitFullScreen() const;
+
+    static void deadNameNotificationCallback(CFMachPortRef, void *msg, CFIndex size, void *info);
 
     typedef HashMap<uint32_t, RefPtr<NetscapePluginInstanceProxy> > PluginInstanceMap;
     PluginInstanceMap m_instances;
@@ -90,10 +96,11 @@ private:
     RetainPtr<WebPlaceholderModalWindow *> m_placeholderWindow;
     unsigned m_isModal;
     bool m_menuBarIsVisible;
+    bool m_fullScreenWindowIsShowing;
     const ProcessSerialNumber m_pluginHostPSN;
-    
+
     unsigned m_processingRequests;
-    
+
     bool m_shouldCacheMissingPropertiesAndMethods;
 };
     

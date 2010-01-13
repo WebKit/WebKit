@@ -1,3 +1,26 @@
+2010-01-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7512726> Flash full-screen does not work correctly with Flash 10.1 beta
+
+        Explicitly track when the plug-in shows and hides a full-screen window to determine
+        whether a plug-in is currently full-screen, rather than relying on menu bar visibility.
+        This ensures that we activate the plug-in host process and client application as
+        appropriate when the plug-in enters or exits full-screen.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::isFullScreenWindowShowing):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::setMenuBarVisible):
+        (WebKit::NetscapePluginHostProxy::didEnterFullScreen):
+        (WebKit::NetscapePluginHostProxy::didExitFullScreen):
+        (WebKit::NetscapePluginHostProxy::setFullScreenWindowIsShowing):
+        (WKPCSetMenuBarVisible):
+        (WKPCSetFullScreenWindowIsShowing):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+
 2010-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kevin Decker.
