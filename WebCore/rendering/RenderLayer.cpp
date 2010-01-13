@@ -988,7 +988,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         return;
 
     EPosition position = renderer()->style()->position();
-    if (position == FixedPosition && (!ancestorLayer || ancestorLayer == renderer()->view()->layer()) {
+    if (position == FixedPosition && (!ancestorLayer || ancestorLayer == renderer()->view()->layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
         FloatPoint absPos = renderer()->localToAbsolute(FloatPoint(), true);
