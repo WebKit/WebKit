@@ -51,6 +51,11 @@ public:
     virtual ~V8SVGPODTypeWrapper() { }
     virtual operator PODType() = 0;
     virtual void commitChange(PODType, SVGElement*) = 0;
+
+    static V8SVGPODTypeWrapper<PODType>* toNative(v8::Handle<v8::Object> object)
+    {
+        return reinterpret_cast<V8SVGPODTypeWrapper<PODType>*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+    }
 };
 
 template<typename PODType>

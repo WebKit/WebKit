@@ -266,13 +266,17 @@ sub GenerateHeader
     push(@headerContent, "#include <wtf/HashMap.h>\n");
     push(@headerContent, "#include \"StringHash.h\"\n");
     push(@headerContent, "#include \"V8Index.h\"\n");
+    push(@headerContent, GetHeaderClassInclude($implClassName));
     push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\nclass $className {\n");
+    
+    my $toNativeReturnType = GetReturnTypeForToNative($interfaceName);
     push(@headerContent, <<END);
 
  public:
   static bool HasInstance(v8::Handle<v8::Value> value);
   static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
+  static ${toNativeReturnType}* toNative(v8::Handle<v8::Object>);
 END
 
     if ($implClassName eq "DOMWindow") {
@@ -373,6 +377,17 @@ sub GetInternalFields
     return ("ownerNodeIndex") if ($name eq "StyleSheet") || ($name eq "CSSStyleSheet");
     return ("ownerNodeIndex") if ($name eq "NamedNodeMap");
     return ();
+}
+
+sub GetHeaderClassInclude
+{
+    my $className = shift;
+    if ($className =~ /SVGPathSeg/) {
+        $className =~ s/Abs|Rel//;
+    }
+    return "" if (AvoidInclusionOfType($className));
+    return "#include \"SVGAnimatedTemplate.h\"\n" if ($codeGenerator->IsSVGAnimatedType($className));
+    return "#include \"${className}.h\"\n";
 }
 
 sub GenerateHeaderCustomInternalFieldIndices
@@ -521,26 +536,6 @@ sub IsNodeSubType
     return 0;
 }
 
-sub HolderToNative
-{
-    my $dataNode = shift;
-    my $implClassName = shift;
-    my $classIndex = shift;
-    my $holder = shift || "holder";   # optional param
-
-    if (IsNodeSubType($dataNode)) {
-        push(@implContentDecls, <<END);
-    $implClassName* imp = v8DOMWrapperToNode<$implClassName>($holder);
-END
-
-    } else {
-        push(@implContentDecls, <<END);
-    $implClassName* imp = v8DOMWrapperTo<$implClassName>(V8ClassIndex::$classIndex, $holder);
-END
-
-  }
-}
-
 sub GenerateDomainSafeFunctionGetter
 {
     my $function = shift;
@@ -569,14 +564,9 @@ sub GenerateDomainSafeFunctionGetter
     if (holder.IsEmpty()) {
       // can only reach here by 'object.__proto__.func', and it should passed
       // domain security check already
-
       return private_template->GetFunction();
     }
-END
-
-    HolderToNative($dataNode, $implClassName, $classIndex);
-
-    push(@implContentDecls, <<END);
+    ${implClassName}* imp = ${className}::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
       static v8::Persistent<v8::FunctionTemplate> shared_template =
         v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
@@ -605,17 +595,15 @@ END
 
     if ($classIndex eq "DOMWINDOW") {
         push(@implContentDecls, <<END);
-    DOMWindow* window = v8DOMWrapperTo<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
     // Get the proxy corresponding to the DOMWindow if possible to
     // make sure that the constructor function is constructed in the
     // context of the DOMWindow and not in the context of the caller.
-    return V8DOMWrapper::getConstructor(type, window);
+    return V8DOMWrapper::getConstructor(type, V8DOMWindow::toNative(info.Holder()));
 END
     } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT" or $classIndex eq "SHAREDWORKERCONTEXT") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
-    WorkerContext* workerContext = v8DOMWrapperTo<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
-    return V8DOMWrapper::getConstructor(type, workerContext);
+    return V8DOMWrapper::getConstructor(type, V8WorkerContext::toNative(info.Holder()));
 END
     } else {
         push(@implContentDecls, "    return v8::Handle<v8::Value>();");
@@ -681,7 +669,7 @@ END
 
     if ($isPodType) {
         push(@implContentDecls, <<END);
-    V8SVGPODTypeWrapper<$implClassName>* imp_wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());
+    V8SVGPODTypeWrapper<$implClassName>* imp_wrapper = V8SVGPODTypeWrapper<$implClassName>::toNative(info.Holder());
     $implClassName imp_instance = *imp_wrapper;
 END
         if ($getterStringUsesImp) {
@@ -702,7 +690,9 @@ END
     if (holder.IsEmpty()) return v8::Handle<v8::Value>();
 END
       }
-        HolderToNative($dataNode, $implClassName, $classIndex, "info");
+    push(@implContentDecls, <<END);
+    ${implClassName}* imp = V8${implClassName}::toNative(holder);
+END
     } else {
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         if ($getterStringUsesImp && $reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
@@ -715,11 +705,9 @@ END
             return;
             # Skip the rest of the function!
         }
-        
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = info.Holder();
+    ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
 END
-        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     }
 
     # Generate security checks if necessary
@@ -884,7 +872,7 @@ sub GenerateNormalAttrSetter
     if ($isPodType) {
         $implClassName = GetNativeType($implClassName);
         $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
-        push(@implContentDecls, "    V8SVGPODTypeWrapper<$implClassName>* wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$implClassName> >(V8ClassIndex::$classIndex, info.Holder());\n");
+        push(@implContentDecls, "    V8SVGPODTypeWrapper<$implClassName>* wrapper = V8SVGPODTypeWrapper<$implClassName>::toNative(info.Holder());\n");
         push(@implContentDecls, "    $implClassName imp_instance = *wrapper;\n");
         push(@implContentDecls, "    $implClassName* imp = &imp_instance;\n");
 
@@ -900,7 +888,9 @@ END
     if (holder.IsEmpty()) return;
 END
       }
-        HolderToNative($dataNode, $implClassName, $classIndex, "info");
+    push(@implContentDecls, <<END);
+    ${implClassName}* imp = V8${implClassName}::toNative(holder);
+END
     } else {
         my $attrType = GetTypeFromSignature($attribute->signature);
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
@@ -917,9 +907,8 @@ END
         }
 
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = info.Holder();
+    ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
 END
-        HolderToNative($dataNode, $implClassName, $classIndex, "info");
     }
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
@@ -966,7 +955,7 @@ END
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             $implIncludes{"V8CustomBinding.h"} = 1;
-            push(@implContentDecls, "    transferHiddenDependency(holder, imp->$attrName(), value, V8${interfaceName}::cacheIndex);\n");
+            push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::cacheIndex);\n");
             push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate)");
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
@@ -1052,14 +1041,13 @@ sub GenerateFunctionCallback
 
     if (IsPodType($implClassName)) {
         my $nativeClassName = GetNativeType($implClassName);
-        push(@implContentDecls, "    V8SVGPODTypeWrapper<$nativeClassName>* imp_wrapper = v8DOMWrapperTo<V8SVGPODTypeWrapper<$nativeClassName> >(V8ClassIndex::$classIndex, args.Holder());\n");
+        push(@implContentDecls, "    V8SVGPODTypeWrapper<$nativeClassName>* imp_wrapper = V8SVGPODTypeWrapper<$nativeClassName>::toNative(args.Holder());\n");
         push(@implContentDecls, "    $nativeClassName imp_instance = *imp_wrapper;\n");
         push(@implContentDecls, "    $nativeClassName* imp = &imp_instance;\n");
     } else {
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = args.Holder();
+    ${implClassName}* imp = V8${implClassName}::toNative(args.Holder());
 END
-        HolderToNative($dataNode, $implClassName, $classIndex);
     }
 
   # Check domain security if needed
@@ -1492,7 +1480,6 @@ sub GenerateImplementation
     $implIncludes{"${className}.h"} = 1;
 
     AddIncludesForType($interfaceName);
-    $implIncludes{"V8Proxy.h"} = 1;
 
     push(@implContentDecls, "namespace WebCore {\n");
     push(@implContentDecls, "namespace ${interfaceName}Internal {\n\n");
@@ -1851,6 +1838,7 @@ END
 END
     }
 
+    $toNativeReturnType = GetReturnTypeForToNative($interfaceName);
     push(@implContent, <<END);
   return desc;
 }
@@ -1863,6 +1851,10 @@ v8::Persistent<v8::FunctionTemplate> ${className}::GetRawTemplate() {
 v8::Persistent<v8::FunctionTemplate> ${className}::GetTemplate() {
   static v8::Persistent<v8::FunctionTemplate> ${className}_cache_ = Configure${className}Template(GetRawTemplate());
   return ${className}_cache_;
+}
+
+${toNativeReturnType}* ${className}::toNative(v8::Handle<v8::Object> object) {
+  return reinterpret_cast<${toNativeReturnType}*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex)); 
 }
 
 bool ${className}::HasInstance(v8::Handle<v8::Value> value) {
@@ -1891,6 +1883,15 @@ END
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
+sub GetReturnTypeForToNative
+{
+    my $type = shift;
+    return "FloatRect" if $type eq "SVGRect";
+    return "FloatPoint" if $type eq "SVGPoint";
+    return "TransformationMatrix" if $type eq "SVGMatrix";
+    return "float" if $type eq "SVGNumber";
+    return $type;
+}
 
 sub GenerateFunctionCallString()
 {
@@ -2322,7 +2323,7 @@ sub JSValueToNative
         $implIncludes{"V8Node.h"} = 1;
 
         # EventTarget is not in DOM hierarchy, but all Nodes are EventTarget.
-        return "V8Node::HasInstance($value) ? v8DOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8Node::HasInstance($value) ? V8Node::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
     }
 
     if ($type eq "XPathNSResolver") {
@@ -2330,14 +2331,13 @@ sub JSValueToNative
     }
 
     AddIncludesForType($type);
-    # $implIncludes{"$type.h"} = 1 unless AvoidInclusionOfType($type);
 
     if (IsDOMNodeType($type)) {
         $implIncludes{"V8${type}.h"} = 1;
 
         # Perform type checks on the parameter, if it is expected Node type,
         # return NULL.
-        return "V8${type}::HasInstance($value) ? v8DOMWrapperToNode<${type}>(v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
     } else {
         # TODO: Temporary to avoid Window name conflict.
         my $classIndex = uc($type);
@@ -2356,7 +2356,7 @@ sub JSValueToNative
 
         # Perform type checks on the parameter, if it is expected Node type,
         # return NULL.
-        return "V8${type}::HasInstance($value) ? v8DOMWrapperTo<${implClassName}>(V8ClassIndex::${classIndex}, v8::Handle<v8::Object>::Cast($value)) : 0";
+        return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
     }
 }
 
@@ -2516,7 +2516,6 @@ sub ReturnNativeToJSValue
     # V8 specific.
     my $implClassName = $type;
     AddIncludesForType($type);
-    # $implIncludes{GetImplementationFileName($type)} = 1 unless AvoidInclusionOfType($type);
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {

@@ -41,6 +41,7 @@
 #include "StringBuffer.h"
 #include "StringHash.h"
 #include "Threading.h"
+#include "V8Element.h"
 #include "V8Proxy.h"
 
 #include <v8.h>
@@ -125,16 +126,6 @@ private:
     WTF::ThreadIdentifier m_threadId;
 #endif
 };
-
-
-void* v8DOMWrapperToNative(v8::Handle<v8::Object> object) {
-    return object->GetPointerFromInternalField(v8DOMWrapperObjectIndex);
-}
-    
-void* v8DOMWrapperToNative(const v8::AccessorInfo& info) {
-    return info.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex);
-}
-    
 
 String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
 {
@@ -486,7 +477,7 @@ void createCallback(v8::Local<v8::ObjectTemplate> proto,
 v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo& info,
                                            const QualifiedName& name) 
 {
-    Element *imp = v8DOMWrapperToNode<Element>(info);
+    Element* imp = V8Element::toNative(info.Holder());
     return v8ExternalString(imp->getAttribute(name));
 }
 
@@ -494,7 +485,7 @@ void setElementStringAttr(const v8::AccessorInfo& info,
                           const QualifiedName& name,
                           v8::Local<v8::Value> value)
 {
-    Element* imp = v8DOMWrapperToNode<Element>(info);
+    Element* imp = V8Element::toNative(info.Holder());
     AtomicString v = toAtomicWebCoreStringWithNullCheck(value);
     imp->setAttribute(name, v);
 }
