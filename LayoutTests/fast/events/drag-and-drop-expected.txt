@@ -13,6 +13,19 @@ PASS event.dataTransfer.dropEffect is "move"
 PASS event.dataTransfer.dropEffect is "link"
 PASS event.dataTransfer.dropEffect is "none"
 
+When effectAllowed == "undefined"
+
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.dropEffect is "none"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.dropEffect is "copy"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.dropEffect is "move"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.dropEffect is "link"
+PASS event.dataTransfer.effectAllowed is "uninitialized"
+PASS event.dataTransfer.dropEffect is "none"
+
 When effectAllowed == "none"
 
 PASS event.dataTransfer.dropEffect is "none"

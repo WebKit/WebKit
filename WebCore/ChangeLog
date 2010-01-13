@@ -1,3 +1,18 @@
+2010-01-13  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (r49268): DHTML drag not allowed unless event.dataTransfer.effectAllowed 
+        is set (differs from HTML5).
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=33607> and <rdar://7507114>.
+
+        If no effectAllowed is set in the dragStart operation, we should default to
+        uninitialized instead of none, so the user doesn't have to manually set the 
+        effectAllowed to enable drag and drop.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+
 2010-01-13  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

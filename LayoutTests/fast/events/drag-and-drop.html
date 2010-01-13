@@ -39,7 +39,9 @@
     function dragStart(e)
     {
         event = e;
-        e.dataTransfer.effectAllowed = effectAllowedElem.options[effectAllowedElem.selectedIndex].value;
+        if (effectAllowedElem.options[effectAllowedElem.selectedIndex].value != "undefined")
+            e.dataTransfer.effectAllowed = effectAllowedElem.options[effectAllowedElem.selectedIndex].value;
+
         e.dataTransfer.setData('Text', e.target.textContent);
     }
     
@@ -87,6 +89,15 @@
         var chosenDropEffect = dropEffectElem.options[dropEffectElem.selectedIndex].value;
         var chosenEffectAllowed = effectAllowedElem.options[effectAllowedElem.selectedIndex].value;
         var actualDropEffect = e.dataTransfer.dropEffect;
+        
+        if (chosenEffectAllowed === "undefined") {
+            // If no effectAllowed is set, we should default to uninitialized. Make sure that's the case.
+            shouldBeEqualToString("event.dataTransfer.effectAllowed", "uninitialized");
+            
+            // Then set the chosenEffectAllowed so isDropEffectAllowed matches the HTML5 spec, and
+            // doesn't need special cases for undefined.
+            chosenEffectAllowed = "uninitialized";
+        }
         
         if (isDropEffectAllowed(chosenDropEffect, chosenEffectAllowed))
             shouldBeEqualToString('event.dataTransfer.dropEffect', dropEffectElem.options[dropEffectElem.selectedIndex].value);
@@ -148,6 +159,7 @@
     <div id="test-container">
         <label for="effectAllowed">effectAllowed</label> <select id="effectAllowed">
             <option value="uninitialized">Uninitialized</option>
+            <option value="undefined">Undefined</option>
             <option value="none">None</option>
             <option value="all">All</option>
             <option value="copy">Copy</option>
