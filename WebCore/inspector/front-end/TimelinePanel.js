@@ -34,7 +34,7 @@ WebInspector.TimelinePanel = function()
     this.element.addStyleClass("timeline");
 
     this._overviewPane = new WebInspector.TimelineOverviewPane(this.categories);
-    this._overviewPane.addEventListener("window changed", this._scheduleRefresh, this);
+    this._overviewPane.addEventListener("window changed", this._windowChanged, this);
     this._overviewPane.addEventListener("filter changed", this._refresh, this);
     this.element.appendChild(this._overviewPane.element);
 
@@ -80,6 +80,7 @@ WebInspector.TimelinePanel = function()
     this._records = [];
     this._sendRequestRecords = {};
     this._calculator = new WebInspector.TimelineCalculator();
+    this._boundariesAreValid = true;
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -291,14 +292,20 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(true);
     },
 
-    _scheduleRefresh: function(immediate)
+    _windowChanged: function()
     {
+        this._scheduleRefresh();
+    },
+  
+    _scheduleRefresh: function(preserveBoundaries)
+    {
+        this._boundariesAreValid &= preserveBoundaries;
         if (this._needsRefresh)
             return;
         this._needsRefresh = true;
 
         if (this.visible && !("_refreshTimeout" in this))
-            this._refreshTimeout = setTimeout(this._refresh.bind(this), immediate ? 0 : 100);
+            this._refreshTimeout = setTimeout(this._refresh.bind(this), preserveBoundaries ? 0 : 100);
     },
 
     _refresh: function()
@@ -308,18 +315,23 @@ WebInspector.TimelinePanel.prototype = {
             clearTimeout(this._refreshTimeout);
             delete this._refreshTimeout;
         }
-        this._overviewPane.update(this._records);
-        this._refreshRecords();
+      
+        if (!this._boundariesAreValid)
+            this._overviewPane.update(this._records);
+        this._refreshRecords(!this._boundariesAreValid);
+        this._boundariesAreValid = true;
     },
 
-    _refreshRecords: function()
+    _refreshRecords: function(updateBoundaries)
     {
-        this._calculator.windowLeft = this._overviewPane.windowLeft;
-        this._calculator.windowRight = this._overviewPane.windowRight;
-        this._calculator.reset();
+        if (updateBoundaries) {
+            this._calculator.windowLeft = this._overviewPane.windowLeft;
+            this._calculator.windowRight = this._overviewPane.windowRight;
+            this._calculator.reset();
 
-        for (var i = 0; i < this._records.length; ++i)
-            this._calculator.updateBoundaries(this._records[i]);
+            for (var i = 0; i < this._records.length; ++i)
+                this._calculator.updateBoundaries(this._records[i]);
+        }
 
         var recordsInWindow = [];
         for (var i = 0; i < this._records.length; ++i) {
@@ -391,7 +403,8 @@ WebInspector.TimelinePanel.prototype = {
 
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
         var timelinePaddingLeft = this._calculator.windowLeft === 0 ? expandOffset : 0;
-        this._timelineGrid.updateDividers(true, this._calculator, timelinePaddingLeft);
+        if (updateBoundaries)
+            this._timelineGrid.updateDividers(true, this._calculator, timelinePaddingLeft);
         this._adjustScrollPosition((recordsInWindow.length + 1) * rowHeight);
     },
 
