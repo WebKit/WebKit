@@ -28,12 +28,17 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "Chrome.h"
+#include "ChromeClientImpl.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 #include "StorageAreaProxy.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
 #include "WebStorageNamespace.h"
 #include "WebString.h"
+#include "WebViewClient.h"
+#include "WebViewImpl.h"
 
 namespace WebCore {
 
@@ -42,9 +47,11 @@ PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const Strin
     return new StorageNamespaceProxy(WebKit::webKitClient()->createLocalStorageNamespace(path, quota));
 }
 
-PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace()
+PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* page)
 {
-    return new StorageNamespaceProxy(WebKit::webKitClient()->createSessionStorageNamespace());
+    WebKit::ChromeClientImpl* chromeClientImpl = static_cast<WebKit::ChromeClientImpl*>(page->chrome()->client());
+    WebKit::WebViewClient* webViewClient = chromeClientImpl->webView()->client();
+    return new StorageNamespaceProxy(webViewClient->createSessionStorageNamespace());
 }
 
 StorageNamespaceProxy::StorageNamespaceProxy(WebKit::WebStorageNamespace* storageNamespace)

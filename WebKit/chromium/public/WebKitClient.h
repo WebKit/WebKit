@@ -89,6 +89,7 @@ public:
     virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
 
     // Return a new SessionStorage namespace.
+    // THIS IS DEPRECATED.  WebViewClient::getSessionStorageNamespace() is the new way to access this.
     virtual WebStorageNamespace* createSessionStorageNamespace() { return 0; }
 
     // Called when storage events fire.
