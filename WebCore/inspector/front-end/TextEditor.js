@@ -31,7 +31,7 @@
 WebInspector.TextEditor = function(platform)
 {
     this._textModel = new WebInspector.TextEditorModel(this._textChanged.bind(this));
-    this._highlighter = new WebInspector.TextEditorHighlighter(this._textModel);
+    this._highlighter = new WebInspector.TextEditorHighlighter(this._textModel, this._highlightChanged.bind(this));
 
     this.element = document.createElement("div");
     this.element.className = "text-editor";
@@ -183,7 +183,11 @@ WebInspector.TextEditor.prototype = {
             // Lines shifted, invalidate all under start line. Also clear lines that now are outside model range.
             this._invalidateLines(newRange.startLine, this._textModel.linesCount + Math.max(0, oldRange.endLine - newRange.endLine));
 
-        this._invalidateHighlight(newRange.startLine);
+        if (this._highlightingEnabled) {
+            var lastVisibleLine = Math.min(this._textModel.linesCount, this._offsetToLineNumber(this._scrollTop + this._canvas.height) + 1);
+            this._highlighter.updateHighlight(newRange.startLine, lastVisibleLine);
+        }
+
         this._updateSize(newRange.startLine, Math.max(newRange.endLine, oldRange.endLine));
         if (oldRange.linesCount !== newRange.linesCount) {
             // Invalidate offset cache.
@@ -205,6 +209,12 @@ WebInspector.TextEditor.prototype = {
 
         this._invalidateLines(oldRange.startLine, oldRange.endLine + 1);
         this._invalidateLines(newRange.startLine, newRange.endLine + 1);
+        this._paint();
+    },
+
+    _highlightChanged: function(fromLine, toLine)
+    {
+        this._invalidateLines(fromLine, toLine + 1);
         this._paint();
     },
 
@@ -320,11 +330,11 @@ WebInspector.TextEditor.prototype = {
         }
         lastLine = Math.min(lastLine, this._textModel.linesCount);
 
+        if (this._highlightingEnabled)
+            this._highlighter.highlight(lastLine);
+
         if (this._selection.startLine === this._selection.endLine && firstLine <= this._selection.startLine && this._selection.startLine < lastLine)
             this._paintCurrentLine(this._selection.startLine);
-
-        if (this._highlightingEnabled)
-            this._highlighter.highlight(firstLine, lastLine);
 
         this._paintSelection(firstLine, lastLine);
 
@@ -338,10 +348,10 @@ WebInspector.TextEditor.prototype = {
                 continue;
             }
 
-            var attributes = this._textModel.getAttributes(i, "highlight");
+            var highlighterState = this._textModel.getAttribute(i, "highlighter-state");
             var plainTextStart = -1;
             for (var j = 0; j < line.length;) {
-                var attribute = attributes && attributes[j];
+                var attribute = highlighterState && highlighterState.attributes[j];
                 if (!attribute || !attribute.style) {
                     if (plainTextStart === -1)
                         plainTextStart = j;
@@ -628,18 +638,6 @@ WebInspector.TextEditor.prototype = {
         var lineLength = this._textModel.lineLength(line);
         column = Math.max(0, Math.min(column, lineLength));
         return { line: line, column: column };
-    },
-
-    _invalidateHighlight: function(startLine)
-    {
-        if (!this._highlightingEnabled)
-            return;
-        var firstVisibleLine = Math.max(0, this._offsetToLineNumber(this._scrollTop) - 1);
-        var lastVisibleLine = Math.min(this._textModel.linesCount, this._offsetToLineNumber(this._scrollTop + this._canvas.height) + 1);
-
-        var damage = this._highlighter.highlight(startLine, lastVisibleLine);
-        for (var line in damage)
-            this._invalidateLines(line, parseInt(line) + 1);
     },
 
     _paintSelection: function(firstLine, lastLine)

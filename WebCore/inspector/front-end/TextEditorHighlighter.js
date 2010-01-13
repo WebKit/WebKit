@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextEditorHighlighter = function(textModel)
+WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
     this._tokenizer = new WebInspector.JavaScriptTokenizer();
@@ -40,62 +40,132 @@ WebInspector.TextEditorHighlighter = function(textModel)
     this._styles["regex"] = "rgb(196, 26, 22)";
     this._styles["keyword"] = "rgb(170, 13, 145)";
     this._styles["number"] = "rgb(28, 0, 207)";
+
+    this._damageCallback = damageCallback;    
 }
 
 WebInspector.TextEditorHighlighter.prototype = {
-    highlight: function(startLine, endLine)
+    highlight: function(endLine)
     {
-        // Rewind to the last highlighted line to gain proper highlighter context.
-        while (startLine > 0 && !this._textModel.getAttribute(startLine - 1, 0, "highlighter-state"))
+        // First check if we have work to do.
+        var state = this._textModel.getAttribute(endLine - 1, "highlighter-state")
+        if (state && !state.outOfDate) {
+            // Last line is highlighted, just exit.
+            return;
+        }
+
+        this._requestedEndLine = endLine;
+
+        if (this._highlightTimer) {
+            // There is a timer scheduled, it will catch the new job based on the new endLine set.
+            return;
+        }
+
+        // We will be highlighting. First rewind to the last highlighted line to gain proper highlighter context.
+        var startLine = endLine;
+        while (startLine > 0) {
+            var state = this._textModel.getAttribute(startLine - 1, "highlighter-state");
+            if (state && !state.outOfDate)
+                break;
             startLine--;
+        }
 
+        // Do small highlight synchronously. This will provide instant highlight on PageUp / PageDown, gentle scrolling.
+        var toLine = Math.min(startLine + 200, endLine);
+        this._highlightLines(startLine, toLine);
+
+        // Schedule tail highlight if necessary.
+        if (endLine > toLine)
+            this._highlightTimer = setTimeout(this._highlightInChunks.bind(this, toLine, endLine), 100);
+    },
+
+    _highlightInChunks: function(startLine, endLine)
+    {
+        delete this._highlightTimer;
+
+        // First we always check if we have work to do. Could be that user scrolled back and we can quit.
+        var state = this._textModel.getAttribute(this._requestedEndLine - 1, "highlighter-state");
+        if (state && !state.outOfDate)
+            return;
+
+        if (this._requestedEndLine !== endLine) {
+            // User keeps updating the job in between of our timer ticks. Just reschedule self, don't eat CPU (they must be scrolling).
+            this._highlightTimer = setTimeout(this._highlightInChunks.bind(this, startLine, this._requestedEndLine), 200);
+            return;
+        }
+
+        // Highlight 500 lines chunk.
+        var toLine = Math.min(startLine + 500, this._requestedEndLine);
+        this._highlightLines(startLine, toLine);
+
+        // Schedule tail highlight if necessary.
+        if (toLine < this._requestedEndLine)
+            this._highlightTimer = setTimeout(this._highlightInChunks.bind(this, toLine, this._requestedEndLine), 10);
+    },
+
+    updateHighlight: function(startLine, endLine)
+    {
+        // Start line was edited, we should highlight everything until endLine synchronously.
+        var state = this._textModel.getAttribute(startLine, "highlighter-state");
+        if (!state || state.outOfDate) {
+            // Highlighter did not reach this point yet, nothing to update. It will reach it on subsequent timer tick and do the job.
+            return;
+        }
+
+        var restored = this._highlightLines(startLine, endLine);
+
+        // Set invalidated flag to the subsequent lines.
+        for (var i = endLine; i < this._textModel.linesCount; ++i) {
+            var highlighterState = this._textModel.getAttribute(i, "highlighter-state");
+            if (highlighterState)
+                highlighterState.outOfDate = !restored;
+            else
+                return;
+        }
+    },
+
+    _highlightLines: function(startLine, endLine)
+    {
         // Restore highlighter context taken from previous line.
-        var state = this._textModel.getAttribute(startLine - 1, 0, "highlighter-state");
-         if (state)
-             this._tokenizer.condition = state.postCondition;
-         else
-             this._tokenizer.condition = this._tokenizer.initialCondition;
-        // Each line has associated state attribute with pre- and post-highlighter conditions.
-        // Highlight lines from range until we find line precondition matching highlighter state.
-        var damage = {};
-        for (var i = startLine; i < endLine; ++i) {
-            state = this._textModel.getAttribute(i, 0, "highlighter-state");
-            if (state && state.preCondition === this._tokenizer.condition) {
-                // Following lines are up to date, no need re-highlight.
-                this._tokenizer.condition = state.postCondition;
-                continue;
-            }
+        var state = this._textModel.getAttribute(startLine - 1, "highlighter-state");
+        if (state)
+            this._tokenizer.condition = state.postCondition;
+        else
+            this._tokenizer.condition = this._tokenizer.initialCondition;
 
-            damage[i] = true;
+        var damagedFrom = startLine;
+        var damagedTo = startLine;
+        for (var i = startLine; i < endLine; ++i) {
+            damagedTo = i;
 
             state = {};
             state.preCondition = this._tokenizer.condition;
+            state.attributes = {};
 
-            this._textModel.removeAttributes(i, "highlight");
-            this._lex(this._textModel.line(i), i);
+            this._lex(this._textModel.line(i), i, state.attributes);
 
             state.postCondition = this._tokenizer.condition;
-            this._textModel.addAttribute(i, 0, "highlighter-state", state);
-        }
+            this._textModel.setAttribute(i, "highlighter-state", state);
 
-        state = this._textModel.getAttribute(endLine, 0, "highlighter-state");
-
-        if (state && state.preCondition !== this._tokenizer.condition) {
-            // Requested highlight range is over, but we did not recover. Invalidate tail highlighting.
-            for (var i = endLine; i < this._textModel.linesCount; ++i)
-                this._textModel.removeAttributes(i, "highlighter-state");
+            var nextLineState = this._textModel.getAttribute(i + 1, "highlighter-state");
+            if (nextLineState && nextLineState.preCondition === state.postCondition) {
+                // Following lines are up to date, no need re-highlight.
+                this._damageCallback(damagedFrom, damagedTo);
+                return true;
+            }
         }
-        return damage;
+        this._damageCallback(damagedFrom, damagedTo);
+        return false;
     },
 
-    _lex: function(line, lineNumber) {
+    _lex: function(line, lineNumber, attributes) {
          this._tokenizer.line = line;
          var column = 0;
          do {
              var newColumn = this._tokenizer.nextToken(column);
              var tokenType = this._tokenizer.tokenType;
              if (tokenType)
-                 this._textModel.addAttribute(lineNumber, column, "highlight", { length: newColumn - column, style: this._styles[tokenType] });
+                 attributes[column] = { length: newColumn - column, style: this._styles[tokenType] };
              column = newColumn;
          } while (column < line.length)
     }

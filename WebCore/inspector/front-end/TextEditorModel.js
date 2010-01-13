@@ -136,7 +136,6 @@ WebInspector.TextEditorModel.prototype = {
     _setLine: function(lineNumber, text)
     {
         this._lines[lineNumber] = text;
-        delete this._attributes[lineNumber];
     },
 
     _removeLines: function(fromLine, count)
@@ -186,34 +185,23 @@ WebInspector.TextEditorModel.prototype = {
         return clip.join("\n");
     },
 
-    addAttribute: function(line, column, name, value)
+    setAttribute: function(line, name, value)
     {
         var attrs = this._attributes[line];
         if (!attrs) {
             attrs = [];
             this._attributes[line] = attrs;
         }
-        var family = attrs[name];
-        if (!family) {
-            family = [];
-            attrs[name] = family;
-        }
-        family[column] = value;
+        attrs[name] = value;
     },
 
-    getAttribute: function(line, column, name)
-    {
-        var family = this.getAttributes(line, name);
-        return family ? family[column] : null;
-    },
-
-    getAttributes: function(line, name)
+    getAttribute: function(line, name)
     {
         var attrs = this._attributes[line];
         return attrs ? attrs[name] : null;
     },
 
-    removeAttributes: function(line, name)
+    removeAttribute: function(line, name)
     {
         var attrs = this._attributes[line];
         if (attrs)
