@@ -15,6 +15,7 @@
 		0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */; };
 		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
 		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
+		0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE917210FE47E30096A45F /* OpenGL.framework */; };
 		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */; };
 		0FD3B0F21076C3E900039B96 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3B0EE1076C3E900039B96 /* WebVideoFullscreenController.h */; };
@@ -366,6 +367,7 @@
 		0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginHalterClient.mm; sourceTree = "<group>"; };
 		0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeContainerCheckContextInfo.h; sourceTree = "<group>"; };
 		0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckContextInfo.mm; sourceTree = "<group>"; };
+		0ACE917210FE47E30096A45F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = WebNetscapeContainerCheckPrivate.h; sourceTree = "<group>"; };
 		0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckPrivate.mm; sourceTree = "<group>"; };
 		0FD3B0EE1076C3E900039B96 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
@@ -727,6 +729,7 @@
 				1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */,
 				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
 				9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */,
+				0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,6 +782,7 @@
 				1A20D08A0ED384F20043FA9F /* QuartzCore.framework */,
 				830E81E005853AC000AD0891 /* Security.framework */,
 				F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */,
+				0ACE917210FE47E30096A45F /* OpenGL.framework */,
 			);
 			name = "Frameworks and Libraries";
 			sourceTree = "<group>";

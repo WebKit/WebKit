@@ -1,3 +1,19 @@
+2010-01-13  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33610
+        <rdar://problem/7288546> Silverlight full screen performance problem seen on Snow Leopard.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _workaroundSilverlightFullScreenBug:]): Added. Work around Silverlight full screen
+         performance issue by maintaining an accelerated GL pixel format. We can safely remove this at some point in
+         the future when both Microsoft releases a genuine fix for 7288546 and enough Silverlight users update to the
+         new Silverlight. For now, we'll distinguish older broken versions of Silverlight by asking the plug-in if it
+         resolved its full screen badness.
+        (-[WebNetscapePluginView _createPlugin]): Call _workaroundSilverlightFullScreenBug:YES if this is Silverlight.
+        (-[WebNetscapePluginView _destroyPlugin]): Call _workaroundSilverlightFullScreenBug:NO if this is Silverlight.
+
 2010-01-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
