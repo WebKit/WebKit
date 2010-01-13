@@ -1,3 +1,17 @@
+2010-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        position:fixed and transform on same element breaks fixed behavior
+        https://bugs.webkit.org/show_bug.cgi?id=31283
+
+        Test for transforms combined with fixed positioning.
+
+        * platform/mac/transforms/2d/transform-fixed-container-expected.checksum: Added.
+        * platform/mac/transforms/2d/transform-fixed-container-expected.png: Added.
+        * platform/mac/transforms/2d/transform-fixed-container-expected.txt: Added.
+        * transforms/2d/transform-fixed-container.html: Added.
+
 2010-01-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
