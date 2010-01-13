@@ -152,13 +152,13 @@ class ArgumentParserTest(unittest.TestCase):
     def _create_defaults(self, default_output_format='vs7',
                          default_verbosity=3,
                          default_filter_rules=['-', '+whitespace']):
-        """"Return a default ArgumentDefaults instance for testing."""
+        """Return a default ArgumentDefaults instance for testing."""
         return style.ArgumentDefaults(default_output_format,
                                       default_verbosity,
                                       default_filter_rules)
 
     def _create_parser(self, defaults=None):
-        """"Return an ArgumentParser instance for testing."""
+        """Return an ArgumentParser instance for testing."""
         def create_usage(_defaults):
             """Return a usage string for testing."""
             return "usage"

@@ -1,3 +1,9 @@
+2010-01-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed tiny typo fix in docstrings.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+
 2010-01-13  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by Shinichiro Hamaji.
