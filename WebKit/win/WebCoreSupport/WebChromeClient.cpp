@@ -30,6 +30,7 @@
 #include "COMVariantSetter.h"
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
+#include "WebGeolocationPolicyListener.h"
 #include "WebHistory.h"
 #include "WebMutableURLRequest.h"
 #include "WebDesktopNotificationsDelegate.h"
@@ -44,6 +45,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/Geolocation.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
@@ -749,10 +751,27 @@ bool WebChromeClient::setCursor(PlatformCursorHandle cursor)
     return true;
 }
 
-void WebChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    // See the comment in WebCore/page/ChromeClient.h
-    notImplemented();
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (FAILED(m_webView->uiDelegate(&uiDelegate))) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
+    COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, uiDelegate);
+    if (!uiDelegatePrivate2) {
+        geolocation->setIsAllowed(false);
+        return;
+    }
+
+    COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
+    COMPtr<WebGeolocationPolicyListener> listener = WebGeolocationPolicyListener::createInstance(geolocation);
+    HRESULT hr = uiDelegatePrivate2->decidePolicyForGeolocationRequest(m_webView, kit(frame), origin.get(), listener.get());
+    if (hr != E_NOTIMPL)
+        return;
+
+    geolocation->setIsAllowed(false);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

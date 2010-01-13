@@ -666,6 +666,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebGeolocationPolicyListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebGeolocationPosition.h"
 				>
 			</File>
@@ -1079,6 +1083,10 @@
 			</File>
 			<File
 				RelativePath="..\WebFramePolicyListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebGeolocationPolicyListener.cpp"
 				>
 			</File>
 			<File

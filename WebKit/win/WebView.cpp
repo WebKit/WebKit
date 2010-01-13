@@ -6075,13 +6075,13 @@ HRESULT WebView::hasPluginForNodeBeenHalted(IDOMNode* domNode, BOOL* result)
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::setGeolocationProvider(IWebGeolocationProvider* locationProvider)
+HRESULT WebView::setGeolocationProvider(IWebGeolocationProvider* locationProvider)
 {
     m_geolocationProvider = locationProvider;
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::geolocationProvider(IWebGeolocationProvider** locationProvider)
+HRESULT WebView::geolocationProvider(IWebGeolocationProvider** locationProvider)
 {
     if (!locationProvider)
         return E_POINTER;
@@ -6092,7 +6092,7 @@ HRESULT STDMETHODCALLTYPE WebView::geolocationProvider(IWebGeolocationProvider**
     return m_geolocationProvider.copyRefTo(locationProvider);
 }
 
-HRESULT STDMETHODCALLTYPE WebView::geolocationDidChangePosition(IWebGeolocationPosition* position)
+HRESULT WebView::geolocationDidChangePosition(IWebGeolocationPosition* position)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (!m_page)
@@ -6104,7 +6104,7 @@ HRESULT STDMETHODCALLTYPE WebView::geolocationDidChangePosition(IWebGeolocationP
 #endif
 }
 
-HRESULT STDMETHODCALLTYPE WebView::geolocationDidFailWithError(IWebError* error)
+HRESULT WebView::geolocationDidFailWithError(IWebError* error)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (!m_page)

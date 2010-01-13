@@ -32,7 +32,7 @@
 
 using namespace WebCore;
 
-WebGeolocationControllerClient::WebGeolocationControllerClient(WebView *webView)
+WebGeolocationControllerClient::WebGeolocationControllerClient(WebView* webView)
     : m_webView(webView)
 {
 }

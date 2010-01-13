@@ -1,3 +1,27 @@
+2010-01-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add additional Geolocation interfaces in WebKit for Windows.
+
+        * Interfaces/IWebGeolocationPolicyListener.idl: Added.
+        * Interfaces/IWebUIDelegatePrivate.idl: Add decidePolicyForGeolocationRequest to IWebUIDelegatePrivate2.
+        Append since this version hasn't shipped.
+        * Interfaces/WebKit.idl: Add include of IWebGeolocationPolicyListener.idl.
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::requestGeolocationPermissionForFrame): Call into decidePolicyForGeolocationRequest.
+        * WebCoreSupport/WebGeolocationControllerClient.cpp:
+        (WebGeolocationControllerClient::WebGeolocationControllerClient): Moved *.
+        * WebGeolocationPolicyListener.cpp: Added.
+        * WebGeolocationPolicyListener.h: Added.
+        * WebKit.vcproj/Interfaces.vcproj: Added IWebGeolocationPolicyListener.
+        * WebKit.vcproj/WebKit.vcproj: Added WebGeolocationPolicyListener, WebGeolocationPolicyListener.
+        * WebView.cpp:
+        (WebView::setGeolocationProvider): Removed extraneous STDMETHODCALLTYPE.
+        (WebView::geolocationProvider): Removed extraneous STDMETHODCALLTYPE.
+        (WebView::geolocationDidChangePosition): Removed extraneous STDMETHODCALLTYPE.
+        (WebView::geolocationDidFailWithError): Removed extraneous STDMETHODCALLTYPE.
+
 2010-01-12  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben, Sam Weinig.

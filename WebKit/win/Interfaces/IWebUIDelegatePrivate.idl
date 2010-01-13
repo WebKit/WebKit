@@ -26,6 +26,7 @@
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";
 import "ocidl.idl";
+import "IWebGeolocationPolicyListener.idl";
 import "IWebSecurityOrigin.idl";
 import "IWebView.idl";
 #endif
@@ -37,6 +38,7 @@ cpp_quote("#define WebEmbeddedViewMIMETypeKey TEXT(\"WebEmbeddedViewMIMETypeKey\
 
 interface IWebEmbeddedView;
 interface IWebFrame;
+interface IWebGeolocationPolicyListener;
 interface IWebSecurityOrigin;
 interface IWebView;
 
@@ -94,4 +96,6 @@ interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
     HRESULT createWebViewWithRequest([in] IWebView* sender, [in] IWebURLRequest* request, [in] IPropertyBag* windowFeatures, [out, retval] IWebView** newWebView);
 
     HRESULT drawBackground([in] IWebView* sender, [in] OLE_HANDLE hdc, [in] const RECT* dirtyRect);
+
+    HRESULT decidePolicyForGeolocationRequest([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] IWebGeolocationPolicyListener* listener);
 }
