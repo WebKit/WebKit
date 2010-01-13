@@ -37,7 +37,7 @@ function addData(db)
 {
     db.transaction(function(tx) { 
         log("Inserting some data");
-        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (randomblob(17408))", [], function(tx, result) { }, errorFunction); 
+        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(17408))", [], function(tx, result) { }, errorFunction); 
     }, errorFunction, function() { 
         checkCompletion(db); 
     });
