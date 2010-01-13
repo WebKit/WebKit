@@ -42848,6 +42848,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SourceFrame2.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceSyntaxHighlighter.js"
 					>
 				</File>

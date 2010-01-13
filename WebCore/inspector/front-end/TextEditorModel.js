@@ -147,7 +147,7 @@ WebInspector.TextEditorModel.prototype = {
     _insertLine: function(lineNumber, text)
     {
         this._lines.splice(lineNumber, 0, text);
-        this._attributes.splice(lineNumber, 0, []);
+        this._attributes.splice(lineNumber, 0, {});
     },
 
     wordRange: function(lineNumber, column)
@@ -189,7 +189,7 @@ WebInspector.TextEditorModel.prototype = {
     {
         var attrs = this._attributes[line];
         if (!attrs) {
-            attrs = [];
+            attrs = {};
             this._attributes[line] = attrs;
         }
         attrs[name] = value;

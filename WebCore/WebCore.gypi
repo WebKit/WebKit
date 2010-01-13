@@ -3722,6 +3722,7 @@
             'inspector/front-end/SidebarPane.js',
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SourceFrame.js',
+            'inspector/front-end/SourceFrame2.js',
             'inspector/front-end/SourceSyntaxHighlighter.js',
             'inspector/front-end/SourceView.js',
             'inspector/front-end/StatusBarButton.js',

@@ -72,7 +72,7 @@ WebInspector.TextEditorHighlighter.prototype = {
 
         // Do small highlight synchronously. This will provide instant highlight on PageUp / PageDown, gentle scrolling.
         var toLine = Math.min(startLine + 200, endLine);
-        this._highlightLines(startLine, toLine);
+        this._highlightInChunks(startLine, toLine);
 
         // Schedule tail highlight if necessary.
         if (endLine > toLine)
@@ -90,7 +90,7 @@ WebInspector.TextEditorHighlighter.prototype = {
 
         if (this._requestedEndLine !== endLine) {
             // User keeps updating the job in between of our timer ticks. Just reschedule self, don't eat CPU (they must be scrolling).
-            this._highlightTimer = setTimeout(this._highlightInChunks.bind(this, startLine, this._requestedEndLine), 200);
+            this._highlightTimer = setTimeout(this._highlightInChunks.bind(this, startLine, this._requestedEndLine), 100);
             return;
         }
 
@@ -133,11 +133,7 @@ WebInspector.TextEditorHighlighter.prototype = {
         else
             this._tokenizer.condition = this._tokenizer.initialCondition;
 
-        var damagedFrom = startLine;
-        var damagedTo = startLine;
         for (var i = startLine; i < endLine; ++i) {
-            damagedTo = i;
-
             state = {};
             state.preCondition = this._tokenizer.condition;
             state.attributes = {};
@@ -150,11 +146,11 @@ WebInspector.TextEditorHighlighter.prototype = {
             var nextLineState = this._textModel.getAttribute(i + 1, "highlighter-state");
             if (nextLineState && nextLineState.preCondition === state.postCondition) {
                 // Following lines are up to date, no need re-highlight.
-                this._damageCallback(damagedFrom, damagedTo);
+                this._damageCallback(startLine, i + 1);
                 return true;
             }
         }
-        this._damageCallback(damagedFrom, damagedTo);
+        this._damageCallback(startLine, endLine);
         return false;
     },
 

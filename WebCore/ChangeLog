@@ -1,3 +1,59 @@
+2010-01-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Introduce SourceFrame2 with basic breakpoint / execution line
+        rendering capabilities.
+
+        Contains a drive-by naming fix (lineNumberOffset and lineNumberToOffset were
+        too close to each other, but were unrelated).
+
+        https://bugs.webkit.org/show_bug.cgi?id=33618
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/SourceFrame2.js: Added.
+        (WebInspector.SourceFrame2):
+        (WebInspector.SourceFrame2.prototype.set text):
+        (WebInspector.SourceFrame2.prototype.get executionLine):
+        (WebInspector.SourceFrame2.prototype.set executionLine):
+        (WebInspector.SourceFrame2.prototype.revealLine):
+        (WebInspector.SourceFrame2.prototype._toggleBreakpoint):
+        (WebInspector.SourceFrame2.prototype.resize):
+        (WebInspector.BreakpointLineNumberDecorator):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.decorate):
+        (WebInspector.BreakpointLineNumberDecorator.prototype._paintBreakpoint):
+        (WebInspector.BreakpointLineNumberDecorator.prototype._paintProgramCounter):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.mouseDown):
+        (WebInspector.ExecutionLineDecorator):
+        (WebInspector.ExecutionLineDecorator.prototype.decorate):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.get textModel):
+        (WebInspector.TextEditor.prototype.set readOnly):
+        (WebInspector.TextEditor.prototype.set lineNumberDecorator):
+        (WebInspector.TextEditor.prototype.set lineDecorator):
+        (WebInspector.TextEditor.prototype.selectionRange):
+        (WebInspector.TextEditor.prototype._offsetToLine):
+        (WebInspector.TextEditor.prototype._lineToOffset):
+        (WebInspector.TextEditor.prototype.reveal):
+        (WebInspector.TextEditor.prototype._textChanged):
+        (WebInspector.TextEditor.prototype._updateSize):
+        (WebInspector.TextEditor.prototype.updateCanvasSize):
+        (WebInspector.TextEditor.prototype._repaintAll):
+        (WebInspector.TextEditor.prototype._paintLines):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype.paintLineNumbers):
+        (WebInspector.TextEditor.prototype._paintCurrentLine):
+        (WebInspector.TextEditor.prototype._mouseDown):
+        (WebInspector.TextEditor.prototype._caretForMouseEvent):
+        (WebInspector.TextEditor.prototype._keyDown):
+        (WebInspector.TextEditor.prototype._handleNavigationKey):
+        (WebInspector.TextEditor.prototype._textInput):
+        (WebInspector.TextEditor.prototype._updateCursor):
+        (WebInspector.TextEditor.prototype._paintSelection):
+        (WebInspector.TextEditor.prototype._initFont):
+
 2010-01-13  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
@@ -21,12 +77,12 @@
 
         Reviewed by Adam Roben.
 
-        REGRESSION (r49268): DHTML drag not allowed unless event.dataTransfer.effectAllowed 
+        REGRESSION (r49268): DHTML drag not allowed unless event.dataTransfer.effectAllowed
         is set (differs from HTML5).
         Fixes <https://bugs.webkit.org/show_bug.cgi?id=33607> and <rdar://7507114>.
 
         If no effectAllowed is set in the dragStart operation, we should default to
-        uninitialized instead of none, so the user doesn't have to manually set the 
+        uninitialized instead of none, so the user doesn't have to manually set the
         effectAllowed to enable drag and drop.
 
         * dom/Clipboard.cpp:

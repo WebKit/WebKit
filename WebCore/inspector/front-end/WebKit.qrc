@@ -64,6 +64,7 @@
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
     <file>SourceFrame.js</file>
+    <file>SourceFrame2.js</file>
     <file>SourceSyntaxHighlighter.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
