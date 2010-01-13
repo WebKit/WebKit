@@ -1,5 +1,14 @@
 2010-01-12  Brian Weinstein  <bweinstein@apple.com>
 
+        Add correct expected results after r53168 for GTK and Qt.
+
+        * platform/gtk/fast/block: Added.
+        * platform/gtk/fast/block/positioning: Added.
+        * platform/gtk/fast/block/positioning/absolute-positioning-no-scrollbar-expected.txt: Added.
+        * platform/qt/fast/block/positioning/absolute-positioning-no-scrollbar-expected.txt: Added.
+
+2010-01-12  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Safari shows an unneeded horizontal scrollbar on many websites.
