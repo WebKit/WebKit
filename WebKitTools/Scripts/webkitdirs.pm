@@ -1475,12 +1475,21 @@ sub buildQMakeProject($@)
     $dsMakefile .= ".Debug" if (isCygwin() || isWindows());
 
     print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/JavaScriptCore\n\n";
-    $result = system "pushd JavaScriptCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    if ($make eq "nmake") {
+        $result = system "pushd JavaScriptCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    } else {
+        $result = system "$make $makeargs -C JavaScriptCore -f $dsMakefile generated_files";
+    }
     if ($result ne 0) {
         die "Failed to generate JavaScriptCore's derived sources!\n";
     }
+
     print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/WebCore\n\n";
-    $result = system "pushd WebCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    if ($make eq "nmake") {
+        $result = system "pushd WebCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    } else {
+        $result = system "$make $makeargs -C WebCore -f $dsMakefile generated_files";
+    }
     if ($result ne 0) {
         die "Failed to generate WebCore's derived sources!\n";
     }

@@ -2,6 +2,14 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Fix build problem related to the pushd command
+
+        * Scripts/webkitdirs.pm:
+
+2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Split the build process in two different .pro files.
         This allows qmake to be run once all source files are available.
 
