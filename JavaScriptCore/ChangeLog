@@ -1,3 +1,14 @@
+2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Split the build process in two different .pro files.
+        This allows qmake to be run once all source files are available.
+
+        * DerivedSources.pro: Added.
+        * JavaScriptCore.pri: Moved source generation to DerivedSources.pro
+        * pcre/pcre.pri: Moved source generation to DerivedSources.pro
+
 2010-01-12  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Geoffrey Garen.

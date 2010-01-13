@@ -32,6 +32,7 @@ use warnings;
 use Config;
 use FindBin;
 use File::Basename;
+use File::Path;
 use File::Spec;
 use POSIX;
 use VCSUtils;
@@ -1449,6 +1450,41 @@ sub buildQMakeProject($@)
     my $make = qtMakeCommand($qmakebin);
     my $config = configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
+    my $dir = File::Spec->canonpath(baseProductDir());
+    File::Path::mkpath($dir);
+    $dir = File::Spec->catfile($dir, $config);
+    File::Path::mkpath($dir);
+    chdir $dir or die "Failed to cd into " . $dir . "\n";
+
+    print "Generating derived sources\n\n";
+
+    my @dsQmakeArgs = @buildArgs;
+    push @dsQmakeArgs, "-r";
+    push @dsQmakeArgs, sourceDir() . "/DerivedSources.pro";
+    push @dsQmakeArgs, "CONFIG-=release";
+    push @dsQmakeArgs, "CONFIG+=debug";
+    print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
+    my $result = system "$qmakebin @dsQmakeArgs";
+    if ($result ne 0) {
+        die "Failed while running $qmakebin to generate derived sources!\n";
+    }
+
+    my $dsMakefile = "Makefile.DerivedSources";
+    # This is to overcome a problem of qmake when generating Makefiles with extra targets for windows.
+    # The configuration doesn't matter for source generation, just use debug.
+    $dsMakefile .= ".Debug" if (isCygwin() || isWindows());
+
+    print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/JavaScriptCore\n\n";
+    $result = system "pushd JavaScriptCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    if ($result ne 0) {
+        die "Failed to generate JavaScriptCore's derived sources!\n";
+    }
+    print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/WebCore\n\n";
+    $result = system "pushd WebCore && $make $makeargs -f $dsMakefile generated_files && popd";
+    if ($result ne 0) {
+        die "Failed to generate WebCore's derived sources!\n";
+    }
+
 
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, sourceDir() . "/WebKit.pro";
@@ -1466,36 +1502,19 @@ sub buildQMakeProject($@)
         }
     }
 
-    my $dir = File::Spec->canonpath(baseProductDir());
-    my @mkdirArgs;
-    push @mkdirArgs, "-p" if !isWindows();
-    if (! -d $dir) {
-        system "mkdir", @mkdirArgs, "$dir";
-        if (! -d $dir) {
-            die "Failed to create product directory " . $dir;
-        }
-    }
-    $dir = File::Spec->catfile($dir, $config);
-    if (! -d $dir) {
-        system "mkdir", @mkdirArgs, "$dir";
-        if (! -d $dir) {
-            die "Failed to create build directory " . $dir;
-        }
-    }
-
-    chdir $dir or die "Failed to cd into " . $dir . "\n";
-
     print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
 
-    my $result = system "$qmakebin @buildArgs";
+    $result = system "$qmakebin @buildArgs";
     if ($result ne 0) {
        die "Failed to setup build environment using $qmakebin!\n";
     }
 
     if ($clean) {
+      print "Calling '$make $makeargs distclean' in " . $dir . "\n\n";
       $result = system "$make $makeargs distclean";
     } else {
+      print "Calling '$make $makeargs' in " . $dir . "\n\n";
       $result = system "$make $makeargs";
     }
 
