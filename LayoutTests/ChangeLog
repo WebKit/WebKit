@@ -2,6 +2,19 @@
 
         Reviewed by Beth Dakin.
 
+        Add tests to check filter, mask, clip, opacity and marker ordering
+        https://bugs.webkit.org/show_bug.cgi?id=14010
+
+        This is a follow up. The order of filter and clipping was changes in bug 14010
+        according to the Spec. Forgot to update this test.
+
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.png:
+
+2010-01-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Beth Dakin.
+
         Speed-up SVG Masking
         https://bugs.webkit.org/show_bug.cgi?id=32738
 
