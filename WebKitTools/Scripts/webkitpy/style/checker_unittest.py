@@ -37,6 +37,52 @@
 import unittest
 
 import checker as style
+from checker import CategoryFilter
+
+
+class CategoryFilterTest(unittest.TestCase):
+
+    """Tests CategoryFilter class."""
+
+    def test_init(self):
+        """Test __init__ constructor."""
+        self.assertRaises(ValueError, CategoryFilter, ["no_prefix"])
+        CategoryFilter([]) # No ValueError: works
+        CategoryFilter(["+"]) # No ValueError: works
+        CategoryFilter(["-"]) # No ValueError: works
+
+    def test_str(self):
+        """Test __str__ "to string" operator."""
+        filter = CategoryFilter(["+a", "-b"])
+        self.assertEquals(str(filter), "+a,-b")
+
+    def test_eq(self):
+        """Test __eq__ equality operator."""
+        filter1 = CategoryFilter(["+a", "+b"])
+        filter2 = CategoryFilter(["+a", "+b"])
+        filter3 = CategoryFilter(["+b", "+a"])
+        self.assertEquals(filter1, filter2)
+        self.assertNotEquals(filter1, filter3)
+
+    def test_should_check(self):
+        """Test should_check() method."""
+        filter = CategoryFilter([])
+        self.assertTrue(filter.should_check("everything"))
+        # Check a second time to exercise cache.
+        self.assertTrue(filter.should_check("everything"))
+
+        filter = CategoryFilter(["-"])
+        self.assertFalse(filter.should_check("anything"))
+        # Check a second time to exercise cache.
+        self.assertFalse(filter.should_check("anything"))
+
+        filter = CategoryFilter(["-", "+ab"])
+        self.assertTrue(filter.should_check("abc"))
+        self.assertFalse(filter.should_check("a"))
+
+        filter = CategoryFilter(["+", "-ab"])
+        self.assertFalse(filter.should_check("abc"))
+        self.assertTrue(filter.should_check("a"))
 
 
 class DefaultArgumentsTest(unittest.TestCase):
@@ -46,6 +92,8 @@ class DefaultArgumentsTest(unittest.TestCase):
     def test_filter_rules(self):
         already_seen = []
         for rule in style.WEBKIT_FILTER_RULES:
+            # Check no leading or trailing white space.
+            self.assertEquals(rule, rule.strip())
             # All categories are on by default, so defaults should
             # begin with -.
             self.assertTrue(rule.startswith('-'))
@@ -75,7 +123,8 @@ class ArgumentPrinterTest(unittest.TestCase):
     def _create_options(self, output_format='emacs', verbosity=3,
                         filter_rules=[], git_commit=None,
                         extra_flag_values={}):
-        return style.ProcessorOptions(output_format, verbosity, filter_rules,
+        filter = CategoryFilter(filter_rules)
+        return style.ProcessorOptions(output_format, verbosity, filter,
                                       git_commit, extra_flag_values)
 
     def test_to_flag_string(self):
@@ -173,7 +222,8 @@ class ArgumentParserTest(unittest.TestCase):
 
         self.assertEquals(options.output_format, 'vs7')
         self.assertEquals(options.verbosity, 3)
-        self.assertEquals(options.filter_rules, ['-', '+whitespace'])
+        self.assertEquals(options.filter,
+                          CategoryFilter(["-", "+whitespace"]))
         self.assertEquals(options.git_commit, None)
 
     def test_parse_explicit_arguments(self):
@@ -187,8 +237,8 @@ class ArgumentParserTest(unittest.TestCase):
         (files, options) = parse(['--git-commit=commit'])
         self.assertEquals(options.git_commit, 'commit')
         (files, options) = parse(['--filter=+foo,-bar'])
-        self.assertEquals(options.filter_rules,
-                          ['-', '+whitespace', '+foo', '-bar'])
+        self.assertEquals(options.filter,
+                          CategoryFilter(["-", "+whitespace", "+foo", "-bar"]))
 
         # Pass extra flag values.
         (files, options) = parse(['--extra'], ['extra'])

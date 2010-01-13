@@ -248,8 +248,8 @@ class _CppStyleState(object):
     def __init__(self):
         self.verbose_level = 1  # global setting.
         self.error_count = 0    # global count of reported errors
-        # filters to apply when emitting error messages
-        self.filters = []
+        # filter to apply when emitting error messages
+        self.filter = None
 
         # output format:
         # "emacs" - format that emacs can parse (default)
@@ -266,32 +266,14 @@ class _CppStyleState(object):
         self.verbose_level = level
         return last_verbose_level
 
-    def set_filters(self, filters):
-        """Sets the error-message filters.
-
-        These filters are applied when deciding whether to emit a given
-        error message.
+    def set_filter(self, filter):
+        """Sets the error-message filter.
 
         Args:
-          filters: A list of strings that are boolean filter rules used
-                   to determine whether a style category should be checked.
-                   Each string should start with + or -. An example
-                   string is "+whitespace/indent". The list includes any
-                   prepended default filter rules.
+          filter: A CategoryFilter instance.
 
-        Raises:
-          ValueError: Not all filters started with '+' or '-'. For example,
-                      "-,+whitespace,-whitespace/indent,whitespace/badfilter"
         """
-        self.filters = []
-        for filter in filters:
-            clean_filter = filter.strip()
-            if clean_filter:
-                self.filters.append(clean_filter)
-        for filter in self.filters:
-            if not (filter.startswith('+') or filter.startswith('-')):
-                raise ValueError('Every filter in --filter must start with '
-                                 '+ or - (%s does not)' % filter)
+        self.filter = filter
 
     def reset_error_count(self):
         """Sets the module's error statistic back to zero."""
@@ -325,25 +307,22 @@ def _set_verbose_level(level):
     return _cpp_style_state.set_verbose_level(level)
 
 
-def _filters():
-    """Returns the module's list of output filters, as a list."""
-    return _cpp_style_state.filters
+def _filter():
+    """Returns the module's CategoryFilter instance."""
+    return _cpp_style_state.filter
 
 
-def _set_filters(filters):
-    """Sets the module's error-message filters.
+def _set_filter(filter):
+    """Sets the module's error-message filter.
 
-    These filters are applied when deciding whether to emit a given
+    The filter is applied when deciding whether to emit a given
     error message.
 
     Args:
-      filters: A list of strings that are boolean filter rules used
-               to determine whether a style category should be checked.
-               Each string should start with + or -. An example
-               string is "+whitespace/indent". The list includes any
-               prepended default filter rules.
+      filter: A CategoryFilter instance.
+
     """
-    _cpp_style_state.set_filters(filters)
+    _cpp_style_state.set_filter(filter)
 
 
 def error_count():
@@ -505,20 +484,12 @@ def _should_print_error(category, confidence):
     if confidence < _cpp_style_state.verbose_level:
         return False
 
-    is_filtered = False
-    for one_filter in _filters():
-        if one_filter.startswith('-'):
-            if category.startswith(one_filter[1:]):
-                is_filtered = True
-        elif one_filter.startswith('+'):
-            if category.startswith(one_filter[1:]):
-                is_filtered = False
-        else:
-            assert False  # should have been checked for in set_filter.
-    if is_filtered:
-        return False
+    filter = _filter()
 
-    return True
+    if filter is None:
+        return True # All categories should be checked by default.
+
+    return filter.should_check(category)
 
 
 def error(filename, line_number, category, confidence, message):

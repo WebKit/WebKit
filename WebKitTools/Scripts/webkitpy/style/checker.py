@@ -230,6 +230,71 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
     return usage
 
 
+class CategoryFilter(object):
+
+    """Filters whether to check style categories."""
+
+    def __init__(self, filter_rules):
+        """Create a category filter.
+
+        This method performs argument validation but does not strip
+        leading or trailing white space.
+
+        Args:
+          filter_rules: A list of strings that are filter rules, which
+                        are strings beginning with the plus or minus
+                        symbol (+/-). The list should include any
+                        default filter rules at the beginning.
+
+        Raises:
+          ValueError: Invalid filter rule if a rule does not start with
+                      plus ("+") or minus ("-").
+
+        """
+        for rule in filter_rules:
+            if not (rule.startswith('+') or rule.startswith('-')):
+                raise ValueError('Invalid filter rule "%s": every rule '
+                                 'rule in the --filter flag must start '
+                                 'with + or -.' % rule)
+
+        self._filter_rules = filter_rules
+        self._should_check_category = {} # Cached dictionary of category to True/False
+
+    def __str__(self):
+        return ",".join(self._filter_rules)
+
+    def __eq__(self, other):
+        # This is useful for unit testing.
+        # Two category filters are the same if and only if their
+        # constituent filter rules are the same.
+        return (str(self) == str(other))
+
+    def should_check(self, category):
+        """Return whether the category should be checked.
+
+        The rules for determining whether a category should be checked
+        are as follows. By default all categories should be checked.
+        Then apply the filter rules in order from first to last, with
+        later flags taking precedence.
+
+        A filter rule applies to a category if the string after the
+        leading plus/minus (+/-) matches the beginning of the category
+        name. A plus (+) means the category should be checked, while a
+        minus (-) means the category should not be checked.
+
+        """
+        if category in self._should_check_category:
+            return self._should_check_category[category]
+
+        should_check = True # All categories checked by default.
+        for rule in self._filter_rules:
+            if not category.startswith(rule[1:]):
+                continue
+            should_check = rule.startswith('+')
+        self._should_check_category[category] = should_check # Update cache.
+        return should_check
+
+
 # This class should not have knowledge of the flag key names.
 class ProcessorOptions(object):
 
@@ -244,12 +309,8 @@ class ProcessorOptions(object):
                  confidence score at or above this value.
                  The default is 1, which displays all errors.
 
-      filter_rules: A list of strings that are boolean filter rules used
-                    to determine whether a style category should be checked.
-                    Each string should start with + or -. An example
-                    string is "+whitespace/indent". The list includes any
-                    prepended default filter rules. The default is the
-                    empty list, which includes all categories.
+      filter: A CategoryFilter instance. The default is the empty filter,
+              which means that all categories should be checked.
 
       git_commit: A string representing the git commit to check.
                   The default is None.
@@ -259,16 +320,16 @@ class ProcessorOptions(object):
                          class. The default is the empty dictionary.
     """
 
-    def __init__(self, output_format, verbosity=1, filter_rules=None,
+    def __init__(self, output_format, verbosity=1, filter=None,
                  git_commit=None, extra_flag_values=None):
-        if filter_rules is None:
-            filter_rules = []
+        if filter is None:
+            filter = CategoryFilter([])
         if extra_flag_values is None:
             extra_flag_values = {}
 
         self.output_format = output_format
         self.verbosity = verbosity
-        self.filter_rules = filter_rules
+        self.filter = filter
         self.git_commit = git_commit
         self.extra_flag_values = extra_flag_values
 
@@ -285,7 +346,7 @@ def set_options(options):
     """
     cpp_style._set_output_format(options.output_format)
     cpp_style._set_verbose_level(options.verbosity)
-    cpp_style._set_filters(options.filter_rules)
+    cpp_style._set_filter(options.filter)
 
 
 # This class should not have knowledge of the flag key names.
@@ -328,8 +389,11 @@ class ArgumentPrinter(object):
 
         flags['output'] = options.output_format
         flags['verbose'] = options.verbosity
-        if options.filter_rules:
-            flags['filter'] = ','.join(options.filter_rules)
+        if options.filter:
+            # Only include the filter flag if rules are present.
+            filter_string = str(options.filter)
+            if filter_string:
+                flags['filter'] = filter_string
         if options.git_commit:
             flags['git-commit'] = options.git_commit
 
@@ -491,13 +555,9 @@ class ArgumentParser(object):
             raise ValueError('Invalid --verbose value %s: value must '
                              'be between 1-5.' % verbosity)
 
-        for rule in filter_rules:
-            if not (rule.startswith('+') or rule.startswith('-')):
-                raise ValueError('Invalid filter rule "%s": every rule '
-                                 'rule in the --filter flag must start '
-                                 'with + or -.' % rule)
+        filter = CategoryFilter(filter_rules)
 
-        options = ProcessorOptions(output_format, verbosity, filter_rules,
+        options = ProcessorOptions(output_format, verbosity, filter,
                                    git_commit, extra_flag_values)
 
         return (filenames, options)

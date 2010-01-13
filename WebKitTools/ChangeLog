@@ -1,3 +1,24 @@
+2010-01-13  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Created a CategoryFilter class to encapsulate the logic of
+        filter rules.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33454
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added CategoryFilter class.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added CategoryFilter unit tests.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+          - Updated filter methods to use CategoryFilter.
+
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+          - Updated references to filters.
+
 2010-01-12  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. Now I can review :)

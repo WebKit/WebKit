@@ -41,10 +41,11 @@ import random
 import re
 import unittest
 import cpp_style
-# FIXME: Remove the need to import something from checker. See the
+# FIXME: Remove the need to import anything from checker. See the
 #        FIXME notes near the STYLE_CATEGORIES definition for a
 #        suggestion on how to best do this.
 from checker import STYLE_CATEGORIES
+from checker import CategoryFilter
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
@@ -1571,9 +1572,9 @@ class CppStyleTest(CppStyleTestBase):
                          'Tab found; better to use spaces  [whitespace/tab] [1]')
 
     def test_filter(self):
-        old_filters = cpp_style._cpp_style_state.filters
+        old_filter = cpp_style._cpp_style_state.filter
         try:
-            cpp_style._cpp_style_state.set_filters(['-', '+whitespace', '-whitespace/indent'])
+            cpp_style._cpp_style_state.set_filter(CategoryFilter(['-', '+whitespace', '-whitespace/indent']))
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
@@ -1581,22 +1582,22 @@ class CppStyleTest(CppStyleTestBase):
             self.assert_lint('int a = (int)1.0;', '')
             self.assert_lint(' weird opening space', '')
         finally:
-            cpp_style._cpp_style_state.filters = old_filters
+            cpp_style._cpp_style_state.filter = old_filter
 
     def test_filter_appending(self):
-        old_filters = cpp_style._cpp_style_state.filters
+        old_filter = cpp_style._cpp_style_state.filter
         try:
             # Reset filters
-            cpp_style._cpp_style_state.set_filters(['-whitespace'])
+            cpp_style._cpp_style_state.set_filter(CategoryFilter(['-whitespace']))
             self.assert_lint('// Hello there ', '')
-            cpp_style._cpp_style_state.set_filters(['-whitespace', '+whitespace/end_of_line'])
+            cpp_style._cpp_style_state.set_filter(CategoryFilter(['-whitespace', '+whitespace/end_of_line']))
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
                 '  [whitespace/end_of_line] [4]')
             self.assert_lint(' weird opening space', '')
         finally:
-            cpp_style._cpp_style_state.filters = old_filters
+            cpp_style._cpp_style_state.filter = old_filter
 
     def test_unnamed_namespaces_in_headers(self):
         self.assert_language_rules_check(
