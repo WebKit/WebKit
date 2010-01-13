@@ -95,3 +95,7 @@ media/media-can-play-ogg.html
 
 # These tests require touch support
 fast/events/touch
+
+# Skip worker-simple until crash bug on Leopard Intel Debug (Tests) builder.
+# http://bugs.webkit.org/show_bug.cgi?id=33581
+websocket/tests/workers/worker-simple.html

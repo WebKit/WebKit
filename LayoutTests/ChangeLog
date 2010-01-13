@@ -1,3 +1,12 @@
+2010-01-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Add websocket/tests/workers/worker-simple.html, because it starts
+        crash after r53174
+
+        * platform/mac/Skipped: Add websocket/tests/workers/worker-simple.html
+
 2010-01-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Darin Adler.
