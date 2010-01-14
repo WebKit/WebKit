@@ -1,3 +1,14 @@
+2010-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33641
+        Assertion failure in Lexer.cpp if input stream ends while in string escape
+
+        * fast/js/end-in-string-escape-expected.txt: Added.
+        * fast/js/end-in-string-escape.html: Added.
+        * fast/js/script-tests/end-in-string-escape.js: Added.
+
 2010-01-13  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: selected, selectable, extended selectable, and multiple

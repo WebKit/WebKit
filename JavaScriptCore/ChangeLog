@@ -1,3 +1,15 @@
+2010-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33641
+        Assertion failure in Lexer.cpp if input stream ends while in string escape
+
+        Test: fast/js/end-in-string-escape.html
+
+        * parser/Lexer.cpp: (JSC::Lexer::lex): Bail out quickly on end of stream, not giving the
+        assertion a chance to fire.
+
 2010-01-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (buildfix).
