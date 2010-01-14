@@ -1,3 +1,17 @@
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix shadow drawing to do the correct computations using the base coordinate space
+        https://bugs.webkit.org/show_bug.cgi?id=33629
+        
+        Testcase for box- and text-shadow drawing, both into the window, and into composited layers.
+
+        * compositing/shadows/shadow-drawing.html: Added.
+        * platform/mac/compositing/shadows/shadow-drawing-expected.checksum: Added.
+        * platform/mac/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/mac/compositing/shadows/shadow-drawing-expected.txt: Added.
+
 2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Update Qt slave result after last SVG commit.

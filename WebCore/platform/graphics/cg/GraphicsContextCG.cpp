@@ -36,6 +36,7 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "TransformationMatrix.h"
+#include "WebCoreSystemInterface.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
@@ -749,23 +750,22 @@ void GraphicsContext::setPlatformShadow(const IntSize& offset, int blur, const C
     CGContextRef context = platformContext();
 
     if (!m_common->state.shadowsIgnoreTransforms) {
-        CGAffineTransform transform = CGContextGetCTM(context);
+        CGAffineTransform userToBaseCTM = wkGetUserToBaseCTM(context);
 
-        CGFloat A = transform.a * transform.a + transform.b * transform.b;
-        CGFloat B = transform.a * transform.c + transform.b * transform.d;
+        CGFloat A = userToBaseCTM.a * userToBaseCTM.a + userToBaseCTM.b * userToBaseCTM.b;
+        CGFloat B = userToBaseCTM.a * userToBaseCTM.c + userToBaseCTM.b * userToBaseCTM.d;
         CGFloat C = B;
-        CGFloat D = transform.c * transform.c + transform.d * transform.d;
+        CGFloat D = userToBaseCTM.c * userToBaseCTM.c + userToBaseCTM.d * userToBaseCTM.d;
 
         CGFloat smallEigenvalue = narrowPrecisionToCGFloat(sqrt(0.5 * ((A + D) - sqrt(4 * B * C + (A - D) * (A - D)))));
 
         // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
         blurRadius = min(blur * smallEigenvalue, narrowPrecisionToCGFloat(1000.0));
 
-        CGSize offsetInDeviceSpace = CGSizeApplyAffineTransform(offset, transform);
+        CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(offset, userToBaseCTM);
 
-        xOffset = offsetInDeviceSpace.width;
-        yOffset = offsetInDeviceSpace.height;
-
+        xOffset = offsetInBaseSpace.width;
+        yOffset = offsetInBaseSpace.height;
     }
 
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
