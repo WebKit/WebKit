@@ -171,6 +171,7 @@ void WebPage::resetSettings()
     m_drt->layoutTestController()->setXSSAuditorEnabled(false);
 
     QWebSettings::setMaximumPagesInCache(0); // reset to default
+    settings()->setUserStyleSheetUrl(QUrl()); // reset to default
 }
 
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType)

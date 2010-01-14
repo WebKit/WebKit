@@ -391,3 +391,16 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
     else if (name == "WebKitUsesPageCachePreferenceKey")
         QWebSettings::setMaximumPagesInCache(value.toInt());
 }
+
+void LayoutTestController::setUserStyleSheetLocation(const QString& url)
+{
+    m_userStyleSheetLocation = QUrl(url);
+}
+
+void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
+{
+    if (enabled)
+        m_drt->webPage()->settings()->setUserStyleSheetUrl(m_userStyleSheetLocation);
+    else
+        m_drt->webPage()->settings()->setUserStyleSheetUrl(QUrl());
+}
