@@ -133,7 +133,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     , m_script(this)
     , m_selectionGranularity(CharacterGranularity)
     , m_selectionController(this)
-    , m_caretBlinkTimer(this, &Frame::caretBlinkTimerFired)
     , m_editor(this)
     , m_eventHandler(this)
     , m_animationController(this)
@@ -141,8 +140,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
-    , m_caretVisible(false)
-    , m_caretPaint(true)
     , m_highlightTextMatches(false)
     , m_inViewSourceMode(false)
     , m_needsReapplyStyles(false)
@@ -557,25 +554,6 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
         toRenderTextControl(renderer)->selectionChanged(userTriggered);
 }
 
-void Frame::setCaretVisible(bool flag)
-{
-    if (m_caretVisible == flag)
-        return;
-    clearCaretRectIfNeeded();
-    m_caretVisible = flag;
-    selectionLayoutChanged();
-}
-
-void Frame::clearCaretRectIfNeeded()
-{
-#if ENABLE(TEXT_CARET)
-    if (m_caretPaint) {
-        m_caretPaint = false;
-        selection()->invalidateCaretRect();
-    }
-#endif
-}
-
 // Helper function that tells whether a particular node is an element that has an entire
 // Frame and FrameView, a <frame>, <iframe>, or <object>.
 static bool isFrameElement(const Node *n)
@@ -626,89 +604,6 @@ void Frame::setFocusedNodeIfNeeded()
 
     if (caretBrowsing)
         page()->focusController()->setFocusedNode(0, this);
-}
-
-void Frame::selectionLayoutChanged()
-{
-    bool caretRectChanged = selection()->recomputeCaretRect();
-
-#if ENABLE(TEXT_CARET)
-    bool caretBrowsing = settings() && settings()->caretBrowsingEnabled();
-    bool shouldBlink = m_caretVisible
-        && selection()->isCaret() && (selection()->isContentEditable() || caretBrowsing);
-
-    // If the caret moved, stop the blink timer so we can restart with a
-    // black caret in the new location.
-    if (caretRectChanged || !shouldBlink)
-        m_caretBlinkTimer.stop();
-
-    // Start blinking with a black caret. Be sure not to restart if we're
-    // already blinking in the right location.
-    if (shouldBlink && !m_caretBlinkTimer.isActive()) {
-        if (double blinkInterval = page()->theme()->caretBlinkInterval())
-            m_caretBlinkTimer.startRepeating(blinkInterval);
-
-        if (!m_caretPaint) {
-            m_caretPaint = true;
-            selection()->invalidateCaretRect();
-        }
-    }
-#else
-    if (!caretRectChanged)
-        return;
-#endif
-
-    RenderView* view = contentRenderer();
-    if (!view)
-        return;
-
-    VisibleSelection selection = this->selection()->selection();
-
-    if (!selection.isRange())
-        view->clearSelection();
-    else {
-        // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
-        // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
-        // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
-        // and will fill the gap before 'bar'.
-        Position startPos = selection.start();
-        Position candidate = startPos.downstream();
-        if (candidate.isCandidate())
-            startPos = candidate;
-        Position endPos = selection.end();
-        candidate = endPos.upstream();
-        if (candidate.isCandidate())
-            endPos = candidate;
-
-        // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
-        // because we don't yet notify the SelectionController of text removal.
-        if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
-            RenderObject *startRenderer = startPos.node()->renderer();
-            RenderObject *endRenderer = endPos.node()->renderer();
-            view->setSelection(startRenderer, startPos.deprecatedEditingOffset(), endRenderer, endPos.deprecatedEditingOffset());
-        }
-    }
-}
-
-void Frame::caretBlinkTimerFired(Timer<Frame>*)
-{
-#if ENABLE(TEXT_CARET)
-    ASSERT(m_caretVisible);
-    ASSERT(selection()->isCaret());
-    bool caretPaint = m_caretPaint;
-    if (selection()->isCaretBlinkingSuspended() && caretPaint)
-        return;
-    m_caretPaint = !caretPaint;
-    selection()->invalidateCaretRect();
-#endif
-}
-
-void Frame::paintCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
-{
-#if ENABLE(TEXT_CARET)
-    if (m_caretPaint && m_caretVisible)
-        selection()->paintCaret(p, tx, ty, clipRect);
-#endif
 }
 
 void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const

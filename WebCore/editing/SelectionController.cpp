@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@
 #include "Range.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
 #include "htmlediting.h"
@@ -64,12 +65,15 @@ const int NoXPosForVerticalArrowNavigation = INT_MIN;
 SelectionController::SelectionController(Frame* frame, bool isDragCaretController)
     : m_frame(frame)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation)
+    , m_caretBlinkTimer(this, &SelectionController::caretBlinkTimerFired)
     , m_needsLayout(true)
     , m_absCaretBoundsDirty(true)
     , m_lastChangeWasHorizontalExtension(false)
     , m_isDragCaretController(isDragCaretController)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
+    , m_caretVisible(isDragCaretController)
+    , m_caretPaint(true)
 {
 }
 
@@ -145,7 +149,8 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
     if (!s.isNone())
         m_frame->setFocusedNodeIfNeeded();
     
-    m_frame->selectionLayoutChanged();
+    updateAppearance();
+
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
@@ -981,28 +986,32 @@ void SelectionController::invalidateCaretRect()
     }
 }
 
-void SelectionController::paintCaret(GraphicsContext* p, int tx, int ty, const IntRect& clipRect)
+void SelectionController::paintCaret(GraphicsContext* context, int tx, int ty, const IntRect& clipRect)
 {
-    if (! m_selection.isCaret())
+#if ENABLE(TEXT_CARET)
+    if (!m_caretVisible)
         return;
-
-    if (m_needsLayout)
-        layout();
+    if (!m_caretPaint)
+        return;
+    if (!m_selection.isCaret())
+        return;
 
     IntRect drawingRect = localCaretRect();
     drawingRect.move(tx, ty);
     IntRect caret = intersection(drawingRect, clipRect);
-    if (!caret.isEmpty()) {
-        Color caretColor = Color::black;
-        ColorSpace colorSpace = DeviceColorSpace;
-        Element* element = rootEditableElement();
-        if (element && element->renderer()) {
-            caretColor = element->renderer()->style()->color();
-            colorSpace = element->renderer()->style()->colorSpace();
-        }
+    if (caret.isEmpty())
+        return;
 
-        p->fillRect(caret, caretColor, colorSpace);
+    Color caretColor = Color::black;
+    ColorSpace colorSpace = DeviceColorSpace;
+    Element* element = rootEditableElement();
+    if (element && element->renderer()) {
+        caretColor = element->renderer()->style()->color();
+        colorSpace = element->renderer()->style()->colorSpace();
     }
+
+    context->fillRect(caret, caretColor, colorSpace);
+#endif
 }
 
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const
@@ -1262,7 +1271,7 @@ void SelectionController::focusedOrActiveStateChanged()
     // Caret appears in the active frame.
     if (activeAndFocused)
         m_frame->setSelectionFromNone();
-    m_frame->setCaretVisible(activeAndFocused);
+    setCaretVisible(activeAndFocused);
 
     // Update for caps lock state
     m_frame->eventHandler()->capsLockStateMayHaveChanged();
@@ -1299,6 +1308,100 @@ void SelectionController::setFocused(bool flag)
 bool SelectionController::isFocusedAndActive() const
 {
     return m_focused && m_frame->page() && m_frame->page()->focusController()->isActive();
+}
+
+void SelectionController::updateAppearance()
+{
+    ASSERT(!m_isDragCaretController);
+
+#if ENABLE(TEXT_CARET)
+    bool caretRectChanged = recomputeCaretRect();
+
+    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    bool shouldBlink = m_caretVisible
+        && isCaret() && (isContentEditable() || caretBrowsing);
+
+    // If the caret moved, stop the blink timer so we can restart with a
+    // black caret in the new location.
+    if (caretRectChanged || !shouldBlink)
+        m_caretBlinkTimer.stop();
+
+    // Start blinking with a black caret. Be sure not to restart if we're
+    // already blinking in the right location.
+    if (shouldBlink && !m_caretBlinkTimer.isActive()) {
+        if (double blinkInterval = m_frame->page()->theme()->caretBlinkInterval())
+            m_caretBlinkTimer.startRepeating(blinkInterval);
+
+        if (!m_caretPaint) {
+            m_caretPaint = true;
+            invalidateCaretRect();
+        }
+    }
+#endif
+
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return;
+
+    VisibleSelection selection = this->selection();
+
+    if (!selection.isRange()) {
+        view->clearSelection();
+        return;
+    }
+
+    // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
+    // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
+    // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
+    // and will fill the gap before 'bar'.
+    Position startPos = selection.start();
+    Position candidate = startPos.downstream();
+    if (candidate.isCandidate())
+        startPos = candidate;
+    Position endPos = selection.end();
+    candidate = endPos.upstream();
+    if (candidate.isCandidate())
+        endPos = candidate;
+
+    // We can get into a state where the selection endpoints map to the same VisiblePosition when a selection is deleted
+    // because we don't yet notify the SelectionController of text removal.
+    if (startPos.isNotNull() && endPos.isNotNull() && selection.visibleStart() != selection.visibleEnd()) {
+        RenderObject* startRenderer = startPos.node()->renderer();
+        RenderObject* endRenderer = endPos.node()->renderer();
+        view->setSelection(startRenderer, startPos.deprecatedEditingOffset(), endRenderer, endPos.deprecatedEditingOffset());
+    }
+}
+
+void SelectionController::setCaretVisible(bool flag)
+{
+    if (m_caretVisible == flag)
+        return;
+    clearCaretRectIfNeeded();
+    m_caretVisible = flag;
+    updateAppearance();
+}
+
+void SelectionController::clearCaretRectIfNeeded()
+{
+#if ENABLE(TEXT_CARET)
+    if (!m_caretPaint)
+        return;
+    m_caretPaint = false;
+    invalidateCaretRect();
+#endif
+}
+
+void SelectionController::caretBlinkTimerFired(Timer<SelectionController>*)
+{
+#if ENABLE(TEXT_CARET)
+    ASSERT(m_caretVisible);
+    ASSERT(isCaret());
+    bool caretPaint = m_caretPaint;
+    if (isCaretBlinkingSuspended() && caretPaint)
+        return;
+    m_caretPaint = !caretPaint;
+    invalidateCaretRect();
+#endif
 }
 
 #ifndef NDEBUG

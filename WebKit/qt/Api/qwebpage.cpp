@@ -1236,7 +1236,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
             break;
         }
         case QInputMethodEvent::Cursor: {
-            frame->setCaretVisible(a.length); //if length is 0 cursor is invisible
+            frame->selection()->setCaretVisible(a.length); //if length is 0 cursor is invisible
             if (a.length > 0) {
                 RenderObject* caretRenderer = frame->selection()->caretRenderer();
                 if (caretRenderer) {

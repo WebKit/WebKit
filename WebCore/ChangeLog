@@ -1,3 +1,45 @@
+2010-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move more of the selection and caret painting code from Frame to SelectionController.
+        https://bugs.webkit.org/show_bug.cgi?id=33619
+
+        Helpful preparation step for a bug fix I am working on.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController): Initialize new data members.
+        Note that m_caretVisible starts as true for the drag caret controller to match the
+        old behavior for painting.
+        (WebCore::SelectionController::setSelection): Changed to call selectionLayoutChanged
+        in its new name and location.
+        (WebCore::SelectionController::paintCaret): Added checks that were formerly done
+        at the Frame level. Tweaked formatting and changed to use early return as well.
+        (WebCore::SelectionController::focusedOrActiveStateChanged): Updated for call
+        moved into this class.
+        (WebCore::SelectionController::updateAppearance): Moved the
+        Frame::selectionLayoutChanged function here. Had to rename it because the word
+        "layout" is usedfor other purposes in this function.
+        (WebCore::SelectionController::setCaretVisible): Moved here from Frame.
+        (WebCore::SelectionController::clearCaretRectIfNeeded): Ditto.
+        (WebCore::SelectionController::caretBlinkTimerFired): Ditto.
+
+        * editing/SelectionController.h: Added new functions. Moved conditional function
+        out of class definition for clarity. Removed unneeded == and != operators.
+        Removed unneeded use of bit fields.
+
+        * page/Frame.cpp: Moved functions to SelectionController.
+        (WebCore::Frame::Frame): Removed initialization of moved data members.
+
+        * page/Frame.h: Removed things moved to SelectionController as well as unneeded
+        forward declaration of Timer class template.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Updated for new location of function.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret): Ditto.
+
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

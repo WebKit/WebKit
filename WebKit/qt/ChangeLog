@@ -1,3 +1,14 @@
+2010-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move more of the selection and caret painting code from Frame to SelectionController.
+        https://bugs.webkit.org/show_bug.cgi?id=33619
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent): Seems possibly wrong to be directly invoking this
+        setCaretVisible here, but I updated it to call it in its new location.
+
 2010-01-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
