@@ -34,6 +34,7 @@
 #include "Editor.h"
 #include "EmptyClients.h"
 #include "EventHandler.h"
+#include "FileChooser.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
