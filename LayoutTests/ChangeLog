@@ -1,5 +1,11 @@
 2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Update Qt slave result after last SVG commit.
+
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt:
+
+2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVGClipPathElement shouldn't resolve style manually
