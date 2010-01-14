@@ -51,7 +51,9 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         return patch.reviewer().full_name
 
     def run(self, state):
-        bug_id = state.get("bug_id") or state["patch"].bug_id()
+        bug_id = state.get("bug_id")
+        if not bug_id and state.get("patch"):
+            bug_id = state.get("patch").bug_id()
 
         reviewer = self._options.reviewer
         if not reviewer:

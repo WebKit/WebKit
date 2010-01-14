@@ -1,3 +1,15 @@
+2010-01-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(53133): webkit-patch land dies if it can't find a bug id.
+        https://bugs.webkit.org/show_bug.cgi?id=33634
+
+        Deal with the case of no bug patch object in the state.
+
+        * Scripts/webkitpy/steps/updatechangelogswithreview_unittests.py:
+        * Scripts/webkitpy/steps/updatechangelogswithreviewer.py:
+
 2010-01-13  Kenneth Russell  <kbr@google.com>
 
         Unreviewed; added myself to the committers list.
