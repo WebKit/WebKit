@@ -1,3 +1,29 @@
+2010-01-13  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector does not update the DOM tree when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=20162
+
+        * dom/Element.cpp: Moves callbacks to InspectorController directly into setAttribute
+        and removeAttribute and removes the existing call sites. This makes it possible to
+        see attribute modifications.
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::dispatchAttrRemovalEvent):
+        (WebCore::Element::dispatchAttrAdditionEvent):
+        (WebCore::Element::removeAttribute):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._setAttributesPayload): Clear existing attributes.
+        (WebInspector.DOMAgent.prototype._didApplyDomChange): Updated call site and fixed style.
+        (WebInspector.DOMAgent.prototype._attributesUpdated): Added.
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._attributesUpdated): Added.
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes): Updated call site.
+        * inspector/front-end/ElementsTreeOutline.js: Renamed _updateTitle to updateTitle.
+        (WebInspector.ElementsTreeElement.prototype.onattach): Updated updateTitle call site.
+        (WebInspector.ElementsTreeElement.prototype._textNodeEditingCommitted): Ditto.
+        (WebInspector.ElementsTreeElement.prototype._editingCancelled): Ditto.
+
 2010-01-13  Carol Szabo <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

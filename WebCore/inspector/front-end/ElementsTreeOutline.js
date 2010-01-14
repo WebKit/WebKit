@@ -394,7 +394,7 @@ WebInspector.ElementsTreeElement.prototype = {
             this.listItemElement.addStyleClass("hovered");
         }
 
-        this._updateTitle();
+        this.updateTitle();
 
         this._preventFollowingLinksOnDoubleClick();
     },
@@ -858,7 +858,7 @@ WebInspector.ElementsTreeElement.prototype = {
         textNode.nodeValue = newText;
 
         // Need to restore attributes / node structure.
-        this._updateTitle();
+        this.updateTitle();
     },
 
     _editingCancelled: function(element, context)
@@ -866,13 +866,13 @@ WebInspector.ElementsTreeElement.prototype = {
         delete this._editing;
 
         // Need to restore attributes structure.
-        this._updateTitle();
+        this.updateTitle();
     },
 
-    _updateTitle: function()
+    updateTitle: function()
     {
         // If we are editing, return early to prevent canceling the edit.
-        // After editing is committed _updateTitle will be called.
+        // After editing is committed updateTitle will be called.
         if (this._editing)
             return;
 

@@ -140,6 +140,8 @@ WebInspector.DOMNode.prototype = {
 
     _setAttributesPayload: function(attrs)
     {
+        this.attributes = [];
+        this._attributesMap = {};
         for (var i = 0; i < attrs.length; i += 2)
             this._addAttribute(attrs[i], attrs[i + 1]);
     },
@@ -363,15 +365,16 @@ WebInspector.DOMAgent.prototype = {
         callback();
         // TODO(pfeldman): Fix this hack.
         var elem = WebInspector.panels.elements.treeOutline.findTreeElement(node);
-        if (elem) {
-            elem._updateTitle();
-        }
+        if (elem)
+            elem.updateTitle();
     },
 
     _attributesUpdated: function(nodeId, attrsArray)
     {
         var node = this._idToDOMNode[nodeId];
         node._setAttributesPayload(attrsArray);
+        var event = {target: node};
+        this.document._fireDomEvent("DOMAttrModified", event);
     },
 
     nodeForId: function(nodeId) {

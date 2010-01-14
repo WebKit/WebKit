@@ -205,6 +205,7 @@ WebInspector.ElementsPanel.prototype = {
 
         inspectedRootDocument.addEventListener("DOMNodeInserted", this._nodeInserted.bind(this));
         inspectedRootDocument.addEventListener("DOMNodeRemoved", this._nodeRemoved.bind(this));
+        inspectedRootDocument.addEventListener("DOMAttrModified", this._attributesUpdated.bind(this));
 
         this.treeOutline.suppressSelectHighlight = true;
         this.rootDOMNode = inspectedRootDocument;
@@ -477,6 +478,13 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.focusedDOMNode = x;
     },
 
+    _attributesUpdated: function(event)
+    {
+        this.recentlyModifiedNodes.push({node: event.target, updated: true});
+        if (this.visible)
+            this._updateModifiedNodesSoon();
+    },
+
     _nodeInserted: function(event)
     {
         this.recentlyModifiedNodes.push({node: event.target, parent: event.relatedNode, inserted: true});
@@ -511,6 +519,14 @@ WebInspector.ElementsPanel.prototype = {
         for (var i = 0; i < this.recentlyModifiedNodes.length; ++i) {
             var replaced = this.recentlyModifiedNodes[i].replaced;
             var parent = this.recentlyModifiedNodes[i].parent;
+            var node = this.recentlyModifiedNodes[i].node;
+
+            if (this.recentlyModifiedNodes[i].updated) {
+                var nodeItem = this.treeOutline.findTreeElement(node);
+                nodeItem.updateTitle();
+                continue;
+            }
+            
             if (!parent)
                 continue;
 
