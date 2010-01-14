@@ -1,5 +1,11 @@
 2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Unreviewed fix of builds with the --no-svg switch.
+
+        * WebCore.pri:
+
+2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Unreviewed build fix on Windows.
 
         * platform/graphics/transforms/TransformationMatrix.h:
