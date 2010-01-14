@@ -1980,6 +1980,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/ContextMenuItemGtk.cpp \
 	WebCore/platform/gtk/CursorGtk.cpp \
 	WebCore/platform/gtk/CursorGtk.h \
+	WebCore/platform/gtk/DataObjectGtk.cpp \
+	WebCore/platform/gtk/DataObjectGtk.h \
 	WebCore/platform/gtk/DragDataGtk.cpp \
 	WebCore/platform/gtk/DragImageGtk.cpp \
 	WebCore/platform/gtk/EventLoopGtk.cpp \

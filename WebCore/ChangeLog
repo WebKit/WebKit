@@ -1,3 +1,40 @@
+2010-01-14  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Add DataObjectGtk, a container for pasteboard and drag-and-drop data.
+
+        No new tests, because functionality has not changed.
+
+        * GNUmakefile.am:
+        * platform/gtk/DataObjectGtk.cpp: Added.
+        (WebCore::DataObjectGtk::text):
+        (WebCore::DataObjectGtk::markup):
+        (WebCore::DataObjectGtk::setText):
+        (WebCore::DataObjectGtk::setMarkup):
+        (WebCore::DataObjectGtk::files):
+        (WebCore::DataObjectGtk::url):
+        (WebCore::DataObjectGtk::urlLabel):
+        (WebCore::DataObjectGtk::hasURL):
+        (WebCore::DataObjectGtk::clear):
+        (WebCore::DataObjectGtk::forClipboard):
+        * platform/gtk/DataObjectGtk.h: Added.
+        (WebCore::DataObjectGtk::create):
+        (WebCore::DataObjectGtk::uriList):
+        (WebCore::DataObjectGtk::image):
+        (WebCore::DataObjectGtk::setRange):
+        (WebCore::DataObjectGtk::setURIList):
+        (WebCore::DataObjectGtk::setImage):
+        (WebCore::DataObjectGtk::setDragContext):
+        (WebCore::DataObjectGtk::hasText):
+        (WebCore::DataObjectGtk::hasMarkup):
+        (WebCore::DataObjectGtk::hasURIList):
+        (WebCore::DataObjectGtk::hasImage):
+        (WebCore::DataObjectGtk::dragContext):
+
 2010-01-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

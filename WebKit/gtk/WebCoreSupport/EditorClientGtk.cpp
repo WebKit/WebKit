@@ -24,6 +24,7 @@
 #include "EditorClientGtk.h"
 
 #include "CString.h"
+#include "DataObjectGtk.h"
 #include "EditCommand.h"
 #include "Editor.h"
 #include <enchant.h>
@@ -35,6 +36,7 @@
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
 #include "markup.h"
 #include "webkitprivate.h"
@@ -185,34 +187,11 @@ void EditorClient::respondToChangedContents()
     notImplemented();
 }
 
-void clipboard_get_contents_cb(GtkClipboard* clipboard, GtkSelectionData* selection_data, guint info, gpointer data)
-{
-    EditorClient* client = static_cast<EditorClient*>(data);
-
-    if (!client->m_range)
-        return;
-
-    if (static_cast<gint>(info) == WEBKIT_WEB_VIEW_TARGET_INFO_HTML) {
-        String markup = createMarkup(client->m_range.get(), 0, AnnotateForInterchange);
-        gtk_selection_data_set(selection_data, selection_data->target, 8,
-                               reinterpret_cast<const guchar*>(markup.utf8().data()), markup.utf8().length());
-    } else {
-        String text = client->m_range->text();
-        gtk_selection_data_set_text(selection_data, text.utf8().data(), text.utf8().length());
-    }
-}
-
-void clipboard_clear_contents_cb(GtkClipboard* clipboard, gpointer data)
-{
-    EditorClient* client = static_cast<EditorClient*>(data);
-
-    client->m_range = 0;
-}
-
 void EditorClient::respondToChangedSelection()
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
-    Frame* targetFrame = core(m_webView)->focusController()->focusedOrMainFrame();
+    WebCore::Page* corePage = core(m_webView);
+    Frame* targetFrame = corePage->focusController()->focusedOrMainFrame();
 
     if (!targetFrame)
         return;
@@ -220,16 +199,16 @@ void EditorClient::respondToChangedSelection()
     if (targetFrame->editor()->ignoreCompositionSelectionChange())
         return;
 
+#if PLATFORM(X11)
     GtkClipboard* clipboard = gtk_widget_get_clipboard(GTK_WIDGET(m_webView), GDK_SELECTION_PRIMARY);
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+
     if (targetFrame->selection()->isRange()) {
-        GtkTargetList* targetList = webkit_web_view_get_copy_target_list(m_webView);
-        gint targetCount;
-        GtkTargetEntry* targets = gtk_target_table_new_from_list(targetList, &targetCount);
-        gtk_clipboard_set_with_data(clipboard, targets, targetCount,
-                                    clipboard_get_contents_cb, clipboard_clear_contents_cb, this);
-        m_range = targetFrame->selection()->toNormalizedRange();
-        gtk_target_table_free(targets, targetCount);
+        dataObject->clear();
+        dataObject->setRange(targetFrame->selection()->toNormalizedRange());
+        pasteboardHelperInstance()->writeClipboardContents(clipboard, corePage);
     }
+#endif
 
     if (!targetFrame->editor()->hasComposition())
         return;
@@ -550,7 +529,6 @@ void EditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
     , m_webView(webView)
-    , m_range(0)
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_connect(priv->imContext, "commit", G_CALLBACK(imContextCommitted), this);

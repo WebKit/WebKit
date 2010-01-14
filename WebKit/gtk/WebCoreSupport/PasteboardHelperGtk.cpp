@@ -20,12 +20,13 @@
 #include "config.h"
 #include "PasteboardHelperGtk.h"
 
+#include "DataObjectGtk.h"
+#include "FocusController.h"
 #include "Frame.h"
+#include <gtk/gtk.h>
 #include "webkitwebframe.h"
 #include "webkitwebview.h"
 #include "webkitprivate.h"
-
-#include <gtk/gtk.h>
 
 using namespace WebCore;
 
@@ -77,6 +78,83 @@ GtkTargetList* PasteboardHelperGtk::targetList() const
 gint PasteboardHelperGtk::getWebViewTargetInfoHtml() const
 {
     return WEBKIT_WEB_VIEW_TARGET_INFO_HTML;
+}
+
+static void fillSelectionData(GtkSelectionData* selectionData, guint info, DataObjectGtk* dataObject)
+{
+    if (info == WEBKIT_WEB_VIEW_TARGET_INFO_TEXT)
+        gtk_selection_data_set_text(selectionData, dataObject->text().utf8().data(), -1);
+    else if (info == WEBKIT_WEB_VIEW_TARGET_INFO_HTML) {
+        GOwnPtr<gchar> markup(g_strdup(dataObject->markup().utf8().data()));
+        gtk_selection_data_set(selectionData, selectionData->target, 8,
+                               reinterpret_cast<const guchar*>(markup.get()),
+                               strlen(markup.get()));
+    }
+}
+
+static GtkTargetList* targetListForDataObject(DataObjectGtk* dataObject)
+{
+    GtkTargetList* list = gtk_target_list_new(0, 0);
+
+    if (dataObject->hasText())
+        gtk_target_list_add_text_targets(list, WEBKIT_WEB_VIEW_TARGET_INFO_TEXT);
+
+    if (dataObject->hasMarkup())
+        gtk_target_list_add(list, gdkMarkupAtom, 0, WEBKIT_WEB_VIEW_TARGET_INFO_HTML);
+
+    return list;
+}
+
+static bool settingClipboard = false;
+static void getClipboardContentsCallback(GtkClipboard* clipboard, GtkSelectionData *selectionData, guint info, gpointer data)
+{
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+    ASSERT(dataObject);
+    fillSelectionData(selectionData, info, dataObject);
+}
+
+static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer data)
+{
+    // GTK will call the clear clipboard callback while setting clipboard data.
+    // We don't actually want to clear the DataObject during that time.
+    if (settingClipboard)
+        return;
+
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+    ASSERT(dataObject);
+
+    dataObject->clear();
+    if (data) {
+        WebCore::Page* corePage = reinterpret_cast<WebCore::Page*>(data);
+        Frame* frame = corePage->focusController()->focusedOrMainFrame();
+
+        // Collapse the selection without clearing it
+        ASSERT(frame);
+        frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+    }
+}
+
+void PasteboardHelperGtk::writeClipboardContents(GtkClipboard* clipboard, gpointer data)
+{
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+    GtkTargetList* list = targetListForDataObject(dataObject);
+
+    int numberOfTargets;
+    GtkTargetEntry* table = gtk_target_table_new_from_list(list, &numberOfTargets);
+
+    if (numberOfTargets > 0 && table) {
+        settingClipboard = true;
+        gtk_clipboard_set_with_data(clipboard, table, numberOfTargets,
+                                    getClipboardContentsCallback,
+                                    clearClipboardContentsCallback, data);
+        settingClipboard = false;
+    } else
+        gtk_clipboard_clear(clipboard);
+
+    if (table)
+        gtk_target_table_free(table, numberOfTargets);
+
+    gtk_target_list_unref(list);
 }
 
 }

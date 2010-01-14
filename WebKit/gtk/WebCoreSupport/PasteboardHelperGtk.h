@@ -47,6 +47,8 @@ public:
     virtual GtkTargetList* targetList() const;
     virtual gint getWebViewTargetInfoHtml() const;
 
+    void writeClipboardContents(GtkClipboard* clipboard, gpointer data = 0);
+
 private:
     GtkTargetList* m_targetList;
 };
