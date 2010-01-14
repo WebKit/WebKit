@@ -1,3 +1,21 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Make Cache::requestResource return 0 if the resource's load fails
+        immediately
+
+        Fixes <http://webkit.org/b/33687> window.onload never fires if page
+        contains a <script src=foo> whose load is cancelled by resource load
+        delegate returning null from willSendRequest
+
+        Test: fast/loader/onload-willSendRequest-null-for-script.html
+
+        Reviewed by Dave Hyatt.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource): Moved code to handle immediate load
+        failure out of the "cache is disabled" block so that it will run even
+        when the cache is enabled.
+
 2010-01-14  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by mitz@webkit.org.

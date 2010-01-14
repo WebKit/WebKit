@@ -197,6 +197,7 @@ http/tests/security/feed-urls-from-remote.html
 
 # Missing layoutTestController.setWillSendRequestReturnsNull()
 fast/loader/onload-willSendRequest-null-for-frame.html
+fast/loader/onload-willSendRequest-null-for-script.html
 
 # Missing layoutTestController.setWillSendRequestReturnsNullOnRedirect()
 http/tests/misc/will-send-request-returns-null-on-redirect.html

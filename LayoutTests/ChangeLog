@@ -1,3 +1,20 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Add a test that shows onload still fires if a load of a <script src>
+        is cancelled by the resource load delegate
+
+        Tests for <http://webkit.org/b/33687> window.onload never fires if
+        page contains a <script src=foo> whose load is cancelled by resource
+        load delegate returning null from willSendRequest
+
+        Reviewed by Dave Hyatt.
+
+        * fast/loader/onload-willSendRequest-null-for-script-expected.txt: Added.
+        * fast/loader/onload-willSendRequest-null-for-script.html: Added.
+
+        * platform/qt/Skipped: Added the new test since Qt doesn't have
+        layoutTestController.setWillSendRequestReturnsNull.
+
 2010-01-14  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by mitz@webkit.org.

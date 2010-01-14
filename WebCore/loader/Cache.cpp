@@ -124,19 +124,21 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         
         resource->load(docLoader);
         
+        if (resource->errorOccurred()) {
+            // We don't support immediate loads, but we do support immediate failure.
+            // In that case we should to delete the resource now and return 0 because otherwise
+            // it would leak if no ref/deref was ever done on it.
+            resource->setInCache(false);
+            delete resource;
+            return 0;
+        }
+
         if (!disabled())
             m_resources.set(url.string(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
         else {
             // Kick the resource out of the cache, because the cache is disabled.
             resource->setInCache(false);
             resource->setDocLoader(docLoader);
-            if (resource->errorOccurred()) {
-                // We don't support immediate loads, but we do support immediate failure.
-                // In that case we should to delete the resource now and return 0 because otherwise
-                // it would leak if no ref/deref was ever done on it.
-                delete resource;
-                return 0;
-            }
         }
     }
 
