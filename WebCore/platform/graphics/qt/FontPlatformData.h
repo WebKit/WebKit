@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class String;
-class FontPlatformDataPrivate {
+class FontPlatformDataPrivate : public Noncopyable {
 public:
     FontPlatformDataPrivate()
         : refCount(1)
