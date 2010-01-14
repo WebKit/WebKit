@@ -1,3 +1,9 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Add new tests from r53277 to the Qt Skipped list
+
+        * platform/qt/Skipped:
+
 2010-01-13  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.

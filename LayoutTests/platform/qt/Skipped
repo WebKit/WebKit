@@ -190,9 +190,13 @@ http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 http/tests/misc/favicon-loads-with-images-disabled.html
 
 # Missing layoutTestController.setCustomPolicyDelegate()
+fast/loader/onload-policy-ignore-for-frame.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
+
+# Missing layoutTestController.setWillSendRequestReturnsNull()
+fast/loader/onload-willSendRequest-null-for-frame.html
 
 # Missing layoutTestController.setWillSendRequestReturnsNullOnRedirect()
 http/tests/misc/will-send-request-returns-null-on-redirect.html
