@@ -563,13 +563,14 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     const FillLayer* bgLayer = style()->backgroundLayers();
     Color bgColor = style()->backgroundColor();
+    RenderObject* bodyObject = 0;
     if (!style()->hasBackground() && node() && node()->hasTagName(HTMLNames::htmlTag)) {
         // Locate the <body> element using the DOM.  This is easier than trying
         // to crawl around a render tree with potential :before/:after content and
         // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
         // render object very easily via the DOM.
         HTMLElement* body = document()->body();
-        RenderObject* bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
+        bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
         if (bodyObject) {
             bgLayer = bodyObject->style()->backgroundLayers();
             bgColor = bodyObject->style()->backgroundColor();
@@ -597,7 +598,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int bw = max(w + marginLeft() + marginRight() + borderLeft() + borderRight(), rw);
     int bh = max(h + marginTop() + marginBottom() + borderTop() + borderBottom(), rh);
 
-    paintFillLayers(paintInfo, bgColor, bgLayer, bx, by, bw, bh);
+    paintFillLayers(paintInfo, bgColor, bgLayer, bx, by, bw, bh, CompositeSourceOver, bodyObject);
 
     if (style()->hasBorder() && style()->display() != INLINE)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
@@ -720,18 +721,18 @@ IntRect RenderBox::maskClipRect()
     return result;
 }
 
-void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op)
+void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op, RenderObject* backgroundObject)
 {
     if (!fillLayer)
         return;
 
-    paintFillLayers(paintInfo, c, fillLayer->next(), tx, ty, width, height, op);
-    paintFillLayer(paintInfo, c, fillLayer, tx, ty, width, height, op);
+    paintFillLayers(paintInfo, c, fillLayer->next(), tx, ty, width, height, op, backgroundObject);
+    paintFillLayer(paintInfo, c, fillLayer, tx, ty, width, height, op, backgroundObject);
 }
 
-void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op)
+void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op, RenderObject* backgroundObject)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op);
+    paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op, backgroundObject);
 }
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)

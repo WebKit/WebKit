@@ -305,8 +305,8 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
 
-    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
-    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
+    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator op, RenderObject* backgroundObject);
+    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
 
     void paintMaskImages(const PaintInfo&, int tx, int ty, int width, int height);
 

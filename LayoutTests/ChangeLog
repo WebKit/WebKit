@@ -1,3 +1,13 @@
+2010-01-14  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by mitz@webkit.org.
+
+        New layout test added to exercise fix for bug
+        http://bugs.webkit.org/show_bug.cgi?id=28426 
+
+        * fast/gradients/crash-on-tr-expected.txt: Added.
+        * fast/gradients/crash-on-tr.html: Added.
+
 2010-01-14  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.

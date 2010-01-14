@@ -304,7 +304,7 @@ int RenderBoxModelObject::paddingRight(bool) const
 }
 
 
-void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op)
+void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op, RenderObject* backgroundObject)
 {
     GraphicsContext* context = paintInfo.context;
     bool includeLeftEdge = box ? box->includeLeftEdge() : true;
@@ -463,20 +463,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!destRect.isEmpty()) {
             phase += destRect.location() - destOrigin;
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
-            RenderObject* clientForBackgroundImage = this;
-            // Check if this is the root element painting a background layer propagated from <body>,
-            // and pass the body's renderer as the client in that case.
-            if (isRoot && !style()->hasBackground()) {
-                ASSERT(node()->hasTagName(htmlTag));
-                HTMLElement* body = document()->body();
-                ASSERT(body);
-                ASSERT(body->hasLocalName(bodyTag));
-                ASSERT(body->renderer());
-                if (body) {
-                    if (RenderObject* bodyRenderer = body->renderer())
-                        clientForBackgroundImage = bodyRenderer;
-                }
-            }
+            RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
             context->drawTiledImage(bg->image(clientForBackgroundImage, tileSize), style()->colorSpace(), destRect, phase, tileSize, compositeOp);
         }
     }
