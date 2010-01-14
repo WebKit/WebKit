@@ -1,3 +1,12 @@
+2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Unreviewed.
+
+        [Qt] Use a different Makefile names for sources generation and compilation.
+        This prevents Makefile overwriting when running build-webkit twice.
+
+        * Scripts/webkitdirs.pm:
+
 2010-01-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

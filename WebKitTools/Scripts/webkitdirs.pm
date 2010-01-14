@@ -1461,6 +1461,7 @@ sub buildQMakeProject($@)
     my @dsQmakeArgs = @buildArgs;
     push @dsQmakeArgs, "-r";
     push @dsQmakeArgs, sourceDir() . "/DerivedSources.pro";
+    push @dsQmakeArgs, "-o Makefile.DerivedSources";
     push @dsQmakeArgs, "CONFIG-=release";
     push @dsQmakeArgs, "CONFIG+=debug";
     print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
