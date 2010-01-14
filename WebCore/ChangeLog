@@ -1,5 +1,19 @@
 2010-01-14  Brian Weinstein  <bweinstein@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Follow up to <https://bugs.webkit.org/show_bug.cgi?id=33635>.
+        
+        Now that dropEffect and effectAllowed are guaranteed to not be
+        null, change null checks into asserts to make sure we are returning
+        a proper DragOperation value.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::sourceOperation): Change null check to assert.
+        (WebCore::Clipboard::destinationOperation): Ditto.
+
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Oliver Hunt.
 
         [DnD] effectAllowed and dropEffect can be set to bogus values.

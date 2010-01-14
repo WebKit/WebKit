@@ -102,17 +102,15 @@ static String IEOpFromDragOp(DragOperation op)
 
 bool Clipboard::sourceOperation(DragOperation& op) const
 {
-    if (m_effectAllowed.isNull())
-        return false;
     op = dragOpFromIEOp(m_effectAllowed);
+    ASSERT(op != DragOperationPrivate);
     return true;
 }
 
 bool Clipboard::destinationOperation(DragOperation& op) const
 {
-    if (m_dropEffect.isNull())
-        return false;
     op = dragOpFromIEOp(m_dropEffect);
+    ASSERT(op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationMove);
     return true;
 }
 
