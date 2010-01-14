@@ -3,9 +3,10 @@
         Make Cache::requestResource return 0 if the resource's load fails
         immediately
 
-        Fixes <http://webkit.org/b/33687> window.onload never fires if page
-        contains a <script src=foo> whose load is cancelled by resource load
-        delegate returning null from willSendRequest
+        Fixes <rdar://problem/7543406> <http://webkit.org/b/33687>
+        window.onload never fires if page contains a <script src=foo> whose
+        load is cancelled by resource load delegate returning null from
+        willSendRequest
 
         Test: fast/loader/onload-willSendRequest-null-for-script.html
 

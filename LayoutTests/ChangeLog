@@ -3,9 +3,10 @@
         Add a test that shows onload still fires if a load of a <script src>
         is cancelled by the resource load delegate
 
-        Tests for <http://webkit.org/b/33687> window.onload never fires if
-        page contains a <script src=foo> whose load is cancelled by resource
-        load delegate returning null from willSendRequest
+        Tests for <rdar://problem/7543406> <http://webkit.org/b/33687>
+        window.onload never fires if page contains a <script src=foo> whose
+        load is cancelled by resource load delegate returning null from
+        willSendRequest
 
         Reviewed by Dave Hyatt.
 
