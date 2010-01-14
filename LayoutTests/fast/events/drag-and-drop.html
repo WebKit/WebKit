@@ -99,16 +99,6 @@
             chosenEffectAllowed = "uninitialized";
         }
         
-        if (chosenEffectAllowed === "dummy") {
-            // If a bad effectAllowed is attempted to be set, it should never be set, and the
-            // effectAllowed should be uninitialized.
-            shouldBeEqualToString("event.dataTransfer.effectAllowed", "uninitialized");
-            
-            // Then set the chosenEffectAllowed so isDropEffectAllowed matches the HTML5 spec, and
-            // doesn't need special cases for undefined.
-            chosenEffectAllowed = "uninitialized";
-        }
-        
         if (isDropEffectAllowed(chosenDropEffect, chosenEffectAllowed))
             shouldBeEqualToString('event.dataTransfer.dropEffect', dropEffectElem.options[dropEffectElem.selectedIndex].value);
         else
