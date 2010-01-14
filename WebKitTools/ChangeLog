@@ -1,5 +1,12 @@
 2010-01-13  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Turn the mac-ews status bubbles back on now that this bot
+        is running again.
+
+        * QueueStatusServer/templates/statusbubble.html:
+
+2010-01-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         REGRESSION(53133): webkit-patch land dies if it can't find a bug id.
