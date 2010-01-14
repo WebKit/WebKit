@@ -1,3 +1,15 @@
+2010-01-14  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Missing fileSystemPath() method in Qt KURL implementation
+        https://bugs.webkit.org/show_bug.cgi?id=33614
+
+        No new tests.
+
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::fileSystemPath):
+
 2010-01-13  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.

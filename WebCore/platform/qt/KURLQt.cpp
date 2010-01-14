@@ -95,8 +95,10 @@ KURL::operator QUrl() const
 
 String KURL::fileSystemPath() const
 {
-    notImplemented();
-    return String();
+    if (!isValid() || !protocolIs("file"))
+        return String();
+
+    return String(path());
 }
 
 }
