@@ -1,3 +1,15 @@
+2010-01-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Cleaning up quota-tracking.html. Removing trailing whitespaces and
+        fixing the errorFunction() to work correctly with both
+        transaction() and executeSql().
+
+        https://bugs.webkit.org/show_bug.cgi?id=33628
+
+        * storage/quota-tracking.html:
+
 2010-01-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Beth Dakin.

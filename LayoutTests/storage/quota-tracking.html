@@ -16,7 +16,7 @@ function finishTest()
         layoutTestController.notifyDone();
 }
 
-function errorFunction(tx, error)
+function errorFunction(error)
 {
     log("Test failed - " + error.message);
     finishTest();
@@ -35,11 +35,13 @@ function checkCompletion(db)
 
 function addData(db)
 {
-    db.transaction(function(tx) { 
+    db.transaction(function(tx) {
         log("Inserting some data");
-        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(17408))", [], function(tx, result) { }, errorFunction); 
-    }, errorFunction, function() { 
-        checkCompletion(db); 
+        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(17408))", [],
+                      function(tx, result) { },
+                      function(tx, error) { errorFunction(error); });
+    }, errorFunction, function() {
+        checkCompletion(db);
     });
 }
 
@@ -47,9 +49,11 @@ function testDatabase(db)
 {
     db.transaction(function(tx) {
         log("Adding a table");
-        tx.executeSql("CREATE TABLE DataTest (randomData)", [], function(tx, result) { }, errorFunction); 
-    }, errorFunction, function() { 
-        addData(db); 
+        tx.executeSql("CREATE TABLE DataTest (randomData)", [],
+                      function(tx, result) { },
+                      function(tx, error) { errorFunction(error); });
+    }, errorFunction, function() {
+        addData(db);
     });
 }
 
@@ -62,12 +66,12 @@ function runTest()
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }
-    
+
     database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);
     database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
     database1.complete = false;
     database2.complete = false;
-    
+
     testDatabase(database1);
 }
 
