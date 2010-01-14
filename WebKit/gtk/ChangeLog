@@ -1,3 +1,20 @@
+2010-01-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Review the tooltip implementation
+        https://bugs.webkit.org/show_bug.cgi?id=32819
+
+        Change the GTK tooltip implementation to avoid the workaround that
+        we are currently using. Now we use a new private API to set the
+        text and all the tooltip handling is done in the webview widget.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_tooltip_text): Added, new private API.
+        (webkit_web_view_query_tooltip): Added
+
 2010-01-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

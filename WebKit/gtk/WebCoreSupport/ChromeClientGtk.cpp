@@ -442,22 +442,6 @@ void ChromeClient::scrollbarsModeDidChange() const
 
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
-#if GTK_CHECK_VERSION(2,12,0)
-    // If a tooltip must be displayed it will be, afterwards, when
-    // setToolTip is called; this is just a work-around to make sure
-    // it updates its location correctly; see
-    // https://bugs.webkit.org/show_bug.cgi?id=15793.
-    g_object_set(m_webView, "has-tooltip", FALSE, NULL);
-
-    GdkDisplay* gdkDisplay;
-    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
-    if (GTK_WIDGET_TOPLEVEL(window))
-        gdkDisplay = gtk_widget_get_display(window);
-    else
-        gdkDisplay = gdk_display_get_default();
-    gtk_tooltip_trigger_tooltip_query(gdkDisplay);
-#endif
-
     // check if the element is a link...
     bool isLink = hit.isLiveLink();
     if (isLink) {
@@ -477,16 +461,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
 
 void ChromeClient::setToolTip(const String& toolTip, TextDirection)
 {
-#if GTK_CHECK_VERSION(2,12,0)
-    if (toolTip.isEmpty())
-        g_object_set(m_webView, "has-tooltip", FALSE, NULL);
-    else
-        gtk_widget_set_tooltip_text(GTK_WIDGET(m_webView), toolTip.utf8().data());
-#else
-    // TODO: Support older GTK+ versions
-    // See http://bugs.webkit.org/show_bug.cgi?id=15793
-    notImplemented();
-#endif
+    webkit_web_view_set_tooltip_text(m_webView, toolTip.utf8().data());
 }
 
 void ChromeClient::print(Frame* frame)
