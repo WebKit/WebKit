@@ -1,5 +1,13 @@
 2010-01-13  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Repeat the below for CloseBugForLandDiff.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/steps/closebugforlanddiff_unittest.py: Added.
+
+2010-01-13  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Turn the mac-ews status bubbles back on now that this bot
         is running again.
 
