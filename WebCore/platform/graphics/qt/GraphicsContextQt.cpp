@@ -166,7 +166,7 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     return Qt::OddEvenFill;
 }
 
-struct TransparencyLayer {
+struct TransparencyLayer : FastAllocBase {
     TransparencyLayer(const QPainter* p, const QRect &rect)
         : pixmap(rect.width(), rect.height())
     {
