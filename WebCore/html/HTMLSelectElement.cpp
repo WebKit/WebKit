@@ -4,6 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,7 +60,6 @@ bool HTMLSelectElement::checkDTD(const Node* newChild)
 
 void HTMLSelectElement::recalcStyle(StyleChange change)
 {
-    SelectElement::recalcStyle(m_data, this);
     HTMLFormControlElementWithState::recalcStyle(change);
 }
 
@@ -259,6 +259,12 @@ PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 {
     SelectElement::recalcListItems(const_cast<SelectElementData&>(m_data), this, updateSelectedStates);
+}
+
+void HTMLSelectElement::recalcListItemsIfNeeded()
+{
+    if (m_data.shouldRecalcListItems())
+        recalcListItems();
 }
 
 void HTMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
