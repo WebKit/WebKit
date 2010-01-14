@@ -1,3 +1,13 @@
+2010-01-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix CloseBugForLandDiff unittest to actually run
+        https://bugs.webkit.org/show_bug.cgi?id=33640
+
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/steps/closebugforlanddiff_unittest.py:
+
 2010-01-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: selected, selectable, extended selectable, and multiple

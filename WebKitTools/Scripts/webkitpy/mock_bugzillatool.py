@@ -183,6 +183,9 @@ class MockSCM(Mock):
     def diff_for_revision(self, revision):
         return "DiffForRevision%s\nhttp://bugs.webkit.org/show_bug.cgi?id=12345" % revision
 
+    def svn_revision_from_commit_text(self, commit_text):
+        return "49824"
+
     def modified_changelogs(self):
         # Ideally we'd return something more interesting here.
         # The problem is that LandDiff will try to actually read the path from disk!
