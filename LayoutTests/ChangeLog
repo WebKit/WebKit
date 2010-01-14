@@ -1,3 +1,14 @@
+2010-01-14  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        [Android] [Qt] The document.createEvent API does not support touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=33605
+
+        * fast/events/script-tests/create-touch-event.js: Added. Ensures that document.createEvent("TouchEvent") can create a TouchEvent.
+        * fast/events/touch/create-touch-event-expected.txt: Added.
+        * fast/events/touch/create-touch-event.html: Added.
+
 2010-01-14  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

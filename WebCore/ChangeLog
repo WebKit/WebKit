@@ -1,3 +1,15 @@
+2010-01-14  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        [Android] [Qt] The document.createEvent API does not support touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=33605
+
+        Test: fast/events/touch/create-touch-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): add creation of a TouchEvent when the "TouchEvent" argument is supplied.
+
 2010-01-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

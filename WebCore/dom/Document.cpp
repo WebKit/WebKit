@@ -173,6 +173,10 @@
 #include "SVGStyleElement.h"
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#include "TouchEvent.h"
+#endif
+
 #if ENABLE(WML)
 #include "WMLDocument.h"
 #include "WMLElement.h"
@@ -3011,6 +3015,10 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
         event = Event::create();
     else if (eventType == "SVGZoomEvents")
         event = SVGZoomEvent::create();
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    else if (eventType == "TouchEvent")
+        event = TouchEvent::create();
 #endif
     if (event) {
         event->setCreatedByDOM(true);
