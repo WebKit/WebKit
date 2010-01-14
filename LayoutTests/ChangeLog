@@ -1,3 +1,13 @@
+2010-01-13  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Failing media/video-seek-past-end-playing.html
+        https://bugs.webkit.org/show_bug.cgi?id=33015
+
+        * media/video-seek-past-end-playing.html: Removed the last timer of this test.
+        * platform/gtk/Skipped: Unskip test above.
+
 2010-01-14  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r53249.

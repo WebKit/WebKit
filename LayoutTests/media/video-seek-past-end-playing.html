@@ -26,20 +26,18 @@
            // make sure time is advancing and seek past end
            testExpected("mediaElement.currentTime", 0, '>');
            run("video.currentTime = 500");
-           setTimeout(seekCheck, 200);
+        } else if (timeupdateEventCount == 10) {
+           // Wait some more timeupdate events so we can check the
+           // media engine performed the seek.
+           consoleWrite("");
+           testExpected("video.paused", false);
+           testExpected("mediaElement.currentTime", 0, '>');
+           consoleWrite("");
+           // reset the counter to prevent infinite loop if the
+           // test is re-executed manually.
+           timeupdateEventCount = 0;
+           endTest();
         }
-    }
-
-    function seekCheck()
-    {
-        consoleWrite("");
-        testExpected("video.paused", false);
-        testExpected("mediaElement.currentTime", 0, '>');
-        consoleWrite("");
-        // reset the counter to prevent infinite loop if the
-        // test is re-executed manually.
-        timeupdateEventCount = 0;
-        endTest();
     }
 
     mediaElement.addEventListener("timeupdate", timeupdate);
