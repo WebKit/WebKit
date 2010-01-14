@@ -1,3 +1,23 @@
+2010-01-14  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Chromium Linux: don't stretch checkboxes
+        https://bugs.webkit.org/show_bug.cgi?id=28631
+
+        Make the default size for checkboxes/radio buttons also the maximum
+        size.
+
+        Based on patch by Adam Langley.
+
+        Test: fast/css/non-standard-checkbox-size.html
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::center):
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+        (WebCore::RenderThemeChromiumSkia::setCheckboxSize):
+        (WebCore::RenderThemeChromiumSkia::paintRadio):
+
 2010-01-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
