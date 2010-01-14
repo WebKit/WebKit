@@ -1,5 +1,11 @@
 2010-01-13  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (buildfix).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-01-13  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Sam Weinig & Darin Adler.
 
         Three quick fixes to UStringImpl.
