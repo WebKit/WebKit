@@ -13,16 +13,6 @@
 
         * platform/qt/Skipped:
 
-2010-01-13  Alexey Proskuryakov  <ap@apple.com>
-
-        Reviewed by Brady Eidson.
-
-        https://bugs.webkit.org/show_bug.cgi?id=33652
-        REGRESSION: Frames stop appearing after browsing for a while
-
-        * fast/frames/cached-frame-counter-expected.txt: Added.
-        * fast/frames/cached-frame-counter.html: Added.
-
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Add tests that show that onload still fires in various situations with
@@ -54,6 +44,16 @@
         to show that we now fire onload for the main frame in this case. (This
         is essentially the same as onload-bad-scheme-for-frame.html, but it
         still seems useful to have that new, more explicit, test.)
+
+2010-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33652
+        REGRESSION: Frames stop appearing after browsing for a while
+
+        * fast/frames/cached-frame-counter-expected.txt: Added.
+        * fast/frames/cached-frame-counter.html: Added.
 
 2010-01-14  Adam Roben  <aroben@apple.com>
 
