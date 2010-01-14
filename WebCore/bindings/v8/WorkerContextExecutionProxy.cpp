@@ -49,6 +49,7 @@
 #include "V8DOMMap.h"
 #include "V8Index.h"
 #include "V8Proxy.h"
+#include "V8WorkerContext.h"
 #include "V8WorkerContextEventListener.h"
 #if ENABLE(WEB_SOCKETS)
 #include "WebSocket.h"
@@ -109,7 +110,7 @@ WorkerContextExecutionProxy* WorkerContextExecutionProxy::retrieve()
     // Return 0 if the current executing context is not the worker context.
     if (global.IsEmpty())
         return 0;
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, global);
+    WorkerContext* workerContext = V8WorkerContext::toNative(global);
     return workerContext->script()->proxy();
 }
 

@@ -402,14 +402,12 @@ public:
 template <class P>
 P V8SVGPODTypeUtil::toSVGPODType(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> object, bool& ok)
 {
-    void *wrapper = V8DOMWrapper::convertToSVGPODTypeImpl(type, object);
-    if (wrapper == NULL) {
+    if (!V8DOMWrapper::isWrapperOfType(object, type)) {
         ok = false;
         return P();
-    } else {
-        ok = true;
-        return *static_cast<V8SVGPODTypeWrapper<P>*>(wrapper);
     }
+    ok = true;
+    return *V8SVGPODTypeWrapper<P>::toNative(v8::Handle<v8::Object>::Cast(object));
 }
 
 } // namespace WebCore

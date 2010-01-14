@@ -46,8 +46,10 @@
 #include "Range.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
+#include "V8Event.h"
 #include "V8Helpers.h"
 #include "V8Proxy.h"
+#include "V8Range.h"
 #elif USE(JSC)
 #include "bridge/c/c_utility.h"
 #endif
@@ -224,13 +226,13 @@ static bool getDragDataImpl(NPObject* npobj, int* eventId, WebDragData* data)
 
     // Get the current WebCore event.
     v8::Handle<v8::Value> currentEvent(getEvent(context));
-    Event* event = V8DOMWrapper::convertToNativeEvent(currentEvent);
+    Event* event = V8Event::toNative(v8::Handle<v8::Object>::Cast(currentEvent));
     if (!event)
         return false;
 
     // Check that the given npobj is that event.
     V8NPObject* object = reinterpret_cast<V8NPObject*>(npobj);
-    Event* given = V8DOMWrapper::convertToNativeEvent(object->v8Object);
+    Event* given = V8Event::toNative(object->v8Object);
     if (given != event)
         return false;
 
@@ -285,7 +287,7 @@ static bool getRangeImpl(NPObject* npobj, WebRange* range)
     if (V8ClassIndex::RANGE != V8DOMWrapper::domWrapperType(v8object))
         return false;
 
-    Range* native = V8DOMWrapper::convertToNativeObject<WebCore::Range>(V8ClassIndex::RANGE, v8object);
+    Range* native = V8Range::toNative(v8object);
     if (!native)
         return false;
 

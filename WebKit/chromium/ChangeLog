@@ -1,3 +1,15 @@
+2010-01-14  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove references to V8DOMWrapper::convertToNative*().
+
+        https://bugs.webkit.org/show_bug.cgi?id=33677
+
+        * src/WebBindings.cpp:
+        (WebKit::getDragDataImpl):
+        (WebKit::getRangeImpl):
+
 2010-01-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

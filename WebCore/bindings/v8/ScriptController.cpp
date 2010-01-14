@@ -51,6 +51,7 @@
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
+#include "V8Event.h"
 #include "V8IsolatedContext.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
@@ -169,7 +170,7 @@ bool ScriptController::processingUserGesture() const
 
     v8::Handle<v8::Object> global = v8Context->Global();
     v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
-    Event* event = V8DOMWrapper::convertToNativeEvent(jsEvent);
+    Event* event = V8DOMWrapper::isDOMEventWrapper(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
 
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.

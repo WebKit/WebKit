@@ -1,3 +1,26 @@
+2010-01-14  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Standardize the rest of the v8 bindings on toNative() wherever possible.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33677
+
+        * bindings/v8/NPV8Object.cpp:
+        (v8ObjectToNPObject): Special case for converting NPObjects, since there aren't genereated bindings for them.
+        * bindings/v8/NPV8Object.h:
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/V8Collection.cpp:
+        * bindings/v8/V8Collection.h:
+        (WebCore::toNativeCollection): Special case for converting V8Collections, since there aren't genereated bindings for them.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8SVGPODTypeWrapper.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+
 2010-01-14  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.

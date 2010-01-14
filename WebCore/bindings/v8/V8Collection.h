@@ -51,6 +51,11 @@ namespace WebCore {
         return V8DOMWrapper::convertToV8Object(type, implementation);
     }
 
+    template<class Collection> static Collection* toNativeCollection(v8::Local<v8::Object> object)
+    {
+        return reinterpret_cast<Collection*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+    }
+
     template<class T> static v8::Handle<v8::Value> getV8Object(PassRefPtr<T> implementation, v8::Local<v8::Value> implementationType)
     {
         return getV8Object(implementation.get(), implementationType);
@@ -64,7 +69,7 @@ namespace WebCore {
         ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
         V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(object);
         ASSERT(wrapperType != V8ClassIndex::NODE);
-        Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, object);
+        Collection* collection = toNativeCollection<Collection>(object);
         AtomicString propertyName = toAtomicWebCoreStringWithNullCheck(name);
         return getV8Object<ItemType>(collection->namedItem(propertyName), implementationType);
     }
@@ -84,26 +89,6 @@ namespace WebCore {
         return getNamedPropertyOfCollection<Collection, ItemType>(name, info.Holder(), info.Data());
     }
 
-    // A template of named property accessor of HTMLSelectElement and HTMLFormElement.
-    template<class Collection> static v8::Handle<v8::Value> nodeCollectionNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-    {
-        ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
-        v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
-
-        if (!value.IsEmpty())
-            return value;
-
-        // Search local callback properties next to find IDL defined
-        // properties.
-        if (info.Holder()->HasRealNamedCallbackProperty(name))
-            return notHandledByInterceptor();
-        Collection* collection = V8DOMWrapper::convertDOMWrapperToNode<Collection>(info.Holder());
-        String propertyName = toWebCoreString(name);
-        void* implementation = collection->namedItem(propertyName);
-        return getV8Object(implementation, info.Data());
-    }
-
     // Returns the property at the index of a collection.
     template<class Collection, class ItemType> static v8::Handle<v8::Value> getIndexedPropertyOfCollection(uint32_t index, v8::Local<v8::Object> object,
                                                                                                            v8::Local<v8::Value> implementationType)
@@ -112,7 +97,7 @@ namespace WebCore {
         ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
         V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(object);
         ASSERT(wrapperType != V8ClassIndex::NODE);
-        Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, object);
+        Collection* collection = toNativeCollection<Collection>(object);
         return getV8Object<ItemType>(collection->item(index), implementationType);
     }
 
@@ -127,7 +112,7 @@ namespace WebCore {
     {
         ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
         ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
-        Collection* collection = V8DOMWrapper::convertDOMWrapperToNode<Collection>(info.Holder());
+        Collection* collection = toNativeCollection<Collection>(info.Holder());
         int length = collection->length();
         v8::Handle<v8::Array> properties = v8::Array::New(length);
         for (int i = 0; i < length; ++i) {
@@ -142,8 +127,7 @@ namespace WebCore {
     template<class Collection> static v8::Handle<v8::Array> collectionIndexedPropertyEnumerator(const v8::AccessorInfo& info)
     {
         ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(info.Holder());
-        Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, info.Holder());
+        Collection* collection = toNativeCollection<Collection>(info.Holder());
         int length = collection->length();
         v8::Handle<v8::Array> properties = v8::Array::New(length);
         for (int i = 0; i < length; ++i) {
@@ -160,8 +144,7 @@ namespace WebCore {
     {
         // FIXME: assert that object must be a collection type
         ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(info.Holder());
-        Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, info.Holder());
+        Collection* collection = toNativeCollection<Collection>(info.Holder());
         String result = collection->item(index);
         return v8StringOrNull(result);
     }
@@ -172,8 +155,7 @@ namespace WebCore {
     {
         // FIXME: assert that object must be a collection type
         ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(info.Holder());
-        Collection* collection = V8DOMWrapper::convertToNativeObject<Collection>(wrapperType, info.Holder());
+        Collection* collection = toNativeCollection<Collection>(info.Holder());
         String result = collection->item(index);
         return v8String(result);
     }

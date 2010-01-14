@@ -497,7 +497,7 @@ DOMWindow* V8Proxy::retrieveWindow(v8::Handle<v8::Context> context)
     ASSERT(!global.IsEmpty());
     global = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, global);
     ASSERT(!global.IsEmpty());
-    return V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, global);
+    return V8DOMWindow::toNative(global);
 }
 
 Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
