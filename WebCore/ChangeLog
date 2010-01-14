@@ -1,3 +1,14 @@
+2010-01-14  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ENABLE(XSLT) guard to TransformSourceLibxslt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=33665
+
+        TransformSource is available only when ENABLE(XSLT) guard is true.
+
+        * dom/TransformSourceLibxslt.cpp:
+
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Treat all synchronous loads equally in FrameLoader::loadSubframe
