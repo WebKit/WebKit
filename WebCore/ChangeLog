@@ -1,3 +1,12 @@
+2010-01-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Scrolling of Timeline Page was broken by fix for bug 33470.
+        https://bugs.webkit.org/show_bug.cgi?id=33666
+
+        * inspector/front-end/inspector.css:
+
 2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Unreviewed fix of builds with the --no-svg switch.
