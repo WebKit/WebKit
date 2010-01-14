@@ -69,6 +69,7 @@ void CachedPage::restore(Page* page)
 {
     ASSERT(m_cachedMainFrame);
     ASSERT(page && page->mainFrame() && page->mainFrame() == m_cachedMainFrame->view()->frame());
+    ASSERT(!page->frameCount());
 
     m_cachedMainFrame->open();
     

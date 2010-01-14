@@ -132,8 +132,8 @@ namespace WebCore {
         PageGroup* groupPtr() { return m_group; } // can return 0
 
         void incrementFrameCount() { ++m_frameCount; }
-        void decrementFrameCount() { --m_frameCount; }
-        int frameCount() const { return m_frameCount; }
+        void decrementFrameCount() { ASSERT(m_frameCount); --m_frameCount; }
+        int frameCount() const { checkFrameCountConsistency(); return m_frameCount; }
 
         Chrome* chrome() const { return m_chrome.get(); }
         SelectionController* dragCaretController() const { return m_dragCaretController.get(); }
@@ -243,6 +243,12 @@ namespace WebCore {
 #endif
     private:
         void initGroup();
+
+#if ASSERT_DISABLED
+        void checkFrameCountConsistency() const { }
+#else
+        void checkFrameCountConsistency() const;
+#endif
 
         OwnPtr<Chrome> m_chrome;
         OwnPtr<SelectionController> m_dragCaretController;

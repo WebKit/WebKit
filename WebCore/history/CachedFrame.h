@@ -31,15 +31,13 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    
-    class CachedFrame;
-    class CachedFramePlatformData;
-    class DOMWindow;
-    class Document;
-    class DocumentLoader;
-    class Frame;
-    class FrameView;
-    class Node;
+
+class CachedFrame;
+class CachedFramePlatformData;
+class Document;
+class DocumentLoader;
+class FrameView;
+class Node;
 
 typedef Vector<RefPtr<CachedFrame> > CachedFrameVector;
 

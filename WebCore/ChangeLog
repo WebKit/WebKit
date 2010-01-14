@@ -1,3 +1,35 @@
+2010-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33652
+        REGRESSION: Frames stop appearing after browsing for a while
+
+        <rdar://problem/7308312> REGRESSION: iBench gets slower after several runs
+
+        I do not know how not creating renderers for frames could make iBench slower, but it did.
+
+        Test: fast/frames/cached-frame-counter.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): A frame that's cached is moved away from Page,
+        so decrement frame count here.
+        (WebCore::CachedFrame::open): Increase frame count when a frame is restored.
+
+        * history/CachedFrame.h: Remove unneeded forward declarations.
+
+        * history/CachedPage.h: Ditto.
+
+        * history/CachedPage.cpp: (WebCore::CachedPage::restore): Assert that page frame count is
+        zero prior to restoring a page from b/f cache.
+        
+        * page/Page.cpp: (WebCore::Page::checkFrameCountConsistency): A debug-only method to
+        check that frame count stored in Page matches the number of frames in frame tree.
+
+        * page/Page.h:
+        (WebCore::Page::decrementFrameCount): Assert that frame count is positive.
+        (WebCore::Page::frameCount): Call checkFrameCountConsistency().
+
 2010-01-14  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fixes.

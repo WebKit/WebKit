@@ -775,4 +775,16 @@ void Page::didStopPlugin(HaltablePlugin* obj)
         m_pluginHalter->didStopPlugin(obj);
 }
 
+#if !ASSERT_DISABLED
+void Page::checkFrameCountConsistency() const
+{
+    ASSERT(m_frameCount >= 0);
+
+    int frameCount = 0;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        ++frameCount;
+
+    ASSERT(m_frameCount + 1 == frameCount);
+}
+#endif
 } // namespace WebCore
