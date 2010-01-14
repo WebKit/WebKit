@@ -48,7 +48,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8Node::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.addEventListener()");
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
+    Node* node = V8Node::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8Node::addEventListenerCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8Node::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.removeEventListener()");
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args.Holder());
+    Node* node = V8Node::toNative(args.Holder());
 
     // It is possbile that the owner document of the node is detached
     // from the frame.
@@ -84,10 +84,10 @@ v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.insertBefore");
     v8::Handle<v8::Object> holder = args.Holder();
-    Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
+    Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
-    Node* refChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1])) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* refChild = V8Node::HasInstance(args[1]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
     bool success = imp->insertBefore(newChild, refChild, ec, true);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -103,10 +103,10 @@ v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.replaceChild");
     v8::Handle<v8::Object> holder = args.Holder();
-    Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
+    Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
-    Node* oldChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1])) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* oldChild = V8Node::HasInstance(args[1]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
     bool success = imp->replaceChild(newChild, oldChild, ec, true);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -121,9 +121,9 @@ v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.removeChild");
     v8::Handle<v8::Object> holder = args.Holder();
-    Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
+    Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
-    Node* oldChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* oldChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->removeChild(oldChild, ec);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -139,9 +139,9 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.appendChild");
     v8::Handle<v8::Object> holder = args.Holder();
-    Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
+    Node* imp = V8Node::toNative(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->appendChild(newChild, ec, true );
     if (ec) {
         V8Proxy::setDOMException(ec);

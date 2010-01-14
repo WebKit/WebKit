@@ -53,7 +53,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8Element::setAttributeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttribute()");
-    Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
+    Element* element = V8Element::toNative(args.Holder());
     String name = toWebCoreString(args[0]);
     String value = toWebCoreString(args[1]);
 
@@ -74,8 +74,8 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeCallback(const v8::Arguments& a
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(v8::Handle<v8::Object>::Cast(args[0]));
-    Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
+    Attr* newAttr = V8Attr::toNative(v8::Handle<v8::Object>::Cast(args[0]));
+    Element* element = V8Element::toNative(args.Holder());
 
     if (!V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), element, newAttr->name(), newAttr->value()))
         return v8::Undefined();
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeCallback(const v8::Arguments& a
 v8::Handle<v8::Value> V8Element::setAttributeNSCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Element.setAttributeNS()");
-    Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
+    Element* element = V8Element::toNative(args.Holder());
     String namespaceURI = toWebCoreStringWithNullCheck(args[0]);
     String qualifiedName = toWebCoreString(args[1]);
     String value = toWebCoreString(args[2]);
@@ -113,8 +113,8 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeNSCallback(const v8::Arguments&
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(v8::Handle<v8::Object>::Cast(args[0]));
-    Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
+    Attr* newAttr = V8Attr::toNative(v8::Handle<v8::Object>::Cast(args[0]));
+    Element* element = V8Element::toNative(args.Holder());
 
     if (!V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), element, newAttr->name(), newAttr->value()))
         return v8::Undefined();

@@ -43,7 +43,7 @@ namespace WebCore {
 
 void V8Attr::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    Attr* imp = V8DOMWrapper::convertDOMWrapperToNode<Attr>(info.Holder());
+    Attr* imp = V8Attr::toNative(info.Holder());
     String attrValue = toWebCoreStringWithNullCheck(value);
     Element* ownerElement = imp->ownerElement();
 

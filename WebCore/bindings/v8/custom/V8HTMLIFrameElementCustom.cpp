@@ -44,7 +44,7 @@ using namespace HTMLNames;
 
 void V8HTMLIFrameElement::srcAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    HTMLIFrameElement* iframe = V8DOMWrapper::convertDOMWrapperToNode<HTMLIFrameElement>(info.Holder());
+    HTMLIFrameElement* iframe = V8HTMLIFrameElement::toNative(info.Holder());
     String v = toWebCoreStringWithNullCheck(value);
 
     if (!V8BindingSecurity::allowSettingFrameSrcToJavascriptUrl(V8BindingState::Only(), iframe, v))

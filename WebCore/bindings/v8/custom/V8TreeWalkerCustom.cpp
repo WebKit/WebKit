@@ -58,7 +58,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ScriptState* s
 v8::Handle<v8::Value> V8TreeWalker::parentNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.parentNode()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->parentNode(&state);
@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8TreeWalker::parentNodeCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8TreeWalker::firstChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.firstChild()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->firstChild(&state);
@@ -78,7 +78,7 @@ v8::Handle<v8::Value> V8TreeWalker::firstChildCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8TreeWalker::lastChildCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.lastChild()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->lastChild(&state);
@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8TreeWalker::lastChildCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8TreeWalker::nextNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.nextNode()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->nextNode(&state);
@@ -98,7 +98,7 @@ v8::Handle<v8::Value> V8TreeWalker::nextNodeCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8TreeWalker::previousNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.previousNode()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->previousNode(&state);
@@ -108,7 +108,7 @@ v8::Handle<v8::Value> V8TreeWalker::previousNodeCallback(const v8::Arguments& ar
 v8::Handle<v8::Value> V8TreeWalker::nextSiblingCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.nextSibling()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->nextSibling(&state);
@@ -118,7 +118,7 @@ v8::Handle<v8::Value> V8TreeWalker::nextSiblingCallback(const v8::Arguments& arg
 v8::Handle<v8::Value> V8TreeWalker::previousSiblingCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TreeWalker.previousSibling()");
-    TreeWalker* treeWalker = V8DOMWrapper::convertToNativeObject<TreeWalker>(V8ClassIndex::TREEWALKER, args.Holder());
+    TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
     ScriptState state;
     RefPtr<Node> result = treeWalker->previousSibling(&state);

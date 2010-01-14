@@ -43,7 +43,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.NamedNodeMap.IndexedPropertyGetter");
-    NamedNodeMap* imp = V8DOMWrapper::convertToNativeObject<NamedNodeMap>(V8ClassIndex::NAMEDNODEMAP, info.Holder());
+    NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->item(index);
     if (!result)
         return notHandledByInterceptor();
@@ -64,7 +64,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
         return notHandledByInterceptor();
 
     // Finally, search the DOM.
-    NamedNodeMap* imp = V8DOMWrapper::convertToNativeObject<NamedNodeMap>(V8ClassIndex::NAMEDNODEMAP, info.Holder());
+    NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
     if (!result)
         return notHandledByInterceptor();

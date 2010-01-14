@@ -59,9 +59,9 @@ v8::Handle<v8::Value> V8XSLTProcessor::importStylesheetCallback(const v8::Argume
     if (!V8Node::HasInstance(args[0]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    Node* node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     imp->importStylesheet(node);
     return v8::Undefined();
 }
@@ -73,10 +73,10 @@ v8::Handle<v8::Value> V8XSLTProcessor::transformToFragmentCallback(const v8::Arg
     if (!V8Node::HasInstance(args[0]) || !V8Document::HasInstance(args[1]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
-    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
-    Document* owner = V8DOMWrapper::convertDOMWrapperToNode<Document>(v8::Handle<v8::Object>::Cast(args[1]));
+    Node* source = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
+    Document* owner = V8Document::toNative(v8::Handle<v8::Object>::Cast(args[1]));
     RefPtr<DocumentFragment> result = imp->transformToFragment(source, owner);
     return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
@@ -89,9 +89,9 @@ v8::Handle<v8::Value> V8XSLTProcessor::transformToDocumentCallback(const v8::Arg
     if (!V8Node::HasInstance(args[0]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
-    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    Node* source = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (!source)
         return v8::Undefined();
 
@@ -109,7 +109,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallback(const v8::Arguments&
     if (isUndefinedOrNull(args[1]) || isUndefinedOrNull(args[2]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
     String namespaceURI = toWebCoreString(args[0]);
     String localName = toWebCoreString(args[1]);
@@ -126,7 +126,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallback(const v8::Arguments&
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
     String namespaceURI = toWebCoreString(args[0]);
     String localName = toWebCoreString(args[1]);
@@ -143,7 +143,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::removeParameterCallback(const v8::Argumen
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();
 
-    XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
+    XSLTProcessor* imp = V8XSLTProcessor::toNative(args.Holder());
 
     String namespaceURI = toWebCoreString(args[0]);
     String localName = toWebCoreString(args[1]);

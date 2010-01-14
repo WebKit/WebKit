@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8HTMLDocument::namedPropertyGetter(v8::Local<v8::String> 
             return value;
     }
 
-    HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(info.Holder());
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
 
     // Fast case for named elements that are not there.
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
@@ -116,7 +116,7 @@ static String writeHelperGetString(const v8::Arguments& args)
 v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.write()");
-    HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
     htmlDocument->write(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
@@ -125,7 +125,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.writeln()");
-    HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
     htmlDocument->writeln(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
@@ -134,7 +134,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.open()");
-    HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(args.Holder());
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
 
     if (args.Length() > 2) {
         if (Frame* frame = htmlDocument->frame()) {
@@ -176,7 +176,7 @@ v8::Handle<v8::Value> V8HTMLDocument::allAccessorGetter(v8::Local<v8::String> na
     INC_STATS("DOM.HTMLDocument.all._get");
     v8::HandleScope scope;
     v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(holder);
+    HTMLDocument* htmlDocument = V8HTMLDocument::toNative(holder);
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, htmlDocument->all());
 }
 

@@ -46,7 +46,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8MessagePort::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.addEventListener()");
-    MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
+    MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(messagePort, args[1], false, ListenerFindOrCreate);
     if (listener) {
         String type = toWebCoreString(args[0]);
@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8MessagePort::addEventListenerCallback(const v8::Argument
 v8::Handle<v8::Value> V8MessagePort::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.removeEventListener()");
-    MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
+    MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(messagePort, args[1], false, ListenerFindOnly);
     if (listener) {
         String type = toWebCoreString(args[0]);
@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8MessagePort::removeEventListenerCallback(const v8::Argum
 v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.postMessage");
-    MessagePort* messagePort = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
+    MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(toWebCoreString(args[0]));
     MessagePortArray portArray;
     if (args.Length() > 1) {
@@ -129,7 +129,7 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& portArray
             throwError("MessagePortArray argument must contain only MessagePorts");
             return false;
         }
-        portArray[i] = V8DOMWrapper::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, v8::Handle<v8::Object>::Cast(port));
+        portArray[i] = V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(port));
     }
     return true;
 }

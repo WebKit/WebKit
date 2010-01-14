@@ -60,7 +60,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
 v8::Handle<v8::Value> V8NodeIterator::nextNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.NodeIterator.nextNode()");
-    NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
+    NodeIterator* nodeIterator = V8NodeIterator::toNative(args.Holder());
 
     ExceptionCode ec = 0;
     ScriptState state;
@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8NodeIterator::nextNodeCallback(const v8::Arguments& args
 v8::Handle<v8::Value> V8NodeIterator::previousNodeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.NodeIterator.previousNode()");
-    NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
+    NodeIterator* nodeIterator = V8NodeIterator::toNative(args.Holder());
 
     ExceptionCode ec = 0;
     ScriptState state;

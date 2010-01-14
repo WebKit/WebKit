@@ -161,8 +161,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
         return notHandledByInterceptor();
 
     // Search the style declaration.
-    CSSStyleDeclaration* imp =
-        V8DOMWrapper::convertToNativeObject<CSSStyleDeclaration>(V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
+    CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     CSSPropertyInfo* propInfo = cssPropertyInfo(name);
 
     // Do not handle non-property names.
@@ -195,9 +194,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
 v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertySetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertySetter");
-    CSSStyleDeclaration* imp =
-        V8DOMWrapper::convertToNativeObject<CSSStyleDeclaration>(
-            V8ClassIndex::CSSSTYLEDECLARATION, info.Holder());
+    CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     CSSPropertyInfo* propInfo = cssPropertyInfo(name);
     if (!propInfo)
         return notHandledByInterceptor();

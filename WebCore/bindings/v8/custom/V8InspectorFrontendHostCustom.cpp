@@ -42,6 +42,7 @@
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -53,7 +54,7 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::searchCallback(const v8::Argument
     if (args.Length() < 2)
         return v8::Undefined();
 
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    Node* node = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0]));
     if (!node)
         return v8::Undefined();
 

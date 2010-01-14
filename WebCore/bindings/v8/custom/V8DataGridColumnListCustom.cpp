@@ -53,7 +53,7 @@ NAMED_PROPERTY_GETTER(DataGridColumnList)
         return notHandledByInterceptor();
     
     // Finally, look up a column by name.
-    DataGridColumnList* imp = V8DOMWrapper::convertToNativeObject<DataGridColumnList>(V8ClassIndex::DATAGRIDCOLUMNLIST, info.Holder());
+    DataGridColumnList* imp = V8DataGridColumnList::toNative(info.Holder());
     DataGridColumn* result = imp->itemWithName(toWebCoreString(name));
     if (!result)
         return notHandledByInterceptor();

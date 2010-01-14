@@ -48,7 +48,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8DOMApplicationCache::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOMApplicationCache.addEventListener()");
-    DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, args.Holder());
+    DOMApplicationCache* appcache = V8DOMApplicationCache::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(appcache, args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -64,7 +64,7 @@ v8::Handle<v8::Value> V8DOMApplicationCache::addEventListenerCallback(const v8::
 v8::Handle<v8::Value> V8DOMApplicationCache::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOMApplicationCache.removeEventListener()");
-    DOMApplicationCache* appcache = V8DOMWrapper::convertToNativeObject<DOMApplicationCache>(V8ClassIndex::DOMAPPLICATIONCACHE, args.Holder());
+    DOMApplicationCache* appcache = V8DOMApplicationCache::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(appcache, args[1], false, ListenerFindOnly);
     if (listener) {

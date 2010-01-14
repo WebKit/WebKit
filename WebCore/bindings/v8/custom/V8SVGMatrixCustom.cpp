@@ -53,8 +53,8 @@ v8::Handle<v8::Value> V8SVGMatrix::multiplyCallback(const v8::Arguments& args)
     if (!V8SVGMatrix::HasInstance(args[0]))
         return throwError("secondMatrix argument was not a SVGMatrix");
 
-    TransformationMatrix m1 = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
-    TransformationMatrix m2 = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, v8::Handle<v8::Object>::Cast(args[0]));
+    TransformationMatrix m1 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
+    TransformationMatrix m2 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(v8::Handle<v8::Object>::Cast(args[0]));
 
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)));
 }
@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8SVGMatrix::multiplyCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGMatrix.inverse()");
-    TransformationMatrix matrix = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
+    TransformationMatrix matrix = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
     ExceptionCode ec = 0;
     TransformationMatrix result = matrix.inverse();
 
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8SVGMatrix::rotateFromVectorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGMatrix.rotateFromVector()");
-    TransformationMatrix matrix = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
+    TransformationMatrix matrix = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
     ExceptionCode ec = 0;
     float x = toFloat(args[0]);
     float y = toFloat(args[1]);

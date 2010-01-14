@@ -63,7 +63,7 @@ void V8Location::hashAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 {
     INC_STATS("DOM.Location.hash._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String hash = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -86,7 +86,7 @@ void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 {
     INC_STATS("DOM.Location.host._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String host = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -106,7 +106,7 @@ void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
 {
     INC_STATS("DOM.Location.hostname._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String hostname = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -123,7 +123,7 @@ void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 {
     INC_STATS("DOM.Location.href._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
 
     Frame* frame = imp->frame();
     if (!frame)
@@ -143,7 +143,7 @@ void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
 {
     INC_STATS("DOM.Location.pathname._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String pathname = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -160,7 +160,7 @@ void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 {
     INC_STATS("DOM.Location.port._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String port = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -177,7 +177,7 @@ void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
 {
     INC_STATS("DOM.Location.protocol._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String protocol = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -194,7 +194,7 @@ void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
 {
     INC_STATS("DOM.Location.search._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     String query = toWebCoreString(value);
 
     Frame* frame = imp->frame();
@@ -217,7 +217,7 @@ v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> nam
         // domain security check already
         return privateTemplate->GetFunction();
     }
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::reloadCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
@@ -235,7 +235,7 @@ v8::Handle<v8::Value> V8Location::replaceAccessorGetter(v8::Local<v8::String> na
         // domain security check already
         return privateTemplate->GetFunction();
     }
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::replaceCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
@@ -254,7 +254,7 @@ v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> nam
         // domain security check already
         return privateTemplate->GetFunction();
     }
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::assignCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
@@ -268,7 +268,7 @@ v8::Handle<v8::Value> V8Location::reloadCallback(const v8::Arguments& args)
 
     INC_STATS("DOM.Location.reload");
     v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
 
     Frame* frame = imp->frame();
     if (!frame || !ScriptController::isSafeScript(frame))
@@ -283,7 +283,7 @@ v8::Handle<v8::Value> V8Location::replaceCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.replace");
     v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
 
     Frame* frame = imp->frame();
     if (!frame)
@@ -304,7 +304,7 @@ v8::Handle<v8::Value> V8Location::assignCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.assign");
     v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
 
     Frame* frame = imp->frame();
     if (!frame)
@@ -335,7 +335,7 @@ v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.toString");
     v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
+    Location* imp = V8Location::toNative(holder);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return v8::Undefined();
     String result = imp->href();
@@ -346,7 +346,7 @@ bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::LOCATION);
     // Only allow same origin access
-    Location* imp =  V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, host);
+    Location* imp =  V8Location::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
 }
 
@@ -354,7 +354,7 @@ bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Va
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::LOCATION);
     // Only allow same origin access
-    Location* imp = V8DOMWrapper::convertToNativeObject<Location>(V8ClassIndex::LOCATION, host);
+    Location* imp = V8Location::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
 }
 

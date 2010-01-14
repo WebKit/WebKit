@@ -48,7 +48,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFrameSetElement.NamedPropertyGetter");
-    HTMLFrameSetElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameSetElement>(info.Holder());
+    HTMLFrameSetElement* imp = V8HTMLFrameSetElement::toNative(info.Holder());
     Node* frameNode = imp->children()->namedItem(v8StringToAtomicWebCoreString(name));
     if (frameNode && frameNode->hasTagName(HTMLNames::frameTag)) {
         Document* doc = static_cast<HTMLFrameElement*>(frameNode)->contentDocument();

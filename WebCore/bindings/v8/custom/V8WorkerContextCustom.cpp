@@ -64,7 +64,7 @@ bool V8WorkerContext::WebSocketEnabled()
 
 v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singleShot)
 {
-    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
 
     int argumentCount = args.Length();
     if (argumentCount < 1)
@@ -119,7 +119,7 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
         urls.append(toWebCoreString(scriptUrl));
     }
 
-    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
 
     ExceptionCode ec = 0;
     workerContext->importScripts(urls, callerURL, callerLine, ec);
@@ -145,7 +145,7 @@ v8::Handle<v8::Value> V8WorkerContext::setIntervalCallback(const v8::Arguments& 
 v8::Handle<v8::Value> V8WorkerContext::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.addEventListener()");
-    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(workerContext, args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -161,7 +161,7 @@ v8::Handle<v8::Value> V8WorkerContext::addEventListenerCallback(const v8::Argume
 v8::Handle<v8::Value> V8WorkerContext::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.WorkerContext.removeEventListener()");
-    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
+    WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(workerContext, args[1], false, ListenerFindOnly);
     if (listener) {

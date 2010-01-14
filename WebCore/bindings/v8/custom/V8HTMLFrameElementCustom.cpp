@@ -44,7 +44,7 @@ using namespace HTMLNames;
 
 void V8HTMLFrameElement::srcAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
+    HTMLFrameElement* frame = V8HTMLFrameElement::toNative(info.Holder());
     String srcValue = toWebCoreStringWithNullCheck(value);
 
     if (!V8BindingSecurity::allowSettingFrameSrcToJavascriptUrl(V8BindingState::Only(), frame, srcValue))
@@ -55,7 +55,7 @@ void V8HTMLFrameElement::srcAccessorSetter(v8::Local<v8::String> name, v8::Local
 
 void V8HTMLFrameElement::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
+    HTMLFrameElement* frame = V8HTMLFrameElement::toNative(info.Holder());
     String locationValue = toWebCoreStringWithNullCheck(value);
 
     if (!V8BindingSecurity::allowSettingFrameSrcToJavascriptUrl(V8BindingState::Only(), frame, locationValue))

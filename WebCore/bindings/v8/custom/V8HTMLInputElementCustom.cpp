@@ -43,7 +43,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionStartAccessorGetter(v8::Local
 {
     INC_STATS("DOM.HTMLInputElement.selectionStart._get");
     v8::Handle<v8::Object> holder = info.Holder();
-    HTMLInputElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLInputElement>(holder);
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
         return throwError("Accessing selectionStart on an input element that cannot have a selection.");
@@ -56,7 +56,7 @@ void V8HTMLInputElement::selectionStartAccessorSetter(v8::Local<v8::String> name
 {
     INC_STATS("DOM.HTMLInputElement.selectionStart._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    HTMLInputElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLInputElement>(holder);
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection()) {
         throwError("Accessing selectionStart on an input element that cannot have a selection.");
@@ -69,7 +69,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionEndAccessorGetter(v8::Local<v
 {
     INC_STATS("DOM.HTMLInputElement.selectionEnd._get");
     v8::Handle<v8::Object> holder = info.Holder();
-    HTMLInputElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLInputElement>(holder);
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
         return throwError("Accessing selectionEnd on an input element that cannot have a selection.");
@@ -82,7 +82,7 @@ void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.HTMLInputElement.selectionEnd._set");
     v8::Handle<v8::Object> holder = info.Holder();
-    HTMLInputElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLInputElement>(holder);
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection()) {
         throwError("Accessing selectionEnd on an input element that cannot have a selection.");
@@ -96,7 +96,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Ar
 {
     INC_STATS("DOM.HTMLInputElement.setSelectionRange");
     v8::Handle<v8::Object> holder = args.Holder();
-    HTMLInputElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLInputElement>(holder);
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
         return throwError("Calling setSelectionRange on an input element that cannot have a selection.");

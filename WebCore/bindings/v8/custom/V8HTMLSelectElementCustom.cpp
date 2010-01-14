@@ -48,7 +48,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8HTMLSelectElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLSelectElement.NamedPropertyGetter");
-    HTMLSelectElement* select = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());
+    HTMLSelectElement* select = V8HTMLSelectElement::toNative(info.Holder());
     v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
 
     if (!value.IsEmpty())
@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index,
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
-    RefPtr<Node> result = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder())->item(index);
+    RefPtr<Node> result = V8HTMLSelectElement::toNative(info.Holder())->item(index);
     if (!result)
         return notHandledByInterceptor();
 
@@ -87,21 +87,21 @@ v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index,
 v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLSelectElement.IndexedPropertySetter");
-    HTMLSelectElement* select = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());
+    HTMLSelectElement* select = V8HTMLSelectElement::toNative(info.Holder());
     return toOptionsCollectionSetter(index, value, select);
 }
 
 v8::Handle<v8::Value> V8HTMLSelectElement::removeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLSelectElement.remove");
-    HTMLSelectElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(args.Holder());
+    HTMLSelectElement* imp = V8HTMLSelectElement::toNative(args.Holder());
     return removeElement(imp, args);
 }
 
 v8::Handle<v8::Value> removeElement(HTMLSelectElement* imp, const v8::Arguments& args) 
 {
     if (V8HTMLOptionElement::HasInstance(args[0])) {
-        HTMLOptionElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(v8::Handle<v8::Object>::Cast(args[0]));
+        HTMLOptionElement* element = V8HTMLOptionElement::toNative(v8::Handle<v8::Object>::Cast(args[0]));
         imp->remove(element->index());
         return v8::Undefined();
     }

@@ -86,21 +86,21 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedPropertyGetter(v8::Local<v8::Str
         return v8::Handle<v8::Value>();
 
     // Finally, search the DOM structure.
-    HTMLAllCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLAllCollection>(V8ClassIndex::HTMLALLCOLLECTION, info.Holder());
+    HTMLAllCollection* imp = V8HTMLAllCollection::toNative(info.Holder());
     return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
 }
 
 v8::Handle<v8::Value> V8HTMLAllCollection::itemCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLAllCollection.item()");
-    HTMLAllCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLAllCollection>(V8ClassIndex::HTMLALLCOLLECTION, args.Holder());
+    HTMLAllCollection* imp = V8HTMLAllCollection::toNative(args.Holder());
     return getItem(imp, args[0]);
 }
 
 v8::Handle<v8::Value> V8HTMLAllCollection::namedItemCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLAllCollection.namedItem()");
-    HTMLAllCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLAllCollection>(V8ClassIndex::HTMLALLCOLLECTION, args.Holder());
+    HTMLAllCollection* imp = V8HTMLAllCollection::toNative(args.Holder());
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]));
 
     if (result.IsEmpty())
@@ -115,7 +115,7 @@ v8::Handle<v8::Value> V8HTMLAllCollection::callAsFunctionCallback(const v8::Argu
     if (args.Length() < 1)
         return v8::Undefined();
 
-    HTMLAllCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLAllCollection>(V8ClassIndex::HTMLALLCOLLECTION, args.Holder());
+    HTMLAllCollection* imp = V8HTMLAllCollection::toNative(args.Holder());
 
     if (args.Length() == 1)
         return getItem(imp, args[0]);

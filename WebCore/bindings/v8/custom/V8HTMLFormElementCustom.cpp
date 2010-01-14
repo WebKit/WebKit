@@ -43,7 +43,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8HTMLFormElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFormElement.IndexedPropertyGetter");
-    HTMLFormElement* form = V8DOMWrapper::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
+    HTMLFormElement* form = V8HTMLFormElement::toNative(info.Holder());
 
     RefPtr<Node> formElement = form->elements()->item(index);
     if (!formElement)
@@ -54,7 +54,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::indexedPropertyGetter(uint32_t index, c
 v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLFormElement.NamedPropertyGetter");
-    HTMLFormElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
+    HTMLFormElement* imp = V8HTMLFormElement::toNative(info.Holder());
     AtomicString v = v8StringToAtomicWebCoreString(name);
 
     // Call getNamedElements twice, first time check if it has a value
@@ -83,7 +83,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
 v8::Handle<v8::Value> V8HTMLFormElement::submitCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLFormElement.submit()");
-    HTMLFormElement* form = V8DOMWrapper::convertDOMWrapperToNative<HTMLFormElement>(args.Holder());
+    HTMLFormElement* form = V8HTMLFormElement::toNative(args.Holder());
     Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
     if (!frame)
         return v8::Undefined();

@@ -96,7 +96,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
             return throwError("sqlArgs should be array or object!", V8Proxy::TypeError);
     }
 
-    SQLTransaction* transaction = V8DOMWrapper::convertToNativeObject<SQLTransaction>(V8ClassIndex::SQLTRANSACTION, args.Holder());
+    SQLTransaction* transaction = V8SQLTransaction::toNative(args.Holder());
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
 

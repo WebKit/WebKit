@@ -47,7 +47,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8AbstractWorker::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.AbstractWorker.addEventListener()");
-    AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());
+    AbstractWorker* worker = V8AbstractWorker::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(worker, args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8AbstractWorker::addEventListenerCallback(const v8::Argum
 v8::Handle<v8::Value> V8AbstractWorker::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.AbstractWorker.removeEventListener()");
-    AbstractWorker* worker = V8DOMWrapper::convertToNativeObject<AbstractWorker>(V8ClassIndex::ABSTRACTWORKER, args.Holder());
+    AbstractWorker* worker = V8AbstractWorker::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(worker, args[1], false, ListenerFindOnly);
     if (listener) {

@@ -43,7 +43,7 @@ namespace WebCore {
 // Get an array containing the names of indexed properties in a collection.
 v8::Handle<v8::Array> V8Storage::namedPropertyEnumerator(const v8::AccessorInfo& info)
 {
-    Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, info.Holder());
+    Storage* storage = V8Storage::toNative(info.Holder());
     unsigned int length = storage->length();
     v8::Handle<v8::Array> properties = v8::Array::New(length);
     for (unsigned int i = 0; i < length; ++i) {
@@ -58,7 +58,7 @@ v8::Handle<v8::Array> V8Storage::namedPropertyEnumerator(const v8::AccessorInfo&
 
 static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
-    Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, info.Holder());
+    Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 
     if (storage->contains(name) && name != "length")
@@ -82,7 +82,7 @@ v8::Handle<v8::Value> V8Storage::namedPropertyGetter(v8::Local<v8::String> name,
 
 static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Local<v8::Value> v8Value, const v8::AccessorInfo& info)
 {
-    Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, info.Holder());
+    Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
     String value = toWebCoreString(v8Value);
 
@@ -117,7 +117,7 @@ v8::Handle<v8::Value> V8Storage::namedPropertySetter(v8::Local<v8::String> name,
 
 static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
-    Storage* storage = V8DOMWrapper::convertToNativeObject<Storage>(V8ClassIndex::STORAGE, info.Holder());
+    Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
     
     if (storage->contains(name)) {

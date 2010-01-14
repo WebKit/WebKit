@@ -46,7 +46,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
 {
     INC_STATS("DOM.HTMLCanvasElement.context");
     v8::Handle<v8::Object> holder = args.Holder();
-    HTMLCanvasElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(holder);
+    HTMLCanvasElement* imp = V8HTMLCanvasElement::toNative(holder);
     String contextId = toWebCoreString(args[0]);
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(3D_CANVAS)

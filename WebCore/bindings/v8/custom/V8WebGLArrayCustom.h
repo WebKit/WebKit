@@ -75,9 +75,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args,
         if (argLen > 3)
             return throwError("Wrong number of arguments to new WebGL<T>Array(WebGLArrayBuffer, int, int)");
 
-        WebGLArrayBuffer* buf =
-                V8DOMWrapper::convertToNativeObject<WebGLArrayBuffer>(V8ClassIndex::WEBGLARRAYBUFFER,
-                                                                      args[0]->ToObject());
+        WebGLArrayBuffer* buf = V8WebGLArrayBuffer::toNative(args[0]->ToObject());
         if (buf == NULL)
             return throwError("Could not convert argument 0 to a WebGLArrayBuffer");
         bool ok;
@@ -155,7 +153,7 @@ v8::Handle<v8::Value> getWebGLArrayElement(const v8::Arguments& args,
         V8Proxy::setDOMException(SYNTAX_ERR);
         return notHandledByInterceptor();
     }
-    T* array = V8DOMWrapper::convertToNativeObject<T>(wrapperType, args.Holder());
+    T* array = reinterpret_cast<T*>(args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     if (index >= array->length())
         return v8::Undefined();
     ElementType result;
@@ -193,7 +191,7 @@ v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args,
         return notHandledByInterceptor();
     }
 
-    CPlusPlusArrayType* array = V8DOMWrapper::convertToNativeObject<CPlusPlusArrayType>(wrapperType, args.Holder());
+    CPlusPlusArrayType* array = JavaScriptWrapperArrayType::toNative(args.Holder());
 
     if (args.Length() == 2 && args[0]->IsInt32()) {
         // void set(in unsigned long index, in {long|float} value);
@@ -204,7 +202,7 @@ v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args,
 
     if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
         // void set(in WebGL<T>Array array, [Optional] in unsigned long offset);
-        CPlusPlusArrayType* src = V8DOMWrapper::convertToNativeObject<CPlusPlusArrayType>(wrapperType, args[0]->ToObject());
+        CPlusPlusArrayType* src = JavaScriptWrapperArrayType::toNative(args[0]->ToObject());
         uint32_t offset = 0;
         if (args.Length() == 2)
             offset = toInt32(args[1]);

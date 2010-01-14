@@ -47,7 +47,7 @@ namespace WebCore {
 v8::Handle<v8::Value> V8SVGElementInstance::addEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGElementInstance.AddEventListener()");
-    SVGElementInstance* instance = V8DOMWrapper::convertDOMWrapperToNative<SVGElementInstance>(args.Holder());
+    SVGElementInstance* instance = V8SVGElementInstance::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(instance, args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8SVGElementInstance::addEventListenerCallback(const v8::A
 v8::Handle<v8::Value> V8SVGElementInstance::removeEventListenerCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGElementInstance.RemoveEventListener()");
-    SVGElementInstance* instance = V8DOMWrapper::convertDOMWrapperToNative<SVGElementInstance>(args.Holder());
+    SVGElementInstance* instance = V8SVGElementInstance::toNative(args.Holder());
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(instance, args[1], false, ListenerFindOnly);
     if (listener) {

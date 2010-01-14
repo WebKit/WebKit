@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Custom::v8WorkerConstructorCallback(const v8::Arguments&
 v8::Handle<v8::Value> V8Worker::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.postMessage");
-    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());
+    Worker* worker = V8Worker::toNative(args.Holder());
     RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(toWebCoreString(args[0]));
     MessagePortArray portArray;
     if (args.Length() > 1) {

@@ -35,7 +35,7 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    Document* document = V8DOMWrapper::convertDOMWrapperToNative<Document>(info.Holder());
+    Document* document = V8Document::toNative(info.Holder());
     if (!document->frame())
         return v8::Null();
 
@@ -45,7 +45,7 @@ v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> n
 
 void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    Document* document = V8DOMWrapper::convertDOMWrapperToNative<Document>(info.Holder());
+    Document* document = V8Document::toNative(info.Holder());
     if (!document->frame())
         return;
 
