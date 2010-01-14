@@ -1,3 +1,30 @@
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        [DnD] effectAllowed and dropEffect can be set to bogus values.
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=33635>.
+        
+        Added a test to check the handling of setting effectAllowed and
+        dropEffect to bogus values (that it gets ignored), and updated results
+        to drag-and-drop because it uses a dummy value.
+        
+        Also, fixed a few tests that broke when the default dropEffect was set to
+        none to match the spec.
+
+        * fast/events/bogus-dropEffect-effectAllowed-expected.txt: Added.
+        * fast/events/bogus-dropEffect-effectAllowed.html: Added.
+        * platform/gtk/fast/events/bogus-dropEffect-effectAllowed-expected.txt: Added.
+        * platform/qt/fast/events/bogus-dropEffect-effectAllowed.html: Added.
+
+        * fast/events/drag-and-drop-expected.txt:
+        * fast/events/drag-and-drop.html:
+        * editing/pasteboard/script-tests/files-during-page-drags.js:
+        * editing/pasteboard/get-data-text-plain-drop.html:
+        * fast/events/resources/drag-in-frames-right.html:
+        * http/tests/local/resources/send-dragged-file.js:
+        * http/tests/misc/bubble-drag-events.html:
+
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Add new test from r53277 to the GTK+ Skipped list

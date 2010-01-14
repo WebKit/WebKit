@@ -13,6 +13,7 @@ function testDragEventBubbling(dragTargetId, dragTargetParentId)
     }
     dragTargetParent.ondragover = function() {
         log("ondragover");
+        event.dataTransfer.dropEffect = "copy";
         event.preventDefault();  // Cancel the drag, so we get the drop.
     }
     dragTargetParent.ondragleave = function() {

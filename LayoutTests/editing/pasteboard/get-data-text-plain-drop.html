@@ -20,6 +20,7 @@ var handleDrop = function(e) {
 }
 
 var handleDrag = function(e) {
+    e.dataTransfer.dropEffect = "copy";
     // Cancel the drag, so we get the drop.
     e.preventDefault();
 }

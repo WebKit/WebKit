@@ -12,6 +12,7 @@ fileInput.addEventListener("dragenter", function() {
 }, false);
 
 fileInput.addEventListener("dragover", function() {
+    event.dataTransfer.dropEffect = "copy";
     event.preventDefault();
 }, false);
 

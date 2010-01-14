@@ -14,6 +14,7 @@ dragTarget.ondragenter = function() {
     event.dataTransfer.dropEffect = "copy";
 }
 dragTarget.ondragover = function() {
+    event.dataTransfer.dropEffect = "copy";
     event.preventDefault();
 }
 dragTarget.ondrop = function() {

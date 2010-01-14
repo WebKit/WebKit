@@ -1,3 +1,22 @@
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        [DnD] effectAllowed and dropEffect can be set to bogus values.
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=33635>.
+        
+        Test to make aure dropEffect and effectAllowed are being set to valid values
+        when they are being set (list of valid values given by HTML5 specification).
+        
+        Also, drive by change to initialize dropEffect to none (as described in spec).
+
+        Test: fast/events/bogus-dropEffect-effectAllowed.html
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard): Initialize m_dropEffect to "none".
+        (WebCore::Clipboard::setDropEffect): Check if dropEffect is being set to a valid value.
+        (WebCore::Clipboard::setEffectAllowed): Check if effectAllowed is being set to a valid value.
+
 2010-01-14  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

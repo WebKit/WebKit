@@ -22,7 +22,7 @@ function log(message) {
      ondragstart="alert('ondragstart right target')"
      ondragend="alert('ondragend right target')"
      ondragenter="log('ondragenter right target'); return false;"
-     ondragover="log('ondragover right target'); return false;"
+     ondragover="log('ondragover right target'); event.dataTransfer.dropEffect = 'copy'; return false;"
      ondragleave="log('ondragleave right target')"
      ondrop="log('ondrop right target')">
   <span style="position: relative; top: 50">And here</span>
