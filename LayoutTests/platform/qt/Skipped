@@ -204,9 +204,6 @@ http/tests/security/isolatedWorld
 http/tests/security/mixedContent
 http/tests/cache/subresource-failover-to-network.html
 
-# Missing layoutTestController.setUserStyleSheetLocation() and layoutTestController.setUserStyleSheetEnabled()
-http/tests/security/local-user-CSS-from-remote.html
-
 # Missing layoutTestController.evaluateInWebInspector()
 # https://bugs.webkit.org/show_bug.cgi?id=33096
 inspector/cookie-resource-match.html

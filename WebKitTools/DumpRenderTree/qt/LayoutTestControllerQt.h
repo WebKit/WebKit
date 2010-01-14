@@ -133,6 +133,8 @@ public slots:
 
     void waitForPolicyDelegate();
     void overridePreference(const QString& name, const QVariant& value);
+    void setUserStyleSheetLocation(const QString& url);
+    void setUserStyleSheetEnabled(bool enabled);
 
 private slots:
     void processWork();
@@ -151,6 +153,7 @@ private:
     bool m_handleErrorPages;
     bool m_loadFinished;
 
+    QUrl m_userStyleSheetLocation;
     QBasicTimer m_timeoutTimer;
     QWebFrame* m_topLoadingFrame;
     WebCore::DumpRenderTree* m_drt;
