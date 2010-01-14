@@ -1,3 +1,17 @@
+2010-01-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix websocket/tests/worker/worker-simple.html crash on Leopard Intel Debug (Tests) builder
+        https://bugs.webkit.org/show_bug.cgi?id=33581
+
+        unref m_workerContext when websocket is disconnected, so that avoid
+        keeping reference to workerContext longer than worker thread runs.
+
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+
 2010-01-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: selected, selectable, extended selectable, and multiple
