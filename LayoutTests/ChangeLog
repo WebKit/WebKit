@@ -1,3 +1,17 @@
+2010-01-13  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        JSON.stringify and JSON.parse needlessly process properties in the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=33053
+
+        Add tests that verify that properties in the prototype chain are ignored.
+
+        * fast/js/JSON-parse-expected.txt:
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/resources/JSON-parse.js:
+        * fast/js/resources/JSON-stringify.js:
+
 2010-01-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

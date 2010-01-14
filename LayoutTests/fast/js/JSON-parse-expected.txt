@@ -67,6 +67,10 @@ function (jsonObject) {
     }
 PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
+        return jsonObject.parse('{"__proto__":5}');
+    }
+PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+function (jsonObject) {
         return jsonObject.parse('{"a":5,}');
     }
 PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
@@ -433,6 +437,10 @@ function (jsonObject) {
 PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse(JSON.stringify(complexObject), log);
+    }
+PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+function (jsonObject) {
+        return jsonObject.parse('{"__proto__":{"a":5}}', log);
     }
 PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {

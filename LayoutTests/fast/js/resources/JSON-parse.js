@@ -65,6 +65,9 @@ function createTests() {
         return jsonObject.parse('{"a":5}');
     });
     result.push(function(jsonObject){
+        return jsonObject.parse('{"__proto__":5}');
+    });
+    result.push(function(jsonObject){
         return jsonObject.parse('{"a":5,}');
     });
     result[result.length - 1].throws = true;
@@ -395,6 +398,9 @@ function createTests() {
     });
     result.push(function(jsonObject){
         return jsonObject.parse(JSON.stringify(complexObject), log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse('{"__proto__":{"a":5}}', log);
     });
     var logOrderString;
     function logOrder(key, value) {
