@@ -1,5 +1,30 @@
 2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Remove six old tiger specific results, that are equal to the SL baseline now. Update one result, showing a marginal difference between Tiger/SL.
+        This is a follow-up commit for Dirks strokeBoundingBox() fixes -> should turn Tiger slave green again.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.png: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac-tiger/svg/W3C-SVG-1.1/paths-data-01-t-expected.checksum: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/paths-data-01-t-expected.png: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.checksum: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.png: Removed.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.txt: Removed.
+        * platform/mac-tiger/svg/custom/control-points-for-S-and-T-expected.checksum: Removed.
+        * platform/mac-tiger/svg/custom/control-points-for-S-and-T-expected.png: Removed.
+        * platform/mac-tiger/svg/custom/control-points-for-S-and-T-expected.txt: Removed.
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.checksum: Removed.
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.png: Removed.
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.txt: Removed.
+
+2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Oliver Hunt.
 
         Window size changes are not propagated down the render tree
