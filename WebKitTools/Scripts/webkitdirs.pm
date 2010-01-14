@@ -140,6 +140,9 @@ sub determineBaseProductDir
                 undef $baseProductDir unless $baseProductDir =~ /^\//;
             }
         }
+    } elsif (isSymbian()) {
+        # Shadow builds are not supported on Symbian
+        $baseProductDir = $sourceDir;
     }
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
@@ -1471,8 +1474,7 @@ sub buildQMakeProject($@)
     my $config = configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
     my $dir = File::Spec->canonpath(baseProductDir());
-    File::Path::mkpath($dir);
-    $dir = File::Spec->catfile($dir, $config);
+    $dir = File::Spec->catfile($dir, $config) unless isSymbian();
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
@@ -1493,7 +1495,7 @@ sub buildQMakeProject($@)
     my $dsMakefile = "Makefile.DerivedSources";
     # This is to overcome a problem of qmake when generating Makefiles with extra targets for windows.
     # The configuration doesn't matter for source generation, just use debug.
-    $dsMakefile .= ".Debug" if (isCygwin() || isWindows());
+    $dsMakefile .= ".Debug" if ((isCygwin() || isWindows()) && !isSymbian());
 
     print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/JavaScriptCore\n\n";
     if ($make eq "nmake") {
@@ -1543,6 +1545,10 @@ sub buildQMakeProject($@)
     if ($clean) {
       print "Calling '$make $makeargs distclean' in " . $dir . "\n\n";
       $result = system "$make $makeargs distclean";
+    } elsif (isSymbian()) {
+      print "\n\nWebKit is now configured for building, but you have to make\n";
+      print "a choice about the target yourself. To start the build run:\n\n";
+      print "    make release-armv5|debug-winscw|etc.\n\n";
     } else {
       print "Calling '$make $makeargs' in " . $dir . "\n\n";
       $result = system "$make $makeargs";

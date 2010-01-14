@@ -1,3 +1,17 @@
+2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add support for partial building on Symbian.
+
+        The build happens in the source directory as out of source builds are
+        not supported by qmake for Symbian.
+
+        Also the actual build isn't started but it is left to the developer
+        to choose the architecture/configuration.
+
+        * Scripts/webkitdirs.pm:
+
 2010-01-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
