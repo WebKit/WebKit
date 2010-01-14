@@ -1,3 +1,18 @@
+2010-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Add expected files for passing new tests.
+        Compared to the mac expected files and png files.
+
+        * platform/qt/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt: Added.
+        * platform/qt/fast/css/css3-space-in-nth-and-lang-expected.txt: Added.
+        * platform/qt/svg/custom/marker-opacity-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-content-expected.txt: Added.
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.txt: Added.
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * platform/qt/transforms/2d/transform-fixed-container-expected.txt: Added.
+
 2010-01-13  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Oliver Hunt.
