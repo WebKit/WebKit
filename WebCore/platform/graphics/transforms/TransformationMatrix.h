@@ -41,9 +41,10 @@
 #include <SkMatrix.h>
 #elif PLATFORM(WX) && USE(WXGC)
 #include <wx/graphics.h>
+#endif
+
 #if OS(WINDOWS)
 #include <windows.h>
-#endif
 #endif
 
 namespace WebCore {
