@@ -1,3 +1,28 @@
+2010-01-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7403736> REGRESSION (r49963,r49965): 8% Dromaeo Core DOM test regression
+
+        Adding isolated worlds support to the JSC bindings introduced a regression due to
+        additional map lookups.  Add a mechanism to quickly detect that a lookup is for the
+        'normal' world, and add fast paths to a couple of methods to check the normal world
+        first.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::Document::getWrapperCache):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::forgetDOMObject):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMWrapperWorld::isNormal):
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::IsolatedWorld::IsolatedWorld):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createWrapperCache):
+        * dom/Document.h:
+
 2010-01-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

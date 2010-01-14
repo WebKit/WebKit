@@ -156,7 +156,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 class IsolatedWorld : public DOMWrapperWorld {
 public:
     IsolatedWorld(JSGlobalData* globalData)
-        : DOMWrapperWorld(globalData)
+        : DOMWrapperWorld(globalData, false)
     {
         JSGlobalData::ClientData* clientData = globalData->clientData;
         ASSERT(clientData);

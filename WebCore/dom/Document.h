@@ -840,12 +840,7 @@ public:
     typedef JSC::WeakGCMap<WebCore::Node*, JSNode*> JSWrapperCache;
     typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
     JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
-    JSWrapperCache* getWrapperCache(DOMWrapperWorld* world)
-    {
-        if (JSWrapperCache* wrapperCache = m_wrapperCacheMap.get(world))
-            return wrapperCache;
-        return createWrapperCache(world);
-    }
+    JSWrapperCache* getWrapperCache(DOMWrapperWorld* world);
     JSWrapperCache* createWrapperCache(DOMWrapperWorld*);
 #endif
 
@@ -1181,6 +1176,7 @@ private:
 
 #if USE(JSC)
     JSWrapperCacheMap m_wrapperCacheMap;
+    JSWrapperCache* m_normalWorldWrapperCache;
 #endif
 
 #if ENABLE(DATABASE)

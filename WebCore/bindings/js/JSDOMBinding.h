@@ -144,7 +144,7 @@ namespace WebCore {
 
     class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
     public:
-        DOMWrapperWorld(JSC::JSGlobalData*);
+        DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
         ~DOMWrapperWorld();
 
         void rememberDocument(Document* document) { documentsWithWrappers.add(document); }
@@ -153,9 +153,12 @@ namespace WebCore {
         // FIXME: can we make this private?
         DOMObjectWrapperMap m_wrappers;
 
+        bool isNormal() const { return m_isNormal; }
+
     private:
         JSC::JSGlobalData* m_globalData;
         HashSet<Document*> documentsWithWrappers;
+        bool m_isNormal;
     };
 
     // Map from static HashTable instances to per-GlobalData ones.
@@ -187,7 +190,7 @@ namespace WebCore {
 
     public:
         WebCoreJSClientData(JSC::JSGlobalData* globalData)
-            : m_normalWorld(globalData)
+            : m_normalWorld(globalData, true)
         {
             m_worldSet.add(&m_normalWorld);
         }
