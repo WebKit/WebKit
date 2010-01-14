@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SystemInfo.h"
 
+#include <windows.h>
+
 namespace WebCore {
 
 bool isRunningOnVistaOrLater()

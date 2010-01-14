@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TransformationMatrix.h"
 
+#include <windows.h>
+
 namespace WebCore {
 
 TransformationMatrix::operator XFORM() const

@@ -1,3 +1,16 @@
+2010-01-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fixes.
+        Add forward declarations and additional includes of windows.h.
+
+        * platform/Cursor.h: Add forward declaration of HCURSOR. Move destructor implementation into cpp.
+        * platform/graphics/transforms/TransformationMatrix.h: Add forward declaration of XFORM. Remove windows.h include.
+        * platform/graphics/win/TransformationMatrixWin.cpp: Add include of windows.h.
+        * platform/win/CursorWin.cpp: Moved destructor of SharedCursor here.
+        (WebCore::SharedCursor::~SharedCursor): Moved here.
+        * platform/win/EventLoopWin.cpp: Add include of windows.h.
+        * platform/win/SystemInfo.cpp: Add include of windows.h.
+
 2010-01-14  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

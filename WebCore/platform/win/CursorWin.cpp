@@ -408,4 +408,9 @@ const Cursor& grabbingCursor()
     return pointerCursor();
 }
 
+SharedCursor::~SharedCursor()
+{
+    DestroyIcon(m_nativeCursor);
+}
+
 }

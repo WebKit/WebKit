@@ -43,8 +43,8 @@
 #include <wx/graphics.h>
 #endif
 
-#if OS(WINDOWS)
-#include <windows.h>
+#if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS)) || (PLATFORM(WX) && OS(WINDOWS))
+typedef struct tagXFORM XFORM;
 #endif
 
 namespace WebCore {

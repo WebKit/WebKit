@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EventLoop.h"
 
+#include <windows.h>
+
 namespace WebCore {
 
 void EventLoop::cycle()
