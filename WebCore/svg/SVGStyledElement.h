@@ -38,7 +38,8 @@ namespace WebCore {
     public:
         SVGStyledElement(const QualifiedName&, Document*);
         virtual ~SVGStyledElement();
-        
+
+        virtual bool hasRelativeValues() const { return false; }
         virtual bool isStyled() const { return true; }
         virtual bool supportsMarkers() const { return false; }
 
@@ -66,10 +67,8 @@ namespace WebCore {
         virtual void detach();
                                  
         void setInstanceUpdatesBlocked(bool);
-        
-    protected:
-        virtual bool hasRelativeValues() const { return true; }
-        
+
+    protected: 
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     private:

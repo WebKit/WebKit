@@ -38,8 +38,6 @@ namespace WebCore {
         virtual ~SVGSymbolElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual bool shouldAttachChild(Element*) const { return false; }
-    
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     private:

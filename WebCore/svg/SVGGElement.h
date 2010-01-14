@@ -50,9 +50,6 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGGElement, SVGExternalResourcesRequiredIdentifier,
                                        SVGNames::externalResourcesRequiredAttrString, bool,
                                        ExternalResourcesRequired, externalResourcesRequired)
-
-        friend class SVGUseElement;
-        TransformationMatrix localMatrix() const;
     };
 
 } // namespace WebCore

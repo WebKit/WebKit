@@ -886,6 +886,11 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
     ASSERT(ec == 0);
 }
 
+bool SVGUseElement::hasRelativeValues() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 }
 
 #endif // ENABLE(SVG)

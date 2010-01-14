@@ -1,3 +1,31 @@
+2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        Window size changes are not propagated down the render tree
+        https://bugs.webkit.org/show_bug.cgi?id=33643
+
+        Test: svg/custom/relative-sized-content.xhtml
+
+        * rendering/RenderSVGContainer.cpp: Fix incorrect markParents=true usage, leading to unnecessary relayouts.
+        (WebCore::RenderSVGContainer::layout): Use new layoutChildren() method.
+        (WebCore::RenderSVGContainer::paint): Fix indention.
+        * rendering/RenderSVGHiddenContainer.cpp: Fix incorrect markParents=true usage.
+        (WebCore::RenderSVGHiddenContainer::layout): Use new layoutChildren() helper.
+        * rendering/RenderSVGRoot.cpp: Refactor existing code to layout children in SVGRenderSupport::layoutChildren.
+        (WebCore::RenderSVGRoot::layout): Make children relayouting depend on width/height changes, if the outermost svg uses relative viewport sizes.
+        * rendering/SVGRenderSupport.cpp: Add central place handling child layout, skips relayouting non-relative sized children as benefit.
+        (WebCore::SVGRenderBase::layoutChildren): This methods contains the actual changes.
+        * rendering/SVGRenderSupport.h:
+        * svg/SVGGElement.h: Remove dead code.
+        * svg/SVGSVGElement.h: Make hasRelativeValues() public to remove the need for friendship declarations.
+        * svg/SVGStyledElement.h: Change default return value for hasRelativeValues() to false, as it was intended.
+        (WebCore::SVGStyledElement::hasRelativeValues): Make it public, to be usable from SVGRenderSupport.
+        * svg/SVGSymbolElement.h: Remove dead code.
+        * svg/SVGUseElement.cpp: Implement hasRelativeValues() - it was simply missing here.
+        (WebCore::SVGUseElement::hasRelativeValues):
+        * svg/SVGUseElement.h:
+
 2010-01-13  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.

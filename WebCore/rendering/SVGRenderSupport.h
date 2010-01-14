@@ -48,6 +48,9 @@ namespace WebCore {
         static bool prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
         static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, SVGResourceFilter*&, GraphicsContext* savedContext);
 
+        // Layout all children of the passed render object
+        static void layoutChildren(RenderObject*, bool selfNeedsLayout);
+
         virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
         virtual FloatRect markerBoundingBox() const { return FloatRect(); }
 

@@ -67,6 +67,8 @@ namespace WebCore {
         SVGElementInstance* instanceForShadowTreeElement(Node* element) const;
 
     private:
+        virtual bool hasRelativeValues() const;
+
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGNames::useTagString, SVGNames::xAttrString, SVGLength, X, x)
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGNames::useTagString, SVGNames::yAttrString, SVGLength, Y, y)
         ANIMATED_PROPERTY_DECLARATIONS(SVGUseElement, SVGNames::useTagString, SVGNames::widthAttrString, SVGLength, Width, width)

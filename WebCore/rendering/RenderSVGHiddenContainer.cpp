@@ -38,17 +38,7 @@ RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGStyledElement* element)
 void RenderSVGHiddenContainer::layout()
 {
     ASSERT(needsLayout());
- 
-    // Layout our kids to prevent a kid from being marked as needing layout
-    // then never being asked to layout.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (selfNeedsLayout())
-            child->setNeedsLayout(true);
-        
-        child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
-    }
-    
+    layoutChildren(this, selfNeedsLayout()); 
     setNeedsLayout(false);    
 }
 

@@ -240,6 +240,29 @@ FloatRect SVGRenderBase::computeContainerBoundingBox(const RenderObject* contain
     return boundingBox;
 }
 
+void SVGRenderBase::layoutChildren(RenderObject* start, bool selfNeedsLayout)
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+        // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
+        // FIXME: We should be able to skip relayout of non-relative kids when only bounds size has changed
+        // that's a possible future optimization using LayoutState
+        // http://bugs.webkit.org/show_bug.cgi?id=15391
+        bool needsLayout = selfNeedsLayout;
+        if (!needsLayout) {
+            if (SVGElement* element = child->node()->isSVGElement() ? static_cast<SVGElement*>(child->node()) : 0) {
+                if (element->isStyled())
+                    needsLayout = static_cast<SVGStyledElement*>(element)->hasRelativeValues();
+            }
+        }
+
+        if (needsLayout)
+            child->setNeedsLayout(true, false);
+
+        child->layoutIfNeeded();
+        ASSERT(!child->needsLayout());
+    }
+}
+
 FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object) const
 {
 #if ENABLE(FILTERS)

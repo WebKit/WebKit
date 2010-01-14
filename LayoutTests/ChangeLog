@@ -1,3 +1,20 @@
+2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        Window size changes are not propagated down the render tree
+        https://bugs.webkit.org/show_bug.cgi?id=33643
+
+        Add svg/custom/relative-sized-content.xhtml, verifying that we're reacting on window size changes.
+        Testcase realized by putting svg content in an absolute sized <div> and resizing that dynamically.
+        The same code path is used when propagating window size changes - we can not test that directly.
+
+        * platform/mac/svg/custom/relative-sized-content-expected.checksum: Added.
+        * platform/mac/svg/custom/relative-sized-content-expected.png: Added.
+        * platform/mac/svg/custom/relative-sized-content-expected.txt: Added.
+        * svg/custom/relative-sized-content.xhtml: Added.
+        * svg/custom/use-clipped-hit.svg: Small change to avoid a timing dependency.
+
 2010-01-13  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

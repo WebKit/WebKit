@@ -26,14 +26,11 @@
 #if ENABLE(SVG)
 #include "RenderSVGContainer.h"
 
-#include "AXObjectCache.h"
-#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
-#include "SVGURIReference.h"
 
 namespace WebCore {
 
@@ -63,17 +60,7 @@ void RenderSVGContainer::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
     calculateLocalTransform(); // Allow RenderSVGTransformableContainer to update its transform
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        // Only force our kids to layout if we're being asked to relayout as a result of a parent changing
-        // FIXME: We should be able to skip relayout of non-relative kids when only bounds size has changed
-        // that's a possible future optimization using LayoutState
-        // http://bugs.webkit.org/show_bug.cgi?id=15391
-        if (selfNeedsLayout())
-            child->setNeedsLayout(true);
-
-        child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
-    }
+    layoutChildren(this, selfNeedsLayout());
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
@@ -95,7 +82,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
     if (paintInfo.context->paintingDisabled() || !drawsContents())
         return;
 
-     // Spec: groups w/o children still may render filter content.
+    // Spec: groups w/o children still may render filter content.
     if (!firstChild() && !selfWillPaint())
         return;
 
@@ -198,5 +185,3 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

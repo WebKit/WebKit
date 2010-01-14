@@ -130,13 +130,8 @@ namespace WebCore {
 
         void inheritViewAttributes(SVGViewElement*);
 
-    protected:
-        friend class RenderSVGRoot;
-        friend class RenderSVGViewportContainer;
-
-        virtual bool hasRelativeValues() const;
-        
         bool isOutermostSVG() const;
+        virtual bool hasRelativeValues() const;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::xAttrString, SVGLength, X, x)

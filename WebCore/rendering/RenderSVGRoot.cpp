@@ -86,23 +86,20 @@ void RenderSVGRoot::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
 
+    int oldWidth = width();
     calcWidth();
+
+    int oldHeight = height();
     calcHeight();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     setWidth(static_cast<int>(width() * svg->currentScale()));
     setHeight(static_cast<int>(height() * svg->currentScale()));
-
     calcViewport();
-    
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (selfNeedsLayout()) // either bounds or transform changed, force kids to relayout
-            child->setNeedsLayout(true, false);
-        
-        child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
-    }
 
+    // RenderSVGRoot needs to take special care to propagate window size changes to the children,
+    // if the outermost <svg> is using relative x/y/width/height values. Hence the additonal parameters.
+    layoutChildren(this, selfNeedsLayout() || (svg->hasRelativeValues() && (width() != oldWidth || height() != oldHeight)));
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
@@ -315,5 +312,3 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet
