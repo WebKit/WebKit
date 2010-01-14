@@ -196,10 +196,12 @@ private:
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
-    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, int index, double timeOffset);
-    bool removeAnimationFromLayer(AnimatedPropertyID, int index);
-    void pauseAnimationOnLayer(AnimatedPropertyID, int index, double timeOffset);
+    void setAnimationOnLayer(CAPropertyAnimation*, AnimatedPropertyID, const String& keyframesName, int index, double timeOffset);
+    bool removeAnimationFromLayer(AnimatedPropertyID, const String& keyframesName, int index);
+    void pauseAnimationOnLayer(AnimatedPropertyID, const String& keyframesName, int index, double timeOffset);
 
+    void moveAnimationsForProperty(AnimatedPropertyID property, CALayer* fromLayer, CALayer* toLayer);
+    
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,

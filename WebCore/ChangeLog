@@ -1,5 +1,37 @@
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Transition followed by animation fails to run the animation sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=33563
+
+        If a transition was closely followed by an animation, it was possible for the cleanup
+        after the end of the transition to kill the animation.
+        
+        Fix this by including the keyframes name (or empty string for transitions) in the labels
+        used to identify CAAnimations on layers.
+        
+        No test because this was a subtle timing issue that is hard to reproduce in a layout test.
+
+        * platform/graphics/mac/GraphicsLayerCA.h: Some new methods and signature changes.
+        
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::animationIdentifier): Pass the keyframes name, since this is included in the identifier string now.
+        (WebCore::moveAllAnimationsForProperty): Pass the keyframes name.
+        (WebCore::GraphicsLayerCA::moveAnimationsForProperty): Try to move both transition- and animation-related
+        CAAnimations, using the list of running animations to get the keyframe names for the latter.
+
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): moveAnimation renamed to moveAnimationsForProperty
+        and takes the keyframes name.
+
+        (WebCore::GraphicsLayerCA::updateLayerAnimations): Pass keyframes name down (or "" for transitions).
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer): Pass keyframes name down.
+        (WebCore::GraphicsLayerCA::removeAnimationFromLayer): Pass keyframes name down.
+        (WebCore::GraphicsLayerCA::pauseAnimationOnLayer): Pass keyframes name down.
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Pass keyframes name down.
+
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix shadow drawing to do the correct computations using the base coordinate space
