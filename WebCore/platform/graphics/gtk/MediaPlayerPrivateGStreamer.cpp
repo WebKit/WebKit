@@ -209,6 +209,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_buffer(0)
     , m_paused(true)
     , m_seeking(false)
+    , m_playbackRate(1)
     , m_errorOccured(false)
     , m_volumeIdleId(-1)
 {
@@ -321,7 +322,9 @@ float MediaPlayerPrivate::currentTime() const
 
 void MediaPlayerPrivate::seek(float time)
 {
-    GstClockTime sec = (GstClockTime)(time * GST_SECOND);
+    // Avoid useless seeking.
+    if (time == playbackPosition(m_playBin))
+        return;
 
     if (!m_playBin)
         return;
@@ -332,6 +335,7 @@ void MediaPlayerPrivate::seek(float time)
     if (m_errorOccured)
         return;
 
+    GstClockTime sec = (GstClockTime)(time * GST_SECOND);
     LOG_VERBOSE(Media, "Seek: %" GST_TIME_FORMAT, GST_TIME_ARGS(sec));
     if (!gst_element_seek(m_playBin, m_player->rate(),
             GST_FORMAT_TIME,
@@ -444,6 +448,10 @@ void MediaPlayerPrivate::volumeChanged()
 
 void MediaPlayerPrivate::setRate(float rate)
 {
+    // Avoid useless playback rate update.
+    if (m_playbackRate == rate)
+        return;
+
     GstState state;
     GstState pending;
 
@@ -455,6 +463,7 @@ void MediaPlayerPrivate::setRate(float rate)
     if (m_isStreaming)
         return;
 
+    m_playbackRate = rate;
     m_changingRate = true;
     float currentPosition = playbackPosition(m_playBin) * GST_SECOND;
     GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH);

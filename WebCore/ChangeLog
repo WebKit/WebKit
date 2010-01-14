@@ -1,3 +1,19 @@
+2010-01-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] un-needed seeks
+        https://bugs.webkit.org/show_bug.cgi?id=33532
+
+        Avoid un-needed seeks. Don't seek at current playback position and
+        don't update the rate if it is already set to target value.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::setRate):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2010-01-14  Eric Seidel  <eric@webkit.org>
 
         No review.  Tiger build fix after http://trac.webkit.org/changeset/53238.

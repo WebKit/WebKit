@@ -140,6 +140,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 
             bool m_paused;
             bool m_seeking;
+            float m_playbackRate;
             bool m_errorOccured;
             guint m_volumeIdleId;
     };
