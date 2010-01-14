@@ -3788,7 +3788,7 @@ ol.breakpoint-list {
     overflow: auto;
 }
 
-.text-editor-sheet {
+.text-editor-sheet, .text-editor-clip {
     opacity: 0;
 }
 

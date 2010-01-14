@@ -1,3 +1,17 @@
+2010-01-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: use hidden text area for clipboard in order to
+        workaround windows setData bug.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33633
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype._copy):
+        * inspector/front-end/inspector.css:
+
 2010-01-13  Mads Ager  <ager@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -49,6 +49,10 @@ WebInspector.TextEditor = function(platform)
     this._sheet.className = "text-editor-sheet";
     this._container.appendChild(this._sheet);
 
+    this._clipboard = document.createElement("textarea");
+    this._clipboard.className = "text-editor-clip";
+    this._container.appendChild(this._clipboard);
+
     var cursorElement = document.createElement("div");
     cursorElement.className = "text-editor-cursor";
     this._container.appendChild(cursorElement);
@@ -735,9 +739,8 @@ WebInspector.TextEditor.prototype = {
         var range = this._selection.range();
         var text = this._textModel.copyRange(range);
 
-        e.preventDefault();
-        e.clipboardData.clearData();
-        e.clipboardData.setData("Text", text);
+        this._clipboard.value = text;
+        this._clipboard.select();
     },
 
     _beforeCut: function(e)
