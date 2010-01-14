@@ -1,3 +1,28 @@
+2010-01-14  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector's JavaScript debugger work with isolated worlds.
+        Console evaluation is not performed in the correct world yet, tracked
+        by bug http://webkit.org/b/33692.
+
+        http://webkit.org/b/33690
+
+        Reviewed by Adam Roben.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore): Attach the debugger to
+        any window shell, not just for the debugger world.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell): Detach the debugger, and
+        reattach to all window shells, not just for the debugger world.
+        (WebCore::ScriptController::initScript): Attach the debugger to
+        any window shell, not just for the debugger world.
+        (WebCore::ScriptController::attachDebugger): Changed to loop through
+        all the window shells and call the new overloaded attachDebugger.
+        (WebCore::ScriptController::attachDebugger): Added. An overload that
+        takes a window shell to attach the debugger to. Has most of the
+        logic from the original attachDebugger.
+        * bindings/js/ScriptController.h: Added the new attachDebugger.
+
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Make Cache::requestResource return 0 if the resource's load fails

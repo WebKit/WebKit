@@ -183,19 +183,17 @@ void ScriptController::clearWindowShell()
 
     JSLock lock(SilenceAssertionsOnly);
 
-    // Clear the debugger from the current window before setting the new window.
-    DOMWrapperWorld* debugWorld = debuggerWorld();
-    attachDebugger(0);
-
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        DOMWrapperWorld* world = iter->first.get();
         JSDOMWindowShell* windowShell = iter->second;
+
+        // Clear the debugger from the current window before setting the new window.
+        attachDebugger(windowShell, 0);
+
         windowShell->window()->willRemoveFromWindowShell();
         windowShell->setWindow(m_frame->domWindow());
 
         if (Page* page = m_frame->page()) {
-            if (world == debugWorld)
-                attachDebugger(page->debugger());
+            attachDebugger(windowShell, page->debugger());
             windowShell->window()->setProfileGroup(page->group().identifier());
         }
     }
@@ -215,8 +213,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
     windowShell->window()->updateDocument();
 
     if (Page* page = m_frame->page()) {
-        if (world == debuggerWorld())
-            attachDebugger(page->debugger());
+        attachDebugger(windowShell, page->debugger());
         windowShell->window()->setProfileGroup(page->group().identifier());
     }
 
@@ -293,8 +290,12 @@ bool ScriptController::anyPageIsProcessingUserGesture() const
 
 void ScriptController::attachDebugger(JSC::Debugger* debugger)
 {
-    // FIXME: Should be able to debug isolated worlds.
-    JSDOMWindowShell* shell = existingWindowShell(debuggerWorld());
+    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter)
+        attachDebugger(iter->second, debugger);
+}
+
+void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* debugger)
+{
     if (!shell)
         return;
 

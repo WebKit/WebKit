@@ -112,7 +112,9 @@ public:
 
     bool canExecuteScripts();
 
-    void attachDebugger(JSC::Debugger*);
+    // Debugger can be 0 to detach any existing Debugger.
+    void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window shells.
+    void attachDebugger(JSDOMWindowShell*, JSC::Debugger*);
 
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }

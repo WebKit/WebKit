@@ -73,8 +73,6 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
 
 void ScriptCachedFrameData::restore(Frame* frame)
 {
-    Page* page = frame->page();
-
     JSLock lock(SilenceAssertionsOnly);
 
     ScriptController* scriptController = frame->script();
@@ -89,8 +87,9 @@ void ScriptCachedFrameData::restore(Frame* frame)
             windowShell->setWindow(window);
         else {
             windowShell->setWindow(frame->domWindow());
-            if (world == debuggerWorld()) {
-                scriptController->attachDebugger(page->debugger());
+
+            if (Page* page = frame->page()) {
+                scriptController->attachDebugger(windowShell, page->debugger());
                 windowShell->window()->setProfileGroup(page->group().identifier());
             }
         }
