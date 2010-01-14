@@ -66,13 +66,11 @@ def main():
     parser = checker.ArgumentParser(defaults)
     (files, options) = parser.parse(sys.argv[1:])
 
-    # FIXME: Eliminate the need to call this function.
-    #        Options should be passed into process_file instead.
-    checker.set_options(options)
+    styleChecker = checker.StyleChecker(options)
 
     if files:
         for filename in files:
-            checker.process_file(filename)
+            styleChecker.process_file(filename)
 
     else:
         cwd = os.path.abspath('.')
@@ -88,7 +86,7 @@ def main():
             patch = scm.create_patch_since_local_commit(commit)
         else:
             patch = scm.create_patch()
-        checker.process_patch(patch)
+        styleChecker.process_patch(patch)
 
     sys.stderr.write('Total errors found: %d\n' % checker.error_count())
     sys.exit(checker.error_count() > 0)

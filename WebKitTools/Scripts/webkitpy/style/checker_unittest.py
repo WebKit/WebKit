@@ -38,7 +38,7 @@ import unittest
 
 import checker as style
 from checker import CategoryFilter
-
+from checker import ProcessorOptions
 
 class CategoryFilterTest(unittest.TestCase):
 
@@ -83,6 +83,54 @@ class CategoryFilterTest(unittest.TestCase):
         filter = CategoryFilter(["+", "-ab"])
         self.assertFalse(filter.should_check("abc"))
         self.assertTrue(filter.should_check("a"))
+
+
+class ProcessorOptionsTest(unittest.TestCase):
+
+    """Tests ProcessorOptions class."""
+
+    def test_init(self):
+        """Test __init__ constructor."""
+        # Check default parameters.
+        options = ProcessorOptions()
+        self.assertEquals(options.extra_flag_values, {})
+        self.assertEquals(options.filter, CategoryFilter([]))
+        self.assertEquals(options.git_commit, None)
+        self.assertEquals(options.output_format, "emacs")
+        self.assertEquals(options.verbosity, 1)
+
+        self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
+        ProcessorOptions(output_format="emacs") # No ValueError: works
+        ProcessorOptions(output_format="vs7") # works
+        self.assertRaises(ValueError, ProcessorOptions, verbosity=0)
+        self.assertRaises(ValueError, ProcessorOptions, verbosity=6)
+        ProcessorOptions(verbosity=1) # works
+        ProcessorOptions(verbosity=5) # works
+
+        # Check attributes.
+        options = ProcessorOptions(extra_flag_values={"extra_value" : 2},
+                                   filter=CategoryFilter(["+"]),
+                                   git_commit="commit",
+                                   output_format="vs7",
+                                   verbosity=3)
+        self.assertEquals(options.extra_flag_values, {"extra_value" : 2})
+        self.assertEquals(options.filter, CategoryFilter(["+"]))
+        self.assertEquals(options.git_commit, "commit")
+        self.assertEquals(options.output_format, "vs7")
+        self.assertEquals(options.verbosity, 3)
+
+    def test_should_report_error(self):
+        """Test should_report_error()."""
+        filter = CategoryFilter(["-xyz"])
+        options = ProcessorOptions(filter=filter, verbosity=3)
+
+        # Test verbosity
+        self.assertTrue(options.should_report_error("abc", 3))
+        self.assertFalse(options.should_report_error("abc", 2))
+
+        # Test filter
+        self.assertTrue(options.should_report_error("xy", 3))
+        self.assertFalse(options.should_report_error("xyz", 3))
 
 
 class DefaultArgumentsTest(unittest.TestCase):
@@ -237,6 +285,10 @@ class ArgumentParserTest(unittest.TestCase):
         (files, options) = parse(['--git-commit=commit'])
         self.assertEquals(options.git_commit, 'commit')
         (files, options) = parse(['--filter=+foo,-bar'])
+        self.assertEquals(options.filter,
+                          CategoryFilter(["-", "+whitespace", "+foo", "-bar"]))
+        # Spurious white space in filter rules.
+        (files, options) = parse(['--filter=+foo ,-bar'])
         self.assertEquals(options.filter,
                           CategoryFilter(["-", "+whitespace", "+foo", "-bar"]))
 

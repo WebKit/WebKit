@@ -1,3 +1,36 @@
+2010-01-14  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Moved error() from cpp_style.py to checker.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33620
+
+        * Scripts/check-webkit-style:
+          - Addressed FIXME to not set global state.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added argument validation to ProcessorOptions constructor.
+          - Added should_report_error() to ProcessorOptions class.
+          - Removed set_options().
+          - Added StyleChecker class.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added unit test class for ProcessorOptions class.
+          - Added unit test to check that parse() strips white space.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+          - Removed "filter" and "output_format" methods.
+          - Removed should_print_error() and error() functions.
+          - Removed default parameter value from process_file().
+
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+          - Removed call to cpp_style._should_print_error().
+          - Removed test_filter() and test_filter_appending().
+
+        * Scripts/webkitpy/style/text_style.py:
+          - Removed default parameter value from process_file().
+
 2010-01-14  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

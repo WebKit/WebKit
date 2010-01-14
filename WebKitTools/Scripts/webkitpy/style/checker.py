@@ -305,8 +305,8 @@ class ProcessorOptions(object):
                      output formats are "emacs" which emacs can parse
                      and "vs7" which Microsoft Visual Studio 7 can parse.
 
-      verbosity: An integer 1-5 that restricts output to errors with a
-                 confidence score at or above this value.
+      verbosity: An integer between 1-5 inclusive that restricts output
+                 to errors with a confidence score at or above this value.
                  The default is 1, which displays all errors.
 
       filter: A CategoryFilter instance. The default is the empty filter,
@@ -318,14 +318,25 @@ class ProcessorOptions(object):
       extra_flag_values: A string-string dictionary of all flag key-value
                          pairs that are not otherwise represented by this
                          class. The default is the empty dictionary.
+
     """
 
-    def __init__(self, output_format, verbosity=1, filter=None,
+    def __init__(self, output_format="emacs", verbosity=1, filter=None,
                  git_commit=None, extra_flag_values=None):
         if filter is None:
             filter = CategoryFilter([])
         if extra_flag_values is None:
             extra_flag_values = {}
+
+        if output_format not in ("emacs", "vs7"):
+            raise ValueError('Invalid "output_format" parameter: '
+                             'value must be "emacs" or "vs7". '
+                             'Value given: "%s".' % output_format)
+
+        if (verbosity < 1) or (verbosity > 5):
+            raise ValueError('Invalid "verbosity" parameter: '
+                             "value must be an integer between 1-5 inclusive. "
+                             'Value given: "%s".' % verbosity)
 
         self.output_format = output_format
         self.verbosity = verbosity
@@ -333,20 +344,28 @@ class ProcessorOptions(object):
         self.git_commit = git_commit
         self.extra_flag_values = extra_flag_values
 
+    def should_report_error(self, category, confidence_in_error):
+        """Return whether an error should be reported.
 
-# FIXME: Eliminate the need for this function.
-#        Options should be passed into process_file instead.
-def set_options(options):
-    """Initialize global _CppStyleState instance.
+        An error should be reported if the confidence in the error
+        is at least the current verbosity level, and if the current
+        filter says that the category should be checked.
 
-    This needs to be called before calling process_file.
+        Args:
+          category: A string that is a style category.
+          confidence_in_error: An integer between 1 and 5, inclusive, that
+                               represents the application's confidence in
+                               the error. A higher number signifies greater
+                               confidence.
 
-    Args:
-      options: A ProcessorOptions instance.
-    """
-    cpp_style._set_output_format(options.output_format)
-    cpp_style._set_verbose_level(options.verbosity)
-    cpp_style._set_filter(options.filter)
+        """
+        if confidence_in_error < self.verbosity:
+            return False
+
+        if self.filter is None:
+            return True # All categories should be checked by default.
+
+        return self.filter.should_check(category)
 
 
 # This class should not have knowledge of the flag key names.
@@ -436,6 +455,7 @@ class ArgumentParser(object):
 
         Args:
           error_message: A string that is an error message to print.
+
         """
         usage = self.create_usage(self.defaults)
         self.doc_print(usage)
@@ -551,7 +571,7 @@ class ArgumentParser(object):
                              output_format)
 
         verbosity = int(verbosity)
-        if ((verbosity < 1) or (verbosity > 5)):
+        if (verbosity < 1) or (verbosity > 5):
             raise ValueError('Invalid --verbose value %s: value must '
                              'be between 1-5.' % verbosity)
 
@@ -563,48 +583,99 @@ class ArgumentParser(object):
         return (filenames, options)
 
 
-def process_file(filename):
-    """Checks style for the specified file.
+class StyleChecker(object):
 
-    If the specified filename is '-', applies cpp_style to the standard input.
-    """
-    if cpp_style.can_handle(filename) or filename == '-':
-        cpp_style.process_file(filename)
-    elif text_style.can_handle(filename):
-        text_style.process_file(filename)
+    """Supports checking style in files and patches."""
 
+    def __init__(self, options):
+        """Create a StyleChecker instance.
 
-def process_patch(patch_string):
-    """Does lint on a single patch.
+        Args:
+          options: A ProcessorOptions instance.
 
-    Args:
-      patch_string: A string of a patch.
-    """
-    patch = DiffParser(patch_string.splitlines())
-    for filename, diff in patch.files.iteritems():
-        file_extension = os.path.splitext(filename)[1]
-        line_numbers = set()
+        """
+        self.options = options
 
-        def error_for_patch(filename, line_number, category, confidence, message):
-            """Wrapper function of cpp_style.error for patches.
+        # FIXME: Eliminate the need to set global state here.
+        cpp_style._set_verbose_level(options.verbosity)
 
-            This function outputs errors only if the line number
-            corresponds to lines which are modified or added.
-            """
-            if not line_numbers:
-                for line in diff.lines:
-                    # When deleted line is not set, it means that
-                    # the line is newly added.
-                    if not line[0]:
-                        line_numbers.add(line[1])
+    def _handle_error(self, filename, line_number, category, confidence, message):
+        """Logs the fact we've found a lint error.
 
-            if line_number in line_numbers:
-                cpp_style.error(filename, line_number, category, confidence, message)
+        We log the error location and our confidence in the error, i.e.
+        how certain we are the error is a legitimate style regression
+        versus a misidentification or justified use.
 
-        if cpp_style.can_handle(filename):
-            cpp_style.process_file(filename, error=error_for_patch)
+        Args:
+          filename: The name of the file containing the error.
+          line_number: The number of the line containing the error.
+          category: A string used to describe the "category" this bug
+                    falls under: "whitespace", say, or "runtime".
+                    Categories may have a hierarchy separated by slashes:
+                    "whitespace/indent".
+          confidence: A number from 1-5 representing a confidence score
+                      for the error, with 5 meaning that we are certain
+                      of the problem, and 1 meaning that it could be a
+                      legitimate construct.
+          message: The error message.
+
+        """
+        if not self.options.should_report_error(category, confidence):
+            return
+
+        # FIXME: Eliminate the need to reference cpp_style here.
+        cpp_style._cpp_style_state.increment_error_count()
+
+        if self.options.output_format == 'vs7':
+            sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
+                filename, line_number, message, category, confidence))
+        else:
+            sys.stderr.write('%s:%s:  %s  [%s] [%d]\n' % (
+                filename, line_number, message, category, confidence))
+
+    def process_file(self, filename):
+        """Checks style for the specified file.
+
+        If the specified filename is '-', applies cpp_style to the standard input.
+
+        """
+        if cpp_style.can_handle(filename) or filename == '-':
+            cpp_style.process_file(filename, self._handle_error)
         elif text_style.can_handle(filename):
-            text_style.process_file(filename, error=error_for_patch)
+            text_style.process_file(filename, self._handle_error)
+
+    def process_patch(self, patch_string):
+        """Does lint on a single patch.
+
+        Args:
+          patch_string: A string of a patch.
+
+        """
+        patch = DiffParser(patch_string.splitlines())
+        for filename, diff in patch.files.iteritems():
+            file_extension = os.path.splitext(filename)[1]
+            line_numbers = set()
+
+            def error_for_patch(filename, line_number, category, confidence, message):
+                """Wrapper function of cpp_style.error for patches.
+
+                This function outputs errors only if the line number
+                corresponds to lines which are modified or added.
+                """
+                if not line_numbers:
+                    for line in diff.lines:
+                        # When deleted line is not set, it means that
+                        # the line is newly added.
+                        if not line[0]:
+                            line_numbers.add(line[1])
+
+                if line_number in line_numbers:
+                    self._handle_error(filename, line_number, category, confidence, message)
+
+            if cpp_style.can_handle(filename):
+                cpp_style.process_file(filename, error_for_patch)
+            elif text_style.can_handle(filename):
+                text_style.process_file(filename, error_for_patch)
 
 
 def error_count():

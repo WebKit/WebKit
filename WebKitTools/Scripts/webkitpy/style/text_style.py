@@ -51,7 +51,7 @@ def process_file_data(filename, lines, error):
             error(filename, line_number, 'whitespace/tab', 5, 'Line contains tab character.')
 
 
-def process_file(filename, error=cpp_style.error):
+def process_file(filename, error):
     """Performs lint check for text on a single file."""
     if (not can_handle(filename)):
         sys.stderr.write('Ignoring %s; not a supported file\n' % filename)

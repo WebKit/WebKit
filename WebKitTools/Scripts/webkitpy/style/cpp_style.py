@@ -248,32 +248,12 @@ class _CppStyleState(object):
     def __init__(self):
         self.verbose_level = 1  # global setting.
         self.error_count = 0    # global count of reported errors
-        # filter to apply when emitting error messages
-        self.filter = None
-
-        # output format:
-        # "emacs" - format that emacs can parse (default)
-        # "vs7" - format that Microsoft Visual Studio 7 can parse
-        self.output_format = 'emacs'
-
-    def set_output_format(self, output_format):
-        """Sets the output format for errors."""
-        self.output_format = output_format
 
     def set_verbose_level(self, level):
         """Sets the module's verbosity, and returns the previous setting."""
         last_verbose_level = self.verbose_level
         self.verbose_level = level
         return last_verbose_level
-
-    def set_filter(self, filter):
-        """Sets the error-message filter.
-
-        Args:
-          filter: A CategoryFilter instance.
-
-        """
-        self.filter = filter
 
     def reset_error_count(self):
         """Sets the module's error statistic back to zero."""
@@ -287,16 +267,6 @@ class _CppStyleState(object):
 _cpp_style_state = _CppStyleState()
 
 
-def _output_format():
-    """Gets the module's output format."""
-    return _cpp_style_state.output_format
-
-
-def _set_output_format(output_format):
-    """Sets the module's output format."""
-    _cpp_style_state.set_output_format(output_format)
-
-
 def _verbose_level():
     """Returns the module's verbosity setting."""
     return _cpp_style_state.verbose_level
@@ -305,24 +275,6 @@ def _verbose_level():
 def _set_verbose_level(level):
     """Sets the module's verbosity, and returns the previous setting."""
     return _cpp_style_state.set_verbose_level(level)
-
-
-def _filter():
-    """Returns the module's CategoryFilter instance."""
-    return _cpp_style_state.filter
-
-
-def _set_filter(filter):
-    """Sets the module's error-message filter.
-
-    The filter is applied when deciding whether to emit a given
-    error message.
-
-    Args:
-      filter: A CategoryFilter instance.
-
-    """
-    _cpp_style_state.set_filter(filter)
 
 
 def error_count():
@@ -475,51 +427,6 @@ class FileInfo:
     def is_source(self):
         """File has a source file extension."""
         return self.extension()[1:] in ('c', 'cc', 'cpp', 'cxx')
-
-
-def _should_print_error(category, confidence):
-    """Returns true iff confidence >= verbose, and category passes filter."""
-    # There are two ways we might decide not to print an error message:
-    # the verbosity level isn't high enough, or the filters filter it out.
-    if confidence < _cpp_style_state.verbose_level:
-        return False
-
-    filter = _filter()
-
-    if filter is None:
-        return True # All categories should be checked by default.
-
-    return filter.should_check(category)
-
-
-def error(filename, line_number, category, confidence, message):
-    """Logs the fact we've found a lint error.
-
-    We log where the error was found, and also our confidence in the error,
-    that is, how certain we are this is a legitimate style regression, and
-    not a misidentification or a use that's sometimes justified.
-
-    Args:
-      filename: The name of the file containing the error.
-      line_number: The number of the line containing the error.
-      category: A string used to describe the "category" this bug
-                falls under: "whitespace", say, or "runtime".  Categories
-                may have a hierarchy separated by slashes: "whitespace/indent".
-      confidence: A number from 1-5 representing a confidence score for
-                  the error, with 5 meaning that we are certain of the problem,
-                  and 1 meaning that it could be a legitimate construct.
-      message: The error message.
-    """
-    # There are two ways we might decide not to print an error message:
-    # the verbosity level isn't high enough, or the filters filter it out.
-    if _should_print_error(category, confidence):
-        _cpp_style_state.increment_error_count()
-        if _cpp_style_state.output_format == 'vs7':
-            sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
-                filename, line_number, message, category, confidence))
-        else:
-            sys.stderr.write('%s:%s:  %s  [%s] [%d]\n' % (
-                filename, line_number, message, category, confidence))
 
 
 # Matches standard C++ escape esequences per 2.13.2.3 of the C++ standard.
@@ -2969,7 +2876,7 @@ def process_file_data(filename, file_extension, lines, error):
     check_for_new_line_at_eof(filename, lines, error)
 
 
-def process_file(filename, error=error):
+def process_file(filename, error):
     """Performs cpp_style on a single file.
 
     Args:
