@@ -185,6 +185,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             return m_context.get();
         }
     }
+#else
+    UNUSED_PARAM(attrs);
 #endif
     return 0;
 }
