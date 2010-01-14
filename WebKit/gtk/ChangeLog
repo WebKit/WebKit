@@ -1,3 +1,29 @@
+2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Oliver Hunter.
+
+        [GTK] couple fixes for signal emissions, and property notifications
+        https://bugs.webkit.org/show_bug.cgi?id=33428
+
+        Do not emit signals and property notifications for error
+        pages. The notifications are not really useful for anything, you
+        can get them back by overriding the error pages, and it avoids a
+        number of hacks.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::FrameLoaderClient):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon):
+        (WebKit::FrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::FrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * tests/testloading.c:
+        (load_error_status_changed_cb):
+        (test_loading_error):
+
 2010-01-14  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Xan Lopez.
@@ -37,7 +63,7 @@
         (webkit_web_view_set_tooltip_text): Added, new private API.
         (webkit_web_view_query_tooltip): Added
 
-2010-01-12  Gustavo Noronha Silva  <gns@gnome.org>
+2010-01-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
 

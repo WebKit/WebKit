@@ -2428,6 +2428,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     *
     * Connect to "notify::load-status" to monitor loading.
     *
+    * Some versions of WebKitGTK+ emitted this signal for the default
+    * error page, while loading it. This behavior was considered bad,
+    * because it was essentially exposing an implementation
+    * detail. From 1.1.19 onwards this signal is no longer emitted for
+    * the default error pages, but keep in mind that if you override
+    * the error pages by using webkit_web_frame_load_alternate_string()
+    * the signals will be emitted.
+    *
     * Since: 1.1.7
     */
     g_object_class_install_property(objectClass, PROP_LOAD_STATUS,

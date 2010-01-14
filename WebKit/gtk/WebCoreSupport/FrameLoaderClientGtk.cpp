@@ -77,6 +77,7 @@ namespace WebKit {
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
     , m_policyDecision(0)
+    , m_loadingErrorPage(false)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
 {
@@ -568,6 +569,11 @@ bool FrameLoaderClient::hasWebView() const
 
 void FrameLoaderClient::dispatchDidFinishLoad()
 {
+    if (m_loadingErrorPage) {
+        m_loadingErrorPage = false;
+        return;
+    }
+
     loadDone(m_frame, true);
 }
 
@@ -703,6 +709,9 @@ void FrameLoaderClient::dispatchWillClose()
 
 void FrameLoaderClient::dispatchDidReceiveIcon()
 {
+    if (m_loadingErrorPage)
+        return;
+
     WebKitWebView* webView = getViewFromFrame(m_frame);
 
     // Avoid reporting favicons for non-main frames.
@@ -715,11 +724,17 @@ void FrameLoaderClient::dispatchDidReceiveIcon()
 
 void FrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
+    if (m_loadingErrorPage)
+        return;
+
     notifyStatus(m_frame, WEBKIT_LOAD_PROVISIONAL);
 }
 
 void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 {
+    if (m_loadingErrorPage)
+        return;
+
     WebKitWebFramePrivate* priv = m_frame->priv;
     g_free(priv->title);
     priv->title = g_strdup(title.utf8().data());
@@ -736,6 +751,9 @@ void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
 
 void FrameLoaderClient::dispatchDidCommitLoad()
 {
+    if (m_loadingErrorPage)
+        return;
+
     /* Update the URI once first data has been received.
      * This means the URI is valid and successfully identify the page that's going to be loaded.
      */
@@ -776,6 +794,9 @@ void FrameLoaderClient::dispatchDidFirstLayout()
 
 void FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
 {
+    if (m_loadingErrorPage)
+        return;
+
     notifyStatus(m_frame, WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT);
 }
 
@@ -937,6 +958,9 @@ void FrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& erro
 
 void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
+    if (m_loadingErrorPage)
+        return;
+
     notifyStatus(m_frame, WEBKIT_LOAD_FAILED);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
@@ -955,6 +979,8 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
         g_error_free(webError);
         return;
     }
+
+    m_loadingErrorPage = true;
 
     String content;
     gchar* fileContent = 0;

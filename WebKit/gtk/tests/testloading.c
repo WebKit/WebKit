@@ -171,8 +171,7 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
 
     switch(status) {
     case WEBKIT_LOAD_PROVISIONAL:
-        /* We are going to go through here twice, so don't assert
-         * anything */
+        g_assert(!fixture->has_been_provisional);
         fixture->has_been_provisional = TRUE;
         break;
     case WEBKIT_LOAD_COMMITTED:
@@ -183,8 +182,6 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
         g_assert(fixture->has_been_provisional);
         g_assert(fixture->has_been_load_error);
         g_assert(fixture->has_been_failed);
-        /* We are checking that only one FINISHED is received in the
-           whole cycle, so assert it's FALSE */
         g_assert(!fixture->has_been_finished);
         fixture->has_been_finished = TRUE;
         g_main_loop_quit(fixture->loop);
@@ -221,6 +218,12 @@ static void test_loading_error(WebLoadingFixture* fixture, gconstpointer data)
     g_free(uri_string);
 
     g_main_loop_run(fixture->loop);
+
+    g_assert(fixture->has_been_provisional);
+    g_assert(fixture->has_been_committed);
+    g_assert(fixture->has_been_load_error);
+    g_assert(fixture->has_been_failed);
+    g_assert(fixture->has_been_finished);
 }
 
 /* Cancelled load */

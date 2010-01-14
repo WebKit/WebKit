@@ -184,6 +184,8 @@ namespace WebKit {
         WebCore::ResourceResponse m_response;
         WebKitWebPolicyDecision* m_policyDecision;
 
+        bool m_loadingErrorPage;
+
         // Plugin view to redirect data to
         WebCore::PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
