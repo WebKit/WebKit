@@ -137,8 +137,6 @@ void HTMLOptionElement::setValue(const String& value)
 
 bool HTMLOptionElement::selected() const
 {
-    if (HTMLSelectElement* select = ownerSelectElement())
-        select->recalcListItemsIfNeeded();
     return m_data.selected();
 }
 
@@ -222,8 +220,7 @@ void HTMLOptionElement::insertedIntoTree(bool deep)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();
-        // Avoid our selected() getter since it will recalculate list items incorrectly for us.
-        if (m_data.selected())
+        if (selected())
             select->setSelectedIndex(index(), false);
         select->scrollToSelection();
     }

@@ -2,6 +2,9 @@ Test that SELECT is in correct state when handling a DOM modification event for 
 
   
 
-Passed
+Failed
+     Expected: true
+     Actual: false
+
 Passed
 Passed

@@ -1,3 +1,21 @@
+2010-01-14  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r53248.
+        http://trac.webkit.org/changeset/53248
+        https://bugs.webkit.org/show_bug.cgi?id=32641
+
+        Caused 2 tests to crash on various bots:
+        fast/dom/HTMLSelectElement/listbox-select-reset.html and
+        fast/forms/listbox-typeahead-scroll.html
+
+        * fast/forms/HTMLOptionElement_selected-expected.txt:
+        * fast/forms/HTMLOptionElement_selected.html:
+        * fast/forms/HTMLOptionElement_selected2-expected.txt: Removed.
+        * fast/forms/HTMLOptionElement_selected2.html: Removed.
+        * fast/forms/HTMLOptionElement_selected3-expected.txt: Removed.
+        * fast/forms/HTMLOptionElement_selected3.html: Removed.
+        * fast/forms/add-remove-option-modification-event-expected.txt:
+
 2010-01-14  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

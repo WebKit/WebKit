@@ -1,3 +1,30 @@
+2010-01-14  Eric Seidel  <eric@webkit.org>
+
+        No review, rolling out r53248.
+        http://trac.webkit.org/changeset/53248
+        https://bugs.webkit.org/show_bug.cgi?id=32641
+
+        Caused 2 tests to crash on various bots:
+        fast/dom/HTMLSelectElement/listbox-select-reset.html and
+        fast/forms/listbox-typeahead-scroll.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::recalcStyle):
+        (WebCore::SelectElement::setRecalcListItems):
+        (WebCore::SelectElement::recalcListItems):
+        (WebCore::SelectElement::restoreFormControlState):
+        (WebCore::SelectElement::reset):
+        (WebCore::SelectElement::typeAheadFind):
+        * dom/SelectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::selected):
+        (WebCore::HTMLOptionElement::insertedIntoTree):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        * html/HTMLSelectElement.h:
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::recalcStyle):
+
 2010-01-14  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.
