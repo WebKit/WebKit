@@ -1,3 +1,19 @@
+2010-01-13  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Slow named property lookup on DOMWindow because of missing fast case
+        https://bugs.webkit.org/show_bug.cgi?id=33584
+
+        Add fast case checks to V8 named property getter on DOMWindow
+        objects.  If the property is not in the DOM there is no reason to
+        search the DOM for all occurrences.
+
+        Covered by layout tests.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+
 2010-01-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

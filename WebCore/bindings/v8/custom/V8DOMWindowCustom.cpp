@@ -40,6 +40,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
+#include "HTMLDocument.h"
 #include "MediaPlayer.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -812,13 +813,14 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
     // Search named items in the document.
     Document* doc = frame->document();
 
-    if (doc) {
-        RefPtr<HTMLCollection> items = doc->windowNamedItems(propName);
-        if (items->length() >= 1) {
-            if (items->length() == 1)
-                return V8DOMWrapper::convertNodeToV8Object(items->firstItem());
-            else
+    if (doc && doc->isHTMLDocument()) {
+        if (static_cast<HTMLDocument*>(doc)->hasNamedItem(propName.impl()) || doc->hasElementWithId(propName.impl())) {
+            RefPtr<HTMLCollection> items = doc->windowNamedItems(propName);
+            if (items->length() >= 1) {
+                if (items->length() == 1)
+                    return V8DOMWrapper::convertNodeToV8Object(items->firstItem());
                 return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, items.release());
+            }
         }
     }
 
