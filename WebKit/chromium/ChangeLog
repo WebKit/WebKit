@@ -1,3 +1,25 @@
+2010-01-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Introduce WebFileChooserParams to convey parameters for
+        WebViewClient::runFileChooser(), and add new parameters to it.
+        https://bugs.webkit.org/show_bug.cgi?id=32473
+
+        The new parameters are
+         - selected file names
+         - "accept" attribute value
+
+        * WebKit.gyp: Add WebFileChooserParams.h
+        * public/WebFileChooserParams.h: Added.
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::runFileChooser):
+          Add runFileChooser() with WebFileChooserParams, and mark the old one deprecated.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+          Call the new runFileChooser() first, then call the old
+          runFileChooser() if the new one failed.
+
 2010-01-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

@@ -108,6 +108,7 @@
                 'public/WebEditingAction.h',
                 'public/WebElement.h',
                 'public/WebFileChooserCompletion.h',
+                'public/WebFileChooserParams.h',
                 'public/WebFindOptions.h',
                 'public/WebFrame.h',
                 'public/WebFrameClient.h',
