@@ -36,13 +36,20 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "TransformationMatrix.h"
-#include "WebCoreSystemInterface.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 

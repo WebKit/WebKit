@@ -1,5 +1,11 @@
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Windows build.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Transition followed by animation fails to run the animation sometimes
