@@ -59,7 +59,7 @@ SharedUChar* UStringImpl::sharedBuffer()
     return owner->baseSharedBuffer();
 }
 
-void UStringImpl::destroy()
+UStringImpl::~UStringImpl()
 {
     ASSERT(!isStatic());
     checkConsistency();
@@ -77,8 +77,6 @@ void UStringImpl::destroy()
             m_dataBuffer.asPtr<SharedUChar*>()->deref();
         }
     }
-
-    delete this;
 }
 
 }

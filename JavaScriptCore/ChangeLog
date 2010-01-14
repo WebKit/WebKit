@@ -1,3 +1,23 @@
+2010-01-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig & Darin Adler.
+
+        Three quick fixes to UStringImpl.
+            - The destroy() method can be switched back to a normal destructor; since we've switched
+              the way we protect static strings to be using an odd ref-count the destroy() won't abort.
+            - The cost() calculation logic was wrong.  If you have multiple JSStrings wrapping substrings
+              of a base string, they would each report the full cost of the base string to the heap.
+              Instead we should only be reporting once for the base string.
+            - Remove the overloaded new operator calling fastMalloc, replace this with a 'using' to pick
+              up the implementation from the parent class.
+
+        * JavaScriptCore.exp:
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::~UStringImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::cost):
+        (JSC::UStringImpl::deref):
+
 2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
