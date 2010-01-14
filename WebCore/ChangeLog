@@ -1,3 +1,19 @@
+2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        SVGClipPathElement shouldn't resolve style manually
+        https://bugs.webkit.org/show_bug.cgi?id=33647
+
+        Build renderers for SVGClipPathElement, so we can query the style from the renderer
+        instead of re-resolving style on every clip path resource invalidation.
+
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::createRenderer):
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::isValid):
+
 2010-01-13  Kelly Norton  <knorton@google.com>
 
         Reviewed by Timothy Hatcher.

@@ -40,12 +40,12 @@ namespace WebCore {
         virtual ~SVGClipPathElement();
 
         virtual bool isValid() const { return SVGTests::isValid(); }
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
         virtual SVGResource* canvasResource(const RenderObject*);
 
     private:

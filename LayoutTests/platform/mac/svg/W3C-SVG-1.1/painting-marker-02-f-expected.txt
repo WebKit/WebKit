@@ -10,6 +10,10 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (-0.80,-0.80) size 480.30x360.30
     RenderSVGContainer {g} at (-0.80,-0.80) size 448.80x272.80
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+          RenderPath {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,2.00 L0.00,2.00 Z"]
+        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+          RenderPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L4.00,0.00 L4.00,4.00 L0.00,4.00 Z"]
       RenderSVGText {text} at (125,30) size 184x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 184x16
           chunk 1 text run 1 at (125.00,30.00) startOffset 0 endOffset 27 width 184.00: "Marker Rendering Properties"

@@ -5,6 +5,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,-16) size 542x145
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderPath {path} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGImage {image} at (0,-16) size 100x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-25.00)}] [clip path="myclip"] [filter=myfilter]
     RenderSVGText {text} at (0,125) size 542x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-14) size 542x18
