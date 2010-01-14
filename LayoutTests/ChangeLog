@@ -1,3 +1,14 @@
+2010-01-14  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Infinite recursion in RuntimeObjectImp::getOwnPropertyNames()
+        https://bugs.webkit.org/show_bug.cgi?id=33371
+
+        Test that Object.keys works on a plugin object.
+
+        * plugins/netscape-enumerate.html:
+
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Add new tests from r53277 to the Qt Skipped list

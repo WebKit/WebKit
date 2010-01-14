@@ -29,6 +29,13 @@ function runTest()
         return;
     }
 
+    // Now try enumerating a plugin object's properties using Object.keys
+    var keys = Object.keys(plugin.testObject);
+    if (keys.toString() != 'foo,bar') {
+        result.innerHTML = 'FAILURE: Plugin object properties returned by Object.keys were ' + keys.toString();
+        return;
+    }
+
     result.innerHTML = 'SUCCESS';
 }
 </script>
