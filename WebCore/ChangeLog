@@ -1,3 +1,15 @@
+2010-01-13  Carol Szabo <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CounterNode::nextInPreOrderAfterChildren(stayWithin) does not stay within.
+        https://bugs.webkit.org/show_bug.cgi?id=33625
+
+        No new tests because the fix should affect strictly performance.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::nextInPreOrderAfterChildren):
+
 2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Oliver Hunt.

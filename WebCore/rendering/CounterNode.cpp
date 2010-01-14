@@ -52,18 +52,14 @@ CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWit
     if (this == stayWithin)
         return 0;
 
-    CounterNode* next = m_nextSibling;
-    if (next)
-        return next;
-    next = m_parent;
-    while (next && !next->m_nextSibling) {
-        if (next == stayWithin)
+    const CounterNode* current = this;
+    CounterNode* next;
+    while (!(next = current->m_nextSibling)) {
+        current = current->m_parent;
+        if (!current || current == stayWithin)
             return 0;
-        next = next->m_parent;
     }
-    if (next)
-        return next->m_nextSibling;
-    return 0;
+    return next;
 }
 
 CounterNode* CounterNode::nextInPreOrder(const CounterNode* stayWithin) const
