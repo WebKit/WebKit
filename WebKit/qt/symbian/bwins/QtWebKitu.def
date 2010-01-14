@@ -620,4 +620,8 @@ EXPORTS
 	?staticMetaObject@QWebPage@@2UQMetaObject@@B @ 619 NONAME ; struct QMetaObject const QWebPage::staticMetaObject
 	?staticMetaObject@QWebView@@2UQMetaObject@@B @ 620 NONAME ; struct QMetaObject const QWebView::staticMetaObject
 	?attributeNames@QWebElement@@QBE?AVQStringList@@ABVQString@@@Z @ 621 NONAME ; class QStringList QWebElement::attributeNames(class QString const &) const
+	?qt_networkAccessAllowed@@YAX_N@Z @ 622 NONAME ; void qt_networkAccessAllowed(bool)
+	?qt_resumeActiveDOMObjects@@YAXPAVQWebFrame@@@Z @ 623 NONAME ; void qt_resumeActiveDOMObjects(class QWebFrame *)
+	?qt_suspendActiveDOMObjects@@YAXPAVQWebFrame@@@Z @ 624 NONAME ; void qt_suspendActiveDOMObjects(class QWebFrame *)
+	?qtwebkit_webframe_scrollRecursively@@YA_NPAVQWebFrame@@HH@Z @ 625 NONAME ; bool qtwebkit_webframe_scrollRecursively(class QWebFrame *, int, int)
 
