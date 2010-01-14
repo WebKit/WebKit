@@ -1,3 +1,13 @@
+2010-01-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for "detecting" Symbian environments by either
+        looking for the EPOCROOT environment variable or via --symbian
+        being passed on the commandline.
+
+        * Scripts/webkitdirs.pm:
+
 2010-01-14  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Unreviewed.

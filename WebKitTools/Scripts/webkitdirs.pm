@@ -59,6 +59,7 @@ my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
 my $isQt;
+my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
 my $isWx;
@@ -239,6 +240,7 @@ sub argumentsForConfiguration()
     push(@args, '--release') if $configuration eq "Release";
     push(@args, '--32-bit') if $architecture ne "x86_64";
     push(@args, '--qt') if isQt();
+    push(@args, '--symbian') if isSymbian();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wx') if isWx();
     push(@args, '--chromium') if isChromium();
@@ -801,6 +803,12 @@ sub isQt()
     return $isQt;
 }
 
+sub isSymbian()
+{
+    determineIsSymbian();
+    return $isSymbian;
+}
+
 sub qtFeatureDefaults()
 {
     determineQtFeatureDefaults();
@@ -849,6 +857,18 @@ sub determineIsQt()
     }
     
     $isQt = defined($ENV{'QTDIR'});
+}
+
+sub determineIsSymbian()
+{
+    return if defined($isSymbian);
+
+    if (checkForArgumentAndRemoveFromARGV("--symbian")) {
+        $isSymbian = 1;
+        return;
+    }
+
+    $isSymbian = defined($ENV{'EPOCROOT'});
 }
 
 sub isGtk()
