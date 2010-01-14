@@ -104,6 +104,7 @@ committers_unable_to_review = [
     Committer("Jungshik Shin", "jshin@chromium.org"),
     Committer("Keishi Hattori", "keishi@webkit.org"),
     Committer("Kelly Norton", "knorton@google.com"),
+    Committer("Kenneth Russell", "kbr@google.com"),
     Committer("Kent Tamura", "tkent@chromium.org"),
     Committer("Krzysztof Kowalczyk", "kkowalczyk@gmail.com"),
     Committer("Levi Weintraub", "lweintraub@apple.com"),
