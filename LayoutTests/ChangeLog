@@ -1,3 +1,9 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Add new test from r53277 to the GTK+ Skipped list
+
+        * platform/gtk/Skipped:
+
 2010-01-14  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

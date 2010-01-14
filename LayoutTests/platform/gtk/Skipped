@@ -1403,6 +1403,7 @@ fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
+fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
