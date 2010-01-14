@@ -1,5 +1,15 @@
 2010-01-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Symbian build fixes.
+
+        * tests/qwebpage/tst_qwebpage.cpp: Include util.h
+        * tests/tests.pri: Don't define TESTS_SOURCE_DIR, it doesn't work.
+        * tests/util.h: Define TESTS_SOURCE_DIR here, just like it's done in Qt.
+
+2010-01-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Update Symbian .def symbol export files after private API additions.

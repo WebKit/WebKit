@@ -16,8 +16,5 @@ symbian {
 }
 
 # This define is used by some tests to look up resources in the source tree
-!symbian {
-    DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
-} else {
-    DEFINES += TESTS_SOURCE_DIR=\\\"\\\"
-}
+!symbian: DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
+

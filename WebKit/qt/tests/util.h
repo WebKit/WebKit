@@ -22,6 +22,10 @@
 #include <QSignalSpy>
 #include <QTimer>
 
+#if !defined(TESTS_SOURCE_DIR)
+#define TESTS_SOURCE_DIR ""
+#endif
+
 /**
  * Starts an event loop that runs until the given signal is received.
  * Optionally the event loop
