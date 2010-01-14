@@ -1,3 +1,18 @@
+2010-01-14  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Moves general includes before bindings includes in Android build system.
+        https://bugs.webkit.org/show_bug.cgi?id=33623
+
+        This avoids problems with collisions between WebCore/platform/text/StringBuilder.h
+        and the new JavaScriptCore/runtime/StringBuilder.h. This change puts
+        JavaScriptCore/runtime and other bindings includes after the WebCore and other
+        general includes, so that the WebCore StringBuilder.h is picked up when building
+        WebCore.
+
+        * Android.mk: Modified.
+
 2010-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -62,70 +62,6 @@ WEBKIT_SRC_FILES :=
 # We have to use bison 2.3
 include $(BASE_PATH)/bison_check.mk
 
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-# Include WTF source file.
-d := JavaScriptCore
-LOCAL_PATH := $(BASE_PATH)/$d
-intermediates := $(base_intermediates)/$d
-include $(LOCAL_PATH)/Android.v8.wtf.mk
-WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
-endif  # JAVASCRIPT_ENGINE == v8
-
-# Include source files for WebCore
-d := WebCore
-LOCAL_PATH := $(BASE_PATH)/$d
-JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
-intermediates := $(base_intermediates)/$d
-include $(LOCAL_PATH)/Android.mk
-ifeq ($(JAVASCRIPT_ENGINE),jsc)
-include $(LOCAL_PATH)/Android.jscbindings.mk
-endif
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-include $(LOCAL_PATH)/Android.v8bindings.mk
-endif
-WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
-LOCAL_C_INCLUDES := $(BINDING_C_INCLUDES)
-
-# Include the derived source files for WebCore. Uses the same path as
-# WebCore
-include $(LOCAL_PATH)/Android.derived.mk
-ifeq ($(JAVASCRIPT_ENGINE),jsc)
-include $(LOCAL_PATH)/Android.derived.jscbindings.mk
-endif
-ifeq ($(JAVASCRIPT_ENGINE),v8)
-include $(LOCAL_PATH)/Android.derived.v8bindings.mk
-endif
-
-# Redefine LOCAL_PATH here so the build system is not confused
-LOCAL_PATH := $(BASE_PATH)
-
-# Define our compiler flags
-LOCAL_CFLAGS += -Wno-endif-labels -Wno-import -Wno-format
-LOCAL_CFLAGS += -fno-strict-aliasing
-LOCAL_CFLAGS += -include "WebCorePrefix.h"
-LOCAL_CFLAGS += -fvisibility=hidden
-
-ifeq ($(TARGET_ARCH),arm)
-LOCAL_CFLAGS += -Darm
-endif
-
-ifeq ($(ENABLE_SVG),true)
-LOCAL_CFLAGS += -DENABLE_SVG=1
-endif
-
-# Temporary disable SVG_ANIMATION.
-ifeq ($(ENABLE_SVG_ANIMATION),true)
-LOCAL_CFLAGS += -DENABLE_SVG_ANIMATION=1
-endif
-
-ifeq ($(WEBCORE_INSTRUMENTATION),true)
-LOCAL_CFLAGS += -DANDROID_INSTRUMENT
-endif
-
-# LOCAL_LDLIBS is used in simulator builds only and simulator builds are only
-# valid on Linux
-LOCAL_LDLIBS += -lpthread -ldl
-
 # Build our list of include paths. We include WebKit/android/icu first so that
 # any files that include <unicode/ucnv.h> will include our ucnv.h first. We
 # also add external/ as an include directory so that we can specify the real
@@ -133,7 +69,7 @@ LOCAL_LDLIBS += -lpthread -ldl
 #
 # Note that JavasCriptCore/ must be included after WebCore/, so that we pick up
 # the right config.h.
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
+LOCAL_C_INCLUDES := \
 	$(JNI_H_INCLUDE) \
 	$(LOCAL_PATH)/WebKit/android/icu \
 	external/ \
@@ -219,6 +155,70 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebCore/svg/graphics/filters \
 	$(base_intermediates)/WebCore/svg
 endif
+
+ifeq ($(JAVASCRIPT_ENGINE),v8)
+# Include WTF source file.
+d := JavaScriptCore
+LOCAL_PATH := $(BASE_PATH)/$d
+intermediates := $(base_intermediates)/$d
+include $(LOCAL_PATH)/Android.v8.wtf.mk
+WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
+endif  # JAVASCRIPT_ENGINE == v8
+
+# Include source files for WebCore
+d := WebCore
+LOCAL_PATH := $(BASE_PATH)/$d
+JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
+intermediates := $(base_intermediates)/$d
+include $(LOCAL_PATH)/Android.mk
+ifeq ($(JAVASCRIPT_ENGINE),jsc)
+include $(LOCAL_PATH)/Android.jscbindings.mk
+endif
+ifeq ($(JAVASCRIPT_ENGINE),v8)
+include $(LOCAL_PATH)/Android.v8bindings.mk
+endif
+WEBKIT_SRC_FILES += $(addprefix $d/,$(LOCAL_SRC_FILES))
+LOCAL_C_INCLUDES += $(BINDING_C_INCLUDES)
+
+# Include the derived source files for WebCore. Uses the same path as
+# WebCore
+include $(LOCAL_PATH)/Android.derived.mk
+ifeq ($(JAVASCRIPT_ENGINE),jsc)
+include $(LOCAL_PATH)/Android.derived.jscbindings.mk
+endif
+ifeq ($(JAVASCRIPT_ENGINE),v8)
+include $(LOCAL_PATH)/Android.derived.v8bindings.mk
+endif
+
+# Redefine LOCAL_PATH here so the build system is not confused
+LOCAL_PATH := $(BASE_PATH)
+
+# Define our compiler flags
+LOCAL_CFLAGS += -Wno-endif-labels -Wno-import -Wno-format
+LOCAL_CFLAGS += -fno-strict-aliasing
+LOCAL_CFLAGS += -include "WebCorePrefix.h"
+LOCAL_CFLAGS += -fvisibility=hidden
+
+ifeq ($(TARGET_ARCH),arm)
+LOCAL_CFLAGS += -Darm
+endif
+
+ifeq ($(ENABLE_SVG),true)
+LOCAL_CFLAGS += -DENABLE_SVG=1
+endif
+
+# Temporary disable SVG_ANIMATION.
+ifeq ($(ENABLE_SVG_ANIMATION),true)
+LOCAL_CFLAGS += -DENABLE_SVG_ANIMATION=1
+endif
+
+ifeq ($(WEBCORE_INSTRUMENTATION),true)
+LOCAL_CFLAGS += -DANDROID_INSTRUMENT
+endif
+
+# LOCAL_LDLIBS is used in simulator builds only and simulator builds are only
+# valid on Linux
+LOCAL_LDLIBS += -lpthread -ldl
 
 # Build the list of shared libraries
 LOCAL_SHARED_LIBRARIES := \
