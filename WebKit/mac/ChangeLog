@@ -1,3 +1,15 @@
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7532544>
+        
+        Expose new method on WebKitSystemInterface, WKGetUserToBaseCTM(), which will
+        be used for a shadow drawing fix.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2010-01-13  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Mark Rowe.

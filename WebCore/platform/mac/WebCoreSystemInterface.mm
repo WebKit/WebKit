@@ -66,6 +66,7 @@ void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetPatternBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
+CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 void (*wkSetUpFontCache)();
 void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);

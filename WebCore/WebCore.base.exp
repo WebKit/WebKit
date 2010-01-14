@@ -1044,6 +1044,7 @@ _wkSetNSURLConnectionDefersCallbacks
 _wkSetNSURLRequestShouldContentSniff
 _wkSetPatternBaseCTM
 _wkSetPatternPhaseInUserSpace
+_wkGetUserToBaseCTM
 _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError

@@ -63,6 +63,19 @@
 
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7532544>
+        
+        Expose new method on WebKitSystemInterface, WKGetUserToBaseCTM(), which will
+        be used for a shadow drawing fix.
+
+        * WebCore.base.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fix shadow drawing to do the correct computations using the base coordinate space

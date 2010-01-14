@@ -76,6 +76,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetNSURLRequestShouldContentSniff);
     INIT(SetPatternBaseCTM);
     INIT(SetPatternPhaseInUserSpace);
+    INIT(GetUserToBaseCTM);
     INIT(SetUpFontCache);
     INIT(SignalCFReadStreamEnd);
     INIT(SignalCFReadStreamError);
