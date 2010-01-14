@@ -458,6 +458,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(WEBGLARRAYBUFFER, WebGLArrayBuffer)                               \
     V(WEBGLBUFFER, WebGLBuffer)                                         \
     V(WEBGLBYTEARRAY, WebGLByteArray)                                   \
+    V(WEBGLCONTEXTATTRIBUTES, WebGLContextAttributes)                   \
     V(WEBGLFLOATARRAY, WebGLFloatArray)                                 \
     V(WEBGLFRAMEBUFFER, WebGLFramebuffer)                               \
     V(WEBGLINTARRAY, WebGLIntArray)                                     \

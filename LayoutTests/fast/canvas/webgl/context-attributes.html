@@ -1,0 +1,40 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test passing down and fetching of WebGLContextAttributes");
+
+debug("Test default values");
+var context;
+var attribs;
+shouldBeNonNull("context = create3DContext()");
+shouldBeNonNull("attribs = context.getContextAttributes()");
+shouldBe("attribs.depth", "true");
+shouldBe("attribs.alpha", "true");
+// The following two depend on whether the implementation actually supports them
+shouldBe("(attribs.stencil == true || attribs.stencil == false)", "true");
+shouldBe("(attribs.antialias == true || attribs.antialias == false)", "true");
+shouldBe("attribs.premultipliedAlpha", "true");
+
+debug ("Test customized values");
+shouldBeNonNull("context = create3DContext({ stencil: false, antialias: false })");
+shouldBeNonNull("attribs = context.getContextAttributes()");
+shouldBe("attribs.depth", "true");
+shouldBe("attribs.alpha", "true");
+shouldBe("attribs.stencil", "false");
+shouldBe("attribs.antialias", "false");
+shouldBe("attribs.premultipliedAlpha", "true");
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

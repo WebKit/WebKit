@@ -8,12 +8,12 @@ function getShaderSource(file) {
     return xhr.responseText;
 }
 
-function create3DContext() {
+function create3DContext(attrs) {
     var canvas = document.createElement("canvas");
     try {
-        return canvas.getContext("experimental-webgl");
+        return canvas.getContext("experimental-webgl", attrs);
     } catch(e) {}
-    return canvas.getContext("moz-webgl");
+    return canvas.getContext("moz-webgl", attrs);
 }
 
 function createGLErrorWrapper(context, fname) {
@@ -26,8 +26,8 @@ function createGLErrorWrapper(context, fname) {
     };
 }
 
-function create3DDebugContext() {
-    var context = create3DContext();
+function create3DDebugContext(attrs) {
+    var context = create3DContext(attrs);
     // Thanks to Ilmari Heikkinen for the idea on how to implement this so elegantly.
     var wrap = {};
     for (var i in context) {

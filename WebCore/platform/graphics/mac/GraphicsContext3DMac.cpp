@@ -75,18 +75,29 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
     attribs.append(static_cast<CGLPixelFormatAttribute>(0));
 }
 
-PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create()
+PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs)
 {
-    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D());
+    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D(attrs));
     return context->m_contextObj ? context.release() : 0;
 }
 
-GraphicsContext3D::GraphicsContext3D()
-    : m_contextObj(0)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs)
+    : m_attrs(attrs)
+    , m_contextObj(0)
     , m_texture(0)
     , m_fbo(0)
     , m_depthBuffer(0)
 {
+    // FIXME: we need to take into account the user's requested
+    // context creation attributes, in particular stencil and
+    // antialias, and determine which could and could not be honored
+    // based on the capabilities of the OpenGL implementation.
+    m_attrs.alpha = true;
+    m_attrs.depth = true;
+    m_attrs.stencil = false;
+    m_attrs.antialias = false;
+    m_attrs.premultipliedAlpha = true;
+
     Vector<CGLPixelFormatAttribute> attribs;
     CGLPixelFormatObj pixelFormatObj = 0;
     GLint numPixelFormats = 0;
@@ -538,6 +549,11 @@ int GraphicsContext3D::getAttribLocation(WebGLProgram* program, const String& na
     
     ensureContext(m_contextObj);
     return ::glGetAttribLocation((GLuint) program->object(), name.utf8().data());
+}
+
+GraphicsContext3D::Attributes GraphicsContext3D::getContextAttributes()
+{
+    return m_attrs;
 }
 
 unsigned long GraphicsContext3D::getError()

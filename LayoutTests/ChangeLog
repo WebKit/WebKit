@@ -1,3 +1,25 @@
+2010-01-13  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Need to implement WebGLContextAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=31169
+
+        Added the WebGLContextAttributes class and custom JavaScript
+        bindings to accept a native object as the second argument to
+        getContext("experimental-webgl") per the WebGL specification.
+        Added GraphicsContext3D::Attributes struct to isolate DOM and
+        graphics layers. Added getContextAttributes() to
+        WebGLRenderingContext. Added test case ensuring that context
+        attributes can be passed down and returned. Tested in Safari and
+        Chromium. The attributes will be hooked up to the creation of the
+        OpenGL context in bug 33416.
+
+        * fast/canvas/webgl/context-attributes-expected.txt: Added.
+        * fast/canvas/webgl/context-attributes.html: Added.
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (create3DContext):
+
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

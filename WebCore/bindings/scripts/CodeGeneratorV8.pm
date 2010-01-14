@@ -2181,6 +2181,7 @@ my %typeCanFailConversion = (
     "WebGLArray" => 0,
     "WebGLBuffer" => 0,
     "WebGLByteArray" => 0,
+    "WebGLContextAttributes" => 0,
     "WebGLFloatArray" => 0,
     "WebGLFramebuffer" => 0,
     "CanvasGradient" => 0,

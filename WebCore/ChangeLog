@@ -1,3 +1,72 @@
+2010-01-13  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Need to implement WebGLContextAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=31169
+
+        Added the WebGLContextAttributes class and custom JavaScript
+        bindings to accept a native object as the second argument to
+        getContext("experimental-webgl") per the WebGL specification.
+        Added GraphicsContext3D::Attributes struct to isolate DOM and
+        graphics layers. Added getContextAttributes() to
+        WebGLRenderingContext. Added test case ensuring that context
+        attributes can be passed down and returned. Tested in Safari and
+        Chromium. The attributes will be hooked up to the creation of the
+        OpenGL context in bug 33416.
+
+        Test: fast/canvas/webgl/context-attributes.html
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/IDLParser.pm:
+        * bindings/v8/DOMData.cpp:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasContextAttributes.cpp: Added.
+        (WebCore::CanvasContextAttributes::CanvasContextAttributes):
+        (WebCore::CanvasContextAttributes::~CanvasContextAttributes):
+        * html/canvas/CanvasContextAttributes.h: Added.
+        * html/canvas/WebGLContextAttributes.cpp: Added.
+        (WebCore::WebGLContextAttributes::create):
+        (WebCore::WebGLContextAttributes::WebGLContextAttributes):
+        (WebCore::WebGLContextAttributes::~WebGLContextAttributes):
+        (WebCore::WebGLContextAttributes::alpha):
+        (WebCore::WebGLContextAttributes::setAlpha):
+        (WebCore::WebGLContextAttributes::depth):
+        (WebCore::WebGLContextAttributes::setDepth):
+        (WebCore::WebGLContextAttributes::stencil):
+        (WebCore::WebGLContextAttributes::setStencil):
+        (WebCore::WebGLContextAttributes::antialias):
+        (WebCore::WebGLContextAttributes::setAntialias):
+        (WebCore::WebGLContextAttributes::premultipliedAlpha):
+        (WebCore::WebGLContextAttributes::setPremultipliedAlpha):
+        (WebCore::WebGLContextAttributes::attributes):
+        * html/canvas/WebGLContextAttributes.h: Added.
+        * html/canvas/WebGLContextAttributes.idl: Added.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::getContextAttributes):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::getContextAttributes):
+
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build.

@@ -1224,6 +1224,13 @@
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */; };
 		6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */; };
+		6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */; };
+		6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */; };
+		6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */; };
+		6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */; };
+		6E4E91B010F7FB3100A2779C /* WebGLContextAttributes.idl in Resources */ = {isa = PBXBuildFile; fileRef = 6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */; };
+		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
+		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
@@ -6579,6 +6586,13 @@
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLGetInfo.cpp; path = canvas/WebGLGetInfo.cpp; sourceTree = "<group>"; };
 		6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLGetInfo.h; path = canvas/WebGLGetInfo.h; sourceTree = "<group>"; };
+		6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasContextAttributes.cpp; path = canvas/CanvasContextAttributes.cpp; sourceTree = "<group>"; };
+		6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasContextAttributes.h; path = canvas/CanvasContextAttributes.h; sourceTree = "<group>"; };
+		6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextAttributes.cpp; path = canvas/WebGLContextAttributes.cpp; sourceTree = "<group>"; };
+		6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLContextAttributes.h; path = canvas/WebGLContextAttributes.h; sourceTree = "<group>"; };
+		6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLContextAttributes.idl; path = canvas/WebGLContextAttributes.idl; sourceTree = "<group>"; };
+		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
+		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
@@ -10734,6 +10748,8 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
+				6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */,
 				A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */,
 				A7D20F3B107F373800A80392 /* WebGLActiveInfo.idl */,
 				49EECDC710503C2300099FAB /* WebGLArray.cpp */,
@@ -10748,6 +10764,9 @@
 				49C7B9AB1042D32E0009D447 /* WebGLByteArray.cpp */,
 				49C7B9AC1042D32E0009D447 /* WebGLByteArray.h */,
 				49C7B9AD1042D32E0009D447 /* WebGLByteArray.idl */,
+				6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */,
+				6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */,
+				6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */,
 				49EECDCD10503C2300099FAB /* WebGLFloatArray.cpp */,
 				49EECDCE10503C2300099FAB /* WebGLFloatArray.h */,
 				49EECDCF10503C2300099FAB /* WebGLFloatArray.idl */,
@@ -12947,6 +12966,8 @@
 				49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */,
 				49C7B9821042D2D30009D447 /* JSWebGLByteArray.cpp */,
 				49C7B9831042D2D30009D447 /* JSWebGLByteArray.h */,
+				6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */,
+				6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */,
 				49EECEF4105070C400099FAB /* JSWebGLFloatArray.cpp */,
 				49EECEF5105070C400099FAB /* JSWebGLFloatArray.h */,
 				49C7B9841042D2D30009D447 /* JSWebGLFramebuffer.cpp */,
@@ -18325,6 +18346,9 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */,
 				087D97BF10FB8D7700C00874 /* JSSVGPODListCustom.h in Headers */,
+				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
+				6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */,
+				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18425,6 +18449,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				6E4E91B010F7FB3100A2779C /* WebGLContextAttributes.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20485,6 +20510,9 @@
 				5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */,
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
 				CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */,
+				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
+				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,
+				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

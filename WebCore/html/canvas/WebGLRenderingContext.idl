@@ -541,6 +541,8 @@ module html {
         // any getBufferParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
         [Custom] void getBufferParameter();
 
+        WebGLContextAttributes getContextAttributes();
+
         unsigned long getError();
 
         // any getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname) raises(DOMException);

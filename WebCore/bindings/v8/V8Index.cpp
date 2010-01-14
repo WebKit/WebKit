@@ -403,6 +403,7 @@
 #include "V8WebGLArray.h"
 #include "V8WebGLByteArray.h"
 #include "V8WebGLBuffer.h"
+#include "V8WebGLContextAttributes.h"
 #include "V8WebGLFloatArray.h"
 #include "V8WebGLFramebuffer.h"
 #include "V8WebGLIntArray.h"

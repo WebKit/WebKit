@@ -371,7 +371,9 @@ sub DetermineParseMode
         $mode = MODE_INTERFACE;
     } elsif ($_ =~ /exception/) {
         $mode = MODE_EXCEPTION;
-    } elsif ($_ =~ /alias/) {
+    } elsif ($_ =~ /(\A|\b)alias/) {
+        # The (\A|\b) above is needed so we don't match attributes
+        # whose names contain the substring "alias".
         $mode = MODE_ALIAS;
     }
 

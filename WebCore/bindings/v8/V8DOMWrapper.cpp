@@ -58,6 +58,7 @@
 #include "V8Proxy.h"
 #include "V8StyleSheet.h"
 #include "WebGLArray.h"
+#include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
 

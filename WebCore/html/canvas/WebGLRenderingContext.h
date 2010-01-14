@@ -39,6 +39,7 @@ namespace WebCore {
 
 class WebGLActiveInfo;
 class WebGLBuffer;
+class WebGLContextAttributes;
 class WebGLFramebuffer;
 class CanvasObject;
 class WebGLProgram;
@@ -53,7 +54,7 @@ class WebKitCSSMatrix;
 
     class WebGLRenderingContext : public CanvasRenderingContext {
     public:
-        static PassOwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*);
+        static PassOwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
         virtual ~WebGLRenderingContext();
 
         virtual bool is3d() const { return true; }
@@ -133,6 +134,8 @@ class WebKitCSSMatrix;
         int  getAttribLocation(WebGLProgram*, const String& name);
 
         WebGLGetInfo getBufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
+
+        PassRefPtr<WebGLContextAttributes> getContextAttributes();
 
         unsigned long getError();
 

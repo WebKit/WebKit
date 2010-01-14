@@ -33,6 +33,7 @@
 
 #include "ChildThreadDOMData.h"
 #include "MainThreadDOMData.h"
+#include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 
 namespace WebCore {

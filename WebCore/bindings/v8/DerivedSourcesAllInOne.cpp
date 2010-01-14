@@ -43,6 +43,7 @@
 #include "bindings/V8WebGLArrayBuffer.cpp"
 #include "bindings/V8WebGLBuffer.cpp"
 #include "bindings/V8WebGLByteArray.cpp"
+#include "bindings/V8WebGLContextAttributes.cpp"
 #include "bindings/V8WebGLFloatArray.cpp"
 #include "bindings/V8WebGLFramebuffer.cpp"
 #include "bindings/V8CanvasGradient.cpp"
