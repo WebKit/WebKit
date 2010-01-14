@@ -1,3 +1,35 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Treat all synchronous loads equally in FrameLoader::loadSubframe
+
+        Only loads of the empty URL or about:blank were being treated as
+        synchronous loads. But other loads can be synchronous (e.g., when we
+        receive a null ResourceRequest from requestFromDelegate or when a
+        policy decision of "ignore" is made). We now treat those loads the
+        same way we treated empty URLs and about:blank.
+
+        Fixes <rdar://problem/7533333> <http://webkit.org/b/33533>
+        window.onload never fires if page contains an <iframe> with a bad
+        scheme or whose load is cancelled by returning null from resource load
+        delegate's willSendRequest
+
+        Tests: fast/loader/onload-bad-scheme-for-frame.html
+               fast/loader/onload-policy-ignore-for-frame.html
+               fast/loader/onload-willSendRequest-null-for-frame.html
+
+        Reviewed by Brady Eidson.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+          - Detect synchronous loads by checking the subframe's loader's
+            state, rather than by checking its URL
+          - Removed unnecessary call to completed(), since checkCompleted()
+            will call completed() if needed (the call to completed() was added
+            first and wasn't removed when the call to checkCompleted() was
+            added in r8316)
+          - Added more comments about the strange thing this function does
+            with the subframe's loader
+
 2010-01-14  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.

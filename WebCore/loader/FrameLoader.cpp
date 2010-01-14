@@ -403,6 +403,12 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
         return 0;
     }
     
+    // All new frames will have m_isComplete set to true at this point due to synchronously loading
+    // an empty document in FrameLoader::init(). But many frames will now be starting an
+    // asynchronous load of url, so we set m_isComplete to false and then check if the load is
+    // actually completed below. (Note that we set m_isComplete to false even for synchronous
+    // loads, so that checkCompleted() below won't bail early.)
+    // FIXME: Can we remove this entirely? m_isComplete normally gets set to false when a load is committed.
     frame->loader()->m_isComplete = false;
    
     RenderObject* renderer = ownerElement->renderer();
@@ -412,16 +418,17 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
     
     checkCallImplicitClose();
     
+    // Some loads are performed synchronously (e.g., about:blank and loads
+    // cancelled by returning a null ResourceRequest from requestFromDelegate).
     // In these cases, the synchronous load would have finished
     // before we could connect the signals, so make sure to send the 
-    // completed() signal for the child by hand
+    // completed() signal for the child by hand and mark the load as being
+    // complete.
     // FIXME: In this case the Frame will have finished loading before 
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
-    if (url.isEmpty() || url == blankURL()) {
-        frame->loader()->completed();
+    if (frame->loader()->state() == FrameStateComplete)
         frame->loader()->checkCompleted();
-    }
 
     return frame.get();
 }

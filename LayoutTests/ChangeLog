@@ -10,6 +10,38 @@
 
 2010-01-14  Adam Roben  <aroben@apple.com>
 
+        Add tests that show that onload still fires in various situations with
+        subframes
+
+        Tests for <rdar://problem/7533333> <http://webkit.org/b/33533>
+        window.onload never fires if page contains an <iframe> with a bad
+        scheme or whose load is cancelled by returning null from resource load
+        delegate's willSendRequest
+
+        Reviewed by Brady Eidson.
+
+        * fast/loader/onload-bad-scheme-for-frame-expected.txt: Added.
+        * fast/loader/onload-bad-scheme-for-frame.html: Added.
+        Tests that onload still fires when a subframe with an unrecognized
+        scheme is in the page.
+
+        * fast/loader/onload-policy-ignore-for-frame-expected.txt: Added.
+        * fast/loader/onload-policy-ignore-for-frame.html: Added.
+        Tests that onload still fires when the policy delegate says to ignore
+        the initial load of a subframe.
+
+        * fast/loader/onload-willSendRequest-null-for-frame-expected.txt: Added.
+        * fast/loader/onload-willSendRequest-null-for-frame.html: Added.
+        Tests that onload still fires when the resource load delegate returns
+        null from willSendRequest for the initial load of a subframe.
+
+        * http/tests/loading/bad-scheme-subframe-expected.txt: Updated result
+        to show that we now fire onload for the main frame in this case. (This
+        is essentially the same as onload-bad-scheme-for-frame.html, but it
+        still seems useful to have that new, more explicit, test.)
+
+2010-01-14  Adam Roben  <aroben@apple.com>
+
         Fix a typo in editing/selection/inactive-selection.html
 
         Fixes <http://webkit.org/b/33676> Exception when opening

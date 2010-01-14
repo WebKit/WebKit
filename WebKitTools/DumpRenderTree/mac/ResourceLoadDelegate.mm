@@ -129,6 +129,9 @@
         printf("%s\n", [string UTF8String]);
     }
 
+    if (!done && gLayoutTestController->willSendRequestReturnsNull())
+        return nil;
+
     if (!done && gLayoutTestController->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
         printf("Returning null for this redirect\n");
         return nil;

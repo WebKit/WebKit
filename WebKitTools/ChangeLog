@@ -1,3 +1,33 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Add LayoutTestController API to force
+        -webView:resource:willSendRequest:: to return null
+
+        Enables tests for <rdar://problem/7533333> <http://webkit.org/b/33533>
+        window.onload never fires if page contains an <iframe> with a bad
+        scheme or whose load is cancelled by returning null from resource load
+        delegate's willSendRequest
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): Initialize new member.
+        (setWillSendRequestReturnsNullCallback): Call through to
+        LayoutTestController.
+        (LayoutTestController::staticFunctions): Added new function.
+
+        * DumpRenderTree/LayoutTestController.h: Added
+        m_willSendRequestReturnsNull.
+        (LayoutTestController::willSendRequestReturnsNull):
+        (LayoutTestController::setWillSendRequestReturnsNull):
+        Added standard accessors.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+        Return null if LayoutTestController says to.
+
 2010-01-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after removal of XBM support.
