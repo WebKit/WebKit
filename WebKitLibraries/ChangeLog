@@ -6,6 +6,18 @@
         
         Expose new method on WebKitSystemInterface, WKGetUserToBaseCTM(), which will
         be used for a shadow drawing fix.
+        
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7532544>
+        
+        Expose new method on WebKitSystemInterface, WKGetUserToBaseCTM(), which will
+        be used for a shadow drawing fix.
 
         * WebKitSystemInterface.h:
         * libWebKitSystemInterfaceLeopard.a:
