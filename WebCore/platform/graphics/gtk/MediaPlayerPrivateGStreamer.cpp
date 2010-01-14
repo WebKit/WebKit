@@ -142,6 +142,7 @@ static float playbackPosition(GstElement* playbin)
     return ret;
 }
 
+
 void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivate* playerPrivate)
 {
     g_return_if_fail(GST_IS_BUFFER(buffer));
@@ -259,28 +260,35 @@ void MediaPlayerPrivate::load(const String& url)
     pause();
 }
 
-void MediaPlayerPrivate::play()
+bool MediaPlayerPrivate::changePipelineState(GstState newState)
 {
-    GstState state;
+    ASSERT(newState == GST_STATE_PLAYING || newState == GST_STATE_PAUSED);
+
+    GstState currentState;
     GstState pending;
 
-    gst_element_get_state(m_playBin, &state, &pending, 0);
-    if (state != GST_STATE_PLAYING && pending != GST_STATE_PLAYING) {
-        LOG_VERBOSE(Media, "Play");
-        gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+    gst_element_get_state(m_playBin, &currentState, &pending, 0);
+    if (currentState != newState && pending != newState) {
+        GstStateChangeReturn ret = gst_element_set_state(m_playBin, newState);
+        GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
+        if (currentState != pausedOrPlaying && ret == GST_STATE_CHANGE_FAILURE) {
+            loadingFailed(MediaPlayer::Empty);
+            return false;
+        }
     }
+    return true;
+}
+
+void MediaPlayerPrivate::play()
+{
+    if (changePipelineState(GST_STATE_PLAYING))
+        LOG_VERBOSE(Media, "Play");
 }
 
 void MediaPlayerPrivate::pause()
 {
-    GstState state;
-    GstState pending;
-
-    gst_element_get_state(m_playBin, &state, &pending, 0);
-    if (state != GST_STATE_PAUSED  && pending != GST_STATE_PAUSED) {
+    if (changePipelineState(GST_STATE_PAUSED))
         LOG_VERBOSE(Media, "Pause");
-        gst_element_set_state(m_playBin, GST_STATE_PAUSED);
-    }
 }
 
 float MediaPlayerPrivate::duration() const
