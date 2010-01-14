@@ -231,13 +231,13 @@ bool WebAccessibilityObject::isIndeterminate() const
     return m_private->isIndeterminate();
 }
 
-bool WebAccessibilityObject::isMultiSelect() const
+bool WebAccessibilityObject::isMultiSelectable() const
 {
     if (!m_private)
         return 0;
 
     m_private->updateBackingStore();
-    return m_private->isMultiSelect();
+    return m_private->isMultiSelectable();
 }
 
 bool WebAccessibilityObject::isOffScreen() const

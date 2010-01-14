@@ -1,3 +1,47 @@
+2010-01-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: selected, selectable, extended selectable, and multiple
+        selectable states are not reported
+
+        https://bugs.webkit.org/show_bug.cgi?id=33574
+        <rdar://problem/7536826>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsSelectableCallback):
+        Return the result of calling isSelectable().
+        (getIsMultiSelectableCallback):
+        Return the result of calling isMultiSelectable().
+        (AccessibilityUIElement::getJSClass):
+        Add isSelected and isMultiSelectable properties to the JSClass
+        definition.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        Declare isSelectable() and isMultiSelectable().
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::isSelectable):
+        Stubbed.
+        (AccessibilityUIElement::isMultiSelectable):
+        Stubbed.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isSelectable):
+        Stubbed.
+        (AccessibilityUIElement::isMultiSelectable):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (accessibilityState):
+        Get the object's state, and return it.
+        (AccessibilityUIElement::isSelected):
+        Check the object's selected state.
+        (AccessibilityUIElement::isSelectable):
+        Check the object's selectable state.
+        (AccessibilityUIElement::isMultiSelectable):
+        Check the object's extended/multiple selectable state.
+
 2010-01-13  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Repeat the below for CloseBugForLandDiff.

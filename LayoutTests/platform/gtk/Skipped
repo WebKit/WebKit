@@ -71,6 +71,7 @@ accessibility/aria-option-role.html
 accessibility/placeholder.html
 accessibility/radio-button-title-label.html
 accessibility/secure-textfield-title-ui.html
+accessibility/selection-states.html
 accessibility/textarea-insertion-point-line-number.html
 accessibility/textarea-line-for-index.html
 accessibility/textarea-selected-text-range.html

@@ -263,9 +263,24 @@ JSStringRef AccessibilityUIElement::valueDescription()
 {
     return 0;
 }
+
+static DWORD accessibilityState(COMPtr<IAccessible> element)
+{
+    VARIANT state;
+    element->get_accState(self(), &state);
+
+    ASSERT(V_VT(&state) == VT_I4);
+
+    DWORD result = state.lVal;
+    VariantClear(&state);
+
+    return result;
+}
+
 bool AccessibilityUIElement::isSelected() const
 {
-    return false;
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_SELECTED) == STATE_SYSTEM_SELECTED;
 }
 
 int AccessibilityUIElement::hierarchicalLevel() const
@@ -510,6 +525,19 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
 {
     // FIXME: implement
     return false;
+}
+
+bool AccessibilityUIElement::isSelectable() const
+{
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_SELECTABLE) == STATE_SYSTEM_SELECTABLE;
+}
+
+bool AccessibilityUIElement::isMultiSelectable() const
+{
+    DWORD multiSelectable = STATE_SYSTEM_EXTSELECTABLE | STATE_SYSTEM_MULTISELECTABLE;
+    DWORD state = accessibilityState(m_element);
+    return (state & multiSelectable) == multiSelectable;
 }
 
 

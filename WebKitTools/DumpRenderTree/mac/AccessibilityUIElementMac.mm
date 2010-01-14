@@ -780,3 +780,14 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     return true;
 }
 
+bool AccessibilityUIElement::isSelectable() const
+{
+    // FIXME: implement
+    return false;
+}
+
+bool AccessibilityUIElement::isMultiSelectable() const
+{
+    // FIXME: implement
+    return false;
+}
