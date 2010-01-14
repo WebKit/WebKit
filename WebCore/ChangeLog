@@ -1,3 +1,18 @@
+2010-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix shadow drawing to do the correct computations using the base coordinate space
+        https://bugs.webkit.org/show_bug.cgi?id=33629
+
+        Step 1: do some renames in setPlatformShadow():
+            size -> offset
+            width -> xOffset
+            height -> yOffset
+        
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2010-01-13  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
