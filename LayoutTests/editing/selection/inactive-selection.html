@@ -9,7 +9,7 @@ after you've made a selection in another frame.</p>
 <div
 <script>
 window.onload = function() {
-    if (window.layoutTestController);
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
         
     var div = frames[0].document.getElementById('input');

@@ -1,3 +1,15 @@
+2010-01-14  Adam Roben  <aroben@apple.com>
+
+        Fix a typo in editing/selection/inactive-selection.html
+
+        Fixes <http://webkit.org/b/33676> Exception when opening
+        editing/selection/inactive-selection.html in a browser
+
+        Reviewed by Dan Bernstein.
+
+        * editing/selection/inactive-selection.html: Remove a semicolon that
+        was making the if (window.layoutTestController) test ineffective.
+
 2010-01-13  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
