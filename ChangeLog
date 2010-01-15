@@ -1,3 +1,11 @@
+2010-01-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Xan Lopez.
+
+        Bump version to 1.1.19.
+
+        * configure.ac:
+
 2010-01-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.
