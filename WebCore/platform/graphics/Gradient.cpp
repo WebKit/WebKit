@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,8 @@
 #include "Gradient.h"
 
 #include "Color.h"
+#include "FloatRect.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -60,6 +62,28 @@ Gradient::Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r
 Gradient::~Gradient()
 {
     platformDestroy();
+}
+
+void Gradient::adjustParametersForTiledDrawing(IntSize& size, FloatRect& srcRect)
+{
+    if (m_radial)
+        return;
+
+    if (srcRect.isEmpty())
+        return;
+
+    if (m_p0.x() == m_p1.x()) {
+        size.setWidth(1);
+        srcRect.setWidth(1);
+        srcRect.setX(0);
+        return;
+    }
+    if (m_p0.y() != m_p1.y())
+        return;
+
+    size.setHeight(1);
+    srcRect.setHeight(1);
+    srcRect.setY(0);
 }
 
 void Gradient::addColorStop(float value, const Color& color)

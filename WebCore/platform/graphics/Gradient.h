@@ -105,6 +105,8 @@ namespace WebCore {
         TransformationMatrix gradientSpaceTransform() { return m_gradientSpaceTransformation; }
 
         virtual void fill(GraphicsContext*, const FloatRect&);
+        virtual void adjustParametersForTiledDrawing(IntSize& size, FloatRect& srcRect);
+
         void setPlatformGradientSpaceTransform(const TransformationMatrix& gradientSpaceTransformation);
 
     private:

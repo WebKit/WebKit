@@ -1,3 +1,22 @@
+2010-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6020083> -webkit-gradient slows down scrolling when page has horizontal scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=19650
+
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern): Added call to adjustParametersForTiledDrawing(),
+        letting the generator substitute the parameters with visually-equivalent values that
+        are more efficient.
+        * platform/graphics/Generator.h:
+        (WebCore::Generator::adjustParametersForTiledDrawing): Added a base class implementation
+        that does nothing.
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::adjustParametersForTiledDrawing): Added. If the gradient is a horizontal
+        or vertical linear gradient, changes to use a 1-pixel tall (or wide) tile.
+        * platform/graphics/Gradient.h:
+
 2010-01-14  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Laszlo Gombos.

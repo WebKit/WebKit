@@ -38,6 +38,7 @@ public:
     virtual ~Generator() {};
     
     virtual void fill(GraphicsContext*, const FloatRect&) = 0;
+    virtual void adjustParametersForTiledDrawing(IntSize& /* size */, FloatRect& /* srcRect */) { }
 };
 
 } //namespace
