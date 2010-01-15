@@ -1,3 +1,14 @@
+2010-01-14  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds WebKit::WebSecurityOrigin::createFromDatabaseIdentifier.
+        https://bugs.webkit.org/show_bug.cgi?id=33648
+
+        * public/WebSecurityOrigin.h:
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::createFromDatabaseIdentifier):
+
 2010-01-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
