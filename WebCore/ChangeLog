@@ -1,3 +1,13 @@
+2010-01-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Use OS(MAC_OS_X) instead of PLATFORM(MAC) when determining navigator.platform
+
+        https://bugs.webkit.org/show_bug.cgi?id=33711
+
+        * page/NavigatorBase.cpp:
+
 2010-01-14  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.
