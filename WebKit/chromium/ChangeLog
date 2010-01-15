@@ -1,3 +1,14 @@
+2010-01-14  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        [Chromium] Forgot to adopt a ref counted object in StorageNamespaceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=33704
+
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespace::localStorageNamespace):
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+
 2010-01-14  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Dimitri Glazkov.
