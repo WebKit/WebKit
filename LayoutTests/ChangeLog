@@ -1,3 +1,22 @@
+2010-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        A few more flaky transitions/animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=33642
+
+        Attempt to deflake a few more tests. Some of these are second
+        attempts. The first attempt made it less flaky, but not 100%.
+        Also, for a couple tests, make them shorter. They seemed
+        unnecessarily long.
+
+        * animations/change-one-anim-expected.txt:
+        * animations/change-one-anim.html:
+        * transitions/cancel-transition.html:
+        * transitions/mask-transitions.html:
+        * transitions/shorthand-border-transitions-expected.txt:
+        * transitions/shorthand-border-transitions.html:
+
 2010-01-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -50,8 +50,6 @@
 
         function isEqual(actual, desired, tolerance)
         {
-            if (tolerance == undefined || tolerance == 0)
-                tolerance = defaultTolerance;
             var diff = Math.abs(actual - desired);
             return diff < tolerance;
         }
@@ -64,7 +62,6 @@
         function restartTransition()
         {
             document.getElementById("container").className = "run";
-            setTimeout("check()", 250);
         }
 
         function check()
@@ -96,6 +93,7 @@
             document.getElementById("container").className = "run";
             setTimeout("cancelTransition()", 100);
             setTimeout("restartTransition()", 200);
+            setTimeout("check()", 500);
         }
     </script>
 <body onload="start()">
