@@ -193,7 +193,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
 
     if (view->needsLayout())
         view->layout();
-    view->paint(context, enclosingIntRect(srcRect));
+    view->paint(context, IntRect(0, 0, view->width(), view->height()));
 
     if (compositeOp != CompositeSourceOver)
         context->endTransparencyLayer();
