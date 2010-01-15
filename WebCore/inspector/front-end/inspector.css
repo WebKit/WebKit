@@ -3759,6 +3759,12 @@ ol.breakpoint-list {
     text-overflow: ellipsis;
     overflow: hidden;
     margin: 4px 0;
+    color: rgb(33%, 33%, 33%);
+    cursor: pointer;
+}
+
+.breakpoint-list li:hover {
+    color: rgb(15%, 15%, 15%);
 }
 
 .breakpoint-list .checkbox-elem {
@@ -3775,15 +3781,6 @@ ol.breakpoint-list {
     text-overflow: ellipsis;
     overflow: hidden;
     margin: 2px 0 0px 20px;
-}
-
-.breakpoint-list a {
-    color: rgb(33%, 33%, 33%);
-    cursor: pointer;
-}
-
-.breakpoint-list a:hover {
-    color: rgb(15%, 15%, 15%);
 }
 
 .webkit-html-js-node, .webkit-html-css-node {
