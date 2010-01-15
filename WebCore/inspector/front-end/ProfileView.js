@@ -599,6 +599,11 @@ WebInspector.CPUProfileType.prototype = {
             InspectorBackend.stopProfiling();
     },
 
+    get welcomeMessage()
+    {
+        return WebInspector.UIString("Start CPU profiling by pressing<br>the %s button on the status bar.");
+    },
+
     setRecordingProfile: function(isProfiling)
     {
         this._recording = isProfiling;

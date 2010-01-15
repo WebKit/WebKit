@@ -3737,6 +3737,7 @@
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',
             'inspector/front-end/WatchExpressionsSidebarPane.js',
+            'inspector/front-end/WelcomeView.js',
             'inspector/front-end/audits.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',

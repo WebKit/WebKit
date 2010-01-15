@@ -42931,6 +42931,10 @@
 					RelativePath="..\inspector\front-end\WatchExpressionsSidebarPane.js"
 					>
 				</File>
+				<File
+					RelativePath="..\inspector\front-end\WelcomeView.js"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

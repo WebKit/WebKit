@@ -2256,7 +2256,7 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     margin: 0 0 5px 20px;
 }
 
-.panel-enabler-view button, .pane button {
+.panel-enabler-view button:not(.status-bar-item), .pane button {
     color: rgb(6, 6, 6);
     background-color: transparent;
     border: 1px solid rgb(165, 165, 165);
@@ -2266,11 +2266,40 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     -webkit-appearance: none;
 }
 
-.panel-enabler-view button {
+.panel-enabler-view button:not(.status-bar-item) {
     font-size: 13px;
     margin: 6px 0 0 0;
     padding: 3px 20px;
     height: 24px;
+}
+
+.panel-enabler-view.welcome {
+    z-index: auto;
+    left: 200px;
+}
+
+.panel-enabler-view.welcome img {
+    height: 90%;
+    min-height: 180px;
+    max-width: 90%;
+}
+
+.panel-enabler-view.welcome .instructions {
+    display: inline-block;
+    vertical-align: middle;
+    width: 330px;
+    margin: 0;
+    padding: 15px;
+    white-space: normal;
+    line-height: 175%;
+}
+
+.panel-enabler-view.welcome .message {
+    margin-bottom: 2ex;
+}
+
+.panel-enabler-view.welcome button.status-bar-item {
+    vertical-align: middle;
 }
 
 .pane button {

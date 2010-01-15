@@ -85,6 +85,7 @@
     <file>utilities.js</file>
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
+    <file>WelcomeView.js</file>
     <file>audits.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>

@@ -70,6 +70,11 @@ WebInspector.ProfileType.prototype = {
         return profile._profileView;
     },
 
+    get welcomeMessage()
+    {
+        return "";
+    },
+
     // Must be implemented by subclasses.
     createView: function(profile)
     {
@@ -111,6 +116,9 @@ WebInspector.ProfilesPanel = function()
     this.profileViewStatusBarItemsContainer = document.createElement("div");
     this.profileViewStatusBarItemsContainer.id = "profile-view-status-bar-items";
 
+    this.welcomeView = new WebInspector.WelcomeView("profiles", WebInspector.UIString("Welcome to the Profiles panel"));
+    this.element.appendChild(this.welcomeView.element);
+
     this._profiles = [];
     this.reset();
 }
@@ -149,6 +157,7 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
+        this.welcomeView.show();
         if (this._shouldPopulateProfiles)
             this._populateProfiles();
     },
@@ -203,6 +212,32 @@ WebInspector.ProfilesPanel.prototype = {
         profileType.treeElement = new WebInspector.SidebarSectionTreeElement(profileType.name, null, true);
         this.sidebarTree.appendChild(profileType.treeElement);
         profileType.treeElement.expand();
+        this._addWelcomeMessage(profileType);
+    },
+
+    _addWelcomeMessage: function(profileType)
+    {
+        var message = profileType.welcomeMessage;
+        // Message text is supposed to have a '%s' substring as a placeholder
+        // for a status bar button. If it is there, we split the message in two
+        // parts, and insert the button between them.
+        var buttonPos = message.indexOf("%s");
+        if (buttonPos > -1) {
+            var container = document.createDocumentFragment();
+            var part1 = document.createElement("span");
+            part1.innerHTML = message.substr(0, buttonPos);
+            container.appendChild(part1);
+     
+            var button = new WebInspector.StatusBarButton(profileType.buttonTooltip, profileType.buttonStyle, profileType.buttonCaption);
+            button.element.addEventListener("click", profileType.buttonClicked.bind(profileType), false);
+            container.appendChild(button.element);
+       
+            var part2 = document.createElement("span");
+            part2.innerHTML = message.substr(buttonPos + 2);
+            container.appendChild(part2);
+            this.welcomeView.addMessage(container);
+        } else
+            this.welcomeView.addMessage(message);
     },
 
     _makeKey: function(text, profileTypeId)
@@ -276,6 +311,7 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile)
             return;
 
+        this.welcomeView.hide();
         if (this.visibleView)
             this.visibleView.hide();
 
@@ -329,6 +365,7 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleView)
             this.visibleView.hide();
         delete this.visibleView;
+        this.welcomeView.show();
     },
 
     displayTitleForProfileLink: function(title, typeId)
@@ -407,12 +444,14 @@ WebInspector.ProfilesPanel.prototype = {
                 this._profileTypeButtonsByIdMap[typeId].removeStyleClass("hidden");
             this.profileViewStatusBarItemsContainer.removeStyleClass("hidden");
             this.panelEnablerView.visible = false;
+            this.welcomeView.visible = true;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Profiling disabled. Click to enable.");
             this.enableToggleButton.toggled = false;
             for (var typeId in this._profileTypeButtonsByIdMap)
                 this._profileTypeButtonsByIdMap[typeId].addStyleClass("hidden");
             this.profileViewStatusBarItemsContainer.addStyleClass("hidden");
+            this.welcomeView.visible = false;
             this.panelEnablerView.visible = true;
         }
     },
