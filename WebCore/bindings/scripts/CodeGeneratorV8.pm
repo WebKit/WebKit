@@ -2564,7 +2564,7 @@ sub ReturnNativeToJSValue
 
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
-        return "return v8String($value->toString())";
+        return "return $value->deserialize()";
     }
 
     if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {

@@ -88,7 +88,7 @@ void WebWorkerImpl::postMessageToWorkerContextTask(WebCore::ScriptExecutionConte
     OwnPtr<MessagePortArray> ports =
         MessagePort::entanglePorts(*context, channels.release());
     RefPtr<SerializedScriptValue> serializedMessage =
-        SerializedScriptValue::create(message);
+        SerializedScriptValue::createFromWire(message);
     workerContext->dispatchEvent(MessageEvent::create(
         ports.release(), serializedMessage.release()));
     thisPtr->confirmMessageFromWorkerObject(workerContext->hasPendingActivity());

@@ -1,3 +1,98 @@
+2010-01-15  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] Support SerializedScriptValue.
+        https://bugs.webkit.org/show_bug.cgi?id=32920
+        http://crbug.com/30620
+
+        Initial implementation of SerializedScriptValue which is used to
+        to create a serialized representation of JavaScript objects.  This
+        representation is needed for structured clones and worker messages.
+
+        * WebCore.gypi: Added SerializedScriptValue.cpp.
+        * bindings/scripts/CodeGeneratorV8.pm: Removed conversion to string before using SerializedScriptValue.
+        * bindings/v8/SerializedScriptValue.cpp: Added.
+        (WebCore::):
+        (WebCore::ZigZag::encode):
+        (WebCore::ZigZag::decode):
+        (WebCore::Writer::Writer):
+        (WebCore::Writer::writeUndefined):
+        (WebCore::Writer::writeNull):
+        (WebCore::Writer::writeTrue):
+        (WebCore::Writer::writeFalse):
+        (WebCore::Writer::writeString):
+        (WebCore::Writer::writeInt32):
+        (WebCore::Writer::writeNumber):
+        (WebCore::Writer::endComposite):
+        (WebCore::Writer::data):
+        (WebCore::Writer::doWriteUint32):
+        (WebCore::Writer::append):
+        (WebCore::Writer::ensureSpace):
+        (WebCore::Writer::fillHole):
+        (WebCore::Writer::charAt):
+        (WebCore::Serializer::Serializer):
+        (WebCore::Serializer::serialize):
+        (WebCore::Serializer::StateBase::~StateBase):
+        (WebCore::Serializer::StateBase::nextState):
+        (WebCore::Serializer::StateBase::setNextState):
+        (WebCore::Serializer::StateBase::composite):
+        (WebCore::Serializer::StateBase::StateBase):
+        (WebCore::Serializer::State::composite):
+        (WebCore::Serializer::State::tag):
+        (WebCore::Serializer::State::State):
+        (WebCore::Serializer::StackCleaner::StackCleaner):
+        (WebCore::Serializer::StackCleaner::~StackCleaner):
+        (WebCore::Serializer::ArrayState::ArrayState):
+        (WebCore::Serializer::ArrayState::done):
+        (WebCore::Serializer::ArrayState::advance):
+        (WebCore::Serializer::ObjectState::ObjectState):
+        (WebCore::Serializer::ObjectState::done):
+        (WebCore::Serializer::ObjectState::advance):
+        (WebCore::Serializer::ObjectState::nextProperty):
+        (WebCore::Serializer::doSerialize):
+        (WebCore::Serializer::push):
+        (WebCore::Serializer::top):
+        (WebCore::Serializer::pop):
+        (WebCore::Serializer::checkComposite):
+        (WebCore::Reader::Reader):
+        (WebCore::Reader::isEof):
+        (WebCore::Reader::read):
+        (WebCore::Reader::readTag):
+        (WebCore::Reader::readString):
+        (WebCore::Reader::readInt32):
+        (WebCore::Reader::readNumber):
+        (WebCore::Reader::doReadUint32):
+        (WebCore::Deserializer::Deserializer):
+        (WebCore::Deserializer::deserialize):
+        (WebCore::Deserializer::doDeserialize):
+        (WebCore::Deserializer::push):
+        (WebCore::Deserializer::pop):
+        (WebCore::Deserializer::stackDepth):
+        (WebCore::Deserializer::element):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/v8/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::release):
+        (WebCore::SerializedScriptValue::toWireString):
+
+        Updated uses of SerializedScriptValue:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::postMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::V8DedicatedWorkerContext::postMessageCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::V8MessagePort::postMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::V8Worker::postMessageCallback):
+
 2010-01-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dirk Schulze.
