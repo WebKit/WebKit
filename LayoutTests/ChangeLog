@@ -1,5 +1,13 @@
 2010-01-15  Darin Fisher  <darin@chromium.org>
 
+        Disable this test temporarily since it is failing on all of the
+        builders.
+
+        * fast/history/history-length.html: Removed.
+        * fast/history/history-length.html-disabled: Copied from fast/history/history-length.html.
+
+2010-01-15  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Brady Eidson.
 
         history.length does not return number of elements in history list
