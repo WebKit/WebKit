@@ -1,3 +1,15 @@
+2010-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        animations/change-keyframes.html failed on Tiger Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33370
+
+        Increase tolerances. They're still testing the stated goal of the test.
+
+        * animations/change-keyframes.html:
+        * transitions/cancel-transition.html:
+
 2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
 
         Skip new test that requires new functionality in

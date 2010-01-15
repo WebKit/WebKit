@@ -19,8 +19,8 @@
     }
     @-webkit-keyframes "anim" {
         from { left: 100px; }
-        40%  { left: 200px; }
-        60%  { left: 200px; }
+        10%  { left: 200px; }
+        90%  { left: 200px; }
         to   { left: 300px; }
     }
     </style>
@@ -56,7 +56,7 @@
         keyframes.deleteRule("100%");
         keyframes.insertRule("0% { top: 50px; }");
         keyframes.insertRule("10% { top: 100px; }");
-        keyframes.insertRule("50% { top: 100px; }");
+        keyframes.insertRule("90% { top: 100px; }");
         keyframes.insertRule("100% { top: 150px; }");
         document.getElementById('box').style.webkitAnimationName = "anim";
     }

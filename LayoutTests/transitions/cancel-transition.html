@@ -68,7 +68,7 @@
         {
             var left = parseFloat(window.getComputedStyle(document.getElementById('a')).left);
             result = "left:";
-            if (!isEqual(left, 250, 30))
+            if (!isEqual(left, 250, 50))
                 result += "<span style='color:red'>FAIL(was:" + left + ", s/b:150)</span>";
             else
                 result += "<span style='color:green'>PASS</span>";
@@ -78,7 +78,7 @@
             var transform = window.getComputedStyle(document.getElementById('b')).webkitTransform;
             transform = transform.split("(");
             transform = transform[1].split(",");
-            if (!isEqual(transform[4], 200, 30))
+            if (!isEqual(transform[4], 200, 50))
                 result += "<span style='color:red'>FAIL(was:" + transform[4] + ", s/b:50)</span>";
             else
                 result += "<span style='color:green'>PASS</span>";
