@@ -1,3 +1,19 @@
+2010-01-14  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Decoding images to scaled output buffers resulted in garbage for
+        no-alpha PNGs and CMYK JPEGs.
+        https://bugs.webkit.org/show_bug.cgi?id=33624
+        
+        No layout test since I don't have access to a platform that scales the
+        output buffers.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::convertCMYKToRGBA):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2010-01-14  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Oliver Hunt.

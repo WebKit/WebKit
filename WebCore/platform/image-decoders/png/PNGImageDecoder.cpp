@@ -404,8 +404,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         int columns = m_scaledColumns.size();
         bool sawAlpha = buffer.hasAlpha();
         for (int x = 0; x < columns; ++x) {
-            png_bytep pixel = row + m_scaledColumns[x] * 4;
-            unsigned alpha = pixel[3];
+            png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
+            unsigned alpha = (hasAlpha ? pixel[3] : 255);
             buffer.setRGBA(x, destY, pixel[0], pixel[1], pixel[2], alpha);
             if (!sawAlpha && alpha < 255) {
                 sawAlpha = true;
