@@ -1,3 +1,14 @@
+2010-01-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        transitions/shorthand-border-transitions.html is still flaky on slower bots
+        https://bugs.webkit.org/show_bug.cgi?id=33721
+
+        Increase the tolerance. The test still tests what it was meant to.
+
+        * transitions/shorthand-border-transitions.html:
+
 2010-01-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
