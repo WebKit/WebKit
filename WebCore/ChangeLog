@@ -1,5 +1,12 @@
 2010-01-14  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, attempted build fix.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+
+2010-01-14  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Adam Barth.
 
         Simplify image decoders by making downsampling functions available at
