@@ -1,3 +1,19 @@
+2010-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        REGRESSION: svg/css/circle-in-mask-with-shadow.svg failing pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=33498
+
+        After http://trac.webkit.org/changeset/53300 Qt expected files should be updated.
+
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt: updated.
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt: updated.
+        * platform/qt/svg/css/mask-with-shadow-expected.txt: updated.
+        * platform/qt/svg/css/path-with-shadow-expected.txt: updated.
+        * platform/qt/svg/css/stars-with-shadow-expected.txt: updated.
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt: updated.
+
 2010-01-14  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by David Levin.
