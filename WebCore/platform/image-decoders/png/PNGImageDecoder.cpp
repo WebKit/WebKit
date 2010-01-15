@@ -256,9 +256,7 @@ void PNGImageDecoder::headerAvailable()
             longjmp(png->jmpbuf, 1);
             return;
         }
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
         prepareScaleDataIfNecessary();
-#endif
     }
 
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
@@ -330,14 +328,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-        int width = m_scaled ? m_scaledColumns.size() : size().width();
-        int height = m_scaled ? m_scaledRows.size() : size().height();
-#else
-        int width = size().width();
-        int height = size().height();
-#endif
-        if (!buffer.setSize(width, height)) {
+        if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
             static_cast<PNGImageDecoder*>(png_get_progressive_ptr(reader()->pngPtr()))->decodingFailed();
             longjmp(reader()->pngPtr()->jmpbuf, 1);
             return;
@@ -396,33 +387,15 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         row = rowBuffer;
 
     // Copy the data into our buffer.
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    if (m_scaled) {
-        int destY = scaledY(rowIndex);
-        if (destY < 0)
-            return;
-        int columns = m_scaledColumns.size();
-        bool sawAlpha = buffer.hasAlpha();
-        for (int x = 0; x < columns; ++x) {
-            png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
-            unsigned alpha = (hasAlpha ? pixel[3] : 255);
-            buffer.setRGBA(x, destY, pixel[0], pixel[1], pixel[2], alpha);
-            if (!sawAlpha && alpha < 255) {
-                sawAlpha = true;
-                buffer.setHasAlpha(true);
-            }
-        }
+    int width = scaledSize().width();
+    int destY = scaledY(rowIndex);
+    if (destY < 0)
         return;
-    }
-#endif
-    int width = size().width();
     bool sawAlpha = buffer.hasAlpha();
     for (int x = 0; x < width; x++) {
-        unsigned red = *row++;
-        unsigned green = *row++;
-        unsigned blue = *row++;
-        unsigned alpha = (hasAlpha ? *row++ : 255);
-        buffer.setRGBA(x, rowIndex, red, green, blue, alpha);
+        png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
+        unsigned alpha = hasAlpha ? pixel[3] : 255;
+        buffer.setRGBA(x, destY, pixel[0], pixel[1], pixel[2], alpha);
         if (!sawAlpha && alpha < 255) {
             sawAlpha = true;
             buffer.setHasAlpha(true);

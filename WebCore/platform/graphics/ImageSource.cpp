@@ -35,12 +35,6 @@
 #include "ImageDecoder.h"
 #endif
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-#ifndef IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS
-#define IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS (1024 * 1024)
-#endif
-#endif
-
 namespace WebCore {
 
 ImageSource::ImageSource()
@@ -81,6 +75,9 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     if (!m_decoder) {
         m_decoder = static_cast<NativeImageSourcePtr>(ImageDecoder::create(*data));
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+#ifndef IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS
+#define IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS (1024 * 1024)
+#endif
         if (m_decoder)
             m_decoder->setMaxNumPixels(IMAGE_DECODER_DOWN_SAMPLING_MAX_NUMBER_OF_PIXELS);
 #endif

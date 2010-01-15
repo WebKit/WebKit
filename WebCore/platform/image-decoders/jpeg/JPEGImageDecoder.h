@@ -47,6 +47,8 @@ namespace WebCore {
         // Whether or not the size information has been decoded yet.
         virtual bool isSizeAvailable();
 
+        virtual bool setSize(unsigned width, unsigned height);
+
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
         
         virtual bool supportsAlpha() const { return false; }
@@ -57,16 +59,6 @@ namespace WebCore {
 
         bool outputScanlines();
         void jpegComplete();
-
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-        bool setSize(int width, int height)
-        {
-            if (!ImageDecoder::setSize(width, height))
-                return false;
-            prepareScaleDataIfNecessary();
-            return true;
-        }
-#endif
 
     private:
         JPEGImageReader* m_reader;
