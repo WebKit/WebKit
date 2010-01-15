@@ -67,8 +67,7 @@ namespace WebCore {
     {
         // FIXME: assert object is a collection type
         ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-        V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(object);
-        ASSERT(wrapperType != V8ClassIndex::NODE);
+        ASSERT(V8DOMWrapper::domWrapperType(object) != V8ClassIndex::NODE);
         Collection* collection = toNativeCollection<Collection>(object);
         AtomicString propertyName = toAtomicWebCoreStringWithNullCheck(name);
         return getV8Object<ItemType>(collection->namedItem(propertyName), implementationType);
