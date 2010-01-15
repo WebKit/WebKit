@@ -463,15 +463,36 @@ v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>d
     return defaultSignature;
 }
 
-void createCallback(v8::Local<v8::ObjectTemplate> proto,
-                    const char *name,
-                    v8::InvocationCallback callback,
-                    v8::Handle<v8::Signature> signature,
-                    v8::PropertyAttribute attribute)
+v8::Persistent<v8::String> getToStringName()
 {
-    proto->Set(v8::String::New(name),
-               v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
-               attribute);
+    DEFINE_STATIC_LOCAL(v8::Persistent<v8::String>, value, ());
+    if (value.IsEmpty())
+        value = v8::Persistent<v8::String>::New(v8::String::New("toString"));
+    return value;
+}
+
+static v8::Handle<v8::Value> constructorToString(const v8::Arguments& args)
+{
+    // The DOM constructors' toString functions grab the current toString
+    // for Functions by taking the toString function of itself and then
+    // calling it with the constructor as its receiver. This means that
+    // changes to the Function prototype chain or toString function are
+    // reflected when printing DOM constructors. The only wart is that
+    // changes to a DOM constructor's toString's toString will cause the
+    // toString of the DOM constructor itself to change. This is extremely
+    // obscure and unlikely to be a problem.
+    v8::Handle<v8::Value> value = args.Callee()->Get(getToStringName());
+    if (!value->IsFunction()) 
+        return v8::String::New("");
+    return v8::Handle<v8::Function>::Cast(value)->Call(args.This(), 0, 0);
+}
+
+v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
+{
+    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, toStringTemplate, ());
+    if (toStringTemplate.IsEmpty())
+        toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorToString));
+    return toStringTemplate;
 }
     
 v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo& info,

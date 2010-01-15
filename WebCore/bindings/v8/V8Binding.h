@@ -163,20 +163,15 @@ namespace WebCore {
                                                const BatchedCallback*,
                                                size_t callbackCount);
     
-    void createCallback(v8::Local<v8::ObjectTemplate> proto,
-                        const char *name,
-                        v8::InvocationCallback,
-                        v8::Handle<v8::Signature>,
-                        v8::PropertyAttribute attributes = v8::DontDelete);
-    
     v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo&,
                                                const QualifiedName&);
     void setElementStringAttr(const v8::AccessorInfo&,
                               const QualifiedName&,
                               v8::Local<v8::Value>);
 
-    v8::Handle<v8::Value> getElementEventHandlerAttr(const v8::AccessorInfo&,
-                                                     const AtomicString&);
+    
+    v8::Persistent<v8::String> getToStringName();
+    v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
     
     // V8Parameter is an adapter class that converts V8 values to Strings
     // or AtomicStrings as appropriate, using multiple typecast operators.

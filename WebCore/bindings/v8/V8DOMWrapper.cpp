@@ -80,31 +80,6 @@ namespace WebCore {
 typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
 
-// Get the string 'toString'.
-static v8::Persistent<v8::String> GetToStringName()
-{
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::String>, value, ());
-    if (value.IsEmpty())
-        value = v8::Persistent<v8::String>::New(v8::String::New("toString"));
-    return value;
-}
-
-static v8::Handle<v8::Value> ConstructorToString(const v8::Arguments& args)
-{
-    // The DOM constructors' toString functions grab the current toString
-    // for Functions by taking the toString function of itself and then
-    // calling it with the constructor as its receiver. This means that
-    // changes to the Function prototype chain or toString function are
-    // reflected when printing DOM constructors. The only wart is that
-    // changes to a DOM constructor's toString's toString will cause the
-    // toString of the DOM constructor itself to change. This is extremely
-    // obscure and unlikely to be a problem.
-    v8::Handle<v8::Value> value = args.Callee()->Get(GetToStringName());
-    if (!value->IsFunction()) 
-        return v8::String::New("");
-    return v8::Handle<v8::Function>::Cast(value)->Call(args.This(), 0, 0);
-}
-
 #if ENABLE(SVG)
 
 static V8ClassIndex::V8WrapperType downcastSVGPathSeg(void* pathSeg)
@@ -282,42 +257,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     // Not in the cache.
     FunctionTemplateFactory factory = V8ClassIndex::GetFactory(type);
     v8::Persistent<v8::FunctionTemplate> descriptor = factory();
-    // DOM constructors are functions and should print themselves as such.
-    // However, we will later replace their prototypes with Object
-    // prototypes so we need to explicitly override toString on the
-    // instance itself. If we later make DOM constructors full objects
-    // we can give them class names instead and Object.prototype.toString
-    // will work so we can remove this code.
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, toStringTemplate, ());
-    if (toStringTemplate.IsEmpty())
-        toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(ConstructorToString));
-    descriptor->Set(GetToStringName(), toStringTemplate);
     switch (type) {
-    case V8ClassIndex::DOMWINDOW: {
-        descriptor->PrototypeTemplate()->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
-        descriptor->SetHiddenPrototype(true);
-
-        // Reserve spaces for references to location, history and
-        // navigator objects.
-        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
-
-        // Set access check callbacks, but turned off initially.
-        // When a context is detached from a frame, turn on the access check.
-        // Turning on checks also invalidates inline caches of the object.
-        instanceTemplate->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW), false);
-        break;
-    }
-    case V8ClassIndex::LOCATION: {
-        // For security reasons, these functions are on the instance
-        // instead of on the prototype object to insure that they cannot
-        // be overwritten.
-        v8::Local<v8::ObjectTemplate> instance = descriptor->InstanceTemplate();
-        instance->SetAccessor(v8::String::New("reload"), V8Location::reloadAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-        instance->SetAccessor(v8::String::New("replace"), V8Location::replaceAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-        instance->SetAccessor(v8::String::New("assign"), V8Location::assignAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-        break;
-    }
     case V8ClassIndex::MESSAGECHANNEL: {
         descriptor->SetCallHandler(USE_CALLBACK(MessageChannelConstructor));
         break;

@@ -1,3 +1,20 @@
+2010-01-15  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Generate more of the custom behaviors that the v8 bindings attach to v8 FunctionTemplates.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::getToStringName):
+        (WebCore::constructorToString):
+        (WebCore::getToStringTemplate):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+
 2010-01-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         No review, rolling out r53331.
