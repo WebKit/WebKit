@@ -1,3 +1,25 @@
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Drag and Drop source/destination code needs cleanup.
+        <https://bugs.webkit.org/show_bug.cgi?id=33691>.
+        
+        Cleaned up some Drag and Drop code that deals with getting
+        source and destination operations, and added some ASSERTS to make
+        sure we don't get in bad states.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::sourceOperation): Make this return the operation itself.
+        (WebCore::Clipboard::destinationOperation): Ditto.
+        (WebCore::Clipboard::setSourceOperation): Add an assert to make sure we're valud.
+        (WebCore::Clipboard::setDestinationOperation): Ditto.
+        * dom/Clipboard.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2010-01-14  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector's JavaScript debugger work with isolated worlds.

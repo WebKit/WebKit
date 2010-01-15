@@ -74,8 +74,8 @@ namespace WebCore {
         
         void setAccessPolicy(ClipboardAccessPolicy);
 
-        bool sourceOperation(DragOperation&) const;
-        bool destinationOperation(DragOperation&) const;
+        DragOperation sourceOperation() const;
+        DragOperation destinationOperation() const;
         void setSourceOperation(DragOperation);
         void setDestinationOperation(DragOperation);
         

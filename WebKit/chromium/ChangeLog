@@ -1,3 +1,15 @@
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Drag and Drop source/destination code needs cleanup.
+        <https://bugs.webkit.org/show_bug.cgi?id=33691>.
+        
+        Update to new way of calling sourceOperation.
+
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+
 2010-01-14  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

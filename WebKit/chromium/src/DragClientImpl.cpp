@@ -79,9 +79,7 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
 
     WebDragData dragData = static_cast<ClipboardChromium*>(clipboard)->dataObject();
 
-    DragOperation dragOperationMask;
-    if (!clipboard->sourceOperation(dragOperationMask))
-        dragOperationMask = DragOperationEvery;
+    DragOperation dragOperationMask = clipboard->sourceOperation();
 
     m_webView->startDragging(
         eventPos, dragData, static_cast<WebDragOperationsMask>(dragOperationMask));
