@@ -1,5 +1,12 @@
 2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Skip new test that requires new functionality in
+        DRT (layoutTestController.setWillSendRequestReturnsNull).
+
+        * platform/gtk/Skipped:
+
+2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
+
         Skipping test that fails intermitently - fix for the test being
         worked on; see https://bugs.webkit.org/show_bug.cgi?id=33671.
 
