@@ -1,3 +1,26 @@
+2010-01-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESISON: Google maps buttons not working properly
+        https://bugs.webkit.org/show_bug.cgi?id=31871
+
+        REGRESSION(r52948): JavaScript exceptions thrown on Google Maps when
+        getting directions for a second time
+        https://bugs.webkit.org/show_bug.cgi?id=33446
+        
+        SunSpider and v8 report no change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID): Update our cached offset in case
+        flattening the dictionary changed any of its offsets.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain): ditto
+
 2010-01-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
