@@ -348,6 +348,24 @@ _NOT_STRICTLY_GOOD_REQUESTS = (
         ' defg\r\n',
         '\r\n',
     ),
+    (  # Wrong-case cookie
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'cookie: abc/xyz\r\n'
+        '\r\n',
+    ),
+    (  # Cookie, no space after colon
+        'GET /demo HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        'Cookie:abc/xyz\r\n'
+        '\r\n',
+    ),
 )
 
 

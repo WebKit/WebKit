@@ -1,3 +1,16 @@
+2010-01-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update pywebsocket to 0.4.6
+        https://bugs.webkit.org/show_bug.cgi?id=32299
+        The newer pywebsocket can handle more simultaneous connections.
+
+        * pywebsocket/mod_pywebsocket/handshake.py:
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+        * pywebsocket/test/test_handshake.py:
+
 2010-01-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
