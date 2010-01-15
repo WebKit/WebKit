@@ -31,6 +31,7 @@
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PossiblyNull.h>
 #include <wtf/StringHashFunctions.h>
+#include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC {
@@ -83,12 +84,15 @@ private:
 
 class UStringImpl : Noncopyable {
 public:
-    static PassRefPtr<UStringImpl> create(UChar* buffer, int length)
+    template<size_t inlineCapacity>
+    static PassRefPtr<UStringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
     {
-        return adoptRef(new UStringImpl(buffer, length, BufferOwned));
+        if (unsigned length = vector.size())
+            return adoptRef(new UStringImpl(vector.releaseBuffer(), length, BufferOwned));
+        return &empty();
     }
 
-    static PassRefPtr<UStringImpl> createCopying(const UChar* buffer, int length)
+    static PassRefPtr<UStringImpl> create(const UChar* buffer, int length)
     {
         UChar* newBuffer;
         if (!UStringImpl::allocChars(length).getValue(newBuffer))
@@ -111,14 +115,30 @@ public:
 
     static PassRefPtr<UStringImpl> createUninitialized(unsigned length, UChar*& output)
     {
-        ASSERT(length);
+        if (!length) {
+            output = 0;
+            return &empty();
+        }
+
+        if (length > ((std::numeric_limits<size_t>::max() - sizeof(UStringImpl)) / sizeof(UChar)))
+            CRASH();
+        UStringImpl* resultImpl = static_cast<UStringImpl*>(fastMalloc(sizeof(UChar) * length + sizeof(UStringImpl)));
+        output = reinterpret_cast<UChar*>(resultImpl + 1);
+        return adoptRef(new(resultImpl) UStringImpl(output, length, BufferInternal));
+    }
+
+    static PassRefPtr<UStringImpl> tryCreateUninitialized(unsigned length, UChar*& output)
+    {
+        if (!length) {
+            output = 0;
+            return &empty();
+        }
+
         if (length > ((std::numeric_limits<size_t>::max() - sizeof(UStringImpl)) / sizeof(UChar)))
             return 0;
-
         UStringImpl* resultImpl;
         if (!tryFastMalloc(sizeof(UChar) * length + sizeof(UStringImpl)).getValue(resultImpl))
             return 0;
-
         output = reinterpret_cast<UChar*>(resultImpl + 1);
         return adoptRef(new(resultImpl) UStringImpl(output, length, BufferInternal));
     }
@@ -138,7 +158,7 @@ public:
         return m_length;
     }
     unsigned hash() const { if (!m_hash) m_hash = computeHash(data(), m_length); return m_hash; }
-    unsigned computedHash() const { ASSERT(m_hash); return m_hash; } // fast path for Identifiers
+    unsigned existingHash() const { ASSERT(m_hash); return m_hash; } // fast path for Identifiers
     void setHash(unsigned hash) { ASSERT(hash == computeHash(data(), m_length)); m_hash = hash; } // fast path for Identifiers
     bool isIdentifier() const { return m_isIdentifier; }
     void setIsIdentifier(bool isIdentifier) { m_isIdentifier = isIdentifier; }

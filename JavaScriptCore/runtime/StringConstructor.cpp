@@ -30,12 +30,12 @@ namespace JSC {
 
 static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
 {
-    UChar* buf = static_cast<UChar*>(fastMalloc(args.size() * sizeof(UChar)));
-    UChar* p = buf;
-    ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        *p++ = static_cast<UChar>((*it).toUInt32(exec));
-    return jsString(exec, UString::createNonCopying(buf, p - buf));
+    unsigned length = args.size();
+    UChar* buf;
+    PassRefPtr<UStringImpl> impl = UStringImpl::createUninitialized(length, buf);
+    for (unsigned i = 0; i < length; ++i)
+        buf[i] = static_cast<UChar>(args.at(i).toUInt32(exec));
+    return jsString(exec, impl);
 }
 
 static JSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec, JSObject*, JSValue, const ArgList& args)

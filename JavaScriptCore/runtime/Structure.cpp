@@ -303,7 +303,7 @@ void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
     ASSERT(isDictionary());
     ASSERT(m_propertyTable);
 
-    unsigned i = rep->computedHash();
+    unsigned i = rep->existingHash();
 
 #if DUMP_PROPERTYMAP_STATS
     ++numProbes;
@@ -321,7 +321,7 @@ void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
     ++numCollisions;
 #endif
 
-    unsigned k = 1 | doubleHash(rep->computedHash());
+    unsigned k = 1 | doubleHash(rep->existingHash());
 
     while (1) {
         i += k;
@@ -686,7 +686,7 @@ size_t Structure::get(const UString::Rep* rep, unsigned& attributes, JSCell*& sp
     if (!m_propertyTable)
         return notFound;
 
-    unsigned i = rep->computedHash();
+    unsigned i = rep->existingHash();
 
 #if DUMP_PROPERTYMAP_STATS
     ++numProbes;
@@ -706,7 +706,7 @@ size_t Structure::get(const UString::Rep* rep, unsigned& attributes, JSCell*& sp
     ++numCollisions;
 #endif
 
-    unsigned k = 1 | doubleHash(rep->computedHash());
+    unsigned k = 1 | doubleHash(rep->existingHash());
 
     while (1) {
         i += k;
@@ -737,7 +737,7 @@ bool Structure::despecifyFunction(const Identifier& propertyName)
 
     UString::Rep* rep = propertyName._ustring.rep();
 
-    unsigned i = rep->computedHash();
+    unsigned i = rep->existingHash();
 
 #if DUMP_PROPERTYMAP_STATS
     ++numProbes;
@@ -757,7 +757,7 @@ bool Structure::despecifyFunction(const Identifier& propertyName)
     ++numCollisions;
 #endif
 
-    unsigned k = 1 | doubleHash(rep->computedHash());
+    unsigned k = 1 | doubleHash(rep->existingHash());
 
     while (1) {
         i += k;
@@ -806,7 +806,7 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
 
     // FIXME: Consider a fast case for tables with no deleted sentinels.
 
-    unsigned i = rep->computedHash();
+    unsigned i = rep->existingHash();
     unsigned k = 0;
     bool foundDeletedElement = false;
     unsigned deletedElementIndex = 0; // initialize to make the compiler happy
@@ -829,7 +829,7 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
         }
 
         if (k == 0) {
-            k = 1 | doubleHash(rep->computedHash());
+            k = 1 | doubleHash(rep->existingHash());
 #if DUMP_PROPERTYMAP_STATS
             ++numCollisions;
 #endif
@@ -909,7 +909,7 @@ size_t Structure::remove(const Identifier& propertyName)
 #endif
 
     // Find the thing to remove.
-    unsigned i = rep->computedHash();
+    unsigned i = rep->existingHash();
     unsigned k = 0;
     unsigned entryIndex;
     UString::Rep* key = 0;
@@ -923,7 +923,7 @@ size_t Structure::remove(const Identifier& propertyName)
             break;
 
         if (k == 0) {
-            k = 1 | doubleHash(rep->computedHash());
+            k = 1 | doubleHash(rep->existingHash());
 #if DUMP_PROPERTYMAP_STATS
             ++numCollisions;
 #endif
@@ -967,7 +967,7 @@ void Structure::insertIntoPropertyMapHashTable(const PropertyMapEntry& entry)
 {
     ASSERT(m_propertyTable);
 
-    unsigned i = entry.key->computedHash();
+    unsigned i = entry.key->existingHash();
     unsigned k = 0;
 
 #if DUMP_PROPERTYMAP_STATS
@@ -980,7 +980,7 @@ void Structure::insertIntoPropertyMapHashTable(const PropertyMapEntry& entry)
             break;
 
         if (k == 0) {
-            k = 1 | doubleHash(entry.key->computedHash());
+            k = 1 | doubleHash(entry.key->existingHash());
 #if DUMP_PROPERTYMAP_STATS
             ++numCollisions;
 #endif
@@ -1178,7 +1178,7 @@ void Structure::checkConsistency()
         if (!rep)
             continue;
         ++nonEmptyEntryCount;
-        unsigned i = rep->computedHash();
+        unsigned i = rep->existingHash();
         unsigned k = 0;
         unsigned entryIndex;
         while (1) {
@@ -1187,7 +1187,7 @@ void Structure::checkConsistency()
             if (rep == m_propertyTable->entries()[entryIndex - 1].key)
                 break;
             if (k == 0)
-                k = 1 | doubleHash(rep->computedHash());
+                k = 1 | doubleHash(rep->existingHash());
             i += k;
         }
         ASSERT(entryIndex == c + 1);

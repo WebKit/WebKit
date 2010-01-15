@@ -96,8 +96,9 @@ void JSString::resolveRope(ExecState* exec) const
 
     // Allocate the buffer to hold the final string, position initially points to the end.
     UChar* buffer;
-    m_value = UString::createUninitialized(m_stringLength, buffer);
-    if (!buffer) {
+    if (PassRefPtr<UStringImpl> newImpl = UStringImpl::tryCreateUninitialized(m_stringLength, buffer))
+        m_value = newImpl;
+    else {
         for (unsigned i = 0; i < m_ropeLength; ++i)
             m_fibers[i].deref();
         m_ropeLength = 0;

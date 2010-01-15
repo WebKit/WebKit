@@ -1,3 +1,92 @@
+2010-01-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make naming & behaviour of UString[Impl] methods more consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=33702
+
+        UString::create() creates a copy of the UChar* passed, but UStringImpl::create() assumes
+        that it should assume ownership of the provided buffer (with UString::createNonCopying()
+        and UStringImpl::createCopying() providing the alternate behaviours).  Unify on create()
+        taking a copy of the provided buffer.  For non-copying cases, use the name 'adopt', and
+        make this method take a Vector<UChar>&.  For cases where non-copying construction was being
+        used, other than from a Vector<UChar>, change the code to allocate the storage along with
+        the UStringImpl using UStringImpl::createUninitialized().  (The adopt() method also more
+        closely matches that of WebCore::StringImpl).
+
+        Also, UString::createUninitialized() and UStringImpl::createUninitialized() have incompatible
+        behaviours, in that the UString form sets the provided UChar* to a null or non-null value to
+        indicate success or failure, but UStringImpl uses the returned PassRefPtr<UStringImpl> to
+        indicate when allocation has failed (potentially leaving the output Char* uninitialized).
+        This is also incompatible with WebCore::StringImpl's behaviour, in that
+        StringImpl::createUninitialized() will CRASH() if unable to allocate.  Some uses of
+        createUninitialized() in JSC are unsafe, since they do not test the result for null.
+        UStringImpl's indication is preferable, since we may want a successful call to set the result
+        buffer to 0 (specifically, StringImpl returns 0 for the buffer where createUninitialized()
+        returns the empty string, which seems reasonable to catch bugs early).  UString's method
+        cannot support UStringImpl's behaviour directly, since it returns an object rather than a
+        pointer.
+            - remove UString::createUninitialized(), replace with calls to UStringImpl::createUninitialized()
+            - create a UStringImpl::tryCreateUninitialized() form UStringImpl::createUninitialized(),
+              with current behaviour, make createUninitialized() crash on failure to allocate.
+            - make cases in JSC that do not check the result call createUninitialized(), and cases that do
+              check call tryCreateUninitialized().
+
+        Rename computedHash() to existingHash(), to bring this in line wih WebCore::StringImpl.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * JavaScriptCore.exp:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/Identifier.cpp:
+        (JSC::CStringTranslator::translate):
+        (JSC::UCharBufferTranslator::translate):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        * runtime/Lookup.h:
+        (JSC::HashTable::entry):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::release):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        * runtime/Structure.cpp:
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::put):
+        (JSC::Structure::remove):
+        (JSC::Structure::insertIntoPropertyMapHashTable):
+        (JSC::Structure::checkConsistency):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTableHash::hash):
+        * runtime/UString.cpp:
+        (JSC::createRep):
+        (JSC::UString::UString):
+        (JSC::UString::spliceSubstringsWithSeparators):
+        (JSC::UString::replaceRange):
+        (JSC::UString::operator=):
+        * runtime/UString.h:
+        (JSC::UString::adopt):
+        (JSC::IdentifierRepHash::hash):
+        (JSC::makeString):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::adopt):
+        (JSC::UStringImpl::create):
+        (JSC::UStringImpl::createUninitialized):
+        (JSC::UStringImpl::tryCreateUninitialized):
+        (JSC::UStringImpl::existingHash):
+
 2010-01-13  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Oliver Hunt.

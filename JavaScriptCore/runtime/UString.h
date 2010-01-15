@@ -103,9 +103,13 @@ namespace JSC {
         {
         }
 
-        static UString createNonCopying(UChar* c, int length);
+        template<size_t inlineCapacity>
+        static PassRefPtr<UStringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
+        {
+            return Rep::adopt(vector);
+        }
+
         static UString createFromUTF8(const char*);
-        static UString createUninitialized(unsigned length, UChar*& output);
 
         static UString from(int);
         static UString from(long long);
@@ -273,8 +277,8 @@ namespace JSC {
     static const int minShareSize = Heap::minExtraCost / sizeof(UChar);
 
     struct IdentifierRepHash : PtrHash<RefPtr<JSC::UString::Rep> > {
-        static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->computedHash(); }
-        static unsigned hash(JSC::UString::Rep* key) { return key->computedHash(); }
+        static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->existingHash(); }
+        static unsigned hash(JSC::UString::Rep* key) { return key->existingHash(); }
     };
 
     void initializeUString();
@@ -357,8 +361,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -366,7 +370,7 @@ namespace JSC {
         result += adapter1.length();
         adapter2.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3>
@@ -378,8 +382,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -389,7 +393,7 @@ namespace JSC {
         result += adapter2.length();
         adapter3.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
@@ -402,8 +406,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -415,7 +419,7 @@ namespace JSC {
         result += adapter3.length();
         adapter4.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
@@ -429,8 +433,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -444,7 +448,7 @@ namespace JSC {
         result += adapter4.length();
         adapter5.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
@@ -459,8 +463,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -476,7 +480,7 @@ namespace JSC {
         result += adapter5.length();
         adapter6.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
@@ -492,8 +496,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length() + adapter7.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -511,7 +515,7 @@ namespace JSC {
         result += adapter6.length();
         adapter7.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
     template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
@@ -528,8 +532,8 @@ namespace JSC {
 
         UChar* buffer;
         unsigned length = adapter1.length() + adapter2.length() + adapter3.length() + adapter4.length() + adapter5.length() + adapter6.length() + adapter7.length() + adapter8.length();
-        UString resultString = UString::createUninitialized(length, buffer);
-        if (!buffer)
+        PassRefPtr<UStringImpl> resultImpl = UStringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
             return UString();
 
         UChar* result = buffer;
@@ -549,7 +553,7 @@ namespace JSC {
         result += adapter7.length();
         adapter8.writeTo(result);
 
-        return resultString;
+        return resultImpl;
     }
 
 } // namespace JSC

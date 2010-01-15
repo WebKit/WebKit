@@ -252,7 +252,7 @@ PassRefPtr<StringImpl> AtomicString::add(const JSC::Identifier& identifier)
     if (!length)
         return StringImpl::empty();
 
-    HashAndCharacters buffer = { string->computedHash(), string->data(), length }; 
+    HashAndCharacters buffer = { string->existingHash(), string->data(), length }; 
     pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
     if (!addResult.second)
         return *addResult.first;
@@ -286,7 +286,7 @@ AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
     if (!length)
         return static_cast<AtomicStringImpl*>(StringImpl::empty());
 
-    HashAndCharacters buffer = { string->computedHash(), string->data(), length }; 
+    HashAndCharacters buffer = { string->existingHash(), string->data(), length }; 
     HashSet<StringImpl*>::iterator iterator = stringTable().find<HashAndCharacters, HashAndCharactersTranslator>(buffer);
     if (iterator == stringTable().end())
         return 0;

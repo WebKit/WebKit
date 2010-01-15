@@ -144,7 +144,7 @@ namespace JSC {
         {
             ASSERT(table);
 
-            const HashEntry* entry = &table[identifier.ustring().rep()->computedHash() & compactHashSizeMask];
+            const HashEntry* entry = &table[identifier.ustring().rep()->existingHash() & compactHashSizeMask];
 
             if (!entry->key())
                 return 0;

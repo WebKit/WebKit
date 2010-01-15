@@ -112,13 +112,11 @@ struct CStringTranslator {
     static void translate(UString::Rep*& location, const char* c, unsigned hash)
     {
         size_t length = strlen(c);
-        UChar* d = static_cast<UChar*>(fastMalloc(sizeof(UChar) * length));
+        UChar* d;
+        UString::Rep* r = UString::Rep::createUninitialized(length, d).releaseRef();
         for (size_t i = 0; i != length; i++)
             d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
-        
-        UString::Rep* r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
         r->setHash(hash);
-
         location = r;
     }
 };
@@ -177,13 +175,11 @@ struct UCharBufferTranslator {
 
     static void translate(UString::Rep*& location, const UCharBuffer& buf, unsigned hash)
     {
-        UChar* d = static_cast<UChar*>(fastMalloc(sizeof(UChar) * buf.length));
+        UChar* d;
+        UString::Rep* r = UString::Rep::createUninitialized(buf.length, d).releaseRef();
         for (unsigned i = 0; i != buf.length; i++)
             d[i] = buf.s[i];
-        
-        UString::Rep* r = UString::Rep::create(d, buf.length).releaseRef();
         r->setHash(hash);
-        
         location = r; 
     }
 };

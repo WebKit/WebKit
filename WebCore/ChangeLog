@@ -1,3 +1,16 @@
+2010-01-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        Make naming & behaviour of UString[Impl] methods more consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=33702
+
+        WebCore change reflecting UString method name change computedHash() -> existingHash().
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::find):
+
 2010-01-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

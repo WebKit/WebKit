@@ -34,7 +34,7 @@ void HashTable::createTable(JSGlobalData* globalData) const
         entries[i].setKey(0);
     for (int i = 0; values[i].key; ++i) {
         UString::Rep* identifier = Identifier::add(globalData, values[i].key).releaseRef();
-        int hashIndex = identifier->computedHash() & compactHashSizeMask;
+        int hashIndex = identifier->existingHash() & compactHashSizeMask;
         HashEntry* entry = &entries[hashIndex];
 
         if (entry->key()) {
