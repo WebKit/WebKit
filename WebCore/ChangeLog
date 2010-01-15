@@ -1,3 +1,24 @@
+2010-01-15  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Need to ensure that Document::postTask does not provide the Task with a dangling pointer to destroyed Document
+        https://bugs.webkit.org/show_bug.cgi?id=31633
+
+        Don't see a way to add test for it, we don't have a way to reproduce the issue currently.
+
+        * dom/Document.cpp:
+        (WebCore::DocumentWeakReference::DocumentWeakReference):
+        (WebCore::DocumentWeakReference::document):
+        (WebCore::DocumentWeakReference::clear):
+        (WebCore::Document::Document): Create a weak reference to this Document.
+        (WebCore::Document::~Document): Clear the weak pointer, preventing further execution of tasks.
+        (WebCore::PerformTaskContext::PerformTaskContext):
+        (WebCore::performTask): Check if the documentWeakReference is cleared by Document destructor - in this case do not run the task.
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        (WebCore::DocumentWeakReference::create):
+
 2010-01-15  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by David Levin.

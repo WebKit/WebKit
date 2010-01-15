@@ -173,6 +173,19 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };
 
+class DocumentWeakReference : public ThreadSafeShared<DocumentWeakReference> {
+public:
+    static PassRefPtr<DocumentWeakReference> create(Document* document)
+    {
+        return adoptRef(new DocumentWeakReference(document));
+    }
+    Document* document();
+    void clear();
+private:
+    DocumentWeakReference(Document*);
+    Document* m_document;
+};
+
 class Document : public ContainerNode, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame)
@@ -1191,6 +1204,8 @@ private:
 #if ENABLE(WML)
     bool m_containsWMLContent;
 #endif
+
+    RefPtr<DocumentWeakReference> m_weakReference;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const
