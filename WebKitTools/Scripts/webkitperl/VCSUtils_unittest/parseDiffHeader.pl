@@ -38,10 +38,9 @@ use VCSUtils;
 
 my @headerKeys = ( # The $headerHashRef keys to check.
     "copiedFromPath",
-    "copiedFromVersion",
     "indexPath",
+    "sourceRevision",
     "svnConvertedText",
-    "version",
 );
 
 # Test parseDiffHeader() for the given $diffTestHashRef.
@@ -54,7 +53,7 @@ sub doDiffTest($)
 
     my $line = <$fileHandle>;
 
-    my ($headerHashRef, $foundHeaderEnding, $lastReadLine) = VCSUtils::parseDiffHeader($fileHandle, $line);
+    my ($headerHashRef, $lastReadLine) = VCSUtils::parseDiffHeader($fileHandle, $line);
 
     my $titleHeader = "parseDiffHeader(): [$diffTestHashRef->{diffName}] ";
     my $title;
@@ -64,32 +63,13 @@ sub doDiffTest($)
         is($headerHashRef->{$headerKey}, $diffTestHashRef->{$headerKey}, $title);
     }
 
-    is($foundHeaderEnding, $diffTestHashRef->{foundHeaderEnding}, "${titleHeader}foundHeaderEnding");
     is($lastReadLine, $diffTestHashRef->{lastReadLine}, "${titleHeader}lastReadLine");
 
     my $nextLine = <$fileHandle>;
     is($nextLine, $diffTestHashRef->{nextLine}, "${titleHeader}nextLine");
 }
 
-my @diffTests = ({
-    # New test: missing closing header line
-    diffName => "SVN: incomplete header",
-    inputText => <<'END',
-Index: WebKitTools/Scripts/VCSUtils.pm
-END
-    # Header keys to check
-    svnConvertedText => <<'END',
-Index: WebKitTools/Scripts/VCSUtils.pm
-END
-    copiedFromPath => undef,
-    copiedFromVersion => undef,
-    indexPath => "WebKitTools/Scripts/VCSUtils.pm",
-    version => undef,
-    # Other values to check
-    foundHeaderEnding => 0,
-    lastReadLine => undef,
-    nextLine => undef,
-},
+my @diffTests = (
 {
     # New test
     diffName => "SVN: simple",
@@ -109,11 +89,9 @@ Index: WebKitTools/Scripts/VCSUtils.pm
 +++ WebKitTools/Scripts/VCSUtils.pm	(working copy)
 END
     copiedFromPath => undef,
-    copiedFromVersion => undef,
     indexPath => "WebKitTools/Scripts/VCSUtils.pm",
-    version => "53004",
+    sourceRevision => "53004",
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -32,6 +32,7 @@ use strict;\n",
     nextLine => " use warnings;\n",
 },
@@ -136,11 +114,9 @@ Index: WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl
 +++ WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl	(revision 0)
 END
     copiedFromPath => undef,
-    copiedFromVersion => undef,
     indexPath => "WebKitTools/Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl",
-    version => undef,
+    sourceRevision => undef,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -0,0 +1,262 @@\n",
     nextLine => "+#!/usr/bin/perl -w\n",
 },
@@ -148,82 +124,76 @@ END
     # New test
     diffName => "SVN: copy",
     inputText => <<'END',
-Index: WebKitTools/Scripts/webkitpy/move_test.py
+Index: index_path.py
 ===================================================================
---- WebKitTools/Scripts/webkitpy/move_test.py	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)
-+++ WebKitTools/Scripts/webkitpy/move_test.py	(working copy)
+--- index_path.py	(revision 53048)	(from copied_from_path.py:53048)
++++ index_path.py	(working copy)
 @@ -0,0 +1,7 @@
-+# Required for Python to search this directory for module files
++# Python file...
 END
     # Header keys to check
     svnConvertedText => <<'END',
-Index: WebKitTools/Scripts/webkitpy/move_test.py
+Index: index_path.py
 ===================================================================
---- WebKitTools/Scripts/webkitpy/move_test.py	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)
-+++ WebKitTools/Scripts/webkitpy/move_test.py	(working copy)
+--- index_path.py	(revision 53048)	(from copied_from_path.py:53048)
++++ index_path.py	(working copy)
 END
-    copiedFromPath => "WebKitTools/Scripts/webkitpy/__init__.py",
-    copiedFromVersion => "53048",
-    indexPath => "WebKitTools/Scripts/webkitpy/move_test.py",
-    version => undef,
+    copiedFromPath => "copied_from_path.py",
+    indexPath => "index_path.py",
+    sourceRevision => 53048,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -0,0 +1,7 @@\n",
-    nextLine => "+# Required for Python to search this directory for module files\n",
+    nextLine => "+# Python file...\n",
 },
 {
     # New test
     diffName => "SVN: \\r\\n lines",
     inputText => <<END, # No single quotes to allow interpolation of "\r"
-Index: WebKitTools/Scripts/webkitpy/move_test.py\r
+Index: index_path.py\r
 ===================================================================\r
---- WebKitTools/Scripts/webkitpy/move_test.py	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)\r
-+++ WebKitTools/Scripts/webkitpy/move_test.py	(working copy)\r
+--- index_path.py	(revision 53048)	(from copied_from_path.py:53048)\r
++++ index_path.py	(working copy)\r
 @@ -0,0 +1,7 @@\r
-+# Required for Python to search this directory for module files\r
++# Python file...\r
 END
     # Header keys to check
     svnConvertedText => <<END, # No single quotes to allow interpolation of "\r"
-Index: WebKitTools/Scripts/webkitpy/move_test.py\r
+Index: index_path.py\r
 ===================================================================\r
---- WebKitTools/Scripts/webkitpy/move_test.py	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)\r
-+++ WebKitTools/Scripts/webkitpy/move_test.py	(working copy)\r
+--- index_path.py	(revision 53048)	(from copied_from_path.py:53048)\r
++++ index_path.py	(working copy)\r
 END
-    copiedFromPath => "WebKitTools/Scripts/webkitpy/__init__.py",
-    copiedFromVersion => "53048",
-    indexPath => "WebKitTools/Scripts/webkitpy/move_test.py",
-    version => undef,
+    copiedFromPath => "copied_from_path.py",
+    indexPath => "index_path.py",
+    sourceRevision => 53048,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -0,0 +1,7 @@\r\n",
-    nextLine => "+# Required for Python to search this directory for module files\r\n",
+    nextLine => "+# Python file...\r\n",
 },
 {
     # New test
     diffName => "SVN: path corrections",
     inputText => <<'END',
-Index: WebKitTools/Scripts/webkitpy/move_test.py
+Index: index_path.py
 ===================================================================
---- bad_path	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)
+--- bad_path	(revision 53048)	(from copied_from_path.py:53048)
 +++ bad_path	(working copy)
 @@ -0,0 +1,7 @@
-+# Required for Python to search this directory for module files
++# Python file...
 END
     # Header keys to check
     svnConvertedText => <<'END',
-Index: WebKitTools/Scripts/webkitpy/move_test.py
+Index: index_path.py
 ===================================================================
---- WebKitTools/Scripts/webkitpy/move_test.py	(revision 53047)	(from WebKitTools/Scripts/webkitpy/__init__.py:53048)
-+++ WebKitTools/Scripts/webkitpy/move_test.py	(working copy)
+--- index_path.py	(revision 53048)	(from copied_from_path.py:53048)
++++ index_path.py	(working copy)
 END
-    copiedFromPath => "WebKitTools/Scripts/webkitpy/__init__.py",
-    copiedFromVersion => "53048",
-    indexPath => "WebKitTools/Scripts/webkitpy/move_test.py",
-    version => undef,
+    copiedFromPath => "copied_from_path.py",
+    indexPath => "index_path.py",
+    sourceRevision => 53048,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -0,0 +1,7 @@\n",
-    nextLine => "+# Required for Python to search this directory for module files\n",
+    nextLine => "+# Python file...\n",
 },
 {
     # New test
@@ -243,11 +213,9 @@ Index: WebCore/rendering/style/StyleFlexibleBoxData.h
 +++ WebCore/rendering/style/StyleFlexibleBoxData.h
 END
     copiedFromPath => undef,
-    copiedFromVersion => undef,
     indexPath => "WebCore/rendering/style/StyleFlexibleBoxData.h",
-    version => undef,
+    sourceRevision => undef,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -47,7 +47,6 @@ public:\n",
     nextLine => undef,
 },
@@ -266,23 +234,20 @@ END
     # Header keys to check
     svnConvertedText => <<'END',
 Index: LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-new file mode 100644
-index 0000000..3c9f114
+===================================================================
 --- LayoutTests/http/tests/security/listener/xss-inactive-closure.html
 +++ LayoutTests/http/tests/security/listener/xss-inactive-closure.html
 END
     copiedFromPath => undef,
-    copiedFromVersion => undef,
     indexPath => "LayoutTests/http/tests/security/listener/xss-inactive-closure.html",
-    version => undef,
+    sourceRevision => undef,
     # Other values to check
-    foundHeaderEnding => 1,
     lastReadLine => "@@ -0,0 +1,34 @@\n",
     nextLine => "+<html>\n",
 },
 );
 
-plan(tests => @diffTests * 8); # Eight assertions per call to doDiffTest().
+plan(tests => @diffTests * 6); # Multiply by number of assertions per call to doDiffTest().
 
 foreach my $diffTestHashRef (@diffTests) {
     doDiffTest($diffTestHashRef);
