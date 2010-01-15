@@ -10,7 +10,7 @@
       height: 100px;
       width: 100px;
       background-color: blue;
-      -webkit-animation-duration: 2s;
+      -webkit-animation-duration: 1s;
       -webkit-animation-timing-function: linear;
       -webkit-animation-name: "anim";
     }
@@ -25,11 +25,11 @@
       layoutTestController.waitUntilDone();
     }
     
-    result = "PASS";
+    result = "";
 
     const expected =  [ [ 1.25,0,0,1.75,25,50 ],
                         [ 1.5,0,0,2.5,50,100 ] ];
-    const tolerance = [ 0.2,0.2,0.2,0.2,5,10 ];
+    const tolerance = [ 0.2,0.2,0.2,0.3,5,15 ];
     const prop = [ "a", "b", "c", "d", "e", "f" ];
     
     function isEqual(actual, desired, tolerance)
@@ -38,29 +38,28 @@
         return diff <= tolerance;
     }
     
+    var numSnapshots = 0;
+    
     function snapshot(which)
     {
-        if (result != "PASS")
-            return;
-        
         var t = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('box')).webkitTransform);
-        for (i = 0; i < 6; ++i)
-            if (!isEqual(t[prop[i]], expected[which][i], tolerance[i])) {
-                result = "FAIL('"+prop[i]+"' was:"+t[prop[i]]+", expected:"+expected[which][i]+")";
-                return;
-            }
+        for (i = 0; i < 6; ++i) {
+            if (!isEqual(t[prop[i]], expected[which][i], tolerance[i]))
+                result += "FAIL('"+prop[i]+"' was:"+t[prop[i]]+", expected:"+expected[which][i]+")";
+        }
+        
+        numSnapshots++;
+        if (numSnapshots == 2) {
+            document.getElementById('result').innerHTML = result || "PASS";
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
     }
 
     function start()
     {
-        setTimeout("snapshot(0)", 500);
-        setTimeout("snapshot(1)", 1000);
-        
-        window.setTimeout(function() {
-            document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }, 1100);
+        setTimeout("snapshot(0)", 250);
+        setTimeout("snapshot(1)", 500);
     }
     
     document.addEventListener('webkitAnimationStart', start, false);
@@ -68,8 +67,8 @@
   </script>
 </head>
 <body>
-This test performs an animation of the translate() and scale() operators. It animates over 2 seconds. 
-At 0.5 and 1 second it takes a snapshot and expects the result to be within range.
+This test performs an animation of the translate() and scale() operators. It animates over 1 seconds. 
+At 0.25 and 0.5 seconds it takes a snapshot and expects the result to be within range.
 <div id="box">
 </div>
 <div id="result">
