@@ -48,6 +48,8 @@ _patch1 = {
     "is_patch" : True,
     "review" : "+",
     "reviewer_email" : "foo@bar.com",
+    "commit-queue" : "+",
+    "committer_email" : "foo@bar.com",
     "attacher_email" : "Contributer1",
 }
 _patch2 = {
@@ -58,8 +60,61 @@ _patch2 = {
     "is_patch" : True,
     "review" : "+",
     "reviewer_email" : "foo@bar.com",
+    "commit-queue" : "+",
+    "committer_email" : "non-committer@example.com",
     "attacher_email" : "eric@webkit.org",
 }
+_patch3 = {
+    "id" : 103,
+    "bug_id" : 75,
+    "url" : "http://example.com/103",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "review" : "?",
+    "attacher_email" : "eric@webkit.org",
+}
+_patch4 = {
+    "id" : 104,
+    "bug_id" : 77,
+    "url" : "http://example.com/103",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "review" : "+",
+    "commit-queue" : "?",
+    "reviewer_email" : "foo@bar.com",
+    "attacher_email" : "Contributer2",
+}
+_patch5 = {
+    "id" : 105,
+    "bug_id" : 77,
+    "url" : "http://example.com/103",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "review" : "+",
+    "reviewer_email" : "foo@bar.com",
+    "attacher_email" : "eric@webkit.org",
+}
+_patch6 = { # Valid committer, but no reviewer.
+    "id" : 106,
+    "bug_id" : 77,
+    "url" : "http://example.com/103",
+    "is_obsolete" : False,
+    "is_patch" : True,
+    "commit-queue" : "+",
+    "committer_email" : "foo@bar.com",
+    "attacher_email" : "eric@webkit.org",
+}
+_patch7 = { # Valid review, patch is marked obsolete.
+    "id" : 107,
+    "bug_id" : 76,
+    "url" : "http://example.com/103",
+    "is_obsolete" : True,
+    "is_patch" : True,
+    "review" : "+",
+    "reviewer_email" : "foo@bar.com",
+    "attacher_email" : "eric@webkit.org",
+}
+
 
 # This must be defined before we define the bugs, thus we don't use MockBugzilla.unassigned_email directly.
 _unassigned_email = "unassigned@example.com"
@@ -67,21 +122,27 @@ _unassigned_email = "unassigned@example.com"
 # FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
 _bug1 = {
     "id" : 42,
-    "title" : "The first bug",
+    "title" : "Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.",
     "assigned_to_email" : _unassigned_email,
     "attachments" : [_patch1, _patch2],
 }
 _bug2 = {
     "id" : 75,
-    "title" : "The second bug",
+    "title" : "Bug with a patch needing review.",
     "assigned_to_email" : "foo@foo.com",
-    "attachments" : [],
+    "attachments" : [_patch3],
 }
 _bug3 = {
     "id" : 76,
     "title" : "The third bug",
     "assigned_to_email" : _unassigned_email,
-    "attachments" : [],
+    "attachments" : [_patch7],
+}
+_bug4 = {
+    "id" : 77,
+    "title" : "The fourth bug",
+    "assigned_to_email" : "foo@foo.com",
+    "attachments" : [_patch4, _patch5, _patch6],
 }
 
 class MockBugzillaQueries(Mock):
@@ -89,20 +150,30 @@ class MockBugzillaQueries(Mock):
         Mock.__init__(self)
         self._bugzilla = bugzilla
 
+    def _all_bugs(self):
+        return map(lambda bug_dictionary: Bug(bug_dictionary, self._bugzilla), self._bugzilla.bug_cache.values())
+
     def fetch_bug_ids_from_commit_queue(self):
-        return [42, 75]
+        bugs_with_commit_queued_patches = filter(lambda bug: bug.commit_queued_patches(), self._all_bugs())
+        return map(lambda bug: bug.id(), bugs_with_commit_queued_patches)
 
     def fetch_attachment_ids_from_review_queue(self):
-        return [197, 128]
+        unreviewed_patches = sum([bug.unreviewed_patches() for bug in self._all_bugs()], [])
+        return map(lambda patch: patch.id(), unreviewed_patches)
 
-    def fetch_patches_from_commit_queue(self, reject_invalid_patches=False):
-        return [self._bugzilla.fetch_attachment(_patch1["id"]), self._bugzilla.fetch_attachment(_patch2["id"])]
+    def fetch_patches_from_commit_queue(self):
+        return sum([bug.commit_queued_patches() for bug in self._all_bugs()], [])
 
     def fetch_bug_ids_from_pending_commit_list(self):
-        return [42, 75, 76]
-    
+        bugs_with_reviewed_patches = filter(lambda bug: bug.reviewed_patches(), self._all_bugs())
+        bug_ids = map(lambda bug: bug.id(), bugs_with_reviewed_patches)
+        # NOTE: This manual hack here is to allow testing logging in test_assign_to_committer
+        # the real pending-commit query on bugzilla will return bugs with patches which have r+, but are also obsolete.
+        return bug_ids + [76]
+
     def fetch_patches_from_pending_commit_list(self):
-        return [self._bugzilla.fetch_attachment(_patch1["id"]), self._bugzilla.fetch_attachment(_patch2["id"])]
+        return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
+
 
 
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork class we should mock that instead.
@@ -110,8 +181,8 @@ class MockBugzillaQueries(Mock):
 class MockBugzilla(Mock):
     bug_server_url = "http://example.com"
     unassigned_email = _unassigned_email
-    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3)
-    attachment_cache = _id_to_object_dictionary(_patch1, _patch2)
+    bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4)
+    attachment_cache = _id_to_object_dictionary(_patch1, _patch2, _patch3, _patch4, _patch5, _patch6, _patch7)
 
     def __init__(self):
         Mock.__init__(self)

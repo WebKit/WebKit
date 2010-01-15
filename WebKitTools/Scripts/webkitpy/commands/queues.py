@@ -143,9 +143,15 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         AbstractQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self.tool.bugs)
 
+    def _validate_patches_in_commit_queue(self):
+        # Not using BugzillaQueries.fetch_patches_from_commit_queue() so we can reject patches with invalid committers/reviewers.
+        bug_ids = self.tool.bugs.queries.fetch_bug_ids_from_commit_queue()
+        all_patches = sum([self.tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True) for bug_id in bug_ids], [])
+        return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
+
     def next_work_item(self):
-        patches = self.tool.bugs.queries.fetch_patches_from_commit_queue()
-        patches = self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(patches)
+        patches = self._validate_patches_in_commit_queue()
+        # FIXME: We could sort the patches in a specific order here, was suggested by https://bugs.webkit.org/show_bug.cgi?id=33395
         if not patches:
             self._update_status("Empty queue")
             return None

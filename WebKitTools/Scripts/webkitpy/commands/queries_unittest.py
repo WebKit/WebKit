@@ -36,26 +36,27 @@ from webkitpy.mock_bugzillatool import MockBugzillaTool
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
-        self.assert_execute_outputs(BugsToCommit(), None, "42\n75\n")
+        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\n"
+        self.assert_execute_outputs(BugsToCommit(), None, "42\n77\n", expected_stderr)
 
     def test_patches_to_commit(self):
-        expected_stdout = "http://example.com/197\nhttp://example.com/128\n"
-        expected_stderr = "Patches in commit queue:\n"
+        expected_stdout = "http://example.com/197\nhttp://example.com/103\n"
+        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nPatches in commit queue:\n"
         self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
 
     def test_patches_to_commit_queue(self):
-        expected_stdout = "http://example.com/197&action=edit\n"
-        expected_stderr = "128 committer = \"Eric Seidel\" <eric@webkit.org>\n"
+        expected_stdout = "http://example.com/104&action=edit\n"
+        expected_stderr = "197 already has cq=+\n128 already has cq=+\n105 committer = \"Eric Seidel\" <eric@webkit.org>\n"
         options = Mock()
         options.bugs = False
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
 
-        expected_stdout = "http://example.com/42\n"
+        expected_stdout = "http://example.com/77\n"
         options.bugs = True
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
 
     def test_patches_to_review(self):
-        expected_stdout = "197\n128\n"
+        expected_stdout = "103\n"
         expected_stderr = "Patches pending review:\n"
         self.assert_execute_outputs(PatchesToReview(), None, expected_stdout, expected_stderr)
 

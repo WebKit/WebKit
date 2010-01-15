@@ -64,10 +64,14 @@ class AbstractQueueTest(CommandsTest):
 
 
 class CommitQueueTest(QueuesTest):
-    def test_style_queue(self):
+    def test_commit_queue(self):
         expected_stderr = {
             "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % os.getcwd(),
-            "next_work_item" : "2 patches in commit-queue [197, 128]\n",
+            # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
+            "next_work_item" : """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+2 patches in commit-queue [197, 106]
+""",
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 

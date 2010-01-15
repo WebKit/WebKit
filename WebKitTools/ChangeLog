@@ -1,3 +1,29 @@
+2010-01-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(53133): commit-queue no longer rejects patches with invalid committers, instead it hangs
+        https://bugs.webkit.org/show_bug.cgi?id=33638
+
+        * Scripts/webkitpy/bugzilla.py:
+         - Add Bug.id() to match Attachment.id()
+         - Give Bug.reviewed_patches and commit_queued_patches the option to return patches with invalid committers/reviewers.
+         - Add back a missing variable to _validate_setter_email found by the new unit tests!
+        * Scripts/webkitpy/commands/queries.py:
+         - Add FIXMEs about the commands being confusingly named.
+        * Scripts/webkitpy/commands/queries_unittest.py:
+         - Update results to reflect the newly restructured mock bug cache.
+        * Scripts/webkitpy/commands/queues.py:
+         - Add a new _validate_patches_in_commit_queue method (this is what fixes the regression).
+         - Add a FIXME about eventually sorting the patches into some order.
+        * Scripts/webkitpy/commands/queues_unittest.py:
+         - Update results now that with the newly restructure mock bug cache we're testing cq+'d patches with an invalid committer.
+        * Scripts/webkitpy/commands/upload_unittest.py:
+         - Update results to match the newly restructured mock bug cache.
+        * Scripts/webkitpy/mock_bugzillatool.py:
+         - Restructure fetch_ methods to not use a manual list of ids, but rather use Bug and Attachment classes to make real queries from all of the Bugs.
+         - Add a few more attachments and bug dictionaries for use by the tests.
+
 2010-01-13  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.

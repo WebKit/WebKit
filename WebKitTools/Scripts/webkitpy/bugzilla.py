@@ -130,6 +130,9 @@ class Bug(object):
         self.bug_dictionary = bug_dictionary
         self._bugzilla = bugzilla
 
+    def id(self):
+        return self.bug_dictionary["id"]
+
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 
@@ -146,13 +149,19 @@ class Bug(object):
     def unreviewed_patches(self):
         return [patch for patch in self.patches() if patch.review() == "?"]
 
-    def reviewed_patches(self):
+    def reviewed_patches(self, include_invalid=False):
+        patches = [patch for patch in self.patches() if patch.review() == "+"]
+        if include_invalid:
+            return patches
         # Checking reviewer() ensures that it was both reviewed and has a valid reviewer.
-        return [patch for patch in self.patches() if patch.review() == "+" and patch.reviewer()]
+        return filter(lambda patch: patch.reviewer(), patches)
 
-    def commit_queued_patches(self):
+    def commit_queued_patches(self, include_invalid=False):
+        patches = [patch for patch in self.patches() if patch.commit_queue() == "+"]
+        if include_invalid:
+            return patches
         # Checking committer() ensures that it was both commit-queue+'d and has a valid committer.
-        return [patch for patch in self.patches() if patch.commit_queue() == "+" and patch.committer()]
+        return filter(lambda patch: patch.committer(), patches)
 
 
 # A container for all of the logic for making a parsing buzilla queries.
@@ -195,6 +204,7 @@ class BugzillaQueries(object):
         commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
 
+    # This function will only return patches which have valid committers set.  It won't reject patches with invalid committers/reviewers.
     def fetch_patches_from_commit_queue(self):
         return sum([self._fetch_bug(bug_id).commit_queued_patches() for bug_id in self.fetch_bug_ids_from_commit_queue()], [])
 
@@ -236,7 +246,8 @@ class CommitterValidator(object):
     def _validate_setter_email(self, patch, result_key, rejection_function):
         committer = getattr(patch, result_key)()
         # If the flag is set, and we don't recognize the setter, reject the flag!
-        if patch._attachment_dictionary.get("%s_email" % result_key) and not committer:
+        setter_email = patch._attachment_dictionary.get("%s_email" % result_key)
+        if setter_email and not committer:
             rejection_function(patch.id(), self._flag_permission_rejection_message(setter_email, result_key))
             return False
         return True
