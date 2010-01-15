@@ -411,7 +411,7 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     ASSERT(source->frame());
 
     v8::TryCatch tryCatch;
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0]);
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(toWebCoreString(args[0]));
     MessagePortArray portArray;
     String targetOrigin;
 

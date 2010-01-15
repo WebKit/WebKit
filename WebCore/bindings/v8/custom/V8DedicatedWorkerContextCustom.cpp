@@ -46,7 +46,7 @@ v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Ar
 {
     INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
     DedicatedWorkerContext* workerContext = V8DedicatedWorkerContext::toNative(args.Holder());
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0]);
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(v8ValueToWebCoreString(args[0]));
     MessagePortArray portArray;
     if (args.Length() > 1) {
         if (!getMessagePortArray(args[1], portArray))

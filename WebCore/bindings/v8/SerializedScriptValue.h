@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,26 +40,11 @@ namespace WebCore {
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
-    // Creates a serialized representation of the given V8 value.
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value)
+    static PassRefPtr<SerializedScriptValue> create(String string)
     {
-        return adoptRef(new SerializedScriptValue(value));
+        return adoptRef(new SerializedScriptValue(string));
     }
 
-    // Creates a serialized value with the given data obtained from a
-    // prior call to toWireString().
-    static PassRefPtr<SerializedScriptValue> createFromWire(String data)
-    {
-        return adoptRef(new SerializedScriptValue(data, WireData));
-    }
-
-    // Creates a serialized representation of WebCore string.
-    static PassRefPtr<SerializedScriptValue> create(String data)
-    {
-        return adoptRef(new SerializedScriptValue(data, StringValue));
-    }
-
-    // Creates an empty serialized value.
     static PassRefPtr<SerializedScriptValue> create()
     {
         return adoptRef(new SerializedScriptValue());
@@ -67,29 +52,23 @@ public:
 
     PassRefPtr<SerializedScriptValue> release()
     {
-        RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data, WireData));
+        RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data));
         m_data = String();
         return result.release();
     }
 
-    String toWireString() const { return m_data; }
-
-    // Deserializes the value (in the current context). Returns an
-    // empty handle in case of failure.
-    v8::Local<v8::Value> deserialize();
+    String toString()
+    {
+        return m_data;
+    }
 
 private:
-    enum StringDataMode {
-        StringValue,
-        WireData
-    };
+    SerializedScriptValue(String string)
+        : m_data(string)
+    {
+    }
 
     SerializedScriptValue() { }
-
-    explicit SerializedScriptValue(v8::Handle<v8::Value>);
-
-    SerializedScriptValue(String data, StringDataMode mode);
-
     String m_data;
 };
 

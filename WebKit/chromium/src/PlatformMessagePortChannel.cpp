@@ -179,7 +179,7 @@ void PlatformMessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChann
     if (!m_localPort || !m_webChannel)
         return;
 
-    WebString messageString = message->message()->toWireString();
+    WebString messageString = message->message()->toString();
     OwnPtr<WebCore::MessagePortChannelArray> channels = message->channels();
     WebMessagePortChannelArray* webChannels = 0;
     if (channels.get() && channels->size()) {
@@ -211,7 +211,7 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
                 (*channels)[i] = MessagePortChannel::create(platformChannel);
             }
         }
-        RefPtr<SerializedScriptValue> serializedMessage = SerializedScriptValue::createFromWire(message);
+        RefPtr<SerializedScriptValue> serializedMessage = SerializedScriptValue::create(message);
         result = MessagePortChannel::EventData::create(serializedMessage.release(), channels.release());
     }
 

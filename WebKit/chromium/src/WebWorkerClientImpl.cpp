@@ -173,7 +173,7 @@ void WebWorkerClientImpl::postMessageToWorkerContext(
     if (!isMainThread()) {
         WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&postMessageToWorkerContextTask,
                                                                    this,
-                                                                   message->toWireString(),
+                                                                   message->toString(),
                                                                    channels));
         return;
     }
@@ -184,7 +184,7 @@ void WebWorkerClientImpl::postMessageToWorkerContext(
         webchannel->setClient(0);
         webChannels[i] = webchannel;
     }
-    m_webWorker->postMessageToWorkerContext(message->toWireString(), webChannels);
+    m_webWorker->postMessageToWorkerContext(message->toString(), webChannels);
 }
 
 bool WebWorkerClientImpl::hasPendingActivity() const
@@ -356,7 +356,7 @@ void WebWorkerClientImpl::postMessageToWorkerObjectTask(
         OwnPtr<MessagePortArray> ports =
             MessagePort::entanglePorts(*context, channels.release());
         RefPtr<SerializedScriptValue> serializedMessage =
-            SerializedScriptValue::createFromWire(message);
+            SerializedScriptValue::create(message);
         thisPtr->m_worker->dispatchEvent(MessageEvent::create(ports.release(),
                                                               serializedMessage.release()));
     }

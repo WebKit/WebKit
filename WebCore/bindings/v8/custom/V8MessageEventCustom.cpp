@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     String typeArg = v8ValueToWebCoreString(args[0]);
     bool canBubbleArg = args[1]->BooleanValue();
     bool cancelableArg = args[2]->BooleanValue();
-    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(args[3]);
+    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(v8ValueToWebCoreString(args[3]));
     String originArg = v8ValueToWebCoreString(args[4]);
     String lastEventIdArg = v8ValueToWebCoreString(args[5]);
     DOMWindow* sourceArg = V8DOMWindow::HasInstance(args[6]) ? V8DOMWindow::toNative(v8::Handle<v8::Object>::Cast(args[6])) : 0;
