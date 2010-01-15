@@ -1,5 +1,24 @@
 2010-01-14  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33705
+        UStringImpl::create() should use internal storage
+
+        When creating a UStringImpl copying of a UChar*, we can use an internal buffer,
+        by calling UStringImpl::tryCreateUninitialized().
+
+        Also, remove duplicate of copyChars from JSString, call UStringImpl's version.
+
+        Small (max 0.5%) progression on Sunspidey.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::create):
+
+2010-01-14  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Make naming & behaviour of UString[Impl] methods more consistent.

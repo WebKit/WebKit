@@ -66,20 +66,6 @@ JSString::Rope::~Rope()
     destructNonRecursive();
 }
 
-#define ROPE_COPY_CHARS_INLINE_CUTOFF 20
-
-static inline void copyChars(UChar* destination, const UChar* source, unsigned numCharacters)
-{
-#ifdef ROPE_COPY_CHARS_INLINE_CUTOFF
-    if (numCharacters <= ROPE_COPY_CHARS_INLINE_CUTOFF) {
-        for (unsigned i = 0; i < numCharacters; ++i)
-            destination[i] = source[i];
-        return;
-    }
-#endif
-    memcpy(destination, source, numCharacters * sizeof(UChar));
-}
-
 // Overview: this methods converts a JSString from holding a string in rope form
 // down to a simple UString representation.  It does so by building up the string
 // backwards, since we want to avoid recursion, we expect that the tree structure
@@ -128,7 +114,7 @@ void JSString::resolveRope(ExecState* exec) const
             UString::Rep* string = currentFiber.string();
             unsigned length = string->size();
             position -= length;
-            copyChars(position, string->data(), length);
+            UStringImpl::copyChars(position, string->data(), length);
 
             // Was this the last item in the work queue?
             if (workQueue.isEmpty()) {
