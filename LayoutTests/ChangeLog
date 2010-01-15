@@ -306,7 +306,7 @@
 
 2010-01-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
-        Reviewed by Dirk Schulze.
+        Reviewed by Oliver Hunt.
 
         SVGClipPathElement shouldn't resolve style manually
         https://bugs.webkit.org/show_bug.cgi?id=33647
