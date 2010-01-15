@@ -248,8 +248,10 @@ FloatRect RenderSVGRoot::objectBoundingBox() const
 
 FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
 {
-    // FIXME: This does not include the border or shadow but it should!
-    return computeContainerBoundingBox(this, true);
+    // FIXME: This does not include the border but it should!
+    FloatRect repaintRect = computeContainerBoundingBox(this, true);
+    style()->svgStyle()->inflateForShadow(repaintRect);
+    return repaintRect;
 }
 
 TransformationMatrix RenderSVGRoot::localTransform() const

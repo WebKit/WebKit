@@ -159,6 +159,8 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
     if (!rect.isEmpty())
         m_cachedLocalRepaintRect.intersect(rect);
 
+    style()->svgStyle()->inflateForShadow(m_cachedLocalRepaintRect);
+
     return m_cachedLocalRepaintRect;
 }
 

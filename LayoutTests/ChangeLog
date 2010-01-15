@@ -1,3 +1,49 @@
+2010-01-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=33498 REGRESSION: 
+        svg/css/circle-in-mask-with-shadow.svg failing pixel tests
+        -and corresponding-
+        <rdar://problem/7544176>
+
+        All of these tests just needed to be updated because of small 
+        rounding differences. 
+
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.checksum:
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/mac/fast/repaint/moving-shadow-on-path-expected.txt:
+        * platform/mac/svg/css/arrow-with-shadow-expected.png:
+        * platform/mac/svg/css/arrow-with-shadow-expected.txt:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.checksum:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/mac/svg/css/clippath-with-shadow-expected.png:
+        * platform/mac/svg/css/composite-shadow-example-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-example-expected.png:
+        * platform/mac/svg/css/composite-shadow-example-expected.txt:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.txt:
+        * platform/mac/svg/css/css-box-min-width-expected.checksum:
+        * platform/mac/svg/css/css-box-min-width-expected.png:
+        * platform/mac/svg/css/group-with-shadow-expected.txt:
+        * platform/mac/svg/css/mask-with-shadow-expected.txt:
+        * platform/mac/svg/css/path-with-shadow-expected.png:
+        * platform/mac/svg/css/path-with-shadow-expected.txt:
+        * platform/mac/svg/css/shadow-and-opacity-expected.txt:
+        * platform/mac/svg/css/shadow-with-large-radius-expected.txt:
+        * platform/mac/svg/css/shadow-with-negative-offset-expected.txt:
+        * platform/mac/svg/css/stars-with-shadow-expected.checksum:
+        * platform/mac/svg/css/stars-with-shadow-expected.png:
+        * platform/mac/svg/css/stars-with-shadow-expected.txt:
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.checksum:
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.txt:
+
 2010-01-14  Adam Roben  <aroben@apple.com>
 
         Add a test that shows onload still fires if a load of a <script src>

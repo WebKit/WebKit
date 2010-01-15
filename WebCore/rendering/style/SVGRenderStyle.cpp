@@ -166,6 +166,17 @@ void SVGRenderStyle::inflateForShadow(IntRect& repaintRect) const
     if (!svgShadow)
         return;
 
+    FloatRect repaintFloatRect = FloatRect(repaintRect);
+    inflateForShadow(repaintFloatRect);
+    repaintRect = enclosingIntRect(repaintFloatRect);
+}
+
+void SVGRenderStyle::inflateForShadow(FloatRect& repaintRect) const
+{
+    ShadowData* svgShadow = shadow();
+    if (!svgShadow)
+        return;
+
     int shadowTop;
     int shadowRight;
     int shadowBottom;

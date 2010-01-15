@@ -1,3 +1,31 @@
+2010-01-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=33498 REGRESSION: 
+        svg/css/circle-in-mask-with-shadow.svg failing pixel tests
+        -and corresponding-
+        <rdar://problem/7544176>
+
+        This change makes repaintRectInLocalCoordinates return a rect that 
+        is -webkit-svg-shadow-aware.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::inflateForShadow):
+        * rendering/style/SVGRenderStyle.h:
+
 2010-01-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
