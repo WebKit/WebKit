@@ -66,7 +66,7 @@ static DragOperation dragOpFromIEOp(const String& op)
     if (op == "link")
         return DragOperationLink;
     if (op == "move")
-        return DragOperationGeneric;
+        return DragOperationGeneric;    // FIXME: Why is this DragOperationGeneric? <http://webkit.org/b/33697>
     if (op == "copyLink")
         return (DragOperation)(DragOperationCopy | DragOperationLink);
     if (op == "copyMove")
@@ -110,7 +110,7 @@ DragOperation Clipboard::sourceOperation() const
 DragOperation Clipboard::destinationOperation() const
 {
     DragOperation op = dragOpFromIEOp(m_dropEffect);
-    ASSERT_ARG(op, op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationGeneric);
+    ASSERT(op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationGeneric || op == DragOperationMove);
     return op;
 }
 
@@ -122,7 +122,7 @@ void Clipboard::setSourceOperation(DragOperation op)
 
 void Clipboard::setDestinationOperation(DragOperation op)
 {
-    ASSERT(op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationMove);
+    ASSERT_ARG(op, op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationGeneric || op == DragOperationMove);
     m_dropEffect = IEOpFromDragOp(op);
 }
 

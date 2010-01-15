@@ -1,3 +1,15 @@
+2010-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Fix an assertion that was causing test crashes. Filed a bug
+        about the weirdness that causes this assertion (inconsistencies 
+        between DragOperationMove and DragOperationGeneric).
+
+        * dom/Clipboard.cpp:
+        (WebCore::dragOpFromIEOp):
+        (WebCore::Clipboard::setDestinationOperation):
+
 2010-01-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
