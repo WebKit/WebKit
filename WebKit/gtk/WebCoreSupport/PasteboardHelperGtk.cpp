@@ -126,6 +126,10 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer dat
     dataObject->clear();
     if (data) {
         WebCore::Page* corePage = reinterpret_cast<WebCore::Page*>(data);
+
+        if (!corePage->focusController())
+            return;
+
         Frame* frame = corePage->focusController()->focusedOrMainFrame();
 
         // Collapse the selection without clearing it

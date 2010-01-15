@@ -1,5 +1,18 @@
 2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Reviewed by Eric Seidel.
+
+        [GTK] Crashes cleaning clipboard contents, with page cache enabled
+        https://bugs.webkit.org/show_bug.cgi?id=32900
+
+        Null-check the focus controller to avoid crashing. Could not find
+        a way to reproduce this consistently, thus no test.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::clearClipboardContentsCallback):
+
+2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
+
         Reviewed by Oliver Hunter.
 
         [GTK] couple fixes for signal emissions, and property notifications
