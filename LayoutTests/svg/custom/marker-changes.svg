@@ -11,32 +11,23 @@
     </marker>
 </defs>
 
+
+<g onclick="mouseHandler()">
+    <path fill="none" stroke="black" stroke-width="8" marker-start="url(#markerStart)" marker-mid="url(#markerMiddle)" marker-end="url(#markerEnd)" d="M 130 135 L 180 135 L 180 185"/>
+</g>
+
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
-window.setTimeout("clickNow()", 0);
-
-function clickNow() {
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 135);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
-}
-
 function mouseHandler(evt)
 {
     var marker = document.getElementById("markerStart");
     marker.setAttribute("markerWidth", "2");
 }
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(150, 135);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
 </script>
 
-<g onclick="mouseHandler()">
-    <path fill="none" stroke="black" stroke-width="8" marker-start="url(#markerStart)" marker-mid="url(#markerMiddle)" marker-end="url(#markerEnd)" d="M 130 135 L 180 135 L 180 185"/>
-</g>
 </svg>

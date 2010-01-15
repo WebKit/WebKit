@@ -1,5 +1,16 @@
 2010-01-15  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        svg/custom/marker-changes.svg is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33728
+
+        removing gratuitous setTimeout.
+
+        * svg/custom/marker-changes.svg:
+
+2010-01-15  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         transitions/shorthand-border-transitions.html is still flaky on slower bots
