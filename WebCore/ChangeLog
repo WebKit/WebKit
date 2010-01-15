@@ -1,3 +1,15 @@
+2010-01-14  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Compiler warning: comparisons like 'X<=Y<=Z' do not have their mathematical meaning
+        https://bugs.webkit.org/show_bug.cgi?id=33575
+
+        Patch from Magnus Boman <captain.magnus@gmail.com>
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache): fix compiler warnings.
+
 2010-01-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

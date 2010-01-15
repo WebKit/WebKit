@@ -869,11 +869,11 @@ static HashSet<String> mimeTypeCache()
                         if (G_VALUE_TYPE(layer) == GST_TYPE_INT_RANGE) {
                             gint minLayer = gst_value_get_int_range_min(layer);
                             gint maxLayer = gst_value_get_int_range_max(layer);
-                            if (minLayer <= 1 <= maxLayer)
+                            if (minLayer <= 1 && 1 <= maxLayer)
                                 cache.add(String("audio/mp1"));
-                            if (minLayer <= 2 <= maxLayer)
+                            if (minLayer <= 2 && 2 <= maxLayer)
                                 cache.add(String("audio/mp2"));
-                            if (minLayer <= 3 <= maxLayer)
+                            if (minLayer <= 3 && 3 <= maxLayer)
                                 cache.add(String("audio/mp3"));
                         }
                     }
