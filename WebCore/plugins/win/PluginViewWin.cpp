@@ -98,7 +98,9 @@ static inline HWND windowHandleForPageClient(PlatformPageClient client)
 #if PLATFORM(QT)
     if (!client)
         return 0;
-    return client->ownerWidget()->winId();
+    if (QWidget* pluginParent = qobject_cast<QWidget*>(client->pluginParent()))
+        return pluginParent->winId();
+    return 0;
 #elif PLATFORM(WX)
     if (!client)
         return 0;

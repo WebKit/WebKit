@@ -1,3 +1,22 @@
+2010-01-13  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt/Win] Flash in QGraphicsWebView does not process hover correctly.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=33591
+        
+        Mouse hover does not work as expected with the flash in some sites.
+        - http://www.bbc.co.uk/ Hover over the map
+        - http://www.barbie.com/ Hover over the menu items (Games, Videos)
+        The problem appears to be that Flash queries NPNVnetscapeWindow on every
+        mouse hover. I do not how flash uses this value but returning 0 when flash
+        is in windowless mode solves the problem (When using QGraphicsWebView we
+        inject wmode opaque, thereby putting the plugin in windowless mode).
+
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+
 2010-01-15  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.
