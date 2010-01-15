@@ -21,7 +21,6 @@
       position: absolute;
       background-color: #282;
       -webkit-animation-duration: 2s;
-      -webkit-animation-name: b1;
       -webkit-animation-iteration-count: infinite;
       -webkit-animation-timing-function: linear;
       -webkit-transform-origin: center center 200px;
@@ -42,7 +41,6 @@
       position: absolute;
       background-color: #282;
       -webkit-animation-duration: 2s;
-      -webkit-animation-name: b2;
       -webkit-animation-iteration-count: infinite;
       -webkit-animation-timing-function: linear;
     }
@@ -63,30 +61,24 @@
       }
 
       result = "";
-      const defaultTolerance = 0.2;
 
       const expected = {
           "b1" : [ 0,0,-1,0, 0,1,0,0, 1,0,0,0, 0,0,0,1 ],
           "b2" : [ 0,0,-1,0, 0,1,0,0, 1,0,0,0, -200,0,200,1 ]
       };
-      
-      const tolerance = 0.2;
 
-      function isEqual(actual, desired, tolerance)
+      const tolerance = 0.2;
+      function isEqual(actual, desired)
       {
-          if (tolerance == undefined || tolerance == 0)
-              tolerance = defaultTolerance;
           var diff = Math.abs(actual - desired);
           return diff <= tolerance;
       }
 
+      var numSnapshots = 0;
+
       function snapshot(id)
       {
           var e = document.getElementById(id);
-          if (!e) {
-              result += "FAIL(element '"+id+"' does not exist"+")<br>";
-              return;
-          }
           var t = window.getComputedStyle(e).webkitTransform;
           var a = t.split("(");
           var array = a[1].split(",");
@@ -94,7 +86,7 @@
           for (i = 0; i < 16; ++i) {
               var actual = parseFloat(array[i]);
               var expect = expected[id][i];
-              if (!isEqual(actual, expect, tolerance)) {
+              if (!isEqual(actual, expect)) {
                   result += "FAIL(element '"+id+"' matrix["+i+"]' was:"+actual+", expected:"+expect+")<br>";
                   pass = false;
               }
@@ -102,17 +94,33 @@
           
           if (pass)
             result += "PASS(element '"+id+"' matches expected value)<br>";
+          
+          numSnapshots++;
+          if (numSnapshots == 2) {
+              document.getElementById('result').innerHTML = result;
+              if (window.layoutTestController)
+                  layoutTestController.notifyDone();
+          }
+      }
+      
+      function snapshotOnTimeout(id) {
+          setTimeout("snapshot('" + id + "')", 250);
+      }
+
+      function startAnimation(id)
+      {
+          var element = document.getElementById(id);
+          element.addEventListener('webkitAnimationStart', function() {
+              // delay to give hardware animations a chance to start
+              window.setTimeout("snapshotOnTimeout('" + id + "')", 0);
+          }, false);
+          element.style.webkitAnimationName = id;
       }
 
       function start()
       {
-          setTimeout("snapshot('b1'); snapshot('b2');", 250);
-
-          window.setTimeout(function() {
-              document.getElementById('result').innerHTML = result;
-              if (window.layoutTestController)
-                  layoutTestController.notifyDone();
-          }, 300);
+          startAnimation('b1');
+          startAnimation('b2');
       }
 
     </script>

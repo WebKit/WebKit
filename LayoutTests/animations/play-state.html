@@ -9,7 +9,7 @@
       width: 100px;
       background-color: blue;
       margin: 0;
-      -webkit-animation-duration: 2s;
+      -webkit-animation-duration: 1s;
       -webkit-animation-timing-function: linear;
       -webkit-animation-name: "move1";
       -webkit-animation-play-state: running;
@@ -24,7 +24,7 @@
       height: 100px;
       width: 100px;
       background-color: red;
-      -webkit-animation-duration: 2s;
+      -webkit-animation-duration: 1s;
       -webkit-animation-timing-function: linear;
       -webkit-animation-name: "move2";
     }
@@ -38,12 +38,12 @@
     
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["move1", 0.5, "box1", "webkitTransform", [1,0,0,1,25,0], 10],
-      ["move1", 1.5, "box1", "webkitTransform", [1,0,0,1,50,0], 10],
-      ["move1", 2.5, "box1", "webkitTransform", [1,0,0,1,75,0], 10],
-      ["move2", 0.5, "box2", "left", 25, 10],
-      ["move3", 1.5, "box2", "left", 50, 10],
-      ["move4", 2.5, "box2", "left", 75, 10],
+      ["move1", 0.25, "box1", "webkitTransform", [1,0,0,1,25,0], 10],
+      ["move1", 0.75, "box1", "webkitTransform", [1,0,0,1,50,0], 10],
+      ["move1", 1.25, "box1", "webkitTransform", [1,0,0,1,75,0], 10],
+      ["move2", 0.25, "box2", "left", 25, 10],
+      ["move3", 0.75, "box2", "left", 50, 10],
+      ["move4", 1.25, "box2", "left", 75, 10],
     ];
     
     function stop()
@@ -60,8 +60,8 @@
 
     function setTimers()
     {
-        setTimeout(stop, 1000);
-        setTimeout(start, 2000);
+        setTimeout(stop, 500);
+        setTimeout(start, 1000);
     }
     
     runAnimationTest(expectedValues, setTimers, null, true);
@@ -70,8 +70,8 @@
 </head>
 <body>
 <p>
-This tests the operation of -webkit-animation-play-state. After 1 seconds the box should stop and after one
-more second it should start again. We test it both while in motion and when stopped.
+This tests the operation of -webkit-animation-play-state. After half a second the box should stop and after one
+more half-second it should start again. We test it both while in motion and when stopped.
 <div id="box1">
 </div>
 <div id="box2">

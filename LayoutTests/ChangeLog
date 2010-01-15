@@ -2,6 +2,22 @@
 
         Reviewed by Eric Seidel.
 
+        LayoutTests/animations/play-state.html and LayoutTests/animations/3d/transform-origin-vs-functions.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33626
+
+        Speculative fixes.
+
+        * animations/3d/transform-origin-vs-functions.html:
+        Remove timeout for notifyDone and start measurement at
+        webkitAnimationStart instead of body onload.
+        * animations/play-state-expected.txt:
+        * animations/play-state.html:
+        Reduce test time in half, but keep the same tolerance level.
+
+2010-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         A few more flaky transitions/animations tests
         https://bugs.webkit.org/show_bug.cgi?id=33642
 
