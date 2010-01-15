@@ -1,3 +1,19 @@
+2010-01-15  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Make Geolocation::suspend/resume public.
+        https://bugs.webkit.org/show_bug.cgi?id=33679
+
+        These were made private in Bug 32499, but are required by Android to be public.
+
+        No new tests, build fix only.
+
+        * page/Geolocation.cpp: Modified
+        (WebCore::Geolocation::suspend): Added back in
+        (WebCore::Geolocation::resume): Added back in
+        * page/Geolocation.h: Modified. Make suspend and resume public
+
 2010-01-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

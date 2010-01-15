@@ -68,7 +68,10 @@ public:
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
-    
+
+    void suspend();
+    void resume();
+
     void setIsAllowed(bool);
     bool isAllowed() const { return m_allowGeolocation == Yes; }
     bool isDenied() const { return m_allowGeolocation == No; }
@@ -137,8 +140,6 @@ private:
 
     bool startUpdating(PositionOptions*);
     void stopUpdating();
-    void suspend();
-    void resume();
 
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
     // GeolocationServiceClient
