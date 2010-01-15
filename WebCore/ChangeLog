@@ -1,3 +1,18 @@
+2010-01-14  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Platform Symbian specific:
+        Added time-based optimization (-Otime) and increased optimization level to -O3,
+        conditionally for RVCT compiler (for ARM), for increasing performance
+        (primarily affecting JavaScript execution).
+        Default settings are -Ospace and -O2.
+
+        No new tests needed because no new funtionality is introduced,
+        only potential regression on existing tests needs to be evaluated.
+
+        * WebCore.pro:
+
 2010-01-14  Jungshik Shin  <jshin@chromium.org>
 
         Unreviewed, attempted build fix on chromium.
