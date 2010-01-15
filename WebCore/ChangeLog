@@ -1,3 +1,12 @@
+2010-01-14  Jungshik Shin  <jshin@chromium.org>
+
+        Unreviewed, attempted build fix on chromium.
+
+        Fix a Chromium build failure due to an unused variable in V8 binding. 
+
+        * bindings/v8/V8Collection.h:
+        (WebCore::getIndexedPropertyOfCollection):
+
 2010-01-14  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, attempted build fix.

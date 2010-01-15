@@ -95,8 +95,7 @@ namespace WebCore {
     {
         // FIXME: Assert that object must be a collection type.
         ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-        V8ClassIndex::V8WrapperType wrapperType = V8DOMWrapper::domWrapperType(object);
-        ASSERT(wrapperType != V8ClassIndex::NODE);
+        ASSERT(V8DOMWrapper::domWrapperType(object) != V8ClassIndex::NODE);
         Collection* collection = toNativeCollection<Collection>(object);
         return getV8Object<ItemType>(collection->item(index), implementationType);
     }
