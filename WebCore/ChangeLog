@@ -1,3 +1,16 @@
+2010-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Bad DOM performance in large SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=30055
+
+        Add an early return when we go to paint a RenderPath that
+        isn't in the current clip.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2010-01-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Antti Koivisto.
