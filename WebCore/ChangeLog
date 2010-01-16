@@ -1,3 +1,39 @@
+2010-01-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt and Alexey Proskuryakov.
+
+        ValidityState can hold a stale pointer to control
+        https://bugs.webkit.org/show_bug.cgi?id=33729
+        rdar://problem/7545114
+
+        Test: fast/forms/ValidityState-removed-control.html
+
+        * html/HTMLFormControlElement.h: Use OwnPtr instead of
+        RefPtr to point to the ValidityState object.
+
+        * html/ValidityState.cpp: Use a constant instead of a
+        macro for the email validation regular expression.
+        (WebCore::ValidityState::validationMessage): Use
+        m_control instead of control function; we don't need
+        a function for this. Also marked const.
+        (WebCore::ValidityState::typeMismatch): Ditto.
+        Fixed some minor style problems.
+        (WebCore::ValidityState::rangeUnderflow): Ditto.
+        (WebCore::ValidityState::rangeOverflow): Ditto.
+        (WebCore::ValidityState::stepMismatch): Ditto.
+        (WebCore::ValidityState::valid): Ditto.
+        (WebCore::ValidityState::isValidEmailAddress):
+        Changed local variable names for clarity. Got rid of
+        an unneeded global variable.
+
+        * html/ValidityState.h: Removed RefCounted as a base
+        class, deriving from Noncopyable instead. Changed
+        creation to use PassOwnPtr instead of PassRefPtr.
+        Eliminated unneeded control function. Added ref and
+        deref functions that forward the reference counting
+        to the control. Moved constructor here and made it
+        inline.
+
 2010-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
