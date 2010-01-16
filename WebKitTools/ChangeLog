@@ -3,6 +3,7 @@
         Reviewed by David Kilzer.
 
         Update iExploder/htdocs/*.in by running update-iexploder-cssproperties 
+        https://bugs.webkit.org/show_bug.cgi?id=33756
 
         * iExploder/htdocs/cssproperties.in: New CSS attributes
         * iExploder/htdocs/htmlattrs.in: New HTML attributes
