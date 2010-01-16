@@ -1,3 +1,177 @@
+2010-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein and Adele Peterson.
+
+        Support reflections on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=31885
+        
+        Implement reflections (via -webkit-box-reflect:) on compositing layers.
+        
+        We add to the GraphicsLayer the notion of having a replica, and being a replicated layer.
+        The replica layer is not parented in the tree, but referenced by another layer.
+        RenderLayerBacking sets this up when it finds RenderLayers for reflections.
+        
+        GraphicsLayerCA implements rendering of replica layers by cloning CA layers,
+        and copying their properties, including animations and contents. Deep reflections
+        are supported by a hash of clone layers on each GraphicsLayerCA, indexed by
+        the path down the tree to each replica instance.
+        
+        When GraphicsLayerCA properties are changed, in most cases the clones must also
+        be updated.
+
+        Tests: compositing/masks/direct-image-mask.html
+               compositing/reflections/animation-inside-reflection.html
+               compositing/reflections/compositing-change-inside-reflection.html
+               compositing/reflections/deeply-nested-reflections.html
+               compositing/reflections/masked-reflection-on-composited.html
+               compositing/reflections/nested-reflection-anchor-point.html
+               compositing/reflections/nested-reflection-animated.html
+               compositing/reflections/nested-reflection-mask-change.html
+               compositing/reflections/nested-reflection-on-overflow.html
+               compositing/reflections/nested-reflection-opacity.html
+               compositing/reflections/nested-reflection-size-change.html
+               compositing/reflections/nested-reflection-transformed.html
+               compositing/reflections/nested-reflection-transition.html
+               compositing/reflections/nested-reflection.html
+               compositing/reflections/reflection-opacity.html
+               compositing/reflections/reflection-ordering.html
+               compositing/reflections/reflection-positioning.html
+               compositing/reflections/transform-inside-reflection.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::isReplicated): Returns true when this layer has a replicated layer.
+        (WebCore::GraphicsLayer::replicatedLayerPosition):
+        (WebCore::GraphicsLayer::setReplicatedLayerPosition): The position of the replica layer must be 
+        special-cased; we cannot just copy the position of the original.
+        (WebCore::GraphicsLayer::didDisplay): Method that indicates that the contents of the layer changed,
+        which gives us a chance to update clone layers.
+        (WebCore::GraphicsLayer::replicaLayer): reference to the replica layer.
+        (WebCore::GraphicsLayer::replicatedLayer): reference to the layer that this (replica) layer is replicating.
+        (WebCore::GraphicsLayer::setReplicatedLayer):
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::setReplicatedByLayer): Hook up a replica with its replicated layer.
+        (WebCore::GraphicsLayer::dumpProperties):
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::primaryLayer): Returns a CALayer, since structural layers may not be WebLayers.
+        (WebCore::GraphicsLayerCA::isReplicatedRootClone): Given a cloneID (string representation of the path to a clone
+        down the tree, which is a bitstring of 1 (replica), or 0 (non-replica)), returns true if this ID represents the
+        root of a replica tree.
+        (WebCore::GraphicsLayerCA::primaryLayerClones): Returns a pointer to the hash map of clones of the primary layers.
+
+        (WebCore::GraphicsLayerCA::ReplicaState::ReplicaState): Small struct used to track original/clone branching
+        down the tree during recursion, to build cloneID paths.
+
+        (WebCore::GraphicsLayerCA::hasCloneLayers): returns true if this layer has clone layers.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::~GraphicsLayerCA): remove the clone layers.
+        (WebCore::GraphicsLayerCA::setChildren): call noteSublayersChanged() since we may have to update replicas too.
+        (WebCore::GraphicsLayerCA::addChild): ditto
+        (WebCore::GraphicsLayerCA::addChildAtIndex): ditto
+        (WebCore::GraphicsLayerCA::addChildBelow): ditto
+        (WebCore::GraphicsLayerCA::addChildAbove): ditto
+        (WebCore::GraphicsLayerCA::replaceChild): ditto
+        (WebCore::GraphicsLayerCA::removeFromParent): ditto
+        (WebCore::GraphicsLayerCA::setMaskLayer): call propagateLayerChangeToReplicas()
+        (WebCore::GraphicsLayerCA::setReplicatedLayer): note replica changed.
+        (WebCore::GraphicsLayerCA::setReplicatedByLayer): ditto
+        (WebCore::GraphicsLayerCA::moveOrCopyAllAnimationsForProperty): Enhanced to allow moving or copying animations.
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimationsForProperty): Ditto.
+        (WebCore::GraphicsLayerCA::setContentsToImage): call noteSublayersChanged()
+        (WebCore::GraphicsLayerCA::setContentsToVideo): call noteSublayersChanged()
+        (WebCore::GraphicsLayerCA::didDisplay): here is our chance to copy updated contents to clone layers.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): pre-order commit, for things that need to be
+            committed before we recurse on children.
+        (WebCore::GraphicsLayerCA::commitLayerChangesAfterSublayers): post-order commit, for things that need to be
+            committed after we recurse on children, like clones.
+        (WebCore::GraphicsLayerCA::updateLayerNames): New method to match the other 'update' methods.
+        (WebCore::GraphicsLayerCA::updateSublayerList): Insert replica layers into the hierarchy.
+        (WebCore::GraphicsLayerCA::updateLayerPosition): update clones.
+        (WebCore::GraphicsLayerCA::updateLayerSize): ditto
+        (WebCore::GraphicsLayerCA::updateAnchorPoint): ditto
+        (WebCore::GraphicsLayerCA::updateTransform): ditto
+        (WebCore::GraphicsLayerCA::updateChildrenTransform): ditto
+        (WebCore::GraphicsLayerCA::updateMasksToBounds): ditto
+        (WebCore::GraphicsLayerCA::updateContentsOpaque): ditto
+        (WebCore::GraphicsLayerCA::updateBackfaceVisibility): ditto
+        (WebCore::GraphicsLayerCA::updateStructuralLayer): call ensureStructuralLayer()
+        (WebCore::moveAnimation): utility to move a CAAnimation from one layer to another.
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): refactored code which creates enclosing CALayers for reflection
+        flattening, or CATransformLayers for preserve-3d.
+        (WebCore::GraphicsLayerCA::structuralLayerPurpose): indicates why we need a structural layer.
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent): update clones
+        (WebCore::GraphicsLayerCA::updateContentsImage): ditto
+        (WebCore::GraphicsLayerCA::updateContentsRect): ditto
+        (WebCore::GraphicsLayerCA::updateMaskLayer): ditto
+        (WebCore::GraphicsLayerCA::updateReplicatedLayers): This is where we ask for the tree of layers for the replica
+        and its children, and attach them as sublayers.
+        (WebCore::GraphicsLayerCA::ReplicaState::cloneID): Build a bitstring from the array of original/clone values; this
+        string serves to identify clones in the hash map.
+        (WebCore::GraphicsLayerCA::replicatedLayerRoot): Request the tree of clone layers, set its position and transform,
+        and return it.
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer): update clones
+        (WebCore::GraphicsLayerCA::removeAnimationFromLayer): ditto
+        (WebCore::GraphicsLayerCA::pauseAnimationOnLayer): ditto
+        (WebCore::GraphicsLayerCA::setContentsToGraphicsContext3D): udpate sublayers.
+        (WebCore::GraphicsLayerCA::suspendAnimations): update clones.
+        (WebCore::GraphicsLayerCA::resumeAnimations): ditto
+        (WebCore::GraphicsLayerCA::animatedLayerClones): return the hash map for clones of the appropriate layer for the given property.
+        (WebCore::GraphicsLayerCA::ensureCloneLayers): create and return clones for the CALayers for this layer.
+        (WebCore::GraphicsLayerCA::removeCloneLayers): clear out the clone layers.
+        (WebCore::GraphicsLayerCA::positionForCloneRootLayer): the root of a clonal subtree needs its position and transform to be special-cased,
+        since it doesn't just copy those properties from the original.
+        (WebCore::GraphicsLayerCA::propagateLayerChangeToReplicas): push the change flags onto the replica.
+        (WebCore::GraphicsLayerCA::fetchCloneLayers): recurse down sublayers, creating clones of the CALayers along the way, and returning
+        the root of the clone tree.
+        (WebCore::copyAnimation): utility to copy an animation from one layer to another. Animations can be shared between layers.
+        (WebCore::GraphicsLayerCA::cloneLayer): utility to clone a CALayer, copying those properties which GraphicsLayerCA makes use of
+        (WebCore::GraphicsLayerCA::setOpacityInternal): push opacity changes to clones.
+        (WebCore::GraphicsLayerCA::updateOpacityOnLayer): ditto
+        (WebCore::GraphicsLayerCA::noteSublayersChanged): set the ChildrenChanged flag, and proprate changes to the replica, if any.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer display]): override -display so we know when to update the contents of clone layers
+
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer display]): ditto.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isReflection): New method that returns true if the renderer is a replica.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): initialize m_isReflection
+        (WebCore::RenderLayer::updateReflectionStyle): call setIsReflection
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer): Put a name on the reflection layer.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Hook up the GraphicsLayers for the reflection.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Reflection overrides preserve-3d (you have to flatten to reflect).
+        Also hook up updating the reflection layer geometry, and the relica position.
+        
+        (WebCore::RenderLayerBacking::paintIntoLayer): We no longer paint the reflection in software.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Hook reflection layers into the compositing logic.
+        (WebCore::RenderLayerCompositor::canAccelerateVideoRendering): No longer have to push video into software if it's reflected.
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Update the bounds of the reflection layer.
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry): ditto
+        (WebCore::RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing): a compositing descendant forces
+        a reflection ancestor to composite now.
+        (WebCore::RenderLayerBacking::containsPaintedContent): Reflection layers don't paint anything.
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage): No need to fall out of direct compositing mode
+        for masks or reflections any more.
+        (WebCore::RenderLayerBacking::paintIntoLayer): No need to paint the reflection manually now.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isReplica):
+        * rendering/RenderReplica.h:
+        (WebCore::RenderReplica::isReplica):
+        New method used to determine if a render is a replica.
+
 2010-01-15  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

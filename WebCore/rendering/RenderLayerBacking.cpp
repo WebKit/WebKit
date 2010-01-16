@@ -100,7 +100,9 @@ void RenderLayerBacking::createGraphicsLayer()
             else
                 m_graphicsLayer->setName(renderer()->renderName());
         }
-    } else
+    } else if (m_owningLayer->isReflection())
+        m_graphicsLayer->setName("Reflection");
+    else
         m_graphicsLayer->setName("Anonymous Node");
 #endif  // NDEBUG
 
@@ -196,6 +198,14 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (updateMaskLayer(m_owningLayer->renderer()->hasMask()))
         m_graphicsLayer->setMaskLayer(m_maskLayer.get());
 
+    if (m_owningLayer->hasReflection()) {
+        if (m_owningLayer->reflectionLayer()->backing()) {
+            GraphicsLayer* reflectionLayer = m_owningLayer->reflectionLayer()->backing()->graphicsLayer();
+            m_graphicsLayer->setReplicatedByLayer(reflectionLayer);
+        }
+    } else
+        m_graphicsLayer->setReplicatedByLayer(0);
+
     if (isDirectlyCompositedImage())
         updateImageContents();
 
@@ -232,7 +242,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         updateLayerOpacity(renderer()->style());
     
     RenderStyle* style = renderer()->style();
-    m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D);
+    m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer()->hasReflection());
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
 
     RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
@@ -351,6 +361,16 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_foregroundLayer->setPosition(foregroundPosition);
         m_foregroundLayer->setSize(foregroundSize);
         m_foregroundLayer->setOffsetFromRenderer(foregroundOffset);
+    }
+
+    if (m_owningLayer->reflectionLayer() && m_owningLayer->reflectionLayer()->isComposited()) {
+        RenderLayerBacking* reflectionBacking = m_owningLayer->reflectionLayer()->backing();
+        reflectionBacking->updateGraphicsLayerGeometry();
+        
+        // The reflection layer has the bounds of m_owningLayer->reflectionLayer(),
+        // but the reflected layer is the bounds of this layer, so we need to position it appropriately.
+        FloatRect reflectedLayerBounds = compositedBounds();
+        reflectionBacking->graphicsLayer()->setReplicatedLayerPosition(reflectedLayerBounds.location());
     }
 
     m_graphicsLayer->setContentsRect(contentsBox());
@@ -666,7 +686,7 @@ bool RenderLayerBacking::hasNonCompositingContent() const
 
 bool RenderLayerBacking::containsPaintedContent() const
 {
-    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow() || m_artificiallyInflatedBounds)
+    if (isSimpleContainerCompositingLayer() || paintingGoesToWindow() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
         return false;
 
     if (isDirectlyCompositedImage())
@@ -685,9 +705,7 @@ bool RenderLayerBacking::containsPaintedContent() const
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     RenderObject* renderObject = renderer();
-    return renderObject->isImage()
-            && !renderObject->hasMask() && !renderObject->hasReflection()
-            && !hasBoxDecorationsOrBackground(renderObject->style());
+    return renderObject->isImage() && !hasBoxDecorationsOrBackground(renderObject->style());
 }
 
 void RenderLayerBacking::rendererContentChanged()
@@ -861,14 +879,6 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     
     m_owningLayer->updateLayerListsIfNeeded();
     
-    // Paint the reflection first if we have one.
-    if (m_owningLayer->hasReflection()) {
-        // Mark that we are now inside replica painting.
-        m_owningLayer->setPaintingInsideReflection(true);
-        m_owningLayer->reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, RenderLayer::PaintLayerPaintingReflection);
-        m_owningLayer->setPaintingInsideReflection(false);
-    }
-
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);

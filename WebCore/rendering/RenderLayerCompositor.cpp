@@ -537,6 +537,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
             addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
     }
 
+    if (layer->reflectionLayer())
+        layer->reflectionLayer()->setMustOverlapCompositedLayers(needsToBeComposited(layer));
+
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
         compositingState.m_subtreeIsCompositing = true;
@@ -552,6 +555,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
     // Update backing now, so that we can use isComposited() reliably during tree traversal in rebuildCompositingLayerTree().
     if (updateBacking(layer, CompositingChangeRepaintNow))
+        layersChanged = true;
+
+    if (layer->reflectionLayer() && updateLayerCompositingState(layer->reflectionLayer(), CompositingChangeRepaintNow))
         layersChanged = true;
 }
 
@@ -599,9 +605,7 @@ void RenderLayerCompositor::parentInRootLayer(RenderLayer* layer)
 #if ENABLE(VIDEO)
 bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 {
-    // FIXME: ideally we need to look at all ancestors for mask or video. But for now,
-    // just bail on the obvious cases.
-    if (o->hasReflection() || !m_hasAcceleratedCompositing)
+    if (!m_hasAcceleratedCompositing)
         return false;
 
     return o->supportsAcceleratedRendering();
@@ -619,6 +623,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         // The compositing state of all our children has been updated already, so now
         // we can compute and cache the composited bounds for this layer.
         layerBacking->updateCompositedBounds();
+
+        if (layer->reflectionLayer())
+            layer->reflectionLayer()->backing()->updateCompositedBounds();
+
         layerBacking->updateGraphicsLayerConfiguration();
         layerBacking->updateGraphicsLayerGeometry();
 
@@ -734,11 +742,18 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
     if (layer != compositingAncestor) {
         if (RenderLayerBacking* layerBacking = layer->backing()) {
             layerBacking->updateCompositedBounds();
+
+            if (layer->reflectionLayer())
+                layer->reflectionLayer()->backing()->updateCompositedBounds();
+
             layerBacking->updateGraphicsLayerGeometry();
             if (updateDepth == RenderLayerBacking::CompositingChildren)
                 return;
         }
     }
+
+    if (layer->reflectionLayer())
+        updateCompositingDescendantGeometry(compositingAncestor, layer->reflectionLayer(), updateDepth);
 
     if (!layer->hasCompositingDescendant())
         return;
@@ -996,7 +1011,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
 
 bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(RenderObject* renderer) const
 {
-    return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask();
+    return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection();
 }
 
 // If an element has negative z-index children, those children render in front of the 

@@ -198,6 +198,14 @@ public:
     GraphicsLayer* maskLayer() const { return m_maskLayer; }
     virtual void setMaskLayer(GraphicsLayer* layer) { m_maskLayer = layer; }
     
+    // The given layer will replicate this layer and its children; the replica renders behind this layer.
+    virtual void setReplicatedByLayer(GraphicsLayer*);
+    // Whether this layer is being replicated by another layer.
+    bool isReplicated() const { return m_replicaLayer; }
+
+    const FloatPoint& replicatedLayerPosition() const { return m_replicatedLayerPosition; }
+    void setReplicatedLayerPosition(const FloatPoint& p) { m_replicatedLayerPosition = p; }
+
     // Offset is origin of the renderer minus origin of the graphics layer (so either zero or negative).
     IntSize offsetFromRenderer() const { return m_offsetFromRenderer; }
     void setOffsetFromRenderer(const IntSize& offset) { m_offsetFromRenderer = offset; }
@@ -279,6 +287,8 @@ public:
 #endif
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);
+    // Callback from the underlying graphics system when the layer has been displayed
+    virtual void didDisplay() { }
     
     virtual PlatformLayer* platformLayer() const { return 0; }
     
@@ -327,6 +337,12 @@ protected:
 
     virtual void setOpacityInternal(float) { }
     
+    // The layer that replicates this layer (if any).
+    GraphicsLayer* replicaLayer() const { return m_replicaLayer; }
+    // The layer being replicated.
+    GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
+    virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
+
     GraphicsLayer(GraphicsLayerClient*);
 
     void dumpProperties(TextStream&, int indent) const;
@@ -364,6 +380,11 @@ protected:
     GraphicsLayer* m_parent;
 
     GraphicsLayer* m_maskLayer; // Reference to mask layer. We don't own this.
+
+    GraphicsLayer* m_replicaLayer; // A layer that replicates this layer. We only allow one, for now.
+                                   // The replica is not parented; this is the primary reference to it.
+    GraphicsLayer* m_replicatedLayer; // For a replica layer, a reference to the original layer.
+    FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     IntRect m_contentsRect;
 

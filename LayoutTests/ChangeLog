@@ -1,3 +1,85 @@
+2010-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein and Adele Peterson.
+
+        Support reflections on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=31885
+        
+        Tests for reflections on compositing layers.
+
+        * compositing/masks/direct-image-mask.html: Added.
+        * compositing/reflections/animation-inside-reflection.html: Added.
+        * compositing/reflections/compositing-change-inside-reflection.html: Added.
+        * compositing/reflections/deeply-nested-reflections.html: Added.
+        * compositing/reflections/masked-reflection-on-composited.html: Added.
+        * compositing/reflections/nested-reflection-anchor-point.html: Added.
+        * compositing/reflections/nested-reflection-animated.html: Added.
+        * compositing/reflections/nested-reflection-mask-change.html: Added.
+        * compositing/reflections/nested-reflection-on-overflow.html: Added.
+        * compositing/reflections/nested-reflection-opacity.html: Added.
+        * compositing/reflections/nested-reflection-size-change.html: Added.
+        * compositing/reflections/nested-reflection-transformed.html: Added.
+        * compositing/reflections/nested-reflection-transition.html: Added.
+        * compositing/reflections/nested-reflection.html: Added.
+        * compositing/reflections/reflection-opacity.html: Added.
+        * compositing/reflections/reflection-ordering.html: Added.
+        * compositing/reflections/reflection-positioning.html: Added.
+        * compositing/reflections/transform-inside-reflection.html: Added.
+        * platform/mac/compositing/masks/direct-image-mask-expected.checksum: Added.
+        * platform/mac/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/mac/compositing/masks/direct-image-mask-expected.txt: Copied from LayoutTests/platform/mac/compositing/reflections/simple-composited-reflections-expected.txt.
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.checksum: Added.
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.txt: Added.
+        * platform/mac/compositing/reflections/compositing-change-inside-reflection-expected.checksum: Added.
+        * platform/mac/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/mac/compositing/reflections/compositing-change-inside-reflection-expected.txt: Added.
+        * platform/mac/compositing/reflections/deeply-nested-reflections-expected.checksum: Added.
+        * platform/mac/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/mac/compositing/reflections/deeply-nested-reflections-expected.txt: Added.
+        * platform/mac/compositing/reflections/masked-reflection-on-composited-expected.checksum: Added.
+        * platform/mac/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/mac/compositing/reflections/masked-reflection-on-composited-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-anchor-point-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-anchor-point-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-anchor-point-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-mask-change-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-mask-change-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-on-overflow-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-on-overflow-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-on-overflow-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-opacity-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-opacity-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-opacity-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-size-change-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-size-change-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-size-change-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed-expected.txt: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.txt: Added.
+        * platform/mac/compositing/reflections/reflection-opacity-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-opacity-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-opacity-expected.txt: Added.
+        * platform/mac/compositing/reflections/reflection-ordering-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-ordering-expected.txt: Added.
+        * platform/mac/compositing/reflections/reflection-positioning-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-positioning-expected.txt: Added.
+        * platform/mac/compositing/reflections/transform-inside-reflection-expected.checksum: Added.
+        * platform/mac/compositing/reflections/transform-inside-reflection-expected.png: Added.
+        * platform/mac/compositing/reflections/transform-inside-reflection-expected.txt: Added.
+
 2010-01-15  Doug Muir  <dmuir@google.com>
 
         Fix some Layout Test timeouts when run under valgrind.

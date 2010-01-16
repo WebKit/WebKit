@@ -205,6 +205,7 @@ public:
     void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, PaintBehavior);
 
     bool hasReflection() const { return renderer()->hasReflection(); }
+    bool isReflection() const { return renderer()->isReplica(); }
     RenderReplica* reflection() const { return m_reflection; }
     RenderLayer* reflectionLayer() const;
 
