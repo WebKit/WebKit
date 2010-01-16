@@ -264,7 +264,7 @@ namespace JSC {
         return strictEqualSlowCaseInline(exec, v1, v2);
     }
 
-    inline bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
+    ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() < v2.asInt32();
