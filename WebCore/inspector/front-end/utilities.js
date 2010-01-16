@@ -333,21 +333,6 @@ String.prototype.collapseWhitespace = function()
     return this.replace(/[\s\xA0]+/g, " ");
 }
 
-String.prototype.trimLeadingWhitespace = function()
-{
-    return this.replace(/^[\s\xA0]+/g, "");
-}
-
-String.prototype.trimTrailingWhitespace = function()
-{
-    return this.replace(/[\s\xA0]+$/g, "");
-}
-
-String.prototype.trimWhitespace = function()
-{
-    return this.replace(/^[\s\xA0]+|[\s\xA0]+$/g, "");
-}
-
 String.prototype.trimURL = function(baseURLDomain)
 {
     var result = this.replace(/^https?:\/\//i, "");

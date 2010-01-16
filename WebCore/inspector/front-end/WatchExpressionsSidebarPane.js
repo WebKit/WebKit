@@ -242,7 +242,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         if (WebInspector.isBeingEdited(this.nameElement) || !this.treeOutline.section.editable)
             return;
 
-        this.nameElement.textContent = this.property.name.trimWhitespace();
+        this.nameElement.textContent = this.property.name.trim();
 
         var context = { expanded: this.expanded };
 
@@ -265,7 +265,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
 
     applyExpression: function(expression, updateInterface)
     {
-        expression = expression.trimWhitespace();
+        expression = expression.trim();
 
         if (!expression)
             expression = null;

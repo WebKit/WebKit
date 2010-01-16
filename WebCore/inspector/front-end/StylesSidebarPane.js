@@ -1310,7 +1310,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
-        var styleTextLength = styleText.trimWhitespace().length;
+        var styleTextLength = styleText.trim().length;
         if (!styleTextLength && updateInterface) {
             if (this._newProperty) {
                 // The user deleted everything, so remove the tree element and update.
@@ -1361,7 +1361,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 WebInspector.panels.elements.treeOutline.update();
         }
 
-        InjectedScriptAccess.applyStyleText(this.style.id, styleText.trimWhitespace(), this.name, callback);
+        InjectedScriptAccess.applyStyleText(this.style.id, styleText.trim(), this.name, callback);
     }
 }
 

@@ -1,3 +1,25 @@
+2010-01-16  Timothy Hatcher  <timothy@apple.com>
+
+        Use String.trim() instead of a regex in the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33765
+
+        Reviewed by George Staikos.
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.performSearch): Use .trim().
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression): Ditto.
+        * inspector/front-end/ProfileView.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame): Ditto.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype): Ditto.
+        * inspector/front-end/utilities.js:
+        (String.prototype.trimLeadingWhitespace): Removed.
+        (String.prototype.trimTrailingWhitespace): Removed.
+        (String.prototype.trimWhitespace): Removed.
+
 2010-01-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Nikolas Zimmermann.

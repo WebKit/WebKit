@@ -233,7 +233,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     applyExpression: function(expression, updateInterface)
     {
-        expression = expression.trimWhitespace();
+        expression = expression.trim();
         var expressionLength = expression.length;
         var self = this;
         var callback = function(success) {
@@ -251,7 +251,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 self.updateSiblings();
             }
         };
-        InjectedScriptAccess.setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trimWhitespace(), callback);
+        InjectedScriptAccess.setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trim(), callback);
     }
 }
 

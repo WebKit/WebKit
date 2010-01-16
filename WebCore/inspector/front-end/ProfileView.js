@@ -233,7 +233,7 @@ WebInspector.CPUProfileView.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
-        query = query.trimWhitespace();
+        query = query.trim();
 
         if (!query.length)
             return;
