@@ -26,11 +26,14 @@ onload = function() {
     if (history.length == (sessionStorage.initialLength - 0) + 2)
       document.body.innerHTML = "PASS";
     else
-      document.body.innerHTML = "FAIL";
+      document.body.innerHTML = "FAIL: initialLength=" + sessionStorage.initialLength + ", history.length=" + history.length;
     if (window.layoutTestController)
       layoutTestController.notifyDone();
     break;
   }
+}
+onunload = function() {
+  // disable page cache
 }
 </script>
 <body></body>
