@@ -1,3 +1,17 @@
+2010-01-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7536748> and https://bugs.webkit.org/show_bug.cgi?id=33571
+        History traversals to a new document do not get the popstate event
+
+        Updated existing tests to match new correct behavior.
+
+        * fast/loader/stateobjects/document-destroyed-navigate-back-expected.txt:
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll-expected.txt:
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+
 2010-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein and Adele Peterson.

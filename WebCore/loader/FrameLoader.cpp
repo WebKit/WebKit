@@ -837,6 +837,11 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     document->setURL(m_URL);
     m_frame->setDocument(document);
 
+    if (m_pendingStateObject) {
+        document->statePopped(m_pendingStateObject.get());
+        m_pendingStateObject.clear();
+    }
+    
     if (m_decoder)
         document->setDecoder(m_decoder.get());
     if (forcedSecurityOrigin)
@@ -2528,10 +2533,13 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         case FrameLoadTypeBack:
         case FrameLoadTypeBackWMLDeckNotAccessible:
         case FrameLoadTypeIndexedBackForward:
-            if (Page* page = m_frame->page())
+            if (Page* page = m_frame->page()) {
                 if (page->backForwardList()) {
                     history()->updateForBackForwardNavigation();
 
+                    if (history()->currentItem())
+                        m_pendingStateObject = history()->currentItem()->stateObject();
+                        
                     // Create a document view for this document, or used the cached view.
                     if (cachedPage) {
                         DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
@@ -2542,6 +2550,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
                     } else
                         m_client->transitionToCommittedForNewPage();
                 }
+            }
             break;
 
         case FrameLoadTypeReload:

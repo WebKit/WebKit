@@ -418,7 +418,6 @@ void HistoryItem::documentDetached(Document* document)
 {
     ASSERT_UNUSED(document, m_document == document);
     m_document = 0;
-    m_stateObject = 0;
 }
 
 void HistoryItem::addChildItem(PassRefPtr<HistoryItem> child)

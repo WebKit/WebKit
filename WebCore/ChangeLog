@@ -1,3 +1,27 @@
+2010-01-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7536748> and https://bugs.webkit.org/show_bug.cgi?id=33571
+        History traversals to a new document do not get the popstate event
+
+        State objects now live-on in their HistoryItem indefinitely.
+        This means any back/forward navigation might result in a popstate event, not just to 
+        pre-existing documents as was previously the case.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::documentDetached): State objects are held beyond Document lifetime.
+       
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): If there is a pending state object for this Frame load, pass it
+          on to the Document after the Document is created.
+        (WebCore::FrameLoader::transitionToCommitted): If the current history item has a state object,
+          set it as the FrameLoad's pending state object.
+        * loader/FrameLoader.h:
+        
+        * page/Page.cpp:
+        (WebCore::Page::goToItem): Remove a now-invalid ASSERT.
+
 2010-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein and Adele Peterson.
