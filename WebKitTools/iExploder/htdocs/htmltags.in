@@ -1,12 +1,13 @@
-# The following come from khtml's htmltags.in from 19oct2004
-# From WebCore svn tree, 2006-04-18 (WebKit/WebCore/html/HTMLNames.h)
-
+# From WebKit svn r53119 (WebCore/html/HTMLTagNames.in)
 a
 abbr
 acronym
 address
 applet
 area
+article
+aside
+audio
 b
 base
 basefont
@@ -23,17 +24,23 @@ cite
 code
 col
 colgroup
+datagrid
+datalist
+dcell
+dcol
 dd
 del
 dfn
 dir
 div
 dl
+drow
 dt
 em
 embed
 fieldset
 font
+footer
 form
 frame
 frameset
@@ -44,6 +51,7 @@ h4
 h5
 h6
 head
+header
 hr
 html
 i
@@ -65,10 +73,12 @@ map
 marquee
 menu
 meta
+nav
 nobr
 noembed
 noframes
 nolayer
+noscript
 noscript
 object
 ol
@@ -79,11 +89,16 @@ param
 plaintext
 pre
 q
+rp
+rt
+ruby
 s
 samp
 script
+section
 select
 small
+source
 span
 strike
 strong
@@ -103,6 +118,7 @@ tt
 u
 ul
 var
+video
 wbr
 xmp
 

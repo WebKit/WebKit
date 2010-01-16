@@ -1,10 +1,11 @@
-# From WebKit svn r44659 (WebCore/css/CSSPropertyNames.in)
+# From WebKit svn r53119 (WebCore/css/CSSPropertyNames.in)
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction
 -webkit-animation-duration
 -webkit-animation-iteration-count
 -webkit-animation-name
+-webkit-animation-play-state
 -webkit-animation-timing-function
 -webkit-appearance
 -webkit-backface-visibility
@@ -13,14 +14,10 @@
 -webkit-background-origin
 -webkit-background-size
 -webkit-binding
--webkit-border-bottom-left-radius
--webkit-border-bottom-right-radius
 -webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
 -webkit-border-radius
--webkit-border-top-left-radius
--webkit-border-top-right-radius
 -webkit-border-vertical-spacing
 -webkit-box-align
 -webkit-box-direction
@@ -33,6 +30,7 @@
 -webkit-box-reflect
 -webkit-box-shadow
 -webkit-box-sizing
+-webkit-color-correction
 -webkit-column-break-after
 -webkit-column-break-before
 -webkit-column-break-inside
@@ -45,6 +43,7 @@
 -webkit-column-width
 -webkit-columns
 -webkit-font-size-delta
+-webkit-font-smoothing
 -webkit-highlight
 -webkit-line-break
 -webkit-line-clamp
@@ -69,6 +68,8 @@
 -webkit-mask-position-x
 -webkit-mask-position-y
 -webkit-mask-repeat
+-webkit-mask-repeat-x
+-webkit-mask-repeat-y
 -webkit-mask-size
 -webkit-match-nearest-mail-blockquote-color
 -webkit-nbsp-mode
@@ -102,15 +103,22 @@
 -webkit-variable-declaration-block
 background
 background-attachment
+background-clip
 background-color
 background-image
+background-origin
 background-position
 background-position-x
 background-position-y
 background-repeat
+background-repeat-x
+background-repeat-y
+background-size
 border
 border-bottom
 border-bottom-color
+border-bottom-left-radius
+border-bottom-right-radius
 border-bottom-style
 border-bottom-width
 border-collapse
@@ -119,6 +127,7 @@ border-left
 border-left-color
 border-left-style
 border-left-width
+border-radius
 border-right
 border-right-color
 border-right-style
@@ -127,6 +136,8 @@ border-spacing
 border-style
 border-top
 border-top-color
+border-top-left-radius
+border-top-right-radius
 border-top-style
 border-top-width
 border-width
@@ -208,6 +219,7 @@ text-overline-color
 text-overline-mode
 text-overline-style
 text-overline-width
+text-rendering
 text-shadow
 text-transform
 text-underline

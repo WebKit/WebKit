@@ -1,3 +1,13 @@
+2010-01-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by David Kilzer.
+
+        Update iExploder/htdocs/*.in by running update-iexploder-cssproperties 
+
+        * iExploder/htdocs/cssproperties.in: New CSS attributes
+        * iExploder/htdocs/htmlattrs.in: New HTML attributes
+        * iExploder/htdocs/htmltags.in: New HTML tags
+
 2010-01-15  Chris Jerdonek  <chris.jerdonek@gmail.com>
 
         Reviewed by David Kilzer.
