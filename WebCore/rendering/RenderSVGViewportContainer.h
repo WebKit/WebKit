@@ -46,7 +46,7 @@ private:
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }
 
     TransformationMatrix viewportTransform() const;
-    virtual TransformationMatrix localToParentTransform() const;
+    virtual const TransformationMatrix& localToParentTransform() const;
 
     // FIXME: This override should be removed once callers of RenderBox::absoluteTransform() can be removed.
     virtual TransformationMatrix absoluteTransform() const;
@@ -57,6 +57,7 @@ private:
     virtual bool pointIsInsideViewportClip(const FloatPoint& pointInParent);
 
     FloatRect m_viewport;
+    mutable TransformationMatrix m_localToParentTransform;
 };
   
 inline RenderSVGViewportContainer* toRenderSVGViewportContainer(RenderObject* object)

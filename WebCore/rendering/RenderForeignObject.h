@@ -38,7 +38,7 @@ public:
 
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual TransformationMatrix localToParentTransform() const;
+    virtual const TransformationMatrix& localToParentTransform() const;
 
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
     virtual bool requiresLayer() const { return false; }
@@ -58,6 +58,7 @@ public:
     virtual TransformationMatrix localTransform() const { return m_localTransform; }
 
     TransformationMatrix m_localTransform;
+    mutable TransformationMatrix m_localToParentTransform;
 };
 
 } // namespace WebCore

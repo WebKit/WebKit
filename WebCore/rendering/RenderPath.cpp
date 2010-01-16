@@ -69,7 +69,7 @@ RenderPath::RenderPath(SVGStyledTransformableElement* node)
 {
 }
 
-TransformationMatrix RenderPath::localToParentTransform() const
+const TransformationMatrix& RenderPath::localToParentTransform() const
 {
     return m_localTransform;
 }
@@ -265,7 +265,7 @@ bool RenderPath::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, 
     if (hitTestAction != HitTestForeground)
         return false;
 
-    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
+    FloatPoint localPoint = m_localTransform.inverse().mapPoint(pointInParent);
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, style()->pointerEvents());
 

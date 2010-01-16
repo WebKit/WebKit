@@ -44,7 +44,7 @@ private:
 
     virtual bool isSVGText() const { return true; }
 
-    virtual TransformationMatrix localToParentTransform() const { return m_localTransform; }
+    virtual const TransformationMatrix& localToParentTransform() const { return m_localTransform; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);

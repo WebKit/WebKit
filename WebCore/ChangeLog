@@ -1,3 +1,41 @@
+2010-01-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Copying TransformationMatrix consumed a lot of cpu time while scroll with cursor over content
+        https://bugs.webkit.org/show_bug.cgi?id=33766
+
+        Make localToParentTransform return by reference to avid copy overhead.
+        This is a little gnarly in places as it means we need to be able to 
+        return temporary values in a few implementations, so we have to add
+        class fields to hold them, heppily the classes that these effect are
+         sufficiently uncommon for this to be okay.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::localToParentTransform):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localTransform):
+        (WebCore::RenderObject::localToParentTransform):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::localToParentTransform):
+        (WebCore::RenderPath::nodeAtFloatPoint):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::localToParentTransform):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::localToParentTransform):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::localToParentTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        * rendering/RenderSVGViewportContainer.h:
+
 2010-01-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt and Alexey Proskuryakov.

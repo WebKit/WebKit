@@ -52,7 +52,7 @@ private:
     virtual FloatRect markerBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-    virtual TransformationMatrix localToParentTransform() const;
+    virtual const TransformationMatrix& localToParentTransform() const;
 
     void setPath(const Path&);
 

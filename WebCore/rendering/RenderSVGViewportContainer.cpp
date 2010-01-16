@@ -105,11 +105,12 @@ TransformationMatrix RenderSVGViewportContainer::viewportTransform() const
     return TransformationMatrix();
 }
 
-TransformationMatrix RenderSVGViewportContainer::localToParentTransform() const
+const TransformationMatrix& RenderSVGViewportContainer::localToParentTransform() const
 {
     TransformationMatrix viewportTranslation;
     viewportTranslation.translate(m_viewport.x(), m_viewport.y());
-    return viewportTransform() * viewportTranslation;
+    m_localToParentTransform = viewportTransform() * viewportTranslation;
+    return m_localToParentTransform;
     // If this class were ever given a localTransform(), then the above would read:
     // return viewportTransform() * localTransform() * viewportTranslation;
 }

@@ -31,7 +31,7 @@ namespace WebCore {
     public:
         RenderSVGTransformableContainer(SVGStyledTransformableElement*);
 
-        virtual TransformationMatrix localToParentTransform() const;
+        virtual const TransformationMatrix& localToParentTransform() const;
 
     private:
         virtual void calculateLocalTransform();

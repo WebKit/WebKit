@@ -43,7 +43,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSVGImage"; }
         virtual bool isSVGImage() const { return true; }
 
-        virtual TransformationMatrix localToParentTransform() const { return m_localTransform; }
+        virtual const TransformationMatrix& localToParentTransform() const { return m_localTransform; }
 
         virtual FloatRect objectBoundingBox() const;
         virtual FloatRect strokeBoundingBox() const { return m_localBounds; }

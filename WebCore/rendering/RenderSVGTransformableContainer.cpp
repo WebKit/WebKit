@@ -34,7 +34,7 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransf
 {
 }
 
-TransformationMatrix RenderSVGTransformableContainer::localToParentTransform() const
+const TransformationMatrix& RenderSVGTransformableContainer::localToParentTransform() const
 {
     return m_localTransform;
 }
