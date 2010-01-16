@@ -1,3 +1,13 @@
+2010-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/7529519> DumpRenderTree crashes in makeLargeMallocFailSilently()
+
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+        (makeLargeMallocFailSilently): Temporarily allow writing to the default
+        malloc zone structure while modifying it.
+
 2010-01-16  David Kilzer  <ddkilzer@apple.com>
 
         Added back removed properties to iExploder input files
