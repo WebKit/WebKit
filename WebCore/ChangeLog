@@ -1,3 +1,16 @@
+2010-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bad DOM performance in large SVG files
+        https://bugs.webkit.org/show_bug.cgi?id=30055
+
+        Improve the performance of the early culling check by avoiding save/restore
+        of graphics state in culled case.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2010-01-15  Eric Seidel  <eric@webkit.org>
 
         No review, rolling out r53344.
