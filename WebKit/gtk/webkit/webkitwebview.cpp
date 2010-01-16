@@ -650,7 +650,11 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
     // TODO: Improve focus handling as suggested in
     // http://bugs.webkit.org/show_bug.cgi?id=16910
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
+#if GTK_CHECK_VERSION(2, 18, 0)
+    if (gtk_widget_is_toplevel(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
+#else
     if (GTK_WIDGET_TOPLEVEL(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
+#endif
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
         FocusController* focusController = core(webView)->focusController();
 
@@ -839,7 +843,11 @@ static gboolean webkit_web_view_script_dialog(WebKitWebView* webView, WebKitWebF
     }
 
     window = gtk_widget_get_toplevel(GTK_WIDGET(webView));
+#if GTK_CHECK_VERSION(2, 18, 0)
+    dialog = gtk_message_dialog_new(gtk_widget_is_toplevel(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, "%s", message);
+#else
     dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0, GTK_DIALOG_DESTROY_WITH_PARENT, messageType, buttons, "%s", message);
+#endif
     gchar* title = g_strconcat("JavaScript - ", webkit_web_frame_get_uri(frame), NULL);
     gtk_window_set_title(GTK_WINDOW(dialog), title);
     g_free(title);

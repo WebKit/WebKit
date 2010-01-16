@@ -1,3 +1,18 @@
+2010-01-15  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Original patch by David Ronis <david.ronis@mcgill.ca>
+
+        Upgrade 1.1.17->1.1.18 fails: GTK_WIDGET_TOPLEVEL' was not declared in this scope
+        https://bugs.webkit.org/show_bug.cgi?id=33486
+
+        Deprecated symbols replaced for gtk+ versions over 2.18.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getVisual):
+        (WebCore::screenRect):
+
 2010-01-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

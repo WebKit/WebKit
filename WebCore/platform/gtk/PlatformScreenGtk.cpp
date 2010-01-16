@@ -56,7 +56,11 @@ static GdkVisual* getVisual(Widget* widget)
 
     if (!GTK_WIDGET_REALIZED(container)) {
         GtkWidget* toplevel = gtk_widget_get_toplevel(container);
+#if GTK_CHECK_VERSION(2, 18, 0)
+        if (gtk_widget_is_toplevel(toplevel))
+#else
         if (GTK_WIDGET_TOPLEVEL(toplevel))
+#endif
             container = toplevel;
         else
             return 0;
@@ -94,7 +98,11 @@ FloatRect screenRect(Widget* widget)
         return FloatRect();
 
     GtkWidget* container = gtk_widget_get_toplevel(GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()));
+#if GTK_CHECK_VERSION(2, 18, 0)
+    if (!gtk_widget_is_toplevel(container))
+#else
     if (!GTK_WIDGET_TOPLEVEL(container))
+#endif
         return FloatRect();
 
     GdkScreen* screen = gtk_widget_has_screen(container) ? gtk_widget_get_screen(container) : gdk_screen_get_default();

@@ -1,3 +1,24 @@
+2010-01-15  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Original patch by David Ronis <david.ronis@mcgill.ca>
+
+        Upgrade 1.1.17->1.1.18 fails: GTK_WIDGET_TOPLEVEL' was not declared in this scope
+        https://bugs.webkit.org/show_bug.cgi?id=33486
+
+        Deprecated symbols replaced for gtk+ versions over 2.18.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::windowRect):
+        * webkit/webkitprivate.cpp:
+        (currentToplevelCallback):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_print_full):
+        (webkit_web_frame_print):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_focus_in_event):
+
 2010-01-14  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Eric Seidel.
