@@ -92,6 +92,13 @@ wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameDat
 
     m_impl->frame = newFrame.get();
 
+    if (data)
+        newFrame->tree()->setName(data->name);
+
+    // Subframes expect to be added to the FrameTree before init is called.
+    if (parentFrame)
+        parentFrame->document()->frame()->tree()->appendChild(newFrame.get());
+    
     loaderClient->setFrame(this);
     loaderClient->setWebView(container);
     

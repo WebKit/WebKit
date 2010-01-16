@@ -828,10 +828,6 @@ PassRefPtr<Frame> FrameLoaderClientWx::createFrame(const KURL& url, const String
 
     RefPtr<Frame> childFrame = adoptRef(newFrame->m_impl->frame);
 
-    m_frame->tree()->appendChild(childFrame);
-    childFrame->tree()->setName(name);
-    childFrame->init();
-
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!childFrame->page())
         return 0;

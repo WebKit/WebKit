@@ -1,3 +1,16 @@
+2010-01-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move the code adding the child frame to the FrameTree into wxWebFrame constructor
+        so that it happens before we call init() on the new frame. Fixes asserts checking
+        frame count consistency.
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::createFrame):
+
 2010-01-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, missing header.
