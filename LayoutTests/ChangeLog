@@ -1,5 +1,13 @@
 2010-01-15  Darin Fisher  <darin@chromium.org>
 
+        Fix flakey test.
+
+        Add a call to clearBackForwardList.
+
+        * fast/history/history-length.html:
+
+2010-01-15  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Disable page cache and add diagnostic output in the failure case.

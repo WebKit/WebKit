@@ -4,6 +4,7 @@ onload = function() {
     sessionStorage.testStage = 0;
     if (window.layoutTestController) {
       layoutTestController.dumpAsText();
+      layoutTestController.clearBackForwardList();
       layoutTestController.waitUntilDone();
     }
   }
