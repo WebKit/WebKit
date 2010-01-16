@@ -1,3 +1,13 @@
+2010-01-15  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS2.1 Counters not updated when new elements are inserted in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=32884
+
+        * fast/css/counters/adding-nodes-expected.txt: Added.
+        * fast/css/counters/adding-nodes.html: Added.
+
 2010-01-15  Darin Fisher  <darin@chromium.org>
 
         Fix flakey test.

@@ -1,3 +1,41 @@
+2010-01-15  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS2.1 Counters not updated when new elements are inserted in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=32884
+
+        Test: fast/css/counters/adding-nodes.html
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::insertAfter):
+        Modified to handle the addition of nodes with children. Needed when formerly 
+        root nodes become descendants of a new node.
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        Changed to handle the case when root counter nodes lose their root 
+        status as a result of a new root counter node creation. 
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        Refactored more code into destroyCounterNodeChildren and renamed the
+        function according to its new action.
+        (WebCore::RenderCounter::destroyCounterNodes):
+        Simplified to share more code with the new destroyCounterNode.
+        (WebCore::RenderCounter::destroyCounterNode):
+        Added to allow for selective counterNode destruction.
+        (WebCore::RenderCounter::rendererSubtreeAttached):
+        Added to refresh counter values in response to DOM changes.
+        For renderers with no attached counters the execution time of this
+        function cannot be discerned in comparison with the time needed to
+        add a node or change the style of a node.
+        (WebCore::updateCounters):
+        Helper function for rendererSubtreeAttached. Updates the counters
+        attached to a Renderer in response to the renderer or its ancestors
+        being attached to the renderer tree.
+        * rendering/RenderCounter.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        Changed to update counter values if needed.
+
 2010-01-15  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
