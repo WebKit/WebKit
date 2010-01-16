@@ -1,3 +1,11 @@
+2010-01-15  Doug Muir  <dmuir@google.com>
+
+        Fix some Layout Test timeouts when run under valgrind.
+        
+        * http/tests/history/redirect-js-form-submit-0-seconds.html:
+        * http/tests/history/redirect-js-form-submit-2-seconds.html:
+        * http/tests/misc/timer-vs-loading.html:
+
 2010-01-15  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

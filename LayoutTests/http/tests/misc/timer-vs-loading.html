@@ -18,9 +18,6 @@
             window.location = "data:text/html,SUCCESS<script>layoutTestController.notifyDone()</scr" + "ipt>";
     }
 
-    window.setTimeout("updateClock()", 100);
-    setTimeout('window.location = "resources/hang-connection.php"', 0);
-
 --></script>
 
 </head><body>
@@ -28,5 +25,10 @@
     Javascript stops running before replacement page data arrives.</p>
 
     <span id="RESULT">WAIT</span><p>
+
+    <script>
+    window.setTimeout("updateClock()", 100);
+    setTimeout('window.location = "resources/hang-connection.php"', 0);
+    </script>
 
 </body></html>
