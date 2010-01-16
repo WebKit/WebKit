@@ -260,6 +260,22 @@ column-span
 column-width
 column-width-policy
 
+# Removed from WebKit between r44660 and r53119
+-webkit-border-bottom-left-radius
+-webkit-border-bottom-right-radius
+-webkit-border-top-left-radius
+-webkit-border-top-right-radius
+
+# Removed from WebKit between r24523 and r44660
+-webkit-dashboard-region
+scrollbar-3dlight-color
+scrollbar-arrow-color
+scrollbar-darkshadow-color
+scrollbar-face-color
+scrollbar-highlight-color
+scrollbar-shadow-color
+scrollbar-track-color
+
 # All of the following are from khtml's cssproperties.in as of 19oct2004, but are no longer in WebKit
 -khtml-border-horizontal-spacing
 -khtml-border-vertical-spacing

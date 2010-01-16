@@ -1,3 +1,15 @@
+2010-01-16  David Kilzer  <ddkilzer@apple.com>
+
+        Added back removed properties to iExploder input files
+
+        While the update-iexploder-cssproperties script works great to
+        add new properties, it has the side-effect of removing old
+        properties that once were parsed.
+
+        * iExploder/htdocs/cssproperties.in: Added back removed
+        properties into their own section.
+        * iExploder/htdocs/htmlattrs.in: Ditto.
+
 2010-01-16  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by David Kilzer.
