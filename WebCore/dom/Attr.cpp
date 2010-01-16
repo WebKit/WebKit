@@ -102,7 +102,13 @@ void Attr::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
     if (ec)
         return;
 
-    m_attribute->setPrefix(prefix);
+    if ((prefix == "xmlns" && namespaceURI() != "http://www.w3.org/2000/xmlns/")
+        || static_cast<Attr*>(this)->qualifiedName() == "xmlns") {
+        ec = NAMESPACE_ERR;
+        return;
+    }
+
+    m_attribute->setPrefix(prefix.isEmpty() ? AtomicString() : prefix);
 }
 
 String Attr::nodeValue() const

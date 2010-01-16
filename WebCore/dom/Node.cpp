@@ -1040,34 +1040,27 @@ Node* Node::traversePreviousSiblingPostOrder(const Node* stayWithin) const
     return 0;
 }
 
-void Node::checkSetPrefix(const AtomicString&, ExceptionCode& ec)
+void Node::checkSetPrefix(const AtomicString& prefix, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // Element::setPrefix() and Attr::setPrefix()
 
     // FIXME: Implement support for INVALID_CHARACTER_ERR: Raised if the specified prefix contains an illegal character.
     
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
-    // FIXME: Implement NAMESPACE_ERR: - Raised if the specified prefix is malformed
-    // We have to comment this out, since it's used for attributes and tag names, and we've only
-    // switched one over.
-    /*
-    // - if the namespaceURI of this node is null,
-    // - if the specified prefix is "xml" and the namespaceURI of this node is different from
-    //   "http://www.w3.org/XML/1998/namespace",
-    // - if this node is an attribute and the specified prefix is "xmlns" and
-    //   the namespaceURI of this node is different from "http://www.w3.org/2000/xmlns/",
-    // - or if this node is an attribute and the qualifiedName of this node is "xmlns" [Namespaces].
-    if ((namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
-        (_prefix == "xml" && String(document()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
+    // FIXME: Raise NAMESPACE_ERR if prefix is malformed per the Namespaces in XML specification.
+
+    const AtomicString& nodeNamespaceURI = namespaceURI();
+    if ((nodeNamespaceURI.isEmpty() && !prefix.isEmpty())
+        || (prefix == "xml" && nodeNamespaceURI != XMLNames::xmlNamespaceURI)) {
         ec = NAMESPACE_ERR;
         return;
-    }*/
+    }
+    // Attribute-specific checks are in Attr::setPrefix().
 }
 
 bool Node::canReplaceChild(Node* newChild, Node*)

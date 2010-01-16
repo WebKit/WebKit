@@ -669,14 +669,14 @@ String Element::nodeNamePreservingCase() const
     return m_tagName.toString();
 }
 
-void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
+void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
 {
     ec = 0;
-    checkSetPrefix(_prefix, ec);
+    checkSetPrefix(prefix, ec);
     if (ec)
         return;
 
-    m_tagName.setPrefix(_prefix);
+    m_tagName.setPrefix(prefix.isEmpty() ? AtomicString() : prefix);
 }
 
 KURL Element::baseURI() const
