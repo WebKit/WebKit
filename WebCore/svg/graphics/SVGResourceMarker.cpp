@@ -72,13 +72,13 @@ void SVGResourceMarker::draw(RenderObject::PaintInfo& paintInfo, const Transform
 
     currentlyDrawingMarkers.add(this);
     ASSERT(!m_renderer->drawsContents());
-
-    paintInfo.context->save();
-    paintInfo.context->concatCTM(transform);
+    RenderObject::PaintInfo info(paintInfo);
+    info.context->save();
+    applyTransformToPaintInfo(info, transform);
     m_renderer->setDrawsContents(true);
-    m_renderer->paint(paintInfo, 0, 0);
+    m_renderer->paint(info, 0, 0);
     m_renderer->setDrawsContents(false);
-    paintInfo.context->restore();
+    info.context->restore();
 
     currentlyDrawingMarkers.remove(this);
 }

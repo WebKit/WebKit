@@ -1,3 +1,16 @@
+2010-01-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Markers are getting culled incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=33767
+
+        Use applyTransformToPaintInfo to transform the paintInfo, otherwise
+        the paint rect is not updated leading to incorrect culling.
+
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+
 2010-01-15  John Sullivan  <sullivan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=33751 and <rdar://problem/7538330>
