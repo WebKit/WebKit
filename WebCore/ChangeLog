@@ -1,3 +1,32 @@
+2010-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cache JS string values made from DOM strings (Dromaeo speedup)
+        https://bugs.webkit.org/show_bug.cgi?id=33768
+        <rdar://problem/7353576>
+
+        Added a new cache for JSString values that are created from Strings or AtomicStrings
+        in the DOM. It's common for the same string to be retrieved from the DOM repeatedly,
+        and it is wasteful to make a new JS-level string value every time.
+        
+        The string cache is per-world, and thus thread-safe and not a
+        vector for accidental information exchange.
+        
+        ~30% speedup on Dromaeo Attributes test, also substantially helps other Dromaeo DOM tests.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringCache): Helper function to get the string cache for the current world.
+        (WebCore::jsString): Some new overloads including the caching version.
+        (WebCore::stringWrapperDestroyed): Finalizer callback - remove from relevant caches.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsString): Prototype new overloads (and define a few inline).
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::type): Explicitly make a UString.
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument): Ditto.
+        * WebCore.base.exp: Add new JSString overloads that WebCore gets to see.
+
 2010-01-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Nikolas Zimmermann.

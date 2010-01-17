@@ -1,3 +1,15 @@
+2010-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cache JS string values made from DOM strings (Dromaeo speedup)
+        https://bugs.webkit.org/show_bug.cgi?id=33768
+        <rdar://problem/7353576>
+        
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::stringValue): Explicitly make a String, since char*
+        is now ambiguous.
+
 2010-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

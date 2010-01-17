@@ -223,7 +223,7 @@ JSValue ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint
 JSValue ProxyInstance::stringValue(ExecState* exec) const
 {
     // FIXME: Implement something sensible.
-    return jsString(exec, "");
+    return jsEmptyString(exec);
 }
 
 JSValue ProxyInstance::numberValue(ExecState* exec) const

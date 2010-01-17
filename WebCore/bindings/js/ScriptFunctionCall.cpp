@@ -79,7 +79,7 @@ void ScriptFunctionCall::appendArgument(const JSC::UString& argument)
 void ScriptFunctionCall::appendArgument(const char* argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsString(m_exec, argument));
+    m_arguments.append(jsString(m_exec, UString(argument)));
 }
 
 void ScriptFunctionCall::appendArgument(JSC::JSValue argument)

@@ -1,3 +1,21 @@
+2010-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cache JS string values made from DOM strings (Dromaeo speedup)
+        https://bugs.webkit.org/show_bug.cgi?id=33768
+        <rdar://problem/7353576>
+
+        * runtime/JSString.h:
+        (JSC::jsStringWithFinalizer): Added new mechanism for a string to have an optional
+        finalizer callback, for the benefit of weak-referencing caches.
+        (JSC::):
+        (JSC::Fiber::JSString):
+        (JSC::Fiber::~JSString):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope): Clear fibers so this doesn't look like a string with a finalizer.
+        * runtime/WeakGCMap.h: Include "Collector.h" to make this header includable by itself.
+
 2010-01-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

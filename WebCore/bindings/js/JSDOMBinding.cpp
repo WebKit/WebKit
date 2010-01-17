@@ -556,6 +556,59 @@ void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
     }
 }
 
+static inline JSStringCache& jsStringCache(ExecState* exec)
+{
+    return currentWorld(exec)->m_stringCache;
+}
+
+static void stringWrapperDestroyed(JSString* str, void* context)
+{
+    StringImpl* cacheKey = static_cast<StringImpl*>(context);
+    JSC::JSGlobalData* globalData = Heap::heap(str)->globalData();
+
+    // Check the normal world first!
+    JSGlobalData::ClientData* clientData = globalData->clientData;
+    ASSERT(clientData);
+    JSStringCache& cache = static_cast<WebCoreJSClientData*>(clientData)->normalWorld()->m_stringCache;
+    if (cache.uncheckedRemove(cacheKey, str)) {
+        cacheKey->deref();
+        return;
+    }
+
+    for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
+        if (worldIter->m_stringCache.uncheckedRemove(cacheKey, str))
+            break;
+    }
+
+    cacheKey->deref();
+}
+
+JSValue jsString(ExecState* exec, const String& s)
+{
+    StringImpl* stringImpl = s.impl();
+    if (!stringImpl || !stringImpl->length())
+        return jsEmptyString(exec);
+
+    if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
+        return jsString(exec, stringImpl->ustring());
+
+    JSStringCache& stringCache = jsStringCache(exec);
+    if (JSString* wrapper = stringCache.get(stringImpl))
+        return wrapper;
+
+    // If there is a stale entry, we have to explicitly remove it to avoid
+    // problems down the line.
+    if (JSString* wrapper = stringCache.uncheckedGet(stringImpl))
+        stringCache.uncheckedRemove(stringImpl, wrapper);
+
+    JSString* wrapper = jsStringWithFinalizer(exec, stringImpl->ustring(), stringWrapperDestroyed, stringImpl);
+    stringCache.set(stringImpl, wrapper);
+    // ref explicitly instead of using a RefPtr-keyed hashtable because the wrapper can
+    // outlive the cache, so the stringImpl has to match the wrapper's lifetime.
+    stringImpl->ref();
+    return wrapper;
+}
+
 JSValue jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
@@ -582,6 +635,11 @@ JSValue jsStringOrFalse(ExecState* exec, const String& s)
     if (s.isNull())
         return jsBoolean(false);
     return jsString(exec, s);
+}
+
+JSValue jsString(ExecState* exec, const KURL& url)
+{
+    return jsString(exec, url.string());
 }
 
 JSValue jsStringOrNull(ExecState* exec, const KURL& url)

@@ -85,8 +85,10 @@ void JSString::resolveRope(ExecState* exec) const
     if (PassRefPtr<UStringImpl> newImpl = UStringImpl::tryCreateUninitialized(m_stringLength, buffer))
         m_value = newImpl;
     else {
-        for (unsigned i = 0; i < m_ropeLength; ++i)
+        for (unsigned i = 0; i < m_ropeLength; ++i) {
             m_fibers[i].deref();
+            m_fibers[i] = static_cast<void*>(0);
+        }
         m_ropeLength = 0;
         ASSERT(!isRope());
         ASSERT(m_value == UString());
@@ -120,8 +122,10 @@ void JSString::resolveRope(ExecState* exec) const
             if (workQueue.isEmpty()) {
                 // Create a string from the UChar buffer, clear the rope RefPtr.
                 ASSERT(buffer == position);
-                for (unsigned i = 0; i < m_ropeLength; ++i)
+                for (unsigned i = 0; i < m_ropeLength; ++i) {
                     m_fibers[i].deref();
+                    m_fibers[i] = static_cast<void*>(0);
+                }
                 m_ropeLength = 0;
 
                 ASSERT(!isRope());
