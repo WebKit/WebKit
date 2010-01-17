@@ -494,25 +494,26 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     return String();
 }
 
-String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
+static String matchLabelsAgainstString(const Vector<String>& labels, const String& stringToMatch)
 {
-    String name = element->getAttribute(nameAttr);
-    if (name.isEmpty())
+    if (stringToMatch.isEmpty())
         return String();
 
-    // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(name, RegularExpression("\\d", TextCaseSensitive), " ");
-    name.replace('_', ' ');
+    String mutableStringToMatch = stringToMatch;
 
+    // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
+    replace(mutableStringToMatch, RegularExpression("\\d", TextCaseSensitive), " ");
+    mutableStringToMatch.replace('_', ' ');
+    
     OwnPtr<RegularExpression> regExp(createRegExpForLabels(labels));
-    // Use the largest match we can find in the whole name string
+    // Use the largest match we can find in the whole string
     int pos;
     int length;
     int bestPos = -1;
     int bestLength = -1;
     int start = 0;
     do {
-        pos = regExp->match(name, start);
+        pos = regExp->match(mutableStringToMatch, start);
         if (pos != -1) {
             length = regExp->matchedLength();
             if (length >= bestLength) {
@@ -522,10 +523,23 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
             start = pos + 1;
         }
     } while (pos != -1);
-
+    
     if (bestPos != -1)
-        return name.substring(bestPos, bestLength);
+        return mutableStringToMatch.substring(bestPos, bestLength);
     return String();
+}
+    
+String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* element)
+{
+    // Match against the name element, then against the id element if no match is found for the name element.
+    // See 7538330 for one popular site that benefits from the id element check.
+    // FIXME: This code is mirrored in FrameMac.mm. It would be nice to make the Mac code call the platform-agnostic
+    // code, which would require converting the NSArray of NSStrings to a Vector of Strings somewhere along the way.
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getAttribute(nameAttr));
+    if (!resultFromNameAttribute.isEmpty())
+        return resultFromNameAttribute;
+    
+    return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
 const VisibleSelection& Frame::mark() const

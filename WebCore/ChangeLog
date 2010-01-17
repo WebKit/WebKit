@@ -1,3 +1,25 @@
+2010-01-15  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=33751 and <rdar://problem/7538330>
+        Zip code field is misidentified as street address because id attribute isn't checked.
+
+        Reviewed by Darin Adler
+
+        No new tests. I believe this code is used only by Safari AutoFill, but in any case
+        it does not affect page rendering or anything else at the WebCore/WebKit level.
+
+        * page/Frame.cpp:
+        (WebCore::matchLabelsAgainstString):
+        New function, split out from matchLabelsAgainstElement.
+        (WebCore::Frame::matchLabelsAgainstElement):
+        Now calls matchLabelsAgainstString for the id attribute if no match is found for the name attribute.
+        
+        * page/mac/FrameMac.mm:
+        (WebCore::matchLabelsAgainstString):
+        Same as above. This is a parallel copy of the function using Mac-specific data structures.
+        (WebCore::Frame::matchLabelsAgainstElement):
+        Ditto.
+
 2010-01-16  Timothy Hatcher  <timothy@apple.com>
 
         Use String.trim() instead of a regex in the Web Inspector.

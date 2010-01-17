@@ -229,25 +229,26 @@ NSString* Frame::searchForLabelsBeforeElement(NSArray* labels, Element* element)
     return nil;
 }
 
-NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
+static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringToMatch)
 {
-    String name = element->getAttribute(nameAttr);
-    if (name.isEmpty())
+    if (stringToMatch.isEmpty())
         return nil;
-
+    
+    String mutableStringToMatch = stringToMatch;
+    
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(name, RegularExpression("\\d", TextCaseSensitive), " ");
-    name.replace('_', ' ');
-
+    replace(mutableStringToMatch, RegularExpression("\\d", TextCaseSensitive), " ");
+    mutableStringToMatch.replace('_', ' ');
+    
     RegularExpression* regExp = regExpForLabels(labels);
-    // Use the largest match we can find in the whole name string
+    // Use the largest match we can find in the whole string
     int pos;
     int length;
     int bestPos = -1;
     int bestLength = -1;
     int start = 0;
     do {
-        pos = regExp->match(name, start);
+        pos = regExp->match(mutableStringToMatch, start);
         if (pos != -1) {
             length = regExp->matchedLength();
             if (length >= bestLength) {
@@ -257,10 +258,23 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
             start = pos + 1;
         }
     } while (pos != -1);
-
+    
     if (bestPos != -1)
-        return name.substring(bestPos, bestLength);
+        return mutableStringToMatch.substring(bestPos, bestLength);
     return nil;
+}
+
+NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
+{
+    // Match against the name element, then against the id element if no match is found for the name element.
+    // See 7538330 for one popular site that benefits from the id element check.
+    // FIXME: This code is mirrored in Frame.cpp. It would be nice to make the Mac code call the platform-agnostic
+    // code, which would require converting the NSArray of NSStrings to a Vector of Strings somewhere along the way.
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getAttribute(nameAttr));
+    if (!resultFromNameAttribute.isEmpty())
+        return resultFromNameAttribute;
+    
+    return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
 NSImage* Frame::imageFromRect(NSRect rect) const
