@@ -1,5 +1,18 @@
 2010-01-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        MSAA: Screen rect for <option> elements is always the zero rect
+
+        https://bugs.webkit.org/show_bug.cgi?id=33758
+
+        Reviewed by Oliver Hunt.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accLocation):
+        Use elementRect() rather than boundingBoxRect(), which
+        AccessibilityListBoxOption overrides.
+
+2010-01-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
         get_accParent should try to retrieve parent AccessibilityObject, before
         calling upon window
 

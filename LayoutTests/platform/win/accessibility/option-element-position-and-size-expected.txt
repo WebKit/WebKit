@@ -1,0 +1,7 @@
+This tests that option elements have the correct size.
+
+
+
+width: 51
+height: 14
+
