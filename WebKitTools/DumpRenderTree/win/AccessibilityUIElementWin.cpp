@@ -126,7 +126,11 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
-    return 0;
+    COMPtr<IDispatch> parent;
+    m_element->get_accParent(&parent);
+
+    COMPtr<IAccessible> parentAccessible(Query, parent);
+    return parentAccessible;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()

@@ -1,3 +1,15 @@
+2010-01-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        get_accParent should try to retrieve parent AccessibilityObject, before
+        calling upon window
+
+        https://bugs.webkit.org/show_bug.cgi?id=22893
+
+        Reviewed by Darin Adler.
+
+        * platform/win/accessibility/parent-element-expected.txt: Added.
+        * platform/win/accessibility/parent-element.html: Added.
+
 2010-01-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt and Alexey Proskuryakov.
