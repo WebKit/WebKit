@@ -1,3 +1,137 @@
+2010-01-17  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] GtkWebKit incompatible with rgba colormaps
+        https://bugs.webkit.org/show_bug.cgi?id=20736
+
+        Fix GTK theme rendering onto drawables with RGBA colormaps. Now
+        each type of colormap has its own collection of GtkWidgets.
+
+        This fix does not introduce any functionality changes, so does not
+        includes new tests.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::~RenderThemeGtk):
+        (WebCore::RenderThemeGtk::partsForDrawable):
+        (WebCore::adjustMozillaStyle):
+        (WebCore::setMozillaState):
+        (WebCore::paintMozillaGtkWidget):
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::RenderThemeGtk::adjustMenuListStyle):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_use_theme_parts):
+        (ensure_window_widget):
+        (setup_widget_prototype):
+        (ensure_button_widget):
+        (ensure_hpaned_widget):
+        (ensure_vpaned_widget):
+        (ensure_toggle_button_widget):
+        (ensure_button_arrow_widget):
+        (ensure_checkbox_widget):
+        (ensure_radiobutton_widget):
+        (ensure_scrollbar_widget):
+        (ensure_spin_widget):
+        (ensure_scale_widget):
+        (ensure_entry_widget):
+        (moz_gtk_get_combo_box_inner_button):
+        (moz_gtk_get_combo_box_button_inner_widgets):
+        (ensure_combo_box_widgets):
+        (moz_gtk_get_combo_box_entry_inner_widgets):
+        (moz_gtk_get_combo_box_entry_arrow):
+        (ensure_combo_box_entry_widgets):
+        (ensure_handlebox_widget):
+        (ensure_toolbar_widget):
+        (ensure_toolbar_separator_widget):
+        (ensure_tooltip_widget):
+        (ensure_tab_widget):
+        (ensure_progress_widget):
+        (ensure_statusbar_widget):
+        (ensure_frame_widget):
+        (ensure_menu_bar_widget):
+        (ensure_menu_bar_item_widget):
+        (ensure_menu_popup_widget):
+        (ensure_menu_item_widget):
+        (ensure_image_menu_item_widget):
+        (ensure_menu_separator_widget):
+        (ensure_check_menu_item_widget):
+        (ensure_tree_view_widget):
+        (ensure_tree_header_cell_widget):
+        (ensure_expander_widget):
+        (ensure_scrolled_window_widget):
+        (moz_gtk_checkbox_get_metrics):
+        (moz_gtk_radio_get_metrics):
+        (moz_gtk_splitter_get_metrics):
+        (moz_gtk_toggle_paint):
+        (moz_gtk_scrollbar_button_paint):
+        (moz_gtk_scrollbar_trough_paint):
+        (moz_gtk_scrollbar_thumb_paint):
+        (moz_gtk_spin_paint):
+        (moz_gtk_spin_updown_paint):
+        (moz_gtk_scale_paint):
+        (moz_gtk_scale_thumb_paint):
+        (moz_gtk_gripper_paint):
+        (moz_gtk_hpaned_paint):
+        (moz_gtk_vpaned_paint):
+        (moz_gtk_caret_paint):
+        (moz_gtk_treeview_paint):
+        (moz_gtk_tree_header_cell_paint):
+        (moz_gtk_tree_header_sort_arrow_paint):
+        (moz_gtk_treeview_expander_paint):
+        (moz_gtk_expander_paint):
+        (moz_gtk_combo_box_paint):
+        (moz_gtk_downarrow_paint):
+        (moz_gtk_combo_box_entry_button_paint):
+        (moz_gtk_container_paint):
+        (moz_gtk_toggle_label_paint):
+        (moz_gtk_toolbar_paint):
+        (moz_gtk_toolbar_separator_paint):
+        (moz_gtk_tooltip_paint):
+        (moz_gtk_resizer_paint):
+        (moz_gtk_frame_paint):
+        (moz_gtk_progressbar_paint):
+        (moz_gtk_progress_chunk_paint):
+        (moz_gtk_get_tab_thickness):
+        (moz_gtk_tab_paint):
+        (moz_gtk_tabpanels_paint):
+        (moz_gtk_tab_scroll_arrow_paint):
+        (moz_gtk_menu_bar_paint):
+        (moz_gtk_menu_popup_paint):
+        (moz_gtk_menu_separator_paint):
+        (moz_gtk_menu_item_paint):
+        (moz_gtk_menu_arrow_paint):
+        (moz_gtk_check_menu_item_paint):
+        (moz_gtk_window_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_combo_box_entry_button_size):
+        (moz_gtk_get_tab_scroll_arrow_size):
+        (moz_gtk_get_downarrow_size):
+        (moz_gtk_get_toolbar_separator_width):
+        (moz_gtk_get_expander_size):
+        (moz_gtk_get_treeview_expander_size):
+        (moz_gtk_get_menu_separator_height):
+        (moz_gtk_get_scalethumb_metrics):
+        (moz_gtk_get_scrollbar_metrics):
+        (moz_gtk_images_in_menus):
+        (moz_gtk_widget_paint):
+        (moz_gtk_get_scrollbar_widget):
+        (moz_gtk_shutdown):
+        (moz_gtk_destroy_theme_parts_widgets):
+        * platform/gtk/gtkdrawing.h:
+
 2010-01-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
