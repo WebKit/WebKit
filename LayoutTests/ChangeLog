@@ -1,3 +1,11 @@
+2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Add platform dependent expected file because of different font size.
+
+        * platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt: Copied from LayoutTests/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt.
+
 2010-01-18  Timothy Hatcher  <timothy@apple.com>
 
         Updated results for scroll position while zoomed.
