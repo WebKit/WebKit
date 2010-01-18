@@ -1,3 +1,20 @@
+2010-01-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30073
+        Moved reshape to HTMLCanvasElement::reset and have it always
+        set the size to the canvas width and height attrs.
+
+        This is not testable with LayoutTests, so I instead added logic
+        to the demo at:
+
+        https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/sdk/demos/webkit/SpinningBox.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+
 2010-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

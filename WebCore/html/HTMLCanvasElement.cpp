@@ -227,6 +227,11 @@ void HTMLCanvasElement::reset()
     IntSize oldSize = m_size;
     m_size = IntSize(w, h);
 
+#if ENABLE(3D_CANVAS)
+    if (m_context && m_context->is3d())
+        static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
+#endif
+
     bool hadImageBuffer = m_createdImageBuffer;
     m_createdImageBuffer = false;
     m_imageBuffer.clear();
@@ -255,7 +260,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
         return;
     
 #if ENABLE(3D_CANVAS)
-    WebGLRenderingContext* context3D = NULL;
+    WebGLRenderingContext* context3D = 0;
     if (m_context && m_context->is3d()) {
         context3D = static_cast<WebGLRenderingContext*>(m_context.get());
         context3D->beginPaint();
@@ -269,10 +274,8 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     }
 
 #if ENABLE(3D_CANVAS)
-    if (context3D != NULL) {
-        context3D->reshape(r.width(), r.height());
+    if (context3D)
         context3D->endPaint();
-    }
 #endif
 }
 
