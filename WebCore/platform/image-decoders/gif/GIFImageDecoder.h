@@ -27,10 +27,11 @@
 #define GIFImageDecoder_h
 
 #include "ImageDecoder.h"
+#include <wtf/OwnPtr.h>
+
+class GIFImageReader;
 
 namespace WebCore {
-
-    class GIFImageDecoderPrivate;
 
     // This class decodes the GIF image format.
     class GIFImageDecoder : public ImageDecoder {
@@ -80,7 +81,8 @@ namespace WebCore {
         bool m_frameCountValid;
         bool m_currentBufferSawAlpha;
         mutable int m_repetitionCount;
-        GIFImageDecoderPrivate* m_reader;
+        OwnPtr<GIFImageReader> m_reader;
+        unsigned m_readOffset;
     };
 
 } // namespace WebCore

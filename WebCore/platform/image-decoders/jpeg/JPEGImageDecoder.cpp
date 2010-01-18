@@ -400,12 +400,11 @@ void term_source (j_decompress_ptr jd)
 }
 
 JPEGImageDecoder::JPEGImageDecoder()
-: m_reader(0)
-{}
+{
+}
 
 JPEGImageDecoder::~JPEGImageDecoder()
 {
-    delete m_reader;
 }
 
 // Take the data and store it.
@@ -419,7 +418,7 @@ void JPEGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 
     // Create the JPEG reader.
     if (!m_reader && !m_failed)
-        m_reader = new JPEGImageReader(this);
+        m_reader.set(new JPEGImageReader(this));
 }
 
 // Whether or not the size information has been decoded yet.
@@ -462,10 +461,8 @@ void JPEGImageDecoder::decode(bool sizeOnly)
 
     m_failed = !m_reader->decode(m_data->buffer(), sizeOnly);
 
-    if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete)) {
-        delete m_reader;
-        m_reader = 0;
-    }
+    if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
+        m_reader.clear();
 }
 
 bool JPEGImageDecoder::outputScanlines()

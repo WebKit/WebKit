@@ -28,6 +28,7 @@
 #define JPEGImageDecoder_h
 
 #include "ImageDecoder.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -55,13 +56,11 @@ namespace WebCore {
 
         void decode(bool sizeOnly = false);
 
-        JPEGImageReader* reader() { return m_reader; }
-
         bool outputScanlines();
         void jpegComplete();
 
     private:
-        JPEGImageReader* m_reader;
+        OwnPtr<JPEGImageReader> m_reader;
     };
 
 } // namespace WebCore
