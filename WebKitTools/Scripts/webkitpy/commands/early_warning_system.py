@@ -37,13 +37,20 @@ from webkitpy.queueengine import QueueEngine
 
 
 class AbstractEarlyWarningSystem(AbstractReviewQueue):
+    _build_style = "release"
+
     def __init__(self):
         AbstractReviewQueue.__init__(self)
         self.port = WebKitPort.port(self.port_name)
 
     def should_proceed_with_work_item(self, patch):
         try:
-            self.run_webkit_patch(["build", self.port.flag(), "--force-clean", "--quiet"])
+            self.run_webkit_patch([
+                "build",
+                self.port.flag(),
+                "--build-style=%s" % self._build_style,
+                "--force-clean",
+                "--quiet"])
             self._update_status("Building", patch)
         except ScriptError, e:
             self._update_status("Unable to perform a build")
@@ -54,6 +61,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         self.run_webkit_patch([
             "build-attachment",
             self.port.flag(),
+            "--build-style=%s" % self._build_style,
             "--force-clean",
             "--quiet",
             "--non-interactive",
@@ -90,6 +98,7 @@ class QtEWS(AbstractEarlyWarningSystem):
 class ChromiumEWS(AbstractEarlyWarningSystem):
     name = "chromium-ews"
     port_name = "chromium"
+    _build_style = "both"
     watchers = AbstractEarlyWarningSystem.watchers + [
         "dglazkov@chromium.org",
     ]
