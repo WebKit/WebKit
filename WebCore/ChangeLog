@@ -1,5 +1,12 @@
 2010-01-18  Dan Bernstein  <mitz@apple.com>
 
+        Address review comments on the last change
+
+        * rendering/TrailingFloatsRootInlineBox.h:
+        (WebCore::TrailingFloatsRootInlineBox::TrailingFloatsRootInlineBox):
+
+2010-01-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/6892207> REGRESSION (Safari 4): Menus at sciencedirect.com push the main article context down the page

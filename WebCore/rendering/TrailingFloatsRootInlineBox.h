@@ -32,11 +32,12 @@ namespace WebCore {
 
 class TrailingFloatsRootInlineBox : public RootInlineBox {
 public:
-    TrailingFloatsRootInlineBox(RenderObject* obj) : RootInlineBox(obj)
+    TrailingFloatsRootInlineBox(RenderObject* object) : RootInlineBox(object)
     {
         setHasVirtualHeight();
     }
 
+private:
     virtual int virtualHeight() const { return 0; }
 };
 
