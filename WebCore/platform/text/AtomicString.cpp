@@ -304,6 +304,8 @@ DEFINE_GLOBAL(AtomicString, emptyAtom, "")
 DEFINE_GLOBAL(AtomicString, textAtom, "#text")
 DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
 DEFINE_GLOBAL(AtomicString, starAtom, "*")
+DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
+DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
 
 void AtomicString::init()
 {
@@ -318,6 +320,8 @@ void AtomicString::init()
         new ((void*)&textAtom) AtomicString("#text");
         new ((void*)&commentAtom) AtomicString("#comment");
         new ((void*)&starAtom) AtomicString("*");
+        new ((void*)&xmlAtom) AtomicString("xml");
+        new ((void*)&xmlnsAtom) AtomicString("xmlns");
 
         initialized = true;
     }

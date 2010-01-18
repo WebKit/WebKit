@@ -391,6 +391,26 @@
           ],
         },
         {
+          'action_name': 'XMLNSNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../xml/xmlnsattrs.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+            '--',
+            '--extraDefines', '<(feature_defines)'
+          ],
+        },
+        {
           'action_name': 'XMLNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -567,6 +587,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
 
         # Additional .cpp files from the webcore_bindings_sources rules.

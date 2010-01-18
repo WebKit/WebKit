@@ -87,6 +87,7 @@ webcore_built_sources += \
 	DerivedSources/JSHTMLElementWrapperFactory.cpp \
 	DerivedSources/UserAgentStyleSheets.h \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
+	DerivedSources/XMLNSNames.cpp \
 	DerivedSources/XMLNames.cpp
 
 IDL_BINDINGS += \
@@ -3496,6 +3497,9 @@ DerivedSources/HTMLElementFactory.cpp DerivedSources/HTMLNames.cpp: $(WebCore)/d
 endif # HTML_FLAGS
 
 DerivedSources/JSHTMLElementWrapperFactory.cpp: DerivedSources/HTMLNames.cpp;
+
+DerivedSources/XMLNSNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlnsattrs.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in --outputDir "$(GENSOURCES)"
 
 DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES)"

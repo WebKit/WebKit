@@ -19397,6 +19397,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XMLNSNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XMLNSNames.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XMLNames.cpp"
 				>
 			</File>

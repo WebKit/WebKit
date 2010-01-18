@@ -27,6 +27,7 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "Text.h"
+#include "XMLNSNames.h"
 
 namespace WebCore {
 
@@ -102,8 +103,8 @@ void Attr::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
     if (ec)
         return;
 
-    if ((prefix == "xmlns" && namespaceURI() != "http://www.w3.org/2000/xmlns/")
-        || static_cast<Attr*>(this)->qualifiedName() == "xmlns") {
+    if ((prefix == xmlnsAtom && namespaceURI() != XMLNSNames::xmlnsNamespaceURI)
+        || static_cast<Attr*>(this)->qualifiedName() == xmlnsAtom) {
         ec = NAMESPACE_ERR;
         return;
     }

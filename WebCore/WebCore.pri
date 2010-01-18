@@ -620,6 +620,12 @@ htmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/HTMLElementFactory.cpp $
 addExtraCompiler(htmlnames)
 
 # GENERATOR 5-B:
+xmlnsnames.output = $${WC_GENERATED_SOURCES_DIR}/XMLNSNames.cpp
+xmlnsnames.input = XMLNS_NAMES
+xmlnsnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlnsattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
+addExtraCompiler(xmlnsnames)
+
+# GENERATOR 5-C:
 xmlnames.output = $${WC_GENERATED_SOURCES_DIR}/XMLNames.cpp
 xmlnames.input = XML_NAMES
 xmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR

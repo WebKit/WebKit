@@ -435,6 +435,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSXSLTProcessor.cpp
         DerivedSources/WebCore/UserAgentStyleSheetsData.cpp
         DerivedSources/WebCore/XLinkNames.cpp
+        DerivedSources/WebCore/XMLNSNames.cpp
         DerivedSources/WebCore/XMLNames.cpp
         DerivedSources/WebCore/XPathGrammar.cpp
     </set>

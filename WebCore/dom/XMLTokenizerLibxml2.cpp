@@ -51,6 +51,7 @@
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "TransformSource.h"
+#include "XMLNSNames.h"
 #include "XMLTokenizerScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -596,9 +597,9 @@ XMLTokenizer::XMLTokenizer(DocumentFragment* fragment, Element* parentElement)
         if (NamedNodeMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
                 Attribute* attr = attrs->attributeItem(i);
-                if (attr->localName() == "xmlns")
+                if (attr->localName() == xmlnsAtom)
                     m_defaultNamespaceURI = attr->value();
-                else if (attr->prefix() == "xmlns")
+                else if (attr->prefix() == xmlnsAtom)
                     m_prefixToNamespaceMap.set(attr->localName(), attr->value());
             }
         }
@@ -678,11 +679,11 @@ static inline void handleElementNamespaces(Element* newElement, const xmlChar** 
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < nb_namespaces; i++) {
-        String namespaceQName = "xmlns";
+        AtomicString namespaceQName = xmlnsAtom;
         String namespaceURI = toString(namespaces[i].uri);
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
-        newElement->setAttributeNS("http://www.w3.org/2000/xmlns/", namespaceQName, namespaceURI, ec);
+        newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, namespaceQName, namespaceURI, ec);
         if (ec) // exception setting attributes
             return;
     }

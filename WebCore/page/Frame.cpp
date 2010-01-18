@@ -75,6 +75,7 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "UserContentURLPattern.h"
+#include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -167,6 +168,7 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     MathMLNames::init();
 #endif
 
+    XMLNSNames::init();
     XMLNames::init();
 
     if (!ownerElement)

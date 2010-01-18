@@ -156,6 +156,8 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
     extern const AtomicString textAtom;
     extern const AtomicString commentAtom;
     extern const AtomicString starAtom;
+    extern const AtomicString xmlAtom;
+    extern const AtomicString xmlnsAtom;
 #endif
 
 } // namespace WebCore

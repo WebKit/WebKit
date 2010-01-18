@@ -450,6 +450,7 @@ all : \
     SVGNames.cpp \
     UserAgentStyleSheets.h \
     XLinkNames.cpp \
+    XMLNSNames.cpp \
     XMLNames.cpp \
     MathMLElementFactory.cpp \
     MathMLNames.cpp \
@@ -635,6 +636,9 @@ HTMLElementFactory.cpp HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in ht
 endif
 
 JSHTMLElementWrapperFactory.cpp : HTMLNames.cpp
+
+XMLNSNames.cpp : dom/make_names.pl xml/xmlnsattrs.in
+	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in
 
 XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in

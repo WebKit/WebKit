@@ -130,6 +130,14 @@ $(intermediates)/css/UserAgentStyleSheets.cpp : $(GEN)
 
 # XML attribute names
 
+GEN:= $(intermediates)/XMLNSNames.cpp
+$(GEN): PRIVATE_PATH := $(LOCAL_PATH)
+$(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --attrs $(xmlns_attrs) --output $(dir $@) 
+$(GEN): xmlns_attrs := $(LOCAL_PATH)/xml/xmlnsattrs.in
+$(GEN): $(LOCAL_PATH)/dom/make_names.pl $(xmlns_attrs)
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN)
+
 GEN:= $(intermediates)/XMLNames.cpp
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = perl -I $(PRIVATE_PATH)/bindings/scripts $< --attrs $(xml_attrs) --output $(dir $@) 

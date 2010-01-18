@@ -55,6 +55,7 @@
 #include "Range.h"
 #include "VisibleSelection.h"
 #include "TextIterator.h"
+#include "XMLNSNames.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
@@ -315,14 +316,12 @@ static bool shouldAddNamespaceElem(const Element* elem)
 static bool shouldAddNamespaceAttr(const Attribute* attr, HashMap<AtomicStringImpl*, AtomicStringImpl*>& namespaces)
 {
     // Don't add namespace attributes twice
-    DEFINE_STATIC_LOCAL(const AtomicString, xmlnsURI, ("http://www.w3.org/2000/xmlns/"));
-    DEFINE_STATIC_LOCAL(const QualifiedName, xmlnsAttr, (nullAtom, "xmlns", xmlnsURI));
-    if (attr->name() == xmlnsAttr) {
+    if (attr->name() == XMLNSNames::xmlnsAttr) {
         namespaces.set(emptyAtom.impl(), attr->value().impl());
         return false;
     }
     
-    QualifiedName xmlnsPrefixAttr("xmlns", attr->localName(), xmlnsURI);
+    QualifiedName xmlnsPrefixAttr(xmlnsAtom, attr->localName(), XMLNSNames::xmlnsNamespaceURI);
     if (attr->name() == xmlnsPrefixAttr) {
         namespaces.set(attr->localName().impl(), attr->value().impl());
         return false;
@@ -341,9 +340,8 @@ static void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, c
     AtomicStringImpl* foundNS = namespaces.get(pre);
     if (foundNS != ns.impl()) {
         namespaces.set(pre, ns.impl());
-        DEFINE_STATIC_LOCAL(const String, xmlns, ("xmlns"));
         result.append(' ');
-        append(result, xmlns);
+        append(result, xmlnsAtom.string());
         if (!prefix.isEmpty()) {
             result.append(':');
             append(result, prefix);

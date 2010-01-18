@@ -4670,6 +4670,8 @@
 		E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
+		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
+		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
@@ -9901,6 +9903,8 @@
 		E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPageTransitionEvent.h; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
+		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
+		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
@@ -11148,6 +11152,8 @@
 				4CA3AB480E556F2400E9C0C0 /* WMLNames.h */,
 				656581EA09D1508D000E61D7 /* XLinkNames.cpp */,
 				656581EB09D1508D000E61D7 /* XLinkNames.h */,
+				E15A36D81104572700B7B639 /* XMLNSNames.cpp */,
+				E15A36D61104572000B7B639 /* XMLNSNames.h */,
 				A833C80A0A2CF25600D57664 /* XMLNames.cpp */,
 				A833C80B0A2CF25600D57664 /* XMLNames.h */,
 				1A7629D30A07425100989F5B /* XPathGrammar.cpp */,
@@ -18350,6 +18356,7 @@
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
+				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -20514,6 +20521,7 @@
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,
 				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
+				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
