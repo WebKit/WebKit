@@ -110,44 +110,56 @@ namespace JSC {
         CodeLocationNearCall callReturnLocation;
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
-        PtrAndFlags<CodeBlock, HasSeenShouldRepatch> ownerCodeBlock;
+        CodeBlock* ownerCodeBlock;
         CodeBlock* callee;
-        unsigned position;
+        unsigned position : 31;
+        unsigned hasSeenShouldRepatch : 1;
         
         void setUnlinked() { callee = 0; }
         bool isLinked() { return callee; }
 
         bool seenOnce()
         {
-            return ownerCodeBlock.isFlagSet(hasSeenShouldRepatch);
+            return hasSeenShouldRepatch;
         }
 
         void setSeen()
         {
-            ownerCodeBlock.setFlag(hasSeenShouldRepatch);
+            hasSeenShouldRepatch = true;
         }
     };
+
+#define MethodCallLinkInfo_seenFlag ((Structure*)1)
 
     struct MethodCallLinkInfo {
         MethodCallLinkInfo()
             : cachedStructure(0)
+            , cachedPrototypeStructure(0)
         {
         }
 
         bool seenOnce()
         {
-            return cachedPrototypeStructure.isFlagSet(hasSeenShouldRepatch);
+            ASSERT(!cachedStructure);
+            return cachedPrototypeStructure;
         }
 
         void setSeen()
         {
-            cachedPrototypeStructure.setFlag(hasSeenShouldRepatch);
+            ASSERT(!cachedStructure && !cachedPrototypeStructure);
+            // We use the values of cachedStructure & cachedPrototypeStructure to indicate the
+            // current state.
+            //     - In the initial state, both are null.
+            //     - Once this transition has been taken once, cachedStructure is
+            //       null and cachedPrototypeStructure is set to a nun-null value.
+            //     - Once the call is linked both structures are set to non-null values.
+            cachedPrototypeStructure = MethodCallLinkInfo_seenFlag;
         }
 
         CodeLocationCall callReturnLocation;
         CodeLocationDataLabelPtr structureLabel;
         Structure* cachedStructure;
-        PtrAndFlags<Structure, HasSeenShouldRepatch> cachedPrototypeStructure;
+        Structure* cachedPrototypeStructure;
     };
 
     struct FunctionRegisterInfo {
