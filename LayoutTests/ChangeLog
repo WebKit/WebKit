@@ -1,5 +1,11 @@
 2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Skip test introduced in r53423 because of missing layoutTestController.setDomainRelaxationForbiddenForURLScheme()
+
+        * platform/qt/Skipped: http/tests/security/setDomainRelaxationForbiddenForURLScheme.html added.
+
+2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] Add platform dependent expected file because of different font size.
