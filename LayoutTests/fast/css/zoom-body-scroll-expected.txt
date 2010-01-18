@@ -10,12 +10,12 @@ Zooming in
 scrollHeight: 1000
 scrollWidth: 1000
 scrollTop: 0
-scrollLeft: 42
+scrollLeft: 50
 
 Scrolling down to 100
 scrollTop: 100
 
 Zooming back out
-scrollTop: 120
+scrollTop: 100
 scrollLeft: 50
 

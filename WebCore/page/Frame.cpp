@@ -681,6 +681,13 @@ void Frame::setZoomFactor(float percent, bool isTextOnly)
     }
 #endif
 
+    if (!isTextOnly) {
+        // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
+        IntPoint scrollPosition = view()->scrollPosition();
+        float percentDifference = (percent / m_zoomFactor);
+        view()->setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
+    }
+
     m_zoomFactor = percent;
     m_page->settings()->setZoomsTextOnly(isTextOnly);
 

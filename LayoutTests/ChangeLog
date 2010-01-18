@@ -1,3 +1,13 @@
+2010-01-18  Timothy Hatcher  <timothy@apple.com>
+
+        Updated results for scroll position while zoomed.
+
+        <rdar://problem/6150099> Zooming should keep the page content in the same place
+
+        Rubber-stamped by Sam Weinig.
+
+        * fast/css/zoom-body-scroll-expected.txt:
+
 2010-01-18  Adam Roben  <aroben@apple.com>
 
         Add tests for new WebKit SPI to disallow setting document.domain

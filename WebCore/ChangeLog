@@ -1,3 +1,16 @@
+2010-01-18  Timothy Hatcher  <timothy@apple.com>
+
+        Adjust the scroll position when doing a full page zoom, so the content
+        stays in relatively the same position.
+
+        <rdar://problem/6150099> Zooming should keep the page content in the same place
+
+        Reviewed by Oliver Hunt.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setZoomFactor): Apply the zoom percent difference to
+        the scroll position, only when doing a full page zoom.
+
 2010-01-18  Adam Roben  <aroben@apple.com>
 
         Add SecurityOrigin::{set,is}DomainRelaxationForbiddenForURLScheme and
