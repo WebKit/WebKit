@@ -258,7 +258,7 @@ namespace JSC {
             , m_ropeLength(0)
         {
             // nasty hack because we can't union non-POD types
-            m_fibers[0] = reinterpret_cast<void*>(finalizer);
+            m_fibers[0] = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(finalizer));
             m_fibers[1] = context;
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }

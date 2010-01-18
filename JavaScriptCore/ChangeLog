@@ -1,3 +1,14 @@
+2010-01-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix the build with strict gcc and RVCT versions: It's not legal to cast a
+        pointer to a function to a void* without an intermediate cast to a non-pointer
+        type. A cast to a ptrdiff_t inbetween fixes it.
+
+        * runtime/JSString.h:
+        (JSC::Fiber::JSString):
+
 2010-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
