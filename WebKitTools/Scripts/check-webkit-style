@@ -59,18 +59,16 @@ def main():
                                            codecs.getwriter('utf8'),
                                            'replace')
 
-    defaults = checker.ArgumentDefaults(checker.DEFAULT_OUTPUT_FORMAT,
-                                        checker.DEFAULT_VERBOSITY,
-                                        checker.WEBKIT_FILTER_RULES)
+    defaults = checker.webkit_argument_defaults()
 
     parser = checker.ArgumentParser(defaults)
     (files, options) = parser.parse(sys.argv[1:])
 
-    styleChecker = checker.StyleChecker(options)
+    style_checker = checker.StyleChecker(options)
 
     if files:
         for filename in files:
-            styleChecker.process_file(filename)
+            style_checker.process_file(filename)
 
     else:
         cwd = os.path.abspath('.')
@@ -86,10 +84,10 @@ def main():
             patch = scm.create_patch_since_local_commit(commit)
         else:
             patch = scm.create_patch()
-        styleChecker.process_patch(patch)
+        style_checker.process_patch(patch)
 
-    sys.stderr.write('Total errors found: %d\n' % checker.error_count())
-    sys.exit(checker.error_count() > 0)
+    sys.stderr.write('Total errors found: %d\n' % style_checker.error_count)
+    sys.exit(style_checker.error_count > 0)
 
 
 if __name__ == "__main__":

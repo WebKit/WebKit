@@ -2619,16 +2619,6 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
              'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
 
 
-class CppStyleStateTest(unittest.TestCase):
-    def test_error_count(self):
-        self.assertEquals(0, cpp_style.error_count())
-        cpp_style._cpp_style_state.increment_error_count()
-        cpp_style._cpp_style_state.increment_error_count()
-        self.assertEquals(2, cpp_style.error_count())
-        cpp_style._cpp_style_state.reset_error_count()
-        self.assertEquals(0, cpp_style.error_count())
-
-
 class WebKitStyleTest(CppStyleTestBase):
 
     # for http://webkit.org/coding/coding-style.html

@@ -39,6 +39,7 @@ import unittest
 import checker as style
 from checker import CategoryFilter
 from checker import ProcessorOptions
+from checker import StyleChecker
 
 class CategoryFilterTest(unittest.TestCase):
 
@@ -47,7 +48,7 @@ class CategoryFilterTest(unittest.TestCase):
     def test_init(self):
         """Test __init__ constructor."""
         self.assertRaises(ValueError, CategoryFilter, ["no_prefix"])
-        CategoryFilter([]) # No ValueError: works
+        CategoryFilter() # No ValueError: works
         CategoryFilter(["+"]) # No ValueError: works
         CategoryFilter(["-"]) # No ValueError: works
 
@@ -57,16 +58,26 @@ class CategoryFilterTest(unittest.TestCase):
         self.assertEquals(str(filter), "+a,-b")
 
     def test_eq(self):
-        """Test __eq__ equality operator."""
+        """Test __eq__ equality function."""
         filter1 = CategoryFilter(["+a", "+b"])
         filter2 = CategoryFilter(["+a", "+b"])
         filter3 = CategoryFilter(["+b", "+a"])
-        self.assertEquals(filter1, filter2)
-        self.assertNotEquals(filter1, filter3)
+
+        # == calls __eq__.
+        self.assertTrue(filter1 == filter2)
+        self.assertFalse(filter1 == filter3) # Cannot test with assertNotEqual.
+
+    def test_ne(self):
+        """Test __ne__ inequality function."""
+        # != calls __ne__.
+        # By default, __ne__ always returns true on different objects.
+        # Thus, just check the distinguishing case to verify that the
+        # code defines __ne__.
+        self.assertFalse(CategoryFilter() != CategoryFilter())
 
     def test_should_check(self):
         """Test should_check() method."""
-        filter = CategoryFilter([])
+        filter = CategoryFilter()
         self.assertTrue(filter.should_check("everything"))
         # Check a second time to exercise cache.
         self.assertTrue(filter.should_check("everything"))
@@ -94,11 +105,12 @@ class ProcessorOptionsTest(unittest.TestCase):
         # Check default parameters.
         options = ProcessorOptions()
         self.assertEquals(options.extra_flag_values, {})
-        self.assertEquals(options.filter, CategoryFilter([]))
+        self.assertEquals(options.filter, CategoryFilter())
         self.assertEquals(options.git_commit, None)
         self.assertEquals(options.output_format, "emacs")
         self.assertEquals(options.verbosity, 1)
 
+        # Check argument validation.
         self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
         ProcessorOptions(output_format="emacs") # No ValueError: works
         ProcessorOptions(output_format="vs7") # works
@@ -119,6 +131,31 @@ class ProcessorOptionsTest(unittest.TestCase):
         self.assertEquals(options.output_format, "vs7")
         self.assertEquals(options.verbosity, 3)
 
+    def test_eq(self):
+        """Test __eq__ equality function."""
+        # == calls __eq__.
+        self.assertTrue(ProcessorOptions() == ProcessorOptions())
+
+        # Verify that a difference in any argument cause equality to fail.
+        options = ProcessorOptions(extra_flag_values={"extra_value" : 1},
+                                   filter=CategoryFilter(["+"]),
+                                   git_commit="commit",
+                                   output_format="vs7",
+                                   verbosity=1)
+        self.assertFalse(options == ProcessorOptions(extra_flag_values={"extra_value" : 2}))
+        self.assertFalse(options == ProcessorOptions(filter=CategoryFilter(["-"])))
+        self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
+        self.assertFalse(options == ProcessorOptions(output_format="emacs"))
+        self.assertFalse(options == ProcessorOptions(verbosity=2))
+
+    def test_ne(self):
+        """Test __ne__ inequality function."""
+        # != calls __ne__.
+        # By default, __ne__ always returns true on different objects.
+        # Thus, just check the distinguishing case to verify that the
+        # code defines __ne__.
+        self.assertFalse(ProcessorOptions() != ProcessorOptions())
+
     def test_should_report_error(self):
         """Test should_report_error()."""
         filter = CategoryFilter(["-xyz"])
@@ -133,27 +170,31 @@ class ProcessorOptionsTest(unittest.TestCase):
         self.assertFalse(options.should_report_error("xyz", 3))
 
 
-class DefaultArgumentsTest(unittest.TestCase):
+class WebKitArgumentDefaultsTest(unittest.TestCase):
 
     """Tests validity of default arguments used by check-webkit-style."""
 
+    def defaults(self):
+        return style.webkit_argument_defaults()
+
     def test_filter_rules(self):
+        defaults = self.defaults()
         already_seen = []
-        for rule in style.WEBKIT_FILTER_RULES:
+        for rule in defaults.filter_rules:
             # Check no leading or trailing white space.
             self.assertEquals(rule, rule.strip())
             # All categories are on by default, so defaults should
             # begin with -.
             self.assertTrue(rule.startswith('-'))
             self.assertTrue(rule[1:] in style.STYLE_CATEGORIES)
+            # Check no rule occurs twice.
             self.assertFalse(rule in already_seen)
             already_seen.append(rule)
 
     def test_defaults(self):
         """Check that default arguments are valid."""
-        defaults = style.ArgumentDefaults(style.DEFAULT_OUTPUT_FORMAT,
-                                          style.DEFAULT_VERBOSITY,
-                                          style.WEBKIT_FILTER_RULES)
+        defaults = self.defaults()
+
         # FIXME: We should not need to call parse() to determine
         #        whether the default arguments are valid.
         parser = style.ArgumentParser(defaults)
@@ -309,6 +350,68 @@ class ArgumentParserTest(unittest.TestCase):
         # Pass multiple files.
         (files, options) = parse(['--output=emacs', 'foo.cpp', 'bar.cpp'])
         self.assertEquals(files, ['foo.cpp', 'bar.cpp'])
+
+
+class StyleCheckerTest(unittest.TestCase):
+
+    """Test the StyleChecker class.
+
+    Attributes:
+      error_message: A string that is the last error message reported
+                     by the test StyleChecker instance.
+
+    """
+
+    error_message = ""
+
+    def mock_write_error(self, error_message):
+        """Store an error message without printing it."""
+        self.error_message = error_message
+        pass
+
+    def style_checker(self, options):
+        return StyleChecker(options, self.mock_write_error)
+
+    def test_init(self):
+        """Test __init__ constructor."""
+        options = ProcessorOptions()
+        style_checker = self.style_checker(options)
+
+        self.assertEquals(style_checker.error_count, 0)
+        self.assertEquals(style_checker.options, options)
+
+    def write_sample_error(self, style_checker, error_confidence):
+        """Write an error to the given style_checker."""
+        style_checker._handle_error(filename="filename",
+                                    line_number=1,
+                                    category="category",
+                                    confidence=error_confidence,
+                                    message="message")
+
+    def test_handle_error(self):
+        """Test _handler_error() function."""
+        options = ProcessorOptions(output_format="emacs",
+                                   verbosity=3)
+        style_checker = self.style_checker(options)
+
+        # Verify initialized properly.
+        self.assertEquals(style_checker.error_count, 0)
+        self.assertEquals(self.error_message, "")
+
+        # Check that should_print_error is getting called appropriately.
+        self.write_sample_error(style_checker, 2)
+        self.assertEquals(style_checker.error_count, 0) # Error confidence too low.
+        self.assertEquals(self.error_message, "")
+
+        self.write_sample_error(style_checker, 3)
+        self.assertEquals(style_checker.error_count, 1) # Error confidence just high enough.
+        self.assertEquals(self.error_message, "filename:1:  message  [category] [3]\n")
+
+        # Check "vs7" output format.
+        style_checker.options.output_format = "vs7"
+        self.write_sample_error(style_checker, 3)
+        self.assertEquals(style_checker.error_count, 2) # Error confidence just high enough.
+        self.assertEquals(self.error_message, "filename(1):  message  [category] [3]\n")
 
 
 if __name__ == '__main__':

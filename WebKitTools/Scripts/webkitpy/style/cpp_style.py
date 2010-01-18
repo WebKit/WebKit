@@ -247,21 +247,12 @@ class _CppStyleState(object):
 
     def __init__(self):
         self.verbose_level = 1  # global setting.
-        self.error_count = 0    # global count of reported errors
 
     def set_verbose_level(self, level):
         """Sets the module's verbosity, and returns the previous setting."""
         last_verbose_level = self.verbose_level
         self.verbose_level = level
         return last_verbose_level
-
-    def reset_error_count(self):
-        """Sets the module's error statistic back to zero."""
-        self.error_count = 0
-
-    def increment_error_count(self):
-        """Bumps the module's error statistic."""
-        self.error_count += 1
 
 
 _cpp_style_state = _CppStyleState()
@@ -275,11 +266,6 @@ def _verbose_level():
 def _set_verbose_level(level):
     """Sets the module's verbosity, and returns the previous setting."""
     return _cpp_style_state.set_verbose_level(level)
-
-
-def error_count():
-    """Returns the global count of reported errors."""
-    return _cpp_style_state.error_count
 
 
 class _FunctionState(object):

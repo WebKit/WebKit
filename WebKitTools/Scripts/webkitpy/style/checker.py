@@ -41,8 +41,8 @@ from diff_parser import DiffParser
 
 
 # These defaults are used by check-webkit-style.
-DEFAULT_VERBOSITY = 1
-DEFAULT_OUTPUT_FORMAT = 'emacs'
+WEBKIT_DEFAULT_VERBOSITY = 1
+WEBKIT_DEFAULT_OUTPUT_FORMAT = 'emacs'
 
 
 # FIXME: For style categories we will never want to have, remove them.
@@ -57,7 +57,7 @@ DEFAULT_OUTPUT_FORMAT = 'emacs'
 # The _WEBKIT_FILTER_RULES are prepended to any user-specified filter
 # rules. Since by default all errors are on, only include rules that
 # begin with a - sign.
-WEBKIT_FILTER_RULES = [
+WEBKIT_DEFAULT_FILTER_RULES = [
     '-build/endif_comment',
     '-build/include_what_you_use',  # <string> for std::string
     '-build/storage_class',  # const static
@@ -158,6 +158,13 @@ STYLE_CATEGORIES = [
     ]
 
 
+def webkit_argument_defaults():
+    """Return the DefaultArguments instance for use by check-webkit-style."""
+    return ArgumentDefaults(WEBKIT_DEFAULT_OUTPUT_FORMAT,
+                            WEBKIT_DEFAULT_VERBOSITY,
+                            WEBKIT_DEFAULT_FILTER_RULES)
+
+
 def _create_usage(defaults):
     """Return the usage string to display for command help.
 
@@ -234,7 +241,7 @@ class CategoryFilter(object):
 
     """Filters whether to check style categories."""
 
-    def __init__(self, filter_rules):
+    def __init__(self, filter_rules=None):
         """Create a category filter.
 
         This method performs argument validation but does not strip
@@ -245,12 +252,16 @@ class CategoryFilter(object):
                         are strings beginning with the plus or minus
                         symbol (+/-). The list should include any
                         default filter rules at the beginning.
+                        Defaults to the empty list.
 
         Raises:
           ValueError: Invalid filter rule if a rule does not start with
                       plus ("+") or minus ("-").
 
         """
+        if filter_rules is None:
+            filter_rules = []
+
         for rule in filter_rules:
             if not (rule.startswith('+') or rule.startswith('-')):
                 raise ValueError('Invalid filter rule "%s": every rule '
@@ -263,11 +274,15 @@ class CategoryFilter(object):
     def __str__(self):
         return ",".join(self._filter_rules)
 
+    # Useful for unit testing.
     def __eq__(self, other):
-        # This is useful for unit testing.
-        # Two category filters are the same if and only if their
-        # constituent filter rules are the same.
-        return (str(self) == str(other))
+        """Return whether this CategoryFilter instance is equal to another."""
+        return self._filter_rules == other._filter_rules
+
+    # Useful for unit testing.
+    def __ne__(self, other):
+        # Python does not automatically deduce from __eq__().
+        return not (self == other)
 
     def should_check(self, category):
         """Return whether the category should be checked.
@@ -324,7 +339,7 @@ class ProcessorOptions(object):
     def __init__(self, output_format="emacs", verbosity=1, filter=None,
                  git_commit=None, extra_flag_values=None):
         if filter is None:
-            filter = CategoryFilter([])
+            filter = CategoryFilter()
         if extra_flag_values is None:
             extra_flag_values = {}
 
@@ -343,6 +358,27 @@ class ProcessorOptions(object):
         self.filter = filter
         self.git_commit = git_commit
         self.extra_flag_values = extra_flag_values
+
+    # Useful for unit testing.
+    def __eq__(self, other):
+        """Return whether this ProcessorOptions instance is equal to another."""
+        if self.output_format != other.output_format:
+            return False
+        if self.verbosity != other.verbosity:
+            return False
+        if self.filter != other.filter:
+            return False
+        if self.git_commit != other.git_commit:
+            return False
+        if self.extra_flag_values != other.extra_flag_values:
+            return False
+
+        return True
+
+    # Useful for unit testing.
+    def __ne__(self, other):
+        # Python does not automatically deduce from __eq__().
+        return not (self == other)
 
     def should_report_error(self, category, confidence_in_error):
         """Return whether an error should be reported.
@@ -585,26 +621,38 @@ class ArgumentParser(object):
 
 class StyleChecker(object):
 
-    """Supports checking style in files and patches."""
+    """Supports checking style in files and patches.
 
-    def __init__(self, options):
+       Attributes:
+         error_count: An integer that is the total number of reported
+                      errors for the lifetime of this StyleChecker
+                      instance.
+         options: A ProcessorOptions instance that controls the behavior
+                  of style checking.
+
+    """
+
+    def __init__(self, options, write_error=sys.stderr.write):
         """Create a StyleChecker instance.
 
         Args:
-          options: A ProcessorOptions instance.
+          options: See options attribute.
+          stderr_write: A function that takes a string as a parameter
+                        and that is called when a style error occurs.
 
         """
+        self._write_error = write_error
         self.options = options
+        self.error_count = 0
 
         # FIXME: Eliminate the need to set global state here.
         cpp_style._set_verbose_level(options.verbosity)
 
     def _handle_error(self, filename, line_number, category, confidence, message):
-        """Logs the fact we've found a lint error.
+        """Handle the occurrence of a style error while checking.
 
-        We log the error location and our confidence in the error, i.e.
-        how certain we are the error is a legitimate style regression
-        versus a misidentification or justified use.
+        Check whether an error should be reported. If so, increment the
+        global error count and report the error details.
 
         Args:
           filename: The name of the file containing the error.
@@ -623,15 +671,15 @@ class StyleChecker(object):
         if not self.options.should_report_error(category, confidence):
             return
 
-        # FIXME: Eliminate the need to reference cpp_style here.
-        cpp_style._cpp_style_state.increment_error_count()
+        self.error_count += 1
 
         if self.options.output_format == 'vs7':
-            sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
-                filename, line_number, message, category, confidence))
+            format_string = "%s(%s):  %s  [%s] [%d]\n"
         else:
-            sys.stderr.write('%s:%s:  %s  [%s] [%d]\n' % (
-                filename, line_number, message, category, confidence))
+            format_string = "%s:%s:  %s  [%s] [%d]\n"
+
+        self._write_error(format_string % (filename, line_number, message,
+                                           category, confidence))
 
     def process_file(self, filename):
         """Checks style for the specified file.
@@ -676,8 +724,3 @@ class StyleChecker(object):
                 cpp_style.process_file(filename, error_for_patch)
             elif text_style.can_handle(filename):
                 text_style.process_file(filename, error_for_patch)
-
-
-def error_count():
-    """Returns the total error count."""
-    return cpp_style.error_count()
