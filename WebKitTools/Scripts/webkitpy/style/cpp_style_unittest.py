@@ -3542,6 +3542,10 @@ class WebKitStyleTest(CppStyleTestBase):
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
 
+        # The Qt API uses names that begin with "qt_".
+        self.assert_lint('void QTFrame::qt_drt_is_awesome(int var1, int var2)', '')
+        self.assert_lint('void qt_drt_is_awesome(int var1, int var2);', '')
+
         # const_iterator is allowed as well.
         self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')
 

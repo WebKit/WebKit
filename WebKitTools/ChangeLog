@@ -1,5 +1,15 @@
 2010-01-17  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style underscore check should be disabled for Qt methods starting with qt_
+        https://bugs.webkit.org/show_bug.cgi?id=33663
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
+2010-01-17  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         style-queue complains about missing #include of config.h for non-WebCore projects
