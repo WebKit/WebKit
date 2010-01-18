@@ -329,14 +329,15 @@ const UChar* String::characters() const
     return m_impl->characters();
 }
 
-const UChar* String::charactersWithNullTermination()
+void String::copyWithNullTermination(OwnArrayPtr<const UChar>& result) const
 {
     if (!m_impl)
-        return 0;
-    if (m_impl->hasTerminatingNullCharacter())
-        return m_impl->characters();
-    m_impl = StringImpl::createWithTerminatingNullCharacter(*m_impl);
-    return m_impl->characters();
+        CRASH();
+    unsigned length = m_impl->length();
+    UChar* buffer = new UChar[length + 1];
+    memcpy(buffer, m_impl->characters(), length * sizeof(UChar));
+    buffer[length] = 0;
+    result.set(buffer);
 }
 
 String String::format(const char *format, ...)

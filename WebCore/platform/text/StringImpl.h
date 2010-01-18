@@ -26,8 +26,8 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnFastMallocPtr.h>
-#include <wtf/PtrAndFlags.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StringHashFunctions.h>
 #include <wtf/Vector.h>
@@ -58,7 +58,7 @@ enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
 
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 
-class StringImpl : public RefCounted<StringImpl> {
+class StringImpl : public Noncopyable {
     friend struct CStringTranslator;
     friend struct HashAndCharactersTranslator;
     friend struct UCharBufferTranslator;
@@ -82,8 +82,6 @@ public:
     static PassRefPtr<StringImpl> create(const char*);
     static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
 
-    static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
-
     static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> adopt(StringBuffer&);
     static PassRefPtr<StringImpl> adopt(Vector<UChar>&);
@@ -96,16 +94,18 @@ public:
     const UChar* characters() { return m_data; }
     unsigned length() { return m_length; }
 
-    bool hasTerminatingNullCharacter() const { return m_sharedBufferAndFlags.isFlagSet(HasTerminatingNullCharacter); }
-
-    bool inTable() const { return m_sharedBufferAndFlags.isFlagSet(InTable); }
-    void setInTable() { return m_sharedBufferAndFlags.setFlag(InTable); }
+    bool inTable() const { return m_refCountAndFlags & s_refCountFlagInTable; }
+    void setInTable() { m_refCountAndFlags |= s_refCountFlagInTable; }
 
     unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
     inline static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
     inline static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
     
+    StringImpl* ref() { m_refCountAndFlags += s_refCountIncrement; return this; }
+    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & s_refCountMask)) delete this; }
+    ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & s_refCountMask) == s_refCountIncrement; }
+
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
     // Makes a deep copy. Helpful only if you need to use a String on another thread
@@ -175,13 +175,9 @@ public:
     operator NSString*();
 #endif
 
-    void operator delete(void*);
-
 private:
-    // Allocation from a custom buffer is only allowed internally to avoid
-    // mismatched allocators. Callers should use create().
-    void* operator new(size_t size);
-    void* operator new(size_t size, void* address);
+    using Noncopyable::operator new;
+    void* operator new(size_t, void* inPlace) { ASSERT(inPlace); return inPlace; }
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
     
@@ -189,15 +185,15 @@ private:
     // In this case, the m_data pointer is an "internal buffer", and does not need to be deallocated.
     bool bufferIsInternal() { return m_data == reinterpret_cast<const UChar*>(this + 1); }
 
-    enum StringImplFlags {
-        HasTerminatingNullCharacter,
-        InTable,
-    };
+    static const unsigned s_refCountMask = 0xFFFFFFFE;
+    static const unsigned s_refCountIncrement = 0x2;
+    static const unsigned s_refCountFlagInTable = 0x1;
 
     const UChar* m_data;
+    SharedUChar* m_sharedBuffer;
     unsigned m_length;
+    unsigned m_refCountAndFlags;
     mutable unsigned m_hash;
-    PtrAndFlags<SharedUChar, StringImplFlags> m_sharedBufferAndFlags;
     // There is a fictitious variable-length UChar array at the end, which is used
     // as the internal buffer by the createUninitialized and create methods.
 };

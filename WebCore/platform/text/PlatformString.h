@@ -26,6 +26,7 @@
 // on systems without case-sensitive file systems.
 
 #include "StringImpl.h"
+#include <wtf/OwnArrayPtr.h>
 
 #ifdef __OBJC__
 #include <objc/objc.h>
@@ -93,7 +94,7 @@ public:
 
     unsigned length() const;
     const UChar* characters() const;
-    const UChar* charactersWithNullTermination();
+    void copyWithNullTermination(OwnArrayPtr<const UChar>&) const;
     
     UChar operator[](unsigned i) const; // if i >= length(), returns 0    
     UChar32 characterStartingAt(unsigned) const; // Ditto.

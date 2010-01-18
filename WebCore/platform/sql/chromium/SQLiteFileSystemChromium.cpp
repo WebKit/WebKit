@@ -51,8 +51,9 @@ SQLiteFileSystem::SQLiteFileSystem()
 int SQLiteFileSystem::openDatabase(const String& fileName, sqlite3** database)
 {
     if (!ChromiumBridge::sandboxEnabled()) {
-        String path = fileName;
-        return sqlite3_open16(path.charactersWithNullTermination(), database);
+        OwnArrayPtr<const UChar> path;
+        fileName.copyWithNullTermination(path);
+        return sqlite3_open16(path.get(), database);
     }
 
     // open databases using the default VFS

@@ -49,8 +49,9 @@ void SQLiteFileSystem::registerSQLiteVFS()
 int SQLiteFileSystem::openDatabase(const String& fileName, sqlite3** database)
 {
     // SQLite expects a null terminator on its UTF-16 strings.
-    String path = fileName;
-    return sqlite3_open16(path.charactersWithNullTermination(), database);
+    OwnArrayPtr<const UChar> path;
+    fileName.copyWithNullTermination(path);
+    return sqlite3_open16(path.get(), database);
 }
 
 String SQLiteFileSystem::getFileNameForNewDatabase(const String& dbDir, const String&,
