@@ -572,14 +572,7 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     if (client->runFileChooser(params, chooserCompletion))
         return;
 
-    // Choosing with new function failed, so fallback to old function.
-    if (client->runFileChooser(params.multiSelect,
-                               params.title,
-                               params.initialValue,
-                               chooserCompletion))
-        return;
-
-    // Choosing with the old function failed, so do callback with an empty list.
+    // Choosing failed, so do callback with an empty list.
     chooserCompletion->didChooseFile(WebVector<WebString>());
 }
 
