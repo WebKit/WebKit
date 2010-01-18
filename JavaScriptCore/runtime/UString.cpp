@@ -348,8 +348,6 @@ UString UString::from(double d)
 
 UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const
 {
-    m_rep->checkConsistency();
-
     if (rangeCount == 1 && separatorCount == 0) {
         int thisSize = size();
         int position = substringRanges[0].position;
@@ -391,8 +389,6 @@ UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, in
 
 UString UString::replaceRange(int rangeStart, int rangeLength, const UString& replacement) const
 {
-    m_rep->checkConsistency();
-
     int replacementLength = replacement.size();
     int totalLength = size() - rangeLength + replacementLength;
     if (totalLength == 0)

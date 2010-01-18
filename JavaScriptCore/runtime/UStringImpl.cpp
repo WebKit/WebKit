@@ -35,48 +35,48 @@ using namespace std;
 
 namespace JSC {
  
-SharedUChar* UStringImpl::baseSharedBuffer()
-{
-    ASSERT((bufferOwnership() == BufferShared)
-        || ((bufferOwnership() == BufferOwned) && !m_dataBuffer.asPtr<void*>()));
-
-    if (bufferOwnership() != BufferShared)
-        m_dataBuffer = UntypedPtrAndBitfield(SharedUChar::create(new OwnFastMallocPtr<UChar>(m_data)).releaseRef(), BufferShared);
-
-    return m_dataBuffer.asPtr<SharedUChar*>();
-}
-
 SharedUChar* UStringImpl::sharedBuffer()
 {
-    if (m_length < s_minLengthToShare)
-        return 0;
-    ASSERT(!isStatic());
-
-    UStringImpl* owner = bufferOwnerString();
-    if (owner->bufferOwnership() == BufferInternal)
+    if (m_length < s_minLengthToShare || isStatic())
         return 0;
 
-    return owner->baseSharedBuffer();
+    switch (bufferOwnership()) {
+    case BufferInternal:
+        return 0;
+    case BufferOwned:
+        m_bufferShared = SharedUChar::create(new OwnFastMallocPtr<UChar>(m_data)).releaseRef();
+        m_refCountAndFlags &= ~s_refCountMaskBufferOwnership;
+        m_refCountAndFlags |= BufferShared;
+        return m_bufferShared;
+    case BufferSubstring:
+        return m_bufferSubstring->sharedBuffer();
+    case BufferShared:
+        return m_bufferShared;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 UStringImpl::~UStringImpl()
 {
     ASSERT(!isStatic());
-    checkConsistency();
 
     if (isIdentifier())
         Identifier::remove(this);
 
-    if (bufferOwnership() != BufferInternal) {
-        if (bufferOwnership() == BufferOwned)
-            fastFree(m_data);
-        else if (bufferOwnership() == BufferSubstring)
-            m_dataBuffer.asPtr<UStringImpl*>()->deref();
-        else {
-            ASSERT(bufferOwnership() == BufferShared);
-            m_dataBuffer.asPtr<SharedUChar*>()->deref();
-        }
+    switch (bufferOwnership()) {
+    case BufferInternal:
+        return;
+    case BufferOwned:
+        fastFree(m_data);
+        return;
+    case BufferSubstring:
+        m_bufferSubstring->deref();
+        return;
+    case BufferShared:
+        m_bufferSubstring->deref();
     }
 }
 
-}
+} // namespace JSC

@@ -3,6 +3,27 @@
         Reviewed by Oliver Hunt.
 
         https://bugs.webkit.org/show_bug.cgi?id=33731
+        Remove UntypedPtrAndBitfield from UStringImpl (akin to PtrAndFlags).
+
+        This break the OS X Leaks tool.  Instead, free up some more bits from the refCount.
+
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::sharedBuffer):
+        (JSC::UStringImpl::~UStringImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::cost):
+        (JSC::UStringImpl::checkConsistency):
+        (JSC::UStringImpl::UStringImpl):
+        (JSC::UStringImpl::bufferOwnerString):
+        (JSC::UStringImpl::):
+        * wtf/StringHashFunctions.h:
+        (WTF::stringHash):
+
+2010-01-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33731
         Remove uses of PtrAndFlags from JIT data stuctures.
 
         These break the OS X Leaks tool.  Free up a bit in CallLinkInfo, and invalid
