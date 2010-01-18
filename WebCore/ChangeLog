@@ -1,3 +1,17 @@
+2010-01-18  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Android] DOMWrapperMap::Visitor needs virtual destructor
+        https://bugs.webkit.org/show_bug.cgi?id=33675
+
+        Add protected virtual dtor to DOMWrapperMap::Visitor. See bug for further discussion.
+
+        No new tests needed, functionality not changed.
+
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::DOMWrapperMap::Visitor::~Visitor): Added.
+
 2010-01-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Symbian build fix.
