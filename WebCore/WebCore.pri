@@ -160,6 +160,8 @@ HTML_NAMES = $$PWD/html/HTMLTagNames.in
 
 XML_NAMES = $$PWD/xml/xmlattrs.in
 
+XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
+
 ENTITIES_GPERF = $$PWD/html/HTMLEntityNames.gperf
 
 COLORDAT_GPERF = $$PWD/platform/ColorData.gperf

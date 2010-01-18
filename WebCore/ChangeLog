@@ -1,3 +1,9 @@
+2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial buildfix. (r53429)
+
+        * WebCore.pri: missing XMLNS_NAMES added.
+
 2010-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
