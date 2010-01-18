@@ -1,5 +1,19 @@
 2010-01-18  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        [check-webkit-style] does understand ResourceHandleWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=32975
+
+        I'm not 100% convinced this fix is correct, but without more examples,
+        it's hard to generalize.  We can always generalize the fix in the
+        future.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
+2010-01-18  Adam Barth  <abarth@webkit.org>
+
         Unreviewed "build" fix.
 
         * Scripts/webkitpy/bugzilla.py:

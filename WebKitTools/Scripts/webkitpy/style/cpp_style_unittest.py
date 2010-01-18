@@ -2187,6 +2187,12 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          'Found header this file implements after a header this file implements.'
                                          ' Should be: config.h, primary header, blank line, and then alphabetically sorted.'
                                          '  [build/include_order] [4]')
+        self.assert_language_rules_check('ResourceHandleWin.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "ResourceHandle.h"\n'
+                                         '\n'
+                                         '#include "ResourceHandleWin.h"\n',
+                                         '')
 
     def test_try_drop_common_suffixes(self):
         self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo-inl.h'))

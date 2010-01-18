@@ -2068,6 +2068,11 @@ def _classify_include(filename, include, is_system, include_state):
     # In case the two filename bases are the same then the above lenient check
     # probably was a false positive.
     elif include_state.visited_primary_section() and target_base == include_base:
+        if include == "ResourceHandleWin.h":
+            # FIXME: Thus far, we've only seen one example of these, but if we
+            # start to see more, please consider generalizing this check
+            # somehow.
+            return _OTHER_HEADER
         return _PRIMARY_HEADER
 
     return _OTHER_HEADER
