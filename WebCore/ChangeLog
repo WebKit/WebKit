@@ -1,3 +1,17 @@
+2010-01-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid slow access to AX objects on attribute access when AX is off
+        https://bugs.webkit.org/show_bug.cgi?id=33779
+
+        ~4% Dromaeo attributes test speedup
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged): Don't do expensive lookup of
+        AX object cache unless accessibility is on and an AX-related attribute is
+        changed.
+
 2010-01-17  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -593,23 +593,22 @@ void Element::attributeChanged(Attribute* attr, bool)
 
 void Element::updateAfterAttributeChanged(Attribute* attr)
 {
-    AXObjectCache* axObjectCache = document()->axObjectCache();
-    if (!axObjectCache->accessibilityEnabled())
+    if (!AXObjectCache::accessibilityEnabled())
         return;
 
     const QualifiedName& attrName = attr->name();
     if (attrName == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
-        axObjectCache->handleActiveDescendantChanged(renderer());
+        document()->axObjectCache()->handleActiveDescendantChanged(renderer());
     } else if (attrName == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
-        axObjectCache->handleAriaRoleChanged(renderer());
+        document()->axObjectCache()->handleAriaRoleChanged(renderer());
     } else if (attrName == aria_valuenowAttr) {
         // If the valuenow attribute changes, AX clients need to be notified.
-        axObjectCache->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
+        document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
     } else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == altAttr || attrName == titleAttr) {
         // If the content of an element changes due to an attribute change, notify accessibility.
-        axObjectCache->contentChanged(renderer());
+        document()->axObjectCache()->contentChanged(renderer());
     }
 }
     
