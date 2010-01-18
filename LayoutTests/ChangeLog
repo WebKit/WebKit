@@ -1,3 +1,13 @@
+2010-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Change a newly added WebSocket test to work on Windows.
+
+        * websocket/tests/multiple-connections.html: Decrease the number of simultaneous connections
+        from 100 to 50. On Windows buildbot, only ~70 connections are allowed for some reason - but
+        we only need much fewer to compare to HTTP simultaneous connection limit anyway.
+
 2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip test introduced in r53423 because of missing layoutTestController.setDomainRelaxationForbiddenForURLScheme()
