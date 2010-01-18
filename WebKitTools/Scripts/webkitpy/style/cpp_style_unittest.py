@@ -3569,6 +3569,10 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('void this_op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
         self.assert_lint('void this_op_code(int var1, int var2)', 'this_op_code' + name_error_message)
 
+        # GObject requires certain magical names in class declarations.
+        self.assert_lint('void webkit_dom_object_init();', '')
+        self.assert_lint('void webkit_dom_object_class_init();', '')
+
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
 

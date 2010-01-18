@@ -1,5 +1,19 @@
 2010-01-18  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        style checker needs to know about GObject-specific requirements
+        inside WebCore/bindings/gobject/
+        https://bugs.webkit.org/show_bug.cgi?id=33606
+
+        Add an exception to the underscore rule for certain
+        GObject-specific names.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
+2010-01-18  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         [check-webkit-style] does understand ResourceHandleWin.h

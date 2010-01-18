@@ -2469,6 +2469,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
             # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
             if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('_op_') >= 0)
                 and not modified_identifier.startswith('tst_')
+                and not modified_identifier.startswith('webkit_dom_object_')
                 and not modified_identifier.startswith('qt_')
                 and not modified_identifier.find('::qt_') >= 0
                 and not modified_identifier == "const_iterator"):
