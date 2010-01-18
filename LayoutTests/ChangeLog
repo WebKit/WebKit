@@ -1,3 +1,16 @@
+2010-01-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r52449): SVG mask wrongly clipped when not at origin for recent nightly build
+        https://bugs.webkit.org/show_bug.cgi?id=33782
+
+        Testcase for a mask containing transformed elements
+
+        * platform/mac/svg/custom/transformedMaskFails-expected.png: Added.
+        * svg/custom/transformedMaskFails-expected.txt: Added.
+        * svg/custom/transformedMaskFails.svg: Added.
+
 2010-01-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Screen rect for <option> elements is always the zero rect
