@@ -136,8 +136,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
     , m_renderer(0)
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
-    , m_scrollFrameWidth(1) // Default to 1 to avoid 0 size frames
-    , m_scrollFrameHeight(1) // Default to 1 to avoid 0 size frames
+    , m_scrollFrame(0, 0, 1, 1) // Default to 1 to avoid 0 size frames
 {
 }
 
@@ -146,19 +145,15 @@ WKCACFLayerRenderer::~WKCACFLayerRenderer()
     destroyRenderer();
 }
 
-void WKCACFLayerRenderer::setScrollFrame(int width, int height, int scrollX, int scrollY)
+void WKCACFLayerRenderer::setScrollFrame(const IntRect& scrollFrame)
 {
-    m_scrollFrameWidth = width;
-    m_scrollFrameHeight = height;
+    m_scrollFrame = scrollFrame;
 
-    CGRect contentsRect = CGRectMake(scrollX, scrollY, width, height);
-    m_scrollLayer->setFrame(contentsRect);
+    m_scrollLayer->setBounds(CGRectMake(0, 0, m_scrollFrame.width(), m_scrollFrame.height()));
+    m_scrollLayer->setPosition(CGPointMake(0, m_scrollFrame.height()));
 
-    if (m_rootChildLayer) {
-        contentsRect.origin.x = 0;
-        contentsRect.origin.y = 0;
-        m_rootChildLayer->setFrame(contentsRect);
-    }
+    if (m_rootChildLayer)
+        m_rootChildLayer->setPosition(CGPointMake(m_scrollFrame.x(), m_scrollFrame.height() + m_scrollFrame.y()));
 }
 
 void WKCACFLayerRenderer::setRootContents(CGImageRef image)
@@ -178,7 +173,8 @@ void WKCACFLayerRenderer::setRootChildLayer(WebCore::PlatformLayer* layer)
         m_scrollLayer->addSublayer(layer);
 
         // Set the frame
-        layer->setFrame(CGRectMake(0, 0, m_scrollFrameWidth, m_scrollFrameHeight));
+        layer->setAnchorPoint(CGPointMake(0, 1));
+        setScrollFrame(m_scrollFrame);
     }
 
     m_rootChildLayer = layer;
@@ -234,6 +230,7 @@ void WKCACFLayerRenderer::createRenderer()
 
     m_rootLayer->addSublayer(m_scrollLayer);
     m_scrollLayer->setMasksToBounds(true);
+    m_scrollLayer->setAnchorPoint(CGPointMake(0, 1));
 
 #ifndef NDEBUG
     CGColorRef debugColor = createCGColor(Color(255, 0, 0, 204));
@@ -285,6 +282,7 @@ void WKCACFLayerRenderer::resize()
     if (m_rootLayer) {
         m_rootLayer->setFrame(bounds());
         WKCACFContextFlusher::shared().flushAllContexts();
+        setScrollFrame(m_scrollFrame);
     }
 }
 

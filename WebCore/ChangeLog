@@ -1,3 +1,22 @@
+2010-01-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Made root compositing layer scroll rather than scroll parent.
+        https://bugs.webkit.org/show_bug.cgi?id=32279
+        
+        There's some general cleanup here so the frames, bounds and
+        positions of all the associated layers are correct.
+        I also changed API of setScrollFrame to use an IntRect.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::setScrollFrame):
+        (WebCore::WKCACFLayerRenderer::setRootChildLayer):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        (WebCore::WKCACFLayerRenderer::resize):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+
 2010-01-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

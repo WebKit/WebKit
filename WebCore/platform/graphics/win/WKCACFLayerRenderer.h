@@ -58,7 +58,7 @@ public:
     static bool acceleratedCompositingAvailable();
     static void didFlushContext(CACFContextRef);
 
-    void setScrollFrame(int width, int height, int scrollX, int scrollY);
+    void setScrollFrame(const IntRect&);
     void setRootContents(CGImageRef);
     void setRootChildLayer(WebCore::PlatformLayer* layer);
     void setNeedsDisplay();
@@ -96,7 +96,7 @@ private:
     CARenderOGLContext* m_renderer;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
-    int m_scrollFrameWidth, m_scrollFrameHeight;
+    IntRect m_scrollFrame;
 };
 
 }
