@@ -251,6 +251,12 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     [origin release];
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+{
+    RetainPtr<CFStringRef> schemeCFString(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, scheme));
+    [WebView _setDomainRelaxationForbidden:forbidden forURLScheme:(NSString *)schemeCFString.get()];
+}
+
 void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     [WebGeolocationMock setPosition:latitude:longitude:accuracy];

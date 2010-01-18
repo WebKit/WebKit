@@ -1,3 +1,19 @@
+2010-01-18  Adam Roben  <aroben@apple.com>
+
+        Add tests for new WebKit SPI to disallow setting document.domain
+
+        Tests for <http://webkit.org/b/33806> <rdar://problem/7552837> Would
+        like API to disallow setting of document.domain for pages with certain
+        URL schemes
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/security/setDomainRelaxationForbiddenForURLScheme-expected.txt: Added.
+        * http/tests/security/setDomainRelaxationForbiddenForURLScheme.html: Added.
+
+        * platform/gtk/Skipped: Skip the new test since WebKitGtk doesn't have
+        this API.
+
 2010-01-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

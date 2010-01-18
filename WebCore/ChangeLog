@@ -1,3 +1,36 @@
+2010-01-18  Adam Roben  <aroben@apple.com>
+
+        Add SecurityOrigin::{set,is}DomainRelaxationForbiddenForURLScheme and
+        respect it
+
+        WebCore part of fixing <http://webkit.org/b/33806>
+        <rdar://problem/7552837> Would like API to disallow setting of
+        document.domain for pages with certain URL schemes
+
+        Test: http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.base.exp: Export
+        SecurityOrigin::setDomainRelaxationForbiddenForURLScheme.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain): If domain relaxation is forbidden for
+        our security origin's scheme, throw an exception and don't allow
+        the domain to be set.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::schemesForbiddenFromDomainRelaxation): Added. Returns a
+        global set of schemes.
+        (WebCore::SecurityOrigin::setDomainRelaxationForbiddenForURLScheme):
+        Add or remove the scheme to schemesForbiddenFromDomainRelaxation, as
+        appropriate.
+        (WebCore::SecurityOrigin::isDomainRelaxationForbiddenForURLScheme):
+        Returns true if the scheme is in schemesForbiddenFromDomainRelaxation.
+
+        * page/SecurityOrigin.h: Added
+        {set,is}DomainRelaxationForbiddenForURLScheme.
+
 2010-01-18  Dan Bernstein  <mitz@apple.com>
 
         Address review comments on the last change

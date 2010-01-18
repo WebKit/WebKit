@@ -62,6 +62,9 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
+    static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
+    static bool isDomainRelaxationForbiddenForURLScheme(const String&);
+
     String protocol() const { return m_protocol; }
     String host() const { return m_host; }
     String domain() const { return m_domain; }

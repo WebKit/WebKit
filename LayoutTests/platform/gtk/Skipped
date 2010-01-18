@@ -5756,3 +5756,6 @@ media/video-loop.html
 
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
+
+# GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
+http/tests/security/setDomainRelaxationForbiddenForURLScheme.html

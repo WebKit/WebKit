@@ -6125,6 +6125,12 @@ HRESULT WebView::geolocationDidFailWithError(IWebError* error)
 #endif
 }
 
+HRESULT WebView::setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme)
+{
+    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, String(scheme, SysStringLen(scheme)));
+    return S_OK;
+}
+
 class EnumTextMatches : public IEnumTextMatches
 {
     long m_ref;

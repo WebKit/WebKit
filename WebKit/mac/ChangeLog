@@ -1,3 +1,18 @@
+2010-01-18  Adam Roben  <aroben@apple.com>
+
+        Add +[WebView _setDomainRelaxationForbidden:forURLScheme:]
+
+        WebKit/mac part of fixing <http://webkit.org/b/33806>
+        <rdar://problem/7552837> Would like API to disallow setting of
+        document.domain for pages with certain URL schemes
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (+[WebView _setDomainRelaxationForbidden:forURLScheme:]):
+        * WebView/WebViewPrivate.h:
+        Added. Calls through to SecurityOrigin.
+
 2010-01-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -72,6 +72,7 @@ public:
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
+    void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void setMockGeolocationError(int code, JSStringRef message);
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);

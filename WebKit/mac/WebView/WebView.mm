@@ -2334,6 +2334,11 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
         frame->animation()->resumeAnimations(frame->document());
 }
 
++ (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme
+{
+    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
+}
+
 @end
 
 @implementation _WebSafeForwarder

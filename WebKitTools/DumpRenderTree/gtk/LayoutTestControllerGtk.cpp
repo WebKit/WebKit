@@ -426,6 +426,11 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     webkit_security_origin_set_web_database_quota(origin, quota);
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     webkit_application_cache_set_maximum_size(size);

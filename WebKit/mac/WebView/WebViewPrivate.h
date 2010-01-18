@@ -508,6 +508,8 @@ Could be worth adding to the API.
 */
 - (void)setCSSAnimationsSuspended:(BOOL)suspended;
 
++ (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

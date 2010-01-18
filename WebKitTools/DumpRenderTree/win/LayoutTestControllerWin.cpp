@@ -806,6 +806,17 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     databaseManager->setQuota(TEXT("file:///"), quota);
 }
 
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    BSTR schemeBSTR = JSStringCopyBSTR(scheme);
+    webView->setDomainRelaxationForbiddenForURLScheme(forbidden, schemeBSTR);
+    SysFreeString(schemeBSTR);
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     printf("ERROR: LayoutTestController::setAppCacheMaximumSize() not implemented\n");

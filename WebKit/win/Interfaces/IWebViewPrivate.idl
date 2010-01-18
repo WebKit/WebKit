@@ -224,4 +224,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT geolocationProvider([out, retval] IWebGeolocationProvider** locationProvider);
     HRESULT geolocationDidChangePosition([in] IWebGeolocationPosition* position);
     HRESULT geolocationDidFailWithError([in] IWebError* error);
+
+    HRESULT setDomainRelaxationForbiddenForURLScheme([in] BOOL forbidden, [in] BSTR scheme);
 }

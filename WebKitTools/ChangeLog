@@ -1,3 +1,35 @@
+2010-01-18  Adam Roben  <aroben@apple.com>
+
+        Add LayoutTestController support for calling new WebKit SPI to
+        disallow setting document.domain
+
+        DRT part of fixing <http://webkit.org/b/33806>
+        <rdar://problem/7552837> Would like API to disallow setting of
+        document.domain for pages with certain URL schemes
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setDomainRelaxationForbiddenForURLSchemeCallback): Added. Calls
+        through to LayoutTestController.
+        (LayoutTestController::staticFunctions): Added
+        setDomainRelaxationForbiddenForURLScheme.
+
+        * DumpRenderTree/LayoutTestController.h: Added
+        setDomainRelaxationForbiddenForURLScheme.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        Added. Calls through to WebKit.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        Stubbed out.
+
 2010-01-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adam Roben.
