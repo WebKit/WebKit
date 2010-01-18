@@ -172,7 +172,7 @@ public:
     virtual JSValue valueAt(ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
-    jobject javaArray() const { return _array->_instance; }
+    jobject javaArray() const { return _array->m_instance; }
 
     static JSValue convertJObjectToArray (ExecState* exec, jobject anObject, const char* type, PassRefPtr<RootObject>);
 

@@ -1,3 +1,21 @@
+2010-01-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Fix style in WebCore/bridge/jni/jsc/JavaInstanceJSC.[cpp|h]
+        https://bugs.webkit.org/show_bug.cgi?id=33792
+
+        No new tests, style fixes only.
+
+        * bridge/jni/jni_runtime.cpp: Modified.
+        (JavaField::dispatchValueFromInstance): Modified. Updated to use renamed JavaInstance::m_instance
+        (JavaField::dispatchSetValueToInstance): Modified. Updated to use renamed JavaInstance::m_instance
+        (JavaArray::JavaArray): Modified. Updated to use renamed JavaInstance::m_instance
+        * bridge/jni/jni_runtime.h: Modified.
+        (JSC::Bindings::JavaArray::javaArray): Modified. Updated to use renamed JavaInstance::m_instance
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Modified. Fixed style
+        * bridge/jni/jsc/JavaInstanceJSC.h: Modified. Fixed style
+
 2010-01-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Oliver Hunt.

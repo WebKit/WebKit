@@ -84,7 +84,7 @@ JSValue JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, cons
 jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = _field->_instance;
+    jobject fieldJInstance = _field->m_instance;
     JNIEnv *env = getJNIEnv();
     jvalue result;
 
@@ -168,7 +168,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
 void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const
 {
     jobject jinstance = instance->javaInstance();
-    jobject fieldJInstance = _field->_instance;
+    jobject fieldJInstance = _field->m_instance;
     JNIEnv *env = getJNIEnv();
 
     jclass cls = env->GetObjectClass(fieldJInstance);
@@ -377,7 +377,7 @@ JavaArray::JavaArray(jobject array, const char* type, PassRefPtr<RootObject> roo
     _array = new JObjectWrapper(array);
     // Java array are fixed length, so we can cache length.
     JNIEnv *env = getJNIEnv();
-    _length = env->GetArrayLength((jarray)_array->_instance);
+    _length = env->GetArrayLength((jarray)_array->m_instance);
     _type = strdup(type);
     _rootObject = rootObject;
 }
