@@ -1,3 +1,27 @@
+2010-01-18  Adam Roben  <aroben@apple.com>
+
+        Clean up use of /useenv when invoking Visual C++
+
+        This change reverts things to their pre-r49485 state. That revision
+        (and, subsequently, r49664 and r51788) started passing /useenv to
+        Visual C++, even in cases where we don't want to do so (such as when
+        invoking Visual C++ Express), in the name of making the Chromium build
+        work. Now that Chromium isn't using buildVisualStudioProject or
+        pdevenv, we can put things back they way they were.
+
+        Fixes <http://webkit.org/b/33797> build-webkit fails with VC++ Express
+        (due to /useenv flag)
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/pdevenv: Always pass /useenv. Chromium doesn't use this
+        script anymore.
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject): Never pass /useenv anymore. pdevenv takes
+        care of this itself, and we don't want to pass /useenv when not using
+        pdevenv (e.g., when using VC++ Express, because that will cause it to
+        ignore the Platform SDK).
+
 2010-01-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

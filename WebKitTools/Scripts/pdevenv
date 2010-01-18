@@ -32,13 +32,8 @@ print $fh "\@echo off\n\n";
 print $fh "call \"\%" . $vsToolsVar . "\%\\vsvars32.bat\"\n\n";
 print $fh "set PATH=$vcBin;$scriptsPath;\%PATH\%\n\n";
 
-my $useenv = "/useenv ";
-if (isChromium()) {
-    $useenv = "";
-}
-
-print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com " . $useenv . join(" ", @ARGV) . ") ELSE ";
-print $fh "VCExpress.exe " . $useenv . join(" ", @ARGV) . "\n";
+print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com /useenv " . join(" ", @ARGV) . ") ELSE ";
+print $fh "VCExpress.exe /useenv " . join(" ", @ARGV) . "\n";
 
 
 close $fh;
