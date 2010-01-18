@@ -1,3 +1,33 @@
+2010-01-18  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33726
+
+        Following up on changes made with respect to bug #33498, we should
+        fix the the style errors found by the style bot.
+        
+        Moreover, this fixes all the style errors found by check-webkit-style
+        except the use of an underline in the variable name _niflags. We should
+        fix this in a second run through for all the other variables names that
+        contain an underline because there are many.
+
+        No functionality was changed. So, no new tests.
+
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::create):
+        (WebCore::SVGRenderStyle::copy):
+        (WebCore::SVGRenderStyle::operator!=):
+        (WebCore::SVGRenderStyle::hasStroke):
+        (WebCore::SVGRenderStyle::hasFill):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator!=):
+        (WebCore::SVGRenderStyle::NonInheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::NonInheritedFlags::operator!=):
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        (WebCore::SVGRenderStyle::):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+
 2010-01-18  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.
