@@ -1482,8 +1482,6 @@ sub buildQMakeProject($@)
     push @dsQmakeArgs, "-r";
     push @dsQmakeArgs, sourceDir() . "/DerivedSources.pro";
     push @dsQmakeArgs, "-o Makefile.DerivedSources";
-    push @dsQmakeArgs, "CONFIG-=release";
-    push @dsQmakeArgs, "CONFIG+=debug";
     print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
     my $result = system "$qmakebin @dsQmakeArgs";
     if ($result ne 0) {
@@ -1491,9 +1489,6 @@ sub buildQMakeProject($@)
     }
 
     my $dsMakefile = "Makefile.DerivedSources";
-    # This is to overcome a problem of qmake when generating Makefiles with extra targets for windows.
-    # The configuration doesn't matter for source generation, just use debug.
-    $dsMakefile .= ".Debug" if ((isCygwin() || isWindows()) && !isSymbian());
 
     print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/JavaScriptCore\n\n";
     if ($make eq "nmake") {

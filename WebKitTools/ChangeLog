@@ -1,3 +1,11 @@
+2010-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Force qmake to generate a single makefile for DerivedSources.pro
+
+        * Scripts/webkitdirs.pm:
+
 2010-01-18  Adam Roben  <aroben@apple.com>
 
         Clean up use of /useenv when invoking Visual C++

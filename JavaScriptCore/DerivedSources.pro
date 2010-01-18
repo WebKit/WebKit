@@ -1,5 +1,7 @@
 # DerivedSources - qmake build info
 
+CONFIG -= debug_and_release
+
 TEMPLATE = lib
 TARGET = dummy
 

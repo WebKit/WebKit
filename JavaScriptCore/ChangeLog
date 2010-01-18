@@ -1,3 +1,11 @@
+2010-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Force qmake to generate a single makefile for DerivedSources.pro
+
+        * DerivedSources.pro:
+
 2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Gustavo Noronha Silva.

@@ -3,6 +3,8 @@
 TEMPLATE = lib
 TARGET = dummy
 
+CONFIG -= debug_and_release
+
 QMAKE_EXTRA_TARGETS += generated_files
 
 defineTest(addExtraCompiler) {
