@@ -87,8 +87,9 @@ void DOMApplicationCache::swapCache(ExceptionCode& ec)
 
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
-    ASSERT(m_frame);
-    return m_frame->document();
+    if (m_frame)
+        return m_frame->document();
+    return 0;
 }
 
 const AtomicString& DOMApplicationCache::toEventType(ApplicationCacheHost::EventID id)
