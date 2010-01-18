@@ -2027,6 +2027,11 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include <assert.h>\n',
                                          '')
 
+    def test_webkit_api_test_excluded(self):
+        self.assert_language_rules_check('WebKitTools/WebKitAPITest/Test.h',
+                                         '#include "foo.h"\n',
+                                         '')
+
     def test_check_line_break_after_own_header(self):
         self.assert_language_rules_check('foo.cpp',
                                          '#include "config.h"\n'

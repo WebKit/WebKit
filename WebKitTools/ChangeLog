@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        style-queue complains about missing #include of config.h for non-WebCore projects
+        https://bugs.webkit.org/show_bug.cgi?id=33170
+
+        WebKitAPITests are consumers of the WebKit API and therefore do not
+        need to follow the same include discipline as the rest of WebKit.  This
+        patch exempts them from the include checks.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
+2010-01-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         EWS (Early Warning Systems) should build both debug and release
         https://bugs.webkit.org/show_bug.cgi?id=33681
 
