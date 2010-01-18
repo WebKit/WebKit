@@ -38,4 +38,4 @@ class PostDiffForCommit(AbstractStep):
             StringIO.StringIO(self.cached_lookup(state, "diff")),
             "Patch for landing",
             mark_for_review=False,
-            mark_for_commit_queue=True)
+            mark_for_landing=True)

@@ -396,11 +396,12 @@ class Bugzilla(object):
 
         self.authenticated = True
 
-    def _fill_attachment_form(self, description, patch_file_object, comment_text=None, mark_for_review=False, mark_for_commit_queue=False, bug_id=None):
+    def _fill_attachment_form(self, description, patch_file_object, comment_text=None, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False, bug_id=None):
         self.browser['description'] = description
         self.browser['ispatch'] = ("1",)
         self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
         self.browser['flag_type-3'] = ('?',) if mark_for_commit_queue else ('X',)
+        self.browser['flag_type-3'] = ('+',) if mark_for_landing else ('X',)
         if bug_id:
             patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
         else:
