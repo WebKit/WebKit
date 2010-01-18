@@ -27799,6 +27799,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\TrailingFloatsRootInlineBox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\TransformState.cpp"
 				>
 			</File>

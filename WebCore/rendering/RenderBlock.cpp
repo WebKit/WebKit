@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -2928,7 +2928,7 @@ RenderBlock::rightBottom()
     return bottom;
 }
 
-void RenderBlock::markLinesDirtyInVerticalRange(int top, int bottom)
+void RenderBlock::markLinesDirtyInVerticalRange(int top, int bottom, RootInlineBox* highest)
 {
     if (top >= bottom)
         return;
@@ -2940,7 +2940,7 @@ void RenderBlock::markLinesDirtyInVerticalRange(int top, int bottom)
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }
 
-    while (afterLowest && afterLowest->blockHeight() >= top) {
+    while (afterLowest && afterLowest != highest && afterLowest->blockHeight() >= top) {
         afterLowest->markDirty();
         afterLowest = afterLowest->prevRootBox();
     }

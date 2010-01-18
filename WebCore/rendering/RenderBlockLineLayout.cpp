@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009 Apple Inc. All right reserved.
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"
+#include "TrailingFloatsRootInlineBox.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -1125,6 +1126,13 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             // In case we have a float on the last line, it might not be positioned up to now.
             // This has to be done before adding in the bottom border/padding, or the float will
             // include the padding incorrectly. -dwh
+            if (checkForFloatsFromLastLine) {
+                TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
+                m_lineBoxes.appendLineBox(trailingFloatsLineBox);
+                trailingFloatsLineBox->setConstructed();
+                trailingFloatsLineBox->verticallyAlignBoxes(height());
+                trailingFloatsLineBox->setBlockHeight(height());
+            }
             if (lastFloat) {
                 for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
                 }
@@ -1187,7 +1195,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                     if (floats[floatIndex].rect.size() != newSize) {
                         int floatTop = floats[floatIndex].rect.y();
                         curr->markDirty();
-                        markLinesDirtyInVerticalRange(curr->blockHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()));
+                        markLinesDirtyInVerticalRange(curr->blockHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()), curr);
                         floats[floatIndex].rect.setSize(newSize);
                         dirtiedByFloat = true;
                     }

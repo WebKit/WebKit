@@ -1,3 +1,35 @@
+2010-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6892207> REGRESSION (Safari 4): Menus at sciencedirect.com push the main article context down the page
+        <rdar://problem/7546035> Second right floated image misplacment
+        https://bugs.webkit.org/show_bug.cgi?id=33245
+
+        Test: fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html
+
+        When the last line of a block contains a line break and there are floats
+        after the line break, it is incorrect to put those floats in the last line’s
+        floats vector (along with floats from before the break). Instead, create
+        an additional line box (a TrailingFloatsRootInlineBox) and put those floats
+        in its floats vector. 
+
+        * WebCore.vcproj/WebCore.vcproj: Added TrailingFloatsRootInlineBox.h
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markLinesDirtyInVerticalRange): Added an optional
+        parameter, which is the highest line to dirty.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Create a TrailingFloatsRootInlineBox
+        for the floats occurring after the line break on the last line.
+        (WebCore::RenderBlock::determineStartPosition): Prevent dirtying of lines
+        above the first dirty line.
+        * rendering/TrailingFloatsRootInlineBox.h: Added.
+        (WebCore::TrailingFloatsRootInlineBox::TrailingFloatsRootInlineBox): Call
+        setHasVirtualHeight().
+        (WebCore::TrailingFloatsRootInlineBox::virtualHeight): Return 0.
+
 2010-01-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).
