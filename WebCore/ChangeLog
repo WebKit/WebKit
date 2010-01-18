@@ -1,3 +1,24 @@
+2010-01-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Improve Resources panel performance for lots of resources
+
+        DOM properties are extracted into const's, comparisons are faster.
+        https://bugs.webkit.org/show_bug.cgi?id=33790
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype._updateDividersLabelBarPosition):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.CompareByStartTime):
+        (WebInspector.Resource.CompareByResponseReceivedTime):
+        (WebInspector.Resource.CompareByEndTime):
+        (WebInspector.Resource.CompareByDuration):
+        (WebInspector.Resource.CompareByLatency):
+        (WebInspector.Resource.CompareBySize):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceGraph.prototype.refreshLabelPositions):
+
 2010-01-18  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

@@ -570,64 +570,40 @@ WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.Resource.CompareByStartTime = function(a, b)
 {
-    if (a.startTime < b.startTime)
-        return -1;
-    if (a.startTime > b.startTime)
-        return 1;
-    return 0;
+    return a.startTime - b.startTime;
 }
 
 WebInspector.Resource.CompareByResponseReceivedTime = function(a, b)
 {
-    if (a.responseReceivedTime === -1 && b.responseReceivedTime !== -1)
-        return 1;
-    if (a.responseReceivedTime !== -1 && b.responseReceivedTime === -1)
-        return -1;
-    if (a.responseReceivedTime < b.responseReceivedTime)
-        return -1;
-    if (a.responseReceivedTime > b.responseReceivedTime)
-        return 1;
-    return 0;
+    var aVal = a.responseReceivedTime;
+    var bVal = b.responseReceivedTime;
+    if (aVal === -1 ^ bVal === -1)
+        return bVal - aVal;
+    return aVal - bVal;
 }
 
 WebInspector.Resource.CompareByEndTime = function(a, b)
 {
-    if (a.endTime === -1 && b.endTime !== -1)
-        return 1;
-    if (a.endTime !== -1 && b.endTime === -1)
-        return -1;
-    if (a.endTime < b.endTime)
-        return -1;
-    if (a.endTime > b.endTime)
-        return 1;
-    return 0;
+    var aVal = a.endTime;
+    var bVal = b.endTime;
+    if (aVal === -1 ^ bVal === -1)
+        return bVal - aVal;
+    return aVal - bVal;
 }
 
 WebInspector.Resource.CompareByDuration = function(a, b)
 {
-    if (a.duration < b.duration)
-        return -1;
-    if (a.duration > b.duration)
-        return 1;
-    return 0;
+    return a.duration - b.duration;
 }
 
 WebInspector.Resource.CompareByLatency = function(a, b)
 {
-    if (a.latency < b.latency)
-        return -1;
-    if (a.latency > b.latency)
-        return 1;
-    return 0;
+    return a.latency - b.latency;
 }
 
 WebInspector.Resource.CompareBySize = function(a, b)
 {
-    if (a.contentLength < b.contentLength)
-        return -1;
-    if (a.contentLength > b.contentLength)
-        return 1;
-    return 0;
+    return a.contentLength - b.contentLength;
 }
 
 WebInspector.Resource.StatusTextForCode = function(code)

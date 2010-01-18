@@ -215,8 +215,9 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
     _updateDividersLabelBarPosition: function()
     {
-        var scrollTop = this.containerElement.scrollTop;
-        var dividersTop = (scrollTop < this.summaryBar.element.offsetHeight ? this.summaryBar.element.offsetHeight : scrollTop);
+        const scrollTop = this.containerElement.scrollTop;
+        const offsetHeight = this.summaryBar.element.offsetHeight;
+        const dividersTop = (scrollTop < offsetHeight ? offsetHeight : scrollTop);
         this._timelineGrid.setScrollAndDividerTop(scrollTop, dividersTop);
     },
 

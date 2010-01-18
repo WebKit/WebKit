@@ -1187,14 +1187,19 @@ WebInspector.ResourceGraph.prototype = {
         this._labelRightElement.removeStyleClass("hidden");
 
         const labelPadding = 10;
-        const rightBarWidth = (this._barRightElement.offsetWidth - labelPadding);
-        const leftBarWidth = ((this._barLeftElement.offsetWidth - this._barRightElement.offsetWidth) - labelPadding);
+        const barRightElementOffsetWidth = this._barRightElement.offsetWidth;
+        const barLeftElementOffsetWidth = this._barLeftElement.offsetWidth;
+        const rightBarWidth = (barRightElementOffsetWidth - labelPadding);
+        const leftBarWidth = ((barLeftElementOffsetWidth - barRightElementOffsetWidth) - labelPadding);
+        const labelLeftElementOffsetWidth = this._labelLeftElement.offsetWidth;
+        const labelRightElementOffsetWidth = this._labelRightElement.offsetWidth;
 
-        var labelBefore = (this._labelLeftElement.offsetWidth > leftBarWidth);
-        var labelAfter = (this._labelRightElement.offsetWidth > rightBarWidth);
+        const labelBefore = (labelLeftElementOffsetWidth > leftBarWidth);
+        const labelAfter = (labelRightElementOffsetWidth > rightBarWidth);
+        const graphElementOffsetWidth = this._graphElement.offsetWidth;
 
         if (labelBefore) {
-            if ((this._graphElement.offsetWidth * (this._percentages.start / 100)) < (this._labelLeftElement.offsetWidth + 10))
+            if ((graphElementOffsetWidth * (this._percentages.start / 100)) < (labelLeftElementOffsetWidth + 10))
                 this._labelLeftElement.addStyleClass("hidden");
             this._labelLeftElement.style.setProperty("right", (100 - this._percentages.start) + "%");
             this._labelLeftElement.addStyleClass("before");
@@ -1204,7 +1209,7 @@ WebInspector.ResourceGraph.prototype = {
         }
 
         if (labelAfter) {
-            if ((this._graphElement.offsetWidth * ((100 - this._percentages.end) / 100)) < (this._labelRightElement.offsetWidth + 10))
+            if ((graphElementOffsetWidth * ((100 - this._percentages.end) / 100)) < (labelRightElementOffsetWidth + 10))
                 this._labelRightElement.addStyleClass("hidden");
             this._labelRightElement.style.setProperty("left", this._percentages.end + "%");
             this._labelRightElement.addStyleClass("after");
