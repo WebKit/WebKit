@@ -1,3 +1,18 @@
+2010-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r53420): incomplete repaint of bottom of bugs.webkit.org comment field
+        https://bugs.webkit.org/show_bug.cgi?id=33809
+
+        Test: fast/repaint/trailing-floats-root-line-box-overflow.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Copy bottom overflow from the last
+        root box to the trailing floats box, which is becoming the last root box. This is
+        needed because painting code assumes that the last line in a block is the one with the
+        lowest overflow bottom.
+
 2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial buildfix. (r53429)

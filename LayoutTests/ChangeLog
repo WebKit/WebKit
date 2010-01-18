@@ -1,3 +1,15 @@
+2010-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r53420): incomplete repaint of bottom of bugs.webkit.org comment field
+        https://bugs.webkit.org/show_bug.cgi?id=33809
+
+        * fast/repaint/trailing-floats-root-line-box-overflow-expected.checksum: Added.
+        * fast/repaint/trailing-floats-root-line-box-overflow-expected.png: Added.
+        * fast/repaint/trailing-floats-root-line-box-overflow-expected.txt: Added.
+        * fast/repaint/trailing-floats-root-line-box-overflow.html: Added.
+
 2010-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Adam Roben.

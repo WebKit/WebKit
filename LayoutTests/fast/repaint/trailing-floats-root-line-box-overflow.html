@@ -1,0 +1,13 @@
+<head>
+    <script src="resources/repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            document.getElementById("target").style.display = "none";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <div style="background-color: yellow;"><div style="display: inline-block; width: 100px; height: 100px; background-color: green; margin-top: 50px; margin-bottom: -100px;"></div><br><div style="float: left;"></div></div>
+    <div style="position: absolute; height: 100px; background-color: red; width: 100px;" id="target"></div>
+</body>
