@@ -171,6 +171,8 @@ class BugzillaQueries(object):
 
     # Note: _load_query and _fetch_bug are the only two methods which access self._bugzilla.
     def _load_query(self, query):
+        self._bugzilla.authenticate()
+
         full_url = "%s%s" % (self._bugzilla.bug_server_url, query)
         return self._bugzilla.browser.open(full_url)
 
@@ -353,6 +355,8 @@ class Bugzilla(object):
         return int(match.group('bug_id'))
 
     def bug_id_for_attachment_id(self, attachment_id):
+        self.authenticate()
+
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
         log("Fetching: %s" % attachment_url)
         page = self.browser.open(attachment_url)
