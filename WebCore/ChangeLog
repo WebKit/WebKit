@@ -1,3 +1,22 @@
+2010-01-18  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for enabling navigator.geolocation at runtime in the V8 bindings.
+        Adds the [EnabledAtRuntime] modifier to the navigator IDL.
+        https://bugs.webkit.org/show_bug.cgi?id=33467
+
+        * WebCore.gypi:
+        * bindings/v8/RuntimeEnabledFeatures.cpp:
+        * bindings/v8/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setGeolocationEnabled):
+        (WebCore::RuntimeEnabledFeatures::geolocationEnabled):
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Added.
+        (WebCore::V8Navigator::GeolocationEnabled):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::geolocation):
+        * page/Navigator.idl:
+
 2010-01-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

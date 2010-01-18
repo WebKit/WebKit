@@ -62,6 +62,9 @@ public:
     WEBKIT_API static void enableApplicationCache(bool);
     WEBKIT_API static bool isApplicationCacheEnabled();
 
+    WEBKIT_API static void enableGeolocation(bool);
+    WEBKIT_API static bool isGeolocationEnabled();
+
 private:
     WebRuntimeFeatures();
 };
