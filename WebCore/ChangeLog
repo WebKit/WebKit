@@ -1,5 +1,42 @@
 2010-01-18  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Eeeep! reverting r53416 & r53417, more to be done to fix windows.
+
+        * WebCore.base.exp:
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        * platform/sql/SQLiteStatement.h:
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::charactersWithNullTermination):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::operator new):
+        (WebCore::StringImpl::operator delete):
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::~StringImpl):
+        (WebCore::StringImpl::create):
+        (WebCore::StringImpl::createWithTerminatingNullCharacter):
+        (WebCore::StringImpl::crossThreadString):
+        (WebCore::StringImpl::sharedBuffer):
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::hasTerminatingNullCharacter):
+        (WebCore::StringImpl::inTable):
+        (WebCore::StringImpl::setInTable):
+        (WebCore::StringImpl::):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData):
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::addDatabase):
+        (WebCore::OriginUsageRecord::markDatabase):
+
+2010-01-18  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (windows build fix).
 
         * platform/win/ClipboardUtilitiesWin.cpp:

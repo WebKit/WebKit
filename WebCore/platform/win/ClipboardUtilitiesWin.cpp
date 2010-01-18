@@ -114,11 +114,7 @@ HGLOBAL createGlobalData(const KURL& url, const String& title)
 
     if (cbData) {
         PWSTR buffer = (PWSTR)::GlobalLock(cbData);
-        OwnArrayPtr<const UChar> nullTerminatedURL;
-        mutableURL.copyWithNullTermination(nullTerminatedURL);
-        OwnArrayPtr<const UChar> nullTerminatedTitle;
-        mutableTitle.copyWithNullTermination(nullTerminatedTitle);
-        swprintf_s(buffer, size, L"%s\n%s", nullTerminatedURL.get(), nullTerminatedTitle.get());
+        swprintf_s(buffer, size, L"%s\n%s", mutableURL.charactersWithNullTermination(), mutableTitle.charactersWithNullTermination());
         ::GlobalUnlock(cbData);
     }
     return cbData;
