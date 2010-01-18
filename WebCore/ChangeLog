@@ -1,3 +1,19 @@
+2010-01-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Timeline panel scrolling speed can be 2 times faster.
+        https://bugs.webkit.org/show_bug.cgi?id=33794
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineCalculator):
+        (WebInspector.TimelineCalculator.prototype.calculateWindow):
+        (WebInspector.TimelineCalculator.prototype.reset):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+
 2010-01-18  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

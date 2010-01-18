@@ -304,8 +304,12 @@ WebInspector.TimelinePanel.prototype = {
             return;
         this._needsRefresh = true;
 
-        if (this.visible && !("_refreshTimeout" in this))
-            this._refreshTimeout = setTimeout(this._refresh.bind(this), preserveBoundaries ? 0 : 100);
+        if (this.visible && !("_refreshTimeout" in this)) {
+            if (preserveBoundaries)
+                this._refresh();
+            else
+                this._refreshTimeout = setTimeout(this._refresh.bind(this), 100);
+        }
     },
 
     _refresh: function()
@@ -325,12 +329,14 @@ WebInspector.TimelinePanel.prototype = {
     _refreshRecords: function(updateBoundaries)
     {
         if (updateBoundaries) {
+            this._calculator.reset();
             this._calculator.windowLeft = this._overviewPane.windowLeft;
             this._calculator.windowRight = this._overviewPane.windowRight;
-            this._calculator.reset();
 
             for (var i = 0; i < this._records.length; ++i)
                 this._calculator.updateBoundaries(this._records[i]);
+
+            this._calculator.calculateWindow();
         }
 
         var recordsInWindow = [];
@@ -366,8 +372,9 @@ WebInspector.TimelinePanel.prototype = {
 
         // Update visible rows.
         var listRowElement = this._sidebarListElement.firstChild;
-        var graphRowElement = this._graphRowsElement.firstChild;
         var width = this._graphRowsElement.offsetWidth;
+        this._itemsGraphsElement.removeChild(this._graphRowsElement);
+        var graphRowElement = this._graphRowsElement.firstChild;
         var scheduleRefreshCallback = this._scheduleRefresh.bind(this, true);
         for (var i = startIndex; i < endIndex; ++i) {
             var record = recordsInWindow[i];
@@ -383,7 +390,7 @@ WebInspector.TimelinePanel.prototype = {
             }
 
             listRowElement.listRow.update(record, isEven);
-            graphRowElement.graphRow.update(record, isEven, this._calculator, width, expandOffset);
+            graphRowElement.graphRow.update(record, isEven, this._calculator, width, expandOffset, i);
 
             listRowElement = listRowElement.nextSibling;
             graphRowElement = graphRowElement.nextSibling;
@@ -401,6 +408,7 @@ WebInspector.TimelinePanel.prototype = {
             graphRowElement = nextElement;
         }
 
+        this._itemsGraphsElement.insertBefore(this._graphRowsElement, this._bottomGapElement);
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
         var timelinePaddingLeft = this._calculator.windowLeft === 0 ? expandOffset : 0;
         if (updateBoundaries)
@@ -440,6 +448,7 @@ WebInspector.TimelineCategory = function(name, title, color)
 
 WebInspector.TimelineCalculator = function()
 {
+    this.reset();
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
     this._uiString = WebInspector.UIString.bind(WebInspector);
@@ -453,63 +462,28 @@ WebInspector.TimelineCalculator.prototype = {
         return {start: start, end: end};
     },
 
-    get minimumBoundary()
+    calculateWindow: function()
     {
-        if (typeof this._minimumBoundary === "number")
-            return this._minimumBoundary;
-
-        if (typeof this.windowLeft === "number")
-            this._minimumBoundary = this._absoluteMinimumBoundary + this.windowLeft * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
-        else
-            this._minimumBoundary = this._absoluteMinimumBoundary;
-        return this._minimumBoundary;
-    },
-
-    get maximumBoundary()
-    {
-        if (typeof this._maximumBoundary === "number")
-            return this._maximumBoundary;
-
-        if (typeof this.windowLeft === "number")
-            this._maximumBoundary = this._absoluteMinimumBoundary + this.windowRight * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
-        else
-            this._maximumBoundary = this._absoluteMaximumBoundary;
-        return this._maximumBoundary;
+        this.minimumBoundary = this._absoluteMinimumBoundary + this.windowLeft * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
+        this.maximumBoundary = this._absoluteMinimumBoundary + this.windowRight * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
+        this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
     },
 
     reset: function()
     {
-        delete this._absoluteMinimumBoundary;
-        delete this._absoluteMaximumBoundary;
-        delete this._minimumBoundary;
-        delete this._maximumBoundary;
+        this._absoluteMinimumBoundary = -1;
+        this._absoluteMaximumBoundary = -1;
     },
 
     updateBoundaries: function(record)
     {
-        var didChange = false;
-
         var lowerBound = record.startTime;
-
-        if (typeof this._absoluteMinimumBoundary === "undefined" || lowerBound < this._absoluteMinimumBoundary) {
+        if (this._absoluteMinimumBoundary === -1 || lowerBound < this._absoluteMinimumBoundary)
             this._absoluteMinimumBoundary = lowerBound;
-            delete this._minimumBoundary;
-            didChange = true;
-        }
 
         var upperBound = record.endTime;
-        if (typeof this._absoluteMaximumBoundary === "undefined" || upperBound > this._absoluteMaximumBoundary) {
+        if (this._absoluteMaximumBoundary === -1 || upperBound > this._absoluteMaximumBoundary)
             this._absoluteMaximumBoundary = upperBound;
-            delete this._maximumBoundary;
-            didChange = true;
-        }
-
-        return didChange;
-    },
-
-    get boundarySpan()
-    {
-        return this.maximumBoundary - this.minimumBoundary;
     },
 
     formatValue: function(value)
@@ -600,7 +574,7 @@ WebInspector.TimelineRecordGraphRow = function(graphContainer, refreshCallback, 
 }
 
 WebInspector.TimelineRecordGraphRow.prototype = {
-    update: function(record, isEven, calculator, clientWidth, expandOffset)
+    update: function(record, isEven, calculator, clientWidth, expandOffset, index)
     {
         this._record = record;
         this.element.className = "timeline-graph-side timeline-category-" + record.category.name + (isEven ? " even" : "");
@@ -611,7 +585,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barElement.style.width = width + "px";
 
         if (record.visibleChildrenCount) {
-            this._expandElement.style.top = this.element.offsetTop + "px";
+            this._expandElement.style.top = index * this._rowHeight + "px";
             this._expandElement.style.left = left + "px";
             this._expandElement.style.width = Math.max(12, width + 25) + "px";
             if (!record.collapsed) {
