@@ -67,6 +67,8 @@ static inline bool is3DCanvas(RenderObject* renderer)
 #if ENABLE(3D_CANVAS)    
     if (renderer->isCanvas())
         return static_cast<HTMLCanvasElement*>(renderer->node())->is3D();
+#else
+    UNUSED_PARAM(renderer);
 #endif
     return false;
 }

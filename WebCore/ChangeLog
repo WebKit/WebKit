@@ -1,3 +1,10 @@
+2010-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix !ENABLE(3D_CANVAS) build.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::is3DCanvas):
+
 2010-01-18  Timothy Hatcher  <timothy@apple.com>
 
         Adjust the scroll position when doing a full page zoom, so the content
