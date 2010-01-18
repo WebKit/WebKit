@@ -3599,6 +3599,18 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_(not cpp_style.can_handle('foo.mm'))
         self.assert_(not cpp_style.can_handle('-'))
 
+    def test_is_exempt(self):
+        """Tests for cpp_style.is_exempt()."""
+        self.assert_(not cpp_style.is_exempt(''))
+        self.assert_(not cpp_style.is_exempt('foo.h'))
+        self.assert_(not cpp_style.is_exempt('foo.hpp'))
+        self.assert_(not cpp_style.is_exempt('foo.c'))
+        self.assert_(not cpp_style.is_exempt('foo.cpp'))
+        self.assert_(not cpp_style.is_exempt('-'))
+        self.assert_(cpp_style.is_exempt('gtk2drawing.h'))
+        self.assert_(cpp_style.is_exempt('WebCore/platform/gtk/gtk2drawing.h'))
+        self.assert_(cpp_style.is_exempt('gtk2drawing.c'))
+        self.assert_(cpp_style.is_exempt('WebCore/platform/gtk/gtk2drawing.c'))
 
 def tearDown():
     """A global check to make sure all error-categories have been tested.

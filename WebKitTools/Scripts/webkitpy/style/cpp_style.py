@@ -2897,6 +2897,8 @@ def process_file(filename, error, verbosity):
     # should rely on the extension.
     if (filename != '-' and not can_handle(filename)):
         sys.stderr.write('Ignoring %s; not a .cpp, .c or .h file\n' % filename)
+    elif is_exempt(filename):
+        sys.stderr.write('Ignoring %s; This file is exempt from the style guide.\n' % filename)
     else:
         process_file_data(filename, file_extension, lines, error, verbosity)
         if carriage_return_found and os.linesep != '\r\n':
@@ -2914,3 +2916,17 @@ def can_handle(filename):
       filename: A filename. It may contain directory names.
      """
     return os.path.splitext(filename)[1] in ('.h', '.cpp', '.c')
+
+
+def is_exempt(filename):
+    """Checks if the given file is exempt from the style guide.  For example,
+    some files are purposefully mantained in Mozilla style to ease future
+    merges.
+
+    Args:
+      filename: A filename. It may contain directory names.
+     """
+    return os.path.basename(filename) in (
+        'gtk2drawing.c',
+        'gtk2drawing.h',
+    )

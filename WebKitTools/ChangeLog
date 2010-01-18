@@ -1,3 +1,16 @@
+2010-01-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        style-check script reports loads of errors on gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=33771
+
+        Exempt WebCore/platform/gtk/gtk2drawing.c and
+        WebCore/platform/gtk/gtk2drawing.h from style checks.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
 2010-01-17  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
