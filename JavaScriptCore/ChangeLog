@@ -1,3 +1,48 @@
+2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        Rolling out r53391 and r53392 because of random crashes on buildbots.
+        https://bugs.webkit.org/show_bug.cgi?id=33731
+
+        * bytecode/CodeBlock.h:
+        (JSC::CallLinkInfo::seenOnce):
+        (JSC::CallLinkInfo::setSeen):
+        (JSC::MethodCallLinkInfo::MethodCallLinkInfo):
+        (JSC::MethodCallLinkInfo::seenOnce):
+        (JSC::MethodCallLinkInfo::setSeen):
+        * jit/JIT.cpp:
+        (JSC::JIT::unlinkCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchMethodCallProto):
+        * runtime/UString.cpp:
+        (JSC::UString::spliceSubstringsWithSeparators):
+        (JSC::UString::replaceRange):
+        * runtime/UString.h:
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::baseSharedBuffer):
+        (JSC::UStringImpl::sharedBuffer):
+        (JSC::UStringImpl::~UStringImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UntypedPtrAndBitfield::UntypedPtrAndBitfield):
+        (JSC::UntypedPtrAndBitfield::asPtr):
+        (JSC::UntypedPtrAndBitfield::operator&=):
+        (JSC::UntypedPtrAndBitfield::operator|=):
+        (JSC::UntypedPtrAndBitfield::operator&):
+        (JSC::UStringImpl::create):
+        (JSC::UStringImpl::cost):
+        (JSC::UStringImpl::isIdentifier):
+        (JSC::UStringImpl::setIsIdentifier):
+        (JSC::UStringImpl::ref):
+        (JSC::UStringImpl::deref):
+        (JSC::UStringImpl::checkConsistency):
+        (JSC::UStringImpl::UStringImpl):
+        (JSC::UStringImpl::bufferOwnerString):
+        (JSC::UStringImpl::bufferOwnership):
+        (JSC::UStringImpl::isStatic):
+        * wtf/StringHashFunctions.h:
+        (WTF::stringHash):
+
 2010-01-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

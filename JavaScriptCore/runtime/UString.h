@@ -31,6 +31,7 @@
 #include <wtf/CrossThreadRefCounted.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/PtrAndFlags.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
