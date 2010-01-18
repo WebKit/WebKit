@@ -1,3 +1,13 @@
+2010-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33804
+        Test that WebSocket is not subject to HTTP connection limit
+
+        * websocket/tests/multiple-connections-expected.txt: Added.
+        * websocket/tests/multiple-connections.html: Added.
+
 2010-01-18  Daniel Cheng  <dcheng@google.com>
 
         Reviewed by Adam Roben
