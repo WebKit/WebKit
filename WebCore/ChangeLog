@@ -1,3 +1,10 @@
+2010-01-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (windows build fix).
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::createGlobalData):
+
 2010-01-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
