@@ -286,6 +286,6 @@ class StyleQueue(AbstractReviewQueue):
         status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
         if is_svn_apply:
             QueueEngine.exit_after_handled_error(script_error)
-        message = "Attachment %s did not pass %s:\n\n%s" % (state["patch"].id(), cls.name, script_error.message_with_output(output_limit=3*1024))
+        message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (state["patch"].id(), cls.name, script_error.message_with_output(output_limit=3*1024))
         tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
         exit(1)
