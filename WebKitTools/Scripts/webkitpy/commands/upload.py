@@ -134,6 +134,7 @@ class LandSafely(AbstractPatchUploadingCommand):
     argument_names = "[BUGID]"
     steps = [
         steps.UpdateChangeLogsWithReviewer,
+        steps.ObsoletePatches,
         steps.PostDiffForCommit,
     ]
 
