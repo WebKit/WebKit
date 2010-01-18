@@ -89,6 +89,11 @@
             testFailed('event.dataTransfer.types should contain format "' + FORMAT_TYPE + '", but it does not.');
         else
             testPassed('event.dataTransfer.types contains format "' + FORMAT_TYPE + '"');
+
+        if (event.dataTransfer.getData(FORMAT_TYPE) != 'Square')
+            testFailed('event.dataTransfer.getData("' + FORMAT_TYPE + '") should contain "Square", but it does not.');
+        else
+            testPassed('event.dataTransfer.getData("' + FORMAT_TYPE + '") contains "Square"');
     }
 
     function runTest()

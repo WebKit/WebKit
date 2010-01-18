@@ -109,9 +109,6 @@ editing/selection/drag-in-iframe.html
 fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html
 
-# Event.dataTransfer.types does not behave correctly (https://bugs.webkit.org/show_bug.cgi?id=30527)
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 

@@ -1,3 +1,16 @@
+2010-01-18  Daniel Cheng  <dcheng@google.com>
+
+        Reviewed by Adam Roben.
+
+        DataTransfer interface broken on Windows--types member is always
+        undefined, and getData() does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=30527
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::addMimeTypesForFormat): pass FORMATETC as a const ref.
+        (WebCore::ClipboardWin::types): fix calls to IEnumFORMATETC.
+        (WebCore::ClipboardWin::hasData): fix calls to IEnumFORMATETC.
+
 2010-01-18  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
