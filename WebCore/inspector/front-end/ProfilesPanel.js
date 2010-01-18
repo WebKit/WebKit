@@ -157,7 +157,8 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        this.welcomeView.show();
+        if (!this.visibleView)
+            this.welcomeView.show();
         if (this._shouldPopulateProfiles)
             this._populateProfiles();
     },

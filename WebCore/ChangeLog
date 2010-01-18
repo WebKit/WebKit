@@ -1,3 +1,15 @@
+2010-01-18  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Don't show Profiles welcome screen on panel switch,
+        if a profile view is shown.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33799
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.show):
+
 2010-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
