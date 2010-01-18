@@ -1,5 +1,11 @@
 2010-01-18  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed "build" fix.
+
+        * Scripts/webkitpy/bugzilla.py:
+
+2010-01-18  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Actually make land-safely mark commit-queue+ as
         discussed with Eric.
 

@@ -408,7 +408,7 @@ class Bugzilla(object):
             patch_name ="%s.patch" % timestamp()
         self.browser.add_file(patch_file_object, "text/plain", patch_name, 'data')
 
-    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False):
+    def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False):
         self.authenticate()
 
         log('Adding patch "%s" to %sshow_bug.cgi?id=%s' % (description, self.bug_server_url, bug_id))
@@ -419,7 +419,7 @@ class Bugzilla(object):
 
         self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
-        self._fill_attachment_form(description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue, bug_id=bug_id)
+        self._fill_attachment_form(description, patch_file_object, mark_for_review=mark_for_review, mark_for_commit_queue=mark_for_commit_queue, mark_for_landing=mark_for_landing, bug_id=bug_id)
         if comment_text:
             log(comment_text)
             self.browser['comment'] = comment_text
