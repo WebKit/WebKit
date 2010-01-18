@@ -39,10 +39,10 @@ class QueryCommandsTest(CommandsTest):
         expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\n"
         self.assert_execute_outputs(BugsToCommit(), None, "42\n77\n", expected_stderr)
 
-    def test_patches_to_commit(self):
+    def test_patches_in_commit_queue(self):
         expected_stdout = "http://example.com/197\nhttp://example.com/103\n"
         expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nPatches in commit queue:\n"
-        self.assert_execute_outputs(PatchesToCommit(), None, expected_stdout, expected_stderr)
+        self.assert_execute_outputs(PatchesInCommitQueue(), None, expected_stdout, expected_stderr)
 
     def test_patches_to_commit_queue(self):
         expected_stdout = "http://example.com/104&action=edit\n"

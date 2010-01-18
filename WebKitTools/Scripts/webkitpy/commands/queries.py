@@ -48,12 +48,11 @@ class BugsToCommit(AbstractDeclarativeCommand):
             print "%s" % bug_id
 
 
-class PatchesToCommit(AbstractDeclarativeCommand):
-    name = "patches-to-commit"
+class PatchesInCommitQueue(AbstractDeclarativeCommand):
+    name = "patches-in-commit-queue"
     help_text = "List patches in the commit-queue"
 
     def execute(self, options, args, tool):
-        # FIXME: This command is poorly named.  It's fetching the commit-queue list here.  The name implies it's fetching pending-commit (all r+'d patches).
         patches = tool.bugs.queries.fetch_patches_from_commit_queue()
         log("Patches in commit queue:")
         for patch in patches:

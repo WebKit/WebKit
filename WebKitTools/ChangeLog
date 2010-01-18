@@ -1,3 +1,16 @@
+2010-01-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Rename patches-to-commit to patches-in-commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=33789
+
+        The command really lists the patches in the commit-queue not all the
+        patches that are pending-commit (as the FIXME commands).
+
+        * Scripts/webkitpy/commands/queries.py:
+        * Scripts/webkitpy/commands/queries_unittest.py:
+
 2010-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
