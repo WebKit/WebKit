@@ -28,8 +28,8 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include <jni_utility.h>
-#include <jni_instance.h>
+#include "JavaInstanceJSC.h"
+#include "jni_utility.h"
 #include <runtime/JSLock.h>
 
 

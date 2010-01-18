@@ -184,9 +184,9 @@ LOCAL_SRC_FILES += \
 	bridge/c/c_runtime.cpp \
 	bridge/c/c_utility.cpp \
 	bridge/jni/jni_class.cpp \
-	bridge/jni/jni_instance.cpp \
 	bridge/jni/jni_runtime.cpp \
 	bridge/jni/jni_utility.cpp \
+	bridge/jni/jsc/JavaInstanceJSC.cpp \
 	bridge/jni/jsc/jni_utility_private.cpp \
 	bridge/npruntime.cpp \
 	bridge/runtime.cpp \

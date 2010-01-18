@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef _JNI_INSTANCE_H_
-#define _JNI_INSTANCE_H_
+#ifndef JavaInstanceJSC_h
+#define JavaInstanceJSC_h
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
@@ -107,4 +107,4 @@ protected:
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
 
-#endif // _JNI_INSTANCE_H_
+#endif // JavaInstanceJSC_h

@@ -51,7 +51,7 @@
 #import "runtime.h"
 
 #if ENABLE(MAC_JAVA_BRIDGE)
-#import "jni_instance.h"
+#import "JavaInstanceJSC.h"
 #endif
 
 @interface NSObject (WebPlugin)

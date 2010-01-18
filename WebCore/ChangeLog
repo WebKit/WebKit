@@ -1,3 +1,22 @@
+2010-01-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Moves JSC-specific version of JavaInstance from bridge/jni/jni_instance to bridge/jni/jsc/JavaInstanceJSC
+        https://bugs.webkit.org/show_bug.cgi?id=33672
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk: Modified. Removed jni_instance.cpp and added JavaInstanceJSC.cpp
+        * GNUmakefile.am: Modified. Removed jni_instance.h and added JavaInstanceJSC.h
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removed jni_instance.[cpp|h] and added JavaInstanceJSC.[cpp|h]
+        * bindings/js/ScriptControllerMac.mm: Modified. Includes JavaInstanceJSC.h
+        * bridge/jni/jni_instance.cpp: Removed.
+        * bridge/jni/jni_instance.h: Removed.
+        * bridge/jni/jni_runtime.h: Modified. Includes JavaInstanceJSC.h
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Copied from WebCore/bridge/jni/jni_instance.cpp.
+        * bridge/jni/jsc/JavaInstanceJSC.h: Copied from WebCore/bridge/jni/jni_instance.h.
+
 2010-01-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

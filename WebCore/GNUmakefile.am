@@ -14,6 +14,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/bindings/js \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/bridge/c \
+	-I$(srcdir)/WebCore/bridge/jni/jsc \
 	-I$(srcdir)/WebCore/css \
 	-I$(srcdir)/WebCore/dom \
 	-I$(srcdir)/WebCore/dom/default \
@@ -503,10 +504,10 @@ webcore_sources += \
 	WebCore/bridge/c/c_utility.cpp \
 	WebCore/bridge/c/c_utility.h \
 	WebCore/bridge/jni/jni_class.h \
-	WebCore/bridge/jni/jni_instance.h \
 	WebCore/bridge/jni/jni_jsobject.h \
 	WebCore/bridge/jni/jni_runtime.h \
 	WebCore/bridge/jni/jni_utility.h \
+	WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
 	WebCore/bridge/npapi.h \
 	WebCore/bridge/npruntime.cpp \
 	WebCore/bridge/npruntime.h \
