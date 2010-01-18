@@ -2718,6 +2718,8 @@ symbian {
                     "$${LITERAL_HASH}elif defined EABI" \
                     "DEFFILE ../WebKit/qt/symbian/eabi/$${TARGET}.def" \
                     "$${LITERAL_HASH}endif"
+        } else {
+            MMP_RULES += EXPORTUNFROZEN
         }
     }
 }

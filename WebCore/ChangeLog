@@ -1,3 +1,16 @@
+2010-01-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Symbian build fix.
+
+        If we don't link with def files, then we have to pass EXPORTUNFROZEN,
+        so that the build system still creates the .dso files in
+        release/armv5/lib and we can actually link against the created QtWebKit
+        dlls.
+
+        Thanks Iain for the help!
+
+        * WebCore.pro:
+
 2010-01-17  Srinidhi Shreedhara  <srinidhi.shreedhara@nokia.com>
 
         Reviewed by Simon Hausmann.
