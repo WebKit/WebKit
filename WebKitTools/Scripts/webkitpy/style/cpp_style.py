@@ -242,39 +242,19 @@ class _IncludeState(dict):
         return error_message
 
 
-class _CppStyleState(object):
-    """Maintains module-wide state.."""
-
-    def __init__(self):
-        self.verbose_level = 1  # global setting.
-
-    def set_verbose_level(self, level):
-        """Sets the module's verbosity, and returns the previous setting."""
-        last_verbose_level = self.verbose_level
-        self.verbose_level = level
-        return last_verbose_level
-
-
-_cpp_style_state = _CppStyleState()
-
-
-def _verbose_level():
-    """Returns the module's verbosity setting."""
-    return _cpp_style_state.verbose_level
-
-
-def _set_verbose_level(level):
-    """Sets the module's verbosity, and returns the previous setting."""
-    return _cpp_style_state.set_verbose_level(level)
-
-
 class _FunctionState(object):
-    """Tracks current function name and the number of lines in its body."""
+    """Tracks current function name and the number of lines in its body.
+
+    Attributes:
+      verbosity: The verbosity level to use while checking style.
+
+    """
 
     _NORMAL_TRIGGER = 250  # for --v=0, 500 for --v=1, etc.
     _TEST_TRIGGER = 400    # about 50% more than _NORMAL_TRIGGER.
 
-    def __init__(self):
+    def __init__(self, verbosity):
+        self.verbosity = verbosity
         self.in_a_function = False
         self.lines_in_function = 0
         self.current_function = ''
@@ -306,7 +286,7 @@ class _FunctionState(object):
             base_trigger = self._TEST_TRIGGER
         else:
             base_trigger = self._NORMAL_TRIGGER
-        trigger = base_trigger * 2 ** _verbose_level()
+        trigger = base_trigger * 2 ** self.verbosity
 
         if self.lines_in_function > trigger:
             error_level = int(math.log(self.lines_in_function / base_trigger, 2))
@@ -2831,7 +2811,7 @@ def process_line(filename, file_extension,
     check_invalid_increment(filename, clean_lines, line, error)
 
 
-def process_file_data(filename, file_extension, lines, error):
+def process_file_data(filename, file_extension, lines, error, verbosity):
     """Performs lint checks and reports any errors to the given error function.
 
     Args:
@@ -2845,7 +2825,7 @@ def process_file_data(filename, file_extension, lines, error):
              ['// marker so line numbers end in a known way'])
 
     include_state = _IncludeState()
-    function_state = _FunctionState()
+    function_state = _FunctionState(verbosity)
     class_state = _ClassState()
     file_state = _FileState()
 
@@ -2870,12 +2850,14 @@ def process_file_data(filename, file_extension, lines, error):
     check_for_new_line_at_eof(filename, lines, error)
 
 
-def process_file(filename, error):
+def process_file(filename, error, verbosity):
     """Performs cpp_style on a single file.
 
     Args:
       filename: The name of the file to parse.
       error: The function to call with any errors found.
+      verbosity: An integer that is the verbosity level to use while
+                 checking style.
     """
     try:
         # Support the UNIX convention of using "-" for stdin.  Note that
@@ -2916,7 +2898,7 @@ def process_file(filename, error):
     if (filename != '-' and not can_handle(filename)):
         sys.stderr.write('Ignoring %s; not a .cpp, .c or .h file\n' % filename)
     else:
-        process_file_data(filename, file_extension, lines, error)
+        process_file_data(filename, file_extension, lines, error, verbosity)
         if carriage_return_found and os.linesep != '\r\n':
             # Use 0 for line_number since outputing only one error for potentially
             # several lines.

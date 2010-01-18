@@ -645,9 +645,6 @@ class StyleChecker(object):
         self.options = options
         self.error_count = 0
 
-        # FIXME: Eliminate the need to set global state here.
-        cpp_style._set_verbose_level(options.verbosity)
-
     def _handle_error(self, filename, line_number, category, confidence, message):
         """Handle the occurrence of a style error while checking.
 
@@ -688,7 +685,7 @@ class StyleChecker(object):
 
         """
         if cpp_style.can_handle(filename) or filename == '-':
-            cpp_style.process_file(filename, self._handle_error)
+            cpp_style.process_file(filename, self._handle_error, self.options.verbosity)
         elif text_style.can_handle(filename):
             text_style.process_file(filename, self._handle_error)
 
@@ -720,7 +717,8 @@ class StyleChecker(object):
                 if line_number in line_numbers:
                     self._handle_error(filename, line_number, category, confidence, message)
 
+            # FIXME: Share this code with self.process_file().
             if cpp_style.can_handle(filename):
-                cpp_style.process_file(filename, error_for_patch)
+                cpp_style.process_file(filename, error_for_patch, self.options.verbosity)
             elif text_style.can_handle(filename):
                 text_style.process_file(filename, error_for_patch)
