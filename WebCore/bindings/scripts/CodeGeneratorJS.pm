@@ -1477,16 +1477,7 @@ sub GenerateImplementation
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
-                            if ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
-                                push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<$className*>(thisObject);\n");
-                            } else {
-                                $implIncludes{"Frame.h"} = 1;
-                                $implIncludes{"JSDOMGlobalObject.h"} = 1;
-                                push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(imp->scriptExecutionContext(), exec);\n");
-                                push(@implContent, "    if (!globalObject)\n");
-                                push(@implContent, "        return;\n");
-                            }
-                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->createJSAttributeEventListener(value));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

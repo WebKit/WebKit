@@ -61,14 +61,6 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
         markStack.append(d()->m_injectedScript);
 }
 
-PassRefPtr<JSEventListener> JSDOMGlobalObject::createJSAttributeEventListener(JSValue val)
-{
-    if (!val.isObject())
-        return 0;
-
-    return JSEventListener::create(asObject(val), true, currentWorld(globalExec())).get();
-}
-
 void JSDOMGlobalObject::setCurrentEvent(Event* evt)
 {
     d()->evt = evt;

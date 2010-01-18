@@ -66,6 +66,16 @@ namespace WebCore {
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };
 
+    // Creates a JS EventListener for an "onXXX" event attribute.
+    inline PassRefPtr<JSEventListener> createJSAttributeEventListener(JSC::ExecState* exec, JSC::JSValue listener)
+    {
+        if (!listener.isObject())
+            return 0;
+
+        return JSEventListener::create(asObject(listener), true, currentWorld(exec));
+    }
+
+
 } // namespace WebCore
 
 #endif // JSEventListener_h

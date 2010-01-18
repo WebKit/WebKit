@@ -1,3 +1,20 @@
+2010-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removed unnecessary use of scriptExecutionContext() when creating a JS event listener.
+        https://bugs.webkit.org/show_bug.cgi?id=33811
+
+        This change simplifies a bunch of code, and also reduces
+        the number of places that use the difficult-to-understand and possibly
+        crashy-null scriptExecutionContext() idiom.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSEventListener.h:
+        (WebCore::createJSAttributeEventListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2010-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
