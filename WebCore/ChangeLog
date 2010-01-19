@@ -1,3 +1,12 @@
+2010-01-19  Kristian Amlie <kristian.amlie@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix qmake warning with qmake in Qt for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=33786
+
+        * WebCore.pro: Use QMAKE_LFLAGS instead of MMP_RULES.
+
 2010-01-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
