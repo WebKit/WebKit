@@ -504,10 +504,10 @@ webcore_sources += \
 	WebCore/bridge/c/c_runtime.h \
 	WebCore/bridge/c/c_utility.cpp \
 	WebCore/bridge/c/c_utility.h \
-	WebCore/bridge/jni/jni_class.h \
 	WebCore/bridge/jni/jni_jsobject.h \
 	WebCore/bridge/jni/jni_runtime.h \
 	WebCore/bridge/jni/jni_utility.h \
+	WebCore/bridge/jni/jsc/JavaClassJSC.h \
 	WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
 	WebCore/bridge/npapi.h \
 	WebCore/bridge/npruntime.cpp \

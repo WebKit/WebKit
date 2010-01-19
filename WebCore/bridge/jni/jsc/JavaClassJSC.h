@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JNI_CLASS_H_
-#define JNI_CLASS_H_
+#ifndef JavaClassJSC_h
+#define JavaClassJSC_h
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
@@ -59,4 +59,4 @@ private:
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
 
-#endif // JNI_CLASS_H_
+#endif // JavaClassJSC_h

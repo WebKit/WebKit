@@ -102,6 +102,24 @@
 
         Reviewed by Adam Barth.
 
+        Moves JSC-specific version of JavaClass from bridge/jni/jni_class to bridge/jni/jsc/JavaClassJSC
+        https://bugs.webkit.org/show_bug.cgi?id=33561
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk: Modified. Removed jni_class.cpp and added JavaClassJSC.cpp
+        * GNUmakefile.am: Modified. Removed jni_class.h and added JavaClassJSC.h
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removed jni_class.[cpp|h] and added JavaClassJSC.[cpp|h]
+        * bridge/jni/jni_class.cpp: Removed.
+        * bridge/jni/jni_class.h: Removed.
+        * bridge/jni/jsc/JavaClassJSC.cpp: Copied from WebCore/bridge/jni/jni_class.cpp.
+        * bridge/jni/jsc/JavaClassJSC.h: Copied from WebCore/bridge/jni/jni_class.h.
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Modified. Includes JavaClassJSC.h
+
+2010-01-18  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
         Fix style in WebCore/bridge/jni/jsc/JavaInstanceJSC.[cpp|h]
         https://bugs.webkit.org/show_bug.cgi?id=33792
 

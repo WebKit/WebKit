@@ -303,8 +303,6 @@
 		1A569CFC0D7E2B82007C3983 /* c_runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CCB0D7E2B82007C3983 /* c_runtime.h */; };
 		1A569CFD0D7E2B82007C3983 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CCC0D7E2B82007C3983 /* c_utility.cpp */; };
 		1A569CFE0D7E2B82007C3983 /* c_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CCD0D7E2B82007C3983 /* c_utility.h */; };
-		1A569CFF0D7E2B82007C3983 /* jni_class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CCF0D7E2B82007C3983 /* jni_class.cpp */; };
-		1A569D000D7E2B82007C3983 /* jni_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD00D7E2B82007C3983 /* jni_class.h */; };
 		1A569D030D7E2B82007C3983 /* jni_jsobject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD30D7E2B82007C3983 /* jni_jsobject.mm */; };
 		1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CD40D7E2B82007C3983 /* jni_jsobject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D050D7E2B82007C3983 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CD50D7E2B82007C3983 /* jni_objc.mm */; };
@@ -1117,6 +1115,8 @@
 		59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */; };
 		59C77F2A10545B3B00506104 /* GeolocationServiceMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */; };
 		59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F2910545B3B00506104 /* GeolocationServiceMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E560A61105336600AA1258 /* JavaClassJSC.h */; };
+		59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E560A81105336F00AA1258 /* JavaClassJSC.cpp */; };
 		5D15E3AB0F9E6AC1009E0E3F /* XMLTokenizerScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */; };
 		5D15E3AC0F9E6AC1009E0E3F /* XMLTokenizerScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
@@ -5550,8 +5550,6 @@
 		1A569CCB0D7E2B82007C3983 /* c_runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c_runtime.h; sourceTree = "<group>"; };
 		1A569CCC0D7E2B82007C3983 /* c_utility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c_utility.cpp; sourceTree = "<group>"; };
 		1A569CCD0D7E2B82007C3983 /* c_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c_utility.h; sourceTree = "<group>"; };
-		1A569CCF0D7E2B82007C3983 /* jni_class.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jni_class.cpp; sourceTree = "<group>"; };
-		1A569CD00D7E2B82007C3983 /* jni_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jni_class.h; sourceTree = "<group>"; };
 		1A569CD30D7E2B82007C3983 /* jni_jsobject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = jni_jsobject.mm; sourceTree = "<group>"; };
 		1A569CD40D7E2B82007C3983 /* jni_jsobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jni_jsobject.h; sourceTree = "<group>"; };
 		1A569CD50D7E2B82007C3983 /* jni_objc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = jni_objc.mm; sourceTree = "<group>"; };
@@ -6470,6 +6468,8 @@
 		59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaInstanceJSC.h; path = jsc/JavaInstanceJSC.h; sourceTree = "<group>"; };
 		59C77F2810545B3B00506104 /* GeolocationServiceMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationServiceMock.cpp; path = mock/GeolocationServiceMock.cpp; sourceTree = "<group>"; };
 		59C77F2910545B3B00506104 /* GeolocationServiceMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationServiceMock.h; path = mock/GeolocationServiceMock.h; sourceTree = "<group>"; };
+		59E560A61105336600AA1258 /* JavaClassJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaClassJSC.h; path = jsc/JavaClassJSC.h; sourceTree = "<group>"; };
+		59E560A81105336F00AA1258 /* JavaClassJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaClassJSC.cpp; path = jsc/JavaClassJSC.cpp; sourceTree = "<group>"; };
 		5D15E3A90F9E6AC1009E0E3F /* XMLTokenizerScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerScope.cpp; sourceTree = "<group>"; };
 		5D15E3AA0F9E6AC1009E0E3F /* XMLTokenizerScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizerScope.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
@@ -10346,8 +10346,6 @@
 			isa = PBXGroup;
 			children = (
 				599D1E2F10C97D4C00E0EF12 /* jsc */,
-				1A569CCF0D7E2B82007C3983 /* jni_class.cpp */,
-				1A569CD00D7E2B82007C3983 /* jni_class.h */,
 				1A569CD40D7E2B82007C3983 /* jni_jsobject.h */,
 				1A569CD30D7E2B82007C3983 /* jni_jsobject.mm */,
 				1A569CD50D7E2B82007C3983 /* jni_objc.mm */,
@@ -11060,6 +11058,8 @@
 		599D1E2F10C97D4C00E0EF12 /* jsc */ = {
 			isa = PBXGroup;
 			children = (
+				59E560A81105336F00AA1258 /* JavaClassJSC.cpp */,
+				59E560A61105336600AA1258 /* JavaClassJSC.h */,
 				59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */,
 				59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */,
 				599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */,
@@ -17149,7 +17149,6 @@
 				1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */,
 				1C81BA010E9733CB00266E07 /* JavaScriptProfile.h in Headers */,
 				1C81B9FF0E9733CB00266E07 /* JavaScriptProfileNode.h in Headers */,
-				1A569D000D7E2B82007C3983 /* jni_class.h in Headers */,
 				1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */,
 				1A569D070D7E2B82007C3983 /* jni_runtime.h in Headers */,
 				1A569D090D7E2B82007C3983 /* jni_utility.h in Headers */,
@@ -18358,6 +18357,7 @@
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */,
+				59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19323,7 +19323,6 @@
 				1C81BA0D0E97348300266E07 /* JavaScriptDebugServer.cpp in Sources */,
 				1C81BA020E9733CB00266E07 /* JavaScriptProfile.cpp in Sources */,
 				1C81BA000E9733CB00266E07 /* JavaScriptProfileNode.cpp in Sources */,
-				1A569CFF0D7E2B82007C3983 /* jni_class.cpp in Sources */,
 				1A569D030D7E2B82007C3983 /* jni_jsobject.mm in Sources */,
 				1A569D050D7E2B82007C3983 /* jni_objc.mm in Sources */,
 				1A569D060D7E2B82007C3983 /* jni_runtime.cpp in Sources */,
@@ -20523,6 +20522,7 @@
 				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */,
+				59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
