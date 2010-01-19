@@ -1,3 +1,37 @@
+2010-01-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33408
+
+        Implements an optimization to ignore fixed background images
+        (i.e. background-attachment: fixed) when a page does not contain
+        any fixed position elements so as to allow fast repaints (via bit
+        blit) when scrolling a page.
+
+        Currently, if a page has elements that specify either a fixed
+        background or a fixed position then we perform a slow repaint
+        (i.e disable blitting) so as to avoid rendering artifacts.
+        However, on low-powered/mobile devices slow repaints can cause
+        noticeable delays when scrolling a page with a fixed background
+        image. By sacrificing support for fixed background images when
+        there are no fixed elements on the page and with come care, we
+        don't need to force slow repaints and can avoid rendering artifacts.
+        Hence, on such devices we can improve the responsiveness of
+        scrolling a page with a fixed background image.
+
+        Note, this optimization is only enabled if the WebKit is built
+        with FAST_MOBILE_SCROLLING enabled.
+
+        Tests: fast/fast-mobile-scrolling/fixed-position-element.html
+               fast/fast-mobile-scrolling/no-fixed-position-elements.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        Disable fixed background attachment if we can blit on scroll.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2010-01-19  Dave Hyatt  <hyatt@apple.com>
 
         Build bustage fix.  Land modified WebCore.base.exp file that includes export of currentWorld().

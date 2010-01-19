@@ -1650,8 +1650,20 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
     if (view()->frameView()) {
         // FIXME: A better solution would be to only invalidate the fixed regions when scrolling.  It's overkill to
         // prevent the entire view from blitting on a scroll.
-        bool newStyleSlowScroll = newStyle && (newStyle->position() == FixedPosition || newStyle->hasFixedBackgroundImage());
-        bool oldStyleSlowScroll = m_style && (m_style->position() == FixedPosition || m_style->hasFixedBackgroundImage());
+
+        bool shouldBlitOnFixedBackgroundImage = false;
+#if ENABLE(FAST_MOBILE_SCROLLING)
+        // On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
+        // when scrolling a page with a fixed background image. As an optimization, assuming there are
+        // no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
+        // ignore the CSS property "background-attachment: fixed".
+        shouldBlitOnFixedBackgroundImage = true;
+#endif
+
+        bool newStyleSlowScroll = newStyle && (newStyle->position() == FixedPosition
+                                               || (!shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage()));
+        bool oldStyleSlowScroll = m_style && (m_style->position() == FixedPosition
+                                               || (!shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage()));
         if (oldStyleSlowScroll != newStyleSlowScroll) {
             if (oldStyleSlowScroll)
                 view()->frameView()->removeSlowRepaintObject();

@@ -1,3 +1,29 @@
+2010-01-19  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33408
+
+        Tests that fixed background images are ignored when there are no
+        fixed elements on a page and honored otherwise.
+
+        Note, includes expected failure results for the test
+        fast/fast-mobile-scrolling/no-fixed-position-elements.html, since
+        the Mac and Windows ports do not support FAST_MOBILE_SCROLLING.
+
+        * fast/fast-mobile-scrolling: Added.
+        * fast/fast-mobile-scrolling/fixed-position-element.html: Added.
+        * fast/fast-mobile-scrolling/no-fixed-position-elements.html: Added.
+        * platform/mac/fast/fast-mobile-scrolling: Added.
+        * platform/mac/fast/fast-mobile-scrolling/fixed-position-element-expected.checksum: Added.
+        * platform/mac/fast/fast-mobile-scrolling/fixed-position-element-expected.png: Added.
+        * platform/mac/fast/fast-mobile-scrolling/fixed-position-element-expected.txt: Added.
+        * platform/mac/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.checksum: Added.
+        * platform/mac/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.png: Added.
+        Expected failure result since the Mac port does not enable FAST_MOBILE_SCROLLING.
+        * platform/mac/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.txt: Added.
+        Expected failure result since the Mac port does not enable FAST_MOBILE_SCROLLING.
+
 2010-01-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
