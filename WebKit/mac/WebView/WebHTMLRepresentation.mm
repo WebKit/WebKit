@@ -337,7 +337,27 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
-    return core([_private->dataSource webFrame])->searchForLabelsBeforeElement(labels, core(element));
+    return [self searchForLabels:labels beforeElement:element resultDistance:0 resultIsInCellAbove:0];
+}
+
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element resultDistance:(NSUInteger*)outDistance resultIsInCellAbove:(BOOL*)outIsInCellAbove
+{
+    size_t distance;
+    bool isInCellAbove;
+    
+    NSString *result = core([_private->dataSource webFrame])->searchForLabelsBeforeElement(labels, core(element), &distance, &isInCellAbove);
+    
+    if (outDistance) {
+        if (distance == notFound)
+            *outDistance = NSNotFound;
+        else
+            *outDistance = distance;
+    }
+
+    if (outIsInCellAbove)
+        *outIsInCellAbove = isInCellAbove;
+    
+    return result;
 }
 
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element

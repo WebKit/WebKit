@@ -45,84 +45,87 @@ public:
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IWebHTMLRepresentation
-    virtual HRESULT STDMETHODCALLTYPE supportedMIMETypes( 
+    virtual HRESULT STDMETHODCALLTYPE supportedMIMETypes(
         /* [out][in] */ BSTR* types,
         /* [out][in] */ int* cTypes);
     
-    virtual HRESULT STDMETHODCALLTYPE supportedNonImageMIMETypes( 
+    virtual HRESULT STDMETHODCALLTYPE supportedNonImageMIMETypes(
         /* [out][in] */ BSTR* types,
         /* [out][in] */ int* cTypes);
     
-    virtual HRESULT STDMETHODCALLTYPE supportedImageMIMETypes( 
+    virtual HRESULT STDMETHODCALLTYPE supportedImageMIMETypes(
         /* [out][in] */ BSTR* types,
         /* [out][in] */ int* cTypes);
     
-    virtual HRESULT STDMETHODCALLTYPE attributedStringFromDOMNodes( 
+    virtual HRESULT STDMETHODCALLTYPE attributedStringFromDOMNodes(
         /* [in] */ IDOMNode* startNode,
         /* [in] */ int startOffset,
         /* [in] */ IDOMNode* endNode,
         /* [in] */ int endOffset,
         /* [retval][out] */ IDataObject** attributedString);
     
-    virtual HRESULT STDMETHODCALLTYPE elementWithName( 
+    virtual HRESULT STDMETHODCALLTYPE elementWithName(
         /* [in] */ BSTR name,
         /* [in] */ IDOMElement* form,
         /* [retval][out] */ IDOMElement** element);
     
-    virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete( 
+    virtual HRESULT STDMETHODCALLTYPE elementDoesAutoComplete(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result);
     
-    virtual HRESULT STDMETHODCALLTYPE elementIsPassword( 
+    virtual HRESULT STDMETHODCALLTYPE elementIsPassword(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result);
     
-    virtual HRESULT STDMETHODCALLTYPE formForElement( 
+    virtual HRESULT STDMETHODCALLTYPE formForElement(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ IDOMElement** form);
     
-    virtual HRESULT STDMETHODCALLTYPE currentForm( 
+    virtual HRESULT STDMETHODCALLTYPE currentForm(
         /* [retval][out] */ IDOMElement** form);
     
-    virtual HRESULT STDMETHODCALLTYPE controlsInForm( 
+    virtual HRESULT STDMETHODCALLTYPE controlsInForm(
         /* [in] */ IDOMElement* form,
         /* [out][in] */ IDOMElement** controls,
         /* [out][in] */ int* cControls);
     
-    virtual HRESULT STDMETHODCALLTYPE searchForLabels( 
+    /* Deprecated. Use the variant that includes resultDistance and resultIsInCellAbove instead. */
+    virtual HRESULT STDMETHODCALLTYPE deprecatedSearchForLabels(
         /* [size_is][in] */ BSTR *labels,
         /* [in] */ int cLabels,
         /* [in] */ IDOMElement *beforeElement,
         /* [retval][out] */ BSTR *result);
     
-    virtual HRESULT STDMETHODCALLTYPE matchLabels( 
+    virtual HRESULT STDMETHODCALLTYPE matchLabels(
         /* [size_is][in] */ BSTR *labels,
         /* [in] */ int cLabels,
         /* [in] */ IDOMElement *againstElement,
         /* [retval][out] */ BSTR *result);
 
+    virtual HRESULT STDMETHODCALLTYPE searchForLabels(BSTR* labels, unsigned cLabels, IDOMElement* beforeElement, unsigned* resultDistance, BOOL* resultIsInCellAbove, BSTR* result);
+    
     // IWebDocumentRepresentation
-    virtual HRESULT STDMETHODCALLTYPE setDataSource( 
+    virtual HRESULT STDMETHODCALLTYPE setDataSource(
         /* [in] */ IWebDataSource* dataSource);
     
-    virtual HRESULT STDMETHODCALLTYPE receivedData( 
+    virtual HRESULT STDMETHODCALLTYPE receivedData(
         /* [in] */ IStream* data,
         /* [in] */ IWebDataSource* dataSource);
     
-    virtual HRESULT STDMETHODCALLTYPE receivedError( 
+    virtual HRESULT STDMETHODCALLTYPE receivedError(
         /* [in] */ IWebError* error,
         /* [in] */ IWebDataSource* dataSource);
     
-    virtual HRESULT STDMETHODCALLTYPE finishedLoadingWithDataSource( 
+    virtual HRESULT STDMETHODCALLTYPE finishedLoadingWithDataSource(
         /* [in] */ IWebDataSource* dataSource);
     
-    virtual HRESULT STDMETHODCALLTYPE canProvideDocumentSource( 
+    virtual HRESULT STDMETHODCALLTYPE canProvideDocumentSource(
         /* [retval][out] */ BOOL* result);
     
-    virtual HRESULT STDMETHODCALLTYPE documentSource( 
+    virtual HRESULT STDMETHODCALLTYPE documentSource(
         /* [retval][out] */ BSTR* source);
     
-    virtual HRESULT STDMETHODCALLTYPE title( 
+    virtual HRESULT STDMETHODCALLTYPE title(
         /* [retval][out] */ BSTR* docTitle);
 
 protected:

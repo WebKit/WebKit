@@ -336,7 +336,7 @@ public:
     HRESULT formForElement(IDOMElement* element, IDOMElement** form);
     HRESULT controlsInForm(IDOMElement* form, IDOMElement** controls, int* cControls);
     HRESULT elementIsPassword(IDOMElement* element, bool* result);
-    HRESULT searchForLabelsBeforeElement(const BSTR* labels, int cLabels, IDOMElement* beforeElement, BSTR* result);
+    HRESULT searchForLabelsBeforeElement(const BSTR* labels, unsigned cLabels, IDOMElement* beforeElement, unsigned* resultDistance, BOOL* resultIsInCellAbove, BSTR* result);
     HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result);
     HRESULT canProvideDocumentSource(bool* result);
 

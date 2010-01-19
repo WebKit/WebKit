@@ -103,7 +103,7 @@ ULONG STDMETHODCALLTYPE WebHTMLRepresentation::Release()
 
 // IWebHTMLRepresentation --------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedMIMETypes( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedMIMETypes(
         /* [out][in] */ BSTR* /*types*/,
         /* [out][in] */ int* /*cTypes*/)
 {
@@ -111,7 +111,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedMIMETypes(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedNonImageMIMETypes( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedNonImageMIMETypes(
         /* [out][in] */ BSTR* /*types*/,
         /* [out][in] */ int* /*cTypes*/)
 {
@@ -119,7 +119,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedNonImageMIMETypes(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedImageMIMETypes( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedImageMIMETypes(
         /* [out][in] */ BSTR* /*types*/,
         /* [out][in] */ int* /*cTypes*/)
 {
@@ -127,7 +127,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::supportedImageMIMETypes(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::attributedStringFromDOMNodes( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::attributedStringFromDOMNodes(
         /* [in] */ IDOMNode* /*startNode*/,
         /* [in] */ int /*startOffset*/,
         /* [in] */ IDOMNode* /*endNode*/,
@@ -138,7 +138,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::attributedStringFromDOMNodes(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementWithName( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementWithName(
         /* [in] */ BSTR name,
         /* [in] */ IDOMElement* form,
         /* [retval][out] */ IDOMElement** element)
@@ -149,7 +149,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementWithName(
     return m_frame->elementWithName(name, form, element);
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result)
 {
@@ -159,7 +159,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete(
     return hr;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementIsPassword( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementIsPassword(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result)
 {
@@ -169,7 +169,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementIsPassword(
     return hr;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::formForElement( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::formForElement(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ IDOMElement** form)
 {
@@ -179,7 +179,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::formForElement(
     return m_frame->formForElement(element, form);
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::currentForm( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::currentForm(
         /* [retval][out] */ IDOMElement** form)
 {
     if (!m_frame)
@@ -188,7 +188,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::currentForm(
     return m_frame->currentForm(form);
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::controlsInForm( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::controlsInForm(
         /* [in] */ IDOMElement* form,
         /* [out][in] */ IDOMElement** controls,
         /* [out][in] */ int* cControls)
@@ -196,16 +196,16 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::controlsInForm(
     return m_frame->controlsInForm(form, controls, cControls);
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::searchForLabels( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::deprecatedSearchForLabels(
         /* [size_is][in] */ BSTR* labels,
         /* [in] */ int cLabels,
         /* [in] */ IDOMElement* beforeElement,
         /* [retval][out] */ BSTR* result)
 {
-    return m_frame->searchForLabelsBeforeElement(labels, cLabels, beforeElement, result);
+    return m_frame->searchForLabelsBeforeElement(labels, cLabels, beforeElement, 0, 0, result);
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::matchLabels( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::matchLabels(
         /* [size_is][in] */ BSTR* labels,
         /* [in] */ int cLabels,
         /* [in] */ IDOMElement* againstElement,
@@ -214,16 +214,21 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::matchLabels(
     return m_frame->matchLabelsAgainstElement(labels, cLabels, againstElement, result);
 }
 
+HRESULT WebHTMLRepresentation::searchForLabels(BSTR* labels, unsigned cLabels, IDOMElement* beforeElement, unsigned* resultDistance, BOOL* resultIsInCellAbove, BSTR* result)
+{
+    return m_frame->searchForLabelsBeforeElement(labels, cLabels, beforeElement, resultDistance, resultIsInCellAbove, result);
+}
+
 // IWebDocumentRepresentation ----------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::setDataSource( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::setDataSource(
         /* [in] */ IWebDataSource* /*dataSource*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedData( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedData(
         /* [in] */ IStream* /*data*/,
         /* [in] */ IWebDataSource* /*dataSource*/)
 {
@@ -231,7 +236,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedData(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedError( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedError(
         /* [in] */ IWebError* /*error*/,
         /* [in] */ IWebDataSource* /*dataSource*/)
 {
@@ -239,14 +244,14 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::receivedError(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::finishedLoadingWithDataSource( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::finishedLoadingWithDataSource(
         /* [in] */ IWebDataSource* /*dataSource*/)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::canProvideDocumentSource( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::canProvideDocumentSource(
         /* [retval][out] */ BOOL* result)
 {
     bool canProvideSource;
@@ -255,7 +260,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::canProvideDocumentSource(
     return hr;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::documentSource( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::documentSource(
         /* [retval][out] */ BSTR* source)
 {
     if (!source)
@@ -306,7 +311,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::documentSource(
     return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::title( 
+HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::title(
         /* [retval][out] */ BSTR* /*docTitle*/)
 {
     ASSERT_NOT_REACHED();

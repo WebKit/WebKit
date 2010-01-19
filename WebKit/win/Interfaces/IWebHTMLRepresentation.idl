@@ -95,11 +95,17 @@ interface IWebHTMLRepresentation : IUnknown
 
     /*
         - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
+        Deprecated: use the variant that includes resultDistance and resultIsInCellAbove instead.
     */
-    HRESULT searchForLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDOMElement* beforeElement, [out, retval] BSTR* result);
+    HRESULT deprecatedSearchForLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDOMElement* beforeElement, [out, retval] BSTR* result);
 
     /*
         - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
     */
     HRESULT matchLabels([in, size_is(cLabels)] BSTR* labels, [in] int cLabels, [in] IDOMElement* againstElement, [out, retval] BSTR* result);
+
+    /*
+        - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element resultDistance:(NSUInteger*)outDistance resultIsInCellAbove:(BOOL*)outIsInCellAbove;
+    */
+    HRESULT searchForLabels([in, size_is(cLabels)] BSTR* labels, [in] unsigned cLabels, [in] IDOMElement* beforeElement, [out] unsigned* resultDistance, [out] BOOL* resultIsInCellAbove, [out, retval] BSTR* result);
 }

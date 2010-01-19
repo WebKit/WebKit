@@ -1,3 +1,20 @@
+2010-01-19  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=33854
+        Would like a variant of WebHTMLRepresentation's searchForLabelsBeforeElement that returns 
+        more info about where the result was found
+
+        Reviewed by Darin Adler
+
+        * WebView/WebHTMLRepresentation.h:
+        Declare -searchForLabels:beforeElement:resultDistance:resultIsInCellAbove.
+        
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:]):
+        Now calls through to searchForLabels:beforeElement:resultDistance:resultIsInCellAbove.
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:resultDistance:resultIsInCellAbove:]):
+        New method, calls through to WebCore.
+
 2010-01-19  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
