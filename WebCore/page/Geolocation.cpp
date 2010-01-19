@@ -107,15 +107,15 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
 {
     m_timer.stop();
 
-    // Cache our pointer to the Geolocation object, as this GeoNotifier object
+    // Protect this GeoNotifier object, since it
     // could be deleted by a call to clearWatch in a callback.
-    Geolocation* geolocation = m_geolocation;
+    RefPtr<GeoNotifier> protect(this);
 
     if (m_fatalError) {
         if (m_errorCallback)
             m_errorCallback->handleEvent(m_fatalError.get());
         // This will cause this notifier to be deleted.
-        geolocation->fatalErrorOccurred(this);
+        m_geolocation->fatalErrorOccurred(this);
         return;
     }
 
@@ -123,7 +123,7 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
         RefPtr<PositionError> error = PositionError::create(PositionError::TIMEOUT, "Timeout expired");
         m_errorCallback->handleEvent(error.get());
     }
-    geolocation->requestTimedOut(this);
+    m_geolocation->requestTimedOut(this);
 }
 
 void Geolocation::Watchers::set(int id, PassRefPtr<GeoNotifier> prpNotifier)

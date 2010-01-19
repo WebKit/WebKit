@@ -1,3 +1,23 @@
+2010-01-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=33816>        
+        Crashes in Geolocation code due to refcounting, observer balance issues.
+        
+        Hold a ref to the GeoNotifier while dispatching a callback. The code was
+        copying a data member to avoid accessing a freed this ptr, but was still
+        using the this ptr.
+        
+        Geolocation::removeObserver calls are not always balanced with addObserver.
+        Instead of asserting and continuing, don't try to remove non-existant
+        observers.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::GeoNotifier::timerFired): Protect notifier.
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::removeObserver): Change ASSERT into an if with early return.
+
 2010-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

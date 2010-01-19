@@ -54,7 +54,8 @@ void GeolocationController::addObserver(Geolocation* observer)
 
 void GeolocationController::removeObserver(Geolocation* observer)
 {
-    ASSERT(m_observers.contains(observer));
+    if (!m_observers.contains(observer))
+        return;
 
     m_observers.remove(observer);
     if (m_observers.isEmpty())
