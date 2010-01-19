@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "jni_utility_private.h"
+#include "JNIUtilityPrivate.h"
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
@@ -189,7 +189,7 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
                     if (instance)
                         result.l = instance->javaInstance();
                 } else if (objectImp->classInfo() == &RuntimeArray::s_info) {
-                // Input is a JavaScript Array that was originally created from a Java Array
+                    // Input is a JavaScript Array that was originally created from a Java Array
                     RuntimeArray* imp = static_cast<RuntimeArray*>(objectImp);
                     JavaArray* array = static_cast<JavaArray*>(imp->getConcreteArray());
                     result.l = array->javaArray();
@@ -284,7 +284,7 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
     return result;
 }
 
-}  // end of namespace Bindings
+} // end of namespace Bindings
 
 } // end of namespace JSC
 

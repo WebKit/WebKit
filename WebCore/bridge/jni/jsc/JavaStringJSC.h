@@ -26,8 +26,8 @@
 #ifndef JavaStringJSC_h
 #define JavaStringJSC_h
 
+#include "JNIUtility.h"
 #include "JavaInstanceJSC.h"
-#include "jni_utility.h"
 #include <runtime/JSLock.h>
 
 

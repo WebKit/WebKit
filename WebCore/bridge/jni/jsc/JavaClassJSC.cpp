@@ -28,9 +28,9 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "JNIUtility.h"
 #include "JSDOMWindow.h"
 #include "jni_runtime.h"
-#include "jni_utility.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 

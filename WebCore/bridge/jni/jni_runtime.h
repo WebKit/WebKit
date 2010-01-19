@@ -28,8 +28,8 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "JNIUtility.h"
 #include "JavaInstanceJSC.h"
-#include "jni_utility.h"
 
 #if USE(JSC)
 #include "JavaStringJSC.h"

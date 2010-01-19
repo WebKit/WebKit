@@ -1,3 +1,36 @@
+2010-01-19  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Renames jni_utility and jni_utility_private to JNIUtility and JNIUtilityPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=33843
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JNIUtility.cpp: Copied from WebCore/bridge/jni/jni_utility.cpp.
+        * bridge/jni/JNIUtility.h: Copied from WebCore/bridge/jni/jni_utility.h.
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jni_objc.mm:
+        * bridge/jni/jni_runtime.cpp:
+        * bridge/jni/jni_runtime.h:
+        * bridge/jni/jni_utility.cpp: Removed.
+        * bridge/jni/jni_utility.h: Removed.
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: Copied from WebCore/bridge/jni/jsc/jni_utility_private.cpp.
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/jsc/JNIUtilityPrivate.h: Copied from WebCore/bridge/jni/jsc/jni_utility_private.h.
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaStringJSC.h:
+        * bridge/jni/jsc/jni_utility_private.cpp: Removed.
+        * bridge/jni/jsc/jni_utility_private.h: Removed.
+        * platform/android/GeolocationServiceBridge.cpp:
+        * platform/android/GeolocationServiceBridge.h:
+        * platform/android/TemporaryLinkStubs.cpp:
+
 2010-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

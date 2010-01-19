@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "jni_utility.h"
+#include "JNIUtility.h"
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 

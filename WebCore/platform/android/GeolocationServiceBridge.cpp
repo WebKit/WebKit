@@ -31,7 +31,6 @@
 #include "PositionError.h"
 #include "WebViewCore.h"
 #include <JNIHelp.h>
-#include <jni_utility.h>
 
 namespace WebCore {
 

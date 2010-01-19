@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _JNI_UTILITY_PRIVATE_H_
-#define _JNI_UTILITY_PRIVATE_H_
+#ifndef JNIUtilityPrivate_h
+#define JNIUtilityPrivate_h
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "jni_utility.h"
+#include "JNIUtility.h"
 #include <runtime/JSValue.h>
 
 namespace JSC {
@@ -48,4 +48,4 @@ bool dispatchJNICall(ExecState*, const void* targetAppletView, jobject obj, bool
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
 
-#endif // _JNI_UTILITY_H_
+#endif // JNIUtilityPrivate_h

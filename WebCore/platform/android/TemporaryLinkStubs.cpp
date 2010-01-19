@@ -82,10 +82,10 @@
 
 #if USE(JSC)
 #include "API/JSClassRef.h"
+#include "JNIUtilityPrivate.h"
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
 #include "JavaScriptProfile.h"
-#include "jni_utility_private.h"
 #endif
 
 using namespace WebCore;

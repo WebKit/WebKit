@@ -26,7 +26,7 @@
 #ifndef GeolocationServiceBridge_h
 #define GeolocationServiceBridge_h
 
-#include <jni_utility.h>
+#include "JNIUtility.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
