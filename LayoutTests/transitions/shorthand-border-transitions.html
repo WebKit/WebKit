@@ -12,7 +12,7 @@
       margin: 10px;
       background-color: gray;
       border: 0px solid rgb(0, 0, 0);
-      -webkit-transition: border 0.5s linear;
+      -webkit-transition: border 1s linear;
     }
     
     #box.final {
@@ -25,7 +25,7 @@
       margin: 10px;
       background-color: gray;
       border: 0px solid rgb(0, 0, 0);
-      -webkit-transition: border-width 0.5s linear;
+      -webkit-transition: border-width 1s linear;
     }
     
     #box1.final {
@@ -38,7 +38,7 @@
       margin: 10px;
       background-color: gray;
       border: 0px solid rgb(0, 0, 0);
-      -webkit-transition: border 0.5s linear;
+      -webkit-transition: border 1s linear;
     }
     
     #box2.final {
@@ -52,22 +52,22 @@
     const expectedValues = [
       // [time, element-id, property, expected-value, tolerance]
       // color and width of each side should be animating
-      [0.25, 'box', 'border-top-color', [128, 0, 128], 30],
-      [0.25, 'box', 'border-right-color', [128, 0, 128], 30],
-      [0.25, 'box', 'border-bottom-color', [128, 0, 128], 30],
-      [0.25, 'box', 'border-left-color', [128, 0, 128], 30],
-      [0.25, 'box', 'border-top-width', 10, 2],
-      [0.25, 'box', 'border-right-width', 10, 2],
-      [0.25, 'box', 'border-bottom-width', 10, 2],
-      [0.25, 'box', 'border-left-width', 10, 2],
+      [0.5, 'box', 'border-top-color', [128, 0, 128], 30],
+      [0.5, 'box', 'border-right-color', [128, 0, 128], 30],
+      [0.5, 'box', 'border-bottom-color', [128, 0, 128], 30],
+      [0.5, 'box', 'border-left-color', [128, 0, 128], 30],
+      [0.5, 'box', 'border-top-width', 10, 2],
+      [0.5, 'box', 'border-right-width', 10, 2],
+      [0.5, 'box', 'border-bottom-width', 10, 2],
+      [0.5, 'box', 'border-left-width', 10, 2],
 
       // only border-width should be animating
-      [0.25, 'box1', 'border-top-width', 10, 2],
-      [0.25, 'box1', 'border-top-color', [255, 0, 255], 0],  // initial value
+      [0.5, 'box1', 'border-top-width', 10, 2],
+      [0.5, 'box1', 'border-top-color', [255, 0, 255], 0],  // initial value
 
       // border-width should be animating
-      [0.25, 'box2', 'border-top-width', 10, 2],
-      [0.25, 'box2', 'border-bottom-width', 20, 4],
+      [0.5, 'box2', 'border-top-width', 10, 2],
+      [0.5, 'box2', 'border-bottom-width', 20, 4],
     ];
     
     function setupTest()
