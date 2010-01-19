@@ -1,3 +1,10 @@
+2010-01-18  Daniel Bates  <dbates@webkit.org>
+
+        Unreviewed, fix misspelling of the word maximum in comment.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::maximum):
+
 2010-01-18  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

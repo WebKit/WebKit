@@ -300,7 +300,7 @@ double HTMLInputElement::maximum() const
     formStringToDouble(getAttribute(maxAttr), &max);
     if (inputType() == RANGE) {
         // A remedy for the inconsistent min/max values for RANGE.
-        // Sets the maxmimum to the default or the minimum value.
+        // Sets the maximum to the default or the minimum value.
         double min = minimum();
         if (max < min)
             max = std::max(min, defaultMaximum);
