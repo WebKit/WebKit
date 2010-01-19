@@ -1,3 +1,13 @@
+2010-01-19  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add an API to obtain the WebScriptWorld for a given JSGlobalContextRef.
+
+        * WebView/WebScriptWorld.h:
+        * WebView/WebScriptWorld.mm:
+        (+[WebScriptWorld scriptWorldForGlobalContext:]):
+
 2010-01-19  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix.

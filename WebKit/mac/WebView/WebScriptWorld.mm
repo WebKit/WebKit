@@ -27,6 +27,8 @@
 #import "WebScriptWorldInternal.h"
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/ScriptController.h>
+#import <JavaScriptCore/APICast.h>
+
 #import <wtf/RefPtr.h>
 
 using namespace WebCore;
@@ -92,6 +94,11 @@ static WorldMap& allWorlds()
 + (WebScriptWorld *)world
 {
     return [[[self alloc] init] autorelease];
+}
+
++ (WebScriptWorld *)scriptWorldForGlobalContext:(JSGlobalContextRef)context
+{
+    return [self findOrCreateWorld:currentWorld(toJS(context))];
 }
 
 @end

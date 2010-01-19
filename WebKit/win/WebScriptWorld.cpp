@@ -128,3 +128,10 @@ HRESULT WebScriptWorld::standardWorld(IWebScriptWorld** outWorld)
     (*outWorld)->AddRef();
     return S_OK;
 }
+
+HRESULT WebScriptWorld::scriptWorldForGlobalContext(JSGlobalContextRef context, IWebScriptWorld** outWorld)
+{
+    if (!outWorld)
+        return E_POINTER;
+    return findOrCreateWorld(currentWorld(toJS(context))).copyRefTo(outWorld);
+}

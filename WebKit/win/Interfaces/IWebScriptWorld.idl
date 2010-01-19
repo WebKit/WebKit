@@ -25,6 +25,7 @@
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";
 import "ocidl.idl";
+import "JavaScriptCoreAPITypes.idl";
 #endif
 
 [
@@ -35,4 +36,5 @@ import "ocidl.idl";
 ]
 interface IWebScriptWorld : IUnknown {
     HRESULT standardWorld([out, retval] IWebScriptWorld**);
+    HRESULT scriptWorldForGlobalContext([in] JSGlobalContextRef, [out, retval] IWebScriptWorld**);
 }
