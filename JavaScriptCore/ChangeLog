@@ -1,3 +1,17 @@
+2010-01-18  Evan Cheng  <evan.cheng@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add some ALWAYS_INLINE for key functions not inlined by some versions of GCC.
+        rdar://problem/7553780
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getPropertySlot): ALWAYS_INLINE both overloads.
+        * runtime/JSString.h:
+        (JSC::JSString::JSString): ALWAYS_INLINE the version that takes a UString.
+        * runtime/UString.h:
+        (JSC::operator==): ALWAYS_INLINE the version that compares two UString objects.
+
 2010-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Darin Adler.

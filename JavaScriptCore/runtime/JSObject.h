@@ -381,7 +381,7 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identif
 
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
-inline bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSObject* object = this;
     while (true) {
@@ -394,7 +394,7 @@ inline bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propert
     }
 }
 
-inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     JSObject* object = this;
     while (true) {

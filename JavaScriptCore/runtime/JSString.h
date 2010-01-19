@@ -165,7 +165,7 @@ namespace JSC {
             Fiber m_fibers[1];
         };
 
-        JSString(JSGlobalData* globalData, const UString& value)
+        ALWAYS_INLINE JSString(JSGlobalData* globalData, const UString& value)
             : JSCell(globalData->stringStructure.get())
             , m_stringLength(value.size())
             , m_value(value)
