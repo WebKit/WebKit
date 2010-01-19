@@ -929,7 +929,12 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
-    return jsNumber(exec, impl()->setTimeout(action, delay));
+
+    ExceptionCode ec = 0;
+    int result = impl()->setTimeout(action, delay, ec);
+    setDOMException(exec, ec);
+
+    return jsNumber(exec, result);
 }
 
 JSValue JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
@@ -938,7 +943,12 @@ JSValue JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
     if (exec->hadException())
         return jsUndefined();
     int delay = args.at(1).toInt32(exec);
-    return jsNumber(exec, impl()->setInterval(action, delay));
+
+    ExceptionCode ec = 0;
+    int result = impl()->setInterval(action, delay, ec);
+    setDOMException(exec, ec);
+
+    return jsNumber(exec, result);
 }
 
 JSValue JSDOMWindow::atob(ExecState* exec, const ArgList& args)
