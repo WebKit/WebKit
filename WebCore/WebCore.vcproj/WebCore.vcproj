@@ -27465,6 +27465,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGShadowTreeRootContainer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGShadowTreeRootContainer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGText.cpp"
 				>
 			</File>
@@ -27792,6 +27800,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGRootInlineBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGShadowTreeElements.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\SVGShadowTreeElements.h"
 				>
 			</File>
 			<File

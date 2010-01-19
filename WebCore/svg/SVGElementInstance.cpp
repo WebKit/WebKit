@@ -33,10 +33,6 @@
 
 #include <wtf/RefCountedLeakCounter.h>
 
-#if USE(JSC)
-#include "GCController.h"
-#endif
-
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -51,8 +47,7 @@ static EventTargetData& dummyEventTargetData()
 }
 
 SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
-    : m_needsUpdate(false)
-    , m_useElement(useElement)
+    : m_useElement(useElement)
     , m_element(originalElement)
     , m_previousSibling(0)
     , m_nextSibling(0)
@@ -93,20 +88,6 @@ void SVGElementInstance::setShadowTreeElement(SVGElement* element)
     m_shadowTreeElement = element;
 }
 
-void SVGElementInstance::forgetWrapper()
-{
-#if USE(JSC)
-    // FIXME: This is fragile, as discussed with Sam. Need to find a better solution.
-    // Think about the case where JS explicitely holds "var root = useElement.instanceRoot;".
-    // We still have to recreate this wrapper somehow. The gc collection below, won't catch it.
-
-    // If the use shadow tree has been rebuilt, just the JSSVGElementInstance objects
-    // are still holding RefPtrs of SVGElementInstance objects, which prevent us to
-    // be deleted (and the shadow tree is not destructed as well). Force JS GC.
-    gcController().garbageCollectNow();
-#endif
-}
-
 void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
 {
     appendChildToContainer<SVGElementInstance, SVGElementInstance>(child.get(), this);
@@ -114,27 +95,24 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
 
 void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
 {
-    if (!element)
+    if (!element || !element->isStyled())
+        return;
+
+    if (static_cast<SVGStyledElement*>(element)->instanceUpdatesBlocked())
         return;
 
     HashSet<SVGElementInstance*> set = element->instancesForElement();
     if (set.isEmpty())
         return;
 
-    // Find all use elements referencing the instances - ask them _once_ to rebuild.
+    // Mark all use elements referencing 'element' for rebuilding
     HashSet<SVGElementInstance*>::const_iterator it = set.begin();
     const HashSet<SVGElementInstance*>::const_iterator end = set.end();
 
-    for (; it != end; ++it)
-        (*it)->setNeedsUpdate(true);
-}
-
-void SVGElementInstance::setNeedsUpdate(bool value)
-{
-    m_needsUpdate = value;
-
-    if (m_needsUpdate)
-        correspondingUseElement()->setNeedsStyleRecalc();
+    for (; it != end; ++it) {
+        ASSERT((*it)->correspondingElement() == element);
+        (*it)->correspondingUseElement()->invalidateShadowTree();
+    }
 }
 
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const

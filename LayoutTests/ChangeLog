@@ -1,3 +1,34 @@
+2010-01-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Rewrite SVG <use> support in a modern-fashion
+        https://bugs.webkit.org/show_bug.cgi?id=33776
+
+        Update some test results, after rewriting <use> support.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.checksum: Added.
+        * platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.png: Added.
+        * platform/mac/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt: Added.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.checksum: Added.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.png: Added.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-expected.txt: Added.
+        * platform/mac/svg/custom/use-events-crash-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/mac/svg/custom/use-recursion-1-expected.txt:
+        * platform/mac/svg/custom/use-recursion-2-expected.txt:
+        * platform/mac/svg/custom/use-recursion-3-expected.txt:
+        * platform/mac/svg/custom/use-recursion-4-expected.txt:
+        * platform/mac/svg/hixie/error/017-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * svg/custom/relative-sized-deep-shadow-tree-content.xhtml: Added.
+        * svg/custom/relative-sized-shadow-tree-content.xhtml: Added.
+        * svg/text/text-text-05-t.svg: Remove possible race-condition, between selecting & dumping.
+
 2010-01-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

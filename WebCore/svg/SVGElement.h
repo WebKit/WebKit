@@ -60,8 +60,6 @@ namespace WebCore {
         virtual bool isGradientStop() const { return false; }
         virtual bool isTextContent() const { return false; }
 
-        void setShadowParentNode(ContainerNode* node) { m_shadowParent = node; }
-
         // For SVGTests
         virtual bool isValid() const { return true; }
 
@@ -95,13 +93,9 @@ namespace WebCore {
         friend class SVGElementInstance;
 
         virtual bool isSVGElement() const { return true; }
-
         virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
-        
-        virtual bool isShadowNode() const { return m_shadowParent; }
-        virtual Node* shadowParentNode() { return m_shadowParent; }
-        virtual ContainerNode* eventParentNode();
 
+        virtual ContainerNode* eventParentNode();
         virtual void buildPendingResource() { }
 
         void mapInstanceToElement(SVGElementInstance*);
@@ -109,7 +103,6 @@ namespace WebCore {
 
         virtual bool haveLoadedRequiredResources();
 
-        ContainerNode* m_shadowParent;
         mutable SynchronizablePropertyController m_propertyController;
 
         SVGCursorElement* m_cursorElement;

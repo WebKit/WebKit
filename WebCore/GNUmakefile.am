@@ -2947,6 +2947,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
 	WebCore/rendering/RenderSVGRoot.h \
+	WebCore/rendering/RenderSVGShadowTreeRootContainer.cpp \
+	WebCore/rendering/RenderSVGShadowTreeRootContainer.h \
 	WebCore/rendering/RenderSVGTSpan.cpp \
 	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGText.cpp \
@@ -2972,6 +2974,8 @@ webcore_sources += \
 	WebCore/rendering/SVGRenderTreeAsText.h \
 	WebCore/rendering/SVGRootInlineBox.cpp \
 	WebCore/rendering/SVGRootInlineBox.h \
+	WebCore/rendering/SVGShadowTreeElements.cpp \
+	WebCore/rendering/SVGShadowTreeElements.h \
 	WebCore/rendering/style/SVGRenderStyle.cpp \
 	WebCore/rendering/style/SVGRenderStyle.h \
 	WebCore/rendering/style/SVGRenderStyleDefs.cpp \

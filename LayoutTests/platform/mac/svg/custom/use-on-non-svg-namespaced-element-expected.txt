@@ -7,3 +7,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 244x18
           text run at (0,0) width 244: "You should only see this string ONCE"
     RenderSVGContainer {use} at (250,-50) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
+      RenderSVGContainer {g} at (250,-50) size 0x0

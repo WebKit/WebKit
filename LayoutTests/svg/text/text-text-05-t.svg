@@ -159,8 +159,15 @@
     <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
     
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpSelectionRect();
-document.execCommand("SelectAll");
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpSelectionRect();
+}
+
+setTimeout(function() { 
+    document.execCommand("SelectAll");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 0);
 </script>
 </svg>

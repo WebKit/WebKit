@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (250,-35.86) size 0x0
     RenderSVGContainer {use} at (250,-50) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
       RenderSVGContainer {g} at (250,-35.86) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-        RenderSVGContainer {g} at (452.13,115.56) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-35.86)}]
-          RenderSVGContainer {g} at (452.13,115.56) size 0x0
-            RenderSVGContainer {g} at (452.13,115.56) size 0x0
+        RenderSVGContainer {g} at (462.13,119.71) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(260.00,-40.00)}]
+          RenderSVGContainer {g} at (462.13,119.71) size 0x0
+            RenderSVGContainer {g} at (462.13,119.71) size 0x0

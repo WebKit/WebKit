@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body onload="window.setTimeout(resizeBox,0)">
+    <p>The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-(50%,50%), second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size</p>
+    <div id="contentBox" style="width: 100px; height: 400px; border: 1px solid red;">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <rect id="targetRect" y="50%" width="50%" height="50%" fill="blue"/>
+                <rect id="targetRect1" y="0%" width="50%" height="50%" fill="blue"/>
+                <use id="targetUse" xlink:href="#targetRect1"/>
+            </defs>
+            <use x="50%" xlink:href="#targetRect"/>
+            <use xlink:href="#targetUse"/>
+        </svg>
+    </div>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
+        function resizeBox() {
+            document.getElementById("contentBox").style.setProperty("width", "400px");
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</body>
+</html>

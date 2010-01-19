@@ -50,10 +50,9 @@ namespace WebCore {
 
         virtual bool rendererIsNeeded(RenderStyle*);
         virtual SVGResource* canvasResource(const RenderObject*) { return 0; }
-        
+
         virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
         virtual void parseMappedAttribute(MappedAttribute*);
-
         virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
@@ -65,14 +64,16 @@ namespace WebCore {
         void invalidateResources();
 
         virtual void detach();
-                                 
-        void setInstanceUpdatesBlocked(bool);
+
+        bool instanceUpdatesBlocked() const { return m_instanceUpdatesBlocked; }
+        void setInstanceUpdatesBlocked(bool value) { m_instanceUpdatesBlocked = value; }
 
     protected: 
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, SVGStyledElementIdentifier, HTMLNames::classAttrString, String, ClassName, className)
+        bool m_instanceUpdatesBlocked;
     };
 
 } // namespace WebCore

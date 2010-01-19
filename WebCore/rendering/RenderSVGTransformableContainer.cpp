@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
                   2009 Google, Inc.
 
@@ -20,12 +20,12 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "RenderSVGTransformableContainer.h"
 
+#include "SVGShadowTreeElements.h"
 #include "SVGStyledTransformableElement.h"
-#include "SVGTransformList.h"
 
 namespace WebCore {
     
@@ -47,6 +47,14 @@ TransformationMatrix RenderSVGTransformableContainer::localTransform() const
 void RenderSVGTransformableContainer::calculateLocalTransform()
 {
     m_localTransform = static_cast<SVGStyledTransformableElement*>(node())->animatedLocalTransform();
+    if (!node()->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(node())->isShadowTreeContainerElement())
+        return;
+
+    FloatSize translation = static_cast<SVGShadowTreeContainerElement*>(node())->containerTranslation();
+    if (translation.width() == 0 && translation.height() == 0)
+        return;
+
+    m_localTransform.translateRight(translation.width(), translation.height());
 }
 
 }

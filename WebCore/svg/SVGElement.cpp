@@ -54,7 +54,6 @@ using namespace HTMLNames;
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
     : StyledElement(tagName, document, CreateElementZeroRefCount)
-    , m_shadowParent(0)
     , m_cursorElement(0)
     , m_cursorImageValue(0)
 {
@@ -285,7 +284,11 @@ void SVGElement::setSynchronizedSVGAttributes(bool value) const
 
 ContainerNode* SVGElement::eventParentNode()
 {
-    return m_shadowParent ? m_shadowParent : StyledElement::eventParentNode();
+    if (Node* shadowParent = shadowParentNode()) {
+        ASSERT(shadowParent->isContainerNode());
+        return static_cast<ContainerNode*>(shadowParent);
+    }
+    return StyledElement::eventParentNode();
 }
 
 }

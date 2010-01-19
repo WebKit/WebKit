@@ -1,3 +1,108 @@
+2010-01-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Rewrite SVG <use> support in a modern-fashion
+        https://bugs.webkit.org/show_bug.cgi?id=33776
+
+        Tests: svg/custom/relative-sized-deep-shadow-tree-content.xhtml
+               svg/custom/relative-sized-shadow-tree-content.xhtml
+
+        Fixes: svg/W3C-SVG-1.1/animate-elem-30-t.svg (animated circle sometimes takes wrong path)
+
+        Rewrite <use> support in less intrusive way. Try hard to avoid recloning where possible, and do it lazily.
+        Introduce RenderSVGShadowTreeRootContainer as special renderer for SVGUseElement, that now manages the
+        render tree, instead of SVGUseElement manually hacking around it's own renderer from the DOM side.
+
+        Instead of recloning the whole shadow tree for every attribute change (DOM setAttribute / SVG DOM changes / CSS changes / childrenChanged()...)
+        just notify the RenderSVGShadowTreeRootContainer that it's supposed to reclone the tree upon the next updateFromElement() call.
+
+        updateFromElement() is fired from SVGUseElement::attach() / recalcStyle(), as it's done for HTMLFormControlElement/HTMLMediaElement, thus
+        lazily recloning the shadow tree if necessary.
+
+        Animations for <use> elements was a real performance bottlenck as the tree got recloned on every attribute change. Reclones are _completly_
+        avoided for animations now - the SVGAnim*Element classes already updated the instances of an element manually, though that resulted in a reclone
+        nontheless, and thus killing performance. <use> elements can only be recloned through mutations of the elements that they reference to.
+        For example referencing a <rect> element from a <use> element and scripting the <rect> element (setAttribute, or child tree mutations etc.).
+        We reclone instead of trying to synchronize trees - as it's currenty implemented - because it's very hard to do it right.
+
+        Any DOM / SVG DOM / CSS change on the <use> element don't reclone the tree anymore, this is a huge speed benefit.
+        x/y attribute changes are correctly handled in the render tree now (by an additional local transformation), now percentual values work
+        as expected, and resize on window changes - affecting lots of testcases.
+
+        The <use> implementation is much safer now, not doing any mutations synchronously from svgAttributeChanged etc.
+        Remove hack to force garbage collection on SVGElementInstance destruction - can't reproduce it anymore.
+
+        * Android.mk: Add new files to build.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderSVGShadowTreeRootContainer.cpp: Added. This is the rendered now created by SVGUseElement.
+        (WebCore::RenderSVGShadowTreeRootContainer::RenderSVGShadowTreeRootContainer):
+        (WebCore::RenderSVGShadowTreeRootContainer::~RenderSVGShadowTreeRootContainer):
+        (WebCore::RenderSVGShadowTreeRootContainer::updateStyle): Used form SVGUseElement to request style recalculations for the shadow tree renderers
+        (WebCore::RenderSVGShadowTreeRootContainer::updateFromElement): Used from SVGUseElement attach/recalcStyle to eventually request shadow tree updates.
+        (WebCore::RenderSVGShadowTreeRootContainer::styleDidChange): Used to propage style updates across shadow tree boundaries.
+        * rendering/RenderSVGShadowTreeRootContainer.h: Added.
+        (WebCore::RenderSVGShadowTreeRootContainer::markShadowTreeForRecreation): Marks the shadow tree for a reclone, next time updateFromElement is used.
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform): Take containerTranslation() into account, supplied by RenderSVGSDhadowTreeContainer.
+        * rendering/SVGShadowTreeElements.cpp: Added. This is the root element of the SVG shadow tree residing as (hidden) child of SVGUseElement (DOM wise).
+        (WebCore::SVGShadowTreeContainerElement::SVGShadowTreeContainerElement):
+        (WebCore::SVGShadowTreeContainerElement::~SVGShadowTreeContainerElement):
+        (WebCore::SVGShadowTreeContainerElement::containerTranslation): Used from calculateLocalTransform() to take x/y translation into account for shadow tree container elements.
+        (WebCore::SVGShadowTreeRootElement::SVGShadowTreeRootElement):
+        (WebCore::SVGShadowTreeRootElement::~SVGShadowTreeRootElement):
+        (WebCore::SVGShadowTreeRootElement::attachElement): Used by RenderSVGShadowTreeRootContainer, instead of attach(), as we're a shadow tree root node.
+        * rendering/SVGShadowTreeElements.h: Added. This is the root element of each SVG shadow sub-tree (whenever a <use> element is expanded in the shadow tree).
+        (WebCore::SVGShadowTreeContainerElement::isShadowTreeContainerElement): Return true here.
+        (WebCore::SVGShadowTreeContainerElement::setContainerOffset): Used from SVGUseElement to propagate x/y translation values set on <use> elements in the shadow tree.
+        (WebCore::SVGShadowTreeRootElement::isShadowNode): Identify us as shadow node.
+        (WebCore::SVGShadowTreeRootElement::shadowParentNode): Ditto. Return actual shadow parent node (== corresponding use element).
+        * svg/SVGElement.cpp: Shrink size of all SVG*Elements, by removing the m_shadowParent parent. SVGShadowTreeRootElement is the new base class for shadow tree.
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::eventParentNode): Call virtual shadowParentNode() method, instead of accessing m_shadowParent.
+        * svg/SVGElement.h: Remove isShadowNode() / shadowParentNode() / setShadowParentNode().
+        * svg/SVGElementInstance.cpp: Remove the hack, calling garbage collection before destruction. Can't reproduce this anymore, let's see what the bots say.
+        (WebCore::SVGElementInstance::SVGElementInstance): Remove now unnecessary m_needsUpdate flag.
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement): Don't invalidate if instance updates are blocked (see SVGStyledElement changes)
+        * svg/SVGElementInstance.h: Remove m_needsUpdate, and forgetWrapper() method.
+        * svg/SVGGElement.h:
+        (WebCore::SVGGElement::isShadowTreeContainerElement): Add new virtual method here returning false by default, SVGShadowTreeContainerElement will override it.
+        * svg/SVGStyledElement.cpp: Remove gElementsWithInstanceUpdatesBlocked HashSet tracking the state of instancesUpdatesBlocked() per SVGStyledElement - make it a member variable.
+        * svg/SVGStyledElement.h: Add inline getter/setters around m_instanceUpdatesBlocked.
+        (WebCore::SVGStyledElement::instanceUpdatesBlocked):
+        (WebCore::SVGStyledElement::setInstanceUpdatesBlocked):
+        * svg/SVGUseElement.cpp: Full rewrite of <use> support, a detailed discussion would blow the ChangeLog - see short version above.
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::instanceRoot):
+        (WebCore::SVGUseElement::insertedIntoDocument):
+        (WebCore::SVGUseElement::removedFromDocument):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::updateContainerOffset):
+        (WebCore::SVGUseElement::updateContainerOffsets):
+        (WebCore::SVGUseElement::recalcStyle):
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::createRenderer):
+        (WebCore::updateFromElementCallback):
+        (WebCore::SVGUseElement::attach):
+        (WebCore::SVGUseElement::detach):
+        (WebCore::SVGUseElement::toClipPath):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::handleDeepUseReferencing):
+        (WebCore::SVGUseElement::buildShadowTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        (WebCore::SVGUseElement::instanceForShadowTreeElement):
+        (WebCore::SVGUseElement::invalidateShadowTree):
+        (WebCore::SVGUseElement::transferUseAttributesToReplacedElement):
+        * svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::isPendingResource):
+
 2010-01-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

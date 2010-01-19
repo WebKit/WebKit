@@ -19,3 +19,4 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (350,25) size 40x40
           RenderSVGContainer {g} at (350,25) size 40x40
             RenderPath {rect} at (350,25) size 40x40 [fill={[type=SOLID] [color=#00FF00]}] [data="M0.00,0.00 L40.00,0.00 L40.00,40.00 L0.00,40.00 Z"]
+caret: position 0 of child 0 {#text} of child 1 {text} of child 1 {g} of child 3 {g} of child 3 {g} of child 1 {svg} of document

@@ -144,6 +144,10 @@
 		08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C925180FCC7C4A00480DEC /* FilterEffect.h */; };
 		08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */; };
 		08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */; };
+		08DAB9BA1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */; };
+		08DAB9BB1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */; };
+		08DAB9C21103D9C1003E7ABA /* SVGShadowTreeElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */; };
+		08DAB9C31103D9C1003E7ABA /* SVGShadowTreeElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */; };
 		08E192530EDE0C3A0087B780 /* WMLErrorHandling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */; };
 		08E192540EDE0C3A0087B780 /* WMLErrorHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E192520EDE0C3A0087B780 /* WMLErrorHandling.h */; };
 		08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */; };
@@ -5368,6 +5372,10 @@
 		08C925180FCC7C4A00480DEC /* FilterEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterEffect.h; path = filters/FilterEffect.h; sourceTree = "<group>"; };
 		08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTaskElement.cpp; sourceTree = "<group>"; };
 		08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTaskElement.h; sourceTree = "<group>"; };
+		08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShadowTreeRootContainer.cpp; sourceTree = "<group>"; };
+		08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShadowTreeRootContainer.h; sourceTree = "<group>"; };
+		08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGShadowTreeElements.cpp; sourceTree = "<group>"; };
+		08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGShadowTreeElements.h; sourceTree = "<group>"; };
 		08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLErrorHandling.cpp; sourceTree = "<group>"; };
 		08E192520EDE0C3A0087B780 /* WMLErrorHandling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLErrorHandling.h; sourceTree = "<group>"; };
 		08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLengthCustom.cpp; sourceTree = "<group>"; };
@@ -15581,6 +15589,8 @@
 				A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */,
 				AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */,
 				AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */,
+				08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */,
+				08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */,
 				853CA9D20AEEC5E9002372DC /* RenderSVGText.cpp */,
 				853CA9D30AEEC5E9002372DC /* RenderSVGText.h */,
 				B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */,
@@ -15644,6 +15654,8 @@
 				B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */,
 				853CA9E40AEEC608002372DC /* SVGRootInlineBox.cpp */,
 				853CA9E50AEEC608002372DC /* SVGRootInlineBox.h */,
+				08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */,
+				08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
 				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
@@ -18355,6 +18367,8 @@
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
+				08DAB9BB1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h in Headers */,
+				08DAB9C31103D9C1003E7ABA /* SVGShadowTreeElements.h in Headers */,
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */,
 				59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */,
@@ -20520,6 +20534,8 @@
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,
 				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
+				08DAB9BA1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp in Sources */,
+				08DAB9C21103D9C1003E7ABA /* SVGShadowTreeElements.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */,
 				59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */,

@@ -1634,6 +1634,7 @@ HEADERS += \
     rendering/RenderSVGInlineText.h \
     rendering/RenderSVGModelObject.h \
     rendering/RenderSVGRoot.h \
+    rendering/RenderSVGShadowTreeRootContainer.h \
     rendering/RenderSVGText.h \
     rendering/RenderSVGTextPath.h \
     rendering/RenderSVGTransformableContainer.h \
@@ -1691,6 +1692,7 @@ HEADERS += \
     rendering/SVGRenderSupport.h \
     rendering/SVGRenderTreeAsText.h \
     rendering/SVGRootInlineBox.h \
+    rendering/SVGShadowTreeElements.h \
     rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
@@ -2578,6 +2580,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGInlineText.cpp \
         rendering/RenderSVGModelObject.cpp \
         rendering/RenderSVGRoot.cpp \
+        rendering/RenderSVGShadowTreeRootContainer.cpp \
         rendering/RenderSVGText.cpp \
         rendering/RenderSVGTextPath.cpp \
         rendering/RenderSVGTransformableContainer.cpp \
@@ -2588,7 +2591,8 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGInlineTextBox.cpp \
         rendering/SVGMarkerLayoutInfo.cpp \
         rendering/SVGRenderSupport.cpp \
-        rendering/SVGRootInlineBox.cpp
+        rendering/SVGRootInlineBox.cpp \
+        rendering/SVGShadowTreeElements.cpp
 }
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
