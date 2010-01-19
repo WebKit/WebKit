@@ -1013,11 +1013,12 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
                 return;
             }
         }
+        inlineBox = 0;
         if (renderer->isBox()) {
             inlineBox = toRenderBox(renderer)->inlineBoxWrapper();
             if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
                 return;
-        } else {
+        } else if (node()->isContentEditable()) {
             Position pos = positionInParentBeforeNode(node()).upstream();
             pos.getInlineBoxAndOffset(DOWNSTREAM, primaryDirection, inlineBox, caretOffset);
             return;

@@ -1,3 +1,14 @@
+2010-01-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Infinite recursion in Position::getInlineBoxAndOffset()
+        https://bugs.webkit.org/show_bug.cgi?id=33864
+        <rdar://problem/7552959>
+
+        * editing/selection/selection-applet-expected.txt: Added.
+        * editing/selection/selection-applet.html: Added.
+
 2010-01-15  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
