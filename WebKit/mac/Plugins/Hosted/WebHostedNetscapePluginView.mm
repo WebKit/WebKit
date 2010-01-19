@@ -37,10 +37,10 @@
 #import "WebUIDelegate.h"
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <WebCore/Bridge.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/HTMLPlugInElement.h>
-#import <WebCore/runtime.h>
 #import <WebCore/runtime_root.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
