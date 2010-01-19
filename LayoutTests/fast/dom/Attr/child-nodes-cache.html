@@ -1,0 +1,38 @@
+<body onload="test()">
+<p>Running test...</p>
+<textarea id=t rows=20>textarea</textarea>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function test()
+{
+    var elem = document.getElementById("t");
+    var nodes = document.getElementById("t").getAttributeNode('rows').childNodes;
+    nodes[0]; // Prime the child node cache.
+    document.body.removeChild(document.getElementById("t"));
+    elem.getAttributeNode('rows').removeChild(nodes[0]);
+    setTimeout(function() {
+        gc();
+        gc();
+        gc();
+        try { nodes[0].textContent } catch (ex) { }
+
+        document.getElementsByTagName("p")[0].innerHTML = "PASS"
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+}
+</script>

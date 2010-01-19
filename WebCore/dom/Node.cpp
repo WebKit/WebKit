@@ -917,7 +917,10 @@ void Node::notifyLocalNodeListsAttributeChanged()
     if (!data->nodeLists())
         return;
 
-    data->nodeLists()->invalidateCachesThatDependOnAttributes();
+    if (!isAttributeNode())
+        data->nodeLists()->invalidateCachesThatDependOnAttributes();
+    else
+        data->nodeLists()->invalidateCaches();
 
     if (data->nodeLists()->isEmpty()) {
         data->clearNodeLists();

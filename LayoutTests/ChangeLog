@@ -1,3 +1,13 @@
+2010-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33850
+        Attr.childNodes does not get updated after DOM mutations
+
+        * fast/dom/Attr/child-nodes-cache-expected.txt: Added.
+        * fast/dom/Attr/child-nodes-cache.html: Added.
+
 2010-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
