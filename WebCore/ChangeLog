@@ -1,5 +1,39 @@
 2010-01-18  Daniel Bates  <dbates@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33089
+
+        Implements all of the alphabetic CSS3 list-style-types as per
+        section 4.4 of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#alphabetic>.
+
+        Test: fast/lists/w3-css3-list-styles-alphabetic.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Updated comment to include
+        added list-style-types.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added new list style types,
+        alphabetized enums, and removed indent to conform to the WebKit Code Style Guidelines.
+        * css/CSSValueKeywords.in:
+        * inspector/front-end/CSSSourceSyntaxHighlighter.js:
+        (WebInspector.CSSSourceSyntaxHighlighter): Added new list style types
+        and alphabetized array valueKeywords.
+        * platform/text/CharacterNames.h: Added constant ethiopicPrefaceColon.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toAlphabetic):
+        (WebCore::listMarkerSuffix): Added.
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::paint): Modified to call WebCore::listMarkerSuffix.
+        (WebCore::RenderListMarker::calcPrefWidths): Ditto.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Ditto.
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
+2010-01-18  Daniel Bates  <dbates@webkit.org>
+
         Unreviewed, fix misspelling of the word maximum in comment.
 
         * html/HTMLInputElement.cpp:

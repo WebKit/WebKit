@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
+ * Copyright (C) 2010 Daniel Bates (dbates@intudata.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -95,6 +96,11 @@ static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
 
     ASSERT(length <= lettersSize);
     return String(&letters[lettersSize - length], length);
+}
+
+template <size_t size> static inline String toAlphabetic(int number, const UChar(&alphabet)[size])
+{
+    return toAlphabetic(number, alphabet, size);
 }
 
 static int toHebrewUnder1000(int number, UChar letters[5])
@@ -337,6 +343,76 @@ static String toCJKIdeographic(int number, const UChar table[16])
     return String(characters, length);
 }
 
+static UChar listMarkerSuffix(EListStyleType type)
+{
+    // Note, the following switch statement has been explicitly
+    // grouped by list-style-type suffix.
+    switch (type) {
+    case NoneListStyle:
+    case Disc:
+    case Circle:
+    case Square:
+        ASSERT_NOT_REACHED();
+        return ' ';
+    case Afar:
+    case Amharic:
+    case AmharicAbegede:
+    case Ethiopic:
+    case EthiopicAbegede:
+    case EthiopicAbegedeAmEt:
+    case EthiopicAbegedeGez:
+    case EthiopicAbegedeTiEr:
+    case EthiopicAbegedeTiEt:
+    case EthiopicHalehameAaEr:
+    case EthiopicHalehameAaEt:
+    case EthiopicHalehameAmEt:
+    case EthiopicHalehameGez:
+    case EthiopicHalehameOmEt:
+    case EthiopicHalehameSidEt:
+    case EthiopicHalehameSoEt:
+    case EthiopicHalehameTiEr:
+    case EthiopicHalehameTiEt:
+    case EthiopicHalehameTig:
+    case Oromo:
+    case Sidama:
+    case Somali:
+    case Tigre:
+    case TigrinyaEr:
+    case TigrinyaErAbegede:
+    case TigrinyaEt:
+    case TigrinyaEtAbegede:
+        return ethiopicPrefaceColon;
+    case Armenian:
+    case CJKIdeographic:
+    case CjkEarthlyBranch:
+    case CjkHeavenlyStem:
+    case DecimalLeadingZero:
+    case DecimalListStyle:
+    case Georgian:
+    case Hangul:
+    case HangulConsonant:
+    case Hebrew:
+    case Hiragana:
+    case HiraganaIroha:
+    case Katakana:
+    case KatakanaIroha:
+    case LowerAlpha:
+    case LowerGreek:
+    case LowerLatin:
+    case LowerNorwegian:
+    case LowerRoman:
+    case UpperAlpha:
+    case UpperGreek:
+    case UpperLatin:
+    case UpperNorwegian:
+    case UpperRoman:
+        return '.';
+    }
+
+    ASSERT_NOT_REACHED();
+    return '.';
+}
+
 String listMarkerText(EListStyleType type, int value)
 {
     switch (type) {
@@ -369,7 +445,7 @@ String listMarkerText(EListStyleType type, int value)
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
             };
-            return toAlphabetic(value, lowerLatinAlphabet, 26);
+            return toAlphabetic(value, lowerLatinAlphabet);
         }
         case UpperAlpha:
         case UpperLatin: {
@@ -377,7 +453,7 @@ String listMarkerText(EListStyleType type, int value)
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
             };
-            return toAlphabetic(value, upperLatinAlphabet, 26);
+            return toAlphabetic(value, upperLatinAlphabet);
         }
         case LowerGreek: {
             static const UChar lowerGreekAlphabet[24] = {
@@ -385,7 +461,7 @@ String listMarkerText(EListStyleType type, int value)
                 0x03B9, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BE, 0x03BF, 0x03C0,
                 0x03C1, 0x03C3, 0x03C4, 0x03C5, 0x03C6, 0x03C7, 0x03C8, 0x03C9
             };
-            return toAlphabetic(value, lowerGreekAlphabet, 24);
+            return toAlphabetic(value, lowerGreekAlphabet);
         }
 
         case Hiragana: {
@@ -399,7 +475,7 @@ String listMarkerText(EListStyleType type, int value)
                 0x3080, 0x3081, 0x3082, 0x3084, 0x3086, 0x3088, 0x3089, 0x308A,
                 0x308B, 0x308C, 0x308D, 0x308F, 0x3090, 0x3091, 0x3092, 0x3093
             };
-            return toAlphabetic(value, hiraganaAlphabet, 48);
+            return toAlphabetic(value, hiraganaAlphabet);
         }
         case HiraganaIroha: {
             // FIXME: This table comes from the CSS3 draft, and is probably
@@ -412,7 +488,7 @@ String listMarkerText(EListStyleType type, int value)
                 0x3053, 0x3048, 0x3066, 0x3042, 0x3055, 0x304D, 0x3086, 0x3081,
                 0x307F, 0x3057, 0x3091, 0x3072, 0x3082, 0x305B, 0x3059
             };
-            return toAlphabetic(value, hiraganaIrohaAlphabet, 47);
+            return toAlphabetic(value, hiraganaIrohaAlphabet);
         }
         case Katakana: {
             // FIXME: This table comes from the CSS3 draft, and is probably
@@ -425,7 +501,7 @@ String listMarkerText(EListStyleType type, int value)
                 0x30E0, 0x30E1, 0x30E2, 0x30E4, 0x30E6, 0x30E8, 0x30E9, 0x30EA,
                 0x30EB, 0x30EC, 0x30ED, 0x30EF, 0x30F0, 0x30F1, 0x30F2, 0x30F3
             };
-            return toAlphabetic(value, katakanaAlphabet, 48);
+            return toAlphabetic(value, katakanaAlphabet);
         }
         case KatakanaIroha: {
             // FIXME: This table comes from the CSS3 draft, and is probably
@@ -438,9 +514,186 @@ String listMarkerText(EListStyleType type, int value)
                 0x30B3, 0x30A8, 0x30C6, 0x30A2, 0x30B5, 0x30AD, 0x30E6, 0x30E1,
                 0x30DF, 0x30B7, 0x30F1, 0x30D2, 0x30E2, 0x30BB, 0x30B9
             };
-            return toAlphabetic(value, katakanaIrohaAlphabet, 47);
+            return toAlphabetic(value, katakanaIrohaAlphabet);
         }
 
+        case Afar:
+        case EthiopicHalehameAaEt:
+        case EthiopicHalehameAaEr: {
+            static const UChar ethiopicHalehameAaErAlphabet[18] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1260, 0x1270, 0x1290,
+                0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12E8, 0x12F0, 0x1308, 0x1338, 0x1348
+            };
+            return toAlphabetic(value, ethiopicHalehameAaErAlphabet);
+        }
+        case Amharic:
+        case EthiopicHalehameAmEt: {
+            static const UChar ethiopicHalehameAmEtAlphabet[33] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1238, 0x1240,
+                0x1260, 0x1270, 0x1278, 0x1280, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12B8,
+                0x12C8, 0x12D0, 0x12D8, 0x12E0, 0x12E8, 0x12F0, 0x1300, 0x1308, 0x1320,
+                0x1328, 0x1330, 0x1338, 0x1340, 0x1348, 0x1350
+            };
+            return toAlphabetic(value, ethiopicHalehameAmEtAlphabet);
+        }
+        case AmharicAbegede:
+        case EthiopicAbegedeAmEt: {
+            static const UChar ethiopicAbegedeAmEtAlphabet[33] = {
+                0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
+                0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
+                0x1298, 0x1220, 0x12D0, 0x1348, 0x1338, 0x1240, 0x1228, 0x1230, 0x1238,
+                0x1270, 0x1278, 0x1280, 0x1340, 0x1330, 0x1350
+            };
+            return toAlphabetic(value, ethiopicAbegedeAmEtAlphabet);
+        }
+        case CjkEarthlyBranch: {
+            static const UChar cjkEarthlyBranchAlphabet[12] = {
+                0x5B50, 0x4E11, 0x5BC5, 0x536F, 0x8FB0, 0x5DF3, 0x5348, 0x672A, 0x7533,
+                0x9149, 0x620C, 0x4EA5
+            };
+            return toAlphabetic(value, cjkEarthlyBranchAlphabet);
+        }
+        case CjkHeavenlyStem: {
+            static const UChar cjkHeavenlyStemAlphabet[10] = {
+                0x7532, 0x4E59, 0x4E19, 0x4E01, 0x620A, 0x5DF1, 0x5E9A, 0x8F9B, 0x58EC,
+                0x7678
+            };
+            return toAlphabetic(value, cjkHeavenlyStemAlphabet);
+        }
+        case Ethiopic:
+        case EthiopicHalehameGez: {
+            static const UChar ethiopicHalehameGezAlphabet[26] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1240, 0x1260,
+                0x1270, 0x1280, 0x1290, 0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12D8, 0x12E8,
+                0x12F0, 0x1308, 0x1320, 0x1330, 0x1338, 0x1340, 0x1348, 0x1350
+            };
+            return toAlphabetic(value, ethiopicHalehameGezAlphabet);
+        }
+        case EthiopicAbegede:
+        case EthiopicAbegedeGez: {
+            static const UChar ethiopicAbegedeGezAlphabet[26] = {
+                0x12A0, 0x1260, 0x1308, 0x12F0, 0x1200, 0x12C8, 0x12D8, 0x1210, 0x1320,
+                0x12E8, 0x12A8, 0x1208, 0x1218, 0x1290, 0x1220, 0x12D0, 0x1348, 0x1338,
+                0x1240, 0x1228, 0x1230, 0x1270, 0x1280, 0x1340, 0x1330, 0x1350
+            };
+            return toAlphabetic(value, ethiopicAbegedeGezAlphabet);
+        }
+        case HangulConsonant: {
+            static const UChar hangulConsonantAlphabet[14] = {
+                0x3131, 0x3134, 0x3137, 0x3139, 0x3141, 0x3142, 0x3145, 0x3147, 0x3148,
+                0x314A, 0x314B, 0x314C, 0x314D, 0x314E
+            };
+            return toAlphabetic(value, hangulConsonantAlphabet);
+        }
+        case Hangul: {
+            static const UChar hangulAlphabet[14] = {
+                0xAC00, 0xB098, 0xB2E4, 0xB77C, 0xB9C8, 0xBC14, 0xC0AC, 0xC544, 0xC790,
+                0xCC28, 0xCE74, 0xD0C0, 0xD30C, 0xD558
+            };
+            return toAlphabetic(value, hangulAlphabet);
+        }
+        case Oromo:
+        case EthiopicHalehameOmEt: {
+            static const UChar ethiopicHalehameOmEtAlphabet[25] = {
+                0x1200, 0x1208, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260, 0x1270,
+                0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12C8, 0x12E8, 0x12F0, 0x12F8,
+                0x1300, 0x1308, 0x1320, 0x1328, 0x1338, 0x1330, 0x1348
+            };
+            return toAlphabetic(value, ethiopicHalehameOmEtAlphabet);
+        }
+        case Sidama:
+        case EthiopicHalehameSidEt: {
+            static const UChar ethiopicHalehameSidEtAlphabet[26] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
+                0x1270, 0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12C8, 0x12E8, 0x12F0,
+                0x12F8, 0x1300, 0x1308, 0x1320, 0x1328, 0x1338, 0x1330, 0x1348
+            };
+            return toAlphabetic(value, ethiopicHalehameSidEtAlphabet);
+        }
+        case Somali:
+        case EthiopicHalehameSoEt: {
+            static const UChar ethiopicHalehameSoEtAlphabet[22] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
+                0x1270, 0x1290, 0x12A0, 0x12A8, 0x12B8, 0x12C8, 0x12D0, 0x12E8, 0x12F0,
+                0x1300, 0x1308, 0x1338, 0x1348
+            };
+            return toAlphabetic(value, ethiopicHalehameSoEtAlphabet);
+        }
+        case Tigre:
+        case EthiopicHalehameTig: {
+            static const UChar ethiopicHalehameTigAlphabet[27] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
+                0x1270, 0x1278, 0x1290, 0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12D8, 0x12E8,
+                0x12F0, 0x1300, 0x1308, 0x1320, 0x1328, 0x1338, 0x1330, 0x1348, 0x1350
+            };
+            return toAlphabetic(value, ethiopicHalehameTigAlphabet);
+        }
+        case TigrinyaEr:
+        case EthiopicHalehameTiEr: {
+            static const UChar ethiopicHalehameTiErAlphabet[31] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1250,
+                0x1260, 0x1270, 0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12B8, 0x12C8,
+                0x12D0, 0x12D8, 0x12E0, 0x12E8, 0x12F0, 0x1300, 0x1308, 0x1320, 0x1328,
+                0x1330, 0x1338, 0x1348, 0x1350
+            };
+            return toAlphabetic(value, ethiopicHalehameTiErAlphabet);
+        }
+        case TigrinyaErAbegede:
+        case EthiopicAbegedeTiEr: {
+            static const UChar ethiopicAbegedeTiErAlphabet[31] = {
+                0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
+                0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
+                0x1298, 0x12D0, 0x1348, 0x1338, 0x1240, 0x1250, 0x1228, 0x1230, 0x1238,
+                0x1270, 0x1278, 0x1330, 0x1350
+            };
+            return toAlphabetic(value, ethiopicAbegedeTiErAlphabet);
+        }
+        case TigrinyaEt:
+        case EthiopicHalehameTiEt: {
+            static const UChar ethiopicHalehameTiEtAlphabet[34] = {
+                0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1238, 0x1240,
+                0x1250, 0x1260, 0x1270, 0x1278, 0x1280, 0x1290, 0x1298, 0x12A0, 0x12A8,
+                0x12B8, 0x12C8, 0x12D0, 0x12D8, 0x12E0, 0x12E8, 0x12F0, 0x1300, 0x1308,
+                0x1320, 0x1328, 0x1330, 0x1338, 0x1340, 0x1348, 0x1350
+            };
+            return toAlphabetic(value, ethiopicHalehameTiEtAlphabet);
+        }
+        case TigrinyaEtAbegede:
+        case EthiopicAbegedeTiEt: {
+            static const UChar ethiopicAbegedeTiEtAlphabet[34] = {
+                0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
+                0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
+                0x1298, 0x1220, 0x12D0, 0x1348, 0x1338, 0x1240, 0x1250, 0x1228, 0x1230,
+                0x1238, 0x1270, 0x1278, 0x1280, 0x1340, 0x1330, 0x1350
+            };
+            return toAlphabetic(value, ethiopicAbegedeTiEtAlphabet);
+        }
+        case UpperGreek: {
+            static const UChar upperGreekAlphabet[24] = {
+                0x0391, 0x0392, 0x0393, 0x0394, 0x0395, 0x0396, 0x0397, 0x0398, 0x0399,
+                0x039A, 0x039B, 0x039C, 0x039D, 0x039E, 0x039F, 0x03A0, 0x03A1, 0x03A3,
+                0x03A4, 0x03A5, 0x03A6, 0x03A7, 0x03A8, 0x03A9
+            };
+            return toAlphabetic(value, upperGreekAlphabet);
+        }
+        case LowerNorwegian: {
+            static const UChar lowerNorwegianAlphabet[29] = {
+                0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069,
+                0x006A, 0x006B, 0x006C, 0x006D, 0x006E, 0x006F, 0x0070, 0x0071, 0x0072,
+                0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007A, 0x00E6,
+                0x00F8, 0x00E5
+            };
+            return toAlphabetic(value, lowerNorwegianAlphabet);
+        }
+        case UpperNorwegian: {
+            static const UChar upperNorwegianAlphabet[29] = {
+                0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049,
+                0x004A, 0x004B, 0x004C, 0x004D, 0x004E, 0x004F, 0x0050, 0x0051, 0x0052,
+                0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x00C6,
+                0x00D8, 0x00C5
+            };
+            return toAlphabetic(value, upperNorwegianAlphabet);
+        }
         case CJKIdeographic: {
             static const UChar traditionalChineseInformalTable[16] = {
                 0x842C, 0x5104, 0x5146,
@@ -570,7 +823,8 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     context->setStrokeThickness(1.0f);
     context->setFillColor(color, style()->colorSpace());
 
-    switch (style()->listStyleType()) {
+    EListStyleType type = style()->listStyleType();
+    switch (type) {
         case Disc:
             context->drawEllipse(marker);
             return;
@@ -583,22 +837,56 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
         case NoneListStyle:
             return;
+        case Afar:
+        case Amharic:
+        case AmharicAbegede:
         case Armenian:
         case CJKIdeographic:
+        case CjkEarthlyBranch:
+        case CjkHeavenlyStem:
         case DecimalLeadingZero:
+        case DecimalListStyle:
+        case Ethiopic:
+        case EthiopicAbegede:
+        case EthiopicAbegedeAmEt:
+        case EthiopicAbegedeGez:
+        case EthiopicAbegedeTiEr:
+        case EthiopicAbegedeTiEt:
+        case EthiopicHalehameAaEr:
+        case EthiopicHalehameAaEt:
+        case EthiopicHalehameAmEt:
+        case EthiopicHalehameGez:
+        case EthiopicHalehameOmEt:
+        case EthiopicHalehameSidEt:
+        case EthiopicHalehameSoEt:
+        case EthiopicHalehameTiEr:
+        case EthiopicHalehameTiEt:
+        case EthiopicHalehameTig:
         case Georgian:
+        case Hangul:
+        case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
         case Katakana:
         case KatakanaIroha:
-        case DecimalListStyle:
         case LowerAlpha:
         case LowerGreek:
         case LowerLatin:
+        case LowerNorwegian:
         case LowerRoman:
+        case Oromo:
+        case Sidama:
+        case Somali:
+        case Tigre:
+        case TigrinyaEr:
+        case TigrinyaErAbegede:
+        case TigrinyaEt:
+        case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperGreek:
         case UpperLatin:
+        case UpperNorwegian:
         case UpperRoman:
             break;
     }
@@ -620,16 +908,17 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     const Font& font = style()->font();
+    const UChar suffix = listMarkerSuffix(type);
     if (style()->direction() == LTR) {
         int width = font.width(textRun);
         context->drawText(style()->font(), textRun, marker.location());
-        const UChar periodSpace[2] = { '.', ' ' };
-        context->drawText(style()->font(), TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
+        UChar suffixSpace[2] = { suffix, ' ' };
+        context->drawText(style()->font(), TextRun(suffixSpace, 2), marker.location() + IntSize(width, 0));
     } else {
-        const UChar spacePeriod[2] = { ' ', '.' };
-        TextRun spacePeriodRun(spacePeriod, 2);
-        int width = font.width(spacePeriodRun);
-        context->drawText(style()->font(), spacePeriodRun, marker.location());
+        UChar spaceSuffix[2] = { ' ', suffix };
+        TextRun spaceSuffixRun(spaceSuffix, 2);
+        int width = font.width(spaceSuffixRun);
+        context->drawText(style()->font(), spaceSuffixRun, marker.location());
         context->drawText(style()->font(), textRun, marker.location() + IntSize(width, 0));
     }
 }
@@ -701,31 +990,65 @@ void RenderListMarker::calcPrefWidths()
             m_text = listMarkerText(type, 0); // value is ignored for these types
             width = (font.ascent() * 2 / 3 + 1) / 2 + 2;
             break;
+        case Afar:
+        case Amharic:
+        case AmharicAbegede:
         case Armenian:
         case CJKIdeographic:
+        case CjkEarthlyBranch:
+        case CjkHeavenlyStem:
         case DecimalLeadingZero:
+        case DecimalListStyle:
+        case Ethiopic:
+        case EthiopicAbegede:
+        case EthiopicAbegedeAmEt:
+        case EthiopicAbegedeGez:
+        case EthiopicAbegedeTiEr:
+        case EthiopicAbegedeTiEt:
+        case EthiopicHalehameAaEr:
+        case EthiopicHalehameAaEt:
+        case EthiopicHalehameAmEt:
+        case EthiopicHalehameGez:
+        case EthiopicHalehameOmEt:
+        case EthiopicHalehameSidEt:
+        case EthiopicHalehameSoEt:
+        case EthiopicHalehameTiEr:
+        case EthiopicHalehameTiEt:
+        case EthiopicHalehameTig:
         case Georgian:
+        case Hangul:
+        case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
         case Katakana:
         case KatakanaIroha:
-        case DecimalListStyle:
         case LowerAlpha:
         case LowerGreek:
         case LowerLatin:
+        case LowerNorwegian:
         case LowerRoman:
+        case Oromo:
+        case Sidama:
+        case Somali:
+        case Tigre:
+        case TigrinyaEr:
+        case TigrinyaErAbegede:
+        case TigrinyaEt:
+        case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperGreek:
         case UpperLatin:
+        case UpperNorwegian:
         case UpperRoman:
             m_text = listMarkerText(type, m_listItem->value());
             if (m_text.isEmpty())
                 width = 0;
             else {
                 int itemWidth = font.width(m_text);
-                const UChar periodSpace[2] = { '.', ' ' };
-                int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
-                width = itemWidth + periodSpaceWidth;
+                UChar suffixSpace[2] = { listMarkerSuffix(type), ' ' };
+                int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
+                width = itemWidth + suffixSpaceWidth;
             }
             break;
     }
@@ -835,7 +1158,8 @@ IntRect RenderListMarker::getRelativeMarkerRect()
     if (isImage())
         return IntRect(x(), y(), m_image->imageSize(this, style()->effectiveZoom()).width(), m_image->imageSize(this, style()->effectiveZoom()).height());
 
-    switch (style()->listStyleType()) {
+    EListStyleType type = style()->listStyleType();
+    switch (type) {
         case Disc:
         case Circle:
         case Square: {
@@ -847,30 +1171,64 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         }
         case NoneListStyle:
             return IntRect();
+        case Afar:
+        case Amharic:
+        case AmharicAbegede:
         case Armenian:
         case CJKIdeographic:
+        case CjkEarthlyBranch:
+        case CjkHeavenlyStem:
         case DecimalLeadingZero:
+        case DecimalListStyle:
+        case Ethiopic:
+        case EthiopicAbegede:
+        case EthiopicAbegedeAmEt:
+        case EthiopicAbegedeGez:
+        case EthiopicAbegedeTiEr:
+        case EthiopicAbegedeTiEt:
+        case EthiopicHalehameAaEr:
+        case EthiopicHalehameAaEt:
+        case EthiopicHalehameAmEt:
+        case EthiopicHalehameGez:
+        case EthiopicHalehameOmEt:
+        case EthiopicHalehameSidEt:
+        case EthiopicHalehameSoEt:
+        case EthiopicHalehameTiEr:
+        case EthiopicHalehameTiEt:
+        case EthiopicHalehameTig:
         case Georgian:
+        case Hangul:
+        case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
         case Katakana:
         case KatakanaIroha:
-        case DecimalListStyle:
         case LowerAlpha:
         case LowerGreek:
         case LowerLatin:
+        case LowerNorwegian:
         case LowerRoman:
+        case Oromo:
+        case Sidama:
+        case Somali:
+        case Tigre:
+        case TigrinyaEr:
+        case TigrinyaErAbegede:
+        case TigrinyaEt:
+        case TigrinyaEtAbegede:
         case UpperAlpha:
+        case UpperGreek:
         case UpperLatin:
+        case UpperNorwegian:
         case UpperRoman:
             if (m_text.isEmpty())
                 return IntRect();
             const Font& font = style()->font();
             int itemWidth = font.width(m_text);
-            const UChar periodSpace[2] = { '.', ' ' };
-            int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
-            return IntRect(x(), y() + font.ascent(), itemWidth + periodSpaceWidth, font.height());
+            UChar suffixSpace[2] = { listMarkerSuffix(type), ' ' };
+            int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
+            return IntRect(x(), y() + font.ascent(), itemWidth + suffixSpaceWidth, font.height());
     }
 
     return IntRect();
