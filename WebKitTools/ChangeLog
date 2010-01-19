@@ -1,3 +1,13 @@
+2010-01-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        validate-committer-lists throws exception and committers.py needs a refresh
+        https://bugs.webkit.org/show_bug.cgi?id=33831
+
+        * Scripts/validate-committer-lists: use webkit_logging
+        * Scripts/webkitpy/committers.py: Add recently minted committers.  Fix Simon Hausmanns email address list to include his webkit-committers@lists address.
+
 2010-01-18  Adam Roben  <aroben@apple.com>
 
         Add LayoutTestController support for calling new WebKit SPI to

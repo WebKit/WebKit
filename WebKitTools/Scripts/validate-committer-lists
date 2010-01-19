@@ -37,7 +37,7 @@ import re
 import urllib2
 from datetime import date, datetime, timedelta
 from webkitpy.committers import CommitterList
-from webkitpy.logging import log, error
+from webkitpy.webkit_logging import log, error
 from webkitpy.scm import Git
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
