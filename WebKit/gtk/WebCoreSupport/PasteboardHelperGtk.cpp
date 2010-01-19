@@ -122,20 +122,27 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer dat
 
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     ASSERT(dataObject);
-
     dataObject->clear();
-    if (data) {
-        WebCore::Page* corePage = reinterpret_cast<WebCore::Page*>(data);
 
-        if (!corePage->focusController())
-            return;
+    // This will be true for clipboards other than X11 primary.
+    if (!data)
+        return;
 
-        Frame* frame = corePage->focusController()->focusedOrMainFrame();
+    WebKitWebView* webView = reinterpret_cast<WebKitWebView*>(data);
+    WebCore::Page* corePage = core(webView);
 
-        // Collapse the selection without clearing it
-        ASSERT(frame);
-        frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+    if (!corePage || !corePage->focusController()) {
+        g_object_unref(webView);
+        return;
     }
+
+    Frame* frame = corePage->focusController()->focusedOrMainFrame();
+
+    // Collapse the selection without clearing it
+    ASSERT(frame);
+    frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+
+    g_object_unref(webView);
 }
 
 void PasteboardHelperGtk::writeClipboardContents(GtkClipboard* clipboard, gpointer data)
@@ -148,9 +155,19 @@ void PasteboardHelperGtk::writeClipboardContents(GtkClipboard* clipboard, gpoint
 
     if (numberOfTargets > 0 && table) {
         settingClipboard = true;
-        gtk_clipboard_set_with_data(clipboard, table, numberOfTargets,
-                                    getClipboardContentsCallback,
-                                    clearClipboardContentsCallback, data);
+
+        // Protect the web view from being destroyed before one of the clipboard callbacks
+        // is called. Balanced in both getClipboardContentsCallback and
+        // clearClipboardContentsCallback.
+        WebKitWebView* webView = static_cast<WebKitWebView*>(data);
+        g_object_ref(webView);
+
+        gboolean succeeded = gtk_clipboard_set_with_data(clipboard, table, numberOfTargets,
+                                                         getClipboardContentsCallback,
+                                                         clearClipboardContentsCallback, data);
+        if (!succeeded)
+            g_object_unref(webView);
+
         settingClipboard = false;
     } else
         gtk_clipboard_clear(clipboard);

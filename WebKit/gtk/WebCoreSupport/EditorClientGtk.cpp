@@ -206,7 +206,7 @@ void EditorClient::respondToChangedSelection()
     if (targetFrame->selection()->isRange()) {
         dataObject->clear();
         dataObject->setRange(targetFrame->selection()->toNormalizedRange());
-        pasteboardHelperInstance()->writeClipboardContents(clipboard, corePage);
+        pasteboardHelperInstance()->writeClipboardContents(clipboard, m_webView);
     }
 #endif
 

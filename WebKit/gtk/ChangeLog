@@ -1,3 +1,22 @@
+2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] More crashes related to the clipboard management
+        https://bugs.webkit.org/show_bug.cgi?id=33746
+
+        Pass the WebKitWebView object (which is a GObject, thus
+        ref-counted) to the clipboard functions instead of passing the
+        Page - this allows us to explicitely protect the object inbetween
+        the clipboard call and its callbacks, which fixes the crash.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::respondToChangedSelection):
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        (WebKit::getClipboardContentsCallback):
+        (WebKit::clearClipboardContentsCallback):
+        (WebKit::PasteboardHelperGtk::writeClipboardContents):
+
 2010-01-15  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
