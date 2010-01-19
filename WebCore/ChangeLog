@@ -1,3 +1,15 @@
+2010-01-19  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Fixes style in WebCore/bridge/jni/jsc/JavaClassJSC
+        https://bugs.webkit.org/show_bug.cgi?id=33819
+
+        No new tests, style fixes only.
+
+        * bridge/jni/jsc/JavaClassJSC.cpp: Modified.
+        * bridge/jni/jsc/JavaClassJSC.h: Modified.
+
 2010-01-19  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Pavel Feldman.

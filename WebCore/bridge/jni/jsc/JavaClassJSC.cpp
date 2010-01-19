@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -29,39 +29,39 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "JSDOMWindow.h"
+#include "jni_runtime.h"
+#include "jni_utility.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
-#include "jni_utility.h"
-#include "jni_runtime.h"
 
 using namespace JSC::Bindings;
 
 JavaClass::JavaClass(jobject anInstance)
 {
     jobject aClass = callJNIMethod<jobject>(anInstance, "getClass", "()Ljava/lang/Class;");
-    
+
     if (!aClass) {
         fprintf(stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
         return;
     }
-    
+
     jstring className = (jstring)callJNIMethod<jobject>(aClass, "getName", "()Ljava/lang/String;");
-    const char *classNameC = getCharactersFromJString(className);
-    _name = strdup(classNameC);
+    const char* classNameC = getCharactersFromJString(className);
+    m_name = strdup(classNameC);
     releaseCharactersForJString(className, classNameC);
 
     int i;
-    JNIEnv *env = getJNIEnv();
+    JNIEnv* env = getJNIEnv();
 
     // Get the fields
     jarray fields = (jarray)callJNIMethod<jobject>(aClass, "getFields", "()[Ljava/lang/reflect/Field;");
-    int numFields = env->GetArrayLength(fields);    
+    int numFields = env->GetArrayLength(fields);
     for (i = 0; i < numFields; i++) {
         jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
-        JavaField *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
+        JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _fields.set(((UString)aField->name()).rep(), aField);
+            m_fields.set(((UString)aField->name()).rep(), aField);
         }
         env->DeleteLocalRef(aJField);
     }
@@ -71,75 +71,76 @@ JavaClass::JavaClass(jobject anInstance)
     int numMethods = env->GetArrayLength(methods);
     for (i = 0; i < numMethods; i++) {
         jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
-        JavaMethod *aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
+        JavaMethod* aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
         MethodList* methodList;
         {
             JSLock lock(SilenceAssertionsOnly);
 
-            methodList = _methods.get(((UString)aMethod->name()).rep());
+            methodList = m_methods.get(((UString)aMethod->name()).rep());
             if (!methodList) {
                 methodList = new MethodList();
-                _methods.set(((UString)aMethod->name()).rep(), methodList);
+                m_methods.set(((UString)aMethod->name()).rep(), methodList);
             }
         }
         methodList->append(aMethod);
         env->DeleteLocalRef(aJMethod);
-    }    
+    }
 
     env->DeleteLocalRef(fields);
     env->DeleteLocalRef(methods);
     env->DeleteLocalRef(aClass);
 }
 
-JavaClass::~JavaClass() {
-    free((void *)_name);
+JavaClass::~JavaClass()
+{
+    free(const_cast<char*>(m_name));
 
     JSLock lock(SilenceAssertionsOnly);
 
-    deleteAllValues(_fields);
-    _fields.clear();
+    deleteAllValues(m_fields);
+    m_fields.clear();
 
-    MethodListMap::const_iterator end = _methods.end();
-    for (MethodListMap::const_iterator it = _methods.begin(); it != end; ++it) {
+    MethodListMap::const_iterator end = m_methods.end();
+    for (MethodListMap::const_iterator it = m_methods.begin(); it != end; ++it) {
         const MethodList* methodList = it->second;
         deleteAllValues(*methodList);
         delete methodList;
     }
-    _methods.clear();
+    m_methods.clear();
 }
 
 MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
-    MethodList *methodList = _methods.get(identifier.ustring().rep());
-    
+    MethodList* methodList = m_methods.get(identifier.ustring().rep());
+
     if (methodList)
         return *methodList;
     return MethodList();
 }
 
-Field *JavaClass::fieldNamed(const Identifier& identifier, Instance*) const
+Field* JavaClass::fieldNamed(const Identifier& identifier, Instance*) const
 {
-    return _fields.get(identifier.ustring().rep());
+    return m_fields.get(identifier.ustring().rep());
 }
 
 bool JavaClass::isNumberClass() const
 {
-    return ((strcmp(_name, "java.lang.Byte") == 0 ||
-             strcmp(_name, "java.lang.Short") == 0 ||
-             strcmp(_name, "java.lang.Integer") == 0 ||
-             strcmp(_name, "java.lang.Long") == 0 ||
-             strcmp(_name, "java.lang.Float") == 0 ||
-             strcmp(_name, "java.lang.Double") == 0) );
+    return (!strcmp(m_name, "java.lang.Byte")
+        || !strcmp(m_name, "java.lang.Short")
+        || !strcmp(m_name, "java.lang.Integer")
+        || !strcmp(m_name, "java.lang.Long")
+        || !strcmp(m_name, "java.lang.Float")
+        || !strcmp(m_name, "java.lang.Double"));
 }
 
 bool JavaClass::isBooleanClass() const
 {
-    return strcmp(_name, "java.lang.Boolean") == 0;
+    return !strcmp(m_name, "java.lang.Boolean");
 }
 
 bool JavaClass::isStringClass() const
 {
-    return strcmp(_name, "java.lang.String") == 0;
+    return !strcmp(m_name, "java.lang.String");
 }
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
