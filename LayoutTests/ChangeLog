@@ -1,3 +1,9 @@
+2010-01-19  Xan Lopez  <xlopez@igalia.com>
+
+        Skip tests generating new results.
+
+        * platform/gtk/Skipped:
+
 2010-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -5759,3 +5759,24 @@ fast/loader/onload-willSendRequest-null-for-script.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
+
+# Tests generating new results
+fast/backgrounds/quirks-mode-line-box-backgrounds.html
+fast/css/css3-space-in-nth-and-lang.html
+fast/lists/w3-css3-list-styles-alphabetic.html
+fast/repaint/block-no-inflow-children.html
+fast/repaint/moving-shadow-on-container.html
+fast/repaint/moving-shadow-on-path.html
+svg/css/shadow-and-opacity.svg
+svg/css/shadow-with-large-radius.svg
+svg/css/shadow-with-negative-offset.svg
+svg/custom/js-repaint-rect-on-path-with-stroke.svg
+svg/custom/marker-opacity.svg
+svg/custom/marker-referencePoint.svg
+svg/custom/marker-strokeWidth-changes.svg
+svg/custom/relative-sized-content.xhtml
+svg/custom/relative-sized-deep-shadow-tree-content.xhtml
+svg/custom/relative-sized-shadow-tree-content.xhtml
+svg/custom/text-xy-updates-SVGList.xhtml
+svg/text/selection-background-color.xhtml
+
