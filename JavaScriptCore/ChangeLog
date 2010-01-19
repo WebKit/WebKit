@@ -1,3 +1,29 @@
+2010-01-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION (52082): Crash on worker thread when reloading http://radnan.public.iastate.edu/procedural/
+        https://bugs.webkit.org/show_bug.cgi?id=33826
+
+        This bug was caused by a GC-protected object being destroyed early by
+        Heap::destroy. Clients of the GC protect APIs (reasonably) expect pointers
+        to GC-protected memory to be valid.
+
+        The solution is to do two passes of tear-down in Heap::destroy. The first
+        pass tears down all unprotected objects. The second pass ASSERTs that all
+        previously protected objects are now unprotected, and then tears down
+        all perviously protected objects. These two passes simulate the two passes
+        that would have been required to free a protected object during normal GC.
+        
+        * API/JSContextRef.cpp: Removed some ASSERTs that have moved into Heap.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy): Moved ASSERTs to here.
+        (JSC::Heap::freeBlock): Tidied up the use of didShrink by moving its
+        setter to the function that does the shrinking.
+        (JSC::Heap::freeBlocks): Implemented above algorithm.
+        (JSC::Heap::shrinkBlocks): Tidied up the use of didShrink.
+
 2010-01-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

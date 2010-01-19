@@ -58,9 +58,6 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 WorkerScriptController::~WorkerScriptController()
 {
     m_workerContextWrapper = 0; // Unprotect the global object.
-
-    ASSERT(!m_globalData->heap.protectedObjectCount());
-    ASSERT(!m_globalData->heap.isBusy());
     m_globalData->heap.destroy();
 }
 

@@ -292,6 +292,11 @@ JSValue JSC_HOST_CALL functionReadline(ExecState* exec, JSObject*, JSValue, cons
 
 JSValue JSC_HOST_CALL functionQuit(ExecState* exec, JSObject*, JSValue, const ArgList&)
 {
+    // Technically, destroying the heap in the middle of JS execution is a no-no,
+    // but we want to maintain compatibility with the Mozilla test suite, so
+    // we pretend that execution has terminated to avoid ASSERTs, then tear down the heap.
+    exec->globalData().dynamicGlobalObject = 0;
+
     cleanupGlobalData(&exec->globalData());
     exit(EXIT_SUCCESS);
 
