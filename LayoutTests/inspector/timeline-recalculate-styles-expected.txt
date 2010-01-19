@@ -2,6 +2,8 @@ Tests the Timeline API instrumentation of a style recalculation event
 
 RecalculateStyles Properties:
 + startTime : * DEFINED *
++ data : {
++ }
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 2

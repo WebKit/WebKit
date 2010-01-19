@@ -4,6 +4,8 @@ ParseHTML Properties:
 + startTime : * DEFINED *
 + data : {
 +- length : 9
++- startLine : 0
++- endLine : 0
 + }
 + children : * DEFINED *
 + endTime : * DEFINED *

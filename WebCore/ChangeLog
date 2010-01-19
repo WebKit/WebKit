@@ -1,3 +1,56 @@
+2010-01-19  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+        
+        Refactors the TimelineRecordFactory and InspectorTimelineAgent to support reporting data
+        when closing a record. Also includes grabbing the start and end line number for parse HTML
+        records as a reference use case for the above refactor
+
+        Tests updated:
+            inspector/timeline-parse-html-expected.txt
+            inspector/timeline-layout-expected.txt
+            inspector/timeline-recalculate-styles-expected.txt
+
+        https://bugs.webkit.org/show_bug.cgi?id=33853
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::write):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createEventDispatchData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createXHRReadyStateChangeData):
+        (WebCore::TimelineRecordFactory::createXHRLoadData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createMarkTimelineData):
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createPaintData):
+        (WebCore::TimelineRecordFactory::createParseHTMLData):
+        * inspector/TimelineRecordFactory.h:
+
 2010-01-19 Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

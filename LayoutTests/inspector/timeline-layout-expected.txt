@@ -2,6 +2,8 @@ Tests the Timeline API instrumentation of a Layout event
 
 Layout Properties:
 + startTime : * DEFINED *
++ data : {
++ }
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 1

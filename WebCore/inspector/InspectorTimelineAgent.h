@@ -86,8 +86,8 @@ namespace WebCore {
         void willPaint(const IntRect&);
         void didPaint();
 
-        void willWriteHTML(unsigned length);
-        void didWriteHTML();
+        void willWriteHTML(unsigned int length, unsigned int startLine);
+        void didWriteHTML(unsigned int endLine);
         
         void didInstallTimer(int timerId, int timeout, bool singleShot);
         void didRemoveTimer(int timerId);
@@ -111,8 +111,9 @@ namespace WebCore {
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
     private:
         struct TimelineRecordEntry {
-            TimelineRecordEntry(ScriptObject record, ScriptArray children, TimelineRecordType type) : record(record), children(children), type(type) { }
+            TimelineRecordEntry(ScriptObject record, ScriptObject data, ScriptArray children, TimelineRecordType type) : record(record), data(data), children(children), type(type) { }
             ScriptObject record;
+            ScriptObject data;
             ScriptArray children;
             TimelineRecordType type;
         };
@@ -122,7 +123,7 @@ namespace WebCore {
         static double currentTimeInMilliseconds();
 
         void didCompleteCurrentRecord(TimelineRecordType);
-        
+
         void addRecordToTimeline(ScriptObject, TimelineRecordType);
 
         InspectorFrontend* m_frontend;

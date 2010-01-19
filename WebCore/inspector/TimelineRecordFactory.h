@@ -46,29 +46,30 @@ namespace WebCore {
     public:
         static ScriptObject createGenericRecord(InspectorFrontend*, double startTime);
 
-        static ScriptObject createEventDispatchRecord(InspectorFrontend*, double startTime, const Event&);
+        static ScriptObject createEventDispatchData(InspectorFrontend*, const Event&);
 
-        static ScriptObject createGenericTimerRecord(InspectorFrontend*, double startTime, int timerId);
+        static ScriptObject createGenericTimerData(InspectorFrontend*, int timerId);
 
-        static ScriptObject createTimerInstallRecord(InspectorFrontend*, double startTime, int timerId, int timeout, bool singleShot);
+        static ScriptObject createTimerInstallData(InspectorFrontend*, int timerId, int timeout, bool singleShot);
 
-        static ScriptObject createXHRReadyStateChangeRecord(InspectorFrontend*, double startTime, const String& url, int readyState);
-        static ScriptObject createXHRLoadRecord(InspectorFrontend*, double startTime, const String& url);
+        static ScriptObject createXHRReadyStateChangeData(InspectorFrontend*, const String& url, int readyState);
+
+        static ScriptObject createXHRLoadData(InspectorFrontend*, const String& url);
         
-        static ScriptObject createEvaluateScriptRecord(InspectorFrontend*, double startTime, const String&, double lineNumber);
+        static ScriptObject createEvaluateScriptData(InspectorFrontend*, const String&, double lineNumber);
         
-        static ScriptObject createMarkTimelineRecord(InspectorFrontend*, double startTime, const String&);
+        static ScriptObject createMarkTimelineData(InspectorFrontend*, const String&);
 
-        static ScriptObject createResourceSendRequestRecord(InspectorFrontend*, double startTime,
-            unsigned long identifier, bool isMainResource, const ResourceRequest&);
-        static ScriptObject createResourceReceiveResponseRecord(InspectorFrontend*, double startTime,
-            unsigned long identifier, const ResourceResponse&);
-        static ScriptObject createResourceFinishRecord(InspectorFrontend*, double startTime,
-            unsigned long identifier, bool didFail);
+        static ScriptObject createResourceSendRequestData(InspectorFrontend*, unsigned long identifier,
+            bool isMainResource, const ResourceRequest&);
 
-        static ScriptObject createPaintRecord(InspectorFrontend*, double startTime, const IntRect&);
+        static ScriptObject createResourceReceiveResponseData(InspectorFrontend*, unsigned long identifier, const ResourceResponse&);
 
-        static ScriptObject createParseHTMLRecord(InspectorFrontend*, double startTime, unsigned length);
+        static ScriptObject createResourceFinishData(InspectorFrontend*, unsigned long identifier, bool didFail);
+
+        static ScriptObject createPaintData(InspectorFrontend*, const IntRect&);
+
+        static ScriptObject createParseHTMLData(InspectorFrontend*, unsigned int length, unsigned int startLine);
 
     private:
         TimelineRecordFactory() { }

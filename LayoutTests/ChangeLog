@@ -1,3 +1,16 @@
+2010-01-19  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Test changes to accomodate refactor of TimelineRecordFactory and InspectorTimelineAgent to
+        support reporting data when closing a record.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33853
+
+        * inspector/timeline-layout-expected.txt:
+        * inspector/timeline-parse-html-expected.txt:
+        * inspector/timeline-recalculate-styles-expected.txt:
+
 2010-01-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
