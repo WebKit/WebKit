@@ -1,3 +1,16 @@
+2010-01-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Reverting r53455, breaks 2 javascriptcore tests.
+
+        * API/JSContextRef.cpp:
+        * runtime/Collector.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::freeBlock):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::shrinkBlocks):
+
 2010-01-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

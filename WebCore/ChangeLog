@@ -1,3 +1,12 @@
+2010-01-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Reverting r53455, breaks 2 javascriptcore tests.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+
 2010-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

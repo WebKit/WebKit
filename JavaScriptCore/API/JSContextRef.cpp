@@ -127,6 +127,8 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     JSGlobalData& globalData = exec->globalData();
     if (globalData.refCount() == 2) { // One reference is held by JSGlobalObject, another added by JSGlobalContextRetain().
         // The last reference was released, this is our last chance to collect.
+        ASSERT(!globalData.heap.protectedObjectCount());
+        ASSERT(!globalData.heap.isBusy());
         globalData.heap.destroy();
     } else
         globalData.heap.collectAllGarbage();

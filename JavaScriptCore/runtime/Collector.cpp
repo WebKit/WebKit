@@ -186,9 +186,6 @@ void Heap::destroy()
     if (!m_globalData)
         return;
 
-    ASSERT(!m_globalData->dynamicGlobalObject);
-    ASSERT(!isBusy());
-    
     // The global object is not GC protected at this point, so sweeping may delete it
     // (and thus the global data) before other objects that may use the global data.
     RefPtr<JSGlobalData> protect(m_globalData);
@@ -293,8 +290,6 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 
 NEVER_INLINE void Heap::freeBlock(size_t block)
 {
-    m_heap.didShrink = true;
-
     ObjectIterator it(m_heap, block);
     ObjectIterator end(m_heap, block + 1);
     for ( ; it != end; ++it)
@@ -334,29 +329,9 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
 
 void Heap::freeBlocks()
 {
-    ProtectCountSet protectedValuesCopy = m_protectedValues;
-
-    clearMarkBits();
-    markProtectedObjects(m_globalData->markStack);
-
-    m_heap.nextCell = 0;
-    m_heap.nextBlock = 0;
-    DeadObjectIterator it(m_heap, m_heap.nextBlock, m_heap.nextCell);
-    DeadObjectIterator end(m_heap, m_heap.usedBlocks);
-    for ( ; it != end; ++it)
-        (*it)->~JSCell();
-
-    ASSERT(!protectedObjectCount());
-
-    ProtectCountSet::iterator protectedValuesEnd = protectedValuesCopy.end();
-    for (ProtectCountSet::iterator protectedValuesIt = protectedValuesCopy.begin(); protectedValuesIt != protectedValuesEnd; ++protectedValuesIt)
-        protectedValuesIt->first->~JSCell();
-
-    for (size_t block = 0; block < m_heap.usedBlocks; ++block)
-        freeBlockPtr(m_heap.blocks[block]);
-
+    while (m_heap.usedBlocks)
+        freeBlock(0);
     fastFree(m_heap.blocks);
-
     memset(&m_heap, 0, sizeof(CollectorHeap));
 }
 
@@ -465,6 +440,7 @@ void Heap::shrinkBlocks(size_t neededBlocks)
     for (size_t i = 0; i != m_heap.usedBlocks && m_heap.usedBlocks != neededBlocks; ) {
         if (m_heap.blocks[i]->marked.isEmpty()) {
             freeBlock(i);
+            m_heap.didShrink = true;
         } else
             ++i;
     }

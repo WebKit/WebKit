@@ -1,3 +1,12 @@
+2010-01-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Reverting r53455, breaks 2 javascriptcore tests.
+
+        * fast/workers/resources/worker-gc2.js: Removed.
+        * fast/workers/worker-gc2.html: Removed.
+
 2010-01-19  Geoffrey Garen  <ggaren@apple.com>
 
         Forgot to add this test result.
