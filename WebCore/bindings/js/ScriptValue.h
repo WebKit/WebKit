@@ -41,8 +41,6 @@ class String;
 
 class ScriptValue {
 public:
-    static ScriptValue quarantineValue(ScriptState* scriptState, const ScriptValue& value);
-
     ScriptValue(JSC::JSValue value = JSC::JSValue()) : m_value(value) {}
     virtual ~ScriptValue() {}
 

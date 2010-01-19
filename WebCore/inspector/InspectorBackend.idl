@@ -75,7 +75,8 @@ module core {
         void getProfileHeaders(in long callId);
         void getProfile(in long callId, in unsigned long uid);
 #endif
-        void dispatchOnInjectedScript(in long callId, in DOMString methodName, in DOMString arguments, in boolean async);
+        void setInjectedScriptSource(in DOMString scriptSource);
+        void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in DOMString methodName, in DOMString arguments, in boolean async);
         void getChildNodes(in long callId, in long nodeId);
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);
@@ -89,7 +90,7 @@ module core {
         void getCookies(in long callId);
         void deleteCookie(in DOMString cookieName, in DOMString domain);
 
-        void releaseWrapperObjectGroup(in DOMString objectGroup);
+        void releaseWrapperObjectGroup(in long injectedScriptId, in DOMString objectGroup);
         void didEvaluateForTestInFrontend(in long callId, in DOMString jsonResult);
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE

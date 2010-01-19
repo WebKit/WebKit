@@ -56,22 +56,22 @@ function frontend_dumpStyles(testController)
 function frontend_dumpStylesContinuation(testController)
 {
     // 1. Get styles for body, store them in mainStyles var.
-    var bodyId = WebInspector.domAgent.document.body.id;
+    var body = WebInspector.domAgent.document.body;
     var mainStyles = null;
     function mainFrameCallback(styles) {
         mainStyles = styles;
     }
-    InjectedScriptAccess.getStyles(bodyId, false, mainFrameCallback);
+    InjectedScriptAccess.get(body.injectedScriptId).getStyles(body.id, false, mainFrameCallback);
 
     // 2. Find iframe node
     var innerMapping = WebInspector.domAgent._idToDOMNode;
-    var iframeBodyId = null;
+    var iframeBody = null;
 
     for (var nodeId in innerMapping) {
         if (innerMapping[nodeId].nodeName === "IFRAME")
-            iframeBodyId = innerMapping[nodeId].firstChild.lastChild.id;
+            iframeBody = innerMapping[nodeId].firstChild.lastChild;
     }
-    if (typeof iframeBodyId !== "number") {
+    if (!iframeBody) {
         testController.notifyDone(["No iframe node found"]);
         return;
     }
@@ -80,7 +80,7 @@ function frontend_dumpStylesContinuation(testController)
     function iframeCallback(styles) {
         testController.notifyDone([mainStyles, styles]);
     }
-    InjectedScriptAccess.getStyles(iframeBodyId, false, iframeCallback);
+    InjectedScriptAccess.get(iframeBody.injectedScriptId).getStyles(iframeBody.id, false, iframeCallback);
 }
 
 </script>

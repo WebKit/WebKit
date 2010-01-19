@@ -191,7 +191,7 @@ WebInspector.EventListenerBar.prototype = {
             // Just build properties in place - no need to reach out for injected script.
             var value = this.eventListener[propertyName];
             if (value instanceof WebInspector.DOMNode)
-                value = new WebInspector.ObjectProxy(value.id, [], 0, appropriateSelectorForNode(value), true);
+                value = new WebInspector.ObjectProxy(value.injectedScriptId, value.id, [], 0, appropriateSelectorForNode(value), true);
             else
                 value = WebInspector.ObjectProxy.wrapPrimitiveValue(value);
             properties.push(new WebInspector.ObjectPropertyProxy(propertyName, value));

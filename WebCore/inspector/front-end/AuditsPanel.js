@@ -193,7 +193,7 @@ WebInspector.AuditsPanel.prototype = {
             InspectorBackend.enableResourceTracking(false);
             this._updateLauncherViewControls();
         } else
-            InjectedScriptAccess.evaluate("window.location.reload()", nullCallback);
+            InjectedScriptAccess.getDefault().evaluate("window.location.reload()", nullCallback);
     },
 
     _didMainResourceLoad: function()
