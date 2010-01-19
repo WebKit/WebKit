@@ -22,7 +22,10 @@ function getPositionOfNode(id)
 
 function doubleClickPosition(pos)
 {
-    eventSender.mouseMoveTo(pos.x + 2, pos.y + 2);
+    // Our test cases will have at most a single leading tab or four spaces,
+    // followed by a word which is wider than 4 "X"s.
+    // So, pos.x + CHAR_WIDTH * 4 always hits the words.
+    eventSender.mouseMoveTo(pos.x + CHAR_WIDTH * 4, pos.y + LINE_HEIGHT / 2);
     eventSender.mouseDown();
     eventSender.leapForward(1);
     eventSender.mouseUp();
@@ -133,13 +136,6 @@ function getPositionOfNextLineHeadOf(spanId)
    return pos;
 }
 
-function getPositionForward(spanId, ncharacters)
-{
-   var pos = getPositionOfNode(spanId)
-   pos.x += CHAR_WIDTH*ncharacters;
-   return pos;
-}
-
 function runTests()
 {
     initConstants();
@@ -160,14 +156,14 @@ function runTests()
         doTest("totest_multiple_word_in_span", "select9 ");
         doTest("totest_word_before_here_in_line", "select10 ");
         doTest("totest_span_first_half", "select11 ");
-        doTest("totest_span_second_half", "select12 ");
+        doTest("totest_span_second_half", "selectHere12 ");
 
         doTest("totest_linebreak_out_pre", "select1");
         doTest("totest_tab_out_pre", "select2\t");
         doTest("totest_multiple_whitespaces_out_pre", "select3    ");
         doTest("totest_linebreak_in_pre", "select4", getPositionOfNextLineHeadOf("totest_linebreak_in_pre"));
         doTest("totest_tab_in_pre", "select5\t");
-        doTest("totest_multiple_whitespaces_in_pre", "select6    ", getPositionForward("totest_multiple_whitespaces_in_pre", "    ".length));
+        doTest("totest_multiple_whitespaces_in_pre", "select6    ");
 
         doTest("totest_linebreak_out_prewrap", "select1");
         doTest("totest_tab_out_prewrap", "select2\t");
@@ -186,9 +182,9 @@ function runTests()
         doTest("totest_linebreak_out_nowrap", "select1\n");
         doTest("totest_tab_out_nowrap", "select2\t");
         doTest("totest_multiple_whitespaces_out_nowrap", "select3 ");
-        doTest("totest_linebreak_in_nowrap", "select4\n", getPositionForward("totest_linebreak_in_nowrap", 1));
-        doTest("totest_tab_in_nowrap", "select5\t", getPositionForward("totest_tab_in_nowrap", 1));
-        doTest("totest_multiple_whitespaces_in_nowrap", "select6 ", getPositionForward("totest_multiple_whitespaces_in_nowrap", 1));
+        doTest("totest_linebreak_in_nowrap", "select4\n");
+        doTest("totest_tab_in_nowrap", "select5\t");
+        doTest("totest_multiple_whitespaces_in_nowrap", "select6 ");
 
     }
 }
@@ -285,8 +281,10 @@ abcd efgh ijkl mnop qrst <b id="totest_span_first_half">sel</b>ect11 notyet
 
 <div class="case">
 <h3>a second half of word is inside b element</h3>
-<div style="width:100pt">
-abcd efgh ijkl mnop qrst sel<b id="totest_span_second_half">ect12</b> notyet
+<!-- We choose selectHere12 instead select12 here
+     because <b>ect12</b> would be too short to be clicked by doubleClickPosition(). -->
+<div style="width:150pt">
+abcd efgh ijkl mnop qrst uvwx yz123 sel<b id="totest_span_second_half">ectHere12</b> notyet
 </div>
 </div>
 

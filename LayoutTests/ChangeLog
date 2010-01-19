@@ -1,3 +1,19 @@
+2010-01-19  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [Chromium] layout_test on linux fails on doubleclick-beside-cr-span.html
+        
+        Place larger margins before clicking position to grab certain words
+        instead of clicking blank, whitespaces or tabs before that words. 
+        Note that widths of rendered tab characters are hard to predict,
+        So such margins are particularly helpful with them.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=33769
+
+        * editing/selection/doubleclick-beside-cr-span.html:
+          Fix to compute click position using actual character width.
+
 2010-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
