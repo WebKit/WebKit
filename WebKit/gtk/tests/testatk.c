@@ -34,6 +34,10 @@ static const char* contentsInTextarea = "<html><body><textarea cols='80'>This is
 
 static const char* contentsInTextInput = "<html><body><input type='text' size='80' value='This is a test. This is the second sentence. And this the third.'/></body></html>";
 
+static const char* contentsInParagraphAndBodySimple = "<html><body><p>This is a test.</p>Hello world.</body></html>";
+
+static const char* contentsInParagraphAndBodyModerate = "<html><body><p>This is a test.</p>Hello world.<br /><font color='#00cc00'>This sentence is green.</font><br />This one is not.</body></html>";
+
 static gboolean bail_out(GMainLoop* loop)
 {
     if (g_main_loop_is_running(loop))
@@ -358,6 +362,94 @@ static void test_webkit_atk_get_text_at_offset_text_input(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkGetTextInParagraphAndBodySimple(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    AtkObject* obj1;
+    AtkObject* obj2;
+    GMainLoop* loop;
+    AtkText* textObj1;
+    AtkText* textObj2;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contentsInParagraphAndBodySimple, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    /* Get to the inner AtkText object */
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+    obj1 = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj1);
+    obj2 = atk_object_ref_accessible_child(obj, 1);
+    g_assert(obj2);
+
+    textObj1 = ATK_TEXT(obj1);
+    g_assert(ATK_IS_TEXT(textObj1));
+    textObj2 = ATK_TEXT(obj2);
+    g_assert(ATK_IS_TEXT(textObj2));
+
+    char *text = atk_text_get_text(textObj1, 0, -1);
+    g_assert_cmpstr(text, ==, "This is a test.");
+
+    text = atk_text_get_text(textObj2, 0, 12);
+    g_assert_cmpstr(text, ==, "Hello world.");
+
+    g_object_unref(obj1);
+    g_object_unref(obj2);
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkGetTextInParagraphAndBodyModerate(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    AtkObject* obj1;
+    AtkObject* obj2;
+    GMainLoop* loop;
+    AtkText* textObj1;
+    AtkText* textObj2;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contentsInParagraphAndBodyModerate, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    /* Get to the inner AtkText object */
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+    obj1 = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj1);
+    obj2 = atk_object_ref_accessible_child(obj, 1);
+    g_assert(obj2);
+
+    textObj1 = ATK_TEXT(obj1);
+    g_assert(ATK_IS_TEXT(textObj1));
+    textObj2 = ATK_TEXT(obj2);
+    g_assert(ATK_IS_TEXT(textObj2));
+
+    char *text = atk_text_get_text(textObj1, 0, -1);
+    g_assert_cmpstr(text, ==, "This is a test.");
+
+    text = atk_text_get_text(textObj2, 0, 53);
+    g_assert_cmpstr(text, ==, "Hello world.\nThis sentence is green.\nThis one is not.");
+
+    g_object_unref(obj1);
+    g_object_unref(obj2);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -369,6 +461,8 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/get_text_at_offset_newlines", test_webkit_atk_get_text_at_offset_newlines);
     g_test_add_func("/webkit/atk/get_text_at_offset_textarea", test_webkit_atk_get_text_at_offset_textarea);
     g_test_add_func("/webkit/atk/get_text_at_offset_text_input", test_webkit_atk_get_text_at_offset_text_input);
+    g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
+    g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
     return g_test_run ();
 }
 

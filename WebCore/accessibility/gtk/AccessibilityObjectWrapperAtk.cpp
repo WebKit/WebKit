@@ -815,38 +815,6 @@ static void atk_selection_interface_init(AtkSelectionIface* iface)
 
 // Text
 
-static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, gint endOffset)
-{
-    AccessibilityObject* coreObject = core(text);
-    String ret;
-    unsigned start = startOffset;
-    if (endOffset == -1) {
-        endOffset = coreObject->stringValue().length();
-        if (!endOffset)
-            endOffset = coreObject->textUnderElement().length();
-    }
-    int length = endOffset - startOffset;
-
-    if (coreObject->isTextControl())
-        ret = coreObject->doAXStringForRange(PlainTextRange(start, length));
-    else
-        ret = coreObject->textUnderElement().substring(start, length);
-
-    return g_strdup(ret.utf8().data());
-}
-
-static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
-{
-    gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-gail-text-util");
-    if (data)
-        return static_cast<GailTextUtil*>(data);
-
-    GailTextUtil* gailTextUtil = gail_text_util_new();
-    gail_text_util_text_setup(gailTextUtil, webkit_accessible_text_get_text(textObject, 0, -1));
-    g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-gail-text-util", gailTextUtil, g_object_unref);
-    return gailTextUtil;
-}
-
 static gchar* utf8Substr(const gchar* string, gint start, gint end)
 {
     ASSERT(string);
@@ -890,24 +858,10 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
     return g_string_free(ret, FALSE);
 }
 
-static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
+gchar* textForObject(AccessibilityRenderObject* accObject)
 {
-    AccessibilityObject* coreObject = core(textObject);
-
-    HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
-    if (!hostWindow)
-        return 0;
-    PlatformPageClient webView = hostWindow->platformPageClient();
-    if (!webView)
-        return 0;
-
     GString* str = g_string_new(0);
 
-    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
-    if (!accObject)
-        return 0;
-
-    // Create a string with the layout as it appears on the screen
     // For text controls, we can get the text line by line.
     if (accObject->isTextControl()) {
         unsigned textLength = accObject->textLength();
@@ -945,14 +899,73 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
                 g_string_append(str, text);
                 // Newline chars in the source result in separate text boxes, so check
                 // before adding a newline in the layout. See bug 25415 comment #78.
-                if (!box->nextOnLineExists())
+                // If the next sibling is a BR, we'll add the newline when we examine that child.
+                if (!box->nextOnLineExists() && (!obj->nextSibling() || !obj->nextSibling()->isBR()))
                     g_string_append(str, "\n");
                 box = box->nextTextBox();
             }
         }
     }
+    return g_string_free(str, FALSE);
+}
 
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), g_string_free(str, FALSE));
+static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, gint endOffset)
+{
+    AccessibilityObject* coreObject = core(text);
+    String ret;
+    unsigned start = startOffset;
+    if (endOffset == -1) {
+        endOffset = coreObject->stringValue().length();
+        if (!endOffset)
+            endOffset = coreObject->textUnderElement().length();
+    }
+    int length = endOffset - startOffset;
+
+    if (coreObject->isTextControl())
+        ret = coreObject->doAXStringForRange(PlainTextRange(start, length));
+    else
+        ret = coreObject->textUnderElement().substring(start, length);
+
+    if (!ret.length()) {
+        // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
+        ret = String(textForObject(static_cast<AccessibilityRenderObject*>(coreObject)));
+        if (!endOffset)
+            endOffset = ret.length();
+        ret = ret.substring(start, endOffset - startOffset);
+    }
+
+    return g_strdup(ret.utf8().data());
+}
+
+static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
+{
+    gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-gail-text-util");
+    if (data)
+        return static_cast<GailTextUtil*>(data);
+
+    GailTextUtil* gailTextUtil = gail_text_util_new();
+    gail_text_util_text_setup(gailTextUtil, webkit_accessible_text_get_text(textObject, 0, -1));
+    g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-gail-text-util", gailTextUtil, g_object_unref);
+    return gailTextUtil;
+}
+
+static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
+{
+    AccessibilityObject* coreObject = core(textObject);
+
+    HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
+    if (!hostWindow)
+        return 0;
+    PlatformPageClient webView = hostWindow->platformPageClient();
+    if (!webView)
+        return 0;
+
+    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
+    if (!accObject)
+        return 0;
+
+    // Create a string with the layout as it appears on the screen
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), textForObject(accObject));
     g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-pango-layout", layout, g_object_unref);
     return layout;
 }
@@ -1747,6 +1760,8 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
 {
     Node* endNode = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
     int endOffset = coreObject->selection().end().computeOffsetInContainerNode();
+    // Indication that something bogus has transpired.
+    offset = -1;
 
     AccessibilityObject* realObject = coreObject;
     if (realObject->accessibilityIsIgnored())
@@ -1755,11 +1770,16 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
     if (ignoreLinks && realObject->isLink())
         realObject = realObject->parentObjectUnignored();
 
-    RefPtr<Range> range = rangeOfContents(static_cast<AccessibilityRenderObject*>(realObject)->renderer()->node());
-    ExceptionCode ec = 0;
-    range->setEndBefore(endNode, ec);
-    offset = range->text().length() + endOffset;
-
+    Node* node = static_cast<AccessibilityRenderObject*>(realObject)->renderer()->node();
+    if (node) {
+        RefPtr<Range> range = rangeOfContents(node);
+        if (range->ownerDocument() == node->document()) {
+            ExceptionCode ec = 0;
+            range->setEndBefore(endNode, ec);
+            if (range->boundaryPointsValid())
+                offset = range->text().length() + endOffset;
+        }
+    }
     return realObject;
 }
 

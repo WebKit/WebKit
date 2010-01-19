@@ -1,3 +1,22 @@
+2010-01-19 Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30883
+        [Gtk] Implement AtkText for HTML elements which contain text
+
+        Moves the text assembling functionality from getPangoLayoutForAtk to
+        textForObject, which webkit_accessible_text_get_text now falls back on
+        when it comes up empty.
+
+        Adds a check in textForObject so that we don't double-add newlines
+        when we have a BR.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textForObject):
+        (getPangoLayoutForAtk):
+        (webkit_accessible_text_get_text):
+
 2010-01-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.
