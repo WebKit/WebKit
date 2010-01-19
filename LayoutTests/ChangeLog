@@ -1,3 +1,9 @@
+2010-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Land correct expected results - forgot to update them after changing test output.
+
+        * fast/dom/Attr/child-nodes-cache-expected.txt:
+
 2010-01-19  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
