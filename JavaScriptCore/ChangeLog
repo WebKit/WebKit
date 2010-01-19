@@ -1,3 +1,25 @@
+2010-01-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=month.
+        https://bugs.webkit.org/show_bug.cgi?id=33021
+
+        Expose the following functions to be used by WebCore:
+         - WTF::msToyear()
+         - WTF::dayInYear()
+         - WTF::monthFromDayInYear()
+         - WTF::dayInMonthFromDayInYear()
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/DateMath.cpp:
+        (WTF::msToYear): Remove "static inline".
+        (WTF::dayInYear): Remove "static inline".
+        (WTF::monthFromDayInYear): Remove "static inline".
+        (WTF::dayInMonthFromDayInYear): Remove "static inline".
+        * wtf/DateMath.h: Declare the above functions.
+
 2010-01-18  Darin Adler  <darin@apple.com>
 
         Fix build by reverting the previous change.

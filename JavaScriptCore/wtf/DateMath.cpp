@@ -172,7 +172,7 @@ static inline double msToDays(double ms)
     return floor(ms / msPerDay);
 }
 
-static inline int msToYear(double ms)
+int msToYear(double ms)
 {
     int approxYear = static_cast<int>(floor(ms / (msPerDay * 365.2425)) + 1970);
     double msFromApproxYearTo1970 = msPerDay * daysFrom1970ToYear(approxYear);
@@ -183,7 +183,7 @@ static inline int msToYear(double ms)
     return approxYear;
 }
 
-static inline int dayInYear(double ms, int year)
+int dayInYear(double ms, int year)
 {
     return static_cast<int>(msToDays(ms) - daysFrom1970ToYear(year));
 }
@@ -229,7 +229,7 @@ static inline int msToHours(double ms)
     return static_cast<int>(result);
 }
 
-static inline int monthFromDayInYear(int dayInYear, bool leapYear)
+int monthFromDayInYear(int dayInYear, bool leapYear)
 {
     const int d = dayInYear;
     int step;
@@ -267,7 +267,7 @@ static inline bool checkMonth(int dayInYear, int& startDayOfThisMonth, int& star
     return (dayInYear <= startDayOfNextMonth);
 }
 
-static inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
+int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
 {
     const int d = dayInYear;
     int step;

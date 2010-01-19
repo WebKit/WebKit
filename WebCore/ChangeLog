@@ -1,3 +1,25 @@
+2010-01-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=month.
+        https://bugs.webkit.org/show_bug.cgi?id=33021
+
+        Introduce ISODateTime::setMillisecondsSinceEpochForMonth() and
+        toString() for the Month type, and HTMLInputElement::setValueAsDate()
+        calls them.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValueAsDate):
+        * html/ISODateTime.cpp:
+        (WebCore::beforeGregorianStartDate):
+        (WebCore::ISODateTime::addDay): Use beforeGregorianStartDate().
+        (WebCore::ISODateTime::parseMonth): Use beforeGregorianStartDate().
+        (WebCore::ISODateTime::setMillisecondsSinceEpochForDateInternal):
+        (WebCore::ISODateTime::setMillisecondsSinceEpochForMonth):
+        (WebCore::ISODateTime::toString): Implement only for the Month type.
+        * html/ISODateTime.h:
+
 2010-01-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

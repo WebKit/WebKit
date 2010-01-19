@@ -1395,12 +1395,22 @@ double HTMLInputElement::valueAsDate() const
 
 void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
 {
-    // FIXME: This is a temporary implementation to check Date binding.
-    if (!isnan(value) && !isinf(value) && inputType() == MONTH) {
-        setValue(String("1970-01"));
+    ISODateTime dateTime;
+    bool success;
+    switch (inputType()) {
+    case MONTH:
+        success = dateTime.setMillisecondsSinceEpochForMonth(value);
+        break;
+    // FIXME: implementations for other supported types.
+    default:
+        ec = INVALID_STATE_ERR;
         return;
     }
-    ec = INVALID_STATE_ERR;
+    if (!success) {
+        setValue(String());
+        return;
+    }
+    setValue(dateTime.toString());
 }
 
 String HTMLInputElement::placeholder() const

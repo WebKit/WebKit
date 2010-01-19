@@ -1,3 +1,18 @@
+2010-01-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=month.
+        https://bugs.webkit.org/show_bug.cgi?id=33021
+
+        Add setter tests to input-valueasdate-month.js, and update the
+        expectation.
+
+        * fast/forms/input-valueasdate-expected.txt:
+        * fast/forms/input-valueasdate-month-expected.txt:
+        * fast/forms/script-tests/input-valueasdate-month.js:
+        * fast/forms/script-tests/input-valueasdate.js:
+
 2010-01-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

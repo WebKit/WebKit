@@ -28,8 +28,15 @@ input.valueAsDate = 0;
 shouldBe('input.value', '"1970-01"');
 shouldBe('input.valueAsDate.getTime()', '0');
 debug('Sets other types:');
-shouldThrow('input.valueAsDate = null', 'invalidStateError');
-shouldThrow('input.valueAsDate = undefined', 'invalidStateError');
-shouldThrow('input.valueAsDate = document', 'invalidStateError');
+input.value = '1970-01';
+input.valueAsDate = null;
+shouldBe('input.value', '""');
+input.value = '1970-01';
+input.valueAsDate = undefined;
+shouldBe('input.value', '""');
+input.value = '1970-01';
+input.valueAsDate = document;
+shouldBe('input.value', '""');
+
 
 var successfullyParsed = true;

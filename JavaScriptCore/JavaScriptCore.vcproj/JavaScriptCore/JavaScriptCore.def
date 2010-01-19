@@ -86,6 +86,8 @@ EXPORTS
     ?currentThread@WTF@@YAIXZ
     ?currentTime@WTF@@YANXZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
+    ?dayInMonthFromDayInYear@WTF@@YAHH_N@Z
+    ?dayInYear@WTF@@YAHNH@Z
     ?decrement@RefCountedLeakCounter@WTF@@QAEXXZ
     ?defaultAttributes@PropertyDescriptor@JSC@@0IA
     ?defaultValue@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
@@ -194,6 +196,8 @@ EXPORTS
     ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
+    ?monthFromDayInYear@WTF@@YAHH_N@Z
+    ?msToYear@WTF@@YAHN@Z
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?nonInlineNaN@JSC@@YANXZ
     ?objectCount@Heap@JSC@@QBEIXZ

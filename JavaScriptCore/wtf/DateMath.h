@@ -78,13 +78,21 @@ const double msPerMonth = 2592000000.0;
 
 // Returns the number of days from 1970-01-01 to the specified date.
 double dateToDaysFrom1970(int year, int month, int day);
+int msToYear(double ms);
+int dayInYear(double ms, int year);
+int monthFromDayInYear(int dayInYear, bool leapYear);
+int dayInMonthFromDayInYear(int dayInYear, bool leapYear);
 
 } // namespace WTF
 
 using WTF::dateToDaysFrom1970;
+using WTF::dayInMonthFromDayInYear;
+using WTF::dayInYear;
 using WTF::minutesPerHour;
+using WTF::monthFromDayInYear;
 using WTF::msPerDay;
 using WTF::msPerSecond;
+using WTF::msToYear;
 using WTF::secondsPerMinute;
 
 #if USE(JSC)
