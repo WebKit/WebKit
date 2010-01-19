@@ -1,3 +1,9 @@
+2010-01-19  Xan Lopez  <xlopez@igalia.com>
+
+        New baseline for failing test.
+
+        * platform/gtk/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt: Copied from LayoutTests/platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt.
+
 2010-01-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
