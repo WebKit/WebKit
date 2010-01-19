@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PluginView.h"
 
+#include "Bridge.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -54,27 +55,27 @@
 #include "PluginDebug.h"
 #include "PluginPackage.h"
 #include "PluginMainThreadScheduler.h"
+#include "QWebPageClient.h"
 #include "RenderLayer.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
-#include "runtime.h"
 #include "runtime_root.h"
-#include "QWebPageClient.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QWidget>
 #include <QX11Info>
-#include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
 #include <X11/X.h>
 #ifndef QT_NO_XRENDER
 #define Bool int
 #define Status int
 #include <X11/extensions/Xrender.h>
 #endif
+#include <runtime/JSLock.h>
+#include <runtime/JSValue.h>
 
 using JSC::ExecState;
 using JSC::Interpreter;

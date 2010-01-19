@@ -31,10 +31,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#include <runtime/JSLock.h>
-#include <runtime/JSValue.h>
-#include "wtf/RetainPtr.h"
-
+#include "Bridge.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -54,7 +51,6 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
-#include "npruntime_impl.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformKeyboardEvent.h"
@@ -62,10 +58,14 @@
 #include "PluginPackage.h"
 #include "PluginMainThreadScheduler.h"
 #include "RenderLayer.h"
-#include "runtime.h"
-#include "runtime_root.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "npruntime_impl.h"
+#include "runtime_root.h"
+#include <runtime/JSLock.h>
+#include <runtime/JSValue.h>
+#include <wtf/RetainPtr.h>
+
 
 using JSC::ExecState;
 using JSC::Interpreter;

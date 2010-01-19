@@ -24,20 +24,18 @@
  */
 
 #include "config.h"
+
+#include "Bridge.h"
 #include <Foundation/Foundation.h>
-
+#include "JSObject.h"
+#include "JSValue.h"
 #import <WebKit/WebScriptObject.h>
-
+#include "interpreter.h"
+#include "runtime_object.h"
 #include <stdio.h>
 #include <string.h>
-
-#include "JSValue.h"
-#include "JSObject.h"
 #include "types.h"
-#include "interpreter.h"
 
-#include "runtime.h"
-#include "runtime_object.h"
 
 #define LOG(formatAndArgs...) { \
     fprintf (stderr, "%s:  ", __PRETTY_FUNCTION__); \

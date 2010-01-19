@@ -33,6 +33,7 @@
 #if !PLATFORM(WX)
 #include "BitmapInfo.h"
 #endif
+#include "Bridge.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -63,11 +64,10 @@
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
+#include "Settings.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include "Settings.h"
-#include "runtime.h"
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>

@@ -28,9 +28,9 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "runtime.h"
-#include <wtf/PassRefPtr.h>
+#include "Bridge.h"
 #include "runtime_root.h"
+#include <wtf/PassRefPtr.h>
 
 typedef struct NPObject NPObject;
 

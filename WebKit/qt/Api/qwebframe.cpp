@@ -21,6 +21,7 @@
 #include "config.h"
 #include "qwebframe.h"
 
+#include "Bridge.h"
 #include "CallFrame.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -67,7 +68,6 @@
 #include "qwebpage_p.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
-#include "runtime.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include "wtf/HashMap.h"

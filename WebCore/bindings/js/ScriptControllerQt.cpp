@@ -36,11 +36,11 @@
 #include "config.h"
 #include "ScriptController.h"
 
+#include "Bridge.h"
 #include "DOMWindow.h"
 #include "PluginView.h"
 #include "qt_instance.h"
 #include "runtime_root.h"
-#include "runtime.h"
 
 #include <QWidget>
 

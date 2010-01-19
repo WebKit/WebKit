@@ -27,9 +27,9 @@
 #include "config.h"
 #include "ScriptController.h"
 
+#include "Bridge.h"
 #include "PluginView.h"
 #include "runtime_root.h"
-#include "runtime.h"
 
 namespace WebCore {
 

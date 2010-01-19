@@ -19,19 +19,17 @@
  *
  */
 #include "config.h"
+
+#include "Bridge.h"
+#include "JSObject.h"
+#include "JSValue.h"
+#include "interpreter.h"
+#include "npruntime_internal.h"
+#include "runtime_object.h"
+#include "types.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "JSValue.h"
-#include "JSObject.h"
-#include "types.h"
-#include "interpreter.h"
-
-#include "npruntime_internal.h"
-
-#include "runtime.h"
-#include "runtime_object.h"
 
 
 #define LOG(formatAndArgs...) { \

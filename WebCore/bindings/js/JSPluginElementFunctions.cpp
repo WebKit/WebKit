@@ -20,10 +20,10 @@
 #include "config.h"
 #include "JSPluginElementFunctions.h"
 
+#include "Bridge.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSHTMLElement.h"
-#include "runtime.h"
 #include "runtime_object.h"
 
 using namespace JSC;

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PluginView.h"
 
+#include "Bridge.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -65,7 +66,6 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "Settings.h"
-#include "runtime.h"
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>

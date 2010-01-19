@@ -28,7 +28,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "runtime.h"
+#include "Bridge.h"
 #include "runtime_root.h"
 
 #include <JavaVM/jni.h>

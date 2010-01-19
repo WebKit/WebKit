@@ -492,6 +492,8 @@ webcore_sources += \
 	WebCore/bindings/js/SerializedScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
+	WebCore/bridge/Bridge.cpp \
+	WebCore/bridge/Bridge.h \
 	WebCore/bridge/IdentifierRep.cpp \
 	WebCore/bridge/IdentifierRep.h \
 	WebCore/bridge/NP_jsobject.cpp \
@@ -515,8 +517,6 @@ webcore_sources += \
 	WebCore/bridge/npruntime_impl.h \
 	WebCore/bridge/npruntime_internal.h \
 	WebCore/bridge/npruntime_priv.h \
-	WebCore/bridge/runtime.cpp \
-	WebCore/bridge/runtime.h \
 	WebCore/bridge/runtime_array.cpp \
 	WebCore/bridge/runtime_array.h \
 	WebCore/bridge/runtime_method.cpp \

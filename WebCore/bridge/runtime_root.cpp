@@ -26,7 +26,7 @@
 #include "config.h"
 #include "runtime_root.h"
 
-#include "runtime.h"
+#include "Bridge.h"
 #include "runtime_object.h"
 #include <runtime/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>

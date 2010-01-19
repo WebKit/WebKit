@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
+#import "Bridge.h"
 #import "Console.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
@@ -36,7 +37,6 @@
 #import "StringSourceProvider.h"
 #import "WebCoreObjCExtras.h"
 #import "objc_instance.h"
-#import "runtime.h"
 #import "runtime_object.h"
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>

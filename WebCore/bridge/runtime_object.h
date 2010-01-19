@@ -26,7 +26,7 @@
 #ifndef KJS_RUNTIME_OBJECT_H
 #define KJS_RUNTIME_OBJECT_H
 
-#include "runtime.h"
+#include "Bridge.h"
 #include <runtime/JSGlobalObject.h>
 
 namespace JSC {

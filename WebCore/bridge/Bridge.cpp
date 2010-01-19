@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "runtime.h"
+#include "Bridge.h"
 
 #include "runtime_object.h"
 #include "runtime_root.h"

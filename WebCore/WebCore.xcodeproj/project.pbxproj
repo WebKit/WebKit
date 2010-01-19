@@ -332,8 +332,6 @@
 		1A569D190D7E2B82007C3983 /* objc_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEA0D7E2B82007C3983 /* objc_utility.h */; };
 		1A569D1A0D7E2B82007C3983 /* objc_utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CEB0D7E2B82007C3983 /* objc_utility.mm */; };
 		1A569D1B0D7E2B82007C3983 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEC0D7E2B82007C3983 /* WebScriptObject.h */; };
-		1A569D1C0D7E2B82007C3983 /* runtime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CED0D7E2B82007C3983 /* runtime.cpp */; };
-		1A569D1D0D7E2B82007C3983 /* runtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEE0D7E2B82007C3983 /* runtime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CEF0D7E2B82007C3983 /* runtime_array.cpp */; };
 		1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF00D7E2B82007C3983 /* runtime_array.h */; };
 		1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF10D7E2B82007C3983 /* runtime_method.cpp */; };
@@ -1115,6 +1113,8 @@
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		599D1E3210C97D6E00E0EF12 /* jni_utility_private.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */; };
 		599D1E3310C97D6E00E0EF12 /* jni_utility_private.h in Headers */ = {isa = PBXBuildFile; fileRef = 599D1E3110C97D6E00E0EF12 /* jni_utility_private.h */; };
+		599E759011055A1F00D904FA /* Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 599E758F11055A1F00D904FA /* Bridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		599E759211055A2A00D904FA /* Bridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 599E759111055A2A00D904FA /* Bridge.cpp */; };
 		59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */; };
 		59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */; };
 		59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BC393E11054A1300FD85DB /* JavaStringJSC.h */; };
@@ -5584,8 +5584,6 @@
 		1A569CEA0D7E2B82007C3983 /* objc_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc_utility.h; sourceTree = "<group>"; };
 		1A569CEB0D7E2B82007C3983 /* objc_utility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = objc_utility.mm; sourceTree = "<group>"; };
 		1A569CEC0D7E2B82007C3983 /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
-		1A569CED0D7E2B82007C3983 /* runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime.cpp; path = bridge/runtime.cpp; sourceTree = "<group>"; };
-		1A569CEE0D7E2B82007C3983 /* runtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = runtime.h; path = bridge/runtime.h; sourceTree = "<group>"; };
 		1A569CEF0D7E2B82007C3983 /* runtime_array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_array.cpp; path = bridge/runtime_array.cpp; sourceTree = "<group>"; };
 		1A569CF00D7E2B82007C3983 /* runtime_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = runtime_array.h; path = bridge/runtime_array.h; sourceTree = "<group>"; };
 		1A569CF10D7E2B82007C3983 /* runtime_method.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_method.cpp; path = bridge/runtime_method.cpp; sourceTree = "<group>"; };
@@ -6473,6 +6471,8 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		599D1E3010C97D6E00E0EF12 /* jni_utility_private.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jni_utility_private.cpp; path = jsc/jni_utility_private.cpp; sourceTree = "<group>"; };
 		599D1E3110C97D6E00E0EF12 /* jni_utility_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jni_utility_private.h; path = jsc/jni_utility_private.h; sourceTree = "<group>"; };
+		599E758F11055A1F00D904FA /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bridge.h; path = bridge/Bridge.h; sourceTree = "<group>"; };
+		599E759111055A2A00D904FA /* Bridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bridge.cpp; path = bridge/Bridge.cpp; sourceTree = "<group>"; };
 		59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaInstanceJSC.cpp; path = jsc/JavaInstanceJSC.cpp; sourceTree = "<group>"; };
 		59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaInstanceJSC.h; path = jsc/JavaInstanceJSC.h; sourceTree = "<group>"; };
 		59BC393E11054A1300FD85DB /* JavaStringJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaStringJSC.h; path = jsc/JavaStringJSC.h; sourceTree = "<group>"; };
@@ -10309,6 +10309,8 @@
 		1A569CC40D7E2B60007C3983 /* bridge */ = {
 			isa = PBXGroup;
 			children = (
+				599E759111055A2A00D904FA /* Bridge.cpp */,
+				599E758F11055A1F00D904FA /* Bridge.h */,
 				1A569CC50D7E2B82007C3983 /* c */,
 				1A569CCE0D7E2B82007C3983 /* jni */,
 				1A569CE20D7E2B82007C3983 /* objc */,
@@ -10322,8 +10324,6 @@
 				1A569CDF0D7E2B82007C3983 /* npruntime_impl.h */,
 				1A569CE00D7E2B82007C3983 /* npruntime_internal.h */,
 				1A569CE10D7E2B82007C3983 /* npruntime_priv.h */,
-				1A569CED0D7E2B82007C3983 /* runtime.cpp */,
-				1A569CEE0D7E2B82007C3983 /* runtime.h */,
 				1A569CEF0D7E2B82007C3983 /* runtime_array.cpp */,
 				1A569CF00D7E2B82007C3983 /* runtime_array.h */,
 				1A569CF10D7E2B82007C3983 /* runtime_method.cpp */,
@@ -17828,7 +17828,6 @@
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
-				1A569D1D0D7E2B82007C3983 /* runtime.h in Headers */,
 				1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */,
 				1A569D210D7E2B82007C3983 /* runtime_method.h in Headers */,
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
@@ -18376,6 +18375,7 @@
 				59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */,
 				59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */,
 				59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */,
+				599E759011055A1F00D904FA /* Bridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20056,7 +20056,6 @@
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
-				1A569D1C0D7E2B82007C3983 /* runtime.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
@@ -20543,6 +20542,7 @@
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */,
 				59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */,
+				599E759211055A2A00D904FA /* Bridge.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,9 +22,7 @@
 #include "config.h"
 #include "MediaPlayerProxy.h"
 
-#include "c_class.h"
-#include "c_instance.h"
-#include "c_runtime.h"
+#include "Bridge.h"
 #include "DocumentLoader.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
@@ -32,14 +30,16 @@
 #include "JSPluginElementFunctions.h"
 #include "MediaPlayer.h"
 #include "Node.h"
-#include "npruntime_impl.h"
 #include "PlatformString.h"
 #include "PluginView.h"
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
-#include "runtime.h"
-#include <runtime/Identifier.h>
 #include "Widget.h"
+#include "c_class.h"
+#include "c_instance.h"
+#include "c_runtime.h"
+#include "npruntime_impl.h"
+#include <runtime/Identifier.h>
 
 using namespace JSC;
 

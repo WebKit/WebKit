@@ -1,3 +1,12 @@
+2010-01-19  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Renames WebCore/bridge/runtime.[cpp|h] to WebCore/bridge/Bridge.[cpp|h]
+        https://bugs.webkit.org/show_bug.cgi?id=33801
+
+        * Plugins/Hosted/ProxyInstance.h:
+
 2010-01-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

@@ -165,6 +165,7 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_BRIDGE">
+        bridge/Bridge.cpp
         bridge/IdentifierRep.cpp
         bridge/NP_jsobject.cpp
         bridge/c/c_class.cpp
@@ -172,7 +173,6 @@ This file contains the list of files needed to build WebCore.
         bridge/c/c_runtime.cpp
         bridge/c/c_utility.cpp
         bridge/npruntime.cpp
-        bridge/runtime.cpp
         bridge/runtime_array.cpp
         bridge/runtime_method.cpp
         bridge/runtime_object.cpp

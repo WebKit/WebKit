@@ -339,11 +339,11 @@ SOURCES += \
     bindings/js/ScheduledAction.cpp \
     bindings/js/SerializedScriptValue.cpp \
     bindings/ScriptControllerBase.cpp \
+    bridge/Bridge.cpp \
     bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \
     bridge/npruntime.cpp \
     bridge/runtime_array.cpp \
-    bridge/runtime.cpp \
     bridge/runtime_method.cpp \
     bridge/runtime_object.cpp \
     bridge/runtime_root.cpp \
@@ -1026,6 +1026,7 @@ HEADERS += \
     bindings/js/SerializedScriptValue.h \
     bindings/js/StringSourceProvider.h \
     bindings/js/WorkerScriptController.h \
+    bridge/Bridge.h \
     bridge/c/c_class.h \
     bridge/c/c_instance.h \
     bridge/c/c_runtime.h \
@@ -1037,7 +1038,6 @@ HEADERS += \
     bridge/qt/qt_instance.h \
     bridge/qt/qt_runtime.h \
     bridge/runtime_array.h \
-    bridge/runtime.h \
     bridge/runtime_method.h \
     bridge/runtime_object.h \
     bridge/runtime_root.h \

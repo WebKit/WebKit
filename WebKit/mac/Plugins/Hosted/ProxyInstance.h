@@ -28,7 +28,7 @@
 #ifndef ProxyInstance_h
 #define ProxyInstance_h
 
-#include <WebCore/runtime.h>
+#include <WebCore/Bridge.h>
 #include <WebCore/runtime_root.h>
 #include <wtf/OwnPtr.h>
 #include "WebKitPluginHostTypes.h"

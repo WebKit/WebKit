@@ -23,21 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+
+#include "Bridge.h"
+#include "JSObject.h"
+#include "JSValue.h"
+#include "interpreter.h"
+#include "qdebug.h"
+#include "qobject.h"
+#include "runtime_object.h"
+#include "types.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "JSValue.h"
-#include "JSObject.h"
-#include "types.h"
-#include "interpreter.h"
-
-#include "qobject.h"
-#include "qdebug.h"
-
-#include "runtime.h"
-#include "runtime_object.h"
-
 
 
 class MyObject : public QObject

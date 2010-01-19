@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PluginView.h"
 
+#include "Bridge.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -52,7 +53,6 @@
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "npruntime_impl.h"
-#include "runtime.h"
 #include "runtime_root.h"
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>

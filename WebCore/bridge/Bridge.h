@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JAVASCRIPTCORE_BINDINGS_RUNTIME_H
-#define JAVASCRIPTCORE_BINDINGS_RUNTIME_H
+#ifndef Bridge_h
+#define Bridge_h
 
 #include <runtime/JSString.h>
 #include <wtf/HashMap.h>
@@ -132,15 +132,15 @@ public:
     Array(PassRefPtr<RootObject>);
     virtual ~Array();
     
-    virtual void setValueAt(ExecState *, unsigned index, JSValue) const = 0;
-    virtual JSValue valueAt(ExecState *, unsigned index) const = 0;
+    virtual void setValueAt(ExecState*, unsigned index, JSValue) const = 0;
+    virtual JSValue valueAt(ExecState*, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
 
 protected:
     RefPtr<RootObject> _rootObject;
 };
 
-const char *signatureForParameters(const ArgList&);
+const char* signatureForParameters(const ArgList&);
 
 typedef HashMap<RefPtr<UString::Rep>, MethodList*> MethodListMap;
 typedef HashMap<RefPtr<UString::Rep>, Method*> MethodMap; 

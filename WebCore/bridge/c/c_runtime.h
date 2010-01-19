@@ -28,8 +28,8 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "Bridge.h"
 #include "npruntime_internal.h"
-#include "runtime.h"
 
 namespace JSC {
 namespace Bindings {
