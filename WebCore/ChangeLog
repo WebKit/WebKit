@@ -1,3 +1,20 @@
+2010-01-19  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33822
+
+        REGRESSION(r53273): Fixes redefinition of XFORM error when building
+        WebKit using Qt Windows with the MinGW compiler.
+ 
+        Note, MinGW has a slightly different declaration of the struct XFORM
+        from that in the Microsoft SDK. So, we need to substitute an alternative
+        typedef for XFORM when compiling with MinGW.
+
+        No functionality was changed. So, no new tests.
+
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2010-01-19  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.
