@@ -1,0 +1,7 @@
+1. Test that no usable <source> element leaves the media element with networkState == NETWORK_NO_SOURCE
+
+EVENT(error)
+EXPECTED (event.target.tagName == 'SOURCE') OK
+EXPECTED (video.networkState == '4') OK
+END OF TEST
+

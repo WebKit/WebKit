@@ -1,3 +1,13 @@
+2010-01-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        video.networkState remains NETWORK_LOADING indefinitely when no <source> element was able to be loaded
+        https://bugs.webkit.org/show_bug.cgi?id=33744
+
+        * media/video-source-none-supported-expected.txt: Added.
+        * media/video-source-none-supported.html: Added.
+
 2010-01-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Treat.

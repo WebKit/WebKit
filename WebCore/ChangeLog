@@ -1,3 +1,20 @@
+2010-01-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        video.networkState remains NETWORK_LOADING indefinitely when no <source> element was able to be loaded
+        https://bugs.webkit.org/show_bug.cgi?id=33744
+
+        Test: media/video-source-none-supported.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadNextSourceChild): Call waitForSourceChange if
+            there are no valid source elements.
+        (WebCore::HTMLMediaElement::waitForSourceChange): New, set networkState to NETWORK_NO_SOURCE.
+        (WebCore::HTMLMediaElement::setNetworkState): Call waitForSourceChange if the movie
+            hasn't reached HAVE_METADATA and there are no more <source> elements to try.
+        * html/HTMLMediaElement.h: Declare waitForSourceChange.
+
 2010-01-19  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Treat.
