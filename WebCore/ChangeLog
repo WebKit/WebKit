@@ -1,3 +1,32 @@
+2010-01-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler & Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33731
+        Remove uses of PtrAndFlags from WebCore::StringImpl.
+
+        These break the OS X Leaks tool.  Move the management of null-terminated copies
+        out from StringImpl to String, and use a bit stolen from the refCount to hold the
+        'InTable' flag.
+
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        * platform/sql/SQLiteStatement.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::copyWithNullTermination):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::~StringImpl):
+        (WebCore::StringImpl::create):
+        (WebCore::StringImpl::crossThreadString):
+        (WebCore::StringImpl::sharedBuffer):
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::inTable):
+        (WebCore::StringImpl::setInTable):
+
 2010-01-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
