@@ -483,15 +483,24 @@ void HTMLMediaElement::selectMediaResource()
 
     // 2 - Asynchronously await a stable state.
 
-    // 3 - If the media element has neither a src attribute nor any source element children, run these substeps
+    // 3 - ... the media element has neither a src attribute ...
     String mediaSrc = getAttribute(srcAttr);
-    if (!mediaSrc && !havePotentialSourceChild()) {
-        m_loadState = WaitingForSource;
+    if (!mediaSrc) {
+        // ... nor a source element child: ...
+        Node* node;
+        for (node = firstChild(); node; node = node->nextSibling()) {
+            if (node->hasTagName(sourceTag))
+                break;
+        }
 
-        // 1 - Set the networkState to NETWORK_EMPTY and abort these steps
-        m_networkState = NETWORK_EMPTY;
-        ASSERT(!m_delayingTheLoadEvent);
-        return;
+        if (!node) {
+            m_loadState = WaitingForSource;
+
+            // ... set the networkState to NETWORK_EMPTY, and abort these steps
+            m_networkState = NETWORK_EMPTY;
+            ASSERT(!m_delayingTheLoadEvent);
+            return;
+        }
     }
 
     // 4

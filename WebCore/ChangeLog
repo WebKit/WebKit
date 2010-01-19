@@ -1,3 +1,16 @@
+2010-01-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        error events don't fire if no <source> elements passed to media engine
+        https://bugs.webkit.org/show_bug.cgi?id=33855
+
+        Test: media/video-source-error-no-candidate.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource): Only bail early if
+        there is no 'src' attribute and no <source> child elements at all.
+
 2010-01-19  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Roben.
