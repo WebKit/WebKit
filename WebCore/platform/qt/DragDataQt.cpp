@@ -134,7 +134,7 @@ String DragData::asURL(String*) const
 PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 {
     if (m_platformDragData && m_platformDragData->hasHtml())
-        return createFragmentFromMarkup(doc, m_platformDragData->html(), "");
+        return createFragmentFromMarkup(doc, m_platformDragData->html(), "", FragmentScriptingNotAllowed);
 
     return 0;
 }

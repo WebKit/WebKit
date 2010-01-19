@@ -47,7 +47,9 @@ enum MappedAttributeEntry {
 // When adding new entries, make sure to keep eLastEntry at the end of the list.
     , eLastEntry
 };
-    
+
+enum FragmentScriptingPermission { FragmentScriptingAllowed, FragmentScriptingNotAllowed };
+
 }
 
 #endif

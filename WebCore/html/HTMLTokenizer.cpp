@@ -196,7 +196,7 @@ HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
+HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag, FragmentScriptingPermission scriptingPermission)
     : m_buffer(0)
     , m_scriptCode(0)
     , m_scriptCodeSize(0)
@@ -208,7 +208,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_externalScriptsTimer(this, &HTMLTokenizer::executeExternalScriptsTimerFired)
     , m_doc(frag->document())
-    , m_parser(new HTMLParser(frag))
+    , m_parser(new HTMLParser(frag, scriptingPermission))
     , m_inWrite(false)
     , m_fragment(true)
 {
@@ -2131,9 +2131,9 @@ void HTMLTokenizer::setSrc(const SegmentedString& source)
     m_src = source;
 }
 
-void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment)
+void parseHTMLDocumentFragment(const String& source, DocumentFragment* fragment, FragmentScriptingPermission scriptingPermission)
 {
-    HTMLTokenizer tok(fragment);
+    HTMLTokenizer tok(fragment, scriptingPermission);
     tok.setForceSynchronous(true);
     tok.write(source, true);
     tok.finish();

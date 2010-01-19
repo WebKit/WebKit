@@ -617,8 +617,18 @@ void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
     if (document()->attached() && document()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
         setNeedsStyleRecalc();
 }
-        
-void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list)
+
+// Returns true is the given attribute is an event handler.
+// We consider an event handler any attribute that begins with "on".
+// It is a simple solution that has the advantage of not requiring any
+// code or configuration change if a new event handler is defined.
+
+static bool isEventHandlerAttribute(const QualifiedName& name)
+{
+    return name.namespaceURI().isNull() && name.localName().startsWith("on");
+}
+    
+void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
 {
     document()->incDOMTreeVersion();
 
@@ -638,6 +648,21 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list)
 
     if (namedAttrMap) {
         namedAttrMap->m_element = this;
+        // If the element is created as result of a paste or drag-n-drop operation
+        // we want to remove all the script and event handlers.
+        if (scriptingPermission == FragmentScriptingNotAllowed) {
+            unsigned i = 0;
+            while (i < namedAttrMap->length()) {
+                const QualifiedName& attributeName = namedAttrMap->m_attributes[i]->name();
+                if (isEventHandlerAttribute(attributeName)) {
+                    namedAttrMap->m_attributes.remove(i);
+                    continue;
+                }
+                if ((attributeName == hrefAttr || attributeName == srcAttr || attributeName == actionAttr) && protocolIsJavaScript(deprecatedParseURL(namedAttrMap->m_attributes[i]->value())))
+                    namedAttrMap->m_attributes[i]->setValue(nullAtom);
+                i++;
+            }
+        }
         unsigned len = namedAttrMap->length();
         for (unsigned i = 0; i < len; i++)
             attributeChanged(namedAttrMap->m_attributes[i].get());

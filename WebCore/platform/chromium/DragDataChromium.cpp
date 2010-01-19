@@ -147,7 +147,7 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 
     if (!m_platformDragData->textHtml.isEmpty()) {
         RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(doc,
-            m_platformDragData->textHtml, m_platformDragData->htmlBaseUrl);
+            m_platformDragData->textHtml, m_platformDragData->htmlBaseUrl, FragmentScriptingNotAllowed);
         return fragment.release();
     }
 

@@ -177,7 +177,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 #endif
 
         RefPtr<DocumentFragment> fragment =
-            createFragmentFromMarkup(frame->document(), markup, srcURL);
+            createFragmentFromMarkup(frame->document(), markup, srcURL, FragmentScriptingNotAllowed);
         if (fragment)
             return fragment.release();
     }

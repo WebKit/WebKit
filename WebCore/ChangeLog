@@ -1,3 +1,57 @@
+2010-01-18  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Script attributes are copied and pasted, making cross-domain attacks possible (30019)
+        <rdar://problem/6008809>
+        https://bugs.webkit.org/show_bug.cgi?id=30019
+
+        When we create the document fragment from a markup string,
+        either to perform a paste operation or a drag and drop, we
+        want to remove all the event handlers and any attribute that contain
+        a value that leads to code execution.
+        The HTMLParser class is now aware of the needs of stripping these attributes.
+        I've modified the call to createMarkupString for every platform.
+
+        Test: editing/pasteboard/paste-noscript.html
+
+        * WebCore.base.exp:
+        * dom/Element.cpp:
+        (WebCore::isEventHandlerAttribute):
+        (WebCore::Element::setAttributeMap):
+        * dom/Element.h:
+        * dom/MappedAttributeEntry.h:
+        (WebCore::):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createContextualFragment):
+        * html/HTMLElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::parseToken):
+        * html/HTMLParser.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::parseHTMLDocumentFragment):
+        * html/HTMLTokenizer.h:
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::asFragment):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::documentFragment):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::documentFragment):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::documentFragment):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asFragment):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::documentFragment):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::fragmentFromCF_HTML):
+        (WebCore::fragmentFromHTML):
+
 2010-01-18  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam Weinig.
