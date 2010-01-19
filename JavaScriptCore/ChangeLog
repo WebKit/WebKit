@@ -1,3 +1,15 @@
+2010-01-18  Darin Adler  <darin@apple.com>
+
+        Fix build by reverting the previous change.
+
+        * runtime/UString.h: Rolled out the FastAllocBase base class.
+        It was making UString larger, and therefore JSString larger,
+        and too big for a garbage collection cell.
+
+        This raises the unpleasant possibility that many classes became
+        larger because we added the FastAllocBase base class. I am
+        worried about this, and it needs to be investigated.
+
 2010-01-18  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.
