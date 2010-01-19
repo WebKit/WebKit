@@ -1,3 +1,22 @@
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Some composited reflections incorrectly positioned
+        https://bugs.webkit.org/show_bug.cgi?id=33856
+        
+        New testcases for reflection positioning when adding outline, which affects the compositing
+        layer geometry.
+
+        * compositing/reflections/nested-reflection-transformed2.html: Added.
+        * compositing/reflections/reflection-positioning2.html: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed2-expected.checksum: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/mac/compositing/reflections/nested-reflection-transformed2-expected.txt: Added.
+        * platform/mac/compositing/reflections/reflection-positioning2-expected.checksum: Added.
+        * platform/mac/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/mac/compositing/reflections/reflection-positioning2-expected.txt: Added.
+
 2010-01-19  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.

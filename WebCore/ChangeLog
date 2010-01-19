@@ -1,3 +1,20 @@
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Some composited reflections incorrectly positioned
+        https://bugs.webkit.org/show_bug.cgi?id=33856
+        
+        When setting the position of the replicated layer inside the reflection, we need to take
+        into account the bounds of the original layer, and the replica layer to get the
+        reflection in the right place.
+
+        Tests: compositing/reflections/nested-reflection-transformed2.html
+               compositing/reflections/reflection-positioning2.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2010-01-19  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.
