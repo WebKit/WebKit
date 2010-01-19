@@ -1,3 +1,11 @@
+2010-01-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Add missing export for Geolocation.
+
+        * WebKit.exp:
+
 2010-01-18  Adam Roben  <aroben@apple.com>
 
         Add +[WebView _setDomainRelaxationForbidden:forURLScheme:]
