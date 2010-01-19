@@ -1,3 +1,16 @@
+2010-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION (52082): Crash on worker thread when reloading http://radnan.public.iastate.edu/procedural/
+        https://bugs.webkit.org/show_bug.cgi?id=33826
+
+        Test: fast/workers/worker-gc2.html
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController): Removed some
+        ASSERTs that have moved to JavaScriptCore.
+
 2010-01-18  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.
