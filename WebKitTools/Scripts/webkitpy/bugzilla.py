@@ -404,8 +404,14 @@ class Bugzilla(object):
         self.browser['description'] = description
         self.browser['ispatch'] = ("1",)
         self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
-        self.browser['flag_type-3'] = ('?',) if mark_for_commit_queue else ('X',)
-        self.browser['flag_type-3'] = ('+',) if mark_for_landing else ('X',)
+
+        if mark_for_landing:
+            self.browser['flag_type-3'] = ('+',)
+        elif mark_for_commit_queue:
+            self.browser['flag_type-3'] = ('?',)
+        else:
+            self.browser['flag_type-3'] = ('X',)
+
         if bug_id:
             patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
         else:
