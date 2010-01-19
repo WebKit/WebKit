@@ -19,12 +19,16 @@
             behavior:expression((function(){})());
             display:none;
         }
+        #test2 {
+            behavior:expression(function(){}());
+            display:none;
+        }
 
         /* Value containing an invalid block should be skipped */
         .malformed1 {
           height:{}
         }
-        #test2 {
+        #test3 {
             display:none;
         }
 
@@ -33,7 +37,7 @@
             a:link { color: blue;}
             a:active { color: red;}
         }
-        #test3 {
+        #test4 {
             display:none;
         }
 
@@ -47,6 +51,7 @@
   <div class="to_be_hidden" id="test1">FAIL: Test 1</div>
   <div class="to_be_hidden" id="test2">FAIL: Test 2</div>
   <div class="to_be_hidden" id="test3">FAIL: Test 3</div>
+  <div class="to_be_hidden" id="test4">FAIL: Test 4</div>
   <div class="to_be_shown" id="last">PASS</div>
 </body>
 </html>

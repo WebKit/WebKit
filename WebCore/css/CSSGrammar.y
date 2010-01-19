@@ -97,7 +97,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 53
+%expect 54
 
 %nonassoc LOWEST_PREC
 
@@ -1329,6 +1329,9 @@ expr:
         }
     }
     | expr invalid_block_list {
+        $$ = 0;
+    }
+    | expr invalid_block_list error {
         $$ = 0;
     }
     | expr error {
