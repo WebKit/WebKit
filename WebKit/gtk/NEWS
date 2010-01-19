@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 1.1.19
+=================
+
+What's new in WebKitGTK+ 1.1.19?
+
+  - Improvements to AtkText implementation
+  - RGBA colormap support has been added
+  - Improvements to the HTML5 media player
+  - Crashes related to clipboard handling, which were hitting many
+    users and seemed to be random have been fixed
+
+=================
 WebKitGTK+ 1.1.18
 =================
 

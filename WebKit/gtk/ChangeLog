@@ -2,6 +2,14 @@
 
         Reviewed by Xan Lopez.
 
+        News items for 1.1.19.
+
+        * NEWS:
+
+2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
         [GTK] More crashes related to the clipboard management
         https://bugs.webkit.org/show_bug.cgi?id=33746
 
