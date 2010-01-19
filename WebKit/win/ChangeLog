@@ -1,3 +1,9 @@
+2010-01-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebScriptWorld.cpp: Added missing #include.
+
 2010-01-19  Dave Hyatt  <hyatt@apple.com>
 
         Build bustage fix. Make sure the newly added scriptWorldForGlobalContext function is [local] in the IDL.
