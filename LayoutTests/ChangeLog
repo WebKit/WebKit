@@ -1,5 +1,14 @@
 2010-01-19  Yury Semikhatsky  <yurys@chromium.org>
 
+        Reviewed by NOBODY (build fix).
+
+        Revert r53467. Browser crashes on opening inspector if there
+        are messages in console.
+
+        * inspector/styles-iframe.html:
+
+2010-01-19  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Inject inspector script directly into the inspected context. All the

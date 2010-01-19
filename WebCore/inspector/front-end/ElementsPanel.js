@@ -63,7 +63,7 @@ WebInspector.ElementsPanel = function()
             this.panel.nodeSearchButton.toggled = false;
         }
         if (this._focusedDOMNode)
-            InjectedScriptAccess.get(this._focusedDOMNode.injectedScriptId).addInspectedNode(this._focusedDOMNode.id, function() {});
+            InjectedScriptAccess.addInspectedNode(this._focusedDOMNode.id, function() {});
     };
 
     this.contentElement.appendChild(this.treeOutline.element);
@@ -237,7 +237,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         if (this._selectedPathOnReset)
-            InjectedScriptAccess.getDefault().nodeByPath(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
+            InjectedScriptAccess.nodeByPath(this._selectedPathOnReset, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
         delete this._selectedPathOnReset;
@@ -257,7 +257,7 @@ WebInspector.ElementsPanel.prototype = {
 
         this._currentSearchResultIndex = 0;
         this._searchResults = [];
-        InjectedScriptAccess.getDefault().searchCanceled(function() {});
+        InjectedScriptAccess.searchCanceled(function() {});
     },
 
     performSearch: function(query)
@@ -272,7 +272,7 @@ WebInspector.ElementsPanel.prototype = {
         this._updatedMatchCountOnce = false;
         this._matchesCountUpdateTimeout = null;
 
-        InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, function() {});
+        InjectedScriptAccess.performSearch(whitespaceTrimmedQuery, function() {});
     },
 
     _updateMatchesCount: function()

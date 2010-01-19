@@ -143,6 +143,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_inspectorBackend(InspectorBackend::create(this))
     , m_inspectorFrontendHost(InspectorFrontendHost::create(this, client))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
+    , m_lastBoundObjectId(1)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
@@ -374,7 +375,7 @@ void InspectorController::clearConsoleMessages()
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_groupLevel = 0;
-    m_injectedScriptHost->releaseWrapperObjectGroup(0 /* release the group in all scripts */, "console");
+    releaseWrapperObjectGroup("console");
     if (m_domAgent)
         m_domAgent->releaseDanglingNodes();
     if (m_frontend)
@@ -499,7 +500,7 @@ void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
 {
     if (!enabled() || !m_frontend || frame != m_inspectedPage->mainFrame())
         return;
-    m_injectedScriptHost->discardInjectedScripts();
+    resetInjectedScript();
 }
 
 void InspectorController::windowScriptObjectAvailable()
@@ -512,6 +513,7 @@ void InspectorController::windowScriptObjectAvailable()
     m_scriptState = scriptStateFromPage(debuggerWorld(), m_page);
     ScriptGlobalObject::set(m_scriptState, "InspectorBackend", m_inspectorBackend.get());
     ScriptGlobalObject::set(m_scriptState, "InspectorFrontendHost", m_inspectorFrontendHost.get());
+    ScriptGlobalObject::set(m_scriptState, "InjectedScriptHost", m_injectedScriptHost.get());
 }
 
 void InspectorController::scriptObjectReady()
@@ -524,6 +526,8 @@ void InspectorController::scriptObjectReady()
     if (!ScriptGlobalObject::get(m_scriptState, "WebInspector", webInspectorObj))
         return;
     ScriptObject injectedScriptObj;
+    if (!ScriptGlobalObject::get(m_scriptState, "InjectedScript", injectedScriptObj))
+        return;
     setFrontendProxyObject(m_scriptState, webInspectorObj, injectedScriptObj);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -541,9 +545,10 @@ void InspectorController::scriptObjectReady()
     m_client->inspectorWindowObjectCleared();
 }
 
-void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj, ScriptObject)
+void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj, ScriptObject injectedScriptObj)
 {
     m_scriptState = scriptState;
+    m_injectedScriptObj = injectedScriptObj;
     m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
     releaseDOMAgent();
     m_domAgent = InspectorDOMAgent::create(m_frontend.get());
@@ -601,6 +606,7 @@ void InspectorController::close()
 #endif
     closeWindow();
 
+    m_injectedScriptObj = ScriptObject();
     releaseDOMAgent();
     m_frontend.set(0);
     m_timelineAgent = 0;
@@ -709,6 +715,8 @@ void InspectorController::resetScriptObjects()
 
     m_frontend->reset();
     m_domAgent->reset();
+    m_objectGroups.clear();
+    m_idToWrappedObject.clear();
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)
@@ -1583,14 +1591,8 @@ void InspectorController::failedToParseSource(ExecState*, const SourceCode& sour
 
 void InspectorController::didPause()
 {
-    JavaScriptCallFrame* callFrame = m_injectedScriptHost->currentCallFrame();
-    ScriptState* scriptState = callFrame->scopeChain()->globalObject->globalExec();
-    ASSERT(scriptState);
-    ScriptObject injectedScriptObj = m_injectedScriptHost->injectedScriptFor(scriptState);
-    ScriptFunctionCall function(scriptState, injectedScriptObj, "getCallFrames");
-    ScriptValue callFramesValue = function.call();
-    String callFrames = callFramesValue.toString(scriptState);
-
+    ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "getCallFrames");
+    ScriptValue callFrames = function.call();
     m_frontend->pausedScript(callFrames);
 }
 
@@ -1818,6 +1820,50 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return ElementsPanel;
 }
 
+ScriptValue InspectorController::wrapObject(const ScriptValue& quarantinedObject, const String& objectGroup)
+{
+    ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "createProxyObject");
+    function.appendArgument(quarantinedObject);
+    if (quarantinedObject.isObject()) {
+        long id = m_lastBoundObjectId++;
+        String objectId = String::format("object#%ld", id);
+        m_idToWrappedObject.set(objectId, quarantinedObject);
+        ObjectGroupsMap::iterator it = m_objectGroups.find(objectGroup);
+        if (it == m_objectGroups.end())
+            it = m_objectGroups.set(objectGroup, Vector<String>()).first;
+        it->second.append(objectId);
+        function.appendArgument(objectId);
+    }
+    ScriptValue wrapper = function.call();
+    return wrapper;
+}
+
+ScriptValue InspectorController::unwrapObject(const String& objectId)
+{
+    HashMap<String, ScriptValue>::iterator it = m_idToWrappedObject.find(objectId);
+    if (it != m_idToWrappedObject.end())
+        return it->second;
+    return ScriptValue();
+}
+
+void InspectorController::releaseWrapperObjectGroup(const String& objectGroup)
+{
+    ObjectGroupsMap::iterator groupIt = m_objectGroups.find(objectGroup);
+    if (groupIt == m_objectGroups.end())
+        return;
+
+    Vector<String>& groupIds = groupIt->second;
+    for (Vector<String>::iterator it = groupIds.begin(); it != groupIds.end(); ++it)
+        m_idToWrappedObject.remove(*it);
+    m_objectGroups.remove(groupIt);
+}
+
+void InspectorController::resetInjectedScript()
+{
+    ScriptFunctionCall function(m_scriptState, m_injectedScriptObj, "reset");
+    function.call();
+}
+
 void InspectorController::deleteCookie(const String& cookieName, const String& domain)
 {
     ResourcesMap::iterator resourcesEnd = m_resources.end();
@@ -1846,27 +1892,6 @@ void InspectorController::didModifyDOMAttr(Element* element)
         m_domAgent->didModifyDOMAttr(element);
 }
 
-ScriptObject InspectorController::injectedScriptForNodeId(long id)
-{
-
-    Frame* frame = 0;
-    if (id) {
-        ASSERT(m_domAgent);
-        Node* node = m_domAgent->nodeForId(id);
-        if (node) {
-            Document* document = node->ownerDocument();
-            if (document)
-                frame = document->frame();
-        }
-    } else
-        frame = m_inspectedPage->mainFrame();
-
-    if (frame)
-        return m_injectedScriptHost->injectedScriptFor(frame->script()->mainWorldScriptState());
-
-    return ScriptObject();
-}
-
-} // namespace WebCore
+}  // namespace WebCore
     
 #endif // ENABLE(INSPECTOR)

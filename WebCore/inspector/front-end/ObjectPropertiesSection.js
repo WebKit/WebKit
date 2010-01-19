@@ -50,7 +50,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 return;
             self.updateProperties(properties);
         };
-        InjectedScriptAccess.get(this.object.injectedScriptId).getProperties(this.object, this.ignoreHasOwnProperty, true, callback);
+        InjectedScriptAccess.getProperties(this.object, this.ignoreHasOwnProperty, true, callback);
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -147,7 +147,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        InjectedScriptAccess.get(this.property.value.injectedScriptId).getProperties(this.property.value, false, true, callback.bind(this));
+        InjectedScriptAccess.getProperties(this.property.value, false, true, callback.bind(this));
     },
 
     ondblclick: function(event)
@@ -251,7 +251,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 self.updateSiblings();
             }
         };
-        InjectedScriptAccess.get(this.property.parentObjectProxy.injectedScriptId).setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trim(), callback);
+        InjectedScriptAccess.setPropertyValue(this.property.parentObjectProxy, this.property.name, expression.trim(), callback);
     }
 }
 

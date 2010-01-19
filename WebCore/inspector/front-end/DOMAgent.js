@@ -33,10 +33,6 @@ WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
     this.id = payload.id;
-    // injectedScriptId is a node is for DOM nodes which should be converted
-    // to corresponding InjectedScript by the inspector backend. We indicate
-    // this by making injectedScriptId negative.
-    this.injectedScriptId = -payload.id;
     this.nodeType = payload.nodeType;
     this.nodeName = payload.nodeName;
     this.localName = payload.localName;
@@ -520,7 +516,6 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
 WebInspector.CSSStyleDeclaration = function(payload)
 {
     this.id = payload.id;
-    this.injectedScriptId = payload.injectedScriptId;
     this.width = payload.width;
     this.height = payload.height;
     this.__disabledProperties = payload.__disabledProperties;
@@ -563,7 +558,6 @@ WebInspector.CSSStyleDeclaration.parseRule = function(payload)
 {
     var rule = {};
     rule.id = payload.id;
-    rule.injectedScriptId = payload.injectedScriptId;
     rule.selectorText = payload.selectorText;
     rule.style = new WebInspector.CSSStyleDeclaration(payload.style);
     rule.style.parentRule = rule;

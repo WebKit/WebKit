@@ -63,8 +63,7 @@ namespace WebCore {
         MessageLevel m_level;
         String m_message;
 #if ENABLE(INSPECTOR)
-        Vector<ScriptValue> m_arguments;
-        ScriptState* m_scriptState;
+        Vector<ScriptValue> m_wrappedArguments;
 #endif
         Vector<ScriptString> m_frames;
         unsigned m_line;
