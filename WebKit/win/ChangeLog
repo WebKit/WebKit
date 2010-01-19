@@ -1,5 +1,11 @@
 2010-01-19  Dave Hyatt  <hyatt@apple.com>
 
+        Build bustage fix. Make sure the newly added scriptWorldForGlobalContext function is [local] in the IDL.
+
+        * Interfaces/IWebScriptWorld.idl:
+
+2010-01-19  Dave Hyatt  <hyatt@apple.com>
+
         Reviewed by Adam Roben.
 
         Add an API to obtain a WebScriptWorld from a JSGlobalContextRef.
