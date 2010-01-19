@@ -951,6 +951,7 @@ webcore_sources += \
 	WebCore/history/HistoryItem.h \
 	WebCore/history/PageCache.cpp \
 	WebCore/history/PageCache.h \
+	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \
 	WebCore/html/canvas/CanvasPattern.cpp \
@@ -1554,6 +1555,7 @@ webcore_sources += \
 	WebCore/platform/graphics/GraphicsContext.cpp \
 	WebCore/platform/graphics/GraphicsContext.h \
 	WebCore/platform/graphics/GraphicsContextPrivate.h \
+	WebCore/platform/graphics/GraphicsLayer.h \
 	WebCore/platform/graphics/GraphicsTypes.cpp \
 	WebCore/platform/graphics/GraphicsTypes.h \
 	WebCore/platform/graphics/Icon.h \
@@ -1587,6 +1589,7 @@ webcore_sources += \
 	WebCore/platform/graphics/StrokeStyleApplier.h \
 	WebCore/platform/graphics/TextRenderingMode.h \
 	WebCore/platform/graphics/TextRun.h \
+	WebCore/platform/graphics/TypesettingFeatures.h \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \
 	WebCore/platform/graphics/WidthIterator.h \
@@ -1709,6 +1712,7 @@ webcore_sources += \
 	WebCore/plugins/PluginQuirkSet.h \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/plugins/PluginStream.h \
+	WebCore/plugins/PluginWidget.h \
 	WebCore/plugins/PluginView.cpp \
 	WebCore/plugins/PluginView.h \
 	WebCore/plugins/npapi.cpp \
@@ -1858,6 +1862,7 @@ webcore_sources += \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \
+	WebCore/rendering/TrailingFloatsRootInlineBox.h \
 	WebCore/rendering/TransformState.cpp \
 	WebCore/rendering/TransformState.h \
 	WebCore/rendering/break_lines.cpp \
@@ -3623,6 +3628,7 @@ webcore_dist += \
 	WebCore/html/HTMLEntityNames.gperf \
 	WebCore/html/HTMLAttributeNames.in \
 	WebCore/xml/xmlattrs.in \
+	WebCore/xml/xmlnsattrs.in \
 	WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files

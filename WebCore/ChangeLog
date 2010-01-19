@@ -1,3 +1,9 @@
+2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Build fixes for make distcheck - missing files.
+
+        * GNUmakefile.am:
+
 2010-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

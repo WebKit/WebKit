@@ -184,11 +184,11 @@ static void load_error_status_changed_cb(GObject* object, GParamSpec* pspec, Web
         g_assert(fixture->has_been_failed);
         g_assert(!fixture->has_been_finished);
         fixture->has_been_finished = TRUE;
-        g_main_loop_quit(fixture->loop);
         break;
     case WEBKIT_LOAD_FAILED:
         g_assert(!fixture->has_been_failed);
         fixture->has_been_failed = TRUE;
+        g_main_loop_quit(fixture->loop);
         break;
     default:
         break;
@@ -220,10 +220,10 @@ static void test_loading_error(WebLoadingFixture* fixture, gconstpointer data)
     g_main_loop_run(fixture->loop);
 
     g_assert(fixture->has_been_provisional);
-    g_assert(fixture->has_been_committed);
+    g_assert(!fixture->has_been_committed);
     g_assert(fixture->has_been_load_error);
     g_assert(fixture->has_been_failed);
-    g_assert(fixture->has_been_finished);
+    g_assert(!fixture->has_been_finished);
 }
 
 /* Cancelled load */

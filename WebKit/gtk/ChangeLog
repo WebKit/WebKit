@@ -14,6 +14,16 @@
 
 2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed. Changes to the test I forgot to make after a last
+        minute change before landing 53294 - this causes make distcheck to
+        fail.
+
+        * tests/testloading.c:
+        (load_error_status_changed_cb):
+        (test_loading_error):
+
+2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
         Reviewed by Xan Lopez.
 
         News items for 1.1.19.
