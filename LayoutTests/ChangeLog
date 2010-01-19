@@ -1,3 +1,23 @@
+2010-01-18  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        <rdar://problem/7476957> REGRESSION (r49567): Business widget list does not line up: too tall due to line height rounding change
+
+        Reverted r49567, but left in the test added in that revision, now with a failing result.
+
+        * css1/font_properties/font.html:
+        * fast/css/line-height-rounding-expected.txt:
+        * platform/mac/css1/font_properties/font-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-00-d-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-02-d-expected.txt:
+        * platform/mac/css2.1/t090501-c414-flt-ln-03-d-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+
 2010-01-18  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

@@ -429,7 +429,7 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 }
                 lineHeight = baseline + baselineToBottom;
             } else if (parentLineHeight.isPercent()) {
-                lineHeight = parentLineHeight.calcMinValue(curr->renderer()->style()->fontSize(), true);
+                lineHeight = parentLineHeight.calcMinValue(curr->renderer()->style()->fontSize());
                 baseline = 0;
                 for (size_t i = 0; i < usedFonts.size(); ++i) {
                     int halfLeading = (lineHeight - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
