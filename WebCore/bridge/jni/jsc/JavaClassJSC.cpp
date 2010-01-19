@@ -61,7 +61,7 @@ JavaClass::JavaClass(jobject anInstance)
         JavaField *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _fields.set(aField->name(), aField);
+            _fields.set(((UString)aField->name()).rep(), aField);
         }
         env->DeleteLocalRef(aJField);
     }
@@ -76,10 +76,10 @@ JavaClass::JavaClass(jobject anInstance)
         {
             JSLock lock(SilenceAssertionsOnly);
 
-            methodList = _methods.get(aMethod->name());
+            methodList = _methods.get(((UString)aMethod->name()).rep());
             if (!methodList) {
                 methodList = new MethodList();
-                _methods.set(aMethod->name(), methodList);
+                _methods.set(((UString)aMethod->name()).rep(), methodList);
             }
         }
         methodList->append(aMethod);

@@ -30,8 +30,10 @@
 
 #include "JavaInstanceJSC.h"
 #include "jni_utility.h"
-#include <runtime/JSLock.h>
 
+#if USE(JSC)
+#include "JavaStringJSC.h"
+#endif
 
 namespace JSC
 {
@@ -46,49 +48,28 @@ class JavaString
 public:
     JavaString()
     {
-        JSLock lock(SilenceAssertionsOnly);
-        _rep = UString().rep();
+        m_impl.init();
     }
 
-    void _commonInit (JNIEnv *e, jstring s)
+    JavaString(JNIEnv* e, jstring s)
     {
-        int _size = e->GetStringLength (s);
-        const jchar *uc = getUCharactersFromJStringInEnv (e, s);
-        {
-            JSLock lock(SilenceAssertionsOnly);
-            _rep = UString(reinterpret_cast<const UChar*>(uc), _size).rep();
-        }
-        releaseUCharactersForJStringInEnv (e, s, uc);
+        m_impl.init(e, s);
     }
-    
-    JavaString (JNIEnv *e, jstring s) {
-        _commonInit (e, s);
-    }
-    
-    JavaString (jstring s) {
-        _commonInit (getJNIEnv(), s);
-    }
-    
-    ~JavaString()
+
+    JavaString(jstring s)
     {
-        JSLock lock(SilenceAssertionsOnly);
-        _rep = 0;
+        m_impl.init(getJNIEnv(), s);
     }
-    
-    const char *UTF8String() const { 
-        if (_utf8String.c_str() == 0) {
-            JSLock lock(SilenceAssertionsOnly);
-            _utf8String = UString(_rep).UTF8String();
-        }
-        return _utf8String.c_str();
-    }
-    const jchar *uchars() const { return (const jchar *)_rep->data(); }
-    int length() const { return _rep->size(); }
-    operator UString() const { return UString(_rep); }
+
+    const char* UTF8String() const { return m_impl.UTF8String(); }
+    const jchar* uchars() const { return m_impl.uchars(); }
+    int length() const { return m_impl.length(); }
+#if USE(JSC)
+    operator UString() const { return m_impl.uString(); }
+#endif
 
 private:
-    RefPtr<UString::Rep> _rep;
-    mutable CString _utf8String;
+    JavaStringImpl m_impl;
 };
 
 class JavaParameter
@@ -115,7 +96,7 @@ public:
     virtual JSValue valueFromInstance(ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValue aValue) const;
     
-    UString::Rep* name() const { return ((UString)_name).rep(); }
+    const JavaString& name() const { return _name; }
     virtual RuntimeType type() const { return _type.UTF8String(); }
 
     JNIType getJNIType() const { return _JNIType; }
@@ -137,7 +118,7 @@ public:
     JavaMethod(JNIEnv* env, jobject aMethod);
     ~JavaMethod();
 
-    UString::Rep* name() const { return ((UString)_name).rep(); }
+    const JavaString& name() const { return _name; }
     RuntimeType returnType() const { return _returnType.UTF8String(); };
     JavaParameter* parameterAt(int i) const { return &_parameters[i]; };
     int numParameters() const { return _numParameters; };
