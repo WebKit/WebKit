@@ -1,3 +1,9 @@
+2010-01-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Forgot to add this test result.
+
+        * fast/workers/worker-gc2-expected.txt: Added.
+
 2010-01-19  Xan Lopez  <xlopez@igalia.com>
 
         Skip tests generating new results.
