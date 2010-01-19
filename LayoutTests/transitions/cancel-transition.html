@@ -62,6 +62,8 @@
         function restartTransition()
         {
             document.getElementById("container").className = "run";
+            // The transition should restart at the beginning here. After 250 it should be halfway done.
+            setTimeout("check()", 250);
         }
 
         function check()
@@ -93,7 +95,6 @@
             document.getElementById("container").className = "run";
             setTimeout("cancelTransition()", 100);
             setTimeout("restartTransition()", 200);
-            setTimeout("check()", 500);
         }
     </script>
 <body onload="start()">
