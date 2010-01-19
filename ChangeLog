@@ -1,3 +1,9 @@
+2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Shared library versioning update for 1.1.19.
+
+        * configure.ac:
+
 2010-01-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Rubber-stamped by Xan Lopez.
