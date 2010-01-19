@@ -1,3 +1,13 @@
+2010-01-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix for JIT with RVCT.
+
+        Remove IMPORT statement; cti_vm_throw is already defined in JITStubs.h.
+        Remove extra ')'.
+
+        * jit/JITStubs.cpp:
+        (JSC::ctiVMThrowTrampoline):
+
 2010-01-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

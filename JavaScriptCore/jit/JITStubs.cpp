@@ -663,7 +663,6 @@ __asm void ctiVMThrowTrampoline()
 {
     ARM
     PRESERVE8
-    IMPORT cti_vm_throw
     mov r0, sp
     bl cti_vm_throw
     add sp, sp, #36
@@ -1074,7 +1073,7 @@ RVCT(    IMPORT JITStubThunked_#op#)
 RVCT(    str lr, [sp, #32])
 RVCT(    bl JITStubThunked_#op#)
 RVCT(    ldr lr, [sp, #32])
-RVCT(    bx lr))
+RVCT(    bx lr)
 RVCT(})
 RVCT()
 */
