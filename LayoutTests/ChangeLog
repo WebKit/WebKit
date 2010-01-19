@@ -1,5 +1,14 @@
 2010-01-19  Xan Lopez  <xlopez@igalia.com>
 
+        svg/custom/use-instanceRoot-event-bubbling.xhtml is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=33835
+
+        Skip flakey test.
+
+        * platform/gtk/Skipped:
+
+2010-01-19  Xan Lopez  <xlopez@igalia.com>
+
         New baseline for failing test.
 
         * platform/gtk/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt: Copied from LayoutTests/platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt.
