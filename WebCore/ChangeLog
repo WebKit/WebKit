@@ -1,3 +1,65 @@
+2010-01-19  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [OpenVG] Add (EGL) surface/context management
+        https://bugs.webkit.org/show_bug.cgi?id=33403
+
+        The foundations for a new OpenVG port.
+
+        OpenVG is not tied to EGL per se, EGL just happens to be
+        the only usable backend for OpenVG state and painting
+        at the time of writing.
+
+        The purpose of the SurfaceOpenVG class is to provide
+        an EGL-independent interface for OpenVG-specific code.
+        The EGLDisplayOpenVG class takes care of keeping track
+        of EGL displays, surfaces and contexts. It also makes
+        sure that all created contexts are interoperable, and
+        that different surfaces use a single context if possible.
+
+        * platform/graphics/openvg/EGLDisplayOpenVG.cpp: Added.
+        (WebCore::displayManagers):
+        (WebCore::EGLDisplayOpenVG::currentSurface):
+        (WebCore::EGLDisplayOpenVG::registerPlatformSurface):
+        (WebCore::EGLDisplayOpenVG::unregisterPlatformSurface):
+        (WebCore::EGLDisplayOpenVG::setCurrentDisplay):
+        (WebCore::EGLDisplayOpenVG::current):
+        (WebCore::EGLDisplayOpenVG::forDisplay):
+        (WebCore::EGLDisplayOpenVG::EGLDisplayOpenVG):
+        (WebCore::EGLDisplayOpenVG::~EGLDisplayOpenVG):
+        (WebCore::EGLDisplayOpenVG::setDefaultPbufferConfig):
+        (WebCore::EGLDisplayOpenVG::defaultPbufferConfig):
+        (WebCore::EGLDisplayOpenVG::setDefaultWindowConfig):
+        (WebCore::EGLDisplayOpenVG::defaultWindowConfig):
+        (WebCore::EGLDisplayOpenVG::sharedPlatformSurface):
+        (WebCore::EGLDisplayOpenVG::createPbufferSurface):
+        (WebCore::EGLDisplayOpenVG::surfaceForWindow):
+        (WebCore::EGLDisplayOpenVG::surfacesCompatible):
+        (WebCore::EGLDisplayOpenVG::destroySurface):
+        (WebCore::EGLDisplayOpenVG::contextForSurface):
+        * platform/graphics/openvg/EGLDisplayOpenVG.h: Added.
+        (WebCore::EGLDisplayOpenVG::display):
+        * platform/graphics/openvg/EGLUtils.h: Added.
+        (toEGLErrorConstant):
+        * platform/graphics/openvg/SurfaceOpenVG.cpp: Added.
+        (WebCore::SurfaceOpenVG::currentSurface):
+        (WebCore::SurfaceOpenVG::SurfaceOpenVG):
+        (WebCore::SurfaceOpenVG::~SurfaceOpenVG):
+        (WebCore::SurfaceOpenVG::isValid):
+        (WebCore::SurfaceOpenVG::width):
+        (WebCore::SurfaceOpenVG::height):
+        (WebCore::SurfaceOpenVG::sharedSurface):
+        (WebCore::SurfaceOpenVG::makeCurrent):
+        (WebCore::SurfaceOpenVG::makeCompatibleCurrent):
+        (WebCore::SurfaceOpenVG::flush):
+        * platform/graphics/openvg/SurfaceOpenVG.h: Added.
+        (WebCore::SurfaceOpenVG::eglDisplay):
+        (WebCore::SurfaceOpenVG::eglSurface):
+        (WebCore::SurfaceOpenVG::eglContext):
+        * platform/graphics/openvg/VGUtils.h: Added.
+        (toVGErrorConstant):
+
 2010-01-19  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
