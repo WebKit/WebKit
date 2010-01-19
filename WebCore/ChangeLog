@@ -1,3 +1,22 @@
+2010-01-19  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix for crash on large TransparencyWin allocation.  The fix is
+        to leave m_layerValid false when the allocPixels of
+        OwnedBuffers::m_referenceBitmap fails.  Then TransparencyWin won't
+        attempt to use it.
+
+        Will be covered by a new unit test in Chromium's test_shell_tests (when
+        this is rolled into Chromium).
+
+        https://bugs.webkit.org/show_bug.cgi?id=33844
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::initializeNewContext):
+        Early return when m_referenceBitmap or its pixels is NULL, leaving
+        m_layerValid false.
+
 2010-01-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

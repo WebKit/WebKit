@@ -371,8 +371,11 @@ void TransparencyWin::initializeNewContext()
             return;
 
         m_drawContext = m_layerBuffer->context();
-        if (needReferenceBitmap)
+        if (needReferenceBitmap) {
             m_referenceBitmap = m_ownedBuffers->referenceBitmap();
+            if (!m_referenceBitmap || !m_referenceBitmap->getPixels()) 
+                return;
+        }
         m_validLayer = true;
         return;
     }
