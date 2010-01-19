@@ -128,8 +128,10 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(keyDown:withModifiers:withLocation:)
             || aSelector == @selector(leapForward:)
             || aSelector == @selector(mouseDown:)
+            || aSelector == @selector(mouseDown:withModifiers:)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(mouseUp:)
+            || aSelector == @selector(mouseUp:withModifiers:)
             || aSelector == @selector(scheduleAsynchronousClick)
             || aSelector == @selector(textZoomIn)
             || aSelector == @selector(textZoomOut)
@@ -158,9 +160,9 @@ BOOL replayingSavedEvents;
         return @"keyDown";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
-    if (aSelector == @selector(mouseDown:))
+    if (aSelector == @selector(mouseDown:) || aSelector == @selector(mouseDown:withModifiers:))
         return @"mouseDown";
-    if (aSelector == @selector(mouseUp:))
+    if (aSelector == @selector(mouseUp:) || aSelector == @selector(mouseUp:withModifiers:))
         return @"mouseUp";
     if (aSelector == @selector(mouseMoveToX:Y:))
         return @"mouseMoveTo";
@@ -285,7 +287,26 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         clickCount++;
 }
 
-- (void)mouseDown:(int)buttonNumber
+static int buildModifierFlags(const WebScriptObject* modifiers)
+{
+    int flags = 0;
+    if (![modifiers isKindOfClass:[WebScriptObject class]])
+        return flags;
+    for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
+        NSString* modifierName = (NSString*)[modifiers webScriptValueAtIndex:i];
+        if ([modifierName isEqual:@"ctrlKey"])
+            flags |= NSControlKeyMask;
+        else if ([modifierName isEqual:@"shiftKey"] || [modifierName isEqual:@"rangeSelectionKey"])
+            flags |= NSShiftKeyMask;
+        else if ([modifierName isEqual:@"altKey"])
+            flags |= NSAlternateKeyMask;
+        else if ([modifierName isEqual:@"metaKey"] || [modifierName isEqual:@"addSelectionKey"])
+            flags |= NSCommandKeyMask;
+    }
+    return flags;
+}
+
+- (void)mouseDown:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
 {
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:buttonNumber];
@@ -293,7 +314,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
-                                   modifierFlags:0 
+                                   modifierFlags:buildModifierFlags(modifiers)
                                        timestamp:[self currentEventTime]
                                     windowNumber:[[[mainFrame webView] window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
@@ -307,6 +328,11 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         if (buttonNumber == LeftMouseButton)
             leftMouseButtonDown = YES;
     }
+}
+
+- (void)mouseDown:(int)buttonNumber
+{
+    [self mouseDown:buttonNumber withModifiers:nil];
 }
 
 - (void)textZoomIn
@@ -329,13 +355,14 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     [[mainFrame webView] zoomPageOut:self];
 }
 
-- (void)mouseUp:(int)buttonNumber
+- (void)mouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
 {
     if (dragMode && !replayingSavedEvents) {
-        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp:)]];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp:withModifiers:)]];
         [invocation setTarget:self];
-        [invocation setSelector:@selector(mouseUp:)];
+        [invocation setSelector:@selector(mouseUp:withModifiers:)];
         [invocation setArgument:&buttonNumber atIndex:2];
+        [invocation setArgument:&modifiers atIndex:3];
         
         [EventSendingController saveEvent:invocation];
         [EventSendingController replaySavedEvents];
@@ -347,7 +374,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
-                                   modifierFlags:0 
+                                   modifierFlags:buildModifierFlags(modifiers)
                                        timestamp:[self currentEventTime]
                                     windowNumber:[[[mainFrame webView] window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
@@ -381,6 +408,11 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         [draggingInfo release];
         draggingInfo = nil;
     }
+}
+
+- (void)mouseUp:(int)buttonNumber
+{
+    [self mouseUp:buttonNumber withModifiers:nil];
 }
 
 - (void)mouseMoveToX:(int)x Y:(int)y
@@ -524,19 +556,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         charactersIgnoringModifiers = [character lowercaseString];
     }
 
-    if ([modifiers isKindOfClass:[WebScriptObject class]]) {
-        for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
-            NSString *modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
-            if ([modifier isEqual:@"ctrlKey"])
-                modifierFlags |= NSControlKeyMask;
-            else if ([modifier isEqual:@"shiftKey"])
-                modifierFlags |= NSShiftKeyMask;
-            else if ([modifier isEqual:@"altKey"])
-                modifierFlags |= NSAlternateKeyMask;
-            else if ([modifier isEqual:@"metaKey"])
-                modifierFlags |= NSCommandKeyMask;
-        }
-    }
+    modifierFlags |= buildModifierFlags(modifiers);
 
     if (keyLocation == DOM_KEY_LOCATION_NUMPAD)
         modifierFlags |= NSNumericPadKeyMask;

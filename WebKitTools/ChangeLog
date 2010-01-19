@@ -1,3 +1,27 @@
+2010-01-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        [DRT][Mac] Add modifiers parameter to eventSender.mouseDown() and eventSender.mouseUp()
+        https://bugs.webkit.org/show_bug.cgi?id=33783
+
+        Some listbox tests check selection behavior by click events with
+        "meta" or "shift" keys. Behaviors for such modifier keys are
+        platform-dependent. The new parameter of mouseDown() and mouseUp()
+        allows to specify not only concrete modifier keys such as
+        "shiftKey" "metaKey", but also functional names like
+        "addSelectionKey" "rangeSelectionKey".
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (buildModifierFlags):
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController mouseDown:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseUp:]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2010-01-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
