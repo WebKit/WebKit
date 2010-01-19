@@ -1,3 +1,18 @@
+2010-01-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for UString class
+        https://bugs.webkit.org/show_bug.cgi?id=27831
+
+        Inherits the following class from FastAllocBase because it is
+        instantiated by 'new' and no need to be copyable:
+
+        class name     - instantiated at:
+        classs UString - JavaScriptCore/runtime/UString.cpp:160
+
+        * runtime/UString.h:
+
 2010-01-18  Evan Cheng  <evan.cheng@apple.com>
 
         Reviewed by Darin Adler.
