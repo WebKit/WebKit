@@ -1,3 +1,36 @@
+2010-01-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Revert r53454, since it causes much sadness in this world.
+
+        * runtime/UString.cpp:
+        (JSC::UString::spliceSubstringsWithSeparators):
+        (JSC::UString::replaceRange):
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::baseSharedBuffer):
+        (JSC::UStringImpl::sharedBuffer):
+        (JSC::UStringImpl::~UStringImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UntypedPtrAndBitfield::UntypedPtrAndBitfield):
+        (JSC::UntypedPtrAndBitfield::asPtr):
+        (JSC::UntypedPtrAndBitfield::operator&=):
+        (JSC::UntypedPtrAndBitfield::operator|=):
+        (JSC::UntypedPtrAndBitfield::operator&):
+        (JSC::UStringImpl::create):
+        (JSC::UStringImpl::cost):
+        (JSC::UStringImpl::isIdentifier):
+        (JSC::UStringImpl::setIsIdentifier):
+        (JSC::UStringImpl::ref):
+        (JSC::UStringImpl::deref):
+        (JSC::UStringImpl::checkConsistency):
+        (JSC::UStringImpl::UStringImpl):
+        (JSC::UStringImpl::bufferOwnerString):
+        (JSC::UStringImpl::bufferOwnership):
+        (JSC::UStringImpl::isStatic):
+        * wtf/StringHashFunctions.h:
+        (WTF::stringHash):
+
 2010-01-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
