@@ -1,0 +1,29 @@
+<html>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function runTest()
+{
+    var ifr = frames[0];
+    document.body.removeChild(document.getElementsByTagName("iframe")[0])
+    try {
+        ifr.history.replaceState("foo", "bar");
+    } catch(e) {
+        alert(e);
+    }
+    try {
+        ifr.history.pushState("fu", "barred");
+    } catch(e) {
+        alert(e);
+    }   
+}
+
+</script>
+<body onload="runTest();">
+If this test doesn't crash, it passed.
+<iframe src="about:blank">
+</iframe>
+</body>
+</html>
