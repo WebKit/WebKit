@@ -310,6 +310,7 @@ module core {
         attribute [DontEnum] EventListener ontouchstart;
         attribute [DontEnum] EventListener ontouchmove;
         attribute [DontEnum] EventListener ontouchend;
+        attribute [DontEnum] EventListener ontouchcancel;
 #endif
 #endif
     };

@@ -149,6 +149,7 @@ namespace WebCore {
     macro(touchstart) \
     macro(touchmove) \
     macro(touchend) \
+    macro(touchcancel) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 

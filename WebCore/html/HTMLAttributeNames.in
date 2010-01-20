@@ -206,6 +206,7 @@ ontimeupdate
 ontouchstart
 ontouchmove
 ontouchend
+ontouchcancel
 onunload
 onvolumechange
 onwaiting

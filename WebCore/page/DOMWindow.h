@@ -326,6 +326,7 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(touchstart);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(touchmove);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(touchend);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
         void captureEvents();
         void releaseEvents();

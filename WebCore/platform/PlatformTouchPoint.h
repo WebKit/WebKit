@@ -40,7 +40,8 @@ public:
         TouchReleased,
         TouchPressed,
         TouchMoved,
-        TouchStationary
+        TouchStationary,
+        TouchCancelled
     };
 
 #if PLATFORM(QT)

@@ -1,3 +1,35 @@
+2010-01-20  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        The touchcancel event is not supported.
+        https://bugs.webkit.org/show_bug.cgi?id=33598
+
+        This change adds support for the touchcancel event in WebCore and adds a test.
+
+        Test: fast/events/touch/send-oncancel-event.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGestureEvent): Considers touchcancel with the other touch events when working out if the event is a user gesture.
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded): Adds a check to consider ontouchcancel a touch event listener.
+        * dom/Document.h: Add the touchcancel attribute event listener.
+        * dom/Document.idl: ditto.
+        * dom/Element.h: ditto.
+        * dom/Element.idl: ditto.
+        * dom/EventNames.h: Adds touchcancel as an event name.
+        * html/HTMLAttributeNames.in:Adds touchcancel as an HTML attribute name.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Parses the ontouchcancel attribute.
+        * page/DOMWindow.h: Adds the touchcancel attribute event listener.
+        * page/DOMWindow.idl: ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Add code to detect and dispatch touchcancel events.
+        * platform/PlatformTouchEvent.h:
+        (WebCore::): Add TouchCancel as a touch event type.
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::): Add TouchCanceled as a touch point state.
+
 2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

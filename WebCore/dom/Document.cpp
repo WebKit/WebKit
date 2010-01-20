@@ -3059,7 +3059,8 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(BEFORELOAD_LISTENER);
     else if (eventType == eventNames().touchstartEvent
              || eventType == eventNames().touchmoveEvent
-             || eventType == eventNames().touchendEvent)
+             || eventType == eventNames().touchendEvent
+             || eventType == eventNames().touchcancelEvent)
         addListenerType(TOUCH_LISTENER);
 }
 

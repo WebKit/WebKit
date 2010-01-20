@@ -2549,6 +2549,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     RefPtr<TouchList> releasedTouches = TouchList::create();
     RefPtr<TouchList> movedTouches = TouchList::create();
     RefPtr<TouchList> targetTouches = TouchList::create();
+    RefPtr<TouchList> cancelTouches = TouchList::create();
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
     AtomicString* eventName = 0;
@@ -2578,6 +2579,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         if (point.state() == PlatformTouchPoint::TouchReleased)
             releasedTouches->append(touch);
+        else if (point.state() == PlatformTouchPoint::TouchCancelled)
+            cancelTouches->append(touch);
         else {
             if (point.state() == PlatformTouchPoint::TouchPressed)
                 pressedTouches->append(touch);
@@ -2595,6 +2598,21 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         return false;
 
     bool defaultPrevented = false;
+
+    if (event.type() == TouchCancel) {
+        eventName = &eventNames().touchcancelEvent;
+        RefPtr<TouchEvent> cancelEv =
+            TouchEvent::create(TouchList::create().get(), TouchList::create().get(), cancelTouches.get(),
+                                                   *eventName, m_touchEventTarget->document()->defaultView(),
+                                                   m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
+                                                   m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
+                                                   event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                                   event.metaKey());
+
+        ExceptionCode ec = 0;
+        m_touchEventTarget->dispatchEvent(cancelEv.get(), ec);
+        defaultPrevented |= cancelEv->defaultPrevented();
+    }
 
     if (releasedTouches->length() > 0) {
         eventName = &eventNames().touchendEvent;
@@ -2643,7 +2661,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         defaultPrevented |= moveEv->defaultPrevented();
     }
 
-    if (event.type() == TouchEnd)
+    if (event.type() == TouchEnd || event.type() == TouchCancel)
         m_touchEventTarget = 0;
 
     return defaultPrevented;
