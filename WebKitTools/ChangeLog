@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Teach check-webkit-style about WebKit/gtk/tests
+        https://bugs.webkit.org/show_bug.cgi?id=33892
+
+        Removes false positives found in
+        https://bugs.webkit.org/show_bug.cgi?id=30883
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
+2010-01-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Teach check-webkit-style about QGVLauncher
         https://bugs.webkit.org/show_bug.cgi?id=33890
 

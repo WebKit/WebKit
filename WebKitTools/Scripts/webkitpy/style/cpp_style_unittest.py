@@ -3631,6 +3631,7 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_(cpp_style.is_exempt('WebKit/qt/Api/qwebpage.h'))
         self.assert_(cpp_style.is_exempt('JavaScriptCore/qt/api/qscriptengine_p.h'))
         self.assert_(cpp_style.is_exempt('WebKit/qt/tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp'))
+        self.assert_(cpp_style.is_exempt('WebKit/gtk/tests/testatk.c'))
 
 def tearDown():
     """A global check to make sure all error-categories have been tested.
