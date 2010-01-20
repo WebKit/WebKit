@@ -1,3 +1,13 @@
+2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        Adjust height of status-bubbles to prevent them being cut.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
 2010-01-08  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/33410> Fix "View Plain Diff"/"View Formatted Diff" button
