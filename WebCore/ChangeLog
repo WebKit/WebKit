@@ -1,3 +1,17 @@
+2010-01-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA popup buttons spoken as simply 'button'
+        https://bugs.webkit.org/show_bug.cgi?id=33922
+
+        Test: platform/mac/accessibility/aria-popup.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::actionElement):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        * html/HTMLAttributeNames.in:
+
 2010-01-19  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

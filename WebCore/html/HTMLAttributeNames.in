@@ -23,6 +23,7 @@ aria-dropeffect
 aria-expanded
 aria-flowto
 aria-grabbed
+aria-haspopup
 aria-hidden
 aria-label
 aria-labeledby
