@@ -1,3 +1,14 @@
+2010-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        [Gtk] media/video-play-pause-exception.html is flacky
+        https://bugs.webkit.org/show_bug.cgi?id=33900
+
+        Refactored the test to use the pause event instead of a timer.
+        * media/video-play-pause-exception.html:
+        * platform/gtk/Skipped:
+
 2010-01-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
