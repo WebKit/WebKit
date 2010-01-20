@@ -1,3 +1,9 @@
+2010-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix for r53547.
+
+        * WebCore.pri:
+
 2010-01-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
