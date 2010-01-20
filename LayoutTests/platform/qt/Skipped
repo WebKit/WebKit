@@ -5072,11 +5072,6 @@ http/tests/navigation/parsed-iframe-dynamic-form-back-entry.html
 # The bug with this test is tracked under https://bugs.webkit.org/show_bug.cgi?id=32521
 http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html
 
-# Bug 32519 -  mouseEvent fires mutiple times in 
-#              LayoutTests/svg/custom/use-instanceRoot-as-event-target.xhtml
-# https://bugs.webkit.org/show_bug.cgi?id=32519
-svg/custom/use-instanceRoot-as-event-target.xhtml
-
 # Missing variables:
 # SVGAltGlyphElement, SVGAnimateElement, SVGAnimateColorElement, SVGAnimateTransformElement
 # SVGFontElement, SVGGlyphElement, SVGMissingGlyphElement, SVGFontFaceElement, SVGFontFaceSrcElement

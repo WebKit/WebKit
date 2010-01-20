@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -38,13 +39,6 @@ namespace WebCore {
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter instanceCounter("WebCoreSVGElementInstance");
 #endif
-
-static EventTargetData& dummyEventTargetData()
-{
-    DEFINE_STATIC_LOCAL(EventTargetData, dummyEventTargetData, ());
-    dummyEventTargetData.eventListenerMap.clear();
-    return dummyEventTargetData;
-}
 
 SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
     : m_useElement(useElement)
@@ -95,10 +89,10 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
 
 void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
 {
-    if (!element || !element->isStyled())
+    if (!element)
         return;
 
-    if (static_cast<SVGStyledElement*>(element)->instanceUpdatesBlocked())
+    if (element->isStyled() && static_cast<SVGStyledElement*>(element)->instanceUpdatesBlocked())
         return;
 
     HashSet<SVGElementInstance*> set = element->instancesForElement();
@@ -117,30 +111,22 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
 
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const
 {
-    if (SVGElement* element = correspondingElement())
-        return element->document();
-    return 0;
+    return m_element->document();
 }
 
 bool SVGElementInstance::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    if (!correspondingElement())
-        return false;
-    return correspondingElement()->addEventListener(eventType, listener, useCapture);
+    return m_element->addEventListener(eventType, listener, useCapture);
 }
 
 bool SVGElementInstance::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    if (!correspondingElement())
-        return false;
-    return correspondingElement()->removeEventListener(eventType, listener, useCapture);
+    return m_element->removeEventListener(eventType, listener, useCapture);
 }
 
 void SVGElementInstance::removeAllEventListeners()
 {
-    if (!correspondingElement())
-        return;
-    correspondingElement()->removeAllEventListeners();
+    m_element->removeAllEventListeners();
 }
 
 bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> prpEvent)
@@ -160,14 +146,17 @@ bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> prpEvent)
 
 EventTargetData* SVGElementInstance::eventTargetData()
 {
-    return correspondingElement() ? correspondingElement()->eventTargetData() : 0;
+    return m_element->eventTargetData();
 }
 
 EventTargetData* SVGElementInstance::ensureEventTargetData()
 {
-    return &dummyEventTargetData(); // return something, so we don't crash
+    // Avoid crashing - return a default dummy value
+    DEFINE_STATIC_LOCAL(EventTargetData, dummyEventTargetData, ());
+    dummyEventTargetData.eventListenerMap.clear();
+    return &dummyEventTargetData;
 }
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG)
+#endif

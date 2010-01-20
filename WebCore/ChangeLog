@@ -1,3 +1,50 @@
+2010-01-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Alexey Proskuryakov. 
+
+        svg/custom/use-instanceRoot-event-bubbling.xhtml is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=33835
+
+        mouseEvent fires mutiple times in svg/custom/use-instanceRoot-as-event-target.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=32519
+
+        Test: svg/custom/use-instanceRoot-event-listener-liveness.xhtml
+
+        Stabilize <use> scripting support - use tests are reliable now (tested using --repeach-each 50 --random -p)
+
+        Do not reclone trees anymore because of event listener changes, instead keep correspondingElement & shadowTreeElement
+        synchronized for each SVGElementInstance - any mutations on any event listeners are live, and take immediate effect,
+        w/o having to rely on a reclone - this was the root of several race conditions making the <use> tests flakey.
+
+        Fix SVGUseElement::instanceRoot() to force shadow tree creation, even if it was not attached so far - we can't wait
+        for finishedParsing() to be called which would recalculate the document style and attach the shadow tree as result.
+        This is now matching Operas behaviour.
+
+        Optimize createAttributeEventListener() to not create event listeners if the supplied Attribute isNull() - otherwhise
+        DOM calls like removeAttribute("onclick") cause a temporary JSEventListener to be created, added to the event listener
+        cache and removed afterwards.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): Return early if the supplied attribute is null as discussed with Geoffrey.
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): Ditto.
+        * dom/Node.cpp: Synchronize event listeners with all element instances, instead of marking the use elements to reclone.
+        (WebCore::instancesForSVGElement):
+        (WebCore::tryAddEventListener):
+        (WebCore::Node::addEventListener): When adding a listener, get a list of element instances and add it their as well.
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::removeEventListener): Ditto for removals, but with special logic for listeners created from markup (see comments)
+        * svg/SVGElementInstance.cpp: Cleaned up, removing unncessary checks of correspondingElement() - there is an ASSERT in the ctor.
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+        (WebCore::SVGElementInstance::scriptExecutionContext):
+        (WebCore::SVGElementInstance::addEventListener):
+        (WebCore::SVGElementInstance::removeEventListener):
+        (WebCore::SVGElementInstance::removeAllEventListeners):
+        (WebCore::SVGElementInstance::eventTargetData):
+        (WebCore::SVGElementInstance::ensureEventTargetData):
+        * svg/SVGUseElement.cpp: Call document()->updateLayoutIgnorePendingStylesheets() to force shadow tree creation, just like CSSStyleDecl works.
+        (WebCore::SVGUseElement::instanceRoot):
+
 2010-01-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

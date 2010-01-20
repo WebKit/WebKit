@@ -18,7 +18,7 @@ function eventHandler(evt)
             debug("Test " + counter + " / " + tests + " FAILED (expected: '" + expected + "' actual: '" + evt.type + "')");
     }
 
-    setTimeout(counter < tests ? driveTests : finishTest, 100);
+    setTimeout(counter < tests ? driveTests : finishTest, 0);
 }
 
 function finishTest()

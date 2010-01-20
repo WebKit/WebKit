@@ -52,6 +52,9 @@ static const String& eventParameterName(bool isSVGEvent)
 PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribute* attr)
 {
     ASSERT(node);
+    ASSERT(attr);
+    if (attr->isNull())
+        return 0;
 
     int lineNumber = 1;
     String sourceURL;
@@ -77,6 +80,10 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
 {
     if (!frame)
+        return 0;
+
+    ASSERT(attr);
+    if (attr->isNull())
         return 0;
 
     int lineNumber = 1;

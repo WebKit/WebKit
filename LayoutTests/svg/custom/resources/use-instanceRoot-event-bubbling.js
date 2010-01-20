@@ -35,12 +35,8 @@ function eventHandler(evt, label) {
     shouldBeEqualToString("msg", expected[eventCounter]);
     ++eventCounter;
 
-    if (label == counter) {
-        if (label == tests)
-            setTimeout("finishTest()", 100);
-        else
-            setTimeout("nextTest()", 100);
-    }
+    if (label == counter)
+        setTimeout(label == tests ? finishTest : nextTest, 0);
 }
 
 function finishTest()

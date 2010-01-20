@@ -78,14 +78,11 @@ SVGUseElement::~SVGUseElement()
 SVGElementInstance* SVGUseElement::instanceRoot() const
 {
     // If there is no element instance tree, force immediate SVGElementInstance tree
-    // creation, as we can't wait for the lazy creation to happen if ie. JS wants to
-    // access the instanceRoot object right after creating the element on-the-fly
-    if (!m_targetElementInstance) {
-        if (RenderSVGShadowTreeRootContainer* shadowRoot = static_cast<RenderSVGShadowTreeRootContainer*>(renderer())) {
-            shadowRoot->markShadowTreeForRecreation();
-            shadowRoot->updateFromElement();
-        }
-    }
+    // creation by asking the document to invoke our recalcStyle function - as we can't
+    // wait for the lazy creation to happen if e.g. JS wants to access the instanceRoot
+    // object right after creating the element on-the-fly
+    if (!m_targetElementInstance)
+        document()->updateLayoutIgnorePendingStylesheets();
 
     return m_targetElementInstance.get();
 }

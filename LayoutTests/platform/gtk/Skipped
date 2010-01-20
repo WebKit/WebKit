@@ -3699,7 +3699,6 @@ svg/custom/svg-disallowed-in-dashboard-object.html
 svg/custom/svg-fonts-in-text-controls.html
 svg/custom/use-elementInstance-event-target.svg
 svg/custom/use-elementInstance-methods.svg
-svg/custom/use-instanceRoot-event-listeners.xhtml
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/custom/use-setAttribute-crash.svg
 #   Tests generating new results
@@ -5717,11 +5716,6 @@ fast/events/touch
 # See https://bugs.webkit.org/show_bug.cgi?id=32441
 fast/parser/xhtml-close-while-parsing.xhtml
 
-# Bug 32519 -  mouseEvent fires mutiple times in
-#              LayoutTests/svg/custom/use-instanceRoot-as-event-target.xhtml
-# https://bugs.webkit.org/show_bug.cgi?id=32519
-svg/custom/use-instanceRoot-as-event-target.xhtml
-
 # https://bugs.webkit.org/show_bug.cgi?id=32604
 # Fails on the release bot because of, apparently, rouding errors
 svg/custom/path-getTotalLength.svg
@@ -5778,8 +5772,3 @@ svg/custom/relative-sized-deep-shadow-tree-content.xhtml
 svg/custom/relative-sized-shadow-tree-content.xhtml
 svg/custom/text-xy-updates-SVGList.xhtml
 svg/text/selection-background-color.xhtml
-
-# Flakey SVG test, uses 'setTimeout(100)'
-# https://bugs.webkit.org/show_bug.cgi?id=33835
-svg/custom/use-instanceRoot-event-bubbling.xhtml
-

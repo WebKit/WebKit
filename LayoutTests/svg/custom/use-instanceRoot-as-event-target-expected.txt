@@ -32,7 +32,7 @@ PASS currentEvent.target == currentEvent.currentTarget is true
 PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 
-Test #3: Verify that event listeners attached to the shadow tree elements are copied when use reclones the internal shadow tree
+Test #3: Verify that events dispatched by the user end up on the SVGElementInstance objects
 
 PASS currentEvent.toString() is "[object MouseEvent]"
 PASS currentEvent.type.toString() is "mouseover"
@@ -46,35 +46,7 @@ PASS currentEvent.target == currentEvent.currentTarget is true
 PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 
-Test #4: Verify that events dispatched to the referenced element end up on the SVElementInstance objects
-
-PASS currentEvent.toString() is "[object MouseEvent]"
-PASS currentEvent.type.toString() is "mouseover"
-PASS currentEvent.target.toString() is "[object SVGElementInstance]"
-PASS currentEvent.currentTarget.toString() is "[object SVGElementInstance]"
-PASS currentEvent.target.correspondingElement == rectElement is true
-PASS currentEvent.target.correspondingUseElement == useElement is true
-PASS currentEvent.currentTarget.correspondingElement == rectElement is true
-PASS currentEvent.currentTarget.correspondingUseElement == useElement is true
-PASS currentEvent.target == currentEvent.currentTarget is true
-PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
-PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
-
-Test #5: Verify that event listeners attached to the referenced elements are copied when use reclones the internal shadow tree
-
-PASS currentEvent.toString() is "[object MouseEvent]"
-PASS currentEvent.type.toString() is "mouseover"
-PASS currentEvent.target.toString() is "[object SVGElementInstance]"
-PASS currentEvent.currentTarget.toString() is "[object SVGElementInstance]"
-PASS currentEvent.target.correspondingElement == rectElement is true
-PASS currentEvent.target.correspondingUseElement == useElement is true
-PASS currentEvent.currentTarget.correspondingElement == rectElement is true
-PASS currentEvent.currentTarget.correspondingUseElement == useElement is true
-PASS currentEvent.target == currentEvent.currentTarget is true
-PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
-PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
-
-Test #6: Verify that a click event got dispatched to the original tree as defined in the markup, when sent to the 'rectElement'
+Test #4: Verify that a click event got dispatched to the original tree as defined in the markup, when sent to the 'rectElement'
 
 PASS currentEvent.toString() is "[object MouseEvent]"
 PASS currentEvent.type.toString() is "click"
@@ -84,7 +56,7 @@ PASS currentEvent.target == rectElement is true
 PASS currentEvent.currentTarget == rectElement is true
 PASS currentEvent.target == currentEvent.currentTarget is true
 
-Test #7: Verify that a click event got dispatched to the instance tree when sent to the 'useElement.instanceRoot' with an event listener attached to 'rectElement'
+Test #5: Verify that a click event got dispatched to the instance tree when sent to the 'useElement.instanceRoot' with an event listener attached to 'rectElement'
 
 PASS currentEvent.toString() is "[object MouseEvent]"
 PASS currentEvent.type.toString() is "click"
@@ -98,7 +70,7 @@ PASS currentEvent.target == currentEvent.currentTarget is true
 PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 
-Test #8: Verify that the original click event listener defined in markup is still working properly
+Test #6: Verify that the original click event listener got removed and a new one attached is attached to the use root SVGElementInstance
 
 PASS currentEvent.toString() is "[object MouseEvent]"
 PASS currentEvent.type.toString() is "click"
@@ -112,21 +84,7 @@ PASS currentEvent.target == currentEvent.currentTarget is true
 PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
 PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
 
-Test #9: Verify that the original click event listener got removed and a new one attached to the use root SVGElementInstance
-
-PASS currentEvent.toString() is "[object MouseEvent]"
-PASS currentEvent.type.toString() is "click"
-PASS currentEvent.target.toString() is "[object SVGElementInstance]"
-PASS currentEvent.currentTarget.toString() is "[object SVGElementInstance]"
-PASS currentEvent.target.correspondingElement == rectElement is true
-PASS currentEvent.target.correspondingUseElement == useElement is true
-PASS currentEvent.currentTarget.correspondingElement == rectElement is true
-PASS currentEvent.currentTarget.correspondingUseElement == useElement is true
-PASS currentEvent.target == currentEvent.currentTarget is true
-PASS currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement is true
-PASS currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement is true
-
-Test #10: Verify that the simulated click event got dispatched to the right target
+Test #8: Verify that the simulated click event got dispatched to the right target
 
 PASS currentEvent.toString() is "[object MouseEvent]"
 PASS currentEvent.type.toString() is "click"
