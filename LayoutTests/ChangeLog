@@ -1,5 +1,16 @@
 2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Bug 28420 - Re-enable fast/ruby layout tests after the issue with mixedContent was fixed.
+        (https://bugs.webkit.org/show_bug.cgi?id=28420, patch 5a)
+
+        cf. https://bugs.webkit.org/show_bug.cgi?id=31200
+
+        * platform/mac/Skipped:
+
+2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
+
         Reviewed by Dan Bernstein.
 
         Bug 33266 - WebCore::InlineFlowBox::determineSpacingForFlowBoxes ReadAV@NULL (43c64e8abbda6766e5f5edbd254c2d57)
