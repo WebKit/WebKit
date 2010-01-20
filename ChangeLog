@@ -1,3 +1,11 @@
+2010-01-20  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the recursive generated_files target to work with qmake -r -o
+
+        * DerivedSources.pro:
+
 2010-01-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
