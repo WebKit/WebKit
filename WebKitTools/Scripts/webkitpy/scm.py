@@ -233,9 +233,6 @@ class SCM:
     def last_svn_commit_log(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def checkout_revision(self):
-        raise NotImplementedError, "subclasses must implement"
-
     # Subclasses must indicate if they support local commits,
     # but the SCM baseclass will only call local_commits methods when this is true.
     @staticmethod
@@ -365,9 +362,6 @@ class SVN(SCM):
         # http://svnbook.red-bean.com/en/1.0/ch03s03.html
         return self.svn_commit_log('BASE')
 
-    def checkout_revision(self):
-        return int(self.value_from_svn_info(self.checkout_root, 'Revision'))
-
 # All git-specific logic should go here.
 class Git(SCM):
     def __init__(self, cwd, dryrun=False):
@@ -465,9 +459,6 @@ class Git(SCM):
 
     def last_svn_commit_log(self):
         return run_command(['git', 'svn', 'log', '--limit=1'])
-
-    def checkout_revision(self):
-        return int(run_command(["git", "svn", "find-rev", "HEAD"]).rstrip())
 
     # Git-specific methods:
 

@@ -107,9 +107,7 @@ class QueueEngine:
                     # handled in the child process and we should just keep looping.
                     if e.exit_code == self.handled_error_code:
                         continue
-                    tool_name = "webkit-patch" # QueueEngine has no way to get to tool.name() at current.
-                    message_header = "Unexpected failure while processing patch!  Please file a bug against %s." % tool_name
-                    message = "%s\n\n%s" % (message_header, e.message_with_output())
+                    message = "Unexpected failure when landing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output()
                     self._delegate.handle_unexpected_error(work_item, message)
             except KeyboardInterrupt, e:
                 log("\nUser terminated queue.")

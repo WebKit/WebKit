@@ -106,8 +106,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def process_work_item(self, work_item):
         raise NotImplementedError, "subclasses must implement"
 
-    # Subclasses are expected to post the message somewhere it can be read by a human.
-    # They should also prevent the queue from processing this patch again.
     def handle_unexpected_error(self, work_item, message):
         raise NotImplementedError, "subclasses must implement"
 
@@ -127,25 +125,11 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return engine(self.name, self).run()
 
     @classmethod
-    def _update_status_for_script_error(cls, tool, state, script_error, patch_has_failed_this_queue=True):
+    def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):
         message = script_error.message
-        # Error: turns the status bubble purple and means that the error was such that we can't tell if the patch fails or not.
-        if not patch_has_failed_this_queue:
+        if is_error:
             message = "Error: %s" % message
-        status_id = tool.status_server.update_status(cls.name, message, state["patch"], StringIO(script_error.output))
-        # In the case we know that this patch actually failed the queue, we make a second status entry (mostly because the server doesn't
-        # understand messages prefixed with "Fail:" to mean failures, and thus would leave the status bubble yellow instead of red).
-        # FIXME: Fail vs. Error should really be stored on a separate field from the message on the server.
-        if patch_has_failed_this_queue:
-            tool.status_server.update_status(cls.name, cls._fail_status)
-        return status_id # Return the status id to the original message with all the script output.
-
-    @classmethod
-    def _format_script_error_output_for_bug(tool, status_id, script_error):
-        if not script_error.output:
-            return script_error.message_with_output()
-        results_link = tool.status_server.results_url_for_status(status_id)
-        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(script_error.output))
 
 
 class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
@@ -175,10 +159,11 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         self.log_progress([patch.id() for patch in patches])
         return patches[0]
 
-    def _current_checkout_builds_and_passes_tests(self):
+    def _can_build_and_test(self):
         try:
             self.run_webkit_patch(["build-and-test", "--force-clean", "--non-interactive", "--build-style=both", "--quiet"])
         except ScriptError, e:
+            self._update_status("Unabled to successfully build and test", None)
             return False
         return True
 
@@ -193,37 +178,43 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def should_proceed_with_work_item(self, patch):
         if not self._builders_are_green():
             return False
-        current_revision = self.tool.scm().checkout_revision()
-        self._update_status("Building and testing r%s before landing patch" % current_revision, patch)
-        if not self._current_checkout_builds_and_passes_tests():
-            self._update_status("Failed to build and test r%s, will try landing later" % current_revision, patch)
+        if not self._can_build_and_test():
             return False
         if not self._builders_are_green():
             return False
         self._update_status("Landing patch", patch)
         return True
 
-    # FIXME: This should be unified with AbstractReviewQueue's implementation.  (Mostly _review_patch just needs a rename.)
     def process_work_item(self, patch):
-        # We pass --no-update here because we've already validated
-        # that the current revision actually builds and passes the tests.
-        # If we update, we risk moving to a revision that doesn't!
-        self.run_webkit_patch(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch.id()])
-        self._did_pass(patch)
+        try:
+            self._cc_watchers(patch.bug_id())
+            # We pass --no-update here because we've already validated
+            # that the current revision actually builds and passes the tests.
+            # If we update, we risk moving to a revision that doesn't!
+            self.run_webkit_patch(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch.id()])
+            self._did_pass(patch)
+        except ScriptError, e:
+            self._did_fail(patch)
+            raise e
 
     def handle_unexpected_error(self, patch, message):
-        self._did_fail(patch)
-        self._cc_watchers(patch.bug_id())
-        self.committer_validator.reject_patch_from_commit_queue(patch.id(), message) # Should instead pass cls.watchers as a CC list here.
+        self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
 
     # StepSequenceErrorHandler methods
 
+    @staticmethod
+    def _error_message_for_bug(tool, status_id, script_error):
+        if not script_error.output:
+            return script_error.message_with_output()
+        results_link = tool.status_server.results_url_for_status(status_id)
+        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
-        status_id = cls._update_status_for_script_error(tool, state, script_error, patch_has_failed_this_queue=True)
-        script_error_output = cls._format_script_error_output_for_bug(tool, status_id, script_error)
-        self._cc_watchers(patch.bug_id())
-        CommitterValidator(tool.bugs).reject_patch_from_commit_queue(state["patch"].id(), script_error_output) # Should instead pass cls.watchers as a CC list here.
+        status_id = cls._update_status_for_script_error(tool, state, script_error)
+        validator = CommitterValidator(tool.bugs)
+        validator.reject_patch_from_commit_queue(state["patch"].id(), cls._error_message_for_bug(tool, status_id, script_error))
+
 
 class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
     def __init__(self, options=None):
@@ -259,25 +250,16 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
         raise NotImplementedError, "subclasses must implement"
 
     def process_work_item(self, patch):
-        self._review_patch(patch)
-        self._did_pass(patch)
+        try:
+            self._review_patch(patch)
+            self._did_pass(patch)
+        except ScriptError, e:
+            if e.exit_code != QueueEngine.handled_error_code:
+                self._did_fail(patch)
+            raise e
 
     def handle_unexpected_error(self, patch, message):
-        log(message) # Unit tests expect us to log, we could eventually remove this since post_comment_to_bug will log as well.
-        self._did_fail(patch)
-        self.tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
-
-    @classmethod
-    def _report_patch_failure(cls, tool, patch, script_error):
-        raise NotImplementedError, "subclasses must implement"
-
-    @classmethod
-    def handle_script_error(cls, tool, state, script_error):
-        patch_has_failed = script_error.command_name() != "svn-apply" # svn-apply failures do not necessarily mean the patch would fail to build.
-        status_id = cls._update_status_for_script_error(tool, state, script_error, patch_has_failed_this_queue=patch_has_failed)
-        if patch_has_failed:
-            return # No need to update the bug for svn-apply failures.
-        cls._report_patch_failure(tool, patch, script_error)
+        log(message)
 
     # StepSequenceErrorHandler methods
 
@@ -299,14 +281,11 @@ class StyleQueue(AbstractReviewQueue):
         self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
 
     @classmethod
-    def _style_error_message_for_bug(cls, patch_id, script_error_output):
-        check_style_command = "check-webkit-style"
-        message_header = "Attachment %s did not pass %s:" % (patch_id, cls.name)
-        message_footer = "If any of these errors are false positives, please file a bug against %s." % check_style_command
-        return "%s\n\n%s\n\n%s" % (message_header, script_error_output, message_footer)
-
-    @classmethod
-    def _report_patch_failure(cls, tool, patch, script_error):
-        script_error_output = self._format_script_error_output_for_bug(tool, status_id, script_error)
-        bug_message = cls._style_error_message_for_bug(patch.id(), script_error_output)
-        tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=cls.watchers)
+    def handle_script_error(cls, tool, state, script_error):
+        is_svn_apply = script_error.command_name() == "svn-apply"
+        status_id = cls._update_status_for_script_error(tool, state, script_error, is_error=is_svn_apply)
+        if is_svn_apply:
+            QueueEngine.exit_after_handled_error(script_error)
+        message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (state["patch"].id(), cls.name, script_error.message_with_output(output_limit=3*1024))
+        tool.bugs.post_comment_to_bug(state["patch"].bug_id(), message, cc=cls.watchers)
+        exit(1)
