@@ -440,4 +440,44 @@ void RenderCounter::rendererSubtreeAttached(RenderObject* renderer)
         updateCounters(descendant);
 }
 
+void RenderCounter::rendererStyleChanged(RenderObject* renderer, const RenderStyle* oldStyle, const RenderStyle* newStyle)
+{
+    const CounterDirectiveMap* newCounterDirectives;
+    const CounterDirectiveMap* oldCounterDirectives;
+    if (oldStyle && (oldCounterDirectives = oldStyle->counterDirectives())) {
+        if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
+            CounterDirectiveMap::const_iterator newMapEnd = newCounterDirectives->end();
+            CounterDirectiveMap::const_iterator oldMapEnd = oldCounterDirectives->end();
+            for (CounterDirectiveMap::const_iterator it = newCounterDirectives->begin(); it != newMapEnd; ++it) {
+                CounterDirectiveMap::const_iterator oldMapIt = oldCounterDirectives->find(it->first);
+                if (oldMapIt != oldMapEnd) {
+                    if (oldMapIt->second == it->second)
+                        continue;
+                    RenderCounter::destroyCounterNode(renderer, it->first.get());
+                }
+                // We must create this node here, because the changed node may be a node with no display such as
+                // as those created by the increment or reset directives and the re-layout that will happen will
+                // not catch the change if the node had no children.
+                makeCounterNode(renderer, it->first.get(), false);
+            }
+            // Destroying old counters that do not exist in the new counterDirective map.
+            for (CounterDirectiveMap::const_iterator it = oldCounterDirectives->begin(); it !=oldMapEnd; ++it) {
+                if (!newCounterDirectives->contains(it->first))
+                    RenderCounter::destroyCounterNode(renderer, it->first.get());
+            }
+        } else {
+            if (renderer->m_hasCounterNodeMap)
+                RenderCounter::destroyCounterNodes(renderer);
+        }
+    } else if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
+        CounterDirectiveMap::const_iterator newMapEnd = newCounterDirectives->end();
+        for (CounterDirectiveMap::const_iterator it = newCounterDirectives->begin(); it != newMapEnd; ++it) {
+            // We must create this node here, because the added node may be a node with no display such as
+            // as those created by the increment or reset directives and the re-layout that will happen will
+            // not catch the change if the node had no children.
+            makeCounterNode(renderer, it->first.get(), false);
+        }
+    }
+}
+
 } // namespace WebCore

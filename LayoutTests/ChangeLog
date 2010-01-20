@@ -1,3 +1,18 @@
+2010-01-19  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Another crazy counters bug
+        https://bugs.webkit.org/show_bug.cgi?id=11031
+        Added tests for dynamic DOM changes affecting counters.
+
+        * fast/css/counters/counter-increment-002.html: Added.
+        * fast/css/counters/counter-reset-000.html: Added.
+        * fast/css/counters/counter-reset-002.html: Added.
+        * fast/css/counters/counter-increment-002-expected.txt: Added.
+        * fast/css/counters/counter-reset-000-expected.txt: Added.
+        * fast/css/counters/counter-reset-002-expected.txt: Added.
+
 2010-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         Land correct expected results - forgot to update them after changing test output.

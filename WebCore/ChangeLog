@@ -1,3 +1,27 @@
+2010-01-19  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Another crazy counters bug
+        https://bugs.webkit.org/show_bug.cgi?id=11031
+
+        This patch actually provides for counter updating when the style
+        of a renderer changes.
+
+        Tests: fast/css/counters/counter-increment-002.html
+               fast/css/counters/counter-reset-000.html
+               fast/css/counters/counter-reset-002.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::rendererStyleChanged):
+        This function is added to update the counter hierarchy in 
+        response to changes to the style of a renderer.
+        * rendering/RenderCounter.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleDidChange):
+        For changes that may include the counter directives added a
+        call to RenderCounter::rendererStyleChanged.
+
 2010-01-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Build fixes for make distcheck - missing files.

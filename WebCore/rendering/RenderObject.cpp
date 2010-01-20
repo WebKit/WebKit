@@ -1673,7 +1673,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
     }
 }
 
-void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
+void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
@@ -1681,9 +1681,10 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle*)
     if (!m_parent)
         return;
     
-    if (diff == StyleDifferenceLayout)
+    if (diff == StyleDifferenceLayout) {
+        RenderCounter::rendererStyleChanged(this, oldStyle, m_style.get());
         setNeedsLayoutAndPrefWidthsRecalc();
-    else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
+    } else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
 
     // Don't check for repaint here; we need to wait until the layer has been
