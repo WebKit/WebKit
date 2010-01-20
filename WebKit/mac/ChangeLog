@@ -1,3 +1,10 @@
+2010-01-19  Dan Bernstein  <mitz@apple.com>
+
+        Redo Tiger build fix without making WebTypesInternal.h a private header
+
+        * WebView/WebHTMLRepresentation.h: Define and use WebNSUInteger.
+        * WebView/WebHTMLRepresentation.mm: Import WebTypesInternal.h.
+
 2009-12-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

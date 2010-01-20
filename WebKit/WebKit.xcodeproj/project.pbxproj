@@ -345,7 +345,7 @@
 		C0B1F7E910AC8E3100C925D9 /* WebScriptWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0B1F7E610AC8E3100C925D9 /* WebScriptWorld.mm */; };
 		C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B1F7E710AC8E3100C925D9 /* WebScriptWorldInternal.h */; };
 		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
