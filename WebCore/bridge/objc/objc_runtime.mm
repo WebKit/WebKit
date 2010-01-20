@@ -174,7 +174,7 @@ JSValue ObjcArray::valueAt(ExecState* exec, unsigned int index) const
     @try {
         id obj = [_array.get() objectAtIndex:index];
         if (obj)
-            return convertObjcValueToValue (exec, &obj, ObjcObjectType, _rootObject.get());
+            return convertObjcValueToValue (exec, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
         return throwError(exec, GeneralError, "Objective-C exception.");
     }

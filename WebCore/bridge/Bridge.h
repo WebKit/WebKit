@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef Bridge_h
@@ -58,7 +58,7 @@ public:
 class Method : public Noncopyable {
 public:
     virtual int numParameters() const = 0;
-        
+
     virtual ~Method() { }
 };
 
@@ -85,12 +85,12 @@ public:
     // any needed state.
     void begin();
     void end();
-    
+
     virtual Class* getClass() const = 0;
     RuntimeObjectImp* createRuntimeObject(ExecState*);
     void willInvalidateRuntimeObject();
     void willDestroyRuntimeObject();
-    
+
     // Returns false if the value was not set successfully.
     virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue) { return false; }
 
@@ -98,18 +98,18 @@ public:
 
     virtual bool supportsInvokeDefaultMethod() const { return false; }
     virtual JSValue invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
-    
+
     virtual bool supportsConstruct() const { return false; }
     virtual JSValue invokeConstruct(ExecState*, const ArgList&) { return JSValue(); }
-    
+
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const = 0;
-    
+
     virtual JSValue valueOf(ExecState* exec) const = 0;
-    
+
     RootObject* rootObject() const;
-    
+
     virtual ~Instance();
 
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&) { return false; }
@@ -121,7 +121,7 @@ protected:
     virtual void virtualEnd() { }
     virtual RuntimeObjectImp* newRuntimeObject(ExecState*);
 
-    RefPtr<RootObject> _rootObject;
+    RefPtr<RootObject> m_rootObject;
 
 private:
     RuntimeObjectImp* m_runtimeObject;
@@ -131,21 +131,21 @@ class Array : public Noncopyable {
 public:
     Array(PassRefPtr<RootObject>);
     virtual ~Array();
-    
+
     virtual void setValueAt(ExecState*, unsigned index, JSValue) const = 0;
     virtual JSValue valueAt(ExecState*, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
 
 protected:
-    RefPtr<RootObject> _rootObject;
+    RefPtr<RootObject> m_rootObject;
 };
 
 const char* signatureForParameters(const ArgList&);
 
 typedef HashMap<RefPtr<UString::Rep>, MethodList*> MethodListMap;
-typedef HashMap<RefPtr<UString::Rep>, Method*> MethodMap; 
-typedef HashMap<RefPtr<UString::Rep>, Field*> FieldMap; 
-    
+typedef HashMap<RefPtr<UString::Rep>, Method*> MethodMap;
+typedef HashMap<RefPtr<UString::Rep>, Field*> FieldMap;
+
 } // namespace Bindings
 
 } // namespace JSC

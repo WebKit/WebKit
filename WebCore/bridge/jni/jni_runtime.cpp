@@ -379,7 +379,7 @@ JavaArray::JavaArray(jobject array, const char* type, PassRefPtr<RootObject> roo
     JNIEnv *env = getJNIEnv();
     _length = env->GetArrayLength((jarray)_array->m_instance);
     _type = strdup(type);
-    _rootObject = rootObject;
+    m_rootObject = rootObject;
 }
 
 JavaArray::~JavaArray () 
@@ -389,7 +389,7 @@ JavaArray::~JavaArray ()
 
 RootObject* JavaArray::rootObject() const 
 { 
-    return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;
+    return m_rootObject && m_rootObject->isValid() ? m_rootObject.get() : 0;
 }
 
 void JavaArray::setValueAt(ExecState* exec, unsigned index, JSValue aValue) const

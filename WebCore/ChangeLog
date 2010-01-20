@@ -1,3 +1,30 @@
+2010-01-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Fixes style in WebCore/bridge/Bridge
+        https://bugs.webkit.org/show_bug.cgi?id=33839
+
+        No new tests, style fixes only.
+
+        * bridge/Bridge.cpp: Modified.
+        * bridge/Bridge.h: Modified.
+        * bridge/c/c_instance.cpp: Modified.
+        (JSC::Bindings::CInstance::invokeMethod): Modified. Use renamed m_rootObject member
+        (JSC::Bindings::CInstance::invokeDefaultMethod): Modified. Use renamed m_rootObject member
+        (JSC::Bindings::CInstance::invokeConstruct): Modified. Use renamed m_rootObject member
+        * bridge/jni/jni_runtime.cpp: Modified.
+        (JavaArray::JavaArray): Modified. Use renamed m_rootObject member
+        (JavaArray::rootObject): Modified. Use renamed m_rootObject member
+        * bridge/objc/objc_instance.mm: Modified.
+        (ObjcInstance::invokeMethod): Modified. Use renamed m_rootObject member
+        (ObjcInstance::invokeDefaultMethod): Modified. Use renamed m_rootObject member
+        (ObjcInstance::getValueOfUndefinedField): Modified. Use renamed m_rootObject member
+        * bridge/objc/objc_runtime.mm: Modified.
+        (JSC::Bindings::ObjcArray::valueAt): Modified. Use renamed m_rootObject member
+        * bridge/qt/qt_runtime.cpp: Modified.
+        (JSC::Bindings::::rootObject): Modified. Use renamed m_rootObject member
+
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.

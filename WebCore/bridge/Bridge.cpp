@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -34,12 +34,14 @@
 #include "qt_instance.h"
 #endif
 
-namespace JSC { namespace Bindings {
+namespace JSC {
+
+namespace Bindings {
 
 Array::Array(PassRefPtr<RootObject> rootObject)
-    : _rootObject(rootObject)
+    : m_rootObject(rootObject)
 {
-    ASSERT(_rootObject);
+    ASSERT(m_rootObject);
 }
 
 Array::~Array()
@@ -47,10 +49,10 @@ Array::~Array()
 }
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
-    : _rootObject(rootObject)
+    : m_rootObject(rootObject)
     , m_runtimeObject(0)
 {
-    ASSERT(_rootObject);
+    ASSERT(m_rootObject);
 }
 
 Instance::~Instance()
@@ -82,28 +84,28 @@ void Instance::end()
 
 RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
 {
-    ASSERT(_rootObject);
-    ASSERT(_rootObject->isValid());
+    ASSERT(m_rootObject);
+    ASSERT(m_rootObject->isValid());
     if (m_runtimeObject)
         return m_runtimeObject;
     JSLock lock(SilenceAssertionsOnly);
     m_runtimeObject = newRuntimeObject(exec);
-    _rootObject->addRuntimeObject(m_runtimeObject);
+    m_rootObject->addRuntimeObject(m_runtimeObject);
     return m_runtimeObject;
 }
 
 RuntimeObjectImp* Instance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new (exec) RuntimeObjectImp(exec, this);
+    return new (exec)RuntimeObjectImp(exec, this);
 }
 
 void Instance::willDestroyRuntimeObject()
 {
-    ASSERT(_rootObject);
-    ASSERT(_rootObject->isValid());
+    ASSERT(m_rootObject);
+    ASSERT(m_rootObject->isValid());
     ASSERT(m_runtimeObject);
-    _rootObject->removeRuntimeObject(m_runtimeObject);
+    m_rootObject->removeRuntimeObject(m_runtimeObject);
     m_runtimeObject = 0;
 }
 
@@ -113,9 +115,11 @@ void Instance::willInvalidateRuntimeObject()
     m_runtimeObject = 0;
 }
 
-RootObject* Instance::rootObject() const 
-{ 
-    return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;
+RootObject* Instance::rootObject() const
+{
+    return m_rootObject && m_rootObject->isValid() ? m_rootObject.get() : 0;
 }
 
-} } // namespace JSC::Bindings
+} // namespace Bindings
+
+} // namespace JSC
