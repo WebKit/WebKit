@@ -12,11 +12,13 @@ function test()
 <body onload="test()">
 <div id="result">FAILED!</div>
 <!-- The following malformed (!) lines mustn't crash the renderer -->
+<!-- Note: the resultant render tree isn't nearly what you'd probably expect! -->
 <div><blockQuote><ruby><i><noBR><form><input type=file></i></div>
 <div><ruby <table >\x0e</div>
-<div><ruby <table >\x0e<i</div>
+<div><ruby <table >\x0f<i</div>
 <div><samp><ruby <s<hr</samp></div>
 <div><samp><ruby <s<r<blockQuote</samp></div>
 <div><samp><ruby <s<hr<blockQuote</samp></div>
+<div><ruby>><table><rt></div>
 </body>
 </html>

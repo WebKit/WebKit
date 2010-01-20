@@ -141,6 +141,8 @@ public:
 protected:
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);
+    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList);
+    void moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild);
 
     int maxTopPosMargin() const { return m_maxMargin ? m_maxMargin->m_topPos : MaxMargin::topPosDefault(this); }
     int maxTopNegMargin() const { return m_maxMargin ? m_maxMargin->m_topNeg : MaxMargin::topNegDefault(this); }
@@ -515,6 +517,10 @@ private:
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
     mutable int m_lineHeight;
+    
+    // RenderRubyBase objects need to be able to split and merge, moving their children around
+    // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
+    friend class RenderRubyBase;
 };
 
 inline RenderBlock* toRenderBlock(RenderObject* object)

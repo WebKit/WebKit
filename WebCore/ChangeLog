@@ -1,3 +1,44 @@
+2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 33266 - WebCore::InlineFlowBox::determineSpacingForFlowBoxes ReadAV@NULL (43c64e8abbda6766e5f5edbd254c2d57)
+        (https://bugs.webkit.org/show_bug.cgi?id=33266)
+        
+        Ruby did not handle malformed cases correctly when the ruby base was in
+        block flow. Changed the code to handle all possible cases.
+        Also, added some simplification methods to RenderBlock.
+
+        Tests: fast/ruby/ruby-illegal-1.html
+               fast/ruby/ruby-illegal-2.html
+               fast/ruby/ruby-illegal-3.html
+               fast/ruby/ruby-illegal-4.html
+               fast/ruby/ruby-illegal-5.html
+               fast/ruby/ruby-illegal-6.html
+               fast/ruby/ruby-illegal-7.html
+               fast/ruby/ruby-illegal-combined.html
+               fast/ruby/rubyDOM-insert-rt-block-1.html
+               fast/ruby/rubyDOM-insert-rt-block-2.html
+               fast/ruby/rubyDOM-insert-rt-block-3.html
+               fast/ruby/rubyDOM-remove-rt-block-1.html
+               fast/ruby/rubyDOM-remove-rt-block-2.html
+               fast/ruby/rubyDOM-remove-rt-block-3.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveAllChildrenTo): useful for anonymous block manipulation
+        (WebCore::RenderBlock::removeChild): making use of moveAllChildrenTo
+        * rendering/RenderBlock.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::hasOnlyWrappedInlineChildren):
+        (WebCore::RenderRubyBase::moveChildren):
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        (WebCore::RenderRubyBase::mergeBlockChildren):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::removeChild):
+
 2010-01-19  Dan Bernstein  <mitz@apple.com>
 
         Build fix after r53514

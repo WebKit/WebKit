@@ -411,6 +411,31 @@ void RenderBlock::moveChildTo(RenderObject* to, RenderObjectChildList* toChildLi
     toChildList->insertChildNode(to, children()->removeChildNode(this, child, false), beforeChild, false);
 }
 
+void RenderBlock::moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList)
+{
+    RenderObject* nextChild = children()->firstChild();
+    while (nextChild) {
+        RenderObject* child = nextChild;
+        nextChild = child->nextSibling();
+        toChildList->appendChildNode(to, children()->removeChildNode(this, child, false), false);
+    }
+}
+
+void RenderBlock::moveAllChildrenTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild)
+{
+    ASSERT(!beforeChild || to == beforeChild->parent());
+    if (!beforeChild) {
+        moveAllChildrenTo(to, toChildList);
+        return;
+    }
+    RenderObject* nextChild = children()->firstChild();
+    while (nextChild) {
+        RenderObject* child = nextChild;
+        nextChild = child->nextSibling();
+        toChildList->insertChildNode(to, children()->removeChildNode(this, child, false), beforeChild, false);
+    }
+}
+
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
 {    
     // makeChildrenNonInline takes a block whose children are *all* inline and it
@@ -517,20 +542,12 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // Take all the children out of the |next| block and put them in
         // the |prev| block.
         prev->setNeedsLayoutAndPrefWidthsRecalc();
-        RenderObject* o = next->firstChild();
-    
         RenderBlock* nextBlock = toRenderBlock(next);
         RenderBlock* prevBlock = toRenderBlock(prev);
-        while (o) {
-            RenderObject* no = o;
-            o = no->nextSibling();
-            nextBlock->moveChildTo(prevBlock, prevBlock->children(), no);
-        }
- 
+        nextBlock->moveAllChildrenTo(prevBlock, prevBlock->children());
+        // Delete the now-empty block's lines and nuke it.
         nextBlock->deleteLineBoxTree();
-        
-        // Nuke the now-empty block.
-        next->destroy();
+        nextBlock->destroy();
     }
 
     RenderBox::removeChild(oldChild);
@@ -543,13 +560,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         setNeedsLayoutAndPrefWidthsRecalc();
         RenderBlock* anonBlock = toRenderBlock(children()->removeChildNode(this, child, false));
         setChildrenInline(true);
-        RenderObject* o = anonBlock->firstChild();
-        while (o) {
-            RenderObject* no = o;
-            o = no->nextSibling();
-            anonBlock->moveChildTo(this, children(), no);
-        }
-
+        anonBlock->moveAllChildrenTo(this, children());
         // Delete the now-empty block's lines and nuke it.
         anonBlock->deleteLineBoxTree();
         anonBlock->destroy();

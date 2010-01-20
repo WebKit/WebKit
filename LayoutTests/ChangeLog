@@ -1,3 +1,47 @@
+2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 33266 - WebCore::InlineFlowBox::determineSpacingForFlowBoxes ReadAV@NULL (43c64e8abbda6766e5f5edbd254c2d57)
+        (https://bugs.webkit.org/show_bug.cgi?id=33266)
+        
+        Layout tests for ruby with malformed HTML.
+        Split up in individual tests, as well ass added a single combined test
+        (whose resulting render tree is probably completely different from what
+        you'd expect), since that combined test showed additional issues not
+        covered by the individual tests.
+
+        * fast/ruby/ruby-illegal-1-expected.txt: Added.
+        * fast/ruby/ruby-illegal-1.html: Added.
+        * fast/ruby/ruby-illegal-2-expected.txt: Added.
+        * fast/ruby/ruby-illegal-2.html: Added.
+        * fast/ruby/ruby-illegal-3-expected.txt: Added.
+        * fast/ruby/ruby-illegal-3.html: Added.
+        * fast/ruby/ruby-illegal-4-expected.txt: Added.
+        * fast/ruby/ruby-illegal-4.html: Added.
+        * fast/ruby/ruby-illegal-5-expected.txt: Added.
+        * fast/ruby/ruby-illegal-5.html: Added.
+        * fast/ruby/ruby-illegal-6-expected.txt: Added.
+        * fast/ruby/ruby-illegal-6.html: Added.
+        * fast/ruby/ruby-illegal-7-expected.txt: Added.
+        * fast/ruby/ruby-illegal-7.html: Added.
+        * fast/ruby/ruby-illegal-combined-expected.txt: Added.
+        * fast/ruby/ruby-illegal-combined.html: Added.
+        * fast/ruby/ruby-illegal-expected.txt: Removed.
+        * fast/ruby/ruby-illegal.html: Removed.
+        * fast/ruby/rubyDOM-insert-rt-block-1-expected.txt: Added.
+        * fast/ruby/rubyDOM-insert-rt-block-1.html: Added.
+        * fast/ruby/rubyDOM-insert-rt-block-2-expected.txt: Added.
+        * fast/ruby/rubyDOM-insert-rt-block-2.html: Added.
+        * fast/ruby/rubyDOM-insert-rt-block-3-expected.txt: Added.
+        * fast/ruby/rubyDOM-insert-rt-block-3.html: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-1-expected.txt: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-1.html: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-2-expected.txt: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-2.html: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-3-expected.txt: Added.
+        * fast/ruby/rubyDOM-remove-rt-block-3.html: Added.
+
 2010-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: The child <option> elements of a non-multiple <select> are not

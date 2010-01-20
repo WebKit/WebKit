@@ -148,7 +148,7 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             RenderRubyRun* newRun = staticCreateRubyRun(ruby);
             ruby->addChild(newRun, this);
             newRun->addChild(child);
-            rubyBaseSafe()->splitToLeft(newRun->rubyBaseSafe(), beforeChild);
+            rubyBaseSafe()->moveChildren(newRun->rubyBaseSafe(), beforeChild);
         }
     } else {
         // child is not a text -> insert it into the base
@@ -170,7 +170,11 @@ void RenderRubyRun::removeChild(RenderObject* child)
             // Ruby run without a base can happen only at the first run.
             RenderRubyRun* rightRun = static_cast<RenderRubyRun*>(rightNeighbour);
             ASSERT(rightRun->hasRubyBase());
-            base->mergeWithRight(rightRun->rubyBaseSafe());
+            RenderRubyBase* rightBase = rightRun->rubyBaseSafe();
+            // Collect all children in a single base, then swap the bases.
+            rightBase->moveChildren(base);
+            moveChildTo(rightRun, rightRun->children(), base);
+            rightRun->moveChildTo(this, children(), rightBase);
             // The now empty ruby base will be removed below.
         }
     }
