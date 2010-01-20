@@ -502,33 +502,27 @@ JSValue JSWebGLRenderingContext::texSubImage2D(ExecState* exec, const ArgList& a
     }
     
     setDOMException(exec, ec);
-    return jsUndefined();    
+    return jsUndefined();
 }
 
-template<typename T>
-void toArray(JSC::ExecState* exec, JSC::JSValue value, T*& array, int& size)
+template<typename T, size_t inlineCapacity>
+bool toVector(JSC::ExecState* exec, JSC::JSValue value, Vector<T, inlineCapacity>& vector)
 {
-    array = 0;
-    
     if (!value.isObject())
-        return;
-        
+        return false;
+
     JSC::JSObject* object = asObject(value);
-    int length = object->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
-    void* tempValues;
-    if (!tryFastMalloc(length * sizeof(T)).getValue(tempValues))
-        return;
-    
-    T* values = static_cast<T*>(tempValues);
-    for (int i = 0; i < length; ++i) {
+    int32_t length = object->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
+    vector.resize(length);
+
+    for (int32_t i = 0; i < length; ++i) {
         JSC::JSValue v = object->get(exec, i);
         if (exec->hadException())
-            return;
-        values[i] = static_cast<T>(v.toNumber(exec));
+            return false;
+        vector[i] = static_cast<T>(v.toNumber(exec));
     }
 
-    array = values;
-    size = length;
+    return true;
 }
 
 enum DataFunctionToCall {
@@ -590,23 +584,20 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, co
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    
-    float* array;
-    int size;
-    toArray<float>(exec, args.at(1), array, size);
-    
-    if (!array)
+
+    Vector<float, 64> array;
+    if (!toVector(exec, args.at(1), array))
         return throwError(exec, TypeError);
 
-    switch(f) {
-        case f_uniform1v: context->uniform1fv(location, array, size, ec); break;
-        case f_uniform2v: context->uniform2fv(location, array, size, ec); break;
-        case f_uniform3v: context->uniform3fv(location, array, size, ec); break;
-        case f_uniform4v: context->uniform4fv(location, array, size, ec); break;
-        case f_vertexAttrib1v: context->vertexAttrib1fv(index, array, size); break;
-        case f_vertexAttrib2v: context->vertexAttrib2fv(index, array, size); break;
-        case f_vertexAttrib3v: context->vertexAttrib3fv(index, array, size); break;
-        case f_vertexAttrib4v: context->vertexAttrib4fv(index, array, size); break;
+    switch (f) {
+        case f_uniform1v: context->uniform1fv(location, array.data(), array.size(), ec); break;
+        case f_uniform2v: context->uniform2fv(location, array.data(), array.size(), ec); break;
+        case f_uniform3v: context->uniform3fv(location, array.data(), array.size(), ec); break;
+        case f_uniform4v: context->uniform4fv(location, array.data(), array.size(), ec); break;
+        case f_vertexAttrib1v: context->vertexAttrib1fv(index, array.data(), array.size()); break;
+        case f_vertexAttrib2v: context->vertexAttrib2fv(index, array.data(), array.size()); break;
+        case f_vertexAttrib3v: context->vertexAttrib3fv(index, array.data(), array.size()); break;
+        case f_vertexAttrib4v: context->vertexAttrib4fv(index, array.data(), array.size()); break;
     }
     
     setDOMException(exec, ec);
@@ -640,19 +631,17 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, co
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    
-    int* array;
-    int size;
-    toArray<int>(exec, args.at(1), array, size);
-    
-    if (!array)
+
+
+    Vector<int, 64> array;
+    if (!toVector(exec, args.at(1), array))
         return throwError(exec, TypeError);
 
-    switch(f) {
-        case f_uniform1v: context->uniform1iv(location, array, size, ec); break;
-        case f_uniform2v: context->uniform2iv(location, array, size, ec); break;
-        case f_uniform3v: context->uniform3iv(location, array, size, ec); break;
-        case f_uniform4v: context->uniform4iv(location, array, size, ec); break;
+    switch (f) {
+        case f_uniform1v: context->uniform1iv(location, array.data(), array.size(), ec); break;
+        case f_uniform2v: context->uniform2iv(location, array.data(), array.size(), ec); break;
+        case f_uniform3v: context->uniform3iv(location, array.data(), array.size(), ec); break;
+        case f_uniform4v: context->uniform4iv(location, array.data(), array.size(), ec); break;
         default: break;
     }
     
@@ -689,20 +678,17 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    
-    float* array;
-    int size;
-    toArray<float>(exec, args.at(2), array, size);
-    
-    if (!array)
+
+    Vector<float, 64> array;
+    if (!toVector(exec, args.at(2), array))
         return throwError(exec, TypeError);
 
-    switch(f) {
-        case f_uniformMatrix2fv: context->uniformMatrix2fv(location, transpose, array, size, ec); break;
-        case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, array, size, ec); break;
-        case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, array, size, ec); break;
+    switch (f) {
+        case f_uniformMatrix2fv: context->uniformMatrix2fv(location, transpose, array.data(), array.size(), ec); break;
+        case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, array.data(), array.size(), ec); break;
+        case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, array.data(), array.size(), ec); break;
     }
-    
+
     setDOMException(exec, ec);
     return jsUndefined();
 }

@@ -1,3 +1,20 @@
+2010-01-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7555330> <http://webkit.org/b/33770> dataFunctionMatrix leaks the array allocated by toArray
+
+        Rework toArray to extract elements in to a vector rather than handing out raw pointers.  This prevents
+        callers from forgetting to free the memory, and gives them the option of using stack buffers for
+        sufficiently small allocations.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+        (WebCore::toVector):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+
 2010-01-19  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.
