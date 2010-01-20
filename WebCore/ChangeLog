@@ -2,6 +2,15 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Make it possible to link with -no-undefined.
+
+        * WebCore.pro: Add missing explicit dependency to libXrender due to the
+        use of XRenderFindVisualFormat in the X11 plugin code.
+
+2010-01-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         Add missing files to the build.
 
         * WebCore.pro:
