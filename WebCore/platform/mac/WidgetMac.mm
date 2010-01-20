@@ -159,6 +159,9 @@ void Widget::setFrameRect(const IntRect& rect)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *v = getOuterView();
+    if (!v)
+        return;
+
     NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
