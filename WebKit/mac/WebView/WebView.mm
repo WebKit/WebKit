@@ -377,6 +377,7 @@ NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
 NSString *WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
 NSString *WebElementTitleKey =              @"WebElementTitle";
 NSString *WebElementLinkIsLiveKey =         @"WebElementLinkIsLive";
+NSString *WebElementIsInScrollBarKey =      @"WebElementIsInScrollBar";
 NSString *WebElementIsContentEditableKey =  @"WebElementIsContentEditableKey";
 
 NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";

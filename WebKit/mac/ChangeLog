@@ -1,3 +1,22 @@
+2010-01-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7489504> Clicking on an overflow scrollbar when the window doesn't have
+        focus only focuses the window; it should start scrolling too
+        https://bugs.webkit.org/show_bug.cgi?id=33906
+
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initializeLookupTable]): Initialize WebElementIsInScrollBarKey.
+        (-[WebElementDictionary _isInScrollBar]): Added. Returns whether the HitTestResult contains
+        a scroll bar.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _isScrollBarEvent:]): Added. Returns whether the event point is in a scroll
+        bar in this view.
+        (-[WebHTMLView acceptsFirstMouse:]): Accept scroll bar events.
+        * WebView/WebView.mm: Define WebElementIsInScrollBarKey.
+        * WebView/WebViewPrivate.h: Declare WebElementIsInScrollBarKey.
+
 2010-01-19  Dan Bernstein  <mitz@apple.com>
 
         Redo Tiger build fix without making WebTypesInternal.h a private header

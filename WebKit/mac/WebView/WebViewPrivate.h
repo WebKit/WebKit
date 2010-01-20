@@ -67,6 +67,7 @@ extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether 
 
 // other WebElementDictionary keys
 extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indictating whether the link is live or not
+extern NSString *WebElementIsInScrollBarKey;
 
 // One of the subviews of the WebView entered compositing mode.
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
