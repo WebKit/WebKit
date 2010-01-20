@@ -1,3 +1,12 @@
+2010-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] fast/frames/set-unloaded-frame-location.html timed out on Qt Linux Release Build Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33303
+
+        It caused by the previously test, so skipped it until fix.
+
+        * platform/qt/Skipped: fast/frames/sandboxed-iframe-navigation-windowopen.html skipped.
+
 2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.
