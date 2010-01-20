@@ -2934,6 +2934,7 @@ def is_exempt(filename):
       filename: A filename. It may contain directory names.
      """
     if (filename.find('WebKit/qt/Api/') >= 0
+        or filename.find('JavaScriptCore/qt/api/') >= 0
         or filename.find('WebKit/qt/tests/') >= 0):
         # The Qt API and tests do not follow WebKit style.
         # They follow Qt style. :)

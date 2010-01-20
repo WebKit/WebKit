@@ -1,3 +1,16 @@
+2010-01-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Exempt JavaScriptCore/qt/api from style checks
+        https://bugs.webkit.org/show_bug.cgi?id=33879
+
+        Apparently there is a JavaScriptCore API for Qt as well as a WebKit
+        API.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
 2010-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

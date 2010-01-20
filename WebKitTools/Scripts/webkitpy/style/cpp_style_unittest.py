@@ -3624,6 +3624,7 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_(cpp_style.is_exempt('gtk2drawing.c'))
         self.assert_(cpp_style.is_exempt('WebCore/platform/gtk/gtk2drawing.c'))
         self.assert_(cpp_style.is_exempt('WebKit/qt/Api/qwebpage.h'))
+        self.assert_(cpp_style.is_exempt('JavaScriptCore/qt/api/qscriptengine_p.h'))
         self.assert_(cpp_style.is_exempt('WebKit/qt/tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp'))
 
 def tearDown():
