@@ -1,3 +1,10 @@
+2010-01-19  John Sullivan  <sullivan@apple.com>
+
+        Tiger build fix.
+        
+        * WebView/WebHTMLRepresentation.h:
+        Added #import for WebTypesInternal.h so NSUInteger will be defined on Tiger.
+
 2010-01-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.

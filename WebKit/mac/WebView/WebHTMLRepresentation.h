@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "WebTypesInternal.h"
 #import <WebKit/WebDocumentPrivate.h>
 
 @class WebHTMLRepresentationPrivate;
