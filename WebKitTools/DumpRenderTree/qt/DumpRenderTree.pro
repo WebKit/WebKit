@@ -17,8 +17,10 @@ INCLUDEPATH += ../../../JavaScriptCore/ForwardingHeaders
 INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../../bin
 
-CONFIG += link_pkgconfig
-PKGCONFIG += fontconfig
+!win32 {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += fontconfig
+}
 
 QT = core gui network testlib
 macx: QT += xml

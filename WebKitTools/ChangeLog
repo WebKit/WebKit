@@ -1,3 +1,14 @@
+2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make DumpRenderTree build on Windows
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/main.cpp:
+
 2010-01-20  Steve Block  <steveblock@google.com>
 
         Reviewed by Eric Seidel.

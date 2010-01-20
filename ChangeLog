@@ -1,3 +1,11 @@
+2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make DumpRenderTree build on Windows
+
+        * WebKit.pro:
+
 2010-01-20  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

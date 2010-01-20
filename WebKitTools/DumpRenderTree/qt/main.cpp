@@ -90,12 +90,14 @@ QString get_backtrace() {
     return s;
 }
 
+#ifndef Q_OS_WIN
 static NO_RETURN void crashHandler(int sig)
 {
     fprintf(stderr, "%s\n", strsignal(sig));
     fprintf(stderr, "%s\n", get_backtrace().toLatin1().constData());
     exit(128 + sig);
 }
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -122,6 +124,7 @@ int main(int argc, char* argv[])
     QX11Info::setAppDpiX(0, 96);
 #endif
 
+#ifndef Q_OS_WIN
     signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
     signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
     signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
@@ -131,6 +134,7 @@ int main(int argc, char* argv[])
     signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
     signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
     signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
+#endif
 
     QStringList args = app.arguments();
     if (args.count() < 2) {

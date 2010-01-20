@@ -36,7 +36,7 @@
 #include <QTextStream>
 #include <QSocketNotifier>
 
-#ifndef QT_NO_SSL
+#ifndef QT_NO_OPENSSL
 #include <QSslError>
 #endif
 
@@ -142,7 +142,7 @@ public:
     NetworkAccessManager(QObject* parent);
 
 private slots:
-#ifndef QT_NO_SSL
+#ifndef QT_NO_OPENSSL
     void sslErrorsEncountered(QNetworkReply*, const QList<QSslError>&);
 #endif
 };
