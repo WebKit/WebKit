@@ -1,3 +1,23 @@
+2010-01-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler and Adam Roben.
+
+        Feature defines are difficult to maintain on Windows builds
+        https://bugs.webkit.org/show_bug.cgi?id=33883
+
+        FeatureDefines.vsprops are now maintained in a way similar to
+        Configurations/FeatureDefines.xcconfig, with the added advantage
+        of having a single FeatureDefines file across all projects.
+
+        * Configurations/FeatureDefines.xcconfig: Add comments about keeping feature definitions in sync.
+        * WebCore.vcproj/MigrateIDLAndScripts: Remove reference to file that no longer exists.
+        * WebCore.vcproj/QTMovieWin.vcproj: Add FeatureDefines.vsprops inherited property sheet.
+        * WebCore.vcproj/WebCore.vcproj: Add FeatureDefines.vsprops inherited property sheet.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Remove ENABLE_ preprocessor definitions.
+        * WebCore.vcproj/WebCoreGenerated.vcproj: Added Cairo configuration for selecting proper features.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Remove ENABLE_VIDEO. This is picked up from FeatureDefines.vsprops.
+        * WebCore.vcproj/build-generated-files.sh: Pick up features from FeatureDefines.vsprops or FeatureDefinesCairo.vsprops.
+
 2010-01-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

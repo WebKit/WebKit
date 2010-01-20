@@ -129,7 +129,6 @@ all : \
     $(WEBKIT_OUTPUT)/EventListener.idl \
     \
     $(WEBKIT_OUTPUT)/CodeGenerator.pm \
-    $(WEBKIT_OUTPUT)/CodeGeneratorCOM.pm \
     $(WEBKIT_OUTPUT)/IDLParser.pm \
     $(WEBKIT_OUTPUT)/IDLStructure.pm \
     $(WEBKIT_OUTPUT)/generate-bindings.pl \

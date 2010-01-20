@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -86,7 +86,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(WebKitOutputDir)\include\WebKit"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\FeatureDefines.vsprops;$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

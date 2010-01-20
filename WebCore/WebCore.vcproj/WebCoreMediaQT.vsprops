@@ -7,6 +7,5 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="$(WebKitOutputDir)\include\QTMovieWin"
-		PreprocessorDefinitions="ENABLE_VIDEO"
 	/>
 </VisualStudioPropertySheet>
