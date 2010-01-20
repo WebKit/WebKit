@@ -4,6 +4,20 @@
 
         * public/WebAccessibilityRole.h:
         (WebKit::):
+        Correct enum names.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Stubbed.
+        (WebCore::AXMenuListActionVerb):
+        Stubbed.
+
+2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Chromium build fix.
+
+        * public/WebAccessibilityRole.h:
+        (WebKit::):
 
         * src/AssertMatchingEnums.cpp:
 
