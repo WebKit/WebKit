@@ -1,3 +1,15 @@
+2010-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Inline functions that are hot in DOM manipulation
+        https://bugs.webkit.org/show_bug.cgi?id=33820
+        
+        (3% speedup on Dromaeo DOM Core tests)
+
+        * runtime/WeakGCMap.h:
+        (JSC::::get): inline
+
 2010-01-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix for JIT with RVCT.

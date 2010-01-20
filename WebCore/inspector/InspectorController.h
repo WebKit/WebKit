@@ -31,6 +31,7 @@
 
 #include "Console.h"
 #include "Cookie.h"
+#include "InspectorDOMAgent.h"
 #include "PlatformString.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
@@ -66,7 +67,6 @@ class HitTestResult;
 class InjectedScriptHost;
 class InspectorBackend;
 class InspectorClient;
-class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorFrontendHost;
 class InspectorTimelineAgent;
@@ -369,6 +369,24 @@ private:
     ProfilesMap m_profiles;
 #endif
 };
+
+inline void InspectorController::didInsertDOMNode(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didInsertDOMNode(node);
+}
+
+inline void InspectorController::didRemoveDOMNode(Node* node)
+{
+    if (m_domAgent)
+        m_domAgent->didRemoveDOMNode(node);
+}
+
+inline void InspectorController::didModifyDOMAttr(Element* element)
+{
+    if (m_domAgent)
+        m_domAgent->didModifyDOMAttr(element);
+}
 
 } // namespace WebCore
 

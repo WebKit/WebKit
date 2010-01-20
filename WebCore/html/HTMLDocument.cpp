@@ -80,7 +80,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLDocument::HTMLDocument(Frame* frame)
-    : Document(frame, false)
+    : Document(frame, false, true)
 {
     clearXMLVersion();
     setParseMode(Compat);

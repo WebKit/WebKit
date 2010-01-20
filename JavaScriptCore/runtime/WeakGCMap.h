@@ -72,7 +72,7 @@ private:
 };
 
 template<typename KeyType, typename MappedType>
-MappedType WeakGCMap<KeyType, MappedType>::get(const KeyType& key) const
+inline MappedType WeakGCMap<KeyType, MappedType>::get(const KeyType& key) const
 {
     MappedType result = m_map.get(key);
     if (result == HashTraits<MappedType>::emptyValue())

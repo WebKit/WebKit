@@ -160,21 +160,6 @@ NamedNodeMap* Element::attributes() const
     return attributes(false);
 }
 
-NamedNodeMap* Element::attributes(bool readonly) const
-{
-    if (!m_isStyleAttributeValid)
-        updateStyleAttribute();
-
-#if ENABLE(SVG)
-    if (!m_areSVGAttributesValid)
-        updateAnimatedSVGAttribute(String());
-#endif
-
-    if (!readonly && !namedAttrMap)
-        createAttributeMap();
-    return namedAttrMap.get();
-}
-
 Node::NodeType Element::nodeType() const
 {
     return ELEMENT_NODE;
@@ -1090,21 +1075,6 @@ String Element::openTagStartToString() const
     }
 
     return result;
-}
-
-void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
-{
-    if (!inDocument())
-        return;
-
-    if (oldId == newId)
-        return;
-
-    Document* doc = document();
-    if (!oldId.isEmpty())
-        doc->removeElementById(oldId, this);
-    if (!newId.isEmpty())
-        doc->addElementById(newId, this);
 }
 
 #ifndef NDEBUG

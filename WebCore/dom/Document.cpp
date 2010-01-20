@@ -322,7 +322,7 @@ static bool disableRangeMutation(Page* page)
 
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
-Document::Document(Frame* frame, bool isXHTML)
+Document::Document(Frame* frame, bool isXHTML, bool isHTML)
     : ContainerNode(0)
     , m_domtree_version(0)
     , m_styleSheets(StyleSheetList::create(this))
@@ -357,6 +357,7 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_inPageCache(false)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
+    , m_isHTML(isHTML)
     , m_numNodeListCaches(0)
 #if USE(JSC)
     , m_normalWorldWrapperCache(0)

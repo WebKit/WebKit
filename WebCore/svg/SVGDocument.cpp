@@ -36,7 +36,7 @@
 namespace WebCore {
 
 SVGDocument::SVGDocument(Frame* frame)
-    : Document(frame, false)
+    : Document(frame, false, false)
 {
 }
 

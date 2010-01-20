@@ -40,7 +40,7 @@ public:
     virtual void attach();
 
 private:
-    PlaceholderDocument(Frame* frame) : Document(frame, false) { }
+    PlaceholderDocument(Frame* frame) : Document(frame, false, false) { }
 };
 
 } // namespace WebCore

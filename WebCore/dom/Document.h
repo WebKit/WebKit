@@ -32,6 +32,7 @@
 #include "CollectionCache.h"
 #include "CollectionType.h"
 #include "Color.h"
+#include "Document.h"
 #include "DocumentMarker.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
@@ -190,11 +191,11 @@ class Document : public ContainerNode, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame)
     {
-        return adoptRef(new Document(frame, false));
+        return adoptRef(new Document(frame, false, false));
     }
     static PassRefPtr<Document> createXHTML(Frame* frame)
     {
-        return adoptRef(new Document(frame, true));
+        return adoptRef(new Document(frame, true, false));
     }
     virtual ~Document();
 
@@ -365,7 +366,7 @@ public:
     CollectionCache* nameCollectionInfo(CollectionType, const AtomicString& name);
 
     // Other methods (not part of DOM)
-    virtual bool isHTMLDocument() const { return false; }
+    bool isHTMLDocument() const { return m_isHTML; }
     virtual bool isImageDocument() const { return false; }
 #if ENABLE(SVG)
     virtual bool isSVGDocument() const { return false; }
@@ -942,7 +943,7 @@ public:
 #endif
 
 protected:
-    Document(Frame*, bool isXHTML);
+    Document(Frame*, bool isXHTML, bool isHTML);
 
     void setStyleSelector(CSSStyleSelector* styleSelector) { m_styleSelector = styleSelector; }
 
@@ -1184,6 +1185,7 @@ private:
     bool m_useSecureKeyboardEntryWhenActive;
 
     bool m_isXHTML;
+    bool m_isHTML;
 
     unsigned m_numNodeListCaches;
 

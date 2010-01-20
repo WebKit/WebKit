@@ -172,48 +172,23 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
     return m_attributes[index]->createAttrIfNeeded(m_element);
 }
 
-// We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
-// can tune the behaviour (hasAttribute is case sensitive whereas getAttribute is not).
-Attribute* NamedNodeMap::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const
+Attribute* NamedNodeMap::getAttributeItemSlowCase(const String& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();
-    bool doSlowCheck = shouldIgnoreAttributeCase;
-    
-    // Optimize for the case where the attribute exists and its name exactly matches.
+
+    // Continue to checking case-insensitively and/or full namespaced names if necessary:
     for (unsigned i = 0; i < len; ++i) {
         const QualifiedName& attrName = m_attributes[i]->name();
         if (!attrName.hasPrefix()) {
-            if (name == attrName.localName())
+            if (shouldIgnoreAttributeCase && equalIgnoringCase(name, attrName.localName()))
                 return m_attributes[i].get();
-        } else
-            doSlowCheck = true;
-    }
-    
-    // Continue to checking case-insensitively and/or full namespaced names if necessary:
-    if (doSlowCheck) {
-        for (unsigned i = 0; i < len; ++i) {
-            const QualifiedName& attrName = m_attributes[i]->name();
-            if (!attrName.hasPrefix()) {
-                if (shouldIgnoreAttributeCase && equalIgnoringCase(name, attrName.localName()))
-                    return m_attributes[i].get();
-            } else {
-                // FIXME: Would be faster to do this comparison without calling toString, which
-                // generates a temporary string by concatenation. But this branch is only reached
-                // if the attribute name has a prefix, which is rare in HTML.
-                if (equalPossiblyIgnoringCase(name, attrName.toString(), shouldIgnoreAttributeCase))
-                    return m_attributes[i].get();
-            }
+        } else {
+            // FIXME: Would be faster to do this comparison without calling toString, which
+            // generates a temporary string by concatenation. But this branch is only reached
+            // if the attribute name has a prefix, which is rare in HTML.
+            if (equalPossiblyIgnoringCase(name, attrName.toString(), shouldIgnoreAttributeCase))
+                return m_attributes[i].get();
         }
-    }
-    return 0;
-}
-
-Attribute* NamedNodeMap::getAttributeItem(const QualifiedName& name) const
-{
-    unsigned len = length();
-    for (unsigned i = 0; i < len; ++i) {
-        if (m_attributes[i]->name().matches(name))
-            return m_attributes[i].get();
     }
     return 0;
 }

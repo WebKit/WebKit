@@ -28,8 +28,15 @@
 #define ThreadGlobalData_h
 
 #include "StringHash.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+
+#if ENABLE(WORKERS)
+#include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
+using WTF::ThreadSpecific;
+#endif
 
 namespace WebCore {
 
@@ -73,10 +80,35 @@ namespace WebCore {
 #if PLATFORM(MAC)
         TECConverterWrapper* m_cachedConverterTEC;
 #endif
+
+#if ENABLE(WORKERS)
+        static ThreadSpecific<ThreadGlobalData>* staticData;
+#else
+        static ThreadGlobalData* staticData;
+#endif
+        friend ThreadGlobalData& threadGlobalData();
     };
 
-    ThreadGlobalData& threadGlobalData();
+inline ThreadGlobalData& threadGlobalData() 
+{
+    // FIXME: Workers are not necessarily the only feature that make per-thread global data necessary.
+    // We need to check for e.g. database objects manipulating strings on secondary threads.
 
+#if ENABLE(WORKERS)
+    // ThreadGlobalData is used on main thread before it could possibly be used on secondary ones, so there is no need for synchronization here.
+    if (!ThreadGlobalData::staticData)
+        ThreadGlobalData::staticData = new ThreadSpecific<ThreadGlobalData>;
+    return **ThreadGlobalData::staticData;
+#else
+    if (!ThreadGlobalData::staticData) {
+        ThreadGlobalData::staticData = static_cast<ThreadGlobalData*>(fastMalloc(sizeof(ThreadGlobalData)));
+        // ThreadGlobalData constructor indirectly uses staticData, so we need to set up the memory before invoking it.
+        new (ThreadGlobalData::staticData) ThreadGlobalData;
+    }
+    return *ThreadGlobalData::staticData;
+#endif
+}
+    
 } // namespace WebCore
 
 #endif // ThreadGlobalData_h

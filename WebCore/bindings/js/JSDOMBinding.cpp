@@ -220,11 +220,6 @@ private:
     HashSet<DOMWrapperWorld*>::iterator m_end;
 };
 
-DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
-{
-    return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
-}
-
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
 {
     JSGlobalData::ClientData* clientData = globalData.clientData;
@@ -556,11 +551,6 @@ void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
     }
 }
 
-static inline JSStringCache& jsStringCache(ExecState* exec)
-{
-    return currentWorld(exec)->m_stringCache;
-}
-
 static void stringWrapperDestroyed(JSString* str, void* context)
 {
     StringImpl* cacheKey = static_cast<StringImpl*>(context);
@@ -583,19 +573,8 @@ static void stringWrapperDestroyed(JSString* str, void* context)
     cacheKey->deref();
 }
 
-JSValue jsString(ExecState* exec, const String& s)
+JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
-    StringImpl* stringImpl = s.impl();
-    if (!stringImpl || !stringImpl->length())
-        return jsEmptyString(exec);
-
-    if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
-        return jsString(exec, stringImpl->ustring());
-
-    JSStringCache& stringCache = jsStringCache(exec);
-    if (JSString* wrapper = stringCache.get(stringImpl))
-        return wrapper;
-
     // If there is a stale entry, we have to explicitly remove it to avoid
     // problems down the line.
     if (JSString* wrapper = stringCache.uncheckedGet(stringImpl))

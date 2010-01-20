@@ -1,3 +1,55 @@
+2010-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Inline functions that are hot in DOM manipulation
+        https://bugs.webkit.org/show_bug.cgi?id=33820
+
+        (3% speedup on Dromaeo DOM Core tests)
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::currentWorld): Inlined.
+        (WebCore::jsString): Inlined String& overload and split off slow case.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringSlowCase): Slow case for the above.
+        * dom/Document.h:
+        (WebCore::Document::isHTMLDocument): Use a bit and an inline method
+        instead of a virtual method, since this is so hot and size of Document
+        is not a prime concern.
+        (WebCore::Document::create): Adapt for above.
+        (WebCore::Document::createXHTML): ditto
+        * dom/Document.cpp:
+        (WebCore::Document::Document): ditto
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument): ditto
+        * html/HTMLDocument.h: ditto
+        * loader/PlaceholderDocument.h:
+        (WebCore::PlaceholderDocument::PlaceholderDocument): ditto
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument): ditto
+        * dom/Element.h:
+        (WebCore::Element::attributes): Inlined.
+        (WebCore::Element::updateId): Inlined.
+        * dom/Element.cpp: (Remove inlined methods.)
+        * dom/NamedAttrMap.h:
+        (WebCore::NamedNodeMap::getAttributeItem): Inlined and split off slow case.
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedNodeMap::getAttributeItemSlowCase): Slow case for the above.
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::didInsertDOMNode): Inlined so the fast case
+        early exit doesn't incur a function call.
+        (WebCore::InspectorController::didRemoveDOMNode): ditto
+        (WebCore::InspectorController::didModifyDOMAttr): ditto
+        * platform/ThreadGlobalData.h:
+        (WebCore::threadGlobalData): Inlined.
+        * platform/ThreadGlobalData.cpp: (Removed inline methods).
+        * platform/Timer.h:
+        (WebCore::TimerBase::isActive): Inlined.
+        * platform/Timer.cpp: (Removed inline methods).
+        * WebCore.xcodeproj/project.pbxproj: Install new heares.
+        * WebCore.base.exp: Add appropriate exports.
+
 2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Chromium build fix.

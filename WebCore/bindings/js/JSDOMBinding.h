@@ -346,6 +346,7 @@ namespace WebCore {
     void setDOMException(JSC::ExecState*, ExceptionCode);
 
     JSC::JSValue jsString(JSC::ExecState*, const String&); // empty if the string is null
+    JSC::JSValue jsStringSlowCase(JSC::ExecState*, JSStringCache&, StringImpl*);
     JSC::JSValue jsString(JSC::ExecState*, const KURL&); // empty if the URL is null
     inline JSC::JSValue jsString(JSC::ExecState* exec, const AtomicString& s)
     { 
@@ -414,6 +415,27 @@ namespace WebCore {
     Frame* toDynamicFrame(JSC::ExecState*);
     bool processingUserGesture(JSC::ExecState*);
     KURL completeURL(JSC::ExecState*, const String& relativeURL);
+
+    inline DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
+    {
+        return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
+    }
+    
+    inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
+    {
+        StringImpl* stringImpl = s.impl();
+        if (!stringImpl || !stringImpl->length())
+            return jsEmptyString(exec);
+
+        if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
+            return jsString(exec, stringImpl->ustring());
+
+        JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
+        if (JSC::JSString* wrapper = stringCache.get(stringImpl))
+            return wrapper;
+
+        return jsStringSlowCase(exec, stringCache, stringImpl);
+    }
 
 } // namespace WebCore
 
