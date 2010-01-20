@@ -32,21 +32,21 @@ namespace WebCore {
 
 class Media : public RefCounted<Media> {
 public:
-    static PassRefPtr<Media> create(DOMWindow* window)
+    static PassRefPtr<Media> create(Frame* frame)
     {
-        return adoptRef(new Media(window));
+        return adoptRef(new Media(frame));
     }
-    
-    Document* document() const { return m_window->document(); }
+
+    void disconnectFrame() { m_frame = 0; }
 
     String type() const;
 
     bool matchMedium(const String&) const;
     
 private:
-    Media(DOMWindow*);
+    Media(Frame*);
 
-    RefPtr<DOMWindow> m_window;
+    Frame* m_frame;
 };
 
 } // namespace

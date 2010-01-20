@@ -442,6 +442,10 @@ void DOMWindow::clear()
     if (m_location)
         m_location->disconnectFrame();
     m_location = 0;
+
+    if (m_media)
+        m_media->disconnectFrame();
+    m_media = 0;
     
 #if ENABLE(DOM_STORAGE)
     if (m_sessionStorage)
@@ -1053,7 +1057,9 @@ Document* DOMWindow::document() const
 
 PassRefPtr<Media> DOMWindow::media() const
 {
-    return Media::create(const_cast<DOMWindow*>(this));
+    if (!m_media)
+        m_media = Media::create(m_frame);
+    return m_media.get();
 }
 
 PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const String&) const

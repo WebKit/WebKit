@@ -113,6 +113,7 @@ void JSDOMWindow::markChildren(MarkStack& markStack)
     markDOMObjectWrapper(markStack, globalData, impl()->optionalStatusbar());
     markDOMObjectWrapper(markStack, globalData, impl()->optionalToolbar());
     markDOMObjectWrapper(markStack, globalData, impl()->optionalLocation());
+    markDOMObjectWrapper(markStack, globalData, impl()->optionalMedia());
 #if ENABLE(DOM_STORAGE)
     markDOMObjectWrapper(markStack, globalData, impl()->optionalSessionStorage());
     markDOMObjectWrapper(markStack, globalData, impl()->optionalLocalStorage());
