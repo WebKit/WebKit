@@ -34,6 +34,7 @@
 #include "Attr.h"
 #include "BarInfo.h"
 #include "BeforeLoadEvent.h"
+#include "Blob.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLArray.h"
 #include "WebGLArrayBuffer.h"

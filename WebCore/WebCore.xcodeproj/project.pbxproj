@@ -594,6 +594,13 @@
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */; };
+		2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99CC10E2BBDA00496337 /* JSBlob.h */; };
+		2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E510E2BC1C00496337 /* DOMBlob.h */; };
+		2E2D99E810E2BC1C00496337 /* DOMBlob.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E2D99E610E2BC1C00496337 /* DOMBlob.mm */; };
+		2E2D99EA10E2BC3800496337 /* DOMBlobInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */; };
+		2E2D99EB10E2BD3900496337 /* DOMBlob.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E510E2BC1C00496337 /* DOMBlob.h */; };
+		2E2D99EC10E2BD3900496337 /* DOMBlobInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */; };
 		2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */; };
 		2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346330F546A8200B0F1BA /* Worker.cpp */; };
 		2E4346460F546A8200B0F1BA /* Worker.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346340F546A8200B0F1BA /* Worker.h */; };
@@ -612,6 +619,8 @@
 		2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */; };
 		2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
+		2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */; };
+		2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */; };
 		2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF7ADA10162B3800427DE7 /* JSErrorEvent.cpp */; };
 		2ECF7ADD10162B3800427DE7 /* JSErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */; };
 		2ECF7AE110162B5800427DE7 /* ErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ECF7ADE10162B5800427DE7 /* ErrorEvent.cpp */; };
@@ -4863,6 +4872,8 @@
 				5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */,
 				8538F0300AD71CDB006A81D1 /* DOMAbstractView.h in Copy Generated Headers */,
 				1C11CCBC0AA6093700DADB20 /* DOMAttr.h in Copy Generated Headers */,
+				2E2D99EB10E2BD3900496337 /* DOMBlob.h in Copy Generated Headers */,
+				2E2D99EC10E2BD3900496337 /* DOMBlobInternal.h in Copy Generated Headers */,
 				1C11CCC70AA6093700DADB20 /* DOMCDATASection.h in Copy Generated Headers */,
 				1C11CCC50AA6093700DADB20 /* DOMCharacterData.h in Copy Generated Headers */,
 				1C11CCB60AA6093700DADB20 /* DOMComment.h in Copy Generated Headers */,
@@ -5876,6 +5887,11 @@
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlob.cpp; sourceTree = "<group>"; };
+		2E2D99CC10E2BBDA00496337 /* JSBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlob.h; sourceTree = "<group>"; };
+		2E2D99E510E2BC1C00496337 /* DOMBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlob.h; sourceTree = "<group>"; };
+		2E2D99E610E2BC1C00496337 /* DOMBlob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMBlob.mm; sourceTree = "<group>"; };
+		2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlobInternal.h; sourceTree = "<group>"; };
 		2E4346320F546A8200B0F1BA /* GenericWorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericWorkerTask.h; path = workers/GenericWorkerTask.h; sourceTree = "<group>"; };
 		2E4346330F546A8200B0F1BA /* Worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Worker.cpp; path = workers/Worker.cpp; sourceTree = "<group>"; };
 		2E4346340F546A8200B0F1BA /* Worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Worker.h; path = workers/Worker.h; sourceTree = "<group>"; };
@@ -5897,6 +5913,9 @@
 		2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
 		2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoaderClient.h; path = workers/WorkerScriptLoaderClient.h; sourceTree = "<group>"; };
+		2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Blob.cpp; sourceTree = "<group>"; };
+		2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Blob.h; sourceTree = "<group>"; };
+		2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Blob.idl; sourceTree = "<group>"; };
 		2ECF7ADA10162B3800427DE7 /* JSErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorEvent.cpp; sourceTree = "<group>"; };
 		2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorEvent.h; sourceTree = "<group>"; };
 		2ECF7ADE10162B5800427DE7 /* ErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorEvent.cpp; sourceTree = "<group>"; };
@@ -12135,6 +12154,8 @@
 		85C56D030AA8BAA700D95755 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				2E2D99E510E2BC1C00496337 /* DOMBlob.h */,
+				2E2D99E610E2BC1C00496337 /* DOMBlob.mm */,
 				BC00EFFE0E0A185500FD04E3 /* DOMFile.h */,
 				BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */,
 				BC00F0010E0A185500FD04E3 /* DOMFileList.h */,
@@ -12276,6 +12297,7 @@
 			children = (
 				8538F0180AD718D8006A81D1 /* DOMAbstractViewInternal.h */,
 				85E7113E0AC5D5340053270F /* DOMAttrInternal.h */,
+				2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */,
 				85E7113F0AC5D5340053270F /* DOMCDATASectionInternal.h */,
 				85E711400AC5D5340053270F /* DOMCharacterDataInternal.h */,
 				85E711410AC5D5340053270F /* DOMCommentInternal.h */,
@@ -12674,6 +12696,9 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
+				2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */,
+				2EAFAF0D10E2AF2D007ED3D6 /* Blob.idl */,
 				49484FAE102CF01E00187DD3 /* canvas */,
 				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
 				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
@@ -12992,6 +13017,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */,
+				2E2D99CC10E2BBDA00496337 /* JSBlob.h */,
 				A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */,
 				A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */,
 				49EECF19105072F300099FAB /* JSWebGLArray.cpp */,
@@ -18397,6 +18424,10 @@
 				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,
 				76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */,
 				5913953B110758450083EC55 /* JNIBridge.h in Headers */,
+				2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */,
+				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
+				2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */,
+				2E2D99EA10E2BC3800496337 /* DOMBlobInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20567,6 +20598,9 @@
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 				5913953D1107584E0083EC55 /* JNIBridge.cpp in Sources */,
+				2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */,
+				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
+				2E2D99E810E2BC1C00496337 /* DOMBlob.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

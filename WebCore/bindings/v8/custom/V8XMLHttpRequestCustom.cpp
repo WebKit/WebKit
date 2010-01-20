@@ -33,9 +33,9 @@
 
 #include "Frame.h"
 #include "V8Binding.h"
+#include "V8Blob.h"
 #include "V8CustomBinding.h"
 #include "V8Document.h"
-#include "V8File.h"
 #include "V8HTMLDocument.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -149,11 +149,11 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
             Document* document = V8Document::toNative(object);
             ASSERT(document);
             xmlHttpRequest->send(document, ec);
-        } else if (V8File::HasInstance(arg)) {
+        } else if (V8Blob::HasInstance(arg)) {
             v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
-            File* file = V8File::toNative(object);
-            ASSERT(file);
-            xmlHttpRequest->send(file, ec);
+            Blob* blob = V8Blob::toNative(object);
+            ASSERT(blob);
+            xmlHttpRequest->send(blob, ec);
         } else
             xmlHttpRequest->send(toWebCoreStringWithNullCheck(arg), ec);
     }

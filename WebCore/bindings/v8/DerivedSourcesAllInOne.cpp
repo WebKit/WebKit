@@ -38,6 +38,7 @@
 #include "bindings/V8Attr.cpp"
 #include "bindings/V8BarInfo.cpp"
 #include "bindings/V8BeforeLoadEvent.cpp"
+#include "bindings/V8Blob.cpp"
 #include "bindings/V8WebGLActiveInfo.cpp"
 #include "bindings/V8WebGLArray.cpp"
 #include "bindings/V8WebGLArrayBuffer.cpp"

@@ -555,6 +555,7 @@ SOURCES += \
     history/HistoryItem.cpp \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
+    html/Blob.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
     html/canvas/CanvasPixelArray.cpp \
@@ -1239,6 +1240,7 @@ HEADERS += \
     history/CachedPage.h \
     history/HistoryItem.h \
     history/PageCache.h \
+    html/Blob.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
     html/canvas/CanvasPixelArray.h \

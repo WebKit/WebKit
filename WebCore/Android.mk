@@ -234,6 +234,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	history/android/HistoryItemAndroid.cpp \
 	\
+	html/Blob.cpp \
 	html/CollectionCache.cpp \
 	html/File.cpp \
 	html/FileList.cpp \

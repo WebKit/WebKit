@@ -66,7 +66,7 @@ my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);
 my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" => 1, "DOMImplementation" => 1,
                     "Event" => 1, "CSSRule" => 1, "CSSValue" => 1, "StyleSheet" => 1, "MediaList" => 1,
                     "Counter" => 1, "Rect" => 1, "RGBColor" => 1, "XPathExpression" => 1, "XPathResult" => 1,
-                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1,
+                    "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1,
                     "SVGAngle" => 1, "SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1, "SVGAnimatedEnumeration" => 1,
                     "SVGAnimatedInteger" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
                     "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1, "SVGAnimatedPoints" => 1,
@@ -1040,6 +1040,7 @@ sub GenerateImplementation
     $implIncludes{$classHeaderName . "Internal.h"} = 1;
 
     # FIXME: These includes are only needed when the class is a subclass of one of these polymorphic classes.
+    $implIncludes{"DOMBlobInternal.h"} = 1;
     $implIncludes{"DOMCSSRuleInternal.h"} = 1;
     $implIncludes{"DOMCSSValueInternal.h"} = 1;
     $implIncludes{"DOMEventInternal.h"} = 1;

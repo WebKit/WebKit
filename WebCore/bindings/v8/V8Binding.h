@@ -112,6 +112,11 @@ namespace WebCore {
         return static_cast<float>(value->NumberValue());
     }
 
+    inline int64 toInt64(v8::Local<v8::Value> value)
+    {
+        return static_cast<int64>(value->IntegerValue());
+    }
+
     // FIXME: Drop this in favor of the type specific v8ValueToWebCoreString when we rework the code generation.
     inline String toWebCoreString(v8::Handle<v8::Value> object)
     {

@@ -249,6 +249,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/HTMLNames.cpp
         DerivedSources/WebCore/JSAttr.cpp
         DerivedSources/WebCore/JSBarInfo.cpp
+        DerivedSources/WebCore/JSBlob.cpp
         DerivedSources/WebCore/JSCDATASection.cpp
         DerivedSources/WebCore/JSCSSCharsetRule.cpp
         DerivedSources/WebCore/JSCSSFontFaceRule.cpp
@@ -585,6 +586,7 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_HTML">
+        html/Blob.cpp
         html/canvas/CanvasGradient.cpp
         html/canvas/CanvasPattern.cpp
         html/canvas/CanvasPixelArray.cpp

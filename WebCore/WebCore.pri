@@ -271,6 +271,7 @@ IDL_BINDINGS += \
     dom/WebKitAnimationEvent.idl \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
+    html/Blob.idl \
     html/canvas/WebGLArray.idl \
     html/canvas/WebGLArrayBuffer.idl \
     html/canvas/WebGLByteArray.idl \

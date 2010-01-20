@@ -235,7 +235,14 @@
 @interface DOMEntityReference : DOMNode WEBKIT_VERSION_1_3
 @end
 
-@interface DOMFile : DOMObject WEBKIT_VERSION_4_0
+@interface DOMBlob : DOMObject WEBKIT_VERSION_4_0
+@property(readonly) unsigned long long size;
+@end
+
+@interface DOMFile : DOMBlob WEBKIT_VERSION_4_0
+@property(readonly, copy) NSString *name;
+
+// FIXME: obsolete properties. To be removed.
 @property(readonly, copy) NSString *fileName;
 @property(readonly) unsigned long long fileSize;
 @end

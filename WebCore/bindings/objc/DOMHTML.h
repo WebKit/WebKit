@@ -26,6 +26,7 @@
 
 #import <WebCore/DOMCore.h>
 
+#import <WebCore/DOMBlob.h>
 #import <WebCore/DOMFile.h>
 #import <WebCore/DOMFileList.h>
 #import <WebCore/DOMHTMLAnchorElement.h>

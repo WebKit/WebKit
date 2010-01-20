@@ -1852,6 +1852,8 @@ my %nativeType = (
     "long" => "int",
     "unsigned long" => "unsigned",
     "unsigned short" => "unsigned short",
+    "long long" => "long long",
+    "unsigned long long" => "unsigned long long",
 );
 
 sub GetNativeType
@@ -1875,6 +1877,7 @@ sub JSValueToNative
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
     return "$value.toInt32(exec)" if $type eq "unsigned long" or $type eq "long" or $type eq "unsigned short";
+    return "static_cast<$type>($value.toInteger(exec))" if $type eq "long long" or $type eq "unsigned long long";
 
     return "valueToDate(exec, $value)" if $type eq "Date";
     return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";

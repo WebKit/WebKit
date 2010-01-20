@@ -2167,6 +2167,7 @@ sub GetNativeType
     return "int" if $type eq "short" or $type eq "unsigned short";
     return "unsigned" if $type eq "unsigned long";
     return "int" if $type eq "long";
+    return "long long" if $type eq "long long";
     return "unsigned long long" if $type eq "unsigned long long";
     return "bool" if $type eq "boolean";
     return "String" if $type eq "DOMString";
@@ -2261,6 +2262,8 @@ my %typeCanFailConversion = (
     "long" => 0,
     "unsigned long" => 0,
     "unsigned short" => 0,
+    "long long" => 0,
+    "unsigned long long" => 0
 );
 
 
@@ -2317,6 +2320,7 @@ sub JSValueToNative
     return "$value->NumberValue()" if $type eq "SVGNumber";
 
     return "toInt32($value${maybeOkParam})" if $type eq "unsigned long" or $type eq "unsigned short" or $type eq "long";
+    return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
     return "toWebCoreDate($value)" if $type eq "Date";
@@ -2450,6 +2454,8 @@ my %non_wrapper_types = (
     'long' => 1,
     'unsigned long' => 1,
     'boolean' => 1,
+    'long long' => 1,
+    'unsigned long long' => 1,
     'DOMString' => 1,
     'CompareHow' => 1,
     'SVGAngle' => 1,

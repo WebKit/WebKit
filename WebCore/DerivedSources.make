@@ -53,6 +53,7 @@ DOM_CLASSES = \
     Attr \
     BarInfo \
     BeforeLoadEvent \
+    Blob \
     CDATASection \
     CSSCharsetRule \
     CSSFontFaceRule \

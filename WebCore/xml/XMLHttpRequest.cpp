@@ -22,6 +22,7 @@
 #include "config.h"
 #include "XMLHttpRequest.h"
 
+#include "Blob.h"
 #include "Cache.h"
 #include "CString.h"
 #include "CrossOriginAccessControl.h"
@@ -31,7 +32,6 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "File.h"
 #include "HTTPParsers.h"
 #include "InspectorTimelineAgent.h"
 #include "ResourceError.h"
@@ -435,7 +435,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     createRequest(ec);
 }
 
-void XMLHttpRequest::send(File* body, ExceptionCode& ec)
+void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
 {
     if (!initSend(ec))
         return;
