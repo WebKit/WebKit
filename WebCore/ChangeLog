@@ -1,3 +1,15 @@
+2010-01-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6579204> Exception thrown when opening a <select> pop-up that
+        uses a web font
+        https://bugs.webkit.org/show_bug.cgi?id=23911
+
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::populate): Use the (bold) system font if an NSFont cannot
+        be obtained.
+
 2010-01-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Alexey Proskuryakov. 

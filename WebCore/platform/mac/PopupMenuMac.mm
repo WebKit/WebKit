@@ -81,8 +81,14 @@ void PopupMenu::populate()
         else {
             PopupMenuStyle style = client()->itemStyle(i);
             NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
-            if (style.font() != Font())
-                [attributes setObject:style.font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
+            if (style.font() != Font()) {
+                NSFont *font = style.font().primaryFont()->getNSFont();
+                if (!font) {
+                    CGFloat size = style.font().primaryFont()->platformData().size();
+                    font = style.font().weight() < FontWeightBold ? [NSFont systemFontOfSize:size] : [NSFont boldSystemFontOfSize:size];
+                }
+                [attributes setObject:font forKey:NSFontAttributeName];
+            }
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.
             NSAttributedString* string = [[NSAttributedString alloc] initWithString:client()->itemText(i) attributes:attributes];
