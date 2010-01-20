@@ -38,8 +38,9 @@
 #include "HitTestResult.h"
 #include "HTMLCanvasElement.h"
 #include "Page.h"
-#include "RenderLayerBacking.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderLayerBacking.h"
+#include "RenderReplica.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -237,6 +238,17 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
         }
     } else {
         if (layer->backing()) {
+            // If we're removing backing on a reflection, clear the source GraphicsLayer's pointer to
+            // its replica GraphicsLayer. In practice this should never happen because reflectee and reflection 
+            // are both either composited, or not composited.
+            if (layer->isReflection()) {
+                RenderLayer* sourceLayer = toRenderBoxModelObject(layer->renderer()->parent())->layer();
+                if (RenderLayerBacking* backing = sourceLayer->backing()) {
+                    ASSERT(backing->graphicsLayer()->replicaLayer() == layer->backing()->graphicsLayer());
+                    backing->graphicsLayer()->setReplicatedByLayer(0);
+                }
+            }
+            
             layer->clearBacking();
             layerChanged = true;
 
@@ -624,8 +636,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         // we can compute and cache the composited bounds for this layer.
         layerBacking->updateCompositedBounds();
 
-        if (layer->reflectionLayer())
-            layer->reflectionLayer()->backing()->updateCompositedBounds();
+        if (RenderLayer* reflection = layer->reflectionLayer()) {
+            if (reflection->backing())
+                reflection->backing()->updateCompositedBounds();
+        }
 
         layerBacking->updateGraphicsLayerConfiguration();
         layerBacking->updateGraphicsLayerGeometry();
@@ -700,8 +714,10 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
         // we can compute and cache the composited bounds for this layer.
         layerBacking->updateCompositedBounds();
 
-        if (layer->reflectionLayer())
-            layer->reflectionLayer()->backing()->updateCompositedBounds();
+        if (RenderLayer* reflection = layer->reflectionLayer()) {
+            if (reflection->backing())
+                reflection->backing()->updateCompositedBounds();
+        }
 
         layerBacking->updateGraphicsLayerConfiguration();
         layerBacking->updateGraphicsLayerGeometry();
@@ -743,8 +759,10 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
         if (RenderLayerBacking* layerBacking = layer->backing()) {
             layerBacking->updateCompositedBounds();
 
-            if (layer->reflectionLayer())
-                layer->reflectionLayer()->backing()->updateCompositedBounds();
+            if (RenderLayer* reflection = layer->reflectionLayer()) {
+                if (reflection->backing())
+                    reflection->backing()->updateCompositedBounds();
+            }
 
             layerBacking->updateGraphicsLayerGeometry();
             if (updateDepth == RenderLayerBacking::CompositingChildren)
@@ -905,6 +923,11 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) const
 {
     RenderObject* renderer = layer->renderer();
+    // The compositing state of a reflection should match that of its reflected layer.
+    if (layer->isReflection()) {
+        renderer = renderer->parent(); // The RenderReplica's parent is the object being reflected.
+        layer = toRenderBoxModelObject(renderer)->layer();
+    }
     // The root layer always has a compositing layer, but it may not have backing.
     return (inCompositingMode() && layer->isRootLayer()) ||
              requiresCompositingForTransform(renderer) ||

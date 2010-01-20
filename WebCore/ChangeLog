@@ -169,6 +169,38 @@
 
         Reviewed by Dan Bernstein.
 
+        Occasional crash when interacting with page with reflected WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=33863
+        
+        If updateCompositingLayers() was called with an updateRoot that was a reflection layer,
+        then we would determine that the layer does not require compositing, and tear down its
+        backing (without clearing replicaLayer() on the source layer's GraphicsLayer).
+        
+        Fix by changing requiresCompositingLayer() on a reflection layer to always give the
+        same answer for a reflection and its original.
+        
+        Also add various belt-and-brances code and null checks to ensure that if we ever end up
+        with a non-composited reflection layer, we won't crash.
+        
+        No new tests, because the crash depends on timing issues that are hard to reproduce in a test.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::replicaLayer): Make this public so we can use it in an assertion.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking): Clear the source layer's replica layer
+        pointer if tearing down backing store of a reflection.
+        
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Null-check reflection->backing().
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry): Null-check reflection->backing().
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry): reflection->backing().
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): If being called for a reflection layer,
+        use the source layer to answer the question.        
+
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Some composited reflections incorrectly positioned
         https://bugs.webkit.org/show_bug.cgi?id=33856
         
