@@ -112,6 +112,8 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleEditableText,
 
     WebAccessibilityRoleListItem,
+    WebAccessibilityMenuListPopupRole,
+    WebAccessibilityMenuListOptionRole,
 
     WebAccessibilityRoleLandmarkApplication,
     WebAccessibilityRoleLandmarkBanner,

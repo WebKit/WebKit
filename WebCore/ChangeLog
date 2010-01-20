@@ -1,3 +1,11 @@
+2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Chromium build fix.
+
+        * accessibility/chromium/AccessibilityObjectChromium.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Call correct function.
+
 2010-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: The child <option> elements of a non-multiple <select> are not
