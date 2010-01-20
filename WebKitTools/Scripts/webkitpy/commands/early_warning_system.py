@@ -98,7 +98,6 @@ class QtEWS(AbstractEarlyWarningSystem):
 class ChromiumEWS(AbstractEarlyWarningSystem):
     name = "chromium-ews"
     port_name = "chromium"
-    _build_style = "both"
     watchers = AbstractEarlyWarningSystem.watchers + [
         "dglazkov@chromium.org",
     ]
