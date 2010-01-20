@@ -29,7 +29,6 @@
 
 #include "JSWebGLRenderingContext.h"
 
-#include "WebGLRenderingContext.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -51,11 +50,12 @@
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
 #include "WebGLBuffer.h"
-#include "WebGLGetInfo.h"
 #include "WebGLFloatArray.h"
 #include "WebGLFramebuffer.h"
+#include "WebGLGetInfo.h"
 #include "WebGLIntArray.h"
 #include "WebGLProgram.h"
+#include "WebGLRenderingContext.h"
 #include <runtime/Error.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/OwnFastMallocPtr.h>
@@ -570,15 +570,31 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, co
         
     ExceptionCode ec = 0;
     if (webGLArray) {
-        switch(f) {
-            case f_uniform1v: context->uniform1fv(location, webGLArray.get(), ec); break;
-            case f_uniform2v: context->uniform2fv(location, webGLArray.get(), ec); break;
-            case f_uniform3v: context->uniform3fv(location, webGLArray.get(), ec); break;
-            case f_uniform4v: context->uniform4fv(location, webGLArray.get(), ec); break;
-            case f_vertexAttrib1v: context->vertexAttrib1fv(index, webGLArray.get()); break;
-            case f_vertexAttrib2v: context->vertexAttrib2fv(index, webGLArray.get()); break;
-            case f_vertexAttrib3v: context->vertexAttrib3fv(index, webGLArray.get()); break;
-            case f_vertexAttrib4v: context->vertexAttrib4fv(index, webGLArray.get()); break;
+        switch (f) {
+        case f_uniform1v:
+            context->uniform1fv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform2v:
+            context->uniform2fv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform3v:
+            context->uniform3fv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform4v:
+            context->uniform4fv(location, webGLArray.get(), ec);
+            break;
+        case f_vertexAttrib1v:
+            context->vertexAttrib1fv(index, webGLArray.get());
+            break;
+        case f_vertexAttrib2v:
+            context->vertexAttrib2fv(index, webGLArray.get());
+            break;
+        case f_vertexAttrib3v:
+            context->vertexAttrib3fv(index, webGLArray.get());
+            break;
+        case f_vertexAttrib4v:
+            context->vertexAttrib4fv(index, webGLArray.get());
+            break;
         }
         
         setDOMException(exec, ec);
@@ -590,14 +606,30 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, co
         return throwError(exec, TypeError);
 
     switch (f) {
-        case f_uniform1v: context->uniform1fv(location, array.data(), array.size(), ec); break;
-        case f_uniform2v: context->uniform2fv(location, array.data(), array.size(), ec); break;
-        case f_uniform3v: context->uniform3fv(location, array.data(), array.size(), ec); break;
-        case f_uniform4v: context->uniform4fv(location, array.data(), array.size(), ec); break;
-        case f_vertexAttrib1v: context->vertexAttrib1fv(index, array.data(), array.size()); break;
-        case f_vertexAttrib2v: context->vertexAttrib2fv(index, array.data(), array.size()); break;
-        case f_vertexAttrib3v: context->vertexAttrib3fv(index, array.data(), array.size()); break;
-        case f_vertexAttrib4v: context->vertexAttrib4fv(index, array.data(), array.size()); break;
+    case f_uniform1v:
+        context->uniform1fv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform2v:
+        context->uniform2fv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform3v:
+        context->uniform3fv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform4v:
+        context->uniform4fv(location, array.data(), array.size(), ec);
+        break;
+    case f_vertexAttrib1v:
+        context->vertexAttrib1fv(index, array.data(), array.size());
+        break;
+    case f_vertexAttrib2v:
+        context->vertexAttrib2fv(index, array.data(), array.size());
+        break;
+    case f_vertexAttrib3v:
+        context->vertexAttrib3fv(index, array.data(), array.size());
+        break;
+    case f_vertexAttrib4v:
+        context->vertexAttrib4fv(index, array.data(), array.size());
+        break;
     }
     
     setDOMException(exec, ec);
@@ -620,12 +652,21 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, co
         
     ExceptionCode ec = 0;
     if (webGLArray) {
-        switch(f) {
-            case f_uniform1v: context->uniform1iv(location, webGLArray.get(), ec); break;
-            case f_uniform2v: context->uniform2iv(location, webGLArray.get(), ec); break;
-            case f_uniform3v: context->uniform3iv(location, webGLArray.get(), ec); break;
-            case f_uniform4v: context->uniform4iv(location, webGLArray.get(), ec); break;
-            default: break;
+        switch (f) {
+        case f_uniform1v:
+            context->uniform1iv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform2v:
+            context->uniform2iv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform3v:
+            context->uniform3iv(location, webGLArray.get(), ec);
+            break;
+        case f_uniform4v:
+            context->uniform4iv(location, webGLArray.get(), ec);
+            break;
+        default:
+            break;
         }
         
         setDOMException(exec, ec);
@@ -638,11 +679,20 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, co
         return throwError(exec, TypeError);
 
     switch (f) {
-        case f_uniform1v: context->uniform1iv(location, array.data(), array.size(), ec); break;
-        case f_uniform2v: context->uniform2iv(location, array.data(), array.size(), ec); break;
-        case f_uniform3v: context->uniform3iv(location, array.data(), array.size(), ec); break;
-        case f_uniform4v: context->uniform4iv(location, array.data(), array.size(), ec); break;
-        default: break;
+    case f_uniform1v:
+        context->uniform1iv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform2v:
+        context->uniform2iv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform3v:
+        context->uniform3iv(location, array.data(), array.size(), ec);
+        break;
+    case f_uniform4v:
+        context->uniform4iv(location, array.data(), array.size(), ec);
+        break;
+    default:
+        break;
     }
     
     setDOMException(exec, ec);
@@ -669,10 +719,16 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         
     ExceptionCode ec = 0;
     if (webGLArray) {
-        switch(f) {
-            case f_uniformMatrix2fv: context->uniformMatrix2fv(location, transpose, webGLArray.get(), ec); break;
-            case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, webGLArray.get(), ec); break;
-            case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, webGLArray.get(), ec); break;
+        switch (f) {
+        case f_uniformMatrix2fv:
+            context->uniformMatrix2fv(location, transpose, webGLArray.get(), ec);
+            break;
+        case f_uniformMatrix3fv:
+            context->uniformMatrix3fv(location, transpose, webGLArray.get(), ec);
+            break;
+        case f_uniformMatrix4fv:
+            context->uniformMatrix4fv(location, transpose, webGLArray.get(), ec);
+            break;
         }
         
         setDOMException(exec, ec);
@@ -684,9 +740,15 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         return throwError(exec, TypeError);
 
     switch (f) {
-        case f_uniformMatrix2fv: context->uniformMatrix2fv(location, transpose, array.data(), array.size(), ec); break;
-        case f_uniformMatrix3fv: context->uniformMatrix3fv(location, transpose, array.data(), array.size(), ec); break;
-        case f_uniformMatrix4fv: context->uniformMatrix4fv(location, transpose, array.data(), array.size(), ec); break;
+    case f_uniformMatrix2fv:
+        context->uniformMatrix2fv(location, transpose, array.data(), array.size(), ec);
+        break;
+    case f_uniformMatrix3fv:
+        context->uniformMatrix3fv(location, transpose, array.data(), array.size(), ec);
+        break;
+    case f_uniformMatrix4fv:
+        context->uniformMatrix4fv(location, transpose, array.data(), array.size(), ec);
+        break;
     }
 
     setDOMException(exec, ec);
