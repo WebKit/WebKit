@@ -1,3 +1,11 @@
+2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make extraCompilers for generated sources depend on their scripts
+
+        * DerivedSources.pro:
+
 2010-01-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Tim Hatcher.

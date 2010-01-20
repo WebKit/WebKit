@@ -553,7 +553,8 @@ IDL_BINDINGS += \
 contains(DEFINES, ENABLE_WML=1) {
     wmlnames.output = $${WC_GENERATED_SOURCES_DIR}/WMLNames.cpp
     wmlnames.input = WML_NAMES
-    wmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+    wmlnames.wkScript = $$PWD/dom/make_names.pl
+    wmlnames.commands = perl -I$$PWD/bindings/scripts $$wmlnames.wkScript --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
     wmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/WMLElementFactory.cpp
     addExtraCompiler(wmlnames)
 }
@@ -562,28 +563,32 @@ contains(DEFINES, ENABLE_SVG=1) {
     # GENERATOR 5-C:
     svgnames.output = $${WC_GENERATED_SOURCES_DIR}/SVGNames.cpp
     svgnames.input = SVG_NAMES
-    svgnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+    svgnames.wkScript = $$PWD/dom/make_names.pl
+    svgnames.commands = perl -I$$PWD/bindings/scripts $$svgnames.wkScript --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
     svgnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/SVGElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSSVGElementWrapperFactory.cpp
     addExtraCompiler(svgnames)
 }
 
 # GENERATOR 5-D:
 xlinknames.output = $${WC_GENERATED_SOURCES_DIR}/XLinkNames.cpp
-xlinknames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/svg/xlinkattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
+xlinknames.wkScript = $$PWD/dom/make_names.pl
+xlinknames.commands = perl -I$$PWD/bindings/scripts $$xlinknames.wkScript --attrs $$PWD/svg/xlinkattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
 xlinknames.input = XLINK_NAMES
 addExtraCompiler(xlinknames)
 
 # GENERATOR 6-A:
 cssprops.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
 cssprops.input = WALDOCSSPROPS
-cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES} > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssprops.wkScript = $$PWD/css/makeprop.pl
+cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES} > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssprops.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssprops.depends = ${QMAKE_FILE_NAME} $${DASHBOARDSUPPORTCSSPROPERTIES} $${EXTRACSSPROPERTIES}
 addExtraCompiler(cssprops)
 
 # GENERATOR 6-B:
 cssvalues.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.c
 cssvalues.input = WALDOCSSVALUES
-cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+cssvalues.wkScript = $$PWD/css/makevalues.pl
+cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$EXTRACSSVALUES > $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.in && cd $$WC_GENERATED_SOURCES_DIR && perl $$cssvalues.wkScript && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
 cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES}
 cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.h
 addExtraCompiler(cssvalues)
@@ -591,9 +596,9 @@ addExtraCompiler(cssvalues)
 # GENERATOR 1: IDL compiler
 idl.output = $${WC_GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
-idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
-idl.depends = $$PWD/bindings/scripts/generate-bindings.pl \
-              $$PWD/bindings/scripts/CodeGenerator.pm \
+idl.wkScript = $$PWD/bindings/scripts/generate-bindings.pl
+idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$WC_GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/CodeGeneratorJS.pm \
               $$PWD/bindings/scripts/IDLParser.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
@@ -603,20 +608,23 @@ addExtraCompiler(idl)
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
 tokenizer.input = TOKENIZER
-tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$PWD/css/maketokenizer > ${QMAKE_FILE_OUT}
+tokenizer.wkScript = $$PWD/css/maketokenizer
+tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$tokenizer.wkScript > ${QMAKE_FILE_OUT}
 addExtraCompiler(tokenizer)
 
 # GENERATOR 4: CSS grammar
 cssbison.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
 cssbison.input = CSSBISON
-cssbison.commands = perl $$PWD/css/makegrammar.pl ${QMAKE_FILE_NAME} $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}
+cssbison.wkScript = $$PWD/css/makegrammar.pl
+cssbison.commands = perl $$cssbison.wkScript ${QMAKE_FILE_NAME} $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}
 cssbison.depends = ${QMAKE_FILE_NAME}
 addExtraCompiler(cssbison)
 
 # GENERATOR 5-A:
 htmlnames.output = $${WC_GENERATED_SOURCES_DIR}/HTMLNames.cpp
 htmlnames.input = HTML_NAMES
-htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
+htmlnames.wkScript = $$PWD/dom/make_names.pl
+htmlnames.commands = perl -I$$PWD/bindings/scripts $$htmlnames.wkScript --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir $$WC_GENERATED_SOURCES_DIR
 htmlnames.depends = $$PWD/html/HTMLAttributeNames.in
 htmlnames.wkExtraSources = $${WC_GENERATED_SOURCES_DIR}/HTMLElementFactory.cpp $${WC_GENERATED_SOURCES_DIR}/JSHTMLElementWrapperFactory.cpp
 addExtraCompiler(htmlnames)
@@ -624,13 +632,15 @@ addExtraCompiler(htmlnames)
 # GENERATOR 5-B:
 xmlnsnames.output = $${WC_GENERATED_SOURCES_DIR}/XMLNSNames.cpp
 xmlnsnames.input = XMLNS_NAMES
-xmlnsnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlnsattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
+xmlnsnames.wkScript = $$PWD/dom/make_names.pl
+xmlnsnames.commands = perl -I$$PWD/bindings/scripts $$xmlnsnames.wkScript --attrs $$PWD/xml/xmlnsattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
 addExtraCompiler(xmlnsnames)
 
 # GENERATOR 5-C:
 xmlnames.output = $${WC_GENERATED_SOURCES_DIR}/XMLNames.cpp
 xmlnames.input = XML_NAMES
-xmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
+xmlnames.wkScript = $$PWD/dom/make_names.pl
+xmlnames.commands = perl -I$$PWD/bindings/scripts $$xmlnames.wkScript --attrs $$PWD/xml/xmlattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
 addExtraCompiler(xmlnames)
 
 # GENERATOR 8-A:
@@ -654,10 +664,10 @@ colordata.commands = gperf -CDEot -L ANSI-C --includes --key-positions="*" -N fi
 addExtraCompiler(colordata)
 
 # GENERATOR 9:
-STYLESHEETS_EMBED_GENERATOR_SCRIPT = $$PWD/css/make-css-file-arrays.pl
+stylesheets.wkScript = $$PWD/css/make-css-file-arrays.pl
 stylesheets.output = $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
-stylesheets.input = STYLESHEETS_EMBED_GENERATOR_SCRIPT
-stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$${QMAKE_MOC} -E\" $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h ${QMAKE_FILE_OUT} $$STYLESHEETS_EMBED
+stylesheets.input = $$stylesheets.wkScript
+stylesheets.commands = perl $$stylesheets.wkScript --preprocessor \"$${QMAKE_MOC} -E\" $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h ${QMAKE_FILE_OUT} $$STYLESHEETS_EMBED
 stylesheets.depends = $$STYLESHEETS_EMBED
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h
 addExtraCompiler(stylesheets, $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h)
@@ -671,11 +681,10 @@ addExtraCompiler(xpathbison)
 
 # GENERATOR 11: WebKit Version
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
-WEBKITVERSION_SCRIPT = $$PWD/../WebKit/scripts/generate-webkitversion.pl
+webkitversion.wkScript = $$PWD/../WebKit/scripts/generate-webkitversion.pl
 webkitversion.output = $${WC_GENERATED_SOURCES_DIR}/WebKitVersion.h
-webkitversion.input = WEBKITVERSION_SCRIPT
-webkitversion.commands = perl $$PWD/../WebKit/scripts/generate-webkitversion.pl --config $$PWD/../WebKit/mac/Configurations/Version.xcconfig --outputDir $${WC_GENERATED_SOURCES_DIR}/
-webkitversion.depends = $$PWD/../WebKit/scripts/generate-webkitversion.pl
+webkitversion.input = $$webkitversion.wkScript
+webkitversion.commands = perl $$webkitversion.wkScript --config $$PWD/../WebKit/mac/Configurations/Version.xcconfig --outputDir $${WC_GENERATED_SOURCES_DIR}/
 webkitversion.clean = ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/WebKitVersion.h
 webkitversion.wkAddOutputToSources = false
 addExtraCompiler(webkitversion)
