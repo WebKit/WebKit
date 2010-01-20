@@ -1,3 +1,13 @@
+2010-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [Qt] Platform dependent expected files added for tests introduced in r53446,
+        because these tests pass. Compared to png files.
+
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.txt: Added.
+
 2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: accSelect() is not implemented
