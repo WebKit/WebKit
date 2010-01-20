@@ -1401,6 +1401,9 @@ void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
     case MONTH:
         success = dateTime.setMillisecondsSinceEpochForMonth(value);
         break;
+    case TIME:
+        success = dateTime.setMillisecondsSinceMidnight(value);
+        break;
     // FIXME: implementations for other supported types.
     default:
         ec = INVALID_STATE_ERR;
@@ -1410,6 +1413,9 @@ void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
         setValue(String());
         return;
     }
+    // FIXME: We should specify SecondFormat.
+    // e.g. If the step value is 60, use SecondFormat::None.
+    //      If the step value is 1, use SecondFormat::Second.
     setValue(dateTime.toString());
 }
 

@@ -68,8 +68,15 @@ public:
     int fullYear() const { return m_year; }
     int week() const { return m_week; }
 
+    enum SecondFormat {
+        None, // Suppress the second part and the millisecond part if they are 0.
+        Second, // Always show the second part, and suppress the millisecond part if it is 0.
+        Millisecond // Always show the second part and the millisecond part.
+    };
+
     // Returns an ISO 8601 representation for this instance.
-    String toString() const;
+    // The format argument is valid for DateTime, DateTimeLocal, and Time types.
+    String toString(SecondFormat format = None) const;
 
     // The following six functions parse the input 'src' whose length is
     // 'length', and updates some fields of this instance. The parsing starts at
@@ -99,9 +106,12 @@ public:
     // ISODateTime type. The function returns true if it succeeds, and
     // false if it fails.
 
-    // For Month type.  Updates m_year and m_month.
+    // For Month type. Updates m_year and m_month.
     bool setMillisecondsSinceEpochForMonth(double ms);
     // FIXME: Add setMillisecondsSinceEpochFor*() for other types.
+
+    // For Time type. Updates m_hour, m_minute, m_second and m_millisecond.
+    bool setMillisecondsSinceMidnight(double ms);
 
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
     // For an ISODateTime initialized with parseDateTimeLocal(),
@@ -119,8 +129,11 @@ private:
     bool parseTimeZone(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Helper for millisecondsSinceEpoch().
     double millisecondsSinceEpochForTime() const;
-    // Helper for setMillisecondsSinceEpochFor*().
+    // Helpers for setMillisecondsSinceEpochFor*().
     bool setMillisecondsSinceEpochForDateInternal(double ms);
+    void setMillisecondsSinceMidnightInternal(double ms);
+    // Helper for toString().
+    String toStringForTime(SecondFormat) const;
 
     // m_weekDay values
     enum {
