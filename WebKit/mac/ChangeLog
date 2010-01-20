@@ -1,3 +1,18 @@
+2010-01-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of <http://webkit.org/b/28622>.
+        Caught exceptions still pause the debugger.
+        
+        Update WebScriptDebugger::exception to have the hasHandler parameter.
+        
+        This just adds a new parameter, no behavior is changed.
+
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::exception):
+
 2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: The child <option> elements of a non-multiple <select> are not

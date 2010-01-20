@@ -1,3 +1,17 @@
+2010-01-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        When JavaScriptCore calls Debugger::Exception, have it pass a
+        hasHandler variable that represents if exception is being handled
+        in the same function (not in a parent on the call stack).
+        
+        This just adds a new parameter, no behavior is changed.
+
+        * debugger/Debugger.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+
 2010-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.

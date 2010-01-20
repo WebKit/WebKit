@@ -120,7 +120,7 @@ namespace WebCore {
         virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
         virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int firstLine);
         virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
-        virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
+        virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, bool hasHandler);
         virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);

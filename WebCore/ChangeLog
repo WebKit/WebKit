@@ -1,3 +1,21 @@
+2010-01-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of <http://webkit.org/b/28622>.
+        Caught exceptions still pause the debugger.
+        
+        Update JavaScriptDebugServer::exception to take a hasHandler parameter,
+        so later we can differentiate between a caught and an uncaught exception.
+        
+        This just adds a new parameter, no behavior is changed.
+
+        No change in functionality, so no tests.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::exception):
+        * inspector/JavaScriptDebugServer.h:
+
 2010-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.

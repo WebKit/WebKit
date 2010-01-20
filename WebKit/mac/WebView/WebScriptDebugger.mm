@@ -200,7 +200,7 @@ void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
+void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, bool hasHandler)
 {
     if (m_callingDelegate)
         return;

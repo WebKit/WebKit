@@ -540,8 +540,10 @@ void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFra
     m_currentCallFrame = m_currentCallFrame->caller();
 }
 
-void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
+void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, bool hasHandler)
 {
+    UNUSED_PARAM(hasHandler);
+    
     if (m_paused)
         return;
 
