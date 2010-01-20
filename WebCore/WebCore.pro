@@ -224,6 +224,9 @@ contains(DEFINES, ENABLE_WCSS=1) {
 SOURCES += \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \    
+    accessibility/AccessibilityMenuList.cpp \
+    accessibility/AccessibilityMenuListOption.cpp \
+    accessibility/AccessibilityMenuListPopup.cpp \
     accessibility/AccessibilityObject.cpp \    
     accessibility/AccessibilityList.cpp \    
     accessibility/AccessibilityListBox.cpp \    
