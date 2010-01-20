@@ -322,6 +322,35 @@ static bool disableRangeMutation(Page* page)
 
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
+class DocumentWeakReference : public ThreadSafeShared<DocumentWeakReference> {
+public:
+    static PassRefPtr<DocumentWeakReference> create(Document* document)
+    {
+        return adoptRef(new DocumentWeakReference(document));
+    }
+
+    Document* document()
+    {
+        ASSERT(isMainThread());
+        return m_document;
+    }
+
+    void clear()
+    {
+        ASSERT(isMainThread());
+        m_document = 0;
+    }
+
+private:
+    DocumentWeakReference(Document* document)
+        : m_document(document)
+    {
+        ASSERT(isMainThread());
+    }
+
+    Document* m_document;
+};
+
 Document::Document(Frame* frame, bool isXHTML, bool isHTML)
     : ContainerNode(0)
     , m_domtree_version(0)
@@ -4797,23 +4826,5 @@ InspectorTimelineAgent* Document::inspectorTimelineAgent() const
     return page() ? page()->inspectorTimelineAgent() : 0;
 }
 #endif
-
-inline DocumentWeakReference::DocumentWeakReference(Document* document)
-    : m_document(document)
-{
-    ASSERT(isMainThread());
-}
-
-inline Document* DocumentWeakReference::document()
-{
-    ASSERT(isMainThread());
-    return m_document;
-}
-
-inline void DocumentWeakReference::clear()
-{
-    ASSERT(isMainThread());
-    m_document = 0;
-}
 
 } // namespace WebCore

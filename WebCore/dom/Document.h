@@ -64,6 +64,7 @@ namespace WebCore {
     class DocLoader;
     class DocumentFragment;
     class DocumentType;
+    class DocumentWeakReference;
     class EditingText;
     class Element;
     class EntityReference;
@@ -172,19 +173,6 @@ struct FormElementKeyHash {
 struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
     static void constructDeletedValue(FormElementKey& slot) { new (&slot) FormElementKey(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
-};
-
-class DocumentWeakReference : public ThreadSafeShared<DocumentWeakReference> {
-public:
-    static PassRefPtr<DocumentWeakReference> create(Document* document)
-    {
-        return adoptRef(new DocumentWeakReference(document));
-    }
-    Document* document();
-    void clear();
-private:
-    DocumentWeakReference(Document*);
-    Document* m_document;
 };
 
 class Document : public ContainerNode, public ScriptExecutionContext {
