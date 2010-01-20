@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -77,7 +77,7 @@ private:
     // lifetimes.
     class Peer : public WebSocketChannelClient, public Noncopyable {
     public:
-        static Peer* create(RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
+        static Peer* create(RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
         {
             return new Peer(clientWrapper, loaderProxy, context, taskMode, url, protocol);
         }
@@ -94,9 +94,9 @@ private:
         virtual void didClose();
 
     private:
-        Peer(RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> >, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);
+        Peer(RefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);
 
-        RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > m_workerClientWrapper;
+        RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         WorkerLoaderProxy& m_loaderProxy;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
         String m_taskMode;
@@ -117,10 +117,10 @@ private:
         using RefCounted<Bridge>::deref;
 
     private:
-        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> >);
+        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> >, const String& taskMode, const KURL&, const String& protocol);
+        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, RefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode, const KURL&, const String& protocol);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();
@@ -128,7 +128,7 @@ private:
         void setMethodNotCompleted();
         void waitForMethodCompletion();
 
-        RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > m_workerClientWrapper;
+        RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<WorkerContext> m_workerContext;
         WorkerLoaderProxy& m_loaderProxy;
         String m_taskMode;

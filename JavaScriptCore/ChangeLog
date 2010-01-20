@@ -1,3 +1,17 @@
+2010-01-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        CrossThreadCopier needs to support ThreadSafeShared better.
+        https://bugs.webkit.org/show_bug.cgi?id=33698
+
+        * wtf/TypeTraits.cpp: Added tests for the new type traits.
+        * wtf/TypeTraits.h:
+        (WTF::IsSubclass): Determines if a class is a derived from another class.
+        (WTF::IsSubclassOfTemplate): Determines if a class is a derived from a
+        template class (with one parameter that is unknown).
+        (WTF::RemoveTemplate): Reveals the type for a template parameter.
+
 2010-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.

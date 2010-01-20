@@ -1,6 +1,6 @@
  /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -100,6 +100,20 @@ COMPILE_ASSERT((IsSameType<int*, int*>::value), WTF_IsSameType_int_pointer_true)
 COMPILE_ASSERT((!IsSameType<int, int*>::value), WTF_IsSameType_int_int_pointer_false);
 COMPILE_ASSERT((!IsSameType<bool, const bool>::value), WTF_IsSameType_const_change_false);
 COMPILE_ASSERT((!IsSameType<bool, volatile bool>::value), WTF_IsSameType_volatile_change_false);
+
+template <typename T>
+class TestBaseClass {
+};
+
+class TestDerivedClass : public TestBaseClass<int> {
+};
+
+COMPILE_ASSERT((IsSubclass<TestDerivedClass, TestBaseClass<int> >::value), WTF_Test_IsSubclass_Derived_From_Base);
+COMPILE_ASSERT((!IsSubclass<TestBaseClass<int>, TestDerivedClass>::value), WTF_Test_IsSubclass_Base_From_Derived);
+COMPILE_ASSERT((IsSubclassOfTemplate<TestDerivedClass, TestBaseClass>::value), WTF_Test_IsSubclassOfTemplate_Base_From_Derived);
+COMPILE_ASSERT((IsSameType<RemoveTemplate<TestBaseClass<int>, TestBaseClass>::Type, int>::value), WTF_Test_RemoveTemplate);
+COMPILE_ASSERT((IsSameType<RemoveTemplate<int, TestBaseClass>::Type, int>::value), WTF_Test_RemoveTemplate_WithoutTemplate);
+
 
 COMPILE_ASSERT((IsSameType<bool, RemoveConst<const bool>::Type>::value), WTF_test_RemoveConst_const_bool);
 COMPILE_ASSERT((!IsSameType<bool, RemoveConst<volatile bool>::Type>::value), WTF_test_RemoveConst_volatile_bool);

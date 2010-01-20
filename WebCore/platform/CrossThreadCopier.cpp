@@ -40,27 +40,27 @@
 
 namespace WebCore {
 
-CrossThreadCopierBase<false, KURL>::Type CrossThreadCopierBase<false, KURL>::copy(const KURL& url)
+CrossThreadCopierBase<false, false, KURL>::Type CrossThreadCopierBase<false, false, KURL>::copy(const KURL& url)
 {
     return url.copy();
 }
 
-CrossThreadCopierBase<false, String>::Type CrossThreadCopierBase<false, String>::copy(const String& str)
+CrossThreadCopierBase<false, false, String>::Type CrossThreadCopierBase<false, false, String>::copy(const String& str)
 {
     return str.crossThreadString();
 }
 
-CrossThreadCopierBase<false, ResourceError>::Type CrossThreadCopierBase<false, ResourceError>::copy(const ResourceError& error)
+CrossThreadCopierBase<false, false, ResourceError>::Type CrossThreadCopierBase<false, false, ResourceError>::copy(const ResourceError& error)
 {
     return error.copy();
 }
 
-CrossThreadCopierBase<false, ResourceRequest>::Type CrossThreadCopierBase<false, ResourceRequest>::copy(const ResourceRequest& request)
+CrossThreadCopierBase<false, false, ResourceRequest>::Type CrossThreadCopierBase<false, false, ResourceRequest>::copy(const ResourceRequest& request)
 {
     return request.copyData();
 }
 
-CrossThreadCopierBase<false, ResourceResponse>::Type CrossThreadCopierBase<false, ResourceResponse>::copy(const ResourceResponse& response)
+CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBase<false, false, ResourceResponse>::copy(const ResourceResponse& response)
 {
     return response.copyData();
 }

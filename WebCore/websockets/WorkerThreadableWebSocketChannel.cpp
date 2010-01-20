@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -94,7 +94,7 @@ void WorkerThreadableWebSocketChannel::disconnect()
     m_bridge.clear();
 }
 
-WorkerThreadableWebSocketChannel::Peer::Peer(RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::Peer::Peer(RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
     : m_workerClientWrapper(clientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_mainWebSocketChannel(WebSocketChannel::create(context, this, url, protocol))
@@ -118,10 +118,10 @@ void WorkerThreadableWebSocketChannel::Peer::connect()
     m_mainWebSocketChannel->connect();
 }
 
-static void workerContextDidSend(ScriptExecutionContext* context, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper, bool sent)
+static void workerContextDidSend(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, bool sent)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->setSent(sent);
+    workerClientWrapper->setSent(sent);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::send(const String& message)
@@ -133,10 +133,10 @@ void WorkerThreadableWebSocketChannel::Peer::send(const String& message)
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSend, m_workerClientWrapper, sent), m_taskMode);
 }
 
-static void workerContextDidGetBufferedAmount(ScriptExecutionContext* context, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper, unsigned long bufferedAmount)
+static void workerContextDidGetBufferedAmount(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, unsigned long bufferedAmount)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->setBufferedAmount(bufferedAmount);
+    workerClientWrapper->setBufferedAmount(bufferedAmount);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::bufferedAmount()
@@ -166,10 +166,10 @@ void WorkerThreadableWebSocketChannel::Peer::disconnect()
     m_mainWebSocketChannel = 0;
 }
 
-static void workerContextDidConnect(ScriptExecutionContext* context, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper)
+static void workerContextDidConnect(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->didConnect();
+    workerClientWrapper->didConnect();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didConnect()
@@ -178,10 +178,10 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidConnect, m_workerClientWrapper), m_taskMode);
 }
 
-static void workerContextDidReceiveMessage(ScriptExecutionContext* context, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper, const String& message)
+static void workerContextDidReceiveMessage(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, const String& message)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->didReceiveMessage(message);
+    workerClientWrapper->didReceiveMessage(message);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(const String& message)
@@ -190,10 +190,10 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(const String& mes
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveMessage, m_workerClientWrapper, message), m_taskMode);
 }
 
-static void workerContextDidClose(ScriptExecutionContext* context, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper)
+static void workerContextDidClose(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->didClose();
+    workerClientWrapper->didClose();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didClose()
@@ -203,14 +203,14 @@ void WorkerThreadableWebSocketChannel::Peer::didClose()
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper), m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > workerClientWrapper)
+void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     thisPtr->m_peer = peer;
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(workerClientWrapper.get())->setSyncMethodDone();
+    workerClientWrapper->setSyncMethodDone();
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, RefPtr<ThreadSafeShared<ThreadableWebSocketChannelClientWrapper> > clientWrapper, const String& taskMode, const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, const String& taskMode, const KURL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
@@ -271,7 +271,7 @@ bool WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSend, m_peer, message));
     waitForMethodCompletion();
-    ThreadableWebSocketChannelClientWrapper* clientWrapper = static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get());
+    ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     return clientWrapper && clientWrapper->sent();
 }
 
@@ -292,7 +292,7 @@ unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadBufferedAmount, m_peer));
     waitForMethodCompletion();
-    ThreadableWebSocketChannelClientWrapper* clientWrapper = static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get());
+    ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     if (clientWrapper)
         return clientWrapper->bufferedAmount();
     return 0;
@@ -335,13 +335,13 @@ void WorkerThreadableWebSocketChannel::Bridge::disconnect()
 
 void WorkerThreadableWebSocketChannel::Bridge::clearClientWrapper()
 {
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get())->clearClient();
+    m_workerClientWrapper->clearClient();
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted()
 {
     ASSERT(m_workerClientWrapper);
-    static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get())->clearSyncMethodDone();
+    m_workerClientWrapper->clearSyncMethodDone();
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
@@ -350,10 +350,10 @@ void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
         return;
     WorkerRunLoop& runLoop = m_workerContext->thread()->runLoop();
     MessageQueueWaitResult result = MessageQueueMessageReceived;
-    ThreadableWebSocketChannelClientWrapper* clientWrapper = static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get());
+    ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
     while (clientWrapper && !clientWrapper->syncMethodDone() && result != MessageQueueTerminated) {
         result = runLoop.runInMode(m_workerContext.get(), m_taskMode);
-        clientWrapper = static_cast<ThreadableWebSocketChannelClientWrapper*>(m_workerClientWrapper.get());
+        clientWrapper = m_workerClientWrapper.get();
     }
 }
 

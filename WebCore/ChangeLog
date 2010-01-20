@@ -1,3 +1,45 @@
+2010-01-19  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        CrossThreadCopier needs to support ThreadSafeShared better.
+        https://bugs.webkit.org/show_bug.cgi?id=33698
+
+        Now the copier is able to handle types that derive from ThreadSafeShared.
+
+        No change functionality so no new tests.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel): Remove unnecessary cast.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::clearClientWrapper): Ditto.
+        * loader/WorkerThreadableLoader.h:
+        Change to use the derived class instead of the ThreadSafeShared version.
+        * platform/CrossThreadCopier.cpp:
+        Add the new template parameter throughout the classes and adjust the class that 
+        handles ThreadSafeShared to allow for derived types.
+        * platform/CrossThreadCopier.h:
+        Add another template parameter to be able to detect classes that derive 
+        from ThreadSafeShared.
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        Removed unnecessary casts and changed a type to use the derived class instead of
+        the ThreadSafeShared version.
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::workerContextDidSend):
+        (WebCore::workerContextDidGetBufferedAmount):
+        (WebCore::workerContextDidConnect):
+        (WebCore::workerContextDidReceiveMessage):
+        (WebCore::workerContextDidClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::bufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::clearClientWrapper):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setMethodNotCompleted):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::create): Changed a type to use the
+        derived class instead of the ThreadSafeShared version.
+
 2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: accSelect() is not implemented

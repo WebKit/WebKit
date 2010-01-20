@@ -1,6 +1,6 @@
  /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -102,6 +102,40 @@ namespace WTF {
 
     template <typename T> struct IsSameType<T, T> {
         static const bool value = true;
+    };
+
+    template <typename T, typename U> class IsSubclass {
+        typedef char YesType;
+        struct NoType {
+            char padding[8];
+        };
+
+        static YesType subclassCheck(U*);
+        static NoType subclassCheck(...);
+        static T* t;
+    public:
+        static const bool value = sizeof(subclassCheck(t)) == sizeof(YesType);
+    };
+
+    template <typename T, template<class V> class U> class IsSubclassOfTemplate {
+        typedef char YesType;
+        struct NoType {
+            char padding[8];
+        };
+
+        template<typename W> static YesType subclassCheck(U<W>*);
+        static NoType subclassCheck(...);
+        static T* t;
+    public:
+        static const bool value = sizeof(subclassCheck(t)) == sizeof(YesType);
+    };
+
+    template <typename T, template <class V> class OuterTemplate> struct RemoveTemplate {
+        typedef T Type;
+    };
+
+    template <typename T, template <class V> class OuterTemplate> struct RemoveTemplate<OuterTemplate<T>, OuterTemplate> {
+        typedef T Type;
     };
 
     template <typename T> struct RemoveConst {

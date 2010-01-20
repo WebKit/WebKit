@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,29 +57,30 @@ namespace WebCore {
         }
     };
 
-    template<bool isConvertibleToInteger, typename T> struct CrossThreadCopierBase;
+    template<bool isConvertibleToInteger, bool isThreadsafeShared, typename T> struct CrossThreadCopierBase;
 
     // Integers get passed through without any changes.
-    template<typename T> struct CrossThreadCopierBase<true, T> : public CrossThreadCopierPassThrough<T> {
+    template<typename T> struct CrossThreadCopierBase<true, false, T> : public CrossThreadCopierPassThrough<T> {
     };
 
     // Pointers get passed through without any significant changes.
-    template<typename T> struct CrossThreadCopierBase<false, T*> : public CrossThreadCopierPassThrough<T*> {
+    template<typename T> struct CrossThreadCopierBase<false, false, T*> : public CrossThreadCopierPassThrough<T*> {
     };
 
-    template<> struct CrossThreadCopierBase<false, ThreadableLoaderOptions> : public CrossThreadCopierPassThrough<ThreadableLoaderOptions> {
+    template<> struct CrossThreadCopierBase<false, false, ThreadableLoaderOptions> : public CrossThreadCopierPassThrough<ThreadableLoaderOptions> {
     };
 
     // Custom copy methods.
-    template<typename T> struct CrossThreadCopierBase<false, RefPtr<ThreadSafeShared<T> > > {
-        typedef PassRefPtr<T> Type;
-        static Type copy(const RefPtr<ThreadSafeShared<T> >& refPtr)
+    template<typename T> struct CrossThreadCopierBase<false, true, T> {
+        typedef typename WTF::RemoveTemplate<T, RefPtr>::Type RefCountedType;
+        typedef PassRefPtr<RefCountedType> Type;
+        static Type copy(const T& refPtr)
         {
-            return PassRefPtr<T>(static_cast<T*>(refPtr.get()));
+            return refPtr.get();
         }
     };
 
-    template<typename T> struct CrossThreadCopierBase<false, PassOwnPtr<T> > {
+    template<typename T> struct CrossThreadCopierBase<false, false, PassOwnPtr<T> > {
         typedef PassOwnPtr<T> Type;
         static Type copy(const PassOwnPtr<T>& ownPtr)
         {
@@ -87,7 +88,7 @@ namespace WebCore {
         }
     };
 
-    template<typename T> struct CrossThreadCopierBase<false, std::auto_ptr<T> > {
+    template<typename T> struct CrossThreadCopierBase<false, false, std::auto_ptr<T> > {
         typedef std::auto_ptr<T> Type;
         static Type copy(const std::auto_ptr<T>& autoPtr)
         {
@@ -95,32 +96,34 @@ namespace WebCore {
         }
     };
 
-    template<> struct CrossThreadCopierBase<false, KURL> {
+    template<> struct CrossThreadCopierBase<false, false, KURL> {
         typedef KURL Type;
         static Type copy(const KURL&);
     };
 
-    template<> struct CrossThreadCopierBase<false, String> {
+    template<> struct CrossThreadCopierBase<false, false, String> {
         typedef String Type;
         static Type copy(const String&);
     };
 
-    template<> struct CrossThreadCopierBase<false, ResourceError> {
+    template<> struct CrossThreadCopierBase<false, false, ResourceError> {
         typedef ResourceError Type;
         static Type copy(const ResourceError&);
     };
 
-    template<> struct CrossThreadCopierBase<false, ResourceRequest> {
+    template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
         typedef std::auto_ptr<CrossThreadResourceRequestData> Type;
         static Type copy(const ResourceRequest&);
     };
 
-    template<> struct CrossThreadCopierBase<false, ResourceResponse> {
+    template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
         typedef std::auto_ptr<CrossThreadResourceResponseData> Type;
         static Type copy(const ResourceResponse&);
     };
 
-    template<typename T> struct CrossThreadCopier : public CrossThreadCopierBase<WTF::IsConvertibleToInteger<T>::value, T> {
+    template<typename T> struct CrossThreadCopier : public CrossThreadCopierBase<WTF::IsConvertibleToInteger<T>::value,
+                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeShared>::value,
+                                                                                 T> {
     };
 
 } // namespace WebCore
