@@ -1,3 +1,25 @@
+2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: accSelect() is not implemented
+
+        https://bugs.webkit.org/show_bug.cgi?id=33918
+        <rdar://problem/7436861>
+
+        Reviewed by Darin Adler.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accSelect):
+        If there is an invalid combination of state flags, return early. If the
+        caller passed the "take focus" flag, focus the object. If the "take
+        selection" flag was passed, check whether the parent object is an
+        AccessibilityListBox; if so, call the object's setSelectedChildren()
+        function. If the parent is an AccessibilityMenuListPopup, call the
+        child object's setSelected() function. Otherwise, if the parent is some
+        other, unsupported object, return early.
+        If the selection flags include "add", "remove", or "extend" selection,
+        and the parent object is not multi-selectable, return early. Otherwise,
+        set or unset the child's selected flag based on the passed flag.
+
 2010-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.

@@ -74,7 +74,12 @@ public:
     int childrenCount();
     AccessibilityUIElement titleUIElement();
     AccessibilityUIElement parentElement();
-    
+
+    void takeFocus();
+    void takeSelection();
+    void addSelection();
+    void removeSelection();
+
     // Methods - platform-independent implementations
     JSStringRef allAttributes();
     JSStringRef attributesOfLinkedUIElements();

@@ -1,3 +1,18 @@
+2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: accSelect() is not implemented
+
+        https://bugs.webkit.org/show_bug.cgi?id=33918
+        <rdar://problem/7436861>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/win/accessibility/selection-and-focus.html
+
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::setSelected):
+        Return early if the object is not selectable.
+
 2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix chromium build, introduced a copy&paste error.

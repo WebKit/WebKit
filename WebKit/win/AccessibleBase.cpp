@@ -29,6 +29,8 @@
 
 #include "AccessibleImage.h"
 #include "WebView.h"
+#include <WebCore/AccessibilityListBox.h>
+#include <WebCore/AccessibilityMenuListPopup.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/BString.h>
@@ -362,9 +364,54 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long, VARIANT)
+HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT vChild)
 {
-    return E_NOTIMPL;
+    // According to MSDN, these combinations are invalid.
+    if (((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) ||
+        ((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION)) ||
+        ((selectionFlags & (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)) ||
+        ((selectionFlags & (SELFLAG_EXTENDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)))
+        return E_INVALIDARG;
+
+    AccessibilityObject* childObject;
+    HRESULT hr = getAccessibilityObjectForChild(vChild, childObject);
+
+    if (FAILED(hr))
+        return hr;
+
+    if (selectionFlags & SELFLAG_TAKEFOCUS)
+        childObject->setFocused(true);
+
+    AccessibilityObject* parentObject = childObject->parentObject();
+    if (!parentObject)
+        return E_INVALIDARG;
+
+    if (selectionFlags & SELFLAG_TAKESELECTION) {
+        if (parentObject->isListBox()) {
+            Vector<RefPtr<AccessibilityObject> > selectedChildren(1);
+            selectedChildren[0] = childObject;
+            static_cast<AccessibilityListBox*>(parentObject)->setSelectedChildren(selectedChildren);
+        } else if (parentObject->isMenuListPopup())
+            childObject->setSelected(true);
+        else
+            return E_INVALIDARG;
+    }
+
+    // MSDN says that ADD, REMOVE, and EXTENDSELECTION are invalid for
+    // single-select.
+    if (!parentObject->isMultiSelectable())
+        return E_INVALIDARG;
+
+    if (selectionFlags & SELFLAG_ADDSELECTION)
+        childObject->setSelected(true);
+
+    if (selectionFlags & SELFLAG_REMOVESELECTION)
+        childObject->setSelected(false);
+
+    // FIXME: Should implement SELFLAG_EXTENDSELECTION. For now, we just return
+    // S_OK, matching Firefox.
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE AccessibleBase::get_accSelection(VARIANT*)

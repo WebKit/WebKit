@@ -1,3 +1,15 @@
+2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: accSelect() is not implemented
+
+        https://bugs.webkit.org/show_bug.cgi?id=33918
+        <rdar://problem/7436861>
+
+        Reviewed by Darin Adler.
+
+        * platform/win/accessibility/selection-and-focus-expected.txt: Added.
+        * platform/win/accessibility/selection-and-focus.html: Added.
+
 2010-01-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Alexey Proskuryakov. 

@@ -570,3 +570,23 @@ bool AccessibilityUIElement::hasPopup() const
     DWORD state = accessibilityState(m_element);
     return (state & STATE_SYSTEM_HASPOPUP) == STATE_SYSTEM_HASPOPUP;
 }
+
+void AccessibilityUIElement::takeFocus()
+{
+    m_element->accSelect(SELFLAG_TAKEFOCUS, self());
+}
+
+void AccessibilityUIElement::takeSelection()
+{
+    m_element->accSelect(SELFLAG_TAKESELECTION, self());
+}
+
+void AccessibilityUIElement::addSelection()
+{
+    m_element->accSelect(SELFLAG_ADDSELECTION, self());
+}
+
+void AccessibilityUIElement::removeSelection()
+{
+    m_element->accSelect(SELFLAG_REMOVESELECTION, self());
+}

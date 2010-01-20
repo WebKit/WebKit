@@ -83,6 +83,9 @@ bool AccessibilityMenuListOption::isSelected() const
 
 void AccessibilityMenuListOption::setSelected(bool b)
 {
+    if (!canSetSelectedAttribute())
+        return;
+
     static_cast<HTMLOptionElement*>(m_element.get())->setSelected(b);
 }
 

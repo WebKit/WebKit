@@ -593,3 +593,23 @@ bool AccessibilityUIElement::hasPopup() const
     // FIXME: implement
     return false;
 }
+
+void AccessibilityUIElement::takeFocus()
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::takeSelection()
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::addSelection()
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::removeSelection()
+{
+    // FIXME: implement
+}
