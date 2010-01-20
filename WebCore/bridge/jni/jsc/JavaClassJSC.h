@@ -28,7 +28,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "jni_runtime.h"
+#include "JNIBridge.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {

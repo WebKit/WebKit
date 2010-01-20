@@ -30,7 +30,6 @@
 
 #include "JNIUtility.h"
 #include "JSDOMWindow.h"
-#include "jni_runtime.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 

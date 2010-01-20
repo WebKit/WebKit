@@ -1,3 +1,25 @@
+2010-01-20  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Renames jni_runtime.[cpp|h] to JNIBridge.[cpp|h]
+        https://bugs.webkit.org/show_bug.cgi?id=33899
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk: Modified. Removes jni_runtime.cpp and adds JNIBridge.cpp
+        * GNUmakefile.am: Modified. Removes jni_runtime.h and adds JNIBridge.h
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removes jni_runtime.[cpp|h] and adds JNIBridge.[cpp|h]
+        * bridge/jni/JNIBridge.cpp: Copied from WebCore/bridge/jni/jni_runtime.cpp.
+        * bridge/jni/JNIBridge.h: Copied from WebCore/bridge/jni/jni_runtime.h.
+        * bridge/jni/jni_jsobject.mm: Modified. Updated to include JNIBridge.h
+        * bridge/jni/jni_runtime.cpp: Removed.
+        * bridge/jni/jni_runtime.h: Removed.
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: Modified. Updated to include JNIBridge.h
+        * bridge/jni/jsc/JavaClassJSC.cpp: Modified. Removed superfluous include
+        * bridge/jni/jsc/JavaClassJSC.h: Modified. Updated to include JNIBridge.h
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Modified. Updated to include JNIBridge.h
+
 2010-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Simon Fraser.

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef _JNI_RUNTIME_H_
-#define _JNI_RUNTIME_H_
+#ifndef JNIBridge_h
+#define JNIBridge_h
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
@@ -169,4 +169,4 @@ private:
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
 
-#endif // _JNI_RUNTIME_H_
+#endif // JNIBridge_h

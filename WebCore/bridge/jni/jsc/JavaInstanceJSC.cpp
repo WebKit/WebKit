@@ -28,10 +28,10 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "JNIBridge.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassJSC.h"
-#include "jni_runtime.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
