@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -34,7 +34,7 @@ namespace JSC {
 
 namespace Bindings {
 
-static jint KJS_GetCreatedJavaVMs(JavaVM** vmBuf, jsize bufLen, jsize* nVMs)
+static jint KJSGetCreatedJavaVMs(JavaVM** vmBuf, jsize bufLen, jsize* nVMs)
 {
     static void* javaVMFramework = 0;
     if (!javaVMFramework)
@@ -42,43 +42,43 @@ static jint KJS_GetCreatedJavaVMs(JavaVM** vmBuf, jsize bufLen, jsize* nVMs)
     if (!javaVMFramework)
         return JNI_ERR;
 
-    static jint(*functionPointer)(JavaVM**, jsize, jsize *) = 0;
+    typedef jint(*FunctionPointerType)(JavaVM**, jsize, jsize*);
+    static FunctionPointerType functionPointer = 0;
     if (!functionPointer)
-        functionPointer = (jint(*)(JavaVM**, jsize, jsize *))dlsym(javaVMFramework, "JNI_GetCreatedJavaVMs");
+        functionPointer = reinterpret_cast<FunctionPointerType>(dlsym(javaVMFramework, "JNI_GetCreatedJavaVMs"));
     if (!functionPointer)
         return JNI_ERR;
     return functionPointer(vmBuf, bufLen, nVMs);
 }
 
-static JavaVM *jvm = 0;
+static JavaVM* jvm = 0;
 
 // Provide the ability for an outside component to specify the JavaVM to use
-// If the jvm value is set, the getJavaVM function below will just return. 
+// If the jvm value is set, the getJavaVM function below will just return.
 // In getJNIEnv(), if AttachCurrentThread is called to a VM that is already
 // attached, the result is a no-op.
-void setJavaVM(JavaVM *javaVM)
+void setJavaVM(JavaVM* javaVM)
 {
     jvm = javaVM;
 }
 
-JavaVM *getJavaVM()
+JavaVM* getJavaVM()
 {
     if (jvm)
         return jvm;
 
-    JavaVM *jvmArray[1];
+    JavaVM* jvmArray[1];
     jsize bufLen = 1;
     jsize nJVMs = 0;
     jint jniError = 0;
 
     // Assumes JVM is already running ..., one per process
-    jniError = KJS_GetCreatedJavaVMs(jvmArray, bufLen, &nJVMs);
-    if ( jniError == JNI_OK && nJVMs > 0 ) {
+    jniError = KJSGetCreatedJavaVMs(jvmArray, bufLen, &nJVMs);
+    if (jniError == JNI_OK && nJVMs > 0)
         jvm = jvmArray[0];
-    }
-    else 
-        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %ld\n", __PRETTY_FUNCTION__, (long)jniError);
-        
+    else
+        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %ld\n", __PRETTY_FUNCTION__, static_cast<long>(jniError));
+
     return jvm;
 }
 
@@ -90,29 +90,27 @@ JNIEnv* getJNIEnv()
     } u;
     jint jniError = 0;
 
-    jniError = (getJavaVM())->AttachCurrentThread(&u.dummy, NULL);
+    jniError = getJavaVM()->AttachCurrentThread(&u.dummy, 0);
     if (jniError == JNI_OK)
         return u.env;
-    else
-        fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, (long)jniError);
-    return NULL;
+    fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, static_cast<long>(jniError));
+    return 0;
 }
 
-jmethodID getMethodID (jobject obj, const char *name, const char *sig)
+jmethodID getMethodID(jobject obj, const char* name, const char* sig)
 {
-    JNIEnv *env = getJNIEnv();
+    JNIEnv* env = getJNIEnv();
     jmethodID mid = 0;
-        
-    if ( env != NULL) {
-    jclass cls = env->GetObjectClass(obj);
-    if ( cls != NULL ) {
+
+    if (env) {
+        jclass cls = env->GetObjectClass(obj);
+        if (cls) {
             mid = env->GetMethodID(cls, name, sig);
             if (!mid) {
                 env->ExceptionClear();
                 mid = env->GetStaticMethodID(cls, name, sig);
-                if (!mid) {
+                if (!mid)
                     env->ExceptionClear();
-                }
             }
         }
         env->DeleteLocalRef(cls);
@@ -120,118 +118,118 @@ jmethodID getMethodID (jobject obj, const char *name, const char *sig)
     return mid;
 }
 
-const char *getCharactersFromJString (jstring aJString)
+const char* getCharactersFromJString(jstring aJString)
 {
-    return getCharactersFromJStringInEnv (getJNIEnv(), aJString);
+    return getCharactersFromJStringInEnv(getJNIEnv(), aJString);
 }
 
-void releaseCharactersForJString (jstring aJString, const char *s)
+void releaseCharactersForJString(jstring aJString, const char* s)
 {
-    releaseCharactersForJStringInEnv (getJNIEnv(), aJString, s);
+    releaseCharactersForJStringInEnv(getJNIEnv(), aJString, s);
 }
 
-const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
+const char* getCharactersFromJStringInEnv(JNIEnv* env, jstring aJString)
 {
     jboolean isCopy;
-    const char *s = env->GetStringUTFChars((jstring)aJString, &isCopy);
+    const char* s = env->GetStringUTFChars(aJString, &isCopy);
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
-                fprintf (stderr, "\n");
+        fprintf(stderr, "\n");
     }
     return s;
 }
 
-void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s)
+void releaseCharactersForJStringInEnv(JNIEnv* env, jstring aJString, const char* s)
 {
-    env->ReleaseStringUTFChars (aJString, s);
+    env->ReleaseStringUTFChars(aJString, s);
 }
 
-const jchar *getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
+const jchar* getUCharactersFromJStringInEnv(JNIEnv* env, jstring aJString)
 {
     jboolean isCopy;
-    const jchar *s = env->GetStringChars((jstring)aJString, &isCopy);
+    const jchar* s = env->GetStringChars(aJString, &isCopy);
     if (!s) {
         env->ExceptionDescribe();
         env->ExceptionClear();
-                fprintf (stderr, "\n");
+        fprintf(stderr, "\n");
     }
     return s;
 }
 
-void releaseUCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const jchar *s)
+void releaseUCharactersForJStringInEnv(JNIEnv* env, jstring aJString, const jchar* s)
 {
-    env->ReleaseStringChars (aJString, s);
+    env->ReleaseStringChars(aJString, s);
 }
 
-JNIType JNITypeFromClassName(const char *name)
+JNIType JNITypeFromClassName(const char* name)
 {
     JNIType type;
-    
-    if (strcmp("byte",name) == 0)
+
+    if (!strcmp("byte", name))
         type = byte_type;
-    else if (strcmp("short",name) == 0)
+    else if (!strcmp("short", name))
         type = short_type;
-    else if (strcmp("int",name) == 0)
+    else if (!strcmp("int", name))
         type = int_type;
-    else if (strcmp("long",name) == 0)
+    else if (!strcmp("long", name))
         type = long_type;
-    else if (strcmp("float",name) == 0)
+    else if (!strcmp("float", name))
         type = float_type;
-    else if (strcmp("double",name) == 0)
+    else if (!strcmp("double", name))
         type = double_type;
-    else if (strcmp("char",name) == 0)
+    else if (!strcmp("char", name))
         type = char_type;
-    else if (strcmp("boolean",name) == 0)
+    else if (!strcmp("boolean", name))
         type = boolean_type;
-    else if (strcmp("void",name) == 0)
+    else if (!strcmp("void", name))
         type = void_type;
-    else if ('[' == name[0]) 
+    else if ('[' == name[0])
         type = array_type;
     else
         type = object_type;
-        
+
     return type;
 }
 
-const char *signatureFromPrimitiveType(JNIType type)
+const char* signatureFromPrimitiveType(JNIType type)
 {
-    switch (type){
-        case void_type: 
-            return "V";
-        
-        case array_type:
-            return "[";
-        
-        case object_type:
-            return "L";
-        
-        case boolean_type:
-            return "Z";
-        
-        case byte_type:
-            return "B";
-            
-        case char_type:
-            return "C";
-        
-        case short_type:
-            return "S";
-        
-        case int_type:
-            return "I";
-        
-        case long_type:
-            return "J";
-        
-        case float_type:
-            return "F";
-        
-        case double_type:
-            return "D";
+    switch (type) {
+    case void_type:
+        return "V";
 
-        case invalid_type:
-        default:
+    case array_type:
+        return "[";
+
+    case object_type:
+        return "L";
+
+    case boolean_type:
+        return "Z";
+
+    case byte_type:
+        return "B";
+
+    case char_type:
+        return "C";
+
+    case short_type:
+        return "S";
+
+    case int_type:
+        return "I";
+
+    case long_type:
+        return "J";
+
+    case float_type:
+        return "F";
+
+    case double_type:
+        return "D";
+
+    case invalid_type:
+    default:
         break;
     }
     return "";
@@ -239,58 +237,58 @@ const char *signatureFromPrimitiveType(JNIType type)
 
 JNIType JNITypeFromPrimitiveType(char type)
 {
-    switch (type){
-        case 'V': 
-            return void_type;
-        
-        case 'L':
-            return object_type;
-            
-        case '[':
-            return array_type;
-        
-        case 'Z':
-            return boolean_type;
-        
-        case 'B':
-            return byte_type;
-            
-        case 'C':
-            return char_type;
-        
-        case 'S':
-            return short_type;
-        
-        case 'I':
-            return int_type;
-        
-        case 'J':
-            return long_type;
-        
-        case 'F':
-            return float_type;
-        
-        case 'D':
-            return double_type;
+    switch (type) {
+    case 'V':
+        return void_type;
 
-        default:
+    case 'L':
+        return object_type;
+
+    case '[':
+        return array_type;
+
+    case 'Z':
+        return boolean_type;
+
+    case 'B':
+        return byte_type;
+
+    case 'C':
+        return char_type;
+
+    case 'S':
+        return short_type;
+
+    case 'I':
+        return int_type;
+
+    case 'J':
+        return long_type;
+
+    case 'F':
+        return float_type;
+
+    case 'D':
+        return double_type;
+
+    default:
         break;
     }
     return invalid_type;
 }
 
-jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature)
+jvalue getJNIField(jobject obj, JNIType type, const char* name, const char* signature)
 {
-    JavaVM *jvm = getJavaVM();
-    JNIEnv *env = getJNIEnv();
+    JavaVM* jvm = getJavaVM();
+    JNIEnv* env = getJNIEnv();
     jvalue result;
 
-    bzero (&result, sizeof(jvalue));
-    if ( obj != NULL && jvm != NULL && env != NULL) {
+    bzero(&result, sizeof(jvalue));
+    if (obj && jvm && env) {
         jclass cls = env->GetObjectClass(obj);
-        if ( cls != NULL ) {
+        if (cls) {
             jfieldID field = env->GetFieldID(cls, name, signature);
-            if ( field != NULL ) {
+            if (field) {
                 switch (type) {
                 case array_type:
                 case object_type:
@@ -321,29 +319,25 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
                     result.d = env->functions->GetDoubleField(env, obj, field);
                     break;
                 default:
-                    fprintf(stderr, "%s: invalid field type (%d)\n", __PRETTY_FUNCTION__, (int)type);
+                    fprintf(stderr, "%s: invalid field type (%d)\n", __PRETTY_FUNCTION__, static_cast<int>(type));
                 }
-            }
-            else
-            {
+            } else {
                 fprintf(stderr, "%s: Could not find field: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
-                fprintf (stderr, "\n");
+                fprintf(stderr, "\n");
             }
 
             env->DeleteLocalRef(cls);
-        }
-        else {
+        } else
             fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
-        }
     }
 
     return result;
 }
 
-}  // end of namespace Bindings
+} // namespace Bindings
 
-} // end of namespace JSC
+} // namespace JSC
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)
