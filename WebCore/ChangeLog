@@ -1,3 +1,152 @@
+2010-01-20  David Levin  <levin@chromium.org>
+
+        No review, rolling out r53552.
+        http://trac.webkit.org/changeset/53552
+        https://bugs.webkit.org/show_bug.cgi?id=32554
+
+        Caused lots of fast/profile test failures.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::databaseForId):
+        (WebCore::JSInjectedScriptHost::inspectedWindow):
+        (WebCore::JSInjectedScriptHost::wrapCallback):
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        (WebCore::JSInjectedScriptHost::nodeForId):
+        (WebCore::JSInjectedScriptHost::wrapObject):
+        (WebCore::JSInjectedScriptHost::unwrapObject):
+        (WebCore::JSInjectedScriptHost::pushNodePathToFrontend):
+        (WebCore::JSInjectedScriptHost::selectDatabase):
+        (WebCore::JSInjectedScriptHost::selectDOMStorage):
+        * bindings/js/ScriptCallStack.h:
+        (WebCore::ScriptCallStack::state):
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptObject.h:
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::quarantineValue):
+        * bindings/js/ScriptValue.h:
+        * bindings/v8/ScriptObject.h:
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::quarantineValue):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectedWindowCallback):
+        (WebCore::V8InjectedScriptHost::wrapCallbackCallback):
+        (WebCore::V8InjectedScriptHost::wrapObjectCallback):
+        (WebCore::V8InjectedScriptHost::unwrapObjectCallback):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToConsole):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::wrapObject):
+        (WebCore::InjectedScriptHost::unwrapObject):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        (WebCore::InspectorBackend::releaseWrapperObjectGroup):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::didPause):
+        (WebCore::InspectorController::wrapObject):
+        (WebCore::InspectorController::unwrapObject):
+        (WebCore::InspectorController::releaseWrapperObjectGroup):
+        (WebCore::InspectorController::resetInjectedScript):
+        (WebCore::InspectorController::deleteCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        (WebCore::InspectorFrontend::pausedScript):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.requestClearMessages):
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype.doEvalInWindow):
+        (WebInspector.ConsoleView.prototype._formatnode):
+        (WebInspector.ConsoleView.prototype._formatarray):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.parseRule):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.executeSql):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.focusedNodeChanged):
+        (WebInspector.ElementsPanel.prototype.setDocument):
+        (WebInspector.ElementsPanel.prototype.searchCanceled):
+        (WebInspector.ElementsPanel.prototype.performSearch):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        ():
+        * inspector/front-end/InjectedScript.js:
+        (InjectedScript.dispatch):
+        (InjectedScript.toggleStyleEnabled):
+        (InjectedScript._serializeRule):
+        (InjectedScript._serializeStyle):
+        (InjectedScript.getProperties):
+        (InjectedScript.setPropertyValue):
+        (InjectedScript._evaluateAndWrap):
+        (InjectedScript.getCallFrames):
+        (InjectedScript._inspectObject):
+        (InjectedScript._ensureCommandLineAPIInstalled):
+        (InjectedScript._resolveObject):
+        (InjectedScript._window):
+        (InjectedScript._objectForId):
+        (InjectedScript.createProxyObject):
+        (InjectedScript.executeSql):
+        (InjectedScript.executeSql.errorCallback):
+        (InjectedScript.executeSql.queryTransaction):
+        (Object.type):
+        (String.prototype.escapeCharacters):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane):
+        (WebInspector.MetricsSidebarPane.prototype.update.inlineStyleCallback):
+        (WebInspector.MetricsSidebarPane.prototype.update):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression):
+        * inspector/front-end/ObjectProxy.js:
+        (WebInspector.ObjectProxy):
+        (WebInspector.ObjectProxy.getPropertiesAsync):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.callback):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.ondblclick):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.doEvalInCallFrame):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.pausedScript):
+        (WebInspector.addConsoleMessage):
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+
 2010-01-20  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
