@@ -37,7 +37,6 @@ var Preferences = {
     minScriptsSidebarWidth: 200,
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
-    heapProfilerPresent: false,
     samplingCPUProfiler: false,
     showColorNicknames: true
 }

@@ -52,12 +52,18 @@ WebInspector.WelcomeView = function(identifier, headingText, instructionsText)
 
     if (instructionsText)
         this.addMessage(instructionsText);
-
-    window.addEventListener("resize", this._windowResized.bind(this), true);
 }
 
 WebInspector.WelcomeView.prototype = {
-    _windowResized: function()
+
+    show: function(parentElement)
+    {
+        WebInspector.View.prototype.show.call(this, parentElement);
+
+        setTimeout(this.resize.bind(this), 0);
+    },
+
+    resize: function()
     {
         this.imageElement.removeStyleClass("hidden");
 

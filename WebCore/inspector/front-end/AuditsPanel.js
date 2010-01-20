@@ -249,13 +249,6 @@ WebInspector.AuditsPanel.prototype = {
         this.auditsItemTreeElement.select();
     },
 
-    resize: function()
-    {
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
-    },
-
     updateMainViewWidth: function(width)
     {
         this.viewsContainerElement.style.left = width + "px";

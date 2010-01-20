@@ -260,13 +260,15 @@ WebInspector.AbstractTimelinePanel.prototype = {
 
     resize: function()
     {
+        WebInspector.Panel.prototype.resize.call(this);
+
         this.updateGraphDividersIfNeeded();
     },
 
     updateMainViewWidth: function(width)
     {
         this._containerContentElement.style.left = width + "px";
-        this.updateGraphDividersIfNeeded();
+        this.resize();
     },
 
     invalidateAllItems: function()

@@ -1,3 +1,44 @@
+2010-01-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Optimize resize event handling for hidden views
+        https://bugs.webkit.org/show_bug.cgi?id=33803
+
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.resize):
+        (WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth):
+        * inspector/front-end/AuditsPanel.js:
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.updateSidebarWidth):
+        (WebInspector.Panel.prototype.resize):
+        * inspector/front-end/PanelEnablerView.js:
+        (WebInspector.PanelEnablerView):
+        (WebInspector.PanelEnablerView.prototype.show):
+        (WebInspector.PanelEnablerView.prototype.resize):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.show):
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.showProfile):
+        (WebInspector.ProfilesPanel.prototype.showView):
+        (WebInspector.ProfilesPanel.prototype.closeVisibleView):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show):
+        (WebInspector.ResourcesPanel.prototype.get visibleView):
+        (WebInspector.ResourcesPanel.prototype.updateMainViewWidth):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.updateMainViewWidth):
+        * inspector/front-end/WelcomeView.js:
+        (WebInspector.WelcomeView):
+        (WebInspector.WelcomeView.prototype.show):
+        (WebInspector.WelcomeView.prototype.resize):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.windowResize):
+
 2010-01-20  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

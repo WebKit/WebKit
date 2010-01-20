@@ -157,8 +157,12 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        if (!this.visibleView)
+        this._updateInterface();
+        if (!this.visibleView) {
+            this.visibleView = this.welcomeView;
             this.welcomeView.show();
+        }
+        this.visibleView.show();
         if (this._shouldPopulateProfiles)
             this._populateProfiles();
     },
@@ -303,7 +307,7 @@ WebInspector.ProfilesPanel.prototype = {
         profile._profilesTreeElement = profileTreeElement;
 
         sidebarParent.appendChild(profileTreeElement);
-        if (!this.visibleView)
+        if (!this.visibleView || this.visibleView === this.welcomeView)
             this.showProfile(profile);
     },
 
@@ -312,9 +316,7 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile)
             return;
 
-        this.welcomeView.hide();
-        if (this.visibleView)
-            this.visibleView.hide();
+        this.closeVisibleView();
 
         var view = profile.__profilesPanelProfileType.viewForProfile(profile);
 
@@ -334,7 +336,19 @@ WebInspector.ProfilesPanel.prototype = {
 
     showView: function(view)
     {
-        this.showProfile(view.profile);
+        if (this.visibleView === view) {
+            if (this.visibleView && !this.visibleView.visible)
+                view.show();
+            return;
+        }
+
+        this._previousVisibleView = this.visibleView;
+        if (view === this.welcomeView) {
+            this.closeVisibleView();
+            this.visibleView = view;
+            view.show();
+        } else
+            this.showProfile(view.profile);
     },
 
     getProfileType: function(typeId)
@@ -366,7 +380,6 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleView)
             this.visibleView.hide();
         delete this.visibleView;
-        this.welcomeView.show();
     },
 
     displayTitleForProfileLink: function(title, typeId)
@@ -428,13 +441,6 @@ WebInspector.ProfilesPanel.prototype = {
         }
     },
 
-    resize: function()
-    {
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
-    },
-
     _updateInterface: function()
     {
         // FIXME: Replace ProfileType-specific button visibility changes by a single ProfileType-agnostic "combo-button" visibility change.
@@ -446,6 +452,7 @@ WebInspector.ProfilesPanel.prototype = {
             this.profileViewStatusBarItemsContainer.removeStyleClass("hidden");
             this.panelEnablerView.visible = false;
             this.welcomeView.visible = true;
+            this.visibleView = this._previousVisibleView || this.welcomeView;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Profiling disabled. Click to enable.");
             this.enableToggleButton.toggled = false;
@@ -454,6 +461,7 @@ WebInspector.ProfilesPanel.prototype = {
             this.profileViewStatusBarItemsContainer.addStyleClass("hidden");
             this.welcomeView.visible = false;
             this.panelEnablerView.visible = true;
+            this.visibleView = this.panelEnablerView;
         }
     },
 
@@ -496,8 +504,10 @@ WebInspector.ProfilesPanel.prototype = {
 
     updateMainViewWidth: function(width)
     {
+        this.welcomeView.element.style.left = width + "px";
         this.profileViews.style.left = width + "px";
         this.profileViewStatusBarItemsContainer.style.left = width + "px";
+        this.resize();
     }
 }
 

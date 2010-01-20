@@ -522,7 +522,7 @@ WebInspector.windowUnload = function(event)
 
 WebInspector.windowResize = function(event)
 {
-    if (this.currentPanel && this.currentPanel.resize)
+    if (this.currentPanel)
         this.currentPanel.resize();
     this.drawer.resize();
 }

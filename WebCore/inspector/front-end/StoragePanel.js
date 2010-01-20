@@ -354,13 +354,6 @@ WebInspector.StoragePanel.prototype = {
         return dataGrid;
     },
 
-    resize: function()
-    {
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
-    },
-
     updateDOMStorage: function(storageId)
     {
         var domStorage = this._domStorageForId(storageId);
@@ -389,6 +382,7 @@ WebInspector.StoragePanel.prototype = {
     {
         this.storageViews.style.left = width + "px";
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
+        this.resize();
     }
 }
 

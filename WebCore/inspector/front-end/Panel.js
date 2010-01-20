@@ -348,10 +348,6 @@ WebInspector.Panel.prototype = {
         this.setSidebarWidth(width);
 
         this.updateMainViewWidth(width);
-
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
     },
 
     setSidebarWidth: function(width)
@@ -363,6 +359,13 @@ WebInspector.Panel.prototype = {
     updateMainViewWidth: function(width)
     {
         // Should be implemented by ancestors.
+    },
+
+    resize: function()
+    {
+        var visibleView = this.visibleView;
+        if (visibleView && "resize" in visibleView)
+            visibleView.resize();
     },
 
     canShowSourceLineForURL: function(url)

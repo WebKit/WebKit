@@ -2275,7 +2275,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
 
 .panel-enabler-view.welcome {
     z-index: auto;
-    left: 200px;
 }
 
 .panel-enabler-view.welcome img {

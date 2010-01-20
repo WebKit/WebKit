@@ -192,10 +192,11 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.AbstractTimelinePanel.prototype.show.call(this);
 
         var visibleView = this.visibleView;
-        if (visibleView) {
+        if (this.visibleResource) {
             visibleView.headersVisible = true;
             visibleView.show(this.viewsContainerElement);
-        }
+        } else if (visibleView)
+            visibleView.show();
 
         // Hide any views that are visible that are not this panel's current visible view.
         // This can happen when a ResourceView is visible in the Scripts panel then switched
@@ -208,15 +209,6 @@ WebInspector.ResourcesPanel.prototype = {
                 continue;
             view.visible = false;
         }
-    },
-
-    resize: function()
-    {
-        WebInspector.AbstractTimelinePanel.prototype.resize.call(this);
-
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
     },
 
     get searchableViews()
@@ -287,7 +279,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (this.visibleResource)
             return this.visibleResource._resourcesView;
-        return null;
+        return InspectorBackend.resourceTrackingEnabled() ? null : this.panelEnablerView;
     },
 
     get sortingFunction()
@@ -684,8 +676,10 @@ WebInspector.ResourcesPanel.prototype = {
 
     updateMainViewWidth: function(width)
     {
-        WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth.call(this, width);
         this.viewsContainerElement.style.left = width + "px";
+
+        WebInspector.AbstractTimelinePanel.prototype.updateMainViewWidth.call(this, width);
+        this.resize();
     },
 
     _enableResourceTracking: function()
