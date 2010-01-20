@@ -1,3 +1,16 @@
+2010-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Don't use QSocketNotifier in the DRT for reading stdin
+
+        QSocketNotifier is not available on Windows. Instead we read
+        stdin synchronously after each test using signals and slots.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/main.cpp:
+
 2010-01-19  Adam Barth  <abarth@webkit.org>
 
         Rubber stamped by Eric Seidel.
