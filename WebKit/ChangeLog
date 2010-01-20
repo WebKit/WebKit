@@ -1,3 +1,12 @@
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix, no review.
+
+        Fix build of DumpRenderTree by making the header WebTypesInternal.h Private
+        in WebKit.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: The child <option> elements of a non-multiple <select> are not
