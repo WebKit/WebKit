@@ -1,3 +1,16 @@
+2010-01-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium][V8] Fix null pointer dereference in V8Proxy::retrieve().
+        https://bugs.webkit.org/show_bug.cgi?id=33886
+
+        This is equivalent to r53433, and fix a crash by
+        LayoutTests/http/tests/appcache/destroyed-iframe.html.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve): Check if context is null.
+
 2010-01-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
