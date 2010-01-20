@@ -490,22 +490,14 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView* scr
 {
     // FIXME: This scrolling behavior should be under the control of the embedding client (rather than something
     // we just do ourselves).
-    
-    IntRect scrollRect = r;
-    NSView *startView = m_webView;
-    if ([m_webView _usesDocumentViews]) {
-        // We have to convert back to document view coordinates.
-        // It doesn't make sense for the scrollRectIntoView API to take document view coordinates.
-        scrollRect.move(scrollView->scrollOffset());
-        startView = [[[m_webView mainFrame] frameView] documentView];
-    }
-    NSRect rect = scrollRect;
-    for (NSView *view = startView; view; view = [view superview]) { 
-        if ([view isKindOfClass:[NSClipView class]]) { 
-            NSClipView *clipView = (NSClipView *)view; 
-            NSView *documentView = [clipView documentView]; 
-            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:startView]]; 
-        } 
+
+    NSRect rect = r;
+    for (NSView *view = m_webView; view; view = [view superview]) {
+        if ([view isKindOfClass:[NSClipView class]]) {
+            NSClipView *clipView = (NSClipView *)view;
+            NSView *documentView = [clipView documentView];
+            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:m_webView]];
+        }
     }
 }
 

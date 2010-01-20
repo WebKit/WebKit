@@ -1,3 +1,21 @@
+2010-01-19  Timothy Hatcher  <timothy@apple.com>
+
+        Fix erroneous page scrolls when trying to select text or use form elements
+        with the Web Inspector docked.
+
+        http://webkit.org/b/24403
+        rdar://problem/6753925
+
+        Reviewed by John Sullivan and Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollRectIntoView): The scrollRect.move() call was
+        incorrectly converting the rect under the assumption that the frame view
+        is the same size as the WebView. Using convertRect:fromView: instead
+        is enough to fix the bug, but that code isn't needed since WebCore
+        already takes care of scrolling the main frame's document view, so it
+        was redundant to do it here too.
+
 2010-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.
