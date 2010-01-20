@@ -72,6 +72,7 @@ unix {
 
 unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 CONFIG(release):!CONFIG(standalone_package) {
     contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
