@@ -1,3 +1,30 @@
+2009-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7068584> Crash at NetscapePluginHostProxy::processRequests
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::waitForReply): Wrapped with calls
+        to willCallPluginFunction/didCallPluginFunction. This prevents the plug-in
+        from being stopped while waiting for reply.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance): Protect the
+        instance proxy in case the plug-in host crashes while waiting for reply.
+        * Plugins/Hosted/ProxyInstance.h:
+        (WebKit::ProxyInstance::waitForReply): Added. Calls through to
+        NetscapePluginInstanceProxy::waitForReply(), but returns a null reply if the
+        proxy gets invalidated while waiting for the reply.
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke): Use ProxyInstance::waitForReply().
+        (WebKit::ProxyInstance::supportsInvokeDefaultMethod): Ditto.
+        (WebKit::ProxyInstance::supportsConstruct): Ditto.
+        (WebKit::ProxyInstance::getPropertyNames): Ditto.
+        (WebKit::ProxyInstance::methodsNamed): Ditto.
+        (WebKit::ProxyInstance::fieldNamed): Ditto.
+        (WebKit::ProxyInstance::fieldValue): Ditto.
+        (WebKit::ProxyInstance::setFieldValue): Ditto.
+
 2010-01-19  John Sullivan  <sullivan@apple.com>
 
         Tiger build fix.
