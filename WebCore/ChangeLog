@@ -1,3 +1,10 @@
+2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix chromium build, introduced a copy&paste error.
+
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+
 2010-01-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

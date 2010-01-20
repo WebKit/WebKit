@@ -80,7 +80,6 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (!frame)
         return 0;
 
-    ASSERT(node);
     ASSERT(attr);
     if (attr->isNull())
         return 0;
