@@ -337,7 +337,9 @@ void Heap::freeBlocks()
     ProtectCountSet protectedValuesCopy = m_protectedValues;
 
     clearMarkBits();
-    markProtectedObjects(m_globalData->markStack);
+    ProtectCountSet::iterator protectedValuesEnd = protectedValuesCopy.end();
+    for (ProtectCountSet::iterator it = protectedValuesCopy.begin(); it != protectedValuesEnd; ++it)
+        markCell(it->first);
 
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
@@ -348,9 +350,9 @@ void Heap::freeBlocks()
 
     ASSERT(!protectedObjectCount());
 
-    ProtectCountSet::iterator protectedValuesEnd = protectedValuesCopy.end();
-    for (ProtectCountSet::iterator protectedValuesIt = protectedValuesCopy.begin(); protectedValuesIt != protectedValuesEnd; ++protectedValuesIt)
-        protectedValuesIt->first->~JSCell();
+    protectedValuesEnd = protectedValuesCopy.end();
+    for (ProtectCountSet::iterator it = protectedValuesCopy.begin(); it != protectedValuesEnd; ++it)
+        it->first->~JSCell();
 
     for (size_t block = 0; block < m_heap.usedBlocks; ++block)
         freeBlockPtr(m_heap.blocks[block]);

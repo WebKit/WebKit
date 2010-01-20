@@ -1,3 +1,17 @@
+2010-01-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7562708> REGRESSION(53460): Heap::destroy may not run
+        all destructors
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::freeBlocks): Instead of fully marking protected objects,
+        just set their mark bits. This prevents protected objects from keeping
+        unprotected objects alive. Destructor order is not guaranteed, so it's
+        OK to destroy objects pointed to by protected objects before destroying
+        protected objects.
+
 2010-01-19  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.
