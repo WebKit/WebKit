@@ -34,7 +34,9 @@ class TrailingFloatsRootInlineBox : public RootInlineBox {
 public:
     TrailingFloatsRootInlineBox(RenderObject* object) : RootInlineBox(object)
     {
+#if ENABLE(SVG)
         setHasVirtualHeight();
+#endif
     }
 
 private:
