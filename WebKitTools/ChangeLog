@@ -1,3 +1,21 @@
+2010-01-20  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Extract Apache handling to httpd.pm module and use the provided functionality
+        in scripts where Apache is needed.
+        The module httpd.pm stores the PID of Apache in a variable and cleans up
+        the PID directory after Apache properly shut down. Catching INT and TERM
+        signals allows the scripts to close Apache and clean up its PID directory
+        even if the testing was interrupted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33153
+
+        * Scripts/webkitperl/httpd.pm: Added.
+        * Scripts/run-iexploder-tests:
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+
 2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

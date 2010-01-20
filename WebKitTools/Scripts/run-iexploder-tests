@@ -38,16 +38,17 @@ use Getopt::Long;
 use IPC::Open2;
 
 use lib $FindBin::Bin;
+use webkitperl::httpd;
 use webkitdirs;
 
-sub openHTTPDIfNeeded();
-sub closeHTTPD();
+sub configureAndOpenHTTPDIfNeeded();
 sub runSafariWithIExploder();
 
 # Argument handling
 my $guardMalloc = '';
 my $httpdPort = 8000;
 my $downloadTest;
+my $iExploderTestDirectory = "/tmp/iExploderTest";
 
 GetOptions(
     'guard-malloc|g' => \$guardMalloc,
@@ -63,8 +64,8 @@ chdirWebKit();
 
 checkFrameworks();
 
-my $httpdOpen = 0;
-openHTTPDIfNeeded();
+my $isHttpdOpen = 0;
+configureAndOpenHTTPDIfNeeded();
 
 if ($downloadTest) {
     system "/usr/bin/curl -o ~/Desktop/iexploder$downloadTest.html \"http://127.0.0.1:$httpdPort/iexploder.cgi?lookup=1&test=$downloadTest\"";
@@ -72,11 +73,11 @@ if ($downloadTest) {
 } else {
     runSafariWithIExploder();
     print "Last generated tests:\n";
-    system "grep 'iexploder.cgi' /tmp/WebKit/access_log.txt | tail -n -5 | awk -F'[ =&\\?]' '{if (\$8 == \"lookup\") print \$11; else print \$9}'";
+    system "grep 'iexploder.cgi' $iExploderTestDirectory/access_log.txt | tail -n -5 | awk -F'[ =&\\?]' '{if (\$8 == \"lookup\") print \$11; else print \$9}'";
 }
 
-closeHTTPD();
-
+rmtree $iExploderTestDirectory;
+$isHttpdOpen = !closeHTTPD();
 
 sub runSafariWithIExploder()
 {
@@ -87,7 +88,7 @@ sub runSafariWithIExploder()
         $redirectTo = "http://127.0.0.1:$httpdPort/index.html";
     }
 
-    open REDIRECT_HTML, ">", "/tmp/WebKit/redirect.html" or die;
+    open REDIRECT_HTML, ">", "$iExploderTestDirectory/redirect.html" or die;
     print REDIRECT_HTML "<html>\n";
     print REDIRECT_HTML "    <head>\n";
     print REDIRECT_HTML "        <meta http-equiv=\"refresh\" content=\"1;URL=$redirectTo\" />\n";
@@ -102,35 +103,17 @@ sub runSafariWithIExploder()
     
     local %ENV;
     $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
-    system "WebKitTools/Scripts/run-safari", "-NSOpen", "/tmp/WebKit/redirect.html";
+    system "WebKitTools/Scripts/run-safari", "-NSOpen", "$iExploderTestDirectory/redirect.html";
 }
 
-sub openHTTPDIfNeeded()
+sub configureAndOpenHTTPDIfNeeded()
 {
-    return if $httpdOpen;
-
-    mkdir "/tmp/WebKit";
-    
-    if (-f "/tmp/WebKit/httpd.pid") {
-        my $oldPid = `cat /tmp/WebKit/httpd.pid`;
-        chomp $oldPid;
-        if (0 != kill 0, $oldPid) {
-            print "\nhttpd is already running: pid $oldPid, killing...\n";
-            kill 15, $oldPid;
-            
-            my $retryCount = 20;
-            while ((0 != kill 0, $oldPid) && $retryCount) {
-                sleep 1;
-                --$retryCount;
-            }
-            
-            die "Timed out waiting for httpd to quit" unless $retryCount;
-        }
-    }
-    
-    my $testDirectory = getcwd() . "/LayoutTests";
-    my $iExploderDirectory = getcwd() . "/WebKitTools/iExploder";
-    my $httpdPath = "/usr/sbin/httpd";
+    return if $isHttpdOpen;
+    mkdir $iExploderTestDirectory;
+    my $httpdPath = getHTTPDPath();
+    my $webkitDirectory = getcwd();
+    my $testDirectory = $webkitDirectory . "/LayoutTests";
+    my $iExploderDirectory = $webkitDirectory . "/WebKitTools/iExploder";
     my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
     $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
     my $documentRoot = "$iExploderDirectory/htdocs";
@@ -138,36 +121,18 @@ sub openHTTPDIfNeeded()
     my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
     my $listen = "127.0.0.1:$httpdPort";
 
-    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
+
+    my @args = (
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
         "-c", "TypesConfig \"$typesConfig\"",
-        "-c", "CustomLog \"/tmp/WebKit/access_log.txt\" common",
-        "-c", "ErrorLog \"/tmp/WebKit/error_log.txt\"",
+        "-c", "CustomLog \"$iExploderTestDirectory/access_log.txt\" common",
+        "-c", "ErrorLog \"$iExploderTestDirectory/error_log.txt\"",
         "-c", "SSLCertificateFile \"$sslCertificate\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "User \"#$<\"");
+        "-c", "User \"#$<\""
+    );
 
-    my $retryCount = 20;
-    while (system("/usr/bin/curl -q --silent --stderr - --output " . File::Spec->devnull() . " $listen") && $retryCount) {
-        sleep 1;
-        --$retryCount;
-    }
-    
-    die "Timed out waiting for httpd to start" unless $retryCount;
-    
-    $httpdOpen = 1;
-}
-
-sub closeHTTPD()
-{
-    return if !$httpdOpen;
-
-    close HTTPDIN;
-    close HTTPDOUT;
-
-    kill 15, `cat /tmp/WebKit/httpd.pid` if -f "/tmp/WebKit/httpd.pid";
-
-    $httpdOpen = 0;
+    $isHttpdOpen = openHTTPD(@args);
 }
