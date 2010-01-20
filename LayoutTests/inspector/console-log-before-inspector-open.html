@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="console-tests.js"></script>
+<script>
+
+console.log('log');
+console.debug('debug');
+console.info('info');
+console.warn('warn');
+console.error('error');
+
+function doit()
+{
+    dumpConsoleMessages();
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that Web Inspector won't crash if some console have been logged by the time it's opening.
+</p>
+
+</body>
+</html>

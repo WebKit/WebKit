@@ -48,6 +48,7 @@ namespace WebCore {
         virtual ~ScriptObject() {}
 
         v8::Local<v8::Object> v8Object() const;
+        ScriptState* scriptState() const { return m_scriptState; }
 
         bool set(const String& name, const String&);
         bool set(const char* name, const ScriptObject&);

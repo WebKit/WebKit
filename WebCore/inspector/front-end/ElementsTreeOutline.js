@@ -357,7 +357,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 tooltipText = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
             callback(tooltipText);
         }
-        var objectProxy = new WebInspector.ObjectProxy(node.id);
+        var objectProxy = new WebInspector.ObjectProxy(node.injectedScriptId, node.id);
         WebInspector.ObjectProxy.getPropertiesAsync(objectProxy, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], createTooltipThenCallback);
     },
 
@@ -1075,10 +1075,10 @@ WebInspector.ElementsTreeElement.prototype = {
 
         function commitChange(value)
         {
-            InjectedScriptAccess.setOuterHTML(node.id, value, wasExpanded, selectNode.bind(this));
+            InjectedScriptAccess.get(node.injectedScriptId).setOuterHTML(node.id, value, wasExpanded, selectNode.bind(this));
         }
 
-        InjectedScriptAccess.getNodePropertyValue(node.id, "outerHTML", this._startEditingAsHTML.bind(this, commitChange));
+        InjectedScriptAccess.get(node.injectedScriptId).getNodePropertyValue(node.id, "outerHTML", this._startEditingAsHTML.bind(this, commitChange));
     },
 
     _copyHTML: function()

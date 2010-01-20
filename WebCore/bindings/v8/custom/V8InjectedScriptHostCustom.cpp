@@ -114,23 +114,6 @@ static ScriptObject createInjectedScript(const String& scriptSource, InjectedScr
     return ScriptObject(inspectedScriptState, injectedScript);
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::inspectedWindowCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.inspectedWindow()");
-
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    InspectorController* ic = host->inspectorController();
-    if (!ic)
-        return v8::Undefined();
-    return V8DOMWrapper::convertToV8Object<DOMWindow>(V8ClassIndex::DOMWINDOW, ic->inspectedPage()->mainFrame()->domWindow());
-}
-
-v8::Handle<v8::Value> V8InjectedScriptHost::wrapCallbackCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.wrapCallback()");
-    return args[0];
-}
-
 v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.nodeForId()");
@@ -148,26 +131,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Argument
         return v8::Undefined();
 
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
-}
-
-v8::Handle<v8::Value> V8InjectedScriptHost::wrapObjectCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.wrapObject()");
-    if (args.Length() < 2)
-        return v8::Undefined();
-
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    return host->wrapObject(ScriptValue(args[0]), toWebCoreStringWithNullCheck(args[1])).v8Value();
-}
-
-v8::Handle<v8::Value> V8InjectedScriptHost::unwrapObjectCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.unwrapObject()");
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    return host->unwrapObject(toWebCoreStringWithNullCheck(args[0])).v8Value();
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const v8::Arguments& args)
