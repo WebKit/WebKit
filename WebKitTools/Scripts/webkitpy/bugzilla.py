@@ -164,7 +164,7 @@ class Bug(object):
         return filter(lambda patch: patch.committer(), patches)
 
 
-# A container for all of the logic for making a parsing buzilla queries.
+# A container for all of the logic for making and parsing buzilla queries.
 class BugzillaQueries(object):
     def __init__(self, bugzilla):
         self._bugzilla = bugzilla
@@ -203,7 +203,7 @@ class BugzillaQueries(object):
         return sum([self._fetch_bug(bug_id).reviewed_patches() for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
 
     def fetch_bug_ids_from_commit_queue(self):
-        commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B"
+        commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B&order=Last+Changed"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
 
     # This function will only return patches which have valid committers set.  It won't reject patches with invalid committers/reviewers.
