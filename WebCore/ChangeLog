@@ -1,3 +1,14 @@
+2010-01-20  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] computePageRectsForFrame seems to be unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=33881
+
+        * WebCore.gypi: Removed FrameChromium.h
+        * page/chromium/FrameChromium.cpp: Removed computePageRectsForFrame.
+        * page/chromium/FrameChromium.h: Removed.
+
 2010-01-20  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dan Bernstein.

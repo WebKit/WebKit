@@ -1743,7 +1743,6 @@
             'page/chromium/DragControllerChromium.cpp',
             'page/chromium/EventHandlerChromium.cpp',
             'page/chromium/FrameChromium.cpp',
-            'page/chromium/FrameChromium.h',
             'page/gtk/DragControllerGtk.cpp',
             'page/gtk/EventHandlerGtk.cpp',
             'page/gtk/FrameGtk.cpp',

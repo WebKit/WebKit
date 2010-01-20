@@ -84,7 +84,6 @@
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FormState.h"
-#include "FrameChromium.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "FrameTree.h"
