@@ -1,3 +1,29 @@
+2010-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: The child <option> elements of a non-multiple <select> are not
+        exposed
+
+        https://bugs.webkit.org/show_bug.cgi?id=33773
+        <rdar://problem/7550556>
+
+        Reviewed by Alice Liu.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accState):
+        If the object is invisible, set the invisible state flag. If the object
+        is collapsed, set the collapsed state. If the object is a combo box,
+        set the has popup flag, and if it's not collapsed, set the expanded
+        flag.
+        (MSAARole):
+        Add new WebCore to MSAA role mappings.
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::AXMenuListActionVerb):
+        Return the action verb that Firefox uses for <select> elements with
+        popups.
+        (WebCore::AXMenuListPopupActionVerb):
+        Return the verb that Firefox uses for a popup list.
+
 2010-01-19  John Sullivan  <sullivan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=33854

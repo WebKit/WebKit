@@ -1,3 +1,17 @@
+2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: The child <option> elements of a non-multiple <select> are not
+        exposed
+
+        https://bugs.webkit.org/show_bug.cgi?id=33773
+        <rdar://problem/7550556>
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory AXMenuListPopupActionVerb]):
+        Stubbed.
+        (-[WebViewFactory AXMenuListActionVerb]):
+        Stubbed.
+
 2010-01-19  John Sullivan  <sullivan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=33854

@@ -37,6 +37,9 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityMediaControls.h"
+#include "AccessibilityMenuList.h"
+#include "AccessibilityMenuListPopup.h"
+#include "AccessibilityMenuListOption.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilityTable.h"
@@ -141,6 +144,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
         RefPtr<AccessibilityObject> newObj = 0;
         if (renderer->isListBox())
             newObj = AccessibilityListBox::create(renderer);
+        else if (renderer->isMenuList())
+            newObj = AccessibilityMenuList::create(renderer);
 
         // If the node is aria role="list" or the aria role is empty and its a ul/ol/dl type (it shouldn't be a list if aria says otherwise). 
         else if (node && ((nodeIsAriaType(node, "list") || nodeIsAriaType(node, "directory"))
@@ -208,6 +213,12 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
         break;   
     case SliderThumbRole:
         obj = AccessibilitySliderThumb::create();
+        break;
+    case MenuListPopupRole:
+        obj = AccessibilityMenuListPopup::create();
+        break;
+    case MenuListOptionRole:
+        obj = AccessibilityMenuListOption::create();
         break;
     default:
         obj = 0;

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2008 Google Inc.
+ * Copyright (C) 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef AccessibilityMenuListPopup_h
+#define AccessibilityMenuListPopup_h
+
 #include "AccessibilityObject.h"
 
 namespace WebCore {
 
-bool AccessibilityObject::accessibilityIgnoreAttachment() const
-{
-    return false;
-}
+class AccessibilityMenuList;
+class AccessibilityMenuListOption;
+class HTMLElement;
 
-AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
-{
-    if (AccessibilityMenuListPopup() || isMenuListOption())
-        return IgnoreObject;
+class AccessibilityMenuListPopup : public AccessibilityObject {
+public:
+    static PassRefPtr<AccessibilityMenuListPopup> create() { return adoptRef(new AccessibilityMenuListPopup); }
 
-    return DefaultBehavior;
-}
+    void setMenuList(AccessibilityMenuList*);
+
+    virtual bool isEnabled() const;
+    virtual bool isOffScreen() const;
+
+private:
+    AccessibilityMenuListPopup();
+
+    virtual bool isMenuListPopup() const { return true; }
+
+    virtual IntRect elementRect() const { return IntRect(); }
+    virtual IntSize size() const { return IntSize(); }
+    virtual AccessibilityRole roleValue() const { return MenuListPopupRole; }
+
+    virtual bool isVisible() const;
+    virtual AccessibilityObject* parentObject() const;
+    virtual bool press() const;
+    virtual void addChildren();
+    virtual void childrenChanged();
+
+    AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
+
+    AccessibilityMenuList* m_menuList;
+};
 
 } // namespace WebCore
+
+#endif // AccessibilityMenuListPopup_h

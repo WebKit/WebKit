@@ -683,6 +683,23 @@ String AXLinkActionVerb()
     return String();
 }
 
+String AXMenuListPopupActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXMenuListPopupActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String AXMenuListActionVerb()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] AXMenuListActionVerb];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

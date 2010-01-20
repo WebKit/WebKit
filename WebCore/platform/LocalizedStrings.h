@@ -124,6 +124,8 @@ namespace WebCore {
     String AXTextFieldActionVerb();
     String AXCheckedCheckBoxActionVerb();
     String AXUncheckedCheckBoxActionVerb();
+    String AXMenuListActionVerb();
+    String AXMenuListPopupActionVerb();
     String AXLinkActionVerb();
 
     String multipleFileUploadText(unsigned numberOfFiles);

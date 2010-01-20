@@ -316,6 +316,12 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityListBoxOption.h \
 	WebCore/accessibility/AccessibilityMediaControls.cpp \
 	WebCore/accessibility/AccessibilityMediaControls.h \
+	WebCore/accessibility/AccessibilityMenuList.cpp \
+	WebCore/accessibility/AccessibilityMenuList.h \
+	WebCore/accessibility/AccessibilityMenuListPopup.cpp \
+	WebCore/accessibility/AccessibilityMenuListPopup.h \
+	WebCore/accessibility/AccessibilityMenuListOption.cpp \
+	WebCore/accessibility/AccessibilityMenuListOption.h \
 	WebCore/accessibility/AccessibilityObject.cpp \
 	WebCore/accessibility/AccessibilityObject.h \
 	WebCore/accessibility/AccessibilityRenderObject.cpp \

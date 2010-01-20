@@ -349,7 +349,8 @@ bool AccessibilityUIElement::isActionSupported(JSStringRef action)
 
 bool AccessibilityUIElement::isEnabled()
 {
-    return false;
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_UNAVAILABLE) != STATE_SYSTEM_UNAVAILABLE;
 }
 
 bool AccessibilityUIElement::isRequired() const
@@ -469,6 +470,8 @@ void AccessibilityUIElement::decrement()
 
 void AccessibilityUIElement::showMenu()
 {
+    ASSERT(hasPopup());
+    m_element->accDoDefaultAction(self());
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
@@ -544,4 +547,26 @@ bool AccessibilityUIElement::isMultiSelectable() const
     return (state & multiSelectable) == multiSelectable;
 }
 
+bool AccessibilityUIElement::isVisible() const
+{
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_INVISIBLE) != STATE_SYSTEM_INVISIBLE;
+}
 
+bool AccessibilityUIElement::isOffScreen() const
+{
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_OFFSCREEN) == STATE_SYSTEM_OFFSCREEN;
+}
+
+bool AccessibilityUIElement::isCollapsed() const
+{
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_COLLAPSED) == STATE_SYSTEM_COLLAPSED;
+}
+
+bool AccessibilityUIElement::hasPopup() const
+{
+    DWORD state = accessibilityState(m_element);
+    return (state & STATE_SYSTEM_HASPOPUP) == STATE_SYSTEM_HASPOPUP;
+}

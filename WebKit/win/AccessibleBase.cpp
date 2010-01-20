@@ -292,6 +292,19 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
     if (childObj->isMultiSelectable())
         pvState->lVal |= STATE_SYSTEM_EXTSELECTABLE | STATE_SYSTEM_MULTISELECTABLE;
 
+    if (!childObj->isVisible())
+        pvState->lVal |= STATE_SYSTEM_INVISIBLE;
+
+    if (childObj->isCollapsed())
+        pvState->lVal |= STATE_SYSTEM_COLLAPSED;
+
+    if (childObj->roleValue() == PopUpButtonRole) {
+        pvState->lVal |= STATE_SYSTEM_HASPOPUP;
+
+        if (!childObj->isCollapsed())
+            pvState->lVal |= STATE_SYSTEM_EXPANDED;
+    }
+
     return S_OK;
 }
 
@@ -571,6 +584,7 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_GROUPING;
         case WebCore::ListRole:
         case WebCore::ListBoxRole:
+        case WebCore::MenuListPopupRole:
             return ROLE_SYSTEM_LIST;
         case WebCore::TableRole:
             return ROLE_SYSTEM_TABLE;
@@ -580,6 +594,7 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::ImageMapRole:
         case WebCore::ImageRole:
             return ROLE_SYSTEM_GRAPHIC;
+        case WebCore::MenuListOptionRole:
         case WebCore::ListItemRole:
         case WebCore::ListBoxOptionRole:
             return ROLE_SYSTEM_LISTITEM;

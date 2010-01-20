@@ -1,3 +1,206 @@
+2010-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: The child <option> elements of a non-multiple <select> are not
+        exposed
+
+        https://bugs.webkit.org/show_bug.cgi?id=33773
+        <rdar://problem/7550556>
+
+        Reviewed by Alice Liu.
+
+        This exposes the child <option> elements in a format similar to
+        Firefox's: the <select> element has one child, a hidden list object,
+        and this list has as its children the <option> elements.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files to project.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        If the element is a RenderMenuList, create an AccessibilityMenuList.
+        (WebCore::AXObjectCache::getOrCreate):
+        Add new types to create by role value.
+
+        * accessibility/AccessibilityMenuList.cpp: Added.
+        (WebCore::AccessibilityMenuList::AccessibilityMenuList):
+        Call the base class constructor. Assert that the RenderObject passed
+        is a RenderMenuList.
+        (WebCore::AccessibilityMenuList::press):
+        Show or hide the popup menu.
+        (WebCore::AccessibilityMenuList::addChildren):
+        Create an AccessibilityMenuListPopup. If the platform ignores its
+        accessibility, remove it from the object cache and return early.
+        Otherwise, set its parent object to this object, add it to our list of
+        children, and tell it to add its children.
+        (WebCore::AccessibilityMenuList::childrenChanged):
+        Tell our child hidden list that its children changed.
+        (WebCore::AccessibilityMenuList::isCollapsed):
+        Return whether the popup menu is visible.
+
+        * accessibility/AccessibilityMenuList.h: Added.
+        (WebCore::AccessibilityMenuList::create):
+        Adopt and return a new RenderMenuList.
+        (WebCore::AccessibilityMenuList::isMenuList):
+        (WebCore::AccessibilityMenuList::roleValue):
+        (WebCore::AccessibilityMenuList::accessibilityIsIgnored):
+        (WebCore::AccessibilityMenuList::canSetFocusAttribute):
+
+        * accessibility/AccessibilityMenuListOption.cpp: Added.
+        (WebCore::AccessibilityMenuListOption::AccessibilityMenuListOption):
+        Initialize the pointer to our parent popup menu.
+        (WebCore::AccessibilityMenuListOption::setElement):
+        Assert that the element is an <option> element.
+        (WebCore::AccessibilityMenuListOption::actionElement):
+        Return our element.
+        (WebCore::AccessibilityMenuListOption::parentObject):
+        Return our parent popup menu.
+        (WebCore::AccessibilityMenuListOption::isEnabled):
+        Return true if the element itself is enabled.
+        (WebCore::AccessibilityMenuListOption::isVisible):
+        Return true if the popup is visible, or return true if the popup is
+        collapsed but the element is selected.
+        (WebCore::AccessibilityMenuListOption::isOffScreen):
+        Return true if the object is invisible.
+        (WebCore::AccessibilityMenuListOption::isSelected):
+        (WebCore::AccessibilityMenuListOption::setSelected):
+        (WebCore::AccessibilityMenuListOption::nameForMSAA):
+        Return the <option> element's text.
+        (WebCore::AccessibilityMenuListOption::canSetSelectedAttribute):
+        Return true if enabled.
+        (WebCore::AccessibilityMenuListOption::elementRect):
+        Return the AccessibilityMenuList's rect.
+
+        * accessibility/AccessibilityMenuListOption.h: Added.
+        (WebCore::AccessibilityMenuListOption::create):
+        Adopt and return a new AccessibilityMenuListOption.
+        (WebCore::AccessibilityMenuListOption::setParent):
+        (WebCore::AccessibilityMenuListOption::isMenuListOption):
+        (WebCore::AccessibilityMenuListOption::roleValue):
+        (WebCore::AccessibilityMenuListOption::canHaveChildren):
+        (WebCore::AccessibilityMenuListOption::size):
+
+        * accessibility/AccessibilityMenuListPopup.cpp: Added.
+        (WebCore::AccessibilityMenuListPopup::AccessibilityMenuListPopup):
+        Initialize the pointer to our parent list.
+        (WebCore::AccessibilityMenuListPopup::isVisible):
+        Return false; we're never considered visible.
+        (WebCore::AccessibilityMenuListPopup::isOffScreen):
+        Return true if the popup is collapsed.
+        (WebCore::AccessibilityMenuListPopup::parentObject):
+        Return our parent AccessibilityMenuList.
+        (WebCore::AccessibilityMenuListPopup::isEnabled):
+        Return true if our parent is enabled.
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        If the element is an <option> element, create a list item for it, and
+        set the object's element to this element.
+        (WebCore::AccessibilityMenuListPopup::press):
+        Call our parent's press() function to show or hide the popup menu.
+        (WebCore::AccessibilityMenuListPopup::addChildren):
+        Walk the select element's children, and create list items for them. Add
+        them to our list of children.
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        If any of our children have been detached from the document, remove
+        them from the AXObjectCache and from our child list.
+        (WebCore::AccessibilityMenuListPopup::setMenuList):
+
+        * accessibility/AccessibilityMenuListPopup.h: Added.
+        (WebCore::AccessibilityMenuListPopup::create):
+        Adopt and return an AccessibilityMenuListPopup.
+        (WebCore::AccessibilityMenuListPopup::isMenuListPopup):
+        (WebCore::AccessibilityMenuListPopup::elementRect):
+        (WebCore::AccessibilityMenuListPopup::size):
+        (WebCore::AccessibilityMenuListPopup::roleValue):
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::actionVerb):
+        Add the menuListAction and menuListPopupAction verbs.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        Add new roles.
+        (WebCore::AccessibilityObject::isMenuList):
+        Stubbed.
+        (WebCore::AccessibilityObject::isMenuListHiddenList):
+        Stubbed.
+        (WebCore::AccessibilityObject::isMenuListOption):
+        Stubbed.
+        (WebCore::AccessibilityObject::isVisible):
+        Stubbed.
+
+        * accessibility/chromium/AccessibilityObjectChromium.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ignore the new object type.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ditto.
+
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ditto.
+
+        * accessibility/qt/AccessibilityObjectQt.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ditto.
+
+        * accessibility/win/AccessibilityObjectWin.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Allow the new object types.
+
+        * accessibility/wx/AccessibilityObjectWx.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ignore the new object type.
+
+        * accessibility/win/AccessibilityObjectWin.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        If the object is an AccessibilityMenuListHiddenList or
+        AccessibilityMenuListOption, include it.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::disabled):
+        Call ownElementDisabled().
+
+        * html/HTMLOptionElement.h:
+        (WebCore::HTMLOptionElement::ownElementDisabled):
+        Return the base class implementation of disabled, which returns
+        whether this <option> itself is disabled.
+
+        * platform/LocalizedStrings.h:
+        Declare new localized string functions.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Stubbed.
+        (WebCore::AXMenuListActionVerb):
+        Stubbed.
+
+        * platform/haiku/LocalizedStringsHaiku.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Stubbed.
+        (WebCore::AXMenuListActionVerb):
+        Stubbed.
+
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::AXMenuListPopupActionVerb):
+        Call the view factory's method.
+        (WebCore::AXMenuListActionVerb):
+        Ditto.
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Stubbed.
+        (WebCore::AXMenuListActionVerb):
+        Stubbed.
+
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Stubbed.
+        (WebCore::AXMenuListActionVerb):
+        Stubbed.
+
 2010-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

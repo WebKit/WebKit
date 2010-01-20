@@ -76,6 +76,7 @@ public:
 
     virtual String textIndentedToRespectGroupLabel() const;
 
+    bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
     virtual bool disabled() const;
     
     virtual void insertedIntoTree(bool);

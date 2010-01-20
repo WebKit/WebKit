@@ -19937,6 +19937,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\accessibility\AccessibilityMenuList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMenuList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMenuListOption.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMenuListOption.h"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMenuListPopup.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMenuListPopup.h"
+				>
+			</File>
+			<File
 				RelativePath="..\accessibility\AccessibilityObject.cpp"
 				>
 				<FileConfiguration
@@ -42007,7 +42031,7 @@
 					RelativePath="..\ForwardingHeaders\runtime\UString.h"
 					>
 				</File>
-                <File
+				<File
 					RelativePath="..\ForwardingHeaders\runtime\UStringImpl.h"
 					>
 				</File>

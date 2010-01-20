@@ -292,6 +292,16 @@ String AXHeadingText()
     return String();
 }
 
+String AXMenuListPopupActionVerb()
+{
+    return String();
+}
+
+String AXMenuListActionVerb()
+{
+    return String();
+}
+
 String imageTitle(const String& filename, const IntSize& size)
 {
     return String(filename);

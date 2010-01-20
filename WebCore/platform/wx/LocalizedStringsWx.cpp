@@ -324,6 +324,16 @@ String AXDefinitionListDefinitionText()
     return String();
 }
 
+String AXMenuListPopupActionVerb()
+{
+    return String();
+}
+
+String AXMenuListActionVerb()
+{
+    return String();
+}
+
 String validationMessageValueMissingText()
 {
     notImplemented();

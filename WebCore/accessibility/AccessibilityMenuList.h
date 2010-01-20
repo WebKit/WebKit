@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2008 Google Inc.
+ * Copyright (C) 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef AccessibilityMenuList_h
+#define AccessibilityMenuList_h
+
 #include "AccessibilityObject.h"
+#include "AccessibilityRenderObject.h"
 
 namespace WebCore {
 
-bool AccessibilityObject::accessibilityIgnoreAttachment() const
-{
-    return false;
-}
+class AccessibilityMenuList;
+class AccessibilityMenuListPopup;
+class HTMLOptionElement;
 
-AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
-{
-    if (AccessibilityMenuListPopup() || isMenuListOption())
-        return IgnoreObject;
+class AccessibilityMenuList : public AccessibilityRenderObject {
+public:
+    static PassRefPtr<AccessibilityMenuList> create(RenderObject* renderer) { return adoptRef(new AccessibilityMenuList(renderer)); }
 
-    return DefaultBehavior;
-}
+    virtual bool isCollapsed() const;
+    virtual bool press() const;
+
+private:
+    AccessibilityMenuList(RenderObject*);
+
+    virtual bool isMenuList() const { return true; }
+    virtual AccessibilityRole roleValue() const { return PopUpButtonRole; }
+    virtual bool accessibilityIsIgnored() const { return false; }
+    virtual bool canSetFocusAttribute() const { return true; }
+
+    virtual void addChildren();
+    virtual void childrenChanged();
+};
 
 } // namespace WebCore
+
+#endif // AccessibilityMenuList_h

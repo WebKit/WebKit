@@ -630,6 +630,16 @@
     return UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility");
 }
 
+- (NSString *)AXMenuListPopupActionVerb
+{
+    return nil;
+}
+
+- (NSString *)AXMenuListActionVerb
+{
+    return nil;
+}
+
 - (NSString *)multipleFileUploadTextForNumberOfFiles:(unsigned)numberOfFiles
 {
     return [NSString stringWithFormat:UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles];

@@ -213,7 +213,7 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 
 bool HTMLOptionElement::disabled() const
 { 
-    return HTMLFormControlElement::disabled() || (parentNode() && static_cast<HTMLFormControlElement*>(parentNode())->disabled()); 
+    return ownElementDisabled() || (parentNode() && static_cast<HTMLFormControlElement*>(parentNode())->disabled()); 
 }
 
 void HTMLOptionElement::insertedIntoTree(bool deep)

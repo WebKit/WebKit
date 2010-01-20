@@ -341,6 +341,16 @@ String AXLinkActionVerb()
     return String();
 }
 
+String AXMenuListPopupActionVerb()
+{
+    return String();
+}
+
+String AXMenuListActionVerb()
+{
+    return String();
+}
+
 String multipleFileUploadText(unsigned)
 {
     return String();

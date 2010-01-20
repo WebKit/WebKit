@@ -1252,6 +1252,12 @@
 		7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7693BACF106C2DCA007B0823 /* PluginHalter.cpp */; };
 		7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD0106C2DCA007B0823 /* PluginHalter.h */; };
 		7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */; };
+		76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */; };
+		76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */; };
+		76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */; };
+		76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */; };
+		76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */; };
 		79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79AC9216109945C80021266E /* JSCompositionEvent.cpp */; };
 		79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AC9217109945C80021266E /* JSCompositionEvent.h */; };
 		79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F2F59E1091939A000D87CB /* CompositionEvent.cpp */; };
@@ -6623,6 +6629,12 @@
 		7693BACF106C2DCA007B0823 /* PluginHalter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginHalter.cpp; sourceTree = "<group>"; };
 		7693BAD0106C2DCA007B0823 /* PluginHalter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalter.h; sourceTree = "<group>"; };
 		7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalterClient.h; sourceTree = "<group>"; };
+		76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMenuList.cpp; sourceTree = "<group>"; };
+		76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMenuList.h; sourceTree = "<group>"; };
+		76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMenuListPopup.cpp; sourceTree = "<group>"; };
+		76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMenuListPopup.h; sourceTree = "<group>"; };
+		76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMenuListOption.cpp; sourceTree = "<group>"; };
+		76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMenuListOption.h; sourceTree = "<group>"; };
 		79AC9216109945C80021266E /* JSCompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCompositionEvent.cpp; sourceTree = "<group>"; };
 		79AC9217109945C80021266E /* JSCompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCompositionEvent.h; sourceTree = "<group>"; };
 		79F2F59E1091939A000D87CB /* CompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositionEvent.cpp; sourceTree = "<group>"; };
@@ -10605,6 +10617,12 @@
 				29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */,
 				07B0113C1032241900FBDC33 /* AccessibilityMediaControls.cpp */,
 				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
+				76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */,
+				76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */,
+				76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */,
+				76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */,
+				76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */,
+				76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */,
 				29A8121E0FBB9C1D00510293 /* AccessibilityObject.cpp */,
 				29A812180FBB9C1D00510293 /* AccessibilityObject.h */,
 				29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */,
@@ -18376,6 +18394,9 @@
 				599E759011055A1F00D904FA /* Bridge.h in Headers */,
 				59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */,
 				59EE12321106082900885116 /* JNIUtility.h in Headers */,
+				76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */,
+				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,
+				76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20543,6 +20564,9 @@
 				599E759211055A2A00D904FA /* Bridge.cpp in Sources */,
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
 				59EE12301106081F00885116 /* JNIUtility.cpp in Sources */,
+				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
+				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
+				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
