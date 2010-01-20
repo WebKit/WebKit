@@ -157,7 +157,7 @@ using namespace WebCore;
 {
     [super display];
     if (m_layerOwner)
-        m_layerOwner->didDisplay();
+        m_layerOwner->didDisplay(self);
 }
 
 - (void)drawInContext:(CGContextRef)context

@@ -405,6 +405,11 @@ GraphicsLayerCA::~GraphicsLayerCA()
         [layer setLayerOwner:nil];
     }
     
+    if (m_contentsLayer) {
+        if ([m_contentsLayer.get() respondsToSelector:@selector(setLayerOwner:)])
+            [(id)m_contentsLayer.get() setLayerOwner:nil];
+    }
+    
     // animationDidStart: can fire after this, so we need to clear out the layer on the delegate.
     [m_animationDelegate.get() setLayer:0];
 
@@ -820,17 +825,29 @@ void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation o
 #endif
 }
 
-void GraphicsLayerCA::didDisplay()
+void GraphicsLayerCA::didDisplay(PlatformLayer* layer)
 {
-    if (LayerMap* layerCloneMap = m_layerClones.get()) {
+    CALayer* sourceLayer;
+    LayerMap* layerCloneMap;
+
+    if (layer == m_layer) {
+        sourceLayer = m_layer.get();
+        layerCloneMap = m_layerClones.get();
+    } else if (layer == m_contentsLayer) {
+        sourceLayer = m_contentsLayer.get();
+        layerCloneMap = m_contentsLayerClones.get();
+    } else
+        return;
+
+    if (layerCloneMap) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             CALayer *currClone = it->second.get();
             if (!currClone)
                 continue;
 
-            if ([currClone contents] != [m_layer.get() contents])
-                [currClone setContents:[m_layer.get() contents]];
+            if ([currClone contents] != [sourceLayer contents])
+                [currClone setContents:[sourceLayer contents]];
             else
                 [currClone setContentsChanged];
         }
@@ -1701,9 +1718,11 @@ void GraphicsLayerCA::setContentsToGraphicsContext3D(const GraphicsContext3D* gr
         m_contentsLayer.adoptNS([[Canvas3DLayer alloc] initWithContext:static_cast<CGLContextObj>(m_platformGraphicsContext3D) texture:static_cast<GLuint>(m_platformTexture)]);
 #ifndef NDEBUG
         [m_contentsLayer.get() setName:@"3D Layer"];
-#endif        
+#endif
+        [m_contentsLayer.get() setLayerOwner:this];
     } else {
         // remove the inner layer
+        [m_contentsLayer.get() setLayerOwner:0];
         m_contentsLayer = 0;
     }
     

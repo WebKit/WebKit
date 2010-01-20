@@ -1,3 +1,17 @@
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Support reflections on WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=33754
+
+        Testcase for WebGL with a reflection.
+        
+        * compositing/webgl/webgl-reflection.html: Added.
+        * platform/mac/compositing/webgl/webgl-reflection-expected.checksum: Added.
+        * platform/mac/compositing/webgl/webgl-reflection-expected.png: Added.
+        * platform/mac/compositing/webgl/webgl-reflection-expected.txt: Added.
+
 2010-01-19  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by Darin Adler.

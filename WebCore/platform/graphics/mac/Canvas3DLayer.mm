@@ -141,6 +141,13 @@ static void freeData(void *, const void *data, size_t /* size */)
     return image;
 }
 
+- (void)display
+{
+    [super display];
+    if (m_layerOwner)
+        m_layerOwner->didDisplay(self);
+}
+
 @end
 
 @implementation Canvas3DLayer(WebLayerAdditions)

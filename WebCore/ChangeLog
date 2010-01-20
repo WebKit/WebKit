@@ -1,3 +1,38 @@
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Support reflections on WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=33754
+
+        Support reflections of WebGL content, by ensuring that when the Canvas3DLayer containing the
+        WebGL content gets displayed, we correctly copy its content to the clone layers.
+        
+        Test: compositing/webgl/webgl-reflection.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::didDisplay): Give the didDisplay() client method a parameter
+        which is the layer that displayed.
+        * platform/graphics/mac/Canvas3DLayer.mm:
+        (-[Canvas3DLayer display]): Override -[CALayer display], and call the client didDisplay().
+        * platform/graphics/mac/GraphicsLayerCA.h: didDisplay() takes a PlatformLayer parameter.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::~GraphicsLayerCA): We need to clear the layer owner on the content
+        layer, since we're setting it for WebGL layers now.
+        
+        (WebCore::GraphicsLayerCA::didDisplay): Handle didDisplay() calls for the content layer,
+        as well as the main layer now, getting the correct layer to copy contents from, and using
+        the correct clone map.
+        
+        (WebCore::GraphicsLayerCA::setContentsToGraphicsContext3D): Set the layer owner for WebGL
+        layers, because we need the didDisplay() callback.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer display]): didDisplay() takes a layer argument.
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer display]): ditto.
+
 2010-01-19  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

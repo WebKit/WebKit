@@ -290,7 +290,7 @@ public:
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);
     // Callback from the underlying graphics system when the layer has been displayed
-    virtual void didDisplay() { }
+    virtual void didDisplay(PlatformLayer*) { }
     
     virtual PlatformLayer* platformLayer() const { return 0; }
     
