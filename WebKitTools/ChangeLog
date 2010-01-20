@@ -1,3 +1,16 @@
+2010-01-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach check-webkit-style about QGVLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=33890
+
+        Remove false positives found in
+        https://bugs.webkit.org/show_bug.cgi?id=33708
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
 2010-01-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

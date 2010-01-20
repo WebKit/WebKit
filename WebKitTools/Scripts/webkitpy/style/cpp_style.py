@@ -2094,7 +2094,8 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
       error: The function to call with any errors found.
     """
 
-    if filename.find('WebKitTools/WebKitAPITest/') >= 0:
+    if (filename.find('WebKitTools/WebKitAPITest/') >= 0
+        or filename.find('WebKit/qt/QGVLauncher/') >= 0):
         # Files in this directory are consumers of the WebKit API and
         # therefore do not follow the same header including discipline as
         # WebCore.
