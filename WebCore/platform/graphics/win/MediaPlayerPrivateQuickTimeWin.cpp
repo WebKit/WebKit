@@ -67,7 +67,6 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_seekTo(-1)
-    , m_endTime(numeric_limits<float>::infinity())
     , m_seekTimer(this, &MediaPlayerPrivate::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -206,7 +205,7 @@ float MediaPlayerPrivate::currentTime() const
 {
     if (!m_qtMovie)
         return 0;
-    return min(m_qtMovie->currentTime(), m_endTime);
+    return m_qtMovie->currentTime();
 }
 
 void MediaPlayerPrivate::seek(float time)
@@ -234,7 +233,7 @@ void MediaPlayerPrivate::doSeek()
     m_qtMovie->setCurrentTime(m_seekTo);
     float timeAfterSeek = currentTime();
     // restore playback only if not at end, othewise QTMovie will loop
-    if (oldRate && timeAfterSeek < duration() && timeAfterSeek < m_endTime)
+    if (oldRate && timeAfterSeek < duration())
         m_qtMovie->setRate(oldRate);
     cancelSeek();
 }
@@ -264,11 +263,6 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
             m_player->timeChanged();
         }
     }
-}
-
-void MediaPlayerPrivate::setEndTime(float time)
-{
-    m_endTime = time;
 }
 
 bool MediaPlayerPrivate::paused() const
@@ -344,12 +338,6 @@ void MediaPlayerPrivate::setClosedCaptionsVisible(bool visible)
     m_qtMovie->setClosedCaptionsVisible(visible);
 }
 
-int MediaPlayerPrivate::dataRate() const
-{
-    // This is not used at the moment
-    return 0;
-}
-
 PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
@@ -382,11 +370,6 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
     if (!dur)
         return 0;
     return totalBytes() * maxTime / dur;
-}
-
-bool MediaPlayerPrivate::totalBytesKnown() const
-{
-    return totalBytes() > 0;
 }
 
 unsigned MediaPlayerPrivate::totalBytes() const

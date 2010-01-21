@@ -259,11 +259,6 @@ float MediaPlayerPrivate::currentTime() const
     return currentTime;
 }
 
-void MediaPlayerPrivate::setEndTime(float)
-{
-    notImplemented();
-}
-
 PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
     notImplemented();
@@ -280,12 +275,6 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
 {
     notImplemented();
     return 0;
-}
-
-bool MediaPlayerPrivate::totalBytesKnown() const
-{
-    //notImplemented();
-    return false;
 }
 
 unsigned MediaPlayerPrivate::totalBytes() const
@@ -310,14 +299,6 @@ void MediaPlayerPrivate::setMuted(bool muted)
     LOG(Media, "MediaPlayerPrivatePhonon::setMuted()");
     m_audioOutput->setMuted(muted);
 }
-
-
-int MediaPlayerPrivate::dataRate() const
-{
-    // This is not used at the moment
-    return 0;
-}
-
 
 MediaPlayer::NetworkState MediaPlayerPrivate::networkState() const
 {

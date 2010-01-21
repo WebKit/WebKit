@@ -72,13 +72,10 @@ private:
     float duration() const;
     float currentTime() const;
     void seek(float time);
-    void setEndTime(float);
     
     void setRate(float);
     void setVolume(float);
     void setPreservesPitch(bool);
-    
-    int dataRate() const;
     
     MediaPlayer::NetworkState networkState() const { return m_networkState; }
     MediaPlayer::ReadyState readyState() const { return m_readyState; }
@@ -86,7 +83,6 @@ private:
     PassRefPtr<TimeRanges> buffered() const;
     float maxTimeSeekable() const;
     unsigned bytesLoaded() const;
-    bool totalBytesKnown() const;
     unsigned totalBytes() const;
     
     void setVisible(bool);
@@ -123,7 +119,6 @@ private:
     MediaPlayer* m_player;
     OwnPtr<QTMovieWin> m_qtMovie;
     float m_seekTo;
-    float m_endTime;
     Timer<MediaPlayerPrivate> m_seekTimer;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

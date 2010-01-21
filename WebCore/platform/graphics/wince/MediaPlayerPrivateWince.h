@@ -61,12 +61,9 @@ namespace WebCore {
         float duration() const;
         float currentTime() const;
         void seek(float time);
-        void setEndTime(float);
 
         void setRate(float);
         void setVolume(float);
-
-        int dataRate() const;
 
         MediaPlayer::NetworkState networkState() const { return m_networkState; }
         MediaPlayer::ReadyState readyState() const { return m_readyState; }
@@ -74,7 +71,6 @@ namespace WebCore {
         PassRefPtr<TimeRanges> buffered() const;
         float maxTimeSeekable() const;
         unsigned bytesLoaded() const;
-        bool totalBytesKnown() const;
         unsigned totalBytes() const;
 
         void setVisible(bool);

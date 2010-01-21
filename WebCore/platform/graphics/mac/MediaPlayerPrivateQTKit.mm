@@ -689,10 +689,6 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
     }
 }
 
-void MediaPlayerPrivate::setEndTime(float)
-{
-}
-
 bool MediaPlayerPrivate::paused() const
 {
     if (!metaDataAvailable())
@@ -798,13 +794,6 @@ void MediaPlayerPrivate::setPreservesPitch(bool preservesPitch)
     createQTMovie([movieAttributes valueForKey:QTMovieURLAttribute], movieAttributes);
 }
 
-int MediaPlayerPrivate::dataRate() const
-{
-    if (!metaDataAvailable())
-        return 0;
-    return wkQTMovieDataRate(m_qtMovie.get()); 
-}
-
 PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
@@ -839,11 +828,6 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
     if (!dur)
         return 0;
     return totalBytes() * maxTimeLoaded() / dur;
-}
-
-bool MediaPlayerPrivate::totalBytesKnown() const
-{
-    return totalBytes() > 0;
 }
 
 unsigned MediaPlayerPrivate::totalBytes() const

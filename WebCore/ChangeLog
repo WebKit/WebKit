@@ -1,3 +1,28 @@
+2010-01-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cleanup MediaPlayer and MediaPlayerPrivateInterface to remove dead methods
+        https://bugs.webkit.org/show_bug.cgi?id=30106
+
+        No new tests, only dead code was removed.
+
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::doSeek):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/wince/MediaPlayerPrivateWince.h:
+
 2010-01-21  Iain Campbell <iain.campbell@accenture.com>
 
         Reviewed by Simon Hausmann.

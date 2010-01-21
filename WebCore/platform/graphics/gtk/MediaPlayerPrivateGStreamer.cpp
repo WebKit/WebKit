@@ -386,11 +386,6 @@ void MediaPlayerPrivate::seek(float time)
     }
 }
 
-void MediaPlayerPrivate::setEndTime(float time)
-{
-    notImplemented();
-}
-
 void MediaPlayerPrivate::startEndPointTimerIfNeeded()
 {
     notImplemented();
@@ -536,12 +531,6 @@ void MediaPlayerPrivate::setRate(float rate)
         g_object_set(m_playBin, "mute", mute, NULL);
 }
 
-int MediaPlayerPrivate::dataRate() const
-{
-    notImplemented();
-    return 1;
-}
-
 MediaPlayer::NetworkState MediaPlayerPrivate::networkState() const
 {
     return m_networkState;
@@ -597,12 +586,6 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
         return 0;*/
 
     return 1; // totalBytes() * maxTime / dur;
-}
-
-bool MediaPlayerPrivate::totalBytesKnown() const
-{
-    LOG_VERBOSE(Media, "totalBytesKnown");
-    return totalBytes() > 0;
 }
 
 unsigned MediaPlayerPrivate::totalBytes() const

@@ -104,17 +104,12 @@ private:
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool);
 
-    void setEndTime(float time);
-
-    int dataRate() const;
-    
     MediaPlayer::NetworkState networkState() const { return m_networkState; }
     MediaPlayer::ReadyState readyState() const { return m_readyState; }
     
     PassRefPtr<TimeRanges> buffered() const;
     float maxTimeSeekable() const;
     unsigned bytesLoaded() const;
-    bool totalBytesKnown() const;
     unsigned totalBytes() const;
     
     void setVisible(bool);

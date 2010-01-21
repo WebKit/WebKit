@@ -81,8 +81,6 @@ public:
     virtual void seek(float) { }
     virtual bool seeking() const { return false; }
 
-    virtual void setEndTime(float) { }
-
     virtual void setRate(float) { }
     virtual void setPreservesPitch(bool) { }
     virtual bool paused() const { return false; }
@@ -98,9 +96,6 @@ public:
     virtual float maxTimeSeekable() const { return 0; }
     virtual PassRefPtr<TimeRanges> buffered() const { return TimeRanges::create(); }
 
-    virtual int dataRate() const { return 0; }
-
-    virtual bool totalBytesKnown() const { return false; }
     virtual unsigned totalBytes() const { return 0; }
     virtual unsigned bytesLoaded() const { return 0; }
 
@@ -415,16 +410,6 @@ void MediaPlayer::setPreservesPitch(bool preservesPitch)
     m_private->setPreservesPitch(preservesPitch);
 }
 
-int MediaPlayer::dataRate() const
-{
-    return m_private->dataRate();
-}
-
-void MediaPlayer::setEndTime(float time)
-{
-    m_private->setEndTime(time);
-}
-
 PassRefPtr<TimeRanges> MediaPlayer::buffered()
 {
     return m_private->buffered();
@@ -438,16 +423,6 @@ float MediaPlayer::maxTimeSeekable()
 unsigned MediaPlayer::bytesLoaded()
 {
     return m_private->bytesLoaded();
-}
-
-bool MediaPlayer::totalBytesKnown()
-{
-    return m_private->totalBytesKnown();
-}
-
-unsigned MediaPlayer::totalBytes()
-{
-    return m_private->totalBytes();
 }
 
 void MediaPlayer::setSize(const IntSize& size)
