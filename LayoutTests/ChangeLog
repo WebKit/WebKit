@@ -1,3 +1,13 @@
+2010-01-21  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Eric Carlson.
+
+        Start the test when the video element loads, which is less prone
+        to occasional cases where document.load is fired after video.load.
+
+        * media/video-source-error-no-candidate.html:
+        * media/video-source-error-no-candidate-expected.txt:
+
 2010-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

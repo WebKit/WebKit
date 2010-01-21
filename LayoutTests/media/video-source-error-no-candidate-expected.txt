@@ -1,6 +1,5 @@
 Test that 'error' events are fired when no urls are passed to the media engine.
 
-EVENT(loadstart)
 
 EVENT(error) from <source id='missing-src' src=''> OK
 EXPECTED (video.error == 'null') OK

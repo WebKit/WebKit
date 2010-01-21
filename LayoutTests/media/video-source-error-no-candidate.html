@@ -44,9 +44,9 @@
         </script>
     </head>
 
-    <body onload="start()">
+    <body>
 
-        <video controls>
+       <video onloadstart="start()" controls>
             <source id=missing-src type="video/blahblah">
             <source id=bogus-type src=content/test.mp4 type="video/blahblah">
             <source id=unsupported-media-query src=content/test.mp4 media=print>
