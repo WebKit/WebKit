@@ -1466,7 +1466,6 @@ void TCMalloc_PageHeap::initializeScavenger()
   m_scavengeTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_scavengeQueue);
   dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeTimerDelayInSeconds * NSEC_PER_SEC);
   dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeTimerDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
-  dispatch_source_set_context(m_scavengeTimer, this);
   dispatch_source_set_event_handler(m_scavengeTimer, ^{ periodicScavenge(); });
   m_scavengingScheduled = false;
 }

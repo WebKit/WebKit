@@ -1,5 +1,12 @@
 2010-01-20  Mark Rowe  <mrowe@apple.com>
 
+        Build fix.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger): Remove unnecessary function call.
+
+2010-01-20  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Use the inline i386 assembly for x86_64 as well rather than falling back to using pthread mutexes.
