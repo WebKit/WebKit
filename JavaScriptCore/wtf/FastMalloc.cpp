@@ -391,6 +391,10 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #endif
+#if HAVE(DISPATCH_H)
+#include <dispatch/dispatch.h>
+#endif
+
 
 #ifndef PRIuS
 #define PRIuS "zu"
@@ -1372,21 +1376,29 @@ class TCMalloc_PageHeap {
 #endif
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-  static NO_RETURN void* runScavengerThread(void*);
-
-  NO_RETURN void scavengerThread();
-
+  void initializeScavenger();
+  ALWAYS_INLINE void signalScavenger();
   void scavenge();
+  ALWAYS_INLINE bool shouldContinueScavenging() const;
 
-  inline bool shouldContinueScavenging() const;
-
-  pthread_mutex_t m_scavengeMutex;
-
-  pthread_cond_t m_scavengeCondition;
+#if !HAVE(DISPATCH_H)
+  static NO_RETURN void* runScavengerThread(void*);
+  NO_RETURN void scavengerThread();
 
   // Keeps track of whether the background thread is actively scavenging memory every kScavengeTimerDelayInSeconds, or
   // it's blocked waiting for more pages to be deleted.
   bool m_scavengeThreadActive;
+
+  pthread_mutex_t m_scavengeMutex;
+  pthread_cond_t m_scavengeCondition;
+#else // !HAVE(DISPATCH_H)
+  void periodicScavenge();
+
+  dispatch_queue_t m_scavengeQueue;
+  dispatch_source_t m_scavengeTimer;
+  bool m_scavengingScheduled;
+#endif
+
 #endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 };
 
@@ -1414,15 +1426,23 @@ void TCMalloc_PageHeap::init()
   }
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
+  initializeScavenger();
+#endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
+}
+
+#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
+
+#if !HAVE(DISPATCH_H)
+
+void TCMalloc_PageHeap::initializeScavenger()
+{
   pthread_mutex_init(&m_scavengeMutex, 0);
   pthread_cond_init(&m_scavengeCondition, 0);
   m_scavengeThreadActive = true;
   pthread_t thread;
   pthread_create(&thread, 0, runScavengerThread, this);
-#endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 }
 
-#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 void* TCMalloc_PageHeap::runScavengerThread(void* context)
 {
   static_cast<TCMalloc_PageHeap*>(context)->scavengerThread();
@@ -1431,6 +1451,35 @@ void* TCMalloc_PageHeap::runScavengerThread(void* context)
   return 0;
 #endif
 }
+
+ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
+{
+  if (!m_scavengeThreadActive && shouldContinueScavenging())
+    pthread_cond_signal(&m_scavengeCondition);
+}
+
+#else // !HAVE(DISPATCH_H)
+
+void TCMalloc_PageHeap::initializeScavenger()
+{
+  m_scavengeQueue = dispatch_queue_create("com.apple.JavaScriptCore.FastMallocSavenger", NULL);
+  m_scavengeTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_scavengeQueue);
+  dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeTimerDelayInSeconds * NSEC_PER_SEC);
+  dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeTimerDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
+  dispatch_source_set_context(m_scavengeTimer, this);
+  dispatch_source_set_event_handler(m_scavengeTimer, ^{ periodicScavenge(); });
+  m_scavengingScheduled = false;
+}
+
+ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
+{
+  if (!m_scavengingScheduled && shouldContinueScavenging()) {
+    m_scavengingScheduled = true;
+    dispatch_resume(m_scavengeTimer);
+  }
+}
+
+#endif
 
 void TCMalloc_PageHeap::scavenge() 
 {
@@ -1467,7 +1516,7 @@ void TCMalloc_PageHeap::scavenge()
     free_committed_pages_ -= pagesDecommitted;
 }
 
-inline bool TCMalloc_PageHeap::shouldContinueScavenging() const 
+ALWAYS_INLINE bool TCMalloc_PageHeap::shouldContinueScavenging() const 
 {
     return free_committed_pages_ > kMinimumFreeCommittedPageCount; 
 }
@@ -1729,8 +1778,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
   }
 
   // Make sure the scavenge thread becomes active if we have enough freed pages to release some back to the system.
-  if (!m_scavengeThreadActive && shouldContinueScavenging())
-      pthread_cond_signal(&m_scavengeCondition);
+  signalScavenger();
 #else
   IncrementalScavenge(n);
 #endif
@@ -2273,6 +2321,8 @@ static inline TCMalloc_PageHeap* getPageHeap()
 #define pageheap getPageHeap()
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
+
+#if !HAVE(DISPATCH_H)
 #if OS(WINDOWS)
 static void sleep(unsigned seconds)
 {
@@ -2302,6 +2352,23 @@ void TCMalloc_PageHeap::scavengerThread()
       }
   }
 }
+
+#else
+
+void TCMalloc_PageHeap::periodicScavenge()
+{
+  {
+    SpinLockHolder h(&pageheap_lock);
+    pageheap->scavenge();
+  }
+
+  if (!shouldContinueScavenging()) {
+    m_scavengingScheduled = false;
+    dispatch_suspend(m_scavengeTimer);
+  }
+}
+#endif // HAVE(DISPATCH_H)
+
 #endif
 
 // If TLS is available, we also store a copy

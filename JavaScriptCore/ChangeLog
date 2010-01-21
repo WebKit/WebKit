@@ -1,3 +1,21 @@
+2010-01-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7215063> Use GCD instead of an extra thread for FastMalloc scavenging on platforms where it is supported
+
+        Abstract the background scavenging slightly so that an alternate implementation that uses GCD can be used on platforms
+        where it is supported.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::initializeScavenger):
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+        (WTF::TCMalloc_PageHeap::shouldContinueScavenging):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::periodicScavenge):
+        * wtf/Platform.h:
+
 2010-01-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
