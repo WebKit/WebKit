@@ -1,5 +1,21 @@
 2010-01-20  Eric Seidel  <eric@webkit.org>
 
+        No review, rolling out r53593.
+        http://trac.webkit.org/changeset/53593
+        https://bugs.webkit.org/show_bug.cgi?id=33496
+
+        Re-rollout this patch, the commit-queue should not have landed
+        it again, but it did due to land-diff and rollout both not
+        clearing flags.
+
+        * Scripts/webkitpy/commands/early_warning_system.py:
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/queueengine.py:
+        * Scripts/webkitpy/scm.py:
+        * Scripts/webkitpy/scm_unittest.py:
+
+2010-01-20  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         webkit-commit-queue status page is confusing
