@@ -520,7 +520,6 @@ fast/text/midword-break-after-breakable-char.html
 fast/text/textIteratorNilRenderer.html
 fast/text/international/002.html
 
-plugins/destroy-during-npp-new.html
 plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
@@ -5023,10 +5022,6 @@ fast/css/namespaces/namespaces-empty.xml
 # https://bugs.webkit.org/show_bug.cgi?id=31626
 fast/dom/javascript-url-crash-function.html
 fast/dom/location-new-window-no-crash.html
-fast/dom/Document/early-document-access.html
-fast/dom/Window/window-early-properties.html
-fast/events/open-window-from-another-frame.html
-fast/events/popup-blocking-click-in-iframe.html
 inspector/console-clear.html
 http/tests/misc/set-window-opener-to-null.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html

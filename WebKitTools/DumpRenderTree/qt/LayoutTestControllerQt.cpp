@@ -88,7 +88,11 @@ void LayoutTestController::processWork()
 // Called on loadFinished on mainFrame.
 void LayoutTestController::maybeDump(bool success)
 {
-    Q_ASSERT(sender() == m_topLoadingFrame->page());
+    // It is possible that we get called by windows created from the main page that have finished
+    // loading, so we don't ASSERT here. At the moment we do not gather results from such windows,
+    // but may need to in future.
+    if (sender() != m_topLoadingFrame->page())
+      return;
 
     m_loadFinished = true;
     // as the function is called on loadFinished, the test might
