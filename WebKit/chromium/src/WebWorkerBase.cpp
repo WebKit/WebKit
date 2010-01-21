@@ -157,7 +157,7 @@ void WebWorkerBase::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> 
                                               PassOwnPtr<MessagePortChannelArray> channels)
 {
     dispatchTaskToMainThread(createCallbackTask(&postMessageTask, this,
-                                                message->toString(), channels));
+                                                message->toWireString(), channels));
 }
 
 void WebWorkerBase::postMessageTask(ScriptExecutionContext* context,

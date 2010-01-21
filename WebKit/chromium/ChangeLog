@@ -1,3 +1,23 @@
+2010-01-20  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Support SerializedScriptValue.
+        https://bugs.webkit.org/show_bug.cgi?id=32920
+        http://crbug.com/30620
+
+        Updated uses of SerializedScriptValue:
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::postMessageToRemote):
+        (WebCore::PlatformMessagePortChannel::tryGetMessageFromRemote):
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postMessageToWorkerObject):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObjectTask):
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::postMessageToWorkerContextTask):
+
 2010-01-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Fisher.

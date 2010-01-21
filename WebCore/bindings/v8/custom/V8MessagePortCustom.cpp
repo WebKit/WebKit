@@ -78,7 +78,7 @@ v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& ar
 {
     INC_STATS("DOM.MessagePort.postMessage");
     MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(toWebCoreString(args[0]));
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0]);
     MessagePortArray portArray;
     if (args.Length() > 1) {
         if (!getMessagePortArray(args[1], portArray))
