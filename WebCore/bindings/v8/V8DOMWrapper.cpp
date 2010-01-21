@@ -32,12 +32,12 @@
 #include "V8DOMWrapper.h"
 
 #include "CSSMutableStyleDeclaration.h"
-#include "ChromiumBridge.h"
 #include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
 #include "Notification.h"
 #include "SVGElementInstance.h"
+#include "SVGPathSeg.h"
 #include "ScriptController.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
@@ -61,10 +61,6 @@
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
-
-#if ENABLE(SVG)
-#include "SVGPathSeg.h"
-#endif
 
 #include <algorithm>
 #include <utility>
@@ -326,12 +322,16 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->SetCallHandler(USE_CALLBACK(XMLHttpRequestConstructor));
         break;
     }
+#if ENABLE(XPATH)
     case V8ClassIndex::XPATHEVALUATOR:
         descriptor->SetCallHandler(USE_CALLBACK(XPathEvaluatorConstructor));
         break;
+#endif
+#if ENABLE(XSLT)
     case V8ClassIndex::XSLTPROCESSOR:
         descriptor->SetCallHandler(USE_CALLBACK(XSLTProcessorConstructor));
         break;
+#endif
     default:
         break;
     }

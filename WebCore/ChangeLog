@@ -1,3 +1,20 @@
+2010-01-21  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by David Levin.
+
+        [Android] bindings/v8/V8DOMWrapper.h[cpp] are missing guards for XPATH and XSLT features
+        https://bugs.webkit.org/show_bug.cgi?id=33944
+
+        Inside V8DOMWrapper.h[cpp], the code for XPATH and XSLT features is not guarded
+        by the appropriate #if ENABLE(feature) macros. Add the missing guards.
+        V8DOMWrapper.cpp includes ChromiumBridge.h for no reason. Remove the include.
+
+        No new tests needed, functionality not changed.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        * bindings/v8/V8DOMWrapper.h:
+
 2010-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

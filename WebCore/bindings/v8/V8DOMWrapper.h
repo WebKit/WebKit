@@ -194,7 +194,7 @@ namespace WebCore {
 
         static PassRefPtr<EventListener> getEventListener(V8Proxy* proxy, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
 
-
+#if ENABLE(XPATH)
         // XPath-related utilities
         static RefPtr<XPathNSResolver> getXPathNSResolver(v8::Handle<v8::Value> value, V8Proxy* proxy = 0)
         {
@@ -205,7 +205,7 @@ namespace WebCore {
                 resolver = V8CustomXPathNSResolver::create(proxy, value->ToObject());
             return resolver;
         }
-
+#endif
         // DOMImplementation is a singleton and it is handled in a special
         // way. A wrapper is generated per document and stored in an
         // internal field of the document.
