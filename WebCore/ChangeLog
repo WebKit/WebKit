@@ -1,3 +1,17 @@
+2010-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33930
+        Crash in JSDOMWindowBase::crossDomainAccessErrorMessage when accessing a detached sandboxed frame
+
+        Test: http/tests/security/detached-sandboxed-frame-access.html
+
+        * bindings/js/JSDOMWindowBase.cpp: (WebCore::JSDOMWindowBase::crossDomainAccessErrorMessage):
+        Changed the way we discover the url to match what the actual check does. Both old and new
+        code correctly fetch the URL of the current window displayed in frame, but going via
+        DOMWindowShell avoids crashing on null DOMWindow::m_frame pointer.
+
 2010-01-20  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Pavel Feldman.

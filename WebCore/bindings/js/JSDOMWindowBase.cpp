@@ -76,7 +76,7 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
     KURL originURL = asJSDOMWindow(other)->impl()->url();
-    KURL targetURL = impl()->frame()->document()->url();
+    KURL targetURL = d()->shell->window()->impl()->url();
     if (originURL.isNull() || targetURL.isNull())
         return String();
 

@@ -1,3 +1,13 @@
+2010-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33930
+        Crash in JSDOMWindowBase::crossDomainAccessErrorMessage when accessing a detached sandboxed frame
+
+        * http/tests/security/detached-sandboxed-frame-access-expected.txt: Added.
+        * http/tests/security/detached-sandboxed-frame-access.html: Added.
+
 2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Re-skip svg/custom/use-instanceRoot-event-bubbling.xhtml on Gtk bot, still fails. Though the other platforms are fixed.

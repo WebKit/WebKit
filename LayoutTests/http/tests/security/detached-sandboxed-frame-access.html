@@ -1,0 +1,37 @@
+<body onload="test()">
+<p></p>
+<div id=result>Testing...</div>
+<iframe src="does-not-exist.html" sandbox=""></iframe>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+var w;
+function test()
+{
+    w = frames[0];
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+    setTimeout(function() {
+        gc();
+        for (i in w) { }
+        try { w.XMLHttpRequest; } catch (ex) { }
+        try { w.top; } catch (ex) { }
+        document.getElementById("result").innerHTML = "PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+}
+
+</script>
