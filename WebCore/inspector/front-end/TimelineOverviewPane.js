@@ -173,10 +173,11 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     reset: function()
     {
-        this._overviewCalculator.reset();
-        this._overviewGrid.updateDividers(true, this._overviewCalculator);
         this.windowLeft = 0.0;
         this.windowRight = 1.0;
+        this._setWindowPosition(0, this._overviewGrid.element.clientWidth);
+        this._overviewCalculator.reset();
+        this._overviewGrid.updateDividers(true, this._overviewCalculator);
     },
 
     _resizeWindow: function(resizeElement, event)

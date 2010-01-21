@@ -271,8 +271,10 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._lastRecord = null;
         this._sendRequestRecords = {};
-        this._overviewPane.reset();
         this._records = [];
+        this._boundariesAreValid = false;
+        this._overviewPane.reset();
+        this._adjustScrollPosition(0);
         this._refresh();
     },
 
@@ -296,7 +298,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._scheduleRefresh();
     },
-  
+
     _scheduleRefresh: function(preserveBoundaries)
     {
         this._boundariesAreValid &= preserveBoundaries;
@@ -356,11 +358,11 @@ WebInspector.TimelinePanel.prototype = {
         const expandOffset = 15;
 
         // Convert visible area to visible indexes. Always include top-level record for a visible nested record.
-        var startIndex = Math.max(0, Math.floor(visibleTop / rowHeight) - 1);
+        var startIndex = Math.max(0, Math.min(Math.floor(visibleTop / rowHeight) - 1, recordsInWindow.length - 1));
         while (startIndex > 0 && recordsInWindow[startIndex].parent)
             startIndex--;
         var endIndex = Math.min(recordsInWindow.length, Math.ceil(visibleBottom / rowHeight));
-        while (endIndex < recordsInWindow.length - 1 && recordsInWindow[startIndex].parent)
+        while (endIndex < recordsInWindow.length - 1 && recordsInWindow[endIndex].parent)
             endIndex++;
 
         // Resize gaps first.

@@ -100,6 +100,8 @@ WebInspector.TimelineGrid.prototype = {
 
             if (!isNaN(slice))
                 dividerLabelBar._labelElement.textContent = calculator.formatValue(slice * i);
+            else
+                dividerLabelBar._labelElement.textContent = "";
 
             divider = divider.nextSibling;
             dividerLabelBar = dividerLabelBar.nextSibling;

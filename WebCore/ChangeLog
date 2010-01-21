@@ -1,3 +1,19 @@
+2010-01-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Timeline reset button doesn't clean timeline if the panel is scrolled down.
+        The overview pane also stay dirty after reset.
+        https://bugs.webkit.org/show_bug.cgi?id=33829
+
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.reset):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+
 2010-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
