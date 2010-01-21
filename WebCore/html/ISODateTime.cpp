@@ -476,6 +476,18 @@ bool ISODateTime::setMillisecondsSinceEpochForDateInternal(double ms)
     return true;
 }
 
+bool ISODateTime::setMillisecondsSinceEpochForDate(double ms)
+{
+    if (!isfinite(ms))
+        return false;
+    if (!setMillisecondsSinceEpochForDateInternal(ms))
+        return false;
+    if (beforeGregorianStartDate(m_year, m_month, m_monthDay))
+        return false;
+    m_type = Date;
+    return true;
+}
+
 bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
 {
     if (!isfinite(ms))
@@ -556,6 +568,8 @@ String ISODateTime::toStringForTime(SecondFormat format) const
 String ISODateTime::toString(SecondFormat format) const
 {
     switch (m_type) {
+    case Date:
+        return String::format("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
     case Month:
         return String::format("%04d-%02d", m_year, m_month + 1);
     case Time:

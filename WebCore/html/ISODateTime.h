@@ -100,12 +100,14 @@ public:
     // Sets year, month, monthDay, hour, minute, second and millisecond, and adjusts timezone.
     bool parseDateTime(const UChar* src, unsigned length, unsigned start, unsigned& end);
 
-    // The following setMillisecondsSinceEpochFor*() function takes
+    // The following setMillisecondsSinceEpochFor*() functions take
     // the number of milliseconds since 1970-01-01 00:00:00.000 UTC as
     // the argument, and update all fields for the corresponding
-    // ISODateTime type. The function returns true if it succeeds, and
-    // false if it fails.
+    // ISODateTime type. The functions return true if it succeeds, and
+    // false if they fail.
 
+    // For Date type. Updates m_year, m_month and m_monthDay.
+    bool setMillisecondsSinceEpochForDate(double ms);
     // For Month type. Updates m_year and m_month.
     bool setMillisecondsSinceEpochForMonth(double ms);
     // FIXME: Add setMillisecondsSinceEpochFor*() for other types.

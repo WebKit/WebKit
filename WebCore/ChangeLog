@@ -1,3 +1,20 @@
+2010-01-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=date.
+        https://bugs.webkit.org/show_bug.cgi?id=33911
+
+        Introduce ISODateTime::setMillisecondsSinceEpochForDate() and add Date
+        type support to ISODateTime::toString().
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValueAsDate):
+        * html/ISODateTime.cpp:
+        (WebCore::ISODateTime::setMillisecondsSinceEpochForDate):
+        (WebCore::ISODateTime::toString):
+        * html/ISODateTime.h:
+
 2010-01-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.

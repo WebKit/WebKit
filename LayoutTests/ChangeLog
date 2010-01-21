@@ -1,3 +1,16 @@
+2010-01-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=date.
+        https://bugs.webkit.org/show_bug.cgi?id=33911
+
+        Add setter tests to input-valueasdate-date.js, and update the
+        expectation.
+
+        * fast/forms/input-valueasdate-date-expected.txt:
+        * fast/forms/script-tests/input-valueasdate-date.js:
+
 2010-01-20  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
