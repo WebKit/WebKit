@@ -979,16 +979,6 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const RenderObject::P
 
     paintMediaBackground(p.painter, r);
 
-    if (MediaPlayer* player = mediaElement->player()) {
-        if (player->totalBytesKnown()) {
-            float percentLoaded = static_cast<float>(player->bytesLoaded()) / player->totalBytes();
-
-            WorldMatrixTransformer transformer(p.painter, o, r);
-            p.painter->setBrush(getMediaControlForegroundColor());
-            p.painter->drawRect(0, 37, 100 * percentLoaded, 26);
-        }
-    }
-
     return false;
 }
 
