@@ -1,3 +1,13 @@
+2010-01-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Force JSC to create a prototype chain for API classes with a
+        parent class but no static functions.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::create):
+
 2010-01-21  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Geoffrey Garen.

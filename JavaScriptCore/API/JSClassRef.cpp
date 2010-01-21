@@ -122,7 +122,8 @@ static void clearReferenceToPrototype(JSObjectRef prototype)
 
 PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* definition)
 {
-    if (const JSStaticFunction* staticFunctions = definition->staticFunctions) {
+    const JSStaticFunction* staticFunctions = definition->staticFunctions;
+    if (staticFunctions || definition->parentClass) {
         // copy functions into a prototype class
         JSClassDefinition protoDefinition = kJSClassDefinitionEmpty;
         protoDefinition.staticFunctions = staticFunctions;
