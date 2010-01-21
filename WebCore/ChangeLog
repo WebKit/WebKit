@@ -1,5 +1,13 @@
 2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        Buildfix for r53646.
+
+        * bindings/js/SerializedScriptValue.cpp: path of JSLock.h fixed.
+
+2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed buildfix after r53644.
 
         * platform/Scrollbar.cpp:

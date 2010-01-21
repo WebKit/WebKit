@@ -32,9 +32,9 @@
 #include "JSFile.h"
 #include "JSFileList.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSLock.h>
 #include <runtime/DateInstance.h>
 #include <runtime/ExceptionHelpers.h>
+#include <runtime/JSLock.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
