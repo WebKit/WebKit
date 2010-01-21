@@ -64,16 +64,18 @@ void GeolocationController::removeObserver(Geolocation* observer)
 
 void GeolocationController::positionChanged(GeolocationPosition* position)
 {
-    HashSet<RefPtr<Geolocation> >::const_iterator end = m_observers.end();
-    for (HashSet<RefPtr<Geolocation> >::const_iterator it = m_observers.begin(); it != end; ++it)
-        (*it)->setPosition(position);
+    Vector<RefPtr<Geolocation> > observersVector;
+    copyToVector(m_observers, observersVector);
+    for (size_t i = 0; i < observersVector.size(); ++i)
+        observersVector[i]->setPosition(position);
 }
 
 void GeolocationController::errorOccurred(GeolocationError* error)
 {
-    HashSet<RefPtr<Geolocation> >::const_iterator end = m_observers.end();
-    for (HashSet<RefPtr<Geolocation> >::const_iterator it = m_observers.begin(); it != end; ++it)
-        (*it)->setError(error);
+    Vector<RefPtr<Geolocation> > observersVector;
+    copyToVector(m_observers, observersVector);
+    for (size_t i = 0; i < observersVector.size(); ++i)
+        observersVector[i]->setError(error);
 }
 
 GeolocationPosition* GeolocationController::lastPosition()

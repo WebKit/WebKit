@@ -1,3 +1,13 @@
+2010-01-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix crash in geolocation when observers change during iteration.
+
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::positionChanged): Copy observers to vector while iterating.
+        (WebCore::GeolocationController::errorOccurred): Copy observers to vector while iterating.
+
 2010-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.
