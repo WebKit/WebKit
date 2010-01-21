@@ -1,3 +1,10 @@
+2010-01-21  Adam Roben  <aroben@apple.com>
+
+        More Windows build fixing
+
+        * WebCore.vcproj/WebCore.vcproj: Copy bridge/jsc in the post-build
+        event of all configurations, not just Debug.
+
 2010-01-21  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.
