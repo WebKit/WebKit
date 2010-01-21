@@ -2310,6 +2310,8 @@ void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy)
     if (m_documentLoader)
         m_documentLoader->clearArchiveResources();
 
+    m_checkTimer.stop();
+
     m_inStopAllLoaders = false;    
 }
 

@@ -1,3 +1,17 @@
+2010-01-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33972
+        Assertion failure in FrameLoader::checkLoadComplete()
+
+        I couldn't make a test for this, after trying rather hard. I'm not too worried, because such
+        a test has to depend on details of current implementation so intimately that it would become
+        ineffective very quickly anyway.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::stopAllLoaders): Stop the check timer, we
+        don't need it after aborting load.
+
 2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Dave Hyatt.
