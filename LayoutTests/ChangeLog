@@ -1,3 +1,11 @@
+2010-01-20  Daniel Bates  <dbates@webkit.org>
+
+        Unreviewed. Add failing test fast/css/button-height.html
+        to GTK Skipped file as we need to look into this.
+        See bug #33936 for more details.
+
+        * platform/gtk/Skipped:
+
 2010-01-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
