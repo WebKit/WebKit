@@ -4,7 +4,7 @@ var testParent = document.createElement('div');
 document.body.appendChild(testParent);
 
 debug('&lt;aside> closes &lt;p>:');
-testParent.innerHTML = '<p>Test that <aside id="aside1">an aside element</nav> closes &lt;p>.</p>';
+testParent.innerHTML = '<p>Test that <aside id="aside1">an aside element</aside> closes &lt;p>.</p>';
 var aside1 = document.getElementById('aside1');
 shouldBeFalse('aside1.parentNode.nodeName == "p"');
 

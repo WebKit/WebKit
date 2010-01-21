@@ -4,7 +4,7 @@ var testParent = document.createElement('div');
 document.body.appendChild(testParent);
 
 debug('&lt;section> closes &lt;p>:');
-testParent.innerHTML = '<p>Test that <section id="section1">a section element</nav> closes &lt;p>.</p>';
+testParent.innerHTML = '<p>Test that <section id="section1">a section element</section> closes &lt;p>.</p>';
 var section1 = document.getElementById('section1');
 shouldBeFalse('section1.parentNode.nodeName == "p"');
 

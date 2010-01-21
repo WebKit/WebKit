@@ -1,3 +1,13 @@
+2010-01-21  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Fix incorrect close tags.
+
+        * fast/html/script-tests/article-element.js:
+        * fast/html/script-tests/aside-element.js:
+        * fast/html/script-tests/footer-element.js:
+        * fast/html/script-tests/header-element.js:
+        * fast/html/script-tests/section-element.js:
+
 2010-01-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

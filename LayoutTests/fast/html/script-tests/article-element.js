@@ -4,7 +4,7 @@ var testParent = document.createElement('div');
 document.body.appendChild(testParent);
 
 debug('&lt;article> closes &lt;p>:');
-testParent.innerHTML = '<p>Test that <article id="article1">an article element</nav> closes &lt;p>.</p>';
+testParent.innerHTML = '<p>Test that <article id="article1">an article element</article> closes &lt;p>.</p>';
 var article1 = document.getElementById('article1');
 shouldBeFalse('article1.parentNode.nodeName == "p"');
 

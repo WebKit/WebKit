@@ -4,7 +4,7 @@ var testParent = document.createElement('div');
 document.body.appendChild(testParent);
 
 debug('&lt;header> closes &lt;p>:');
-testParent.innerHTML = '<p>Test that <header id="header1">a header element</nav> closes &lt;p>.</p>';
+testParent.innerHTML = '<p>Test that <header id="header1">a header element</header> closes &lt;p>.</p>';
 var header1 = document.getElementById('header1');
 shouldBeFalse('header1.parentNode.nodeName == "p"');
 

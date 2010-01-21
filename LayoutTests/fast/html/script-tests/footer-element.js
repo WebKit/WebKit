@@ -4,7 +4,7 @@ var testParent = document.createElement('div');
 document.body.appendChild(testParent);
 
 debug('&lt;footer> closes &lt;p>:');
-testParent.innerHTML = '<p>Test that <footer id="footer1">a footer element</nav> closes &lt;p>.</p>';
+testParent.innerHTML = '<p>Test that <footer id="footer1">a footer element</footer> closes &lt;p>.</p>';
 var footer1 = document.getElementById('footer1');
 shouldBeFalse('footer1.parentNode.nodeName == "p"');
 
