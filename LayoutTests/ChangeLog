@@ -1,3 +1,13 @@
+2010-01-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash in Page::backForwardList when using History object from a detached window
+        <rdar://problem/7556252> and https://bugs.webkit.org/show_bug.cgi?id=33828
+
+        * fast/loader/stateobjects/state-api-on-detached-frame-crash-expected.txt: Added.
+        * fast/loader/stateobjects/state-api-on-detached-frame-crash.html: Added.
+
 2010-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

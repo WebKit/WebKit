@@ -3700,9 +3700,6 @@ void FrameLoader::navigateWithinDocument(HistoryItem* item)
     loadInSameDocument(item->url(), item->stateObject(), false);
 
     // Restore user view state from the current history item here since we don't do a normal load.
-    // Even though we just manually set the current history item, this ASSERT verifies nothing 
-    // inside of loadInSameDocument() caused it to change.
-    ASSERT(history()->currentItem() == item);
     history()->restoreScrollPositionAndViewState();
 }
 

@@ -1,3 +1,15 @@
+2010-01-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Assertion failure calling history.pushState within popstate event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=33830
+
+        Test: fast/loader/stateobjects/pushstate-within-popstate-handler-assert.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigateWithinDocument): Remove the ASSERT and invalid part of the comment.
+
 2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Oliver Hunt.
