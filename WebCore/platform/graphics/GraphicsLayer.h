@@ -59,6 +59,10 @@ class WKCACFLayer;
 typedef WKCACFLayer PlatformLayer;
 typedef void* NativeLayer;
 }
+#elif PLATFORM(QT)
+class QGraphicsItem;
+typedef QGraphicsItem PlatformLayer;
+typedef QGraphicsItem* NativeLayer;
 #else
 typedef void* PlatformLayer;
 typedef void* NativeLayer;

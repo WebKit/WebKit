@@ -1,3 +1,60 @@
+2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Implement GraphicsLayer for accelerated layer compositing
+        https://bugs.webkit.org/show_bug.cgi?id=33514
+
+        Here we have the QGraphicsWebView support for accelerated compositing
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewOverlay::q): access to container object
+        (QGraphicsWebViewOverlay::boundingRect): overlay has same rect as the
+        webview
+        (QGraphicsWebViewOverlay::paint): paint everything but the contents
+        (QGraphicsWebViewPrivate::QGraphicsWebViewPrivate): some vars needed
+        for accelerated compositing
+        (QGraphicsWebViewPrivate::):
+        (QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate):
+        (QGraphicsWebViewPrivate::setRootGraphicsLayer): make sure we have a
+        scrollbar overlay, and that the new graphics layer is parented by the
+        web-view
+        (QGraphicsWebViewPrivate::markForSync): flush changes at earliest
+        convenience or during the next draw
+
+        (QGraphicsWebViewPrivate::updateCompositingScrollPosition): sync the
+        position of the compositing layer with the scroll position
+        (QGraphicsWebViewPrivate::syncLayers): flush changes now
+        (QGraphicsWebViewPrivate::scroll): make sure we also move the
+        compositing layer
+        (QGraphicsWebViewPrivate::update): also update the overlay if needed
+        (QGraphicsWebView::QGraphicsWebView): initialize overlay with 0
+        (QGraphicsWebView::paint): paint only contents if we have an overlay,
+        sync the compositing layers now if needed
+        (QGraphicsWebView::setPage): also clean up the compositing
+        (QGraphicsWebView::updateGeometry): also update overlay geo
+        (QGraphicsWebView::setGeometry): also update overlay geo
+        * Api/qgraphicswebview.h: reimp compositing stuff from QWebPageClient
+        * Api/qwebsettings.cpp: init new settings flag for compositing as
+        false
+        (QWebSettingsPrivate::apply): apply new settings flag for compositing
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h: new settings flag for compositing
+        * Api/qwebview.cpp: 
+        (QWebView::setPage): qwebview doesn't support compositing: always false
+        * QGVLauncher/main.cpp:
+        (WebView::WebView): some more cmdline arguments + compositing
+        (MainWindow::init): some more cmdline arguments
+        (main): ditto
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::attachRootGraphicsLayer): reimp for
+        accel-compositing
+        (WebCore::ChromeClientQt::setNeedsOneShotDrawingSynchronization):
+        reimp for accel compositing
+        (WebCore::ChromeClientQt::scheduleCompositingLayerSync): reimp for
+        accel compositing
+        * WebCoreSupport/ChromeClientQt.h: reimps for accel compositing
+
 2010-01-21  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Simon Hausmann.

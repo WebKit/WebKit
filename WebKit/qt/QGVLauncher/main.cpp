@@ -72,6 +72,8 @@ public:
     WebView(QGraphicsItem* parent = 0)
         : QGraphicsWebView(parent)
     {
+        if (QApplication::instance()->arguments().contains("--cacheWebView"))
+            setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
     void setYRotation(qreal angle)
     {
@@ -253,6 +255,12 @@ public:
         setAttribute(Qt::WA_DeleteOnClose);
 
         view->setScene(scene->scene());
+        const QStringList arguments = QApplication::instance()->arguments();
+        const int indexOfViewportUpdateMode = arguments.indexOf("--updateMode");
+        if (indexOfViewportUpdateMode > 1 && indexOfViewportUpdateMode < arguments.count() - 1) {
+            const QString updateMode = arguments[indexOfViewportUpdateMode+1] + "ViewportUpdate";
+            view->setViewportUpdateMode(static_cast<QGraphicsView::ViewportUpdateMode>(QGraphicsView::staticMetaObject.enumerator(QGraphicsView::staticMetaObject.indexOfEnumerator("ViewportUpdateMode")).keysToValue(updateMode.toAscii())));
+        }
 
         setCentralWidget(view);
 
@@ -447,6 +455,10 @@ QWebPage* WebPage::createWindow(QWebPage::WebWindowType)
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    if (app.arguments().contains("--help")) {
+        qDebug() << "Usage: QGVLauncher [--url url] [--compositing] [--updateMode Full|Minimal|Smart|No|BoundingRect] [--cacheWebView]\n";
+        return 0;
+    }
     QString url = QString("file://%1/%2").arg(QDir::homePath()).arg(QLatin1String("index.html"));
 
     app.setApplicationName("GQVLauncher");
@@ -458,14 +470,20 @@ int main(int argc, char** argv)
     QWebSettings::enablePersistentStorage();
 
     const QStringList args = app.arguments();
-    if (args.count() > 1)
+    const int indexOfUrl = args.indexOf("--url");
+    if (indexOfUrl > 0 && indexOfUrl < args.count() - 1)
+        url = args.at(indexOfUrl+1);
+    else if (args.count() > 1)
         url = args.at(1);
+    if (args.contains("--compositing"))
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, true);
 
     MainWindow* window = new MainWindow;
     window->load(url);
 
-    for (int i = 2; i < args.count(); i++)
-        window->newWindow(args.at(i));
+    for (int i = 2; i < args.count(); ++i)
+        if (!args.at(i).startsWith("-") && !args.at(i - 1).startsWith("-"))
+            window->newWindow(args.at(i));
 
     window->show();
     return app.exec();

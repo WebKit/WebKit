@@ -18,6 +18,117 @@
 
 2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        Reviewed by Antti Koivisto.
+
+        [Qt] Implement GraphicsLayer for accelerated layer compositing
+        https://bugs.webkit.org/show_bug.cgi?id=33514
+
+        No new tests: tests in LayoutTests/compositing are now relevant for
+        QtWebkit!
+
+        * WebCore.pro: added accelerated-compositing related files 
+        * platform/graphics/GraphicsLayer.h: define Qt-specific implementation           of GraphicsLayer
+        * platform/graphics/qt/GraphicsLayerQt.cpp: Added.
+        (WebCore::GraphicsLayerQtImpl::): Implementation of GraphicsLayer with
+        a QGraphicsItem
+        (WebCore::GraphicsLayerQtImpl::ContentData::ContentData): save 
+        pixmap/color info for directly composited content
+        (WebCore::GraphicsLayerQtImpl::State::State): save info for syncing
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl): ctor
+        (WebCore::GraphicsLayerQtImpl::~GraphicsLayerQtImpl): dtor
+        (WebCore::GraphicsLayerQtImpl::setBaseTransform): set Qt
+        transformation in the way WebCore wants it
+        (WebCore::GraphicsLayerQtImpl::opaqueArea): calculate opaque area
+        based on info we have
+        (WebCore::GraphicsLayerQtImpl::boundingRect): reimp QGraphicsItem
+        (WebCore::GraphicsLayerQtImpl::paint): reimp QGraphicsItem
+        (WebCore::GraphicsLayerQtImpl::drawContents): draw HTML/Pixmap/Color
+        (WebCore::GraphicsLayerQtImpl::notifyChange): let WebCore know
+        something has changed
+        (WebCore::GraphicsLayerQtImpl::flushChanges): Make the changes appear
+        on screen by setting them to QGraphicsItems
+        (WebCore::GraphicsLayerQtImpl::notifyAnimationStarted): let WebCore
+        know the QAnimation started
+        (WebCore::GraphicsLayerQt::GraphicsLayerQt): ctor
+        (WebCore::GraphicsLayerQt::~GraphicsLayerQt): dtor
+        (WebCore::GraphicsLayer::create): hook for WebCore to know we're
+        implementing compositing
+        (WebCore::GraphicsLayer::compositingCoordinatesOrientation): hook for
+        WebCore to know we use a top-down system
+        (WebCore::GraphicsLayerQt::setNeedsDisplay): update the display
+        (WebCore::GraphicsLayerQt::setNeedsDisplayInRect): udpate part of the
+        display
+        (WebCore::GraphicsLayerQt::setName): reimp
+        (WebCore::GraphicsLayerQt::setParent): reimp
+        (WebCore::GraphicsLayerQt::setChildren): reimp
+        (WebCore::GraphicsLayerQt::addChild): reimp
+        (WebCore::GraphicsLayerQt::addChildAtIndex): reimp
+        (WebCore::GraphicsLayerQt::addChildAbove): reimp
+        (WebCore::GraphicsLayerQt::addChildBelow): reimp
+        (WebCore::GraphicsLayerQt::replaceChild): reimp
+        (WebCore::GraphicsLayerQt::removeFromParent): reimp
+        (WebCore::GraphicsLayerQt::setMaskLayer): reimp
+        (WebCore::GraphicsLayerQt::setPosition): reimp
+        (WebCore::GraphicsLayerQt::setAnchorPoint): reimp
+        (WebCore::GraphicsLayerQt::setSize): reimp
+        (WebCore::GraphicsLayerQt::setTransform): reimp
+        (WebCore::GraphicsLayerQt::setChildrenTransform): reimp
+        (WebCore::GraphicsLayerQt::setPreserves3D): reimp
+        (WebCore::GraphicsLayerQt::setMasksToBounds): reimp
+        (WebCore::GraphicsLayerQt::setDrawsContent): reimp
+        (WebCore::GraphicsLayerQt::setBackgroundColor): reimp
+        (WebCore::GraphicsLayerQt::clearBackgroundColor): reimp
+        (WebCore::GraphicsLayerQt::setContentsOpaque): reimp
+        (WebCore::GraphicsLayerQt::setBackfaceVisibility): reimp
+        (WebCore::GraphicsLayerQt::setOpacity): reimp
+        (WebCore::GraphicsLayerQt::setContentsRect): reimp
+        (WebCore::GraphicsLayerQt::setContentsToImage): reimp
+        (WebCore::GraphicsLayerQt::setContentsBackgroundColor): reimp
+        (WebCore::GraphicsLayerQt::setGeometryOrientation): reimp
+        (WebCore::GraphicsLayerQt::setContentsOrientation): reimp
+        (WebCore::GraphicsLayerQt::distributeOpacity): reimp
+        (WebCore::GraphicsLayerQt::accumulatedOpacity): reimp
+        (WebCore::GraphicsLayerQt::syncCompositingState): reimp
+        (WebCore::GraphicsLayerQt::nativeLayer): reimp (QGraphicsItem*)
+        (WebCore::GraphicsLayerQt::platformLayer): reimp (QGraphicsItem*)
+        (WebCore::solveEpsilon): copy from AnimationBase.cpp
+        (WebCore::solveCubicBezierFunction): copy from AniamtionBase.cpp
+        (WebCore::applyTimingFunction): use WebCore's timing and not Qt's
+        (WebCore::webkitAnimationToQtAnimationValue): safely figure out
+        animation values
+        (WebCore::AnimationQtBase::AnimationQtBase): base class for Qt-based
+        Webcore-initiated animations
+        (WebCore::AnimationQtBase::updateState): notify when an animation
+        starts
+        (WebCore::AnimationQtBase::duration): reimp QAbstractAnimation
+        (WebCore::AnimationQt:::AnimationQtBase):
+        (WebCore::AnimationQt::updateCurrentTime): realize keyframes from
+        progress
+        (WebCore::TransformAnimationQt::TransformAnimationQt): ctor
+        (WebCore::TransformAnimationQt::~TransformAnimationQt): dtor
+        (WebCore::TransformAnimationQt::applyFrame): set the actual QTransform
+        based on WebCore TransformOperations
+        (WebCore::TransformAnimationQt::updateState): change cache mode
+        (WebCore::OpacityAnimationQt::OpacityAnimationQt):
+        (WebCore::OpacityAnimationQt::applyFrame): change item's opacity
+        (WebCore::OpacityAnimationQt::updateState):
+        (WebCore::GraphicsLayerQt::addAnimation): convert WebCore Animation to
+        Qt Animation
+        (WebCore::GraphicsLayerQt::removeAnimationsForProperty):
+        (WebCore::GraphicsLayerQt::removeAnimationsForKeyframes):
+        (WebCore::GraphicsLayerQt::pauseAnimation):
+        (WebCore::GraphicsLayerQt::suspendAnimations):
+        (WebCore::GraphicsLayerQt::resumeAnimations):
+        * platform/graphics/qt/GraphicsLayerQt.h: Added.
+        * platform/qt/QWebPageClient.h: virtual functions for QGraphicsWebView
+        compositing
+        (QWebPageClient::setRootGraphicsLayer): let QGraphicsWebView know that
+        compositing has started/ended
+        (QWebPageClient::markForSync): let QGraphicsWebView know the
+        compositing layers need to sync, either soon or with the next update
+
+2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Adding QPixmap/QImage support for the Qt hybrid layer

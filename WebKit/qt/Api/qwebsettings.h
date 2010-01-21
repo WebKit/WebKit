@@ -68,7 +68,8 @@ public:
 #endif
         LocalContentCanAccessRemoteUrls,
         DnsPrefetchEnabled,
-        XSSAuditorEnabled
+        XSSAuditorEnabled,
+        AcceleratedCompositingEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

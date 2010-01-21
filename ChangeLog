@@ -1,3 +1,13 @@
+2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Implement GraphicsLayer for accelerated layer compositing
+        https://bugs.webkit.org/show_bug.cgi?id=33514
+
+        * WebKit.pri: Addded compile flags to enable accelerated compositing
+        on versions higher than 4.5
+
 2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

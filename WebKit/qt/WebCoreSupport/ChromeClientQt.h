@@ -123,6 +123,15 @@ namespace WebCore {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
 #endif
+
+#if USE(ACCELERATED_COMPOSITING)
+        // see ChromeClient.h
+        // this is a hook for WebCore to tell us what we need to do with the GraphicsLayers
+        virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
+        virtual void setNeedsOneShotDrawingSynchronization();
+        virtual void scheduleCompositingLayerSync();
+#endif
+
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 
         virtual void formStateDidChange(const Node*) { }

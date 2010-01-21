@@ -22,10 +22,11 @@
 #include "config.h"
 #include "qwebview.h"
 
+#include "Page.h"
 #include "QWebPageClient.h"
+#include "Settings.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
-
 #include "qbitmap.h"
 #include "qevent.h"
 #include "qpainter.h"
@@ -247,6 +248,9 @@ void QWebView::setPage(QWebPage* page)
                 this, SLOT(_q_pageDestroyed()));
     }
     setAttribute(Qt::WA_OpaquePaintEvent, d->page);
+#if USE(ACCELERATED_COMPOSITING)
+    d->page->d->page->settings()->setAcceleratedCompositingEnabled(false);
+#endif
     update();
 }
 

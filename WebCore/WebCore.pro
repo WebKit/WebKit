@@ -2722,6 +2722,19 @@ CONFIG(standalone_package):isEqual(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VER
             plugins/win/PaintHooks.asm
     }
 }
+contains(DEFINES, WTF_USE_ACCELERATED_COMPOSITING) {
+HEADERS += \
+    rendering/RenderLayerBacking.h \
+    rendering/RenderLayerCompositor.h \
+    platform/graphics/GraphicsLayer.h \
+    platform/graphics/GraphicsLayerClient.h \
+    platform/graphics/qt/GraphicsLayerQt.h
+SOURCES += \
+    platform/graphics/GraphicsLayer.cpp \
+    platform/graphics/qt/GraphicsLayerQt.cpp \
+    rendering/RenderLayerBacking.cpp \
+    rendering/RenderLayerCompositor.cpp
+}
 
 symbian {
     shared {
