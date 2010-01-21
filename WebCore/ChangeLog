@@ -1,3 +1,17 @@
+2010-01-20  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        Touch Events are not sent to iframes
+        https://bugs.webkit.org/show_bug.cgi?id=33894
+
+        Fix the touch event handler so it does not bail out early if the main frame document does not have any touch listeners registered, as there may be embedded iframes that have registered for touch events.
+
+        Test: fast/events/touch/touch-inside-iframe.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Instead of looking at the document of the main frame to see if touch event listeners are registered, look at the document of the target element to account for iframes.
+
 2010-01-20  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.

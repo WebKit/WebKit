@@ -1,0 +1,31 @@
+<html>
+<script type="text/javascript">
+if (window.layoutTestController)
+{
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    if (window.eventSender)
+    {
+        eventSender.addTouchPoint(50, 150);
+        eventSender.touchStart();
+    }
+}
+
+function testComplete()
+{
+    document.getElementById('console').innerText = 'PASS';
+    layoutTestController.notifyDone();
+}
+</script>
+<body onload="runTest();">
+<p>Test that touch events are sent to iframes that listen for them even if the parent frame does not listen for them.</p>
+<div id="console">
+<p>FAIL - no touchstart received!</p>
+</div>
+<iframe src="./resources/touch-inside-iframe2.html" />
+</body>
+</html>

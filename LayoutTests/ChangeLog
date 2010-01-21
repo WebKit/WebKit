@@ -1,3 +1,17 @@
+2010-01-20  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        Touch Events are not sent to iframes
+        https://bugs.webkit.org/show_bug.cgi?id=33894
+
+        Testcase to verify that touch events are sent to iframes when the main frame document does not have any touch event listeners installed.
+
+        * fast/events/touch/resources: Added.
+        * fast/events/touch/resources/touch-inside-iframe2.html: Added.
+        * fast/events/touch/touch-inside-iframe-expected.txt: Added.
+        * fast/events/touch/touch-inside-iframe.html: Added.
+
 2010-01-20  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Alexey Proskuryakov.

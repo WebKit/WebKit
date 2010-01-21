@@ -1,0 +1,4 @@
+Test that touch events are sent to iframes that listen for them even if the parent frame does not listen for them.
+
+PASS
+

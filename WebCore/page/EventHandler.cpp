@@ -2537,13 +2537,6 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setL
 #if ENABLE(TOUCH_EVENTS)
 bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 {
-    Document* doc = m_frame->document();
-    if (!doc)
-        return false;
-
-    if (!doc->hasListenerType(Document::TOUCH_LISTENER))
-        return false;
-
     RefPtr<TouchList> touches = TouchList::create();
     RefPtr<TouchList> pressedTouches = TouchList::create();
     RefPtr<TouchList> releasedTouches = TouchList::create();
@@ -2563,6 +2556,12 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // Touch events should not go to text nodes
         if (target && target->isTextNode())
             target = target->parentNode();
+
+        Document* doc = target->document();
+        if (!doc)
+            continue;
+        if (!doc->hasListenerType(Document::TOUCH_LISTENER))
+            continue;
 
         int adjustedPageX = lroundf(framePoint.x() / m_frame->pageZoomFactor());
         int adjustedPageY = lroundf(framePoint.y() / m_frame->pageZoomFactor());
