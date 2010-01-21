@@ -79,7 +79,7 @@ public:
     virtual void removedFromDocument();
 
     // from CachedResourceClient
-    virtual void setCSSStyleSheet(const String &url, const String& charset, const CachedCSSStyleSheet* sheet);
+    virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
     bool isLoading() const;
     virtual bool sheetLoaded();
 

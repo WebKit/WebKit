@@ -52,9 +52,9 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 {
     if (!m_loading)
-        c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), this);
+        c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
 }
-    
+
 void CachedCSSStyleSheet::allClientsRemoved()
 {
     if (isSafeToMakePurgeable())
@@ -112,7 +112,7 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
-        c->setCSSStyleSheet(m_response.url().string(), m_decoder->encoding().name(), this);
+        c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::error()

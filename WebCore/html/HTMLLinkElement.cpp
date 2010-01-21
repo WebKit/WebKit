@@ -254,9 +254,9 @@ void HTMLLinkElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
+void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
-    m_sheet = CSSStyleSheet::create(this, url, charset);
+    m_sheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
     bool strictParsing = !document()->inCompatMode();
     bool enforceMIMEType = strictParsing;
@@ -272,7 +272,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (enforceMIMEType && needsSiteSpecificQuirks) {
         // Covers both http and https, with or without "www."
-        if (url.contains("mcafee.com/japan/", false))
+        if (baseURL.string().contains("mcafee.com/japan/", false))
             enforceMIMEType = false;
     }
 #endif
@@ -285,11 +285,11 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
     // valid CSS rule.
     // This prevents an attacker playing games by injecting CSS strings into
     // HTML, XML, JSON, etc. etc.
-    if (!document()->securityOrigin()->canRequest(KURL(ParsedURLString, url)))
+    if (!document()->securityOrigin()->canRequest(baseURL))
         crossOriginCSS = true;
 
     if (crossOriginCSS && !validMIMEType && !m_sheet->hasSyntacticallyValidCSSHeader())
-        m_sheet = CSSStyleSheet::create(this, url, charset);
+        m_sheet = CSSStyleSheet::create(this, href, baseURL, charset);
 
     if (strictParsing && needsSiteSpecificQuirks) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
@@ -297,7 +297,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset,
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
         // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
         // while the other lacks the second trailing newline.
-        if (url.endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+        if (baseURL.string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
                 && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
             ASSERT(m_sheet->length() == 1);
             ExceptionCode ec;

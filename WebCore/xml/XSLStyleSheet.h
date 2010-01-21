@@ -43,18 +43,18 @@ class XSLImportRule;
 class XSLStyleSheet : public StyleSheet {
 public:
 #if !USE(QXMLQUERY)
-    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& href)
+    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& href, const KURL& baseURL)
     {
-        return adoptRef(new XSLStyleSheet(parentImport, href));
+        return adoptRef(new XSLStyleSheet(parentImport, href, baseURL));
     }
 #endif
-    static PassRefPtr<XSLStyleSheet> create(Node* parentNode, const String& href)
+    static PassRefPtr<XSLStyleSheet> create(Node* parentNode, const String& href, const KURL& baseURL)
     {
-        return adoptRef(new XSLStyleSheet(parentNode, href, false));
+        return adoptRef(new XSLStyleSheet(parentNode, href, baseURL, false));
     }
-    static PassRefPtr<XSLStyleSheet> createEmbedded(Node* parentNode, const String& href)
+    static PassRefPtr<XSLStyleSheet> createEmbedded(Node* parentNode, const String& href, const KURL& baseURL)
     {
-        return adoptRef(new XSLStyleSheet(parentNode, href, true));
+        return adoptRef(new XSLStyleSheet(parentNode, href, baseURL, true));
     }
 
     virtual ~XSLStyleSheet();
@@ -90,9 +90,9 @@ public:
     bool processed() const { return m_processed; }
 
 private:
-    XSLStyleSheet(Node* parentNode, const String& href, bool embedded);
+    XSLStyleSheet(Node* parentNode, const String& href, const KURL& baseURL, bool embedded);
 #if !USE(QXMLQUERY)
-    XSLStyleSheet(XSLImportRule* parentImport, const String& href);
+    XSLStyleSheet(XSLImportRule* parentImport, const String& href, const KURL& baseURL);
 #endif
 
     Document* m_ownerDocument;

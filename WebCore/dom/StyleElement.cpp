@@ -103,7 +103,7 @@ void StyleElement::createSheet(Element* e, const String& text)
         if (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get())) {
             document->addPendingSheet();
             setLoading(true);
-            m_sheet = CSSStyleSheet::create(e, String(), document->inputEncoding());
+            m_sheet = CSSStyleSheet::create(e, String(), KURL(), document->inputEncoding());
             m_sheet->parseString(text, !document->inCompatMode());
             m_sheet->setMedia(mediaList.get());
             m_sheet->setTitle(e->title());

@@ -52,13 +52,13 @@ XSLStyleSheet* XSLImportRule::parentStyleSheet() const
     return (parent() && parent()->isXSLStyleSheet()) ? static_cast<XSLStyleSheet*>(parent()) : 0;
 }
 
-void XSLImportRule::setXSLStyleSheet(const String& url, const String& sheet)
+void XSLImportRule::setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet)
 {
     if (m_styleSheet)
         m_styleSheet->setParent(0);
-    
-    m_styleSheet = XSLStyleSheet::create(this, url);
-    
+
+    m_styleSheet = XSLStyleSheet::create(this, href, baseURL);
+
     XSLStyleSheet* parent = parentStyleSheet();
     if (parent)
         m_styleSheet->setParentStyleSheet(parent);
@@ -87,14 +87,14 @@ void XSLImportRule::loadSheet()
     
     String absHref = m_strHref;
     XSLStyleSheet* parentSheet = parentStyleSheet();
-    if (!parentSheet->href().isNull())
+    if (!parentSheet->putativeBaseURL().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(KURL(ParsedURLString, parentSheet->href()), m_strHref).string();
+        absHref = KURL(parentSheet->putativeBaseURL(), m_strHref).string();
     
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     for (parent = this->parent(); parent; parent = parent->parent()) {
-        if (parent->isXSLStyleSheet() && absHref == static_cast<XSLStyleSheet*>(parent)->href())
+        if (parent->isXSLStyleSheet() && absHref == static_cast<XSLStyleSheet*>(parent)->putativeBaseURL().string())
             return;
     }
     

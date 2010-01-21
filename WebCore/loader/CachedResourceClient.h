@@ -42,6 +42,7 @@ namespace WebCore {
     class String;
     class Image;
     class IntRect;
+    class KURL;
 
     /**
      * @internal
@@ -65,8 +66,8 @@ namespace WebCore {
         // e.g., in the b/f cache or in a background tab).
         virtual bool willRenderImage(CachedImage*) { return false; }
 
-        virtual void setCSSStyleSheet(const String& /*URL*/, const String& /*charset*/, const CachedCSSStyleSheet*) { }
-        virtual void setXSLStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
+        virtual void setCSSStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* charset */, const CachedCSSStyleSheet*) { }
+        virtual void setXSLStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* sheet */) { }
 
         virtual void fontLoaded(CachedFont*) {};
 

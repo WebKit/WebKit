@@ -24,27 +24,30 @@
 
 namespace WebCore {
 
-StyleSheet::StyleSheet(StyleSheet* parentSheet, const String& href)
+StyleSheet::StyleSheet(StyleSheet* parentSheet, const String& href, const KURL& baseURL)
     : StyleList(parentSheet)
     , m_parentNode(0)
-    , m_strHref(href)
+    , m_href(href)
+    , m_baseURL(baseURL)
     , m_disabled(false)
 {
 }
 
 
-StyleSheet::StyleSheet(Node* parentNode, const String& href)
+StyleSheet::StyleSheet(Node* parentNode, const String& href, const KURL& baseURL)
     : StyleList(0)
     , m_parentNode(parentNode)
-    , m_strHref(href)
+    , m_href(href)
+    , m_baseURL(baseURL)
     , m_disabled(false)
 {
 }
 
-StyleSheet::StyleSheet(StyleBase* owner, const String& href)
+StyleSheet::StyleSheet(StyleBase* owner, const String& href, const KURL& baseURL)
     : StyleList(owner)
     , m_parentNode(0)
-    , m_strHref(href)
+    , m_href(href)
+    , m_baseURL(baseURL)
     , m_disabled(false)
 {
 }

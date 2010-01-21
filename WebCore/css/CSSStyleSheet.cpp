@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const String& charset)
-    : StyleSheet(parentSheet, href)
+CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const KURL& baseURL, const String& charset)
+    : StyleSheet(parentSheet, href, baseURL)
     , m_doc(parentSheet ? parentSheet->doc() : 0)
     , m_namespaces(0)
     , m_charset(charset)
@@ -46,8 +46,8 @@ CSSStyleSheet::CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, con
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const String& charset)
-    : StyleSheet(parentNode, href)
+CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const KURL& baseURL, const String& charset)
+    : StyleSheet(parentNode, href, baseURL)
     , m_doc(parentNode->document())
     , m_namespaces(0)
     , m_charset(charset)
@@ -58,8 +58,8 @@ CSSStyleSheet::CSSStyleSheet(Node* parentNode, const String& href, const String&
 {
 }
 
-CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const String& charset)
-    : StyleSheet(ownerRule, href)
+CSSStyleSheet::CSSStyleSheet(CSSRule* ownerRule, const String& href, const KURL& baseURL, const String& charset)
+    : StyleSheet(ownerRule, href, baseURL)
     , m_namespaces(0)
     , m_charset(charset)
     , m_loadCompleted(false)

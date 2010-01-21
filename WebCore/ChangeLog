@@ -1,3 +1,93 @@
+2010-01-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Stylesheet href property shows redirected URL unlike other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=33683
+
+        Teach StyleSheet the difference between original and final URLs in
+        redirect chains.  Unfortunately, StyleSheet needs to know both of these
+        URLs.  The original URL is needed for the href property and the final
+        URL is needed as the baseURL.
+
+        This change required touching a lot of lines of code because we need to
+        plumb this information to the StyleSheet object.  I audited all
+        existing clients of href() and setHref() to see whether they wanted the
+        original or final URLs.  I then updated the clients (except the JS
+        bindings themselves) to use the correct accessor.
+
+        Test: http/tests/security/stylesheet-href-redirect.html
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSImportRule.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::create): 
+        (WebCore::CSSStyleSheet::createInline): Added a new constructor to deal
+        with "inline" style sheets that don't have a distinct original and
+        final URL.
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::baseURL): This code wants to use the final URL,
+        not the original URL.  Updated it to grab the baseURL directly.
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::href):
+        (WebCore::StyleSheet::setBaseURL): This function really just updates
+        the base URL of the style sheet, so I made it more explicit.
+        (WebCore::StyleSheet::putativeBaseURL): We need an accessor for the
+        base URL, but baseURL is already taken.
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::pageUserSheet):
+        (WebCore::Document::pageGroupUserSheets):
+        (WebCore::Document::elementSheet):
+        (WebCore::Document::mappedElementSheet):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        (WebCore::ProcessingInstruction::setXSLStyleSheet):
+        * dom/ProcessingInstruction.h:
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::createSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLLinkElement.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::checkNotify): This code now passes both
+        the original and final URL into setCSSStyleSheet so that the style
+        sheet can have both.
+        * loader/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::setCSSStyleSheet):
+        (WebCore::CachedResourceClient::setXSLStyleSheet):
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        (WebCore::CachedXSLStyleSheet::checkNotify): I don't have any direct
+        evidence that we need to change the XSLStyleSheet behavior, which is
+        why I wasn't able to add a test for the behavior.  However, the objects
+        are parallel enough that it seemed like the right thing to do.
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLImportRule.h:
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::create):
+        (WebCore::XSLStyleSheet::createEmbedded):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::parseString):
+        (WebCore::XSLStyleSheet::loadChildSheets):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xsltStylesheetPointer):
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTProcessor::transformToString):
+
 2010-01-20  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Alexey Proskuryakov.
