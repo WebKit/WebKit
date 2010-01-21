@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Scrollbar.h"
 
+#include "AccessibilityScrollbar.h"
+#include "AXObjectCache.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -117,6 +119,16 @@ void Scrollbar::setSteps(int lineStep, int pageStep, int pixelsPerStep)
 
 bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
+    if (AXObjectCache::accessibilityEnabled()) {
+        if (parent() && parent()->isFrameView()) {
+            Document* document = static_cast<FrameView*>(parent())->frame()->document();
+            AXObjectCache* cache = document->axObjectCache();
+            AccessibilityScrollbar* axObject = static_cast<AccessibilityScrollbar*>(cache->getOrCreate(ScrollBarRole));
+            axObject->setScrollbar(this);
+            cache->postNotification(axObject, document, AXObjectCache::AXValueChanged, true);
+        }
+    }
+
     float step = 0;
     if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar))
         step = -1;

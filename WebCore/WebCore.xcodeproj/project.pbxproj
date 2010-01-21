@@ -2353,6 +2353,8 @@
 		93C441EF0F813A1A00C1A634 /* CollectionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */; };
 		93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441EE0F813A1A00C1A634 /* CollectionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C442000F813AE100C1A634 /* CollectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441FF0F813AE100C1A634 /* CollectionType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93C4F6EA1108F9A50099D0DB /* AccessibilityScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C4F6E81108F9A50099D0DB /* AccessibilityScrollbar.cpp */; };
+		93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
 		93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF0260AF6C52900018E89 /* NavigationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7700,6 +7702,8 @@
 		93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionCache.cpp; sourceTree = "<group>"; };
 		93C441EE0F813A1A00C1A634 /* CollectionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionCache.h; sourceTree = "<group>"; };
 		93C441FF0F813AE100C1A634 /* CollectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionType.h; sourceTree = "<group>"; };
+		93C4F6E81108F9A50099D0DB /* AccessibilityScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityScrollbar.cpp; sourceTree = "<group>"; };
+		93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollbar.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html.css; sourceTree = "<group>"; };
@@ -10640,14 +10644,16 @@
 				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
 				76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */,
 				76CDD2ED1103DA6600680521 /* AccessibilityMenuList.h */,
-				76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */,
-				76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */,
 				76CDD2F01103DA6600680521 /* AccessibilityMenuListOption.cpp */,
 				76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */,
+				76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */,
+				76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */,
 				29A8121E0FBB9C1D00510293 /* AccessibilityObject.cpp */,
 				29A812180FBB9C1D00510293 /* AccessibilityObject.h */,
 				29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */,
 				29A8121B0FBB9C1D00510293 /* AccessibilityRenderObject.h */,
+				93C4F6E81108F9A50099D0DB /* AccessibilityScrollbar.cpp */,
+				93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */,
 				0709FC4B1025DED80059CDBA /* AccessibilitySlider.cpp */,
 				0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */,
 				29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */,
@@ -18440,6 +18446,7 @@
 				2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */,
 				2E2D99EA10E2BC3800496337 /* DOMBlobInternal.h in Headers */,
 				59B5977511086579007159E8 /* BridgeJSC.h in Headers */,
+				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20613,6 +20620,7 @@
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
 				2E2D99E810E2BC1C00496337 /* DOMBlob.mm in Sources */,
 				59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */,
+				93C4F6EA1108F9A50099D0DB /* AccessibilityScrollbar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

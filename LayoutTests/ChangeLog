@@ -1,3 +1,15 @@
+2010-01-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=33923 REGRESSION 
+        (Safari 4): AXValueChanged no longer sent for text area scrollbars
+        -and corresponding-
+        <rdar://problem/6942686>
+
+        * platform/mac/accessibility/change-notification-on-scroll-expected.txt: Added.
+        * platform/mac/accessibility/change-notification-on-scroll.html: Added.
+
 2010-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         No review

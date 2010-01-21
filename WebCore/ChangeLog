@@ -1,3 +1,46 @@
+2010-01-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=33923 REGRESSION 
+        (Safari 4): AXValueChanged no longer sent for text area scrollbars
+        -and corresponding-
+        <rdar://problem/6942686>
+
+        New class AccessibilityScrollbar inherits directly from 
+        AccessibilityObject.
+        * accessibility/AccessibilityScrollbar.cpp: Added.
+        (WebCore::AccessibilityScrollbar::AccessibilityScrollbar):
+        (WebCore::AccessibilityScrollbar::create):
+        (WebCore::AccessibilityScrollbar::valueForRange):
+        * accessibility/AccessibilityScrollbar.h: Added.
+        (WebCore::AccessibilityScrollbar::setScrollbar):
+        (WebCore::AccessibilityScrollbar::roleValue):
+        (WebCore::AccessibilityScrollbar::accessibilityIsIgnored):
+        (WebCore::AccessibilityScrollbar::size):
+        (WebCore::AccessibilityScrollbar::elementRect):
+        (WebCore::AccessibilityScrollbar::parentObject):
+
+        AXObjectCache::getOrCreate() now has a case for ScrollBarRole, 
+        which will create a new AccessibilityScrollbar. I also added a new 
+        version of postNotification() that does not require a renderer. The 
+        old postNotification() calls the new one.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::postNotification):
+        * accessibility/AXObjectCache.h:
+
+        When AX is enabled, getOrCreate an AccessibilityScrollbar and send 
+        a notification.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::scroll):
+
+        Fix project files.
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
 2010-01-21  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

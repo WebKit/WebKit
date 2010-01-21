@@ -43,6 +43,7 @@ This file contains the list of files needed to build WebCore.
         accessibility/AccessibilityListBox.cpp
         accessibility/AccessibilityListBoxOption.cpp
         accessibility/AccessibilityRenderObject.cpp
+        accessibility/AccessibilityScrollbar.cpp
         accessibility/AccessibilitySlider.cpp
         accessibility/AccessibilityTable.cpp
         accessibility/AccessibilityTableCell.cpp
