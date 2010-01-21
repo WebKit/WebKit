@@ -1,3 +1,17 @@
+2010-01-20  Daniel Bates  <dbates@webkit.org>
+
+        No review, rolling out 53591.
+        http://trac.webkit.org/changeset/53591
+        https://bugs.webkit.org/show_bug.cgi?id=29564
+
+        Rolling out the change committed in change set 53591
+        <http://trac.webkit.org/changeset/53591> because it caused
+        a regression of test /fast/replaced/table-percent-height.html
+        on the Qt bot.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+
 2010-01-20  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by David Levin.

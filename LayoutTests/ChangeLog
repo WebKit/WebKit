@@ -1,5 +1,19 @@
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
+        No review, rolling out 53591.
+        http://trac.webkit.org/changeset/53591
+        https://bugs.webkit.org/show_bug.cgi?id=29564
+
+        Rolling out the change committed in change set 53591
+        <http://trac.webkit.org/changeset/53591> because it caused
+        a regression of test /fast/replaced/table-percent-height.html
+        on the Qt bot.
+
+        * fast/css/button-height-expected.txt: Removed.
+        * fast/css/button-height.html: Removed.
+
+2010-01-20  Daniel Bates  <dbates@webkit.org>
+
         No review, rolling out 53594.
         http://trac.webkit.org/changeset/53594
         https://bugs.webkit.org/show_bug.cgi?id=33936
