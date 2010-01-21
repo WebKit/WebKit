@@ -1,3 +1,15 @@
+2010-01-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Fixes style in WebCore/bridge/jni/JNIBridge
+        https://bugs.webkit.org/show_bug.cgi?id=33914
+
+        No new tests, style fixes only.
+
+        * bridge/jni/JNIBridge.cpp:
+        * bridge/jni/JNIBridge.h:
+
 2010-01-13  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Oliver Hunt.
