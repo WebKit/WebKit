@@ -13,7 +13,7 @@ PASS setValueAsDateAndGetValue(2009, 11, 31) is "2009-12-31"
 PASS setValueAsDateAndGetValue(10000, 0, 1) is "10000-01-01"
 PASS setValueAsDateAndGetValue(794, 9, 22) is ""
 PASS setValueAsDateAndGetValue(1582, 8, 30) is ""
-FAIL setValueAsDateAndGetValue(1582, 9, 1) should be 1582-10-01. Was .
+PASS setValueAsDateAndGetValue(1582, 9, 15) is "1582-10-15"
 PASS setValueAsDateAndGetValue(1582, 9, 31) is "1582-10-31"
 PASS setValueAsDateAndGetValue(275760, 8, 13) is "275760-09-13"
 PASS setValueAsDateAndGetValue(275760, 8, 14) is ""

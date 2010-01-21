@@ -1,3 +1,10 @@
+2010-01-21  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Fix a FAIL test by a wrong input.
+
+        * fast/forms/input-valueasdate-date-expected.txt:
+        * fast/forms/script-tests/input-valueasdate-date.js:
+
 2010-01-21  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -27,7 +27,7 @@ shouldBe('setValueAsDateAndGetValue(10000, 0, 1)', '"10000-01-01"');
 
 shouldBe('setValueAsDateAndGetValue(794, 9, 22)', '""');
 shouldBe('setValueAsDateAndGetValue(1582, 8, 30)', '""');
-shouldBe('setValueAsDateAndGetValue(1582, 9, 1)', '"1582-10-01"');
+shouldBe('setValueAsDateAndGetValue(1582, 9, 15)', '"1582-10-15"');
 shouldBe('setValueAsDateAndGetValue(1582, 9, 31)', '"1582-10-31"');
 shouldBe('setValueAsDateAndGetValue(275760, 8, 13)', '"275760-09-13"');
 shouldBe('setValueAsDateAndGetValue(275760, 8, 14)', '""'); // Date of JavaScript can't represent this.
