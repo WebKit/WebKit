@@ -146,6 +146,17 @@
 
 2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        <rdar://problem/7086565> Crash in WebCore::PlugInView::dispatchNPEvent
+
+        Reviewed by Sam Weinig.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::handleEvent):
+        Ref the PluginView to protect it from deletion while calling into the
+        plug-in.
+
+2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
         MSAA: accSelect() is not implemented
 
         https://bugs.webkit.org/show_bug.cgi?id=33918

@@ -145,6 +145,9 @@ void PluginView::handleEvent(Event* event)
     if (!m_plugin || m_isWindowed)
         return;
 
+    // Protect the plug-in from deletion while dispatching the event.
+    RefPtr<PluginView> protect(this);
+
     if (event->isMouseEvent())
         handleMouseEvent(static_cast<MouseEvent*>(event));
     else if (event->isKeyboardEvent())
