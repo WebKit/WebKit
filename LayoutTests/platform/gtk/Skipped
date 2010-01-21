@@ -3652,6 +3652,7 @@ plugins/qt-qwidget-plugin.html
 plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
+plugins/mouse-events-fixedpos.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
 

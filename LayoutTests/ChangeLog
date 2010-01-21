@@ -1,3 +1,11 @@
+2010-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        No review
+
+        Skip plugins/mouse-events-fixedpos.html on gtk, since it requires a special test plugin.
+
+        * platform/gtk/Skipped:
+
 2010-01-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Oliver Hunt.
