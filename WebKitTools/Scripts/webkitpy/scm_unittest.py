@@ -204,6 +204,9 @@ class SCMTest(unittest.TestCase):
         self.assertTrue(re.search('test2', r3_patch))
         self.assertTrue(re.search('test2', self.scm.diff_for_revision(2)))
 
+    def _shared_test_checkout_revision(self):
+        self.assertEqual(self.scm.checkout_revision(), 4)
+
     def _shared_test_svn_apply_git_patch(self):
         self._setup_webkittools_scripts_symlink(self.scm)
         git_binary_addition = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
@@ -465,6 +468,9 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
     def test_diff_for_revision(self):
         self._shared_test_diff_for_revision()
 
+    def test_checkout_revision(self):
+        self._shared_test_checkout_revision()
+
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()
 
@@ -556,6 +562,9 @@ class GitTest(SCMTest):
 
     def test_diff_for_revision(self):
         self._shared_test_diff_for_revision()
+
+    def test_checkout_revision(self):
+        self._shared_test_checkout_revision()
 
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()

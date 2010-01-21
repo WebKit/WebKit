@@ -1,3 +1,45 @@
+2010-01-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-commit-queue status page is confusing
+        https://bugs.webkit.org/show_bug.cgi?id=33496
+
+        This should improve the status page by removing more Fail messages.
+        To do this, I re-factored the CommitQueue and the AbstractReviewQueues
+        to behave more like one another.  This meant moving where the failure reporting was done.
+        Previously the AbstractReviewQueue always used the parent process to report the error,
+        while CommitQueue used the subprocess when possible, and the parent only reported errors
+        that we didn't know how to handle (bugs in the commit-queue itself).
+        Now the AbstractReviewQueue follow's the commit-queue's model.  This got rid of a try-block
+        in both implementations and required teaching handle_script_error in each to post Fail messages
+        to the status server instead of calling exit(1).
+
+        This will also make the style-queue share more bug posting logic with other queues:
+        https://bugs.webkit.org/show_bug.cgi?id=33871
+
+        * Scripts/webkitpy/commands/early_warning_system.py:
+         - Don't exit(1) as that will cause the calling queue to also report Fail to the status server.
+           Implementors of handle_script_error are expected to update the status server if needed, but only exit if the error could not be handled.
+           So we instead pass patch_has_failed_this_queue=True to _update_status_for_script_error in the case that this was a real failure.
+           _update_status_for_script_error knows how to post the Fail message to the status server.
+         - Teach _update_status_for_script_error how to post Fail messages to the status server.
+        * Scripts/webkitpy/commands/queues.py:
+         - Remove the try block from process_work_item since the caller already has one.
+         - Only CC watchers on failure to cut down on commit-queue generated mail.
+         - handle_unexpected_error needs to mark _did_fail now that the try block is gone from process_work_item.
+         - Abstract _format_script_error_output_for_bug to share code between all queues.
+         - The new _format_script_error_output_for_bug allows the style-queue to share the posting limit with other queues, as well as support linking to the full output.
+         - Rename _can_build_and_test to _current_checkout_builds_and_passes_tests to better explain what revision it's testing.
+         - Move logging out of _can_build_and_test and make the logs explain what revision we're testing.
+         - handle_script_error now posts Fail instead of the try block in process_work_item handling it.
+        * Scripts/webkitpy/queueengine.py:
+         - QueueEngine is no longer used just by the commit-queue, update the logging to say "processing" instead of landing.
+        * Scripts/webkitpy/scm.py:
+         - Add new checkout_revision function.
+        * Scripts/webkitpy/scm_unittest.py:
+         - Test our new checkout_revision function.
+
 2010-01-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
