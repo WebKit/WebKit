@@ -1,3 +1,13 @@
+2010-01-21  Steve Block  <steveblock@google.com>
+
+        Unreviewed build fix.
+
+        Copy BridgeJSC.h to generated headers on Windows
+
+        No new tests, build fix only.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.
