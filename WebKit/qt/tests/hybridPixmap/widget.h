@@ -23,6 +23,9 @@
 #include <QImage>
 #include <QPixmap>
 #include <QWidget>
+#include "qwebview.h"
+
+typedef QWebView WebView;
 
 namespace Ui {
 class Widget;
