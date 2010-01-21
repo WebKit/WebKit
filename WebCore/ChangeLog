@@ -1,3 +1,21 @@
+2010-01-13  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] handle media redirections
+        https://bugs.webkit.org/show_bug.cgi?id=33539
+
+        Media redirections support.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::mediaLocationChanged):
+        (WebCore::MediaPlayerPrivate::loadNextLocation):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivate::pipelineReset):
+
 2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.

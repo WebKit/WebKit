@@ -36,6 +36,7 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ScrollView.h"
+#include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
 #include "Widget.h"
@@ -59,9 +60,24 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
     MediaPlayer::NetworkState error;
     MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
     gint percent = 0;
+    bool issueError = true;
+    bool attemptNextLocation = false;
+
+    if (message->structure) {
+        const gchar* messageTypeName = gst_structure_get_name(message->structure);
+
+        // Redirect messages are sent from elements, like qtdemux, to
+        // notify of the new location(s) of the media.
+        if (!g_strcmp0(messageTypeName, "redirect")) {
+            mp->mediaLocationChanged(message);
+            return true;
+        }
+    }
 
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
+        if (mp && mp->pipelineReset())
+            break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         LOG_VERBOSE(Media, "Error: %d, %s", err->code,  err->message);
 
@@ -72,13 +88,18 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
             || err->code == GST_CORE_ERROR_MISSING_PLUGIN
             || err->code == GST_RESOURCE_ERROR_NOT_FOUND)
             error = MediaPlayer::FormatError;
-        else if (err->domain == GST_STREAM_ERROR)
+        else if (err->domain == GST_STREAM_ERROR) {
             error = MediaPlayer::DecodeError;
-        else if (err->domain == GST_RESOURCE_ERROR)
+            attemptNextLocation = true;
+        } else if (err->domain == GST_RESOURCE_ERROR)
             error = MediaPlayer::NetworkError;
 
-        if (mp)
-            mp->loadingFailed(error);
+        if (mp) {
+            if (attemptNextLocation)
+                issueError = !mp->loadNextLocation();
+            if (issueError)
+                mp->loadingFailed(error);
+        }
         break;
     case GST_MESSAGE_EOS:
         LOG_VERBOSE(Media, "End of Stream");
@@ -208,6 +229,9 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_isStreaming(false)
     , m_size(IntSize())
     , m_buffer(0)
+    , m_mediaLocations(0)
+    , m_mediaLocationCurrentIndex(0)
+    , m_resetPipeline(false)
     , m_paused(true)
     , m_seeking(false)
     , m_playbackRate(1)
@@ -227,6 +251,11 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     if (m_buffer)
         gst_buffer_unref(m_buffer);
     m_buffer = 0;
+
+    if (m_mediaLocations) {
+        gst_structure_free(m_mediaLocations);
+        m_mediaLocations = 0;
+    }
 
     if (m_playBin) {
         gst_element_set_state(m_playBin, GST_STATE_NULL);
@@ -628,6 +657,8 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
 
+        m_resetPipeline = state <= GST_STATE_READY;
+
         if (state == GST_STATE_READY)
             m_readyState = MediaPlayer::HaveNothing;
         else if (state == GST_STATE_PAUSED)
@@ -700,6 +731,105 @@ void MediaPlayerPrivate::updateStates()
             oldReadyState, m_readyState);
         m_player->readyStateChanged();
     }
+}
+
+void MediaPlayerPrivate::mediaLocationChanged(GstMessage* message)
+{
+    if (m_mediaLocations)
+        gst_structure_free(m_mediaLocations);
+
+    if (message->structure) {
+        // This structure can contain:
+        // - both a new-location string and embedded locations structure
+        // - or only a new-location string.
+        m_mediaLocations = gst_structure_copy(message->structure);
+        const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
+
+        if (locations)
+            m_mediaLocationCurrentIndex = gst_value_list_get_size(locations) -1;
+
+        loadNextLocation();
+    }
+}
+
+bool MediaPlayerPrivate::loadNextLocation()
+{
+    if (!m_mediaLocations)
+        return false;
+
+    const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
+    const gchar* newLocation = 0;
+
+    if (!locations) {
+        // Fallback on new-location string.
+        newLocation = gst_structure_get_string(m_mediaLocations, "new-location");
+        if (!newLocation)
+            return false;
+    }
+
+    if (!newLocation) {
+        if (m_mediaLocationCurrentIndex < 0) {
+            m_mediaLocations = 0;
+            return false;
+        }
+
+        const GValue* location = gst_value_list_get_value(locations,
+                                                          m_mediaLocationCurrentIndex);
+        const GstStructure* structure = gst_value_get_structure(location);
+
+        if (!structure) {
+            m_mediaLocationCurrentIndex--;
+            return false;
+        }
+
+        newLocation = gst_structure_get_string(structure, "new-location");
+    }
+
+    if (newLocation) {
+        // Found a candidate. new-location is not always an absolute url
+        // though. We need to take the base of the current url and
+        // append the value of new-location to it.
+
+        gchar* currentLocation = 0;
+        g_object_get(m_playBin, "uri", &currentLocation, NULL);
+
+        KURL currentUrl(KURL(), currentLocation);
+        g_free(currentLocation);
+
+        KURL newUrl;
+
+        if (gst_uri_is_valid(newLocation))
+            newUrl = KURL(KURL(), newLocation);
+        else
+            newUrl = KURL(KURL(), currentUrl.baseAsString() + newLocation);
+
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(currentUrl);
+        if (securityOrigin->canRequest(newUrl)) {
+            LOG_VERBOSE(Media, "New media url: %s", newUrl.string().utf8().data());
+
+            // Reset player states.
+            m_networkState = MediaPlayer::Loading;
+            m_player->networkStateChanged();
+            m_readyState = MediaPlayer::HaveNothing;
+            m_player->readyStateChanged();
+
+            // Reset pipeline state.
+            m_resetPipeline = true;
+            gst_element_set_state(m_playBin, GST_STATE_READY);
+
+            GstState state;
+            gst_element_get_state(m_playBin, &state, 0, 0);
+            if (state <= GST_STATE_READY) {
+                // Set the new uri and start playing.
+                g_object_set(m_playBin, "uri", newUrl.string().utf8().data(), NULL);
+                gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+                return true;
+            }
+        }
+    }
+    m_mediaLocationCurrentIndex--;
+    return false;
+
 }
 
 void MediaPlayerPrivate::loadStateChanged()
