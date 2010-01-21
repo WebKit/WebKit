@@ -1,3 +1,11 @@
+2010-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        No review
+
+        Skip plugins/mouse-events-fixedpos.html on Qt, since it requires a special test plugin.
+
+        * platform/qt/Skipped:
+
 2010-01-21  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

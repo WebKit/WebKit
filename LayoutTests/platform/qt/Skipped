@@ -522,6 +522,7 @@ plugins/embed-attributes-setting.html
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
+plugins/mouse-events-fixedpos.html
 plugins/open-and-close-window-with-plugin.html
 
 security/block-test.html
