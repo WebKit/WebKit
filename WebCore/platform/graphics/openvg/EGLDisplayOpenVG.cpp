@@ -222,7 +222,6 @@ SurfaceOpenVG* EGLDisplayOpenVG::sharedPlatformSurface()
         // We'll just make the shared surface as small as possible: 1x1 pixel.
         EGLConfig config = defaultPbufferConfig();
         EGLSurface surface = createPbufferSurface(IntSize(1, 1), config);
-        ASSERT_EGL_NO_ERROR();
 
         EGLContext context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, 0);
         ASSERT_EGL_NO_ERROR();
@@ -237,7 +236,7 @@ SurfaceOpenVG* EGLDisplayOpenVG::sharedPlatformSurface()
     return m_sharedPlatformSurface;
 }
 
-EGLSurface EGLDisplayOpenVG::createPbufferSurface(const IntSize& size, const EGLConfig& config)
+EGLSurface EGLDisplayOpenVG::createPbufferSurface(const IntSize& size, const EGLConfig& config, EGLint* errorCode)
 {
     const EGLint attribList[] = {
         EGL_WIDTH, size.width(),
@@ -245,7 +244,13 @@ EGLSurface EGLDisplayOpenVG::createPbufferSurface(const IntSize& size, const EGL
         EGL_NONE
     };
     EGLSurface surface = eglCreatePbufferSurface(m_display, config, attribList);
-    if (eglGetError() != EGL_SUCCESS)
+
+    if (errorCode)
+        *errorCode = eglGetError();
+    else
+        ASSERT_EGL_NO_ERROR();
+
+    if (surface == EGL_NO_SURFACE)
         return EGL_NO_SURFACE;
 
     EGLint surfaceConfigId;

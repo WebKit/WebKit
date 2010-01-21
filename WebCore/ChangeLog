@@ -1,3 +1,40 @@
+2010-01-21  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Adam Treat.
+
+        Don't call vgGetError()/eglGetError() repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=33959
+
+        For vgGetError(), I missed the part of the spec where
+        it says that calling that function clears the error
+        and subsequent calls will return VG_NO_ERROR again.
+
+        For eglGetError(), the specification doesn't mention
+        that kind of behavior, and interpretations seem to
+        differ between EGL implementations (even within
+        Khronos: the OpenVG reference implementation doesn't
+        reset the error code - and even mentions the difference
+        to vgGetError() in a comment - whereas the online
+        OpenGL ES API document explicitly specifies clearing
+        the error code).
+
+        It thus makes sense not to call either of the two
+        error functions more than once for checking a single
+        EGL/OpenVG call. This patch adapts assertions to
+        accommodate for this behavior, and also needs to
+        change surface creation methods as they previously
+        relied on multiple calls of eglGetError().
+
+        * platform/graphics/openvg/EGLDisplayOpenVG.cpp:
+        (WebCore::EGLDisplayOpenVG::sharedPlatformSurface):
+        (WebCore::EGLDisplayOpenVG::createPbufferSurface):
+        * platform/graphics/openvg/EGLDisplayOpenVG.h:
+        * platform/graphics/openvg/EGLUtils.h:
+        * platform/graphics/openvg/SurfaceOpenVG.cpp:
+        (WebCore::SurfaceOpenVG::SurfaceOpenVG):
+        * platform/graphics/openvg/SurfaceOpenVG.h:
+        * platform/graphics/openvg/VGUtils.h:
+
 2010-01-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

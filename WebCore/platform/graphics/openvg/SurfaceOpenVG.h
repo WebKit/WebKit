@@ -54,21 +54,17 @@ public:
      * the given display. If config is not specified, the display's default
      * pbuffer config is used.
      *
-     * For reasons of recoverability (e.g. ImageBuffer's "bool success"
-     * return value), this constructor won't assert if creation of the surface
-     * fails. Make sure to check successful surface creation with either
-     * ASSERT_EGL_NO_ERROR() or the surface's isValid() method.
+     * This constructor will trigger an assertion if creation of the surface
+     * fails, unless you pledge to manually process the error code by passing
+     * a non-zero pointer as errorCode parameter. The error code returned by
+     * eglGetError() will be written to that variable.
      */
-    SurfaceOpenVG(const IntSize& size, const EGLDisplay& display, EGLConfig* config = 0);
+    SurfaceOpenVG(const IntSize& size, const EGLDisplay& display, EGLConfig* config = 0, EGLint* errorCode = 0);
 
     /**
      * Create a new EGL window surface with the specified native window handle
      * and config on the given display. If config is not specified, the
      * display's default window config is used.
-     *
-     * For reasons of recoverability, this constructor won't assert if creation
-     * of the surface fails. Make sure to check successful surface creation
-     * with either ASSERT_EGL_NO_ERROR() or the surface's isValid() method.
      */
     SurfaceOpenVG(EGLNativeWindowType window, const EGLDisplay& display, EGLConfig* config = 0);
 

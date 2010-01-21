@@ -62,8 +62,10 @@ static inline const char* toEGLErrorConstant(EGLint error)
 #if ASSERT_DISABLED
 #define ASSERT_EGL_NO_ERROR() ((void)0)
 #else
-#define ASSERT_EGL_NO_ERROR() \
-    ASSERT_WITH_MESSAGE(eglGetError() == VG_NO_ERROR, "Found %s", toEGLErrorConstant(eglGetError()))
+#define ASSERT_EGL_NO_ERROR() do { \
+    EGLint eglErrorCode = eglGetError(); \
+    ASSERT_WITH_MESSAGE(eglErrorCode == EGL_SUCCESS, "Found %s", toEGLErrorConstant(eglErrorCode)); \
+} while (0)
 #endif
 
 #endif

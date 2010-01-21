@@ -47,8 +47,10 @@ public:
 
     /** Creates a pbuffer surface using the given config. If no surface
      * could be created, EGL_NO_SURFACE is returned and errors can be
-     * caught with eglGetError() (respectively ASSERT_EGL_NO_ERROR()). */
-    EGLSurface createPbufferSurface(const IntSize&, const EGLConfig&);
+     * checked with the value that is written to the errorCode parameter
+     * If no surface could be created and errorCode is zero, this method
+     * will trigger an assertion by itself. */
+    EGLSurface createPbufferSurface(const IntSize&, const EGLConfig&, EGLint* errorCode = 0);
 
     EGLSurface surfaceForWindow(EGLNativeWindowType, const EGLConfig&);
 

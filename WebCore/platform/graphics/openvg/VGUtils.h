@@ -50,8 +50,10 @@ static inline const char* toVGErrorConstant(VGErrorCode error)
 #if ASSERT_DISABLED
 #define ASSERT_VG_NO_ERROR() ((void)0)
 #else
-#define ASSERT_VG_NO_ERROR() \
-    ASSERT_WITH_MESSAGE(vgGetError() == VG_NO_ERROR, "Found %s", toVGErrorConstant(vgGetError()))
+#define ASSERT_VG_NO_ERROR() do { \
+    VGErrorCode vgErrorCode = vgGetError(); \
+    ASSERT_WITH_MESSAGE(vgErrorCode == VG_NO_ERROR, "Found %s", toVGErrorConstant(vgErrorCode)); \
+} while (0)
 #endif
 
 #endif
