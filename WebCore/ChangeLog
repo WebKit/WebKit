@@ -1,3 +1,12 @@
+2010-01-21  Albert J. Wong  <ajwong@chromium.org>
+
+        [chromium] Unreviewed build fix.
+
+        Fix possible use of initialized variable warning in release mode.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Deserializer::doDeserialize):
+
 2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r53644.
