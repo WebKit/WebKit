@@ -69,7 +69,8 @@ public:
     void setHeight(int height) { m_height = height; }
 
     bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
-
+    bool isZero() const { return !m_width && !m_height; }
+    
     void expand(int width, int height)
     {
         m_width += width;

@@ -1,3 +1,41 @@
+2010-01-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Hit testing on composited plugins is broken
+        https://bugs.webkit.org/show_bug.cgi?id=33927
+        <rdar://problem/7559069>
+
+        RenderWidget::paint()'s strategy of moving widgets at paint time, using tx and ty, was flawed
+        because tx,ty are not always root-relative, especially when painting into compositing layers.
+        This would move widgets to the wrong location, which caused hit testing issues.
+        
+        Widgets are usually positioned by layout. The one time this was not true was scrolling fixed-position
+        elements, so we now reposition widgets after scrolling too.
+        
+        There was a related problem, which was that widgets expect the graphics context to be set up for
+        root-relative painting. To fix this, adjust the CTM and the paintRect when the widget's frameRect
+        is in a different coordinate system to the painting offset.
+        
+        Test: plugins/mouse-events-fixedpos.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged): Update widget positions, to handle widgets in fixed position
+        elements, but only if we're not already inside of layout.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::translate): Add a translate() convenience method that takes a FloatSize.
+
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::isZero): Add a convenience method for testing for a zero size.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint): Adjust a comment.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): Detect when the widget's frame is in a different coordinate system
+        to painting, and adjust the CTM and paintRect in that case.
+
 2010-01-21  Andrei Popescu  <andreip@google.com>
 
         Reviewed by David Levin.

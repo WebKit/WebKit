@@ -1,3 +1,16 @@
+2010-01-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Hit testing on composited plugins is broken
+        https://bugs.webkit.org/show_bug.cgi?id=33927
+        <rdar://problem/7559069>
+
+        Testcase for hit testing on a fixed-position plugin after scrolling.
+        
+        * plugins/mouse-events-fixedpos-expected.txt: Added.
+        * plugins/mouse-events-fixedpos.html: Added.
+
 2010-01-21  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

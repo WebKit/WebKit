@@ -950,6 +950,13 @@ void FrameView::scrollPositionChanged()
     if (layer)
         layer->updateLayerPositions(RenderLayer::UpdateCompositingLayers);
 #endif
+
+    // Update widget positions to take care of widgets inside fixed position elements,
+    // but only if we're not inside of layout.
+    if (!m_nestedLayoutCount) {
+        if (RenderView* root = m_frame->contentRenderer())
+            root->updateWidgetPositions();
+    }
 }
 
 HostWindow* FrameView::hostWindow() const

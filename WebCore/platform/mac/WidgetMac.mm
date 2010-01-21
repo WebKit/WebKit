@@ -197,7 +197,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         END_BLOCK_OBJC_EXCEPTIONS;
     } else {
         // This is the case of drawing into a bitmap context other than a window backing store. It gets hit beneath
-        // -cacheDisplayInRect:toBitmapImageRep:.
+        // -cacheDisplayInRect:toBitmapImageRep:, and when painting into compositing layers.
 
         // Transparent subframes are in fact implemented with scroll views that return YES from -drawsBackground (whenever the WebView
         // itself is in drawsBackground mode). In the normal drawing code path, the scroll views are never asked to draw the background,
