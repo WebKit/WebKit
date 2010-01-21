@@ -2,6 +2,17 @@
 
         Reviewed by Oliver Hunt.
 
+        Use the inline i386 assembly for x86_64 as well rather than falling back to using pthread mutexes.
+
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+
+2010-01-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         <rdar://problem/7215063> Use GCD instead of an extra thread for FastMalloc scavenging on platforms where it is supported
 
         Abstract the background scavenging slightly so that an alternate implementation that uses GCD can be used on platforms
