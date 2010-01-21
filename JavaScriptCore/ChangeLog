@@ -1,3 +1,20 @@
+2010-01-21  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Object.getOwnPropertyDescriptor always returns undefined for JS API objects
+        https://bugs.webkit.org/show_bug.cgi?id=33946
+
+        Ideally the getOwnPropertyDescriptor() reimplementation should return an
+        access descriptor that wraps the property getter and setter callbacks, but
+        that approach is much more involved than returning a value descriptor.
+        Keep it simple for now.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyDescriptor):
+        * API/tests/testapi.js:
+
 2010-01-20  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
