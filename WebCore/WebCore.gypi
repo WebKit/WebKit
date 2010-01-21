@@ -414,6 +414,8 @@
             'accessibility/AccessibilityObject.h',
             'accessibility/AccessibilityRenderObject.cpp',
             'accessibility/AccessibilityRenderObject.h',
+            'accessibility/AccessibilityScrollbar.cpp',
+            'accessibility/AccessibilityScrollbar.h',
             'accessibility/AccessibilitySlider.cpp',
             'accessibility/AccessibilitySlider.h',
             'accessibility/AccessibilityTable.cpp',
