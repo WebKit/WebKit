@@ -83,7 +83,12 @@ ULONG WebGeolocationPosition::Release()
 
 HRESULT WebGeolocationPosition::initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy)
 {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    m_position = GeolocationPosition::create(timestamp, latitude, longitude, accuracy);
+    return S_OK;
+#else
     return E_FAIL;
+#endif
 }
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)

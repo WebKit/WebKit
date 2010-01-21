@@ -1,3 +1,12 @@
+2010-01-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add missing implementation for WebGeolocationPosition::initWithTimestamp.
+
+        * WebGeolocationPosition.cpp:
+        (WebGeolocationPosition::initWithTimestamp): Implemented.
+
 2010-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: accSelect() is not implemented
