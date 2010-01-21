@@ -36,9 +36,6 @@ namespace WebCore {
 // A class that stores static enablers for all experimental features
 class RuntimeEnabledFeatures {
 public:
-    static void setDatabaseEnabled(bool isEnabled) { isDatabaseEnabled = isEnabled; }
-    static bool databaseEnabled() { return isDatabaseEnabled; }
-
     static void setLocalStorageEnabled(bool isEnabled) { isLocalStorageEnabled = isEnabled; }
     static bool localStorageEnabled() { return isLocalStorageEnabled; }
 
@@ -58,7 +55,6 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
 
-    static bool isDatabaseEnabled;
     static bool isLocalStorageEnabled;
     static bool isSessionStorageEnabled;
     static bool isNotificationsEnabled;

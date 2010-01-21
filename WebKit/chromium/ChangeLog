@@ -1,3 +1,17 @@
+2010-01-21  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add changes missing from r53595, without which Chromium has no database.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33966
+
+        No new tests - fixes database layout tests in Chromium.
+
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableDatabase):
+        (WebKit::WebRuntimeFeatures::isDatabaseEnabled):
+
 2010-01-21  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
