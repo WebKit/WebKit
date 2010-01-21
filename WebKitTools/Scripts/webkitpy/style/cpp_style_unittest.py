@@ -3578,6 +3578,9 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('void webkit_dom_object_init();', '')
         self.assert_lint('void webkit_dom_object_class_init();', '')
 
+        # The GTK+ APIs use GTK+ naming style, which includes lower-cased, _-separated values.
+        self.assert_lint('void this_is_a_gtk_style_name(int var1, int var2)', '', 'WebKit/gtk/webkit/foo.cpp')
+
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
 

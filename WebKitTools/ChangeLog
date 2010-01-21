@@ -1,3 +1,16 @@
+2010-01-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        [style-queue] should not complain about identifier names with underscores under WebKit/gtk/webkit/
+        https://bugs.webkit.org/show_bug.cgi?id=33356
+
+        White list unix_hacker_style names in WebKit/gtk/webkit because these
+        are used in the GTK+ API.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+
 2010-01-21  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
