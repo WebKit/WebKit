@@ -1373,6 +1373,7 @@ sub openWebSocketServerIfNeeded()
     my $webSocketPythonPath = "WebKitTools/pywebsocket";
     my $webSocketHandlerDir = "$testDirectory";
     my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
+    my $webSocketHandlerMapFile = "$webSocketHandlerScanDir/handler_map.txt";
     my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
     my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
     my $logFile = "$absTestResultsDirectory/pywebsocket_log.txt";
@@ -1382,6 +1383,7 @@ sub openWebSocketServerIfNeeded()
         "-p", "$webSocketPort",
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
+        "-m", "$webSocketHandlerMapFile",
         "-l", "$logFile",
         "--strict",
     );

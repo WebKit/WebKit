@@ -56,7 +56,7 @@ _MANDATORY_HEADERS = [
 ]
 
 _FIRST_FIVE_LINES = map(re.compile, [
-    r'^GET /[\S]+ HTTP/1.1\r\n$',
+    r'^GET /[\S]* HTTP/1.1\r\n$',
     r'^Upgrade: WebSocket\r\n$',
     r'^Connection: Upgrade\r\n$',
     r'^Host: [\S]+\r\n$',

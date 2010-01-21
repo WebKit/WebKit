@@ -1,3 +1,17 @@
+2010-01-20  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket: Request-URI should not be empty when no tralling slash in host
+        https://bugs.webkit.org/show_bug.cgi?id=33689
+
+        * websocket/tests/handler_map.txt: Added.
+          use websocket/tests/echo-location_wsh.py to handle request for
+          ws://127.0.0.1:8880
+        * websocket/tests/script-tests/url-no-trailing-slash.js: Added.
+        * websocket/tests/url-no-trailing-slash-expected.txt: Added.
+        * websocket/tests/url-no-trailing-slash.html: Added.
+
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

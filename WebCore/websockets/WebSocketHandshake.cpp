@@ -76,9 +76,14 @@ static String extractResponseCode(const char* header, int len)
 
 static String resourceName(const KURL& url)
 {
-    if (url.query().isNull())
-        return url.path();
-    return url.path() + "?" + url.query();
+    String name = url.path();
+    if (name.isEmpty())
+        name = "/";
+    if (!url.query().isNull())
+        name += "?" + url.query();
+    ASSERT(!name.isEmpty());
+    ASSERT(!name.contains(' '));
+    return name;
 }
 
 WebSocketHandshake::WebSocketHandshake(const KURL& url, const String& protocol, ScriptExecutionContext* context)

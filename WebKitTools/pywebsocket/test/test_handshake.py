@@ -258,6 +258,14 @@ _STRICTLY_GOOD_REQUESTS = (
         'Cookie: abc\r\n'
         '\r\n',
     ),
+    (
+        'GET / HTTP/1.1\r\n',
+        'Upgrade: WebSocket\r\n',
+        'Connection: Upgrade\r\n',
+        'Host: example.com\r\n',
+        'Origin: http://example.com\r\n',
+        '\r\n',
+    ),
 )
 
 _NOT_STRICTLY_GOOD_REQUESTS = (
