@@ -1,5 +1,15 @@
 2010-01-21  Steve Block  <steveblock@google.com>
 
+        Unreviewed speculative build fix for Windows.
+
+        Adds missing include path for JSCBridge.h on Windows, added in http://trac.webkit.org/changeset/53620
+
+        No new tests, build fix only.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
+2010-01-21  Steve Block  <steveblock@google.com>
+
         Unreviewed build fix.
 
         Adds missing include path for JSCBridge.h, added in http://trac.webkit.org/changeset/53620
