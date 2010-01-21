@@ -1,3 +1,9 @@
+2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r53644.
+
+        * WebCore.pro: accessibility/AccessibilityScrollbar.cpp and accessibility/AccessibilityScrollbar.h added.
+
 2010-01-21  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
