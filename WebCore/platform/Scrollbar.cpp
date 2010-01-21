@@ -119,6 +119,7 @@ void Scrollbar::setSteps(int lineStep, int pageStep, int pixelsPerStep)
 
 bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
+#if HAVE(ACCESSIBILITY)
     if (AXObjectCache::accessibilityEnabled()) {
         if (parent() && parent()->isFrameView()) {
             Document* document = static_cast<FrameView*>(parent())->frame()->document();
@@ -128,6 +129,7 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
             cache->postNotification(axObject, document, AXObjectCache::AXValueChanged, true);
         }
     }
+#endif
 
     float step = 0;
     if ((direction == ScrollUp && m_orientation == VerticalScrollbar) || (direction == ScrollLeft && m_orientation == HorizontalScrollbar))

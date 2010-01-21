@@ -1,3 +1,10 @@
+2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r53644.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::scroll): missing HAVE(ACCESSIBILITY) guard added.
+
 2010-01-21  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.
