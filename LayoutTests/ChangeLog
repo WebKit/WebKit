@@ -1,3 +1,16 @@
+2010-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [Gtk] media/video-currentTime-set.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=33897
+
+        Refactored the test to use the "seeked" event.
+
+        * media/video-currentTime-set-expected.txt:
+        * media/video-currentTime-set.html:
+        * platform/gtk/Skipped:
+
 2010-01-21  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Fix incorrect close tags.

@@ -5566,7 +5566,6 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 fast/css/opacity-float.html 
 
 # Media tests that keep failing on the bot
-media/video-currentTime-set.html
 media/video-play-pause-events.html
 
 # New events failing; see https://bugs.webkit.org/show_bug.cgi?id=28823
