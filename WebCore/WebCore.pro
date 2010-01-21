@@ -157,6 +157,7 @@ INCLUDEPATH = \
     $$PWD/bindings/js \
     $$PWD/bridge \
     $$PWD/bridge/c \
+    $$PWD/bridge/jsc \
     $$PWD/css \
     $$PWD/dom \
     $$PWD/dom/default \

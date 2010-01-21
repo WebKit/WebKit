@@ -1,5 +1,18 @@
 2010-01-21  Steve Block  <steveblock@google.com>
 
+        Unreviewed build fix.
+
+        Adds missing include path for JSCBridge.h, added in http://trac.webkit.org/changeset/53620
+
+        No new tests, build fix only.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-01-21  Steve Block  <steveblock@google.com>
+
         Reviewed by David Levin.
 
         Move bridge interfaces Field, Class, Instance and Array from Bridge to BridgeJSC

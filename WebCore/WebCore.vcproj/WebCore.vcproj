@@ -42497,6 +42497,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\bridge\jsc\BridgeJSC.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\jsc\BridgeJSC.h"
+				>
+			</File>
+			<File
 				RelativePath="..\bridge\NP_jsobject.cpp"
 				>
 			</File>
@@ -42526,10 +42534,6 @@
 			</File>
 			<File
 				RelativePath="..\bridge\npruntime_priv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\Bridge.cpp"
 				>
 			</File>
 			<File
