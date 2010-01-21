@@ -220,9 +220,6 @@ inspector/elements-panel-rewrite-href.html
 
 # Missing layoutTestController.setSmartInsertDeleteEnabled()
 editing/selection/doubleclick-beside-cr-span.html
-
-# Missing layoutTestController.setDomainRelaxationForbiddenForURLScheme()
-http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

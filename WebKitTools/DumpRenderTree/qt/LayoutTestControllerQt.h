@@ -135,6 +135,7 @@ public slots:
     void overridePreference(const QString& name, const QVariant& value);
     void setUserStyleSheetLocation(const QString& url);
     void setUserStyleSheetEnabled(bool enabled);
+    void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
 
 private slots:
     void processWork();

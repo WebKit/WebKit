@@ -1,3 +1,14 @@
+2010-01-21  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] add setDomainRelaxationForbiddenForURLScheme in Qt DRT
+        https://bugs.webkit.org/show_bug.cgi?id=33945
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-01-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         No review, rolling out 53615 as it causes two

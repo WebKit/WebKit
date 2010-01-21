@@ -40,6 +40,11 @@ void QWEBKIT_EXPORT qt_drt_resetOriginAccessWhiteLists()
     SecurityOrigin::resetOriginAccessWhiteLists();
 }
 
+void QWEBKIT_EXPORT qt_drt_setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)
+{
+    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
+}
+
 /*!
     \class QWebSecurityOrigin
     \since 4.5
