@@ -1,3 +1,15 @@
+2010-01-21  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by David Levin.
+
+        Add PlatformBridge.h header and a typedef to give ChromiumBridge a new name: PlatformBridge.
+        https://bugs.webkit.org/show_bug.cgi?id=33917
+
+        No new tests needed, this is just to allow other methods to call ChromiumBridge
+        using the new 'PlatformBridge' name.
+
+        * platform/chromium/PlatformBridge.h: Added.
+
 2010-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r53625.
