@@ -343,7 +343,6 @@ SOURCES += \
     bindings/js/ScheduledAction.cpp \
     bindings/js/SerializedScriptValue.cpp \
     bindings/ScriptControllerBase.cpp \
-    bridge/Bridge.cpp \
     bridge/IdentifierRep.cpp \
     bridge/NP_jsobject.cpp \
     bridge/npruntime.cpp \
@@ -355,6 +354,7 @@ SOURCES += \
     bridge/c/c_instance.cpp \
     bridge/c/c_runtime.cpp \
     bridge/c/c_utility.cpp \
+    bridge/jsc/BridgeJSC.cpp \
     css/CSSBorderImageValue.cpp \
     css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
@@ -1036,6 +1036,7 @@ HEADERS += \
     bridge/c/c_instance.h \
     bridge/c/c_runtime.h \
     bridge/c/c_utility.h \
+    bridge/jsc/BridgeJSC.h \
     bridge/IdentifierRep.h \
     bridge/NP_jsobject.h \
     bridge/npruntime.h \

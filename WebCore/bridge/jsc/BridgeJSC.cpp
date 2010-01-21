@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +25,7 @@
  */
 
 #include "config.h"
-#include "Bridge.h"
+#include "BridgeJSC.h"
 
 #include "runtime_object.h"
 #include "runtime_root.h"

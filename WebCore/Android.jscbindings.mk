@@ -29,6 +29,7 @@ BINDING_C_INCLUDES := \
 	$(LOCAL_PATH)/bridge/c \
 	$(LOCAL_PATH)/bridge/jni \
 	$(LOCAL_PATH)/bridge/jni/jsc \
+	$(LOCAL_PATH)/bridge/jsc \
 	\
 	$(JAVASCRIPTCORE_PATH)/API \
 	$(JAVASCRIPTCORE_PATH)/assembler \
@@ -177,7 +178,6 @@ LOCAL_SRC_FILES += \
 	\
 	bindings/ScriptControllerBase.cpp \
 	\
-	bridge/Bridge.cpp \
 	bridge/IdentifierRep.cpp \
 	bridge/NP_jsobject.cpp \
 	bridge/c/c_class.cpp \
@@ -189,6 +189,7 @@ LOCAL_SRC_FILES += \
 	bridge/jni/jsc/JNIUtilityPrivate.cpp \
 	bridge/jni/jsc/JavaClassJSC.cpp \
 	bridge/jni/jsc/JavaInstanceJSC.cpp \
+	bridge/jsc/BridgeJSC.cpp \
 	bridge/npruntime.cpp \
 	bridge/runtime_array.cpp \
 	bridge/runtime_method.cpp \

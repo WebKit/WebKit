@@ -2,6 +2,29 @@
 
         Reviewed by David Levin.
 
+        Move bridge interfaces Field, Class, Instance and Array from Bridge to BridgeJSC
+        https://bugs.webkit.org/show_bug.cgi?id=33589
+
+        These interfaces use JSC-specific types, so are moved out of Bridge.h to allow the file to
+        be used with both JSC and V8.
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk: Modified. Removed Bridge.cpp and added BridgeJSC.cpp
+        * GNUmakefile.am: Modified. Removed Bridge.cpp and added BridgeJSC.[cpp|h]
+        * WebCore.pro: Modified. Removed Bridge.cpp and added BridgeJSC.[cpp|h]
+        * WebCore.xcodeproj/project.pbxproj: Modified. Removed Bridge.cpp and added BridgeJSC.[cpp|h]
+        * WebCoreSources.bkl: Modified. Removed Bridge.cpp and added BridgeJSC.cpp
+        * bridge/Bridge.cpp: Removed.
+        * bridge/Bridge.h: Modfied. Moved Field, Class, Instance and Array interfaces to BridgeJSC.h
+        * bridge/jsc: Added.
+        * bridge/jsc/BridgeJSC.cpp: Copied from WebCore/bridge/Bridge.cpp.
+        * bridge/jsc/BridgeJSC.h: Copied from WebCore/bridge/Bridge.h.
+
+2010-01-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
         Fixes style in WebCore/bridge/jni/JNIBridge
         https://bugs.webkit.org/show_bug.cgi?id=33914
 
