@@ -2,6 +2,25 @@
 
         Reviewed by David Levin.
 
+        [Android] bindings/v8/NPV8Object.cpp does not compile on Android
+        https://bugs.webkit.org/show_bug.cgi?id=33608
+
+        Use the standard WebKit header in bridge/npruntime.h.
+        Include PlatformBridge.h instead of ChroimiumBridge.h.
+        Add popupsAllowed() method to PlatformBridge.h on Android.
+        Add ARRAYSIZE_UNSAFE to PlatformBridge.h on Android.
+
+        No new tests, fixing the build.
+
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_Evaluate):
+        * bindings/v8/NPV8Object.h:
+        * platform/android/PlatformBridge.h:
+
+2010-01-21  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by David Levin.
+
         Add PlatformBridge.h header and a typedef to give ChromiumBridge a new name: PlatformBridge.
         https://bugs.webkit.org/show_bug.cgi?id=33917
 
