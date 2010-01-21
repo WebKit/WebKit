@@ -1,3 +1,10 @@
+2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Re-skip svg/custom/use-instanceRoot-event-bubbling.xhtml on Gtk bot, still fails. Though the other platforms are fixed.
+        Reopened bug 33835.
+
+        * platform/gtk/Skipped:
+
 2010-01-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
