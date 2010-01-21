@@ -1042,6 +1042,7 @@ HEADERS += \
     bridge/qt/qt_class.h \
     bridge/qt/qt_instance.h \
     bridge/qt/qt_runtime.h \
+    bridge/qt/qt_pixmapruntime.h \
     bridge/runtime_array.h \
     bridge/runtime_method.h \
     bridge/runtime_object.h \
@@ -1943,6 +1944,7 @@ SOURCES += \
     bindings/js/ScriptControllerQt.cpp \
     bridge/qt/qt_class.cpp \
     bridge/qt/qt_instance.cpp \
+    bridge/qt/qt_pixmapruntime.cpp \
     bridge/qt/qt_runtime.cpp \
     page/qt/DragControllerQt.cpp \
     page/qt/EventHandlerQt.cpp \

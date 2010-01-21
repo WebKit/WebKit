@@ -43,6 +43,7 @@
 #include "qobject.h"
 #include "qstringlist.h"
 #include "qt_instance.h"
+#include "qt_pixmapruntime.h"
 #include "qvarlengtharray.h"
 #include <JSFunction.h>
 #include <limits.h>
@@ -719,6 +720,8 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     }
                 }
                 break;
+            } else if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
+                ret = QtPixmapInstance::variantFromObject(object, static_cast<QMetaType::Type>(hint));
             } else if (hint == (QMetaType::Type) qMetaTypeId<QVariant>()) {
                 if (value.isUndefinedOrNull()) {
                     if (distance)
@@ -847,6 +850,9 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QObject* obj = variant.value<QObject*>();
         return QtInstance::getQtInstance(obj, root, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
     }
+
+    if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type())))
+        return QtPixmapInstance::createRuntimeObject(exec, root, variant);
 
     if (type == QMetaType::QVariantMap) {
         // create a new object, and stuff properties into it

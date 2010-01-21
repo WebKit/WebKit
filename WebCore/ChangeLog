@@ -1,3 +1,73 @@
+2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Adding QPixmap/QImage support for the Qt hybrid layer
+        Allows accesing QPixmap and QImage based arguments from Qt signals,
+        slots and properties
+        This is done by an intermediate object that can be turned into
+        web-based objects by calling either toHTMLImageElement() or
+        toDataURL()
+        https://bugs.webkit.org/show_bug.cgi?id=32461
+
+        Tests are in WebKit/qt/tests/hybridPixmap
+
+        * WebCore.pro:
+        * bridge/qt/qt_pixmapruntime.cpp: Added.
+        (JSC::Bindings::QtPixmapWidthField::name): "width"
+        (JSC::Bindings::QtPixmapWidthField::valueFromInstance): width of
+        pixmap
+        (JSC::Bindings::QtPixmapWidthField::setValueToInstance): nothing
+        (JSC::Bindings::QtPixmapHeightField::name): "height"
+        (JSC::Bindings::QtPixmapHeightField::valueFromInstance): height of
+        pixmap
+        (JSC::Bindings::QtPixmapHeightField::setValueToInstance): nothing
+        (JSC::Bindings::QtPixmapRuntimeMethod::numParameters): 0
+        (JSC::Bindings::QtPixmapCreateElementMethod::name): toHTMLImageElement
+        (JSC::Bindings::QtPixmapCreateElementMethod::invoke): creates an HTML
+        element from the QPixmap
+        (JSC::Bindings::QtPixmapToDataUrlMethod::name): "toDataURL"
+        (JSC::Bindings::QtPixmapToDataUrlMethod::invoke): encodes the image to
+        a base64 data url
+        (JSC::Bindings::QtPixmapToStringMethod::name): "toString"
+        (JSC::Bindings::QtPixmapToStringMethod::invoke): [Qt Native Pixmap
+        w,h]
+
+        (JSC::Bindings::QtPixmapRuntimeObjectImp::createStructure):
+        runtime-object broilerplate
+        (JSC::Bindings::QtPixmapRuntimeObjectImp::classInfo): ditto
+        (JSC::Bindings::QtPixmapRuntimeObjectImp::QtPixmapRuntimeObjectImp):
+        ditto
+        (JSC::Bindings::): ditto
+        (JSC::Bindings::QtPixmapClass::QtPixmapClass): class for the
+        intermediate pixmap-holder 
+        (JSC::Bindings::QtPixmapInstance::getClass): ditto
+        (JSC::Bindings::QtPixmapInstance::invokeMethod): ditto
+        (JSC::Bindings::QtPixmapClass::methodsNamed): toHTMLImageElement,
+        toDataURL
+        (JSC::Bindings::QtPixmapClass::fieldNamed): width, height
+        (JSC::Bindings::QtPixmapInstance::getPropertyNames):
+                toHTMLImageElement, toDataURL, width, height
+        (JSC::Bindings::QtPixmapInstance::defaultValue): nothing
+        (JSC::Bindings::QtPixmapInstance::valueOf): toString
+        (JSC::Bindings::data): holds a QVariant of type QImage/QPixmap
+        (JSC::Bindings::QtPixmapInstance::width): width of the image/pixmap
+        (JSC::Bindings::QtPixmapInstance::height): height of the image/pixmap
+        (JSC::Bindings::QtPixmapInstance::toPixmap): converts to a QPixmap
+        (JSC::Bindings::QtPixmapInstance::toImage): converts to a QImage
+        (JSC::Bindings::QtPixmapInstance::variantFromObject): makes sure this
+        is the right type of object, and creates a QVariant
+        (JSC::Bindings::QtPixmapInstance::createRuntimeObject): creates a new
+        intermediate pixmap holder from a QVariant
+        (JSC::Bindings::QtPixmapInstance::canHandle): returns true if a
+        QPixmap/QImage is required
+        * bridge/qt/qt_pixmapruntime.h: Added.
+        * bridge/qt/qt_runtime.cpp: hooks for the bridge
+        (JSC::Bindings::convertValueToQVariant): handle QPixmap/QImage if the
+        object is the intermediate pixmap holder or an HTMLImageElement
+        (JSC::Bindings::convertQVariantToValue): creates the intermediate
+        object from a QVariant of type QImage/QPixmap
+
 2010-01-21  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

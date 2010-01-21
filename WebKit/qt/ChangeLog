@@ -1,3 +1,39 @@
+2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Adding QPixmap/QImage support for the Qt hybrid layer
+        https://bugs.webkit.org/show_bug.cgi?id=32461
+
+        * tests/hybridPixmap: Added.
+        * tests/hybridPixmap/hybridPixmap.pro: Added.
+        * tests/hybridPixmap/resources.qrc: Added.
+        * tests/hybridPixmap/test.html: Added.
+        * tests/hybridPixmap/tst_hybridPixmap.cpp: Added.
+        (tst_hybridPixmap::tst_hybridPixmap): tests most of the use cases for
+        hybrid pixmap/image manipulation 
+        (tst_hybridPixmap::init): QTestLib initialization
+        (tst_hybridPixmap::cleanup): QTestLib cleanup
+        (tst_hybridPixmap::hybridPixmap): run the html file
+        * tests/hybridPixmap/widget.cpp: Added.
+        (Widget::Widget):
+        (Widget::refreshJS):
+        (Widget::start):
+        (Widget::completeTest):
+        (Widget::setPixmap):
+        (Widget::pixmap):
+        (Widget::setImage):
+        (Widget::image):
+        (Widget::~Widget):
+        (Widget::changeEvent):
+        (Widget::compare):
+        (Widget::imageSlot):
+        (Widget::pixmapSlot):
+        (Widget::randomSlot):
+        * tests/hybridPixmap/widget.h: Added.
+        * tests/hybridPixmap/widget.ui: Added.
+        * tests/tests.pro:
+
 2010-01-21  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
