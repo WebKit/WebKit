@@ -772,6 +772,15 @@ bool RenderListMarker::isImage() const
     return m_image && !m_image->errorOccurred();
 }
 
+IntRect RenderListMarker::localSelectionRect()
+{
+    InlineBox* box = inlineBoxWrapper();
+    if (!box)
+        return IntRect();
+    RootInlineBox* root = box->root();
+    return IntRect(x(), root->selectionTop() - y(), width(), root->selectionHeight());
+}
+
 void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (paintInfo.phase != PaintPhaseForeground)
@@ -800,8 +809,9 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 #endif
         context->drawImage(m_image->image(this, marker.size()), style()->colorSpace(), marker.location());
         if (selectionState() != SelectionNone) {
-            // FIXME: selectionRect() is in absolute, not painting coordinates.
-            context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());
+            IntRect selRect = localSelectionRect();
+            selRect.move(tx, ty);
+            context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
         }
         return;
     }
@@ -813,8 +823,9 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 #endif
 
     if (selectionState() != SelectionNone) {
-        // FIXME: selectionRect() is in absolute, not painting coordinates.
-        context->fillRect(selectionRect(), selectionBackgroundColor(), style()->colorSpace());
+        IntRect selRect = localSelectionRect();
+        selRect.move(tx, ty);
+        context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
     }
 
     const Color color(style()->color());

@@ -1,3 +1,18 @@
+2010-01-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Insufficient repaint issues with html embedded in foreignObject
+        https://bugs.webkit.org/show_bug.cgi?id=16318
+
+        Final part of fix -- now we render the selection rect of list
+        markers in a transformed context.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::localSelectionRect):
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderListMarker.h:
+
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
         No review, rolling out 53591.
