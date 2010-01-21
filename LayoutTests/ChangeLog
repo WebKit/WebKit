@@ -1,3 +1,16 @@
+2010-01-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Added platform specific (incorrect) results for plugins/mouse-events* for Windows,
+        and removed mouse-events from the Windows Skipped list. The landing of correct results
+        for these tests is being tracked by <http://webkit.org/b/33973>.
+
+        * platform/win/Skipped: Removed plugins/mouse-events from the Skipped List.
+        * platform/win/plugins: Added.
+        * platform/win/plugins/mouse-events-expected.txt: Added.
+        * platform/win/plugins/mouse-events-fixedpos-expected.txt: Added.
+
 2010-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         No review

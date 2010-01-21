@@ -1,0 +1,2 @@
+
+Test for bug 11517: Flash clicks/interactivity not working properly.

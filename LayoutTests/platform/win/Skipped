@@ -139,7 +139,6 @@ plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 plugins/get-url-with-blank-target.html
 plugins/jsobjc-dom-wrappers.html
 plugins/jsobjc-simple.html
-plugins/mouse-events.html
 plugins/open-and-close-window-with-plugin.html
 plugins/plugin-javascript-access.html
 plugins/root-object-premature-delete-crash.html
