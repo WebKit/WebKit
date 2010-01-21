@@ -1,3 +1,17 @@
+2010-01-20  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Disable the "seatbelt" coordinate validation functions in the
+        Skia graphics layer.  We believe all the underlying bugs have
+        been fixed, but just in case we're being overly optimistic, this
+        leaves in the code for an easy revert.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33908
+        Exercised by many layout tests.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+
 2010-01-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
