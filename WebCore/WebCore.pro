@@ -2741,7 +2741,6 @@ SOURCES += \
 symbian {
     shared {
         contains(CONFIG, def_files) {
-        contains(MMP_RULES, defBlock) {
             defFilePath=../WebKit/qt/symbian
         } else {
             MMP_RULES += EXPORTUNFROZEN
