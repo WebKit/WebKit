@@ -57,12 +57,31 @@ static inline void deleteUCharVector(const UChar* p)
     fastFree(const_cast<UChar*>(p));
 }
 
+// Some of the factory methods create buffers using fastMalloc.
+// We must ensure that all allocations of StringImpl are allocated using
+// fastMalloc so that we don't have mis-matched frees. We accomplish 
+// this by overriding the new and delete operators.
+void* StringImpl::operator new(size_t size, void* address)
+{
+    if (address)
+        return address;  // Allocating using an internal buffer
+    return fastMalloc(size);
+}
+
+void* StringImpl::operator new(size_t size)
+{
+    return fastMalloc(size);
+}
+
+void StringImpl::operator delete(void* address)
+{
+    fastFree(address);
+}
+
 // This constructor is used only to create the empty string.
 StringImpl::StringImpl()
     : m_data(0)
-    , m_sharedBuffer(0)
     , m_length(0)
-    , m_refCountAndFlags(s_refCountIncrement)
     , m_hash(0)
 {
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
@@ -73,9 +92,7 @@ StringImpl::StringImpl()
 
 inline StringImpl::StringImpl(const UChar* characters, unsigned length)
     : m_data(characters)
-    , m_sharedBuffer(0)
     , m_length(length)
-    , m_refCountAndFlags(s_refCountIncrement)
     , m_hash(0)
 {
     ASSERT(characters);
@@ -87,7 +104,7 @@ StringImpl::~StringImpl()
     if (inTable())
         AtomicString::remove(this);
     if (!bufferIsInternal()) {
-        SharedUChar* sharedBuffer = m_sharedBuffer;
+        SharedUChar* sharedBuffer = m_sharedBufferAndFlags.get();
         if (sharedBuffer)
             sharedBuffer->deref();
         else
@@ -953,7 +970,7 @@ PassRefPtr<StringImpl> StringImpl::create(const JSC::UString& str)
     if (sharedBuffer) {
         PassRefPtr<StringImpl> impl = adoptRef(new StringImpl(str.data(), str.size()));
         sharedBuffer->ref();
-        impl->m_sharedBuffer = sharedBuffer;
+        impl->m_sharedBufferAndFlags.set(sharedBuffer);
         return impl;
     }
     return StringImpl::create(str.data(), str.size());
@@ -980,7 +997,7 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
     data[length] = 0;
     terminatedString->m_length--;
     terminatedString->m_hash = string.m_hash;
-    terminatedString->m_refCountAndFlags |= s_refCountFlagHasTerminatingNullCharacter;
+    terminatedString->m_sharedBufferAndFlags.setFlag(HasTerminatingNullCharacter);
     return terminatedString.release();
 }
 
@@ -997,7 +1014,7 @@ PassRefPtr<StringImpl> StringImpl::crossThreadString()
     SharedUChar* shared = sharedBuffer();
     if (shared) {
         RefPtr<StringImpl> impl = adoptRef(new StringImpl(m_data, m_length));
-        impl->m_sharedBuffer = shared->crossThreadCopy().releaseRef();
+        impl->m_sharedBufferAndFlags.set(shared->crossThreadCopy().releaseRef());
         return impl.release();
     }
 
@@ -1010,9 +1027,9 @@ StringImpl::SharedUChar* StringImpl::sharedBuffer()
     if (m_length < minLengthToShare || bufferIsInternal())
         return 0;
 
-    if (!m_sharedBuffer)
-        m_sharedBuffer = SharedUChar::create(new OwnFastMallocPtr<UChar>(const_cast<UChar*>(m_data))).releaseRef();
-    return m_sharedBuffer;
+    if (!m_sharedBufferAndFlags.get())
+        m_sharedBufferAndFlags.set(SharedUChar::create(new OwnFastMallocPtr<UChar>(const_cast<UChar*>(m_data))).releaseRef());
+    return m_sharedBufferAndFlags.get();
 }
 
 
