@@ -4,9 +4,9 @@
 <script>
 function test()
 {
-    var ruby = document.getElementById('r');
-    var k = document.getElementById('k');
-    ruby.removeChild(k);    
+    var ruby = document.getElementById('R');
+    var s = document.getElementById('S');
+    ruby.removeChild(s);    
 }
 </script>
 </head>
@@ -15,7 +15,7 @@ function test()
 <p>Both lines should look identical (the first line is the one manipulated).</p>
 <br>
 <br>
-<p>準太郎は<ruby id="r"><span id="k">工業</span><rt>だいがく</rt></ruby>から卒業しました。</p>
-<p>準太郎は<ruby><rt>だいがく</rt></ruby>から卒業しました。</p>
+<p>&lt;ruby&gt; is defined in the <ruby id="R"><span id="S" style="color:red">SHOULDN'T SHOW!</span><rt>Hyper-text Markup Language</rt>5</ruby> spec.</p>
+<p>&lt;ruby&gt; is defined in the <ruby><rt>Hyper-text Markup Language</rt>5</ruby> spec.</p>
 </body>
 </html>
