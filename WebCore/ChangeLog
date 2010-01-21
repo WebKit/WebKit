@@ -1,3 +1,11 @@
+2010-01-21  Iain Campbell <iain.campbell@accenture.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Simplify the qmake code for freezing QtWebKit on Symbian.
+
+        * WebCore.pro:
+
 2010-01-21  Steve Block  <steveblock@google.com>
 
         Unreviewed speculative build fix for Windows.

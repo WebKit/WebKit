@@ -2740,14 +2740,9 @@ SOURCES += \
 
 symbian {
     shared {
+        contains(CONFIG, def_files) {
         contains(MMP_RULES, defBlock) {
-            MMP_RULES -= defBlock
-
-            MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
-                    "DEFFILE ../WebKit/qt/symbian/bwins/$${TARGET}.def" \
-                    "$${LITERAL_HASH}elif defined EABI" \
-                    "DEFFILE ../WebKit/qt/symbian/eabi/$${TARGET}.def" \
-                    "$${LITERAL_HASH}endif"
+            defFilePath=../WebKit/qt/symbian
         } else {
             MMP_RULES += EXPORTUNFROZEN
         }
