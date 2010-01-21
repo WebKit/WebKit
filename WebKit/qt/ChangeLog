@@ -1,3 +1,19 @@
+2010-01-21  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Improve the autotests of QtWebkit
+        https://bugs.webkit.org/show_bug.cgi?id=32216
+
+        Remove qWait() of the test when possible.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::loadFinished):
+        (tst_QWebPage::database):
+        (tst_QWebPage::testEnablePersistentStorage):
+        (tst_QWebPage::errorPageExtension):
+        (tst_QWebPage::screenshot):
+
 2010-01-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Prospective build fix for the Qt build.

@@ -18,28 +18,24 @@
     Boston, MA 02110-1301, USA.
 */
 
-
+#include "../util.h"
+#include <QDir>
+#include <QGraphicsWidget>
+#include <QLineEdit>
+#include <QMenu>
+#include <QPushButton>
 #include <QtTest/QtTest>
-
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
+#include <qnetworkrequest.h>
+#include <qwebdatabase.h>
 #include <qwebelement.h>
-#include <qwebpage.h>
-#include <qwidget.h>
-#include <QGraphicsWidget>
-#include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebhistory.h>
-#include <qnetworkrequest.h>
-#include <QDebug>
-#include <QLineEdit>
-#include <QMenu>
+#include <qwebpage.h>
 #include <qwebsecurityorigin.h>
-#include <qwebdatabase.h>
-#include <QPushButton>
-#include <QDir>
-#include "../util.h"
+#include <qwebview.h>
 
 class EventSpy : public QObject, public QList<QEvent::Type>
 {
@@ -226,10 +222,8 @@ void tst_QWebPage::loadFinished()
                             "<frame src=\"data:text/html,bar\"></frameset>"), QUrl());
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
-    QTest::qWait(3000);
-
-    QVERIFY(spyLoadStarted.count() > 1);
-    QVERIFY(spyLoadFinished.count() > 1);
+    QTRY_VERIFY(spyLoadStarted.count() > 1);
+    QTRY_VERIFY(spyLoadFinished.count() > 1);
 
     spyLoadFinished.clear();
 
@@ -476,7 +470,6 @@ void tst_QWebPage::database()
     // Remove removed test :-)
     QWebDatabase::removeAllDatabases();
     QVERIFY(!origin.databases().size());
-    QTest::qWait(1000);
 }
 
 class PluginPage : public QWebPage
@@ -1556,16 +1549,14 @@ void tst_QWebPage::testEnablePersistentStorage()
 
     QWebSettings::enablePersistentStorage();
 
-    // Give it some time to initialize - icon database needs it
-    QTest::qWait(1000);
 
-    QCOMPARE(webPage.settings()->testAttribute(QWebSettings::LocalStorageEnabled), true);
-    QCOMPARE(webPage.settings()->testAttribute(QWebSettings::OfflineStorageDatabaseEnabled), true);
-    QCOMPARE(webPage.settings()->testAttribute(QWebSettings::OfflineWebApplicationCacheEnabled), true);
+    QTRY_COMPARE(webPage.settings()->testAttribute(QWebSettings::LocalStorageEnabled), true);
+    QTRY_COMPARE(webPage.settings()->testAttribute(QWebSettings::OfflineStorageDatabaseEnabled), true);
+    QTRY_COMPARE(webPage.settings()->testAttribute(QWebSettings::OfflineWebApplicationCacheEnabled), true);
 
-    QVERIFY(!webPage.settings()->offlineStoragePath().isEmpty());
-    QVERIFY(!webPage.settings()->offlineWebApplicationCachePath().isEmpty());
-    QVERIFY(!webPage.settings()->iconDatabasePath().isEmpty());
+    QTRY_VERIFY(!webPage.settings()->offlineStoragePath().isEmpty());
+    QTRY_VERIFY(!webPage.settings()->offlineWebApplicationCachePath().isEmpty());
+    QTRY_VERIFY(!webPage.settings()->iconDatabasePath().isEmpty());
 }
 
 void tst_QWebPage::defaultTextEncoding()
@@ -1633,20 +1624,17 @@ void tst_QWebPage::errorPageExtension()
     QCOMPARE(page->history()->canGoForward(), false);
 
     page->triggerAction(QWebPage::Back);
-    QTest::qWait(2000);
-    QCOMPARE(page->history()->canGoBack(), false);
-    QCOMPARE(page->history()->canGoForward(), true);
+    QTRY_COMPARE(page->history()->canGoBack(), false);
+    QTRY_COMPARE(page->history()->canGoForward(), true);
 
     page->triggerAction(QWebPage::Forward);
-    QTest::qWait(2000);
-    QCOMPARE(page->history()->canGoBack(), true);
-    QCOMPARE(page->history()->canGoForward(), false);
+    QTRY_COMPARE(page->history()->canGoBack(), true);
+    QTRY_COMPARE(page->history()->canGoForward(), false);
 
     page->triggerAction(QWebPage::Back);
-    QTest::qWait(2000);
-    QCOMPARE(page->history()->canGoBack(), false);
-    QCOMPARE(page->history()->canGoForward(), true);
-    QCOMPARE(page->history()->currentItem().url(), QUrl("data:text/html,foo"));
+    QTRY_COMPARE(page->history()->canGoBack(), false);
+    QTRY_COMPARE(page->history()->canGoForward(), true);
+    QTRY_COMPARE(page->history()->currentItem().url(), QUrl("data:text/html,foo"));
 
     m_view->setPage(0);
 }
@@ -1732,10 +1720,7 @@ void tst_QWebPage::screenshot()
     page->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     QWebFrame* mainFrame = page->mainFrame();
     mainFrame->setHtml(html, QUrl::fromLocalFile(TESTS_SOURCE_DIR));
-    if (html.contains("</embed>")) {
-        // some reasonable time for the PluginStream to feed test.swf to flash and start painting
-        QTest::qWait(2000);
-    }
+    ::waitForSignal(mainFrame, SIGNAL(loadFinished(bool)), 2000);
 
     // take screenshot without a view
     takeScreenshot(page);
