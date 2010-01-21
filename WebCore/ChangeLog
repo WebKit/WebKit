@@ -1,3 +1,21 @@
+2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        Crash on dispatching SVG mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=33841
+
+        Return early SVGUseElement::instanceForShadowTreeElement if m_targetElementInstance is zero.
+        This only happens if the SVGUseElement has just been removed from the document and EventHandler
+        tries to dispatch a mouseout event to the corresponding SVGElementInstance. This is not testable
+        using DRT unfortunately, so we have to add another manual testcase for that.
+
+        Tests: manual-tests/use-crash-on-mouse-hover.svg
+
+        * manual-tests/svg-crash-hovering-use.svg: Added.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::instanceForShadowTreeElement): Add ASSERT(!inDocument()) when returning 0 here if m_targetElementInstance is 0.
+
 2010-01-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
