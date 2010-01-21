@@ -79,3 +79,7 @@ fast/images/size-failure.html
 # FIXME: The result of this test appears to be affected by other tests, so skip it for now.
 # See https://bugs.webkit.org/show_bug.cgi?id=33372
 platform/mac/editing/input/devanagari-ligature.html
+
+# Occasionally fails on bot for unknown reasons, unclear when it started.
+# https://bugs.webkit.org/show_bug.cgi?id=33742
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html

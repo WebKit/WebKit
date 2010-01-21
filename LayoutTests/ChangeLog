@@ -1,3 +1,12 @@
+2010-01-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        http/tests/xmlhttprequest/cross-origin-cookie-storage.html failed on Snow Leopard Intel Release Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33742
+
+        * platform/mac-snowleopard/Skipped: Skip this for now to keep the bots green.
+
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
         No review, rolling out 53591.
