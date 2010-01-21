@@ -35,11 +35,11 @@
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseDetails.h"
-#include "Document.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "SQLError.h"
 #include "SQLiteTransaction.h"
@@ -94,8 +94,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
 
     bool readOnlyMode = m_readOnly;
     if (!readOnlyMode) {
-        Page* page = m_database->document()->page();
-        if (!page || page->settings()->privateBrowsingEnabled())
+        if (m_database->scriptExecutionContext()->isDatabaseReadOnly())
             readOnlyMode = true;
     }
 

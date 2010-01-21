@@ -1,3 +1,146 @@
+2010-01-20  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Refactoring and plumbing to get the HTML5 SQL Database API accessible to
+        web workers.  No new functionality is exposed yet; this just gets the
+        infrastructure in place.  It touches a lot of files in small ways; here
+        are the main changes:
+
+        1) Database members and methods move from Document up to
+        ScriptExecutionContext.  Each of Document and WorkerContext must
+        implement a few virtual methods where the Database code requires
+        differentiation.
+        2) Worker thread shutdown got changed a bunch to handle Database cleanup
+        and thread synchronization issues.  Database cleanup tasks need to post
+        some cleanup tasks to the JavaScript thread.  However, since database
+        cleanup may happen due to the destruction of the WorkerThread, I added a
+        handshake [involving WorkerThreadShutdownStartTask,
+        WorkerThreadShutdownFinishTask, and a DatabaseTaskSynchronizer] between
+        the Database thread and WorkerThread that cleans up all the Database
+        stuff before the WorkerThread's runLoop can exit.
+        3) The runtime enabler for the Database moved to a static variable
+        accessible through Database::isAvailable, following the model used by
+        WebSocket.
+        4) Worker threads don't run their JavaScript on the Main thread, so
+        Database code that differentiated between the Main thread and the
+        Database thread now need to deal with a third possibility.
+        5) Most of the other changes have to do with having a
+        ScriptExecutionContext pointer instead of a Document pointer when
+        dealing with a Database.  In many cases it's just a string replacement,
+        but in some it required the creation of a new virtual function [e.g.
+        databaseExceededQuota, isDatabaseReadOnly]
+
+        https://bugs.webkit.org/show_bug.cgi?id=22725
+
+        No new tests; in a future patch I'll add JSC and V8 bindings and new
+        layout tests to exercise them.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::OpenDatabaseEnabled):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::isDatabaseReadOnly):
+        (WebCore::Document::databaseExceededQuota):
+        (WebCore::Document::isContextThread):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::databaseThread):
+        (WebCore::ScriptExecutionContext::addOpenDatabase):
+        (WebCore::ScriptExecutionContext::removeOpenDatabase):
+        (WebCore::ScriptExecutionContext::stopDatabases):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::setHasOpenDatabases):
+        (WebCore::ScriptExecutionContext::hasOpenDatabases):
+        (WebCore::ScriptExecutionContext::Task::isCleanupTask):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * storage/Database.cpp:
+        (WebCore::Database::setIsAvailable):
+        (WebCore::Database::isAvailable):
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::DerefContextTask::create):
+        (WebCore::DerefContextTask::performTask):
+        (WebCore::DerefContextTask::isCleanupTask):
+        (WebCore::Database::~Database):
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::ContextRemoveOpenDatabaseTask::create):
+        (WebCore::ContextRemoveOpenDatabaseTask::performTask):
+        (WebCore::ContextRemoveOpenDatabaseTask::isCleanupTask):
+        (WebCore::ContextRemoveOpenDatabaseTask::ContextRemoveOpenDatabaseTask):
+        (WebCore::Database::close):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::DeliverPendingCallbackTask::create):
+        (WebCore::DeliverPendingCallbackTask::performTask):
+        (WebCore::DeliverPendingCallbackTask::DeliverPendingCallbackTask):
+        (WebCore::Database::scheduleTransactionCallback):
+        (WebCore::Database::transactionClient):
+        (WebCore::Database::transactionCoordinator):
+        (WebCore::Database::tableNames):
+        (WebCore::Database::securityOrigin):
+        * storage/Database.h:
+        (WebCore::Database::scriptExecutionContext):
+        * storage/DatabaseTask.h:
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::~DatabaseThread):
+        (WebCore::DatabaseThread::requestTermination):
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::unscheduleDatabaseTasks):
+        * storage/DatabaseThread.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        * storage/DatabaseTracker.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+        * storage/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didCommitTransaction):
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+        (WebCore::SQLTransactionClient::didExceedQuota):
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::TrackerRemoveOpenDatabaseTask::create):
+        (WebCore::TrackerRemoveOpenDatabaseTask::performTask):
+        (WebCore::TrackerRemoveOpenDatabaseTask::TrackerRemoveOpenDatabaseTask):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        * storage/chromium/SQLTransactionClientChromium.cpp:
+        (WebCore::NotifyDatabaseChangedTask::create):
+        (WebCore::NotifyDatabaseChangedTask::performTask):
+        (WebCore::NotifyDatabaseChangedTask::NotifyDatabaseChangedTask):
+        (WebCore::SQLTransactionClient::didCommitTransaction):
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+        (WebCore::SQLTransactionClient::didExceedQuota):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        (WebCore::WorkerContext::isContextThread):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::clearScript):
+        (WebCore::WorkerContext::thread):
+        (WebCore::WorkerContext::isDatabaseReadOnly):
+        (WebCore::WorkerContext::databaseExceededQuota):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThreadShutdownFinishTask::create):
+        (WebCore::WorkerThreadShutdownFinishTask::performTask):
+        (WebCore::WorkerThreadShutdownFinishTask::isCleanupTask):
+        (WebCore::WorkerThreadShutdownStartTask::create):
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+        (WebCore::WorkerThreadShutdownStartTask::isCleanupTask):
+        (WebCore::WorkerThread::stop):
+
 2010-01-20  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

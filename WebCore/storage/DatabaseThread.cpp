@@ -44,6 +44,7 @@ DatabaseThread::DatabaseThread()
     : m_threadID(0)
     , m_transactionClient(new SQLTransactionClient())
     , m_transactionCoordinator(new SQLTransactionCoordinator())
+    , m_cleanupSync(0)
 {
     m_selfRef = this;
 }
@@ -51,6 +52,7 @@ DatabaseThread::DatabaseThread()
 DatabaseThread::~DatabaseThread()
 {
     // FIXME: Any cleanup required here?  Since the thread deletes itself after running its detached course, I don't think so.  Lets be sure.
+    ASSERT(terminationRequested());
 }
 
 bool DatabaseThread::start()
@@ -65,8 +67,10 @@ bool DatabaseThread::start()
     return m_threadID;
 }
 
-void DatabaseThread::requestTermination()
+void DatabaseThread::requestTermination(DatabaseTaskSynchronizer *cleanupSync)
 {
+    ASSERT(!m_cleanupSync);
+    m_cleanupSync = cleanupSync;
     LOG(StorageAPI, "DatabaseThread %p was asked to terminate\n", this);
     m_queue.kill();
 }
@@ -115,8 +119,13 @@ void* DatabaseThread::databaseThread()
     // Detach the thread so its resources are no longer of any concern to anyone else
     detachThread(m_threadID);
 
+    DatabaseTaskSynchronizer* cleanupSync = m_cleanupSync;
+    
     // Clear the self refptr, possibly resulting in deletion
     m_selfRef = 0;
+
+    if (cleanupSync) // Someone wanted to know when we were done cleaning up.
+        cleanupSync->taskCompleted();
 
     return 0;
 }
@@ -162,6 +171,5 @@ void DatabaseThread::unscheduleDatabaseTasks(Database* database)
     SameDatabasePredicate predicate(database);
     m_queue.removeIf(predicate);
 }
-
 } // namespace WebCore
 #endif

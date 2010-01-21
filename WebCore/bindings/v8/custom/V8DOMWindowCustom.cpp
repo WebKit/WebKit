@@ -33,6 +33,7 @@
 
 #include "Base64.h"
 #include "Chrome.h"
+#include "Database.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
@@ -296,7 +297,7 @@ bool V8DOMWindow::WebSocketEnabled()
 #if ENABLE(DATABASE)
 bool V8DOMWindow::OpenDatabaseEnabled()
 {
-    return WebCore::RuntimeEnabledFeatures::databaseEnabled();
+    return Database::isAvailable();
 }
 #endif
 

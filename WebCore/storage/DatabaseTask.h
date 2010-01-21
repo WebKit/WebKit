@@ -50,16 +50,15 @@ class VersionChangeCallback;
 // Can be used to wait until DatabaseTask is completed.
 // Has to be passed into DatabaseTask::create to be associated with the task.
 class DatabaseTaskSynchronizer : public Noncopyable {
-    friend class DatabaseTask;
 public:
     DatabaseTaskSynchronizer();
 
     // Called from main thread to wait until task is completed.
     void waitForTaskCompletion();
 
-private:
     // Called by the task.
     void taskCompleted();
+private:
 
     bool m_taskCompleted;
     Mutex m_synchronousMutex;
