@@ -1,3 +1,13 @@
+2010-01-21  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        [Chromium] Implement texSubImage2D taking WebGLArray
+        https://bugs.webkit.org/show_bug.cgi?id=33932
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2010-01-20  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Pavel Feldman.

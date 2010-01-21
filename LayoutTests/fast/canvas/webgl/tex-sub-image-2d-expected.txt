@@ -1,0 +1,7 @@
+Tests texSubImage2D upload path from WebGLUnsignedByteArray
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Regression test for https://bugs.webkit.org/show_bug.cgi?id=33932 : [Chromium] Implement texSubImage2D taking WebGLArray
+PASS 
+
