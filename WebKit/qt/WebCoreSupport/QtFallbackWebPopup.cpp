@@ -31,71 +31,21 @@
 
 namespace WebCore {
 
-// QtFallbackWebPopup
-
-QtFallbackWebPopup::QtFallbackWebPopup()
-    : QtAbstractWebPopup()
-    , m_popupVisible(false)
+QtFallbackWebPopupCombo::QtFallbackWebPopupCombo(QtFallbackWebPopup& ownerPopup)
+    : m_ownerPopup(ownerPopup)
 {
-    connect(this, SIGNAL(activated(int)),
-            SLOT(activeChanged(int)), Qt::QueuedConnection);
 }
 
-
-void QtFallbackWebPopup::show(const QRect& geometry, int selectedIndex)
-{
-    setCurrentIndex(selectedIndex);
-
-    /*
-    QWidget* parent = 0;
-    if (client()->hostWindow() && client()->hostWindow()->platformPageClient())
-       parent = client()->hostWindow()->platformPageClient()->ownerWidget();
-
-    setParent(parent);
-    */
-
-    setGeometry(QRect(geometry.left(), geometry.top(), geometry.width(), sizeHint().height()));
-
-    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
-                      Qt::LeftButton, Qt::NoModifier);
-    QCoreApplication::sendEvent(this, &event);
-}
-
-void QtFallbackWebPopup::populate(const QFont& font, const QList<Item>& items)
-{
-    clear();
-
-    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(QComboBox::model());
-    Q_ASSERT(model);
-
-    setFont(font);
-    for (int i = 0; i < items.size(); ++i) {
-        switch (items[i].type) {
-        case QtAbstractWebPopup::Item::Separator:
-            insertSeparator(i);
-            break;
-        case QtAbstractWebPopup::Item::Group:
-            insertItem(i, items[i].text);
-            model->item(i)->setEnabled(false);
-            break;
-        case QtAbstractWebPopup::Item::Option:
-            insertItem(i, items[i].text);
-            model->item(i)->setEnabled(items[i].enabled);
-            break;
-        }
-    }
-}
-
-void QtFallbackWebPopup::showPopup()
+void QtFallbackWebPopupCombo::showPopup()
 {
     QComboBox::showPopup();
-    m_popupVisible = true;
+    m_ownerPopup.m_popupVisible = true;
 }
 
-void QtFallbackWebPopup::hidePopup()
+void QtFallbackWebPopupCombo::hidePopup()
 {
     QWidget* activeFocus = QApplication::focusWidget();
-    if (activeFocus && activeFocus == view()
+    if (activeFocus && activeFocus == QComboBox::view()
         && activeFocus->testAttribute(Qt::WA_InputMethodEnabled)) {
         QInputContext* qic = activeFocus->inputContext();
         if (qic) {
@@ -105,11 +55,72 @@ void QtFallbackWebPopup::hidePopup()
     }
 
     QComboBox::hidePopup();
-    if (!m_popupVisible)
+    if (!m_ownerPopup.m_popupVisible)
         return;
 
-    m_popupVisible = false;
-    popupDidHide(true);
+    m_ownerPopup.m_popupVisible = false;
+    m_ownerPopup.popupDidHide(true);
+}
+
+// QtFallbackWebPopup
+
+QtFallbackWebPopup::QtFallbackWebPopup()
+    : QtAbstractWebPopup()
+    , m_popupVisible(false)
+    , m_combo(new QtFallbackWebPopupCombo(*this))
+{
+    connect(m_combo, SIGNAL(activated(int)),
+            SLOT(activeChanged(int)), Qt::QueuedConnection);
+}
+
+QtFallbackWebPopup::~QtFallbackWebPopup()
+{
+    delete m_combo;
+}
+
+void QtFallbackWebPopup::show()
+{
+    populate();
+    m_combo->setParent(view());
+    m_combo->setCurrentIndex(currentIndex());
+
+    QRect rect = geometry();
+    m_combo->setGeometry(QRect(rect.left(), rect.top(),
+                               rect.width(), m_combo->sizeHint().height()));
+
+    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
+                      Qt::LeftButton, Qt::NoModifier);
+    QCoreApplication::sendEvent(m_combo, &event);
+}
+
+void QtFallbackWebPopup::hide()
+{
+    m_combo->hidePopup();
+}
+
+void QtFallbackWebPopup::populate()
+{
+    m_combo->clear();
+
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
+    Q_ASSERT(model);
+
+    m_combo->setFont(font());
+    for (int i = 0; i < itemCount(); ++i) {
+        switch (itemType(i)) {
+        case Separator:
+            m_combo->insertSeparator(i);
+            break;
+        case Group:
+            m_combo->insertItem(i, itemText(i));
+            model->item(i)->setEnabled(false);
+            break;
+        case Option:
+            m_combo->insertItem(i, itemText(i));
+            model->item(i)->setEnabled(itemIsEnabled(i));
+            break;
+        }
+    }
 }
 
 void QtFallbackWebPopup::activeChanged(int index)
@@ -118,11 +129,6 @@ void QtFallbackWebPopup::activeChanged(int index)
         return;
 
     valueChanged(index);
-}
-
-void QtFallbackWebPopup::setParent(QWidget* parent)
-{
-    QComboBox::setParent(parent);
 }
 
 }

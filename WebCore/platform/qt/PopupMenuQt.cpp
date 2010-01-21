@@ -46,47 +46,25 @@ PopupMenu::~PopupMenu()
     delete m_popup;
 }
 
-static QList<QtAbstractWebPopup::Item> getItems(PopupMenuClient* client)
-{
-    QList<QtAbstractWebPopup::Item> result;
-
-    int size = client->listSize();
-    for (int i = 0; i < size; ++i) {
-        QtAbstractWebPopup::Item item;
-
-        if (client->itemIsSeparator(i))
-            item.type = QtAbstractWebPopup::Item::Separator;
-        else if (client->itemIsLabel(i))
-            item.type = QtAbstractWebPopup::Item::Group;
-        else
-            item.type = QtAbstractWebPopup::Item::Option;
-
-        item.text = client->itemText(i);
-        item.toolTip = client->itemToolTip(i);
-        item.enabled = client->itemIsEnabled(i);
-        result.append(item);
-    }
-    return result;
-}
-
 void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
 {
     ChromeClientQt* chromeClient = static_cast<ChromeClientQt*>(
         view->frame()->page()->chrome()->client());
     ASSERT(chromeClient);
 
-    if (!m_popup) {
-        m_popup = chromeClient->createPopup();
-        m_popup->m_client = m_popupClient;
-    }
+    if (!m_popup)
+        m_popup = chromeClient->createSelectPopup();
 
-    m_popup->setParent(chromeClient->platformPageClient()->ownerWidget());
-    m_popup->populate(m_popupClient->menuStyle().font().font(),
-                      getItems(m_popupClient));
+    m_popup->m_client = m_popupClient;
+    m_popup->m_currentIndex = index;
+    m_popup->m_view = chromeClient->platformPageClient()->ownerWidget();
 
-    QRect bounds = rect;
-    bounds.moveTopLeft(view->contentsToWindow(rect.topLeft()));
-    m_popup->show(bounds, index);
+    QRect geometry(rect);
+    geometry.moveTopLeft(view->contentsToWindow(rect.topLeft()));
+    m_popup->m_geometry = geometry;
+
+    m_popup->show();
+
 }
 
 void PopupMenu::hide()

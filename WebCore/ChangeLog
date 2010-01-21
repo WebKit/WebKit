@@ -1,3 +1,28 @@
+2010-01-21  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Custom select popups.
+        https://bugs.webkit.org/show_bug.cgi?id=33418
+
+        Optimization of the WebCore support to combobox popup delegate.
+
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QtAbstractWebPopup.cpp:
+        (WebCore::QtAbstractWebPopup::QtAbstractWebPopup):
+        (WebCore::QtAbstractWebPopup::itemType):
+        * platform/qt/QtAbstractWebPopup.h:
+        (WebCore::QtAbstractWebPopup::):
+        (WebCore::QtAbstractWebPopup::itemText):
+        (WebCore::QtAbstractWebPopup::itemToolTip):
+        (WebCore::QtAbstractWebPopup::itemIsEnabled):
+        (WebCore::QtAbstractWebPopup::itemCount):
+        (WebCore::QtAbstractWebPopup::view):
+        (WebCore::QtAbstractWebPopup::geometry):
+        (WebCore::QtAbstractWebPopup::currentIndex):
+        (WebCore::QtAbstractWebPopup::font):
+
 2010-01-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

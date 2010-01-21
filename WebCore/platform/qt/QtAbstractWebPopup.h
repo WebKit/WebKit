@@ -20,38 +20,47 @@
 #ifndef QtAbstractWebPopup_h
 #define QtAbstractWebPopup_h
 
+#include "PopupMenuClient.h"
+
 #include <QFont>
 #include <QList>
 #include <QRect>
+#include <QWidget>
 
 namespace WebCore {
 
-class PopupMenuClient;
 
 class QtAbstractWebPopup {
 public:
-    struct Item {
-        enum { Option, Group, Separator } type;
-        QString text;
-        QString toolTip;
-        bool enabled;
-    };
+    enum ItemType { Option, Group, Separator };
+
+    ItemType itemType(int) const;
+    QString itemText(int idx) const { return m_client->itemText(idx); }
+    QString itemToolTip(int idx) const { return m_client->itemToolTip(idx); }
+    bool itemIsEnabled(int idx) const { return m_client->itemIsEnabled(idx); }
+    int itemCount() const { return m_client->listSize(); }
+
+    QWidget* view() { return m_view; }
+    QRect geometry() const { return m_geometry; }
+    int currentIndex() const { return m_currentIndex; }
 
     QtAbstractWebPopup();
     virtual ~QtAbstractWebPopup();
 
-    virtual void show(const QRect& geometry, int selectedIndex) = 0;
+    virtual void show() = 0;
     virtual void hide() = 0;
-    virtual void populate(const QFont& font, const QList<Item>& items) = 0;
-    virtual void setParent(QWidget* parent) = 0;
 
-protected:
     void popupDidHide(bool acceptSuggestions);
     void valueChanged(int index);
+
+    QFont font() { return m_client->menuStyle().font().font(); }
 
 private:
     friend class PopupMenu;
     PopupMenuClient* m_client;
+    QWidget* m_view;
+    int m_currentIndex;
+    QRect m_geometry;
 };
 
 }
