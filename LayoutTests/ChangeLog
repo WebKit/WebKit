@@ -1,3 +1,13 @@
+2010-01-20  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove an assertion that is not valid in some detached iframes cases.
+        https://bugs.webkit.org/show_bug.cgi?id=33827
+
+        * http/tests/appcache/detached-iframe-expected.txt: Added.
+        * http/tests/appcache/detached-iframe.html: Added.
+
 2010-01-20  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed. Add failing test fast/css/button-height.html

@@ -1,3 +1,15 @@
+2010-01-20  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove an assertion that is not valid in some detached iframes cases.
+        https://bugs.webkit.org/show_bug.cgi?id=33827
+
+        Test: http/tests/appcache/detached-iframe.html
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache):
+
 2010-01-20  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.
