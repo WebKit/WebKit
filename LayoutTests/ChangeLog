@@ -1,3 +1,12 @@
+2010-01-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(r53514?): fast/canvas/webgl/texImage2DImageDataTest.html fails on Leopard Release Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33893
+
+        * platform/mac-leopard/Skipped: Skip the test for now.
+
 2010-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Eric Seidel.
