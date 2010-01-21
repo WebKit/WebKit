@@ -1,3 +1,15 @@
+2010-01-21  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix incorrect dependency to QtXmlPatterns in generated include/QtWebKit/QtWebKit header
+
+        The generated file includes QtXmlPatterns/QtXmlPatterns, which is neither used/required by
+        the public QtWebKit API nor will it be available if Qt is configured with -no-xmlpatterns.
+
+        * WebCore.pro: Trick syncqt to believe that xmlpatterns is not a dependency, so that it's not
+        included in the generated file. It'll still be used and linked to with this trick.
+
 2010-01-21  Steve Block  <steveblock@google.com>
 
         Unreviewed build fix.

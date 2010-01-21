@@ -2328,7 +2328,7 @@ contains(DEFINES, ENABLE_XPATH=1) {
 unix:!mac:CONFIG += link_pkgconfig
 
 contains(DEFINES, ENABLE_XSLT=1) {
-    QT += xmlpatterns
+    tobe|!tobe: QT += xmlpatterns
 
     SOURCES += \
         bindings/js/JSXSLTProcessorConstructor.cpp \
