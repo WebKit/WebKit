@@ -258,8 +258,6 @@ void SVGStyledElement::invalidateResourcesInAncestorChain() const
 void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    if (document()->parsing())
-        return;
 
     // Invalidate all SVGElementInstances associated with us
     SVGElementInstance::invalidateAllInstancesOfElement(this);

@@ -1,3 +1,38 @@
+2010-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        <use> with % lengths does not update on window resize
+        https://bugs.webkit.org/show_bug.cgi?id=14639
+
+        appendChild broken for symbol-use
+        https://bugs.webkit.org/show_bug.cgi?id=24802
+
+        Test: svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml
+              svg/custom/svg/custom/relative-sized-use-on-symbol.xhtml
+
+        Fix reaction on window size changes for relative sized elements within <symbol> elements.
+        Don't evaluate SVGUseElement width/height attributes in order to propagate them to the shadow tree,
+        instead just propagate the attribute values itself so "100%" remains "100%" instead of being evaluated
+        to an absolute pixel value in the parent <svg> user-space.
+
+        Needs another fix in SVGStyledElement::childrenChanged(), which is a regression from my last <use>
+        patch, that hasn't been detected, as the use-dynamic-append.svg testcase was broken.
+
+        The combination of all the last <use> patches finally fixes the peepo.co.uk website, which was broken by several bugs for years.
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::childrenChanged): Need to mark shadow trees needing recalcs, even when parsing.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged): Don't reclone for width/height attribute changes, just propagate them down the render tree
+        (WebCore::updateContainerSize): Added helper function, updating the width/height attributes in the shadow tree.
+        (WebCore::SVGUseElement::updateContainerSizes):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Update container width/height after shadow tree creation, instead of doing it inbetween.
+        (WebCore::SVGUseElement::buildShadowTree): Don't alter width/height attributes here anymore.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Ditto.
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Ditto.
+        * svg/SVGUseElement.h:
+
 2010-01-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

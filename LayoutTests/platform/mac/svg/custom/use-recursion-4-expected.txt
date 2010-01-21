@@ -6,7 +6,6 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderSVGContainer {use} at (0,0) size 0x0
           RenderSVGContainer {g} at (0,0) size 0x0
-            RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (-2.50,-2.50) size 65x15
         RenderPath {rect} at (-2.50,-2.50) size 65x15 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L60.00,0.00 L60.00,10.00 L0.00,10.00 Z"]
         RenderSVGContainer {use} at (0,0) size 0x0

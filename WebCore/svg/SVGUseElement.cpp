@@ -157,21 +157,71 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
+    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
+        updateContainerSizes();
+        return;
+    }
+
     // Be very careful here, if svgAttributeChanged() has been called because a SVG CSS property changed, we do NOT want to reclone the tree!
     if (SVGStyledElement::isKnownAttribute(attrName)) {
         setNeedsStyleRecalc();
         return;
     }
 
-    // TODO: We should be able to remove the need for width/height to require a reclone, similar to the x/y logic.
-    if (attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr
-        || SVGTests::isKnownAttribute(attrName)
+    if (SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
         || SVGStyledTransformableElement::isKnownAttribute(attrName)) {
         invalidateShadowTree();
     }
+}
+
+static void updateContainerSize(SVGUseElement* useElement, SVGElementInstance* targetInstance)
+{
+    // Depth-first used to write the method in early exit style, no particular other reason.
+    for (SVGElementInstance* instance = targetInstance->firstChild(); instance; instance = instance->nextSibling())
+        updateContainerSize(useElement, instance);
+
+    SVGElement* correspondingElement = targetInstance->correspondingElement();
+    ASSERT(correspondingElement);
+
+    bool isSymbolTag = correspondingElement->hasTagName(SVGNames::symbolTag);
+    if (!correspondingElement->hasTagName(SVGNames::svgTag) && !isSymbolTag)
+        return;
+
+    SVGElement* shadowTreeElement = targetInstance->shadowTreeElement();
+    ASSERT(shadowTreeElement);
+    ASSERT(shadowTreeElement->hasTagName(SVGNames::svgTag));
+
+    // Spec (<use> on <symbol>): This generated 'svg' will always have explicit values for attributes width and height.
+    // If attributes width and/or height are provided on the 'use' element, then these attributes
+    // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
+    // the generated 'svg' element will use values of 100% for these attributes.
+    
+    // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
+    // values will override the corresponding attributes on the 'svg' in the generated tree.
+
+    if (useElement->hasAttribute(SVGNames::widthAttr))
+        shadowTreeElement->setAttribute(SVGNames::widthAttr, useElement->getAttribute(SVGNames::widthAttr));
+    else if (isSymbolTag && shadowTreeElement->hasAttribute(SVGNames::widthAttr))
+        shadowTreeElement->setAttribute(SVGNames::widthAttr, "100%");
+
+    if (useElement->hasAttribute(SVGNames::heightAttr))
+        shadowTreeElement->setAttribute(SVGNames::heightAttr, useElement->getAttribute(SVGNames::heightAttr));
+    else if (isSymbolTag && shadowTreeElement->hasAttribute(SVGNames::heightAttr))
+        shadowTreeElement->setAttribute(SVGNames::heightAttr, "100%");
+}   
+
+void SVGUseElement::updateContainerSizes()
+{
+    if (!m_targetElementInstance)
+        return;
+
+    // Update whole subtree, scanning for shadow container elements, that correspond to <svg>/<symbol> tags
+    updateContainerSize(this, m_targetElementInstance.get());
+
+    if (renderer())
+        renderer()->setNeedsLayout(true);
 }
 
 static void updateContainerOffset(SVGElementInstance* targetInstance)
@@ -465,8 +515,9 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Transfer event listeners assigned to the referenced element to our shadow tree elements.
     transferEventListenersToShadowTree(m_targetElementInstance.get());
 
-    // Update container translation offsets
+    // Update container offset/size
     updateContainerOffsets();
+    updateContainerSizes();
 }
 
 RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -597,18 +648,6 @@ void SVGUseElement::handleDeepUseReferencing(SVGUseElement* use, SVGElementInsta
     buildInstanceTree(target, newInstancePtr, foundProblem);
 }
 
-void SVGUseElement::alterShadowTreeForSVGTag(SVGElement* target)
-{
-    String widthString = String::number(width().value(this));
-    String heightString = String::number(height().value(this));
-
-    if (hasAttribute(SVGNames::widthAttr))
-        target->setAttribute(SVGNames::widthAttr, widthString);
-
-    if (hasAttribute(SVGNames::heightAttr))
-        target->setAttribute(SVGNames::heightAttr, heightString);
-}
-
 void SVGUseElement::removeDisallowedElementsFromSubtree(Node* subtree)
 {
     ASSERT(!subtree->inDocument());
@@ -649,10 +688,6 @@ void SVGUseElement::buildShadowTree(SVGShadowTreeRootElement* shadowRoot, SVGEle
     ExceptionCode ec = 0;
     shadowRoot->appendChild(newChild.release(), ec);
     ASSERT(!ec);
-
-    // Handle use referencing <svg> special case
-    if (target->hasTagName(SVGNames::svgTag))
-        alterShadowTreeForSVGTag(newChildPtr);
 }
 
 #if ENABLE(SVG) && ENABLE(SVG_USE)
@@ -719,10 +754,6 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
             use->parentNode()->replaceChild(cloneParent.release(), use, ec);
             ASSERT(!ec);
 
-            // Handle use referencing <svg> special case
-            if (target->hasTagName(SVGNames::svgTag))
-                alterShadowTreeForSVGTag(newChildPtr);
-
             // Immediately stop here, and restart expanding.
             expandUseElementsInShadowTree(shadowRoot, shadowRoot);
             return;
@@ -747,16 +778,8 @@ void SVGUseElement::expandSymbolElementsInShadowTree(SVGShadowTreeRootElement* s
         // Transfer all attributes from <symbol> to the new <svg> element
         svgElement->attributes()->setAttributes(*element->attributes());
 
-        // Explicitly re-set width/height values
-        String widthString = String::number(width().value(this));
-        String heightString = String::number(height().value(this)); 
-
-        svgElement->setAttribute(SVGNames::widthAttr, hasAttribute(SVGNames::widthAttr) ? widthString : "100%");
-        svgElement->setAttribute(SVGNames::heightAttr, hasAttribute(SVGNames::heightAttr) ? heightString : "100%");
-
-        ExceptionCode ec = 0;
-
         // Only clone symbol children, and add them to the new <svg> element    
+        ExceptionCode ec = 0;
         for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
             RefPtr<Node> newChild = child->cloneNode(true);
             svgElement->appendChild(newChild.release(), ec);

@@ -93,7 +93,6 @@ namespace WebCore {
         void handleDeepUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
 
         // Shadow tree handling
-        void alterShadowTreeForSVGTag(SVGElement*);
         void buildShadowTree(SVGShadowTreeRootElement*, SVGElement* target, SVGElementInstance* targetInstance);
 
 #if ENABLE(SVG) && ENABLE(SVG_USE)
@@ -107,7 +106,9 @@ namespace WebCore {
 
         void transferUseAttributesToReplacedElement(SVGElement* from, SVGElement* to) const;
         void transferEventListenersToShadowTree(SVGElementInstance* target);
+
         void updateContainerOffsets();
+        void updateContainerSizes();
 
         bool m_isPendingResource;
         bool m_needsShadowTreeRecreation;
@@ -115,7 +116,7 @@ namespace WebCore {
         RefPtr<SVGElementInstance> m_targetElementInstance;
     };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG)
+#endif
 #endif
