@@ -1,3 +1,13 @@
+2010-01-21  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Unnecessary call to HistoryItem::targetItem in HistoryController::pushState
+        https://bugs.webkit.org/show_bug.cgi?id=33969
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState): Remove unnecessary code.
+
 2010-01-21  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, Chromium build fix. Add AccessibilityScrollbar.h and .cpp to WebCore.gypi

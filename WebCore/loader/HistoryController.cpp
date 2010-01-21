@@ -632,14 +632,13 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
     // Get a HistoryItem tree for the current frame tree.
     RefPtr<HistoryItem> item = createItemTree(m_frame, false);
+    ASSERT(item->isTargetItem());
     
     // Override data in the target item to reflect the pushState() arguments.
-    HistoryItem* targetItem = item->targetItem();
-    ASSERT(targetItem->isTargetItem());
-    targetItem->setDocument(m_frame->document());
-    targetItem->setTitle(title);
-    targetItem->setStateObject(stateObject);
-    targetItem->setURLString(urlString);
+    item->setDocument(m_frame->document());
+    item->setTitle(title);
+    item->setStateObject(stateObject);
+    item->setURLString(urlString);
     
     page->backForwardList()->pushStateItem(item.release());
 }
