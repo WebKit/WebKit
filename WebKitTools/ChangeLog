@@ -1,3 +1,15 @@
+2010-01-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        No review, rolling out 53615 as it causes two
+        crashes on the bot.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::createWindow):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::maybeDump):
+
 2010-01-21  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.

@@ -109,7 +109,6 @@ public Q_SLOTS:
     void connectFrame(QWebFrame *frame);
     void dumpDatabaseQuota(QWebFrame* frame, const QString& dbName);
     void statusBarMessage(const QString& message);
-    void windowCloseRequested();
 
 Q_SIGNALS:
     void quit();
