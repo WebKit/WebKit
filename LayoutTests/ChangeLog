@@ -1,3 +1,17 @@
+2010-01-20  Daniel Bates  <dbates@webkit.org>
+
+        No review, rolling out 53594.
+        http://trac.webkit.org/changeset/53594
+        https://bugs.webkit.org/show_bug.cgi?id=33936
+
+        Note, there still is an issue on GTK related to the rendering of 
+        button heights. But we are rolling out this change since
+        we're going to rollout the change committed in change set 53591
+        <http://trac.webkit.org/changeset/53591> because r53591 caused a
+        regression.
+
+        * platform/gtk/Skipped:
+
 2010-01-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
