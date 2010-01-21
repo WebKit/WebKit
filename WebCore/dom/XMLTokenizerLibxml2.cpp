@@ -169,11 +169,11 @@ public:
         m_callbacks.append(callback);        
     }
     
-    void appendErrorCallback(XMLTokenizer::ErrorType type, const char* message, int lineNumber, int columnNumber)
+    void appendErrorCallback(XMLTokenizer::ErrorType type, const xmlChar* message, int lineNumber, int columnNumber)
     {
         PendingErrorCallback* callback = new PendingErrorCallback;
         
-        callback->message = strdup(message);
+        callback->message = xmlStrdup(message);
         callback->type = type;
         callback->lineNumber = lineNumber;
         callback->columnNumber = columnNumber;
@@ -316,16 +316,16 @@ private:
     struct PendingErrorCallback: public PendingCallback {
         virtual ~PendingErrorCallback() 
         {
-            free(message);
+            xmlFree(message);
         }
         
         virtual void call(XMLTokenizer* tokenizer) 
         {
-            tokenizer->handleError(type, message, lineNumber, columnNumber);
+            tokenizer->handleError(type, reinterpret_cast<char*>(message), lineNumber, columnNumber);
         }
         
         XMLTokenizer::ErrorType type;
-        char* message;
+        xmlChar* message;
         int lineNumber;
         int columnNumber;
     };
@@ -910,7 +910,7 @@ void XMLTokenizer::error(ErrorType type, const char* message, va_list args)
 #endif
     
     if (m_parserPaused)
-        m_pendingCallbacks->appendErrorCallback(type, m, lineNumber(), columnNumber());
+        m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(m), lineNumber(), columnNumber());
     else
         handleError(type, m, lineNumber(), columnNumber());
 

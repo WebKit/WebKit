@@ -1,3 +1,17 @@
+2010-01-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use xmlStrdup instead of strdup for consistency in Libxml2.
+        https://bugs.webkit.org/show_bug.cgi?id=33935
+
+        Remove the direct use of strdup.
+
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::PendingCallbacks::):
+        (WebCore::XMLTokenizer::error):
+
 2010-01-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.
