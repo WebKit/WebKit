@@ -1,3 +1,12 @@
+2010-01-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Update r53711 for GraphicsLayer method rename.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::createLayerForMovie): Rename from change setContentsToVideo.
+
 2010-01-22  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Adler.

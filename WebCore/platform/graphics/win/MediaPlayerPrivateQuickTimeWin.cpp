@@ -831,7 +831,7 @@ void MediaPlayerPrivate::createLayerForMovie()
 #endif
 
     // Hang the video layer from the render layer.
-    videoGraphicsLayer->setContentsToVideo(m_qtVideoLayer->platformLayer());
+    videoGraphicsLayer->setContentsToMedia(m_qtVideoLayer->platformLayer());
 #endif
 }
 
