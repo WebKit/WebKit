@@ -1,3 +1,23 @@
+2010-01-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Antti Koivisto.
+
+        [Qt] Separate out the WebPage class into it's own
+        cpp/header files. Also, removed the assumption that
+        the view is a QWebView, in preparation of a merger
+        of the two Qt WebKit launchers.
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/main.cpp:
+        (WebView::mousePressEvent):
+        * QtLauncher/webpage.cpp: Added.
+        (WebPage::supportsExtension):
+        (WebPage::extension):
+        (WebPage::acceptNavigationRequest):
+        (WebPage::openUrlInDefaultBrowser):
+        * QtLauncher/webpage.h: Added.
+        (WebPage::WebPage):
+
 2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.

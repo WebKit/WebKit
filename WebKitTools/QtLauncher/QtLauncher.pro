@@ -1,5 +1,5 @@
 TEMPLATE = app
-SOURCES += main.cpp
+SOURCES += main.cpp webpage.cpp
 CONFIG -= app_bundle
 CONFIG += uitools
 DESTDIR = ../../bin
