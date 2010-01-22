@@ -26,6 +26,10 @@ function fileListShouldBe(fileListString, filesArray)
     shouldBe(fileListString + ".length", "" + filesArray.length);
     for (var x = 0; x < filesArray.length; x++) {
         var fileValueString = fileListString + "[" + x + "]";
+        shouldBeEqualToString(fileValueString + ".name", filesArray[x]['name']);
+        shouldBe(fileValueString + ".size", "" + filesArray[x]['size']);
+
+        // FIXME: to be removed after legacy attributes are removed. 
         shouldBeEqualToString(fileValueString + ".fileName", filesArray[x]['name']);
         shouldBe(fileValueString + ".fileSize", "" + filesArray[x]['size']);
     }

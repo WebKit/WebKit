@@ -9,11 +9,15 @@ PASS fileInput.files.length is 0
 Dragging a single (non-existant) file to a file input control:
 PASS fileInput.value is "DRTFakeFile"
 PASS fileInput.files.length is 1
+PASS fileInput.files[0].name is "DRTFakeFile"
+PASS fileInput.files[0].size is 0
 PASS fileInput.files[0].fileName is "DRTFakeFile"
 PASS fileInput.files[0].fileSize is 0
 Dragging a real file to a file input control:
 PASS fileInput.value is "apple.gif"
 PASS fileInput.files.length is 1
+PASS fileInput.files[0].name is "apple.gif"
+PASS fileInput.files[0].size is 1476
 PASS fileInput.files[0].fileName is "apple.gif"
 PASS fileInput.files[0].fileSize is 1476
 Dragging a directory onto an file input control:
@@ -33,8 +37,12 @@ FAIL fileInput.files.length should be 0. Was 1.
 Dragging two files to a multi-file input control:
 PASS fileInput.value is "apple.gif"
 PASS fileInput.files.length is 2
+PASS fileInput.files[0].name is "apple.gif"
+PASS fileInput.files[0].size is 1476
 PASS fileInput.files[0].fileName is "apple.gif"
 PASS fileInput.files[0].fileSize is 1476
+PASS fileInput.files[1].name is "mozilla.gif"
+PASS fileInput.files[1].size is 2593
 PASS fileInput.files[1].fileName is "mozilla.gif"
 PASS fileInput.files[1].fileSize is 2593
 Dragging a file and a directory onto a mutli-file input control:
