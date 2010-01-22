@@ -27,20 +27,21 @@
 #include <QRect>
 #include <QWidget>
 
-namespace WebCore {
+class QWebPageClient;
 
+namespace WebCore {
 
 class QtAbstractWebPopup {
 public:
     enum ItemType { Option, Group, Separator };
 
     ItemType itemType(int) const;
-    QString itemText(int idx) const { return m_client->itemText(idx); }
-    QString itemToolTip(int idx) const { return m_client->itemToolTip(idx); }
-    bool itemIsEnabled(int idx) const { return m_client->itemIsEnabled(idx); }
-    int itemCount() const { return m_client->listSize(); }
+    QString itemText(int idx) const { return m_popupClient->itemText(idx); }
+    QString itemToolTip(int idx) const { return m_popupClient->itemToolTip(idx); }
+    bool itemIsEnabled(int idx) const { return m_popupClient->itemIsEnabled(idx); }
+    int itemCount() const { return m_popupClient->listSize(); }
 
-    QWidget* view() { return m_view; }
+    QWebPageClient* pageClient() const { return m_pageClient; }
     QRect geometry() const { return m_geometry; }
     int currentIndex() const { return m_currentIndex; }
 
@@ -53,12 +54,12 @@ public:
     void popupDidHide(bool acceptSuggestions);
     void valueChanged(int index);
 
-    QFont font() { return m_client->menuStyle().font().font(); }
+    QFont font() { return m_popupClient->menuStyle().font().font(); }
 
 private:
     friend class PopupMenu;
-    PopupMenuClient* m_client;
-    QWidget* m_view;
+    PopupMenuClient* m_popupClient;
+    QWebPageClient* m_pageClient;
     int m_currentIndex;
     QRect m_geometry;
 };

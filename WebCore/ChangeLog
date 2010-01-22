@@ -1,3 +1,28 @@
+2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Save the QWebPageClient instead of the ownerWidget in QtAbstractWebPopup
+        
+        The QWebPageClient is required for the QtFallbackWebPopup. QtFallbackWebPopup will
+        need it to create a QGraphicsProxyWidget (in a future commit) for the 
+        QGraphicsWebView's web popup.
+
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QtAbstractWebPopup.cpp:
+        (WebCore::QtAbstractWebPopup::QtAbstractWebPopup):
+        (WebCore::QtAbstractWebPopup::popupDidHide):
+        (WebCore::QtAbstractWebPopup::valueChanged):
+        (WebCore::QtAbstractWebPopup::itemType):
+        * platform/qt/QtAbstractWebPopup.h:
+        (WebCore::QtAbstractWebPopup::itemText):
+        (WebCore::QtAbstractWebPopup::itemToolTip):
+        (WebCore::QtAbstractWebPopup::itemIsEnabled):
+        (WebCore::QtAbstractWebPopup::itemCount):
+        (WebCore::QtAbstractWebPopup::pageClient):
+        (WebCore::QtAbstractWebPopup::font):
+
 2010-01-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt "build" fix.

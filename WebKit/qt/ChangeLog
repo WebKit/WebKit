@@ -1,5 +1,18 @@
 2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
 
+        Reviewed by Simon Hausmann.
+
+        [Qt] Save the QWebPageClient instead of the ownerWidget in QtAbstractWebPopup
+        
+        The QWebPageClient is required for the QtFallbackWebPopup. QtFallbackWebPopup will
+        need it to create a QGraphicsProxyWidget (in a future commit) for the 
+        QGraphicsWebView's web popup.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::show):
+
+2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         QState::polished() was renamed to QState::propertiesAssigned() when

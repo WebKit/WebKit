@@ -55,9 +55,9 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
     if (!m_popup)
         m_popup = chromeClient->createSelectPopup();
 
-    m_popup->m_client = m_popupClient;
+    m_popup->m_popupClient = m_popupClient;
     m_popup->m_currentIndex = index;
-    m_popup->m_view = chromeClient->platformPageClient()->ownerWidget();
+    m_popup->m_pageClient = chromeClient->platformPageClient();
 
     QRect geometry(rect);
     geometry.moveTopLeft(view->contentsToWindow(rect.topLeft()));

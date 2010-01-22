@@ -81,7 +81,7 @@ QtFallbackWebPopup::~QtFallbackWebPopup()
 void QtFallbackWebPopup::show()
 {
     populate();
-    m_combo->setParent(view());
+    m_combo->setParent(pageClient()->ownerWidget());
     m_combo->setCurrentIndex(currentIndex());
 
     QRect rect = geometry();
