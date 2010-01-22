@@ -1,3 +1,10 @@
+2010-01-22  Jian Li  <jianli@chromium.org>
+
+        No review. Build fix.
+        Updated the newly added test to count the change from r53722.
+
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+
 2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
