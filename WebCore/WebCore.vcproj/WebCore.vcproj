@@ -38960,6 +38960,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSSVGContextCache.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSSVGElementInstanceCustom.cpp"
 					>
 					<FileConfiguration

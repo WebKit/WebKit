@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-    class SVGStyledElement;
-
     class SVGAngle {
     public:
         SVGAngle();
@@ -55,9 +53,6 @@ namespace WebCore {
 
         void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
         void convertToSpecifiedUnits(unsigned short unitType);
-
-        // Throughout SVG 1.1 'SVGAngle' is only used for 'SVGMarkerElement' (orient-angle)
-        const QualifiedName& associatedAttributeName() const { return SVGNames::orientAttr; }
 
     private:
         SVGAngleType m_unitType;

@@ -2931,6 +2931,7 @@ webcore_cppflags += \
 	-DENABLE_SVG=1
 
 webcore_sources += \
+	WebCore/bindings/js/JSSVGContextCache.h \
 	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \

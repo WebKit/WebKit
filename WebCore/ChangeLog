@@ -1,3 +1,68 @@
+2010-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        SVG JS bindings "context" pointer needs to move onto binding impls
+        https://bugs.webkit.org/show_bug.cgi?id=27243
+
+        Rewrite SVG DOM JSC bindings to use a global DOMObject <-> SVGElement context map, similar to V8's approach.
+        This allows us to remove DOMObjectWithSVGContext and make all SVG JS objects use DOMObjectWithGlobalPointer.
+        We're fitting again in JS_CELL_SIZE, and there's no need to special case SVG anymore.
+
+        Not adding a new test, as we have yet to identify how to test that we're passing around correct global objects.
+        For now this is just a code cleanup which lets me continue making progress in that area of the code.
+
+        * GNUmakefile.am: Add new DOMObjectWithSVGContext.h to build.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/DOMObjectWithSVGContext.h: Removed.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException): Add comment, that passing 0 context is intentional.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createDOMObjectWrapper): Add to JSSVGContextCache, when creating wrappers.
+        (WebCore::getDOMObjectWrapper): Add assertion guarding the JSSVGContextCache is in-sync with the passed context.
+        * bindings/js/JSSVGContextCache.h: Added. Maps DOMObjects to SVGElements - just like V8 approachs to this problem.
+        (WebCore::JSSVGContextCache::wrapperMap):
+        (WebCore::JSSVGContextCache::addWrapper):
+        (WebCore::JSSVGContextCache::forgetWrapper):
+        (WebCore::JSSVGContextCache::propagateSVGDOMChange): 
+        (WebCore::JSSVGContextCache::svgContextForDOMObject):
+        * bindings/js/JSSVGLengthCustom.cpp: Retrieve context from cache, instead of taking it from the JS* class.
+        (WebCore::JSSVGLength::value):
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/js/JSSVGMatrixCustom.cpp Ditto.:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPODListCustom.h: Ditto.
+        (WebCore::JSSVGPODListCustom::finishGetter):
+        (WebCore::JSSVGPODListCustom::finishSetter):
+        (WebCore::JSSVGPODListCustom::finishSetterReadOnlyResult):
+        (WebCore::JSSVGPODListCustom::clear):
+        (WebCore::JSSVGPODListCustom::initialize):
+        * bindings/js/JSSVGPODTypeWrapper.h: Ditto.
+        (WebCore::JSSVGDynamicPODTypeWrapper::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapper::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapperWithPODTypeParent::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapperWithParent::commitChange):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::commitChange):
+        * bindings/js/JSSVGPathSegCustom.cpp: Ditto.
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegListCustom.cpp: Ditto.
+        (WebCore::JSSVGPathSegList::clear):
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * svg/SVGAngle.h: Remove unneeded associatedAttributeName() method.
+        * svg/SVGPreserveAspectRatio.h: Ditto.
+        * svg/SVGTransform.h: Ditto.
+
 2010-01-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix, add missing header.

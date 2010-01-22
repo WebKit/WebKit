@@ -54,7 +54,6 @@ namespace WebCore {
         float angle() const;
         FloatPoint rotationCenter() const;
 
-//        void setMatrix(const TransformationMatrix&);
         void setMatrix(TransformationMatrix);
 
         void setTranslate(float tx, float ty);
@@ -68,9 +67,6 @@ namespace WebCore {
         FloatSize scale() const;
         
         bool isValid();
-
-        // Throughout SVG 1.1 'SVGTransform' is only used for the 'transform' attribute
-        const QualifiedName& associatedAttributeName() const { return SVGNames::transformAttr; }
 
     private:
         SVGTransformType m_type;
@@ -93,5 +89,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

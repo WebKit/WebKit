@@ -21,6 +21,8 @@
 
 #if ENABLE(SVG)
 #include "JSSVGPathSeg.h"
+
+#include "JSDOMBinding.h"
 #include "JSSVGPathSegArcAbs.h"
 #include "JSSVGPathSegArcRel.h"
 #include "JSSVGPathSegClosePath.h"
@@ -40,9 +42,6 @@
 #include "JSSVGPathSegLinetoVerticalRel.h"
 #include "JSSVGPathSegMovetoAbs.h"
 #include "JSSVGPathSegMovetoRel.h"
-
-#include "JSDOMBinding.h"
-
 #include "SVGPathSeg.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegClosePath.h"
@@ -64,8 +63,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, SVGPathSeg* objec
     if (!object)
         return jsNull();
 
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, object))
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, object)) {
+        ASSERT(JSSVGContextCache::svgContextForDOMObject(wrapper) == context);
         return wrapper;
+    }
 
     switch (object->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
@@ -115,5 +116,3 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, SVGPathSeg* objec
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

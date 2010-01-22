@@ -44,15 +44,16 @@ JSValue JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
     TransformationMatrix m1(*impl());
     TransformationMatrix m2(*(matrixObj->impl()));
 
-    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)).get(), m_context.get());
-
-    return result;
+    SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
+    return toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)).get(), context);
 }
 
 JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 {
     TransformationMatrix imp(*impl());
-    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.inverse()).get(), m_context.get());
+
+    SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
+    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.inverse()).get(), context);
 
     if (!imp.isInvertible())
         setDOMException(exec, SVGException::SVG_MATRIX_NOT_INVERTABLE);
@@ -67,7 +68,8 @@ JSValue JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
     float x = args.at(0).toFloat(exec);
     float y = args.at(1).toFloat(exec);
 
-    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
+    SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
+    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), context);
 
     if (x == 0.0 || y == 0.0)
         setDOMException(exec, SVGException::SVG_INVALID_VALUE_ERR);

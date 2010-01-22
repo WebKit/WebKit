@@ -585,6 +585,7 @@
             'bindings/js/JSStorageCustom.h',
             'bindings/js/JSStyleSheetCustom.cpp',
             'bindings/js/JSStyleSheetListCustom.cpp',
+            'bindings/js/JSSVGContextCache.h',
             'bindings/js/JSSVGElementInstanceCustom.cpp',
             'bindings/js/JSSVGLengthCustom.cpp',
             'bindings/js/JSSVGMatrixCustom.cpp',
