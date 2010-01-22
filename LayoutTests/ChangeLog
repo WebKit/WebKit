@@ -1,3 +1,12 @@
+2010-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix comment in the a SVG <use> testcase, it should say "green rectangles" instead of "blue rectangles", as noticed by Csaba Osztrogonác.
+
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.checksum:
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png:
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml:
+
 2010-01-22  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Adler.
