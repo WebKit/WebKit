@@ -56,7 +56,6 @@ my $idlFile = $ARGV[0];
 die('Must specify input file.') unless defined($idlFile);
 die('Must specify IDL search path.') unless @idlDirectories;
 die('Must specify generator') unless defined($generator);
-die('Must specify input file.') unless defined($idlFile);
 die('Must specify output directory.') unless defined($outputDirectory);
 die('Must specify defines') unless defined($defines);
 
