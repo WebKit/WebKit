@@ -72,6 +72,7 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
+    , m_scale(1)
     , m_viewSpec(0)
     , m_containerSize(300, 150)
     , m_hasSetContainerSize(false)
@@ -189,15 +190,22 @@ SVGViewSpec* SVGSVGElement::currentView() const
 
 float SVGSVGElement::currentScale() const
 {
-    if (document() && document()->frame())
-        return document()->frame()->zoomFactor();
-    return 1.0f;
+    if (document() && parentNode() == document())
+        return document()->frame() ? document()->frame()->zoomFactor() : 1;
+    return m_scale;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    if (document() && document()->frame())
-        document()->frame()->setZoomFactor(scale, true);
+    if (document() && parentNode() == document()) {
+        if (document()->frame())
+            document()->frame()->setZoomFactor(scale, true);
+        return;
+    }
+
+    m_scale = scale;
+    if (renderer())
+        renderer()->setNeedsLayout(true);
 }
 
 FloatPoint SVGSVGElement::currentTranslate() const

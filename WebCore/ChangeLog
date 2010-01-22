@@ -1,3 +1,20 @@
+2010-01-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7568696> Zoom applied to embedded SVG incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=33988
+
+        Test: svg/custom/text-zoom.xhtml
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement): Initialize m_scale.
+        (WebCore::SVGSVGElement::currentScale): If this is the document element,
+        return the frame’s zoom factor. Otherwise, return m_scale.
+        (WebCore::SVGSVGElement::setCurrentScale): If this is the document element,
+        set the frame’s zoom factor. Otherwise, set m_scale and mark for layout.
+        * svg/SVGSVGElement.h: Added m_scale member.
+
 2010-01-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
