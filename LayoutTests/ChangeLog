@@ -1,3 +1,11 @@
+2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        [Qt] css1_forward_compatible_parsing.html moved from css2.1 to fast/css by r53664.
+
+        * platform/qt/Skipped: path fixed.
+
 2010-01-22  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -1231,7 +1231,6 @@ fast/loader/stop-provisional-loads.html
 # Skip tests with metrics for now
 animations/animation-drt-api.html
 animations/animation-drt-api-multiple-keyframes.html
-css2.1/css1_forward_compatible_parsing.html
 css2.1/t010403-shand-border-00-c.html
 css2.1/t010403-shand-font-00-b.html
 css2.1/t010403-shand-font-01-b.html
@@ -2512,6 +2511,7 @@ fast/css/continuationCrash.html
 fast/css/counters/counter-text-security.html
 fast/css/counters/counter-text-transform.html
 fast/css/create_element_align.xhtml
+fast/css/css1_forward_compatible_parsing.html
 fast/css/css3-modsel-22.html
 fast/css/css3-nth-child.html
 fast/css/css-imports.html
