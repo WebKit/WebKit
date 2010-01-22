@@ -1,3 +1,21 @@
+2010-01-22  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve portability of listbox-deselect-scroll.html
+        https://bugs.webkit.org/show_bug.cgi?id=33989
+
+        - Convert the test to dumpAsTest
+        - Use eventSender.mouseDown(0, ['addSelectionKey'])
+        - Avoid hard-coded line-heights.
+
+        * fast/forms/listbox-deselect-scroll-expected.txt: Added.
+        * fast/forms/listbox-deselect-scroll.html:
+        * fast/forms/script-tests/listbox-deselect-scroll.js: Added.
+        * platform/mac/fast/forms/listbox-deselect-scroll-expected.checksum: Removed.
+        * platform/mac/fast/forms/listbox-deselect-scroll-expected.png: Removed.
+        * platform/mac/fast/forms/listbox-deselect-scroll-expected.txt: Removed.
+
 2010-01-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

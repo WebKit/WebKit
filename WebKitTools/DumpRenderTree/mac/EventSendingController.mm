@@ -127,10 +127,8 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(fireKeyboardEventsToElement:)
             || aSelector == @selector(keyDown:withModifiers:withLocation:)
             || aSelector == @selector(leapForward:)
-            || aSelector == @selector(mouseDown:)
             || aSelector == @selector(mouseDown:withModifiers:)
             || aSelector == @selector(mouseMoveToX:Y:)
-            || aSelector == @selector(mouseUp:)
             || aSelector == @selector(mouseUp:withModifiers:)
             || aSelector == @selector(scheduleAsynchronousClick)
             || aSelector == @selector(textZoomIn)
@@ -160,9 +158,9 @@ BOOL replayingSavedEvents;
         return @"keyDown";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
-    if (aSelector == @selector(mouseDown:) || aSelector == @selector(mouseDown:withModifiers:))
+    if (aSelector == @selector(mouseDown:withModifiers:))
         return @"mouseDown";
-    if (aSelector == @selector(mouseUp:) || aSelector == @selector(mouseUp:withModifiers:))
+    if (aSelector == @selector(mouseUp:withModifiers:))
         return @"mouseUp";
     if (aSelector == @selector(mouseMoveToX:Y:))
         return @"mouseMoveTo";
