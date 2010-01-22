@@ -1,3 +1,13 @@
+2010-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix for the failing test on qt buildbot.
+        This tests had been added as part of the patch for https://bugs.webkit.org/show_bug.cgi?id=33970
+
+        * editing/pasteboard/paste-noscript-svg-expected.txt:
+        * editing/resources/svgcontent.xhtml:
+
 2010-01-22  Adam Roben  <aroben@apple.com>
 
         Check in expected failure results for text-zoom.xhtml on Windows
