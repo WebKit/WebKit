@@ -29,15 +29,14 @@
 
 """Front end of some style-checker modules."""
 
-# FIXME: Move more code from cpp_style to here.
-
+import codecs
 import getopt
 import os.path
 import sys
 
-import cpp_style
-import text_style
 from diff_parser import DiffParser
+from cpp_style import CppProcessor
+from text_style import TextProcessor
 
 
 # These defaults are used by check-webkit-style.
@@ -155,6 +154,30 @@ STYLE_CATEGORIES = [
     'whitespace/semicolon',
     'whitespace/tab',
     'whitespace/todo',
+    ]
+
+
+# Some files should be skipped when checking style. For example,
+# WebKit maintains some files in Mozilla style on purpose to ease
+# future merges.
+#
+# Include a warning for skipped files that are less obvious.
+SKIPPED_FILES_WITH_WARNING = [
+    # The Qt API and tests do not follow WebKit style.
+    # They follow Qt style. :)
+    "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
+    "gtk2drawing.h", # WebCore/platform/gtk/gtk2drawing.h
+    "JavaScriptCore/qt/api/",
+    "WebKit/gtk/tests/",
+    "WebKit/qt/Api/",
+    "WebKit/qt/tests/",
+    ]
+
+
+# Don't include a warning for skipped files that are more common
+# and more obvious.
+SKIPPED_FILES_WITHOUT_WARNING = [
+    "LayoutTests/"
     ]
 
 
@@ -619,6 +642,104 @@ class ArgumentParser(object):
         return (filenames, options)
 
 
+# Enum-like idiom
+class FileType:
+
+    NONE = 1
+    # Alphabetize remaining types
+    CPP = 2
+    TEXT = 3
+
+
+class ProcessorDispatcher(object):
+
+    """Supports determining whether and how to check style, based on path."""
+
+    cpp_file_extensions = (
+        'c',
+        'cpp',
+        'h',
+        )
+
+    text_file_extensions = (
+        'css',
+        'html',
+        'idl',
+        'js',
+        'mm',
+        'php',
+        'pm',
+        'py',
+        'txt',
+        )
+
+    def _file_extension(self, file_path):
+        """Return the file extension without the leading dot."""
+        return os.path.splitext(file_path)[1].lstrip(".")
+
+    def should_skip_with_warning(self, file_path):
+        """Return whether the given file should be skipped with a warning."""
+        for skipped_file in SKIPPED_FILES_WITH_WARNING:
+            if file_path.find(skipped_file) >= 0:
+                return True
+        return False
+
+    def should_skip_without_warning(self, file_path):
+        """Return whether the given file should be skipped without a warning."""
+        for skipped_file in SKIPPED_FILES_WITHOUT_WARNING:
+            if file_path.find(skipped_file) >= 0:
+                return True
+        return False
+
+    def _file_type(self, file_path):
+        """Return the file type corresponding to the given file."""
+        file_extension = self._file_extension(file_path)
+
+        if (file_extension in self.cpp_file_extensions) or (file_path == '-'):
+            # FIXME: Do something about the comment below and the issue it
+            #        raises since cpp_style already relies on the extension.
+            #
+            # Treat stdin as C++. Since the extension is unknown when
+            # reading from stdin, cpp_style tests should not rely on
+            # the extension.
+            return FileType.CPP
+        elif ("ChangeLog" in file_path
+              or "WebKitTools/Scripts/" in file_path
+              or file_extension in self.text_file_extensions):
+            return FileType.TEXT
+        else:
+            return FileType.NONE
+
+    def _create_processor(self, file_type, file_path, handle_style_error, verbosity):
+        """Instantiate and return a style processor based on file type."""
+        if file_type == FileType.NONE:
+            processor = None
+        elif file_type == FileType.CPP:
+            file_extension = self._file_extension(file_path)
+            processor = CppProcessor(file_path, file_extension, handle_style_error, verbosity)
+        elif file_type == FileType.TEXT:
+            processor = TextProcessor(file_path, handle_style_error)
+        else:
+            raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
+                             "are %(NONE)s, %(CPP)s, and %(TEXT)s."
+                             % {"file_type": file_type,
+                                "NONE": FileType.NONE,
+                                "CPP": FileType.CPP,
+                                "TEXT": FileType.TEXT})
+
+        return processor
+
+    def dispatch_processor(self, file_path, handle_style_error, verbosity):
+        """Instantiate and return a style processor based on file path."""
+        file_type = self._file_type(file_path)
+
+        processor = self._create_processor(file_type,
+                                           file_path,
+                                           handle_style_error,
+                                           verbosity)
+        return processor
+
+
 class StyleChecker(object):
 
     """Supports checking style in files and patches.
@@ -632,20 +753,25 @@ class StyleChecker(object):
 
     """
 
-    def __init__(self, options, write_error=sys.stderr.write):
+    def __init__(self, options, stderr_write=None):
         """Create a StyleChecker instance.
 
         Args:
           options: See options attribute.
           stderr_write: A function that takes a string as a parameter
                         and that is called when a style error occurs.
+                        Defaults to sys.stderr.write. This should be
+                        used only for unit tests.
 
         """
-        self._write_error = write_error
-        self.options = options
-        self.error_count = 0
+        if stderr_write is None:
+            stderr_write = sys.stderr.write
 
-    def _handle_error(self, filename, line_number, category, confidence, message):
+        self._stderr_write = stderr_write
+        self.error_count = 0
+        self.options = options
+
+    def _handle_style_error(self, filename, line_number, category, confidence, message):
         """Handle the occurrence of a style error while checking.
 
         Check whether an error should be reported. If so, increment the
@@ -675,37 +801,104 @@ class StyleChecker(object):
         else:
             format_string = "%s:%s:  %s  [%s] [%d]\n"
 
-        self._write_error(format_string % (filename, line_number, message,
-                                           category, confidence))
+        self._stderr_write(format_string % (filename, line_number, message,
+                                            category, confidence))
 
-    def process_file(self, filename):
-        """Checks style for the specified file.
+    def _process_file(self, processor, file_path, handle_style_error):
+        """Process the file using the given processor."""
+        try:
+            # Support the UNIX convention of using "-" for stdin.  Note that
+            # we are not opening the file with universal newline support
+            # (which codecs doesn't support anyway), so the resulting lines do
+            # contain trailing '\r' characters if we are reading a file that
+            # has CRLF endings.
+            # If after the split a trailing '\r' is present, it is removed
+            # below. If it is not expected to be present (i.e. os.linesep !=
+            # '\r\n' as in Windows), a warning is issued below if this file
+            # is processed.
+            if file_path == '-':
+                lines = codecs.StreamReaderWriter(sys.stdin,
+                                                  codecs.getreader('utf8'),
+                                                  codecs.getwriter('utf8'),
+                                                  'replace').read().split('\n')
+            else:
+                lines = codecs.open(file_path, 'r', 'utf8', 'replace').read().split('\n')
 
-        If the specified filename is '-', applies cpp_style to the standard input.
+            carriage_return_found = False
+            # Remove trailing '\r'.
+            for line_number in range(len(lines)):
+                if lines[line_number].endswith('\r'):
+                    lines[line_number] = lines[line_number].rstrip('\r')
+                    carriage_return_found = True
 
-        """
-        if cpp_style.can_handle(filename) or filename == '-':
-            cpp_style.process_file(filename, self._handle_error, self.options.verbosity)
-        elif text_style.can_handle(filename):
-            text_style.process_file(filename, self._handle_error)
+        except IOError:
+            self._stderr_write("Skipping input '%s': Can't open for reading\n" % file_path)
+            return
 
-    def process_patch(self, patch_string):
-        """Does lint on a single patch.
+        processor.process(lines)
+
+        if carriage_return_found and os.linesep != '\r\n':
+            # FIXME: Make sure this error also shows up when checking
+            #        patches, if appropriate.
+            #
+            # Use 0 for line_number since outputting only one error for
+            # potentially several lines.
+            handle_style_error(file_path, 0, 'whitespace/newline', 1,
+                               'One or more unexpected \\r (^M) found;'
+                               'better to use only a \\n')
+
+    def check_file(self, file_path, handle_style_error=None, process_file=None):
+        """Check style in the given file.
 
         Args:
-          patch_string: A string of a patch.
+          file_path: A string that is the path of the file to process.
+          handle_style_error: The function to call when a style error
+                              occurs. This parameter is meant for internal
+                              use within this class. Defaults to the
+                              style error handling method of this class.
+          process_file: The function to call to process the file. This
+                        parameter should be used only for unit tests.
+                        Defaults to the file processing method of this class.
+
+        """
+        if handle_style_error is None:
+            handle_style_error = self._handle_style_error
+
+        if process_file is None:
+            process_file = self._process_file
+
+        dispatcher = ProcessorDispatcher()
+
+        if dispatcher.should_skip_without_warning(file_path):
+            return
+        if dispatcher.should_skip_with_warning(file_path):
+            self._stderr_write('Ignoring "%s": this file is exempt from the '
+                               "style guide.\n" % file_path)
+            return
+
+        verbosity = self.options.verbosity
+        processor = dispatcher.dispatch_processor(file_path,
+                                                  handle_style_error,
+                                                  verbosity)
+        process_file(processor, file_path, handle_style_error)
+
+    def check_patch(self, patch_string):
+        """Check style in the given patch.
+
+        Args:
+          patch_string: A string that is a patch string.
 
         """
         patch = DiffParser(patch_string.splitlines())
-        for filename, diff in patch.files.iteritems():
-            file_extension = os.path.splitext(filename)[1]
+        for file_path, diff in patch.files.iteritems():
             line_numbers = set()
 
-            def error_for_patch(filename, line_number, category, confidence, message):
+            def error_for_patch(file_path, line_number, category, confidence, message):
                 """Wrapper function of cpp_style.error for patches.
 
                 This function outputs errors only if the line number
                 corresponds to lines which are modified or added.
+
                 """
                 if not line_numbers:
                     for line in diff.lines:
@@ -714,11 +907,10 @@ class StyleChecker(object):
                         if not line[0]:
                             line_numbers.add(line[1])
 
+                # FIXME: Make sure errors having line number zero are
+                #        logged -- like carriage-return errors.
                 if line_number in line_numbers:
-                    self._handle_error(filename, line_number, category, confidence, message)
+                    self._handle_style_error(file_path, line_number, category, confidence, message)
 
-            # FIXME: Share this code with self.process_file().
-            if cpp_style.can_handle(filename):
-                cpp_style.process_file(filename, error_for_patch, self.options.verbosity)
-            elif text_style.can_handle(filename):
-                text_style.process_file(filename, error_for_patch)
+            self.check_file(file_path, handle_style_error=error_for_patch)
+

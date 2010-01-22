@@ -4,6 +4,7 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -41,6 +42,8 @@ import random
 import re
 import unittest
 import cpp_style
+from cpp_style import CppProcessor
+
 # FIXME: Remove the need to import anything from checker. See the
 #        FIXME notes near the STYLE_CATEGORIES definition for a
 #        suggestion on how to best do this.
@@ -3606,35 +3609,53 @@ class WebKitStyleTest(CppStyleTestBase):
         pass
 
 
-    def test_can_handle(self):
-        """Tests for cpp_style.can_handle()."""
-        self.assert_(not cpp_style.can_handle(''))
-        self.assert_(cpp_style.can_handle('foo.h'))
-        self.assert_(not cpp_style.can_handle('foo.hpp'))
-        self.assert_(cpp_style.can_handle('foo.c'))
-        self.assert_(cpp_style.can_handle('foo.cpp'))
-        self.assert_(not cpp_style.can_handle('foo.cc'))
-        self.assert_(not cpp_style.can_handle('foo.cxx'))
-        self.assert_(not cpp_style.can_handle('foo.C'))
-        self.assert_(not cpp_style.can_handle('foo.mm'))
-        self.assert_(not cpp_style.can_handle('-'))
+class CppProcessorTest(unittest.TestCase):
 
-    def test_is_exempt(self):
-        """Tests for cpp_style.is_exempt()."""
-        self.assert_(not cpp_style.is_exempt(''))
-        self.assert_(not cpp_style.is_exempt('foo.h'))
-        self.assert_(not cpp_style.is_exempt('foo.hpp'))
-        self.assert_(not cpp_style.is_exempt('foo.c'))
-        self.assert_(not cpp_style.is_exempt('foo.cpp'))
-        self.assert_(not cpp_style.is_exempt('-'))
-        self.assert_(cpp_style.is_exempt('gtk2drawing.h'))
-        self.assert_(cpp_style.is_exempt('WebCore/platform/gtk/gtk2drawing.h'))
-        self.assert_(cpp_style.is_exempt('gtk2drawing.c'))
-        self.assert_(cpp_style.is_exempt('WebCore/platform/gtk/gtk2drawing.c'))
-        self.assert_(cpp_style.is_exempt('WebKit/qt/Api/qwebpage.h'))
-        self.assert_(cpp_style.is_exempt('JavaScriptCore/qt/api/qscriptengine_p.h'))
-        self.assert_(cpp_style.is_exempt('WebKit/qt/tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp'))
-        self.assert_(cpp_style.is_exempt('WebKit/gtk/tests/testatk.c'))
+    """Tests CppProcessor class."""
+
+    def mock_handle_style_error(self):
+        pass
+
+    def _processor(self):
+        return CppProcessor("foo", "h", self.mock_handle_style_error, 3)
+
+    def test_init(self):
+        """Test __init__ constructor."""
+        processor = self._processor()
+        self.assertEquals(processor.file_extension, "h")
+        self.assertEquals(processor.file_path, "foo")
+        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
+        self.assertEquals(processor.verbosity, 3)
+
+    def test_eq(self):
+        """Test __eq__ equality function."""
+        processor1 = self._processor()
+        processor2 = self._processor()
+
+        # == calls __eq__.
+        self.assertTrue(processor1 == processor2)
+
+        def mock_handle_style_error2(self):
+            pass
+
+        # Verify that a difference in any argument cause equality to fail.
+        processor = CppProcessor("foo", "h", self.mock_handle_style_error, 3)
+        self.assertFalse(processor == CppProcessor("bar", "h", self.mock_handle_style_error, 3))
+        self.assertFalse(processor == CppProcessor("foo", "c", self.mock_handle_style_error, 3))
+        self.assertFalse(processor == CppProcessor("foo", "h", mock_handle_style_error2, 3))
+        self.assertFalse(processor == CppProcessor("foo", "h", self.mock_handle_style_error, 4))
+
+    def test_ne(self):
+        """Test __ne__ inequality function."""
+        processor1 = self._processor()
+        processor2 = self._processor()
+
+        # != calls __ne__.
+        # By default, __ne__ always returns true on different objects.
+        # Thus, just check the distinguishing case to verify that the
+        # code defines __ne__.
+        self.assertFalse(processor1 != processor2)
+
 
 def tearDown():
     """A global check to make sure all error-categories have been tested.

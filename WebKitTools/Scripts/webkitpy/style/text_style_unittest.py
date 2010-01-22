@@ -32,7 +32,7 @@
 import unittest
 
 import text_style
-
+from text_style import TextProcessor
 
 class TextStyleTestCase(unittest.TestCase):
     """TestCase for text_style.py"""
@@ -76,36 +76,18 @@ class TextStyleTestCase(unittest.TestCase):
                           '\tReviewed by NOBODY.'], 3)
 
 
-    def test_can_handle(self):
-        """Tests for text_style.can_handle()."""
-        self.assert_(not text_style.can_handle(''))
-        self.assert_(not text_style.can_handle('-'))
-        self.assert_(text_style.can_handle('ChangeLog'))
-        self.assert_(text_style.can_handle('WebCore/ChangeLog'))
-        self.assert_(text_style.can_handle('FooChangeLog.bak'))
-        self.assert_(text_style.can_handle('WebKitTools/Scripts/check-webkit=style'))
-        self.assert_(text_style.can_handle('WebKitTools/Scripts/modules/text_style.py'))
-        self.assert_(not text_style.can_handle('WebKitTools/Scripts'))
+class TextProcessorTest(unittest.TestCase):
 
-        self.assert_(text_style.can_handle('foo.css'))
-        self.assert_(text_style.can_handle('foo.html'))
-        self.assert_(text_style.can_handle('foo.idl'))
-        self.assert_(text_style.can_handle('foo.js'))
-        self.assert_(text_style.can_handle('WebCore/inspector/front-end/inspector.js'))
-        self.assert_(text_style.can_handle('foo.mm'))
-        self.assert_(text_style.can_handle('foo.php'))
-        self.assert_(text_style.can_handle('foo.pm'))
-        self.assert_(text_style.can_handle('foo.py'))
-        self.assert_(text_style.can_handle('foo.txt'))
-        self.assert_(not text_style.can_handle('foo.c'))
-        self.assert_(not text_style.can_handle('foo.c'))
-        self.assert_(not text_style.can_handle('foo.c'))
-        self.assert_(not text_style.can_handle('foo.png'))
-        self.assert_(not text_style.can_handle('foo.c/bar.png'))
-        self.assert_(not text_style.can_handle('WebKit/English.lproj/Localizable.strings'))
-        self.assert_(not text_style.can_handle('Makefile'))
-        self.assert_(not text_style.can_handle('WebCore/Android.mk'))
-        self.assert_(not text_style.can_handle('LayoutTests/inspector/console-tests.js'))
+    """Tests TextProcessor class."""
+
+    def mock_handle_style_error(self):
+        pass
+
+    def test_init(self):
+        """Test __init__ constructor."""
+        processor = TextProcessor("foo.txt", self.mock_handle_style_error)
+        self.assertEquals(processor.file_path, "foo.txt")
+        self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
 
 
 if __name__ == '__main__':

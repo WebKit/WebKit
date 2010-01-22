@@ -68,7 +68,7 @@ def main():
 
     if files:
         for filename in files:
-            style_checker.process_file(filename)
+            style_checker.check_file(filename)
 
     else:
         cwd = os.path.abspath('.')
@@ -84,7 +84,7 @@ def main():
             patch = scm.create_patch_since_local_commit(commit)
         else:
             patch = scm.create_patch()
-        style_checker.process_patch(patch)
+        style_checker.check_patch(patch)
 
     sys.stderr.write('Total errors found: %d\n' % style_checker.error_count)
     sys.exit(style_checker.error_count > 0)

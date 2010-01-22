@@ -1,5 +1,56 @@
 2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        Refactored to move file name and file-reading related code
+        from cpp_style.py and text_style.py to checker.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33775
+
+        * Scripts/check-webkit-style:
+          - Updates caused by changes to checker.py.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added SKIPPED_FILES_WITH_WARNING list.
+          - Added SKIPPED_FILES_WITHOUT_WARNING list.
+          - Added FileType class.
+          - Added ProcessorDispatcher class.
+          - In StyleChecker class:
+            - Renamed process_patch() to check_patch().
+            - Renamed process_file() to check_file().
+            - Added _process_file().
+            - Related refactoring.
+            - Addressed check_patch() FIXME to share code with process_file().
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added ProcessorDispatcherSkipTest class.
+          - Added ProcessorDispatcherDispatchTest class.
+          - Added StyleCheckerCheckFileTest class.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+          - Renamed process_file_data() to _process_lines.
+          - Removed process_file() (moved logic to checker.py).
+          - Removed can_handle() (moved logic to checker.py).
+          - Added CppProcessor class.
+          - Removed is_exempt() (moved logic to checker.py).
+          - Added process_file_data() back as a wrapper function.
+
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+          - Removed test_can_handle().
+          - Removed test_is_exempt().
+          - Added CppProcessorTest class.
+
+        * Scripts/webkitpy/style/text_style.py:
+          - Added TextProcessor class.
+          - Removed process_file().
+          - Removed can_handle().
+
+        * Scripts/webkitpy/style/text_style_unittest.py:
+          - Removed test_can_handle().
+          - Added TextProcessorTest class.
+
+2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by David Kilzer.
 
         Create a unit-tested subroutine to parse patch files created

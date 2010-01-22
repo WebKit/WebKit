@@ -4,6 +4,7 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -2820,7 +2821,7 @@ def process_line(filename, file_extension,
     check_invalid_increment(filename, clean_lines, line, error)
 
 
-def process_file_data(filename, file_extension, lines, error, verbosity):
+def _process_lines(filename, file_extension, lines, error, verbosity):
     """Performs lint checks and reports any errors to the given error function.
 
     Args:
@@ -2859,90 +2860,49 @@ def process_file_data(filename, file_extension, lines, error, verbosity):
     check_for_new_line_at_eof(filename, lines, error)
 
 
-def process_file(filename, error, verbosity):
-    """Performs cpp_style on a single file.
+class CppProcessor(object):
 
-    Args:
-      filename: The name of the file to parse.
-      error: The function to call with any errors found.
-      verbosity: An integer that is the verbosity level to use while
-                 checking style.
-    """
-    try:
-        # Support the UNIX convention of using "-" for stdin.  Note that
-        # we are not opening the file with universal newline support
-        # (which codecs doesn't support anyway), so the resulting lines do
-        # contain trailing '\r' characters if we are reading a file that
-        # has CRLF endings.
-        # If after the split a trailing '\r' is present, it is removed
-        # below. If it is not expected to be present (i.e. os.linesep !=
-        # '\r\n' as in Windows), a warning is issued below if this file
-        # is processed.
+    """Processes C++ lines for checking style."""
 
-        if filename == '-':
-            lines = codecs.StreamReaderWriter(sys.stdin,
-                                              codecs.getreader('utf8'),
-                                              codecs.getwriter('utf8'),
-                                              'replace').read().split('\n')
-        else:
-            lines = codecs.open(filename, 'r', 'utf8', 'replace').read().split('\n')
+    def __init__(self, file_path, file_extension, handle_style_error, verbosity):
+        """Create a CppProcessor instance.
 
-        carriage_return_found = False
-        # Remove trailing '\r'.
-        for line_number in range(len(lines)):
-            if lines[line_number].endswith('\r'):
-                lines[line_number] = lines[line_number].rstrip('\r')
-                carriage_return_found = True
+        Args:
+          file_extension: A string that is the file extension, without
+                          the leading dot.
 
-    except IOError:
-        sys.stderr.write(
-            "Skipping input '%s': Can't open for reading\n" % filename)
-        return
+        """
+        self.file_extension = file_extension
+        self.file_path = file_path
+        self.handle_style_error = handle_style_error
+        self.verbosity = verbosity
 
-    # Note, if no dot is found, this will give the entire filename as the ext.
-    file_extension = filename[filename.rfind('.') + 1:]
+    # Useful for unit testing.
+    def __eq__(self, other):
+        """Return whether this CppProcessor instance is equal to another."""
+        if self.file_extension != other.file_extension:
+            return False
+        if self.file_path != other.file_path:
+            return False
+        if self.handle_style_error != other.handle_style_error:
+            return False
+        if self.verbosity != other.verbosity:
+            return False
 
-    # When reading from stdin, the extension is unknown, so no cpp_style tests
-    # should rely on the extension.
-    if (filename != '-' and not can_handle(filename)):
-        sys.stderr.write('Ignoring %s; not a .cpp, .c or .h file\n' % filename)
-    elif is_exempt(filename):
-        sys.stderr.write('Ignoring %s; This file is exempt from the style guide.\n' % filename)
-    else:
-        process_file_data(filename, file_extension, lines, error, verbosity)
-        if carriage_return_found and os.linesep != '\r\n':
-            # Use 0 for line_number since outputing only one error for potentially
-            # several lines.
-            error(filename, 0, 'whitespace/newline', 1,
-                  'One or more unexpected \\r (^M) found;'
-                  'better to use only a \\n')
-
-
-def can_handle(filename):
-    """Checks if this module supports for the specified file type.
-
-    Args:
-      filename: A filename. It may contain directory names.
-     """
-    return os.path.splitext(filename)[1] in ('.h', '.cpp', '.c')
-
-
-def is_exempt(filename):
-    """Checks if the given file is exempt from the style guide.  For example,
-    some files are purposefully mantained in Mozilla style to ease future
-    merges.
-
-    Args:
-      filename: A filename. It may contain directory names.
-     """
-    if (filename.find('WebKit/qt/Api/') >= 0
-        or filename.find('JavaScriptCore/qt/api/') >= 0
-        or filename.find('WebKit/qt/tests/') >= 0
-        or filename.find('WebKit/gtk/tests/') >= 0):
-        # The Qt API and the Qt and Gtk tests do not follow WebKit style.
         return True
 
-    return os.path.basename(filename) in (
-        'gtk2drawing.c',
-        'gtk2drawing.h',
-    )
+    # Useful for unit testing.
+    def __ne__(self, other):
+        # Python does not automatically deduce __ne__() from __eq__().
+        return not self.__eq__(other)
+
+    def process(self, lines):
+        _process_lines(self.file_path, self.file_extension, lines,
+                       self.handle_style_error, self.verbosity)
+
+
+# FIXME: Remove this function (requires refactoring unit tests).
+def process_file_data(filename, file_extension, lines, error, verbosity):
+    processor = CppProcessor(filename, file_extension, error, verbosity)
+    processor.process(lines)
+
