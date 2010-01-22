@@ -1,3 +1,13 @@
+2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QState::polished() was renamed to QState::propertiesAssigned() when
+        Qt 4.6.0 was released.
+
+        * QGVLauncher/main.cpp:
+        (MainWindow::init):
+
 2010-01-21  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
