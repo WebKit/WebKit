@@ -46,7 +46,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
-
 namespace WebKit {
 
 class WebPluginLoadObserver;
@@ -73,6 +72,7 @@ public:
     virtual double triggeringEventTime() const;
     virtual ExtraData* extraData() const;
     virtual void setExtraData(ExtraData*);
+    virtual WebApplicationCacheHost* applicationCacheHost();
 
     static WebNavigationType toWebNavigationType(WebCore::NavigationType type);
 

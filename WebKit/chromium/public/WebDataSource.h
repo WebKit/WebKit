@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+class WebApplicationCacheHost;
 class WebString;
 class WebURL;
 class WebURLRequest;
@@ -90,6 +91,9 @@ public:
     // extra data pointer to be deleted.
     virtual ExtraData* extraData() const = 0;
     virtual void setExtraData(ExtraData*) = 0;
+
+    // The application cache host associated with this datasource.
+    virtual WebApplicationCacheHost* applicationCacheHost() = 0;
 
 protected:
     ~WebDataSource() { }

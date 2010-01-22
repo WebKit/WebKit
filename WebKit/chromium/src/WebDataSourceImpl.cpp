@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebDataSourceImpl.h"
 
+#include "ApplicationCacheHostInternal.h"
 #include "WebURL.h"
 #include "WebURLError.h"
 #include "WebVector.h"
@@ -106,6 +107,14 @@ WebDataSource::ExtraData* WebDataSourceImpl::extraData() const
 void WebDataSourceImpl::setExtraData(ExtraData* extraData)
 {
     m_extraData.set(extraData);
+}
+
+WebApplicationCacheHost* WebDataSourceImpl::applicationCacheHost() {
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    return ApplicationCacheHostInternal::toWebApplicationCacheHost(DocumentLoader::applicationCacheHost());
+#else
+    return 0;
+#endif
 }
 
 WebNavigationType WebDataSourceImpl::toWebNavigationType(NavigationType type)

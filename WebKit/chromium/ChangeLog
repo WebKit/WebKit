@@ -1,3 +1,20 @@
+2010-01-21  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Adds WebKit::WebDataSource::applicationCacheHost() to the API.
+        https://bugs.webkit.org/show_bug.cgi?id=33880
+
+        * WebKit.gyp:
+        * public/WebDataSource.h:
+        * src/ApplicationCacheHost.cpp:
+        * src/ApplicationCacheHostInternal.h: Copied from WebKit/chromium/src/ApplicationCacheHost.cpp.
+        (WebCore::ApplicationCacheHostInternal::notifyEventListener):
+        (WebCore::ApplicationCacheHostInternal::toWebApplicationCacheHost):
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::applicationCacheHost):
+        * src/WebDataSourceImpl.h:
+
 2010-01-21  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

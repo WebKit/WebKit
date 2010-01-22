@@ -33,14 +33,11 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "ApplicationCacheHostInternal.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "Frame.h"
 #include "Settings.h"
-#include "WebApplicationCacheHost.h"
-#include "WebApplicationCacheHostClient.h"
-#include "WebKit.h"
-#include "WebKitClient.h"
 #include "WebURL.h"
 #include "WebURLError.h"
 #include "WebURLResponse.h"
@@ -51,27 +48,6 @@ using namespace WebKit;
 
 namespace WebCore {
 
-// ApplicationCacheHostInternal -----------------------------------------------
-
-class ApplicationCacheHostInternal : public WebApplicationCacheHostClient {
-public:
-    ApplicationCacheHostInternal(ApplicationCacheHost* host)
-        : m_innerHost(host)
-    {
-        m_outerHost.set(WebKit::webKitClient()->createApplicationCacheHost(this));
-    }
-
-    virtual void notifyEventListener(WebApplicationCacheHost::EventID eventID)
-    {
-        m_innerHost->notifyDOMApplicationCache(
-            static_cast<ApplicationCacheHost::EventID>(eventID));
-    }
-
-    ApplicationCacheHost* m_innerHost;
-    OwnPtr<WebApplicationCacheHost> m_outerHost;
-};
-
-// ApplicationCacheHost -------------------------------------------------------
 // We provide a custom implementation of this class that calls out to the
 // embedding application instead of using WebCore's built in appcache system.
 // This file replaces webcore/appcache/ApplicationCacheHost.cpp in our build.
