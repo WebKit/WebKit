@@ -53,3 +53,4 @@ ws.dispatchEvent(evt);
 shouldBe("close_event_handled", "false");
 
 var successfullyParsed = true;
+isSuccessfullyParsed();
