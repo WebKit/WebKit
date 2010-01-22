@@ -121,7 +121,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 
 // Called in the thread during initialization.
 // Helpful for platforms where the thread name must be set from within the thread.
-void setThreadNameInternal(const char* threadName);
+void initializeCurrentThreadInternal(const char* threadName);
 
 ThreadIdentifier currentThread();
 bool isMainThread();

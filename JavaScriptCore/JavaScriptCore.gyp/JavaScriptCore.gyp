@@ -134,6 +134,7 @@
       'conditions': [
         ['OS=="win"', {
           'sources/': [
+            ['exclude', 'ThreadIdentifierDataPthreads\\.(h|cpp)$'],
             ['exclude', 'ThreadingPthreads\\.cpp$'],
             ['include', 'Thread(ing|Specific)Win\\.cpp$']
           ],

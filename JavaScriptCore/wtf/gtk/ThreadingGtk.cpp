@@ -138,7 +138,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     return threadID;
 }
 
-void setThreadNameInternal(const char*)
+void initializeCurrentThreadInternal(const char*)
 {
 }
 

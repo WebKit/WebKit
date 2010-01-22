@@ -49,12 +49,13 @@ static void* threadEntryPoint(void* contextData)
 {
     NewThreadContext* context = reinterpret_cast<NewThreadContext*>(contextData);
 
-    setThreadNameInternal(context->name);
-
-    // Block until our creating thread has completed any extra setup work.
+    // Block until our creating thread has completed any extra setup work, including
+    // establishing ThreadIdentifier.
     {
         MutexLocker locker(context->creationMutex);
     }
+
+    initializeCurrentThreadInternal(context->name);
 
     // Grab the info that we need out of the context, then deallocate it.
     ThreadFunction entryPoint = context->entryPoint;

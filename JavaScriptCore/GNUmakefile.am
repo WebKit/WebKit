@@ -279,10 +279,12 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/TCPackedCache.h \
 	JavaScriptCore/wtf/TCPageMap.h \
 	JavaScriptCore/wtf/TCSpinLock.h \
-	JavaScriptCore/wtf/ThreadSpecific.h \
+	JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
+	JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h \
 	JavaScriptCore/wtf/Threading.cpp \
 	JavaScriptCore/wtf/Threading.h \
 	JavaScriptCore/wtf/ThreadingPthreads.cpp \
+	JavaScriptCore/wtf/ThreadSpecific.h \
 	JavaScriptCore/wtf/TypeTraits.cpp \
 	JavaScriptCore/wtf/TypeTraits.h \
 	JavaScriptCore/wtf/UnusedParam.h \

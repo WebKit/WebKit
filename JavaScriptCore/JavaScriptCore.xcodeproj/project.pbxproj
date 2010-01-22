@@ -177,6 +177,8 @@
 		14F8BA4F107EC899009892DC /* Collector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8520255597D01FF60F7 /* Collector.cpp */; };
 		180B9B080F16D94F009BDBC5 /* CurrentTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 180B9AF00F16C569009BDBC5 /* CurrentTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */; };
+		18BAB55310DAE054000D945B /* ThreadIdentifierDataPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */; };
+		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
 		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
@@ -654,6 +656,8 @@
 		14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIterator.h; sourceTree = "<group>"; };
 		180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CurrentTime.cpp; sourceTree = "<group>"; };
 		180B9AF00F16C569009BDBC5 /* CurrentTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentTime.h; sourceTree = "<group>"; };
+		18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadIdentifierDataPthreads.cpp; sourceTree = "<group>"; };
+		18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadIdentifierDataPthreads.h; sourceTree = "<group>"; };
 		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
 		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -1371,6 +1375,8 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
+				18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */,
+				18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */,
 				5D6A566A0F05995500266145 /* Threading.cpp */,
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
@@ -2038,6 +2044,7 @@
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
 				1420BE7B10AA6DDB00F455D2 /* WeakRandom.h in Headers */,
+				18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */,
 				8698B86910D44D9400D8D01B /* StringBuilder.h in Headers */,
 				8698BB3910D86BAF00D8D01B /* UStringImpl.h in Headers */,
 				14035DB110DBFB2A00FFFFE7 /* WeakGCPtr.h in Headers */,
@@ -2475,6 +2482,7 @@
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */,
+				18BAB55310DAE054000D945B /* ThreadIdentifierDataPthreads.cpp in Sources */,
 				5D6A566B0F05995500266145 /* Threading.cpp in Sources */,
 				E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */,
 				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,

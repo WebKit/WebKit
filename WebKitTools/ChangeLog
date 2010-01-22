@@ -1,3 +1,24 @@
+2010-01-22  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix the leak of ThreadIdentifiers in threadMap across threads.
+        https://bugs.webkit.org/show_bug.cgi?id=32689
+
+        Add a new test to verify the ThreadIdentifiers are not reused across threads.
+        The test runs in the beginning of DumpRenderTree and spawns 2 non-WTF treads sequentially,
+        waiting for the previous thread to terminate before starting the next.
+        The treads use WTF::currentThread() in their thread function. Without a fix, this
+        causes both threads to have the same ThreadIdentifier which triggers ASSERT in thread function.
+        It also starts another thread using WTF. Without the fix, this finds pthread handle from previous
+        threads in the WTF threadMap and asserts in WTF::establishIdentifierForPthreadHandle().
+        The test practically does not affect the DRT run time because the threads end immediately.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runThread): Test thread function.
+        (testThreadIdentifierMap):
+        (dumpRenderTree):
+
 2010-01-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.

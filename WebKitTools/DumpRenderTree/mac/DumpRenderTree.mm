@@ -80,6 +80,7 @@
 #import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Threading.h>
 #import <wtf/OwnPtr.h>
 
 using namespace std;
@@ -466,6 +467,31 @@ static void setDefaultsToConsistentValuesForTesting()
 
 }
 
+static void* runThread(void* arg)
+{
+    static ThreadIdentifier previousId = 0;
+    ThreadIdentifier currentId = currentThread();
+    // Verify 2 successive threads do not get the same Id.
+    ASSERT(previousId != currentId);
+    previousId = currentId;
+    return 0;
+}
+
+static void testThreadIdentifierMap()
+{
+    // Imitate 'foreign' threads that are not created by WTF.
+    pthread_t pthread;
+    pthread_create(&pthread, 0, &runThread, 0);
+    pthread_join(pthread, 0);
+
+    pthread_create(&pthread, 0, &runThread, 0);
+    pthread_join(pthread, 0);
+
+    // Now create another thread using WTF. On OSX, it will have the same pthread handle
+    // but should get a different ThreadIdentifier.
+    createThread(runThread, 0, "DumpRenderTree: test");
+}
+
 static void crashHandler(int sig)
 {
     char *signalName = strsignal(sig);
@@ -613,6 +639,9 @@ void dumpRenderTree(int argc, const char *argv[])
 
     // <rdar://problem/5222911>
     testStringByEvaluatingJavaScriptFromString();
+
+    // http://webkit.org/b/32689
+    testThreadIdentifierMap();
 
     if (threaded)
         startJavaScriptThreads();

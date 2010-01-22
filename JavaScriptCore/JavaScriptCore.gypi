@@ -418,6 +418,8 @@
             'wtf/TCSpinLock.h',
             'wtf/TCSystemAlloc.cpp',
             'wtf/TCSystemAlloc.h',
+            'wtf/ThreadIdentifierDataPthreads.cpp',
+            'wtf/ThreadIdentifierDataPthreads.h',
             'wtf/Threading.cpp',
             'wtf/Threading.h',
             'wtf/ThreadingNone.cpp',
