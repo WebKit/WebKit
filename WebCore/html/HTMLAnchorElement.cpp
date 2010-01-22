@@ -497,20 +497,8 @@ String HTMLAnchorElement::protocol() const
 
 void HTMLAnchorElement::setProtocol(const String& value)
 {
-    int separator = value.find(':');
-
-    if (!separator)
-        return;
-    if (value.isEmpty())
-        return;
-
     KURL url = href();
-    // Following Firefox 3.5.2 which removes anything after the first ":"
-    String newProtocol = value.substring(0, separator);
-    if (!isValidProtocol(newProtocol))
-        return;
-    url.setProtocol(newProtocol);
-
+    url.setProtocol(value);
     setHref(url.string());
 }
 

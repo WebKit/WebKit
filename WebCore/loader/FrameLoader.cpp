@@ -620,7 +620,8 @@ KURL FrameLoader::iconURL()
         return KURL();
 
     KURL url;
-    url.setProtocol(m_URL.protocol());
+    bool couldSetProtocol = url.setProtocol(m_URL.protocol());
+    ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     url.setHost(m_URL.host());
     if (m_URL.hasPort())
         url.setPort(m_URL.port());

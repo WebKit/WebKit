@@ -570,12 +570,13 @@ String KURL::path() const
     return m_url.componentString(m_url.m_parsed.path);
 }
 
-void KURL::setProtocol(const String& protocol)
+bool KURL::setProtocol(const String& protocol)
 {
     KURLGooglePrivate::Replacements replacements;
     replacements.SetScheme(CharactersOrEmpty(protocol),
                            url_parse::Component(0, protocol.length()));
     m_url.replaceComponents(replacements);
+    return true;
 }
 
 void KURL::setHost(const String& host)
@@ -732,18 +733,6 @@ String KURL::prettyURL() const
 bool protocolIsJavaScript(const String& url)
 {
     return protocolIs(url, "javascript");
-}
-
-bool isValidProtocol(const String& protocol)
-{
-    if (!isSchemeFirstChar(protocol[0]))
-        return false;
-    unsigned protocolLength = protocol.length();
-    for (unsigned i = 1; i < protocolLength; i++) {
-        if (!isSchemeChar(protocol[i]))
-            return false;
-    }
-    return true;
 }
 
 // We copied the KURL version here on Dec 4, 2009 while doing a WebKit

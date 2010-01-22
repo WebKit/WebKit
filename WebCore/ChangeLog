@@ -1,3 +1,37 @@
+2010-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34008
+        Assertion failure in KURL::setProtocol when running DOM Fuzzer
+
+        Test: fast/dom/Window/invalid-protocol.html
+
+        * bindings/js/JSLocationCustom.cpp: (WebCore::JSLocation::setProtocol): Raise an exception
+        if KURL::setProtocol fails.
+
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::setProtocol): Move argument
+        tweaking logic into KURL. This way, the ':' trick applies to both JSLocation and
+        HTMLAnchorElement, matching IE (but not Firefox). IE behavior is more permissive, and even
+        more logical in my opinion.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::iconURL): Assert that setting protocol
+        succeeded.
+
+        * platform/KURL.cpp: (WebCore::KURL::setProtocol): Remove everything past ':', if present.
+        Return false if the protocol to set is not valid.
+        (WebCore::isValidProtocol): Made this work correctly for empty strings.
+
+        * platform/KURL.h: isValidProtocol() is now static in KURL.cpp, it's only used in setProtocol().
+
+        * platform/KURLGoogle.cpp: 
+        (WebCore::KURL::setProtocol): Always return true. This should hopefully prevent Chromium build
+        breakage, alhough tests will likely fail.
+        (WebCore::isValidProtocol): Removed, as this isn't used at the moment.
+
+        * websockets/WebSocketHandshake.cpp: (WebCore::WebSocketHandshake::httpURLForAuthenticationAndCookies):
+        Assert that setting protocol succeeded.
+
 2010-01-22  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

@@ -144,7 +144,7 @@ public:
     bool protocolInHTTPFamily() const;
     bool isLocalFile() const;
 
-    void setProtocol(const String&);
+    bool setProtocol(const String&);
     void setHost(const String&);
 
     void removePort();
@@ -266,7 +266,6 @@ const KURL& blankURL();
 
 bool protocolIs(const String& url, const char* protocol);
 bool protocolIsJavaScript(const String& url);
-bool isValidProtocol(const String& protocol);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
 bool portAllowed(const KURL&); // Blacklist ports that should never be used for Web resources.

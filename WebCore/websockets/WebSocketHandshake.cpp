@@ -355,7 +355,8 @@ void WebSocketHandshake::setServerSetCookie2(const String& setCookie2)
 KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
     KURL url = m_url.copy();
-    url.setProtocol(m_secure ? "https" : "http");
+    bool couldSetProtocol = url.setProtocol(m_secure ? "https" : "http");
+    ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     return url;
 }
 
