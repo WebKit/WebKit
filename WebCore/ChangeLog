@@ -1,3 +1,27 @@
+2010-01-22  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not render the full frame when there is some elements with fixed positioning
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        The RenderObjects with fixed position register to the view
+        to be taken into account while scrolling.
+        The scrolling code update specifically those elements after blitting the pixels.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::registerFixedPositionedObject):
+        (WebCore::FrameView::unregisterFixedPositionedObject):
+        (WebCore::FrameView::scrollContentsFastPath):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::scrollContentsFastPath):
+        * platform/ScrollView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::destroy):
+
 2010-01-22  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Eric Seidel.
