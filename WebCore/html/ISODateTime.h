@@ -78,6 +78,10 @@ public:
     // The format argument is valid for DateTime, DateTimeLocal, and Time types.
     String toString(SecondFormat format = None) const;
 
+    // parse*() and setMillisecondsSince*() functions are initializers for an
+    // ISODateTime instance. If these functions return false, the instance
+    // might be invalid.
+
     // The following six functions parse the input 'src' whose length is
     // 'length', and updates some fields of this instance. The parsing starts at
     // src[start] and examines characters before src[length].
@@ -108,6 +112,8 @@ public:
 
     // For Date type. Updates m_year, m_month and m_monthDay.
     bool setMillisecondsSinceEpochForDate(double ms);
+    // For DateTime type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
+    bool setMillisecondsSinceEpochForDateTime(double ms);
     // For Month type. Updates m_year and m_month.
     bool setMillisecondsSinceEpochForMonth(double ms);
     // FIXME: Add setMillisecondsSinceEpochFor*() for other types.

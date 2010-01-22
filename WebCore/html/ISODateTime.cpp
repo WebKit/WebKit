@@ -478,9 +478,10 @@ bool ISODateTime::setMillisecondsSinceEpochForDateInternal(double ms)
 
 bool ISODateTime::setMillisecondsSinceEpochForDate(double ms)
 {
+    m_type = Invalid;
     if (!isfinite(ms))
         return false;
-    if (!setMillisecondsSinceEpochForDateInternal(ms))
+    if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
     if (beforeGregorianStartDate(m_year, m_month, m_monthDay))
         return false;
@@ -488,11 +489,27 @@ bool ISODateTime::setMillisecondsSinceEpochForDate(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
+bool ISODateTime::setMillisecondsSinceEpochForDateTime(double ms)
 {
+    m_type = Invalid;
     if (!isfinite(ms))
         return false;
+    ms = round(ms);
+    setMillisecondsSinceMidnightInternal(positiveFmod(ms, msPerDay));
     if (!setMillisecondsSinceEpochForDateInternal(ms))
+        return false;
+    if (beforeGregorianStartDate(m_year, m_month, m_monthDay))
+        return false;
+    m_type = DateTime;
+    return true;
+}
+
+bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
+{
+    m_type = Invalid;
+    if (!isfinite(ms))
+        return false;
+    if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
     // Ignore m_monthDay updated by setMillisecondsSinceEpochForDateInternal().
     if (beforeGregorianStartDate(m_year, m_month, gregorianStartDay))
@@ -503,6 +520,7 @@ bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
 
 bool ISODateTime::setMillisecondsSinceMidnight(double ms)
 {
+    m_type = Invalid;
     if (!isfinite(ms))
         return false;
     setMillisecondsSinceMidnightInternal(positiveFmod(round(ms), msPerDay));
@@ -570,6 +588,9 @@ String ISODateTime::toString(SecondFormat format) const
     switch (m_type) {
     case Date:
         return String::format("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
+    case DateTime:
+        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
+            + toStringForTime(format) + String("Z");
     case Month:
         return String::format("%04d-%02d", m_year, m_month + 1);
     case Time:

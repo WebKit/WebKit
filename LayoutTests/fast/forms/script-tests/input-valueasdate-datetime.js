@@ -8,9 +8,37 @@ function valueAsDateFor(stringValue) {
     return input.valueAsDate;
 }
 
+function setValueAsDateAndGetValue(year, month, day, hour, minute, second, msec) {
+    var date = new Date();
+    date.setTime(Date.UTC(year, month, day, hour, minute, second, msec));
+    input.valueAsDate = date;
+    return input.value;
+}
+
 shouldBe('valueAsDateFor("")', 'null');
 shouldBe('valueAsDateFor("1969-12-31T12:34:56.789Z").getTime()', 'Date.UTC(1969, 11, 31, 12, 34, 56, 789)');
 shouldBe('valueAsDateFor("1970-01-01T00:00:00.000Z").getTime()', 'Date.UTC(1970, 0, 1, 0, 0, 0)');
 shouldBe('valueAsDateFor("2009-12-22T11:32:11Z").getTime()', 'Date.UTC(2009, 11, 22, 11, 32, 11)');
+
+shouldBe('setValueAsDateAndGetValue(1969, 11, 1, 0, 0, 0, 0)', '"1969-12-01T00:00Z"');
+shouldBe('setValueAsDateAndGetValue(1970, 0, 1, 10, 1, 0, 100)', '"1970-01-01T10:01:00.100Z"');
+shouldBe('setValueAsDateAndGetValue(2009, 11, 31, 23, 59, 59, 999)', '"2009-12-31T23:59:59.999Z"');
+shouldBe('setValueAsDateAndGetValue(10000, 0, 1, 12, 0, 1, 0)', '"10000-01-01T12:00:01Z"');
+
+shouldBe('setValueAsDateAndGetValue(794, 9, 22, 0, 0, 0, 0)', '""');
+shouldBe('setValueAsDateAndGetValue(1582, 9, 14, 23, 59, 59, 999)', '""');
+shouldBe('setValueAsDateAndGetValue(1582, 9, 15, 0, 0, 0, 0)', '"1582-10-15T00:00Z"');
+shouldBe('setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 0)', '"275760-09-13T00:00Z"');
+shouldBe('setValueAsDateAndGetValue(275760, 8, 13, 0, 0, 0, 1)', '""'); // Date of JavaScript can't represent this.
+
+debug('Invalid objects:');
+shouldBe('input.value = "2010-01-01T00:00Z"; input.valueAsDate = document; input.value', '""');
+shouldBe('input.value = "2010-01-01T00:00Z"; input.valueAsDate = null; input.value', '""');
+
+debug('Step attribute value and string representation:');
+// If the step attribute value is 1 second and the second part is 0, we should show the second part.
+shouldBe('input.step = "1"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00"');
+// If the step attribute value is 0.001 second and the millisecond part is 0, we should show the millisecond part.
+shouldBe('input.step = "0.001"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00.000"');
 
 var successfullyParsed = true;
