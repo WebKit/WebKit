@@ -1,3 +1,40 @@
+2010-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed <rdar://problem/7562574> ASSERT in WebCore::removeWrapper() at the
+        end of run-webkit-tests
+        
+        This was an ASSERT-only bug, introduced by isolated worlds, which
+        created the novelty of a wrapper that might outlive its wrapper cache.
+        
+        When a wrapper outlived its wrapper cache, both the wrapper's destructor
+        and the wrapper cache's destructor would claim to have uncached the wrapper,
+        causing an ASSERT to fire.
+        
+        The solution is to distinguish between operations that logically add and
+        remove cache entries, and operations that delete whole caches. We track
+        when a cache entry is logically added, and when it's logically removed,
+        independent of whether the actual cache still exists.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::willCacheWrapper):
+        (WebCore::didUncacheWrapper): New names for these functions to help
+        explain what they track.
+
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld): Don't claim to uncache
+        all the wrappers in the world; we're deleting the cache, not managing its
+        entries.
+
+        (WebCore::cacheDOMObjectWrapper):
+        (WebCore::forgetDOMObject):
+        (WebCore::forgetDOMNode):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::forgetAllDOMNodesForDocument):
+        (WebCore::forgetWorldOfDOMNodesForDocument):
+        (WebCore::takeWrappers):
+        (WebCore::updateDOMNodeDocument): Updated for renames.
+
 2010-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Sam Weinig.
