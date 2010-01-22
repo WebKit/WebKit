@@ -302,7 +302,9 @@ static bool isEmptyFontTag(const Node *node)
 
     const Element *elem = static_cast<const Element *>(node);
     NamedNodeMap *map = elem->attributes(true); // true for read-only
-    return (!map || map->length() == 1) && elem->getAttribute(classAttr) == styleSpanClassString();
+    if (!map)
+        return true;
+    return map->isEmpty() || (map->length() == 1 && elem->getAttribute(classAttr) == styleSpanClassString());
 }
 
 static PassRefPtr<Element> createFontElement(Document* document)
