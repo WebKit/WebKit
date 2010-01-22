@@ -1,3 +1,35 @@
+2010-01-21  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        3 tests for CSS are misplaced
+        https://bugs.webkit.org/show_bug.cgi?id=33942
+
+        * css2.1/atrule_longest_match-expected.txt: Removed.
+        * css2.1/atrule_longest_match.html: Removed.
+        * css2.1/bogus-color-span.html: Removed.
+        * css2.1/css1_forward_compatible_parsing.html: Removed.
+        * fast/css/atrule_longest_match-expected.txt: Copied from LayoutTests/css2.1/atrule_longest_match-expected.txt.
+        * fast/css/atrule_longest_match.html: Copied from LayoutTests/css2.1/atrule_longest_match.html.
+        * fast/css/bogus-color-span.html: Copied from LayoutTests/css2.1/bogus-color-span.html.
+        * fast/css/css1_forward_compatible_parsing.html: Copied from LayoutTests/css2.1/css1_forward_compatible_parsing.html.
+        * platform/mac/css2.1/bogus-color-span-expected.checksum: Removed.
+        * platform/mac/css2.1/bogus-color-span-expected.png: Removed.
+        * platform/mac/css2.1/bogus-color-span-expected.txt: Removed.
+        * platform/mac/css2.1/css1_forward_compatible_parsing-expected.checksum: Removed.
+        * platform/mac/css2.1/css1_forward_compatible_parsing-expected.png: Removed.
+        * platform/mac/css2.1/css1_forward_compatible_parsing-expected.txt: Removed.
+        * platform/mac/fast/css/bogus-color-span-expected.checksum: Copied from LayoutTests/platform/mac/css2.1/bogus-color-span-expected.checksum.
+        * platform/mac/fast/css/bogus-color-span-expected.png: Copied from LayoutTests/platform/mac/css2.1/bogus-color-span-expected.png.
+        * platform/mac/fast/css/bogus-color-span-expected.txt: Copied from LayoutTests/platform/mac/css2.1/bogus-color-span-expected.txt.
+        * platform/mac/fast/css/css1_forward_compatible_parsing-expected.checksum: Copied from LayoutTests/platform/mac/css2.1/css1_forward_compatible_parsing-expected.checksum.
+        * platform/mac/fast/css/css1_forward_compatible_parsing-expected.png: Copied from LayoutTests/platform/mac/css2.1/css1_forward_compatible_parsing-expected.png.
+        * platform/mac/fast/css/css1_forward_compatible_parsing-expected.txt: Copied from LayoutTests/platform/mac/css2.1/css1_forward_compatible_parsing-expected.txt.
+        * platform/qt/css2.1/bogus-color-span-expected.txt: Removed.
+        * platform/qt/css2.1/css1_forward_compatible_parsing-expected.txt: Removed.
+        * platform/qt/fast/css/bogus-color-span-expected.txt: Copied from LayoutTests/platform/qt/css2.1/bogus-color-span-expected.txt.
+        * platform/qt/fast/css/css1_forward_compatible_parsing-expected.txt: Copied from LayoutTests/platform/qt/css2.1/css1_forward_compatible_parsing-expected.txt.
+
 2010-01-21  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Eric Seidel.
