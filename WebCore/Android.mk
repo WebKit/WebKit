@@ -166,6 +166,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/TagNodeList.cpp \
 	dom/Text.cpp \
 	dom/TextEvent.cpp \
+	dom/Touch.cpp \
+	dom/TouchEvent.cpp \
+	dom/TouchList.cpp \
 	dom/Traversal.cpp \
 	dom/TreeWalker.cpp \
 	dom/UIEvent.cpp \
@@ -396,6 +399,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/android/GeolocationServiceBridge.cpp \
 	platform/android/KeyEventAndroid.cpp \
 	platform/android/LocalizedStringsAndroid.cpp \
+	platform/android/PlatformTouchEventAndroid.cpp \
+	platform/android/PlatformTouchPointAndroid.cpp \
 	platform/android/PopupMenuAndroid.cpp \
 	platform/android/RenderThemeAndroid.cpp \
 	platform/android/ScreenAndroid.cpp \

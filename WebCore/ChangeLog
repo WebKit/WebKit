@@ -1,3 +1,22 @@
+2010-01-22  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [Android] Android platform specific PlatformTouchEvent and PlatformTouchPoint implementations are not upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=33719
+
+        Add the Android specific files and update the Android makefile.
+
+        No new tests as this is all Android-specific code.
+
+        * Android.mk: Add Touch event related files to the makefile.
+        * platform/PlatformTouchEvent.h: Add Android constructor.
+        * platform/PlatformTouchPoint.h: Ditto.
+        * platform/android/PlatformTouchEventAndroid.cpp: Added.
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent): Android implementation.
+        * platform/android/PlatformTouchPointAndroid.cpp: Added.
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint): Android implementation.
+
 2010-01-22  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
