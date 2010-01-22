@@ -1,3 +1,14 @@
+2010-01-22  Petri Latvala  <petri.latvala@nomovok.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style breaks on files with unknown types
+        https://bugs.webkit.org/show_bug.cgi?id=34001
+
+        For files with type FileType.NONE, dispatch_processor returns None.
+
+        * Scripts/webkitpy/style/checker.py: Don't call process_file with a processor of value None.
+
 2010-01-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

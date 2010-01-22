@@ -880,6 +880,9 @@ class StyleChecker(object):
         processor = dispatcher.dispatch_processor(file_path,
                                                   handle_style_error,
                                                   verbosity)
+        if processor is None:
+            return
+
         process_file(processor, file_path, handle_style_error)
 
     def check_patch(self, patch_string):
