@@ -48,6 +48,9 @@ static const char permissionDeniedErrorMessage[] = "User denied Geolocation";
 
 static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
 {
+    if (!position)
+        return 0;
+    
     RefPtr<Coordinates> coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
                                                           position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
                                                           position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
