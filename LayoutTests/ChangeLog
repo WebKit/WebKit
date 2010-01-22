@@ -56,6 +56,23 @@
 
 2010-01-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        -webkit-mask-box-image draws a box while loading
+        https://bugs.webkit.org/show_bug.cgi?id=33979
+        <rdar://problem/7378662>
+        
+        http test that uses a CGI to trickle in a mask image.
+
+        * http/tests/misc/resources/slow-png-load.pl: Added.
+        * http/tests/misc/resources/mask.png: Added.
+        * http/tests/misc/slow-loading-mask.html: Added.
+        * platform/mac/http/tests/misc/slow-loading-mask-expected.checksum: Added.
+        * platform/mac/http/tests/misc/slow-loading-mask-expected.png: Added.
+        * platform/mac/http/tests/misc/slow-loading-mask-expected.txt: Added.
+
+2010-01-21  Simon Fraser  <simon.fraser@apple.com>
+
         No review
 
         Skip plugins/mouse-events-fixedpos.html on gtk, since it requires a special test plugin.

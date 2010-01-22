@@ -126,6 +126,7 @@ public:
     }
 
     bool containsImage(StyleImage*) const;
+    bool imagesAreLoaded() const;
 
     bool hasImage() const
     {

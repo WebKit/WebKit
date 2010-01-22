@@ -1,3 +1,25 @@
+2010-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-mask-box-image draws a box while loading
+        https://bugs.webkit.org/show_bug.cgi?id=33979
+        <rdar://problem/7378662>
+        
+        Don't render masked elements until the mask images are fully loaded.
+
+        Test: http/tests/misc/slow-loading-mask.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages): Check that all mask images (both the single mask-box-image,
+        and the possibly multiple mask-image) are fully loaded before allowing the masked content to render.
+        If they are not fully loaded, use a fully transparent transparency layer.
+        
+        * rendering/style/FillLayer.h:
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::imagesAreLoaded): New utility function that returns true if the image
+        in every FillLayer is loaded.
+
 2010-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
