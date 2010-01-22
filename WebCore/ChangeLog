@@ -1,3 +1,20 @@
+2010-01-22  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Object.getOwnPropertyDescriptor(window) returns descriptors for properties in the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=33948
+
+        Even though prototype properties are proxied by JSDOMWindow::getOwnPropertySlot(),
+        that proxying should not be performed by JSDOMWindow::getOwnPropertyDescriptor().
+
+        This makes getOwnPropertyDescriptor() consistent with getOwnPropertyNames().
+
+        Test: fast/dom/Window/window-property-descriptors.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+
 2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

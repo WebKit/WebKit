@@ -325,22 +325,6 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
         return true;
     }
 
-    // We need this code here because otherwise JSDOMWindowBase will stop the search before we even get to the
-    // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
-    // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
-    // what prototype is actually set on this object.
-    entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & Function) {
-            if (entry->function() == jsDOMWindowPrototypeFunctionShowModalDialog) {
-                if (!DOMWindow::canShowModalDialog(impl()->frame())) {
-                    descriptor.setUndefined();
-                    return true;
-                }
-            }
-        }
-    }
-    
     entry = JSDOMWindow::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         PropertySlot slot;
@@ -361,14 +345,6 @@ bool JSDOMWindow::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pr
         return true;
     }
     
-    // Do prototype lookup early so that functions and attributes in the prototype can have
-    // precedence over the index and name getters.  
-    JSValue proto = prototype();
-    if (proto.isObject()) {
-        if (asObject(proto)->getPropertyDescriptor(exec, propertyName, descriptor))
-            return true;
-    }
-
     bool ok;
     unsigned i = propertyName.toArrayIndex(&ok);
     if (ok && i < impl()->frame()->tree()->childCount()) {
