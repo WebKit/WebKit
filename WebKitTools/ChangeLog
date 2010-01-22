@@ -1,3 +1,25 @@
+2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Create a unit-tested subroutine to parse patch files created
+        by svn-create-patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33475
+
+        * Scripts/VCSUtils.pm:
+          - Added parseDiff().
+          - Added parsePatch().
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl: Added.
+          - Added unit tests for parseDiff().
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Total number of tests now computed dynamically.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parsePatch.pl: Added.
+          - Added unit tests for parsePatch().
+
 2010-01-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add new directory to dir list.

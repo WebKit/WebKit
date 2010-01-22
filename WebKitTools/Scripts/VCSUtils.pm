@@ -62,6 +62,7 @@ BEGIN {
         &isSVNVersion16OrNewer
         &makeFilePathRelative
         &normalizePath
+        &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
         &runPatchCommand
         &svnRevisionForDirectory
@@ -478,6 +479,98 @@ sub parseDiffHeader($$)
     $header{svnConvertedText} = $svnConvertedText;
 
     return (\%header, $lastReadLine);
+}
+
+# Parse one diff from a patch file created by svn-create-patch, and
+# advance the file handle so the last line read is the first line
+# of the next header block.
+#
+# This subroutine preserves any leading junk encountered before the header.
+#
+# Args:
+#   $fileHandle: a file handle advanced to the first line of the next
+#                header block. Leading junk is okay.
+#   $line: the line last read from $fileHandle.
+#
+# Returns ($diffHashRef, $lastReadLine):
+#   $diffHashRef:
+#     copiedFromPath: if a file copy, the path from which the file was
+#                     copied. Otherwise, undefined.
+#     indexPath: the path in the "Index:" line.
+#     sourceRevision: the revision number of the source. This is the same
+#                     as the revision number the file was copied from, in
+#                     the case of a file copy.
+#     svnConvertedText: the diff converted to SVN format.
+#   $lastReadLine: the line last read from $fileHandle
+sub parseDiff($$)
+{
+    my ($fileHandle, $line) = @_;
+
+    my $headerStartRegEx = qr#^Index: #; # SVN-style header for the default
+    my $gitHeaderStartRegEx = qr#^diff --git \w/#;
+
+    my $headerHashRef; # Last header found, as returned by parseDiffHeader().
+    my $svnText;
+    while (defined($line)) {
+        if (!$headerHashRef && ($line =~ $gitHeaderStartRegEx)) {
+            # Then assume all diffs in the patch are Git-formatted. This
+            # block was made to be enterable at most once since we assume
+            # all diffs in the patch are formatted the same (SVN or Git).
+            $headerStartRegEx = $gitHeaderStartRegEx;
+        }
+
+        if ($line !~ $headerStartRegEx) {
+            # Then we are in the body of the diff.
+            $svnText .= $line;
+            $line = <$fileHandle>;
+            next;
+        } # Otherwise, we found a diff header.
+
+        if ($headerHashRef) {
+            # Then this is the second diff header of this while loop.
+            last;
+        }
+
+        ($headerHashRef, $line) = parseDiffHeader($fileHandle, $line);
+
+        $svnText .= $headerHashRef->{svnConvertedText};
+    }
+
+    my %diffHashRef;
+    $diffHashRef{copiedFromPath} = $headerHashRef->{copiedFromPath};
+    $diffHashRef{indexPath} = $headerHashRef->{indexPath};
+    $diffHashRef{sourceRevision} = $headerHashRef->{sourceRevision};
+    $diffHashRef{svnConvertedText} = $svnText;
+
+    return (\%diffHashRef, $line);
+}
+
+# Parse a patch file created by svn-create-patch.
+#
+# Args:
+#   $fileHandle: A file handle to the patch file that has not yet been
+#                read from.
+#
+# Returns:
+#   @diffHashRefs: an array of diff hash references. See parseDiff() for
+#                  a description of each $diffHashRef.
+sub parsePatch($)
+{
+    my ($fileHandle) = @_;
+
+    my @diffHashRefs; # return value
+
+    my $line = <$fileHandle>;
+
+    while (defined($line)) { # Otherwise, at EOF.
+
+        my $diffHashRef;
+        ($diffHashRef, $line) = parseDiff($fileHandle, $line);
+
+        push @diffHashRefs, $diffHashRef;
+    }
+
+    return @diffHashRefs;
 }
 
 # If possible, returns a ChangeLog patch equivalent to the given one,

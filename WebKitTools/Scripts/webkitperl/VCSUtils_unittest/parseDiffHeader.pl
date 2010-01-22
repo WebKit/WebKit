@@ -36,40 +36,15 @@ use warnings;
 use Test::More;
 use VCSUtils;
 
-my @headerKeys = ( # The $headerHashRef keys to check.
+my @diffHeaderHashRefKeys = ( # The $diffHeaderHashRef keys to check.
     "copiedFromPath",
     "indexPath",
     "sourceRevision",
     "svnConvertedText",
 );
 
-# Test parseDiffHeader() for the given $diffTestHashRef.
-sub doDiffTest($)
-{
-    my ($diffTestHashRef) = @_;
-
-    my $fileHandle;
-    open($fileHandle, "<", \$diffTestHashRef->{inputText});
-
-    my $line = <$fileHandle>;
-
-    my ($headerHashRef, $lastReadLine) = VCSUtils::parseDiffHeader($fileHandle, $line);
-
-    my $titleHeader = "parseDiffHeader(): [$diffTestHashRef->{diffName}] ";
-    my $title;
-
-    foreach my $headerKey (@headerKeys) {
-        my $title = "${titleHeader}key=\"$headerKey\"";
-        is($headerHashRef->{$headerKey}, $diffTestHashRef->{$headerKey}, $title);
-    }
-
-    is($lastReadLine, $diffTestHashRef->{lastReadLine}, "${titleHeader}lastReadLine");
-
-    my $nextLine = <$fileHandle>;
-    is($nextLine, $diffTestHashRef->{nextLine}, "${titleHeader}nextLine");
-}
-
-my @diffTests = (
+# The array of test cases.
+my @testCaseHashRefs = (
 {
     # New test
     diffName => "SVN: simple",
@@ -247,8 +222,67 @@ END
 },
 );
 
-plan(tests => @diffTests * 6); # Multiply by number of assertions per call to doDiffTest().
+# Return the arguments for each assertion per test case.
+#
+# In particular, the number of assertions per test case is the length
+# of the return value of this subroutine on a sample input.
+#
+# Returns @assertionArgsArrayRefs:
+#   $assertionArgsArrayRef: A reference to an array of parameters to pass
+#                           to each call to is(). The parameters are--
+#                             $got: The value obtained
+#                             $expected: The expected value
+#                             $testName: The name of the test
+sub testParseDiffHeaderAssertionArgs($)
+{
+    my ($testCaseHashRef) = @_;
 
-foreach my $diffTestHashRef (@diffTests) {
-    doDiffTest($diffTestHashRef);
+    my $fileHandle;
+    open($fileHandle, "<", \$testCaseHashRef->{inputText});
+
+    my $line = <$fileHandle>;
+
+    my ($headerHashRef, $lastReadLine) = VCSUtils::parseDiffHeader($fileHandle, $line);
+
+    my $testNameStart = "parseDiffHeader(): [$testCaseHashRef->{diffName}] ";
+
+    my @assertionArgsArrayRefs; # Return value
+    my @assertionArgs;
+    foreach my $diffHeaderHashRefKey (@diffHeaderHashRefKeys) {
+        my $testName = "${testNameStart}key=\"$diffHeaderHashRefKey\"";
+        @assertionArgs = ($headerHashRef->{$diffHeaderHashRefKey}, $testCaseHashRef->{$diffHeaderHashRefKey}, $testName);
+        push(@assertionArgsArrayRefs, \@assertionArgs);
+    }
+
+    @assertionArgs = ($lastReadLine, $testCaseHashRef->{lastReadLine}, "${testNameStart}lastReadLine");
+    push(@assertionArgsArrayRefs, \@assertionArgs);
+
+    my $nextLine = <$fileHandle>;
+    @assertionArgs = ($nextLine, $testCaseHashRef->{nextLine}, "${testNameStart}nextLine");
+    push(@assertionArgsArrayRefs, \@assertionArgs);
+
+    return @assertionArgsArrayRefs;
+}
+
+# Test parseDiffHeader() for the given test case.
+sub testParseDiffHeader($)
+{
+    my ($testCaseHashRef) = @_;
+
+    my @assertionArgsArrayRefs = testParseDiffHeaderAssertionArgs($testCaseHashRef);
+
+    foreach my $arrayRef (@assertionArgsArrayRefs) {
+        # The parameters are -- is($got, $expected, $testName).
+        is($arrayRef->[0], $arrayRef->[1], $arrayRef->[2]);
+    }
+}
+
+# Count the number of assertions per test case to calculate the total number
+# of Test::More tests. We could have used any test case for the count.
+my $assertionCount = testParseDiffHeaderAssertionArgs($testCaseHashRefs[0]);
+
+plan(tests => @testCaseHashRefs * $assertionCount); # Total number of tests
+
+foreach my $testCaseHashRef (@testCaseHashRefs) {
+    testParseDiffHeader($testCaseHashRef);
 }
