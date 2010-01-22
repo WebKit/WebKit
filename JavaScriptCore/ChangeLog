@@ -1,5 +1,27 @@
 2010-01-21  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Add ThreadSpecific for ENABLE(SINGLE_THREADED)
+        https://bugs.webkit.org/show_bug.cgi?id=33878
+
+        Implement ThreadSpecific with a simple getter/setter
+        when ENABLE(SINGLE_THREADED) is true.
+
+        Due to the change in https://bugs.webkit.org/show_bug.cgi?id=33236,
+        an implementation of ThreadSpecific must be available to build WebKit.
+        This causes a build failure for platforms without a proper
+        ThreadSpecific implementation.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::::ThreadSpecific):
+        (WTF::::~ThreadSpecific):
+        (WTF::::get):
+        (WTF::::set):
+        (WTF::::destroy):
+
+2010-01-21  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Maciej Stachowiak.
 
         Add fastStrDup to FastMalloc
