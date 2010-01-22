@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x482
+  RenderBlock {html} at (0,0) size 800x482
+    RenderBody {body} at (8,16) size 784x458
+      RenderBlock {p} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 778x40
+          text run at (0,0) width 768: "The svg area contained in the div element (red box), should fill out the whole area (two green rectangles, first:"
+          text run at (0,20) width 778: "(0,0)-(50%,50%), second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
+      RenderBlock {div} at (0,56) size 402x402 [border: (1px solid #FF0000)]
+        RenderSVGRoot {svg} at (9,73) size 400x400
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGContainer {use} at (9,73) size 400x400
+            RenderSVGContainer {g} at (9,73) size 400x400
+              RenderSVGViewportContainer {svg} at (9,73) size 400x400
+                RenderPath {rect} at (209,273) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 100 100L 200 100L 200 200L 100 200L 100 100"]
+                RenderPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0L 100 0L 100 100L 0 100L 0 0"]
+        RenderText {#text} at (0,0) size 0x0

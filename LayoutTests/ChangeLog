@@ -1,3 +1,13 @@
+2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [Qt] Platform dependent expected files added for tests introduced in r53656,
+        because these tests pass. Compared to png files.
+
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Added.
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt: Added.
+
 2010-01-22  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, test fix.
