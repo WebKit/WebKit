@@ -1,3 +1,16 @@
+2010-01-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Add stub implementation of dispatchOnInjectedScript method so that
+        Chromium source can compile against it and the main fix for the bug
+        28622 can be landed without breaking Chromium build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28622
+
+        * inspector/InspectorBackend.h:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+
 2010-01-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Dmitry Titov.
