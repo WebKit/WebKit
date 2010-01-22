@@ -195,12 +195,12 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    pauseOnExceptions: function()
+    pauseOnExceptionsState: function()
     {
-        return false;
+        return 0;
     },
 
-    setPauseOnExceptions: function(value)
+    setPauseOnExceptionsState: function(value)
     {
     },
 

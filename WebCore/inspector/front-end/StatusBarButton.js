@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StatusBarButton = function(title, className)
+WebInspector.StatusBarButton = function(title, className, states)
 {
     this.element = document.createElement("button");
     this.element.className = className + " status-bar-item";
@@ -41,10 +41,18 @@ WebInspector.StatusBarButton = function(title, className)
     this.glyphShadow = document.createElement("div");
     this.glyphShadow.className = "glyph shadow";
     this.element.appendChild(this.glyphShadow);
+    
+    this.states = states;
+    if (!states)
+        this.states = 2;
 
+    if (states == 2)
+        this._state = false;
+    else
+        this._state = 0;
+    
     this.title = title;
     this.disabled = false;
-    this._toggled = false;
     this._visible = true;
 }
 
@@ -79,22 +87,44 @@ WebInspector.StatusBarButton.prototype = {
         this._title = x;
         this.element.title = x;
     },
+    
+    get state()
+    {
+        return this._state;
+    },
+    
+    set state(x)
+    {
+        if (this._state === x)
+            return;
+        
+        if (this.states === 2) {
+            if (x)
+                this.element.addStyleClass("toggled-on");
+            else
+                this.element.removeStyleClass("toggled-on");
+        } else {
+            if (x !== 0) {
+                this.element.removeStyleClass("toggled-" + this._state);
+                this.element.addStyleClass("toggled-" + x);
+            } else 
+                this.element.removeStyleClass("toggled-" + this._state);
+        }
+        this._state = x;
+    },
 
     get toggled()
     {
-        return this._toggled;
+        if (this.states !== 2)
+            throw("Only used toggled when there are 2 states, otherwise, use state");
+        return this.state;
     },
 
     set toggled(x)
     {
-        if (this._toggled === x)
-            return;
-
-        if (x)
-            this.element.addStyleClass("toggled-on");
-        else
-            this.element.removeStyleClass("toggled-on");
-        this._toggled = x;
+        if (this.states !== 2)
+            throw("Only used toggled when there are 2 states, otherwise, use state");
+        this.state = x;
     },
 
     get visible()

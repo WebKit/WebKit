@@ -366,6 +366,14 @@ button.status-bar-item.toggled-on .glyph {
     background-color: rgb(66, 129, 235);
 }
 
+button.status-bar-item.toggled-1 .glyph {
+    background-color: rgb(66, 129, 235);
+}
+
+button.status-bar-item.toggled-2 .glyph {
+    background-color: purple;   
+}
+
 button.status-bar-item:disabled {
     opacity: 0.5;
     background-position: 0 0 !important;

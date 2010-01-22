@@ -84,8 +84,8 @@ public:
     void pauseInDebugger();
     void resumeDebugger();
 
-    bool pauseOnExceptions();
-    void setPauseOnExceptions(bool pause);
+    long pauseOnExceptionsState();
+    void setPauseOnExceptionsState(long pauseState);
 
     void stepOverStatementInDebugger();
     void stepIntoStatementInDebugger();

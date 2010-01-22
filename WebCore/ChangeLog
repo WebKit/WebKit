@@ -1,3 +1,48 @@
+2010-01-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Caught exceptions still pause the debugger.
+        <https://bugs.webkit.org/show_bug.cgi?id=28622>.
+
+        Turn the pauseOnExceptions variable from a bool to an int, because we now have
+        3 states, in an enum: DontPauseOnExceptions, PauseOnAllExceptions, and
+        PauseOnUncaughtExceptions. The status button for pausing on exceptions is now
+        a tri-state button, which cycles from Don't pause (no background) to Pause on All
+        (blue background) to Pause on Uncaught (purple background).
+
+        Also added the ability for a status button to have more than 2 states, and added
+        style rules for a CSS three state button.
+
+        Added a manual test, manual-tests/debugger-caught-uncaught-exceptions.html, that
+        generates caught and uncaught exceptions.
+
+        * English.lproj/localizedStrings.js: Added updated Action / Click to Action text.
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::pauseOnExceptions): Changed from a bool to an int.
+        (WebCore::InspectorBackend::setPauseOnExceptions): Ditto.
+        * inspector/InspectorBackend.h: Ditto.
+        * inspector/InspectorBackend.idl: Ditto.
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::JavaScriptDebugServer): Changed from bool to PauseOnExceptionsState.
+        (WebCore::JavaScriptDebugServer::setPauseOnExceptions): Ditto.
+        (WebCore::JavaScriptDebugServer::exception): Updated logic to see if we are breaking
+            on uncaught exceptions, and check if we have a handler.
+        * inspector/JavaScriptDebugServer.h:
+        (WebCore::JavaScriptDebugServer::): Changed from bool to PauseOnExceptionsState.
+        (WebCore::JavaScriptDebugServer::pauseOnExceptions): Ditto.
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.pauseOnExceptionsState): Changed from returning false to returning 0 (stub function).
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._updatePauseOnExceptionsButton): Updated to new text/new cycling of variables.
+        (WebInspector.ScriptsPanel.prototype._togglePauseOnExceptions): Updated to new text/new cycling of variables.
+        * inspector/front-end/StatusBarButton.js:
+        (WebInspector.StatusBarButton): Added the option for a different number of states.
+        (WebInspector.StatusBarButton.prototype.set toggled): Added rules to toggle on/off with multiple states.
+        * inspector/front-end/inspector.css: Added rules for toggled-1 and toggled-2.
+        * manual-tests/debugger-caught-uncaught-exceptions.html: Added.
+
 2010-01-22  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

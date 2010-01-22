@@ -62,8 +62,8 @@ module core {
         void stepIntoStatementInDebugger();
         void stepOutOfFunctionInDebugger();
 
-        boolean pauseOnExceptions();
-        void setPauseOnExceptions(in boolean pauseOnExceptions);
+        long pauseOnExceptionsState();
+        void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
         boolean profilerEnabled();
         void enableProfiler(in boolean always);
