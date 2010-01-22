@@ -1,3 +1,13 @@
+2010-01-22  Adam Roben  <aroben@apple.com>
+
+        Check in expected failure results for text-zoom.xhtml on Windows
+
+        Fixing this test is covered by <http://webkit.org/b/34006>.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/win/svg/custom/text-zoom-expected.txt: Added.
+
 2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] http/tests/misc/slow-loading-mask.html timed out.
