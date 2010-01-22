@@ -106,7 +106,7 @@ public:
     // PopupListBox methods
 
     // Hides the popup.
-    void hidePopup(bool acceptSuggestions);
+    void hidePopup();
 
     // Updates our internal list to match the client.
     void updateFromElement();
@@ -381,7 +381,7 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 
 void PopupContainer::hidePopup()
 {
-    listBox()->hidePopup(true);
+    listBox()->hidePopup();
 }
 
 void PopupContainer::layout()
@@ -631,7 +631,7 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         return true;
     case VKEY_RETURN:
         if (m_selectedIndex == -1)  {
-            hidePopup(false);
+            hidePopup();
             // Don't eat the enter if nothing is selected.
             return false;
         }
@@ -884,7 +884,7 @@ void PopupListBox::abandon()
 
     m_selectedIndex = m_originalIndex;
 
-    hidePopup(false);
+    hidePopup();
 
     if (m_acceptedIndexOnAbandon >= 0) {
         m_popupClient->valueChanged(m_acceptedIndexOnAbandon);
@@ -921,7 +921,7 @@ void PopupListBox::acceptIndex(int index)
     if (index < 0) {
         if (m_popupClient) {
             // Enter pressed with no selection, just close the popup.
-            hidePopup(false);
+            hidePopup();
         }
         return;
     }
@@ -930,7 +930,7 @@ void PopupListBox::acceptIndex(int index)
         RefPtr<PopupListBox> keepAlive(this);
 
         // Hide ourselves first since valueChanged may have numerous side-effects.
-        hidePopup(true);
+        hidePopup();
 
         // Tell the <select> PopupMenuClient what index was selected.
         m_popupClient->valueChanged(index);
@@ -948,7 +948,6 @@ void PopupListBox::selectIndex(int index)
         invalidateRow(m_selectedIndex);
 
         scrollToRevealSelection();
-        m_popupClient->selectionChanged(m_selectedIndex);
     }
 }
 
@@ -1010,7 +1009,6 @@ void PopupListBox::clearSelection()
     if (m_selectedIndex != -1) {
         invalidateRow(m_selectedIndex);
         m_selectedIndex = -1;
-        m_popupClient->selectionChanged(m_selectedIndex);
     }
 }
 
@@ -1078,7 +1076,7 @@ void PopupListBox::adjustSelectedIndex(int delta)
     scrollToRevealSelection();
 }
 
-void PopupListBox::hidePopup(bool acceptSuggestions)
+void PopupListBox::hidePopup()
 {
     if (parent()) {
         PopupContainer* container = static_cast<PopupContainer*>(parent());
@@ -1086,7 +1084,7 @@ void PopupListBox::hidePopup(bool acceptSuggestions)
             container->client()->popupClosed(container);
     }
 
-    m_popupClient->popupDidHide(acceptSuggestions);
+    m_popupClient->popupDidHide();
 }
 
 void PopupListBox::updateFromElement()

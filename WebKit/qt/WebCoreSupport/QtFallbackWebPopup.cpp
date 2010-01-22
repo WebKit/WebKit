@@ -59,7 +59,7 @@ void QtFallbackWebPopupCombo::hidePopup()
         return;
 
     m_ownerPopup.m_popupVisible = false;
-    m_ownerPopup.popupDidHide(true);
+    m_ownerPopup.popupDidHide();
 }
 
 // QtFallbackWebPopup

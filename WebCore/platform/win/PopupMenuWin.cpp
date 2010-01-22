@@ -274,7 +274,7 @@ void PopupMenu::hide()
     ::ShowWindow(m_popup, SW_HIDE);
 
     if (client())
-        client()->popupDidHide(true);
+        client()->popupDidHide();
 
     // Post a WM_NULL message to wake up the message pump if necessary.
     ::PostMessage(m_popup, WM_NULL, 0, 0);

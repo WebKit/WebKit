@@ -1,3 +1,37 @@
+2010-01-22  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, backout.
+
+        Back out r52673, which caused several regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=32533
+
+        * platform/PopupMenuClient.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::clearSelection):
+        (WebCore::PopupListBox::hidePopup):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::menuUnmapped):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::show):
+        * platform/qt/QtAbstractWebPopup.cpp:
+        (WebCore::QtAbstractWebPopup::popupDidHide):
+        * platform/qt/QtAbstractWebPopup.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::hide):
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::OnMenuItemSelected):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::popupDidHide):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::popupDidHide):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-01-22  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Darin Adler.

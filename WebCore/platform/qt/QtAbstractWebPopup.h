@@ -51,7 +51,7 @@ public:
     virtual void show() = 0;
     virtual void hide() = 0;
 
-    void popupDidHide(bool acceptSuggestions);
+    void popupDidHide();
     void valueChanged(int index);
 
     QFont font() { return m_popupClient->menuStyle().font().font(); }

@@ -1,3 +1,13 @@
+2010-01-22  Peter Kasting  <pkasting@google.com>
+
+        Not reviewed, backout.
+
+        Back out r52673, which caused several regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=32533
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopupCombo::hidePopup):
+
 2010-01-22  Girish Ramakrishnan  <girish@forwardbias.in>
 
         Reviewed by Simon Hausmann.

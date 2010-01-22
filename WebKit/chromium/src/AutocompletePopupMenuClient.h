@@ -58,7 +58,6 @@ public:
 
     // WebCore::PopupMenuClient methods:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
-    virtual void selectionChanged(unsigned listIndex, bool fireEvents = true);
     virtual WebCore::String itemText(unsigned listIndex) const;
     virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
@@ -70,7 +69,7 @@ public:
     virtual int clientPaddingRight() const;
     virtual int listSize() const { return m_suggestions.size(); }
     virtual int selectedIndex() const { return m_selectedIndex; }
-    virtual void popupDidHide(bool acceptSuggestion);
+    virtual void popupDidHide();
     virtual bool itemIsSeparator(unsigned listIndex) const { return false; }
     virtual bool itemIsLabel(unsigned listIndex) const { return false; }
     virtual bool itemIsSelected(unsigned listIndex) const { return false; }
@@ -86,17 +85,12 @@ public:
 
 private:
     WebCore::RenderStyle* textFieldStyle() const;
-    void setInitialAutocompleteValue();
-    void resetLastFieldValue();
 
     RefPtr<WebCore::HTMLInputElement> m_textField;
     Vector<WebCore::String> m_suggestions;
     int m_selectedIndex;
     WebViewImpl* m_webView;
-    WebCore::String m_typedFieldValue;
     OwnPtr<WebCore::PopupMenuStyle> m_style;
-    typedef HashMap<WebCore::String, WebCore::String> FieldValuesMap;
-    OwnPtr<FieldValuesMap> m_lastFieldValues;
 };
 
 } // namespace WebKit

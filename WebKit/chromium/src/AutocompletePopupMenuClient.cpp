@@ -59,15 +59,10 @@ void AutocompletePopupMenuClient::initialize(
     const WebVector<WebString>& suggestions,
     int defaultSuggestionIndex)
 {
-    if (!m_lastFieldValues)
-        m_lastFieldValues.set(new FieldValuesMap);
     ASSERT(defaultSuggestionIndex < static_cast<int>(suggestions.size()));
     m_textField = textField;
-    m_typedFieldValue = textField->value();
     m_selectedIndex = defaultSuggestionIndex;
     setSuggestions(suggestions);
-
-    setInitialAutocompleteValue();
 
     FontDescription fontDescription;
     m_webView->theme()->systemFont(CSSValueWebkitControl, fontDescription);
@@ -84,40 +79,6 @@ void AutocompletePopupMenuClient::initialize(
                                    textField->renderer()->style()->direction()));
 }
 
-
-void AutocompletePopupMenuClient::setInitialAutocompleteValue()
-{
-    if (!m_suggestions.size() || !m_textField->name().length() || !m_typedFieldValue.length())
-        return;
-    int newIndex = m_selectedIndex >= 0 ? m_selectedIndex : 0;
-    String suggestion = m_suggestions[newIndex];
-    bool hasPreviousValue = m_lastFieldValues->contains(m_textField->name());
-    String prevValue;
-    if (hasPreviousValue)
-        prevValue = m_lastFieldValues->get(m_textField->name());
-    if (!hasPreviousValue || m_typedFieldValue.length() > m_lastFieldValues->get(m_textField->name()).length()) {
-          int start = 0;
-          String newSuggestion = suggestion;
-          if (suggestion.startsWith(m_typedFieldValue))
-              m_selectedIndex = newIndex;
-          if (suggestion.startsWith(m_typedFieldValue, false)) {
-              newSuggestion = m_typedFieldValue;
-              if (suggestion.length() > m_typedFieldValue.length()) {
-                  newSuggestion.append(suggestion.substring(m_typedFieldValue.length(),
-                      suggestion.length() - m_typedFieldValue.length()));
-              }
-              start = m_typedFieldValue.length();
-          }
-          m_textField->setSuggestedValue(newSuggestion);
-          m_textField->setSelectionRange(start, newSuggestion.length());
-    }
-    if (hasPreviousValue)
-        m_lastFieldValues->set(m_textField->name(), m_typedFieldValue);
-    else
-        m_lastFieldValues->add(m_textField->name(), m_typedFieldValue);
-}
-
-
 void AutocompletePopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
 {
     m_textField->setValue(m_suggestions[listIndex]);
@@ -126,21 +87,6 @@ void AutocompletePopupMenuClient::valueChanged(unsigned listIndex, bool fireEven
     ASSERT(editor);
     editor->onAutofillSuggestionAccepted(
         static_cast<HTMLInputElement*>(m_textField.get()));
-}
-
-void AutocompletePopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
-{
-    if (listIndex != static_cast<unsigned>(-1)) {
-        m_textField->setSuggestedValue(m_suggestions[listIndex]);
-        m_textField->setSelectionRange(m_typedFieldValue.length(),
-                                       m_suggestions[listIndex].length());
-    } else {
-      m_textField->setValue(m_typedFieldValue);
-      if (m_lastFieldValues->contains(m_textField->name()))
-          m_lastFieldValues->set(m_textField->name(), m_typedFieldValue);
-      else
-          m_lastFieldValues->add(m_textField->name(), m_typedFieldValue);
-    }
 }
 
 String AutocompletePopupMenuClient::itemText(unsigned listIndex) const
@@ -172,31 +118,14 @@ int AutocompletePopupMenuClient::clientPaddingRight() const
     return style ? m_webView->theme()->popupInternalPaddingRight(style) : 0;
 }
 
-void AutocompletePopupMenuClient::popupDidHide(bool acceptSuggestions)
+void AutocompletePopupMenuClient::popupDidHide()
 {
-    if (acceptSuggestions) {
-        String suggestedValue = m_textField->suggestedValue();
-        if (!suggestedValue.isNull())
-            m_textField->setValue(suggestedValue);
-    } else
-        m_textField->setValue(m_typedFieldValue);
-
-    resetLastFieldValue();
     m_webView->autoCompletePopupDidHide();
 }
 
 void AutocompletePopupMenuClient::setTextFromItem(unsigned listIndex)
 {
     m_textField->setValue(m_suggestions[listIndex]);
-    resetLastFieldValue();
-}
-
-void AutocompletePopupMenuClient::resetLastFieldValue()
-{
-    if (m_lastFieldValues->contains(m_textField->name()))
-        m_lastFieldValues->set(m_textField->name(), m_textField->value());
-    else
-        m_lastFieldValues->add(m_textField->name(), m_textField->value());
 }
 
 FontSelector* AutocompletePopupMenuClient::fontSelector() const
