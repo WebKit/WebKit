@@ -179,6 +179,17 @@ void* fastZeroedMalloc(size_t n)
     memset(result, 0, n);
     return result;
 }
+
+char* fastStrDup(const char* src)
+{
+    int len = strlen(src) + 1;
+    char* dup = static_cast<char*>(fastMalloc(len));
+
+    if (dup)
+        memcpy(dup, src, len);
+
+    return dup;
+}
     
 TryMallocReturnValue tryFastZeroedMalloc(size_t n) 
 {

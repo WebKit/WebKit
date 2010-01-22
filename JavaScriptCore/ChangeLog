@@ -1,3 +1,19 @@
+2010-01-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add fastStrDup to FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=33937
+
+        The new string returned by fastStrDup is obtained with fastMalloc,
+        and can be freed with fastFree. This makes the memory management 
+        more consistent because we don't need to keep strdup allocated pointers
+        and free them with free(). Instead we can use fastFree everywhere.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastStrDup):
+        * wtf/FastMalloc.h:
+
 2010-01-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.
