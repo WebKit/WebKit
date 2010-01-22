@@ -1,3 +1,9 @@
+2010-01-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add new directory to dir list.
+
+        * wx/build/settings.py:
+
 2010-01-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

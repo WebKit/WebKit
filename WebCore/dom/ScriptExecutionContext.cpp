@@ -28,6 +28,7 @@
 #include "ScriptExecutionContext.h"
 
 #include "ActiveDOMObject.h"
+#include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "MessagePort.h"

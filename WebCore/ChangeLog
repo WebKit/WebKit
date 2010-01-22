@@ -1,3 +1,9 @@
+2010-01-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix, add missing header.
+
+        * dom/ScriptExecutionContext.cpp:
+
 2010-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
