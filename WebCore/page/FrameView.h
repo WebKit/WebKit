@@ -145,11 +145,6 @@ public:
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
 
-    // Methods to manage the objects that are fixed
-    // in the view when scrolling
-    void registerFixedPositionedObject(RenderObject* object);
-    void unregisterFixedPositionedObject(RenderObject* object);
-
     void beginDeferredRepaints();
     void endDeferredRepaints();
     void checkStopDelayingDeferredRepaints();
@@ -203,9 +198,6 @@ public:
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
     void invalidateScrollCorner();
-
-protected:
-    virtual void scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
 
 private:
     FrameView(Frame*);
@@ -276,7 +268,6 @@ private:
     bool m_isOverlapped;
     bool m_contentIsOpaque;
     unsigned m_slowRepaintObjectCount;
-    HashSet<RenderObject*> m_fixedPositionedObjects;
 
     int m_borderX, m_borderY;
 

@@ -1,3 +1,19 @@
+2010-01-22  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Revert r53693 because it broke scrolling of pages with fixed elements on
+        Mac OS X.
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        * platform/ScrollView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::destroy):
+
 2010-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
