@@ -1,3 +1,48 @@
+2010-01-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        incorrect results for css2.1 layout tests that use setTimeout in body onload event
+        https://bugs.webkit.org/show_bug.cgi?id=17557
+
+        * css2.1/README.txt: Added.
+        * css2.1/t1204-increment-00-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-increment-00-c-o.html.
+        * css2.1/t1204-increment-01-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-increment-01-c-o.html.
+        * css2.1/t1204-increment-02-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-increment-02-c-o.html.
+        * css2.1/t1204-reset-00-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-reset-00-c-o.html.
+        * css2.1/t1204-reset-01-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-reset-01-c-o.html.
+        * css2.1/t1204-reset-02-c-o.html-disabled: Renamed from LayoutTests/css2.1/t1204-reset-02-c-o.html.
+        * fast/css/counters/counter-increment-000-expected.txt: Renamed from LayoutTests/fast/css/counters/t1204-increment-00-c-o-expected.txt.
+        * fast/css/counters/counter-increment-000.html: Renamed from LayoutTests/fast/css/counters/t1204-increment-00-c-o.html.
+        * fast/css/counters/counter-increment-001-expected.txt: Renamed from LayoutTests/fast/css/counters/t1204-increment-01-c-o-expected.txt.
+        * fast/css/counters/counter-increment-001.html: Renamed from LayoutTests/fast/css/counters/t1204-increment-01-c-o.html.
+        * fast/css/counters/counter-reset-001-expected.txt: Added.
+        * fast/css/counters/counter-reset-001.html: Added.
+        * platform/mac/css2.1/t1204-increment-00-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-increment-00-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-increment-00-c-o-expected.txt: Removed.
+        * platform/mac/css2.1/t1204-increment-01-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-increment-01-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-increment-01-c-o-expected.txt: Removed.
+        * platform/mac/css2.1/t1204-increment-02-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-increment-02-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-increment-02-c-o-expected.txt: Removed.
+        * platform/mac/css2.1/t1204-reset-00-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-reset-00-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-reset-00-c-o-expected.txt: Removed.
+        * platform/mac/css2.1/t1204-reset-01-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-reset-01-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-reset-01-c-o-expected.txt: Removed.
+        * platform/mac/css2.1/t1204-reset-02-c-o-expected.checksum: Removed.
+        * platform/mac/css2.1/t1204-reset-02-c-o-expected.png: Removed.
+        * platform/mac/css2.1/t1204-reset-02-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-increment-00-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-increment-01-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-increment-02-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-reset-00-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-reset-01-c-o-expected.txt: Removed.
+        * platform/qt/css2.1/t1204-reset-02-c-o-expected.txt: Removed.
+
 2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip test introduced in r53684 because of missing eventSender.textZoomIn()
