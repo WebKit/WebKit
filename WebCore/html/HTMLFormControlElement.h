@@ -43,7 +43,7 @@ public:
     virtual int tagPriority() const { return 1; }
 
     HTMLFormElement* form() const { return m_form; }
-    virtual ValidityState* validity();
+    ValidityState* validity();
 
     bool formNoValidate() const;
     void setFormNoValidate(bool);

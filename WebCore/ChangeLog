@@ -1,3 +1,16 @@
+2010-01-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        An element that doesn't validate and an invalid element shouldn't share style
+        https://bugs.webkit.org/show_bug.cgi?id=34010
+
+        Test: fast/css/pseudo-invalid-novalidate-001.html
+
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::canShareStyleWithElement): 
+          Separate the check for willValidate from the check for isValidFormControlElement.
+        * html/HTMLFormControlElement.h: The validity method doesn't need to be virtual.
+
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -1001,9 +1001,12 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
 
                 if (s->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
                     return false;
-
-                if ((s->willValidate() && s->isValidFormControlElement()) !=
-                    (m_element->willValidate() && m_element->isValidFormControlElement()))
+                
+                bool willValidate = s->willValidate();
+                if (willValidate != m_element->willValidate())
+                    return false;
+                
+                if (willValidate && (s->isValidFormControlElement() != m_element->isValidFormControlElement()))
                     return false;
             }
 
