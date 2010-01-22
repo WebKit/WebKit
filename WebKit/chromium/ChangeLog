@@ -1,3 +1,24 @@
+2010-01-21  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] spurious WebViewClient::didStopLoading if changing
+        location.hash while a subframe is still loading
+
+        https://bugs.webkit.org/show_bug.cgi?id=33884
+
+        This is a refinement of http://trac.webkit.org/changeset/51548
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClientImpl::postProgressStartedNotification):
+        (WebKit::FrameLoaderClientImpl::postProgressFinishedNotification):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::didStartLoading):
+        (WebKit::WebViewImpl::didStopLoading):
+        * src/WebViewImpl.h:
+
 2010-01-21  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Added a blank line requested by the great an powerful

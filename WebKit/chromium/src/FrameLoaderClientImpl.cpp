@@ -554,16 +554,10 @@ void FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage()
     // some events for our delegate.
     WebViewImpl* webView = m_webFrame->viewImpl();
 
-    // Flag of whether frame loader is completed. Generate didStartLoading and
-    // didStopLoading only when loader is completed so that we don't fire
-    // them for fragment redirection that happens in window.onload handler.
-    // See https://bugs.webkit.org/show_bug.cgi?id=31838
-    bool loaderCompleted =
-        !m_webFrame->frame()->page()->mainFrame()->loader()->isLoading();
-
-    // Generate didStartLoading if loader is completed.
-    if (webView->client() && loaderCompleted)
-        webView->client()->didStartLoading();
+    // It is possible for a fragment redirection to occur after the page has
+    // fully loaded, so we may need to synthesize didStartLoading and
+    // didStopLoading.  See https://bugs.webkit.org/show_bug.cgi?id=31838
+    webView->didStartLoading();
 
     WebDataSourceImpl* ds = m_webFrame->dataSourceImpl();
     ASSERT(ds);  // Should not be null when navigating to a reference fragment!
@@ -608,9 +602,7 @@ void FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage()
     if (m_webFrame->client())
         m_webFrame->client()->didChangeLocationWithinPage(m_webFrame, isNewNavigation);
 
-    // Generate didStopLoading if loader is completed.
-    if (webView->client() && loaderCompleted)
-        webView->client()->didStopLoading();
+    webView->didStopLoading();
 }
 
 void FrameLoaderClientImpl::dispatchDidPushStateWithinPage()
@@ -982,9 +974,9 @@ void FrameLoaderClientImpl::setMainDocumentError(DocumentLoader*,
 
 void FrameLoaderClientImpl::postProgressStartedNotification()
 {
-    WebViewImpl* webview = m_webFrame->viewImpl();
-    if (webview && webview->client())
-        webview->client()->didStartLoading();
+    WebViewImpl* webView = m_webFrame->viewImpl();
+    if (webView)
+        webView->didStartLoading();
 }
 
 void FrameLoaderClientImpl::postProgressEstimateChangedNotification()
@@ -995,9 +987,9 @@ void FrameLoaderClientImpl::postProgressEstimateChangedNotification()
 void FrameLoaderClientImpl::postProgressFinishedNotification()
 {
     // FIXME: why might the webview be null?  http://b/1234461
-    WebViewImpl* webview = m_webFrame->viewImpl();
-    if (webview && webview->client())
-        webview->client()->didStopLoading();
+    WebViewImpl* webView = m_webFrame->viewImpl();
+    if (webView)
+        webView->didStopLoading();
 }
 
 void FrameLoaderClientImpl::setMainFrameDocumentReady(bool ready)

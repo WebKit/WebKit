@@ -200,6 +200,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #ifndef NDEBUG
     , m_newNavigationLoader(0)
 #endif
+    , m_isLoading(0)
     , m_zoomLevel(0)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
@@ -1665,6 +1666,22 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation)
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
+}
+
+void WebViewImpl::didStartLoading()
+{
+    if (!m_isLoading++) {
+        if (m_client)
+            m_client->didStartLoading();
+    }
+}
+
+void WebViewImpl::didStopLoading()
+{
+    if (!--m_isLoading) {
+        if (m_client)
+            m_client->didStopLoading();
+    }
 }
 
 bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
