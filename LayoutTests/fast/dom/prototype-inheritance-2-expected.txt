@@ -204,6 +204,7 @@ PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummy
 PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
 PASS XSLTProcessorConsructor from inner.document.forms.testForm.0.ownerDocument.defaultView.XSLTProcessor
 Never found Audio
+Never found Blob
 Never found CDATASection
 Never found CSSPageRule
 Never found CSSRule
