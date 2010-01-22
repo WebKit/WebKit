@@ -277,7 +277,8 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
     // set attributes
     if (n->isHTMLElement()) {
         HTMLElement* e = static_cast<HTMLElement*>(n.get());
-        e->setAttributeMap(t->attrs.get(), m_scriptingPermission);
+        if (m_scriptingPermission == FragmentScriptingAllowed || t->tagName != scriptTag)
+            e->setAttributeMap(t->attrs.get(), m_scriptingPermission);
 
         // take care of optional close tags
         if (e->endTagRequirement() == TagStatusOptional)

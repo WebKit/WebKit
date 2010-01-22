@@ -421,6 +421,7 @@ private:
     OwnPtr<HTMLParser> m_parser;
     bool m_inWrite;
     bool m_fragment;
+    FragmentScriptingPermission m_scriptingPermission;
 
     OwnPtr<PreloadScanner> m_preloadScanner;
 };

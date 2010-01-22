@@ -643,7 +643,8 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
                     namedAttrMap->m_attributes.remove(i);
                     continue;
                 }
-                if ((attributeName == hrefAttr || attributeName == srcAttr || attributeName == actionAttr) && protocolIsJavaScript(deprecatedParseURL(namedAttrMap->m_attributes[i]->value())))
+
+                if ((attributeName.localName().endsWith(hrefAttr.localName()) || attributeName == srcAttr || attributeName == actionAttr) && protocolIsJavaScript(deprecatedParseURL(namedAttrMap->m_attributes[i]->value())))
                     namedAttrMap->m_attributes[i]->setValue(nullAtom);
                 i++;
             }

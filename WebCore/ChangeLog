@@ -1,3 +1,27 @@
+2010-01-21  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Script tags are copied and pasted, making cross-domain attacks possible.
+        https://bugs.webkit.org/show_bug.cgi?id=33970
+
+        Tests: editing/pasteboard/paste-noscript-svg.html
+               editing/pasteboard/paste-visible-script.html
+
+        We remove the content and the attributes of every script tag before
+        pasting into the destination.
+        
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeMap): Now we are removing xlink:href
+        if it contains javascript protocol.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseToken): We strip all the script tag attributes
+        we are parsing to create a fragment to paste.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::scriptHandler): Removes the script text after it was parsed.
+        * html/HTMLTokenizer.h:
+
 2010-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
