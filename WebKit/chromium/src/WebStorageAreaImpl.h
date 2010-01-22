@@ -45,9 +45,9 @@ public:
     virtual unsigned length();
     virtual WebString key(unsigned index);
     virtual WebString getItem(const WebString& key);
-    virtual void setItem(const WebString& key, const WebString& value, const WebURL& url, bool& quotaException);
-    virtual void removeItem(const WebString& key, const WebURL& url);
-    virtual void clear(const WebURL& url);
+    virtual void setItem(const WebString& key, const WebString& value, const WebURL& url, bool& quotaException, WebString& oldValue);
+    virtual void removeItem(const WebString& key, const WebURL& url, WebString& oldValue);
+    virtual void clear(const WebURL& url, bool& somethingCleared);
 
     // For storage events in single-process mode and test shell.
     static const WebURL* currentStorageEventURL() { return storageEventURL; }

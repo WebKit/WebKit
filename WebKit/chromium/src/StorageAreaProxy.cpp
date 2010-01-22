@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
+ *           (C) 2008 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +29,16 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "DOMWindow.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "SecurityOrigin.h"
 #include "StorageAreaImpl.h"
+#include "StorageEvent.h"
 
 #include "WebStorageArea.h"
 #include "WebString.h"
@@ -40,8 +46,9 @@
 
 namespace WebCore {
 
-StorageAreaProxy::StorageAreaProxy(WebKit::WebStorageArea* storageArea)
+StorageAreaProxy::StorageAreaProxy(WebKit::WebStorageArea* storageArea, StorageType storageType)
     : m_storageArea(storageArea)
+    , m_storageType(storageType)
 {
 }
 
@@ -64,26 +71,74 @@ String StorageAreaProxy::getItem(const String& key) const
     return m_storageArea->getItem(key);
 }
 
-void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+String StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
     bool quotaException = false;
-    m_storageArea->setItem(key, value, frame->document()->url(), quotaException);
+    WebKit::WebString oldValue;
+    m_storageArea->setItem(key, value, frame->document()->url(), quotaException, oldValue);
     ec = quotaException ? QUOTA_EXCEEDED_ERR : 0;
+    String oldValueString = oldValue;
+    if (oldValueString != value)
+        storageEvent(key, oldValue, value, m_storageType, frame->document()->securityOrigin(), frame);
+    return oldValue;
 }
 
-void StorageAreaProxy::removeItem(const String& key, Frame* frame)
+String StorageAreaProxy::removeItem(const String& key, Frame* frame)
 {
-    m_storageArea->removeItem(key, frame->document()->url());
+    WebKit::WebString oldValue;
+    m_storageArea->removeItem(key, frame->document()->url(), oldValue);
+    if (!oldValue.isNull())
+        storageEvent(key, oldValue, String(), m_storageType, frame->document()->securityOrigin(), frame);
+    return oldValue;
 }
 
-void StorageAreaProxy::clear(Frame* frame)
+bool StorageAreaProxy::clear(Frame* frame)
 {
-    m_storageArea->clear(frame->document()->url());
+    bool clearedSomething;
+    m_storageArea->clear(frame->document()->url(), clearedSomething);
+    if (clearedSomething)
+        storageEvent(String(), String(), String(), m_storageType, frame->document()->securityOrigin(), frame);
+    return clearedSomething;
 }
 
 bool StorageAreaProxy::contains(const String& key) const
 {
     return !getItem(key).isNull();
+}
+
+// Copied from WebCore/storage/StorageEventDispatcher.cpp out of necessity.  It's probably best to keep it current.
+void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Frame* sourceFrame)
+{
+    Page* page = sourceFrame->page();
+    if (!page)
+        return;
+
+    // We need to copy all relevant frames from every page to a vector since sending the event to one frame might mutate the frame tree
+    // of any given page in the group or mutate the page group itself.
+    Vector<RefPtr<Frame> > frames;
+    if (storageType == SessionStorage) {
+        // Send events only to our page.
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (frame->document()->securityOrigin()->equal(securityOrigin))
+                frames.append(frame);
+        }
+
+        for (unsigned i = 0; i < frames.size(); ++i)
+            frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), frames[i]->domWindow()->sessionStorage()));
+    } else {
+        // Send events to every page.
+        const HashSet<Page*>& pages = page->group().pages();
+        HashSet<Page*>::const_iterator end = pages.end();
+        for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+            for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+                if (frame->document()->securityOrigin()->equal(securityOrigin))
+                    frames.append(frame);
+            }
+        }
+
+        for (unsigned i = 0; i < frames.size(); ++i)
+            frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), frames[i]->domWindow()->localStorage()));
+    }
 }
 
 } // namespace WebCore

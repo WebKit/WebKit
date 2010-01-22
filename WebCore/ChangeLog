@@ -1,3 +1,19 @@
+2010-01-21  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        The Chromium WebKit API needs to expose storage event related data
+        https://bugs.webkit.org/show_bug.cgi?id=33985
+
+        This change is not visible to layoutTests/web pages.
+
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::setItem): return the old value
+        (WebCore::StorageAreaImpl::removeItem): return the old value
+        (WebCore::StorageAreaImpl::clear): return whether there was anything to clear
+        * storage/StorageAreaImpl.h:
+
 2010-01-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

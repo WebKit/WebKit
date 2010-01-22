@@ -50,9 +50,9 @@ namespace WebCore {
         virtual unsigned length() const = 0;
         virtual String key(unsigned index) const = 0;
         virtual String getItem(const String& key) const = 0;
-        virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
-        virtual void removeItem(const String& key, Frame* sourceFrame) = 0;
-        virtual void clear(Frame* sourceFrame) = 0;
+        virtual String setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
+        virtual String removeItem(const String& key, Frame* sourceFrame) = 0;
+        virtual bool clear(Frame* sourceFrame) = 0;
         virtual bool contains(const String& key) const = 0;
     };
 

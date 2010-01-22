@@ -66,12 +66,12 @@ WebString WebStorageAreaImpl::getItem(const WebString& key)
     return m_storageArea->getItem(key);
 }
 
-void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, const WebURL& url, bool& quotaException)
+void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, const WebURL& url, bool& quotaException, WebString& oldValue)
 {
     int exceptionCode = 0;
 
     ScopedStorageEventURL scope(url);
-    m_storageArea->setItem(key, value, exceptionCode, 0);
+    oldValue = m_storageArea->setItem(key, value, exceptionCode, 0);
 
     if (exceptionCode) {
         ASSERT(exceptionCode == WebCore::QUOTA_EXCEEDED_ERR);
@@ -80,16 +80,16 @@ void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, c
         quotaException = false;
 }
 
-void WebStorageAreaImpl::removeItem(const WebString& key, const WebURL& url)
+void WebStorageAreaImpl::removeItem(const WebString& key, const WebURL& url, WebString& oldValue)
 {
     ScopedStorageEventURL scope(url);
-    m_storageArea->removeItem(key, 0);
+    oldValue = m_storageArea->removeItem(key, 0);
 }
 
-void WebStorageAreaImpl::clear(const WebURL& url)
+void WebStorageAreaImpl::clear(const WebURL& url, bool& somethingCleared)
 {
     ScopedStorageEventURL scope(url);
-    m_storageArea->clear(0);
+    somethingCleared = m_storageArea->clear(0);
 }
 
 } // namespace WebKit

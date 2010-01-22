@@ -32,10 +32,10 @@
 #define WebStorageArea_h
 
 #include "WebCommon.h"
+#include "WebString.h"
 
 namespace WebKit {
 
-class WebString;
 class WebURL;
 
 // In WebCore, there's one distinct StorageArea per origin per StorageNamespace. This
@@ -60,14 +60,41 @@ public:
     // Set the value that corresponds to a specific key. QuotaException is set if we've
     // the StorageArea would have exceeded its quota. The value is NOT set when there's
     // an exception.  url is the url that should be used if a storage event fires.
-    virtual void setItem(const WebString& key, const WebString& value, const WebURL& url, bool& quotaException) = 0;
+    // FIXME: The following is a hack to keep Chromium compiling until the other half is landed.  Remove soon.
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& url, bool& quotaException) // Deprecated.
+    {
+        WebString oldValue;
+        setItem(key, newValue, url, quotaException, oldValue);
+    }
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& url, bool& quotaException, WebString& oldValue)
+    {
+        setItem(key, newValue, url, quotaException);
+    }
 
     // Remove the value associated with a particular key.  url is the url that should be used
     // if a storage event fires.
-    virtual void removeItem(const WebString& key, const WebURL& url) = 0;
+    // FIXME: The following is a hack to keep Chromium compiling until the other half is landed.  Remove soon.
+    virtual void removeItem(const WebString& key, const WebURL& url) // Deprecated.
+    {
+        WebString oldValue;
+        removeItem(key, url, oldValue);
+    }
+    virtual void removeItem(const WebString& key, const WebURL& url, WebString& oldValue)
+    {
+        removeItem(key, url);
+    }
 
     // Clear all key/value pairs.  url is the url that should be used if a storage event fires.
-    virtual void clear(const WebURL& url) = 0;
+    // FIXME: The following is a hack to keep Chromium compiling until the other half is landed.  Remove soon.
+    virtual void clear(const WebURL& url) // Deprecated.
+    {
+        bool somethingCleared;
+        clear(url, somethingCleared);
+    }
+    virtual void clear(const WebURL& url, bool& somethingCleared)
+    {
+        clear(url);
+    }
 };
 
 } // namespace WebKit

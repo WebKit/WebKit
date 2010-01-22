@@ -128,7 +128,7 @@ String StorageAreaImpl::getItem(const String& key) const
     return m_storageMap->getItem(key);
 }
 
-void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+String StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
@@ -136,7 +136,7 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
 
     if (privateBrowsingEnabled(frame)) {
         ec = QUOTA_EXCEEDED_ERR;
-        return;
+        return String();
     }
 
     String oldValue;
@@ -147,24 +147,25 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
 
     if (quotaException) {
         ec = QUOTA_EXCEEDED_ERR;
-        return;
+        return oldValue;
     }
 
     if (oldValue == value)
-        return;
+        return oldValue;
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, value);
     StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
+    return oldValue;
 }
 
-void StorageAreaImpl::removeItem(const String& key, Frame* frame)
+String StorageAreaImpl::removeItem(const String& key, Frame* frame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     if (privateBrowsingEnabled(frame))
-        return;
+        return String();
 
     String oldValue;
     RefPtr<StorageMap> newMap = m_storageMap->removeItem(key, oldValue);
@@ -172,23 +173,24 @@ void StorageAreaImpl::removeItem(const String& key, Frame* frame)
         m_storageMap = newMap.release();
 
     if (oldValue.isNull())
-        return;
+        return oldValue;
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, String());
     StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
+    return oldValue;
 }
 
-void StorageAreaImpl::clear(Frame* frame)
+bool StorageAreaImpl::clear(Frame* frame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     if (privateBrowsingEnabled(frame))
-        return;
+        return false;
 
     if (!m_storageMap->length())
-        return;
+        return false;
 
     unsigned quota = m_storageMap->quota();
     m_storageMap = StorageMap::create(quota);
@@ -196,6 +198,7 @@ void StorageAreaImpl::clear(Frame* frame)
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleClear();
     StorageEventDispatcher::dispatch(String(), String(), String(), m_storageType, m_securityOrigin.get(), frame);
+    return true;
 }
 
 bool StorageAreaImpl::contains(const String& key) const
