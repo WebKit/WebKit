@@ -294,16 +294,16 @@ EOF
 
         def self.parse(string)
             haveSeenDiffHeader = false
-            linesForDiffs = string.inject([]) do |diffChunks, line|
+            linesForDiffs = []
+            string.each_line do |line|
                 if (PrettyPatch.diff_header?(line))
-                    diffChunks << []
+                    linesForDiffs << []
                     haveSeenDiffHeader = true
                 elsif (!haveSeenDiffHeader && line =~ /^--- /)
-                    diffChunks << []
+                    linesForDiffs << []
                     haveSeenDiffHeader = false
                 end
-                diffChunks.last << line unless diffChunks.last.nil?
-                diffChunks
+                linesForDiffs.last << line unless linesForDiffs.last.nil?
             end
 
             linesForDiffs.collect { |lines| FileDiff.new(lines) }

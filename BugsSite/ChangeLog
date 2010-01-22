@@ -1,3 +1,13 @@
+2010-01-22  Janusz Lewandowski  <lew21@xtreeme.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        run-webkit-tests fails on Ruby 1.9
+        https://bugs.webkit.org/show_bug.cgi?id=33554
+        inject does not work with strings any more, so BugsSite/PrettyPatch/PrettyPatch.rb prints lots of errors.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Adam Barth.
