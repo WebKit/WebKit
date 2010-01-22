@@ -1,9 +1,9 @@
 # Copyright (C) 2009, Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -35,6 +35,7 @@ from webkitpy.executive import Executive
 
 
 class WebKitPort(object):
+
     # We might need to pass scm into this function for scm.checkout_root
     @classmethod
     def script_path(cls, script_name):
@@ -53,11 +54,11 @@ class WebKitPort(object):
 
     @classmethod
     def name(cls):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError("subclasses must implement")
 
     @classmethod
     def flag(cls):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError("subclasses must implement")
 
     @classmethod
     def update_webkit_command(cls):
@@ -90,6 +91,7 @@ class WebKitPort(object):
 
 
 class MacPort(WebKitPort):
+
     @classmethod
     def name(cls):
         return "Mac"
@@ -100,6 +102,7 @@ class MacPort(WebKitPort):
 
 
 class GtkPort(WebKitPort):
+
     @classmethod
     def name(cls):
         return "Gtk"
@@ -123,6 +126,7 @@ class GtkPort(WebKitPort):
 
 
 class QtPort(WebKitPort):
+
     @classmethod
     def name(cls):
         return "Qt"
@@ -140,6 +144,7 @@ class QtPort(WebKitPort):
 
 
 class ChromiumPort(WebKitPort):
+
     @classmethod
     def name(cls):
         return "Chromium"

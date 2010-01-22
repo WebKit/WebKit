@@ -1,5 +1,21 @@
 2010-01-22  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Make bugzilla.py and webkitport.py conform to pep8
+        https://bugs.webkit.org/show_bug.cgi?id=34015
+
+        This patch makes webkitport.py and bugzilla.py mostly conform to PEP8
+        style as enforced by pep8.py.  I wasn't able to get rid of all the
+        errors because I'm not sure how to wrap some lines properly.  Also,
+        there are a few deprication errors that I couldn't resolve easily.
+        However, this is a massive improvement in compliance.
+
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/webkitport.py:
+
+2010-01-22  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Limit length of EWS results to 5MB
