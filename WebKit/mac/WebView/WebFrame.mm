@@ -1356,7 +1356,10 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    _private->coreFrame->loader()->load(request, false);
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return;
+    coreFrame->loader()->load(request, false);
 }
 
 static NSURL *createUniqueWebDataURL()
