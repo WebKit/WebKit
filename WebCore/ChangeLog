@@ -1,3 +1,16 @@
+2010-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        REGRESSION (r52795): New message created in response to mailto: URL has random character in message body
+        rdar://problem/7565902
+
+        This regression affects the Mac OS X Mail application.
+        I was not able to find a simple way to create a regression test.
+
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer): Initialize m_size to 0 as in the other constructors.
+
 2010-01-21  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
@@ -9936,7 +9949,7 @@
 
         Reviewed by Adam Roben.
 
-        Fix  build warnings blindly
+        Fix build warnings blindly
         https://bugs.webkit.org/show_bug.cgi?id=33178
 
         * platform/SharedBuffer.cpp:
