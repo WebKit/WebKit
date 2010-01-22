@@ -220,6 +220,9 @@ inspector/elements-panel-rewrite-href.html
 
 # Missing layoutTestController.setSmartInsertDeleteEnabled()
 editing/selection/doubleclick-beside-cr-span.html
+
+# Missing eventSender.textZoomIn() (and textZoomOut)
+svg/custom/text-zoom.xhtml
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

@@ -1,5 +1,11 @@
 2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Skip test introduced in r53684 because of missing eventSender.textZoomIn()
+
+        * platform/qt/Skipped: svg/custom/text-zoom.xhtml skipped.
+
+2010-01-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix.
 
         [Qt] css1_forward_compatible_parsing.html moved from css2.1 to fast/css by r53664.
