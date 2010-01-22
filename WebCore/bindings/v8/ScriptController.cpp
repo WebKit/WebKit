@@ -32,7 +32,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 #include "CString.h"
 #include "Document.h"
 #include "DOMWindow.h"
@@ -302,7 +302,8 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     if (widget->isFrameView())
         return 0;
 
-    NPObject* npObject = ChromiumBridge::pluginScriptableObject(widget);
+    NPObject* npObject = PlatformBridge::pluginScriptableObject(widget);
+
     if (!npObject)
         return 0;
 

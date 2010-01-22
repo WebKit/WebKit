@@ -1,3 +1,22 @@
+2010-01-21  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by David Levin.
+
+        [Android] bindings/v8/ScriptController.cpp needs to include
+        PlatformBridge.h instead of ChromiumBridge.h so that it can
+        be used on both Chromium and Android.
+        https://bugs.webkit.org/show_bug.cgi?id=33673
+
+        Add "static NPObject* pluginScriptableObject(Widget*);" method
+        to PlatformBridge.h
+        Include PlatformBridge.h from ScriptController.cpp.
+
+        No new tests, just platform code.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * platform/android/PlatformBridge.h:
+
 2010-01-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.
