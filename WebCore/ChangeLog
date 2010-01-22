@@ -1,3 +1,59 @@
+2010-01-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/7373568>
+        https://bugs.webkit.org/show_bug.cgi?id=34007
+        Implement hardware acceleration of video compositing on Windows
+
+        Internally we still have QuickTime render to a bitmap, but frames are then composited
+        with the page using an accelerated renderer.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_newFrameAvailable.
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate): Call tearDownVideoRendering.
+        (WebCore::MediaPlayerPrivate::cancelLoad): Call tearDownVideoRendering.
+        (WebCore::MediaPlayerPrivate::updateStates): Call setUpVideoRendering once the movie 
+            is ready to draw.
+        (WebCore::MediaPlayerPrivate::isReadyForRendering): New, utility function returns true 
+            only when movie is ready to render.
+        (WebCore::MediaPlayerPrivate::setSize): Remember the size as we need it when rendering 
+            in accelerated mode.
+        (WebCore::MediaPlayerPrivate::setVisible): Call setUpVideoRendering when made visible.
+        (WebCore::MediaPlayerPrivate::paint): Do nothing when rendering to a layer. Move frame 
+            rate drawing code to paintCompleted.
+        (WebCore::MediaPlayerPrivate::paintCompleted): New, clear m_newFrameAvailable and, when 
+            built with DRAW_FRAME_RATE, draw framerate.
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable): Set m_newFrameAvailable, trigger 
+            repaint differently when drawing to a layer.
+        (WebCore::MediaPlayerPrivate::currentRenderingMode): New, return the current rendering mode.
+        (WebCore::MediaPlayerPrivate::preferredRenderingMode): New, return preferred rendering mode
+            (render to a layer whenever possible).
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): New, tear down current rendering mode 
+            and set up new mode when necessary.
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering): New, noop unless rendering to a layer.
+        (WebCore::MediaPlayerPrivate::hasSetUpVideoRendering): New.
+        (WebCore::MediaPlayerPrivate::paintContents): New, callback from compositing layer when it
+            is time to draw the current frame.
+        (WebCore::MediaPlayerPrivate::createLayerForMovie): New, allocate a layer for the movie.
+        (WebCore::MediaPlayerPrivate::destroyLayerForMovie): New, delete movie layer.
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering): New, return true unless the 
+            movie is not ready to render.
+        (WebCore::MediaPlayerPrivate::acceleratedRenderingStateChanged): New, deal with change in 
+            accelerated rendering state.
+        (WebCore::MediaPlayerPrivate::notifySyncRequired): New, callback from compositing layer 
+            when it wants to schedule a redraw.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        (WebCore::MediaPlayerPrivate::notifyAnimationStarted):
+        (WebCore::MediaPlayerPrivate::showDebugBorders):
+        (WebCore::MediaPlayerPrivate::showRepaintCounter):
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::getCurrentFrameInfo):
+            New, return information about the offscreen render buffer.
+        (QTMovieWin::initializeQuickTime):
+        * platform/graphics/win/QTMovieWin.h:
+
 2010-01-21  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

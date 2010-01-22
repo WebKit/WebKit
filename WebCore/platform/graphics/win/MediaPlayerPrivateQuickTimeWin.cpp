@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,15 @@
 #include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsLayerCACF.h"
+#include "WKCACFLayer.h"
+#endif
 
 #if DRAW_FRAME_RATE
 #include "Font.h"
@@ -75,6 +81,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_hasUnsupportedTracks(false)
     , m_startedPlaying(false)
     , m_isStreaming(false)
+    , m_visible(false)
+    , m_newFrameAvailable(false)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -85,6 +93,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
+    tearDownVideoRendering();
 }
 
 bool MediaPlayerPrivate::supportsFullscreen() const
@@ -189,7 +198,7 @@ void MediaPlayerPrivate::pause()
         return;
     m_startedPlaying = false;
 #if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = GetTickCount();
+    m_timeStoppedPlaying = WTF::currentTime();
 #endif
     m_qtMovie->pause();
 }
@@ -384,9 +393,11 @@ void MediaPlayerPrivate::cancelLoad()
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
     
+    tearDownVideoRendering();
+
     // Cancel the load by destroying the movie.
     m_qtMovie.clear();
-    
+
     updateStates();
 }
 
@@ -449,6 +460,9 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
+    if (isReadyForRendering() && !hasSetUpVideoRendering())
+        setUpVideoRendering();
+
     if (seeking())
         m_readyState = MediaPlayer::HaveNothing;
     
@@ -456,6 +470,11 @@ void MediaPlayerPrivate::updateStates()
         m_player->networkStateChanged();
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
+}
+
+bool MediaPlayerPrivate::isReadyForRendering() const
+{
+    return m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
 }
 
 void MediaPlayerPrivate::sawUnsupportedTracks()
@@ -472,7 +491,7 @@ void MediaPlayerPrivate::didEnd()
 
     m_startedPlaying = false;
 #if DRAW_FRAME_RATE
-    m_timeStoppedPlaying = GetTickCount();
+    m_timeStoppedPlaying = WTF::currentTime();
 #endif
     updateStates();
     m_player->timeChanged();
@@ -480,20 +499,32 @@ void MediaPlayerPrivate::didEnd()
 
 void MediaPlayerPrivate::setSize(const IntSize& size) 
 { 
-    if (m_hasUnsupportedTracks || !m_qtMovie)
+    if (m_hasUnsupportedTracks || !m_qtMovie || m_size == size)
         return;
+    m_size = size;
     m_qtMovie->setSize(size.width(), size.height());
 }
 
-void MediaPlayerPrivate::setVisible(bool b)
+void MediaPlayerPrivate::setVisible(bool visible)
 {
-    if (m_hasUnsupportedTracks || !m_qtMovie)
+    if (m_hasUnsupportedTracks || !m_qtMovie || m_visible == visible)
         return;
-    m_qtMovie->setVisible(b);
+
+    m_qtMovie->setVisible(visible);
+    m_visible = visible;
+    if (m_visible) {
+        if (isReadyForRendering())
+            setUpVideoRendering();
+    } else
+        tearDownVideoRendering();
 }
 
 void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_qtVideoLayer)
+        return;
+#endif
     if (p->paintingDisabled() || !m_qtMovie || m_hasUnsupportedTracks)
         return;
 
@@ -524,28 +555,50 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
     else
         p->releaseWindowsContext(hdc, r);
 
+    paintCompleted(*p, r);
+}
+
+void MediaPlayerPrivate::paintCompleted(GraphicsContext& context, const IntRect& rect)
+{
+    m_newFrameAvailable = false;
+
 #if DRAW_FRAME_RATE
     if (m_frameCountWhilePlaying > 10) {
-        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : NULL;
-        Document* document = frame ? frame->document() : NULL;
-        RenderObject* renderer = document ? document->renderer() : NULL;
-        RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
-        if (styleToUse) {
-            double frameRate = (m_frameCountWhilePlaying - 1) / (0.001 * ( m_startedPlaying ? (GetTickCount() - m_timeStartedPlaying) :
-                (m_timeStoppedPlaying - m_timeStartedPlaying) ));
-            String text = String::format("%1.2f", frameRate);
-            TextRun textRun(text.characters(), text.length());
-            const Color color(255, 0, 0);
-            p->save();
-            p->translate(r.x(), r.y() + r.height());
-            p->setFont(styleToUse->font());
-            p->setStrokeColor(color);
-            p->setStrokeStyle(SolidStroke);
-            p->setStrokeThickness(1.0f);
-            p->setFillColor(color);
-            p->drawText(textRun, IntPoint(2, -3));
-            p->restore();
-        }
+        double interval =  m_startedPlaying ? WTF::currentTime() - m_timeStartedPlaying : m_timeStoppedPlaying - m_timeStartedPlaying;
+        double frameRate = (m_frameCountWhilePlaying - 1) / interval;
+        CGContextRef cgContext = context.platformContext();
+        CGRect drawRect = rect;
+
+        char text[8];
+        _snprintf(text, sizeof(text), "%1.2f", frameRate);
+
+        static const int fontSize = 25;
+        static const int fontCharWidth = 12;
+        static const int boxHeight = 25;
+        static const int boxBorderWidth = 4;
+        drawRect.size.width = boxBorderWidth * 2 + fontCharWidth * strlen(text);
+        drawRect.size.height = boxHeight;
+
+        CGContextSaveGState(cgContext);
+#if USE(ACCELERATED_COMPOSITING)
+        if (m_qtVideoLayer)
+            CGContextScaleCTM(cgContext, 1, -1);
+        CGContextTranslateCTM(cgContext, rect.width() - drawRect.size.width, m_qtVideoLayer ? -rect.height() : 0);
+#else
+        CGContextTranslateCTM(cgContext, rect.width() - drawRect.size.width, 0);
+#endif
+        static const CGFloat backgroundColor[4] = { 0.98, 0.98, 0.82, 0.8 };
+        CGContextSetFillColor(cgContext, backgroundColor);
+        CGContextFillRect(cgContext, drawRect);
+
+        static const CGFloat textColor[4] = { 0, 0, 0, 1 };
+        CGContextSetFillColor(cgContext, textColor);
+        CGContextSetTextMatrix(cgContext, CGAffineTransformMakeScale(1, -1));
+        CGContextSelectFont(cgContext, "Helvetica", fontSize, kCGEncodingMacRoman);
+
+        CGContextShowTextAtPoint(cgContext, drawRect.origin.x + boxBorderWidth, drawRect.origin.y + boxHeight - boxBorderWidth, text, strlen(text));
+        
+        CGContextRestoreGState(cgContext);        
     }
 #endif
 }
@@ -625,13 +678,21 @@ void MediaPlayerPrivate::movieNewImageAvailable(QTMovieWin* movie)
 #if DRAW_FRAME_RATE
     if (m_startedPlaying) {
         m_frameCountWhilePlaying++;
-        // to eliminate preroll costs from our calculation,
-        // our frame rate calculation excludes the first frame drawn after playback starts
-        if (1==m_frameCountWhilePlaying)
-            m_timeStartedPlaying = GetTickCount();
+        // To eliminate preroll costs from our calculation, our frame rate calculation excludes
+        // the first frame drawn after playback starts.
+        if (m_frameCountWhilePlaying == 1)
+            m_timeStartedPlaying = WTF::currentTime();
     }
 #endif
-    m_player->repaint();
+
+    m_newFrameAvailable = true;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_qtVideoLayer)
+        m_qtVideoLayer->platformLayer()->setNeedsDisplay();
+    else
+#endif
+        m_player->repaint();
 }
 
 bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
@@ -640,6 +701,171 @@ bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
     // so we all media is single origin.
     return true;
 }
+
+MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode() const
+{
+    if (!m_qtMovie)
+        return MediaRenderingNone;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_qtVideoLayer)
+        return MediaRenderingMovieLayer;
+#endif
+
+    return MediaRenderingSoftwareRenderer;
+}
+
+MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::preferredRenderingMode() const
+{
+    if (!m_player->frameView() || !m_qtMovie)
+        return MediaRenderingNone;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
+        return MediaRenderingMovieLayer;
+#endif
+
+    return MediaRenderingSoftwareRenderer;
+}
+
+void MediaPlayerPrivate::setUpVideoRendering()
+{
+    MediaRenderingMode currentMode = currentRenderingMode();
+    MediaRenderingMode preferredMode = preferredRenderingMode();
+
+#if !USE(ACCELERATED_COMPOSITING)
+    ASSERT(preferredMode != MediaRenderingMovieLayer);
+#endif
+
+    if (currentMode == preferredMode && currentMode != MediaRenderingNone)
+        return;
+
+    if (currentMode != MediaRenderingNone)  
+        tearDownVideoRendering();
+
+    if (preferredMode == MediaRenderingMovieLayer)
+        createLayerForMovie();
+}
+
+void MediaPlayerPrivate::tearDownVideoRendering()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_qtVideoLayer)
+        destroyLayerForMovie();
+#endif
+}
+
+bool MediaPlayerPrivate::hasSetUpVideoRendering() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return m_qtVideoLayer || currentRenderingMode() != MediaRenderingMovieLayer;
+#else
+    return true;
+#endif
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+
+// Up-call from compositing layer drawing callback.
+void MediaPlayerPrivate::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect&)
+{
+     if (m_hasUnsupportedTracks)
+         return;
+
+    ASSERT(supportsAcceleratedRendering());
+
+    // No reason to replace the current layer image unless we have something new to show.
+    if (!m_newFrameAvailable)
+        return;
+
+    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    void* buffer;
+    unsigned bitsPerPixel;
+    unsigned rowBytes;
+    unsigned width;
+    unsigned height;
+
+    m_qtMovie->getCurrentFrameInfo(buffer, bitsPerPixel, rowBytes, width, height);
+    if (!buffer)
+        return ;
+
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, static_cast<UInt8*>(buffer), rowBytes * height, kCFAllocatorNull));
+    RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+    RetainPtr<CGImageRef> frameImage(AdoptCF, CGImageCreate(width, height, 8, bitsPerPixel, rowBytes, colorSpace, 
+        kCGBitmapByteOrder32Little | kCGImageAlphaFirst, provider.get(), 0, false, kCGRenderingIntentDefault));
+    if (!frameImage)
+        return;
+
+    IntRect rect(0, 0, m_size.width(), m_size.height());
+    CGContextDrawImage(context.platformContext(), rect, frameImage.get()); 
+    paintCompleted(context, rect);
+}
+#endif
+
+void MediaPlayerPrivate::createLayerForMovie()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(supportsAcceleratedRendering());
+
+    if (!m_qtMovie || m_qtVideoLayer)
+        return;
+
+    // Do nothing if the parent layer hasn't been set up yet.
+    GraphicsLayer* videoGraphicsLayer = m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player);
+    if (!videoGraphicsLayer)
+        return;
+
+    // Create a GraphicsLayer that won't be inserted directly into the render tree, but will used 
+    // as a wrapper for a WKCACFLayer which gets inserted as the content layer of the video 
+    // renderer's GraphicsLayer.
+    m_qtVideoLayer.set(new GraphicsLayerCACF(this));
+    if (!m_qtVideoLayer)
+        return;
+
+    // Mark the layer as drawing itself, anchored in the top left, and bottom-up.
+    m_qtVideoLayer->setDrawsContent(true);
+    m_qtVideoLayer->setAnchorPoint(FloatPoint3D());
+    m_qtVideoLayer->setContentsOrientation(GraphicsLayer::CompositingCoordinatesBottomUp);
+#ifndef NDEBUG
+    m_qtVideoLayer->setName("Video layer");
+#endif
+
+    // Hang the video layer from the render layer.
+    videoGraphicsLayer->setContentsToVideo(m_qtVideoLayer->platformLayer());
+#endif
+}
+
+void MediaPlayerPrivate::destroyLayerForMovie()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_qtVideoLayer)
+        return;
+    m_qtVideoLayer = 0;
+#endif
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+bool MediaPlayerPrivate::supportsAcceleratedRendering() const
+{
+    return isReadyForRendering();
+}
+
+void MediaPlayerPrivate::acceleratedRenderingStateChanged()
+{
+    // Set up or change the rendering path if necessary.
+    setUpVideoRendering();
+}
+
+void MediaPlayerPrivate::notifySyncRequired(const GraphicsLayer*)
+{
+    GraphicsLayerCACF* videoGraphicsLayer = static_cast<GraphicsLayerCACF*>(m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player));
+    if (videoGraphicsLayer)
+        videoGraphicsLayer->notifySyncRequired();
+ }
+
+
+#endif
+
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -606,6 +606,24 @@ void QTMovieWin::setVisible(bool b)
 {
     m_private->m_visible = b;
     m_private->updateGWorld();
+}
+
+void QTMovieWin::getCurrentFrameInfo(void*& buffer, unsigned& bitsPerPixel, unsigned& rowBytes, unsigned& width, unsigned& height)
+{
+    if (!m_private->m_gWorld) {
+        buffer = 0;
+        bitsPerPixel = 0;
+        rowBytes = 0;
+        width = 0;
+        height = 0;
+        return;
+    }
+    PixMapHandle offscreenPixMap = GetGWorldPixMap(m_private->m_gWorld);
+    buffer = (*offscreenPixMap)->baseAddr;
+    bitsPerPixel = (*offscreenPixMap)->pixelSize;
+    rowBytes = (*offscreenPixMap)->rowBytes & 0x3FFF;
+    width = m_private->m_width;
+    height = m_private->m_height;
 }
 
 void QTMovieWin::paint(HDC hdc, int x, int y)
