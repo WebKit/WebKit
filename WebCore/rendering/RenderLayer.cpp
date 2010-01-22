@@ -1895,8 +1895,7 @@ RenderLayer::updateScrollInfoAfterLayout()
     // Set up the range (and page step/line step).
     if (m_hBar) {
         int clientWidth = box->clientWidth();
-        int pageStep = (clientWidth - cAmountToKeepWhenPaging);
-        if (pageStep < 0) pageStep = clientWidth;
+        int pageStep = max(clientWidth * cFractionToStepWhenPaging, 1.f);
         m_hBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_hBar->setProportion(clientWidth, m_scrollWidth);
         // Explicitly set the horizontal scroll value.  This ensures that when a
@@ -1911,8 +1910,7 @@ RenderLayer::updateScrollInfoAfterLayout()
     }
     if (m_vBar) {
         int clientHeight = box->clientHeight();
-        int pageStep = (clientHeight - cAmountToKeepWhenPaging);
-        if (pageStep < 0) pageStep = clientHeight;
+        int pageStep = max(clientHeight * cFractionToStepWhenPaging, 1.f);
         m_vBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
     }

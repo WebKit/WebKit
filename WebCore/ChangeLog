@@ -1,5 +1,24 @@
 2010-01-22  Peter Kasting  <pkasting@google.com>
 
+        Reviewed by David Hyatt.
+
+        When scrolling by page, hold back 1/8th of the visible size instead of
+        40 px.
+        https://bugs.webkit.org/show_bug.cgi?id=32595
+
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Scrollbar.h:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
+2010-01-22  Peter Kasting  <pkasting@google.com>
+
         Not reviewed, backout.
 
         Back out r52673, which caused several regressions.

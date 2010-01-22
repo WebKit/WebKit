@@ -260,7 +260,7 @@ static int verticalScrollDistance(Frame* frame)
     if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || renderer->isTextArea()))
         return 0;
     int height = toRenderBox(renderer)->clientHeight();
-    return max((height + 1) / 2, height - cAmountToKeepWhenPaging);
+    return max(height * cFractionToStepWhenPaging, 1.f);
 }
 
 static RefPtr<Range> unionDOMRanges(Range* a, Range* b)

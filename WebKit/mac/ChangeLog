@@ -1,3 +1,16 @@
+2010-01-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        When scrolling by page, hold back 1/8th of the visible size instead of
+        40 px.
+        https://bugs.webkit.org/show_bug.cgi?id=32595
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _verticalPageScrollDistance]):
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView _horizontalPageScrollDistance]):
+
 2010-01-20  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.
