@@ -1,3 +1,20 @@
+2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Levin.
+
+        Added screenshots and clearer instructions on how to submit
+        a patch for review.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32542
+
+        Also added that a bug report should be selected or created
+        prior to submitting a patch.
+
+        * coding/contributing.html:
+        * coding/images: Added.
+        * coding/images/contribute_add_attachment.png: Added.
+        * coding/images/contribute_mark_review.png: Added.
+
 2010-01-11  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed; updated for truth (and readability).
