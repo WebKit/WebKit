@@ -1,3 +1,20 @@
+2010-01-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Add allowPlugins callback to allow per-site enabling of plugins
+        https://bugs.webkit.org/show_bug.cgi?id=33974
+
+        Forward the new allowPlugins callback to WebKitClient so that it can
+        make the policy decision.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::allowPlugins):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowJavaScript):
+        (WebKit::FrameLoaderClientImpl::allowPlugins):
+        * src/FrameLoaderClientImpl.h:
+
 2010-01-21  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

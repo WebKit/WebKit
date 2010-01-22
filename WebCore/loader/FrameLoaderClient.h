@@ -257,6 +257,7 @@ namespace WebCore {
         virtual void didChangeScrollOffset() { }
 
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
+        virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
     };
 
 } // namespace WebCore

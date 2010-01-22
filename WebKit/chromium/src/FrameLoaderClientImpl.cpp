@@ -164,6 +164,14 @@ bool FrameLoaderClientImpl::allowJavaScript(bool enabledPerSettings)
     return enabledPerSettings;
 }
 
+bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
+{
+    if (m_webFrame->client())
+        return m_webFrame->client()->allowPlugins(m_webFrame, enabledPerSettings);
+
+    return enabledPerSettings;
+}
+
 bool FrameLoaderClientImpl::hasWebView() const
 {
     return m_webFrame->viewImpl();

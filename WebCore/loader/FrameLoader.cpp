@@ -1274,8 +1274,8 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
         Settings* settings = m_frame->settings();
-        if (!settings || !settings->arePluginsEnabled() || 
-            (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
+        if (!m_client->allowPlugins(settings && settings->arePluginsEnabled())
+            || (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
             return false;
         if (isSandboxed(SandboxPlugins))
             return false;
