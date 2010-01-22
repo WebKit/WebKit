@@ -48,8 +48,7 @@ import os.path
 import sys
 
 import webkitpy.style.checker as checker
-from webkitpy.scm import detect_scm_system
-
+from webkitpy.style_references import SimpleScm
 
 def main():
     # Change stderr to write with replacement characters so we don't die
@@ -71,8 +70,9 @@ def main():
             style_checker.check_file(filename)
 
     else:
-        cwd = os.path.abspath('.')
-        scm = detect_scm_system(cwd)
+        scm = SimpleScm()
+
+        os.chdir(scm.checkout_root())
 
         if options.git_commit:
             commit = options.git_commit

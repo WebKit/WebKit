@@ -1,3 +1,24 @@
+2010-01-22  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Made check-webkit-style able to check patches when script not
+        run from source root. Also consolidated external references
+        to a single file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33791
+
+        * Scripts/check-webkit-style:
+          - Changed to import style_references.py.
+
+        * Scripts/webkitpy/style/__init__.py:
+          - Removed __path__ hack that allowed searching Scripts/ directory.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Changed to import style_references.py.
+
+        * Scripts/webkitpy/style_references.py: Added.
+
 2010-01-22  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Maciej Stachowiak.
