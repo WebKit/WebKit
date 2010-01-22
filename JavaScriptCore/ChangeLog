@@ -1,3 +1,9 @@
+2010-01-22  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, attempted Snow Leopard build fix.
+
+        * wtf/ThreadingPthreads.cpp: Add a forward declaration of a function which is not 'static'.
+
 2009-01-22  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -61,6 +61,8 @@ static Mutex* atomicallyInitializedStaticMutex;
 static pthread_t mainThread; // The thread that was the first to call initializeThreading(), which must be the main thread.
 #endif
 
+void clearPthreadHandleForIdentifier(ThreadIdentifier);
+
 static Mutex& threadMapMutex()
 {
     DEFINE_STATIC_LOCAL(Mutex, mutex, ());
