@@ -77,10 +77,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
         ASSERT((*iter)->scriptExecutionContext() == this);
         (*iter)->contextDestroyed();
     }
+#if ENABLE(DATABASE)
     if (m_databaseThread) {
         ASSERT(m_databaseThread->terminationRequested());
         m_databaseThread = 0;
     }
+#endif
 }
 
 #if ENABLE(DATABASE)
