@@ -27,39 +27,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class PersistentPatchCollectionDelegate:
+import unittest
+
+from webkitpy.mock import Mock
+from webkitpy.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
+
+
+class TestPersistentPatchCollectionDelegate(PersistentPatchCollectionDelegate):
     def collection_name(self):
-        raise NotImplementedError, "subclasses must implement"
+        return "test-collection"
 
     def fetch_potential_patch_ids(self):
-        raise NotImplementedError, "subclasses must implement"
+        return [42, 192, 87]
 
     def status_server(self):
-        raise NotImplementedError, "subclasses must implement"
+        return Mock()
 
     def is_terminal_status(self, status):
-        raise NotImplementedError, "subclasses must implement"
+        return False
 
 
-class PersistentPatchCollection:
-    def __init__(self, delegate):
-        self._delegate = delegate
-        self._name = self._delegate.collection_name()
-        self._status = self._delegate.status_server()
-        self._status_cache = {}
-
-    def _cached_status(self, patch_id):
-        cached = self._status_cache.get(patch_id)
-        if cached:
-            return cached
-        status = self._status.patch_status(self._name, patch_id)
-        if status and self._delegate.is_terminal_status(status):
-            self._status_cache[patch_id] = status
-        return status
-
-    def next(self):
-        patch_ids = self._delegate.fetch_potential_patch_ids()
-        for patch_id in patch_ids:
-            status = self._cached_status(patch_id)
-            if not status or not self._delegate.is_terminal_status(status):
-                return patch_id
+class PersistentPatchCollectionTest(unittest.TestCase):
+    def test_next(self):
+        collection = PersistentPatchCollection(TestPersistentPatchCollectionDelegate())
+        collection.next()

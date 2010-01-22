@@ -234,6 +234,9 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
     def status_server(self):
         return self.tool.status_server
 
+    def is_terminal_status(self, status):
+        return status == "Pass" or status == "Fail" or status.startswith("Error:")
+
     # AbstractQueue methods
 
     def begin_work_queue(self):

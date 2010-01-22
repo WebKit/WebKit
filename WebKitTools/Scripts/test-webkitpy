@@ -44,6 +44,7 @@ from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
 from webkitpy.multicommandtool_unittest import *
 from webkitpy.networktransaction_unittest import *
+from webkitpy.patchcollection_unittest import *
 from webkitpy.queueengine_unittest import *
 from webkitpy.steps.steps_unittest import *
 from webkitpy.steps.closebugforlanddiff_unittest import *

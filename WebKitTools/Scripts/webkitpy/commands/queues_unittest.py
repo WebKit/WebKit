@@ -40,6 +40,10 @@ class TestQueue(AbstractQueue):
     name = "test-queue"
 
 
+class TestReviewQueue(AbstractReviewQueue):
+    name = "test-review-queue"
+
+
 class AbstractQueueTest(CommandsTest):
     def _assert_log_progress_output(self, patch_ids, progress_output):
         OutputCapture().assert_outputs(self, TestQueue().log_progress, [patch_ids], expected_stderr=progress_output)
@@ -61,6 +65,20 @@ class AbstractQueueTest(CommandsTest):
     def test_run_webkit_patch(self):
         self._assert_run_webkit_patch([1])
         self._assert_run_webkit_patch(["one", 2])
+
+
+class AbstractReviewQueueTest(CommandsTest):
+    def test_patch_collection_delegate_methods(self):
+        queue = TestReviewQueue()
+        tool = MockBugzillaTool()
+        queue.bind_to_tool(tool)
+        self.assertEquals(queue.collection_name(), "test-review-queue")
+        self.assertEquals(queue.fetch_potential_patch_ids(), [103])
+        queue.status_server()
+        self.assertTrue(queue.is_terminal_status("Pass"))
+        self.assertTrue(queue.is_terminal_status("Fail"))
+        self.assertTrue(queue.is_terminal_status("Error: Your patch exploded"))
+        self.assertFalse(queue.is_terminal_status("Foo"))
 
 
 class CommitQueueTest(QueuesTest):

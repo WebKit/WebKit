@@ -1,5 +1,21 @@
 2010-01-21  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Make the EWS transactional
+        https://bugs.webkit.org/show_bug.cgi?id=33978
+
+        Now if the EWS gets interrupted in the middle of processing a patch,
+        the bots will re-process the patch.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+        * Scripts/webkitpy/patchcollection.py:
+        * Scripts/webkitpy/patchcollection_unittest.py: Added.
+
+2010-01-21  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Add missing "ago" for style in the status bubble.
 
         * QueueStatusServer/templates/statusbubble.html:
