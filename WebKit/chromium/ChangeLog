@@ -1,3 +1,27 @@
+2010-01-21  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Bumps the refcount when WebNode::toElement/toConstElement are called.
+        https://bugs.webkit.org/show_bug.cgi?id=33977
+        
+        Ensures that when a wrapper around a WebNode is create via the
+        toElement() or toConstElement() calls that the refcount on the WebNode
+        is increased, by forcing a call to WebNode::assign().  This is needed
+        so that the following code:
+        {
+          WebNode n = someNode();
+          WebElement e = n.toElement<WebElement>();
+        }
+        does not decrease the overall refcount on the Node that someNode()
+        returns.
+
+        This caused crashes in the 'Save page as..' feature.
+
+        * public/WebNode.h:
+        (WebKit::WebNode::toElement):
+        (WebKit::WebNode::toConstElement):
+
 2010-01-21  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
