@@ -970,7 +970,6 @@ HEADERS += \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
     bindings/js/CachedScriptSourceProvider.h \
-    bindings/js/DOMObjectWithSVGContext.h \
     bindings/js/GCController.h \
     bindings/js/JSCallbackData.h \
     bindings/js/JSAudioConstructor.h \

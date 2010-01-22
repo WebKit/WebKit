@@ -1,3 +1,9 @@
+2010-01-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt "build" fix.
+
+        * WebCore.pro: Fix warning about missing header file that isn't present anymore.
+
 2010-01-22  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.
