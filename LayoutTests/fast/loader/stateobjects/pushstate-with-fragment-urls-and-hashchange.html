@@ -48,14 +48,14 @@ function statePopped()
 {
     log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent());
     if (event.state != "OriginalEntry")
-        history.back();
+        setTimeout("history.back();", 0);
     else if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
 function hashChanged()
 {
-    log("Hash change fired");
+    log("Hash change fired and last path component is " + lastPathComponent());
 }
 
 </script>

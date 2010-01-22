@@ -32,12 +32,14 @@
 #include "config.h"
 #include "RedirectScheduler.h"
 
+#include "BackForwardList.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "HistoryItem.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Page.h"
@@ -265,11 +267,23 @@ void RedirectScheduler::scheduleHistoryNavigation(int steps)
 
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
     // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
-    if (!m_frame->page()->canGoBackOrForward(steps)) { 
-        cancel(); 
-        return; 
-    } 
-
+    HistoryItem* specifiedEntry = m_frame->page()->backForwardList()->itemAtIndex(steps);
+    if (!specifiedEntry) {
+        cancel();
+        return;
+    }
+    
+#if !ENABLE(HISTORY_ALWAYS_ASYNC)
+    // If the specified entry and the current entry have the same document, this is either a state object traversal or a fragment 
+    // traversal (or both) and should be performed synchronously.
+    HistoryItem* currentEntry = m_frame->loader()->history()->currentItem();
+    if (currentEntry != specifiedEntry && specifiedEntry->document() && currentEntry->document() == specifiedEntry->document()) {
+        m_frame->loader()->history()->goToItem(specifiedEntry, FrameLoadTypeIndexedBackForward);
+        return;
+    }
+#endif
+    
+    // In all other cases, schedule the history traversal to occur asynchronously.
     schedule(new ScheduledRedirection(steps));
 }
 

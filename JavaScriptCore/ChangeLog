@@ -1,3 +1,12 @@
+2010-01-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        history.back() for same-document history traversals isn't synchronous as the specification states.
+        <rdar://problem/7535011> and https://bugs.webkit.org/show_bug.cgi?id=33538
+
+        * wtf/Platform.h: Add a "HISTORY_ALWAYS_ASYNC" enable and turn it on for Chromium.
+
 2010-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

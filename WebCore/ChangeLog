@@ -1,3 +1,21 @@
+2010-01-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        history.back() for same-document history traversals isn't synchronous as the specification states.
+        <rdar://problem/7535011> and https://bugs.webkit.org/show_bug.cgi?id=33538
+
+        In resolving https://bugs.webkit.org/show_bug.cgi?id=25570, all history.back()/forward()/go() navigations
+        were made asynchronous. That doesn't agree with the HTML5 spec and might have been overreaching for fixing
+        that particular bug. In working with the new history state APIs I noticed some things that should've been
+        possible were not possible because of this change.
+
+        The change in loading behavior is well covered via modifications to previous tests.
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation): Determine beforehand if the traversal is
+          a same-document navigation. If it is, perform the load directly instead of scheduling it.
+
 2010-01-21  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Tor Arne Vestbø.

@@ -1,3 +1,18 @@
+2010-01-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        history.back() for same-document history traversals isn't synchronous as the specification states.
+        <rdar://problem/7535011> and https://bugs.webkit.org/show_bug.cgi?id=33538
+
+        The change in loading behavior is well covered via modifications to these previous tests:
+
+        * fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange-expected.txt:
+        * fast/loader/stateobjects/pushstate-with-fragment-urls-and-hashchange.html:
+        * fast/loader/stateobjects/state-api-on-detached-frame-crash-expected.txt:
+        * fast/loader/stateobjects/state-api-on-detached-frame-crash.html:
+
 2010-01-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
