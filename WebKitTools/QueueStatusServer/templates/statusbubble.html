@@ -50,7 +50,7 @@ function statusDetail(patch_id) {
 <!-- FIXME: Find some way to remove this copy-and-paste code! -->
 <div class="status {{ summary.style_queue.state }}"{% if summary.style_queue.status %}
     onclick="statusDetail({{ summary.attachment_id }})"
-    title="{{ summary.style_queue.status.date|timesince }}"{% endif %}>
+    title="{{ summary.style_queue.status.date|timesince }} ago"{% endif %}>
   style
 </div>
 <div class="status {{ summary.chromium_ews.state }}"{% if summary.chromium_ews.status %}

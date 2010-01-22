@@ -1,5 +1,11 @@
 2010-01-21  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Add missing "ago" for style in the status bubble.
+
+        * QueueStatusServer/templates/statusbubble.html:
+
+2010-01-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by David Levin.
 
         [style-queue] should not complain about identifier names with underscores under WebKit/gtk/webkit/
