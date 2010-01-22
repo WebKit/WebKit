@@ -27,6 +27,7 @@
 
 #include "EventTarget.h"
 #include "KURLHash.h"
+#include "ScriptWrappable.h"
 #include "TreeShared.h"
 #include <wtf/ListHashSet.h>
 
@@ -76,7 +77,7 @@ const unsigned short DOCUMENT_POSITION_CONTAINED_BY = 0x10;
 const unsigned short DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
 // this class implements nodes, which can have a parent but no children:
-class Node : public EventTarget, public TreeShared<Node> {
+class Node : public EventTarget, public TreeShared<Node>, public ScriptWrappable {
     friend class Document;
 public:
     enum NodeType {

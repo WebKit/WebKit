@@ -40576,6 +40576,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptWrappable.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\SerializedScriptValue.cpp"
 					>
 					<FileConfiguration
