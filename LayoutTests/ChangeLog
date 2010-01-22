@@ -1,3 +1,23 @@
+2010-01-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Split websocket/tests/bad-sub-protocol.html
+        https://bugs.webkit.org/show_bug.cgi?id=33646
+
+        * websocket/tests/bad-sub-protocol-control-chars-expected.txt: Added.
+        * websocket/tests/bad-sub-protocol-control-chars.html: Added.
+        * websocket/tests/bad-sub-protocol-empty-expected.txt: Added.
+        * websocket/tests/bad-sub-protocol-empty.html: Added.
+        * websocket/tests/bad-sub-protocol-expected.txt: Removed.
+        * websocket/tests/bad-sub-protocol-non-ascii-expected.txt: Added.
+        * websocket/tests/bad-sub-protocol-non-ascii.html: Added.
+        * websocket/tests/bad-sub-protocol.html: Removed.
+        * websocket/tests/script-tests/bad-sub-protocol-control-chars.js: Added.
+        * websocket/tests/script-tests/bad-sub-protocol-empty.js: Added.
+        * websocket/tests/script-tests/bad-sub-protocol-non-ascii.js: Added.
+        * websocket/tests/script-tests/bad-sub-protocol.js: Removed.
+
 2010-01-22  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Maciej Stachowiak.
