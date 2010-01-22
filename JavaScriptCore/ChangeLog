@@ -1,3 +1,23 @@
+2010-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Always create a prototype for automatically managed classes.
+        
+        This fixes some errors where prototype chains were not correctly hooked
+        up, and also ensures that API classes work correctly with features like
+        instanceof.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::create): Cleaned up some of this code. Also changed it
+        to always create a prototype class.
+
+        * API/tests/testapi.c:
+        (Derived2_class):
+        (main): Fixed a null value crash in the exception checking code.
+        * API/tests/testapi.js: Added some tests for the case where a prototype
+        chain would not be hooked up correctly.
+
 2010-01-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

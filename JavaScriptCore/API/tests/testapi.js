@@ -169,6 +169,9 @@ shouldThrow("MyObject.hasPropertyLie");
 
 derived = new Derived();
 
+shouldBe("derived instanceof Derived", true);
+shouldBe("derived instanceof Base", true);
+
 // base properties and functions return 1 when called/gotten; derived, 2
 shouldBe("derived.baseProtoDup()", 2);
 shouldBe("derived.baseProto()", 1);
@@ -183,6 +186,27 @@ shouldBe("derived.baseDup = 0", 2);
 shouldBe("derived.baseOnly = 0", 1);
 shouldBe("derived.derivedOnly = 0", 2)
 shouldBe("derived.protoDup = 0", 2);
+
+derived2 = new Derived2();
+
+shouldBe("derived2 instanceof Derived2", true);
+shouldBe("derived2 instanceof Derived", true);
+shouldBe("derived2 instanceof Base", true);
+
+// base properties and functions return 1 when called/gotten; derived, 2
+shouldBe("derived2.baseProtoDup()", 2);
+shouldBe("derived2.baseProto()", 1);
+shouldBe("derived2.baseDup", 2);
+shouldBe("derived2.baseOnly", 1);
+shouldBe("derived2.protoOnly()", 2);
+shouldBe("derived2.protoDup", 2);
+shouldBe("derived2.derivedOnly", 2)
+
+// base properties throw 1 when set; derived, 2
+shouldBe("derived2.baseDup = 0", 2);
+shouldBe("derived2.baseOnly = 0", 1);
+shouldBe("derived2.derivedOnly = 0", 2)
+shouldBe("derived2.protoDup = 0", 2);
 
 shouldBe('Object.getOwnPropertyDescriptor(derived, "baseProto")', undefined);
 shouldBe('Object.getOwnPropertyDescriptor(derived, "baseProtoDup")', undefined);

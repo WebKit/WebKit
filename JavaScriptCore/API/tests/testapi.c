@@ -623,6 +623,17 @@ static JSClassRef Derived_class(JSContextRef context)
     return jsClass;
 }
 
+static JSClassRef Derived2_class(JSContextRef context)
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.parentClass = Derived_class(context);
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
 static JSValueRef print_callAsFunction(JSContextRef ctx, JSObjectRef functionObject, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(functionObject);
@@ -1070,11 +1081,21 @@ int main(int argc, char* argv[])
     ASSERT(!JSObjectSetPrivate(myConstructor, (void*)1));
     ASSERT(!JSObjectGetPrivate(myConstructor));
     
+    string = JSStringCreateWithUTF8CString("Base");
+    JSObjectRef baseConstructor = JSObjectMakeConstructor(context, Base_class(context), NULL);
+    JSObjectSetProperty(context, globalObject, string, baseConstructor, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(string);
+    
     string = JSStringCreateWithUTF8CString("Derived");
     JSObjectRef derivedConstructor = JSObjectMakeConstructor(context, Derived_class(context), NULL);
     JSObjectSetProperty(context, globalObject, string, derivedConstructor, kJSPropertyAttributeNone, NULL);
     JSStringRelease(string);
     
+    string = JSStringCreateWithUTF8CString("Derived2");
+    JSObjectRef derived2Constructor = JSObjectMakeConstructor(context, Derived2_class(context), NULL);
+    JSObjectSetProperty(context, globalObject, string, derived2Constructor, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(string);
+
     o = JSObjectMake(context, NULL, NULL);
     JSObjectSetProperty(context, o, jsOneIString, JSValueMakeNumber(context, 1), kJSPropertyAttributeNone, NULL);
     JSObjectSetProperty(context, o, jsCFIString,  JSValueMakeNumber(context, 1), kJSPropertyAttributeDontEnum, NULL);
@@ -1173,7 +1194,7 @@ int main(int argc, char* argv[])
     } else {
         script = JSStringCreateWithUTF8CString(scriptUTF8);
         result = JSEvaluateScript(context, script, NULL, NULL, 1, &exception);
-        if (JSValueIsUndefined(context, result))
+        if (result && JSValueIsUndefined(context, result))
             printf("PASS: Test script executed successfully.\n");
         else {
             printf("FAIL: Test script returned unexpected value:\n");
