@@ -1,3 +1,13 @@
+2010-01-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+        
+        Commit files that were supposed to be part of r53696, but weren't
+        landed.
+
+        * English.lproj/localizedStrings.js:
+        * manual-tests/debugger-caught-uncaught-exceptions.html: Added.
+
 2010-01-22  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
