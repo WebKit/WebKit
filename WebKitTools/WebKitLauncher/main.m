@@ -166,6 +166,17 @@ static NSString *currentMacOSXVersion()
     return [NSString stringWithFormat:@"%x.%x", (version & 0xFF00) >> 8, (version & 0x00F0) >> 4];
 }
 
+static NSString *fallbackMacOSXVersion(NSString *systemVersion)
+{
+    NSDictionary *fallbackVersionMap = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"FallbackSystemVersions"];
+    if (!fallbackVersionMap)
+        return nil;
+    NSString *fallbackSystemVersion = [fallbackVersionMap objectForKey:systemVersion];
+    if (!fallbackSystemVersion || ![fallbackSystemVersion isKindOfClass:[NSString class]])
+        return nil;
+    return fallbackSystemVersion;
+}
+
 static BOOL checkFrameworkPath(NSString *frameworkPath)
 {
     BOOL isDirectory = NO;
@@ -186,14 +197,25 @@ int main(int argc, char *argv[])
 
     NSString *systemVersion = currentMacOSXVersion();
     NSString *frameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:systemVersion];
+
+    BOOL frameworkPathIsUsable = checkFrameworkPath(frameworkPath);
+
+    if (!frameworkPathIsUsable) {
+        NSString *fallbackSystemVersion = fallbackMacOSXVersion(systemVersion);
+        if (fallbackSystemVersion) {
+            frameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:fallbackSystemVersion];
+            frameworkPathIsUsable = checkFrameworkPath(frameworkPath);
+        }
+    }
+
+    if (!frameworkPathIsUsable)
+        displayErrorAndQuit([NSString stringWithFormat:@"Mac OS X %@ is not supported", systemVersion],
+                            [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on Mac OS X %@ at this time.", systemVersion]);
+
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
 
     NSBundle *safariBundle = locateSafariBundle();
     NSString *executablePath = [safariBundle executablePath];
-
-    if (!checkFrameworkPath(frameworkPath))
-        displayErrorAndQuit([NSString stringWithFormat:@"Mac OS X %@ is not supported", systemVersion],
-                            [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on Mac OS X %@ at this time.", systemVersion]);
 
     if (!checkSafariVersion(safariBundle)) {
         NSString *safariVersion = [[safariBundle localizedInfoDictionary] objectForKey:@"CFBundleShortVersionString"];

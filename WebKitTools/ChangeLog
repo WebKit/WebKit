@@ -1,3 +1,16 @@
+2010-01-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Added a user default for specifying a fallback frameworks path in case
+        the bundle does not contain frameworks for the current Mac OS X version.
+
+        * WebKitLauncher/main.m:
+        (fallbackMacOSXVersion): Added. Looks up the fallback version in a dictionary
+        keyed by the FallbackSystemVersions user default and returns it.
+        (main): If a frameworks directory for the current system version is not found,
+        try the fallback.
+
 2010-01-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
