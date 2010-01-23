@@ -1,3 +1,13 @@
+2010-01-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34025
+        Enable client-based Geolocation abstraction for Mac, Windows AppleWebKit targets.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.

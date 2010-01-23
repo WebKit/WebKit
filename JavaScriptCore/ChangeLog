@@ -1,3 +1,12 @@
+2010-01-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34025
+        Enable client-based Geolocation abstraction for Mac, Windows AppleWebKit targets.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-01-22  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, attempted Snow Leopard build fix.
