@@ -1,3 +1,29 @@
+2010-01-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make run-webkit-tests work under Cygwin for the Qt port
+
+        setPathForRunningWebKitApp() is implemented for the Qt port
+        by using qmake to query for the location of the Qt libraries.
+
+        This requires the original environment (%ENV) to be untouched,
+        so launchWithCurrentEnv() was refactored to launchWithEnv(),
+        and the code in openDumpTool() to not use %ENV but a %CLEAN_ENV
+        instead. This has the added benefit of getting rid of the temp
+        variables used for storing the current env.
+
+        openDumpTool() is also refactored a bit into platform-spesific,
+        port-spesific, and generic environment variables.
+
+        Checks for undef was added a few places to fix Perl concat
+        warnings when run-webkit-tests is aborted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33895
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2010-01-22  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
