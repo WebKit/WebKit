@@ -1,3 +1,31 @@
+2010-01-23  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Qt DRT: respect window.close() and window.closed()
+        
+        Qt DRT needs to maintain a correct count of open windows
+        for windowCount(). It also needs to delete windows that
+        have been closed by window.close().
+        
+        This fixes the following tests:
+        
+        plugins/destroy-during-npp-new.html
+        fast/dom/Document/early-document-access.html
+        fast/dom/Window/window-early-properties.html
+        fast/events/open-window-from-another-frame.html
+        fast/events/popup-blocking-click-in-iframe.html
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32953
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::createWindow):
+        (WebCore::DumpRenderTree::windowCloseRequested):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::maybeDump):
+
 2010-01-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

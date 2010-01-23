@@ -344,6 +344,7 @@ DumpRenderTree::DumpRenderTree()
     // dump results itself when the last page loaded in the test has finished loading.
     connect(m_page, SIGNAL(loadStarted()),
             m_controller, SLOT(resetLoadFinished()));
+    connect(m_page, SIGNAL(windowCloseRequested()), this, SLOT(windowCloseRequested()));
 
     connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),
             SLOT(titleChanged(const QString&)));
@@ -782,7 +783,16 @@ QWebPage *DumpRenderTree::createWindow()
     connect(page, SIGNAL(frameCreated(QWebFrame*)), this, SLOT(connectFrame(QWebFrame*)));
     connectFrame(page->mainFrame());
     connect(page, SIGNAL(loadFinished(bool)), m_controller, SLOT(maybeDump(bool)));
+    connect(page, SIGNAL(windowCloseRequested()), this, SLOT(windowCloseRequested()));
     return page;
+}
+
+void DumpRenderTree::windowCloseRequested()
+{
+    QWebPage* page = qobject_cast<QWebPage*>(sender());
+    QObject* container = page->parent();
+    windows.removeAll(container);
+    container->deleteLater();
 }
 
 int DumpRenderTree::windowCount() const
