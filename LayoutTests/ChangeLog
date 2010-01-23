@@ -1,3 +1,9 @@
+2010-01-22  Dmitry Titov  <dimich@chromium.org>
+
+        Fix tests, unreviewed. Adding expectations file missing from r53739
+
+        * fast/dom/Window/webkitConvertPointUpdateLayout-expected.txt: Added.
+
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix. Add missing comma.
