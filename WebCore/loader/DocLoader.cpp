@@ -111,8 +111,8 @@ void DocLoader::checkForReload(const KURL& fullURL)
     case CachePolicyRevalidate:
         cache()->revalidateResource(existing, this);
         break;
-    default:
-        ASSERT_NOT_REACHED();
+    case CachePolicyAllowStale:
+        return;
     }
 
     m_reloadedURLs.add(fullURL.string());

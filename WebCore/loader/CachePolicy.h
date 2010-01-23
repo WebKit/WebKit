@@ -32,7 +32,8 @@ namespace WebCore {
         CachePolicyCache,
         CachePolicyVerify,
         CachePolicyRevalidate,
-        CachePolicyReload
+        CachePolicyReload,
+        CachePolicyAllowStale
     };
 
 }

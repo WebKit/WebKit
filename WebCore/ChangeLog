@@ -1,3 +1,24 @@
+2010-01-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use stale cache data when going back and forward but not using WebCore’s page cache
+        https://bugs.webkit.org/show_bug.cgi?id=33993
+        <rdar://problem/7383392>
+
+        No tests since this is a performance change.
+
+        * loader/CachePolicy.h:
+        (WebCore::): Add CachePolicyAllowStale.
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkForReload): Never reload in the case of
+        CachePolicyAllowStale.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy): Return CachePolicyAllowStale
+        if the main resource is being loaded to allow stale data.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Use ReturnCacheDataElseLoad
+        on back/forward loads - needed when going back of forward to a page with frames.
+
 2010-01-22  Kelly Norton  <knorton@google.com>
 
         Reviewed by Pavel Feldman.
