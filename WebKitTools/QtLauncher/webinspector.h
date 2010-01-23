@@ -29,6 +29,7 @@
 #define webinspector_h
 
 #include <QtGui>
+#include "qwebinspector.h"
 
 class WebInspector : public QWebInspector {
     Q_OBJECT

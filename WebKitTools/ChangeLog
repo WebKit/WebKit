@@ -1,5 +1,12 @@
 2010-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Unreviewed build fix
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/webinspector.h:
+
+2010-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Rubberstamped by Simon Hausmann.
 
         [Qt] Move the WebInspector class to it's own header file.
