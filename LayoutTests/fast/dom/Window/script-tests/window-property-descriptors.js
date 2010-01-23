@@ -26,7 +26,9 @@ var __skip__ = {
     "WebGLShortArray" : 1,
     "WebGLUnsignedByteArray" : 1,
     "WebGLUnsignedIntArray" : 1,
-    "WebGLUnsignedShortArray" : 1
+    "WebGLUnsignedShortArray" : 1,
+    // Ignore this property because it only appears in debug builds and not in release.
+    "jscprint" : 1
 };
 
 var windowPropertyNames = Object.getOwnPropertyNames(window)

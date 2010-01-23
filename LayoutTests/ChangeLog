@@ -1,3 +1,9 @@
+2010-01-22  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, fixes one issue with window-property-descriptors test.
+
+        * fast/dom/Window/script-tests/window-property-descriptors.js: Don't dump the property that only appears in debug build, it will fail tests in debug.
+
 2010-01-22  Jian Li  <jianli@chromium.org>
 
         No review. Updated Qt layout tests due to r53722.
