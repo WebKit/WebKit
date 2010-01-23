@@ -2206,6 +2206,7 @@ my %typeCanFailConversion = (
     "WebGLArray" => 0,
     "WebGLBuffer" => 0,
     "WebGLByteArray" => 0,
+    "WebGLUnsignedByteArray" => 0,
     "WebGLContextAttributes" => 0,
     "WebGLFloatArray" => 0,
     "WebGLFramebuffer" => 0,
