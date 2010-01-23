@@ -223,13 +223,6 @@ public:
     // load.
     void didCommitLoad(bool* isNewNavigation);
 
-    // Notifies the WebView that loading started or stopped.  It is okay to
-    // call didStartLoading multiple times before calling didStopLoading.
-    // However, didStopLoading must be called just as many times as
-    // didStartLoading in order for the loading state to return to false.
-    void didStartLoading();
-    void didStopLoading();
-
     bool contextMenuAllowed() const
     {
         return m_contextMenuAllowed;
@@ -329,9 +322,6 @@ private:
     // when we make use of m_observedNewNavigation.
     const WebCore::DocumentLoader* m_newNavigationLoader;
 #endif
-
-    // This counter is non-zero if we are loading.
-    int m_isLoading;
 
     // An object that can be used to manipulate m_page->settings() without linking
     // against WebCore.  This is lazily allocated the first time GetWebSettings()

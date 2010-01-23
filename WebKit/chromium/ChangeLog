@@ -1,3 +1,19 @@
+2010-01-22  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed.  backout.
+
+        Backout r53705.
+        Causes ui_tests to timeout, and browser_tests to fail with
+        TestConnectToBadPort and WindowOpenInvalidExtension.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage):
+        (WebKit::FrameLoaderClientImpl::postProgressStartedNotification):
+        (WebKit::FrameLoaderClientImpl::postProgressFinishedNotification):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2010-01-22  Peter Kasting  <pkasting@google.com>
 
         Not reviewed, backout.
