@@ -1,3 +1,19 @@
+2010-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        webkitConvertPointFromNodeToPage doesn't take into account most recent transform style
+        https://bugs.webkit.org/show_bug.cgi?id=34023
+
+        Be sure to call updateLayoutIgnorePendingStylesheets() before doing point mapping,
+        to apply any style changes since the last layout.
+
+        Test: fast/dom/Window/webkitConvertPointUpdateLayout.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitConvertPointFromNodeToPage): Call updateLayoutIgnorePendingStylesheets().
+        (WebCore::DOMWindow::webkitConvertPointFromPageToNode): Ditto.
+
 2010-01-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Roben.
