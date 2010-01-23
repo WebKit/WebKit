@@ -1,3 +1,15 @@
+2010-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        [Qt] Move the WebInspector class to it's own header file.
+
+        * QtLauncher/main.cpp:
+        * QtLauncher/webinspector.h: Added.
+        (WebInspector::WebInspector):
+        (WebInspector::showEvent):
+        (WebInspector::hideEvent):
+
 2010-01-23  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Kenneth Rohde Christiansen.

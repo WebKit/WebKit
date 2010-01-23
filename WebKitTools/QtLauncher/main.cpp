@@ -51,10 +51,10 @@
 #include <qwebelement.h>
 #include <qwebframe.h>
 #include <qwebinspector.h>
-#include "webpage.h"
 #include <qwebsettings.h>
 #include <qwebview.h>
-
+#include "webinspector.h"
+#include "webpage.h"
 
 #ifndef NDEBUG
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
@@ -101,24 +101,6 @@ protected:
 
 };
 
-class WebInspector : public QWebInspector {
-    Q_OBJECT
-public:
-    WebInspector(QWidget* parent) : QWebInspector(parent) {}
-signals:
-    void visibleChanged(bool nowVisible);
-protected:
-    void showEvent(QShowEvent* event)
-    {
-        QWebInspector::showEvent(event);
-        emit visibleChanged(true);
-    }
-    void hideEvent(QHideEvent* event)
-    {
-        QWebInspector::hideEvent(event);
-        emit visibleChanged(false);
-    }
-};
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
