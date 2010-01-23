@@ -65,8 +65,9 @@ class StatusServer:
         self.browser.add_file(results_file, "text/plain", "results.txt", 'results_file')
 
     def _post_to_server(self, queue_name, status, patch, results_file):
-        # We might need to re-wind the file if we've already tried to post it.
-        results_file.seek(0)
+        if results_file:
+            # We might need to re-wind the file if we've already tried to post it.
+            results_file.seek(0)
 
         update_status_url = "%s/update-status" % self.url
         self.browser.open(update_status_url)

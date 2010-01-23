@@ -1,3 +1,9 @@
+2010-01-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Don't call seek on a NoneType.
+
+        * Scripts/webkitpy/statusserver.py:
+
 2010-01-22  Petri Latvala  <petri.latvala@nomovok.com>
 
         Reviewed by David Levin.
