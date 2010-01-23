@@ -1,5 +1,11 @@
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
+        Build fix. Add missing comma.
+
+        * fast/dom/Window/window-properties.html:
+
+2010-01-22  Steve Falkenburg  <sfalken@apple.com>
+
         Skip fast/dom/Window/window-properties-geolocation.html
         until https://bugs.webkit.org/show_bug.cgi?id=34025 is landed.
 
