@@ -1,3 +1,17 @@
+2010-01-22  Kelly Norton  <knorton@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: JavaScript Error in DOMAgent.js:375 (_attributesUpdated)
+        https://bugs.webkit.org/show_bug.cgi?id=33915
+
+        Errors were caused by the fact that Element::attributes calls Element::setAttribute to
+        synchronized the styleAttr. The fix is to simply check the synchronizing style attribute
+        flag.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute): Checked for case where styleAttr is being synchronized.
+
 2010-01-22  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
