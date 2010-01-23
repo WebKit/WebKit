@@ -1,3 +1,10 @@
+2010-01-22  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix after r53718.
+
+        * WebView.cpp:
+        (wxWebView::OnKeyEvents):
+
 2010-01-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Alexey Proskuryakov.

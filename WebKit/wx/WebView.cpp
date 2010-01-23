@@ -821,11 +821,11 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
             return;
         case WXK_PAGEUP:
         case WXK_NUMPAD_PAGEUP:
-            frame->view()->scrollBy(WebCore::IntSize(0, -frame->view()->visibleHeight() + WebCore::cAmountToKeepWhenPaging));
+            frame->view()->scrollBy(WebCore::IntSize(0, -frame->view()->visibleHeight() * WebCore::cFractionToStepWhenPaging));
             return;
         case WXK_PAGEDOWN:
         case WXK_NUMPAD_PAGEDOWN:
-            frame->view()->scrollBy(WebCore::IntSize(0, frame->view()->visibleHeight() - WebCore::cAmountToKeepWhenPaging));
+            frame->view()->scrollBy(WebCore::IntSize(0, frame->view()->visibleHeight() * WebCore::cFractionToStepWhenPaging));
             return;
         //These we don't want turning into char events, stuff 'em
         case WXK_ESCAPE:
