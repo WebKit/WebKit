@@ -1,3 +1,13 @@
+2010-01-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Simon Fraser.
+
+        Checking in platform-specific results for test that is failing
+        because of an additional single pixel in size - the test passes,
+        when testing manually.
+
+        * platform/gtk/svg/custom/text-zoom-expected.txt: Added.
+
 2010-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

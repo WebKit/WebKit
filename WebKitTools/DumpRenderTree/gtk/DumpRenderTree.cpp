@@ -342,6 +342,8 @@ static void resetDefaultsToConsistentValues()
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
 
+    webkit_web_view_set_zoom_level(webView, 1.0);
+
     webkit_reset_origin_access_white_lists();
 
     setlocale(LC_ALL, "");

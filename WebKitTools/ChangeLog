@@ -1,3 +1,14 @@
+2010-01-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Simon Fraser.
+
+        Reset zoom level to 1.0 when resetting view state. This is causing
+        many tests to fail after svg/custom/text-zoom.xhtml changes the
+        zoom level.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
