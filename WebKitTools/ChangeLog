@@ -1,3 +1,12 @@
+2010-01-22  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Make __init__.py and buildbot.py pass pep8 style checker.
+
+        * Scripts/webkitpy/__init__.py:
+        * Scripts/webkitpy/buildbot.py:
+
 2010-01-21  Joe Mason  <jmason@rim.com>
 
         Reviewed by Adam Barth.
