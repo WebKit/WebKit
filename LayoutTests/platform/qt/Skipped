@@ -4853,6 +4853,7 @@ http/tests/globalhistory
 inspector/console-dir.html
 inspector/console-dirxml.html
 inspector/console-format.html
+inspector/console-log-before-inspector-open.html
 inspector/console-tests.html
 inspector/elements-panel-structure.html
 inspector/evaluate-in-frontend.html

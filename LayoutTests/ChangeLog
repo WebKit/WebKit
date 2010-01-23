@@ -1,5 +1,12 @@
 2010-01-23  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Add new inspector test added in r53766 to skipi
+        list on qt platform.
+
+        * platform/qt/Skipped:
+
+2010-01-23  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Inject inspector script directly into the inspected context. All the
