@@ -23,6 +23,8 @@
 #include "QtAbstractWebPopup.h"
 #include <QComboBox>
 
+class QGraphicsProxyWidget;
+
 namespace WebCore {
 
 class QtFallbackWebPopupCombo;
@@ -43,6 +45,7 @@ private:
     friend class QtFallbackWebPopupCombo;
     bool m_popupVisible;
     QtFallbackWebPopupCombo* m_combo;
+    QGraphicsProxyWidget* m_proxy;
 
     void populate();
 };
