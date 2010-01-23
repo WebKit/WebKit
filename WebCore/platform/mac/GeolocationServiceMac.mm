@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(GEOLOCATION)
+#if ENABLE(GEOLOCATION) && !ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #import "GeolocationServiceMac.h"
 
