@@ -9,6 +9,8 @@ PASS inner.Audio.isInner is true
 PASS inner.Audio.constructor.isInner is true
 PASS inner.BeforeLoadEvent.isInner is true
 PASS inner.BeforeLoadEvent.constructor.isInner is true
+PASS inner.Blob.isInner is true
+PASS inner.Blob.constructor.isInner is true
 PASS inner.CDATASection.isInner is true
 PASS inner.CDATASection.constructor.isInner is true
 PASS inner.CSSCharsetRule.isInner is true

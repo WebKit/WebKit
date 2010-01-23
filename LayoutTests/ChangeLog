@@ -1,5 +1,14 @@
 2010-01-22  Jian Li  <jianli@chromium.org>
 
+        No review. Updated Qt layout tests due to r53722.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
+2010-01-22  Jian Li  <jianli@chromium.org>
+
         No review. Build fix.
         Updated the newly added test to count the change from r53722.
 
