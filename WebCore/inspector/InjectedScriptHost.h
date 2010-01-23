@@ -66,8 +66,6 @@ public:
 
     void copyText(const String& text);
     Node* nodeForId(long nodeId);
-    ScriptValue wrapObject(const ScriptValue& object, const String& objectGroup);
-    ScriptValue unwrapObject(const String& objectId);
     long pushNodePathToFrontend(Node* node, bool withChildren, bool selectInUI);
 
     void addNodesToSearchResult(const String& nodeIds);
@@ -88,11 +86,14 @@ public:
     ScriptObject injectedScriptFor(ScriptState*);
     ScriptObject injectedScriptForId(long);
     void discardInjectedScripts();
+    void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
 private:
     InjectedScriptHost(InspectorController* inspectorController);
     InspectorDOMAgent* inspectorDOMAgent();
     InspectorFrontend* inspectorFrontend();
+
+    void releaseWrapperObjectGroup(const ScriptObject& injectedScript, const String& objectGroup);
 
     InspectorController* m_inspectorController;
     String m_injectedScriptSource;

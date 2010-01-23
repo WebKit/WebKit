@@ -52,6 +52,7 @@ namespace WebCore {
         unsigned size() const { return 1; }
 
         ScriptState* state() const { return m_scriptState; }
+        ScriptState* globalState() const { return m_scriptState; }
 
     private:
         ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber);

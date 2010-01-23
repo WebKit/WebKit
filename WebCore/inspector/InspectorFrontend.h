@@ -67,7 +67,7 @@ namespace WebCore {
         void populateFrontendSettings(const String& settings);
 
         void updateConsoleMessageExpiredCount(unsigned count);
-        void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message);
+        void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, ScriptState*, const Vector<ScriptValue> arguments, const String& message);
         void updateConsoleMessageRepeatCount(unsigned count);
         void clearConsoleMessages();
 
@@ -95,7 +95,7 @@ namespace WebCore {
         void setRecordingProfile(bool isProfiling);
         void didGetProfileHeaders(int callId, const ScriptArray& headers);
         void didGetProfile(int callId, const ScriptValue& profile);
-        void pausedScript(const ScriptValue& callFrames);
+        void pausedScript(const String& callFrames);
         void resumedScript();
 #endif
 

@@ -29,11 +29,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var InjectedScriptAccess = {};
+function InjectedScriptAccess(injectedScriptId) {
+    this._injectedScriptId = injectedScriptId;
+}
+
+InjectedScriptAccess.get = function(injectedScriptId)
+{
+    return new InjectedScriptAccess(injectedScriptId);
+}
+
+InjectedScriptAccess.getDefault = function()
+{
+    return InjectedScriptAccess.get(0);
+}
+
+InjectedScriptAccess.prototype = {};
 
 InjectedScriptAccess._installHandler = function(methodName, async)
 {
-    InjectedScriptAccess[methodName] = function()
+    InjectedScriptAccess.prototype[methodName] = function()
     {
         var allArgs = Array.prototype.slice.call(arguments);
         var callback = allArgs[allArgs.length - 1];
@@ -47,7 +61,8 @@ InjectedScriptAccess._installHandler = function(methodName, async)
                 WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage("Error dispatching: " + methodName));
         }
         var callId = WebInspector.Callback.wrap(myCallback);
-        InspectorBackend.dispatchOnInjectedScript(callId, methodName, argsString, !!async);
+
+        InspectorBackend.dispatchOnInjectedScript(callId, this._injectedScriptId, methodName, argsString, !!async);
     };
 }
 

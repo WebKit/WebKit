@@ -30,6 +30,7 @@ WebInspector.MetricsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Metrics"));
     this._inlineStyleId = null;
+    this._inlineStyleInjectedScriptId = null;
 }
 
 WebInspector.MetricsSidebarPane.prototype = {
@@ -52,14 +53,15 @@ WebInspector.MetricsSidebarPane.prototype = {
             var style = WebInspector.CSSStyleDeclaration.parseStyle(stylePayload);
             self._update(style);
         };
-        InjectedScriptAccess.getComputedStyle(node.id, callback);
+        InjectedScriptAccess.get(node.injectedScriptId).getComputedStyle(node.id, callback);
 
         var inlineStyleCallback = function(stylePayload) {
             if (!stylePayload)
                 return;
             self._inlineStyleId = stylePayload.id;
+            self._inlineStyleInjectedScriptId = stylePayload.injectedScriptId;
         };
-        InjectedScriptAccess.getInlineStyle(node.id, inlineStyleCallback);
+        InjectedScriptAccess.get(node.injectedScriptId).getInlineStyle(node.id, inlineStyleCallback);
     },
 
     _update: function(style)
@@ -204,7 +206,7 @@ WebInspector.MetricsSidebarPane.prototype = {
             self.dispatchEventToListeners("metrics edited");
             self.update();
         };
-        InjectedScriptAccess.setStyleProperty(this._inlineStyleId, context.styleProperty, userInput, callback);
+        InjectedScriptAccess.get(this._inlineStyleInjectedScriptId).setStyleProperty(this._inlineStyleId, context.styleProperty, userInput, callback);
     }
 }
 

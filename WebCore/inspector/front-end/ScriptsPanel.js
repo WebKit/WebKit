@@ -407,7 +407,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (result)
                 callback(result.value, result.isException);
         }
-        InjectedScriptAccess.evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
+        InjectedScriptAccess.get(callFrame.injectedScriptId).evaluateInCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
     debuggerPaused: function(callFrames)

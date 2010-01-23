@@ -28,9 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectProxy = function(objectId, path, protoDepth, description, hasChildren)
+WebInspector.ObjectProxy = function(injectedScriptId, objectId, path, protoDepth, description, hasChildren)
 {
     this.objectId = objectId;
+    this.injectedScriptId = injectedScriptId;
     this.path = path || [];
     this.protoDepth = protoDepth || 0;
     this.description = description;
@@ -60,7 +61,7 @@ WebInspector.ObjectProxy.getPropertiesAsync = function(objectProxy, propertiesTo
                 result[propertiesPayload[i].name] = propertiesPayload[i].value.description;
         callback(result);
     };
-    InjectedScriptAccess.getProperties(objectProxy, true, false, createPropertiesMapThenCallback);
+    InjectedScriptAccess.get(objectProxy.injectedScriptId).getProperties(objectProxy, true, false, createPropertiesMapThenCallback);
 }
 
 WebInspector.ObjectPropertyProxy = function(name, value)

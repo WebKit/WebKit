@@ -104,10 +104,8 @@ public:
     JavaScriptCallFrame* currentCallFrame() const;
 #endif
 
-    void dispatchOnInjectedScript(long callId, const String& methodName, const String& arguments, bool async);
-    // FIXME(32554): Temporarily we have two similar methods so that clients can compile against both signatures.
-    // The method above will be removed soon.
-    void dispatchOnInjectedScript(long, long, const String&, const String&, bool) { }
+    void setInjectedScriptSource(const String& source);
+    void dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async);
     void getChildNodes(long callId, long nodeId);
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
@@ -122,7 +120,7 @@ public:
     void deleteCookie(const String& cookieName, const String& domain);
 
     // Generic code called from custom implementations.
-    void releaseWrapperObjectGroup(const String& objectGroup);
+    void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
 #if ENABLE(DATABASE)

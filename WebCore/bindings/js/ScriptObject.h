@@ -47,6 +47,7 @@ namespace WebCore {
         ScriptObject(ScriptState*, JSC::JSObject*);
         ScriptObject() {}
         JSC::JSObject* jsObject() const { return asObject(jsValue()); }
+        ScriptState* scriptState() const { return m_scriptState; }
 
         bool set(const String& name, const String&);
         bool set(const char* name, const ScriptObject&);

@@ -1,3 +1,20 @@
+2010-01-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Inject inspector script directly into the inspected context. All the
+        communication between the script and the frontend is serialized into
+        JSON strings. It allows to get rid of object quarantines in Web Inspector.
+
+        Test that web inspector doesn't crash when opening if there are messages in
+        the console. Refactor test case due to InjectedScriptAccess changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32554
+
+        * inspector/console-log-before-inspector-open-expected.txt: Added.
+        * inspector/console-log-before-inspector-open.html: Added.
+        * inspector/styles-iframe.html:
+
 2010-01-22  Alex Milowski  <alex@milowski.com>
 
         Reviewed by David Hyatt.

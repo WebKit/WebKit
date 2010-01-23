@@ -389,6 +389,8 @@ var WebInspector = {
 
 WebInspector.loaded = function()
 {
+    InspectorBackend.setInjectedScriptSource("(" + injectedScriptConstructor + ");");
+
     var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
     var port = WebInspector.port;
@@ -1147,6 +1149,7 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 
 WebInspector.pausedScript = function(callFrames)
 {
+    callFrames = JSON.parse(callFrames);
     this.panels.scripts.debuggerPaused(callFrames);
 }
 
@@ -1203,7 +1206,7 @@ WebInspector.updateConsoleMessageExpiredCount = function(count)
     WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
 }
 
-WebInspector.addConsoleMessage = function(payload)
+WebInspector.addConsoleMessage = function(payload, argumentsStringified, opt_args)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(
         payload.source,
@@ -1213,7 +1216,14 @@ WebInspector.addConsoleMessage = function(payload)
         payload.url,
         payload.groupLevel,
         payload.repeatCount);
-    consoleMessage.setMessageBody(Array.prototype.slice.call(arguments, 1));
+    var parsedArguments = [];
+    for (var i = 2; i < arguments.length; i++) {
+        if (argumentsStringified)
+            parsedArguments.push(JSON.parse(arguments[i]));
+        else
+            parsedArguments.push(arguments[i]);
+    }
+    consoleMessage.setMessageBody(parsedArguments);
     this.console.addMessage(consoleMessage);
 }
 
@@ -1270,7 +1280,7 @@ WebInspector.log = function(message)
         WebInspector.log.repeatCount = repeatCount;
 
         // ConsoleMessage expects a proxy object
-        message = new WebInspector.ObjectProxy(null, [], 0, message, false);
+        message = new WebInspector.ObjectProxy(null, null, [], 0, message, false);
 
         // post the message
         var msg = new WebInspector.ConsoleMessage(

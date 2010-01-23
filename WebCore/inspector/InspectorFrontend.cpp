@@ -34,6 +34,7 @@
 
 #include "ConsoleMessage.h"
 #include "Frame.h"
+#include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "Node.h"
 #include "ScriptFunctionCall.h"
@@ -93,19 +94,32 @@ void InspectorFrontend::updateConsoleMessageExpiredCount(unsigned count)
     function.call();
 }
 
-void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message)
+void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, ScriptState* scriptState, const Vector<ScriptValue> arguments, const String& message)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 
     function.appendArgument("addConsoleMessage");
     function.appendArgument(messageObj);
     if (!frames.isEmpty()) {
+        function.appendArgument(false);
         for (unsigned i = 0; i < frames.size(); ++i)
             function.appendArgument(frames[i]);
-    } else if (!wrappedArguments.isEmpty()) {
-        for (unsigned i = 0; i < wrappedArguments.size(); ++i)
-            function.appendArgument(m_inspectorController->wrapObject(wrappedArguments[i], "console"));
-    } else
+    } else if (!arguments.isEmpty()) {
+        function.appendArgument(true);
+        ScriptObject injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptFor(scriptState);
+        for (unsigned i = 0; i < arguments.size(); ++i) {
+            ScriptFunctionCall wrapFunction(scriptState, injectedScript, "wrapAndStringifyObject");
+            wrapFunction.appendArgument(arguments[i]);
+            wrapFunction.appendArgument("console");
+            ScriptValue r = wrapFunction.call();
+            if (r.hasNoValue())
+                return;
+            String s = r.toString(scriptState);
+            function.appendArgument(s);
+        }
+    } else {
+        function.appendArgument(false);
         function.appendArgument(message);
+    }
     function.call();
 }
 
@@ -312,7 +326,7 @@ void InspectorFrontend::didGetProfile(int callId, const ScriptValue& profile)
     function.call();
 }
 
-void InspectorFrontend::pausedScript(const ScriptValue& callFrames)
+void InspectorFrontend::pausedScript(const String& callFrames)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 
     function.appendArgument("pausedScript");

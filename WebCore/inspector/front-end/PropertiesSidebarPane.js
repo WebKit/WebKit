@@ -50,13 +50,13 @@ WebInspector.PropertiesSidebarPane.prototype = {
 
             // Get array of prototype user-friendly names.
             for (var i = 0; i < prototypes.length; ++i) {
-                var prototype = new WebInspector.ObjectProxy(node.id, [], i);
+                var prototype = new WebInspector.ObjectProxy(node.injectedScriptId, node.id, [], i);
                 var section = new WebInspector.ObjectPropertiesSection(prototype, prototypes[i], WebInspector.UIString("Prototype"));
                 self.sections.push(section);
                 body.appendChild(section.element);
             }
         };
-        InjectedScriptAccess.getPrototypes(node.id, callback);
+        InjectedScriptAccess.get(node.injectedScriptId).getPrototypes(node.id, callback);
     }
 }
 

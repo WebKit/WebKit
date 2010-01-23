@@ -95,7 +95,8 @@ WebInspector.Database.prototype = {
             }
             onSuccess(result);
         }
-        InjectedScriptAccess.executeSql(this._id, query, callback);
+        // FIXME: execute the query in the frame the DB comes from.
+        InjectedScriptAccess.getDefault().executeSql(this._id, query, callback);
     }
 }
 

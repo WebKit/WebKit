@@ -54,7 +54,8 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, S
     , m_type(t)
     , m_level(l)
 #if ENABLE(INSPECTOR)
-    , m_wrappedArguments(callStack->at(0).argumentCount())
+    , m_arguments(callStack->at(0).argumentCount())
+    , m_scriptState(callStack->globalState())
 #endif
     , m_frames(storeTrace ? callStack->size() : 0)
     , m_groupLevel(g)
@@ -74,7 +75,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, S
 
 #if ENABLE(INSPECTOR)
     for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
-        m_wrappedArguments[i] = ScriptObject::quarantineValue(callStack->state(), lastCaller.argumentAt(i));
+        m_arguments[i] = lastCaller.argumentAt(i);
 #endif
 }
 
@@ -89,7 +90,7 @@ void ConsoleMessage::addToConsole(InspectorFrontend* frontend)
     jsonObj.set("url", m_url);
     jsonObj.set("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
-    frontend->addConsoleMessage(jsonObj, m_frames, m_wrappedArguments,  m_message);
+    frontend->addConsoleMessage(jsonObj, m_frames, m_scriptState, m_arguments,  m_message);
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
@@ -101,15 +102,15 @@ void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
 bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
 {
 #if ENABLE(INSPECTOR)
-    if (msg->m_wrappedArguments.size() != m_wrappedArguments.size())
+    if (msg->m_arguments.size() != m_arguments.size())
         return false;
-    if (!state && msg->m_wrappedArguments.size())
+    if (!state && msg->m_arguments.size())
         return false;
 
-    ASSERT_ARG(state, state || msg->m_wrappedArguments.isEmpty());
+    ASSERT_ARG(state, state || msg->m_arguments.isEmpty());
 
-    for (size_t i = 0; i < msg->m_wrappedArguments.size(); ++i) {
-        if (!m_wrappedArguments[i].isEqual(state, msg->m_wrappedArguments[i]))
+    for (size_t i = 0; i < msg->m_arguments.size(); ++i) {
+        if (!m_arguments[i].isEqual(state, msg->m_arguments[i]))
             return false;
     }
 #else
