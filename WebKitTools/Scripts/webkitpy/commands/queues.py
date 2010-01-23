@@ -129,7 +129,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         message = script_error.message
         if is_error:
             message = "Error: %s" % message
-        output = script_error.message_with_output(limit=5*1024*1024) # 5MB
+        output = script_error.message_with_output(output_limit=5*1024*1024) # 5MB
         return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output))
 
 
