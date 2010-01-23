@@ -499,6 +499,9 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::preferredRenderingMod
 
 void MediaPlayerPrivate::setUpVideoRendering()
 {
+    if (!isReadyForRendering())
+        return;
+
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
     if (currentMode == preferredMode && currentMode != MediaRenderingNone)
@@ -967,7 +970,7 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
-    if (isReadyForRendering() && !hasSetUpVideoRendering())
+    if (!hasSetUpVideoRendering())
         setUpVideoRendering();
 
     if (seeking())
@@ -1064,10 +1067,9 @@ void MediaPlayerPrivate::setVisible(bool b)
 {
     if (m_visible != b) {
         m_visible = b;
-        if (b) {
-            if (m_readyState >= MediaPlayer::HaveMetadata)
-                setUpVideoRendering();
-        } else
+        if (b)
+            setUpVideoRendering();
+        else
             tearDownVideoRendering();
     }
 }

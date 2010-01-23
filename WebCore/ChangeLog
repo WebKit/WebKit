@@ -276,6 +276,34 @@
 
 2010-01-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Eric Carlson.
+
+        Race condition in video setup can force videos into software mode
+        https://bugs.webkit.org/show_bug.cgi?id=34034
+
+        We used to call setUpVideoRendering() unconditionally from
+        acceleratedRenderingStateChanged(); this could happen before the movie had any
+        data, and thus force the movie into software rendering mode.
+        
+        Fix by returning early from setUpVideoRendering() if isReadyForRendering() returns false,
+        which also allows us to remove some other checks for being ready to render.
+        
+        Timing dependent, hard to make a test for.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToMedia): Optimize to do an early return
+        if passing in the same layer that is already being used.
+        
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): Return without doing anything
+        if not ready to render.
+        (WebCore::MediaPlayerPrivate::updateStates): No need to call isReadyForRendering()
+        any more, since setUpVideoRendering() does that.
+        (WebCore::MediaPlayerPrivate::setVisible): No need to check the ready state; this
+        is equivalent to the check inside of setUpVideoRendering().
+
+2010-01-22  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         REGRESSION (r53110): Find My iPhone message dialog is offset from original position once it gets focus

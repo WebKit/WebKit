@@ -794,13 +794,14 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
 
 void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
 {
-    if (mediaLayer != m_contentsLayer.get())
-        noteSublayersChanged();
+    if (mediaLayer == m_contentsLayer)
+        return;
 
     m_contentsLayer = mediaLayer;
-    noteLayerPropertyChanged(ContentsMediaLayerChanged);
-
     m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
+
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsMediaLayerChanged);
 }
 
 void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
