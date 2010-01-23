@@ -1,5 +1,6 @@
-# Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2010 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -466,24 +467,25 @@ class Bugzilla(object):
             self.authenticated = True
             return
 
-        (username, password) = Credentials(
+        while not self.authenticated:
+            (username, password) = Credentials(
                 self.bug_server_host, git_prefix="bugzilla").read_credentials()
 
-        log("Logging in as %s..." % username)
-        self.browser.open(self.bug_server_url + "index.cgi?GoAheadAndLogIn=1")
-        self.browser.select_form(name="login")
-        self.browser['Bugzilla_login'] = username
-        self.browser['Bugzilla_password'] = password
-        response = self.browser.submit()
+            log("Logging in as %s..." % username)
+            self.browser.open(self.bug_server_url +
+                              "index.cgi?GoAheadAndLogIn=1")
+            self.browser.select_form(name="login")
+            self.browser['Bugzilla_login'] = username
+            self.browser['Bugzilla_password'] = password
+            response = self.browser.submit()
 
-        match = re.search("<title>(.+?)</title>", response.read())
-        # If the resulting page has a title, and it contains the word "invalid"
-        # assume it's the login failure page.
-        if match and re.search("Invalid", match.group(1), re.IGNORECASE):
-            # FIXME: We could add the ability to try again on failure.
-            raise Exception("Bugzilla login failed: %s" % match.group(1))
-
-        self.authenticated = True
+            match = re.search("<title>(.+?)</title>", response.read())
+            # If the resulting page has a title, and it contains the word
+            # "invalid" assume it's the login failure page.
+            if match and re.search("Invalid", match.group(1), re.IGNORECASE):
+                log("Bugzilla login failed: %s" % match.group(1))
+            else:
+                self.authenticated = True
 
     def _fill_attachment_form(self,
                               description,
