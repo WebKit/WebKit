@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-#if !ENABLE(GEOLOCATION)
+#if !ENABLE(GEOLOCATION) || ENABLE(CLIENT_BASED_GEOLOCATION)
 static GeolocationService* createGeolocationServiceNull(GeolocationServiceClient*)
 {
     return 0;
