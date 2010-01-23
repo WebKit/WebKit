@@ -657,6 +657,12 @@ static inline bool isPositionedContainer(RenderLayer* layer)
     return o->isRenderView() || o->isPositioned() || o->isRelPositioned() || layer->hasTransform();
 }
 
+static inline bool isFixedPositionedContainer(RenderLayer* layer)
+{
+    RenderObject* o = layer->renderer();
+    return o->isRenderView() || layer->hasTransform();
+}
+
 RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
@@ -997,10 +1003,41 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         return;
     }
  
+    if (position == FixedPosition) {
+        // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
+        // (e.g. a transformed layer). It's an error to call convertToLayerCoords() across a layer with a transform,
+        // so we should always find the ancestor at or before we find the fixed position container.
+        RenderLayer* fixedPositionContainerLayer = 0;
+        bool foundAncestor = false;
+        for (RenderLayer* currLayer = parent(); currLayer; currLayer = currLayer->parent()) {
+            if (currLayer == ancestorLayer)
+                foundAncestor = true;
+
+            if (isFixedPositionedContainer(currLayer)) {
+                fixedPositionContainerLayer = currLayer;
+                ASSERT(foundAncestor);
+                break;
+            }
+        }
+        
+        ASSERT(fixedPositionContainerLayer); // We should have hit the RenderView's layer at least.
+
+        if (fixedPositionContainerLayer != ancestorLayer) {
+            int fixedContainerX = 0;
+            int fixedContainerY = 0;
+            convertToLayerCoords(fixedPositionContainerLayer, fixedContainerX, fixedContainerY);
+            
+            int ancestorX = 0;
+            int ancestorY = 0;
+            ancestorLayer->convertToLayerCoords(fixedPositionContainerLayer, ancestorX, ancestorY);
+        
+            xPos += (fixedContainerX - ancestorX);
+            yPos += (fixedContainerY - ancestorY);
+            return;
+        }
+    }
+    
     RenderLayer* parentLayer;
-    // For a fixed layer, if we're asking for coords relative to some other ancestor, then it must be
-    // enclosed in a fixed position container (e.g. a transformed element), so it behaves like an absolutely
-    // positioned element.
     if (position == AbsolutePosition || position == FixedPosition) {
         // Do what enclosingPositionedAncestor() does, but check for ancestorLayer along the way.
         parentLayer = parent();

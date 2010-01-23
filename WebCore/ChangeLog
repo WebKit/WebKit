@@ -2,6 +2,31 @@
 
         Reviewed by Dan Bernstein.
 
+        REGRESSION (r53110): Find My iPhone message dialog is offset from original position once it gets focus
+        https://bugs.webkit.org/show_bug.cgi?id=33821
+
+        Fix an issue with the geometry of fixed position, composited layers inside other
+        composited layers. If we called convertToLayerCoords() on a fixed layer with an ancestor
+        layer which is not the root, then we assumed that the fixed layer had a positioning root.
+        However, this is not always the case, since the fixed layer may have a compositing ancestor
+        which is not a fixed container.
+        
+        Test: compositing/geometry/fixed-in-composited.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::isFixedPositionedContainer): Utility function to test whether a layer acts
+        as a fixed position container.
+        
+        (WebCore::RenderLayer::convertToLayerCoords): When called on a fixed position layer
+        for an ancestor layer that is not the root, compute the correct offsets by looking for
+        the fixed position container, and computing offsets relative to that. If the ancestorLayer
+        is the fixed position container, fall through to the existing code that is shared
+        with absolutely positioned layers.
+
+2010-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         webkitConvertPointFromNodeToPage doesn't take into account most recent transform style
         https://bugs.webkit.org/show_bug.cgi?id=34023
 
