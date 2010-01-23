@@ -1,12 +1,3 @@
-2010-01-22  Steve Falkenburg  <sfalken@apple.com>
-
-        Rubber-stamped by Cameron Zwarich.
-
-        Re-enable Geolocation tests on Mac.
-
-        * platform/mac/Skipped:
-        * platform/win/Skipped:
-
 2010-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
