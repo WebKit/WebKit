@@ -1,3 +1,22 @@
+2010-01-22  Elliot Glaysher  <erg@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium: theme selection colors to match gtk theme
+        Add functions to RenderThemeChromiumLinux to change the selection color
+        according to the current GTK+ theme.
+
+        Since the change is to the Chromium WebKit API layer, testing is done
+        in Chromium's test shell (see Chromium side of this patch:
+        http://codereview.chromium.org/554004)
+
+        https://bugs.webkit.org/show_bug.cgi?id=33921
+
+        * public/WebView.h: Adds interface to change the selection colors
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setSelectionColors): Implements new interface.
+        * src/WebViewImpl.h:
+
 2010-01-22  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by David Levin.

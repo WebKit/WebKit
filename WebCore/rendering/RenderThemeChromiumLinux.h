@@ -49,10 +49,20 @@ namespace WebCore {
         virtual Color inactiveListBoxSelectionBackgroundColor() const;
         virtual Color inactiveListBoxSelectionForegroundColor() const;
 
+        virtual Color platformActiveSelectionBackgroundColor() const;
+        virtual Color platformInactiveSelectionBackgroundColor() const;
+        virtual Color platformActiveSelectionForegroundColor() const;
+        virtual Color platformInactiveSelectionForegroundColor() const;
+
         virtual void adjustSliderThumbSize(RenderObject*) const;
 
         void setCaretBlinkInterval(double interval);
         virtual double caretBlinkIntervalInternal() const;
+
+        static void setSelectionColors(unsigned activeBackgroundColor,
+                                       unsigned activeForegroundColor,
+                                       unsigned inactiveBackgroundColor,
+                                       unsigned inactiveForegroundColor);
 
         static void setScrollbarColors(unsigned inactive_color,
                                        unsigned active_color,
@@ -69,6 +79,11 @@ namespace WebCore {
         virtual bool supportsControlTints() const;
 
         double m_caretBlinkInterval;
+
+        static unsigned m_activeSelectionBackgroundColor;
+        static unsigned m_activeSelectionForegroundColor;
+        static unsigned m_inactiveSelectionBackgroundColor;
+        static unsigned m_inactiveSelectionForegroundColor;
 
         static unsigned m_thumbInactiveColor;
         static unsigned m_thumbActiveColor;

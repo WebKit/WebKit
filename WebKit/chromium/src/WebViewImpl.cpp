@@ -1654,6 +1654,19 @@ void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
 #endif
 }
 
+void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
+                                     unsigned activeForegroundColor,
+                                     unsigned inactiveBackgroundColor,
+                                     unsigned inactiveForegroundColor) {
+#if OS(LINUX)
+    RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor,
+                                                 activeForegroundColor,
+                                                 inactiveBackgroundColor,
+                                                 inactiveForegroundColor);
+    theme()->platformColorsDidChange();
+#endif
+}
+
 void WebViewImpl::didCommitLoad(bool* isNewNavigation)
 {
     if (isNewNavigation)
