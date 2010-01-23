@@ -23,39 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef MathMLTextElement_h
+#define MathMLTextElement_h
 
 #if ENABLE(MATHML)
-
-#include "MathMLInlineContainerElement.h"
-
-#include "MathMLNames.h"
-#include "RenderMathMLBlock.h"
+#include "MathMLElement.h"
 
 namespace WebCore {
     
-using namespace MathMLNames;
+class MathMLTextElement : public MathMLElement {
+public:
+    static PassRefPtr<MathMLTextElement> create(const QualifiedName& tagName, Document*);
 
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document* document)
-    : MathMLElement(tagName, document)
-{
-}
-
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document* document)
-{
-    return new MathMLInlineContainerElement(tagName, document);
-}
-
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, RenderStyle* style)
-{
-    // FIXME: This method will contain the specialized renderers based on element name
-    RenderObject* object = new (arena) RenderMathMLBlock(this);
-    object->setStyle(style);
-    return object;
-}
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
+protected:
+    MathMLTextElement(const QualifiedName& tagName, Document*);
+    
+};
     
 }
 
 #endif // ENABLE(MATHML)
-
+#endif // MathMLTextElement_h

@@ -748,8 +748,8 @@ endif
 
 ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
 
-MathMLElementFactory.cpp MathMLNames.cpp : dom/make_names.pl mathml/mathtags.in
-	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --factory --wrapperFactory
+MathMLElementFactory.cpp MathMLNames.cpp : dom/make_names.pl mathml/mathtags.in mathml/mathattrs.in
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
 
 else
 

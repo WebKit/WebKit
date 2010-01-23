@@ -1,3 +1,42 @@
+2010-01-22  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by David Hyatt.
+
+        Added support for RenderMathMLBlock base object and isRenderMathMLBlock()
+        method on RenderObject. 
+
+        Added support for text elements and updated tag and attribute names
+
+        Also, updated the stylesheet added files to the project
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mathml.css:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/MathMLTextElement.cpp: Added.
+        (WebCore::MathMLTextElement::MathMLTextElement):
+        (WebCore::MathMLTextElement::create):
+        (WebCore::MathMLTextElement::createRenderer):
+        * mathml/MathMLTextElement.h: Added.
+        * mathml/RenderMathMLBlock.cpp: Added.
+        (WebCore::RenderMathMLBlock::RenderMathMLBlock):
+        (WebCore::RenderMathMLBlock::styleDidChange):
+        (WebCore::RenderMathMLBlock::isChildAllowed):
+        (WebCore::RenderMathMLBlock::makeBlockStyle):
+        (WebCore::RenderMathMLBlock::nonOperatorHeight):
+        (WebCore::RenderMathMLBlock::stretchToHeight):
+        * mathml/RenderMathMLBlock.h: Added.
+        (WebCore::RenderMathMLBlock::isRenderMathMLBlock):
+        (WebCore::RenderMathMLBlock::isRenderMathMLOperator):
+        (WebCore::RenderMathMLBlock::isRenderMathMLRow):
+        (WebCore::RenderMathMLBlock::isRenderMathMLMath):
+        (WebCore::RenderMathMLBlock::hasBase):
+        (WebCore::toRenderMathMLBlock):
+        * mathml/mathattrs.in: Added.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderMathMLBlock):
+
 2010-01-22  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

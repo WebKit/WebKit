@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef RenderMathMLBlock_h
+#define RenderMathMLBlock_h
 
 #if ENABLE(MATHML)
 
-#include "MathMLInlineContainerElement.h"
-
-#include "MathMLNames.h"
-#include "RenderMathMLBlock.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
     
-using namespace MathMLNames;
+class RenderMathMLBlock : public RenderBlock {
+public:
+    RenderMathMLBlock(Node* container);
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    
+    virtual bool isRenderMathMLBlock() const { return true; }
+    virtual bool isRenderMathMLOperator() const { return false; }
+    virtual bool isRenderMathMLRow() const { return false; }
+    virtual bool isRenderMathMLMath() const { return false; }
+    virtual bool hasBase() const { return false; }
+    virtual int nonOperatorHeight() const;
+    virtual void stretchToHeight(int height);
+    
+protected:
+    virtual PassRefPtr<RenderStyle> makeBlockStyle();
+    
+};
 
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document* document)
-    : MathMLElement(tagName, document)
-{
+inline RenderMathMLBlock* toRenderMathMLBlock(RenderObject* object)
+{ 
+    ASSERT(!object || object->isRenderMathMLBlock());
+    return static_cast<RenderMathMLBlock*>(object);
 }
 
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document* document)
-{
-    return new MathMLInlineContainerElement(tagName, document);
-}
-
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, RenderStyle* style)
-{
-    // FIXME: This method will contain the specialized renderers based on element name
-    RenderObject* object = new (arena) RenderMathMLBlock(this);
-    object->setStyle(style);
-    return object;
+inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
+{ 
+    ASSERT(!object || object->isRenderMathMLBlock());
+    return static_cast<const RenderMathMLBlock*>(object);
 }
     
-    
 }
+
 
 #endif // ENABLE(MATHML)
-
+#endif // RenderMathMLBlock_h

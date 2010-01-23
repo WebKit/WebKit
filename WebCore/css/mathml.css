@@ -1,28 +1,57 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
 /* approved */
+
 math {
     font-family: Symbol, STIXGeneral, "Times New Roman";
     display: inline-block;
     padding: 0px;
     margin: 0px;
-    text-indent: 0;
-    font-size: 1.1em;
     vertical-align: baseline;
 }
+
 math[display="block"] {
-    font-family: "New Times Roman"
     display: block;
     text-align: center;
     page-break-inside: avoid;
+    margin-bottom: 1em;
+}
+
+math > * {
+   vertical-align: baseline;
+}
+
+mrow, mfenced {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+mrow > mo, mfenced > mo, math > mo,
+mrow > mi, mfenced > mi, math > mi,
+mrow > mn, mfenced > mn, math > mn,
+mrow > mtext, mfenced > mtext, math > mtext
+{
+   vertical-align: middle;
+}
+
+mi, mtext {
+    font-style: italic;
+    padding-right: 0.1em;
+}
+
+mi + mrow {
+   margin-left: 0.1em;
 }
 
 mfrac {
+    display: inline-block;
     vertical-align: middle;
 }
 
 msub, msup {
-   display: inline-block;
+    display: inline-block;
+    vertical-align: baseline;
 }
 
 msub > * + * {
@@ -37,10 +66,14 @@ msup > * + * {
    line-height: 0.75em;
 }
 
+msubsup {
+    display: inline-block;
+    vertical-align: baseline;
+}
+
 msubsup > * {
     margin: 0px;
     padding: 0px;
-    vertical-align: middle;
 }
 
 msubsup > * + * {
@@ -48,8 +81,9 @@ msubsup > * + * {
    line-height: 0.75em;
 }
 
-munderover {
-    vertical-align: middle;
+munder, mover, munderover {
+    display: inline-block;
+    vertical-align: baseline;
 }
 
 munderover > * + *, mover > * + *, munder > * + * {
@@ -57,20 +91,20 @@ munderover > * + *, mover > * + *, munder > * + * {
    line-height: 0.5625em;
 }
 
-mrow {
-    line-height: 1em;
-    white-space: nowrap;
-    vertical-align: middle;
-}
-
-mfenced > * {
-    vertical-align: middle;
-}
-
-mo, mn, mi {
+mo, mn, mi, mtext {
    line-height: 0.75em;
    padding: 0px;
    margin: 0px;
+}
+
+mo {
+    display: inline-block;
+    /*height: 100%;*/
+}
+
+mo {
+   padding-left: 0.05em;
+   padding-right: 0.05em;
 }
 
 mo[mathsize="small"], mn[mathsize="small"], mi[mathsize="small"] {
@@ -100,11 +134,13 @@ merror {
 }
 
 msqrt {
+    display: inline-block;
     padding-top: 0.2em;
     padding-left: 0.75em;
 }
 
 mroot {
+    display: inline-block;
     padding-top: 0.2em;
     padding-left: 0.2em;
 }
@@ -168,3 +204,6 @@ mtable[columnlines="dashed"] > mtr > mtd + mtd {
     border-left: dashed thin;
 }
 
+mspace[linebreak="newline"] {
+   display: block;
+}

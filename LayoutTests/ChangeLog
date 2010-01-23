@@ -1,3 +1,19 @@
+2010-01-22  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by David Hyatt.
+
+        Updated tests due to stylesheet changes.
+
+        * platform/mac/mathml/presentation/sub-expected.checksum:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.checksum:
+        * platform/mac/mathml/presentation/sup-expected.png:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+
 2010-01-22  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by David Levin.

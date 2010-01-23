@@ -4821,6 +4821,12 @@
 		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
+		FA654A641108ABB7002615E0 /* mathml.css in Resources */ = {isa = PBXBuildFile; fileRef = FA654A631108ABB7002615E0 /* mathml.css */; };
+		FA654A681108ABE2002615E0 /* mathattrs.in in Resources */ = {isa = PBXBuildFile; fileRef = FA654A671108ABE2002615E0 /* mathattrs.in */; };
+		FA654A6B1108ABED002615E0 /* MathMLTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A691108ABED002615E0 /* MathMLTextElement.cpp */; };
+		FA654A6C1108ABED002615E0 /* MathMLTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002615E0 /* MathMLTextElement.h */; };
+		FA654A6F1108ABFF002615E0 /* RenderMathMLBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */; };
+		FA654A701108ABFF002615E0 /* RenderMathMLBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */; };
 		FABE72F41059C1EB00D999DD /* MathMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
 		FABE72F61059C1EB00D999DD /* MathMLInlineContainerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */; };
@@ -10122,6 +10128,12 @@
 		F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
+		FA654A631108ABB7002615E0 /* mathml.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mathml.css; sourceTree = "<group>"; };
+		FA654A671108ABE2002615E0 /* mathattrs.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathattrs.in; sourceTree = "<group>"; };
+		FA654A691108ABED002615E0 /* MathMLTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLTextElement.cpp; sourceTree = "<group>"; };
+		FA654A6A1108ABED002615E0 /* MathMLTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLTextElement.h; sourceTree = "<group>"; };
+		FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLBlock.cpp; sourceTree = "<group>"; };
+		FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLBlock.h; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D999DD /* MathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElement.h; sourceTree = "<group>"; };
 		FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLInlineContainerElement.cpp; sourceTree = "<group>"; };
@@ -15455,6 +15467,7 @@
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
+				FA654A631108ABB7002615E0 /* mathml.css */,
 				0FF5026E102BA9660066F39A /* Media.cpp */,
 				0FF5026F102BA96A0066F39A /* Media.h */,
 				0FF50270102BA96A0066F39A /* Media.idl */,
@@ -15986,13 +15999,18 @@
 		FABE72EC1059C1EB00D999DD /* mathml */ = {
 			isa = PBXGroup;
 			children = (
+				FA654A671108ABE2002615E0 /* mathattrs.in */,
 				FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */,
 				FABE72EE1059C1EB00D999DD /* MathMLElement.h */,
 				FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */,
 				FABE72F01059C1EB00D999DD /* MathMLInlineContainerElement.h */,
 				FABE72F11059C1EB00D999DD /* MathMLMathElement.cpp */,
 				FABE72F21059C1EB00D999DD /* MathMLMathElement.h */,
+				FA654A691108ABED002615E0 /* MathMLTextElement.cpp */,
+				FA654A6A1108ABED002615E0 /* MathMLTextElement.h */,
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
+				FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */,
+				FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */,
 			);
 			path = mathml;
 			sourceTree = "<group>";
@@ -18447,6 +18465,8 @@
 				76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */,
 				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,
 				76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */,
+				FA654A6C1108ABED002615E0 /* MathMLTextElement.h in Headers */,
+				FA654A701108ABFF002615E0 /* RenderMathMLBlock.h in Headers */,
 				5913953B110758450083EC55 /* JNIBridge.h in Headers */,
 				2EAFAF0F10E2AF2D007ED3D6 /* Blob.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
@@ -18556,6 +18576,8 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				6E4E91B010F7FB3100A2779C /* WebGLContextAttributes.idl in Resources */,
+				FA654A641108ABB7002615E0 /* mathml.css in Resources */,
+				FA654A681108ABE2002615E0 /* mathattrs.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20623,6 +20645,8 @@
 				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
+				FA654A6B1108ABED002615E0 /* MathMLTextElement.cpp in Sources */,
+				FA654A6F1108ABFF002615E0 /* RenderMathMLBlock.cpp in Sources */,
 				5913953D1107584E0083EC55 /* JNIBridge.cpp in Sources */,
 				2EAFAF0E10E2AF2D007ED3D6 /* Blob.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,

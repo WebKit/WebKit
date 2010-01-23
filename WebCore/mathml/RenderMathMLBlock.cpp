@@ -27,35 +27,53 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLInlineContainerElement.h"
-
-#include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
+
+#include "FontSelector.h"
+#include "MathMLNames.h"
+#include "RenderInline.h"
+#include "RenderText.h"
 
 namespace WebCore {
     
 using namespace MathMLNames;
-
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document* document)
-    : MathMLElement(tagName, document)
-{
-}
-
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document* document)
-{
-    return new MathMLInlineContainerElement(tagName, document);
-}
-
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, RenderStyle* style)
-{
-    // FIXME: This method will contain the specialized renderers based on element name
-    RenderObject* object = new (arena) RenderMathMLBlock(this);
-    object->setStyle(style);
-    return object;
-}
     
-    
+RenderMathMLBlock::RenderMathMLBlock(Node* container) 
+    : RenderBlock(container) 
+{
 }
 
-#endif // ENABLE(MATHML)
+bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
+{
+    return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
+}
 
+PassRefPtr<RenderStyle> RenderMathMLBlock::makeBlockStyle()
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    newStyle->inheritFrom(style());
+    newStyle->setDisplay(BLOCK);
+    return newStyle;
+}
+
+int RenderMathMLBlock::nonOperatorHeight() const
+{
+    if (!isRenderMathMLOperator())
+        return offsetHeight();
+        
+    return 0;
+}
+
+void RenderMathMLBlock::stretchToHeight(int height) 
+{
+    for (RenderObject* current = firstChild(); current; current = current->nextSibling())
+       if (current->isRenderMathMLBlock()) {
+          RenderMathMLBlock* block = toRenderMathMLBlock(current);
+          block->stretchToHeight(height);
+       }
+}
+
+
+}    
+
+#endif
