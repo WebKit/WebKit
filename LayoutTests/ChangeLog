@@ -1,5 +1,12 @@
 2010-01-22  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed. Updated platform-specific result to account for
+        changes done in r53722.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+
+2010-01-22  Gustavo Noronha Silva  <gns@gnome.org>
+
         Reviewed by Simon Fraser.
 
         Checking in platform-specific results for test that is failing
