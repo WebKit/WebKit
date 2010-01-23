@@ -62,9 +62,11 @@ function check_navigator() {
         strings.push("navigator."+p+"() threw err "+err);
       }
     } else {
-      var v = old_nav[p];
-      // no crash, it is ok.
-      strings.push("navigator."+p+" is OK");
+      if (p != "geolocation") { // Don't include geolocation until most platforms have support.
+        var v = old_nav[p];
+        // no crash, it is ok.
+        strings.push("navigator."+p+" is OK");
+      }
     }
   }
   strings.sort();

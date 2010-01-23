@@ -76,8 +76,6 @@ PASS DocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__prot
 PASS ElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__.__proto__
 PASS EventSourceContructor from inner.document.forms.testForm.0.ownerDocument.defaultView.EventSource
 FAIL Function from inner.document.location.pathname.constructor
-PASS Geolocation from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.geolocation
-PASS GeolocationPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.geolocation.__proto__
 PASS HTMLAnchorElement from inner.document.forms.testForm.0.parentNode.firstElementChild
 PASS HTMLAnchorElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.constructor
 PASS HTMLAnchorElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.__proto__

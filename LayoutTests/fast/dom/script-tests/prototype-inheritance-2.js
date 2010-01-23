@@ -16,6 +16,8 @@ var skippedProperties = [
     "isInner",
     // Ignore fooConstructor.prototype, fooInstance.__proto__ is more likely to fail.
     "prototype",
+    // Skip Geolocation until it is supported on most platforms.
+    "geolocation",
 ];
 
 var skippedPropertiesSet = {};

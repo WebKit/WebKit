@@ -5110,3 +5110,6 @@ fast/frames/sandboxed-iframe-navigation-windowopen.html
 # https://bugs.webkit.org/show_bug.cgi?id=34004
 # [Qt] http/tests/misc/slow-loading-mask.html timed out.
 http/tests/misc/slow-loading-mask.html
+
+# skip Geolocation tests
+fast/dom/Window/window-properties-geolocation.html
