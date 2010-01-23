@@ -1,3 +1,14 @@
+2010-01-22  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Reviewed by David Levin.
+
+        Middle clicking the main scroll bars should not trigger a paste event
+        in Linux chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=33062
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseUp):
+
 2010-01-22  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed.  backout.

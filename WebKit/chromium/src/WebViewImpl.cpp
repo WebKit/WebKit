@@ -391,14 +391,14 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     // handleMouseReleaseEvent() earlier in this function
     if (event.button == WebMouseEvent::ButtonMiddle) {
         Frame* focused = focusedWebCoreFrame();
+        FrameView* view = m_page->mainFrame()->view();
         IntPoint clickPoint(m_lastMouseDownPoint.x, m_lastMouseDownPoint.y);
-        clickPoint = m_page->mainFrame()->view()->windowToContents(clickPoint);
-        HitTestResult hitTestResult =
-            focused->eventHandler()->hitTestResultAtPoint(clickPoint, false, false,
-                                                          ShouldHitTestScrollbars);
+        IntPoint contentPoint = view->windowToContents(clickPoint);
+        HitTestResult hitTestResult = focused->eventHandler()->hitTestResultAtPoint(contentPoint, false, false, ShouldHitTestScrollbars);
         // We don't want to send a paste when middle clicking a scroll bar or a
-        // link (which will navigate later in the code).
-        if (!hitTestResult.scrollbar() && !hitTestResult.isLiveLink() && focused) {
+        // link (which will navigate later in the code).  The main scrollbars 
+        // have to be handled separately.
+        if (!hitTestResult.scrollbar() && !hitTestResult.isLiveLink() && focused && !view->scrollbarAtPoint(clickPoint)) {
             Editor* editor = focused->editor();
             Pasteboard* pasteboard = Pasteboard::generalPasteboard();
             bool oldSelectionMode = pasteboard->isSelectionMode();
