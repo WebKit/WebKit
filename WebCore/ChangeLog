@@ -1,3 +1,35 @@
+2010-01-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary copy of zlib.
+        https://bugs.webkit.org/show_bug.cgi?id=34028
+
+        * platform/image-decoders/zlib: Removed.
+        * platform/image-decoders/zlib/adler32.c: Removed.
+        * platform/image-decoders/zlib/compress.c: Removed.
+        * platform/image-decoders/zlib/crc32.c: Removed.
+        * platform/image-decoders/zlib/crc32.h: Removed.
+        * platform/image-decoders/zlib/deflate.c: Removed.
+        * platform/image-decoders/zlib/deflate.h: Removed.
+        * platform/image-decoders/zlib/gzio.c: Removed.
+        * platform/image-decoders/zlib/infback.c: Removed.
+        * platform/image-decoders/zlib/inffast.c: Removed.
+        * platform/image-decoders/zlib/inffast.h: Removed.
+        * platform/image-decoders/zlib/inffixed.h: Removed.
+        * platform/image-decoders/zlib/inflate.c: Removed.
+        * platform/image-decoders/zlib/inflate.h: Removed.
+        * platform/image-decoders/zlib/inftrees.c: Removed.
+        * platform/image-decoders/zlib/inftrees.h: Removed.
+        * platform/image-decoders/zlib/mozzconf.h: Removed.
+        * platform/image-decoders/zlib/trees.c: Removed.
+        * platform/image-decoders/zlib/trees.h: Removed.
+        * platform/image-decoders/zlib/uncompr.c: Removed.
+        * platform/image-decoders/zlib/zconf.h: Removed.
+        * platform/image-decoders/zlib/zlib.h: Removed.
+        * platform/image-decoders/zlib/zutil.c: Removed.
+        * platform/image-decoders/zlib/zutil.h: Removed.
+
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
