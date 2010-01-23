@@ -1,3 +1,19 @@
+2010-01-22  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fixing svg/custom/stroke-width-click.svg to not cause the double-click
+        handler to fire on certain platforms (chromium, for one). Chromium,
+        Leopard, and GTK all agree on the calculated extents of the shape, so I'm
+        disabling this test on mac-tiger and re-enabling it on mac-leopard and
+        updating the expected file to reflect the current state of the test.
+        https://bugs.webkit.org/show_bug.cgi?id=33865
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * svg/custom/stroke-width-click-expected.txt:
+        * svg/custom/stroke-width-click.svg:
+
 2010-01-22  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

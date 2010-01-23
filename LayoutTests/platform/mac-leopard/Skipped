@@ -5,9 +5,6 @@ http/tests/security/frame-loading-via-document-write.html
 # <rdar://problem/5686552> svg/css/glyph-orientation-rounding-test.xhtml sometimes fails
 svg/css/glyph-orientation-rounding-test.xhtml
 
-# <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
-svg/custom/stroke-width-click.svg
-
 # Tests of table accessibility functionality not supported on Leopard
 platform/mac/accessibility/table-multi-bodies.html
 # Lists are not supported on Leopard.

@@ -56,21 +56,23 @@
   <path d="M 30 100 L 301 100" stroke-width="100" stroke="yellow" onclick="gotClick(evt)" onmouseover="gotMouseEvent(evt, 'mouseover')" onmouseout="gotMouseEvent(evt, 'mouseout')" onmousemove="gotMouseEvent(evt, 'mousemove')" />
   <text id="mouseover-text" x="30" y="190"></text>
   
+  <!-- The following mouse events are spaced explicity to prevent triggering double-click logic -->
   <script type="text/javascript">
   <![CDATA[
     if (window.eventSender) {
-      testClick(10, 10, false);
       testClick(30, 100, true);
-      testClick(29, 100, false);
       testClick(30, 50, true);
-      testClick(30, 49, false);
       testClick(30, 150, true);
-      testClick(30, 151, false);
       testClick(300, 100, true);
-      testClick(301, 100, false);
       testClick(300, 50, true);
-      testClick(300, 49, false);
+      testClick(301, 100, true);
       testClick(300, 150, true);
+
+      testClick(10, 10, false);
+      testClick(29, 100, false);
+      testClick(30, 49, false);
+      testClick(30, 151, false);
+      testClick(300, 49, false);
       testClick(300, 151, false);
     } else {
       log("ERROR: window.eventSender not found!  This test must be run using DumpRenderTree.  Mousing over the yellow area will log however.");

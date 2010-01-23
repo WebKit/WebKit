@@ -21,7 +21,6 @@ svg/batik/paints/patternRegionA.svg
 svg/custom/path-bad-data.svg
 svg/custom/pattern-deep-referencing.svg
 svg/custom/preserve-aspect-ratio-syntax.svg
-svg/custom/stroke-width-click.svg
 svg/custom/viewbox-syntax.svg
 svg/hixie/perf/007.xml
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml
