@@ -1,3 +1,36 @@
+2010-01-22  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Ensures that the 'selected' attribute of an <option> is correct
+        https://bugs.webkit.org/show_bug.cgi?id=32641
+
+        Adds a check in OptionElement::selected() that checks if list items need to be recalculated and does so if needed,
+        so the attribute is up to date more often.  Also gets rid of most of the recalcStyle() side effects.
+
+         Our behavior now matches Firefox 3.5 and IE8 after the </select> is parsed.
+
+         Tests: fast/forms/HTMLOptionElement_selected2.html
+                fast/forms/HTMLOptionElement_selected3.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::setOptionsChangedOnRenderer):
+        (WebCore::SelectElement::setRecalcListItems):
+        (WebCore::SelectElement::recalcListItems):
+        (WebCore::SelectElement::restoreFormControlState):
+        (WebCore::SelectElement::reset):
+        (WebCore::SelectElement::typeAheadFind):
+        * dom/SelectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::selected):
+        (WebCore::HTMLOptionElement::insertedIntoTree):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::recalcListItemsIfNeeded):
+        * html/HTMLSelectElement.h:
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::recalcStyle):
+
 2010-01-22  Chris Rogers  <crogers@google.com>
 
         Reviewed by Eric Seidel.

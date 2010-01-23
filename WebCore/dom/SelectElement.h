@@ -75,7 +75,6 @@ protected:
     static void listBoxOnChange(SelectElementData&, Element*);
     static void menuListOnChange(SelectElementData&, Element*);
     static void scrollToSelection(SelectElementData&, Element*);
-    static void recalcStyle(SelectElementData&, Element*);
     static void setRecalcListItems(SelectElementData&, Element*);
     static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
     static int selectedIndex(const SelectElementData&, const Element*);
@@ -100,6 +99,7 @@ protected:
 private:
     static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static void setOptionsChangedOnRenderer(SelectElementData&, Element*);
 };
 
 // HTML/WMLSelectElement hold this struct as member variable

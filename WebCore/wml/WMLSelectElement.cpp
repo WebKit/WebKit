@@ -83,7 +83,6 @@ void WMLSelectElement::selectAll()
 
 void WMLSelectElement::recalcStyle(StyleChange change)
 {
-    SelectElement::recalcStyle(m_data, this);
     WMLFormControlElement::recalcStyle(change);
 }
 

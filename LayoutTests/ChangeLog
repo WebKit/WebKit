@@ -1,3 +1,23 @@
+2010-01-22  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds tests for the 'selected' attribute of <option>s
+        https://bugs.webkit.org/show_bug.cgi?id=32641
+
+        HTMLOptionElement_selected2 checks that the selected attribute is up to date immediately after the <select>
+        parsed.  HTMLOptionElement_selected3 does the same, but checks immediately prior to the </select>.
+
+        Also changes the expectation for add-remove-option-modification-event to reflect that we now pass.
+
+        * fast/forms/HTMLOptionElement_selected-expected.txt:
+        * fast/forms/HTMLOptionElement_selected.html:
+        * fast/forms/HTMLOptionElement_selected2-expected.txt: Added.
+        * fast/forms/HTMLOptionElement_selected2.html: Added.
+        * fast/forms/HTMLOptionElement_selected3-expected.txt: Added.
+        * fast/forms/HTMLOptionElement_selected3.html: Added.
+        * fast/forms/add-remove-option-modification-event-expected.txt:
+
 2010-01-22  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by David Levin.
