@@ -183,6 +183,10 @@ dt {
     margin-top: 1em;
 }
 
+.book {
+    font-style: italic;
+}
+
 .code, pre, tt, code {
     font-family: Courier, Fixed;
     font-size: 110%;

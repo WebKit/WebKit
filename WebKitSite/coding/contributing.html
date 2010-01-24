@@ -27,13 +27,13 @@ Later sections of this page explain each step in more detail.
 
 <ol>
     <li>Choose or create a <a href="#bugreport">bug report</a> to work on.</li>
-    <li>Complete your changes.</li>
+    <li><a href="#writecode">Develop</a> your changes.</li>
     <li>Make sure your changes meet the <a href="/coding/coding-style.html">code
         style guidelines</a>. The <tt>check-webkit-style</tt> script may be of
         help.</li>
     <li>Run the layout tests using the <tt>run-webkit-tests</tt> script and make sure they all pass.
         See the <a href="/quality/testwriting.html">testing page</a> for more information, as well as what you need to do if you've modified JavaScriptCore.</li>
-    <li>Add any new files and layout tests to Subversion using the <tt>svn add</tt> command.</li>
+    <li>Add any <a href="#newfiles">new files</a> to your working directory.</li>
     <li>Prepare a change log entry. You may have to add entries to multiple ChangeLogs. The <tt>prepare-ChangeLog</tt> script will create stub entries for you.  See the <a href="#changelogs">paragraph about ChangeLogs</a> below.</li>
     <li>Create the patch using the <tt>svn-create-patch</tt> script.</li>
     <li><a href="#submit">Submit</a> your patch for review to
@@ -65,6 +65,25 @@ may be controversial, you may want to check in advance with the
 <a href="http://lists.webkit.org/mailman/listinfo/webkit-dev">
 webkit-dev</a> mailing list.</p>
 
+<h3 id="writecode">Develop your changes</h3>
+
+<p>If you make substantive changes to a file, you may wish to add a
+copyright line for yourself or for the company on whose behalf you
+work. Below are sample copyright lines for an individual contributor
+and a company:
+
+<p><tt>Copyright (C) 2010 John Smith (jsmith@example.com)</tt></p>
+<p><tt>Copyright (C) 2010 Company Inc. All rights reserved.</tt></p>
+
+<p>In addition, make sure that any new source code and script files
+you introduce contain license text at the beginning of the file.
+If you are the author of a new file, preferred license text to include
+can be found here:
+<a href="http://trac.webkit.org/browser/trunk/WebKit/LICENSE">WebKit/LICENSE</a>.
+(The "Original Format" link at the bottom of the page contains text
+that can be cut and pasted more easily.) Simply replace the copyright
+line with your own information, for example as suggested above.
+
 <h3>Code Style Guidelines</h3>
 <p>Patches must comply with the <a href="/coding/coding-style.html">code style guidelines</a>.
 Some older parts of the codebase do not follow these guidelines.
@@ -85,9 +104,16 @@ why a new test isn't necessary to the reviewer.</p>
 <p>Information on writing a layout test as well as what needs to be done if you've made changes to JavaScriptCore
 can be found on the <a href="/quality/testwriting.html">testing page</a>.</p>
 
-<h3>Adding new files</h3>
-<p>New files and layout tests must be added to Subversion or else they won't be included in your patch. This is done with the <tt>svn add</tt> command.
-More information on Subversion commands can be found via <tt>svn help</tt> or the <a href="http://svnbook.red-bean.com/">Version Control with Subversion</a> online book.</p>
+<h3 id="newfiles">Add new files to your working directory</h3>
+<p>If your changes include adding new files (like new layout tests),
+use the <tt>svn add</tt> command to mark these files for addition to the
+repository. If you do not do this, the new files will be missing from
+the patch file you generate below.</p>
+
+<p>You can learn more about Subversion commands like <tt>svn add</tt>
+from the online book <a class="book" href="http://svnbook.red-bean.com/">
+Version Control with Subversion</a> and by using the <tt>svn help</tt>
+command.</p>
 
 <h3 id="changelogs">ChangeLog files</h3>
 <p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <tt>prepare-ChangeLog</tt> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>

@@ -1,3 +1,16 @@
+2010-01-24  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Added to contributing code page a pointer to the preferred
+        license text. Also added information about copyright lines.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34017
+
+        * coding/contributing.html:
+        * css/main.css:
+          - Added CSS class for books.
+
 2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by David Levin.
