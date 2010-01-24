@@ -1,3 +1,13 @@
+2010-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Fix incorrect layout test that I checked in earlier.
+
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.checksum:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.txt:
+
 2010-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
