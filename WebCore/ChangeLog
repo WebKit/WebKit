@@ -1,3 +1,31 @@
+2010-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement support for FileList cloning in postMessage
+        https://bugs.webkit.org/show_bug.cgi?id=34048
+
+        Support passing FileList through postMessage APIs.  Basically
+        mechanical task in line with other terminals in the object
+        graph.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedFileList::create):
+        (WebCore::SerializedFileList::length):
+        (WebCore::SerializedFileList::item):
+        (WebCore::SerializedFileList::SerializedFileList):
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SharedSerializedData::asFileList):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        (WebCore::TeardownTreeWalker::convertIfTerminal):
+            Rearrange these functions to not use 'default:' handling
+            so that the compiler will actually tell us when we're
+            not handling cases.
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::):
+        (WebCore::SerializedScriptValueData::asFileList):
+
 2010-01-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

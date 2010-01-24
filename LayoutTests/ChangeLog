@@ -1,3 +1,17 @@
+2010-01-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement support for FileList cloning in postMessage
+        https://bugs.webkit.org/show_bug.cgi?id=34048
+
+        Add test for passing a FileList through postMessage, and 
+        correct testing already present to test what it was meant
+        to be.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2010-01-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

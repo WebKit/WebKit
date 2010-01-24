@@ -34,14 +34,17 @@ typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
     class File;
-    class SerializedObject;
+    class FileList;
     class SerializedArray;
+    class SerializedFileList;
+    class SerializedObject;
 
     class SharedSerializedData : public RefCounted<SharedSerializedData> {
     public:
         virtual ~SharedSerializedData() { }
         SerializedArray* asArray();
         SerializedObject* asObject();
+        SerializedFileList* asFileList();
     };
 
     class SerializedScriptValue;
@@ -56,7 +59,8 @@ namespace WebCore {
             ObjectType,
             ArrayType,
             StringType,
-            FileType
+            FileType,
+            FileListType
         };
 
         SerializedType type() const { return m_type; }
@@ -81,6 +85,7 @@ namespace WebCore {
         }
         
         explicit SerializedScriptValueData(const File*);
+        explicit SerializedScriptValueData(const FileList*);
 
         explicit SerializedScriptValueData(JSC::JSValue value)
             : m_type(ImmediateType)
@@ -128,6 +133,13 @@ namespace WebCore {
             ASSERT(m_type == ArrayType);
             ASSERT(m_sharedData);
             return m_sharedData->asArray();
+        }
+
+        SerializedFileList* asFileList() const
+        {
+            ASSERT(m_type == FileListType);
+            ASSERT(m_sharedData);
+            return m_sharedData->asFileList();
         }
 
         operator bool() const { return m_type != EmptyType; }
