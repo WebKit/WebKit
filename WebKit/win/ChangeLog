@@ -1,3 +1,14 @@
+2010-01-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7569820> svg/custom/text-zoom.xhtml fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=34006
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Added WebKitZoomsTextOnlyPreferenceKey
+        with a default value of true.
+
 2010-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam Weinig.

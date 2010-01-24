@@ -1,3 +1,12 @@
+2010-01-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7569820> svg/custom/text-zoom.xhtml fails on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=34006
+
+        * platform/win/svg/custom/text-zoom-expected.txt: Removed.
+
 2010-01-23  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Kenneth Rohde Christiansen.
