@@ -1,3 +1,11 @@
+2010-01-24  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Make changelogs.py pass pep8.
+
+        * Scripts/webkitpy/changelogs.py:
+
 2010-01-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Unreviewed build fix
