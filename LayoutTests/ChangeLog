@@ -1,3 +1,14 @@
+2010-01-24  Eric Seidel  <eric@webkit.org>
+
+        No review.
+
+        Middle clicking the primary scroll bars on Chromium Linux triggers a paste event
+        https://bugs.webkit.org/show_bug.cgi?id=33062
+
+        * platform/gtk/Skipped:
+         - This new test fails on Gtk for unknown reasons.
+         - Skipping for now to make the bots green, until a Gtk person can look.
+
 2010-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

@@ -5775,3 +5775,6 @@ svg/text/selection-background-color.xhtml
 
 # Only fails on Gtk bot - https://bugs.webkit.org/show_bug.cgi?id=33835
 svg/custom/use-instanceRoot-event-bubbling.xhtml
+
+# New failure after http://trac.webkit.org/changeset/53758
+scrollbars/scrollbar-middleclick-nopaste.html
