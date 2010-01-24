@@ -1,3 +1,27 @@
+2010-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video that loads inside reflection doesn't get reflected
+        https://bugs.webkit.org/show_bug.cgi?id=34046
+        
+        ensureCloneLayers() made an incorrect assumption that if a clone of the primaryLayer
+        exists already, then the structural layer and content layer can just be returned.
+        However, this doesn't account for the situation where a content layer may have
+        been create after the clone tree was last updated.
+        
+        Fix by always creating the structural and clone layers on demand.
+
+        Test: compositing/reflections/load-video-in-reflection.html
+
+        * platform/graphics/mac/GraphicsLayerCA.h: Added utility method, findOrMakeClone().
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::findOrMakeClone): Utility that efficiently finds
+        or creates a layer in a LayerMap.
+        (WebCore::GraphicsLayerCA::ensureCloneLayers): Always look for or clone the
+        structural and content layers, rather than relying on whether there's a primary
+        layer clone already.
+
 2010-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

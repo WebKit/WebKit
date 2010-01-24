@@ -2244,6 +2244,31 @@ void GraphicsLayerCA::setupContentsLayer(CALayer* contentsLayer)
     }
 }
 
+CALayer *GraphicsLayerCA::findOrMakeClone(CloneID cloneID, CALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
+{
+    if (!sourceLayer)
+        return 0;
+
+    CALayer *resultLayer;
+
+    // Add with a dummy value to get an iterator for the insertion position, and a boolean that tells
+    // us whether there's an item there. This technique avoids two hash lookups.
+    RetainPtr<CALayer> dummy;
+    pair<LayerMap::iterator, bool> addResult = clones->add(cloneID, dummy);
+    if (!addResult.second) {
+        // Value was not added, so it exists already.
+        resultLayer = addResult.first->second.get();
+    } else {
+        resultLayer = cloneLayer(sourceLayer, cloneLevel);
+#ifndef NDEBUG
+        [resultLayer setName:[NSString stringWithFormat:@"Clone %d of layer %@", cloneID[0U], sourceLayer]];
+#endif
+        addResult.first->second = resultLayer;
+    }
+
+    return resultLayer;
+}   
+
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel cloneLevel)
 {
     structuralLayer = nil;
@@ -2258,44 +2283,9 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, CALayer *& primaryLayer
     if (!m_contentsLayerClones && m_contentsLayer)
         m_contentsLayerClones = new LayerMap;
 
-    // If we have the layers already, return them.
-    LayerMap::const_iterator it = m_layerClones->find(cloneID);
-    LayerMap::const_iterator end = m_layerClones->end();
-    if (it != end) {
-            primaryLayer = it->second.get();
-
-        if (m_structuralLayerClones)
-            structuralLayer = m_structuralLayerClones->get(cloneID).get();
-
-        if (m_contentsLayerClones)
-            contentsLayer = m_contentsLayerClones->get(cloneID).get();
-
-        return;
-    }
-    
-    // Create clones of the primary layer, and the structural and contents layers if we have them.
-    primaryLayer = cloneLayer(m_layer.get(), cloneLevel);
-
-#ifndef NDEBUG
-    [primaryLayer setName:[NSString stringWithFormat:@"Clone %d of layer %@", cloneID[0U], m_layer.get()]];
-#endif
-    m_layerClones->set(cloneID, primaryLayer);
-
-    if (m_structuralLayer) {
-        structuralLayer = cloneLayer(m_structuralLayer.get(), cloneLevel);
-#ifndef NDEBUG
-        [structuralLayer setName:[NSString stringWithFormat:@"Clone %d of layer %@", cloneID[0U], m_structuralLayer.get()]];
-#endif
-        m_structuralLayerClones->set(cloneID, structuralLayer);
-    }
-
-    if (m_contentsLayer) {
-        contentsLayer = cloneLayer(m_contentsLayer.get(), cloneLevel);
-#ifndef NDEBUG
-        [contentsLayer setName:[NSString stringWithFormat:@"Clone %d of layer %@", cloneID[0U], m_contentsLayer.get()]];
-#endif
-        m_contentsLayerClones->set(cloneID, contentsLayer);
-    }
+    primaryLayer = findOrMakeClone(cloneID, m_layer.get(), m_layerClones.get(), cloneLevel);
+    structuralLayer = findOrMakeClone(cloneID, m_structuralLayer.get(), m_structuralLayerClones.get(), cloneLevel);
+    contentsLayer = findOrMakeClone(cloneID, m_contentsLayer.get(), m_contentsLayerClones.get(), cloneLevel);
 }
 
 void GraphicsLayerCA::removeCloneLayers()

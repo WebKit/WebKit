@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+
+    .container {
+      width: 300px;
+      -webkit-animation: spin 18s infinite linear;
+    }
+    
+    video {
+      -webkit-box-reflect: below;
+      background-color: red;
+    }
+
+    @-webkit-keyframes spin {
+      from { -webkit-transform: rotate(0); }
+      to   { -webkit-transform: rotate(0); }
+    }
+
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    function videoLoaded()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    function runTest()
+    {
+      var video = document.getElementsByTagName('video')[0];
+      video.addEventListener('canplaythrough', videoLoaded, false);
+      
+      window.setTimeout(function() {
+        video.src= "../resources/video.mp4"
+      }, 100);
+    }
+    
+    window.addEventListener('load', runTest, false)
+  </script>
+</head>
+<body>
+  <p>You should see a reflected video below, rather than the red video background.</p>
+  <div class="container">
+    <video></video>
+  </div>
+</body>
+</html>

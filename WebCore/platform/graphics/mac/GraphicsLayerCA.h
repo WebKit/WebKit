@@ -228,8 +228,11 @@ private:
 
     enum CloneLevel { RootCloneLevel, IntermediateCloneLevel };
     CALayer *fetchCloneLayers(GraphicsLayer* replicaRoot, ReplicaState&, CloneLevel);
-    void ensureCloneLayers(CloneID index, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel);
+    
     CALayer *cloneLayer(CALayer *, CloneLevel);
+    CALayer *findOrMakeClone(CloneID, CALayer *, LayerMap*, CloneLevel);
+
+    void ensureCloneLayers(CloneID index, CALayer *& primaryLayer, CALayer *& structuralLayer, CALayer *& contentsLayer, CloneLevel);
 
     bool hasCloneLayers() const { return m_layerClones; }
     void removeCloneLayers();

@@ -1,3 +1,17 @@
+2010-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video that loads inside reflection doesn't get reflected
+        https://bugs.webkit.org/show_bug.cgi?id=34046
+        
+        Testcase for a video loading inside a reflection.
+
+        * compositing/reflections/load-video-in-reflection.html: Added.
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.checksum: Added.
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.txt: Added.
+
 2010-01-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
