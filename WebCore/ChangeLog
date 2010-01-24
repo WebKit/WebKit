@@ -1,3 +1,30 @@
+2010-01-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Object Serialization assumes deserialization will always occur in the context of a webpage
+        https://bugs.webkit.org/show_bug.cgi?id=34056
+        rdar://7573833
+
+        Added ClassInfo to JSDOMGlobalObject and make the window and worker class info
+        inherit from it.  With this in place we're able to determine whether a given
+        global object is a DOMGlobalObject, and then use that information to avoid
+        attempting to deserialize types that require the presence of the DOM.
+
+        No test as all global objects in webkit inherit from JSDOMGlobalObject.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::classInfo):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::DeserializingTreeWalker::DeserializingTreeWalker):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+
 2010-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
