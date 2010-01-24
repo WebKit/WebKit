@@ -1,3 +1,12 @@
+2010-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        No review, build fix.
+
+        Only log the first 'timeupdate' event from audio-delete-while-slider-thumb-clicked.html
+        as the number fired can vary according to how long it takes to run the test.
+
+        * media/audio-delete-while-slider-thumb-clicked.html:
+
 2010-01-24  Eric Seidel  <eric@webkit.org>
 
         No review.

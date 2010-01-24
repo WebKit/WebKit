@@ -68,6 +68,15 @@
                 setTimeout(deleteAudio, 10);
             }
 
+            var timeupdateCount = 0;
+            function logtimeupdate()
+            {
+                // only log the first 'timeupdate' event as more than one will be fired on slower
+                // machines
+                if (++timeupdateCount==1) 
+                    log('timeupdate');
+            }
+
             function start()
             {
                 setSrcByTagName("audio", findMediaFile("audio", "content/test"));
@@ -80,7 +89,7 @@
         <br>
         <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
         <br>
-        <audio id="audio" ontimeupdate="log('timeupdate')" onload="drag()" controls></audio><br><br>
+        <audio id="audio" ontimeupdate="logtimeupdate()" onload="drag()" controls></audio><br><br>
         <div id="console"></div>
     </body>
 </html>
