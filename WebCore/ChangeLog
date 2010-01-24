@@ -1,3 +1,21 @@
+2010-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34047
+        <rdar://problem/7573699>
+        Media element "endedPlayback" logic doesn't match spec
+
+        Test: media/video-timeupdate-reverse-play.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ended): The 'ended' attribute should only be true when playback
+        rate is positive.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Always schedule a 'timeupdate' event when
+        the media engine signals a time discontinuity, scheduleTimeupdateEvent will only queue an event
+        if one hasn't already been posted for the current movie time.
+        (WebCore::HTMLMediaElement::endedPlayback): Update to match the spec logic.
+
 2010-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

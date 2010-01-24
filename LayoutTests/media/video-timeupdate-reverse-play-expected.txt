@@ -1,0 +1,17 @@
+Tests that a 'timeupdate' event is fired when a movie plays
+in reverse to time zero.
+
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+RUN(video.currentTime = 0.3)
+
+EVENT(seeked)
+EXPECTED (video.currentTime.toFixed(1) == '0.3') OK
+RUN(video.play())
+RUN(video.playbackRate = -1)
+
+EVENT(timeupdate) fired at time 0
+EXPECTED (video.ended == 'false') OK
+
+END OF TEST
+

@@ -1093,7 +1093,10 @@ void HTMLMediaElement::setWebkitPreservesPitch(bool preservesPitch)
 
 bool HTMLMediaElement::ended() const
 {
-    return endedPlayback();
+    // 4.8.10.8 Playing the media resource
+    // The ended attribute must return true if the media element has ended 
+    // playback and the direction of playback is forwards, and false otherwise.
+    return endedPlayback() && m_playbackRate > 0;
 }
 
 bool HTMLMediaElement::autoplay() const
@@ -1407,10 +1410,14 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
 
+    // Always call scheduleTimeupdateEvent when the media engine reports a time discontinuity, 
+    // it will only queue a 'timeupdate' event if we haven't already posted one at the current
+    // movie time.
+    scheduleTimeupdateEvent(false);
+
     // 4.8.10.10 step 12 & 13.  Needed if no ReadyState change is associated with the seek.
-    if (m_readyState >= HAVE_CURRENT_DATA && m_seeking) {
+    if (m_readyState >= HAVE_CURRENT_DATA && m_seeking)
         finishSeek();
-    }
     
     float now = currentTime();
     float dur = duration();
@@ -1422,7 +1429,6 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         } else {
             if (!m_sentEndEvent) {
                 m_sentEndEvent = true;
-                scheduleTimeupdateEvent(false);
                 scheduleEvent(eventNames().endedEvent);
             }
         }
@@ -1553,11 +1559,29 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
 
 bool HTMLMediaElement::endedPlayback() const
 {
-    if (!m_player || m_readyState < HAVE_METADATA)
+    float dur = duration();
+    if (!m_player || isnan(dur))
+        return false;
+
+    // 4.8.10.8 Playing the media resource
+
+    // A media element is said to have ended playback when the element's 
+    // readyState attribute is HAVE_METADATA or greater, 
+    if (m_readyState < HAVE_METADATA)
         return false;
     
-    float dur = duration();
-    return !isnan(dur) && currentTime() >= dur && !loop();
+    // and the current playback position is the end of the media resource and the direction 
+    // of playback is forwards and the media element does not have a loop attribute specified,
+    float now = currentTime();
+    if (m_playbackRate > 0)
+        return now >= dur && !loop();
+    
+    // or the current playback position is the earliest possible position and the direction 
+    // of playback is backwards
+    if (m_playbackRate < 0)
+        return now <= 0;
+
+    return false;
 }
 
 bool HTMLMediaElement::stoppedDueToErrors() const

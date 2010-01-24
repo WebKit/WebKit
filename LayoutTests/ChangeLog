@@ -1,3 +1,14 @@
+2010-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34047
+        <rdar://problem/7573699>
+        Media element "endedPlayback" logic doesn't match spec
+
+        * media/video-timeupdate-reverse-play-expected.txt: Added.
+        * media/video-timeupdate-reverse-play.html: Added.
+
 2010-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
