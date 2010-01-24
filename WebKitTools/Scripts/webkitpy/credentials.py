@@ -1,10 +1,10 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -38,7 +38,9 @@ from webkitpy.executive import Executive, ScriptError
 from webkitpy.webkit_logging import log
 from webkitpy.scm import Git
 
+
 class Credentials(object):
+
     def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
         self.host = host
         self.git_prefix = git_prefix
@@ -46,14 +48,20 @@ class Credentials(object):
         self.cwd = cwd
 
     def _credentials_from_git(self):
-        return [self._read_git_config("username"), self._read_git_config("password")]
+        return [self._read_git_config("username"),
+                self._read_git_config("password")]
 
     def _read_git_config(self, key):
-        config_key = "%s.%s" % (self.git_prefix, key) if self.git_prefix else key
-        return self.executive.run_command(["git", "config", "--get", config_key], error_handler=Executive.ignore_error).rstrip('\n')
+        config_key = "%s.%s" % (self.git_prefix, key) if self.git_prefix \
+                                                      else key
+        return self.executive.run_command(
+                ["git", "config", "--get", config_key],
+                error_handler=Executive.ignore_error).rstrip('\n')
 
     def _keychain_value_with_label(self, label, source_text):
-        match = re.search("%s\"(?P<value>.+)\"" % label, source_text, re.MULTILINE)
+        match = re.search("%s\"(?P<value>.+)\"" % label,
+                                                  source_text,
+                                                  re.MULTILINE)
         if match:
             return match.group('value')
 
@@ -61,21 +69,31 @@ class Credentials(object):
         return platform.mac_ver()[0]
 
     def _parse_security_tool_output(self, security_output):
-        username = self._keychain_value_with_label("^\s*\"acct\"<blob>=", security_output)
-        password = self._keychain_value_with_label("^password: ", security_output)
+        username = self._keychain_value_with_label("^\s*\"acct\"<blob>=",
+                                                   security_output)
+        password = self._keychain_value_with_label("^password: ",
+                                                   security_output)
         return [username, password]
 
     def _run_security_tool(self, username=None):
-        security_command = ["/usr/bin/security", "find-internet-password", "-g", "-s", self.host]
+        security_command = [
+            "/usr/bin/security",
+            "find-internet-password",
+            "-g",
+            "-s",
+            self.host,
+        ]
         if username:
             security_command += ["-a", username]
 
-        log("Reading Keychain for %s account and password.  Click \"Allow\" to continue..." % self.host)
+        log("Reading Keychain for %s account and password.  "
+            "Click \"Allow\" to continue..." % self.host)
         try:
             return self.executive.run_command(security_command)
         except ScriptError:
-            # Failed to either find a keychain entry or somekind of OS-related error
-            # occured (for instance, couldn't find the /usr/sbin/security command).
+            # Failed to either find a keychain entry or somekind of OS-related
+            # error occured (for instance, couldn't find the /usr/sbin/security
+            # command).
             log("Could not find a keychain entry for %s." % self.host)
             return None
 
@@ -102,6 +120,7 @@ class Credentials(object):
         if not username:
             username = raw_input("%s login: " % self.host)
         if not password:
-            password = getpass.getpass("%s password for %s: " % (self.host, username))
+            password = getpass.getpass("%s password for %s: " % (self.host,
+                                                                 username))
 
         return [username, password]

@@ -1,9 +1,9 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +28,9 @@
 #
 # WebKit's Python module for committer and reviewer validation
 
+
 class Committer:
+
     def __init__(self, name, email_or_emails):
         self.full_name = name
         if isinstance(email_or_emails, str):
@@ -37,21 +39,28 @@ class Committer:
             self.emails = email_or_emails
         self.can_review = False
 
-    # FIXME: We're assuming the first email is a valid bugzilla email, which might not be right.
     def bugzilla_email(self):
+        # FIXME: We're assuming the first email is a valid bugzilla email,
+        # which might not be right.
         return self.emails[0]
 
     def __str__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
+
 class Reviewer(Committer):
+
     def __init__(self, name, email_or_emails):
         Committer.__init__(self, name, email_or_emails)
         self.can_review = True
 
-# This is intended as a canonical, machine-readable list of all non-reviewer committers for WebKit.
-# If your name is missing here and you are a committer, please add it.  No review needed.
-# All reviewers are committers, so this list is only of committers who are not reviewers.
+
+# This is intended as a canonical, machine-readable list of all non-reviewer
+# committers for WebKit.  If your name is missing here and you are a committer,
+# please add it.  No review needed.  All reviewers are committers, so this list
+# is only of committers who are not reviewers.
+
+
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org"),
     Committer("Adam Langley", "agl@chromium.org"),
@@ -145,8 +154,12 @@ committers_unable_to_review = [
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
 
-# This is intended as a canonical, machine-readable list of all reviewers for WebKit.
-# If your name is missing here and you are a reviewer, please add it.  No review needed.
+
+# This is intended as a canonical, machine-readable list of all reviewers for
+# WebKit.  If your name is missing here and you are a reviewer, please add it.
+# No review needed.
+
+
 reviewers_list = [
     Reviewer("Ada Chan", "adachan@apple.com"),
     Reviewer("Adam Barth", "abarth@webkit.org"),
@@ -215,8 +228,12 @@ reviewers_list = [
 
 
 class CommitterList:
+
     # Committers and reviewers are passed in to allow easy testing
-    def __init__(self, committers=committers_unable_to_review, reviewers=reviewers_list):
+
+    def __init__(self,
+                 committers=committers_unable_to_review,
+                 reviewers=reviewers_list):
         self._committers = committers + reviewers
         self._reviewers = reviewers
         self._committers_by_email = {}

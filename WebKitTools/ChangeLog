@@ -2,6 +2,16 @@
 
         Rubber stamped by Eric Seidel.
 
+        More pep8 compliance.
+
+        * Scripts/webkitpy/comments.py:
+        * Scripts/webkitpy/committers.py:
+        * Scripts/webkitpy/credentials.py:
+
+2010-01-24  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
         Make changelogs.py pass pep8.
 
         * Scripts/webkitpy/changelogs.py:
