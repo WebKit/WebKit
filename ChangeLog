@@ -1,3 +1,13 @@
+2010-01-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix the build on Maemo5.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34051
+
+        * WebKit.pri: Disable the use of uitools, just like it's done for Symbian.
+
 2010-01-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Antti Koivisto.

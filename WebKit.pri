@@ -65,7 +65,6 @@ CONFIG -= warn_on
 symbian|*-armcc {
     RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
     RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
-    DEFINES *= QT_NO_UITOOLS
 }
 
 *-armcc {
@@ -76,6 +75,8 @@ symbian|*-armcc {
 symbian {
     QMAKE_CXXFLAGS.ARMCC += $$RVCT_COMMON_CXXFLAGS
 }
+
+symbian|maemo5: DEFINES *= QT_NO_UITOOLS
 
 contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
 
