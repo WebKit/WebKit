@@ -1179,6 +1179,22 @@
 
         * WebCore.pro: Fix warning about missing header file that isn't present anymore.
 
+2010-01-25  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update copy of the source whenever playbin2's source property
+        changes.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+        Connect to the notify::source signal and update the source
+        element pointer from there. This makes sure that we never
+        store a pointer to an old source element.
+
 2010-01-22  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Timothy Hatcher.

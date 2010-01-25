@@ -124,6 +124,16 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
     return true;
 }
 
+void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec, gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    GstElement* element;
+
+    g_object_get(mp->m_playBin, "source", &element, NULL);
+    gst_object_replace((GstObject**) &mp->m_source, (GstObject*) element);
+    gst_object_unref(element);
+}
+
 void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
 {
     MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
@@ -255,6 +265,11 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     if (m_mediaLocations) {
         gst_structure_free(m_mediaLocations);
         m_mediaLocations = 0;
+    }
+
+    if (m_source) {
+        gst_object_unref(m_source);
+        m_source = 0;
     }
 
     if (m_playBin) {
@@ -664,10 +679,6 @@ void MediaPlayerPrivate::updateStates()
         }
 
         m_networkState = MediaPlayer::Loaded;
-
-        g_object_get(m_playBin, "source", &m_source, NULL);
-        if (!m_source)
-            LOG_VERBOSE(Media, "m_source is 0");
         break;
     case GST_STATE_CHANGE_ASYNC:
         LOG_VERBOSE(Media, "Async: State: %s, pending: %s",
@@ -1058,6 +1069,7 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
     g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
 
     g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
+    g_signal_connect(m_playBin, "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
 
     m_videoSink = webkit_video_sink_new();
 
