@@ -288,8 +288,8 @@ void forgetDOMObject(DOMObject* wrapper, void* objectHandle)
         return;
     }
 
-    // We can't guarantee that an wrapper is in the cache when it uncaches itself,
-    // since a new wrapper may have been allocated before the object's destrcutor ran.
+    // We can't guarantee that a wrapper is in the cache when it uncaches itself,
+    // since a new wrapper may be cached before the old wrapper's destructor runs.
     for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
         if (worldIter->m_wrappers.uncheckedRemove(objectHandle, wrapper))
             break;
@@ -304,8 +304,8 @@ void forgetDOMNode(JSNode* wrapper, Node* node, Document* document)
         return;
     }
 
-    // We can't guarantee that an wrapper is in the cache when it uncaches itself,
-    // since a new wrapper may have been allocated before the object's destrcutor ran.
+    // We can't guarantee that a wrapper is in the cache when it uncaches itself,
+    // since a new wrapper may be cached before the old wrapper's destructor runs.
     JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
     for (JSWrapperCacheMap::iterator wrappersIter = wrapperCacheMap.begin(); wrappersIter != wrapperCacheMap.end(); ++wrappersIter) {
         if (wrappersIter->second->uncheckedRemove(node, wrapper))

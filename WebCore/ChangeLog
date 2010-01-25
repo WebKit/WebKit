@@ -1,3 +1,13 @@
+2010-01-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Suggested by Darin Adler.
+
+        Fixed a spelling error, tightened up some grammar.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::forgetDOMObject):
+        (WebCore::forgetDOMNode):
+
 2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
