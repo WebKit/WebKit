@@ -1,3 +1,12 @@
+2010-01-25  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Phone backup support for QtWebkit for Symbian devices.
+        https://bugs.webkit.org/show_bug.cgi?id=34077
+
+        * WebCore.pro:
+
 2010-01-25  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Antti Koivisto.

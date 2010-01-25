@@ -6,6 +6,7 @@ symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000 // Min 128kB, Max 32MB
     TARGET.CAPABILITY = All -Tcb
+    TARGET.UID3 = 0x200267C2
 
     webkitlibs.sources = QtWebKit.dll
     webkitlibs.path = /sys/bin
@@ -18,9 +19,11 @@ symbian: {
         " "
     webkitlibs.pkg_prerules = vendorinfo
 
-    DEPLOYMENT += webkitlibs
+    webkitbackup.sources = ../WebKit/qt/symbian/backup_registration.xml
+    webkitbackup.path = /private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
 
-    TARGET.UID3 = 0x200267C2
+    DEPLOYMENT += webkitlibs webkitbackup
+
     # Need to guarantee that these come before system includes of /epoc32/include
     MMP_RULES += "USERINCLUDE rendering"
     MMP_RULES += "USERINCLUDE platform/text"
