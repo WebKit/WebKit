@@ -28,11 +28,9 @@
 
 WebInspector.SourceView = function(resource)
 {
-    // Set the sourceFrame first since WebInspector.ResourceView will set headersVisible
-    // and our override of headersVisible needs the sourceFrame.
-    this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
-
     WebInspector.ResourceView.call(this, resource);
+
+    this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
 
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
 
@@ -44,22 +42,10 @@ WebInspector.SourceView = function(resource)
 
     var gutterElement = document.createElement("div");
     gutterElement.className = "webkit-line-gutter-backdrop";
-    this.element.appendChild(gutterElement);
+    this.contentElement.appendChild(gutterElement);
 }
 
 WebInspector.SourceView.prototype = {
-    set headersVisible(x)
-    {
-        if (x === this._headersVisible)
-            return;
-
-        var superSetter = WebInspector.ResourceView.prototype.__lookupSetter__("headersVisible");
-        if (superSetter)
-            superSetter.call(this, x);
-
-        this.sourceFrame.autoSizesToFitContentHeight = x;
-    },
-
     show: function(parentElement)
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
@@ -70,12 +56,6 @@ WebInspector.SourceView.prototype = {
     {
         WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
-    },
-
-    resize: function()
-    {
-        if (this.sourceFrame.autoSizesToFitContentHeight)
-            this.sourceFrame.sizeToFitContentHeight();
     },
 
     detach: function()

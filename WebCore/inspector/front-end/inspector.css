@@ -767,39 +767,46 @@ body.drawer-visible #drawer {
 
 .resource-view {
     display: none;
-    overflow: hidden;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    overflow: hidden;
 }
 
 .resource-view.visible {
     display: block;
 }
 
-.resource-view.headers-visible {
-    overflow-y: auto;
-    overflow-x: hidden;
+.resource-view .scope-bar {
+    position: absolute;
+    height: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
+    border-bottom: 1px solid rgb(163, 163, 163);
+}
+
+.resource-view .scope-bar li {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .resource-view-headers {
-    display: none;
     padding: 6px;
-    border-bottom: 1px solid rgb(64%, 64%, 64%);
-    background-color: white;
-    -webkit-user-select: text;
+    -webkit-user-select: text;    
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
 }
 
 .resource-view-headers .outline-disclosure .parent {
     -webkit-user-select: none;
     font-weight: bold;
-}
-
-.resource-view.headers-visible .resource-view-headers {
-    display: block;
 }
 
 .resource-view-headers .outline-disclosure .children li {
@@ -833,23 +840,10 @@ body.drawer-visible #drawer {
 
 .resource-view .resource-view-content {
     position: absolute;
-    top: 0;
+    top: 20px;
     right: 0;
     left: 0;
     bottom: 0;
-}
-
-.resource-view.headers-visible .resource-view-content {
-    position: relative;
-    top: auto;
-    right: auto;
-    left: auto;
-    bottom: auto;
-}
-
-.resource-view.headers-visible .source-view-frame {
-    height: auto;
-    vertical-align: top;
 }
 
 .webkit-line-gutter-backdrop {

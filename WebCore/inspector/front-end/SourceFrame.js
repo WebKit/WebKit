@@ -56,31 +56,6 @@ WebInspector.SourceFrame.prototype = {
         this._updateExecutionLine(previousLine);
     },
 
-    get autoSizesToFitContentHeight()
-    {
-        return this._autoSizesToFitContentHeight;
-    },
-
-    set autoSizesToFitContentHeight(x)
-    {
-        if (this._autoSizesToFitContentHeight === x)
-            return;
-
-        this._autoSizesToFitContentHeight = x;
-
-        if (this._autoSizesToFitContentHeight) {
-            this._windowResizeListener = this._windowResized.bind(this);
-            window.addEventListener("resize", this._windowResizeListener, false);
-            this.sizeToFitContentHeight();
-        } else {
-            this.element.style.removeProperty("height");
-            if (this.element.contentDocument)
-                this.element.contentDocument.body.removeStyleClass("webkit-height-sized-to-fit");
-            window.removeEventListener("resize", this._windowResizeListener, false);
-            delete this._windowResizeListener;
-        }
-    },
-
     sourceRow: function(lineNumber)
     {
         if (!lineNumber || !this.element.contentDocument)
@@ -278,9 +253,6 @@ WebInspector.SourceFrame.prototype = {
         if (this._executionLine)
             this.revealLine(this._executionLine);
 
-        if (this.autoSizesToFitContentHeight)
-            this.sizeToFitContentHeight();
-
         if (this._lineNumberToReveal) {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
@@ -297,13 +269,6 @@ WebInspector.SourceFrame.prototype = {
     _isContentLoaded: function() {
         var doc = this.element.contentDocument;
         return doc && doc.getElementsByTagName("table")[0];
-    },
-
-    _windowResized: function(event)
-    {
-        if (!this._autoSizesToFitContentHeight)
-            return;
-        this.sizeToFitContentHeight();
     },
 
     _documentContextMenu: function(event)

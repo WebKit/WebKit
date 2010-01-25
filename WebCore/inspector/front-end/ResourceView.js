@@ -35,6 +35,20 @@ WebInspector.ResourceView = function(resource)
 
     this.resource = resource;
 
+    this.tabsElement = document.createElement("div");
+    this.tabsElement.className = "scope-bar";
+    this.element.appendChild(this.tabsElement);
+
+    this.headersTabElement = document.createElement("li");
+    this.headersTabElement.textContent = WebInspector.UIString("Headers");
+    this.contentTabElement = document.createElement("li");
+    this.contentTabElement.textContent = WebInspector.UIString("Content");
+    this.tabsElement.appendChild(this.headersTabElement);
+    this.tabsElement.appendChild(this.contentTabElement);
+
+    this.headersTabElement.addEventListener("click", this._selectHeadersTab.bind(this), false);
+    this.contentTabElement.addEventListener("click", this._selectContentTab.bind(this), false);
+
     this.headersElement = document.createElement("div");
     this.headersElement.className = "resource-view-headers";
     this.element.appendChild(this.headersElement);
@@ -63,7 +77,7 @@ WebInspector.ResourceView = function(resource)
     this.headersTreeOutline.appendChild(this.statusCodeTreeElement);
      
     this.requestHeadersTreeElement = new TreeElement("", null, true);
-    this.requestHeadersTreeElement.expanded = false;
+    this.requestHeadersTreeElement.expanded = true;
     this.requestHeadersTreeElement.selectable = false;
     this.headersTreeOutline.appendChild(this.requestHeadersTreeElement);
 
@@ -71,29 +85,27 @@ WebInspector.ResourceView = function(resource)
     this._decodeRequestParameters = true;
 
     this.queryStringTreeElement = new TreeElement("", null, true);
-    this.queryStringTreeElement.expanded = false;
+    this.queryStringTreeElement.expanded = true;
     this.queryStringTreeElement.selectable = false;
     this.queryStringTreeElement.hidden = true;
     this.headersTreeOutline.appendChild(this.queryStringTreeElement);
 
     this.formDataTreeElement = new TreeElement("", null, true);
-    this.formDataTreeElement.expanded = false;
+    this.formDataTreeElement.expanded = true;
     this.formDataTreeElement.selectable = false;
     this.formDataTreeElement.hidden = true;
     this.headersTreeOutline.appendChild(this.formDataTreeElement);
 
     this.requestPayloadTreeElement = new TreeElement(WebInspector.UIString("Request Payload"), null, true);
-    this.requestPayloadTreeElement.expanded = false;
+    this.requestPayloadTreeElement.expanded = true;
     this.requestPayloadTreeElement.selectable = false;
     this.requestPayloadTreeElement.hidden = true;
     this.headersTreeOutline.appendChild(this.requestPayloadTreeElement);
 
     this.responseHeadersTreeElement = new TreeElement("", null, true);
-    this.responseHeadersTreeElement.expanded = false;
+    this.responseHeadersTreeElement.expanded = true;
     this.responseHeadersTreeElement.selectable = false;
     this.headersTreeOutline.appendChild(this.responseHeadersTreeElement);
-
-    this.headersVisible = true;
 
     resource.addEventListener("url changed", this._refreshURL, this);
     resource.addEventListener("requestHeaders changed", this._refreshRequestHeaders, this);
@@ -104,27 +116,10 @@ WebInspector.ResourceView = function(resource)
     this._refreshRequestHeaders();
     this._refreshResponseHeaders();
     this._refreshHTTPInformation();
+    this._selectTab();
 }
 
 WebInspector.ResourceView.prototype = {
-    get headersVisible()
-    {
-        return this._headersVisible;
-    },
-
-    set headersVisible(x)
-    {
-        if (x === this._headersVisible)
-            return;
-
-        this._headersVisible = x;
-
-        if (x)
-            this.element.addStyleClass("headers-visible");
-        else
-            this.element.removeStyleClass("headers-visible");
-    },
-
     attach: function()
     {
         if (!this.element.parentNode) {
@@ -132,6 +127,38 @@ WebInspector.ResourceView.prototype = {
             if (parentElement)
                 parentElement.appendChild(this.element);
         }
+    },
+
+    show: function(parentElement)
+    {
+        WebInspector.View.prototype.show.call(this, parentElement);
+        this._selectTab();
+    },
+
+    _selectTab: function()
+    {
+        if (WebInspector.settings.resourceViewTab === "headers")
+            this._selectHeadersTab();
+        else
+            this._selectContentTab();
+    },
+
+    _selectHeadersTab: function()
+    {
+        WebInspector.settings.resourceViewTab = "headers";
+        this.headersTabElement.addStyleClass("selected");
+        this.contentTabElement.removeStyleClass("selected");
+        this.headersElement.removeStyleClass("hidden");
+        this.contentElement.addStyleClass("hidden");
+    },
+
+    _selectContentTab: function()
+    {
+        WebInspector.settings.resourceViewTab = "content";
+        this.contentTabElement.addStyleClass("selected");
+        this.headersTabElement.removeStyleClass("selected");
+        this.contentElement.removeStyleClass("hidden");
+        this.headersElement.addStyleClass("hidden");
     },
 
     _refreshURL: function()

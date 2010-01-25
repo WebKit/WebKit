@@ -229,11 +229,8 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
 
-        if (this.visibleView) {
-            if (this.visibleView instanceof WebInspector.ResourceView)
-                this.visibleView.headersVisible = false;
+        if (this.visibleView)
             this.visibleView.show(this.viewsContainerElement);
-        }
 
         // Hide any views that are visible that are not this panel's current visible view.
         // This can happen when a ResourceView is visible in the Resources panel then switched
@@ -611,7 +608,6 @@ WebInspector.ScriptsPanel.prototype = {
             if (!WebInspector.panels.resources)
                 return null;
             view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
-            view.headersVisible = false;
 
             if (scriptOrResource.url in this._breakpointsURLMap) {
                 var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
