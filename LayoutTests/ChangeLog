@@ -1,3 +1,13 @@
+2010-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Improve portability of select-item-background-clip.html
+        https://bugs.webkit.org/show_bug.cgi?id=34072
+
+        * fast/forms/select-item-background-clip.html:
+          Calculate the pixel height at runtime.
+
 2010-01-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, trivial baseline updates.
