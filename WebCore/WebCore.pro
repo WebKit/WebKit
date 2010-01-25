@@ -119,7 +119,7 @@ symbian:!CONFIG(QTDIR_build): CONFIG += system-sqlite
 RESOURCES += \
     $$PWD/../WebCore/WebCore.qrc
 
-!symbian {
+!symbian:!maemo5 {
     RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
 }
 
