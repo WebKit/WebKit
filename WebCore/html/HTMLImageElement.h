@@ -45,8 +45,6 @@ public:
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
 
     virtual bool canStartSelection() const { return false; }
 
@@ -105,6 +103,11 @@ public:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 private:
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
+
     HTMLImageLoader m_imageLoader;
     String usemap;
     bool ismap;

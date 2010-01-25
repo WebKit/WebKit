@@ -1,3 +1,24 @@
+2010-01-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34076
+        An image remains accessible via form.property syntax after being removed from document.
+
+        Tests: fast/forms/removed-image-as-property.html
+               fast/forms/reparented-image-as-property.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::~HTMLImageElement): This is called during GC - not a good time
+        to make observable changes to DOM.
+        (WebCore::HTMLImageElement::insertedIntoTree): This is the right place to do any work that
+        depends on connectedness to some ancestor. We still allow for m_form to be set via constructor,
+        which happens during parsing.
+        (WebCore::HTMLImageElement::removedFromTree): Ditto.
+
+        * html/HTMLImageElement.h: Added removedFromTree/insertedIntoTree, moved removedFromDocument
+        and insertedIntoDocument to private section, as they shouldn't be called directly.
+
 2010-01-25  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

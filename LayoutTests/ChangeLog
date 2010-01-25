@@ -1,3 +1,15 @@
+2010-01-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34076
+        An image remains accessible via form.property syntax after being removed from document.
+
+        * fast/forms/removed-image-as-property-expected.txt: Added.
+        * fast/forms/removed-image-as-property.html: Added.
+        * fast/forms/reparented-image-as-property-expected.txt: Added.
+        * fast/forms/reparented-image-as-property.html: Added.
+
 2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Add new inspector test added in r53807 to skip
