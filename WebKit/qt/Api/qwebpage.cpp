@@ -172,6 +172,8 @@ public:
 
     virtual QObject* pluginParent() const;
 
+    virtual QStyle* style() const;
+
     QWidget* view;
 };
 
@@ -239,6 +241,11 @@ QWidget* QWebPageWidgetClient::ownerWidget() const
 QObject* QWebPageWidgetClient::pluginParent() const
 {
     return view;
+}
+
+QStyle* QWebPageWidgetClient::style() const
+{
+    return view->style();
 }
 
 // Lookup table mapping QWebPage::WebActions to the associated Editor commands

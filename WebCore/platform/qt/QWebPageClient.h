@@ -31,7 +31,11 @@
 #endif
 
 #include <QRect>
+
+QT_BEGIN_NAMESPACE
 class QGraphicsItem;
+class QStyle;
+QT_END_NAMESPACE
 
 class QWebPageClient {
 public:
@@ -78,6 +82,8 @@ public:
     virtual QWidget* ownerWidget() const = 0;
 
     virtual QObject* pluginParent() const = 0;
+
+    virtual QStyle* style() const = 0;
 
 protected:
 #ifndef QT_NO_CURSOR
