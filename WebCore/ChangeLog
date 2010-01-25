@@ -1,3 +1,18 @@
+2010-01-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        [Qt] Clean up code to determine palette from page client in RenderThemeQt
+        https://bugs.webkit.org/show_bug.cgi?id=34052
+
+        Use the RenderTheme's associated page instead of going through the
+        render tree and the document.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::setPaletteFromPageClientIfExists):
+        (WebCore::RenderThemeQt::initializeCommonQStyleOptions):
+        * platform/qt/RenderThemeQt.h:
+
 2010-01-25  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
