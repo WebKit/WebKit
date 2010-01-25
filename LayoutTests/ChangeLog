@@ -1,3 +1,14 @@
+2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Test that Web Inspector doesn't change methods declared by the inspected
+        page.
+        https://bugs.webkit.org/show_bug.cgi?id=34089
+
+        * inspector/inspected-objects-not-overriden-expected.txt: Added.
+        * inspector/inspected-objects-not-overriden.html: Added.
+
 2010-01-25  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Xan Lopez.

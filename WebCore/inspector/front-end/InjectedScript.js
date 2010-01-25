@@ -85,7 +85,7 @@ InjectedScript.reset();
 
 InjectedScript.dispatch = function(methodName, args, callId)
 {
-    var argsArray = JSON.parse(args);
+    var argsArray = InjectedScript.JSON.parse(args);
     if (callId)
         argsArray.splice(0, 0, callId);  // Methods that run asynchronously have a call back id parameter.
     var result = InjectedScript[methodName].apply(InjectedScript, argsArray);
@@ -476,7 +476,7 @@ InjectedScript.getPrototypes = function(nodeId)
 
     var result = [];
     for (var prototype = node; prototype; prototype = prototype.__proto__) {
-        var title = Object.describe(prototype, true);
+        var title = InjectedScript._describe(prototype, true);
         if (title.match(/Prototype$/)) {
             title = title.replace(/Prototype$/, "");
         }
@@ -544,7 +544,7 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
         return true;
     } catch(e) {
         try {
-            var result = InjectedScript._window().eval("\"" + expression.escapeCharacters("\"") + "\"");
+            var result = InjectedScript._window().eval("\"" + InjectedScript._escapeCharacters(expression, "\"") + "\"");
             object[propertyName] = result;
             return true;
         } catch(e) {
@@ -660,7 +660,7 @@ InjectedScript._evaluateOn = function(evalFunction, object, expression)
     var value = evalFunction.call(object, expression);
 
     // When evaluating on call frame error is not thrown, but returned as a value.
-    if (Object.type(value) === "error")
+    if (InjectedScript._type(value) === "error")
         throw value.toString();
 
     return value;
@@ -700,9 +700,9 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery)
     if (!/^[a-zA-Z0-9\-_:]+$/.test(attributeNameQuery))
         attributeNameQuery = null;
 
-    const escapedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
-    const escapedTagNameQuery = (tagNameQuery ? tagNameQuery.escapeCharacters("'") : null);
-    const escapedWhitespaceTrimmedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
+    const escapedQuery = InjectedScript._escapeCharacters(whitespaceTrimmedQuery, "'");
+    const escapedTagNameQuery = (tagNameQuery ?  InjectedScript._escapeCharacters(tagNameQuery, "'") : null);
+    const escapedWhitespaceTrimmedQuery = InjectedScript._escapeCharacters(whitespaceTrimmedQuery, "'");
     const searchResultsProperty = InjectedScript._includedInSearchResultsPropertyName;
 
     function addNodesToResults(nodes, length, getItem)
@@ -966,10 +966,10 @@ InjectedScript._inspectObject = function(o)
         return;
 
     inspectedWindow.console.log(o);
-    if (Object.type(o) === "node") {
+    if (InjectedScript._type(o) === "node") {
         InjectedScriptHost.pushNodePathToFrontend(o, false, true);
     } else {
-        switch (Object.describe(o)) {
+        switch (InjectedScript._describe(o)) {
             case "Database":
                 InjectedScriptHost.selectDatabase(o);
                 break;
@@ -982,7 +982,7 @@ InjectedScript._inspectObject = function(o)
 
 InjectedScript._copy = function(o)
 {
-    if (Object.type(o) === "node") {
+    if (InjectedScript._type(o) === "node") {
         var nodeId = InjectedScriptHost.pushNodePathToFrontend(o, false, false);
         InjectedScriptHost.copyNode(nodeId);
     } else {
@@ -1122,7 +1122,7 @@ InjectedScript._objectForId = function(objectId)
 InjectedScript.pushNodeToFrontend = function(objectProxy)
 {
     var object = InjectedScript._resolveObject(objectProxy);
-    if (!object || Object.type(object) !== "node")
+    if (!object || InjectedScript._type(object) !== "node")
         return false;
     return InjectedScriptHost.pushNodePathToFrontend(object, false, false);
 }
@@ -1140,7 +1140,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
     var result = {};
     result.injectedScriptId = injectedScriptId;
     result.objectId = objectId;
-    result.type = Object.type(object);
+    result.type = InjectedScript._type(object);
 
     var type = typeof object;
     if ((type === "object" && object !== null) || type === "function") {
@@ -1150,7 +1150,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
         }
     }
     try {
-        result.description = Object.describe(object, abbreviate);
+        result.description = InjectedScript._describe(object, abbreviate);
     } catch (e) {
         result.errorText = e.toString();
     }
@@ -1245,7 +1245,7 @@ InjectedScript._isDefined = function(object)
     return object || object instanceof inspectedWindow.HTMLAllCollection;
 }
 
-Object.type = function(obj)
+InjectedScript._type = function(obj)
 {
     if (obj === null)
         return "null";
@@ -1283,19 +1283,10 @@ Object.type = function(obj)
     return type;
 }
 
-Object.hasProperties = function(obj)
+InjectedScript._describe = function(obj, abbreviated)
 {
-    if (typeof obj === "undefined" || typeof obj === "null")
-        return false;
-    for (var name in obj)
-        return true;
-    return false;
-}
-
-Object.describe = function(obj, abbreviated)
-{
-    var type1 = Object.type(obj);
-    var type2 = Object.className(obj);
+    var type1 = InjectedScript._type(obj);
+    var type2 = InjectedScript._className(obj);
 
     switch (type1) {
     case "object":
@@ -1320,39 +1311,29 @@ Object.describe = function(obj, abbreviated)
     }
 }
 
-Object.className = function(obj)
+InjectedScript._className = function(obj)
 {
     return Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1")
 }
 
-// Although Function.prototype.bind and String.prototype.escapeCharacters are defined in utilities.js they will soon become
-// unavailable in the InjectedScript context. So we define them here for the local use.
-// TODO: remove this comment once InjectedScript runs in a separate context.
-Function.prototype.bind = function(thisObject)
-{
-    var func = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-    return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))) };
-}
-
-String.prototype.escapeCharacters = function(chars)
+InjectedScript._escapeCharacters = function(str, chars)
 {
     var foundChar = false;
     for (var i = 0; i < chars.length; ++i) {
-        if (this.indexOf(chars.charAt(i)) !== -1) {
+        if (str.indexOf(chars.charAt(i)) !== -1) {
             foundChar = true;
             break;
         }
     }
 
     if (!foundChar)
-        return this;
+        return str;
 
     var result = "";
-    for (var i = 0; i < this.length; ++i) {
-        if (chars.indexOf(this.charAt(i)) !== -1)
+    for (var i = 0; i < str.length; ++i) {
+        if (chars.indexOf(str.charAt(i)) !== -1)
             result += "\\";
-        result += this.charAt(i);
+        result += str.charAt(i);
     }
 
     return result;
