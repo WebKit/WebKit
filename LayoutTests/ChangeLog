@@ -1,3 +1,20 @@
+2010-01-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, trivial baseline updates.
+
+        -webkit-gradient slows down scrolling when page has horizontal scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=19650
+
+        Update pixel baselines. They changed slightly after http://trac.webkit.org/changeset/53318/
+        landed.
+
+        * platform/mac/fast/gradients/border-image-gradient-expected.checksum:
+        * platform/mac/fast/gradients/border-image-gradient-expected.png:
+        * platform/mac/fast/gradients/border-image-gradient-sides-and-corners-expected.checksum:
+        * platform/mac/fast/gradients/border-image-gradient-sides-and-corners-expected.png:
+        * platform/mac/fast/gradients/simple-gradients-expected.checksum:
+        * platform/mac/fast/gradients/simple-gradients-expected.png:
+
 2010-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.
