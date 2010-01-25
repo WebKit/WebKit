@@ -1,5 +1,12 @@
 2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Add new inspector test added in r53807 to skip
+        list on qt platform.
+
+        * platform/qt/Skipped:
+
+2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Test that Web Inspector doesn't change methods declared by the inspected
