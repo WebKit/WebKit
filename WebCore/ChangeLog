@@ -1,5 +1,18 @@
 2010-01-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Rubber-stamped by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34076
+        An image remains accessible via form.property syntax after being removed from document.
+
+        Fix crashing regression tests (tables/mozilla/bugs/bug4527.html et al.)
+
+        * html/HTMLImageElement.cpp: (WebCore::HTMLImageElement::insertedIntoTree): Remove incorrect
+        assertions added in the previous patch - it's mot true that m_for is always a parent; table
+        parsing can reparent the image element, but m_form still needs to be set.
+
+2010-01-25  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=34076

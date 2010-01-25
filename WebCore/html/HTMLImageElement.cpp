@@ -209,18 +209,8 @@ void HTMLImageElement::removedFromDocument()
 
 void HTMLImageElement::insertedIntoTree(bool deep)
 {
-    if (m_form) {
-        // m_form was set by constructor. In debug builds, check that it's an ancestor indeed.
-#ifndef NDEBUG
-        for (Node* ancestor = parentNode(); /* no end condition - there must be a form ancestor */; ancestor = ancestor->parentNode()) {
-            ASSERT(ancestor);
-            if (ancestor->hasTagName(formTag)) {
-                ASSERT(m_form == static_cast<HTMLFormElement*>(ancestor));
-                break;
-            }
-        }
-#endif
-    } else {
+    if (!m_form) {
+        // m_form can be non-null if it was set in constructor.
         for (Node* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor->hasTagName(formTag)) {
                 m_form = static_cast<HTMLFormElement*>(ancestor);
