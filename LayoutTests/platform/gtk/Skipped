@@ -5778,3 +5778,6 @@ svg/custom/use-instanceRoot-event-bubbling.xhtml
 
 # New failure after http://trac.webkit.org/changeset/53758
 scrollbars/scrollbar-middleclick-nopaste.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=34086
+media/video-reverse-play-duration.html
