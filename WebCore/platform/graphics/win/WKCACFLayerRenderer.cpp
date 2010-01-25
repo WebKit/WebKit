@@ -148,9 +148,9 @@ WKCACFLayerRenderer::~WKCACFLayerRenderer()
 void WKCACFLayerRenderer::setScrollFrame(const IntRect& scrollFrame)
 {
     m_scrollFrame = scrollFrame;
-
+    CGRect frameBounds = bounds();
     m_scrollLayer->setBounds(CGRectMake(0, 0, m_scrollFrame.width(), m_scrollFrame.height()));
-    m_scrollLayer->setPosition(CGPointMake(0, m_scrollFrame.height()));
+    m_scrollLayer->setPosition(CGPointMake(0, frameBounds.size.height));
 
     if (m_rootChildLayer)
         m_rootChildLayer->setPosition(CGPointMake(m_scrollFrame.x(), m_scrollFrame.height() + m_scrollFrame.y()));
@@ -238,13 +238,8 @@ void WKCACFLayerRenderer::createRenderer()
     CGColorRelease(debugColor);
 #endif
 
-    if (IsWindow(m_hostWindow)) {
+    if (IsWindow(m_hostWindow))
         m_rootLayer->setFrame(bounds());
-
-        // For now this will include the scroll bars. Later in the setScrollFrame
-        // we will fix it
-        m_scrollLayer->setFrame(bounds());
-    }
 
     if (m_context)
         m_rootLayer->becomeRootLayerForContext(m_context.get());

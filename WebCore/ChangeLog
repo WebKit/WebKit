@@ -1,3 +1,15 @@
+2010-01-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed bug in positioning of scroll layer within the
+        parent root layer.
+        https://bugs.webkit.org/show_bug.cgi?id=33847
+        
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::setScrollFrame):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+
 2010-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Geoffrey Garen.
