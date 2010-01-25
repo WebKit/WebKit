@@ -61,7 +61,7 @@ CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& userSpac
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also
     // result in nothing being rendered.
-    // INT_MAX is almost correct, but there seems to be some number wrapping occuring making the fill
+    // INT_MAX is almost correct, but there seems to be some number wrapping occurring making the fill
     // pattern is not filled correctly.
     // To make error of floating point less than 0.5, we use the half of the number of mantissa of float (1 << 22).
     CGFloat xStep = m_repeatX ? tileRect.width() : (1 << 22);

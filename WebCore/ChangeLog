@@ -1,3 +1,147 @@
+2010-01-25  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34073
+
+        Fixes misspelled words in comments.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper detach]):
+        (AXAttributeStringSetElement):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::completeURL):
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetException):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        (JObjectWrapper::JObjectWrapper):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * dom/Element.h:
+        * dom/MessagePortChannel.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * dom/Node.cpp:
+        (WebCore::Node::isFocusable):
+        (WebCore::Node::shadowAncestorNode):
+        * dom/Node.h:
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        * dom/Position.h:
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::reconcileTextDecorationProperties):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::prepareEditingStyleToApplyAt):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        * editing/Editor.cpp:
+        (WebCore::Editor::learnSpelling):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._format):
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneDeadResources):
+        * loader/Cache.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::makePurgeable):
+        * loader/CachedResource.h:
+        * loader/CachedResourceHandle.h:
+        * loader/DocumentLoader.h:
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didCancel):
+        * loader/WorkerThreadableLoader.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::spaceNeeded):
+        * notifications/NotificationPresenter.h:
+        (WebCore::NotificationPresenter::):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+        * platform/LinkHash.cpp:
+        (WebCore::cleanPath):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::calculateDrawingMode):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::doSeek):
+        (WebCore::MediaPlayerPrivate::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivate::hasAvailableVideoFrame):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames):
+        * platform/text/TextEncodingDetectorICU.cpp:
+        (WebCore::detectTextEncoding):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::stateChanged):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::mapLocalToContainer):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::flattenWithTransform):
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::dispatchBlurEvent):
+        (WebCore::WMLInputElement::suggestedValue):
+
 2010-01-25  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Darin Adler.

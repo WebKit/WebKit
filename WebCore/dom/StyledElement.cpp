@@ -346,7 +346,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
     // not something that fits the specs.
     
     // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
-    // out of everyhting you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
+    // out of everything you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
     
     // the length of the color value is rounded up to the next
     // multiple of 3. each part of the rgb triple then gets one third

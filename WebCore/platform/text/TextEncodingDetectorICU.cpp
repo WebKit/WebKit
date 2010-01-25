@@ -69,7 +69,7 @@ bool detectTextEncoding(const char* data, size_t len,
     // "the context" (parent-encoding, referrer encoding, etc).
     // 2. 'Emulate' Firefox/IE's non-Universal detectors (e.g.
     // Chinese, Japanese, Russian, Korean and Hebrew) by picking the 
-    // encoding with a highest confidence among the detetctor-specific
+    // encoding with a highest confidence among the detector-specific
     // limited set of candidate encodings.
     // Below is a partial implementation of the first part of what's outlined
     // above.

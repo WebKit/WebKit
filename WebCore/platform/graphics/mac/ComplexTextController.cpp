@@ -113,7 +113,7 @@ int ComplexTextController::offsetForPosition(int h, bool includePartialGlyphs)
                 else
                     hitGlyphEnd = max<CFIndex>(hitGlyphStart, j > 0 ? complexTextRun.indexAt(j - 1) : complexTextRun.stringLength());
 
-                // FIXME: Instead of dividing the glyph's advance equially between the characters, this
+                // FIXME: Instead of dividing the glyph's advance equally between the characters, this
                 // could use the glyph's "ligature carets". However, there is no Core Text API to get the
                 // ligature carets.
                 CFIndex hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);

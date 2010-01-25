@@ -62,7 +62,7 @@ namespace WebCore {
         // Creates a new wrapper for the passed channel.
         static PassOwnPtr<MessagePortChannel> create(PassRefPtr<PlatformMessagePortChannel>);
 
-        // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshalled to its new owning thread and is ready to receive messages).
+        // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshaled to its new owning thread and is ready to receive messages).
         // Returns false if the entanglement failed because the port was closed.
         bool entangleIfOpen(MessagePort*);
 

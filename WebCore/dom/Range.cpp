@@ -666,7 +666,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     }
 
     // Complex case: Start and end containers are different.
-    // There are three possiblities here:
+    // There are three possibilities here:
     // 1. Start container == commonRoot (End container must be a descendant)
     // 2. End container == commonRoot (Start container must be a descendant)
     // 3. Neither is commonRoot, they are both descendants

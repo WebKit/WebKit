@@ -1211,7 +1211,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 {
     if (purpose == NoStructuralLayer) {
         if (m_structuralLayer) {
-            // Relace the transformLayer in the parent with this layer.
+            // Replace the transformLayer in the parent with this layer.
             [m_layer.get() removeFromSuperlayer];
             [[m_structuralLayer.get() superlayer] replaceSublayer:m_structuralLayer.get() with:m_layer.get()];
 

@@ -74,7 +74,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(select);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(submit);
 
-    // These 4 attribute event handler attributes are overrided by HTMLBodyElement
+    // These four attribute event handler attributes are overridden by HTMLBodyElement
     // and HTMLFrameSetElement to forward to the DOMWindow.
     DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(blur);
     DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(error);

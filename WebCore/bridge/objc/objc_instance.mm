@@ -348,7 +348,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier& p
     JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
-    // setValue:forUndefinedKey:, and unfortnately the default implementation
+    // setValue:forUndefinedKey:, and unfortunately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
         setGlobalException(nil);
@@ -376,7 +376,7 @@ JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier
     JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
-    // valueForUndefinedKey:, and unfortnately the default implementation
+    // valueForUndefinedKey:, and unfortunately the default implementation
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
         setGlobalException(nil);

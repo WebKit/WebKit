@@ -1467,7 +1467,7 @@ void Document::updateLayoutIgnorePendingStylesheets()
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
-            // but here we need up-to-date style immediatly.
+            // but here we need up-to-date style immediately.
             recalcStyle(Force);
     }
 
@@ -1554,7 +1554,7 @@ void Document::detach()
         (*i)->documentDetached(this);
     
     // This is required, as our Frame might delete itself as soon as it detaches
-    // us. However, this violates Node::detach() symantics, as it's never
+    // us. However, this violates Node::detach() semantics, as it's never
     // possible to re-attach. Eventually Document::detach() should be renamed,
     // or this setting of the frame to 0 could be made explicit in each of the
     // callers of Document::detach().
@@ -4546,7 +4546,7 @@ void Document::executeScriptSoon(ScriptElementData* data, CachedResourceHandle<C
         m_executeScriptSoonTimer.startOneShot(0);
 }
 
-// FF method for accessing the selection added for compatability.
+// FF method for accessing the selection added for compatibility.
 DOMSelection* Document::getSelection() const
 {
     return frame() ? frame()->domWindow()->getSelection() : 0;

@@ -192,7 +192,7 @@ typedef unsigned NSUInteger;
 - (void)detach
 {
     // Send unregisterUniqueIdForUIElement unconditionally because if it is
-    // ever accidently not done (via other bugs in our AX implementation) you
+    // ever accidentally not done (via other bugs in our AX implementation) you
     // end up with a crash like <rdar://problem/4273149>.  It is safe and not
     // expensive to send even if the object is not registered.
     [self unregisterUniqueIdForUIElement];
@@ -438,7 +438,7 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, AccessibilityObject* object, NSRange range)
 {
     if (object && object->isAccessibilityRenderObject()) {
-        // make a serialiazable AX object
+        // make a serializable AX object
         
         RenderObject* renderer = static_cast<AccessibilityRenderObject*>(object)->renderer();
         if (!renderer)

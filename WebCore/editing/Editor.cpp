@@ -1502,7 +1502,7 @@ void Editor::learnSpelling()
     if (!client())
         return;
         
-    // FIXME: We don't call this on the Mac, and it should remove misppelling markers around the 
+    // FIXME: We don't call this on the Mac, and it should remove misspelling markers around the 
     // learned word, see <rdar://problem/5396072>.
 
     String text = frame()->selectedText();

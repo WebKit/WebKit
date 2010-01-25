@@ -171,7 +171,7 @@ void JSDOMWindowBase::destroyJSDOMWindowBaseData(void* jsDOMWindowBaseData)
     delete static_cast<JSDOMWindowBaseData*>(jsDOMWindowBaseData);
 }
 
-// JSDOMGlobalObject* is ignored, accesing a window in any context will
+// JSDOMGlobalObject* is ignored, accessing a window in any context will
 // use that DOMWindow's prototype chain.
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow* domWindow)
 {

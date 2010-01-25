@@ -498,7 +498,7 @@ static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPat
         }
     } else {
         // Setting mode to kCGPathStroke even if shouldStroke is false. In that case, we return false and mode will not be used,
-        // but the compiler will not compain about an uninitialized variable.
+        // but the compiler will not complain about an uninitialized variable.
         mode = kCGPathStroke;
     }
 

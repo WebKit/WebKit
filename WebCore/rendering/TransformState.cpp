@@ -115,7 +115,7 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t)
     }
 
     // We could throw away m_accumulatedTransform if we wanted to here, but that
-    // would cause thrash when traversing hierarachies with alternating
+    // would cause thrash when traversing hierarchies with alternating
     // preserve-3d and flat elements.
     if (m_accumulatedTransform)
         m_accumulatedTransform->makeIdentity();

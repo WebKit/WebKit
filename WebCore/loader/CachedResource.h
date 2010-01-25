@@ -149,7 +149,7 @@ public:
 
     virtual bool schedule() const { return false; }
 
-    // List of acceptable MIME types seperated by ",".
+    // List of acceptable MIME types separated by ",".
     // A MIME type may contain a wildcard, e.g. "text/*".
     String accept() const { return m_accept; }
     void setAccept(const String& accept) { m_accept = accept; }

@@ -849,7 +849,7 @@ bool Node::isFocusable() const
         ASSERT(!renderer()->needsLayout());
     else
         // If the node is in a display:none tree it might say it needs style recalc but
-        // the whole document is atually up to date.
+        // the whole document is actually up to date.
         ASSERT(!document()->childNeedsStyleRecalc());
     
     // FIXME: Even if we are not visible, we might have a child that is visible.
@@ -1467,7 +1467,7 @@ bool Node::canStartSelection() const
 Node* Node::shadowAncestorNode()
 {
 #if ENABLE(SVG)
-    // SVG elements living in a shadow tree only occour when <use> created them.
+    // SVG elements living in a shadow tree only occur when <use> created them.
     // For these cases we do NOT want to return the shadowParentNode() here
     // but the actual shadow tree element - as main difference to the HTML forms
     // shadow tree concept. (This function _could_ be made virtual - opinions?)

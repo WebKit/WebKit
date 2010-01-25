@@ -441,7 +441,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
         m_medium = new MediaQueryEvaluator("all");
 
     if (root)
-        m_rootDefaultStyle = styleForElement(root, 0, false, true); // dont ref, because the RenderStyle is allocated from global heap
+        m_rootDefaultStyle = styleForElement(root, 0, false, true); // don't ref, because the RenderStyle is allocated from global heap
 
     if (m_rootDefaultStyle && view) {
         delete m_medium;
@@ -463,7 +463,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, StyleSheetList* styleSheets, C
     // add stylesheets from document
     m_authorStyle = new CSSRuleSet();
     
-    // Add rules from elments like SVG's <font-face>
+    // Add rules from elements like SVG's <font-face>
     if (mappedElementSheet)
         m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
 
@@ -759,7 +759,7 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
         return;
     }
 
-    // Peform a merge sort for larger lists.
+    // Perform a merge sort for larger lists.
     unsigned mid = (start + end) / 2;
     sortMatchedRules(start, mid);
     sortMatchedRules(mid, end);
@@ -2874,7 +2874,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     case CSSPropertyFontVariant:
                     case CSSPropertyZoom:
                         // these have to be applied first, because other properties use the computed
-                        // values of these porperties.
+                        // values of these properties.
                         first = true;
                         break;
                     default:
@@ -3039,7 +3039,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #if ENABLE(WCSS)
         if (primitiveValue) {
             if (primitiveValue->getIdent() == CSSValueWapMarquee) {
-                // Initialize Wap Marquee style
+                // Initialize WAP Marquee style
                 m_style->setOverflowX(OMARQUEE);
                 m_style->setOverflowY(OMARQUEE);
                 m_style->setWhiteSpace(NOWRAP);

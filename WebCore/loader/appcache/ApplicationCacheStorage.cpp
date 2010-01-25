@@ -405,7 +405,7 @@ int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
         totalAvailableSize = (m_maximumSize - currentSize) + m_database.freeSpaceSize();
     }
 
-    // The space needed to be freed in order to accomodate the failed cache is
+    // The space needed to be freed in order to accommodate the failed cache is
     // the size of the failed cache minus any already available free space.
     spaceNeeded = cacheToSave - totalAvailableSize;
     // The space needed value must be positive (or else the total already

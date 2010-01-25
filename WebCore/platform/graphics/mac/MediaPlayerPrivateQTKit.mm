@@ -656,7 +656,7 @@ void MediaPlayerPrivate::doSeek()
         [m_qtMovie.get() setRate:0];
     [m_qtMovie.get() setCurrentTime:qttime];
 
-    // restore playback only if not at end, othewise QTMovie will loop
+    // restore playback only if not at end, otherwise QTMovie will loop
     float timeAfterSeek = currentTime();
     if (oldRate && timeAfterSeek < duration())
         [m_qtMovie.get() setRate:oldRate];
@@ -766,7 +766,7 @@ void MediaPlayerPrivate::setClosedCaptionsVisible(bool closedCaptionsVisible)
 
 #if USE(ACCELERATED_COMPOSITING) && (!defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD))
     if (closedCaptionsVisible && m_qtVideoLayer) {
-        // Captions will be rendered upsided down unless we flag the movie as flipped (again). See <rdar://7408440>.
+        // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
         [m_qtVideoLayer.get() setGeometryFlipped:YES];
     }
 #endif
@@ -1081,7 +1081,7 @@ bool MediaPlayerPrivate::hasAvailableVideoFrame() const
 {
     // When using a QTMovieLayer return true as soon as the movie reaches QTMovieLoadStatePlayable 
     // because although we don't *know* when the first frame has decoded, by the time we get and 
-    // process the notificaiton a frame should have propagated the VisualContext and been set on
+    // process the notification a frame should have propagated the VisualContext and been set on
     // the layer.
     if (currentRenderingMode() == MediaRenderingMovieLayer)
         return m_readyState >= MediaPlayer::HaveCurrentData;

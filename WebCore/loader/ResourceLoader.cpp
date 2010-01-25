@@ -318,7 +318,7 @@ void ResourceLoader::didCancel(const ResourceError& error)
     // load itself to be cancelled (which could happen with a javascript that 
     // changes the window location). This is used to prevent both the body
     // of this method and the body of connectionDidFinishLoading: running
-    // for a single delegate. Cancelling wins.
+    // for a single delegate. Canceling wins.
     m_cancelled = true;
     
     if (m_handle)

@@ -121,7 +121,7 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
     else if (end.node()->hasTagName(hrTag))
         end = Position(end.node(), 1);
     
-    // FIXME: This is only used so that moveParagraphs can avoid the bugs in special element expanion.
+    // FIXME: This is only used so that moveParagraphs can avoid the bugs in special element expansion.
     if (!m_expandForSpecialElements)
         return;
     

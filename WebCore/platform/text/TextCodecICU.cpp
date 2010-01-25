@@ -87,7 +87,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
         const char* name = ucnv_getAvailableName(i);
         UErrorCode error = U_ZERO_ERROR;
         // Try MIME before trying IANA to pick up commonly used names like
-        // 'EUC-JP' instead of horrendeously long names like 
+        // 'EUC-JP' instead of horrendously long names like 
         // 'Extended_UNIX_Code_Packed_Format_for_Japanese'. 
         const char* standardName = ucnv_getStandardName(name, "MIME", &error);
         if (!U_SUCCESS(error) || !standardName) {

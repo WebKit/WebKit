@@ -1155,7 +1155,7 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
                 frame->eventHandler()->updateAutoscrollRenderer();
         }
     } else if (renderer()->view()->frameView()) {
-        // If we are here, we were called on a renderer that can be programatically scrolled, but doesn't
+        // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
         renderer()->view()->frameView()->scrollBy(IntSize(xDelta, yDelta));
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
@@ -2275,7 +2275,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
-    // so it will be tested against as we decend through the renderers.
+    // so it will be tested against as we descend through the renderers.
     RenderObject* paintingRootForRenderer = 0;
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
@@ -2645,7 +2645,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
     if (fgRect.contains(hitTestPoint) && isSelfPaintingLayer()) {
-        // Hit test with a temporary HitTestResult, because we onlyl want to commit to 'result' if we know we're frontmost.
+        // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.point());
         if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants) &&
             isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {

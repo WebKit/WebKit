@@ -152,7 +152,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     jvalue result;
 
     // Try to use the JNI abstraction first, otherwise fall back to
-    // nornmal JNI.  The JNI dispatch abstraction allows the Java plugin
+    // normal JNI.  The JNI dispatch abstraction allows the Java plugin
     // to dispatch the call on the appropriate internal VM thread.
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -320,7 +320,7 @@ JObjectWrapper::JObjectWrapper(jobject instance)
 {
     assert(instance);
 
-    // Cache the JNIEnv used to get the global ref for this java instanace.
+    // Cache the JNIEnv used to get the global ref for this java instance.
     // It'll be used to delete the reference.
     m_env = getJNIEnv();
 

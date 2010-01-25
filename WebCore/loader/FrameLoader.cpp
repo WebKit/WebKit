@@ -671,7 +671,7 @@ void FrameLoader::didExplicitOpen()
     
     // Prevent window.open(url) -- eg window.open("about:blank") -- from blowing away results
     // from a subsequent window.document.open / window.document.write call. 
-    // Cancelling redirection here works for all cases because document.open 
+    // Canceling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
     m_frame->redirectScheduler()->cancel(); 
     if (m_frame->document()->url() != blankURL())

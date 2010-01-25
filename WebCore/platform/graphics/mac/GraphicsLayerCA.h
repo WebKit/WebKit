@@ -317,9 +317,9 @@ private:
 
     void repaintLayerDirtyRects();
 
-    RetainPtr<WebLayer> m_layer;            // The main layer
-    RetainPtr<CALayer> m_structuralLayer;   // A layer used for structual reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
-    RetainPtr<CALayer> m_contentsLayer;     // A layer used for inner content, like image and video
+    RetainPtr<WebLayer> m_layer; // The main layer
+    RetainPtr<CALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
+    RetainPtr<CALayer> m_contentsLayer; // A layer used for inner content, like image and video
 
     // References to clones of our layers, for replicated layers.
     OwnPtr<LayerMap> m_layerClones;

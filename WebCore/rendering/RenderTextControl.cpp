@@ -195,7 +195,7 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
             ASSERT(!ec);
         }
 
-        // We set m_lastChangeWasUserEdit to false since this change was not explicty made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
+        // We set m_lastChangeWasUserEdit to false since this change was not explicitly made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
         m_lastChangeWasUserEdit = false;
     }
 

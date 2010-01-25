@@ -431,7 +431,7 @@ bool CachedResource::makePurgeable(bool purgeable)
         if (!m_data)
             return false;
         
-        // Should not make buffer purgeable if it has refs othen than this since we don't want two copies.
+        // Should not make buffer purgeable if it has refs other than this since we don't want two copies.
         if (!m_data->hasOneRef())
             return false;
         

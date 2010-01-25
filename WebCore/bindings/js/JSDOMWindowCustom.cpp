@@ -267,7 +267,7 @@ bool JSDOMWindow::getOwnPropertySlot(ExecState* exec, const Identifier& property
         }
     }
 
-    // FIXME: Search the whole frame hierachy somewhere around here.
+    // FIXME: Search the whole frame hierarchy somewhere around here.
     // We need to test the correct priority order.
 
     // allow window[1] or parent[1] etc. (#56983)

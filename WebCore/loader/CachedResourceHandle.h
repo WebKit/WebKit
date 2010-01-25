@@ -72,7 +72,7 @@ namespace WebCore {
         bool operator!=(const CachedResourceHandleBase& o) const { return get() != o.get(); }
     };
 
-    // Don't inline for winscw compiler to prevent the compiler agressively resolving
+    // Don't inline for winscw compiler to prevent the compiler aggressively resolving
     // the base class of R* when CachedResourceHandler<T>(R*) is inlined.  The bug is
     // reported at: https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812.
     template <class R>

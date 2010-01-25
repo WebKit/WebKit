@@ -190,7 +190,7 @@ private:
     unsigned m_deadSize; // The number of bytes currently consumed by "dead" resources in the cache.
 
     // Size-adjusted and popularity-aware LRU list collection for cache objects.  This collection can hold
-    // more resources than the cached resource map, since it can also hold "stale" muiltiple versions of objects that are
+    // more resources than the cached resource map, since it can also hold "stale" multiple versions of objects that are
     // waiting to die when the clients referencing them go away.
     Vector<LRUList, 32> m_allResources;
     

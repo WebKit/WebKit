@@ -636,7 +636,7 @@ WebInspector.ConsoleMessage.prototype = {
 
     _format: function(parameters)
     {
-        // This node is used like a Builder. Values are contintually appended onto it.
+        // This node is used like a Builder. Values are continually appended onto it.
         var formattedResult = document.createElement("span");
         if (!parameters.length)
             return formattedResult;
@@ -689,7 +689,7 @@ WebInspector.ConsoleMessage.prototype = {
         formatters.o = consoleFormatWrapper();
         // Firebug allows both %i and %d for formatting integers.
         formatters.i = formatters.d;
-        // Support %O to force object formating, instead of the type-based %o formatting.
+        // Support %O to force object formatting, instead of the type-based %o formatting.
         formatters.O = consoleFormatWrapper(true);
 
         function append(a, b)

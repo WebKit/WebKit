@@ -1422,7 +1422,7 @@ void SVGRootInlineBox::buildTextChunks(Vector<SVGChar>& svgChars, InlineFlowBox*
             } else
                 ASSERT(!info.chunk.boxes.isEmpty());
 
-            // Walk string to find out new chunk positions, if existant
+            // Walk string to find out new chunk positions, if existent
             for (unsigned i = 0; i < length; ++i) {
                 ASSERT(info.it != svgChars.end());
 

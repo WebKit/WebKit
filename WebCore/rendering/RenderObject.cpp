@@ -1960,7 +1960,7 @@ void RenderObject::destroy()
 
     // If this renderer is being autoscrolled, stop the autoscroll timer
     
-    // FIXME: RenderObject::destroy should not get called with a renderar whose document
+    // FIXME: RenderObject::destroy should not get called with a renderer whose document
     // has a null frame, so we assert this. However, we don't want release builds to crash which is why we
     // check that the frame is not null.
     ASSERT(document()->frame());

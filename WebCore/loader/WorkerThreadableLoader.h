@@ -82,7 +82,7 @@ namespace WebCore {
         //
         // all cases. All tasks posted from the worker context's thread are ok because
         //    the last task posted always is "mainThreadDestroy", so MainThreadBridge is
-        //    around for all tasks that use it on the mian thread.
+        //    around for all tasks that use it on the main thread.
         //
         // case 1. worker.terminate is called.
         //    In this case, no more tasks are posted from the worker object's thread to the worker

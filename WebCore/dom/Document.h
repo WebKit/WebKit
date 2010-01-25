@@ -823,7 +823,7 @@ public:
     void updateFocusAppearanceSoon();
     void cancelFocusAppearanceUpdate();
         
-    // FF method for accessing the selection added for compatability.
+    // FF method for accessing the selection added for compatibility.
     DOMSelection* getSelection() const;
     
     // Extension for manipulating canvas drawing contexts for use in CSS

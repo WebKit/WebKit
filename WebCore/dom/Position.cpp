@@ -498,7 +498,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
             lastNode = currentNode;
         }
 
-        // If we've moved to a position that is visually disinct, return the last saved position. There 
+        // If we've moved to a position that is visually distinct, return the last saved position. There 
         // is code below that terminates early if we're *about* to move to a visually distinct position.
         if (endsOfNodeAreVisuallyDistinctPositions(currentNode) && currentNode != boundary)
             return lastVisible;

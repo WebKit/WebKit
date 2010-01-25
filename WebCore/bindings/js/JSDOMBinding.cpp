@@ -781,7 +781,7 @@ bool processingUserGesture(ExecState* exec)
 
 KURL completeURL(ExecState* exec, const String& relativeURL)
 {
-    // For histoical reasons, we need to complete the URL using the dynamic frame.
+    // For historical reasons, we need to complete the URL using the dynamic frame.
     Frame* frame = toDynamicFrame(exec);
     if (!frame)
         return KURL();

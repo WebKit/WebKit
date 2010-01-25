@@ -151,7 +151,7 @@ void MouseRelatedEvent::receivedTarget()
     }
 
     // Adjust layerX/Y to be relative to the layer.
-    // FIXME: We're pretty sure this is the wrong defintion of "layer."
+    // FIXME: We're pretty sure this is the wrong definition of "layer."
     // Our RenderLayer is a more modern concept, and layerX/Y is some
     // other notion about groups of elements (left over from the Netscape 4 days?);
     // we should test and fix this.
