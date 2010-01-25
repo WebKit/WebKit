@@ -1,3 +1,16 @@
+2010-01-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor JITStubs.cpp so that DEFINE_STUB_FUNCTION is only used once for each function
+        https://bugs.webkit.org/show_bug.cgi?id=33866
+
+        Place the guard USE(JSVALUE32_64) inside the body of the DEFINE_STUB_FUNCTION
+        macro for those functions that are always present.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2010-01-22  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
