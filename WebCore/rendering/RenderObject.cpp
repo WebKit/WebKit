@@ -1647,10 +1647,8 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
     } else
         s_affectsParentBlock = false;
 
-    if (view()->frameView()) {
-        // FIXME: A better solution would be to only invalidate the fixed regions when scrolling.  It's overkill to
-        // prevent the entire view from blitting on a scroll.
-
+    FrameView* frameView = view()->frameView();
+    if (frameView) {
         bool shouldBlitOnFixedBackgroundImage = false;
 #if ENABLE(FAST_MOBILE_SCROLLING)
         // On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
@@ -1660,15 +1658,32 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         shouldBlitOnFixedBackgroundImage = true;
 #endif
 
-        bool newStyleSlowScroll = newStyle && (newStyle->position() == FixedPosition
-                                               || (!shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage()));
-        bool oldStyleSlowScroll = m_style && (m_style->position() == FixedPosition
-                                               || (!shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage()));
+        bool newStyleSlowScroll = newStyle && !shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage();
+        bool oldStyleSlowScroll = m_style && !shouldBlitOnFixedBackgroundImage && m_style->hasFixedBackgroundImage();
+
         if (oldStyleSlowScroll != newStyleSlowScroll) {
             if (oldStyleSlowScroll)
-                view()->frameView()->removeSlowRepaintObject();
+                frameView->removeSlowRepaintObject();
             if (newStyleSlowScroll)
-                view()->frameView()->addSlowRepaintObject();
+                frameView->addSlowRepaintObject();
+        }
+
+        bool newStyleHasTransform = newStyle && (newStyle->hasTransformRelatedProperty());
+        if (!newStyleHasTransform) {
+            bool newStyleHasFixedPosition = newStyle && (newStyle->position() == FixedPosition);
+            bool oldStyleHasFixedPosition = m_style && (m_style->position() == FixedPosition);
+
+            if (oldStyleHasFixedPosition != newStyleHasFixedPosition) {
+                if (newStyleHasFixedPosition)
+                    frameView->registerFixedPositionedObject(this);
+                else
+                    frameView->unregisterFixedPositionedObject(this);
+            } else {
+                // if previously had a fix position, but had a transform, which has been removed
+                bool oldStyleHasTransform = m_style && (m_style->hasTransformRelatedProperty());
+                if (oldStyleHasTransform && newStyleHasFixedPosition)
+                    frameView->registerFixedPositionedObject(this);
+            }
         }
     }
 }
@@ -1931,6 +1946,13 @@ bool RenderObject::isSelectionBorder() const
 
 void RenderObject::destroy()
 {
+    // unregister from the view if the object had a fixed position
+    if (m_style && m_style->position() == FixedPosition) {
+        FrameView* frameView = document()->view();
+        if (frameView)
+            frameView->unregisterFixedPositionedObject(this);
+    }
+
     // Destroy any leftover anonymous children.
     RenderObjectChildList* children = virtualChildren();
     if (children)

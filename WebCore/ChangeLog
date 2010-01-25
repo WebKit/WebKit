@@ -1,3 +1,28 @@
+2010-01-25  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Do not render the full frame when there is some elements with fixed positioning
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        Do not render the full frame when there is some elements with fixed positioning
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::useSlowRepaintsIfNotOverlapped):
+        (WebCore::FrameView::registerFixedPositionedObject):
+        (WebCore::FrameView::unregisterFixedPositionedObject):
+        (WebCore::FrameView::scrollContentsFastPath):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::scrollContentsFastPath):
+        * platform/ScrollView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::destroy):
+
 2010-01-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
