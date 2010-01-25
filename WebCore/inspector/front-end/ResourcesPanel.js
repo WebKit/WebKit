@@ -192,9 +192,10 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.AbstractTimelinePanel.prototype.show.call(this);
 
         var visibleView = this.visibleView;
-        if (this.visibleResource)
-            visibleView.show(this.viewsContainerElement);
-        else if (visibleView)
+        if (this.visibleResource) {
+            this.visibleView.headersVisible = true;
+            this.visibleView.show(this.viewsContainerElement);
+        } else if (visibleView)
             visibleView.show();
 
         // Hide any views that are visible that are not this panel's current visible view.
@@ -444,6 +445,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         resource._resourcesView = newView;
 
+        newView.headersVisible = oldView.headersVisible;
+
         if (oldView.visible && oldView.element.parentNode)
             newView.show(oldView.element.parentNode);
     },
@@ -469,6 +472,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.visibleResource._resourcesView.hide();
 
         var view = this.resourceViewForResource(resource);
+        view.headersVisible = true;
         view.show(this.viewsContainerElement);
 
         if (line) {

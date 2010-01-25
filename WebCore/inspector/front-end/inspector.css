@@ -779,6 +779,7 @@ body.drawer-visible #drawer {
 }
 
 .resource-view .scope-bar {
+    display: none;
     position: absolute;
     height: 20px;
     top: 0;
@@ -786,6 +787,10 @@ body.drawer-visible #drawer {
     right: 0;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
     border-bottom: 1px solid rgb(163, 163, 163);
+}
+
+.resource-view.headers-visible .scope-bar {
+    display: block;
 }
 
 .resource-view .scope-bar li {
@@ -797,11 +802,15 @@ body.drawer-visible #drawer {
     padding: 6px;
     -webkit-user-select: text;    
     position: absolute;
-    top: 20px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     overflow: auto;
+}
+
+.resource-view.headers-visible .resource-view-headers {
+    top: 20px;
 }
 
 .resource-view-headers .outline-disclosure .parent {
@@ -840,10 +849,14 @@ body.drawer-visible #drawer {
 
 .resource-view .resource-view-content {
     position: absolute;
-    top: 20px;
+    top: 0;
     right: 0;
     left: 0;
     bottom: 0;
+}
+
+.resource-view.headers-visible .resource-view-content {
+    top: 20px;
 }
 
 .webkit-line-gutter-backdrop {
@@ -2443,7 +2456,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 #script-resource-views {
     display: block;
-    overflow: auto;
     padding: 0;
     position: absolute;
     top: 23px;

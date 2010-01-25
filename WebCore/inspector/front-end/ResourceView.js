@@ -107,6 +107,8 @@ WebInspector.ResourceView = function(resource)
     this.responseHeadersTreeElement.selectable = false;
     this.headersTreeOutline.appendChild(this.responseHeadersTreeElement);
 
+    this.headersVisible = true;
+
     resource.addEventListener("url changed", this._refreshURL, this);
     resource.addEventListener("requestHeaders changed", this._refreshRequestHeaders, this);
     resource.addEventListener("responseHeaders changed", this._refreshResponseHeaders, this);
@@ -129,10 +131,18 @@ WebInspector.ResourceView.prototype = {
         }
     },
 
-    show: function(parentElement)
+    set headersVisible(x)
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
-        this._selectTab();
+        if (x === this._headersVisible)
+            return;
+        this._headersVisible = x;
+        if (x) {
+            this.element.addStyleClass("headers-visible"); 
+            this._selectTab();
+        } else {
+            this.element.removeStyleClass("headers-visible"); 
+            this._innerSelectContentTab();
+        }
     },
 
     _selectTab: function()
@@ -155,6 +165,11 @@ WebInspector.ResourceView.prototype = {
     _selectContentTab: function()
     {
         WebInspector.settings.resourceViewTab = "content";
+        this._innerSelectContentTab();
+    },
+
+    _innerSelectContentTab: function()
+    {
         this.contentTabElement.addStyleClass("selected");
         this.headersTabElement.removeStyleClass("selected");
         this.contentElement.removeStyleClass("hidden");
