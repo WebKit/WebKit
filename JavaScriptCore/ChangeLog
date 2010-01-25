@@ -1,3 +1,16 @@
+2010-01-25  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix Chromium Linux tests: the pthread functions on Linux produce segfault if they receive 0 thread handle.
+        After r53714, we can have 0 thread handles passed to pthread_join and pthread_detach if corresponding threads
+        were already terminated and their threadMap entries cleared.
+        Add a 0 check.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::waitForThreadCompletion):
+        (WTF::detachThread):
+
 2010-01-24  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Maciej Stachowiak.
