@@ -106,10 +106,12 @@ WebInspector.TextEditorHighlighter.prototype = {
     updateHighlight: function(startLine, endLine)
     {
         // Start line was edited, we should highlight everything until endLine synchronously.
-        var state = this._textModel.getAttribute(startLine, "highlighter-state");
-        if (!state || state.outOfDate) {
-            // Highlighter did not reach this point yet, nothing to update. It will reach it on subsequent timer tick and do the job.
-            return;
+        if (startLine) {
+            var state = this._textModel.getAttribute(startLine - 1, "highlighter-state");
+            if (!state || state.outOfDate) {
+                // Highlighter did not reach this point yet, nothing to update. It will reach it on subsequent timer tick and do the job.
+                return;
+            }
         }
 
         var restored = this._highlightLines(startLine, endLine);

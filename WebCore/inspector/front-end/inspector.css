@@ -3817,8 +3817,12 @@ ol.breakpoint-list {
     overflow: auto;
 }
 
-.text-editor-sheet, .text-editor-clip {
+.text-editor-clip {
     opacity: 0;
+    position: absolute;
+    top:0;
+    left:0;
+    pointer-events: none;
 }
 
 .text-editor-cursor {

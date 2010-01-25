@@ -43076,6 +43076,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\textEditor.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TextPrompt.js"
 					>
 				</File>

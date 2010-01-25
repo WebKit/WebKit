@@ -3760,6 +3760,7 @@
             'inspector/front-end/audits.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',
+            'inspector/front-end/textEditor.css',
         ],
         'webinspector_image_files': [
 

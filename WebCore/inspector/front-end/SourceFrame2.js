@@ -35,6 +35,9 @@ WebInspector.SourceFrame2 = function()
     this._editor.lineNumberDecorator = new WebInspector.BreakpointLineNumberDecorator(this);
     this._editor.lineDecorator = new WebInspector.ExecutionLineDecorator(this);
     this._editor.readOnly = true;
+    this._messages = [];
+    this._rowMessages = {};
+    this._messageBubbles = {};
     this.element = this._editor.element;
 }
 
@@ -42,6 +45,107 @@ WebInspector.SourceFrame2.prototype = {
     set text(text)
     {
         this._editor.text = text;
+    },
+
+    addMessage: function(msg)
+    {
+        // Don't add the message if there is no message or valid line or if the msg isn't an error or warning.
+        if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
+            return;
+        this._messages.push(msg);
+        this._addMessageToSource(msg);
+    },
+
+    clearMessages: function()
+    {
+        for (var line in this._messageBubbles) {
+            var bubble = this._messageBubbles[line];
+            bubble.parentNode.removeChild(bubble);
+        }
+
+        this._messages = [];
+        this._rowMessages = {};
+        this._messageBubbles = {};
+        this._editor.packAndRepaintAll();
+    },
+
+    _incrementMessageRepeatCount: function(msg, repeatDelta)
+    {
+        if (!msg._resourceMessageLineElement)
+            return;
+
+        if (!msg._resourceMessageRepeatCountElement) {
+            var repeatedElement = document.createElement("span");
+            msg._resourceMessageLineElement.appendChild(repeatedElement);
+            msg._resourceMessageRepeatCountElement = repeatedElement;
+        }
+
+        msg.repeatCount += repeatDelta;
+        msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
+    },
+
+    _addExistingMessagesToSource: function()
+    {
+        var length = this._messages.length;
+        for (var i = 0; i < length; ++i)
+            this._addMessageToSource(this._messages[i]);
+    },
+
+    _addMessageToSource: function(msg)
+    {
+        if (msg.line >= this._textModel.linesCount)
+            return;
+
+        var messageBubbleElement = this._messageBubbles[msg.line];
+        if (!messageBubbleElement || messageBubbleElement.nodeType !== Node.ELEMENT_NODE || !messageBubbleElement.hasStyleClass("webkit-html-message-bubble")) {
+            messageBubbleElement = document.createElement("div");
+            messageBubbleElement.className = "webkit-html-message-bubble";
+            this._messageBubbles[msg.line] = messageBubbleElement;
+            this._editor.setDivDecoration(msg.line, messageBubbleElement);
+        }
+
+        var rowMessages = this._rowMessages[msg.line];
+        if (!rowMessages) {
+            rowMessages = [];
+            this._rowMessages[msg.line] = rowMessages;
+        }
+
+        for (var i = 0; i < rowMessages.length; ++i) {
+            if (rowMessages[i].isEqual(msg, true)) {
+                this._incrementMessageRepeatCount(rowMessages[i], msg.repeatDelta);
+                this._editor.packAndRepaintAll();
+                return;
+            }
+        }
+
+        rowMessages.push(msg);
+
+        var imageURL;
+        switch (msg.level) {
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
+                messageBubbleElement.addStyleClass("webkit-html-error-message");
+                imageURL = "Images/errorIcon.png";
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
+                messageBubbleElement.addStyleClass("webkit-html-warning-message");
+                imageURL = "Images/warningIcon.png";
+                break;
+        }
+
+        var messageLineElement = document.createElement("div");
+        messageLineElement.className = "webkit-html-message-line";
+        messageBubbleElement.appendChild(messageLineElement);
+
+        // Create the image element in the Inspector's document so we can use relative image URLs.
+        var image = document.createElement("img");
+        image.src = imageURL;
+        image.className = "webkit-html-message-icon";
+        messageLineElement.appendChild(image);
+        messageLineElement.appendChild(document.createTextNode(msg.message));
+
+        msg._resourceMessageLineElement = messageLineElement;
+
+        this._editor.packAndRepaintAll();
     },
 
     get executionLine()
@@ -70,7 +174,7 @@ WebInspector.SourceFrame2.prototype = {
 
     resize: function()
     {
-        this._editor.updateCanvasSize();
+        this._editor.packAndRepaintAll();
     }
 }
 

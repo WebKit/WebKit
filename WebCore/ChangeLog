@@ -2,6 +2,46 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Add support for addMessage/clearMessages to SourceFrame2.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33904
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/SourceFrame2.js:
+        (WebInspector.SourceFrame2):
+        (WebInspector.SourceFrame2.prototype.addMessage):
+        (WebInspector.SourceFrame2.prototype.clearMessages):
+        (WebInspector.SourceFrame2.prototype._incrementMessageRepeatCount):
+        (WebInspector.SourceFrame2.prototype._addExistingMessagesToSource):
+        (WebInspector.SourceFrame2.prototype._addMessageToSource):
+        (WebInspector.SourceFrame2.prototype.resize):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.setDivDecoration):
+        (WebInspector.TextEditor.prototype._lineHeight):
+        (WebInspector.TextEditor.prototype._highlightChanged):
+        (WebInspector.TextEditor.prototype.packAndRepaintAll):
+        (WebInspector.TextEditor.prototype._updateSize):
+        (WebInspector.TextEditor.prototype._repaintAll):
+        (WebInspector.TextEditor.prototype._paint):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype._mouseOut):
+        (WebInspector.TextEditor.prototype._updateDivDecorations):
+        (WebInspector.TextEditor.prototype._positionDivDecoration):
+        (WebInspector.TextEditor.prototype._paintSelection):
+        (WebInspector.TextEditor.prototype._replaceSelectionWith):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype.updateHighlight):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/textEditor.css: Added.
+
+2010-01-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Replace split pane with tabbed pane in resource
         contents view.
 
@@ -74355,8 +74395,6 @@ form controls that have different validity states.
          * platform/qt/RenderThemeQt.cpp:
          (WebCore::RenderThemeQt::adjustButtonStyle):
 
-=== End merge of nitro-extreme branch 2009-07-30 ===
-
 2009-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
@@ -74368,8 +74406,6 @@ form controls that have different validity states.
         * bindings/js/ScriptEventListener.cpp:
         * bindings/scripts/CodeGeneratorJS.pm:
         * bridge/c/c_instance.cpp:
-
-=== Start merge of nitro-extreme branch 2009-07-30 ===
 
 2009-07-30  Dean McNamee  <deanm@chromium.org>
 
