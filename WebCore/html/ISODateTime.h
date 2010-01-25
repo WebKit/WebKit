@@ -116,7 +116,8 @@ public:
     bool setMillisecondsSinceEpochForDateTime(double ms);
     // For Month type. Updates m_year and m_month.
     bool setMillisecondsSinceEpochForMonth(double ms);
-    // FIXME: Add setMillisecondsSinceEpochFor*() for other types.
+    // For Week type. Updates m_year and m_week.
+    bool setMillisecondsSinceEpochForWeek(double ms);
 
     // For Time type. Updates m_hour, m_minute, m_second and m_millisecond.
     bool setMillisecondsSinceMidnight(double ms);

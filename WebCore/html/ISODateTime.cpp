@@ -528,6 +528,47 @@ bool ISODateTime::setMillisecondsSinceMidnight(double ms)
     return true;
 }
 
+// Offset from January 1st to Monday of the ISO 8601's first week.
+//   ex. If January 1st is Friday, such Monday is 3 days later. Returns 3.
+static int offsetTo1stWeekStart(int year)
+{
+    int offsetTo1stWeekStart = 1 - dayOfWeek(year, 0, 1);
+    if (offsetTo1stWeekStart <= -4)
+        offsetTo1stWeekStart += 7;
+    return offsetTo1stWeekStart;
+}
+
+bool ISODateTime::setMillisecondsSinceEpochForWeek(double ms)
+{
+    m_type = Invalid;
+    if (!isfinite(ms))
+        return false;
+    ms = round(ms);
+
+    m_year = msToYear(ms);
+    // We don't support gregorianStartYear. Week numbers are undefined in that year.
+    if (m_year <= gregorianStartYear)
+        return false;
+
+    int yearDay = dayInYear(ms, m_year);
+    int offset = offsetTo1stWeekStart(m_year);
+    if (yearDay < offset) {
+        // The day belongs to the last week of the previous year.
+        m_year--;
+        if (m_year <= gregorianStartYear)
+            return false;
+        m_week = maxWeekNumberInYear();
+    } else {
+        m_week = ((yearDay - offset) / 7) + 1;
+        if (m_week > maxWeekNumberInYear()) {
+            m_year++;
+            m_week = 1;
+        }
+    }
+    m_type = Week;
+    return true;
+}
+
 double ISODateTime::millisecondsSinceEpochForTime() const
 {
     ASSERT(m_type == Time || m_type == DateTime);
@@ -546,14 +587,8 @@ double ISODateTime::millisecondsSinceEpoch() const
         return dateToDaysFrom1970(m_year, m_month, 1) * msPerDay;
     case Time:
         return millisecondsSinceEpochForTime();
-    case Week: {
-        // Offset from January 1st to Monday of the ISO 8601's first week.
-        //   ex. If January 1st is Friday, such Monday is 3 days later.
-        int offsetTo1stWeekStart = 1 - dayOfWeek(m_year, 0, 1);
-        if (offsetTo1stWeekStart <= -4)
-            offsetTo1stWeekStart += 7;
-        return (dateToDaysFrom1970(m_year, 0, 1) + offsetTo1stWeekStart + (m_week - 1) * 7) * msPerDay;
-    }
+    case Week:
+        return (dateToDaysFrom1970(m_year, 0, 1) + offsetTo1stWeekStart(m_year) + (m_week - 1) * 7) * msPerDay;
     case Invalid:
         break;
     }
@@ -595,9 +630,10 @@ String ISODateTime::toString(SecondFormat format) const
         return String::format("%04d-%02d", m_year, m_month + 1);
     case Time:
         return toStringForTime(format);
-
-    // FIXME: implementations for other types.
-    default:
+    case Week:
+        return String::format("%04d-W%02d", m_year, m_week);
+    case DateTimeLocal:
+    case Invalid:
         break;
     }
     ASSERT_NOT_REACHED();

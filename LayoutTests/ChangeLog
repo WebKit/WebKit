@@ -1,3 +1,16 @@
+2010-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsDate setter support for type=week.
+        https://bugs.webkit.org/show_bug.cgi?id=33986
+
+        Add setter tests to input-valueasdate-datetime.js, and update the
+        expectation.
+
+        * fast/forms/input-valueasdate-week-expected.txt:
+        * fast/forms/script-tests/input-valueasdate-week.js:
+
 2010-01-24  Eric Carlson  <eric.carlson@apple.com>
 
         No review, build fix.
