@@ -140,7 +140,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
        return false;
     }
 
-    StylePainter p(graphicsContext);
+    StylePainter p(this, graphicsContext);
     if (!p.isValid())
       return true;
 
@@ -172,14 +172,14 @@ ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMous
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     const QPoint pos = scrollbar->convertFromContainingWindow(evt.pos());
     opt->rect.moveTo(QPoint(0, 0));
-    QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, opt, pos, 0);
+    QStyle::SubControl sc = style()->hitTestComplexControl(QStyle::CC_ScrollBar, opt, pos, 0);
     return scrollbarPart(sc);
 }
 
 bool ScrollbarThemeQt::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
 {
     // Middle click centers slider thumb (if supported)
-    return QApplication::style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
+    return style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
 }
 
 void ScrollbarThemeQt::invalidatePart(Scrollbar* scrollbar, ScrollbarPart)
@@ -190,13 +190,12 @@ void ScrollbarThemeQt::invalidatePart(Scrollbar* scrollbar, ScrollbarPart)
 
 int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    QStyle* s = QApplication::style();
     QStyleOptionSlider o;
     o.orientation = Qt::Vertical;
     o.state &= ~QStyle::State_Horizontal;
     if (controlSize != RegularScrollbar)
         o.state |= QStyle::State_Mini;
-    return s->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
+    return style()->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
 }
 
 int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
@@ -209,21 +208,21 @@ int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
 int ScrollbarThemeQt::thumbLength(Scrollbar* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect thumb = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarSlider, 0);
+    IntRect thumb = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarSlider, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? thumb.width() : thumb.height();
 }
 
 int ScrollbarThemeQt::trackPosition(Scrollbar* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
+    IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? track.x() - scrollbar->x() : track.y() - scrollbar->y();
 }
 
 int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
+    IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? track.width() : track.height();
 }
 
@@ -237,7 +236,7 @@ void ScrollbarThemeQt::paintScrollCorner(ScrollView* scrollView, GraphicsContext
 #if QT_VERSION < 0x040500
     context->fillRect(rect, QApplication::palette().color(QPalette::Normal, QPalette::Window), DeviceColorSpace);
 #else
-    StylePainter p(context);
+    StylePainter p(this, context);
     if (!p.isValid())
         return;
 
@@ -245,6 +244,11 @@ void ScrollbarThemeQt::paintScrollCorner(ScrollView* scrollView, GraphicsContext
     option.rect = rect;
     p.drawPrimitive(QStyle::PE_PanelScrollAreaCorner, option);
 #endif
+}
+
+QStyle* ScrollbarThemeQt::style() const
+{
+    return QApplication::style();
 }
 
 }

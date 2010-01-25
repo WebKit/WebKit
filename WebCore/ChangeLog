@@ -2,6 +2,44 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] In the StyledPainter determine the style from the Render and Scrollbar theme instead of from the paint device
+        https://bugs.webkit.org/show_bug.cgi?id=34054
+
+        Getting the style from the painter's paint device is a hack that breaks when
+        the paint device's style is different than the style that is used when
+        calculating the metries earlier when there is no painter available.
+
+        This change moves us closer to always using the same style.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::init):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::paintMenuListButton):
+        (WebCore::RenderThemeQt::paintSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+        (WebCore::ScrollbarThemeQt::hitTest):
+        (WebCore::ScrollbarThemeQt::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeQt::scrollbarThickness):
+        (WebCore::ScrollbarThemeQt::thumbLength):
+        (WebCore::ScrollbarThemeQt::trackPosition):
+        (WebCore::ScrollbarThemeQt::trackLength):
+        (WebCore::ScrollbarThemeQt::paintScrollCorner):
+        (WebCore::ScrollbarThemeQt::style):
+        * platform/qt/ScrollbarThemeQt.h:
+
+2010-01-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt] In RenderThemeQt determine the QStyle from the page client instead of the page's view
         https://bugs.webkit.org/show_bug.cgi?id=34053
 
