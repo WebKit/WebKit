@@ -1,3 +1,26 @@
+2010-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Content with heavily nested residual style is so slow, it seems like a hang
+        https://bugs.webkit.org/show_bug.cgi?id=34059
+        <rdar://problem/7292906>
+        
+        Test cast: fast/parser/residual-style-hang.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        Limit the number of iterations of the main loop to 5.
+        
+        The reason this limit is necessary is that otherwise, N misnested open tags followed
+        by N misnested close tags will cause O(N^2) of work due to cloning and attaching subtrees;
+        at a fixed limit, the cost is at worst O(N).
+        
+        The code that was in the loop originally ran exactly once - the loop was added in
+        r21472 to fix <https://bugs.webkit.org/show_bug.cgi?id=13603>. I have verified that
+        with the iteration limit, the bug is still fixed, both with the original test case
+        and with the layout tests tht were added.
+
 2010-01-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

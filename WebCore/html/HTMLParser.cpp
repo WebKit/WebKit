@@ -65,6 +65,8 @@ using namespace HTMLNames;
 
 static const unsigned cMaxRedundantTagDepth = 20;
 static const unsigned cResidualStyleMaxDepth = 200;
+static const unsigned cResidualStyleIterationLimit = 5;
+
 
 static const int minBlockLevelTagPriority = 3;
 
@@ -1128,8 +1130,10 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     bool finished = false;
     bool strayTableContent = elem->strayTableContent;
 
+    unsigned iterationCount = 0;
+
     m_handlingResidualStyleAcrossBlocks = true;
-    while (!finished) {
+    while (!finished && (iterationCount++ < cResidualStyleIterationLimit)) {
         // Find the outermost element that crosses over to a higher level. If there exists another higher-level
         // element, we will do another pass, until we have corrected the innermost one.
         ExceptionCode ec = 0;

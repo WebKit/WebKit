@@ -1,3 +1,16 @@
+2010-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Content with heavily nested residual style is so slow, it seems like a hang
+        https://bugs.webkit.org/show_bug.cgi?id=34059
+        <rdar://problem/7292906>
+
+        Test case for the above bug fix.
+
+        * fast/parser/residual-style-hang-expected.txt: Added.
+        * fast/parser/residual-style-hang.html: Added.
+
 2010-01-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
