@@ -673,9 +673,6 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 # This test has never passed on Windows (https://bugs.webkit.org/show_bug.cgi?id=30234)
 platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
 
-# Ruby tests aren't passing on Windows, do they just need platform results - or should they match Mac?
-fast/ruby
-
 # https://bugs.webkit.org/show_bug.cgi?id=31315
 fast/dom/HTMLObjectElement/children-changed.html
 
