@@ -2,6 +2,23 @@
 
         Reviewed by Darin Adler.
 
+        Improve portability of listbox-selection-2.html
+        https://bugs.webkit.org/show_bug.cgi?id=33994
+
+        - Convert to dumpAsText().
+        - Determine the height of an item at runtime
+
+        * fast/forms/listbox-selection-2-expected.txt: Added.
+        * fast/forms/listbox-selection-2.html:
+        * fast/forms/script-tests/listbox-selection-2.js
+        * platform/mac/fast/forms/listbox-selection-2-expected.checksum: Removed.
+        * platform/mac/fast/forms/listbox-selection-2-expected.png: Removed.
+        * platform/mac/fast/forms/listbox-selection-2-expected.txt: Removed.
+
+2010-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         HTMLInputElement::valueAsDate setter support for type=week.
         https://bugs.webkit.org/show_bug.cgi?id=33986
 
