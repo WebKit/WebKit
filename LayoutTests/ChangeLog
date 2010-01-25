@@ -1,3 +1,18 @@
+2010-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Update inspector test expectations. Line number and source
+        name are present only in Chromium when console message is
+        logged before document load is completed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34078
+
+        * platform/chromium/inspector/console-log-before-inspector-open-expected.txt: Added.
+        * platform/gtk/inspector/console-log-before-inspector-open-expected.txt: Copied from LayoutTests/inspector/console-log-before-inspector-open-expected.txt.
+        * platform/mac/inspector/console-log-before-inspector-open-expected.txt: Copied from LayoutTests/inspector/console-log-before-inspector-open-expected.txt.
+        * platform/win/inspector/console-log-before-inspector-open-expected.txt: Renamed from LayoutTests/inspector/console-log-before-inspector-open-expected.txt.
+
 2010-01-24  Roland Steiner  <rolandsteiner@chromium.org>
 
         build fix: rubber-stamped by Eric Seidel.
