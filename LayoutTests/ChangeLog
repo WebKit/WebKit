@@ -1,3 +1,13 @@
+2010-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Media element duration changes to zero after playing in reverse
+        https://bugs.webkit.org/show_bug.cgi?id=34041
+
+        * media/video-reverse-play-duration-expected.txt: Added.
+        * media/video-reverse-play-duration.html: Added.
+
 2010-01-25  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Maciej Stachowiak.

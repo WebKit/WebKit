@@ -1045,8 +1045,11 @@ void MediaPlayerPrivate::didEnd()
 
     // Hang onto the current time and use it as duration from now on since QuickTime is telling us we
     // are at the end. Do this because QuickTime sometimes reports one time for duration and stops
-    // playback at another time, which causes problems in HTMLMediaElement.
-    m_cachedDuration = currentTime();
+    // playback at another time, which causes problems in HTMLMediaElement. QTKit's 'ended' event 
+    // fires when playing in reverse so don't update duration when at time zero!
+    float now = currentTime();
+    if (now > 0)
+        m_cachedDuration = now;
 
     updateStates();
     m_player->timeChanged();

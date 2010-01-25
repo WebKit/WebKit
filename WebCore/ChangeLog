@@ -1,3 +1,16 @@
+2010-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Media element duration changes to zero after playing in reverse
+        https://bugs.webkit.org/show_bug.cgi?id=34041
+
+        Test: media/video-reverse-play-duration.html
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::didEnd): QTKit's ended notification fires at time zero when 
+        playing in reverse, so don't reset duration in that case.
+
 2010-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
