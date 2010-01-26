@@ -194,6 +194,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier
 {
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     DocumentLoader* loader = [self _documentLoader];
     
     if (!loader)
@@ -202,6 +203,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     NSString *cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:destinationBundleIdentifier];
     
     return ApplicationCacheStorage::storeCopyOfCache(cacheDir, loader->applicationCacheHost());
+#else
+    return NO;
+#endif
 }
 
 @end

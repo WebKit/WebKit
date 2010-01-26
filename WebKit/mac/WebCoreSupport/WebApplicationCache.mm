@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
 #import "WebApplicationCache.h"
 #import <WebCore/ApplicationCacheStorage.h>
 
@@ -38,3 +40,5 @@ using namespace WebCore;
 }
 
 @end
+
+#endif

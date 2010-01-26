@@ -115,8 +115,10 @@
     [WebView _setCacheModel:WebCacheModelDocumentViewer];
     [WebView _setCacheModel:cacheModel];
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // Empty the application cache.
     WebCore::cacheStorage().empty();
+#endif
 
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::shared().empty();
