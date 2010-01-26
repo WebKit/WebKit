@@ -1,3 +1,44 @@
+2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement HTML and CSS highlighters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34144
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/JavaScriptTokenizer.js: Removed.
+        * inspector/front-end/JavaScriptTokenizer.re2js: Removed.
+        * inspector/front-end/SourceCSSTokenizer.js: Added.
+        (WebInspector.SourceCSSTokenizer):
+        (WebInspector.SourceCSSTokenizer.prototype._stringToken):
+        (WebInspector.SourceCSSTokenizer.prototype._isPropertyValue):
+        (WebInspector.SourceCSSTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceCSSTokenizer.re2js: Added.
+        * inspector/front-end/SourceHTMLTokenizer.js: Added.
+        (WebInspector.SourceHTMLTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype._stringToken):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js: Added.
+        * inspector/front-end/SourceJavaScriptTokenizer.js: Added.
+        (WebInspector.SourceJavaScriptTokenizer):
+        (WebInspector.SourceJavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js: Added.
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+        (WebInspector.TextEditorHighlighter.Tokenizer):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.set line):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.set condition):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.get condition):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.hasCondition):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.getLexCondition):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype.setLexCondition):
+        (WebInspector.TextEditorHighlighter.Tokenizer.prototype._charAt):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.

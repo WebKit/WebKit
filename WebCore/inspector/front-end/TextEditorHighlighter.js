@@ -32,14 +32,32 @@
 WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
-    this._tokenizer = new WebInspector.JavaScriptTokenizer();
+    this._tokenizer = new WebInspector.SourceCSSTokenizer();
 
     this._styles = [];
-    this._styles["comment"] = "rgb(0, 116, 0)";
-    this._styles["string"] = "rgb(196, 26, 22)";
-    this._styles["regex"] = "rgb(196, 26, 22)";
-    this._styles["keyword"] = "rgb(170, 13, 145)";
-    this._styles["number"] = "rgb(28, 0, 207)";
+
+    this._styles["css-comment"] = "rgb(0, 116, 0)";
+    this._styles["css-params"] = "rgb(7, 144, 154)";
+    this._styles["css-string"] = "rgb(7, 144, 154)";
+    this._styles["css-keyword"] = "rgb(7, 144, 154)";
+    this._styles["css-number"] = "rgb(50, 0, 255)";
+    this._styles["css-property"] = "rgb(200, 0, 0)";
+    this._styles["css-at-rule"] = "rgb(200, 0, 0)";
+    this._styles["css-selector"] = "rgb(0, 0, 0)";
+    this._styles["css-important"] = "rgb(200, 0, 180)";
+
+    /* Keep this in sync with inspector.css and view-source.css */
+    this._styles["html-tag"] = "rgb(136, 18, 128)";
+    this._styles["html-attr-name"] = "rgb(153, 69, 0)";
+    this._styles["html-attr-value"] = "rgb(26, 26, 166)";
+    this._styles["html-comment"] = "rgb(35, 110, 37)";
+    this._styles["html-doctype"] = "rgb(192, 192, 192)";
+
+    this._styles["js-comment"] = "rgb(0, 116, 0)";
+    this._styles["js-string"] = "rgb(196, 26, 22)";
+    this._styles["js-regex"] = "rgb(196, 26, 22)";
+    this._styles["js-keyword"] = "rgb(170, 13, 145)";
+    this._styles["js-number"] = "rgb(28, 0, 207)";
 
     this._damageCallback = damageCallback;    
 }
@@ -146,7 +164,7 @@ WebInspector.TextEditorHighlighter.prototype = {
             this._textModel.setAttribute(i, "highlighter-state", state);
 
             var nextLineState = this._textModel.getAttribute(i + 1, "highlighter-state");
-            if (nextLineState && nextLineState.preCondition === state.postCondition) {
+            if (nextLineState && this._tokenizer.hasCondition(nextLineState.preCondition)) {
                 // Following lines are up to date, no need re-highlight.
                 this._damageCallback(startLine, i + 1);
                 return true;
@@ -166,5 +184,46 @@ WebInspector.TextEditorHighlighter.prototype = {
                  attributes[column] = { length: newColumn - column, style: this._styles[tokenType] };
              column = newColumn;
          } while (column < line.length)
+    }
+}
+
+WebInspector.TextEditorHighlighter.Tokenizer = function()
+{
+}
+
+WebInspector.TextEditorHighlighter.Tokenizer.prototype = {
+    set line(line) {
+        this._line = line;
+    },
+
+    set condition(condition)
+    {
+        this._lexCondition = condition.lexCondition;
+        this._parseCondition = condition.parseCondition;
+    },
+
+    get condition()
+    {
+        return { lexCondition: this._lexCondition, parseCondition: this._parseCondition };
+    },
+
+    hasCondition: function(condition)
+    {
+        return this._lexCondition === condition.lexCondition && this._parseCondition === condition.parseCondition;
+    },
+
+    getLexCondition: function()
+    {
+        return this._lexCondition;
+    },
+
+    setLexCondition: function(lexCondition)
+    {
+        this._lexCondition = lexCondition;
+    },
+
+    _charAt: function(cursor)
+    {
+        return cursor < this._line.length ? this._line.charAt(cursor) : "\n";
     }
 }

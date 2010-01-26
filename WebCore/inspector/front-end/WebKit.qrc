@@ -36,7 +36,6 @@
     <file>InspectorBackendStub.js</file>
     <file>InspectorFrontendHostStub.js</file>
     <file>JavaScriptSourceSyntaxHighlighter.js</file>
-    <file>JavaScriptTokenizer.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
@@ -63,8 +62,11 @@
     <file>Settings.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
+    <file>SourceCSSTokenizer.js</file>
     <file>SourceFrame.js</file>
     <file>SourceFrame2.js</file>
+    <file>SourceHTMLTokenizer.js</file>
+    <file>SourceJavaScriptTokenizer.js</file>
     <file>SourceSyntaxHighlighter.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>

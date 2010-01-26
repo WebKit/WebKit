@@ -42924,10 +42924,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptTokenizer.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\MetricsSidebarPane.js"
 					>
 				</File>
@@ -43028,11 +43024,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SourceCSSTokenizer.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceFrame.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\SourceFrame2.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\SourceHTMLTokenizer.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\SourceJavaScriptTokenizer.js"
 					>
 				</File>
 				<File

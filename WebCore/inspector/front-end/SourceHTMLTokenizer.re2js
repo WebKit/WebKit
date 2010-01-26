@@ -1,0 +1,198 @@
+/*
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// Generate js file as follows:
+//
+// re2c -isc WebCore/inspector/front-end/SourceHTMLTokenizer.re2js \
+// | sed 's|^yy\([^:]*\)*\:|case \1:|' \
+// | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
+// | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
+// | sed 's|[*]cursor|this._charAt(cursor)|' \
+// | sed 's|yych = \*\([^;]*\)|yych = this._charAt\1|' \
+// | sed 's|goto case \([^;]*\)|{ gotoCase = \1; continue; }|' \
+// | sed 's|unsigned\ int|var|' \
+// | sed 's|var\ yych|case 1: var yych|'
+
+WebInspector.SourceHTMLTokenizer = function()
+{
+    WebInspector.TextEditorHighlighter.Tokenizer.call(this);
+
+    this._lexConditions = {
+        INITIAL: 0,
+        COMMENT: 1,
+        DSTRING: 2,
+        SSTRING: 3
+    };
+
+    this._parseConditions = {
+        INITIAL: 0,
+        TAG: 1,
+        ATTRIBUTE: 2,
+        ATTRIBUTE_VALUE: 3,
+        DOCTYPE: 4
+    };
+
+    this.case_INITIAL = 1000;
+    this.case_COMMENT = 1001;
+    this.case_DSTRING = 1002;
+    this.case_SSTRING = 1003;
+
+    this.initialCondition = { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
+}
+
+WebInspector.SourceHTMLTokenizer.prototype = {
+    _stringToken: function(cursor, stringEnds)
+    {
+        if (this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE) {
+            this.tokenType = "html-attr-value";
+            if (stringEnds)
+                this._parseCondition = this._parseConditions.ATTRIBUTE;
+        } else if (this._parseCondition === this._parseConditions.DOCTYPE)
+            this.tokenType = "html-doctype";
+        else
+            this.tokenType = null;
+        return cursor;
+    },
+
+    nextToken: function(cursor)
+    {
+        var cursorOnEnter = cursor;
+        var gotoCase = 1;
+        while (1) {
+            switch (gotoCase)
+            // Following comment is replaced with generated state machine.
+            /*!re2c
+                re2c:define:YYCTYPE  = "var";
+                re2c:define:YYCURSOR = cursor;
+                re2c:define:YYGETCONDITION = "this.getLexCondition";
+                re2c:define:YYSETCONDITION = "this.setLexCondition";
+                re2c:condprefix = "case this.case_";
+                re2c:condenumprefix = "this._lexConditions.";
+                re2c:yyfill:enable = 0;
+                re2c:labelprefix = "case ";
+                re2c:indent:top = 2;
+                re2c:indent:string = "    ";
+
+                CommentContent = ([^-\r\n] | ("--" [^>]))*;
+                Comment = "<!--" CommentContent "-->";
+                CommentStart = "<!--" CommentContent [\r\n];
+                CommentEnd = CommentContent "-->";
+
+                LT = "<" | "</";
+                DocTypeLT = "<!" [Dd] [Oo] [Cc] [Tt] [Yy] [Pp] [Ee];
+                GT = ">";
+                EqualSign = "=";
+
+                Letter = [_a-zA-Z\x80-\xFF];
+
+                DoubleStringContent = [^\r\n\"]*;
+                SingleStringContent = [^\r\n\']*;
+                StringLiteral = "\"" DoubleStringContent "\"" | "'" SingleStringContent "'";
+                DoubleStringStart = "\"" DoubleStringContent [\r\n];
+                DoubleStringEnd = DoubleStringContent "\"";
+                SingleStringStart = "'" SingleStringContent [\r\n];
+                SingleStringEnd = SingleStringContent "'";
+
+                Identifier = Letter+;
+
+                <INITIAL> Comment { this.tokenType = "html-comment"; return cursor; }
+                <INITIAL> CommentStart => COMMENT { this.tokenType = "html-comment"; return cursor; }
+                <COMMENT> CommentContent => COMMENT { this.tokenType = "html-comment"; return cursor; }
+                <COMMENT> CommentEnd => INITIAL { this.tokenType = "html-comment"; return cursor; }
+
+                <INITIAL> DocTypeLT => INITIAL
+                {
+                    var token = this._line.substring(cursorOnEnter, cursor);
+                    this.tokenType = "html-doctype";
+                    this._parseCondition = this._parseConditions.DOCTYPE;
+                    return cursor;
+                }
+
+                <INITIAL> LT => INITIAL
+                {
+                    this.tokenType = "html-tag";
+                    this._parseCondition = this._parseConditions.TAG;
+                    return cursor;
+                }
+
+                <INITIAL> GT => INITIAL
+                {
+                    if (this._parseCondition === this._parseConditions.DOCTYPE)
+                        this.tokenType = "html-doctype";
+                    else
+                        this.tokenType = "html-tag";
+                    this._parseCondition = this._parseConditions.INITIAL;
+                    return cursor;
+                }
+
+                <INITIAL> StringLiteral { return this._stringToken(cursor, true); }
+                <INITIAL> DoubleStringStart => DSTRING { return this._stringToken(cursor); }
+                <DSTRING> DoubleStringContent => DSTRING { return this._stringToken(cursor); }
+                <DSTRING> DoubleStringEnd => INITIAL { return this._stringToken(cursor, true); }
+                <INITIAL> SingleStringStart => SSTRING { return this._stringToken(cursor); }
+                <SSTRING> SingleStringContent => SSTRING { return this._stringToken(cursor); }
+                <SSTRING> SingleStringEnd => INITIAL { return this._stringToken(cursor, true); }
+
+                <INITIAL> EqualSign => INITIAL
+                {
+                    if (this._parseCondition === this._parseConditions.ATTRIBUTE) {
+                        this.tokenType = null;
+                        this._parseCondition = this._parseConditions.ATTRIBUTE_VALUE;
+                    } else if (this._parseCondition === this._parseConditions.DOCTYPE)
+                        this.tokenType = "html-doctype";
+                    else
+                        this.tokenType = null;
+                    return cursor;
+                }
+
+                <INITIAL> Identifier
+                {
+                    if (this._parseCondition === this._parseConditions.TAG) {
+                        this.tokenType = "html-tag";
+                        this._parseCondition = this._parseConditions.ATTRIBUTE;
+                    } else if (this._parseCondition === this._parseConditions.ATTRIBUTE) {
+                        this.tokenType = "html-attr-name";
+                        this._parseCondition = this._parseConditions.ATTRIBUTE;
+                    } else if (this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE) {
+                        this.tokenType = "html-attr-value";
+                        this._parseCondition = this._parseConditions.ATTRIBUTE;
+                    } else if (this._parseCondition === this._parseConditions.DOCTYPE)
+                        this.tokenType = "html-doctype";
+                    else
+                        this.tokenType = null;
+                    return cursor;
+                }
+                <*> [^] { this.tokenType = null; return cursor; }
+            */
+        }
+    }
+}
+
+WebInspector.SourceHTMLTokenizer.prototype.__proto__ = WebInspector.TextEditorHighlighter.Tokenizer.prototype;

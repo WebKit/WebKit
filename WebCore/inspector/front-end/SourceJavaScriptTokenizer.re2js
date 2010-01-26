@@ -30,7 +30,7 @@
 
 // Generate js file as follows:
 //
-// re2c -isc WebCore/inspector/front-end/JavaScriptTokenizer.re2js \
+// re2c -isc WebCore/inspector/front-end/SourceJavaScriptTokenizer.re2js \
 // | sed 's|^yy\([^:]*\)*\:|case \1:|' \
 // | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
 // | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
@@ -40,9 +40,10 @@
 // | sed 's|unsigned\ int|var|' \
 // | sed 's|var\ yych|case 1: var yych|'
 
-WebInspector.JavaScriptTokenizer = function()
+WebInspector.SourceJavaScriptTokenizer = function()
 {
-    this._tokens = [];
+    WebInspector.TextEditorHighlighter.Tokenizer.call(this);
+
     this._keywords = [
         "null", "true", "false", "break", "case", "catch", "const", "default", "finally", "for",
         "instanceof", "new", "var", "continue", "function", "return", "void", "delete", "if",
@@ -50,7 +51,7 @@ WebInspector.JavaScriptTokenizer = function()
         "class", "enum", "export", "extends", "import", "super", "get", "set"
     ].keySet();
 
-    this._conditions = {
+    this._lexConditions = {
         DIV: 0,
         NODIV: 1,
         COMMENT: 2,
@@ -66,31 +67,10 @@ WebInspector.JavaScriptTokenizer = function()
     this.case_SSTRING = 1004;
     this.case_REGEX = 1005;
 
-    this.initialCondition = this._conditions.NODIV;
-    this.condition = this.initialCondition;
+    this.initialCondition = { lexCondition: this._lexConditions.NODIV }
 }
 
-WebInspector.JavaScriptTokenizer.prototype = {
-
-    set line(line) {
-        this._line = line;
-    },
-
-    getCondition: function()
-    {
-        return this.condition;
-    },
-
-    setCondition: function(condition)
-    {
-        this.condition = condition;
-    },
-
-    _charAt: function(cursor)
-    {
-        return cursor < this._line.length ? this._line.charAt(cursor) : "\n";
-    },
-
+WebInspector.SourceJavaScriptTokenizer.prototype = {
     nextToken: function(cursor)
     {
         var cursorOnEnter = cursor;
@@ -101,10 +81,10 @@ WebInspector.JavaScriptTokenizer.prototype = {
             /*!re2c
                 re2c:define:YYCTYPE  = "var";
                 re2c:define:YYCURSOR = cursor;
-                re2c:define:YYGETCONDITION = "this.getCondition";
-                re2c:define:YYSETCONDITION = "this.setCondition";
+                re2c:define:YYGETCONDITION = "this.getLexCondition";
+                re2c:define:YYSETCONDITION = "this.setLexCondition";
                 re2c:condprefix = "case this.case_";
-                re2c:condenumprefix = "this._conditions.";
+                re2c:condenumprefix = "this._lexConditions.";
                 re2c:yyfill:enable = 0;
                 re2c:labelprefix = "case ";
                 re2c:indent:top = 2;
@@ -144,8 +124,8 @@ WebInspector.JavaScriptTokenizer.prototype = {
                 StringLiteral = "\"" DoubleStringContent "\"" | "'" SingleStringContent "'";
                 DoubleStringStart = "\"" DoubleStringContent "\\" [\r\n];
                 DoubleStringEnd = DoubleStringContent "\"";
-                SingleStringStart = "\'" SingleStringContent "\\" [\r\n];
-                SingleStringEnd = SingleStringContent "\'";
+                SingleStringStart = "'" SingleStringContent "\\" [\r\n];
+                SingleStringEnd = SingleStringContent "'";
 
                 BackslashSequence = "\\" [^\r\n];
                 RegexSet = "[" ([^\r\n*\\/] | BackslashSequence)* "]";
@@ -156,31 +136,31 @@ WebInspector.JavaScriptTokenizer.prototype = {
                 RegexStart = "/" RegexFirstChar RegexContent "\\";
                 RegexEnd = RegexContent "/" [igm]*;
 
-                <DIV,NODIV> LineComment { this.tokenType = "comment"; return cursor; }
-                <DIV,NODIV> Comment { this.tokenType = "comment"; return cursor; }
-                <DIV,NODIV> CommentStart => COMMENT { this.tokenType = "comment"; return cursor; }
-                <COMMENT> CommentContent => COMMENT { this.tokenType = "comment"; return cursor; }
-                <COMMENT> CommentEnd => NODIV { this.tokenType = "comment"; return cursor; }
+                <DIV,NODIV> LineComment { this.tokenType = "js-comment"; return cursor; }
+                <DIV,NODIV> Comment { this.tokenType = "js-comment"; return cursor; }
+                <DIV,NODIV> CommentStart => COMMENT { this.tokenType = "js-comment"; return cursor; }
+                <COMMENT> CommentContent => COMMENT { this.tokenType = "js-comment"; return cursor; }
+                <COMMENT> CommentEnd => NODIV { this.tokenType = "js-comment"; return cursor; }
 
-                <DIV,NODIV> StringLiteral { this.tokenType = "string"; return cursor; }
-                <DIV,NODIV> DoubleStringStart => DSTRING { this.tokenType = "string"; return cursor; }
-                <DSTRING> DoubleStringContent => DSTRING { this.tokenType = "string"; return cursor; }
-                <DSTRING> DoubleStringEnd => NODIV { this.tokenType = "string"; return cursor; }
-                <DIV,NODIV> SingleStringStart => SSTRING { this.tokenType = "string"; return cursor; }
-                <SSTRING> SingleStringContent => SSTRING { this.tokenType = "string"; return cursor; }
-                <SSTRING> SingleStringEnd => NODIV { this.tokenType = "string"; return cursor; }
+                <DIV,NODIV> StringLiteral { this.tokenType = "js-string"; return cursor; }
+                <DIV,NODIV> DoubleStringStart => DSTRING { this.tokenType = "js-string"; return cursor; }
+                <DSTRING> DoubleStringContent => DSTRING { this.tokenType = "js-string"; return cursor; }
+                <DSTRING> DoubleStringEnd => NODIV { this.tokenType = "js-string"; return cursor; }
+                <DIV,NODIV> SingleStringStart => SSTRING { this.tokenType = "js-string"; return cursor; }
+                <SSTRING> SingleStringContent => SSTRING { this.tokenType = "js-string"; return cursor; }
+                <SSTRING> SingleStringEnd => NODIV { this.tokenType = "js-string"; return cursor; }
 
-                <NODIV> Regex { this.tokenType = "regex"; return cursor; }
-                <NODIV> RegexStart => REGEX { this.tokenType = "regex"; return cursor; }
-                <REGEX> RegexContent => REGEX { this.tokenType = "regex"; return cursor; }
-                <REGEX> RegexEnd => NODIV { this.tokenType = "regex"; return cursor; }
+                <NODIV> Regex { this.tokenType = "js-regex"; return cursor; }
+                <NODIV> RegexStart => REGEX { this.tokenType = "js-regex"; return cursor; }
+                <REGEX> RegexContent => REGEX { this.tokenType = "js-regex"; return cursor; }
+                <REGEX> RegexEnd => NODIV { this.tokenType = "js-regex"; return cursor; }
 
-                <DIV,NODIV> NumericLiteral => DIV { this.tokenType = "number"; return cursor; }
+                <DIV,NODIV> NumericLiteral => DIV { this.tokenType = "js-number"; return cursor; }
                 <DIV,NODIV> Identifier => DIV
                 {
                     var token = this._line.substring(cursorOnEnter, cursor);
                     if (token in this._keywords)
-                        this.tokenType = "keyword";
+                        this.tokenType = "js-keyword";
                     else
                         this.tokenType = null;
                     return cursor;
@@ -193,3 +173,5 @@ WebInspector.JavaScriptTokenizer.prototype = {
         }
     }
 }
+
+WebInspector.SourceJavaScriptTokenizer.prototype.__proto__ = WebInspector.TextEditorHighlighter.Tokenizer.prototype;
