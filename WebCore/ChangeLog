@@ -1,3 +1,12 @@
+2010-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Unreviewed build fix.
+
+        [Qt] Fix Windows build when sqlite is not available.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2010-01-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

@@ -2639,6 +2639,7 @@ SOURCES += \
     websockets/WebSocket.cpp \
     websockets/WebSocketChannel.cpp \
     websockets/WebSocketHandshake.cpp \
+    websockets/ThreadableWebSocketChannel.cpp \
     platform/network/SocketStreamErrorBase.cpp \
     platform/network/SocketStreamHandleBase.cpp \
     platform/network/qt/SocketStreamHandleQt.cpp \
@@ -2647,7 +2648,6 @@ SOURCES += \
 
 contains(DEFINES, ENABLE_WORKERS=1) {
 SOURCES += \
-    websockets/ThreadableWebSocketChannel.cpp \
     websockets/WorkerThreadableWebSocketChannel.cpp
 }
 }
