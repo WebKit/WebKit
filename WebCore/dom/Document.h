@@ -907,8 +907,6 @@ public:
 
     void updateURLForPushOrReplaceState(const KURL&);
     void statePopped(SerializedScriptValue*);
-    void registerHistoryItem(HistoryItem* item);
-    void unregisterHistoryItem(HistoryItem* item);
 
     void updateSandboxFlags(); // Set sandbox flags as determined by the frame.
 

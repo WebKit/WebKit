@@ -123,7 +123,12 @@ HistoryItem* BackForwardList::itemAtIndex(int index)
 
 void BackForwardList::pushStateItem(PassRefPtr<HistoryItem> newItem)
 {
-  // FIXME: Need to implement state support for chromium.
+    RefPtr<HistoryItem> current = m_client->currentItem();
+
+    addItem(newItem);
+
+    if (!current->stateObject())
+        current->setStateObject(SerializedScriptValue::create());
 }
 
 HistoryItemVector& BackForwardList::entries()

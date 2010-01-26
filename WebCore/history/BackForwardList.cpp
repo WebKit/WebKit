@@ -239,20 +239,15 @@ HistoryItemVector& BackForwardList::entries()
 void BackForwardList::pushStateItem(PassRefPtr<HistoryItem> newItem)
 {
     ASSERT(newItem);
-    ASSERT(newItem->document());
     ASSERT(newItem->stateObject());
     
     RefPtr<HistoryItem> current = currentItem();
     ASSERT(current);
 
-    Document* newItemDocument = newItem->document();
-
     addItem(newItem);
     
-    if (!current->document()) {
-        current->setDocument(newItemDocument);
+    if (!current->stateObject())
         current->setStateObject(SerializedScriptValue::create());
-    }
 }
 
 void BackForwardList::close()

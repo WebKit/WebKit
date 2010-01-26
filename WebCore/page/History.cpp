@@ -112,13 +112,13 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     else if (stateObjectType == StateObjectReplace)
         m_frame->loader()->history()->replaceState(data, title, fullURL.string());
             
-    if (!urlString.isEmpty()) {
+    if (!urlString.isEmpty())
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);
-        if (stateObjectType == StateObjectPush)
-            m_frame->loader()->client()->dispatchDidPushStateWithinPage();
-        else if (stateObjectType == StateObjectReplace)
-            m_frame->loader()->client()->dispatchDidReplaceStateWithinPage();
-    }
+
+    if (stateObjectType == StateObjectPush)
+        m_frame->loader()->client()->dispatchDidPushStateWithinPage();
+    else if (stateObjectType == StateObjectReplace)
+        m_frame->loader()->client()->dispatchDidReplaceStateWithinPage();
 }
 
 } // namespace WebCore
