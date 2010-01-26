@@ -41,52 +41,57 @@ JavaClass::JavaClass(jobject anInstance)
 
     if (!aClass) {
         fprintf(stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
+        m_name = strdup("<Unknown>");
         return;
     }
 
-    jstring className = (jstring)callJNIMethod<jobject>(aClass, "getName", "()Ljava/lang/String;");
-    const char* classNameC = getCharactersFromJString(className);
-    m_name = strdup(classNameC);
-    releaseCharactersForJString(className, classNameC);
+    if (jstring className = (jstring)callJNIMethod<jobject>(aClass, "getName", "()Ljava/lang/String;")) {
+        const char* classNameC = getCharactersFromJString(className);
+        m_name = strdup(classNameC);
+        releaseCharactersForJString(className, classNameC);
+    } else
+        m_name = strdup("<Unknown>");
 
     int i;
     JNIEnv* env = getJNIEnv();
 
     // Get the fields
-    jarray fields = (jarray)callJNIMethod<jobject>(aClass, "getFields", "()[Ljava/lang/reflect/Field;");
-    int numFields = env->GetArrayLength(fields);
-    for (i = 0; i < numFields; i++) {
-        jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
-        JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
-        {
-            JSLock lock(SilenceAssertionsOnly);
-            m_fields.set(((UString)aField->name()).rep(), aField);
+    if (jarray fields = (jarray)callJNIMethod<jobject>(aClass, "getFields", "()[Ljava/lang/reflect/Field;")) {
+        int numFields = env->GetArrayLength(fields);
+        for (i = 0; i < numFields; i++) {
+            jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
+            JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
+            {
+                JSLock lock(SilenceAssertionsOnly);
+                m_fields.set(((UString)aField->name()).rep(), aField);
+            }
+            env->DeleteLocalRef(aJField);
         }
-        env->DeleteLocalRef(aJField);
+        env->DeleteLocalRef(fields);
     }
 
     // Get the methods
-    jarray methods = (jarray)callJNIMethod<jobject>(aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
-    int numMethods = env->GetArrayLength(methods);
-    for (i = 0; i < numMethods; i++) {
-        jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
-        JavaMethod* aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
-        MethodList* methodList;
-        {
-            JSLock lock(SilenceAssertionsOnly);
+    if (jarray methods = (jarray)callJNIMethod<jobject>(aClass, "getMethods", "()[Ljava/lang/reflect/Method;")) {
+        int numMethods = env->GetArrayLength(methods);
+        for (i = 0; i < numMethods; i++) {
+            jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
+            JavaMethod* aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
+            MethodList* methodList;
+            {
+                JSLock lock(SilenceAssertionsOnly);
 
-            methodList = m_methods.get(((UString)aMethod->name()).rep());
-            if (!methodList) {
-                methodList = new MethodList();
-                m_methods.set(((UString)aMethod->name()).rep(), methodList);
+                methodList = m_methods.get(((UString)aMethod->name()).rep());
+                if (!methodList) {
+                    methodList = new MethodList();
+                    m_methods.set(((UString)aMethod->name()).rep(), methodList);
+                }
             }
+            methodList->append(aMethod);
+            env->DeleteLocalRef(aJMethod);
         }
-        methodList->append(aMethod);
-        env->DeleteLocalRef(aJMethod);
+        env->DeleteLocalRef(methods);
     }
 
-    env->DeleteLocalRef(fields);
-    env->DeleteLocalRef(methods);
     env->DeleteLocalRef(aClass);
 }
 

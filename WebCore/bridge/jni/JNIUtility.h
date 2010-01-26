@@ -81,11 +81,11 @@ template <typename T> struct JNICaller;
 template<> struct JNICaller<void> {
     static void callA(jobject obj, jmethodID mid, jvalue* args)
     {
-        return getJNIEnv()->CallVoidMethodA(obj, mid, args);
+        getJNIEnv()->CallVoidMethodA(obj, mid, args);
     }
     static void callV(jobject obj, jmethodID mid, va_list args)
     {
-        return getJNIEnv()->CallVoidMethodV(obj, mid, args);
+        getJNIEnv()->CallVoidMethodV(obj, mid, args);
     }
 };
 

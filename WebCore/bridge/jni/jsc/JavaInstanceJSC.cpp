@@ -90,6 +90,11 @@ JSValue JavaInstance::stringValue(ExecState* exec) const
     JSLock lock(SilenceAssertionsOnly);
 
     jstring stringValue = (jstring)callJNIMethod<jobject>(m_instance->m_instance, "toString", "()Ljava/lang/String;");
+
+    // Should throw a JS exception, rather than returning ""? - but better than a null dereference.
+    if (!stringValue)
+        return jsString(exec, UString());
+
     JNIEnv* env = getJNIEnv();
     const jchar* c = getUCharactersFromJStringInEnv(env, stringValue);
     UString u((const UChar*)c, (int)env->GetStringLength(stringValue));

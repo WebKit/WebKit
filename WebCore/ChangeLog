@@ -1,3 +1,28 @@
+<<<<<<< .mine
+2010-01-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Some methods in JSC JNI bridge need more error checking of results from JNI.
+        https://bugs.webkit.org/show_bug.cgi?id=34149
+
+        In JNIUtility.h, callJNIMethodV<jobject> might return null (from CallObjectMethodV, via
+        JNICaller<jobject>::callV) if an exception is thrown.  All clients of callJNIMethodV<jobject>
+        that are calling methods on the returned object should null check first.
+
+        * bridge/jni/JNIBridge.cpp:
+        (JavaField::JavaField):
+        (JavaMethod::JavaMethod):
+        * bridge/jni/JNIUtility.h:
+        (JSC::Bindings::):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::stringValue):
+
+=======
 2010-01-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -340,6 +365,7 @@
         (WebCore::XMLTokenizer::XMLTokenizer):
         (WebCore::parseXMLDocumentFragment):
 
+>>>>>>> .r53864
 2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.

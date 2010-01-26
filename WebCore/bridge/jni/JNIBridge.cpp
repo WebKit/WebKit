@@ -55,32 +55,44 @@ JavaParameter::JavaParameter(JNIEnv* env, jstring type)
 
 JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 {
-    // Get return type
-    jobject returnType = callJNIMethod<jobject>(aMethod, "getReturnType", "()Ljava/lang/Class;");
-    jstring returnTypeName = static_cast<jstring>(callJNIMethod<jobject>(returnType, "getName", "()Ljava/lang/String;"));
+    // Get return type name
+    jstring returnTypeName = 0;
+    if (jobject returnType = callJNIMethod<jobject>(aMethod, "getReturnType", "()Ljava/lang/Class;")) {
+            returnTypeName = static_cast<jstring>(callJNIMethod<jobject>(returnType, "getName", "()Ljava/lang/String;"));
+        if (!returnTypeName)
+            returnTypeName = env->NewStringUTF("<Unknown>");
+        env->DeleteLocalRef(returnType);
+    }
     m_returnType = JavaString(env, returnTypeName);
     m_JNIReturnType = JNITypeFromClassName(m_returnType.UTF8String());
-    env->DeleteLocalRef(returnType);
     env->DeleteLocalRef(returnTypeName);
 
     // Get method name
     jstring methodName = static_cast<jstring>(callJNIMethod<jobject>(aMethod, "getName", "()Ljava/lang/String;"));
+    if (!returnTypeName)
+        returnTypeName = env->NewStringUTF("<Unknown>");
     m_name = JavaString(env, methodName);
     env->DeleteLocalRef(methodName);
 
     // Get parameters
-    jarray jparameters = static_cast<jarray>(callJNIMethod<jobject>(aMethod, "getParameterTypes", "()[Ljava/lang/Class;"));
-    m_numParameters = env->GetArrayLength(jparameters);
-    m_parameters = new JavaParameter[m_numParameters];
+    if (jarray jparameters = static_cast<jarray>(callJNIMethod<jobject>(aMethod, "getParameterTypes", "()[Ljava/lang/Class;"))) {
+        m_numParameters = env->GetArrayLength(jparameters);
+        m_parameters = new JavaParameter[m_numParameters];
 
-    for (int i = 0; i < m_numParameters; i++) {
-        jobject aParameter = env->GetObjectArrayElement(static_cast<jobjectArray>(jparameters), i);
-        jstring parameterName = static_cast<jstring>(callJNIMethod<jobject>(aParameter, "getName", "()Ljava/lang/String;"));
-        m_parameters[i] = JavaParameter(env, parameterName);
-        env->DeleteLocalRef(aParameter);
-        env->DeleteLocalRef(parameterName);
+        for (int i = 0; i < m_numParameters; i++) {
+            jobject aParameter = env->GetObjectArrayElement(static_cast<jobjectArray>(jparameters), i);
+            jstring parameterName = static_cast<jstring>(callJNIMethod<jobject>(aParameter, "getName", "()Ljava/lang/String;"));
+            if (!parameterName)
+                parameterName = env->NewStringUTF("<Unknown>");
+            m_parameters[i] = JavaParameter(env, parameterName);
+            env->DeleteLocalRef(aParameter);
+            env->DeleteLocalRef(parameterName);
+        }
+        env->DeleteLocalRef(jparameters);
+    } else {
+        m_numParameters = 0;
+        m_parameters = 0;
     }
-    env->DeleteLocalRef(jparameters);
 
     // Created lazily.
     m_signature = 0;
