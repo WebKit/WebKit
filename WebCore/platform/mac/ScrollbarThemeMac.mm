@@ -362,7 +362,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     trackInfo.min = 0;
     trackInfo.max = scrollbar->maximum();
     trackInfo.value = scrollbar->currentPos();
-    trackInfo.trackInfo.scrollbar.viewsize = scrollbar->pageStep();
+    trackInfo.trackInfo.scrollbar.viewsize = scrollbar->visibleSize();
     trackInfo.attributes = 0;
     if (scrollbar->orientation() == HorizontalScrollbar)
         trackInfo.attributes |= kThemeTrackHorizontal;

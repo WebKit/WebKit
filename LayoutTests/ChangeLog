@@ -1,3 +1,99 @@
+2010-01-25  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rebaseline pixel tests affected by changes in scrollbar thumb size.
+        https://bugs.webkit.org/show_bug.cgi?id=34049
+
+        * platform/mac/compositing/overflow/overflow-scroll-expected.checksum:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum:
+        * platform/mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/mac/fast/body-propagation/overflow/002-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/002-expected.png:
+        * platform/mac/fast/body-propagation/overflow/002-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/002-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-expected.png:
+        * platform/mac/fast/body-propagation/overflow/003-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/003-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-expected.png:
+        * platform/mac/fast/body-propagation/overflow/004-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/004-xhtml-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-declarative-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-declarative-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-expected.png:
+        * platform/mac/fast/body-propagation/overflow/007-xhtml-expected.checksum:
+        * platform/mac/fast/body-propagation/overflow/007-xhtml-expected.png:
+        * platform/mac/fast/clip/014-expected.checksum:
+        * platform/mac/fast/clip/014-expected.png:
+        * platform/mac/fast/forms/basic-textareas-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/mac/fast/forms/form-element-geometry-expected.checksum:
+        * platform/mac/fast/forms/form-element-geometry-expected.png:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.checksum:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.png:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.checksum:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.png:
+        * platform/mac/fast/inline-block/tricky-baseline-expected.checksum:
+        * platform/mac/fast/inline-block/tricky-baseline-expected.png:
+        * platform/mac/fast/layers/scroll-rect-to-visible-expected.checksum:
+        * platform/mac/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/mac/fast/overflow/002-expected.checksum:
+        * platform/mac/fast/overflow/002-expected.png:
+        * platform/mac/fast/overflow/003-expected.checksum:
+        * platform/mac/fast/overflow/003-expected.png:
+        * platform/mac/fast/overflow/005-expected.checksum:
+        * platform/mac/fast/overflow/005-expected.png:
+        * platform/mac/fast/overflow/007-expected.checksum:
+        * platform/mac/fast/overflow/007-expected.png:
+        * platform/mac/fast/overflow/008-expected.checksum:
+        * platform/mac/fast/overflow/008-expected.png:
+        * platform/mac/fast/overflow/childFocusRingClip-expected.checksum:
+        * platform/mac/fast/overflow/childFocusRingClip-expected.png:
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.checksum:
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.png:
+        * platform/mac/fast/overflow/image-selection-highlight-expected.checksum:
+        * platform/mac/fast/overflow/image-selection-highlight-expected.png:
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.checksum:
+        * platform/mac/fast/overflow/overflow-auto-position-absolute-expected.png:
+        * platform/mac/fast/overflow/overflow-rtl-expected.checksum:
+        * platform/mac/fast/overflow/overflow-rtl-expected.png:
+        * platform/mac/fast/overflow/overflow-stacking-expected.checksum:
+        * platform/mac/fast/overflow/overflow-stacking-expected.png:
+        * platform/mac/fast/overflow/overflow-text-hit-testing-expected.checksum:
+        * platform/mac/fast/overflow/overflow-text-hit-testing-expected.png:
+        * platform/mac/fast/overflow/overflow-with-local-background-attachment-expected.checksum:
+        * platform/mac/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/mac/fast/overflow/overflow-x-y-expected.checksum:
+        * platform/mac/fast/overflow/overflow-x-y-expected.png:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.checksum:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/mac/fast/overflow/scrollbar-position-update-expected.checksum:
+        * platform/mac/fast/overflow/scrollbar-position-update-expected.png:
+        * platform/mac/fast/overflow/table-overflow-float-expected.checksum:
+        * platform/mac/fast/overflow/table-overflow-float-expected.png:
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.checksum:
+        * platform/mac/fast/repaint/block-selection-gap-stale-cache-2-expected.png:
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.checksum:
+        * platform/mac/fast/repaint/layout-state-only-positioned-expected.png:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-expected.checksum:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-expected.png:
+        * platform/mac/fast/table/edge-offsets-expected.checksum:
+        * platform/mac/fast/table/edge-offsets-expected.png:
+        * platform/mac/scrollbars/key-window-not-first-responder-expected.checksum:
+        * platform/mac/scrollbars/key-window-not-first-responder-expected.png:
+        * platform/mac/svg/custom/invisible-text-after-scrolling-expected.checksum:
+        * platform/mac/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug149275-1-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug149275-1-expected.png:
+
 2010-01-25  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
