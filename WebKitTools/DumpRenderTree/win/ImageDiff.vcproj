@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -173,7 +173,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -240,7 +240,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

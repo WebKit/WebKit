@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 		PreprocessorDefinitions="__STD_C"
 	/>
 	<Tool

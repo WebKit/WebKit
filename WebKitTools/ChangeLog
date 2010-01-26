@@ -1,3 +1,14 @@
+2010-01-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Windows build references non-existent include paths
+        https://bugs.webkit.org/show_bug.cgi?id=34175
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj:
+
 2010-01-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Ariya Hidayat.
