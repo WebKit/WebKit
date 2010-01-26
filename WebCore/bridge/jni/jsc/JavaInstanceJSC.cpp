@@ -28,7 +28,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "JNIBridge.h"
+#include "JNIBridgeJSC.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassJSC.h"

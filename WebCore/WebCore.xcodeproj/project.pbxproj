@@ -1130,6 +1130,8 @@
 		59C77F2B10545B3B00506104 /* GeolocationServiceMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F2910545B3B00506104 /* GeolocationServiceMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E560A61105336600AA1258 /* JavaClassJSC.h */; };
 		59E560A91105336F00AA1258 /* JavaClassJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E560A81105336F00AA1258 /* JavaClassJSC.cpp */; };
+		59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E842651109E5A2000305AD /* JNIBridgeJSC.h */; };
+		59E842681109E5AE000305AD /* JNIBridgeJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */; };
 		59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */; };
 		59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EE122D1106080F00885116 /* JNIUtilityPrivate.h */; };
 		59EE12301106081F00885116 /* JNIUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EE122F1106081F00885116 /* JNIUtility.cpp */; };
@@ -6515,6 +6517,8 @@
 		59C77F2910545B3B00506104 /* GeolocationServiceMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationServiceMock.h; path = mock/GeolocationServiceMock.h; sourceTree = "<group>"; };
 		59E560A61105336600AA1258 /* JavaClassJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaClassJSC.h; path = jsc/JavaClassJSC.h; sourceTree = "<group>"; };
 		59E560A81105336F00AA1258 /* JavaClassJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaClassJSC.cpp; path = jsc/JavaClassJSC.cpp; sourceTree = "<group>"; };
+		59E842651109E5A2000305AD /* JNIBridgeJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIBridgeJSC.h; path = jsc/JNIBridgeJSC.h; sourceTree = "<group>"; };
+		59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JNIBridgeJSC.cpp; path = jsc/JNIBridgeJSC.cpp; sourceTree = "<group>"; };
 		59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JNIUtilityPrivate.cpp; path = jsc/JNIUtilityPrivate.cpp; sourceTree = "<group>"; };
 		59EE122D1106080F00885116 /* JNIUtilityPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JNIUtilityPrivate.h; path = jsc/JNIUtilityPrivate.h; sourceTree = "<group>"; };
 		59EE122F1106081F00885116 /* JNIUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JNIUtility.cpp; sourceTree = "<group>"; };
@@ -11129,6 +11133,8 @@
 		599D1E2F10C97D4C00E0EF12 /* jsc */ = {
 			isa = PBXGroup;
 			children = (
+				59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */,
+				59E842651109E5A2000305AD /* JNIBridgeJSC.h */,
 				59EE122D1106080F00885116 /* JNIUtilityPrivate.h */,
 				59EE122B1106080500885116 /* JNIUtilityPrivate.cpp */,
 				59BC393E11054A1300FD85DB /* JavaStringJSC.h */,
@@ -18475,6 +18481,7 @@
 				59B5977511086579007159E8 /* BridgeJSC.h in Headers */,
 				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
 				082FCAC4110927CE00CC4821 /* JSSVGContextCache.h in Headers */,
+				59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20653,6 +20660,7 @@
 				2E2D99E810E2BC1C00496337 /* DOMBlob.mm in Sources */,
 				59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */,
 				93C4F6EA1108F9A50099D0DB /* AccessibilityScrollbar.cpp in Sources */,
+				59E842681109E5AE000305AD /* JNIBridgeJSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

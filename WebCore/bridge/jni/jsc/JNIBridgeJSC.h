@@ -24,91 +24,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIBridge_h
-#define JNIBridge_h
+#ifndef JNIBridgeJSC_h
+#define JNIBridgeJSC_h
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "JNIUtility.h"
-
-#if USE(JSC)
-#include "JavaStringJSC.h"
-#endif
+#include "Bridge.h"
+#include "JNIBridge.h"
+#include <JavaVM/jni.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-typedef const char* RuntimeType;
-
-class JavaString {
+class JavaField : public Field {
 public:
-    JavaString()
-    {
-        m_impl.init();
-    }
+    JavaField(JNIEnv*, jobject aField);
 
-    JavaString(JNIEnv* e, jstring s)
-    {
-        m_impl.init(e, s);
-    }
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
 
-    JavaString(jstring s)
-    {
-        m_impl.init(getJNIEnv(), s);
-    }
+    const JavaString& name() const { return m_name; }
+    virtual RuntimeType type() const { return m_type.UTF8String(); }
 
-    const char* UTF8String() const { return m_impl.UTF8String(); }
-    const jchar* uchars() const { return m_impl.uchars(); }
-    int length() const { return m_impl.length(); }
-#if USE(JSC)
-    operator UString() const { return m_impl.uString(); }
-#endif
-
-private:
-    JavaStringImpl m_impl;
-};
-
-class JavaParameter {
-public:
-    JavaParameter() : m_JNIType(invalid_type) { }
-    JavaParameter(JNIEnv*, jstring type);
-    virtual ~JavaParameter() { }
-
-    RuntimeType type() const { return m_type.UTF8String(); }
     JNIType getJNIType() const { return m_JNIType; }
 
 private:
+    void dispatchSetValueToInstance(ExecState*, const JavaInstance*, jvalue, const char* name, const char* sig) const;
+    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JNIType returnType) const;
+
+    JavaString m_name;
     JavaString m_type;
     JNIType m_JNIType;
+    RefPtr<JObjectWrapper> m_field;
 };
 
-class JavaMethod : public Method {
+class JavaArray : public Array {
 public:
-    JavaMethod(JNIEnv*, jobject aMethod);
-    ~JavaMethod();
+    JavaArray(jobject array, const char* type, PassRefPtr<RootObject>);
+    virtual ~JavaArray();
 
-    const JavaString& name() const { return m_name; }
-    RuntimeType returnType() const { return m_returnType.UTF8String(); }
-    JavaParameter* parameterAt(int i) const { return &m_parameters[i]; }
-    int numParameters() const { return m_numParameters; }
+    RootObject* rootObject() const;
 
-    const char* signature() const;
-    JNIType JNIReturnType() const;
+    virtual void setValueAt(ExecState*, unsigned int index, JSValue) const;
+    virtual JSValue valueAt(ExecState*, unsigned int index) const;
+    virtual unsigned int getLength() const;
 
-    jmethodID methodID(jobject obj) const;
+    jobject javaArray() const { return m_array->m_instance; }
 
-    bool isStatic() const { return m_isStatic; }
+    static JSValue convertJObjectToArray(ExecState*, jobject, const char* type, PassRefPtr<RootObject>);
 
 private:
-    JavaParameter* m_parameters;
-    int m_numParameters;
-    JavaString m_name;
-    mutable char* m_signature;
-    JavaString m_returnType;
-    JNIType m_JNIReturnType;
-    mutable jmethodID m_methodID;
-    bool m_isStatic;
+    RefPtr<JObjectWrapper> m_array;
+    unsigned int m_length;
+    const char* m_type;
 };
 
 } // namespace Bindings

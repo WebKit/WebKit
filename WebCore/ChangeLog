@@ -1,3 +1,28 @@
+2010-01-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Moves JSC-specific classes from bridge/jni/JNIBridge to bridge/jni/jsc/JNIBridgeJSC
+        https://bugs.webkit.org/show_bug.cgi?id=33958
+
+        This allows bridge/jni/JNIBridge to be used with both JSC and V8.
+        A later change will add the V8 equivalent of these JSC-specific classes.
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk: Modified. Added JNIBridgeJSC.cpp
+        * GNUmakefile.am: Modified. Added JNIBridgeJSC.h
+        * WebCore.xcodeproj/project.pbxproj: Modified. Added JNIBridgeJSC.[cpp|h]
+        * bridge/jni/JNIBridge.cpp: Modified. Moved JavaField and JavaArray to JNIBridgeJSC.cpp
+        (appendClassName): Modfied. Guard calls to JSLock
+        (JavaMethod::signature): Modfied. Guard calls to JSLock
+        * bridge/jni/JNIBridge.h: Modified. Moved JavaField and JavaArray to JNIBridgeJSC.h
+        * bridge/jni/jsc/JNIBridgeJSC.cpp: Copied from WebCore/bridge/jni/JNIBridge.cpp.
+        * bridge/jni/jsc/JNIBridgeJSC.h: Copied from WebCore/bridge/jni/JNIBridge.h.
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: Modified. Include JNIBridgeJSC.h
+        * bridge/jni/jsc/JavaClassJSC.h: Modified. Include JNIBridgeJSC.h
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Modified. Include JNIBridgeJSC.h
+
 2010-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Unreviewed build fix.

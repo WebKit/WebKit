@@ -518,6 +518,7 @@ webcore_sources += \
 	WebCore/bridge/jni/JNIBridge.h \
 	WebCore/bridge/jni/JNIUtility.h \
 	WebCore/bridge/jni/jni_jsobject.h \
+	WebCore/bridge/jni/jsc/JNIBridgeJSC.h \
 	WebCore/bridge/jni/jsc/JavaClassJSC.h \
 	WebCore/bridge/jni/jsc/JavaInstanceJSC.h \
 	WebCore/bridge/jsc/BridgeJSC.h \

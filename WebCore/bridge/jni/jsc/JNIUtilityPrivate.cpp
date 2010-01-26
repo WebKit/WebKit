@@ -29,7 +29,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "JNIBridge.h"
+#include "JNIBridgeJSC.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <runtime/JSArray.h>
