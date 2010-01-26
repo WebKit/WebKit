@@ -110,9 +110,16 @@ void QtFallbackWebPopup::show()
 
     }
 
+    // QCursor::pos() is not a great idea for a touch screen, but we don't need the coordinates
+    // as comboboxes with Qt on Maemo 5 come up in their full width on the screen.
+    // On the other platforms it's okay to use QCursor::pos().
+#if defined(Q_WS_MAEMO_5)
+    m_combo->showPopup();
+#else
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
     QCoreApplication::sendEvent(m_combo, &event);
+#endif
 }
 
 void QtFallbackWebPopup::hide()
