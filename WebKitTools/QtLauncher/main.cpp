@@ -42,9 +42,6 @@
 #endif
 
 #include <QDebug>
-#include <QFile>
-#include <QTextStream>
-#include <QVector>
 
 #include <cstdio>
 #include <qevent.h>
@@ -53,6 +50,7 @@
 #include <qwebinspector.h>
 #include <qwebsettings.h>
 #include <qwebview.h>
+#include "urlloader.h"
 #include "webinspector.h"
 #include "webpage.h"
 
@@ -595,69 +593,6 @@ QObject* WebPage::createPlugin(const QString &classId, const QUrl &url, const QS
 #endif
 }
 
-class URLLoader : public QObject {
-    Q_OBJECT
-public:
-    URLLoader(QWebView* view, const QString& inputFileName)
-        : m_view(view)
-        , m_stdOut(stdout)
-        , m_loaded(0)
-    {
-        init(inputFileName);
-    }
-
-public slots:
-    void loadNext()
-    {
-        QString qstr;
-        if (getUrl(qstr)) {
-            QUrl url(qstr, QUrl::StrictMode);
-            if (url.isValid()) {
-                m_stdOut << "Loading " << qstr << " ......" << ++m_loaded << endl;
-                m_view->load(url);
-            } else
-                loadNext();
-        } else
-            disconnect(m_view, 0, this, 0);
-    }
-
-private:
-    void init(const QString& inputFileName)
-    {
-        QFile inputFile(inputFileName);
-        if (inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream stream(&inputFile);
-            QString line;
-            while (true) {
-                line = stream.readLine();
-                if (line.isNull())
-                    break;
-                m_urls.append(line);
-            }
-        } else {
-            qDebug() << "Cant't open list file";
-            exit(0);
-        }
-        m_index = 0;
-        inputFile.close();
-    }
-
-    bool getUrl(QString& qstr)
-    {
-        if (m_index == m_urls.size())
-            return false;
-
-        qstr = m_urls[m_index++];
-        return true;
-    }
-
-private:
-    QVector<QString> m_urls;
-    int m_index;
-    QWebView* m_view;
-    QTextStream m_stdOut;
-    int m_loaded;
-};
 
 #include "main.moc"
 
@@ -704,8 +639,8 @@ int main(int argc, char **argv)
         }
         MainWindow* window = new MainWindow;
         QWebView* view = window->webView();
-        URLLoader loader(view, listFile);
-        QObject::connect(view, SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
+        UrlLoader loader(view->page()->mainFrame(), listFile);
+        QObject::connect(view->page()->mainFrame(), SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
         loader.loadNext();
         window->show();
         launcherMain(app);

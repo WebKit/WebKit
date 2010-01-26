@@ -1,3 +1,19 @@
+2010-01-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Separating out the UrlLoader from the QtLauncher in it's
+        own implementation and header file.
+
+        * QtLauncher/main.cpp:
+        (main):
+        * QtLauncher/urlloader.cpp: Added.
+        (UrlLoader::UrlLoader):
+        (UrlLoader::loadNext):
+        (UrlLoader::init):
+        (UrlLoader::getUrl):
+        * QtLauncher/urlloader.h: Added.
+
 2010-01-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
