@@ -1,3 +1,10 @@
+2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: added null check into the timeline agent getter.
+
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::retrieve):
+
 2010-01-26  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
