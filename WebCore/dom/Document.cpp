@@ -388,6 +388,7 @@ Document::Document(Frame* frame, bool isXHTML, bool isHTML)
     , m_normalWorldWrapperCache(0)
 #endif
     , m_usingGeolocation(false)
+    , m_storageEventTimer(this, &Document::storageEventTimerFired)
 #if ENABLE(WML)
     , m_containsWMLContent(false)
 #endif
@@ -2991,6 +2992,25 @@ void Document::dispatchWindowLoadEvent()
     if (!domWindow)
         return;
     domWindow->dispatchLoadEvent();
+}
+
+void Document::enqueueStorageEvent(PassRefPtr<Event> storageEvent)
+{
+    m_storageEventQueue.append(storageEvent);
+    if (!m_storageEventTimer.isActive())
+        m_storageEventTimer.startOneShot(0);
+}
+
+void Document::storageEventTimerFired(Timer<Document>*)
+{
+    ASSERT(!m_storageEventTimer.isActive());
+    Vector<RefPtr<Event> > storageEventQueue;
+    storageEventQueue.swap(m_storageEventQueue);
+
+    typedef Vector<RefPtr<Event> >::const_iterator Iterator;
+    Iterator end = storageEventQueue.end();
+    for (Iterator it = storageEventQueue.begin(); it != end; ++it)
+        dispatchWindowEvent(*it);
 }
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)

@@ -26,16 +26,6 @@ function testStorage(name, storage)
         log("Storage object " + name + " has clear");
 }
 
-function testOnstorage()
-{
-    window.onstorage = function(event)
-    {
-        log("The onstorage property works when a storage event is fired.");
-    }
-    
-    window.localStorage["test"] = "test";
-}
-
 function runTest()
 {
     if ("sessionStorage" in window) {
@@ -54,10 +44,9 @@ function runTest()
     } else
         log("window.localStorage DOES NOT exist");
 
-    if ("onstorage" in window) {
+    if ("onstorage" in window)
         log("window.onstorage exists");
-        testOnstorage();
-    } else
+    else
         log("window.onstorage DOES NOT exist");
 }
 

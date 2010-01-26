@@ -18,5 +18,4 @@ Storage object localStorage has clear
 window.localStorage == window.localStorage: true
 window.localStorage === window.localStorage: true
 window.onstorage exists
-The onstorage property works when a storage event is fired.
 

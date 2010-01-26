@@ -1,54 +1,29 @@
 This is a test to make sure you can get and set values in SessionStorage by index.
 Setting FOO using the index setter.
-Storage event fired:
-Key - FOO
-New Value - BAR
-Old Value - null
-
 Reading FOO:
 BAR
 BAR
 BAR
 
 Setting FOO again, using setItem.
-Storage event fired:
-Key - FOO
-New Value - BAZ
-Old Value - BAR
-
 Reading FOO:
 BAZ
 BAZ
 BAZ
 
 Setting FOO again, using the index setter.
-Storage event fired:
-Key - FOO
-New Value - BAT
-Old Value - BAZ
-
 Reading FOO:
 BAT
 BAT
 BAT
 
 Setting FOO again, using property-slot syntax
-Storage event fired:
-Key - FOO
-New Value - BATMAN
-Old Value - BAT
-
 Reading FOO:
 BATMAN
 BATMAN
 BATMAN
 
 Removing FOO, then trying to read it
-Storage event fired:
-Key - FOO
-New Value - null
-Old Value - BATMAN
-
 Reading FOO:
 undefined
 undefined

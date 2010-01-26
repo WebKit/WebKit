@@ -1,3 +1,15 @@
+2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make storage events match the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=30546
+
+        Update the storageEvent algorithm to match the change in WebCore.
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::storageEvent):
+
 2010-01-22  Elliot Glaysher  <erg@chromium.org>
 
         Reviewed by David Levin.

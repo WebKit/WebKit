@@ -1,10 +1,5 @@
 description("Test some corner case DOM Storage values.");
 
-eventCounter = 0;
-function handleStorageEvent() {
-    eventCounter++;
-}
-
 function testKeyValue(key, value)
 {
     keyString = "storage['" + key + "']";
@@ -73,21 +68,6 @@ function test(storageString)
     testKeyValue("foo11", k);
     evalAndLog("storage.setItem('foo12', k)");
     testKeyValue("foo12", k);
-
-    debug("");
-    debug("Verify storage events are case sensitive");
-    evalAndLog("storage.foo = 'test'");
-    debug("Setting event listener");
-    window.addEventListener("storage", handleStorageEvent, false);
-    shouldBe("eventCounter", "0");
-    evalAndLog("storage.foo = 'test'");
-    shouldBe("eventCounter", "0");
-    evalAndLog("storage.foo = 'TEST'");
-    shouldBe("eventCounter", "1");
-
-    // Reset the counter for next tests (if any).
-    window.removeEventListener("storage", handleStorageEvent, false);
-    eventCounter = 0;
 }
 
 test("sessionStorage");

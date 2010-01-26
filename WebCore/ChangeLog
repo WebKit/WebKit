@@ -1,3 +1,37 @@
+2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make storage events match the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=30546
+
+        This meat of the patch I just posted is very simple.  It's just making events
+        asynchronous, not posting them to the frame that generated them, passing a null
+        for the key when issuing a clear storage event, and making the events
+        non-cancelable/non-bubbleable...all of which are clearly stated in the spec.
+
+        The asynchronous and not posting to the frame that generated them forced me to
+        re-write all the layout tests that dealt with storage events.  There's a lot of
+        code there, but I tried to be fairly careful to ensure that test coverage did
+        not shrink in any area.
+
+        Tests: storage/domstorage/events/basic-body-attribute.html
+               storage/domstorage/events/basic-setattribute.html
+               storage/domstorage/events/basic.html
+               storage/domstorage/events/case-sensitive.html
+               storage/domstorage/events/documentURI.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::enqueueStorageEvent):
+        (WebCore::Document::storageEventTimerFired):
+        * dom/Document.h:
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::StorageEvent):
+        * storage/StorageEvent.idl:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+
 2010-01-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

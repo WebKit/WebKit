@@ -102,15 +102,6 @@ PASS storage.foo12 is "ÿ찡hello"
 PASS typeof storage.getItem('foo12') is "string"
 PASS storage.getItem('foo12') is "ÿ찡hello"
 
-Verify storage events are case sensitive
-storage.foo = 'test'
-Setting event listener
-PASS eventCounter is 0
-storage.foo = 'test'
-PASS eventCounter is 0
-storage.foo = 'TEST'
-PASS eventCounter is 1
-
 
 Testing localStorage
 storage.clear()
@@ -210,15 +201,6 @@ PASS typeof storage.foo12 is "string"
 PASS storage.foo12 is "ÿ찡hello"
 PASS typeof storage.getItem('foo12') is "string"
 PASS storage.getItem('foo12') is "ÿ찡hello"
-
-Verify storage events are case sensitive
-storage.foo = 'test'
-Setting event listener
-PASS eventCounter is 0
-storage.foo = 'test'
-PASS eventCounter is 0
-storage.foo = 'TEST'
-PASS eventCounter is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
