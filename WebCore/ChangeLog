@@ -1,3 +1,42 @@
+2010-01-26  Adam Roben  <aroben@apple.com>
+
+        No review, rolling out r53861.
+        http://trac.webkit.org/changeset/53861
+        https://bugs.webkit.org/show_bug.cgi?id=33224
+
+        Caused 2 regression tests to fail.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        (WebCore::Document::registerHistoryItem):
+        (WebCore::Document::unregisterHistoryItem):
+        * dom/Document.h:
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::pushStateItem):
+        * history/BackForwardListChromium.cpp:
+        (WebCore::BackForwardList::pushStateItem):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::~HistoryItem):
+        (WebCore::HistoryItem::setStateObject):
+        (WebCore::HistoryItem::setDocument):
+        (WebCore::HistoryItem::documentDetached):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::document):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigateWithinDocument):
+        (WebCore::FrameLoader::loadItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateBackForwardListForFragmentScroll):
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2010-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

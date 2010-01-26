@@ -1,3 +1,14 @@
+2010-01-26  Adam Roben  <aroben@apple.com>
+
+        No review, rolling out r53861.
+        http://trac.webkit.org/changeset/53861
+        https://bugs.webkit.org/show_bug.cgi?id=33224
+
+        Caused 2 regression tests to fail.
+
+        * fast/loader/stateobjects/document-destroyed-navigate-back-expected.txt:
+        * fast/loader/stateobjects/document-destroyed-navigate-back.html:
+
 2010-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

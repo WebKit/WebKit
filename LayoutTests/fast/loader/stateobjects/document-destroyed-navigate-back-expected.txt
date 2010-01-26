@@ -5,6 +5,8 @@ ALERT: Navigating back...
 main frame - has 1 onunload handler(s)
 ALERT: Last path component of location is document-destroyed-navigate-back.html?SecondEntryWillLaterBeReactivated
 ALERT: State popped - SecondEntryWillLaterBeReactivated (type string)
+main frame - has 1 onunload handler(s)
+ALERT: Last path component of location is document-destroyed-navigate-back.html?FirstEntryWillLaterBeReactivated
 ALERT: State popped - FirstEntryWillLaterBeReactivated (type string)
 ALERT: Test complete
 This test:

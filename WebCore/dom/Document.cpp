@@ -1548,6 +1548,12 @@ void Document::detach()
     if (render)
         render->destroy();
     
+    HashSet<RefPtr<HistoryItem> > associatedHistoryItems;
+    associatedHistoryItems.swap(m_associatedHistoryItems);
+    HashSet<RefPtr<HistoryItem> >::iterator end = associatedHistoryItems.end();
+    for (HashSet<RefPtr<HistoryItem> >::iterator i = associatedHistoryItems.begin(); i != end; ++i)
+        (*i)->documentDetached(this);
+    
     // This is required, as our Frame might delete itself as soon as it detaches
     // us. However, this violates Node::detach() semantics, as it's never
     // possible to re-attach. Eventually Document::detach() should be renamed,
@@ -4486,6 +4492,18 @@ void Document::statePopped(SerializedScriptValue* stateObject)
         dispatchWindowEvent(PopStateEvent::create(stateObject));
     else
         m_pendingStateObject = stateObject;
+}
+
+void Document::registerHistoryItem(HistoryItem* item)
+{
+    ASSERT(!m_associatedHistoryItems.contains(item));
+    m_associatedHistoryItems.add(item);
+}
+
+void Document::unregisterHistoryItem(HistoryItem* item)
+{
+    ASSERT(m_associatedHistoryItems.contains(item) || m_associatedHistoryItems.isEmpty());
+    m_associatedHistoryItems.remove(item);
 }
 
 void Document::updateSandboxFlags()
