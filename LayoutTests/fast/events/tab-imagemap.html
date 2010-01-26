@@ -6,7 +6,7 @@
 var successfullyParsed = false;
 </script>
 <script src="../js/resources/js-test-pre.js"></script>
-<body id="body" tabindex=-1>
+<body id="body">
 
 <map name="mymap">
 <area id="area1" shape="circle" coords="70,84,51" href="1">
@@ -44,9 +44,10 @@ var successfullyParsed = false;
     eventSender.keyDown('\t');
     shouldBe("document.activeElement.id", "'area6'");
 
-    // We'll skip over area7 because its tabindex=-1
+    // We'll skip over area7 because its tabindex=-1. On Mac and others, we'll wrap around to area1.
+    // On GTK, we'll go to the body element next.
     eventSender.keyDown('\t');
-    shouldBe("document.activeElement.id", "'area1'");
+    shouldBe("document.activeElement.id", "'area1' || 'body'");
 
     successfullyParsed = true;
 </script>
