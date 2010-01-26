@@ -1,3 +1,15 @@
+2010-01-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] JavaScript prompt is currently broken.
+        https://bugs.webkit.org/show_bug.cgi?id=30914
+
+        Remove the manual test case in favor of an automated
+        test case in WebKit/qt/tests/qwebpage.
+
+        * manual-tests/qt/java-script-prompt.html: Removed.
+
 2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

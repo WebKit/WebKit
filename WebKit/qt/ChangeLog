@@ -1,3 +1,31 @@
+2010-01-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] JavaScript prompt is currently broken
+        https://bugs.webkit.org/show_bug.cgi?id=30914
+
+        In r52152 a patch was landed to convert a null QString
+        to an empty WebCore::String in case the prompt was accepted
+        but the default implementation returned the null QString.
+
+        The patch tried to avoid assign to result twice and
+        was not checking the QString if it is null but the default
+        value. This lead to always returning an empty string on
+        successful prompts. Fix it by checking the variable 'x'
+        for isNull.
+
+        The manual test case used didn't cover the case of non
+        empty input, replace it with an automatic test case that
+        should cover all cases.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::runJavaScriptPrompt): Fix the bug.
+        * tests/qwebpage/tst_qwebpage.cpp: Add automatic test case
+        (JSPromptPage::JSPromptPage):
+        (JSPromptPage::javaScriptPrompt):
+        (tst_QWebPage::testJSPrompt):
+
 2010-01-25  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

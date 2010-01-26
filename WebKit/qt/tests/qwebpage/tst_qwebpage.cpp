@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
+    Copyright (C) 2010 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -108,6 +109,7 @@ private slots:
     void screenshot();
 
     void originatingObjectInNetworkRequests();
+    void testJSPrompt();
 
 private:
     QWebView* m_view;
@@ -1757,6 +1759,73 @@ void tst_QWebPage::originatingObjectInNetworkRequests()
     for (int i = 0; i < 2; ++i)
         QVERIFY(qobject_cast<QWebFrame*>(networkManager->requests.at(i).originatingObject()) == childFrames.at(i));
 #endif
+}
+
+/**
+ * Test fixups for https://bugs.webkit.org/show_bug.cgi?id=30914
+ *
+ * From JS we test the following conditions.
+ *
+ *   OK     + QString() => SUCCESS, empty string (but not null)
+ *   OK     + "text"    => SUCCESS, "text"
+ *   CANCEL + QString() => CANCEL, null string
+ *   CANCEL + "text"    => CANCEL, null string
+ */
+class JSPromptPage : public QWebPage {
+    Q_OBJECT
+public:
+    JSPromptPage()
+    {}
+
+    bool javaScriptPrompt(QWebFrame* frame, const QString& msg, const QString& defaultValue, QString* result)
+    {
+        if (msg == QLatin1String("test1")) {
+            *result = QString();
+            return true;
+        } else if (msg == QLatin1String("test2")) {
+            *result = QLatin1String("text");
+            return true;
+        } else if (msg == QLatin1String("test3")) {
+            *result = QString();
+            return false;
+        } else if (msg == QLatin1String("test4")) {
+            *result = QLatin1String("text");
+            return false;
+        }
+
+        qFatal("Unknown msg.");
+        return QWebPage::javaScriptPrompt(frame, msg, defaultValue, result);
+    }
+};
+
+void tst_QWebPage::testJSPrompt()
+{
+    JSPromptPage page;
+    bool res;
+
+    // OK + QString()
+    res = page.mainFrame()->evaluateJavaScript(
+            "var retval = prompt('test1');"
+            "retval=='' && retval.length == 0;").toBool();
+    QVERIFY(res);
+
+    // OK + "text"
+    res = page.mainFrame()->evaluateJavaScript(
+            "var retval = prompt('test2');"
+            "retval=='text' && retval.length == 4;").toBool();
+    QVERIFY(res);
+
+    // Cancel + QString()
+    res = page.mainFrame()->evaluateJavaScript(
+            "var retval = prompt('test3');"
+            "retval===null;").toBool();
+    QVERIFY(res);
+
+    // Cancel + "text"
+    res = page.mainFrame()->evaluateJavaScript(
+            "var retval = prompt('test4');"
+            "retval===null;").toBool();
+    QVERIFY(res);
 }
 
 QTEST_MAIN(tst_QWebPage)
