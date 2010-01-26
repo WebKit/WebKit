@@ -1,3 +1,29 @@
+2010-01-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Crash in WebKit!WebCore::RenderMenuList::itemStyle
+        https://bugs.webkit.org/show_bug.cgi?id=34182
+        <rdar://7087757>
+        
+        Added bounds checks in RenderMenuList to make sure we are
+        not making an out of bounds check in a vector once an option
+        element has been deleted. If we are out of bounds, we fall back to
+        a default value and return early, and in the case of itemStyle, we use a 
+        previous option's style, if it is available.
+
+        * manual-tests/select-delete-item.html: Added.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemText): If out of bounds check, return early.
+        (WebCore::RenderMenuList::itemToolTip): Ditto.
+        (WebCore::RenderMenuList::itemIsEnabled): Ditto.
+        (WebCore::RenderMenuList::itemStyle): If out of bounds check, try using the 0th index
+            option style, then fall back to the select's style if that option doesn't exist.
+        (WebCore::RenderMenuList::itemBackgroundColor): If out of bounds check, return early.
+        (WebCore::RenderMenuList::itemIsSeparator): Ditto.
+        (WebCore::RenderMenuList::itemIsLabel): Ditto.
+        (WebCore::RenderMenuList::itemIsSelected): Ditto.
+
 2010-01-25  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Anders Carlsson.
