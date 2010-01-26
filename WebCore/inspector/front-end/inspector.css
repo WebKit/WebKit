@@ -3800,52 +3800,34 @@ ol.breakpoint-list {
     white-space: pre;
 }
 
-.text-editor {
+.source-breakpoint-condition {
     position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    -webkit-user-select: text;
-    -webkit-user-modify: read-write-plaintext-only;
+    z-index: 30;
+    padding: 4px;
+    background-color: rgb(203, 226, 255);
+    -webkit-border-radius: 7px;
+    border: 2px solid rgb(169, 172, 203); 
+    width: 90%; 
 }
 
-.text-editor-canvas {
-    position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index: 10;
-    pointer-events: none;
+.source-breakpoint-message {
+    background-color: transparent;
+    font-family: Lucida Grande, sans-serif; 
+    font-weight: normal;
+    font-size: 11px;
+    text-align: left;
+    text-shadow: none;
+    color: rgb(85, 85, 85);
+    cursor: default;
+    margin: 0 0 2px 0; 
 }
 
-.text-editor-container {
-    position: absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    overflow: auto;
-}
-
-.text-editor-clip {
-    opacity: 0;
-    position: absolute;
-    top:0;
-    left:0;
-    pointer-events: none;
-}
-
-.text-editor-cursor {
-    -webkit-user-select: none;
-    -webkit-user-modify: none;
-    position: absolute;
-    top:0;
-    left:0;
-    width:1px;
-    height: 14px;
-    z-index: 20;
-    background-color: black;
-    pointer-events: none;
+#source-breakpoint-condition {
+    font-family: monospace;
+    margin: 0;
+    border: 1px inset rgb(190, 190, 190) !important;
+    width: 100%;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-user-modify: read-write;
 }

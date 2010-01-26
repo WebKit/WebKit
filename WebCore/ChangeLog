@@ -1,6 +1,75 @@
 2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
 
-        Reviewed by Timothy Hather.
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: add support for breakpoints, messages and search into the SourceFrame2.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34165
+
+        * inspector/front-end/SourceFrame2.js:
+        (WebInspector.SourceFrame2):
+        (WebInspector.SourceFrame2.prototype.get executionLine):
+        (WebInspector.SourceFrame2.prototype.set executionLine):
+        (WebInspector.SourceFrame2.prototype.revealLine):
+        (WebInspector.SourceFrame2.prototype.addBreakpoint):
+        (WebInspector.SourceFrame2.prototype.removeBreakpoint):
+        (WebInspector.SourceFrame2.prototype.sizeToFitContentHeight):
+        (WebInspector.SourceFrame2.prototype.setContent):
+        (WebInspector.SourceFrame2.prototype.findSearchMatches):
+        (WebInspector.SourceFrame2.prototype.setSelection):
+        (WebInspector.SourceFrame2.prototype._addMessageToSource):
+        (WebInspector.SourceFrame2.prototype._addExistingBreakpointsToSource):
+        (WebInspector.SourceFrame2.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame2.prototype._removeBreakpointFromSource):
+        (WebInspector.SourceFrame2.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame2.prototype._contextMenu):
+        (WebInspector.SourceFrame2.prototype._toggleBreakpoint):
+        (WebInspector.SourceFrame2.prototype._editBreakpointCondition.committed):
+        (WebInspector.SourceFrame2.prototype._editBreakpointCondition.dismissed):
+        (WebInspector.SourceFrame2.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame2.prototype._showBreakpointConditionPopup):
+        (WebInspector.SourceFrame2.prototype._createConditionElement):
+        (WebInspector.SourceFrame2.prototype._keyDown):
+        (WebInspector.SourceFrame2.prototype._evalSelectionInCallFrame):
+        (WebInspector.SourceFrame2.prototype._breakpointChanged):
+        (WebInspector.SourceFrame2.prototype.resize):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.decorate):
+        (WebInspector.BreakpointLineNumberDecorator.prototype._paintBreakpoint):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.mouseDown):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.contextMenu):
+        (WebInspector.ExecutionLineDecorator.prototype.decorate):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.set mimeType):
+        (WebInspector.TextEditor.prototype.set readOnly):
+        (WebInspector.TextEditor.prototype.setDivDecoration):
+        (WebInspector.TextEditor.prototype.reveal):
+        (WebInspector.TextEditor.prototype.packAndRepaintAll):
+        (WebInspector.TextEditor.prototype._updateSize):
+        (WebInspector.TextEditor.prototype.updateCanvasSize):
+        (WebInspector.TextEditor.prototype.repaintAll):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype._repaintOnScroll):
+        (WebInspector.TextEditor.prototype._mouseDown):
+        (WebInspector.TextEditor.prototype._contextMenu):
+        (WebInspector.TextEditor.prototype._caretForMouseEvent):
+        (WebInspector.TextEditor.prototype._columnForOffset):
+        (WebInspector.TextEditor.prototype._handleNavigationKey):
+        (WebInspector.TextEditor.prototype._positionDivDecoration):
+        (WebInspector.TextEditor.prototype._replaceSelectionWith):
+        (WebInspector.TextEditor.prototype.setCoalescingUpdate):
+        (WebInspector.TextEditor.prototype._handleUndo):
+        (WebInspector.TextEditor.prototype._handleRedo):
+        (WebInspector.TextEditor.prototype._changeFont):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.set mimeType):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/textEditor.css:
+
+2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
 
         Web Inspector: add methods for getting resource content from within frontend.
 

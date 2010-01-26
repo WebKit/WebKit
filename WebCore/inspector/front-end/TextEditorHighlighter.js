@@ -32,7 +32,6 @@
 WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
-    this._tokenizer = new WebInspector.SourceCSSTokenizer();
 
     this._styles = [];
 
@@ -59,10 +58,29 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._styles["js-keyword"] = "rgb(170, 13, 145)";
     this._styles["js-number"] = "rgb(28, 0, 207)";
 
+    this._tokenizers = {};
+    this._tokenizerConstructors = {
+        "text/css": WebInspector.SourceCSSTokenizer,
+        "text/html": WebInspector.SourceHTMLTokenizer,
+        "text/javascript": WebInspector.SourceJavaScriptTokenizer
+    };
+
+    this.mimeType = "text/html";
     this._damageCallback = damageCallback;    
 }
 
 WebInspector.TextEditorHighlighter.prototype = {
+    set mimeType(mimeType)
+    {
+        if (!this._tokenizerConstructors[mimeType])
+            return;
+        this._tokenizer = this._tokenizers[mimeType];
+        if (!this._tokenizer) {
+            this._tokenizer = new this._tokenizerConstructors[mimeType]();
+            this._tokenizers[mimeType] = this._tokenizer;
+        }
+    },
+
     highlight: function(endLine)
     {
         // First check if we have work to do.
