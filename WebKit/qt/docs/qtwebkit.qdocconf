@@ -4,7 +4,7 @@ project     = qtwebkit
 description = "Qt WebKit API Documentation"
 
 headerdirs = $SRCDIR/WebKit/qt/Api
-sourcedirs = $SRCDIR/WebKit/qt/Api $SRCDIR/WebKit/qt/docs
+sourcedirs = $SRCDIR/WebKit/qt/Api $SRCDIR/WebKit/qt/docs $SRCDIR/JavaScriptCore/qt/api
 outputdir = $OUTPUT_DIR/doc/html
 outputformats = HTML
 sources.fileextensions  = "*.cpp *.doc *.qdoc *.h"

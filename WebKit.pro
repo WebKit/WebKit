@@ -21,4 +21,10 @@ SUBDIRS += \
 
 }
 
+build-qtscript {
+    SUBDIRS += \
+        JavaScriptCore/qt/api/QtScript.pro \
+        JavaScriptCore/qt/tests
+}
+
 include(WebKit/qt/docs/docs.pri)

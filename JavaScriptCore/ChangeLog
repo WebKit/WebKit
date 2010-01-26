@@ -1,3 +1,126 @@
+2010-01-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        First steps of the QtScript API.
+        
+        Two new classes were created; QScriptEngine and QScriptValue.
+        The first should encapsulate a javascript context and the second a script
+        value.
+        
+        This API is still in development, so it isn't compiled by default.
+        To trigger compilation, pass --qmakearg="CONFIG+=build-qtscript" to
+        build-webkit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32565
+
+        * qt/api/QtScript.pro: Added.
+        * qt/api/qscriptconverter_p.h: Added.
+        (QScriptConverter::toString):
+        * qt/api/qscriptengine.cpp: Added.
+        (QScriptEngine::QScriptEngine):
+        (QScriptEngine::~QScriptEngine):
+        (QScriptEngine::evaluate):
+        (QScriptEngine::collectGarbage):
+        * qt/api/qscriptengine.h: Added.
+        * qt/api/qscriptengine_p.cpp: Added.
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        (QScriptEnginePrivate::evaluate):
+        * qt/api/qscriptengine_p.h: Added.
+        (QScriptEnginePrivate::get):
+        (QScriptEnginePrivate::collectGarbage):
+        (QScriptEnginePrivate::makeJSValue):
+        (QScriptEnginePrivate::context):
+        * qt/api/qscriptvalue.cpp: Added.
+        (QScriptValue::QScriptValue):
+        (QScriptValue::~QScriptValue):
+        (QScriptValue::isValid):
+        (QScriptValue::isBool):
+        (QScriptValue::isBoolean):
+        (QScriptValue::isNumber):
+        (QScriptValue::isNull):
+        (QScriptValue::isString):
+        (QScriptValue::isUndefined):
+        (QScriptValue::isError):
+        (QScriptValue::isObject):
+        (QScriptValue::isFunction):
+        (QScriptValue::toString):
+        (QScriptValue::toNumber):
+        (QScriptValue::toBool):
+        (QScriptValue::toBoolean):
+        (QScriptValue::toInteger):
+        (QScriptValue::toInt32):
+        (QScriptValue::toUInt32):
+        (QScriptValue::toUInt16):
+        (QScriptValue::call):
+        (QScriptValue::engine):
+        (QScriptValue::operator=):
+        (QScriptValue::equals):
+        (QScriptValue::strictlyEquals):
+        * qt/api/qscriptvalue.h: Added.
+        (QScriptValue::):
+        * qt/api/qscriptvalue_p.h: Added.
+        (QScriptValuePrivate::):
+        (QScriptValuePrivate::get):
+        (QScriptValuePrivate::QScriptValuePrivate):
+        (QScriptValuePrivate::isValid):
+        (QScriptValuePrivate::isBool):
+        (QScriptValuePrivate::isNumber):
+        (QScriptValuePrivate::isNull):
+        (QScriptValuePrivate::isString):
+        (QScriptValuePrivate::isUndefined):
+        (QScriptValuePrivate::isError):
+        (QScriptValuePrivate::isObject):
+        (QScriptValuePrivate::isFunction):
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toBool):
+        (QScriptValuePrivate::toInteger):
+        (QScriptValuePrivate::toInt32):
+        (QScriptValuePrivate::toUInt32):
+        (QScriptValuePrivate::toUInt16):
+        (QScriptValuePrivate::equals):
+        (QScriptValuePrivate::strictlyEquals):
+        (QScriptValuePrivate::assignEngine):
+        (QScriptValuePrivate::call):
+        (QScriptValuePrivate::engine):
+        (QScriptValuePrivate::context):
+        (QScriptValuePrivate::value):
+        (QScriptValuePrivate::object):
+        (QScriptValuePrivate::inherits):
+        (QScriptValuePrivate::isJSBased):
+        (QScriptValuePrivate::isNumberBased):
+        (QScriptValuePrivate::isStringBased):
+        * qt/api/qtscriptglobal.h: Added.
+        * qt/tests/qscriptengine/qscriptengine.pro: Added.
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp: Added.
+        (tst_QScriptEngine::tst_QScriptEngine):
+        (tst_QScriptEngine::~tst_QScriptEngine):
+        (tst_QScriptEngine::init):
+        (tst_QScriptEngine::cleanup):
+        (tst_QScriptEngine::collectGarbage):
+        (tst_QScriptEngine::evaluate):
+        * qt/tests/qscriptvalue/qscriptvalue.pro: Added.
+        * qt/tests/qscriptvalue/tst_qscriptvalue.cpp: Added.
+        (tst_QScriptValue::tst_QScriptValue):
+        (tst_QScriptValue::~tst_QScriptValue):
+        (tst_QScriptValue::init):
+        (tst_QScriptValue::cleanup):
+        (tst_QScriptValue::ctor):
+        (tst_QScriptValue::toString_data):
+        (tst_QScriptValue::toString):
+        (tst_QScriptValue::copyConstructor_data):
+        (tst_QScriptValue::copyConstructor):
+        (tst_QScriptValue::assignOperator_data):
+        (tst_QScriptValue::assignOperator):
+        (tst_QScriptValue::dataSharing):
+        (tst_QScriptValue::constructors_data):
+        (tst_QScriptValue::constructors):
+        (tst_QScriptValue::call):
+        * qt/tests/tests.pri: Added.
+        * qt/tests/tests.pro: Added.
+
 2010-01-25  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
