@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<div id="description">
+This test copies the content of an iframe and pastes it
+in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
+</div>
+<iframe id="iframe1" src="../resources/htmlcontent.html" onload="foo()"></iframe>
+<div id="pastehere" contenteditable="true"></div>
+<ul id="console"></ul>
+<script>
+if (window.layoutTestController)
+     window.layoutTestController.dumpAsText();
+
+if (window.layoutTestController)
+    window.layoutTestController.waitUntilDone();
+
+function foo() {
+    var frame = frames[0];
+    var sel = frame.getSelection();
+    var doc = frame.document;
+    sel.setPosition(doc.body, 0);
+    doc.execCommand("SelectAll");
+    doc.execCommand("Copy");
+
+    var p1 = document.getElementById("pastehere");
+    var s = window.getSelection();
+    s.setPosition(p1, 0);
+    document.execCommand("Paste");
+    log(document.getElementById("pastehere").innerHTML);
+
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+</script>
+</html>
