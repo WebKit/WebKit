@@ -1,3 +1,15 @@
+2010-01-26  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Unreviewed build fix.
+
+        [Qt] Build fix after API changes in r53835.
+
+        No new tests needed.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::parseXMLDocumentFragment):
+
 2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
