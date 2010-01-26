@@ -1,5 +1,16 @@
 2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Fix compilation of QtScript with non-gcc compilers
+
+        Variable length stack arrays are a gcc extension. Use QVarLengthArray
+        as a more portable solution that still tries to allocate on the stack
+        first.
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::call):
+
+2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Fix the build on platforms without JIT support.
