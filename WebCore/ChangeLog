@@ -1,3 +1,23 @@
+2010-01-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7573493> Error with line break inside ?&raquo; pair of characters.
+        https://bugs.webkit.org/show_bug.cgi?id=17475
+
+        Test: fast/text/line-break-after-question-mark.html
+
+        Instead of unconditionally allowing lines to break after a question mark, which was intended
+        to mimic Internet Explorer, apply the Unicode line breaking behavior after a question mark,
+        with one exception in the ASCII range to match IE, namely not allowing a line break between
+        a question mark and a vertical line.
+
+        * rendering/break_lines.cpp:
+        (WebCore::shouldBreakAfter): Added a next character parameter. Changed to consult a table
+        for the question mark case in order to keep it fast and not require a text break iterator in
+        the ASCII case.
+        (WebCore::nextBreakablePosition): Pass the next character to shouldBreakAfter.
+
 2010-01-25  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dan Bernstein.

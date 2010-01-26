@@ -1,21 +1,26 @@
 /*
- * Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007, 2010 Apple Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA.
- *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -44,13 +49,30 @@ static inline bool isBreakableSpace(UChar ch, bool treatNoBreakSpaceAsBreak)
     }
 }
 
-static inline bool shouldBreakAfter(UChar ch)
+// This differs from the Unicode algorithm only in that Unicode does not break
+// between a question mark and a vertical line (U+007C).
+static const unsigned char internetExplorerLineBreaksAfterQuestionMarkTable[0x80] = {
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, // \t
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, // ! " ' ) , . /
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, // : ; ?
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, // ]
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1  // }
+};
+
+static const size_t internetExplorerLineBreaksAfterQuestionMarkTableSize = sizeof(internetExplorerLineBreaksAfterQuestionMarkTable) / sizeof(*internetExplorerLineBreaksAfterQuestionMarkTable);
+
+static inline bool shouldBreakAfter(UChar ch, UChar nextCh)
 {
-    // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
-    // FIXME: it appears that IE behavior is more complex, see <http://bugs.webkit.org/show_bug.cgi?id=17475>.
     switch (ch) {
-        case '-':
+        // For a question mark preceding a non-ASCII characters, defer to the Unicode algorithm by returning false.
+        // For ASCII characters, use a lookup table for enhanced speed and for compatibility with Internet Explorer. 
         case '?':
+            return nextCh <= internetExplorerLineBreaksAfterQuestionMarkTableSize && internetExplorerLineBreaksAfterQuestionMarkTable[nextCh];
+        // Internet Explorer always allows breaking after a hyphen.
+        case '-':
         case softHyphen:
         // FIXME: cases for ideographicComma and ideographicFullStop are a workaround for an issue in Unicode 5.0
         // which is likely to be resolved in Unicode 5.1 <http://bugs.webkit.org/show_bug.cgi?id=17411>.
@@ -88,7 +110,7 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool treatNoBreakS
     for (int i = pos; i < len; i++) {
         UChar ch = str[i];
 
-        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastCh))
+        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastCh, ch))
             return i;
 
         if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {

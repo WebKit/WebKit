@@ -1,3 +1,18 @@
+2010-01-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7573493> Error with line break inside ?&raquo; pair of characters.
+        https://bugs.webkit.org/show_bug.cgi?id=17475
+
+        * fast/text/line-break-after-question-mark-expected.txt: Added.
+        * fast/text/line-break-after-question-mark.html: Added.
+        * fast/text/script-tests/line-break-after-question-mark.js: Added.
+        ():
+        * platform/mac/tables/mozilla/bugs/bug6674-expected.checksum: Updated.
+        * platform/mac/tables/mozilla/bugs/bug6674-expected.png: Updated.
+        * platform/mac/tables/mozilla/bugs/bug6674-expected.txt: Updated.
+
 2010-01-25  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dan Bernstein.
