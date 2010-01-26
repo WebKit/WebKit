@@ -68,6 +68,7 @@ public:
     void enableResourceTracking(bool always);
     void disableResourceTracking(bool always);
     bool resourceTrackingEnabled() const;
+    void getResourceContent(long callId, unsigned long identifier);
 
     void startTimelineProfiler();
     void stopTimelineProfiler();

@@ -149,6 +149,7 @@ const String& InspectorFrontendHost::port() const
     return port;
 }
 
+// FIXME: Remove this once migrated to SourceFrame2.
 void InspectorFrontendHost::addResourceSourceToFrame(long identifier, Node* frame)
 {
     if (!m_inspectorController)
@@ -161,6 +162,7 @@ void InspectorFrontendHost::addResourceSourceToFrame(long identifier, Node* fram
     }
 }
 
+// FIXME: Remove this once migrated to SourceFrame2.
 bool InspectorFrontendHost::addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
 {
     ASSERT_ARG(frameNode, frameNode);

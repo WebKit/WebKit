@@ -1,5 +1,27 @@
 2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
 
+        Reviewed by Timothy Hather.
+
+        Web Inspector: add methods for getting resource content from within frontend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34163
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getResourceContent):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetResourceContent):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.getResourceContent):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+
+2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: added null check into the timeline agent getter.
 
         * inspector/InspectorTimelineAgent.h:

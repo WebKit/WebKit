@@ -73,6 +73,7 @@ namespace WebCore {
 
         bool updateResource(unsigned long identifier, const ScriptObject& resourceObj);
         void removeResource(unsigned long identifier);
+        void didGetResourceContent(int callId, const String& content);
 
         void updateFocusedNode(long nodeId);
         void setAttachedWindow(bool attached);

@@ -42,6 +42,7 @@ module core {
         boolean resourceTrackingEnabled();
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
+        void getResourceContent(in long callId, in unsigned long identifier);
 
         void startTimelineProfiler();
         void stopTimelineProfiler();
@@ -77,6 +78,7 @@ module core {
 #endif
         void setInjectedScriptSource(in DOMString scriptSource);
         void dispatchOnInjectedScript(in long callId, in long injectedScriptId, in DOMString methodName, in DOMString arguments, in boolean async);
+
         void getChildNodes(in long callId, in long nodeId);
         void setAttribute(in long callId, in long elementId, in DOMString name, in DOMString value);
         void removeAttribute(in long callId, in long elementId, in DOMString name);

@@ -155,6 +155,15 @@ void InspectorFrontend::removeResource(unsigned long identifier)
     function.call();
 }
 
+void InspectorFrontend::didGetResourceContent(int callId, const String& content)
+{
+    ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch");
+    function.appendArgument("didGetResourceContent");
+    function.appendArgument(callId);
+    function.appendArgument(content);
+    function.call();
+}
+
 void InspectorFrontend::updateFocusedNode(long nodeId)
 {
     ScriptFunctionCall function(m_scriptState, m_webInspector, "dispatch"); 

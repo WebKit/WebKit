@@ -100,7 +100,6 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-
     addResourceSourceToFrame: function(identifier, element)
     {
     },
@@ -110,6 +109,13 @@ WebInspector.InspectorBackendStub.prototype = {
         return false;
     },
 
+    // FIXME: remove once migrated to SourceFrame2.
+    getResourceContent: function(callId, identifier)
+    {
+        WebInspector.didGetResourceContent(callId, "");
+    },
+
+    // FIXME: remove once migrated to SourceFrame2.
     getResourceDocumentNode: function(identifier)
     {
         return undefined;
