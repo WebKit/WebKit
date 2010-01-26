@@ -1,3 +1,9 @@
+2010-01-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Adding myself as reviewer.  No review necessary.
+
+        * Scripts/webkitpy/committers.py:
+
 2010-01-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
