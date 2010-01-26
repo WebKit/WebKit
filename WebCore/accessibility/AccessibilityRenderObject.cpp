@@ -2049,24 +2049,14 @@ AXObjectCache* AccessibilityRenderObject::axObjectCache() const
 AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
 {
     // find an image that is using this map
-    if (!m_renderer || !map)
+    if (!map)
         return 0;
 
-    String mapName = map->getName().string().lower();
-    RefPtr<HTMLCollection> coll = m_renderer->document()->images();
-    for (Node* curr = coll->firstItem(); curr; curr = coll->nextItem()) {
-        RenderObject* obj = curr->renderer();
-        if (!obj || !curr->hasTagName(imgTag))
-            continue;
-        
-        // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning,
-        // which has to be stripped off
-        String useMapName = static_cast<HTMLImageElement*>(curr)->getAttribute(usemapAttr).string().substring(1).lower();
-        if (useMapName == mapName)
-            return axObjectCache()->getOrCreate(obj);
-    }
+    HTMLImageElement* imageElement = map->imageElement();
+    if (!imageElement)
+        return 0;
     
-    return 0;
+    return axObjectCache()->getOrCreate(imageElement->renderer());
 }
     
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)

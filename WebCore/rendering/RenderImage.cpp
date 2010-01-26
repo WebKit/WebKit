@@ -26,14 +26,19 @@
 #include "config.h"
 #include "RenderImage.h"
 
+#include "Frame.h"
 #include "GraphicsContext.h"
+#include "HTMLAreaElement.h"
+#include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Page.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
+#include "SelectionController.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 
@@ -425,6 +430,51 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
+void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    RenderReplaced::paint(paintInfo, tx, ty);
+    
+    if (paintInfo.phase == PaintPhaseOutline)
+        paintFocusRings(paintInfo, style());
+}
+    
+void RenderImage::paintFocusRings(PaintInfo& paintInfo, const RenderStyle* style)
+{
+    // Don't draw focus rings if printing.
+    if (document()->printing() || !document()->frame()->selection()->isFocusedAndActive())
+        return;
+    
+    if (paintInfo.context->paintingDisabled() && !paintInfo.context->updatingControlTints())
+        return;
+
+    HTMLMapElement* mapElement = imageMap();
+    if (!mapElement)
+        return;
+    
+    Document* document = mapElement->document();
+    if (!document)
+        return;
+    
+    Node* focusedNode = document->focusedNode();
+    if (!focusedNode)
+        return;
+    
+    RefPtr<HTMLCollection> areas = mapElement->areas();
+    unsigned numAreas = areas->length();
+    
+    // FIXME: Clip the paths to the image bounding box.
+    for (unsigned k = 0; k < numAreas; ++k) {
+        HTMLAreaElement* areaElement = static_cast<HTMLAreaElement*>(areas->item(k));
+        if (focusedNode != areaElement)
+            continue;
+        
+        Vector<Path> focusRingPaths;
+        focusRingPaths.append(areaElement->getPath(this));
+        paintInfo.context->drawFocusRing(focusRingPaths, style->outlineWidth(), style->outlineOffset(), style->outlineColor());
+        break;
+    }
+}
+    
 void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
 {
     if (!hasImage() || errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
@@ -445,7 +495,7 @@ int RenderImage::minimumReplacedHeight() const
     return errorOccurred() ? intrinsicSize().height() : 0;
 }
 
-HTMLMapElement* RenderImage::imageMap()
+HTMLMapElement* RenderImage::imageMap() const
 {
     HTMLImageElement* i = node() && node()->hasTagName(imgTag) ? static_cast<HTMLImageElement*>(node()) : 0;
     return i ? i->document()->getImageMap(i->getAttribute(usemapAttr)) : 0;

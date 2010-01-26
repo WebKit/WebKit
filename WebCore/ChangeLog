@@ -1,3 +1,62 @@
+2010-01-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add ability for image maps to be focused via tabbing
+        https://bugs.webkit.org/show_bug.cgi?id=17513
+
+        Test: fast/events/tab-imagemap.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::areaElement):
+        (WebCore::AccessibilityImageMapLink::mapElement):
+        (WebCore::AccessibilityImageMapLink::isImageMapLink):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isImageMapLink):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::getPath):
+        (WebCore::HTMLAreaElement::getRect):
+        (WebCore::HTMLAreaElement::imageElement):
+        (WebCore::HTMLAreaElement::isKeyboardFocusable):
+        (WebCore::HTMLAreaElement::isFocusable):
+        (WebCore::HTMLAreaElement::dispatchBlurEvent):
+        (WebCore::HTMLAreaElement::updateFocusAppearance):
+        (WebCore::HTMLAreaElement::supportsFocus):
+        * html/HTMLAreaElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        * html/HTMLMapElement.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::drawFocusRingToContext):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::paintFocusRings):
+        (WebCore::RenderImage::imageMap):
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.h:
+
 2010-01-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

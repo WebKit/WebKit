@@ -50,6 +50,8 @@
 #include "AccessibilityTableRow.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "HTMLAreaElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
@@ -84,6 +86,35 @@ AXObjectCache::~AXObjectCache()
     }
 }
 
+AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* areaElement)
+{
+    // Find the corresponding accessibility object for the HTMLAreaElement. This should be
+    // in the list of children for its corresponding image.
+    if (!areaElement)
+        return 0;
+    
+    HTMLImageElement* imageElement = areaElement->imageElement();
+    if (!imageElement)
+        return 0;
+    
+    AccessibilityObject* axRenderImage = areaElement->document()->axObjectCache()->getOrCreate(imageElement->renderer());
+    if (!axRenderImage)
+        return 0;
+    
+    AccessibilityObject::AccessibilityChildrenVector imageChildren = axRenderImage->children();
+    unsigned count = imageChildren.size();
+    for (unsigned k = 0; k < count; ++k) {
+        AccessibilityObject* child = imageChildren[k].get();
+        if (!child->isImageMapLink())
+            continue;
+        
+        if (static_cast<AccessibilityImageMapLink*>(child)->areaElement() == areaElement)
+            return child;
+    }    
+    
+    return 0;
+}
+    
 AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 {
     // get the focused node in the page
@@ -92,6 +123,9 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     if (!focusedNode)
         focusedNode = focusedDocument;
 
+    if (focusedNode->hasTagName(areaTag))
+        return focusedImageMapUIElement(static_cast<HTMLAreaElement*>(focusedNode));
+    
     RenderObject* focusedNodeRenderer = focusedNode->renderer();
     if (!focusedNodeRenderer)
         return 0;

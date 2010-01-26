@@ -270,6 +270,11 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     notImplemented();
 }
 
+void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+{
+    // FIXME: implement
+}
+
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
     if (paintingDisabled())

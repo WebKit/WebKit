@@ -795,6 +795,11 @@ void GraphicsContext::clipPath(WindRule clipRule)
     p->setClipPath(newPath);
 }
 
+void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+{
+    // FIXME: implement
+}
+
 /**
  * Focus ring handling is not handled here. Qt style in 
  * RenderTheme handles drawing focus on widgets which 

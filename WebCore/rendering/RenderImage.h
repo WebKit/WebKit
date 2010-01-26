@@ -43,7 +43,7 @@ public:
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_cachedImage.get(); }
 
-    HTMLMapElement* imageMap();
+    HTMLMapElement* imageMap() const;
 
     void resetAnimation();
 
@@ -58,6 +58,8 @@ protected:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void paintIntoRect(GraphicsContext*, const IntRect&);
+    void paintFocusRings(PaintInfo&, const RenderStyle*);
+    virtual void paint(PaintInfo&, int tx, int ty);
 
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;

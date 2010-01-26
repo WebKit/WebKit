@@ -204,6 +204,11 @@ void GraphicsContext::clip(const FloatRect& rect)
     m_data->m_view->ConstrainClippingRegion(&region);
 }
 
+void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int offset, const Color& color)
+{
+    // FIXME: implement
+}
+
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int /* width */, int /* offset */, const Color& color)
 {
     if (paintingDisabled())

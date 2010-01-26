@@ -285,6 +285,7 @@ public:
     virtual bool isFieldset() const { return false; }
     virtual bool isGroup() const { return false; }
     virtual bool isARIATreeGridRow() const { return false; }
+    virtual bool isImageMapLink() const { return false; }
     virtual bool isMenuList() const { return false; }
     virtual bool isMenuListPopup() const { return false; }
     virtual bool isMenuListOption() const { return false; }

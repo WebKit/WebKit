@@ -11,6 +11,7 @@ var focusedElem = null;
 var failedTestCount = 0;
 
 var tagNamesAlwaysFocused = ["A",
+                             "AREA",
                              "BUTTON",
                              "IFRAME",
                              "INPUT",
@@ -19,6 +20,8 @@ var tagNamesAlwaysFocused = ["A",
                              "TEXTAREA"];
 
 var tagNamesTransferFocused = ["LABEL"]; // labels always transfer focus to the labeled element
+
+var noDisplayTagNamesWithFocus = ["AREA"];  // AREA elements can get focus, but are not displayed.
 
 function printToConsole(str)
 {
@@ -49,7 +52,7 @@ function test()
     var homeBase = window.frames[1].document.getElementsByClassName('homebase');
     homeBase[0].focus();
 
-    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 329 / 329 ";
+    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 337 / 337 ";
     resultSummary += (focusCount==blurCount) ? "<span style='color:green'>PASSED</span><br>" : "<span style='color:red'>FAILED</span><br>";
     resultSummary += "Total of "+failedTestCount+" focus test(s) failed.";
     if (failedTestCount)
@@ -102,9 +105,9 @@ function testProgrammaticFocus(elem)
         elemThatShouldFocus = elem;
     else if (tagNamesAlwaysFocused.find(elem.tagName)) // special case form elements and other controls that are always focusable
         elemThatShouldFocus = elem;
-    
+
     // Hidden elements should not be focusable. https://bugs.webkit.org/show_bug.cgi?id=27099
-    if (document.defaultView.getComputedStyle(elem).display == "none")
+    if (document.defaultView.getComputedStyle(elem).display == "none" && !noDisplayTagNamesWithFocus.find(elem.tagName))
         elemThatShouldFocus = null;
 
     if (tagNamesTransferFocused.find(elem.tagName)) {

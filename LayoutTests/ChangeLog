@@ -1,3 +1,17 @@
+2010-01-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add ability for image maps to be focused via tabbing
+        https://bugs.webkit.org/show_bug.cgi?id=17513
+
+        * fast/events/resources/tabindex-focus-blur-all.js:
+        (test):
+        (testProgrammaticFocus):
+        * fast/events/tab-imagemap-expected.txt: Added.
+        * fast/events/tab-imagemap.html: Added.
+        * fast/events/tabindex-focus-blur-all-expected.txt:
+
 2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Holger Freyther.
