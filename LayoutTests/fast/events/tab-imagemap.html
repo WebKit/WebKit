@@ -44,10 +44,10 @@ var successfullyParsed = false;
     eventSender.keyDown('\t');
     shouldBe("document.activeElement.id", "'area6'");
 
-    // We'll skip over area7 because its tabindex=-1. On Mac and others, we'll wrap around to area1.
-    // On GTK, we'll go to the body element next.
+    // We'll skip over area7 because its tabindex=-1. On the Mac, the wrap around should give 
+    // area1. On GTK, we will go to the body element.
     eventSender.keyDown('\t');
-    shouldBe("document.activeElement.id", "'area1' || 'body'");
+    shouldBe("document.activeElement.id == 'area1' || document.activeElement.id == 'body'", "true");
 
     successfullyParsed = true;
 </script>

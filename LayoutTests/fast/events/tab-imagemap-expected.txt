@@ -9,5 +9,5 @@ PASS document.activeElement.id is 'area2'
 PASS document.activeElement.id is 'area3'
 PASS document.activeElement.id is 'area5'
 PASS document.activeElement.id is 'area6'
-PASS document.activeElement.id is 'area1' || 'body'
+PASS document.activeElement.id == 'area1' || document.activeElement.id == 'body' is true
 
