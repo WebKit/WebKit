@@ -771,38 +771,49 @@ class StyleChecker(object):
         self.error_count = 0
         self.options = options
 
-    def _handle_style_error(self, filename, line_number, category, confidence, message):
-        """Handle the occurrence of a style error while checking.
-
-        Check whether an error should be reported. If so, increment the
-        global error count and report the error details.
+    def _default_style_error_handler(self, file_path):
+        """Return a default style error handler for the given path.
 
         Args:
-          filename: The name of the file containing the error.
-          line_number: The number of the line containing the error.
-          category: A string used to describe the "category" this bug
-                    falls under: "whitespace", say, or "runtime".
-                    Categories may have a hierarchy separated by slashes:
-                    "whitespace/indent".
-          confidence: A number from 1-5 representing a confidence score
-                      for the error, with 5 meaning that we are certain
-                      of the problem, and 1 meaning that it could be a
-                      legitimate construct.
-          message: The error message.
+          file_path: The path to the file containing the error. This
+                     is meant for reporting to the user.
 
         """
-        if not self.options.should_report_error(category, confidence):
-            return
+        def handle_style_error(line_number, category, confidence, message):
+            """Handle the occurrence of a style error.
 
-        self.error_count += 1
+            Check whether an error should be reported. If so, increment the
+            global error count and report the error details.
 
-        if self.options.output_format == 'vs7':
-            format_string = "%s(%s):  %s  [%s] [%d]\n"
-        else:
-            format_string = "%s:%s:  %s  [%s] [%d]\n"
+            Args:
+              line_number: The number of the line containing the error.
+              category: A string used to describe the "category" this bug
+                        falls under: "whitespace", say, or "runtime".
+                        Categories may have a hierarchy separated by slashes:
+                        "whitespace/indent".
+              confidence: A number from 1-5 representing a confidence score
+                          for the error, with 5 meaning that we are certain
+                          of the problem, and 1 meaning that it could be a
+                          legitimate construct.
+              message: The error message.
 
-        self._stderr_write(format_string % (filename, line_number, message,
-                                            category, confidence))
+            """
+            if not self.options.should_report_error(category, confidence):
+                return
+
+            self.error_count += 1
+
+            if self.options.output_format == 'vs7':
+                format_string = "%s(%s):  %s  [%s] [%d]\n"
+            else:
+                format_string = "%s:%s:  %s  [%s] [%d]\n"
+
+            self._stderr_write(format_string % (file_path,
+                                                line_number,
+                                                message,
+                                                category,
+                                                confidence))
+        return handle_style_error
 
     def _process_file(self, processor, file_path, handle_style_error):
         """Process the file using the given processor."""
@@ -862,7 +873,7 @@ class StyleChecker(object):
 
         """
         if handle_style_error is None:
-            handle_style_error = self._handle_style_error
+            handle_style_error = self._default_style_error_handler(file_path)
 
         if process_file is None:
             process_file = self._process_file
@@ -896,7 +907,10 @@ class StyleChecker(object):
         for file_path, diff in patch_files.iteritems():
             line_numbers = set()
 
-            def error_for_patch(file_path, line_number, category, confidence, message):
+            handle_style_error = self._default_style_error_handler(file_path)
+
+            def handle_patch_style_error(line_number, category, confidence,
+                                         message):
                 """Wrapper function of cpp_style.error for patches.
 
                 This function outputs errors only if the line number
@@ -913,7 +927,7 @@ class StyleChecker(object):
                 # FIXME: Make sure errors having line number zero are
                 #        logged -- like carriage-return errors.
                 if line_number in line_numbers:
-                    self._handle_style_error(file_path, line_number, category, confidence, message)
+                    handle_style_error(line_number, category, confidence, message)
 
-            self.check_file(file_path, handle_style_error=error_for_patch)
+            self.check_file(file_path, handle_patch_style_error)
 

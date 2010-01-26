@@ -549,13 +549,15 @@ class StyleCheckerTest(unittest.TestCase):
 
     def write_sample_error(self, style_checker, error_confidence):
         """Write an error to the given style checker."""
-        style_checker._handle_style_error(filename="filename",
-                                          line_number=1,
-                                          category="category",
-                                          confidence=error_confidence,
-                                          message="message")
+        handle_style_error = (
+            style_checker._default_style_error_handler("filename"))
 
-    def test_handle_style_error(self):
+        handle_style_error(line_number=1,
+                           category="category",
+                           confidence=error_confidence,
+                           message="message")
+
+    def test_default_style_error_handler(self):
         """Test _handle_style_error() function."""
         options = ProcessorOptions(output_format="emacs",
                                    verbosity=3)

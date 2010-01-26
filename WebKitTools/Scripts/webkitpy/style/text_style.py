@@ -44,7 +44,7 @@ class TextProcessor(object):
         # FIXME: share with cpp_style.
         for line_number, line in enumerate(lines):
             if "\t" in line:
-                self.handle_style_error(self.file_path, line_number,
+                self.handle_style_error(line_number,
                                         "whitespace/tab", 5,
                                         "Line contains tab character.")
 

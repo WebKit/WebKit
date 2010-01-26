@@ -1,3 +1,31 @@
+2010-01-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactored check-webkit-style by removing the file path
+        parameter from the style error handler functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34031
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added _default_style_error_handler() to StyleChecker class.
+          - Moved handle_style_error() to inside _default_style_error_handler().
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Removed file path from calls to error handler.
+
+        * Scripts/webkitpy/style/cpp_style.py:
+          - Removed file path from calls to error handler.
+
+        * Scripts/webkitpy/style/cpp_style_unittest.py:
+          - Removed file path from calls to error handler.
+
+        * Scripts/webkitpy/style/text_style.py:
+          - Removed file path from calls to error handler.
+
+        * Scripts/webkitpy/style/text_style_unittest.py:
+          - Removed file path from calls to error handler.
+
 2010-01-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Adding myself as reviewer.  No review necessary.

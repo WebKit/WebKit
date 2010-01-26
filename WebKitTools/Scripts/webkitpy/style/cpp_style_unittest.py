@@ -62,8 +62,7 @@ class ErrorCollector:
         self._assert_fn = assert_fn
         self._errors = []
 
-    def __call__(self, unused_filename, unused_linenum,
-                 category, confidence, message):
+    def __call__(self, unused_linenum, category, confidence, message):
         self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
                         ' which is not in STYLE_CATEGORIES' % (message, category))
