@@ -1,3 +1,13 @@
+2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix the build on platforms without JIT support.
+
+        The JIT support should be determined at compile-time via wtf/Platform.h
+
+        * qt/api/QtScript.pro:
+
 2010-01-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -5,7 +5,6 @@ QT         = core
 INCLUDEPATH += $$PWD
 
 CONFIG += building-libs
-JAVASCRIPTCORE_JIT = yes
 
 isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../../generated
 CONFIG(debug, debug|release) {
