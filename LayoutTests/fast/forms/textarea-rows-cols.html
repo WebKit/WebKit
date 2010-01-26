@@ -1,25 +1,13 @@
-<div>Test for edge cases of &lt;textarea&gt; rows and cols attributes.</div>
-
-<hr>
-
-<div><textarea>default height</textarea></div>
-<div><textarea rows="1">rows = 1</textarea></div>
-<div><textarea rows="2">rows = 2; should match default height</textarea></div>
-<div><textarea rows="3">rows = 3</textarea></div>
-<div><textarea rows>rows; should be default height</textarea></div>
-<div><textarea rows="0">rows = 0; should be default height</textarea></div>
-<div><textarea rows="-1">rows = -1; should be default height</textarea></div>
-<div><textarea rows="x">rows = x; should be default height</textarea></div>
-
-<hr>
-
-<div><textarea>default width</textarea></div>
-<div><textarea cols="1">cols = 1</textarea></div>
-<div><textarea cols="20">cols = 20; should match default width</textarea></div>
-<div><textarea cols="40">cols = 40</textarea></div>
-<div><textarea cols>cols; should be default width</textarea></div>
-<div><textarea cols="0">cols = 0; should be default width</textarea></div>
-<div><textarea cols="-1">cols = -1; should be default width</textarea></div>
-<div><textarea cols="x">cols = x; should be default width</textarea></div>
-
-<hr>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="script-tests/textarea-rows-cols.js"></script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

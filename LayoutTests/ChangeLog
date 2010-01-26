@@ -1,3 +1,19 @@
+2010-01-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Convert textarea-rows-cols.html to dumpAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=34074
+
+        * fast/forms/script-tests/textarea-rows-cols.js: Added.
+        * fast/forms/textarea-rows-cols-expected.txt: Added.
+        * fast/forms/textarea-rows-cols.html:
+        * platform/mac/fast/forms/textarea-rows-cols-expected.checksum: Removed.
+        * platform/mac/fast/forms/textarea-rows-cols-expected.png: Removed.
+        * platform/mac/fast/forms/textarea-rows-cols-expected.txt: Removed.
+        * platform/qt/fast/forms/textarea-rows-cols-expected.txt: Removed.
+        * platform/win/fast/forms/textarea-rows-cols-expected.txt: Removed.
+
 2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
