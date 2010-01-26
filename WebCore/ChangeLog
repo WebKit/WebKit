@@ -1,3 +1,12 @@
+2010-01-26  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add missing declaration for the feMorphology SVG element.
+        https://bugs.webkit.org/show_bug.cgi?id=34151
+
+        * bindings/v8/V8DOMWrapper.cpp:
+
 2010-01-26  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Unreviewed build fix.

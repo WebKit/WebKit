@@ -849,6 +849,7 @@ V8ClassIndex::V8WrapperType V8DOMWrapper::htmlElementType(HTMLElement* element)
     macro(feImage, FEIMAGE) \
     macro(feMerge, FEMERGE) \
     macro(feMergeNode, FEMERGENODE) \
+    macro(feMorphology, FEMORPHOLOGY) \
     macro(feOffset, FEOFFSET) \
     macro(fePointLight, FEPOINTLIGHT) \
     macro(feSpecularLighting, FESPECULARLIGHTING) \
