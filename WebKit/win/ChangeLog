@@ -1,3 +1,14 @@
+2010-01-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        A WebGeolocationControllerClient is leaked for every WebView
+        https://bugs.webkit.org/show_bug.cgi?id=34145
+
+        * WebCoreSupport/WebGeolocationControllerClient.cpp:
+        (WebGeolocationControllerClient::geolocationDestroyed): Added.
+        * WebCoreSupport/WebGeolocationControllerClient.h:
+
 2010-01-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

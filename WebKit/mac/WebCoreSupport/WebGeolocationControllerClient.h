@@ -36,6 +36,7 @@ public:
     WebGeolocationControllerClient(WebView *);
     WebView *webView() { return m_webView; }
 
+    void geolocationDestroyed();
     void startUpdating();
     void stopUpdating();
 

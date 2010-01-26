@@ -37,6 +37,11 @@ WebGeolocationControllerClient::WebGeolocationControllerClient(WebView* webView)
 {
 }
 
+void WebGeolocationControllerClient::geolocationDestroyed()
+{
+    delete this;
+}
+
 void WebGeolocationControllerClient::startUpdating()
 {
     COMPtr<IWebGeolocationProvider> provider;

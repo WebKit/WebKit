@@ -32,6 +32,8 @@ class GeolocationPosition;
 
 class GeolocationControllerClient {
 public:
+    virtual void geolocationDestroyed() = 0;
+
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
     virtual GeolocationPosition* lastPosition() = 0;

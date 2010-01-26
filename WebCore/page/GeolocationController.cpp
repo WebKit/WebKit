@@ -40,6 +40,7 @@ GeolocationController::GeolocationController(Page* page, GeolocationControllerCl
 
 GeolocationController::~GeolocationController()
 {
+    m_client->geolocationDestroyed();
 }
 
 void GeolocationController::addObserver(Geolocation* observer)
