@@ -1,3 +1,15 @@
+2010-01-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/7576663> Crash caused by anonymous list item
+        https://bugs.webkit.org/show_bug.cgi?id=34183
+
+        * fast/lists/anonymous-items.html: Added.
+        * platform/mac/fast/lists/anonymous-items-expected.checksum: Added.
+        * platform/mac/fast/lists/anonymous-items-expected.png: Added.
+        * platform/mac/fast/lists/anonymous-items-expected.txt: Added.
+
 2010-01-26  Chris Fleizach  <cfleizach@apple.com>
 
         Another attempt to get this test to pass for GTK.

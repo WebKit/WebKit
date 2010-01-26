@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -75,11 +75,16 @@ void RenderListItem::destroy()
     RenderBlock::destroy();
 }
 
+static bool isList(Node* node)
+{
+    return (node->hasTagName(ulTag) || node->hasTagName(olTag));
+}
+
 static Node* enclosingList(Node* node)
 {
     Node* parent = node->parentNode();
     for (Node* n = parent; n; n = n->parentNode())
-        if (n->hasTagName(ulTag) || n->hasTagName(olTag))
+        if (isList(n))
             return n;
     // If there's no actual <ul> or <ol> list element, then our parent acts as
     // our list for purposes of determining what other list items should be
@@ -87,22 +92,38 @@ static Node* enclosingList(Node* node)
     return parent;
 }
 
+static Node* enclosingList(const RenderObject* renderer)
+{
+    Node* node = renderer->node();
+    if (node)
+        return enclosingList(node);
+
+    renderer = renderer->parent();
+    while (renderer && !renderer->node())
+        renderer = renderer->parent();
+
+    node = renderer->node();
+    if (isList(node))
+        return node;
+
+    return enclosingList(node);
+}
+
 static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
 {
-    for (Node* node = item->node()->traversePreviousNode(); node != list; node = node->traversePreviousNode()) {
-        RenderObject* renderer = node->renderer();
-        if (!renderer || !renderer->isListItem())
+    for (RenderObject* renderer = item->previousInPreOrder(); renderer != list->renderer(); renderer = renderer->previousInPreOrder()) {
+        if (!renderer->isListItem())
             continue;
-        Node* otherList = enclosingList(node);
+        Node* otherList = enclosingList(renderer);
         // This item is part of our current list, so it's what we're looking for.
         if (list == otherList)
             return toRenderListItem(renderer);
         // We found ourself inside another list; lets skip the rest of it.
-        // Use traverseNextNode() here because the other list itself may actually
+        // Use nextInPreOrder() here because the other list itself may actually
         // be a list item itself. We need to examine it, so we do this to counteract
-        // the traversePreviousNode() that will be done by the loop.
+        // the previousInPreOrder() that will be done by the loop.
         if (otherList)
-            node = otherList->traverseNextNode();
+            renderer = otherList->renderer()->nextInPreOrder();
     }
     return 0;
 }
@@ -111,7 +132,7 @@ inline int RenderListItem::calcValue() const
 {
     if (m_hasExplicitValue)
         return m_explicitValue;
-    Node* list = enclosingList(node());
+    Node* list = enclosingList(this);
     // FIXME: This recurses to a possible depth of the length of the list.
     // That's not good -- we need to change this to an iterative algorithm.
     if (RenderListItem* previousItem = previousListItem(list, this))
@@ -322,6 +343,8 @@ void RenderListItem::explicitValueChanged()
 
 void RenderListItem::setExplicitValue(int value)
 {
+    ASSERT(node());
+
     if (m_hasExplicitValue && m_explicitValue == value)
         return;
     m_explicitValue = value;
@@ -332,6 +355,8 @@ void RenderListItem::setExplicitValue(int value)
 
 void RenderListItem::clearExplicitValue()
 {
+    ASSERT(node());
+
     if (!m_hasExplicitValue)
         return;
     m_hasExplicitValue = false;
