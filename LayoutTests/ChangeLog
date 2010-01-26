@@ -1,3 +1,18 @@
+2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        REGRESSION(r53835): Fix editing/pasteboard/paste-noscript-xhtml.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=34157
+
+        Add Qt specific result for this test that differs from the cross-platform
+        result in only one character: In htmlcontent.html the href attribute value
+        is http://www.cnn.com, which somehow becomes http://www.cnn.com/ in the cross
+        platform result. With the Qt xml parser that attribute is somehow preserved
+        and so our result does not have the trailing slash.
+
+        * platform/qt/editing/pasteboard/paste-noscript-xhtml-expected.txt: Added.
+
 2010-01-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

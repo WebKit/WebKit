@@ -1,3 +1,20 @@
+2010-01-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        REGRESSION(r53835): Fix editing/pasteboard/paste-noscript-xhtml.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=34157
+
+        Pass the FragmentScriptingPermission correctly through to the DOM
+        and disallow scripting elements in parseEndElement(), similar to
+        the libxml tokenizer change in r53835.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLTokenizer::parseStartElement):
+        (WebCore::XMLTokenizer::parseEndElement):
+
 2010-01-26  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Eric Seidel.
