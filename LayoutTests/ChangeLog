@@ -1,5 +1,16 @@
 2010-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Failing tests after r53895 skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=34167
+
+        * platform/qt/Skipped: 
+         - http/tests/history/redirect-301.pl
+         - http/tests/history/redirect-302.pl
+         - http/tests/history/redirect-303.pl
+         - http/tests/history/redirect-307.pl
+
+2010-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed trivial fix.
 
         * platform/qt/editing/pasteboard/paste-noscript-xhtml-expected.txt: updated after r53873.

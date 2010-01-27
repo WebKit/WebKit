@@ -5109,3 +5109,10 @@ http/tests/misc/slow-loading-mask.html
 
 # skip Geolocation tests
 fast/dom/Window/window-properties-geolocation.html
+
+# skip failing history tests
+# https://bugs.webkit.org/show_bug.cgi?id=34167
+http/tests/history/redirect-301.pl
+http/tests/history/redirect-302.pl
+http/tests/history/redirect-303.pl
+http/tests/history/redirect-307.pl
