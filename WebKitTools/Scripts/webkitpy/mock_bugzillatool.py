@@ -28,10 +28,11 @@
 
 import os
 
+from webkitpy.bugzilla import Bug, Attachment
+from webkitpy.committers import CommitterList, Reviewer
 from webkitpy.mock import Mock
 from webkitpy.scm import CommitMessage
-from webkitpy.committers import CommitterList, Reviewer
-from webkitpy.bugzilla import Bug, Attachment
+from webkitpy.webkit_logging import log
 
 
 def _id_to_object_dictionary(*objects):
@@ -333,6 +334,7 @@ class MockUser(object):
         return True
 
     def open_url(self, url):
+        log("MOCK: user.open_url: %s" % url)
         pass
 
 

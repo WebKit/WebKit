@@ -1,3 +1,19 @@
+2010-01-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        webkit-patch needs an open-bugs command
+        https://bugs.webkit.org/show_bug.cgi?id=30793
+
+        * Scripts/test-webkitpy: import OpenBugsTest
+        * Scripts/webkit-patch: import OpenBugs
+        * Scripts/webkitpy/commands/download_unittest.py: don't import unittest
+        * Scripts/webkitpy/commands/early_warning_system_unittest.py: ditto
+        * Scripts/webkitpy/commands/queries_unittest.py: ditto
+        * Scripts/webkitpy/commands/queues_unittest.py: ditto
+        * Scripts/webkitpy/commands/upload_unittest.py: ditto
+        * Scripts/webkitpy/mock_bugzillatool.py: log when user.open_url is called.
+
 2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann

@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
 from webkitpy.commands.commandtest import CommandsTest
 from webkitpy.commands.download import *
 from webkitpy.mock import Mock

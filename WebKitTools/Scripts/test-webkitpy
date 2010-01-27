@@ -35,6 +35,7 @@ from webkitpy.buildbot_unittest import *
 from webkitpy.changelogs_unittest import *
 from webkitpy.commands.download_unittest import *
 from webkitpy.commands.early_warning_system_unittest import *
+from webkitpy.commands.openbugs_unittest import OpenBugsTest
 from webkitpy.commands.upload_unittest import *
 from webkitpy.commands.queries_unittest import *
 from webkitpy.commands.queues_unittest import *

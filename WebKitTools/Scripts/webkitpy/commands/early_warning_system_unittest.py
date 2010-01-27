@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest
 
 from webkitpy.commands.early_warning_system import *
 from webkitpy.commands.queuestest import QueuesTest

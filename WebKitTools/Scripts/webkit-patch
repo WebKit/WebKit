@@ -36,6 +36,7 @@ from webkitpy.bugzilla import Bugzilla
 from webkitpy.buildbot import BuildBot
 from webkitpy.commands.download import *
 from webkitpy.commands.early_warning_system import *
+from webkitpy.commands.openbugs import OpenBugs
 from webkitpy.commands.queries import *
 from webkitpy.commands.queues import *
 from webkitpy.commands.upload import *

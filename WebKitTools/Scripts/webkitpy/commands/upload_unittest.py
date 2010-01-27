@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
 from webkitpy.commands.commandtest import CommandsTest
 from webkitpy.commands.upload import *
 from webkitpy.mock import Mock
@@ -67,7 +65,7 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Prepare(), [])
 
     def test_upload(self):
-        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\n"
+        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK: user.open_url: http://example.com/42\n"
         self.assert_execute_outputs(Upload(), [42], expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
@@ -75,7 +73,11 @@ class UploadCommandsTest(CommandsTest):
         tool._scm.last_svn_commit_log = lambda: "r9876 |"
         options = Mock()
         options.bug_id = 42
-        expected_stderr = "Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.\nRevision: 9876\nAdding comment to Bug 42.\n"
+        expected_stderr = """Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.
+Revision: 9876
+MOCK: user.open_url: http://example.com/42
+Adding comment to Bug 42.
+"""
         self.assert_execute_outputs(MarkBugFixed(), [], expected_stderr=expected_stderr, tool=tool, options=options)
 
     def test_edit_changelog(self):
