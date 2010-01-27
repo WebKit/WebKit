@@ -30,30 +30,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef webpage_h
-#define webpage_h
+#include "webview.h"
 
-#include <qwebframe.h>
-#include <qwebpage.h>
+#include <QtGui>
 
-class WebPage : public QWebPage {
-    Q_OBJECT
+static QMenu* createContextMenu(QWebPage* page, QPoint position)
+{
+    QMenu* menu = page->createStandardContextMenu();
 
-public:
-    WebPage(QObject* parent = 0);
+    QWebHitTestResult r = page->mainFrame()->hitTestContent(position);
 
-    virtual QWebPage* createWindow(QWebPage::WebWindowType);
-    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&);
-    virtual bool supportsExtension(QWebPage::Extension extension) const;
-    virtual bool extension(Extension extension, const ExtensionOption* option, ExtensionReturn* output);
+    if (!r.linkUrl().isEmpty()) {
+        WebPage* webPage = qobject_cast<WebPage*>(page);
+        QAction* newTabAction = menu->addAction("Open in Default &Browser", webPage, SLOT(openUrlInDefaultBrowser()));
+        newTabAction->setData(r.linkUrl());
+        menu->insertAction(menu->actions().at(2), newTabAction);
+    }
+    return menu;
+}
 
-    virtual bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);
+void WebViewGraphicsBased::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    setProperty("mouseButtons", QVariant::fromValue(int(event->buttons())));
+    setProperty("keyboardModifiers", QVariant::fromValue(int(event->modifiers())));
 
-public slots:
-    void openUrlInDefaultBrowser(const QUrl& url = QUrl());
+    QGraphicsWebView::mousePressEvent(event);
+}
 
-private:
-    void applyProxy();
-};
+void WebViewTraditional::mousePressEvent(QMouseEvent* event)
+{
+    setProperty("mouseButtons", QVariant::fromValue(int(event->buttons())));
+    setProperty("keyboardModifiers", QVariant::fromValue(int(event->modifiers())));
 
-#endif
+    QWebView::mousePressEvent(event);
+}
+
+void WebViewGraphicsBased::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
+{
+    QMenu* menu = createContextMenu(page(), event->pos().toPoint());
+    menu->exec(mapToScene(event->pos()).toPoint());
+    delete menu;
+}
+
+void WebViewTraditional::contextMenuEvent(QContextMenuEvent* event)
+{
+    QMenu* menu = createContextMenu(page(), event->pos());
+    menu->exec(mapToGlobal(event->pos()));
+    delete menu;
+}
+

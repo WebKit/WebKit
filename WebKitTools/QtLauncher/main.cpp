@@ -48,47 +48,15 @@
 #include <qwebframe.h>
 #include <qwebinspector.h>
 #include <qwebsettings.h>
-#include <qwebview.h>
 #include "urlloader.h"
 #include "utils.h"
 #include "webinspector.h"
 #include "webpage.h"
+#include "webview.h"
 
 #ifndef NDEBUG
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
-
-class WebView : public QWebView {
-    Q_OBJECT
-public:
-    WebView(QWidget* parent) : QWebView(parent) {}
-
-protected:
-    virtual void contextMenuEvent(QContextMenuEvent* event)
-    {
-        QMenu* menu = page()->createStandardContextMenu();
-
-        QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-
-        if (!r.linkUrl().isEmpty()) {
-            QAction* newTabAction = menu->addAction(tr("Open in Default &Browser"), this, SLOT(openUrlInDefaultBrowser()));
-            newTabAction->setData(r.linkUrl());
-            menu->insertAction(menu->actions().at(2), newTabAction);
-        }
-
-        menu->exec(mapToGlobal(event->pos()));
-        delete menu;
-    }
-
-    virtual void mousePressEvent(QMouseEvent* event)
-    {
-        setProperty("mouseButtons", QVariant::fromValue(int(event->buttons())));
-        setProperty("keyboardModifiers", QVariant::fromValue(int(event->modifiers())));
-
-        QWebView::mousePressEvent(event);
-    }
-
-};
 
 
 class MainWindow : public QMainWindow {
@@ -105,7 +73,7 @@ public:
         QSplitter* splitter = new QSplitter(Qt::Vertical, this);
         setCentralWidget(splitter);
 
-        view = new WebView(splitter);
+        view = new WebViewTraditional(splitter);
         WebPage* page = new WebPage(view);
         view->setPage(page);
 

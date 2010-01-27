@@ -30,30 +30,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef webpage_h
-#define webpage_h
+#ifndef webview_h
+#define webview_h
 
-#include <qwebframe.h>
-#include <qwebpage.h>
+#include "webpage.h"
+#include <qwebview.h>
+#include <qgraphicswebview.h>
 
-class WebPage : public QWebPage {
+class WebViewGraphicsBased : public QGraphicsWebView {
     Q_OBJECT
 
 public:
-    WebPage(QObject* parent = 0);
+    WebViewGraphicsBased(QGraphicsItem* parent = 0) : QGraphicsWebView(parent) {};
 
-    virtual QWebPage* createWindow(QWebPage::WebWindowType);
-    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&);
-    virtual bool supportsExtension(QWebPage::Extension extension) const;
-    virtual bool extension(Extension extension, const ExtensionOption* option, ExtensionReturn* output);
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent*);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent*);
+};
 
-    virtual bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);
+class WebViewTraditional : public QWebView {
+    Q_OBJECT
 
-public slots:
-    void openUrlInDefaultBrowser(const QUrl& url = QUrl());
+public:
+    WebViewTraditional(QWidget* parent) : QWebView(parent) {}
 
-private:
-    void applyProxy();
+protected:
+    virtual void contextMenuEvent(QContextMenuEvent*);
+    virtual void mousePressEvent(QMouseEvent*);
 };
 
 #endif
