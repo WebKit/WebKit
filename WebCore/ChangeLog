@@ -1,3 +1,13 @@
+2010-01-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Enable the Audits panel via a shortcut (Cmd/Ctrl+Alt+A)
+        https://bugs.webkit.org/show_bug.cgi?id=34158
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2010-01-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

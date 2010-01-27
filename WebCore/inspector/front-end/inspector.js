@@ -696,6 +696,20 @@ WebInspector.documentKeyDown = function(event)
             }
 
             break;
+
+        case "U+0041": // A key
+            if (isMac)
+                var shouldShowAuditsPanel = event.metaKey && !event.shiftKey && !event.ctrlKey && event.altKey;
+            else
+                var shouldShowAuditsPanel = event.ctrlKey && !event.shiftKey && !event.metaKey && event.altKey;
+
+            if (shouldShowAuditsPanel) {
+                if (!this.panels.audits)
+                    this.panels.audits = new WebInspector.AuditsPanel();
+                this.currentPanel = this.panels.audits;
+            }
+
+            break;
     }
 }
 
