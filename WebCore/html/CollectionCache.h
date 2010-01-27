@@ -43,8 +43,6 @@ struct CollectionCache : FastAllocBase {
     void reset();
     void swap(CollectionCache&);
 
-    void checkConsistency();
-
     typedef HashMap<AtomicStringImpl*, Vector<Element*>*> NodeCacheMap;
 
     unsigned version;
@@ -60,10 +58,6 @@ struct CollectionCache : FastAllocBase {
 private:
     static void copyCacheMap(NodeCacheMap&, const NodeCacheMap&);
 };
-
-#if ASSERT_DISABLED
-    inline void CollectionCache::checkConsistency() { }
-#endif
 
 } // namespace
 

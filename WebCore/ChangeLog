@@ -1,3 +1,62 @@
+2010-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert r53899 (HashMap<AtomicStringImpl*, Value> key checks) and subsequent bug fixes,
+        because they make SVG tests crash in release builds.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::getIDRules):
+        (WebCore::CSSRuleSet::getClassRules):
+        (WebCore::CSSRuleSet::getTagRules):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::checkedButtonForGroup):
+        (WebCore::CheckedRadioButtons::removeButton):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::removeAllChildrenInContainer):
+        * dom/Document.cpp:
+        (WebCore::Document::getElementById):
+        (WebCore::Document::removeElementById):
+        (WebCore::Document::removeImageMap):
+        (WebCore::Document::getImageMap):
+        (WebCore::Document::nameCollectionInfo):
+        * dom/Document.h:
+        (WebCore::Document::collectionInfo):
+        * editing/markup.cpp:
+        (WebCore::shouldAddNamespaceAttr):
+        (WebCore::appendNamespace):
+        (WebCore::appendStartMarkup):
+        * html/CollectionCache.cpp:
+        * html/CollectionCache.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::nextNamedItem):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::collectionInfo):
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::nonCacheRequestInFlight):
+        (WebCore::Loader::nonCacheRequestComplete):
+        (WebCore::Loader::cancelRequests):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::~TreeShared):
+        (WebCore::TreeShared::deref):
+
 2010-01-25  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.

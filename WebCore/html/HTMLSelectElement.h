@@ -76,7 +76,7 @@ public:
     Node* namedItem(const AtomicString& name);
     Node* item(unsigned index);
 
-    CollectionCache* collectionInfo() { m_collectionInfo.checkConsistency(); return &m_collectionInfo; }
+    CollectionCache* collectionInfo() { return &m_collectionInfo; }
 
     void scrollToSelection();
 

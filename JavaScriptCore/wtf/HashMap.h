@@ -100,8 +100,6 @@ namespace WTF {
         //   static translate(ValueType&, const T&, unsigned hashCode);
         template<typename T, typename HashTranslator> pair<iterator, bool> add(const T&, const MappedType&);
 
-        void checkConsistency() const;
-
     private:
         pair<iterator, bool> inlineAdd(const KeyType&, const MappedType&);
 
@@ -283,7 +281,7 @@ namespace WTF {
     {
         if (it.m_impl == m_impl.end())
             return;
-        m_impl.internalCheckTableConsistency();
+        m_impl.checkTableConsistency();
         m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
     }
 
@@ -311,13 +309,6 @@ namespace WTF {
         remove(it);
         return result;
     }
-
-    template<typename T, typename U, typename V, typename W, typename X>
-    inline void HashMap<T, U, V, W, X>::checkConsistency() const
-    {
-        m_impl.checkTableConsistency();
-    }
-
 
     template<typename T, typename U, typename V, typename W, typename X>
     bool operator==(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W, X>& b)

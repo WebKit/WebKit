@@ -358,8 +358,7 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
 
     resetCollectionInfo();
     updateNameCache();
-    m_info->checkConsistency();
-
+    
     Vector<Element*>* idResults = m_info->idCache.get(name.impl());
     Vector<Element*>* nameResults = m_info->nameCache.get(name.impl());
     
@@ -374,7 +373,6 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
 Node* HTMLCollection::nextNamedItem(const AtomicString& name) const
 {
     resetCollectionInfo();
-    m_info->checkConsistency();
 
     for (Element* e = itemAfter(m_info->current); e; e = itemAfter(e)) {
         if (checkForNameMatch(e, m_idsDone, name)) {

@@ -349,7 +349,6 @@ public:
         ASSERT(type >= FirstUnnamedDocumentCachedType);
         unsigned index = type - FirstUnnamedDocumentCachedType;
         ASSERT(index < NumUnnamedDocumentCachedTypes);
-        m_collectionInfo[index].checkConsistency();
         return &m_collectionInfo[index]; 
     }
 

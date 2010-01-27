@@ -1,3 +1,26 @@
+2010-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert r53899 (HashMap<AtomicStringImpl*, Value> key checks) and subsequent bug fixes,
+        because they make SVG tests crash in release builds.
+
+        * wtf/HashMap.h:
+        (WTF::::remove):
+        * wtf/HashSet.h:
+        (WTF::::remove):
+        * wtf/HashTable.h:
+        (WTF::::add):
+        (WTF::::addPassingHashCode):
+        (WTF::::removeAndInvalidate):
+        (WTF::::remove):
+        (WTF::::rehash):
+        (WTF::::checkTableConsistency):
+        (WTF::::checkTableConsistencyExceptSize):
+        * wtf/HashTraits.h:
+        (WTF::GenericHashTraits::emptyValue):
+        (WTF::):
+        * wtf/RefPtrHashMap.h:
+        (WTF::::remove):
+
 2010-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         More Windows build fixing.
