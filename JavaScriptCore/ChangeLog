@@ -1,3 +1,12 @@
+2010-01-26  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Opcode.h use const void* for Opcode cause error #1211 for RVCT compiler
+        https://bugs.webkit.org/show_bug.cgi?id=33902
+
+        * bytecode/Opcode.h:
+
 2010-01-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver Hunt.

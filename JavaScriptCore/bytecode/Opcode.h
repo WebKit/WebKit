@@ -196,7 +196,11 @@ namespace JSC {
     #undef VERIFY_OPCODE_ID
 
 #if HAVE(COMPUTED_GOTO)
+#if COMPILER(RVCT)
+    typedef void* Opcode;
+#else
     typedef const void* Opcode;
+#endif
 #else
     typedef OpcodeID Opcode;
 #endif
