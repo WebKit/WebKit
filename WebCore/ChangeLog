@@ -1,3 +1,8 @@
+2010-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        * WebCore.xcodeproj/project.pbxproj: Actually land the change to add ContainerNodeAlgorithms.h
+        (it's "svn resolved", not "svn revert"!).
+
 2010-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
