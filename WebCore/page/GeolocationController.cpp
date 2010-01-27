@@ -40,7 +40,8 @@ GeolocationController::GeolocationController(Page* page, GeolocationControllerCl
 
 GeolocationController::~GeolocationController()
 {
-    m_client->geolocationDestroyed();
+    if (m_client)
+        m_client->geolocationDestroyed();
 }
 
 void GeolocationController::addObserver(Geolocation* observer)
@@ -49,7 +50,7 @@ void GeolocationController::addObserver(Geolocation* observer)
 
     bool wasEmpty = m_observers.isEmpty();
     m_observers.add(observer);
-    if (wasEmpty)
+    if (wasEmpty && m_client)
         m_client->startUpdating();
 }
 
@@ -59,7 +60,7 @@ void GeolocationController::removeObserver(Geolocation* observer)
         return;
 
     m_observers.remove(observer);
-    if (m_observers.isEmpty())
+    if (m_observers.isEmpty() && m_client)
         m_client->stopUpdating();
 }
 
@@ -81,6 +82,9 @@ void GeolocationController::errorOccurred(GeolocationError* error)
 
 GeolocationPosition* GeolocationController::lastPosition()
 {
+    if (!m_client)
+        return 0;
+
     return m_client->lastPosition();
 }
 

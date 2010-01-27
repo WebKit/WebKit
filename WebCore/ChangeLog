@@ -1,3 +1,16 @@
+2010-01-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Steve Falkenburg.
+
+        DumpRenderTree silently crashes at the end of the run because geolocationControllerClient pointer is 0.
+        https://bugs.webkit.org/show_bug.cgi?id=34191
+
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::~GeolocationController): Add check for m_client being 0.
+        (WebCore::GeolocationController::addObserver): Ditto.
+        (WebCore::GeolocationController::removeObserver): Ditto.
+        (WebCore::GeolocationController::lastPosition): Ditto.
+
 2010-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.
