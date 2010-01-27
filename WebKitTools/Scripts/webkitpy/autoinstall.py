@@ -141,6 +141,9 @@ References::
 
 """
 
+# To allow use of the "with" keyword for Python 2.5 users.
+from __future__ import with_statement
+
 __version__ = "0.2"
 __docformat__ = "restructuredtext en"
 
