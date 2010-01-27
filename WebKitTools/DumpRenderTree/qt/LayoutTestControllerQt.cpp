@@ -71,6 +71,7 @@ void LayoutTestController::reset()
     m_topLoadingFrame = 0;
     m_waitForPolicy = false;
     m_handleErrorPages = false;
+    m_webHistory = 0;
     qt_dump_editing_callbacks(false);
     qt_dump_resource_load_callbacks(false);
 }
@@ -131,9 +132,19 @@ QString LayoutTestController::counterValueForElementById(const QString& id)
     return qt_drt_counterValueForElementById(m_drt->webPage()->mainFrame(), id);
 }
 
+int LayoutTestController::webHistoryItemCount()
+{
+    if (!m_webHistory)
+        return -1;
+
+    // Subtract one here as our QWebHistory::count() includes the actual page,
+    // which is not considered in the DRT tests.
+    return m_webHistory->count() - 1;
+}
+
 void LayoutTestController::keepWebHistory()
 {
-    // FIXME: implement
+    m_webHistory = m_drt->webPage()->history();
 }
 
 void LayoutTestController::notifyDone()

@@ -51,6 +51,7 @@ namespace WebCore {
 }
 class LayoutTestController : public QObject {
     Q_OBJECT
+    Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
 public:
     LayoutTestController(WebCore::DumpRenderTree* drt);
 
@@ -82,6 +83,7 @@ public slots:
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void waitUntilDone();
     QString counterValueForElementById(const QString& id);
+    int webHistoryItemCount();
     void keepWebHistory();
     void notifyDone();
     void dumpBackForwardList() { m_dumpBackForwardList = true; }
@@ -158,6 +160,7 @@ private:
     QBasicTimer m_timeoutTimer;
     QWebFrame* m_topLoadingFrame;
     WebCore::DumpRenderTree* m_drt;
+    QWebHistory* m_webHistory;
 };
 
 #endif // LayoutTestControllerQt_h
