@@ -94,7 +94,7 @@ namespace WTF {
 #if OS(DARWIN)
             ASSERT(malloc_size(p));
 #elif COMPILER(MSVC)
-            ASSERT(_msize(p));
+            ASSERT(_msize(const_cast<P*>(p)));
 #endif
 #endif
             HashTraits<P>::checkValueConsistency(*p);

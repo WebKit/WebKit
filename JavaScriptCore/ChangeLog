@@ -1,5 +1,11 @@
 2010-01-26  Alexey Proskuryakov  <ap@apple.com>
 
+        More Windows build fixing.
+
+        * wtf/HashTraits.h: _msize takes void*, remove const qualifier from type.
+
+2010-01-26  Alexey Proskuryakov  <ap@apple.com>
+
         Windows build fix.
 
         * wtf/HashTraits.h: Include malloc.h for _msize().
