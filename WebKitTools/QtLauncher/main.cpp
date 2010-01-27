@@ -114,7 +114,7 @@ public:
 
         QTouchEvent touchEv(type);
         touchEv.setTouchPoints(touchPoints);
-        QCoreApplication::sendEvent(view->page(), &touchEv);
+        QCoreApplication::sendEvent(page(), &touchEv);
 
         // After sending the event, remove all touchpoints that were released
         if (touchPoints[0].state() == Qt::TouchPointReleased)
@@ -203,8 +203,9 @@ protected slots:
 
     void loadFinished()
     {
-        setAddressUrl(view->url().toString());
-        addCompleterEntry(view->url());
+        QUrl url = page()->mainFrame()->url();
+        setAddressUrl(url.toString());
+        addCompleterEntry(url);
     }
 
     void showLinkHover(const QString &link, const QString &toolTip)
@@ -223,7 +224,7 @@ protected slots:
         if (i < zoomLevels.count() - 1)
             currentZoom = zoomLevels[i + 1];
 
-        view->setZoomFactor(qreal(currentZoom) / 100.0);
+        page()->mainFrame()->setZoomFactor(qreal(currentZoom) / 100.0);
     }
 
     void zoomOut()
@@ -233,18 +234,18 @@ protected slots:
         if (i > 0)
             currentZoom = zoomLevels[i - 1];
 
-        view->setZoomFactor(qreal(currentZoom) / 100.0);
+        page()->mainFrame()->setZoomFactor(qreal(currentZoom) / 100.0);
     }
 
     void resetZoom()
     {
        currentZoom = 100;
-       view->setZoomFactor(1.0);
+       page()->mainFrame()->setZoomFactor(1.0);
     }
 
     void toggleZoomTextOnly(bool b)
     {
-        view->page()->settings()->setAttribute(QWebSettings::ZoomTextOnly, b);
+        page()->settings()->setAttribute(QWebSettings::ZoomTextOnly, b);
     }
 
     void print()
@@ -293,7 +294,7 @@ protected slots:
 
     void dumpHtml()
     {
-        qDebug() << "HTML: " << view->page()->mainFrame()->toHtml();
+        qDebug() << "HTML: " << page()->mainFrame()->toHtml();
     }
 
     void selectElements()
@@ -303,7 +304,7 @@ protected slots:
                                             QLineEdit::Normal, "a", &ok);
 
         if (ok && !str.isEmpty()) {
-            QWebElementCollection result =  view->page()->mainFrame()->findAllElements(str);
+            QWebElementCollection result =  page()->mainFrame()->findAllElements(str);
             foreach (QWebElement e, result)
                 e.setStyleProperty("background-color", "yellow");
             statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);
@@ -344,12 +345,12 @@ private:
         fileMenu->addAction("Quit", QApplication::instance(), SLOT(closeAllWindows()), QKeySequence(Qt::CTRL | Qt::Key_Q));
 
         QMenu* editMenu = menuBar()->addMenu("&Edit");
-        editMenu->addAction(view->pageAction(QWebPage::Undo));
-        editMenu->addAction(view->pageAction(QWebPage::Redo));
+        editMenu->addAction(page()->action(QWebPage::Undo));
+        editMenu->addAction(page()->action(QWebPage::Redo));
         editMenu->addSeparator();
-        editMenu->addAction(view->pageAction(QWebPage::Cut));
-        editMenu->addAction(view->pageAction(QWebPage::Copy));
-        editMenu->addAction(view->pageAction(QWebPage::Paste));
+        editMenu->addAction(page()->action(QWebPage::Cut));
+        editMenu->addAction(page()->action(QWebPage::Copy));
+        editMenu->addAction(page()->action(QWebPage::Paste));
         editMenu->addSeparator();
         QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
         setEditable->setCheckable(true);
@@ -371,13 +372,13 @@ private:
         QMenu* formatMenu = new QMenu("F&ormat", this);
         formatMenuAction = menuBar()->addMenu(formatMenu);
         formatMenuAction->setVisible(false);
-        formatMenu->addAction(view->pageAction(QWebPage::ToggleBold));
-        formatMenu->addAction(view->pageAction(QWebPage::ToggleItalic));
-        formatMenu->addAction(view->pageAction(QWebPage::ToggleUnderline));
+        formatMenu->addAction(page()->action(QWebPage::ToggleBold));
+        formatMenu->addAction(page()->action(QWebPage::ToggleItalic));
+        formatMenu->addAction(page()->action(QWebPage::ToggleUnderline));
         QMenu* writingMenu = formatMenu->addMenu(tr("Writing Direction"));
-        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionDefault));
-        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionLeftToRight));
-        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionRightToLeft));
+        writingMenu->addAction(page()->action(QWebPage::SetTextDirectionDefault));
+        writingMenu->addAction(page()->action(QWebPage::SetTextDirectionLeftToRight));
+        writingMenu->addAction(page()->action(QWebPage::SetTextDirectionRightToLeft));
 
         zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
         zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
@@ -396,6 +397,7 @@ private:
 #endif
     }
 
+private:
     QWebView* view;
     WebInspector* inspector;
 

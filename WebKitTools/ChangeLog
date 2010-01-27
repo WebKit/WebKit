@@ -1,3 +1,23 @@
+2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
+        [Qt] QtLauncher refactoring:
+
+        Make the LauncherWindow depend less on the view, so that more
+        code can be shared in near future.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::sendTouchEvent):
+        (LauncherWindow::loadFinished):
+        (LauncherWindow::zoomIn):
+        (LauncherWindow::zoomOut):
+        (LauncherWindow::resetZoom):
+        (LauncherWindow::toggleZoomTextOnly):
+        (LauncherWindow::dumpHtml):
+        (LauncherWindow::selectElements):
+        (LauncherWindow::setupUI):
+
 2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.
