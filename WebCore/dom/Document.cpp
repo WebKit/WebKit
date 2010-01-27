@@ -69,6 +69,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
@@ -796,6 +797,9 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             break;
         }       
         default:
+            if (source->hasTagName(iframeTag))
+                static_cast<HTMLIFrameElement*>(source.get())->setRemainsAliveOnRemovalFromTree(attached());
+
             if (source->parentNode())
                 source->parentNode()->removeChild(source.get(), ec);
     }

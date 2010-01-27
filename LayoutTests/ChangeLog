@@ -1,3 +1,16 @@
+2010-01-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Avoid reloading iframe on re-parenting between documents.
+        https://bugs.webkit.org/show_bug.cgi?id=32848
+
+        * fast/frames/iframe-reparenting-expected.txt: Added.
+        * fast/frames/iframe-reparenting.html: Added.
+        * fast/frames/resources/iframe-reparenting-frame1.html: Added.
+        * fast/frames/resources/iframe-reparenting-frame2.html: Added.
+        * fast/frames/resources/iframe-reparenting-iframe-content.html: Added.
+
 2010-01-26  Adam Roben  <aroben@apple.com>
 
         No review, rolling out r53861.

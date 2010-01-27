@@ -1,3 +1,29 @@
+2010-01-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Avoid reloading iframe on re-parenting between documents.
+        https://bugs.webkit.org/show_bug.cgi?id=32848
+
+        Achieved by setting a flag on iframe element when it is a target of document.adoptNode(node) operation.
+        The flag prevents unload/load cycle and is reset once element is attached to a new document.
+        If iframe is adopted but not actually inserted into the tree, it gets unloaded by async timer
+        once JS yields, to avoid having active content in non-attached iframe.
+
+        Test: fast/frames/iframe-reparenting.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): If the adopted node is iframe, set a remainsAliveOnRemovalFromTree on it.
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::attach): Skip actual loading of the frame if it has remainsAliveOnRemovalFromTree flag. Reset the flag.
+        (WebCore::HTMLFrameElementBase::willRemove): Skip unloading the frame if it has remainsAliveOnRemovalFromTree flag set.
+        (WebCore::HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree): Set the flag, start the async timer to check if the frame was actually attached.
+        (WebCore::HTMLFrameElementBase::checkAttachedTimerFired):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::willRemove): Move from private to protected, since it is conditionally called in HTMLFrameElementBase::willRemove now.
+
 2010-01-26  Adam Roben  <aroben@apple.com>
 
         No review, rolling out r53861.
@@ -116,7 +142,7 @@
         * WebCore.vcproj/QTMovieWin.vcproj:
         * WebCore.vcproj/WebCoreCommon.vsprops:
 
-2010-01-25  Darin Fisher  <darin@chromium.org>
+2010-01-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady Eidson.
 
