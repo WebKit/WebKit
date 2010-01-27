@@ -1,5 +1,13 @@
 2010-01-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Add the "d" suffix to QtWebKit's dll on Windows.
+
+        * WebKit.pri:
+
+2010-01-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         Unreviewed build fix
 
         [Qt] Build fix for windows when QTDIR contains release libraries.
