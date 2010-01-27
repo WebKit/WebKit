@@ -694,4 +694,6 @@ EXPORTS
 	_Z25qt_resumeActiveDOMObjectsP9QWebFrame @ 693 NONAME
 	_Z26qt_suspendActiveDOMObjectsP9QWebFrame @ 694 NONAME
 	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameii @ 695 NONAME
+	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 696 NONAME
+	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME
 

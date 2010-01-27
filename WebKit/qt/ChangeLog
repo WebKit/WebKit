@@ -1,3 +1,11 @@
+2010-01-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Update the .def files with exported symbols
+
+        * symbian/eabi/QtWebKitu.def: Add two mangled missing new symbols for arm eabi.
+
 2010-01-27  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.
