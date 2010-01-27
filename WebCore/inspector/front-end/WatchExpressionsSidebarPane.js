@@ -37,6 +37,8 @@ WebInspector.WatchExpressionsSidebarPane = function()
 WebInspector.WatchExpressionsSidebarPane.prototype = {
     _settingsLoaded: function()
     {
+        this.bodyElement.removeChildren();
+
         this.expanded = WebInspector.settings.watchExpressions.length > 0;
         this.section = new WebInspector.WatchExpressionsSection();
         this.bodyElement.appendChild(this.section.element);
