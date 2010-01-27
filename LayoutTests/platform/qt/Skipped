@@ -4821,12 +4821,6 @@ loader/go-back-to-different-window-size.html
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 
-# Missing DRT ability to track worker thread counts
-fast/workers/dedicated-worker-lifecycle.html
-fast/workers/shared-worker-frame-lifecycle.html
-fast/workers/shared-worker-lifecycle.html
-fast/workers/worker-lifecycle.html
-
 # Missing DRT ability to set accept cookie policy
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 

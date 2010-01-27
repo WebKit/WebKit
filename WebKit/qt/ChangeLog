@@ -1,3 +1,21 @@
+2010-01-27  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] DRT Provide worker thread ability to track counters
+        https://bugs.webkit.org/show_bug.cgi?id=34221
+
+        Implement workerThreadCount() in LayoutTestController of Qt DRT
+
+        Tests:
+        fast/workers/dedicated-worker-lifecycle.html
+        fast/workers/shared-worker-frame-lifecycle.html
+        fast/workers/shared-worker-lifecycle.html
+        fast/workers/worker-lifecycle.html
+
+        * Api/qwebpage.cpp:
+        (qt_drt_workerThreadCount):
+
 2010-01-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
