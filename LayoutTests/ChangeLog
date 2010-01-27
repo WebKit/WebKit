@@ -1,3 +1,12 @@
+2010-01-26  Daniel Bates  <dbates@webkit.org>
+
+        Unreviewed. Made a minor typo when I added the test case fast/css/button-height.html
+        to the GTK Skipped file. In changeset 53900, I added test "fast/css/button-height.htm"
+        to the GTK Skipped file instead of "fast/css/button-height.html". See bug #33936
+        for more details.
+
+        * platform/gtk/Skipped:
+
 2010-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Failing tests after r53895 skipped.
