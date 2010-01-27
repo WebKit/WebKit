@@ -35,8 +35,8 @@ import os.path
 import sys
 
 from .. style_references import parse_patch
-from cpp_style import CppProcessor
-from text_style import TextProcessor
+from processors.cpp import CppProcessor
+from processors.text import TextProcessor
 
 
 # These defaults are used by check-webkit-style.

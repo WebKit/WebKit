@@ -41,8 +41,8 @@ from checker import CategoryFilter
 from checker import ProcessorDispatcher
 from checker import ProcessorOptions
 from checker import StyleChecker
-from cpp_style import CppProcessor
-from text_style import TextProcessor
+from processors.cpp import CppProcessor
+from processors.text import TextProcessor
 
 class CategoryFilterTest(unittest.TestCase):
 

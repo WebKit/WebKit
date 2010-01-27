@@ -31,8 +31,8 @@
 
 import unittest
 
-import text_style
-from text_style import TextProcessor
+import text as text_style
+from text import TextProcessor
 
 class TextStyleTestCase(unittest.TestCase):
     """TestCase for text_style.py"""

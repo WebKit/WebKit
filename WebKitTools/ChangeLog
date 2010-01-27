@@ -1,3 +1,26 @@
+2010-01-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Moved the check-webkit-style processors into a new
+        webkitpy/style/processors directory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34060
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/style/cpp_style.py: Removed.
+        * Scripts/webkitpy/style/cpp_style_unittest.py: Removed.
+        * Scripts/webkitpy/style/processors: Added.
+        * Scripts/webkitpy/style/processors/__init__.py: Added.
+        * Scripts/webkitpy/style/processors/cpp.py: Copied from WebKitTools/Scripts/webkitpy/style/cpp_style.py.
+        * Scripts/webkitpy/style/processors/cpp_unittest.py: Copied from WebKitTools/Scripts/webkitpy/style/cpp_style_unittest.py.
+        * Scripts/webkitpy/style/processors/text.py: Copied from WebKitTools/Scripts/webkitpy/style/text_style.py.
+        * Scripts/webkitpy/style/processors/text_unittest.py: Copied from WebKitTools/Scripts/webkitpy/style/text_style_unittest.py.
+        * Scripts/webkitpy/style/text_style.py: Removed.
+        * Scripts/webkitpy/style/text_style_unittest.py: Removed.
+        * Scripts/webkitpy/style/unittests.py:
+
 2010-01-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, make sure stub function returns a value.
