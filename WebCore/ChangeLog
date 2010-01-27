@@ -1,3 +1,17 @@
+2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add key event mappings for numpad keys for Gtk and Chromium/Gtk.
+        http://bugs.webkit.org/show_bug.cgi?id=28247
+
+        Test: fast/events/keydown-numpad-keys.html
+
+        * platform/chromium/KeyCodeConversionGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2010-01-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

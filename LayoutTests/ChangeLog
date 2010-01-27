@@ -1,3 +1,12 @@
+2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove fast/events/keydown-numpad-keys.html from gtk's Skipped list.
+        https://bugs.webkit.org/show_bug.cgi?id=28247
+
+        * platform/gtk/Skipped:
+
 2010-01-27  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

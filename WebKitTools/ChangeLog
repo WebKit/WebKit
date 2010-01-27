@@ -1,3 +1,16 @@
+2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Correctly handle the KeyLocation argument that has been introduced
+        recently to test location-dependent key events in EventSender.keyDown.
+        http://bugs.webkit.org/show_bug.cgi?id=28247
+
+        Test: fast/events/keydown-numpad-keys.html
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (keyDownCallback):
+
 2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Simon Hausmann.

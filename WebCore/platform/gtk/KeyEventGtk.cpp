@@ -181,6 +181,23 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
         case GDK_KP_Divide:
             return VK_DIVIDE; // (6F) Divide key
 
+        case GDK_KP_Page_Up:
+            return VK_PRIOR; // (21) PAGE UP key
+        case GDK_KP_Page_Down:
+            return VK_NEXT; // (22) PAGE DOWN key
+        case GDK_KP_End:
+            return VK_END; // (23) END key
+        case GDK_KP_Home:
+            return VK_HOME; // (24) HOME key
+        case GDK_KP_Left:
+            return VK_LEFT; // (25) LEFT ARROW key
+        case GDK_KP_Up:
+            return VK_UP; // (26) UP ARROW key
+        case GDK_KP_Right:
+            return VK_RIGHT; // (27) RIGHT ARROW key
+        case GDK_KP_Down:
+            return VK_DOWN; // (28) DOWN ARROW key
+
         case GDK_BackSpace:
             return VK_BACK; // (08) BACKSPACE key
         case GDK_ISO_Left_Tab:

@@ -76,6 +76,14 @@ static unsigned startOfQueue;
 
 static const float zoomMultiplierRatio = 1.2f;
 
+// Key event location code defined in DOM Level 3.
+enum KeyLocationCode {
+    DOM_KEY_LOCATION_STANDARD      = 0x00,
+    DOM_KEY_LOCATION_LEFT          = 0x01,
+    DOM_KEY_LOCATION_RIGHT         = 0x02,
+    DOM_KEY_LOCATION_NUMPAD        = 0x03
+};
+
 static JSValueRef getDragModeCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, dragMode);
@@ -449,66 +457,93 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         }
     }
 
+    // handle location argument.
+    int location = DOM_KEY_LOCATION_STANDARD;
+    if (argumentCount > 2)
+        location = (int)JSValueToNumber(context, arguments[2], exception);
+
     JSStringRef character = JSValueToStringCopy(context, arguments[0], exception);
     g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
-    int gdkKeySym;
-    if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
-        gdkKeySym = GDK_Left;
-    else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
-        gdkKeySym = GDK_Right;
-    else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
-        gdkKeySym = GDK_Up;
-    else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
-        gdkKeySym = GDK_Down;
-    else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
-        gdkKeySym = GDK_Page_Up;
-    else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
-        gdkKeySym = GDK_Page_Down;
-    else if (JSStringIsEqualToUTF8CString(character, "home"))
-        gdkKeySym = GDK_Home;
-    else if (JSStringIsEqualToUTF8CString(character, "end"))
-        gdkKeySym = GDK_End;
-    else if (JSStringIsEqualToUTF8CString(character, "delete"))
-        gdkKeySym = GDK_BackSpace;
-    else if (JSStringIsEqualToUTF8CString(character, "F1"))
-        gdkKeySym = GDK_F1;
-    else if (JSStringIsEqualToUTF8CString(character, "F2"))
-        gdkKeySym = GDK_F2;
-    else if (JSStringIsEqualToUTF8CString(character, "F3"))
-        gdkKeySym = GDK_F3;
-    else if (JSStringIsEqualToUTF8CString(character, "F4"))
-        gdkKeySym = GDK_F4;
-    else if (JSStringIsEqualToUTF8CString(character, "F5"))
-        gdkKeySym = GDK_F5;
-    else if (JSStringIsEqualToUTF8CString(character, "F6"))
-        gdkKeySym = GDK_F6;
-    else if (JSStringIsEqualToUTF8CString(character, "F7"))
-        gdkKeySym = GDK_F7;
-    else if (JSStringIsEqualToUTF8CString(character, "F8"))
-        gdkKeySym = GDK_F8;
-    else if (JSStringIsEqualToUTF8CString(character, "F9"))
-        gdkKeySym = GDK_F9;
-    else if (JSStringIsEqualToUTF8CString(character, "F10"))
-        gdkKeySym = GDK_F10;
-    else if (JSStringIsEqualToUTF8CString(character, "F11"))
-        gdkKeySym = GDK_F11;
-    else if (JSStringIsEqualToUTF8CString(character, "F12"))
-        gdkKeySym = GDK_F12;
-    else {
-        int charCode = JSStringGetCharactersPtr(character)[0];
-        if (charCode == '\n' || charCode == '\r')
-            gdkKeySym = GDK_Return;
-        else if (charCode == '\t')
-            gdkKeySym = GDK_Tab;
-        else if (charCode == '\x8')
+    int gdkKeySym = GDK_VoidSymbol;
+    if (location == DOM_KEY_LOCATION_NUMPAD) {
+        if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
+            gdkKeySym = GDK_KP_Left;
+        else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
+            gdkKeySym = GDK_KP_Right;
+        else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
+            gdkKeySym = GDK_KP_Up;
+        else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
+            gdkKeySym = GDK_KP_Down;
+        else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
+            gdkKeySym = GDK_KP_Page_Up;
+        else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
+            gdkKeySym = GDK_KP_Page_Down;
+        else if (JSStringIsEqualToUTF8CString(character, "home"))
+            gdkKeySym = GDK_KP_Home;
+        else if (JSStringIsEqualToUTF8CString(character, "end"))
+            gdkKeySym = GDK_KP_End;
+        else
+            // Assume we only get arrow/pgUp/pgDn/home/end keys with
+            // location=NUMPAD for now.
+            g_assert_not_reached();
+    } else {
+        if (JSStringIsEqualToUTF8CString(character, "leftArrow"))
+            gdkKeySym = GDK_Left;
+        else if (JSStringIsEqualToUTF8CString(character, "rightArrow"))
+            gdkKeySym = GDK_Right;
+        else if (JSStringIsEqualToUTF8CString(character, "upArrow"))
+            gdkKeySym = GDK_Up;
+        else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
+            gdkKeySym = GDK_Down;
+        else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
+            gdkKeySym = GDK_Page_Up;
+        else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
+            gdkKeySym = GDK_Page_Down;
+        else if (JSStringIsEqualToUTF8CString(character, "home"))
+            gdkKeySym = GDK_Home;
+        else if (JSStringIsEqualToUTF8CString(character, "end"))
+            gdkKeySym = GDK_End;
+        else if (JSStringIsEqualToUTF8CString(character, "delete"))
             gdkKeySym = GDK_BackSpace;
+        else if (JSStringIsEqualToUTF8CString(character, "F1"))
+            gdkKeySym = GDK_F1;
+        else if (JSStringIsEqualToUTF8CString(character, "F2"))
+            gdkKeySym = GDK_F2;
+        else if (JSStringIsEqualToUTF8CString(character, "F3"))
+            gdkKeySym = GDK_F3;
+        else if (JSStringIsEqualToUTF8CString(character, "F4"))
+            gdkKeySym = GDK_F4;
+        else if (JSStringIsEqualToUTF8CString(character, "F5"))
+            gdkKeySym = GDK_F5;
+        else if (JSStringIsEqualToUTF8CString(character, "F6"))
+            gdkKeySym = GDK_F6;
+        else if (JSStringIsEqualToUTF8CString(character, "F7"))
+            gdkKeySym = GDK_F7;
+        else if (JSStringIsEqualToUTF8CString(character, "F8"))
+            gdkKeySym = GDK_F8;
+        else if (JSStringIsEqualToUTF8CString(character, "F9"))
+            gdkKeySym = GDK_F9;
+        else if (JSStringIsEqualToUTF8CString(character, "F10"))
+            gdkKeySym = GDK_F10;
+        else if (JSStringIsEqualToUTF8CString(character, "F11"))
+            gdkKeySym = GDK_F11;
+        else if (JSStringIsEqualToUTF8CString(character, "F12"))
+            gdkKeySym = GDK_F12;
         else {
-            gdkKeySym = gdk_unicode_to_keyval(charCode);
-            if (WTF::isASCIIUpper(charCode))
-                state |= GDK_SHIFT_MASK;
+            int charCode = JSStringGetCharactersPtr(character)[0];
+            if (charCode == '\n' || charCode == '\r')
+                gdkKeySym = GDK_Return;
+            else if (charCode == '\t')
+                gdkKeySym = GDK_Tab;
+            else if (charCode == '\x8')
+                gdkKeySym = GDK_BackSpace;
+            else {
+                gdkKeySym = gdk_unicode_to_keyval(charCode);
+                if (WTF::isASCIIUpper(charCode))
+                    state |= GDK_SHIFT_MASK;
+            }
         }
     }
-
     JSStringRelease(character);
 
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);

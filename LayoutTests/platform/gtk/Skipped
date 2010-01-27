@@ -2261,7 +2261,6 @@ fast/events/event-listener-on-link.html
 fast/events/event-sender-mouse-moved.html
 fast/events/focusingUnloadedFrame.html
 fast/events/keydown-1.html
-fast/events/keydown-numpad-keys.html
 fast/events/label-focus.html
 fast/events/mouseout-dead-node.html
 fast/events/onload-re-entry.html
