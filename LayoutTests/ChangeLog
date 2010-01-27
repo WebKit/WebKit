@@ -1,5 +1,41 @@
 2010-01-26  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsNumber support except type=datetime-local.
+        https://bugs.webkit.org/show_bug.cgi?id=32696
+
+        input-valueasnumber-datetime-expected.txt and
+        input-valueasnumber-time-expected.txt have FAIL lines because they
+        test unimplemented features.
+
+        * fast/forms/input-valueasnumber-date-expected.txt: Added.
+        * fast/forms/input-valueasnumber-date.html: Added.
+        * fast/forms/input-valueasnumber-datetime-expected.txt: Added.
+        * fast/forms/input-valueasnumber-datetime.html: Added.
+        * fast/forms/input-valueasnumber-month-expected.txt: Added.
+        * fast/forms/input-valueasnumber-month.html: Added.
+        * fast/forms/input-valueasnumber-number-expected.txt: Added.
+        * fast/forms/input-valueasnumber-number.html: Added.
+        * fast/forms/input-valueasnumber-range-expected.txt: Added.
+        * fast/forms/input-valueasnumber-range.html: Added.
+        * fast/forms/input-valueasnumber-time-expected.txt: Added.
+        * fast/forms/input-valueasnumber-time.html: Added.
+        * fast/forms/input-valueasnumber-unsupported-expected.txt: Added.
+        * fast/forms/input-valueasnumber-unsupported.html: Added.
+        * fast/forms/input-valueasnumber-week-expected.txt: Added.
+        * fast/forms/input-valueasnumber-week.html: Added.
+        * fast/forms/script-tests/input-valueasnumber-date.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-datetime.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-month.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-number.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-range.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-time.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-unsupported.js: Added.
+        * fast/forms/script-tests/input-valueasnumber-week.js: Added.
+
+2010-01-26  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Eric Seidel.
 
         [Win] Add modifiers parameter support to Windows DumpRenderTree

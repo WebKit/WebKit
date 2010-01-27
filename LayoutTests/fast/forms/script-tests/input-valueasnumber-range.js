@@ -1,0 +1,70 @@
+description('Tests for .valueAsNumber with &lt;input type=range>.');
+
+var input = document.createElement('input');
+input.type = 'range';
+document.body.appendChild(input);
+
+function valueAsNumberFor(stringValue) {
+    input.value = stringValue;
+    input.offsetWidth; // Force to make a renderer work.
+    return input.valueAsNumber;
+}
+
+function setValueAsNumberAndGetValue(num) {
+    input.valueAsNumber = num;
+    input.offsetWidth; // Force to make a renderer work.
+    return input.value;
+}
+
+// The default values for type=range: min=0 max=100 step=1
+// Values are modifies for these restrictions.
+shouldBe('valueAsNumberFor("0")', '0');
+shouldBe('valueAsNumberFor("10")', '10');
+shouldBe('valueAsNumberFor("01")', '1');
+shouldBe('valueAsNumberFor("-0")', '0');
+shouldBe('valueAsNumberFor("-1.2")', '0');
+shouldBe('valueAsNumberFor("1.2E10")', '100');
+shouldBe('valueAsNumberFor("1.2E-10")', '0');
+shouldBe('valueAsNumberFor("1.2E+10")', '100');
+shouldBe('valueAsNumberFor("12345678901234567890123456789012345678901234567890")', '100');
+shouldBe('valueAsNumberFor("0.12345678901234567890123456789012345678901234567890")', '0');
+
+debug('valueAsNumber for invalid string values:');
+shouldBe('valueAsNumberFor("")', '50');
+shouldBe('valueAsNumberFor("abc")', '50');
+shouldBe('valueAsNumberFor("0xff")', '50');
+shouldBe('valueAsNumberFor("+1")', '50');
+shouldBe('valueAsNumberFor(" 10")', '50');
+shouldBe('valueAsNumberFor("10 ")', '50');
+shouldBe('valueAsNumberFor(".2")', '50');
+shouldBe('valueAsNumberFor("1E")', '50');
+shouldBe('valueAsNumberFor("NaN")', '50');
+shouldBe('valueAsNumberFor("nan")', '50');
+shouldBe('valueAsNumberFor("Inf")', '50');
+shouldBe('valueAsNumberFor("inf")', '50');
+shouldBe('valueAsNumberFor("Infinity")', '50');
+shouldBe('valueAsNumberFor("infinity")', '50');
+
+debug('Too huge exponent to support');
+shouldBe('valueAsNumberFor("1.2E65535")', '50');
+
+debug('Tests for the valueAsNumber setter:');
+shouldBe('setValueAsNumberAndGetValue(0)', '"0"');
+shouldBe('setValueAsNumberAndGetValue(10)', '"10"');
+shouldBe('setValueAsNumberAndGetValue(01)', '"1"');
+shouldBe('setValueAsNumberAndGetValue(-0)', '"0"');
+shouldBe('setValueAsNumberAndGetValue(-1.2)', '"0"');
+shouldBe('setValueAsNumberAndGetValue(1.2e10)', '"100"');
+shouldBe('setValueAsNumberAndGetValue(1.2e-10)', '"0"');
+shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+49)', '"100"');
+
+debug('Tests to set invalid values to valueAsNumber:');
+shouldBe('setValueAsNumberAndGetValue(null)', '"0"');
+shouldThrow('setValueAsNumberAndGetValue("foo")', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(NaN)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+
+var successfullyParsed = true;

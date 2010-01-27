@@ -1,3 +1,31 @@
+2010-01-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::valueAsNumber support except type=datetime-local.
+        https://bugs.webkit.org/show_bug.cgi?id=32696
+
+        Tests: fast/forms/input-valueasnumber-date.html
+               fast/forms/input-valueasnumber-datetime.html
+               fast/forms/input-valueasnumber-month.html
+               fast/forms/input-valueasnumber-number.html
+               fast/forms/input-valueasnumber-range.html
+               fast/forms/input-valueasnumber-time.html
+               fast/forms/input-valueasnumber-unsupported.html
+               fast/forms/input-valueasnumber-week.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueAsNumber):
+          According to the specification, we should return NaN for invalid values.
+        (WebCore::HTMLInputElement::setValueAsNumber):
+          According to the specification, throws NOT_SUPPORTED_ERR for Infinitiy or NaN,
+          and throws INVALID_STATE_ERR for unsupported types.
+        (WebCore::HTMLInputElement::formStringToDouble):
+          According to the step 14 of Real Number in the specification, we
+          should round -0 to 0.
+        * html/HTMLInputElement.h: Declare valueAsNumber() and setValueAsNumber().
+        * html/HTMLInputElement.idl: Add valueAsNumber.
+
 2010-01-26  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.

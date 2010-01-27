@@ -1467,6 +1467,94 @@ void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
     setValue(dateTime.toString());
 }
 
+double HTMLInputElement::valueAsNumber() const
+{
+    const double nan = numeric_limits<double>::quiet_NaN();
+    switch (inputType()) {
+    case DATE:
+    case DATETIME:
+    case MONTH:
+    case TIME:
+    case WEEK: {
+        ISODateTime dateTime;
+        if (!formStringToISODateTime(inputType(), value(), &dateTime))
+            return nan;
+        return dateTime.millisecondsSinceEpoch();
+    }
+    case NUMBER:
+    case RANGE: {
+        double numberValue;
+        if (!formStringToDouble(value(), &numberValue))
+            return nan;
+        return numberValue;
+    }
+
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case DATETIMELOCAL: // FIXME: Unlike valueAsDate, valueAsNumber should support DATETIMELOCAL type.
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case PASSWORD:
+    case RADIO:
+    case RESET:
+    case SEARCH:
+    case SUBMIT:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        return nan;
+    }
+    ASSERT_NOT_REACHED();
+    return nan;
+}
+
+void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
+{
+    if (!isfinite(newValue)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+    switch (inputType()) {
+    case DATE:
+    case DATETIME:
+    case MONTH:
+    case TIME:
+    case WEEK:
+        setValueAsDate(newValue, ec);
+        return;
+    case NUMBER:
+    case RANGE:
+        setValue(formStringFromDouble(newValue));
+        return;
+
+    case DATETIMELOCAL: // FIXME: implement ISODateTime.toString()
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case PASSWORD:
+    case RADIO:
+    case RESET:
+    case SEARCH:
+    case SUBMIT:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    ASSERT_NOT_REACHED();
+    return;
+}
+
 String HTMLInputElement::placeholder() const
 {
     return getAttribute(placeholderAttr).string();
@@ -2195,8 +2283,11 @@ bool HTMLInputElement::formStringToDouble(const String& src, double* out)
     if (!valid)
         return false;
     // NaN and Infinity are not valid numbers according to the standard.
-    if (isnan(value) || isinf(value))
+    if (!isfinite(value))
         return false;
+    // -0 -> 0
+    if (!value)
+        value = 0;
     if (out)
         *out = value;
     return true;

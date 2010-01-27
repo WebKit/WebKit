@@ -147,6 +147,9 @@ public:
     double valueAsDate() const;
     void setValueAsDate(double, ExceptionCode&);
 
+    double valueAsNumber() const;
+    void setValueAsNumber(double, ExceptionCode&);
+
     virtual String placeholder() const;
     virtual void setPlaceholder(const String&);
 
