@@ -66,6 +66,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PageGroupLoadDeferrer.h"
 #include "Pasteboard.h"
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
@@ -130,6 +131,10 @@ static const double maxTextSizeMultiplier = 3.0;
 // one page group.
 const char* pageGroupName = "default";
 
+// Used to defer all page activity in cases where the embedder wishes to run
+// a nested event loop.
+static PageGroupLoadDeferrer* pageGroupLoadDeferrer;
+
 // Ensure that the WebDragOperation enum values stay in sync with the original
 // DragOperation constants.
 #define COMPILE_ASSERT_MATCHING_ENUM(coreName) \
@@ -173,6 +178,28 @@ void WebView::updateVisitedLinkState(unsigned long long linkHash)
 void WebView::resetVisitedLinkState()
 {
     Page::allVisitedStateChanged(PageGroup::pageGroup(pageGroupName));
+}
+
+void WebView::willEnterModalLoop()
+{
+    // It is not valid to nest more than once.
+    ASSERT(!pageGroupLoadDeferrer);
+
+    PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
+    ASSERT(pageGroup);
+    ASSERT(!pageGroup->pages().isEmpty());
+
+    // Pick any page in the page group since we are deferring all pages.
+    pageGroupLoadDeferrer = new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true);
+}
+
+void WebView::didExitModalLoop()
+{
+    // The embedder must have called willEnterNestedEventLoop.
+    ASSERT(pageGroupLoadDeferrer);
+
+    delete pageGroupLoadDeferrer;
+    pageGroupLoadDeferrer = 0;
 }
 
 void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)

@@ -252,6 +252,7 @@ public:
 
 
     // Custom colors -------------------------------------------------------
+
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,
                                     unsigned trackColor) = 0;
@@ -260,6 +261,14 @@ public:
                                     unsigned activeForegroundColor,
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor) = 0;
+
+
+    // Modal dialog support ------------------------------------------------
+
+    // Call these methods before and after running a nested, modal event loop
+    // to suspend script callbacks and resource loads.
+    WEBKIT_API static void willEnterModalLoop();
+    WEBKIT_API static void didExitModalLoop();
 
 protected:
     ~WebView() {}
