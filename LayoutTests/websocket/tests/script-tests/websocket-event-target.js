@@ -1,7 +1,7 @@
 description("Make sure WebSocket object acts as EventTarget.");
 
-var ws = new WebSocket("ws://localhost:8000");
-ws.close(); // That is not a WebSocket server, prevent logging an error to console.
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/simple");
+ws.close(); // That is not a test with a WebSocket server, prevent logging an error to console.
 var open_event_handled = false;
 var message_event_handled = false;
 var close_event_handled = false;
