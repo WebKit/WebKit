@@ -1414,7 +1414,7 @@ END
 
     push(@implContent, "  desc->${setOn}Template()->SetNamedPropertyHandler(V8${interfaceName}::namedPropertyGetter, ");
     push(@implContent, $hasSetter ? "V8${interfaceName}::namedPropertySetter, " : "0, ");
-    push(@implContent, "0 ,"); # NamedPropertyQuery -- not being used at the moment.
+    push(@implContent, "0, "); # NamedPropertyQuery -- not being used at the moment.
     push(@implContent, $hasDeleter ? "V8${interfaceName}::namedPropertyDeleter, " : "0, ");
     push(@implContent, $hasEnumerator ? "V8${interfaceName}::namedPropertyEnumerator" : "0");
     push(@implContent, ");\n");
