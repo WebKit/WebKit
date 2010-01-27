@@ -1,3 +1,9 @@
+2010-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        * platform/qt/editing/pasteboard/paste-noscript-xhtml-expected.txt: updated after r53873.
+
 2010-01-26  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed. Updated expected failing results for table-percent-height.html
