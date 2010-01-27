@@ -1,5 +1,12 @@
 2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Qt port doesn't need platform dependent expected file anymore
+        for editing/pasteboard/paste-noscript-xhtml.html from r53873.
+
+        * platform/qt/editing/pasteboard/paste-noscript-xhtml-expected.txt: Removed.
+
+2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] fast/backgrounds/animated-svg-as-background.html make fast/backgrounds/svg-as-background-5.html crash.
         https://bugs.webkit.org/show_bug.cgi?id=34202
 
