@@ -26,6 +26,10 @@
 #include <utility>
 #include <limits>
 
+#if OS(DARWIN)
+#include <malloc/malloc.h>
+#endif
+
 namespace WTF {
 
     using std::pair;
@@ -51,6 +55,7 @@ namespace WTF {
     template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
         typedef T TraitType;
         static T emptyValue() { return T(); }
+        static void checkValueConsistency(const T&) { }
     };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };
@@ -79,6 +84,19 @@ namespace WTF {
         static const bool needsDestruction = false;
         static void constructDeletedValue(P*& slot) { slot = reinterpret_cast<P*>(-1); }
         static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
+#if !ASSERT_DISABLED
+        static void checkValueConsistency(const P* p)
+        {
+#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) || !defined(NDEBUG)
+#if OS(DARWIN)
+            ASSERT(malloc_size(p));
+#elif COMPILER(MSVC)
+            ASSERT(_msize(p));
+#endif
+#endif
+            HashTraits<P>::checkValueConsistency(*p);
+        }
+#endif
     };
 
     template<typename P> struct HashTraits<RefPtr<P> > : GenericHashTraits<RefPtr<P> > {

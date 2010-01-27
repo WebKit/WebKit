@@ -1,3 +1,45 @@
+2010-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34150
+        WebKit needs a mechanism to catch stale HashMap entries
+
+        It is very difficult to catch stale pointers that are HashMap keys - since a pointer's hash
+        is just its value, it is very unlikely that any observable problem is reproducible.
+
+        This extends hash table consistency checks to check that pointers are referencing allocated
+        memory blocks, and makes it possible to invoke the checks explicitly (it is not feasible
+        to enable CHECK_HASHTABLE_CONSISTENCY by default, because that affects performance too much).
+
+        * wtf/HashMap.h: (WTF::::checkConsistency): Call through to HashTable implementation. We can
+        add similar calls to HashSet and HashCountedSet, but I haven't seen hard to debug problems
+        with those yet.
+
+        * wtf/HashSet.h: (WTF::::remove): The version of checkTableConsistency that's guarded by
+        CHECK_HASHTABLE_CONSISTENCY is now called internalCheckTableConsistency().
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::internalCheckTableConsistency):
+        (WTF::HashTable::internalCheckTableConsistencyExceptSize):
+        (WTF::HashTable::checkTableConsistencyExceptSize):
+        Expose checkTableConsistency() even if CHECK_HASHTABLE_CONSISTENCY is off.
+        (WTF::::add): Updated for checkTableConsistency renaming.
+        (WTF::::addPassingHashCode): Ditto.
+        (WTF::::removeAndInvalidate): Ditto.
+        (WTF::::remove): Ditto.
+        (WTF::::rehash): Ditto.
+        (WTF::::checkTableConsistency): The assertion for !shouldExpand() was not correct - this
+        function returns true for tables with m_table == 0.
+        (WTF::::checkTableConsistencyExceptSize): Call checkValueConsistency for key. Potentially,
+        we could do the same for values.
+
+        * wtf/HashTraits.h:
+        (WTF::GenericHashTraits::checkValueConsistency): An empty function that can be overridden
+        to add checks. Currently, the only override is for pointer hashes.
+
+        * wtf/RefPtrHashMap.h: (WTF::::remove): Updated for checkTableConsistency renaming.
+
 2010-01-26  Lyon Chen  <liachen@rim.com>
 
         Reviewed by Maciej Stachowiak.

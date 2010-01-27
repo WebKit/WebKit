@@ -285,7 +285,7 @@ namespace WTF {
     {
         if (it.m_impl == m_impl.end())
             return;
-        m_impl.checkTableConsistency();
+        m_impl.internalCheckTableConsistency();
         m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
     }
 
