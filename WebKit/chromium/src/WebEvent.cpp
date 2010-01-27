@@ -33,7 +33,6 @@
 
 #include "Event.h"
 #include "Node.h"
-#include "WebMutationEvent.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -217,4 +216,4 @@ bool WebEvent::isBeforeLoadEvent() const
     return m_private->isBeforeLoadEvent();
 }
 
-}
+} // namespace WebKit

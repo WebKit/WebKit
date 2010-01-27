@@ -27,32 +27,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebMutationEvent_h
-#define WebMutationEvent_h
 
-#include "WebEvent.h"
+#include "config.h"
+#include "WebMutationEvent.h"
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Event; }
-#endif
+#include "MutationEvent.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebMutationEvent : public WebEvent {
-public:
-    enum AttrChangeType {
-        Modification    = 1,
-        Addition        = 2,
-        Removal         = 3
-    };
+WebNode WebMutationEvent::relatedNode() const
+{
+    return WebNode(constUnwrap<MutationEvent>()->relatedNode());
+}
 
-    WEBKIT_API WebNode relatedNode() const;
-    WEBKIT_API WebString prevValue() const;
-    WEBKIT_API WebString newValue() const;
-    WEBKIT_API WebString attrName() const;
-    WEBKIT_API AttrChangeType attrChange() const;
-};
+WebString WebMutationEvent::prevValue() const
+{
+    return WebString(constUnwrap<MutationEvent>()->prevValue());
+}
+
+WebString WebMutationEvent::newValue() const
+{
+    return WebString(constUnwrap<MutationEvent>()->newValue());
+}
+
+WebString WebMutationEvent::attrName() const
+{
+    return WebString(constUnwrap<MutationEvent>()->attrName());
+}
+
+WebMutationEvent::AttrChangeType WebMutationEvent::attrChange() const
+{
+    return static_cast<AttrChangeType>(constUnwrap<MutationEvent>()->attrChange());
+}
 
 } // namespace WebKit
-
-#endif
