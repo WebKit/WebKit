@@ -3026,6 +3026,8 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedPoints.cpp \
 	WebCore/svg/SVGAnimatedPoints.h \
 	WebCore/svg/SVGAnimatedProperty.h \
+	WebCore/svg/SVGAnimatedPropertySynchronizer.h \
+	WebCore/svg/SVGAnimatedPropertyTraits.h \
 	WebCore/svg/SVGAnimatedTemplate.h \
 	WebCore/svg/SVGAnimationElement.cpp \
 	WebCore/svg/SVGAnimationElement.h \
