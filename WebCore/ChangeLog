@@ -1,3 +1,36 @@
+2010-01-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable websockets support in QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=34180
+
+        Connected between SocketStreamHandle and QTcpSocket/QSslSocket
+        to enable support for websockets.
+        Proxy authentication is not yet supported.
+        SSL certificate errors are ignored while this is under development.
+
+        * WebCore.pro:
+        * platform/network/qt/SocketStreamHandle.h:
+        * platform/network/qt/SocketStreamHandlePrivate.h: Added.
+        * platform/network/qt/SocketStreamHandleQt.cpp:
+        (WebCore::SocketStreamHandlePrivate::SocketStreamHandlePrivate):
+        (WebCore::SocketStreamHandlePrivate::~SocketStreamHandlePrivate):
+        (WebCore::SocketStreamHandlePrivate::socketConnected):
+        (WebCore::SocketStreamHandlePrivate::socketReadyRead):
+        (WebCore::SocketStreamHandlePrivate::send):
+        (WebCore::SocketStreamHandlePrivate::close):
+        (WebCore::SocketStreamHandlePrivate::socketSentdata):
+        (WebCore::SocketStreamHandlePrivate::socketClosed):
+        (WebCore::SocketStreamHandlePrivate::socketError):
+        (WebCore::SocketStreamHandlePrivate::socketClosedCallback):
+        (WebCore::SocketStreamHandlePrivate::socketErrorCallback):
+        (WebCore::SocketStreamHandlePrivate::socketSslErrors):
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+
 2010-01-27  Mads Ager  <ager@chromium.org>
 
         Reviewed by Dimitri Glazkov.

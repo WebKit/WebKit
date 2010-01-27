@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2010 Nokia Inc. All rights reserved.
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,43 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SocketStreamHandle_h
-#define SocketStreamHandle_h
+#ifndef SocketStreamHandlePrivate_h
+#define SocketStreamHandlePrivate_h
 
 #include "SocketStreamHandleBase.h"
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <QSslSocket>
+#include <QTcpSocket>
 
 namespace WebCore {
 
-    class AuthenticationChallenge;
-    class Credential;
-    class SocketStreamHandleClient;
-    class SocketStreamHandlePrivate;
+class AuthenticationChallenge;
+class Credential;
+class SocketStreamHandleClient;
+class SocketStreamHandlePrivate;
 
-    class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
-    public:
-        static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+class SocketStreamHandlePrivate : public QObject {
+    Q_OBJECT
+public:
+    SocketStreamHandlePrivate(SocketStreamHandle*, const KURL&);
+    ~SocketStreamHandlePrivate();
 
-        virtual ~SocketStreamHandle();
+public slots:
+    void socketConnected();
+    void socketReadyRead();
+    int send(const char* data, int len);
+    void close();
+    void socketSentdata();
+    void socketClosed();
+    void socketError(QAbstractSocket::SocketError);
+    void socketClosedCallback();
+    void socketErrorCallback(int);
+    void socketSslErrors(const QList<QSslError>&);
+public:
+    QTcpSocket* m_socket;
+    SocketStreamHandle* m_streamHandle;
+};
 
-    protected:
-        virtual int platformSend(const char* data, int length);
-        virtual void platformClose();
+}
 
-    private:
-        SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
-
-        // No authentication for streams per se, but proxy may ask for credentials.
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-        void receivedCredential(const AuthenticationChallenge&, const Credential&);
-        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-        void receivedCancellation(const AuthenticationChallenge&);
-        SocketStreamHandlePrivate* m_p;
-        friend class SocketStreamHandlePrivate;
-    };
-
-}  // namespace WebCore
-
-#endif  // SocketStreamHandle_h
+#endif

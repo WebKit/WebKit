@@ -1526,6 +1526,7 @@ HEADERS += \
     platform/network/NetworkStateNotifier.h \
     platform/network/ProtectionSpace.h \
     platform/network/qt/QNetworkReplyHandler.h \
+    platform/network/qt/SocketStreamHandlePrivate.h \
     platform/network/ResourceErrorBase.h \
     platform/network/ResourceHandle.h \
     platform/network/ResourceRequestBase.h \

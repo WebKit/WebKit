@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2010 Nokia Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,34 +36,139 @@
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "SocketStreamHandleClient.h"
+#include "SocketStreamHandlePrivate.h"
 
 namespace WebCore {
 
+SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamHandle, const KURL& url) : QObject()
+{
+    m_streamHandle = streamHandle;
+    m_socket = 0;
+    bool isSecure = url.protocolIs("wss");
+    if (isSecure)
+        m_socket = new QSslSocket(this);
+    else
+        m_socket = new QTcpSocket(this);
+    connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
+    connect(m_socket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
+    if (isSecure)
+        connect(m_socket, SIGNAL(sslErrors(const QList<QSslError>&)), this, SLOT(socketSslErrors(const QList<QSslError>&)));
+
+    unsigned int port = url.hasPort() ? url.port() : (isSecure ? 443 : 80);
+
+    QString host = url.host();
+    if (isSecure)
+        static_cast<QSslSocket*>(m_socket)->connectToHostEncrypted(host, port);
+    else
+        m_socket->connectToHost(host, port);
+}
+
+SocketStreamHandlePrivate::~SocketStreamHandlePrivate()
+{
+    Q_ASSERT(!(m_socket && m_socket->state() == QAbstractSocket::ConnectedState));
+}
+
+void SocketStreamHandlePrivate::socketConnected()
+{
+    if (m_streamHandle && m_streamHandle->client()) {
+        m_streamHandle->m_state = SocketStreamHandleBase::Open;
+        m_streamHandle->client()->didOpen(m_streamHandle);
+    }
+}
+
+void SocketStreamHandlePrivate::socketReadyRead()
+{
+    if (m_streamHandle && m_streamHandle->client()) {
+        QByteArray data = m_socket->read(m_socket->bytesAvailable());
+        m_streamHandle->client()->didReceiveData(m_streamHandle, data.constData(), data.size());
+    }
+}
+
+int SocketStreamHandlePrivate::send(const char* data, int len)
+{
+    if (m_socket->state() != QAbstractSocket::ConnectedState)
+        return 0;
+    quint64 sentSize = m_socket->write(data, len);
+    QMetaObject::invokeMethod(this, "socketSentData", Qt::QueuedConnection);
+    return sentSize;
+}
+
+void SocketStreamHandlePrivate::close()
+{
+    if (m_socket && m_socket->state() == QAbstractSocket::ConnectedState)
+        m_socket->close();
+}
+
+void SocketStreamHandlePrivate::socketSentdata()
+{
+    if (m_streamHandle)
+        m_streamHandle->sendPendingData();
+}
+
+void SocketStreamHandlePrivate::socketClosed()
+{
+    QMetaObject::invokeMethod(this, "socketClosedCallback", Qt::QueuedConnection);
+}
+
+void SocketStreamHandlePrivate::socketError(QAbstractSocket::SocketError error)
+{
+    QMetaObject::invokeMethod(this, "socketErrorCallback", Qt::QueuedConnection, Q_ARG(int, error));
+}
+
+void SocketStreamHandlePrivate::socketClosedCallback()
+{
+    if (m_streamHandle && m_streamHandle->client()) {
+        SocketStreamHandle* streamHandle = m_streamHandle;
+        m_streamHandle = 0;
+        // This following call deletes _this_. Nothing should be after it.
+        streamHandle->client()->didClose(streamHandle);
+    }
+}
+
+void SocketStreamHandlePrivate::socketErrorCallback(int error)
+{
+    // FIXME - in the future, we might not want to treat all errors as fatal.
+    if (m_streamHandle && m_streamHandle->client()) {
+        SocketStreamHandle* streamHandle = m_streamHandle;
+        m_streamHandle = 0;
+        // This following call deletes _this_. Nothing should be after it.
+        streamHandle->client()->didClose(streamHandle);
+    }
+}
+
+void SocketStreamHandlePrivate::socketSslErrors(const QList<QSslError>&)
+{
+    // FIXME: based on http://tools.ietf.org/html/draft-hixie-thewebsocketprotocol-68#page-15
+    // we should abort on certificate errors.
+    // We don't abort while this is still work in progress.
+    static_cast<QSslSocket*>(m_socket)->ignoreSslErrors();
+}
 SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
-    notImplemented();
+    m_p = new SocketStreamHandlePrivate(this, url);
 }
 
 SocketStreamHandle::~SocketStreamHandle()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
     setClient(0);
-    notImplemented();
+    delete m_p;
 }
 
-int SocketStreamHandle::platformSend(const char*, int)
+int SocketStreamHandle::platformSend(const char* data, int len)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
-    notImplemented();
-    return 0;
+    return m_p->send(data, len);
 }
 
 void SocketStreamHandle::platformClose()
 {
     LOG(Network, "SocketStreamHandle %p platformClose", this);
-    notImplemented();
+    m_p->close();
 }
 
 void SocketStreamHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge&)
@@ -86,3 +192,5 @@ void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
 }
 
 } // namespace WebCore
+
+#include "moc_SocketStreamHandlePrivate.cpp"
