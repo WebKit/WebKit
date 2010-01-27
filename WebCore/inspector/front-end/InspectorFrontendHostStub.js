@@ -71,17 +71,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
-    // FIXME: remove once migrated to SourceFrame2.
-    addResourceSourceToFrame: function(identifier, element)
-    {
-    },
-
-    // FIXME: remove once migrated to SourceFrame2.
-    addSourceToFrame: function(mimeType, source, element)
-    {
-        return false;
-    },
-
     loaded: function()
     {
     },
@@ -97,6 +86,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     },
 
     windowUnloading: function()
+    {
+    },
+
+    copyText: function()
     {
     }
 }

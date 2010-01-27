@@ -131,26 +131,33 @@ WebInspector.ResourceView.prototype = {
         }
     },
 
+    show: function(parentElement)
+    {
+        WebInspector.View.prototype.show.call(this, parentElement);
+        this._selectTab();
+    },
+
     set headersVisible(x)
     {
         if (x === this._headersVisible)
             return;
         this._headersVisible = x;
-        if (x) {
+        if (x)
             this.element.addStyleClass("headers-visible"); 
-            this._selectTab();
-        } else {
+        else
             this.element.removeStyleClass("headers-visible"); 
-            this._innerSelectContentTab();
-        }
+        this._selectTab();
     },
 
     _selectTab: function()
     {
-        if (WebInspector.settings.resourceViewTab === "headers")
-            this._selectHeadersTab();
-        else
-            this._selectContentTab();
+        if (this._headersVisible) {
+            if (WebInspector.settings.resourceViewTab === "headers")
+                this._selectHeadersTab();
+            else
+                this._selectContentTab();
+        } else
+            this._innerSelectContentTab();
     },
 
     _selectHeadersTab: function()
@@ -174,6 +181,8 @@ WebInspector.ResourceView.prototype = {
         this.headersTabElement.removeStyleClass("selected");
         this.contentElement.removeStyleClass("hidden");
         this.headersElement.addStyleClass("hidden");
+        if ("resize" in this)
+            this.resize();
     },
 
     _refreshURL: function()

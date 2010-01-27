@@ -30,7 +30,7 @@ WebInspector.SourceView = function(resource)
 {
     WebInspector.ResourceView.call(this, resource);
 
-    this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
+    this.sourceFrame = new WebInspector.SourceFrame(this._addBreakpoint.bind(this));
 
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
 
@@ -50,12 +50,19 @@ WebInspector.SourceView.prototype = {
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this.setupSourceFrameIfNeeded();
+        this.resize();
     },
 
     hide: function()
     {
         WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
+    },
+
+    resize: function()
+    {
+        if (this._sourceFrameSetup)
+            this.sourceFrame.resize();
     },
 
     detach: function()
@@ -76,28 +83,13 @@ WebInspector.SourceView.prototype = {
         this.attach();
 
         delete this._frameNeedsSetup;
-        this.sourceFrame.addEventListener("content loaded", this._contentLoaded, this);
-        InspectorFrontendHost.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
+        WebInspector.getResourceContent(this.resource.identifier, this._contentLoaded.bind(this));
     },
     
-    _contentLoaded: function()
+    _contentLoaded: function(content)
     {
-        delete this._frameNeedsSetup;
-        this.sourceFrame.removeEventListener("content loaded", this._contentLoaded, this);
-        
-        if (this.resource.type === WebInspector.Resource.Type.Script
-            || this.resource.mimeType === "application/json"
-            || this.resource.mimeType === "application/javascript"
-            || /\.js(on)?$/.test(this.resource.lastPathComponent) ) {
-            this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
-            this.sourceFrame.syntaxHighlightJavascript();
-        } else if (this.resource.type === WebInspector.Resource.Type.Stylesheet
-            || this.resource.mimeType === "text/css"
-            || /\.css$/.test(this.resource.lastPathComponent) ) {
-            this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
-            this.sourceFrame.syntaxHighlightCSS();
-        } else
-            this._sourceFrameSetupFinished();
+        this.sourceFrame.setContent(this.resource.mimeType, content);
+        this._sourceFrameSetupFinished();
     },
 
     _resourceLoadingFinished: function(event)
@@ -135,6 +127,7 @@ WebInspector.SourceView.prototype = {
     {
         this._currentSearchResultIndex = -1;
         this._searchResults = [];
+        this.sourceFrame.clearSelection();
         delete this._delayedFindSearchMatches;
     },
 
@@ -143,44 +136,11 @@ WebInspector.SourceView.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
-        var lineQueryRegex = /(^|\s)(?:#|line:\s*)(\d+)(\s|$)/i;
-        var lineQueryMatch = query.match(lineQueryRegex);
-        if (lineQueryMatch) {
-            var lineToSearch = parseInt(lineQueryMatch[2]);
-
-            // If there was a space before and after the line query part, replace with a space.
-            // Otherwise replace with an empty string to eat the prefix or postfix space.
-            var lineQueryReplacement = (lineQueryMatch[1] && lineQueryMatch[3] ? " " : "");
-            var filterlessQuery = query.replace(lineQueryRegex, lineQueryReplacement);
-        }
-
         this._searchFinishedCallback = finishedCallback;
 
         function findSearchMatches(query, finishedCallback)
         {
-            if (isNaN(lineToSearch)) {
-                // Search the whole document since there was no line to search.
-                this._searchResults = (InspectorFrontendHost.search(this.sourceFrame.element.contentDocument, query) || []);
-            } else {
-                var sourceRow = this.sourceFrame.sourceRow(lineToSearch);
-                if (sourceRow) {
-                    if (filterlessQuery) {
-                        // There is still a query string, so search for that string in the line.
-                        this._searchResults = (InspectorFrontendHost.search(sourceRow, filterlessQuery) || []);
-                    } else {
-                        // Match the whole line, since there was no remaining query string to match.
-                        var rowRange = this.sourceFrame.element.contentDocument.createRange();
-                        rowRange.selectNodeContents(sourceRow);
-                        this._searchResults = [rowRange];
-                    }
-                }
-
-                // Attempt to search for the whole query, just incase it matches a color like "#333".
-                var wholeQueryMatches = InspectorFrontendHost.search(this.sourceFrame.element.contentDocument, query);
-                if (wholeQueryMatches)
-                    this._searchResults = this._searchResults.concat(wholeQueryMatches);
-            }
-
+            this._searchResults = this.sourceFrame.findSearchMatches(query);
             if (this._searchResults)
                 finishedCallback(this, this._searchResults.length);
         }
@@ -267,29 +227,17 @@ WebInspector.SourceView.prototype = {
         if (!foundRange)
             return;
 
-        var selection = this.sourceFrame.element.contentWindow.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(foundRange);
-
-        if (foundRange.startContainer.scrollIntoViewIfNeeded)
-            foundRange.startContainer.scrollIntoViewIfNeeded(true);
-        else if (foundRange.startContainer.parentNode)
-            foundRange.startContainer.parentNode.scrollIntoViewIfNeeded(true);
+        this.sourceFrame.setSelection(foundRange);
     },
 
     _sourceFrameSetupFinished: function()
     {
         this._sourceFrameSetup = true;
+        this.resize();
         if (this._delayedFindSearchMatches) {
             this._delayedFindSearchMatches();
             delete this._delayedFindSearchMatches;
         }
-    },
-
-    _syntaxHighlightingComplete: function(event)
-    {
-        this._sourceFrameSetupFinished();
-        this.sourceFrame.removeEventListener("syntax highlighting complete", null, this);
     }
 }
 

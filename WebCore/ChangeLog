@@ -1,3 +1,87 @@
+2010-01-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: migrate from SourceFrame to SourceFrame2.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34171
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorBackendStub.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._innerSelectContentTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.getResourceContent):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._sidebarResizeDrag):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.set executionLine):
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype.removeBreakpoint):
+        (WebInspector.SourceFrame.prototype.addMessage):
+        (WebInspector.SourceFrame.prototype.clearMessages):
+        (WebInspector.SourceFrame.prototype.sizeToFitContentHeight):
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype.findSearchMatches):
+        (WebInspector.SourceFrame.prototype._collectRegexMatches):
+        (WebInspector.SourceFrame.prototype.setSelection):
+        (WebInspector.SourceFrame.prototype._incrementMessageRepeatCount):
+        (WebInspector.SourceFrame.prototype._addExistingMessagesToSource):
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        (WebInspector.SourceFrame.prototype._addExistingBreakpointsToSource):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame.prototype._removeBreakpointFromSource):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._toggleBreakpoint):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.committed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.dismissed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._showBreakpointConditionPopup):
+        (WebInspector.SourceFrame.prototype._createConditionElement):
+        (WebInspector.SourceFrame.prototype._keyDown):
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+        (WebInspector.SourceFrame.prototype._breakpointChanged):
+        (WebInspector.SourceFrame.prototype.resize):
+        (WebInspector.BreakpointLineNumberDecorator):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.decorate):
+        (WebInspector.BreakpointLineNumberDecorator.prototype._paintBreakpoint):
+        (WebInspector.BreakpointLineNumberDecorator.prototype._paintProgramCounter):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.mouseDown):
+        (WebInspector.BreakpointLineNumberDecorator.prototype.contextMenu):
+        (WebInspector.ExecutionLineDecorator):
+        (WebInspector.ExecutionLineDecorator.prototype.decorate):
+        * inspector/front-end/SourceFrame2.js: Removed.
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype.show):
+        (WebInspector.SourceView.prototype.resize):
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded):
+        (WebInspector.SourceView.prototype._contentLoaded):
+        (WebInspector.SourceView.prototype.performSearch.findSearchMatches):
+        (WebInspector.SourceView.prototype.performSearch):
+        (WebInspector.SourceView.prototype._jumpToSearchResult):
+        (WebInspector.SourceView.prototype._sourceFrameSetupFinished):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype._mouseDown):
+        (WebInspector.TextEditor.prototype._copy.delayCopy):
+        (WebInspector.TextEditor.prototype._copy):
+        (WebInspector.TextEditor.prototype._cut):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-01-27  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Xan Lopez.

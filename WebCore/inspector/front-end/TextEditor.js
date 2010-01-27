@@ -49,10 +49,6 @@ WebInspector.TextEditor = function(platform)
     this._sheet.className = "text-editor-sheet";
     this._container.appendChild(this._sheet);
 
-    this._clipboard = document.createElement("textarea");
-    this._clipboard.className = "text-editor-clip";
-    this._container.appendChild(this._clipboard);
-
     var cursorElement = document.createElement("div");
     cursorElement.className = "text-editor-cursor";
     this._container.appendChild(cursorElement);
@@ -138,6 +134,11 @@ WebInspector.TextEditor.prototype = {
     set lineDecorator(lineDecorator)
     {
         this._lineDecorator = lineDecorator;
+    },
+
+    get selection()
+    {
+        return this._selection.range();
     },
 
     setSelection: function(startLine, startColumn, endLine, endColumn)
@@ -514,7 +515,7 @@ WebInspector.TextEditor.prototype = {
     {
         // Hide div-based cursor first.
         this._cursor._cursorElement.style.display = "none";
-        setTimeout(this._repaintOnScroll.bind(this), 0);
+        setTimeout(this._repaintOnScroll.bind(this), 10);
     },
 
     _repaintOnScroll: function()
@@ -533,6 +534,9 @@ WebInspector.TextEditor.prototype = {
 
     _mouseDown: function(e)
     {
+        if (e.button === 2 || (this._isMac && e.ctrlKey))
+            return;
+
         var location = this._caretForMouseEvent(e);
 
         if (e.offsetX < this._lineNumberWidth && this._lineNumberDecorator) {
@@ -574,6 +578,14 @@ WebInspector.TextEditor.prototype = {
             var line = location.line;
             if (this._lineNumberDecorator.contextMenu(location.line, e))
                 return;
+        } else {
+            var range = this._selection.range();
+            if (!range.isEmpty()) {
+                var text = this._textModel.copyRange(range);
+                var contextMenu = new WebInspector.ContextMenu();
+                contextMenu.appendItem(WebInspector.UIString("Copy"), this._copy.bind(this));
+                contextMenu.show(event);
+            }
         }
     },
 
@@ -581,7 +593,7 @@ WebInspector.TextEditor.prototype = {
     {
         var lineNumber = Math.max(0, this._offsetToLine(e.offsetY) - 1);
         var line = this._textModel.line(lineNumber);
-        var offset = e.offsetX + this._scrollLeft - this._lineNumberWidth - this._digitWidth;
+        var offset = e.offsetX + this._scrollLeft - this._lineNumberWidth;
         return { line: lineNumber, column: this._columnForOffset(lineNumber, offset) };
     },
 
@@ -589,12 +601,23 @@ WebInspector.TextEditor.prototype = {
     {
         var length = 0;
         var line = this._textModel.line(lineNumber);
-        for (var column = 0; column < line.length; ++column) {
-            if (length > offset)
-                break;
-            length += this._ctx.measureText(line.charAt(column)).width;
+
+        // First pretend it is monospace to get a quick guess.
+        var charWidth = this._ctx.measureText("a").width;
+        var index = Math.floor(offset / charWidth);
+        var indexOffset = this._ctx.measureText(line.substring(0, index)).width;
+        if (offset >= indexOffset && index < line.length && offset < indexOffset + this._ctx.measureText(line.charAt(index)).width)
+            return index;
+
+        // Fallback to non-monospace.
+        var delta = indexOffset < offset ? 1 : -1;
+        while (index >=0 && index < line.length) {
+            index += delta;
+            indexOffset += delta * this._ctx.measureText(line.charAt(index)).width;
+            if (offset >= indexOffset && offset < indexOffset + charWidth)
+                return index;
         }
-        return column;
+        return line.length;
     },
 
     _columnToOffset: function(lineNumber, column)
@@ -847,8 +870,14 @@ WebInspector.TextEditor.prototype = {
         var range = this._selection.range();
         var text = this._textModel.copyRange(range);
 
-        this._clipboard.value = text;
-        this._clipboard.select();
+        function delayCopy()
+        {
+            InspectorFrontendHost.copyText(text);
+        }
+
+        setTimeout(delayCopy);
+        if (e)
+            e.preventDefault();
     },
 
     _beforeCut: function(e)
@@ -859,6 +888,11 @@ WebInspector.TextEditor.prototype = {
 
     _cut: function(e)
     {
+        if (this._readOnly) {
+            e.preventDefault();
+            return;
+        }
+
         this._textModel.markUndoableState();
         this._copy(e);
         this._replaceSelectionWith("");

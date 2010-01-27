@@ -36,18 +36,10 @@
 #if ENABLE(INSPECTOR)
 
 #include "ContextMenuItem.h"
-#include "ExceptionCode.h"
-#include "Frame.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "JSEvent.h"
-#include "JSNode.h"
-#include "JSRange.h"
 #include "MouseEvent.h"
-#include "Node.h"
-#include "Page.h"
-#include "TextIterator.h"
-#include "VisiblePosition.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
@@ -56,42 +48,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-JSValue JSInspectorFrontendHost::search(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 2)
-        return jsUndefined();
-
-    Node* node = toNode(args.at(0));
-    if (!node)
-        return jsUndefined();
-
-    String target = args.at(1).toString(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    MarkedArgumentBuffer result;
-    RefPtr<Range> searchRange(rangeOfContents(node));
-
-    ExceptionCode ec = 0;
-    do {
-        RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, true, false));
-        if (resultRange->collapsed(ec))
-            break;
-
-        // A non-collapsed result range can in some funky whitespace cases still not
-        // advance the range's start position (4509328). Break to avoid infinite loop.
-        VisiblePosition newStart = endVisiblePosition(resultRange.get(), DOWNSTREAM);
-        if (newStart == startVisiblePosition(searchRange.get(), DOWNSTREAM))
-            break;
-
-        result.append(toJS(exec, resultRange.get()));
-
-        setStart(searchRange.get(), newStart);
-    } while (true);
-
-    return constructArray(exec, result);
-}
 
 JSValue JSInspectorFrontendHost::showContextMenu(ExecState* execState, const ArgList& args)
 {

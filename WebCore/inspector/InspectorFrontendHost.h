@@ -73,9 +73,7 @@ public:
     const String& platform() const;
     const String& port() const;
 
-    // FIXME: Remove these once migrated to SourceFrame2.
-    void addResourceSourceToFrame(long identifier, Node* frame);
-    bool addSourceToFrame(const String& mimeType, const String& source, Node* frame);
+    void copyText(const String& text);
 
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);

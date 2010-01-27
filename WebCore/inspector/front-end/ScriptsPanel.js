@@ -799,6 +799,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarResizeWidgetElement.style.right = newWidth + "px";
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
+        this.resize();
         event.preventDefault();
     },
     

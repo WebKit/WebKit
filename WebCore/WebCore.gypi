@@ -3733,7 +3733,6 @@
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SourceCSSTokenizer.js',
             'inspector/front-end/SourceFrame.js',
-            'inspector/front-end/SourceFrame2.js',
             'inspector/front-end/SourceHTMLTokenizer.js',
             'inspector/front-end/SourceJavaScriptTokenizer.js',
             'inspector/front-end/SourceSyntaxHighlighter.js',

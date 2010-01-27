@@ -45,6 +45,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
 #include "Page.h"
+#include "Pasteboard.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -133,7 +134,6 @@ const String& InspectorFrontendHost::platform() const
     return platform;
 }
 
-
 const String& InspectorFrontendHost::port() const
 {
 #if PLATFORM(QT)
@@ -149,54 +149,9 @@ const String& InspectorFrontendHost::port() const
     return port;
 }
 
-// FIXME: Remove this once migrated to SourceFrame2.
-void InspectorFrontendHost::addResourceSourceToFrame(long identifier, Node* frame)
+void InspectorFrontendHost::copyText(const String& text)
 {
-    if (!m_inspectorController)
-        return;
-    RefPtr<InspectorResource> resource = m_inspectorController->resources().get(identifier);
-    if (resource) {
-        String sourceString = resource->sourceString();
-        if (!sourceString.isEmpty())
-            addSourceToFrame(resource->mimeType(), sourceString, frame);
-    }
-}
-
-// FIXME: Remove this once migrated to SourceFrame2.
-bool InspectorFrontendHost::addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
-{
-    ASSERT_ARG(frameNode, frameNode);
-
-    if (!frameNode)
-        return false;
-
-    if (!frameNode->attached()) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    ASSERT(frameNode->isElementNode());
-    if (!frameNode->isElementNode())
-        return false;
-
-    Element* element = static_cast<Element*>(frameNode);
-    ASSERT(element->isFrameOwnerElement());
-    if (!element->isFrameOwnerElement())
-        return false;
-
-    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(element);
-    ASSERT(frameOwner->contentFrame());
-    if (!frameOwner->contentFrame())
-        return false;
-
-    FrameLoader* loader = frameOwner->contentFrame()->loader();
-
-    loader->setResponseMIMEType(mimeType);
-    loader->begin();
-    loader->write(source);
-    loader->end();
-
-    return true;
+    Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem*>& items)

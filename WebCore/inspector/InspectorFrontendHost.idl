@@ -46,11 +46,8 @@ module core {
         DOMString platform();
         DOMString port();
 
-        // FIXME: Remove these once migrated to SourceFrame2.
-        void addResourceSourceToFrame(in long identifier, in Node frame);
-        boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
+        void copyText(in DOMString text);
 
-        [Custom] void search(in Node node, in DOMString query);
         [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
     };
 }
