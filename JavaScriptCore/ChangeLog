@@ -1,5 +1,11 @@
 2010-01-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Windows build fix.
+
+        * wtf/HashTraits.h: Include malloc.h for _msize().
+
+2010-01-26  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix.
 
         * wtf/HashTable.h: (WTF::HashTable::checkTableConsistencyExceptSize): Remove const from a

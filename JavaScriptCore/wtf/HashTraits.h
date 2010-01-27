@@ -26,8 +26,11 @@
 #include <utility>
 #include <limits>
 
+// For malloc_size and _msize.
 #if OS(DARWIN)
 #include <malloc/malloc.h>
+#elif COMPILER(MSVC)
+#include <malloc.h>
 #endif
 
 namespace WTF {
