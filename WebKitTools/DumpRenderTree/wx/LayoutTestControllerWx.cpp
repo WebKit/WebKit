@@ -357,5 +357,5 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
 
 JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
 {
-
+    return 0;
 }
