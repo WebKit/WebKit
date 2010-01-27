@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: SUCCESS
+CONSOLE MESSAGE: line 0: SUCCESS
+This test should log a console message on success. 

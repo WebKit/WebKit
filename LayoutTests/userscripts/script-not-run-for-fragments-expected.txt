@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: injected
+CONSOLE MESSAGE: line 0: injected
+This test should not infinitely inject user scripts. 

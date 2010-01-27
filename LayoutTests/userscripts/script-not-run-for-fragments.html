@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.addUserScript("console.log('injected'); var div = document.createElement('div'); div.innerHTML = '<p>hi</p>';", true);
+}
+</script>
+</head>
+<body>
+This test should not infinitely inject user scripts.
+<iframe src="resources/blank.xhtml"></iframe>
+</body>
+</html>

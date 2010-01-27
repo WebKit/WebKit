@@ -1,3 +1,17 @@
+2010-01-27  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a bug where dispatchDocumentElementAvailable was fired for fragment parsing on XML documents.
+        https://bugs.webkit.org/show_bug.cgi?id=33920
+
+        * userscripts/resources: Added.
+        * userscripts/resources/blank.xhtml: Added.
+        * userscripts/script-not-run-for-fragments-expected.txt: Added.
+        * userscripts/script-not-run-for-fragments.html: Added.
+        * userscripts/script-run-at-start-expected.txt: Added.
+        * userscripts/script-run-at-start.html: Added.
+
 2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/backgrounds/animated-svg-as-background.html make fast/backgrounds/svg-as-background-5.html crash.
