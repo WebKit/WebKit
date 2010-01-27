@@ -1,5 +1,11 @@
 2010-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewd. Revert Base.xcconfig changes, was not meant to be committed.
+
+        * Configurations/Base.xcconfig:
+
+2010-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Oliver Hunt.
 
         SVG consumes way too much memory to store animated properties in the DOM
