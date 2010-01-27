@@ -1,6 +1,17 @@
 TEMPLATE = app
-SOURCES += main.cpp webpage.cpp urlloader.cpp
-HEADERS += webinspector.h webpage.h urlloader.h
+
+SOURCES += \
+    main.cpp \
+    webpage.cpp \
+    urlloader.cpp \
+    utils.cpp \
+
+HEADERS += \
+    webinspector.h \
+    webpage.h \
+    urlloader.h \
+    utils.h \
+
 CONFIG -= app_bundle
 CONFIG += uitools
 DESTDIR = ../../bin

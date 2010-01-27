@@ -18,6 +18,18 @@
 
         Rubberstamped by Simon Hausmann
 
+        [Qt] QtLauncher refactoring, separating utility methods.
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/main.cpp:
+        * QtLauncher/utils.cpp: Added.
+        (urlFromUserInput):
+        * QtLauncher/utils.h: Added.
+
+2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann
+
         [Qt] Refactor the code in the QtLauncher dealing with HTTP proxy.
 
         * QtLauncher/main.cpp:

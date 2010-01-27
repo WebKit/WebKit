@@ -50,21 +50,13 @@
 #include <qwebsettings.h>
 #include <qwebview.h>
 #include "urlloader.h"
+#include "utils.h"
 #include "webinspector.h"
 #include "webpage.h"
 
 #ifndef NDEBUG
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
-
-static QUrl urlFromUserInput(const QString& input)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    return QUrl::fromUserInput(input);
-#else
-    return QUrl(input);
-#endif
-}
 
 class WebView : public QWebView {
     Q_OBJECT
