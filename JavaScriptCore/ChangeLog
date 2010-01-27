@@ -1,5 +1,22 @@
 2010-01-27  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Oliver Hunt.
+
+        [BREWMP] Add MarkStack fastMalloc implementation for platforms without VirtualAlloc or mmap.
+        https://bugs.webkit.org/show_bug.cgi?id=33582
+
+        Use fastMalloc and fastFree to implement MarkStack::allocateStack and
+        MarkStack::releaseStack for platforms without page level allocation.
+
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::MarkStackArray::shrinkAllocation):
+        * runtime/MarkStackNone.cpp: Added.
+        (JSC::MarkStack::initializePagesize):
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack):
+
+2010-01-27  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Eric Seidel.
 
         [BREWMP] Don't use time function
