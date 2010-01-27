@@ -38,6 +38,9 @@
 #include <unicode/uidna.h>
 #elif USE(QT4_UNICODE)
 #include <QUrl>
+#elif USE(GLIB_UNICODE)
+#include <glib.h>
+#include <wtf/gtk/GOwnPtr.h>
 #endif
 
 #include <stdio.h>
@@ -1410,6 +1413,19 @@ static void appendEncodedHostname(UCharBuffer& buffer, const UChar* str, unsigne
 #elif USE(QT4_UNICODE)
     QByteArray result = QUrl::toAce(String(str, strLen));
     buffer.append(result.constData(), result.length());
+#elif USE(GLIB_UNICODE)
+    GOwnPtr<gchar> utf8Hostname;
+    GOwnPtr<GError> utf8Err;
+    utf8Hostname.set(g_utf16_to_utf8(str, strLen, 0, 0, &utf8Err.outPtr()));
+    if (utf8Err)
+        return;
+
+    GOwnPtr<gchar> encodedHostname;
+    encodedHostname.set(g_hostname_to_ascii(utf8Hostname.get()));
+    if (!encodedHostname) 
+        return;
+
+    buffer.append(encodedHostname.get(), strlen(encodedHostname.get()));
 #endif
 }
 

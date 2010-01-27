@@ -1,3 +1,16 @@
+2010-01-27  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] For removing ICU, implement IDN support by means of libidn
+        https://bugs.webkit.org/show_bug.cgi?id=31470
+
+        In order to avoid a new dependency, 
+        IDN support now based on GLib for the GLib unicode backend.
+
+        * platform/KURL.cpp:
+        (WebCore::appendEncodedHostname):
+
 2010-01-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
