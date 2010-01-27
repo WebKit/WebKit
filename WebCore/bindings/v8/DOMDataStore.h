@@ -32,6 +32,7 @@
 #define DOMDataStore_h
 
 #include "DOMObjectsInclude.h"
+#include "V8Node.h"
 
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -48,6 +49,95 @@ namespace WebCore {
     class DOMData;
 
     typedef WTF::Vector<DOMDataStore*> DOMDataList;
+
+    template <class T, int CHUNK_SIZE, class Traits>
+    class ChunkedTable {
+      public:
+        ChunkedTable() : m_chunks(0), m_current(0), m_last(0) { }
+
+        T* add(T element)
+        {
+            if (m_current == m_last) {
+                m_chunks = new Chunk(m_chunks);
+                m_current = m_chunks->m_entries;
+                m_last = m_current + CHUNK_SIZE;
+            }
+            ASSERT((m_chunks->m_entries <= m_current) && (m_current < m_last));
+            T* p = m_current++;
+            *p = element;
+            return p;
+        }
+
+        void remove(T* element)
+        {
+            ASSERT(element);
+            ASSERT(m_current > m_chunks->m_entries);
+            m_current--;
+            if (element != m_current)
+                Traits::move(element, m_current);
+            if (m_current == m_chunks->m_entries) {
+                Chunk* toDelete = m_chunks;
+                m_chunks = toDelete->m_previous;
+                m_current = m_last = m_chunks ? m_chunks->m_entries + CHUNK_SIZE : 0;
+                delete toDelete;
+            }
+            ASSERT(!m_chunks || ((m_chunks->m_entries < m_current) && (m_current <= m_last)));
+        }
+
+        void clear()
+        {
+            if (!m_chunks)
+                return;
+
+            clearEntries(m_chunks->m_entries, m_current);
+            Chunk* last = m_chunks;
+            while (true) {
+                Chunk* previous = last->m_previous;
+                if (!previous)
+                    break;
+                delete last;
+                clearEntries(previous->m_entries, previous->m_entries + CHUNK_SIZE);
+                last = previous;
+            }
+
+            m_chunks = last;
+            m_current = m_chunks->m_entries;
+            m_last = m_current + CHUNK_SIZE;
+        }
+
+        void visit(typename Traits::Visitor* visitor)
+        {
+            if (!m_chunks)
+                return;
+
+            visitEntries(m_chunks->m_entries, m_current, visitor);
+            for (Chunk* chunk = m_chunks->m_previous; chunk; chunk = chunk->m_previous)
+                visitEntries(chunk->m_entries, chunk->m_entries + CHUNK_SIZE, visitor);
+        }
+
+      private:
+        struct Chunk {
+            explicit Chunk(Chunk* previous) : m_previous(previous) { }
+            Chunk* const m_previous;
+            T m_entries[CHUNK_SIZE];
+        };
+
+        static void clearEntries(T* first, T* last)
+        {
+            for (T* entry = first; entry < last; entry++)
+                Traits::clear(entry);
+        }
+
+        static void visitEntries(T* first, T* last, typename Traits::Visitor* visitor)
+        {
+            for (T* entry = first; entry < last; entry++)
+                Traits::visit(entry, visitor);
+        }
+
+        Chunk* m_chunks;
+        T* m_current;
+        T* m_last;
+    };
 
     // DOMDataStore
     //
@@ -86,6 +176,79 @@ namespace WebCore {
             DOMData* m_domData;
         };
 
+        class IntrusiveDOMWrapperMap : public AbstractWeakReferenceMap<Node, v8::Object> {
+        public:
+            IntrusiveDOMWrapperMap(v8::WeakReferenceCallback callback)
+                : AbstractWeakReferenceMap<Node, v8::Object>(callback) { }
+
+            virtual v8::Persistent<v8::Object> get(Node* obj)
+            {
+                v8::Persistent<v8::Object>* wrapper = obj->wrapper();
+                return wrapper ? *wrapper : v8::Persistent<v8::Object>();
+            }
+
+            virtual void set(Node* obj, v8::Persistent<v8::Object> wrapper)
+            {
+                ASSERT(obj);
+                ASSERT(!obj->wrapper());
+                v8::Persistent<v8::Object>* entry = m_table.add(wrapper);
+                obj->setWrapper(entry);
+                wrapper.MakeWeak(obj, weakReferenceCallback());
+            }
+
+            virtual bool contains(Node* obj)
+            {
+                return obj->wrapper();
+            }
+
+            virtual void visit(Visitor* visitor)
+            {
+                m_table.visit(visitor);
+            }
+
+            virtual bool removeIfPresent(Node* key, v8::Persistent<v8::Data> value);
+
+            virtual void clear()
+            {
+                m_table.clear();
+            }
+
+        private:
+            static int const numberOfEntries = (1 << 10) - 1;
+
+            struct ChunkedTableTraits {
+                typedef IntrusiveDOMWrapperMap::Visitor Visitor;
+
+                static void move(v8::Persistent<v8::Object>* target, v8::Persistent<v8::Object>* source)
+                {
+                    *target = *source;
+                    Node* node = V8Node::toNative(*target);
+                    ASSERT(node);
+                    node->setWrapper(target);
+                }
+
+                static void clear(v8::Persistent<v8::Object>* entry)
+                {
+                    Node* node = V8Node::toNative(*entry);
+                    ASSERT(node->wrapper() == entry);
+
+                    node->clearWrapper();
+                    entry->Dispose();
+                }
+
+                static void visit(v8::Persistent<v8::Object>* entry, Visitor* visitor)
+                {
+                    Node* node = V8Node::toNative(*entry);
+                    ASSERT(node->wrapper() == entry);
+
+                    visitor->visitDOMWrapper(node, *entry);
+                }
+            };
+
+            typedef ChunkedTable<v8::Persistent<v8::Object>, numberOfEntries, ChunkedTableTraits> Table;
+            Table m_table;
+        };
+
         DOMDataStore(DOMData*);
         virtual ~DOMDataStore();
 
@@ -102,7 +265,7 @@ namespace WebCore {
 
         void* getDOMWrapperMap(DOMWrapperMapType);
 
-        InternalDOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
+        DOMNodeMapping& domNodeMap() { return *m_domNodeMap; }
         InternalDOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
         InternalDOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 #if ENABLE(SVG)
@@ -122,7 +285,7 @@ namespace WebCore {
         static void weakSVGObjectWithContextCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #endif
         
-        InternalDOMWrapperMap<Node>* m_domNodeMap;
+        DOMNodeMapping* m_domNodeMap;
         InternalDOMWrapperMap<void>* m_domObjectMap;
         InternalDOMWrapperMap<void>* m_activeDomObjectMap;
 #if ENABLE(SVG)

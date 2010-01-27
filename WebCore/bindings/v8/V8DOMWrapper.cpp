@@ -32,6 +32,7 @@
 #include "V8DOMWrapper.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "DOMDataStore.h"
 #include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
@@ -1056,7 +1057,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document
     if (proxy)
         proxy->windowShell()->initContextIfNeeded();
 
-    DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
+    DOMNodeMapping& domNodeMap = getDOMNodeMap();
     v8::Handle<v8::Object> wrapper = domNodeMap.get(document);
     if (wrapper.IsEmpty())
         return convertNewNodeToV8Object(document, proxy, domNodeMap);
@@ -1064,25 +1065,39 @@ v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document
     return wrapper;
 }
 
+static v8::Handle<v8::Value> getWrapper(Node* node)
+{
+    ASSERT(WTF::isMainThread());
+    V8IsolatedContext* context = V8IsolatedContext::getEntered();
+    if (LIKELY(!context)) {
+        v8::Persistent<v8::Object>* wrapper = node->wrapper();
+        if (!wrapper)
+            return v8::Handle<v8::Value>();
+        return *wrapper;
+    }
+
+    DOMNodeMapping& domNodeMap = context->world()->domDataStore()->domNodeMap();
+    return domNodeMap.get(node);
+}
+
 v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
 {
     if (!node)
         return v8::Null();
     
+    v8::Handle<v8::Value> wrapper = getWrapper(node);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+
     Document* document = node->document();
     if (node == document)
         return convertDocumentToV8Object(document);
-    
-    DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
-    v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
-    if (wrapper.IsEmpty())
-        return convertNewNodeToV8Object(node, 0, domNodeMap);
-    
-    return wrapper;
+
+    return convertNewNodeToV8Object(node, 0, getDOMNodeMap());
 }
     
 // Caller checks node is not null.
-v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy* proxy, DOMWrapperMap<Node>& domNodeMap)
+v8::Handle<v8::Value> V8DOMWrapper::convertNewNodeToV8Object(Node* node, V8Proxy* proxy, DOMNodeMapping& domNodeMap)
 {
     if (!proxy && node->document())
         proxy = V8Proxy::retrieve(node->document()->frame());

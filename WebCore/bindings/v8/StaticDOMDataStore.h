@@ -48,7 +48,7 @@ public:
     StaticDOMDataStore(DOMData*);
 
 private:
-    InternalDOMWrapperMap<Node> m_staticDomNodeMap;
+    IntrusiveDOMWrapperMap m_staticDomNodeMap;
     InternalDOMWrapperMap<void> m_staticDomObjectMap;
     InternalDOMWrapperMap<void> m_staticActiveDomObjectMap;
 #if ENABLE(SVG)

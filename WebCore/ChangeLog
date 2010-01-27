@@ -1,3 +1,45 @@
+2010-01-27 Anton Muhin <antonm@google.com>
+        Review by Adam Barth.
+
+        Implement Node map in intrusive way for better speed.
+        https://bugs.webkit.org/show_bug.cgi?id=33957
+
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::get):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::set):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::removeIfPresent):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::contains):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::visit):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::clear):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::allocateTableEntry):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::freeTableEntry):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::IntrusiveDOMWrapperMap):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::clearEntry):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::clearEntries):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::visitEntries):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::TableChunk::TableChunk):
+        (WebCore::DOMDataStore::domNodeMap):
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMNodeMap):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::AbstractWeakReferenceMap::AbstractWeakReferenceMap):
+        (WebCore::AbstractWeakReferenceMap::weakReferenceCallback):
+        (WebCore::WeakReferenceMap::WeakReferenceMap):
+        (WebCore::WeakReferenceMap::set):
+        (WebCore::WeakReferenceMap::visit):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertDocumentToV8Object):
+        (WebCore::getWrapper):
+        (WebCore::V8DOMWrapper::convertNodeToV8Object):
+        (WebCore::V8DOMWrapper::convertNewNodeToV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+
 2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.

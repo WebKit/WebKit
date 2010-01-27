@@ -62,7 +62,7 @@ namespace WebCore {
         void derefDelayedObjects();
 
         template<typename T>
-        static void removeObjectsFromWrapperMap(DOMWrapperMap<T>& domMap);
+        static void removeObjectsFromWrapperMap(AbstractWeakReferenceMap<T, v8::Object>& domMap);
 
         ThreadIdentifier owningThread() const { return m_owningThread; }
 
@@ -113,7 +113,7 @@ namespace WebCore {
     }
 
     template<typename T>
-    void DOMData::removeObjectsFromWrapperMap(DOMWrapperMap<T>& domMap)
+    void DOMData::removeObjectsFromWrapperMap(AbstractWeakReferenceMap<T, v8::Object>& domMap)
     {
         WrapperMapObjectRemover<T> remover;
         domMap.visit(&remover);

@@ -150,7 +150,7 @@ namespace WebCore {
             return convertNewNodeToV8Object(node, 0, getDOMNodeMap());
         }
 
-        static v8::Handle<v8::Value> convertNewNodeToV8Object(Node*, V8Proxy*, DOMWrapperMap<Node>&);
+        static v8::Handle<v8::Value> convertNewNodeToV8Object(Node*, V8Proxy*, DOMNodeMapping&);
 
         static V8ClassIndex::V8WrapperType domWrapperType(v8::Handle<v8::Object>);
 

@@ -174,6 +174,20 @@ void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* do
     }
 }
 
+bool DOMDataStore::IntrusiveDOMWrapperMap::removeIfPresent(Node* obj, v8::Persistent<v8::Data> value)
+{
+    ASSERT(obj);
+    v8::Persistent<v8::Object>* entry = obj->wrapper();
+    if (!entry)
+        return false;
+    if (*entry != value)
+        return false;
+    obj->clearWrapper();
+    m_table.remove(entry);
+    value.Dispose();
+    return true;
+}
+
 #if ENABLE(SVG)
 
 void DOMDataStore::weakSVGElementInstanceCallback(v8::Persistent<v8::Value> v8Object, void* domObject)

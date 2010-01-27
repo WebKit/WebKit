@@ -35,7 +35,7 @@ namespace WebCore {
 
 StaticDOMDataStore::StaticDOMDataStore(DOMData* domData)
     : DOMDataStore(domData)
-    , m_staticDomNodeMap(domData, &DOMDataStore::weakNodeCallback)
+    , m_staticDomNodeMap(&DOMDataStore::weakNodeCallback)
     , m_staticDomObjectMap(domData, &DOMDataStore::weakDOMObjectCallback)
     , m_staticActiveDomObjectMap(domData, &DOMDataStore::weakActiveDOMObjectCallback)
 #if ENABLE(SVG)

@@ -65,7 +65,7 @@ void enableFasterDOMStoreAccess()
     fasterDOMStoreAccess = true;
 }
 
-DOMWrapperMap<Node>& getDOMNodeMap()
+DOMNodeMapping& getDOMNodeMap()
 {
     return getDOMDataStore().domNodeMap();
 }
