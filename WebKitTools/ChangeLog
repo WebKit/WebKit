@@ -1,3 +1,21 @@
+2010-01-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Win] Add modifiers parameter support to Windows DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=34068
+
+        Add support for functional name modifiers; "addSelectionKey" and
+        "rangeSelectionKey", and modifiers parameter to eventSender.mouseDown()
+        and eventSender.mouseUp().
+        This change is similar to r53498 for Mac.
+        
+        * DumpRenderTree/win/EventSender.cpp:
+        (buildModifierFlags): New function to set MK_CONTROL or MK_SHIFT to WPARAM.
+        (mouseDownCallback): Call buidlModifiersFlags().
+        (mouseUpCallback): ditto.
+        (keyDownCallback): Add support for "addSelectionkey" and "rangeSelectionKey".
+
 2010-01-26  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.

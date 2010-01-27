@@ -1,3 +1,17 @@
+2010-01-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Win] Add modifiers parameter support to Windows DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=34068
+
+        Remove listbox-deselect-scroll.html and listbox-selectio-2.html
+        from Skipped. We improved their portability and Windows DRT now
+        havs modifiers parameter of eventSender.mouseDown() and
+        eventSender.mouseUp().
+
+        * platform/win/Skipped:
+
 2010-01-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
