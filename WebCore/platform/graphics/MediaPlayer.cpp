@@ -245,7 +245,8 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         m_private->setMediaPlayerProxy(m_playerProxy);
 #endif
-
+        m_private->setAutobuffer(autobuffer());
+        m_private->setPreservesPitch(preservesPitch());
     }
 
     if (m_private)

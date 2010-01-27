@@ -586,6 +586,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_player = MediaPlayer::create(this);
 #endif
 
+    m_player->setAutobuffer(autobuffer());
     m_player->setPreservesPitch(m_webkitPreservesPitch);
     updateVolume();
 

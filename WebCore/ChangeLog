@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        autobuffer value not forwarded media element to MediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=33889
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Forward autobuffer
+        value to MediaPlayer instance.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Forward autobuffer and
+        preservesPitch values to newly created platform media player instance.
+
+2010-01-25  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
         [Gtk] media/video-reverse-play-duration.html fails on and off on Gtk buildbots
         https://bugs.webkit.org/show_bug.cgi?id=34086
 
