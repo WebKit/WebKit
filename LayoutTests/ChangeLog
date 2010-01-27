@@ -1,3 +1,21 @@
+2010-01-27  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a crash when trying to indent a block element that was contained
+        in a list.  This was happening because enclosingBlock() in
+        htmlediting.cpp can return the current the same Node when a block
+        element (like an <hr> or a <table>) is passed in.  This causes
+        the indent command to think that it is not in a list item.
+
+        Work around this by checking to see if enclosingBlock returned the
+        same Node.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32390
+
+        * editing/execCommand/indent-block-in-list-expected.txt: Added.
+        * editing/execCommand/indent-block-in-list.html: Added.
+
 2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Qt port doesn't need platform dependent expected file anymore

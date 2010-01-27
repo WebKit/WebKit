@@ -76,7 +76,12 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const VisiblePosition& endOfCu
         return false;
 
     // Find the list item enclosing the current paragraph
-    Element* selectedListItem = static_cast<Element*>(enclosingBlock(endOfCurrentParagraph.deepEquivalent().node()));
+    Element* selectedListItem = static_cast<Element*>(enclosingBlock(lastNodeInSelectedParagraph));
+    // FIXME: enclosingBlock shouldn't return the passed in element.  See the
+    // comment on the function about how to fix rather than having to adjust here.
+    if (selectedListItem == lastNodeInSelectedParagraph)
+        selectedListItem = static_cast<Element*>(enclosingBlock(lastNodeInSelectedParagraph->parentNode()));
+
     // FIXME: we need to deal with the case where there is no li (malformed HTML)
     if (!selectedListItem->hasTagName(liTag))
         return false;
