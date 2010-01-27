@@ -1,3 +1,38 @@
+2010-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Animated scaling of background-image is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=33808
+
+        Implement a version of the RenderImage animated scaling optimisation
+        for background images.  Due to the possibility of arbitrary transforms
+        being applied to containing elements we explicitly check the current
+        CTM of the context for scaling or rotation.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::isIdentityOrTranslation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelScaleData::RenderBoxModelScaleData):
+        (WebCore::RenderBoxModelScaleData::~RenderBoxModelScaleData):
+        (WebCore::RenderBoxModelScaleData::size):
+        (WebCore::RenderBoxModelScaleData::time):
+        (WebCore::RenderBoxModelScaleData::useLowQualityScale):
+        (WebCore::RenderBoxModelScaleData::hiqhQualityRepaintTimer):
+        (WebCore::RenderBoxModelScaleData::setSize):
+        (WebCore::RenderBoxModelScaleData::setTime):
+        (WebCore::RenderBoxModelScaleData::setUseLowQualityScale):
+        (WebCore::RenderBoxModelScaleObserver::boxModelObjectDestroyed):
+        (WebCore::RenderBoxModelScaleObserver::highQualityRepaintTimerFired):
+        (WebCore::RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality):
+        (WebCore::RenderBoxModelObject::highQualityRepaintTimerFired):
+        (WebCore::RenderBoxModelObject::~RenderBoxModelObject):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+
 2010-01-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.
