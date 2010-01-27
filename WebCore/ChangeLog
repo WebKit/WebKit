@@ -1,3 +1,24 @@
+2010-01-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: nuke quarantine wrappers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34203
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSInspectedObjectWrapper.cpp: Removed.
+        * bindings/js/JSInspectedObjectWrapper.h: Removed.
+        * bindings/js/JSInspectorCallbackWrapper.cpp: Removed.
+        * bindings/js/JSInspectorCallbackWrapper.h: Removed.
+        * bindings/js/JSQuarantinedObjectWrapper.cpp: Removed.
+        * bindings/js/JSQuarantinedObjectWrapper.h: Removed.
+
 2010-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Revert r53899 (HashMap<AtomicStringImpl*, Value> key checks) and subsequent build fixes,

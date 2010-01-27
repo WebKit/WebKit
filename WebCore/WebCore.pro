@@ -300,9 +300,7 @@ SOURCES += \
     bindings/js/JSImageConstructor.cpp \
     bindings/js/JSImageDataCustom.cpp \
     bindings/js/JSInjectedScriptHostCustom.cpp \
-    bindings/js/JSInspectedObjectWrapper.cpp \
     bindings/js/JSInspectorFrontendHostCustom.cpp \
-    bindings/js/JSInspectorCallbackWrapper.cpp \
     bindings/js/JSLocationCustom.cpp \
     bindings/js/JSNamedNodeMapCustom.cpp \
     bindings/js/JSNavigatorCustom.cpp  \
@@ -312,7 +310,6 @@ SOURCES += \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSNodeListCustom.cpp \
     bindings/js/JSOptionConstructor.cpp \
-    bindings/js/JSQuarantinedObjectWrapper.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTextCustom.cpp \
@@ -1002,15 +999,12 @@ HEADERS += \
     bindings/js/JSHTMLObjectElementCustom.h \
     bindings/js/JSHTMLSelectElementCustom.h \
     bindings/js/JSImageConstructor.h \
-    bindings/js/JSInspectedObjectWrapper.h \
-    bindings/js/JSInspectorCallbackWrapper.h \
     bindings/js/JSLazyEventListener.h \
     bindings/js/JSLocationCustom.h \
     bindings/js/JSMessageChannelConstructor.h \
     bindings/js/JSNodeFilterCondition.h \
     bindings/js/JSOptionConstructor.h \
     bindings/js/JSPluginElementFunctions.h \
-    bindings/js/JSQuarantinedObjectWrapper.h \
     bindings/js/JSSharedWorkerConstructor.h \
     bindings/js/JSStorageCustom.h \
     bindings/js/JSWebKitCSSMatrixConstructor.h \

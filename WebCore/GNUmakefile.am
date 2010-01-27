@@ -423,10 +423,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
 	WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
 	WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
-	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
-	WebCore/bindings/js/JSInspectedObjectWrapper.h \
-	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
-	WebCore/bindings/js/JSInspectorCallbackWrapper.h \
 	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	WebCore/bindings/js/JSLazyEventListener.cpp \
 	WebCore/bindings/js/JSLazyEventListener.h \
@@ -454,8 +450,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
-	WebCore/bindings/js/JSQuarantinedObjectWrapper.cpp \
-	WebCore/bindings/js/JSQuarantinedObjectWrapper.h \
 	WebCore/bindings/js/JSStorageCustom.h \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
