@@ -76,6 +76,8 @@ public:
     WEBKIT_API void assign(const WebString&);
     WEBKIT_API void assign(const WebUChar* data, size_t len);
 
+    WEBKIT_API bool equals(const WebString& s) const;
+
     WEBKIT_API size_t length() const;
     WEBKIT_API const WebUChar* data() const;
 
@@ -162,6 +164,16 @@ private:
     void assign(WebStringPrivate*);
     WebStringPrivate* m_private;
 };
+
+inline bool operator==(const WebString& a, const WebString& b)
+{
+    return a.equals(b);
+}
+
+inline bool operator!=(const WebString& a, const WebString& b)
+{
+    return !(a == b);
+}
 
 } // namespace WebKit
 
