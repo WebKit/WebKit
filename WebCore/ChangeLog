@@ -1,3 +1,53 @@
+2010-01-26  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson and David Levin.
+
+        Chains of history items representing same-document navigation need to
+        always remember that association
+
+        https://bugs.webkit.org/show_bug.cgi?id=33224
+
+        Replace HistoryItem's Document pointer with a DocumentSequenceNumber.
+        During session history traversal, if the current HistoryItem and the
+        target HistoryItem have the same DocumentSequenceNumber, then it means
+        that the current Document should remain.
+
+        NOTE: To support Chromium's serialization of HistoryItems, I generate
+        DocumentSequenceNumbers that are unique across application launches.
+        DocumentSequenceNumbers are generated using a counter initialized with
+        the time of day.
+
+        Test: fast/loader/stateobjects/document-destroyed-navigate-back.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::pushStateItem):
+        * history/BackForwardListChromium.cpp:
+        (WebCore::BackForwardList::pushStateItem):
+        * history/HistoryItem.cpp:
+        (WebCore::generateDocumentSequenceNumber):
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::~HistoryItem):
+        (WebCore::HistoryItem::setStateObject):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::setDocumentSequenceNumber):
+        (WebCore::HistoryItem::documentSequenceNumber):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigateWithinDocument):
+        (WebCore::FrameLoader::loadItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateBackForwardListForFragmentScroll):
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/RedirectScheduler.cpp:
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+
 2010-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Simon Fraser.
