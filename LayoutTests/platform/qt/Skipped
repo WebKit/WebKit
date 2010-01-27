@@ -5116,7 +5116,3 @@ http/tests/history/redirect-301.pl
 http/tests/history/redirect-302.pl
 http/tests/history/redirect-303.pl
 http/tests/history/redirect-307.pl
-
-# fast/backgrounds/animated-svg-as-background.html make fast/backgrounds/svg-as-background-5.html crash.
-# https://bugs.webkit.org/show_bug.cgi?id=34202
-fast/backgrounds/animated-svg-as-background.html
