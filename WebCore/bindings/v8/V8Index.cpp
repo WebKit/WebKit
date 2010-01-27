@@ -445,6 +445,10 @@
 #include "V8InspectorFrontendHost.h"
 #endif
 
+#if ENABLE(EVENTSOURCE)
+#include "V8EventSource.h"
+#endif
+
 // Geolocation
 #include "V8Coordinates.h"
 #include "V8Geolocation.h"

@@ -85,6 +85,13 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define WORKER_NONNODE_WRAPPER_TYPES(V)
 #endif
 
+#if ENABLE(EVENTSOURCE)
+#define EVENTSOURCE_ACTIVE_OBJECT_WRAPPER_TYPES(V)                      \
+    V(EVENTSOURCE, EventSource)
+#else
+#define EVENTSOURCE_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+#endif
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #define APPLICATIONCACHE_NONNODE_WRAPPER_TYPES(V)                       \
   V(DOMAPPLICATIONCACHE, DOMApplicationCache)
@@ -321,7 +328,8 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(XMLHTTPREQUEST, XMLHttpRequest)                                   \
     WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                               \
     SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                        \
-    WEBSOCKET_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+    WEBSOCKET_ACTIVE_OBJECT_WRAPPER_TYPES(V)                            \
+    EVENTSOURCE_ACTIVE_OBJECT_WRAPPER_TYPES(V)
 
 // NOTE: DOM_OBJECT_TYPES is split into two halves because
 //       Visual Studio's Intellinonsense crashes when macros get

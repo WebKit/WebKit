@@ -357,6 +357,7 @@ sub GetInternalFields
     return ("cacheIndex", "implementationIndex") if ($name eq "Document") || ($name eq "SVGDocument");
     return ("cacheIndex", "implementationIndex", "markerIndex", "shadowIndex") if $name eq "HTMLDocument";
     return ("cacheIndex") if IsNodeSubType($dataNode);
+    return ("cacheIndex") if $name eq "EventSource";
     return ("cacheIndex") if $name eq "XMLHttpRequest";
     return ("cacheIndex") if $name eq "XMLHttpRequestUpload";
     return ("cacheIndex") if $name eq "MessagePort";

@@ -259,6 +259,13 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         break;
     }
 
+#if ENABLE(EVENTSOURCE)
+    case V8ClassIndex::EVENTSOURCE: {
+        descriptor->SetCallHandler(USE_CALLBACK(EventSourceConstructor));
+        break;
+    }
+#endif
+
 #if ENABLE(WORKERS)
     case V8ClassIndex::WORKER: {
         descriptor->SetCallHandler(USE_CALLBACK(WorkerConstructor));
@@ -1226,6 +1233,12 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
         return convertToV8Object(V8ClassIndex::DOMAPPLICATIONCACHE, domAppCache);
 #endif
 
+#if ENABLE(EVENTSOURCE)
+    EventSource* eventSource = target->toEventSource();
+    if (eventSource)
+        return convertToV8Object(V8ClassIndex::EVENTSOURCE, eventSource);
+#endif
+
     ASSERT(0);
     return notHandledByInterceptor();
 }
@@ -1289,6 +1302,22 @@ PassRefPtr<EventListener> V8DOMWrapper::getEventListener(XMLHttpRequestUpload* u
 {
     return getEventListener(upload->associatedXMLHttpRequest(), value, isAttribute, lookup);
 }
+
+#if ENABLE(EVENTSOURCE)
+PassRefPtr<EventListener> V8DOMWrapper::getEventListener(EventSource* eventSource, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
+{
+    if (V8Proxy::retrieve(eventSource->scriptExecutionContext()))
+        return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
+
+#if ENABLE(WORKERS)
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
+    if (workerContextProxy)
+        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
+#endif
+
+    return 0;
+}
+#endif
 
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(EventTarget* eventTarget, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
 {

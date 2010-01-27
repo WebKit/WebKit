@@ -188,6 +188,10 @@
 #include "StorageEvent.h"
 #endif // DOM_STORAGE
 
+#if ENABLE(EVENTSOURCE)
+#include "EventSource.h"
+#endif // EVENTSOURCE
+
 // GEOLOCATION
 #include "Coordinates.h"
 #include "Geolocation.h"

@@ -75,6 +75,10 @@ namespace WebCore {
         DECLARE_CALLBACK(WebSocketConstructor);
 #endif
 
+#if ENABLE(EVENTSOURCE)
+        DECLARE_CALLBACK(EventSourceConstructor);
+#endif
+
 #undef DECLARE_CALLBACK
     };
 } // namespace WebCore
