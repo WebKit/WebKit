@@ -416,8 +416,10 @@
             ],
             'include_dirs': [
                 'public',
+                'src',
             ],
             'sources': [
+                'tests/KeyboardTest.cpp',
                 'tests/KURLTest.cpp',
                 'tests/RunAllTests.cpp',
             ],

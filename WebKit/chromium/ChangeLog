@@ -1,3 +1,13 @@
+2010-01-26  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add KeyboardTest to WebKit API tests
+        https://bugs.webkit.org/show_bug.cgi?id=34178
+
+        * WebKit.gyp:
+        * tests/KeyboardTest.cpp: Added.
+
 2010-01-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
