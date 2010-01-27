@@ -983,7 +983,7 @@ unsigned numEnclosingMailBlockquotes(const Position& p)
 
 bool isMailBlockquote(const Node *node)
 {
-    if (!node || (!node->isElementNode() && !node->hasTagName(blockquoteTag)))
+    if (!node || !node->hasTagName(blockquoteTag))
         return false;
         
     return static_cast<const Element *>(node)->getAttribute("type") == "cite";

@@ -1,3 +1,15 @@
+2010-01-26  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Incorrect boolean expression in isMailBlockquote() (WebCore/htmlediting.cpp)
+        https://bugs.webkit.org/show_bug.cgi?id=34156
+
+        No new tests (minor code change).
+
+        * editing/htmlediting.cpp:
+        (WebCore::isMailBlockquote):
+
 2010-01-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Levin.
