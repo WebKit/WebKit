@@ -201,10 +201,10 @@ class ARMThumbImmediate {
 
     ALWAYS_INLINE static void countLeadingZerosPartial(uint32_t& value, int32_t& zeros, const int N)
     {
-        if (value & ~((1<<N)-1)) /* check for any of the top N bits (of 2N bits) are set */ \
-            value >>= N;         /* if any were set, lose the bottom N */ \
-        else                     /* if none of the top N bits are set, */ \
-            zeros += N;          /* then we have identified N leading zeros */
+        if (value & ~((1 << N) - 1)) /* check for any of the top N bits (of 2N bits) are set */
+            value >>= N;             /* if any were set, lose the bottom N */
+        else                         /* if none of the top N bits are set, */
+            zeros += N;              /* then we have identified N leading zeros */
     }
 
     static int32_t countLeadingZeros(uint32_t value)
