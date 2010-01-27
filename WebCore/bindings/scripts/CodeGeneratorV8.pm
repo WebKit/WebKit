@@ -429,6 +429,7 @@ END
 my %indexerSpecialCases = (
     "Storage" => 1,
     "HTMLAppletElement" => 1,
+    "HTMLDocument" => 1,
     "HTMLEmbedElement" => 1,
     "HTMLObjectElement" => 1
 );
@@ -1305,7 +1306,9 @@ sub GenerateImplementationIndexer
     my $isSpecialCase = exists $indexerSpecialCases{$interfaceName};
     if ($isSpecialCase) {
         $hasGetter = 1;
-        $hasCustomSetter = 1;
+        if ($dataNode->extendedAttributes->{"DelegatingPutFunction"}) {
+            $hasCustomSetter = 1;
+        }
     }
 
     if (!$hasGetter) {

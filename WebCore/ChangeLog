@@ -1,3 +1,19 @@
+2010-01-27  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Support getting integer-named properties using indexing notation on document object
+        https://bugs.webkit.org/show_bug.cgi?id=34211
+
+        Add indexed property getter to HTMLDocument to support getting
+        elements with integer names using indexing notation on document.
+
+        Test: fast/dom/HTMLDocument/get-iframe-with-integer-name.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::indexedPropertyGetter):
+
 2010-01-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Oliver Hunt.

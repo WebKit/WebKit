@@ -1,3 +1,13 @@
+2010-01-27  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Support getting integer-named properties using indexing notation on document object
+        https://bugs.webkit.org/show_bug.cgi?id=34211
+
+        * fast/dom/HTMLDocument/get-iframe-with-integer-name-expected.txt: Added.
+        * fast/dom/HTMLDocument/get-iframe-with-integer-name.html: Added.
+
 2010-01-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Eric Seidel.
