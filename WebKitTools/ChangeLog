@@ -2,6 +2,20 @@
 
         Rubberstamped by Simon Hausmann.
 
+        [Qt] QtLauncher, coding style fixes.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::sendTouchEvent):
+        (MainWindow::eventFilter):
+        (MainWindow::loadURL):
+        (MainWindow::setupUI):
+        (WebPage::createPlugin):
+
+2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
         [Qt] QtLauncher refactoring, separating the webview and
         adding a QGraphicsWebView based version.
 

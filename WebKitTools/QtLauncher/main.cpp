@@ -82,10 +82,8 @@ public:
         touchMocking = false;
 #endif
 
-        connect(view, SIGNAL(loadFinished(bool)),
-                this, SLOT(loadFinished()));
-        connect(view, SIGNAL(titleChanged(const QString&)),
-                this, SLOT(setWindowTitle(const QString&)));
+        connect(view, SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
+        connect(view, SIGNAL(titleChanged(const QString&)), this, SLOT(setWindowTitle(const QString&)));
         connect(view->page(), SIGNAL(linkHovered(const QString&, const QString&, const QString &)),
                 this, SLOT(showLinkHover(const QString&, const QString&)));
         connect(view->page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
@@ -96,10 +94,6 @@ public:
         connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
 
         setupUI();
-
-        QFileInfo fi(url);
-        if (fi.exists() && fi.isRelative())
-            url = fi.absoluteFilePath();
 
         QUrl qurl = urlFromUserInput(url);
         if (qurl.scheme().isEmpty())
@@ -137,7 +131,7 @@ public:
         if (touchPoints[0].state() == Qt::TouchPointReleased)
             touchPoints.removeAt(0);
         if (touchPoints.size() > 1 && touchPoints[1].state() == Qt::TouchPointReleased)
-            touchPoints.removeAt(1);        
+            touchPoints.removeAt(1);
     }
 
     bool eventFilter(QObject* obj, QEvent* event)
@@ -169,9 +163,9 @@ public:
             touchPoint.setPressure(1);
 
             // If the point already exists, update it. Otherwise create it.
-            if (touchPoints.size() > 0 && !touchPoints[0].id()) 
+            if (touchPoints.size() > 0 && !touchPoints[0].id())
                 touchPoints[0] = touchPoint;
-            else if (touchPoints.size() > 1 && !touchPoints[1].id()) 
+            else if (touchPoints.size() > 1 && !touchPoints[1].id())
                 touchPoints[1] = touchPoint;
             else 
                 touchPoints.append(touchPoint);
@@ -195,7 +189,7 @@ public:
                 touchPoint.setId(1);
                 touchPoint.setScreenPos(QCursor::pos());
                 touchPoint.setPos(view->mapFromGlobal(QCursor::pos()));
-                touchPoint.setPressure(1);            
+                touchPoint.setPressure(1);
                 touchPoints.append(touchPoint);
                 sendTouchEvent();
 
@@ -389,7 +383,7 @@ private:
     {
         if (!url.isValid())
             return;
-    
+
         urlEdit->setText(url.toString());
         view->load(url);
         view->setFocus(Qt::OtherFocusReason);
@@ -457,7 +451,7 @@ private:
         zoomTextOnly->setChecked(false);
         viewMenu->addSeparator();
         viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
-        //viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
+        // viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
 
         QMenu* formatMenu = new QMenu("F&ormat", this);
         formatMenuAction = menuBar()->addMenu(formatMenu);
@@ -523,12 +517,8 @@ QWebPage* WebPage::createWindow(QWebPage::WebWindowType)
     return mw->webPage();
 }
 
-QObject* WebPage::createPlugin(const QString &classId, const QUrl &url, const QStringList &paramNames, const QStringList &paramValues)
+QObject* WebPage::createPlugin(const QString &classId, const QUrl&, const QStringList&, const QStringList&)
 {
-    Q_UNUSED(url);
-    Q_UNUSED(paramNames);
-    Q_UNUSED(paramValues);
-
     if (classId == "alien_QLabel") {
         QLabel* l = new QLabel;
         l->winId();
