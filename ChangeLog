@@ -1,3 +1,11 @@
+2010-01-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Unreviewed build fix
+
+        [Qt] Build fix for windows when QTDIR contains release libraries.
+
+        * WebKit.pri: Use the <name>.lib syntax for linking instead of qmake's -l<name> emulation
+
 2010-01-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

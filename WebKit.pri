@@ -33,7 +33,9 @@ building-libs {
             QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
         } else {
             win32-*|wince* {
-                LIBS += -lQtWebKit$${QT_MAJOR_VERSION}
+                QTWEBKITLIBNAME = QtWebKit$${QT_MAJOR_VERSION}
+                win32-g++: LIBS += -l$$QTWEBKITLIBNAME
+                else: LIBS += $${QTWEBKITLIBNAME}.lib
             } else {
                 LIBS += -lQtWebKit
                 symbian {
