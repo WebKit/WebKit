@@ -85,4 +85,12 @@ void CollectionCache::reset()
     hasNameCache = false;
 }
 
+#if !ASSERT_DISABLED
+void CollectionCache::checkConsistency()
+{
+    idCache.checkConsistency();
+    nameCache.checkConsistency();
+}
+#endif
+
 } // namespace WebCore

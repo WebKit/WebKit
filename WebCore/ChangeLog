@@ -1,3 +1,71 @@
+2010-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34150
+        WebKit needs a mechanism to catch stale HashMap entries
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::getIDRules):
+        (WebCore::CSSRuleSet::getClassRules):
+        (WebCore::CSSRuleSet::getTagRules):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::checkedButtonForGroup):
+        (WebCore::CheckedRadioButtons::removeButton):
+        * editing/markup.cpp:
+        (WebCore::shouldAddNamespaceAttr):
+        (WebCore::appendNamespace):
+        (WebCore::appendStartMarkup):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::nextNamedItem):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::formCollectionInfo):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::collectionInfo):
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::nonCacheRequestInFlight):
+        (WebCore::Loader::nonCacheRequestComplete):
+        (WebCore::Loader::cancelRequests):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+        Added checkConsistency checks before lookups in HashMaps with AtomicStringImpl* keys.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef): Clear m_elementsById map, because removeAllChildren()
+        doesn't always update it correctly when called during docuemnt destruction.
+        (WebCore::Document::getElementById): Added checkConsistency().
+        (WebCore::Document::removeElementById): Ditto.
+        (WebCore::Document::removeImageMap): Ditto.
+        (WebCore::Document::getImageMap): Ditto.
+        (WebCore::Document::nameCollectionInfo): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::collectionInfo): Ditto.
+
+        * html/CollectionCache.cpp:
+        (WebCore::CollectionCache::checkConsistency):
+        * html/CollectionCache.h:
+        Added a checkConsistency() method that checks both HashMaps in the cache.
+
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::~TreeShared): Assert that m_refCount is null. Since Nodes can be
+        destroyed with operator delete (as done in ContainerNodeAlgorithms), this is important to check.
+        (WebCore::TreeShared::deref): Assert that m_refCount isn't already negative.
+
 2010-01-27  Brian Tarricone  <brian@kakai.com>
 
         Reviewed by Gustavo Noronha Silva.
