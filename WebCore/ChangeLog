@@ -1,3 +1,23 @@
+2010-01-25  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] media/video-reverse-play-duration.html fails on and off on Gtk buildbots
+        https://bugs.webkit.org/show_bug.cgi?id=34086
+
+        Cache media duration and fix didEnd() in case of reverse
+        playback. When EOS was reached but in case of reverse playback the
+        position is not always 0. So to not confuse the HTMLMediaElement
+        we synchronize position and duration values.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2010-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj: Actually land the change to add ContainerNodeAlgorithms.h

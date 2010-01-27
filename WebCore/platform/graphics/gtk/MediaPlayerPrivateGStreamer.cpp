@@ -247,6 +247,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_playbackRate(1)
     , m_errorOccured(false)
     , m_volumeIdleId(-1)
+    , m_mediaDuration(0.0)
 {
     doGstInit();
 }
@@ -342,6 +343,9 @@ float MediaPlayerPrivate::duration() const
 
     if (m_errorOccured)
         return 0.0;
+
+    if (m_mediaDuration)
+        return m_mediaDuration;
 
     GstFormat timeFormat = GST_FORMAT_TIME;
     gint64 timeLength = 0;
@@ -665,6 +669,11 @@ void MediaPlayerPrivate::updateStates()
         if (state == GST_STATE_PLAYING) {
             m_readyState = MediaPlayer::HaveEnoughData;
             m_paused = false;
+            if (!m_mediaDuration) {
+                float newDuration = duration();
+                if (!isinf(newDuration))
+                    m_mediaDuration = newDuration;
+            }
         } else
             m_paused = true;
 
@@ -844,11 +853,27 @@ void MediaPlayerPrivate::timeChanged()
 
 void MediaPlayerPrivate::didEnd()
 {
+    // EOS was reached but in case of reverse playback the position is
+    // not always 0. So to not confuse the HTMLMediaElement we
+    // synchronize position and duration values.
+    float now = currentTime();
+    if (now > 0)
+        m_mediaDuration = now;
+    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+
     timeChanged();
 }
 
 void MediaPlayerPrivate::durationChanged()
 {
+    // Reset cached media duration
+    m_mediaDuration = 0;
+
+    // And re-cache it if possible.
+    float newDuration = duration();
+    if (!isinf(newDuration))
+        m_mediaDuration = newDuration;
+
     m_player->durationChanged();
 }
 

@@ -148,6 +148,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             float m_playbackRate;
             bool m_errorOccured;
             guint m_volumeIdleId;
+            gfloat m_mediaDuration;
     };
 }
 
