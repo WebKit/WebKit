@@ -43,7 +43,8 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1
                          "unsigned int" => 1, "unsigned short" => 1,
                          "unsigned long" => 1, "unsigned long long" => 1, 
                          "float" => 1, "double" => 1, 
-                         "boolean" => 1, "void" => 1);
+                         "boolean" => 1, "void" => 1,
+                         "Date" => 1);
 
 my %podTypeHash = ("SVGNumber" => 1, "SVGTransform" => 1);
 my %podTypesWithWritablePropertiesHash = ("SVGAngle" => 1, "SVGLength" => 1, "SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);

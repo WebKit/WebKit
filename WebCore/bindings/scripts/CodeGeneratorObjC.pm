@@ -316,6 +316,7 @@ sub GetClassName
     return "BOOL" if $name eq "boolean";
     return "unsigned" if $name eq "unsigned long";
     return "int" if $name eq "long";
+    return "NSTimeInterval" if $name eq "Date";
     return "DOMAbstractView" if $name eq "DOMWindow";
     return $name if $codeGenerator->IsPrimitiveType($name) or $name eq "DOMImplementation" or $name eq "DOMTimeStamp";
 
@@ -1222,7 +1223,7 @@ sub GenerateImplementation
                 $getterContentTail .= ")";
             } elsif ($attribute->signature->extendedAttributes->{"ConvertFromString"}) {
                 $getterContentTail .= ".toInt()";
-            } elsif ($codeGenerator->IsPodType($idlType)) {
+            } elsif ($codeGenerator->IsPodType($idlType) or $idlType eq "Date") {
                 $getterContentHead = "kit($getterContentHead";
                 $getterContentTail .= ")";
             } elsif (IsProtocolType($idlType) and $idlType ne "EventTarget") {
@@ -1291,6 +1292,10 @@ sub GenerateImplementation
 
                 unless ($codeGenerator->IsPrimitiveType($idlType) or $codeGenerator->IsStringType($idlType)) {
                     push(@implContent, "    ASSERT($argName);\n\n");
+                }
+
+                if ($idlType eq "Date") {
+                    $arg = "core(" . $arg . ")";
                 }
 
                 if ($podType) {

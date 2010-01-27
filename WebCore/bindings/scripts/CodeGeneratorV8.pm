@@ -156,7 +156,7 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type) or $type eq "Date") {
+    if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)) {
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -2530,6 +2530,7 @@ sub ReturnNativeToJSValue
     return "return v8::Integer::New($value)" if $nativeType eq "int";
     return "return v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
 
+    return "return v8DateOrNull($value);" if $type eq "Date";
     return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
 
     if ($codeGenerator->IsStringType($type)) {
@@ -2584,10 +2585,6 @@ sub ReturnNativeToJSValue
         my $classIndex = uc($type);
 
         return "return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::$classIndex, $value)";
-    }
-
-    if ($type eq "Date") {
-        return "return v8DateOrNull($value);";
     }
 
     else {

@@ -169,8 +169,6 @@ sub AddIncludesForType
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
-    } elsif ($type eq "Date") {
-        $implIncludes{"<runtime/DateInstance.h>"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -1876,7 +1874,11 @@ sub NativeToJSValue
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "jsBoolean($value)" if $type eq "boolean";
-    
+
+    # Need to check Date type before IsPrimitiveType().
+    if ($type eq "Date") {
+        return "jsDateOrNull(exec, $value)";
+    }
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
         $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
         return "jsNumber(exec, $value)";
@@ -1952,9 +1954,6 @@ sub NativeToJSValue
     } elsif ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
         return "$value->deserialize(exec)";
-    } elsif ($type eq "Date") {
-        $implIncludes{"<runtime/DateInstance.h>"} = 1;
-        return "jsDateOrNull(exec, $value)";
     } else {
         # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;

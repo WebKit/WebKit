@@ -57,10 +57,7 @@ module html {
                  attribute [ConvertNullToNullString, JSCCustomGetter] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 // FIXME: Add Date support for Objective-C and COM.
                  attribute Date            valueAsDate setter raises(DOMException);
-#endif
 #if defined(ENABLE_DATALIST) && ENABLE_DATALIST
         readonly attribute HTMLOptionElement selectedOption;
 #endif

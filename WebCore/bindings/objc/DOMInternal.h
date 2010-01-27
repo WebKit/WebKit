@@ -87,3 +87,13 @@ WebCore::NodeFilter* core(DOMNodeFilter *);
 DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *);
 #endif // ENABLE(XPATH)
+
+inline NSTimeInterval kit(double msSinceEpoch)
+{
+    return msSinceEpoch / 1000.0 - NSTimeIntervalSince1970;
+}
+
+inline double core(NSTimeInterval sec)
+{
+    return sec * 1000.0 + NSTimeIntervalSince1970;
+}
