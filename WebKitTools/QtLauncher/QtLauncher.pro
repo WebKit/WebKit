@@ -2,12 +2,14 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
+    mainwindow.cpp \
     urlloader.cpp \
     utils.cpp \
     webpage.cpp \
     webview.cpp \
 
 HEADERS += \
+    mainwindow.h \
     urlloader.h \
     utils.h \
     webinspector.h \

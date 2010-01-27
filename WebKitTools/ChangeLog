@@ -15,6 +15,37 @@
 
         Rubberstamped by Simon Hausmann.
 
+        [Qt] QtLauncher refactoring:
+
+        Move out code from the MainWindow (renamed to LauncherWindow)
+        that is not depending on the view, and add it to a new class
+        called MainWindow.
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::loadStarted):
+        (LauncherWindow::loadFinished):
+        (LauncherWindow::newWindow):
+        (LauncherWindow::setupUI):
+        (WebPage::createWindow):
+        (main):
+        * QtLauncher/mainwindow.cpp: Added.
+        (MainWindow::MainWindow):
+        (MainWindow::buildUI):
+        (MainWindow::page):
+        (MainWindow::setAddressUrl):
+        (MainWindow::addCompleterEntry):
+        (MainWindow::load):
+        (MainWindow::changeLocation):
+        (MainWindow::openFile):
+        * QtLauncher/mainwindow.h: Added.
+
+2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann.
+
         [Qt] QtLauncher, coding style fixes.
 
         * QtLauncher/main.cpp:
