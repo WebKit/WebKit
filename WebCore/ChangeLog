@@ -1,3 +1,22 @@
+2010-01-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Instead of relying on Object.prototype.toString result use JSObject::isActivationObject
+        to check if a scope node is a JSActivation. Object.prototype.toString for JSActivation
+        will call JSActivation::toThisObject whose result depends on the current call stack.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34161
+
+        Test: WebCore/manual-tests/inspector/debugger-scopes-inspection.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::isActivation):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor.):
+        * manual-tests/inspector/debugger-scopes-inspection.html: Added.
+
 2010-01-27 Anton Muhin <antonm@google.com>
         Review by Adam Barth.
 

@@ -126,6 +126,19 @@ JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec, const ArgList&)
     return toJS(exec, callFrame);
 }
 
+JSValue JSInjectedScriptHost::isActivation(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 1)
+        return jsUndefined();
+
+    JSValue value = args.at(0);
+    if (!value.isObject())
+        return jsBoolean(false);
+
+    JSObject* object = value.toObject(exec);
+    return jsBoolean(object->isActivationObject());
+}
+
 #endif
 
 JSValue JSInjectedScriptHost::nodeForId(ExecState* exec, const ArgList& args)
