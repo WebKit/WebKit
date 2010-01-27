@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        The Python autoinstall cache directory now only gets created
+        in the directory containing autoinstall.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33365
+
+        * Scripts/webkitpy/autoinstall.py:
+          - Also added a README file to the cache directory saying
+            where it came from.
+
+2010-01-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Moved the check-webkit-style processors into a new
         webkitpy/style/processors directory.
 
