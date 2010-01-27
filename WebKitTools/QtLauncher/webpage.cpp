@@ -35,6 +35,23 @@
 #include <QDesktopServices>
 #include <QtGui>
 #include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkProxy>
+
+WebPage::WebPage(QObject* parent)
+    : QWebPage(parent)
+{
+    applyProxy();
+}
+
+void WebPage::applyProxy()
+{
+    QUrl proxyUrl(qgetenv("http_proxy"));
+
+    if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
+        int proxyPort = (proxyUrl.port() > 0) ? proxyUrl.port() : 8080;
+        networkAccessManager()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyUrl.host(), proxyPort));
+    }
+}
 
 bool WebPage::supportsExtension(QWebPage::Extension extension) const
 {
@@ -85,3 +102,5 @@ void WebPage::openUrlInDefaultBrowser(const QUrl& url)
     else
         QDesktopServices::openUrl(url);
 }
+
+

@@ -31,7 +31,6 @@
  */
 
 #include <QtGui>
-#include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkRequest>
 #if !defined(QT_NO_PRINTER)
 #include <QPrintPreviewDialog>
@@ -137,14 +136,6 @@ public:
         connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
 
         setupUI();
-
-        // set the proxy to the http_proxy env variable - if present
-        QUrl proxyUrl = urlFromUserInput(qgetenv("http_proxy"));
-
-        if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()) {
-            int proxyPort = (proxyUrl.port() > 0)  ? proxyUrl.port() : 8080;
-            page->networkAccessManager()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxyUrl.host(), proxyPort));
-        }
 
         QFileInfo fi(url);
         if (fi.exists() && fi.isRelative())

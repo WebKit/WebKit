@@ -1,3 +1,16 @@
+2010-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Simon Hausmann
+
+        [Qt] Refactor the code in the QtLauncher dealing with HTTP proxy.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        * QtLauncher/webpage.cpp:
+        (WebPage::WebPage):
+        (WebPage::applyProxy):
+        * QtLauncher/webpage.h:
+
 2010-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
