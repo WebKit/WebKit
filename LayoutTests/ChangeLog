@@ -1,3 +1,13 @@
+2010-01-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/7169464> REGRESSION (r47444): PLT is 1% slower due to implementation of :valid and :invalid CSS selectors
+        https://bugs.webkit.org/show_bug.cgi?id=34029
+
+        * fast/css/pseudo-valid-dynamic-expected.txt: Added.
+        * fast/css/pseudo-valid-dynamic.html: Added.
+
 2010-01-26  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

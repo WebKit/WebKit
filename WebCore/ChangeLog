@@ -1,3 +1,22 @@
+2010-01-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7169464> REGRESSION (r47444): PLT is 1% slower due to implementation of :valid and :invalid CSS selectors
+        https://bugs.webkit.org/show_bug.cgi?id=34029
+
+        If we never hit the valid or invalid selectors for a particular document, 
+        then we'll skip the validity checks when deciding about style sharing.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        
+        * dom/Document.cpp: (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::considerValidity):
+        (WebCore::Document::setConsiderValidity):
+
 2010-01-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Simon Fraser.
