@@ -73,11 +73,13 @@
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
+#include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "ScaleTransformOperation.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SelectionController.h"
+#include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
@@ -3498,3 +3500,16 @@ void RenderLayer::updateReflectionStyle()
 }
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+void showLayerTree(const WebCore::RenderLayer* layer)
+{
+    if (!layer)
+        return;
+
+    if (WebCore::Frame* frame = layer->renderer()->document()->frame()) {
+        WebCore::String output = externalRepresentation(frame, WebCore::RenderAsTextShowAllLayers | WebCore::RenderAsTextShowLayerNesting | WebCore::RenderAsTextShowCompositedLayers);
+        fprintf(stderr, "%s\n", output.utf8().data());
+    }
+}
+#endif

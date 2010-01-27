@@ -1,3 +1,30 @@
+2010-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Enhance externalRepresentation() to make it more useful for layer debugging
+        https://bugs.webkit.org/show_bug.cgi?id=34143
+
+        Enhance externalRepresentation() to output additional information about layers when certain flags are passed.
+        The new flags allow you to show all layers (not just those that would paint), to the structure of the z-order
+        and normal flow lists, and to show which layers are composited.
+
+        * WebCore.base.exp: The signature of externalRepresentation() changed.
+
+        * platform/text/TextStream.h: Add operator<<(void*)
+        * platform/text/TextStream.cpp: Implement operator<<(void*)
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (showLayerTree): New method outside the WebCore namespace, for ease of calling from gdb.
+
+        * rendering/RenderTreeAsText.h: New behavior flags for externalRepresentation().
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write): Output compositing information if requested. Also clean up some -1/1 magic
+        numbers with an enum.
+        (WebCore::writeLayers): If requested, show layer nesting via the z-order and normal flow lists.
+        (WebCore::externalRepresentation): New arguments
+
 2010-01-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -664,4 +664,9 @@ private:
 
 } // namespace WebCore
 
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showLayerTree(const WebCore::RenderLayer* layer);
+#endif
+
 #endif // RenderLayer_h
