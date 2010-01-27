@@ -573,6 +573,8 @@ private slots:
     void evaluateWillCauseRepaint();
     void qObjectWrapperWithSameIdentity();
     void scrollRecursively();
+    void introspectQtMethods_data();
+    void introspectQtMethods();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2859,6 +2861,48 @@ void tst_QWebFrame::scrollRecursively()
     QVERIFY(children.at(0)->scrollRecursively(-10, -10));
     QVERIFY(scrollPosition != webPage->mainFrame()->scrollPosition());
 
+}
+
+void tst_QWebFrame::introspectQtMethods_data()
+{
+    QTest::addColumn<QString>("objectExpression");
+    QTest::addColumn<QString>("methodName");
+    QTest::addColumn<QStringList>("expectedPropertyNames");
+
+    QTest::newRow("myObject.mySignal")
+        << "myObject" << "mySignal" << (QStringList() << "connect" << "disconnect" << "length" << "name");
+    QTest::newRow("myObject.mySlot")
+        << "myObject" << "mySlot" << (QStringList() << "connect" << "disconnect" << "length" << "name");
+    QTest::newRow("myObject.myInvokable")
+        << "myObject" << "myInvokable" << (QStringList() << "connect" << "disconnect" << "length" << "name");
+    QTest::newRow("myObject.mySignal.connect")
+        << "myObject.mySignal" << "connect" << (QStringList() << "length" << "name");
+    QTest::newRow("myObject.mySignal.disconnect")
+        << "myObject.mySignal" << "disconnect" << (QStringList() << "length" << "name");
+}
+
+void tst_QWebFrame::introspectQtMethods()
+{
+    QFETCH(QString, objectExpression);
+    QFETCH(QString, methodName);
+    QFETCH(QStringList, expectedPropertyNames);
+
+    QString methodLookup = QString::fromLatin1("%0['%1']").arg(objectExpression).arg(methodName);
+    QCOMPARE(evalJSV(QString::fromLatin1("Object.getOwnPropertyNames(%0).sort()").arg(methodLookup)).toStringList(), expectedPropertyNames);
+
+    for (int i = 0; i < expectedPropertyNames.size(); ++i) {
+        QString name = expectedPropertyNames.at(i);
+        QCOMPARE(evalJS(QString::fromLatin1("%0.hasOwnProperty('%1')").arg(methodLookup).arg(name)), sTrue);
+        evalJS(QString::fromLatin1("var descriptor = Object.getOwnPropertyDescriptor(%0, '%1')").arg(methodLookup).arg(name));
+        QCOMPARE(evalJS("typeof descriptor"), QString::fromLatin1("object"));
+        QCOMPARE(evalJS("descriptor.get"), sUndefined);
+        QCOMPARE(evalJS("descriptor.set"), sUndefined);
+        QCOMPARE(evalJS(QString::fromLatin1("descriptor.value === %0['%1']").arg(methodLookup).arg(name)), sTrue);
+        QCOMPARE(evalJS(QString::fromLatin1("descriptor.enumerable")), sFalse);
+        QCOMPARE(evalJS(QString::fromLatin1("descriptor.configurable")), sFalse);
+    }
+
+    QVERIFY(evalJSV("var props=[]; for (var p in myObject.deleteLater) {props.push(p);}; props.sort()").toStringList().isEmpty());
 }
 
 QTEST_MAIN(tst_QWebFrame)

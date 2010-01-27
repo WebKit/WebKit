@@ -1400,6 +1400,43 @@ bool QtRuntimeMetaMethod::getOwnPropertySlot(ExecState* exec, const Identifier& 
     return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (propertyName == "connect") {
+        PropertySlot slot;
+        slot.setCustom(this, connectGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
+        return true;
+    }
+
+    if (propertyName == "disconnect") {
+        PropertySlot slot;
+        slot.setCustom(this, disconnectGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
+        return true;
+    }
+
+    if (propertyName == exec->propertyNames().length) {
+        PropertySlot slot;
+        slot.setCustom(this, lengthGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
+        return true;
+    }
+
+    return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
+void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    if (mode == IncludeDontEnumProperties) {
+        propertyNames.add(Identifier(exec, "connect"));
+        propertyNames.add(Identifier(exec, "disconnect"));
+        propertyNames.add(exec->propertyNames().length);
+    }
+
+    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
+}
+
 JSValue QtRuntimeMetaMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot&)
 {
     // QtScript always returns 0
@@ -1584,6 +1621,26 @@ bool QtRuntimeConnectionMethod::getOwnPropertySlot(ExecState* exec, const Identi
     }
 
     return QtRuntimeMethod::getOwnPropertySlot(exec, propertyName, slot);
+}
+
+bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (propertyName == exec->propertyNames().length) {
+        PropertySlot slot;
+        slot.setCustom(this, lengthGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
+        return true;
+    }
+
+    return QtRuntimeMethod::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
+void QtRuntimeConnectionMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    if (mode == IncludeDontEnumProperties)
+        propertyNames.add(exec->propertyNames().length);
+
+    QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
 JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot&)
