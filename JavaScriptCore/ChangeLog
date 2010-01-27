@@ -1,3 +1,17 @@
+2010-01-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Don't use time function
+        https://bugs.webkit.org/show_bug.cgi?id=33577
+
+        Calling time(0) in BREW devices causes a crash because time
+        is not properly ported in most devices. Cast currentTime() to
+        time_t to get the same result as time(0).
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateUTCOffset):
+
 2010-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Revert r53899 (HashMap<AtomicStringImpl*, Value> key checks) and subsequent build fixes,
