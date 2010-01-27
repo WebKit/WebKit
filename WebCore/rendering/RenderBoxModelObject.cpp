@@ -33,6 +33,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 
