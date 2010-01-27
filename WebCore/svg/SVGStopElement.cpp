@@ -33,7 +33,7 @@ namespace WebCore {
 
 SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
-    , m_offset(this, SVGNames::offsetAttr, 0.0f)
+    , m_offset(0.0f)
 {
 }
 
@@ -53,6 +53,14 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
         setNeedsStyleRecalc();
     } else
         SVGStyledElement::parseMappedAttribute(attr);
+}
+
+void SVGStopElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || attrName == SVGNames::offsetAttr)
+        synchronizeOffset();
 }
 
 RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)

@@ -51,9 +51,6 @@ SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_target(this, SVGNames::targetAttr)
-    , m_href(this, XLinkNames::hrefAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 
@@ -96,6 +93,25 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
         if (wasLink != isLink())
             setNeedsStyleRecalc();
     }
+}
+
+void SVGAElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeTarget();
+        synchronizeHref();
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (attrName == SVGNames::targetAttr)
+        synchronizeTarget();
+    else if (SVGURIReference::isKnownAttribute(attrName))
+        synchronizeHref();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
 }
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)

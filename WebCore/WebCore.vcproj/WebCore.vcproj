@@ -40877,6 +40877,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedProperty.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatedPropertySynchronizer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatedPropertyTraits.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedTemplate.h"
 				>
 			</File>
@@ -41706,10 +41718,6 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGZoomEvent.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SynchronizablePropertyController.h"
 				>
 			</File>
 			<Filter

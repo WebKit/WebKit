@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-    extern char SVGTextPositioningElementIdentifier[];
-
     class SVGTextPositioningElement : public SVGTextContentElement {
     public:
         SVGTextPositioningElement(const QualifiedName&, Document*);
@@ -37,15 +35,16 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
+        virtual void synchronizeProperty(const QualifiedName&);
 
         bool isKnownAttribute(const QualifiedName&);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::xAttrString, SVGLengthList, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::yAttrString, SVGLengthList, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::dxAttrString, SVGLengthList, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::dyAttrString, SVGLengthList, Dy, dy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::rotateAttrString, SVGNumberList, Rotate, rotate)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::xAttr, SVGLengthList*, X, x)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::yAttr, SVGLengthList*, Y, y)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::dxAttr, SVGLengthList*, Dx, dx)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::dyAttr, SVGLengthList*, Dy, dy)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList*, Rotate, rotate)
     };
 
 } // namespace WebCore

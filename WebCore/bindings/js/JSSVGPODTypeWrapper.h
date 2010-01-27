@@ -77,7 +77,7 @@ template<typename PODType, typename PODTypeCreator>
 class JSSVGDynamicPODTypeWrapper : public JSSVGPODTypeWrapper<PODType> {
 public:
     typedef PODType (PODTypeCreator::*GetterMethod)() const; 
-    typedef void (PODTypeCreator::*SetterMethod)(PODType);
+    typedef void (PODTypeCreator::*SetterMethod)(const PODType&);
 
     static PassRefPtr<JSSVGDynamicPODTypeWrapper> create(PassRefPtr<PODTypeCreator> creator, GetterMethod getter, SetterMethod setter)
     {
@@ -226,7 +226,7 @@ public:
     typedef SVGPODListItem<PODType> PODListItemPtrType;
 
     typedef PODType (SVGPODListItem<PODType>::*GetterMethod)() const; 
-    typedef void (SVGPODListItem<PODType>::*SetterMethod)(PODType);
+    typedef void (SVGPODListItem<PODType>::*SetterMethod)(const PODType&);
 
     static PassRefPtr<JSSVGPODTypeWrapperCreatorForList> create(PassRefPtr<PODListItemPtrType> creator, const QualifiedName& attributeName)
     {
@@ -270,7 +270,7 @@ private:
 template<typename PODType, typename PODTypeCreator>
 struct PODTypeWrapperCacheInfo {
     typedef PODType (PODTypeCreator::*GetterMethod)() const; 
-    typedef void (PODTypeCreator::*SetterMethod)(PODType);
+    typedef void (PODTypeCreator::*SetterMethod)(const PODType&);
 
     // Empty value
     PODTypeWrapperCacheInfo()
@@ -357,7 +357,7 @@ template<typename PODType, typename PODTypeCreator>
 class JSSVGDynamicPODTypeWrapperCache {
 public:
     typedef PODType (PODTypeCreator::*GetterMethod)() const; 
-    typedef void (PODTypeCreator::*SetterMethod)(PODType);
+    typedef void (PODTypeCreator::*SetterMethod)(const PODType&);
 
     typedef PODTypeWrapperCacheInfo<PODType, PODTypeCreator> CacheInfo;
     typedef PODTypeWrapperCacheInfoHash<PODType, PODTypeCreator> CacheInfoHash;

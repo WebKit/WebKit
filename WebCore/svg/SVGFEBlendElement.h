@@ -32,12 +32,13 @@ namespace WebCore {
         virtual ~SVGFEBlendElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool build(SVGResourceFilter*);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::inAttrString, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::in2AttrString, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::modeAttrString, int, Mode, mode)
+        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::inAttr, String, In1, in1)
+        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::in2Attr, String, In2, in2)
+        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::modeAttr, int, Mode, mode)
     };
 
 } // namespace WebCore

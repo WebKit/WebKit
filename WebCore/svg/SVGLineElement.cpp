@@ -36,11 +36,10 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x1(this, SVGNames::x1Attr, LengthModeWidth)
-    , m_y1(this, SVGNames::y1Attr, LengthModeHeight)
-    , m_x2(this, SVGNames::x2Attr, LengthModeWidth)
-    , m_y2(this, SVGNames::y2Attr, LengthModeHeight)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_x1(LengthModeWidth)
+    , m_y1(LengthModeHeight)
+    , m_x2(LengthModeWidth)
+    , m_y2(LengthModeHeight)
 {
 }
 
@@ -83,6 +82,31 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName))
         renderer()->setNeedsLayout(true);
+}
+
+void SVGLineElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeX1();
+        synchronizeY1();
+        synchronizeX2();
+        synchronizeY2();
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (attrName == SVGNames::x1Attr)
+        synchronizeX1();
+    else if (attrName == SVGNames::y1Attr)
+        synchronizeY1();
+    else if (attrName == SVGNames::x2Attr)
+        synchronizeX2();
+    else if (attrName == SVGNames::y2Attr)
+        synchronizeY2();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
 }
 
 Path SVGLineElement::toPathData() const

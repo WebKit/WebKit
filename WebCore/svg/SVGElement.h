@@ -23,16 +23,14 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
+#include "SVGDocumentExtensions.h"
 #include "StyledElement.h"
-#include "SVGAnimatedProperty.h"
-#include "SynchronizablePropertyController.h"
 
 namespace WebCore {
 
     class CSSCursorImageValue;
     class Document;
     class SVGCursorElement;
-    class SVGDocumentExtensions;
     class SVGElementInstance;
     class SVGSVGElement;
     class TransformationMatrix;
@@ -67,19 +65,18 @@ namespace WebCore {
         virtual bool childShouldCreateRenderer(Node*) const;
 
         virtual void svgAttributeChanged(const QualifiedName&) { }
+        virtual void synchronizeProperty(const QualifiedName&) { }
 
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
         
         virtual TransformationMatrix* supplementalTransform() { return 0; }
 
-        virtual void setSynchronizedSVGAttributes(bool) const;
+        void setSynchronizedSVGAttributes(bool value) { m_areSVGAttributesValid = value; }
 
         HashSet<SVGElementInstance*> instancesForElement() const;
 
         void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
         void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
-
-        SynchronizablePropertyController& propertyController() const { return m_propertyController; }
 
     protected:
         SVGElement(const QualifiedName&, Document*);
@@ -87,7 +84,7 @@ namespace WebCore {
         virtual void finishParsingChildren();
         virtual void insertedIntoDocument();
         virtual void attributeChanged(Attribute*, bool preserveDecls = false);
-        virtual void updateAnimatedSVGAttribute(const String&) const;
+        virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
 
     private:
         friend class SVGElementInstance;
@@ -103,15 +100,16 @@ namespace WebCore {
 
         virtual bool haveLoadedRequiredResources();
 
-        mutable SynchronizablePropertyController m_propertyController;
-
         SVGCursorElement* m_cursorElement;
         CSSCursorImageValue* m_cursorImageValue;
 
         HashSet<SVGElementInstance*> m_elementInstances;
     };
 
-} // namespace WebCore 
+}
 
-#endif // ENABLE(SVG)
-#endif // SVGElement_h
+// This file needs to be included after the SVGElement declaration
+#include "SVGAnimatedProperty.h"
+
+#endif
+#endif

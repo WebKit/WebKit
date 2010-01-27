@@ -42,15 +42,16 @@ namespace WebCore {
         virtual ~SVGFETurbulenceElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool build(SVGResourceFilter*);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGBaseFrequencyXIdentifier, float, BaseFrequencyX, baseFrequencyX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGBaseFrequencyYIdentifier, float, BaseFrequencyY, baseFrequencyY)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGNames::numOctavesAttrString, long, NumOctaves, numOctaves)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGNames::seedAttrString, float, Seed, seed)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGNames::stitchTilesAttrString, int, StitchTiles, stitchTiles)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, SVGNames::feTurbulenceTagString, SVGNames::typeAttrString, int, Type, type)
+        DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, SVGBaseFrequencyXIdentifier, float, BaseFrequencyX, baseFrequencyX)
+        DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, SVGBaseFrequencyYIdentifier, float, BaseFrequencyY, baseFrequencyY)
+        DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::numOctavesAttr, long, NumOctaves, numOctaves)
+        DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::seedAttr, float, Seed, seed)
+        DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::stitchTilesAttr, int, StitchTiles, stitchTiles)
+        DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::typeAttr, int, Type, type)
     };
 
 } // namespace WebCore

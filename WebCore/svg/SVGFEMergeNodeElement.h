@@ -33,9 +33,10 @@ namespace WebCore {
         virtual ~SVGFEMergeNodeElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEMergeNodeElement, SVGNames::feMergeNodeTagString, SVGNames::inAttrString, String, In1, in1)
+        DECLARE_ANIMATED_PROPERTY(SVGFEMergeNodeElement, SVGNames::inAttr, String, In1, in1)
     };
 
 } // namespace WebCore

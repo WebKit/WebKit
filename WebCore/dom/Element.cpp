@@ -182,7 +182,7 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
 
 #if ENABLE(SVG)
     if (!m_areSVGAttributesValid)
-        updateAnimatedSVGAttribute(name.localName());
+        updateAnimatedSVGAttribute(name);
 #endif
 
     if (namedAttrMap)
@@ -488,8 +488,10 @@ const AtomicString& Element::getAttribute(const String& name) const
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!m_areSVGAttributesValid)
-        updateAnimatedSVGAttribute(name);
+    if (!m_areSVGAttributesValid) {
+        // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
+        updateAnimatedSVGAttribute(QualifiedName(nullAtom, name, nullAtom));
+    }
 #endif
 
     if (namedAttrMap)
@@ -672,7 +674,7 @@ bool Element::hasAttributes() const
 
 #if ENABLE(SVG)
     if (!m_areSVGAttributesValid)
-        updateAnimatedSVGAttribute(String());
+        updateAnimatedSVGAttribute(anyQName());
 #endif
 
     return namedAttrMap && namedAttrMap->length() > 0;

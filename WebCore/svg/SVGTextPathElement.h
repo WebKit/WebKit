@@ -57,18 +57,19 @@ namespace WebCore {
         virtual void insertedIntoDocument();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         bool childShouldCreateRenderer(Node*) const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::startOffsetAttrString, SVGLength, StartOffset, startOffset)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::methodAttrString, int, Method, method)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::spacingAttrString, int, Spacing, spacing)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::startOffsetAttr, SVGLength, StartOffset, startOffset)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::methodAttr, int, Method, method)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, SVGNames::spacingAttr, int, Spacing, spacing)
     
         // SVGURIReference
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
+        DECLARE_ANIMATED_PROPERTY(SVGTextPathElement, XLinkNames::hrefAttr, String, Href, href)
     };
 
 } // namespace WebCore

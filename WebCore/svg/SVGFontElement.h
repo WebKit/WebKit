@@ -37,6 +37,7 @@ namespace WebCore {
         SVGFontElement(const QualifiedName&, Document*);
         virtual ~SVGFontElement();
 
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
 
         void invalidateGlyphCache();
@@ -49,9 +50,7 @@ namespace WebCore {
 
     private:
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFontElement, SVGExternalResourcesRequiredIdentifier,
-                                       SVGNames::externalResourcesRequiredAttrString, bool,
-                                       ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_PROPERTY(SVGFontElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         void ensureGlyphCache() const;
 

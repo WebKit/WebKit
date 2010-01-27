@@ -42,11 +42,11 @@ namespace WebCore {
 
 SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_cx(this, SVGNames::cxAttr, LengthModeWidth, "50%")
-    , m_cy(this, SVGNames::cyAttr, LengthModeHeight, "50%")
-    , m_r(this, SVGNames::rAttr, LengthModeOther, "50%")
-    , m_fx(this, SVGNames::fxAttr, LengthModeWidth)
-    , m_fy(this, SVGNames::fyAttr, LengthModeHeight)
+    , m_cx(LengthModeWidth, "50%")
+    , m_cy(LengthModeHeight, "50%")
+    , m_r(LengthModeOther, "50%")
+    , m_fx(LengthModeWidth)
+    , m_fy(LengthModeHeight)
 {
     // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
 }
@@ -84,6 +84,31 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         attrName == SVGNames::fxAttr || attrName == SVGNames::fyAttr ||
         attrName == SVGNames::rAttr)
         m_resource->invalidate();
+}
+
+void SVGRadialGradientElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGGradientElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeCx();
+        synchronizeCy();
+        synchronizeFx();
+        synchronizeFy();
+        synchronizeR();
+        return;
+    }
+
+    if (attrName == SVGNames::cxAttr)
+        synchronizeCx();
+    else if (attrName == SVGNames::cyAttr)
+        synchronizeCy();
+    else if (attrName == SVGNames::fxAttr)
+        synchronizeFx();
+    else if (attrName == SVGNames::fyAttr)
+        synchronizeFy();
+    else if (attrName == SVGNames::rAttr)
+        synchronizeR();
 }
 
 void SVGRadialGradientElement::buildGradient() const

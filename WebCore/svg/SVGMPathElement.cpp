@@ -31,8 +31,6 @@ namespace WebCore {
 
 SVGMPathElement::SVGMPathElement(const QualifiedName& qname, Document* doc)
     : SVGElement(qname, doc)
-    , m_href(this, XLinkNames::hrefAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 
@@ -45,6 +43,22 @@ void SVGMPathElement::parseMappedAttribute(MappedAttribute* attr)
     if (SVGURIReference::parseMappedAttribute(attr))
         return;
     SVGElement::parseMappedAttribute(attr);
+}
+
+void SVGMPathElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeExternalResourcesRequired();
+        synchronizeHref();
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGURIReference::isKnownAttribute(attrName))
+        synchronizeHref();
 }
 
 SVGPathElement* SVGMPathElement::pathElement()

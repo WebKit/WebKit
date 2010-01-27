@@ -43,6 +43,7 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
+        virtual void synchronizeProperty(const QualifiedName&);
 
         virtual Path toPathData() const;
 
@@ -52,15 +53,13 @@ namespace WebCore {
         virtual bool hasRelativeValues() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGNames::lineTagString, SVGNames::x1AttrString, SVGLength, X1, x1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGNames::lineTagString, SVGNames::y1AttrString, SVGLength, Y1, y1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGNames::lineTagString, SVGNames::x2AttrString, SVGLength, X2, x2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGNames::lineTagString, SVGNames::y2AttrString, SVGLength, Y2, y2)
+        DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::x1Attr, SVGLength, X1, x1)
+        DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::y1Attr, SVGLength, Y1, y1)
+        DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::x2Attr, SVGLength, X2, x2)
+        DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::y2Attr, SVGLength, Y2, y2)
 
         // SVGExternalResourcesRequired
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLineElement, SVGExternalResourcesRequiredIdentifier,
-                                       SVGNames::externalResourcesRequiredAttrString, bool,
-                                       ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_PROPERTY(SVGLineElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

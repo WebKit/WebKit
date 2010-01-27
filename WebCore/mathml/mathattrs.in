@@ -2,7 +2,6 @@ namespace="MathML"
 namespaceURI="http://www.w3.org/1998/Math/MathML"
 guardFactoryWith="ENABLE(MATHML)"
 attrsNullNamespace
-exportStrings
 
 close
 denomalign

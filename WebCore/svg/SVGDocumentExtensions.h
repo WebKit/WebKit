@@ -31,15 +31,11 @@
 
 #include "StringHash.h"
 #include "StringImpl.h"
-#include "SVGAnimatedTemplate.h"
 
 namespace WebCore {
 
 class Document;
-class EventListener;
-class Node;
 class String;
-class SVGElementInstance;
 class SVGStyledElement;
 class SVGSMILElement;
 class SVGSVGElement;
@@ -68,13 +64,6 @@ private:
     SVGDocumentExtensions(const SVGDocumentExtensions&);
     SVGDocumentExtensions& operator=(const SVGDocumentExtensions&);
 
-    template<typename ValueType>
-    HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*>* baseValueMap() const
-    {
-        static HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*>* s_baseValueMap = new HashMap<const SVGElement*, HashMap<StringImpl*, ValueType>*>();
-        return s_baseValueMap;
-    }
-
 public:
     // This HashMap contains a list of pending resources. Pending resources, are such
     // which are referenced by any object in the SVG document, but do NOT exist yet.
@@ -82,52 +71,9 @@ public:
     void addPendingResource(const AtomicString& id, SVGStyledElement*);
     bool isPendingResource(const AtomicString& id) const;
     std::auto_ptr<HashSet<SVGStyledElement*> > removePendingResource(const AtomicString& id);
-
-    // Used by the ANIMATED_PROPERTY_* macros
-    template<typename ValueType>
-    ValueType baseValue(const SVGElement* element, const AtomicString& propertyName) const
-    {
-        HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>()->get(element);
-        if (propertyMap)
-            return propertyMap->get(propertyName.impl());
-
-        return SVGAnimatedTypeValue<ValueType>::null();
-    }
-
-    template<typename ValueType>
-    void setBaseValue(const SVGElement* element, const AtomicString& propertyName, ValueType newValue)
-    {
-        HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>()->get(element);
-        if (!propertyMap) {
-            propertyMap = new HashMap<StringImpl*, ValueType>();
-            baseValueMap<ValueType>()->set(element, propertyMap);
-        }
-
-        propertyMap->set(propertyName.impl(), newValue);
-    }
-
-    template<typename ValueType>
-    void removeBaseValue(const SVGElement* element, const AtomicString& propertyName)
-    {
-        HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>()->get(element);
-        if (!propertyMap)
-            return;
-
-        propertyMap->remove(propertyName.impl());
-    }
-
-    template<typename ValueType>
-    bool hasBaseValue(const SVGElement* element, const AtomicString& propertyName) const
-    {
-        HashMap<StringImpl*, ValueType>* propertyMap = baseValueMap<ValueType>()->get(element);
-        if (propertyMap)
-            return propertyMap->contains(propertyName.impl());
-
-        return false;
-    }
 };
 
 }
 
-#endif // ENABLE(SVG)
+#endif
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -32,7 +32,6 @@ SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 
@@ -58,8 +57,14 @@ RenderObject* SVGSwitchElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGTransformableContainer(this);
 }
 
+void SVGSwitchElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
 }
 
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
+}
 
+#endif // ENABLE(SVG)

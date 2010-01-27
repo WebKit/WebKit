@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-    extern char SVGStyledTransformableElementIdentifier[];
-
     class TransformationMatrix;
 
     class SVGStyledTransformableElement : public SVGStyledLocatableElement,
@@ -51,6 +49,7 @@ namespace WebCore {
         virtual FloatRect getBBox() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         bool isKnownAttribute(const QualifiedName&);
 
         // "base class" methods for all the elements which render as paths
@@ -59,8 +58,7 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     protected:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGStyledTransformableElementIdentifier,
-                                       SVGNames::transformAttrString, SVGTransformList, Transform, transform)
+        DECLARE_ANIMATED_PROPERTY(SVGStyledTransformableElement, SVGNames::transformAttr, SVGTransformList*, Transform, transform)
 
     private:
         // Used by <animateMotion>

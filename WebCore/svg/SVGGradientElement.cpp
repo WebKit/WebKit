@@ -37,17 +37,12 @@
 
 namespace WebCore {
 
-char SVGGradientElementIdentifier[] = "SVGGradientElement";
-
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGExternalResourcesRequired()
-    , m_spreadMethod(this, SVGNames::spreadMethodAttr)
-    , m_gradientUnits(this, SVGNames::gradientUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_gradientTransform(this, SVGNames::gradientTransformAttr, SVGTransformList::create(SVGNames::gradientTransformAttr))
-    , m_href(this, XLinkNames::hrefAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_gradientTransform(SVGTransformList::create(SVGNames::gradientTransformAttr))
 {
 }
 
@@ -99,6 +94,31 @@ void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledElement::isKnownAttribute(attrName))
         m_resource->invalidate();
+}
+
+void SVGGradientElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeGradientUnits();
+        synchronizeGradientTransform();
+        synchronizeSpreadMethod();
+        synchronizeExternalResourcesRequired();
+        synchronizeHref();
+        return;
+    }
+
+    if (attrName == SVGNames::gradientUnitsAttr)
+        synchronizeGradientUnits();
+    else if (attrName == SVGNames::gradientTransformAttr)
+        synchronizeGradientTransform();
+    else if (attrName == SVGNames::spreadMethodAttr)
+        synchronizeSpreadMethod();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGURIReference::isKnownAttribute(attrName))
+        synchronizeHref();
 }
 
 void SVGGradientElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

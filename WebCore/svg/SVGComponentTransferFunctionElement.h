@@ -29,25 +29,24 @@
 
 namespace WebCore {
 
-    extern char SVGComponentTransferFunctionElementIdentifier[];
-
     class SVGComponentTransferFunctionElement : public SVGElement {
     public:
         SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
         virtual ~SVGComponentTransferFunctionElement();
 
-        virtual void parseMappedAttribute(MappedAttribute* attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         
         ComponentTransferFunction transferFunction() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::typeAttrString, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::tableValuesAttrString, SVGNumberList, TableValues, tableValues)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::slopeAttrString, float, Slope, slope)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::interceptAttrString, float, Intercept, intercept)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::amplitudeAttrString, float, Amplitude, amplitude)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::exponentAttrString, float, Exponent, exponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::offsetAttrString, float, Offset, offset)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::typeAttr, int, Type, type)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, SVGNumberList*, TableValues, tableValues)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::slopeAttr, float, Slope, slope)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::interceptAttr, float, Intercept, intercept)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::amplitudeAttr, float, Amplitude, amplitude)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::exponentAttr, float, Exponent, exponent)
+        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::offsetAttr, float, Offset, offset)
     };
 
 } // namespace WebCore

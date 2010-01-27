@@ -48,10 +48,11 @@ namespace WebCore {
         virtual bool childShouldCreateRenderer(Node*) const;
                 
         virtual void svgAttributeChanged(const QualifiedName&);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextElement, SVGNames::textTagString, SVGNames::transformAttrString, SVGTransformList, Transform, transform)
+        DECLARE_ANIMATED_PROPERTY(SVGTextElement, SVGNames::transformAttr, SVGTransformList*, Transform, transform)
        
        // Used by <animateMotion>
        OwnPtr<TransformationMatrix> m_supplementalTransform;

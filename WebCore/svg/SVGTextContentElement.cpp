@@ -43,16 +43,13 @@
 
 namespace WebCore {
 
-char SVGTextContentElementIdentifier[] = "SVGTextContentElement";
-
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_textLength(this, SVGNames::textLengthAttr, LengthModeOther)
-    , m_lengthAdjust(this, SVGNames::lengthAdjustAttr, LENGTHADJUST_SPACING)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_textLength(LengthModeOther)
+    , m_lengthAdjust(LENGTHADJUST_SPACING)
 {
 }
 
@@ -515,6 +512,25 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGTextContentElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeLengthAdjust();
+        synchronizeTextLength();
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (attrName == SVGNames::lengthAdjustAttr)
+        synchronizeLengthAdjust();
+    else if (attrName == SVGNames::textLengthAttr)
+        synchronizeTextLength();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
 }
 
 bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)

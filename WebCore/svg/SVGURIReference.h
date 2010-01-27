@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-    extern char SVGURIReferenceIdentifier[];
     class MappedAttribute;
 
     class SVGURIReference {
@@ -41,7 +40,7 @@ namespace WebCore {
         static String getTarget(const String& url);
 
     protected:
-        virtual void setHrefBaseValue(SVGAnimatedTypeValue<String>::DecoratedType type) = 0;
+        virtual void setHrefBaseValue(SVGAnimatedPropertyTraits<String>::PassType) = 0;
     };
 
 } // namespace WebCore

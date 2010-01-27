@@ -29,7 +29,6 @@ namespace WebCore {
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_in1(this, SVGNames::inAttr)
 {
 }
 
@@ -44,6 +43,14 @@ void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
         setIn1BaseValue(value);
     else
         SVGElement::parseMappedAttribute(attr);
+}
+
+void SVGFEMergeNodeElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || attrName == SVGNames::inAttr)
+        synchronizeIn1();
 }
 
 }

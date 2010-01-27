@@ -36,11 +36,10 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(this, SVGNames::cxAttr, LengthModeWidth)
-    , m_cy(this, SVGNames::cyAttr, LengthModeHeight)
-    , m_rx(this, SVGNames::rxAttr, LengthModeWidth)
-    , m_ry(this, SVGNames::ryAttr, LengthModeHeight)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_cx(LengthModeWidth)
+    , m_cy(LengthModeHeight)
+    , m_rx(LengthModeWidth)
+    , m_ry(LengthModeHeight)
 {
 }    
 
@@ -87,6 +86,31 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName))
         renderer()->setNeedsLayout(true);
+}
+
+void SVGEllipseElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledTransformableElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeCx();
+        synchronizeCy();
+        synchronizeRx();
+        synchronizeRy();
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (attrName == SVGNames::cxAttr)
+        synchronizeCx();
+    else if (attrName == SVGNames::cyAttr)
+        synchronizeCy();
+    else if (attrName == SVGNames::rxAttr)
+        synchronizeRx();
+    else if (attrName == SVGNames::ryAttr)
+        synchronizeRy();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
 }
 
 Path SVGEllipseElement::toPathData() const

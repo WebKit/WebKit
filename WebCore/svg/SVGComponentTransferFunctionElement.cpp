@@ -30,17 +30,13 @@
 
 namespace WebCore {
 
-char SVGComponentTransferFunctionElementIdentifier[] = "SVGComponentTransferFunctionElement";
-
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_type(this, SVGNames::typeAttr, FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-    , m_tableValues(this, SVGNames::tableValuesAttr, SVGNumberList::create(SVGNames::tableValuesAttr))
-    , m_slope(this, SVGNames::slopeAttr, 1.0f)
-    , m_intercept(this, SVGNames::interceptAttr)
-    , m_amplitude(this, SVGNames::amplitudeAttr, 1.0f)
-    , m_exponent(this, SVGNames::exponentAttr, 1.0f)
-    , m_offset(this, SVGNames::offsetAttr)
+    , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
+    , m_tableValues(SVGNumberList::create(SVGNames::tableValuesAttr))
+    , m_slope(1.0f)
+    , m_amplitude(1.0f)
+    , m_exponent(1.0f)
 {
 }
 
@@ -51,8 +47,7 @@ SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
 void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
-    if (attr->name() == SVGNames::typeAttr)
-    {
+    if (attr->name() == SVGNames::typeAttr) {
         if (value == "identity")
             setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_IDENTITY);
         else if (value == "table")
@@ -80,6 +75,37 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* 
         SVGElement::parseMappedAttribute(attr);
 }
 
+void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeType();
+        synchronizeTableValues();
+        synchronizeSlope();
+        synchronizeIntercept();
+        synchronizeAmplitude();
+        synchronizeExponent();
+        synchronizeOffset();
+        return;
+    }
+
+    if (attrName == SVGNames::typeAttr)
+        synchronizeType();
+    else if (attrName == SVGNames::tableValuesAttr)
+        synchronizeTableValues();
+    else if (attrName == SVGNames::slopeAttr)
+        synchronizeSlope();
+    else if (attrName == SVGNames::interceptAttr)
+        synchronizeIntercept();
+    else if (attrName == SVGNames::amplitudeAttr)
+        synchronizeAmplitude();
+    else if (attrName == SVGNames::exponentAttr)
+        synchronizeExponent();
+    else if (attrName == SVGNames::offsetAttr)
+        synchronizeOffset();
+}
+
 ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
 {
     ComponentTransferFunction func;
@@ -100,6 +126,4 @@ ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction(
 
 }
 
-// vim:ts=4:noet
 #endif // ENABLE(SVG)
-

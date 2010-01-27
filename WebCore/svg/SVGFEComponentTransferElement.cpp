@@ -37,7 +37,6 @@ namespace WebCore {
 
 SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_in1(this, SVGNames::inAttr)
 {
 }
 
@@ -52,6 +51,14 @@ void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
         setIn1BaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFEComponentTransferElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || attrName == SVGNames::inAttr)
+        synchronizeIn1();
 }
 
 bool SVGFEComponentTransferElement::build(SVGResourceFilter* filterResource)

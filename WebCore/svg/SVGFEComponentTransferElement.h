@@ -33,10 +33,11 @@ namespace WebCore {
         virtual ~SVGFEComponentTransferElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool build(SVGResourceFilter*);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEComponentTransferElement, SVGNames::feComponentTransferTagString, SVGNames::inAttrString, String, In1, in1)
+        DECLARE_ANIMATED_PROPERTY(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
     };
 
 } // namespace WebCore

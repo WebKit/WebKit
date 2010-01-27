@@ -32,6 +32,8 @@ namespace WebCore {
         SVGStopElement(const QualifiedName&, Document*);
         virtual ~SVGStopElement();
 
+        virtual void synchronizeProperty(const QualifiedName&);
+
     private:
         virtual bool isGradientStop() const { return true; }
 
@@ -39,7 +41,7 @@ namespace WebCore {
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGStopElement, SVGNames::stopTagString, SVGNames::offsetAttrString, float, Offset, offset)
+        DECLARE_ANIMATED_PROPERTY(SVGStopElement, SVGNames::offsetAttr, float, Offset, offset)
     };
 
 } // namespace WebCore

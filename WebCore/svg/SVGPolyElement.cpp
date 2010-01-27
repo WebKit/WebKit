@@ -27,7 +27,6 @@
 #include "FloatPoint.h"
 #include "MappedAttribute.h"
 #include "RenderPath.h"
-#include "SVGAnimatedProperty.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
@@ -40,7 +39,6 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGAnimatedPoints()
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 
@@ -88,41 +86,35 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
+    // The points property is not a regular SVGAnimatedProperty, still we use the same SVG<->XML DOM synchronization framework.
+    if (attrName == SVGNames::pointsAttr)
+        setSynchronizedSVGAttributes(false);
+
     if (!renderer())
         return;
 
-    if (attrName == SVGNames::pointsAttr) {
-        setSynchronizedSVGAttributes(false);
-        renderer()->setNeedsLayout(true);
-        return;
-    }
-
-    if (SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
+    if (attrName == SVGNames::pointsAttr
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGStyledTransformableElement::isKnownAttribute(attrName))
         renderer()->setNeedsLayout(true);
 }
 
-// Custom SVG<->XML synchronization logic, as SVGPoly*Element doesn't use animated
-// properties for this, but a special solution: SVGAnimatedPoints inheritance.
-void SVGPolyElement::updateAnimatedSVGAttribute(const String& name) const
+void SVGPolyElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    ASSERT(!m_areSVGAttributesValid);
+    SVGStyledTransformableElement::synchronizeProperty(attrName);
 
-    if (m_synchronizingSVGAttributes)
-        return;
-
-    if (name == SVGNames::pointsAttr.localName()) {
-        m_synchronizingSVGAttributes = true;
-
-        PropertySynchronizer<SVGPolyElement, SVGPointList*, true>::synchronize(this, SVGNames::pointsAttr, m_points.get());
-        setSynchronizedSVGAttributes(true);
-        m_synchronizingSVGAttributes = false;
+    if (attrName == anyQName()) {
+        synchronizeExternalResourcesRequired();
+        SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::pointsAttr, points()->valueAsString());
         return;
     }
 
-    SVGStyledTransformableElement::updateAnimatedSVGAttribute(name);
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (attrName == SVGNames::pointsAttr)
+        SVGAnimatedPropertySynchronizer<true>::synchronize(this, attrName, points()->valueAsString());
 }
 
 }

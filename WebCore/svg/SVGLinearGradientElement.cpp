@@ -40,10 +40,10 @@ namespace WebCore {
 
 SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_x1(this, SVGNames::x1Attr, LengthModeWidth)
-    , m_y1(this, SVGNames::y1Attr, LengthModeHeight)
-    , m_x2(this, SVGNames::x2Attr, LengthModeWidth, "100%")
-    , m_y2(this, SVGNames::y2Attr, LengthModeHeight)
+    , m_x1(LengthModeWidth)
+    , m_y1(LengthModeHeight)
+    , m_x2(LengthModeWidth, "100%")
+    , m_y2(LengthModeHeight)
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
 }
@@ -76,6 +76,28 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
     if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
         attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr)
         m_resource->invalidate();
+}
+
+void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGGradientElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeX1();
+        synchronizeY1();
+        synchronizeX2();
+        synchronizeY2();
+        return;
+    }
+
+    if (attrName == SVGNames::x1Attr)
+        synchronizeX1();
+    else if (attrName == SVGNames::y1Attr)
+        synchronizeY1();
+    else if (attrName == SVGNames::x2Attr)
+        synchronizeX2();
+    else if (attrName == SVGNames::y2Attr)
+        synchronizeY2();
 }
 
 void SVGLinearGradientElement::buildGradient() const

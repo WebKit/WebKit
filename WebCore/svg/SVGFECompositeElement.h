@@ -33,16 +33,17 @@ namespace WebCore {
         virtual ~SVGFECompositeElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool build(SVGResourceFilter*);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::inAttrString, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::in2AttrString, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::operatorAttrString, int, _operator, _operator)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k1AttrString, float, K1, k1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k2AttrString, float, K2, k2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k3AttrString, float, K3, k3)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k4AttrString, float, K4, k4)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::inAttr, String, In1, in1)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::in2Attr, String, In2, in2)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::operatorAttr, int, _operator, _operator)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k1Attr, float, K1, k1)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k2Attr, float, K2, k2)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k3Attr, float, K3, k3)
+        DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k4Attr, float, K4, k4)
     };
 
 } // namespace WebCore

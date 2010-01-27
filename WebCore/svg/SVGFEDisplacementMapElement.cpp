@@ -29,11 +29,8 @@ namespace WebCore {
 
 SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_in1(this, SVGNames::inAttr)
-    , m_in2(this, SVGNames::in2Attr)
-    , m_xChannelSelector(this, SVGNames::xChannelSelectorAttr, CHANNEL_A)
-    , m_yChannelSelector(this, SVGNames::yChannelSelectorAttr, CHANNEL_A)
-    , m_scale(this, SVGNames::scaleAttr)
+    , m_xChannelSelector(CHANNEL_A)
+    , m_yChannelSelector(CHANNEL_A)
 {
 }
 
@@ -70,6 +67,31 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
         setScaleBaseValue(value.toFloat());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFEDisplacementMapElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeXChannelSelector();
+        synchronizeYChannelSelector();
+        synchronizeIn1();
+        synchronizeIn2();
+        synchronizeScale();
+        return;
+    }
+
+    if (attrName == SVGNames::xChannelSelectorAttr)
+        synchronizeXChannelSelector();
+    else if (attrName == SVGNames::yChannelSelectorAttr)
+        synchronizeYChannelSelector();
+    else if (attrName == SVGNames::inAttr)
+        synchronizeIn1();
+    else if (attrName == SVGNames::in2Attr)
+        synchronizeIn2();
+    else if (attrName == SVGNames::scaleAttr)
+        synchronizeScale();
 }
 
 bool SVGFEDisplacementMapElement::build(SVGResourceFilter* filterResource)

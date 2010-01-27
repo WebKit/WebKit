@@ -37,7 +37,7 @@ namespace WebCore {
 SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(this, SVGNames::transformAttr, SVGTransformList::create(SVGNames::transformAttr))
+    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
@@ -119,6 +119,14 @@ void SVGTextElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (SVGTransformable::isKnownAttribute(attrName))
         renderer()->setNeedsLayout(true);
+}
+
+void SVGTextElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGTextPositioningElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || SVGTransformable::isKnownAttribute(attrName))
+        synchronizeTransform();
 }
 
 void SVGTextElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

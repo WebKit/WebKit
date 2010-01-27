@@ -53,14 +53,12 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_maskUnits(this, SVGNames::maskUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_maskContentUnits(this, SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(this, SVGNames::xAttr, LengthModeWidth, "-10%")
-    , m_y(this, SVGNames::yAttr, LengthModeHeight, "-10%")
-    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "120%")
-    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "120%")
-    , m_href(this, XLinkNames::hrefAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_x(LengthModeWidth, "-10%")
+    , m_y(LengthModeHeight, "-10%")
+    , m_width(LengthModeWidth, "120%")
+    , m_height(LengthModeHeight, "120%")
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
@@ -120,6 +118,34 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGStyledElement::isKnownAttribute(attrName))
         for (HashMap<const RenderObject*, RefPtr<SVGResourceMasker> >::iterator it = m_masker.begin(); it != m_masker.end(); ++it)
             it->second->invalidate();
+}
+
+void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeMaskUnits();
+        synchronizeMaskContentUnits();
+        synchronizeX();
+        synchronizeY();
+        synchronizeExternalResourcesRequired();
+        synchronizeHref();
+        return;
+    }
+
+    if (attrName == SVGNames::maskUnitsAttr)
+        synchronizeMaskUnits();
+    else if (attrName == SVGNames::maskContentUnitsAttr)
+        synchronizeMaskContentUnits();
+    else if (attrName == SVGNames::xAttr)
+        synchronizeX();
+    else if (attrName == SVGNames::yAttr)
+        synchronizeY();
+    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGURIReference::isKnownAttribute(attrName))
+        synchronizeHref();
 }
 
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

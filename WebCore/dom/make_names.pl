@@ -94,7 +94,6 @@ sub defaultTagPropertyHash
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
         'createWithNew' => 0,
-        'exportString' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.
         'JSInterfaceName' => defaultInterfaceName($_[0]),
@@ -102,11 +101,6 @@ sub defaultTagPropertyHash
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'conditional' => 0
     );
-}
-
-sub defaultAttrPropertyHash
-{
-    return ('exportString' => 0);
 }
 
 sub defaultParametersHash
@@ -117,8 +111,7 @@ sub defaultParametersHash
         'namespaceURI' => '',
         'guardFactoryWith' => '',
         'tagsNullNamespace' => 0,
-        'attrsNullNamespace' => 0,
-        'exportStrings' => 0
+        'attrsNullNamespace' => 0
     );
 }
 
@@ -157,7 +150,7 @@ sub attrsHandler
     $attr =~ s/-/_/g;
 
     # Initialize default properties' values.
-    $attrs{$attr} = { defaultAttrPropertyHash($attr) } if !defined($attrs{$attr});
+    $attrs{$attr} = {} if !defined($attrs{$attr});
 
     if ($property) {
         die "Unknown property $property for attribute $attr\n" if !defined($attrs{$attr}{$property});
@@ -220,10 +213,6 @@ sub printMacros
 
     for my $name (sort keys %$namesRef) {
         print F "$macro $name","$suffix;\n";
-
-        if ($parameters{exportStrings} or $names{$name}{exportString}) { 
-            print F "extern char $name", "${suffix}String[];\n";
-        }
     }
 }
 
@@ -534,14 +523,6 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespa
         print F "}\n";
     }
 
-    if (keys %tags) {
-        printDefinitionStrings($F, \%tags, "tags");
-    }
-
-    if (keys %attrs) {
-        printDefinitionStrings($F, \%attrs, "attributes");
-    }
-
 print F "\nvoid init()
 {
     static bool initialized = false;
@@ -599,25 +580,6 @@ sub printElementIncludes
     }
 }
 
-sub printDefinitionStrings
-{
-    my ($F, $namesRef, $type) = @_;
-    my $singularType = substr($type, 0, -1);
-    my $shortType = substr($singularType, 0, 4);
-    my $shortCamelType = ucfirst($shortType);
-    print F "\n// " . ucfirst($type) . " as strings\n";
-
-    my %names = %$namesRef;
-    for my $name (sort keys %$namesRef) {
-        next if (!$parameters{exportStrings} and !$names{$name}{exportString});
-
-        my $realName = $name;
-        $realName =~ s/_/-/g;
-
-        print F "char $name","${shortCamelType}String[] = \"$realName\";\n";
-    }
-} 
-
 sub printDefinitions
 {
     my ($F, $namesRef, $type, $namespaceURI) = @_;
@@ -628,19 +590,10 @@ sub printDefinitions
     
     print F "    // " . ucfirst($type) . "\n";
 
-    my %names = %$namesRef;
     for my $name (sort keys %$namesRef) {
-        next if ($parameters{exportStrings} or $names{$name}{exportString});
-
         my $realName = $name;
         $realName =~ s/_/-/g;
-        print F "    const char *$name","${shortCamelType}String = \"$realName\";\n";
-    }
-
-    print "\n";
-
-    for my $name (sort keys %$namesRef) {
-        print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
+        print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, \"$realName\", $namespaceURI);\n";
     }
 }
 

@@ -33,12 +33,10 @@
 
 namespace WebCore {
 
-char SVGStyledTransformableElementIdentifier[] = "SVGStyledTransformableElement";
-
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(this, SVGNames::transformAttr, SVGTransformList::create(SVGNames::transformAttr))
+    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
@@ -78,6 +76,14 @@ void SVGStyledTransformableElement::parseMappedAttribute(MappedAttribute* attr)
         }
     } else 
         SVGStyledLocatableElement::parseMappedAttribute(attr);
+}
+
+void SVGStyledTransformableElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledLocatableElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName() || SVGTransformable::isKnownAttribute(attrName))
+        synchronizeTransform();
 }
 
 bool SVGStyledTransformableElement::isKnownAttribute(const QualifiedName& attrName)

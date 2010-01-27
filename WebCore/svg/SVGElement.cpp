@@ -38,7 +38,6 @@
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
 #include "SVGCursorElement.h"
-#include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGResource.h"
@@ -259,7 +258,7 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
     svgAttributeChanged(attr->name());
 }
 
-void SVGElement::updateAnimatedSVGAttribute(const String& name) const
+void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 {
     ASSERT(!m_areSVGAttributesValid);
 
@@ -268,18 +267,11 @@ void SVGElement::updateAnimatedSVGAttribute(const String& name) const
 
     m_synchronizingSVGAttributes = true;
 
-    if (name.isEmpty()) {
-        m_propertyController.synchronizeAllProperties();
-        setSynchronizedSVGAttributes(true);
-    } else
-        m_propertyController.synchronizeProperty(name);
+    const_cast<SVGElement*>(this)->synchronizeProperty(name);
+    if (name == anyQName())
+        m_areSVGAttributesValid = true;
 
     m_synchronizingSVGAttributes = false;
-}
-
-void SVGElement::setSynchronizedSVGAttributes(bool value) const
-{
-    m_areSVGAttributesValid = value;
 }
 
 ContainerNode* SVGElement::eventParentNode()

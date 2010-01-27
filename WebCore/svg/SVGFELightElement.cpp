@@ -29,20 +29,9 @@
 
 namespace WebCore {
 
-char SVGFELightElementIdentifier[] = "SVGFELightElement";
-
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_azimuth(this, SVGNames::azimuthAttr)
-    , m_elevation(this, SVGNames::elevationAttr)
-    , m_x(this, SVGNames::xAttr)
-    , m_y(this, SVGNames::yAttr)
-    , m_z(this, SVGNames::zAttr)
-    , m_pointsAtX(this, SVGNames::pointsAtXAttr)
-    , m_pointsAtY(this, SVGNames::pointsAtYAttr)
-    , m_pointsAtZ(this, SVGNames::pointsAtZAttr)
-    , m_specularExponent(this, SVGNames::specularExponentAttr, 1.0f)
-    , m_limitingConeAngle(this, SVGNames::limitingConeAngleAttr)
+    , m_specularExponent(1.0f)
 {
 }
 
@@ -77,8 +66,46 @@ void SVGFELightElement::parseMappedAttribute(MappedAttribute* attr)
         SVGElement::parseMappedAttribute(attr);
 }
 
+void SVGFELightElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeAzimuth();
+        synchronizeElevation();
+        synchronizeX();
+        synchronizeY();
+        synchronizeZ();
+        synchronizePointsAtX();
+        synchronizePointsAtY();
+        synchronizePointsAtZ();
+        synchronizeSpecularExponent();
+        synchronizeLimitingConeAngle();
+        return;
+    }
+
+    if (attrName == SVGNames::azimuthAttr)
+        synchronizeAzimuth();
+    else if (attrName == SVGNames::elevationAttr)
+        synchronizeElevation();
+    else if (attrName == SVGNames::xAttr)
+        synchronizeX();
+    else if (attrName == SVGNames::yAttr)
+        synchronizeY();
+    else if (attrName == SVGNames::zAttr)
+        synchronizeZ();
+    else if (attrName == SVGNames::pointsAtXAttr)
+        synchronizePointsAtX();
+    else if (attrName == SVGNames::pointsAtYAttr)
+        synchronizePointsAtY();
+    else if (attrName == SVGNames::pointsAtZAttr)
+        synchronizePointsAtZ();
+    else if (attrName == SVGNames::specularExponentAttr)
+        synchronizeSpecularExponent();
+    else if (attrName == SVGNames::limitingConeAngleAttr)
+        synchronizeLimitingConeAngle();
+}
+
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -38,9 +38,6 @@ SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
     , SVGZoomAndPan()
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
-    , m_viewBox(this, SVGNames::viewBoxAttr)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
 {
 }
 
@@ -67,6 +64,25 @@ void SVGViewElement::parseMappedAttribute(MappedAttribute* attr)
             return;
 
         SVGStyledElement::parseMappedAttribute(attr);
+    }
+}
+
+void SVGViewElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeExternalResourcesRequired();
+        synchronizeViewBox();
+        synchronizePreserveAspectRatio();
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        synchronizeViewBox();
+        synchronizePreserveAspectRatio();
     }
 }
 

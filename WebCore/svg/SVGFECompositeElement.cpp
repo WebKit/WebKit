@@ -31,13 +31,7 @@ namespace WebCore {
 
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_in1(this, SVGNames::inAttr)
-    , m_in2(this, SVGNames::in2Attr)
-    , m__operator(this, SVGNames::operatorAttr, FECOMPOSITE_OPERATOR_OVER)
-    , m_k1(this, SVGNames::k1Attr)
-    , m_k2(this, SVGNames::k2Attr)
-    , m_k3(this, SVGNames::k3Attr)
-    , m_k4(this, SVGNames::k4Attr)
+    , m__operator(FECOMPOSITE_OPERATOR_OVER)
 {
 }
 
@@ -61,8 +55,7 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
             set_operatorBaseValue(FECOMPOSITE_OPERATOR_XOR);
         else if (value == "arithmetic")
             set_operatorBaseValue(FECOMPOSITE_OPERATOR_ARITHMETIC);
-    }
-    else if (attr->name() == SVGNames::inAttr)
+    } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
         setIn2BaseValue(value);
@@ -76,6 +69,37 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
         setK4BaseValue(value.toFloat());
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronize_operator();
+        synchronizeIn1();
+        synchronizeIn2();
+        synchronizeK1();
+        synchronizeK2();
+        synchronizeK3();
+        synchronizeK4();
+        return;
+    }
+
+    if (attrName == SVGNames::operatorAttr)
+        synchronize_operator();
+    else if (attrName == SVGNames::inAttr)
+        synchronizeIn1();
+    else if (attrName == SVGNames::in2Attr)
+        synchronizeIn2();
+    else if (attrName == SVGNames::k1Attr)
+        synchronizeK1();
+    else if (attrName == SVGNames::k2Attr)
+        synchronizeK2();
+    else if (attrName == SVGNames::k3Attr)
+        synchronizeK3();
+    else if (attrName == SVGNames::k4Attr)
+        synchronizeK4();
 }
 
 bool SVGFECompositeElement::build(SVGResourceFilter* filterResource)

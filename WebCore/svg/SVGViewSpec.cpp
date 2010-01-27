@@ -35,8 +35,6 @@ SVGViewSpec::SVGViewSpec(const SVGSVGElement* contextElement)
     : SVGFitToViewBox()
     , SVGZoomAndPan()
     , m_contextElement(contextElement)
-    , m_viewBox(this, SVGNames::viewBoxAttr)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
     , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {
 }

@@ -33,15 +33,12 @@
 
 namespace WebCore {
 
-char SVGFilterPrimitiveStandardAttributesIdentifierIdentifier[] = "SVGFilterPrimitiveStandardAttributesIdentifier";
-
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
-    , m_x(this, SVGNames::xAttr, LengthModeWidth, "0%")
-    , m_y(this, SVGNames::yAttr, LengthModeHeight, "0%")
-    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "100%")
-    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "100%")
-    , m_result(this, SVGNames::resultAttr)
+    , m_x(LengthModeWidth, "0%")
+    , m_y(LengthModeHeight, "0%")
+    , m_width(LengthModeWidth, "100%")
+    , m_height(LengthModeHeight, "100%")
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
@@ -66,6 +63,31 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute*
         setResultBaseValue(value);
     else
         return SVGStyledElement::parseMappedAttribute(attr);
+}
+
+void SVGFilterPrimitiveStandardAttributes::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeX();
+        synchronizeY();
+        synchronizeWidth();
+        synchronizeHeight();
+        synchronizeResult();
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr)
+        synchronizeX();
+    else if (attrName == SVGNames::yAttr)
+        synchronizeY();
+    else if (attrName == SVGNames::widthAttr)
+        synchronizeWidth();
+    else if (attrName == SVGNames::heightAttr)
+        synchronizeHeight();
+    else if (attrName == SVGNames::resultAttr)
+        synchronizeResult();
 }
 
 void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilter* resourceFilter, FilterEffect* filterEffect) const

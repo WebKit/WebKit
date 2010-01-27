@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-char SVGFitToViewBoxIdentifier[] = "SVGFitToViewBox";
-
 SVGFitToViewBox::SVGFitToViewBox()
 {
 }

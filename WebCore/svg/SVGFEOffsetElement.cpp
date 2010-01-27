@@ -31,9 +31,6 @@ namespace WebCore {
 
 SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_in1(this, SVGNames::inAttr)
-    , m_dx(this, SVGNames::dxAttr)
-    , m_dy(this, SVGNames::dyAttr)
 {
 }
 
@@ -52,6 +49,25 @@ void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
         setIn1BaseValue(value);
     else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+}
+
+void SVGFEOffsetElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeDx();
+        synchronizeDy();
+        synchronizeIn1();
+        return;
+    }
+
+    if (attrName == SVGNames::dxAttr)
+        synchronizeDx();
+    else if (attrName == SVGNames::dyAttr)
+        synchronizeDy();
+    else if (attrName == SVGNames::inAttr)
+        synchronizeIn1();
 }
 
 bool SVGFEOffsetElement::build(SVGResourceFilter* filterResource)

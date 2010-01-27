@@ -34,12 +34,13 @@ namespace WebCore {
         virtual ~SVGFEColorMatrixElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void synchronizeProperty(const QualifiedName&);
         virtual bool build(SVGResourceFilter*);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, SVGNames::feColorMatrixTagString, SVGNames::inAttrString, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, SVGNames::feColorMatrixTagString, SVGNames::typeAttrString, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, SVGNames::feColorMatrixTagString, SVGNames::valuesAttrString, SVGNumberList, Values, values)
+        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
+        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::typeAttr, int, Type, type)
+        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::valuesAttr, SVGNumberList*, Values, values)
     };
 
 } // namespace WebCore

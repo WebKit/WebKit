@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-    extern char SVGExternalResourcesRequiredIdentifier[];
     class MappedAttribute;
 
     // Notes on a SVG 1.1 spec discrepancy:
@@ -44,7 +43,7 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     protected:
-        virtual void setExternalResourcesRequiredBaseValue(SVGAnimatedTypeValue<bool>::DecoratedType type) = 0;
+        virtual void setExternalResourcesRequiredBaseValue(SVGAnimatedPropertyTraits<bool>::PassType) = 0;
     };
 
 } // namespace WebCore

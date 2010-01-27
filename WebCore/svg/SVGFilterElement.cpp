@@ -47,16 +47,12 @@ SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_filterUnits(this, SVGNames::filterUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_primitiveUnits(this, SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(this, SVGNames::xAttr, LengthModeWidth, "-10%")
-    , m_y(this, SVGNames::yAttr, LengthModeHeight, "-10%")
-    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "120%")
-    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "120%")
-    , m_filterResX(this, SVGNames::filterResAttr)
-    , m_filterResY(this, SVGNames::filterResAttr)
-    , m_href(this, XLinkNames::hrefAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
+    , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_x(LengthModeWidth, "-10%")
+    , m_y(LengthModeHeight, "-10%")
+    , m_width(LengthModeWidth, "120%")
+    , m_height(LengthModeHeight, "120%")
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
@@ -107,6 +103,45 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
+}
+
+void SVGFilterElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeX();
+        synchronizeY();
+        synchronizeWidth();
+        synchronizeHeight();
+        synchronizeFilterUnits();
+        synchronizePrimitiveUnits();
+        synchronizeFilterResX();
+        synchronizeFilterResY();
+        synchronizeExternalResourcesRequired();
+        synchronizeHref();
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr)
+        synchronizeX();
+    else if (attrName == SVGNames::yAttr)
+        synchronizeY();
+    else if (attrName == SVGNames::widthAttr)
+        synchronizeWidth();
+    else if (attrName == SVGNames::heightAttr)
+        synchronizeHeight();
+    else if (attrName == SVGNames::filterUnitsAttr)
+        synchronizeFilterUnits();
+    else if (attrName == SVGNames::primitiveUnitsAttr)
+        synchronizePrimitiveUnits();
+    else if (attrName == SVGNames::filterResAttr) {
+        synchronizeFilterResX();
+        synchronizeFilterResY();
+    } else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGURIReference::isKnownAttribute(attrName))
+        synchronizeHref();
 }
 
 FloatRect SVGFilterElement::filterBoundingBox(const FloatRect& objectBoundingBox) const

@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-    extern char SVGFitToViewBoxIdentifier[];
-
     class TransformationMatrix;
 
     class SVGFitToViewBox {
@@ -42,8 +40,8 @@ namespace WebCore {
         bool parseMappedAttribute(Document*, MappedAttribute*);
         bool isKnownAttribute(const QualifiedName&);
 
-        virtual void setViewBoxBaseValue(SVGAnimatedTypeValue<FloatRect>::DecoratedType) = 0;
-        virtual void setPreserveAspectRatioBaseValue(SVGAnimatedTypeValue<SVGPreserveAspectRatio>::DecoratedType) = 0;
+        virtual void setViewBoxBaseValue(SVGAnimatedPropertyTraits<FloatRect>::PassType) = 0;
+        virtual void setPreserveAspectRatioBaseValue(SVGAnimatedPropertyTraits<SVGPreserveAspectRatio>::PassType) = 0;
     };
 
 } // namespace WebCore

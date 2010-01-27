@@ -42,16 +42,12 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
-    , m_refX(this, SVGNames::refXAttr, LengthModeWidth)
-    , m_refY(this, SVGNames::refYAttr, LengthModeHeight)
-    , m_markerWidth(this, SVGNames::markerWidthAttr, LengthModeWidth, "3")
-    , m_markerHeight(this, SVGNames::markerHeightAttr, LengthModeHeight, "3") 
-    , m_markerUnits(this, SVGNames::markerUnitsAttr, SVG_MARKERUNITS_STROKEWIDTH)
-    , m_orientType(this, SVGNames::orientAttr, SVG_MARKER_ORIENT_ANGLE)
-    , m_orientAngle(this, SVGNames::orientAttr)
-    , m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
-    , m_viewBox(this, SVGNames::viewBoxAttr)
-    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr)
+    , m_refX(LengthModeWidth)
+    , m_refY(LengthModeHeight)
+    , m_markerWidth(LengthModeWidth, "3")
+    , m_markerHeight(LengthModeHeight, "3") 
+    , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
+    , m_orientType(SVG_MARKER_ORIENT_ANGLE)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
 }
@@ -121,6 +117,45 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
             renderer()->setNeedsLayout(true);
 
         m_marker->invalidate();
+    }
+}
+
+void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGStyledElement::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeMarkerUnits();
+        synchronizeRefX();
+        synchronizeRefY();
+        synchronizeMarkerWidth();
+        synchronizeMarkerHeight();
+        synchronizeOrientAngle();
+        synchronizeOrientType();
+        synchronizeExternalResourcesRequired();
+        synchronizeViewBox();
+        synchronizePreserveAspectRatio();
+        return;
+    }
+
+    if (attrName == SVGNames::markerUnitsAttr)
+        synchronizeMarkerUnits();
+    else if (attrName == SVGNames::refXAttr)
+        synchronizeRefX();
+    else if (attrName == SVGNames::refYAttr)
+        synchronizeRefY();
+    else if (attrName == SVGNames::markerWidthAttr)
+        synchronizeMarkerWidth();
+    else if (attrName == SVGNames::markerHeightAttr)
+        synchronizeMarkerHeight();
+    else if (attrName == SVGNames::orientAttr) {
+        synchronizeOrientAngle();
+        synchronizeOrientType();
+    } else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        synchronizeExternalResourcesRequired();
+    else if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        synchronizeViewBox();
+        synchronizePreserveAspectRatio();
     }
 }
 
