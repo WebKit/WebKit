@@ -237,8 +237,6 @@ namespace WebCore {
         // Returns the size of the image.
         virtual IntSize size() const
         {
-            // Requesting the size of an invalid bitmap is meaningless.
-            ASSERT(!m_failed);
             return m_size;
         }
 

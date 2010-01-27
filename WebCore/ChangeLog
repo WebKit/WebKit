@@ -1,3 +1,22 @@
+2010-01-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Levin.
+
+        Handle broken images more correctly in the open-source image decoders.
+        https://bugs.webkit.org/show_bug.cgi?id=33747
+
+        No tests since Safari doesn't use these decoders and there's already a
+        broken-image test in the tree.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::createFrameAtIndex): No need to check isSizeAvailable() since size() is now always safe.
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::size): Don't assert that the bitmap is valid; we don't need a complete successful decode to be able to give info about the size.
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp:
+        (WebCore::RGBA32Buffer::setSize): Don't set the frame to complete on failure, since it's not complete, but empty, and callers can better handle empty frames.
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::RGBA32Buffer::setSize): Don't set the frame to complete on failure, since it's not complete, but empty, and callers can better handle empty frames.
+
 2010-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Synchronize Qt/Gtk build systems with Mac/Win, should fix Qt compilation. Gtk results still pending.

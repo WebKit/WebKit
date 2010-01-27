@@ -83,11 +83,8 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
     m_size = IntSize(newWidth, newHeight);
     m_image = QImage(newWidth, newHeight, QImage::Format_ARGB32_Premultiplied);
-    if (m_image.isNull()) {
-        // Allocation failure, maybe the bitmap was too big.
-        setStatus(FrameComplete);
+    if (m_image.isNull())
         return false;
-    }
 
     // Zero the image.
     zeroFill();
