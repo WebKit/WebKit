@@ -1,6 +1,12 @@
 2010-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
-        Not reviewd. Revert Base.xcconfig changes, was not meant to be committed.
+        Not reviewed. Attempt to fix V8 - change SetterMethod function signatures, just like it has been done for JSSVGPODTypeWrapper.
+
+        * bindings/v8/V8SVGPODTypeWrapper.h:
+
+2010-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Revert Base.xcconfig changes, was not meant to be committed.
 
         * Configurations/Base.xcconfig:
 
