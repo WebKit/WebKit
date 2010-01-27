@@ -59,7 +59,7 @@ function is75PercentOf(expression75, expression100)
 
 function test()
 {
-    description("This test checks that replaced elements with percentage heights within table cells have the correct height.");
+    description("This test checks that replaced elements with percentage heights within table cells have the correct height.<br>Note, some of the button height tests fail on the Windows ports. See bug #34071.");
 
     shouldBe("getWidth('canvas-75')", "'300px'");
     shouldBe("getHeight('canvas-75')", "'112px'");

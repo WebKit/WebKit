@@ -1,3 +1,19 @@
+2010-01-26  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29564
+
+        Tests that the user-specified height for <button>- and <input type="button">-
+        elements are honored, if appropriate for the platform and context.
+
+        * fast/css/button-height-expected.txt: Added.
+        * fast/css/button-height.html: Added.
+        * fast/replaced/table-percent-height-expected.txt: Added notice about failing tests
+        in Windows ports.
+        * fast/replaced/table-percent-height.html: Ditto.
+        * platform/qt/fast/replaced/table-percent-height-expected.txt: Added.
+
 2010-01-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

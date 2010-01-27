@@ -1,3 +1,24 @@
+2010-01-26  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29564
+
+        [Qt] Fixes an issue where the height of <button>- and
+        <input type="button">- elements are fixed to the height of the
+        button label font plus padding. That is, the CSS height property
+        is being ignored.
+
+        Instead, we should honor the user-specified height, if appropriate
+        for the platform and context. Notice, the Mac ports do not honor the
+        height for <input type="button"> elements unless a border and/or
+        background is also specified.
+
+        Test: fast/css/button-height.html
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+
 2010-01-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

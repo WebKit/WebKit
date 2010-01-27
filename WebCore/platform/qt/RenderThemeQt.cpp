@@ -395,8 +395,13 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     // Ditch the border.
     style->resetBorder();
 
-    // Height is locked to auto.
-    style->setHeight(Length(Auto));
+#ifdef Q_WS_MAC
+    if (style->appearance() == PushButtonPart) {
+        // The Mac ports ignore the specified height for <input type="button"> elements
+        // unless a border and/or background CSS property is also specified.
+        style->setHeight(Length(Auto));
+    }
+#endif
 
     // White-space is locked to pre
     style->setWhiteSpace(PRE);
