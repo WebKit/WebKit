@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        [BREWMP] Port WTF's randomNumber
+        https://bugs.webkit.org/show_bug.cgi?id=33566
+
+        Use GETRAND to generate 4 byte random byte sequence to implement
+        weakRandomNumber. Create a secure random number generator with
+        AEECLSID_RANDOM to implement randomNumber.
+
+        * wtf/RandomNumber.cpp:
+        (WTF::weakRandomNumber):
+        (WTF::randomNumber):
+
+2010-01-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
         [BREWMP] Port getCPUTime
         https://bugs.webkit.org/show_bug.cgi?id=33572
 
