@@ -45,6 +45,7 @@
 #include "RenderWidget.h"
 #include "SelectionController.h"
 #include "TextStream.h"
+#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
@@ -492,6 +493,8 @@ static void write(TextStream& ts, RenderLayer& l,
         if (l.isComposited())
             ts << " (composited, bounds " << l.backing()->compositedBounds() << ")";
     }
+#else
+    UNUSED_PARAM(behavior);
 #endif
     
     ts << "\n";

@@ -1,3 +1,10 @@
+2010-01-26  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, attempt to fix Tiger build.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write): Use UNUSED_PARAM macros to prevent compiler warning on targets without accelerated compositing.
+
 2010-01-26  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.
