@@ -1,3 +1,15 @@
+2010-01-26  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fixing for failing test on qt.
+        https://bugs.webkit.org/show_bug.cgi?id=34148
+        
+        Changed url in anchor tag to avoid the additional trailing slash.
+
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt:
+        * editing/resources/htmlcontent.html:
+
 2010-01-26  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
