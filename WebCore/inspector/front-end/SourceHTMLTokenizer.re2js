@@ -56,7 +56,10 @@ WebInspector.SourceHTMLTokenizer = function()
         TAG: 1,
         ATTRIBUTE: 2,
         ATTRIBUTE_VALUE: 3,
-        DOCTYPE: 4
+        SCRIPT: 4,
+        SCRIPT_ATTRIBUTE: 5,
+        SCRIPT_ATTRIBUTE_VALUE: 6,
+        DOCTYPE: 7
     };
 
     this.case_INITIAL = 1000;
@@ -68,12 +71,38 @@ WebInspector.SourceHTMLTokenizer = function()
 }
 
 WebInspector.SourceHTMLTokenizer.prototype = {
+    _isAttribute: function()
+    {
+        return this._parseCondition === this._parseConditions.ATTRIBUTE || this._parseCondition === this._parseConditions.SCRIPT_ATTRIBUTE;
+    },
+
+    _isAttributeValue: function()
+    {
+        return this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE || this._parseCondition === this._parseConditions.SCRIPT_ATTRIBUTE_VALUE;
+    },
+
+    _setAttributeValue: function()
+    {
+        if (this._parseCondition === this._parseConditions.ATTRIBUTE)
+            this._parseCondition = this._parseConditions.ATTRIBUTE_VALUE;
+        else if (this._parseCondition === this._parseConditions.SCRIPT_ATTRIBUTE)
+            this._parseCondition = this._parseConditions.SCRIPT_ATTRIBUTE_VALUE;
+    },
+
+    _setAttribute: function()
+    {
+        if (this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE)
+            this._parseCondition = this._parseConditions.ATTRIBUTE;
+        else if (this._parseCondition === this._parseConditions.SCRIPT_ATTRIBUTE_VALUE)
+            this._parseCondition = this._parseConditions.SCRIPT_ATTRIBUTE;
+    },
+
     _stringToken: function(cursor, stringEnds)
     {
-        if (this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE) {
+        if (this._isAttributeValue()) {
             this.tokenType = "html-attr-value";
             if (stringEnds)
-                this._parseCondition = this._parseConditions.ATTRIBUTE;
+                this._setAttribute();
         } else if (this._parseCondition === this._parseConditions.DOCTYPE)
             this.tokenType = "html-doctype";
         else
@@ -105,12 +134,13 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 CommentStart = "<!--" CommentContent [\r\n];
                 CommentEnd = CommentContent "-->";
 
-                LT = "<" | "</";
                 DocTypeLT = "<!" [Dd] [Oo] [Cc] [Tt] [Yy] [Pp] [Ee];
+                ScriptStart = "<" [Ss] [Cc] [Rr] [Ii] [Pp] [Tt];
+                ScriptEnd = "</" [Ss] [Cc] [Rr] [Ii] [Pp] [Tt];
+
+                LT = "<" | "</";
                 GT = ">";
                 EqualSign = "=";
-
-                Letter = [_a-zA-Z\x80-\xFF];
 
                 DoubleStringContent = [^\r\n\"]*;
                 SingleStringContent = [^\r\n\']*;
@@ -120,7 +150,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 SingleStringStart = "'" SingleStringContent [\r\n];
                 SingleStringEnd = SingleStringContent "'";
 
-                Identifier = Letter+;
+                Identifier = [_a-zA-Z\x80-\xFF]+;
 
                 <INITIAL> Comment { this.tokenType = "html-comment"; return cursor; }
                 <INITIAL> CommentStart => COMMENT { this.tokenType = "html-comment"; return cursor; }
@@ -129,14 +159,32 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <INITIAL> DocTypeLT => INITIAL
                 {
-                    var token = this._line.substring(cursorOnEnter, cursor);
                     this.tokenType = "html-doctype";
                     this._parseCondition = this._parseConditions.DOCTYPE;
                     return cursor;
                 }
 
+                <INITIAL> ScriptStart => INITIAL
+                {
+                    this.tokenType = "html-tag";
+                    this._parseCondition = this._parseConditions.SCRIPT_ATTRIBUTE;
+                    return cursor;
+                }
+
+                <INITIAL> ScriptEnd => INITIAL
+                {
+                    this.tokenType = "html-tag";
+                    this._parseCondition = this._parseConditions.INITIAL;
+                    return cursor;
+                }
+
                 <INITIAL> LT => INITIAL
                 {
+                    if (this._parseCondition === this._parseConditions.SCRIPT) {
+                        this.tokenType = null;
+                        return cursor;
+                    }
+
                     this.tokenType = "html-tag";
                     this._parseCondition = this._parseConditions.TAG;
                     return cursor;
@@ -144,11 +192,20 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <INITIAL> GT => INITIAL
                 {
+                    if (this._parseCondition === this._parseConditions.SCRIPT) {
+                        this.tokenType = null;
+                        return cursor;
+                    }
+
                     if (this._parseCondition === this._parseConditions.DOCTYPE)
                         this.tokenType = "html-doctype";
                     else
                         this.tokenType = "html-tag";
-                    this._parseCondition = this._parseConditions.INITIAL;
+
+                    if (this._parseCondition === this._parseConditions.SCRIPT_ATTRIBUTE)
+                        this._parseCondition = this._parseConditions.SCRIPT;
+                    else
+                        this._parseCondition = this._parseConditions.INITIAL;
                     return cursor;
                 }
 
@@ -162,9 +219,9 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <INITIAL> EqualSign => INITIAL
                 {
-                    if (this._parseCondition === this._parseConditions.ATTRIBUTE) {
+                    if (this._isAttribute()) {
                         this.tokenType = null;
-                        this._parseCondition = this._parseConditions.ATTRIBUTE_VALUE;
+                        this._setAttributeValue();
                     } else if (this._parseCondition === this._parseConditions.DOCTYPE)
                         this.tokenType = "html-doctype";
                     else
@@ -174,16 +231,19 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <INITIAL> Identifier
                 {
+                    if (this._parseCondition === this._parseConditions.SCRIPT) {
+                        this.tokenType = null;
+                        return cursor;
+                    }
+
                     if (this._parseCondition === this._parseConditions.TAG) {
                         this.tokenType = "html-tag";
                         this._parseCondition = this._parseConditions.ATTRIBUTE;
-                    } else if (this._parseCondition === this._parseConditions.ATTRIBUTE) {
+                    } else if (this._isAttribute())
                         this.tokenType = "html-attr-name";
-                        this._parseCondition = this._parseConditions.ATTRIBUTE;
-                    } else if (this._parseCondition === this._parseConditions.ATTRIBUTE_VALUE) {
+                    else if (this._isAttributeValue())
                         this.tokenType = "html-attr-value";
-                        this._parseCondition = this._parseConditions.ATTRIBUTE;
-                    } else if (this._parseCondition === this._parseConditions.DOCTYPE)
+                    else if (this._parseCondition === this._parseConditions.DOCTYPE)
                         this.tokenType = "html-doctype";
                     else
                         this.tokenType = null;
