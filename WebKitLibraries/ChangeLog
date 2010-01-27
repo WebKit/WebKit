@@ -1,3 +1,11 @@
+2010-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        More Windows build fixing.
+
+        * win/tools/vsprops/common.vsprops: Disable warning C4180 (qualifier applied to function
+        type has no meaning; ignored). This is a known bug - MSVC tries to compile a wrong
+        specialization sometimes - but it's not instantiated, so it's harmless.
+
 2010-01-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
