@@ -1,3 +1,22 @@
+2010-01-26  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34070
+
+        Moves the try/catch for OSError exceptions in Executive.run_command
+        to Credentials.read_credentials() so that the unit test
+        webkitpy.scm_unittest.SCMClassTests.test_error_handlers can
+        assert that Executive.run_command throws an OSError exception.
+
+        * Scripts/webkitpy/credentials.py:
+        * Scripts/webkitpy/executive.py: Moved try/catch for OSError to
+        method Credentials.read_credentials().
+        * Scripts/webkitpy/executive_unittest.py: Removed tests that no longer
+        apply: test_run_command_with_bad_command_check_return_code and
+        test_run_command_with_bad_command_check_calls_error_handler. Added new
+        test to assert that run_command throws OSError exceptions.
+
 2010-01-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

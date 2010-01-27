@@ -111,8 +111,14 @@ class Credentials(object):
         username = None
         password = None
 
-        if Git.in_working_directory(self.cwd):
-            (username, password) = self._credentials_from_git()
+        try:
+            if Git.in_working_directory(self.cwd):
+                (username, password) = self._credentials_from_git()
+        except OSError, e:
+            # Catch and ignore OSError exceptions such as "no such file 
+            # or directory" (OSError errno 2), which imply that the Git
+            # command cannot be found/is not installed.
+            pass
 
         if not username or not password:
             (username, password) = self._credentials_from_keychain(username)

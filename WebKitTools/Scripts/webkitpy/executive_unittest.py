@@ -28,21 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.executive import Executive, ScriptError, run_command
+from webkitpy.executive import Executive, run_command
 
 class ExecutiveTest(unittest.TestCase):
 
-    def test_run_command_with_bad_command_check_return_code(self):
-        self.assertEqual(run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True), 2)
-
-    def test_run_command_with_bad_command_check_calls_error_handler(self):
-        self.didHandleErrorGetCalled = False
-        def handleError(scriptError):
-            self.didHandleErrorGetCalled = True
-            self.assertEqual(scriptError.exit_code, 2)
-
-        run_command(["foo_bar_command_blah"], error_handler=handleError)
-        self.assertTrue(self.didHandleErrorGetCalled)
+    def test_run_command_with_bad_command(self):
+        def run_bad_command():
+            run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
+        self.failUnlessRaises(OSError, run_bad_command)
 
 if __name__ == '__main__':
     unittest.main()

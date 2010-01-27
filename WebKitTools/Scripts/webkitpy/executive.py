@@ -152,20 +152,14 @@ class Executive(object):
             stderr = subprocess.STDOUT
         else:
             stderr = None
-        try:
-            process = subprocess.Popen(args,
-                                       stdin=stdin,
-                                       stdout=subprocess.PIPE,
-                                       stderr=stderr,
-                                       cwd=cwd)
-            output = process.communicate(string_to_communicate)[0]
-            exit_code = process.wait()
-        except OSError, e:
-            # Catch OSError exceptions. For example, "no such file or
-            # directory" (i.e. OSError errno 2), when the command cannot be
-            # found.
-            output = e.strerror
-            exit_code = e.errno
+
+        process = subprocess.Popen(args,
+                                   stdin=stdin,
+                                   stdout=subprocess.PIPE,
+                                   stderr=stderr,
+                                   cwd=cwd)
+        output = process.communicate(string_to_communicate)[0]
+        exit_code = process.wait()
         if exit_code:
             script_error = ScriptError(script_args=args,
                                        exit_code=exit_code,
