@@ -1,5 +1,19 @@
 2010-01-27  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port getCPUTime
+        https://bugs.webkit.org/show_bug.cgi?id=33572
+
+        Use GETUPTIMEMS which returns a continuously and
+        linearly increasing millisecond timer from the time the device
+        was powered on. This function is enough to implement getCPUTime.
+
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+
+2010-01-27  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Oliver Hunt.
 
         [BREWMP] Add MarkStack fastMalloc implementation for platforms without VirtualAlloc or mmap.

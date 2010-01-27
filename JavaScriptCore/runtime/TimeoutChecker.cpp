@@ -41,6 +41,10 @@
 #include "CurrentTime.h"
 #endif
 
+#if PLATFORM(BREWMP)
+#include <AEEStdLib.h>
+#endif
+
 using namespace std;
 
 namespace JSC {
@@ -80,6 +84,11 @@ static inline unsigned getCPUTime()
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
     
     return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
+#elif PLATFORM(BREWMP)
+    // This function returns a continuously and linearly increasing millisecond
+    // timer from the time the device was powered on.
+    // There is only one thread in BREW, so this is enough.
+    return GETUPTIMEMS();
 #else
     // FIXME: We should return the time the current thread has spent executing.
     return currentTime() * 1000;
