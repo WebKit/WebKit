@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ISODateTime_h
-#define ISODateTime_h
+#ifndef DateComponents_h
+#define DateComponents_h
 
 #include <limits>
 #include <wtf/unicode/Unicode.h>
@@ -38,15 +38,15 @@ namespace WebCore {
 
 class String;
 
-// An ISODateTime instance represents one of the following date and time combinations:
+// A DateComponents instance represents one of the following date and time combinations:
 // * Month type: year-month
 // * Date type: year-month-day
 // * Week type: year-week
 // * Time type: hour-minute-second-millisecond
 // * DateTime or DateTimeLocal type: year-month-day hour-minute-second-millisecond
-class ISODateTime {
+class DateComponents {
 public:
-    ISODateTime()
+    DateComponents()
         : m_millisecond(0)
         , m_second(0)
         , m_minute(0)
@@ -79,7 +79,7 @@ public:
     String toString(SecondFormat format = None) const;
 
     // parse*() and setMillisecondsSince*() functions are initializers for an
-    // ISODateTime instance. If these functions return false, the instance
+    // DateComponents instance. If these functions return false, the instance
     // might be invalid.
 
     // The following six functions parse the input 'src' whose length is
@@ -107,7 +107,7 @@ public:
     // The following setMillisecondsSinceEpochFor*() functions take
     // the number of milliseconds since 1970-01-01 00:00:00.000 UTC as
     // the argument, and update all fields for the corresponding
-    // ISODateTime type. The functions return true if it succeeds, and
+    // DateComponents type. The functions return true if it succeeds, and
     // false if they fail.
 
     // For Date type. Updates m_year, m_month and m_monthDay.
@@ -125,13 +125,13 @@ public:
     bool setMillisecondsSinceMidnight(double ms);
 
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
-    // For an ISODateTime initialized with parseDateTimeLocal(),
+    // For a DateComponents initialized with parseDateTimeLocal(),
     // millisecondsSinceEpoch() returns a value for UTC timezone.
     double millisecondsSinceEpoch() const;
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
 private:
-    // Returns the maximum week number in this ISODateTime's year.
+    // Returns the maximum week number in this DateComponents's year.
     // The result is either of 52 and 53.
     int maxWeekNumberInYear() const;
     bool parseYear(const UChar* src, unsigned length, unsigned start, unsigned& end);
@@ -157,14 +157,14 @@ private:
         Saturday,
     };
 
-    int m_millisecond;  // 0 - 999
+    int m_millisecond; // 0 - 999
     int m_second;
     int m_minute;
     int m_hour;
-    int m_monthDay;  // 1 - 31
-    int m_month;  // 0:January - 11:December
-    int m_year;  //  1582 -
-    int m_week;  // 1 - 53
+    int m_monthDay; // 1 - 31
+    int m_month; // 0:January - 11:December
+    int m_year; //  1582 -
+    int m_week; // 1 - 53
 
     enum Type {
         Invalid,
@@ -181,4 +181,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ISODateTime_h
+#endif // DateComponents_h

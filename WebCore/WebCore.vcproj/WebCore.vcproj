@@ -29877,6 +29877,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DateComponents.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DateComponents.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\DOMDataGridDataSource.cpp"
 				>
 			</File>
@@ -34070,14 +34078,6 @@
 			</File>
 			<File
 				RelativePath="..\html\ImageData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\ISODateTime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\ISODateTime.h"
 				>
 			</File>
 			<File

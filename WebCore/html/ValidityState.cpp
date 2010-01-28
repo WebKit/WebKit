@@ -100,7 +100,7 @@ bool ValidityState::typeMismatch() const
     case HTMLInputElement::MONTH:
     case HTMLInputElement::TIME:
     case HTMLInputElement::WEEK:
-        return !HTMLInputElement::formStringToISODateTime(input->inputType(), value, 0);
+        return !HTMLInputElement::formStringToDateComponents(input->inputType(), value, 0);
     case HTMLInputElement::BUTTON:
     case HTMLInputElement::CHECKBOX:
     case HTMLInputElement::FILE:

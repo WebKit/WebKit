@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
+class DateComponents;
 class FileList;
 class HTMLDataListElement;
 class HTMLImageLoader;
 class HTMLOptionElement;
-class ISODateTime;
 class KURL;
 class VisibleSelection;
 
@@ -267,9 +267,9 @@ public:
     // HTML5's "algorithm to convert a number to a string" for NUMBER/RANGE types.
     static String formStringFromDouble(double);
     // Parses the specified string as the InputType, and returns true if it is successfully parsed.
-    // An instance pointed by the ISODateTime* parameter will have parsed values and be
-    // modified even if the parsing fails.  The ISODateTime* parameter may be 0.
-    static bool formStringToISODateTime(InputType, const String&, ISODateTime*);
+    // An instance pointed by the DateComponents* parameter will have parsed values and be
+    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
+    static bool formStringToDateComponents(InputType, const String&, DateComponents*);
     
 protected:
     virtual void willMoveToNewOwnerDocument();

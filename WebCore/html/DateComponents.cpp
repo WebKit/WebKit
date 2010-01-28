@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "ISODateTime.h"
+#include "DateComponents.h"
 
 #include "PlatformString.h"
 #include <limits.h>
@@ -57,7 +57,7 @@ static bool isLeapYear(int year)
     return true;
 }
 
-// `month' is 0-based.
+// 'month' is 0-based.
 static int maxDayOfMonth(int year, int month)
 {
     if (month != 1) // February?
@@ -65,7 +65,7 @@ static int maxDayOfMonth(int year, int month)
     return isLeapYear(year) ? 29 : 28;
 }
 
-// `month' is 0-based.
+// 'month' is 0-based.
 static int dayOfWeek(int year, int month, int day)
 {
     int shiftedMonth = month + 2;
@@ -85,7 +85,7 @@ static int dayOfWeek(int year, int month, int day)
     return result;
 }
 
-int ISODateTime::maxWeekNumberInYear() const
+int DateComponents::maxWeekNumberInYear() const
 {
     int day = dayOfWeek(m_year, 0, 1); // January 1.
     return day == Thursday || (day == Wednesday && isLeapYear(m_year)) ? 53 : 52;
@@ -123,7 +123,7 @@ static bool toInt(const UChar* src, unsigned length, unsigned parseStart, unsign
     return true;
 }
 
-bool ISODateTime::parseYear(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseYear(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     unsigned digitsLength = countDigits(src, length, start);
     // Needs at least 4 digits according to the standard.
@@ -147,7 +147,7 @@ static bool beforeGregorianStartDate(int year, int month, int monthDay)
         || year == gregorianStartYear && month == gregorianStartMonth && monthDay < gregorianStartDay;
 }
 
-bool ISODateTime::addDay(int dayDiff)
+bool DateComponents::addDay(int dayDiff)
 {
     ASSERT(m_monthDay);
 
@@ -197,7 +197,7 @@ bool ISODateTime::addDay(int dayDiff)
     return true;
 }
 
-bool ISODateTime::addMinute(int minute)
+bool DateComponents::addMinute(int minute)
 {
     int carry;
     // min can be negative or greater than 59.
@@ -237,7 +237,7 @@ bool ISODateTime::addMinute(int minute)
 }
 
 // Parses a timezone part, and adjust year, month, monthDay, hour, minute, second, millisecond.
-bool ISODateTime::parseTimeZone(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseTimeZone(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     if (start >= length)
         return false;
@@ -282,7 +282,7 @@ bool ISODateTime::parseTimeZone(const UChar* src, unsigned length, unsigned star
     return true;
 }
 
-bool ISODateTime::parseMonth(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseMonth(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     unsigned index;
@@ -305,7 +305,7 @@ bool ISODateTime::parseMonth(const UChar* src, unsigned length, unsigned start, 
     return true;
 }
 
-bool ISODateTime::parseDate(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseDate(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     unsigned index;
@@ -330,7 +330,7 @@ bool ISODateTime::parseDate(const UChar* src, unsigned length, unsigned start, u
     return true;
 }
 
-bool ISODateTime::parseWeek(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseWeek(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     unsigned index;
@@ -359,7 +359,7 @@ bool ISODateTime::parseWeek(const UChar* src, unsigned length, unsigned start, u
     return true;
 }
 
-bool ISODateTime::parseTime(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseTime(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     int hour;
@@ -414,7 +414,7 @@ bool ISODateTime::parseTime(const UChar* src, unsigned length, unsigned start, u
     return true;
 }
 
-bool ISODateTime::parseDateTimeLocal(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseDateTimeLocal(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     unsigned index;
@@ -431,7 +431,7 @@ bool ISODateTime::parseDateTimeLocal(const UChar* src, unsigned length, unsigned
     return true;
 }
 
-bool ISODateTime::parseDateTime(const UChar* src, unsigned length, unsigned start, unsigned& end)
+bool DateComponents::parseDateTime(const UChar* src, unsigned length, unsigned start, unsigned& end)
 {
     ASSERT(src);
     unsigned index;
@@ -456,7 +456,7 @@ static inline double positiveFmod(double value, double divider)
     return remainder < 0 ? remainder + divider : remainder;
 }
 
-void ISODateTime::setMillisecondsSinceMidnightInternal(double msInDay)
+void DateComponents::setMillisecondsSinceMidnightInternal(double msInDay)
 {
     ASSERT(msInDay >= 0 && msInDay < msPerDay);
     m_millisecond = static_cast<int>(fmod(msInDay, msPerSecond));
@@ -467,7 +467,7 @@ void ISODateTime::setMillisecondsSinceMidnightInternal(double msInDay)
     m_hour = static_cast<int>(value / minutesPerHour);
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForDateInternal(double ms)
+bool DateComponents::setMillisecondsSinceEpochForDateInternal(double ms)
 {
     m_year = msToYear(ms);
     int yearDay = dayInYear(ms, m_year);
@@ -476,7 +476,7 @@ bool ISODateTime::setMillisecondsSinceEpochForDateInternal(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForDate(double ms)
+bool DateComponents::setMillisecondsSinceEpochForDate(double ms)
 {
     m_type = Invalid;
     if (!isfinite(ms))
@@ -489,7 +489,7 @@ bool ISODateTime::setMillisecondsSinceEpochForDate(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForDateTime(double ms)
+bool DateComponents::setMillisecondsSinceEpochForDateTime(double ms)
 {
     m_type = Invalid;
     if (!isfinite(ms))
@@ -504,7 +504,7 @@ bool ISODateTime::setMillisecondsSinceEpochForDateTime(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForDateTimeLocal(double ms)
+bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
 {
     // Internal representation of DateTimeLocal is the same as DateTime except m_type.
     if (!setMillisecondsSinceEpochForDateTime(ms))
@@ -513,7 +513,7 @@ bool ISODateTime::setMillisecondsSinceEpochForDateTimeLocal(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
+bool DateComponents::setMillisecondsSinceEpochForMonth(double ms)
 {
     m_type = Invalid;
     if (!isfinite(ms))
@@ -527,7 +527,7 @@ bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
     return true;
 }
 
-bool ISODateTime::setMillisecondsSinceMidnight(double ms)
+bool DateComponents::setMillisecondsSinceMidnight(double ms)
 {
     m_type = Invalid;
     if (!isfinite(ms))
@@ -547,7 +547,7 @@ static int offsetTo1stWeekStart(int year)
     return offsetTo1stWeekStart;
 }
 
-bool ISODateTime::setMillisecondsSinceEpochForWeek(double ms)
+bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
 {
     m_type = Invalid;
     if (!isfinite(ms))
@@ -578,13 +578,13 @@ bool ISODateTime::setMillisecondsSinceEpochForWeek(double ms)
     return true;
 }
 
-double ISODateTime::millisecondsSinceEpochForTime() const
+double DateComponents::millisecondsSinceEpochForTime() const
 {
     ASSERT(m_type == Time || m_type == DateTime || m_type == DateTimeLocal);
     return ((m_hour * minutesPerHour + m_minute) * secondsPerMinute + m_second) * msPerSecond + m_millisecond;
 }
 
-double ISODateTime::millisecondsSinceEpoch() const
+double DateComponents::millisecondsSinceEpoch() const
 {
     switch (m_type) {
     case Date:
@@ -605,7 +605,7 @@ double ISODateTime::millisecondsSinceEpoch() const
     return invalidMilliseconds();
 }
 
-String ISODateTime::toStringForTime(SecondFormat format) const
+String DateComponents::toStringForTime(SecondFormat format) const
 {
     ASSERT(m_type == DateTime || m_type == DateTimeLocal || m_type == Time);
     SecondFormat effectiveFormat = format;
@@ -627,7 +627,7 @@ String ISODateTime::toStringForTime(SecondFormat format) const
     }
 }
 
-String ISODateTime::toString(SecondFormat format) const
+String DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
     case Date:
@@ -648,7 +648,7 @@ String ISODateTime::toString(SecondFormat format) const
         break;
     }
     ASSERT_NOT_REACHED();
-    return String("(Invalid ISODateTime)");
+    return String("(Invalid DateComponents)");
 }
 
 } // namespace WebCore

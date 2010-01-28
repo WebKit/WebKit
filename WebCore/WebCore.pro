@@ -569,6 +569,7 @@ SOURCES += \
     html/CollectionCache.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
+    html/DateComponents.cpp \
     html/DOMDataGridDataSource.cpp \
     html/File.cpp \
     html/FileList.cpp \
@@ -654,7 +655,6 @@ SOURCES += \
     html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
     html/HTMLViewSourceDocument.cpp \
-    html/ISODateTime.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
     html/ValidityState.cpp \
@@ -1254,6 +1254,7 @@ HEADERS += \
     html/CollectionCache.h \
     html/DataGridColumn.h \
     html/DataGridColumnList.h \
+    html/DateComponents.h \
     html/DOMDataGridDataSource.h \
     html/File.h \
     html/FileList.h \
@@ -1343,7 +1344,6 @@ HEADERS += \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
-    html/ISODateTime.h \
     html/ImageData.h \
     html/PreloadScanner.h \
     html/TimeRanges.h \

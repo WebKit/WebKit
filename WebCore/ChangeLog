@@ -1,3 +1,55 @@
+2010-01-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Rename ISODateTime.{cpp,h} to DateComponents.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=34245
+
+        No functional changes.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/DateComponents.cpp: Copied from WebCore/html/ISODateTime.cpp.
+        (WebCore::DateComponents::maxWeekNumberInYear):
+        (WebCore::DateComponents::parseYear):
+        (WebCore::DateComponents::addDay):
+        (WebCore::DateComponents::addMinute):
+        (WebCore::DateComponents::parseTimeZone):
+        (WebCore::DateComponents::parseMonth):
+        (WebCore::DateComponents::parseDate):
+        (WebCore::DateComponents::parseWeek):
+        (WebCore::DateComponents::parseTime):
+        (WebCore::DateComponents::parseDateTimeLocal):
+        (WebCore::DateComponents::parseDateTime):
+        (WebCore::DateComponents::setMillisecondsSinceMidnightInternal):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDateInternal):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDate):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDateTime):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDateTimeLocal):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForMonth):
+        (WebCore::DateComponents::setMillisecondsSinceMidnight):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForWeek):
+        (WebCore::DateComponents::millisecondsSinceEpochForTime):
+        (WebCore::DateComponents::millisecondsSinceEpoch):
+        (WebCore::DateComponents::toStringForTime):
+        (WebCore::DateComponents::toString):
+        * html/DateComponents.h: Copied from WebCore/html/ISODateTime.h.
+        (WebCore::DateComponents::DateComponents):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseToDouble):
+        (WebCore::HTMLInputElement::valueAsDate):
+        (WebCore::HTMLInputElement::setValueAsDate):
+        (WebCore::HTMLInputElement::setValueAsNumber):
+        (WebCore::HTMLInputElement::formStringToDateComponents):
+        * html/HTMLInputElement.h:
+        * html/ISODateTime.cpp: Removed.
+        * html/ISODateTime.h: Removed.
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+
 2010-01-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
