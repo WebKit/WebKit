@@ -40,16 +40,18 @@
 
 namespace WebCore {
 
-NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter) 
+NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter)
     : ActiveDOMObject(context, this)
     , m_scriptExecutionContext(context)
     , m_notificationPresenter(presenter) {}
 
-int NotificationCenter::checkPermission() 
+int NotificationCenter::checkPermission()
 {
     if (!presenter())
         return NotificationPresenter::PermissionDenied;
-    return m_notificationPresenter->checkPermission(m_scriptExecutionContext->securityOrigin());
+    return m_notificationPresenter->checkPermission(
+        m_scriptExecutionContext->url(),
+        m_scriptExecutionContext->isDocument() ? static_cast<Document*>(m_scriptExecutionContext) : 0);
 }
 
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)

@@ -54,7 +54,7 @@ public:
     virtual bool show(WebCore::Notification* object);
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
-    virtual WebCore::NotificationPresenter::Permission checkPermission(WebCore::SecurityOrigin* origin);
+    virtual WebCore::NotificationPresenter::Permission checkPermission(const WebCore::KURL& url, WebCore::Document* document);
     virtual void requestPermission(WebCore::SecurityOrigin* origin, WTF::PassRefPtr<WebCore::VoidCallback> callback);
 
 private:
