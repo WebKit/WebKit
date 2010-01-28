@@ -1526,7 +1526,6 @@ HEADERS += \
     platform/network/NetworkStateNotifier.h \
     platform/network/ProtectionSpace.h \
     platform/network/qt/QNetworkReplyHandler.h \
-    platform/network/qt/SocketStreamHandlePrivate.h \
     platform/network/ResourceErrorBase.h \
     platform/network/ResourceHandle.h \
     platform/network/ResourceRequestBase.h \
@@ -2635,6 +2634,9 @@ SOURCES += \
 }
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
+HEADERS += \
+    platform/network/qt/SocketStreamHandlePrivate.h \
+
 SOURCES += \
     websockets/WebSocket.cpp \
     websockets/WebSocketChannel.cpp \
