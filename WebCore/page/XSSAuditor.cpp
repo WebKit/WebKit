@@ -202,6 +202,7 @@ bool XSSAuditor::canSetBaseElementURL(const String& url) const
 
     FindTask task;
     task.string = url;
+    task.allowRequestIfNoIllegalURICharacters = true;
 
     if (findInRequest(task)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to load from document base URL. URL found within request.\n"));

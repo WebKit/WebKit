@@ -1,3 +1,19 @@
+2010-01-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Remove XSSAuditor false positive for Google Translate
+        https://bugs.webkit.org/show_bug.cgi?id=34242
+
+        Google translate takes a base URL as a parameter, causing a false
+        positive in the XSS filter.  This patch removes the false positive by
+        allowing direct injections into the href property of the base tag.
+
+        Test: http/tests/security/xssAuditor/base-href-direct.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canSetBaseElementURL):
+
 2010-01-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
