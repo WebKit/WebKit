@@ -2,6 +2,25 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Eliminated the filename parameter from functions in
+        check-webkit-style's cpp.py where it is no longer used.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34249
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+          - Reduced number of occurrences of "filename" variable from
+            approximately 200 to 120.
+
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+          - Refactored unit tests as necessary to accommodate changes to cpp.py.
+          - Fixed bug in CppStyleTestBase.perform_include_what_you_use()
+            where the incorrect file extension was getting passed to
+            cpp_style.check_language().
+
+2010-01-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
         In check-webkit-style, eliminated the dependency of
         processors/cpp_unittest.py on checker.py.
 

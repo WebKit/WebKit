@@ -105,6 +105,16 @@ class MockIo:
         return self.mock_file
 
 
+class CppFunctionsTest(unittest.TestCase):
+
+    """Supports testing functions that do not need CppStyleTestBase."""
+
+    def test_is_c_or_objective_c(self):
+        self.assertTrue(cpp_style.is_c_or_objective_c("c"))
+        self.assertTrue(cpp_style.is_c_or_objective_c("m"))
+        self.assertFalse(cpp_style.is_c_or_objective_c("cpp"))
+
+
 class CppStyleTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpp_style tests.
 
@@ -128,7 +138,7 @@ class CppStyleTestBase(unittest.TestCase):
     def perform_single_line_lint(self, code, file_name):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        cpp_style.remove_multi_line_comments(lines, error_collector)
         clean_lines = cpp_style.CleansedLines(lines)
         include_state = cpp_style._IncludeState()
         function_state = cpp_style._FunctionState(self.verbosity)
@@ -145,19 +155,18 @@ class CppStyleTestBase(unittest.TestCase):
         return error_collector.results()
 
     # Perform lint over multiple lines and return the error message.
-    def perform_multi_line_lint(self, code, file_name):
+    def perform_multi_line_lint(self, code, file_extension):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
-        ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpp_style._ClassState()
         file_state = cpp_style._FileState()
         for i in xrange(lines.num_lines()):
-            cpp_style.check_style(file_name, lines, i, ext, file_state, error_collector)
-            cpp_style.check_for_non_standard_constructs(file_name, lines, i, class_state,
+            cpp_style.check_style(lines, i, file_extension, file_state, error_collector)
+            cpp_style.check_for_non_standard_constructs(lines, i, class_state,
                                                         error_collector)
-        class_state.check_finished(file_name, error_collector)
+        class_state.check_finished(error_collector)
         return error_collector.results()
 
     # Similar to perform_multi_line_lint, but calls check_language instead of
@@ -166,7 +175,7 @@ class CppStyleTestBase(unittest.TestCase):
         error_collector = ErrorCollector(self.assert_)
         include_state = cpp_style._IncludeState()
         lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
         ext = file_name[file_name.rfind('.') + 1:]
         for i in xrange(lines.num_lines()):
@@ -189,14 +198,13 @@ class CppStyleTestBase(unittest.TestCase):
         Returns:
           The accumulated errors.
         """
-        file_name = 'foo.cpp'
         error_collector = ErrorCollector(self.assert_)
         function_state = cpp_style._FunctionState(self.verbosity)
         lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
         for i in xrange(lines.num_lines()):
-            cpp_style.check_for_function_lengths(file_name, lines, i,
+            cpp_style.check_for_function_lengths(lines, i,
                                                  function_state, error_collector)
         return error_collector.results()
 
@@ -205,10 +213,11 @@ class CppStyleTestBase(unittest.TestCase):
         error_collector = ErrorCollector(self.assert_)
         include_state = cpp_style._IncludeState()
         lines = code.split('\n')
-        cpp_style.remove_multi_line_comments(filename, lines, error_collector)
+        cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
+        file_extension = filename[filename.rfind('.') + 1:]
         for i in xrange(lines.num_lines()):
-            cpp_style.check_language(filename, lines, i, '.h', include_state,
+            cpp_style.check_language(filename, lines, i, file_extension, include_state,
                                      error_collector)
         # We could clear the error_collector here, but this should
         # also be fine, since our IncludeWhatYouUse unittests do not
@@ -232,10 +241,12 @@ class CppStyleTestBase(unittest.TestCase):
         self.assertEquals(expected_message, messages)
 
     def assert_multi_line_lint(self, code, expected_message, file_name='foo.h'):
-        self.assertEquals(expected_message, self.perform_multi_line_lint(code, file_name))
+        file_extension = file_name[file_name.rfind('.') + 1:]
+        self.assertEquals(expected_message, self.perform_multi_line_lint(code, file_extension))
 
     def assert_multi_line_lint_re(self, code, expected_message_re, file_name='foo.h'):
-        message = self.perform_multi_line_lint(code, file_name)
+        file_extension = file_name[file_name.rfind('.') + 1:]
+        message = self.perform_multi_line_lint(code, file_extension)
         if not re.search(expected_message_re, message):
             self.fail('Message was:\n' + message + 'Expected match to "' + expected_message_re + '"')
 

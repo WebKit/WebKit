@@ -300,12 +300,11 @@ class _FunctionState(object):
         if self.in_a_function:
             self.lines_in_function += 1
 
-    def check(self, error, filename, line_number):
+    def check(self, error, line_number):
         """Report if too many lines in function body.
 
         Args:
           error: The function to call with any errors found.
-          filename: The name of the current file.
           line_number: The number of the line to check.
         """
         if match(r'T(EST|est)', self.current_function):
@@ -333,6 +332,16 @@ class _FunctionState(object):
 class _IncludeError(Exception):
     """Indicates a problem with the include order in a file."""
     pass
+
+
+def is_c_or_objective_c(file_extension):
+   """Return whether the file extension corresponds to C or Objective-C.
+
+   Args:
+     file_extension: The file extension without the leading dot.
+
+   """
+   return file_extension in ['c', 'm']
 
 
 class FileInfo:
@@ -488,7 +497,7 @@ def remove_multi_line_comments_from_range(lines, begin, end):
         lines[i] = '// dummy'
 
 
-def remove_multi_line_comments(filename, lines, error):
+def remove_multi_line_comments(lines, error):
     """Removes multiline (c-style) comments from lines."""
     line_index = 0
     while line_index < len(lines):
@@ -607,7 +616,7 @@ def close_expression(clean_lines, line_number, pos):
     return (line, line_number, endpos + 1)
 
 
-def check_for_copyright(filename, lines, error):
+def check_for_copyright(lines, error):
     """Logs an error if no Copyright message appears at the top of the file."""
 
     # We'll say it should occur by line 10. Don't forget there's a
@@ -678,7 +687,7 @@ def check_for_header_guard(filename, lines, error):
               '#ifndef header guard has wrong style, please use: %s' % cppvar)
 
 
-def check_for_unicode_replacement_characters(filename, lines, error):
+def check_for_unicode_replacement_characters(lines, error):
     """Logs an error for each line containing Unicode replacement characters.
 
     These indicate that either the file contained invalid UTF-8 (likely)
@@ -687,7 +696,6 @@ def check_for_unicode_replacement_characters(filename, lines, error):
     UTF-8 occurred adjacent to a newline.
 
     Args:
-      filename: The name of the current file.
       lines: An array of strings, each representing a line of the file.
       error: The function to call with any errors found.
     """
@@ -697,11 +705,10 @@ def check_for_unicode_replacement_characters(filename, lines, error):
                   'Line contains invalid UTF-8 (or Unicode replacement character).')
 
 
-def check_for_new_line_at_eof(filename, lines, error):
+def check_for_new_line_at_eof(lines, error):
     """Logs an error if there is no newline char at the end of the file.
 
     Args:
-      filename: The name of the current file.
       lines: An array of strings, each representing a line of the file.
       error: The function to call with any errors found.
     """
@@ -715,7 +722,7 @@ def check_for_new_line_at_eof(filename, lines, error):
               'Could not find a newline character at the end of the file.')
 
 
-def check_for_multiline_comments_and_strings(filename, clean_lines, line_number, error):
+def check_for_multiline_comments_and_strings(clean_lines, line_number, error):
     """Logs an error if we see /* ... */ or "..." that extend past one line.
 
     /* ... */ comments are legit inside macros, for one line.
@@ -727,7 +734,6 @@ def check_for_multiline_comments_and_strings(filename, clean_lines, line_number,
     in this lint program, so we warn about both.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -770,7 +776,7 @@ _THREADING_LIST = (
     )
 
 
-def check_posix_threading(filename, clean_lines, line_number, error):
+def check_posix_threading(clean_lines, line_number, error):
     """Checks for calls to thread-unsafe functions.
 
     Much code has been originally written without consideration of
@@ -780,7 +786,6 @@ def check_posix_threading(filename, clean_lines, line_number, error):
     posix directly).
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -803,7 +808,7 @@ _RE_PATTERN_INVALID_INCREMENT = re.compile(
     r'^\s*\*\w+(\+\+|--);')
 
 
-def check_invalid_increment(filename, clean_lines, line_number, error):
+def check_invalid_increment(clean_lines, line_number, error):
     """Checks for invalid increment *count++.
 
     For example following function:
@@ -814,7 +819,6 @@ def check_invalid_increment(filename, clean_lines, line_number, error):
     be replaced with ++*count, (*count)++ or *count += 1.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -850,12 +854,11 @@ class _ClassState(object):
     def __init__(self):
         self.classinfo_stack = []
 
-    def check_finished(self, filename, error):
+    def check_finished(self, error):
         """Checks that all classes have been completely parsed.
 
         Call this when all lines in a file have been processed.
         Args:
-          filename: The name of the current file.
           error: The function to call with any errors found.
         """
         if self.classinfo_stack:
@@ -877,7 +880,7 @@ class _FileState(object):
     def did_inside_namespace_indent_warning(self):
         return self._did_inside_namespace_indent_warning
 
-def check_for_non_standard_constructs(filename, clean_lines, line_number,
+def check_for_non_standard_constructs(clean_lines, line_number,
                                       class_state, error):
     """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
 
@@ -898,13 +901,12 @@ def check_for_non_standard_constructs(filename, clean_lines, line_number,
     is very convenient to do so while checking for gcc-2 compliance.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       class_state: A _ClassState instance which maintains information about
                    the current stack of nested class declarations being parsed.
-      error: A callable to which errors are reported, which takes 4 arguments:
-             filename, line number, error level, and message
+      error: A callable to which errors are reported, which takes parameters:
+             line number, error level, and message
     """
 
     # Remove comments from the line, but leave in strings for now.
@@ -1028,11 +1030,10 @@ def check_for_non_standard_constructs(filename, clean_lines, line_number,
         classinfo.brace_depth = brace_depth
 
 
-def check_spacing_for_function_call(filename, line, line_number, error):
+def check_spacing_for_function_call(line, line_number, error):
     """Checks for the correctness of various spacing around function calls.
 
     Args:
-      filename: The name of the current file.
       line: The text of the line to check.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1104,8 +1105,7 @@ def is_blank_line(line):
     return not line or line.isspace()
 
 
-def check_for_function_lengths(filename, clean_lines, line_number,
-                               function_state, error):
+def check_for_function_lengths(clean_lines, line_number, function_state, error):
     """Reports for long function bodies.
 
     For an overview why this is done, see:
@@ -1121,7 +1121,6 @@ def check_for_function_lengths(filename, clean_lines, line_number,
     NOLINT *on the last line of a function* disables this check.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       function_state: Current function name and lines in body so far.
@@ -1168,13 +1167,13 @@ def check_for_function_lengths(filename, clean_lines, line_number,
                   'Lint failed to find start of function body.')
     elif match(r'^\}\s*$', line):  # function end
         if not search(r'\bNOLINT\b', raw_line):
-            function_state.check(error, filename, line_number)
+            function_state.check(error, line_number)
         function_state.end()
     elif not match(r'^\s*$', line):
         function_state.count()  # Count non-blank/non-comment lines.
 
 
-def check_spacing(filename, clean_lines, line_number, error):
+def check_spacing(file_extension, clean_lines, line_number, error):
     """Checks for the correctness of various spacing issues in the code.
 
     Things we check for: spaces around operators, spaces after
@@ -1184,7 +1183,7 @@ def check_spacing(filename, clean_lines, line_number, error):
     blank lines in a row.
 
     Args:
-      filename: The name of the current file.
+      file_extension: The current file extension, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1366,14 +1365,14 @@ def check_spacing(filename, clean_lines, line_number, error):
         error(line_number, 'whitespace/comma', 3,
               'Missing space after ,')
 
-    if filename.endswith('.cpp'):
+    if file_extension == 'cpp':
         # C++ should have the & or * beside the type not the variable name.
         matched = match(r'\s*\w+(?<!\breturn)\s+(?P<pointer_operator>\*|\&)\w+', line)
         if matched:
             error(line_number, 'whitespace/declaration', 3,
                   'Declaration has space between type name and %s in %s' % (matched.group('pointer_operator'), matched.group(0).strip()))
 
-    elif filename.endswith('.c'):
+    elif file_extension == 'c':
         # C Pointer declaration should have the * beside the variable not the type name.
         matched = search(r'^\s*\w+\*\s+\w+', line)
         if matched:
@@ -1381,7 +1380,7 @@ def check_spacing(filename, clean_lines, line_number, error):
                   'Declaration has space between * and variable name in %s' % matched.group(0).strip())
 
     # Next we will look for issues with function calls.
-    check_spacing_for_function_call(filename, line, line_number, error)
+    check_spacing_for_function_call(line, line_number, error)
 
     # Except after an opening paren, you should have spaces before your braces.
     # And since you should never have braces at the beginning of a line, this is
@@ -1446,11 +1445,10 @@ def get_previous_non_blank_line(clean_lines, line_number):
     return ('', -1)
 
 
-def check_namespace_indentation(filename, clean_lines, line_number, file_extension, file_state, error):
+def check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error):
     """Looks for indentation errors inside of namespaces.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       file_extension: The extension (dot not included) of the file.
@@ -1495,18 +1493,18 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
         if current_indentation_level < 0:
             break;
 
-def check_using_std(filename, clean_lines, line_number, error):
+def check_using_std(file_extension, clean_lines, line_number, error):
     """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
 
     Args:
-      filename: The name of the current file.
+      file_extension: The extension of the current file, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
     """
 
     # This check doesn't apply to C or Objective-C implementation files.
-    if filename.endswith('.c') or filename.endswith('.m'):
+    if is_c_or_objective_c(file_extension):
         return
 
     line = clean_lines.elided[line_number] # Get rid of comments and strings.
@@ -1520,18 +1518,18 @@ def check_using_std(filename, clean_lines, line_number, error):
           "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
 
 
-def check_max_min_macros(filename, clean_lines, line_number, error):
+def check_max_min_macros(file_extension, clean_lines, line_number, error):
     """Looks use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
 
     Args:
-      filename: The name of the current file.
+      file_extension: The extension of the current file, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
     """
 
     # This check doesn't apply to C or Objective-C implementation files.
-    if filename.endswith('.c') or filename.endswith('.m'):
+    if is_c_or_objective_c(file_extension):
         return
 
     line = clean_lines.elided[line_number] # Get rid of comments and strings.
@@ -1547,11 +1545,10 @@ def check_max_min_macros(filename, clean_lines, line_number, error):
           % (max_min_macro_lower, max_min_macro_lower, max_min_macro))
 
 
-def check_switch_indentation(filename, clean_lines, line_number, error):
+def check_switch_indentation(clean_lines, line_number, error):
     """Looks for indentation errors inside of switch statements.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1618,11 +1615,10 @@ def check_switch_indentation(filename, clean_lines, line_number, error):
             break
 
 
-def check_braces(filename, clean_lines, line_number, error):
+def check_braces(clean_lines, line_number, error):
     """Looks for misplaced braces (e.g. at the end of line).
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1695,13 +1691,12 @@ def check_braces(filename, clean_lines, line_number, error):
               "You don't need a ; after a }")
 
 
-def check_exit_statement_simplifications(filename, clean_lines, line_number, error):
+def check_exit_statement_simplifications(clean_lines, line_number, error):
     """Looks for else or else-if statements that should be written as an
     if statement when the prior if concludes with a return, break, continue or
     goto statement.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1820,11 +1815,10 @@ def replaceable_check(operator, macro, line):
     return match(match_this, line) and not search(r'NULL|&&|\|\|', line)
 
 
-def check_check(filename, clean_lines, line_number, error):
+def check_check(clean_lines, line_number, error):
     """Checks the use of CHECK and EXPECT macros.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       error: The function to call with any errors found.
@@ -1853,7 +1847,7 @@ def check_check(filename, clean_lines, line_number, error):
             break
 
 
-def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
+def check_for_comparisons_to_zero(clean_lines, line_number, error):
     # Get the line without comments and strings.
     line = clean_lines.elided[line_number]
 
@@ -1863,9 +1857,9 @@ def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
               'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
 
 
-def check_for_null(filename, clean_lines, line_number, error):
+def check_for_null(file_extension, clean_lines, line_number, error):
     # This check doesn't apply to C or Objective-C implementation files.
-    if filename.endswith('.c') or filename.endswith('.m'):
+    if is_c_or_objective_c(file_extension):
         return
 
     line = clean_lines.elided[line_number]
@@ -1906,7 +1900,7 @@ def get_line_width(line):
     return len(line)
 
 
-def check_style(filename, clean_lines, line_number, file_extension, file_state, error):
+def check_style(clean_lines, line_number, file_extension, file_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
     Most of these rules are hard to test (naming, comment style), but we
@@ -1914,7 +1908,6 @@ def check_style(filename, clean_lines, line_number, file_extension, file_state, 
     tab usage, spaces inside code, etc.
 
     Args:
-      filename: The name of the current file.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       file_extension: The extension (without the dot) of the filename.
@@ -1988,16 +1981,16 @@ def check_style(filename, clean_lines, line_number, file_extension, file_state, 
               'operators on the left side of the line instead of the right side.')
 
     # Some more style checks
-    check_namespace_indentation(filename, clean_lines, line_number, file_extension, file_state, error)
-    check_using_std(filename, clean_lines, line_number, error)
-    check_max_min_macros(filename, clean_lines, line_number, error)
-    check_switch_indentation(filename, clean_lines, line_number, error)
-    check_braces(filename, clean_lines, line_number, error)
-    check_exit_statement_simplifications(filename, clean_lines, line_number, error)
-    check_spacing(filename, clean_lines, line_number, error)
-    check_check(filename, clean_lines, line_number, error)
-    check_for_comparisons_to_zero(filename, clean_lines, line_number, error)
-    check_for_null(filename, clean_lines, line_number, error)
+    check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
+    check_using_std(file_extension, clean_lines, line_number, error)
+    check_max_min_macros(file_extension, clean_lines, line_number, error)
+    check_switch_indentation(clean_lines, line_number, error)
+    check_braces(clean_lines, line_number, error)
+    check_exit_statement_simplifications(clean_lines, line_number, error)
+    check_spacing(file_extension, clean_lines, line_number, error)
+    check_check(clean_lines, line_number, error)
+    check_for_comparisons_to_zero(clean_lines, line_number, error)
+    check_for_null(file_extension, clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
@@ -2118,7 +2111,7 @@ def _classify_include(filename, include, is_system, include_state):
 
 
 
-def check_include_line(filename, clean_lines, line_number, include_state, error):
+def check_include_line(filename, file_extension, clean_lines, line_number, include_state, error):
     """Check rules that are applicable to #include lines.
 
     Strings on #include lines are NOT removed from elided line, to make
@@ -2127,6 +2120,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
 
     Args:
       filename: The name of the current file.
+      file_extension: The current file extension, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
       include_state: An _IncludeState instance in which the headers are inserted.
@@ -2181,7 +2175,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
     # 2) for header files: alphabetically sorted
     # The include_state object keeps track of the last type seen
     # and complains if the header types are out of order or missing.
-    error_message = include_state.check_next_include_order(header_type, filename.endswith('.h'))
+    error_message = include_state.check_next_include_order(header_type, file_extension == "h")
 
     # Check to make sure we have a blank line after primary header.
     if not error_message and header_type == _PRIMARY_HEADER:
@@ -2208,7 +2202,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
                       'Alphabetical sorting problem.')
 
     if error_message:
-        if filename.endswith('.h'):
+        if file_extension == 'h':
             error(line_number, 'build/include_order', 4,
                   '%s Should be: alphabetically sorted.' %
                   error_message)
@@ -2241,7 +2235,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
 
     matched = _RE_PATTERN_INCLUDE.search(line)
     if matched:
-        check_include_line(filename, clean_lines, line_number, include_state, error)
+        check_include_line(filename, file_extension, clean_lines, line_number, include_state, error)
         return
 
     # FIXME: figure out if they're using default arguments in fn proto.
@@ -2262,12 +2256,12 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
                   'Use static_cast<%s>(...) instead' %
                   matched.group(1))
 
-    check_c_style_cast(filename, line_number, line, clean_lines.raw_lines[line_number],
+    check_c_style_cast(line_number, line, clean_lines.raw_lines[line_number],
                        'static_cast',
                        r'\((int|float|double|bool|char|u?int(16|32|64))\)',
                        error)
     # This doesn't catch all cases.  Consider (const char * const)"hello".
-    check_c_style_cast(filename, line_number, line, clean_lines.raw_lines[line_number],
+    check_c_style_cast(line_number, line, clean_lines.raw_lines[line_number],
                        'reinterpret_cast', r'\((\w+\s?\*+\s?)\)', error)
 
     # In addition, we look for people taking the address of a cast.  This
@@ -2529,14 +2523,13 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
         line = line[matched.end():]
 
 
-def check_c_style_cast(filename, line_number, line, raw_line, cast_type, pattern,
+def check_c_style_cast(line_number, line, raw_line, cast_type, pattern,
                        error):
     """Checks for a C-style cast by looking for the pattern.
 
     This also handles sizeof(type) warnings, due to similarity of content.
 
     Args:
-      filename: The name of the current file.
       line_number: The number of the line to check.
       line: The line of code to check.
       raw_line: The raw line of code to check, with comments.
@@ -2841,22 +2834,21 @@ def process_line(filename, file_extension,
                    the current stack of nested class declarations being parsed.
       file_state: A _FileState instance which maintains information about
                   the state of things in the file.
-      error: A callable to which errors are reported, which takes 4 arguments:
-             filename, line number, error level, and message
+      error: A callable to which errors are reported, which takes arguments:
+             line number, error level, and message
 
     """
     raw_lines = clean_lines.raw_lines
-    check_for_function_lengths(filename, clean_lines, line, function_state, error)
+    check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
-    check_for_multiline_comments_and_strings(filename, clean_lines, line, error)
-    check_style(filename, clean_lines, line, file_extension, file_state, error)
+    check_for_multiline_comments_and_strings(clean_lines, line, error)
+    check_style(clean_lines, line, file_extension, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
                    error)
-    check_for_non_standard_constructs(filename, clean_lines, line,
-                                      class_state, error)
-    check_posix_threading(filename, clean_lines, line, error)
-    check_invalid_increment(filename, clean_lines, line, error)
+    check_for_non_standard_constructs(clean_lines, line, class_state, error)
+    check_posix_threading(clean_lines, line, error)
+    check_invalid_increment(clean_lines, line, error)
 
 
 def _process_lines(filename, file_extension, lines, error, verbosity):
@@ -2877,25 +2869,25 @@ def _process_lines(filename, file_extension, lines, error, verbosity):
     class_state = _ClassState()
     file_state = _FileState()
 
-    check_for_copyright(filename, lines, error)
+    check_for_copyright(lines, error)
 
     if file_extension == 'h':
         check_for_header_guard(filename, lines, error)
 
-    remove_multi_line_comments(filename, lines, error)
+    remove_multi_line_comments(lines, error)
     clean_lines = CleansedLines(lines)
     for line in xrange(clean_lines.num_lines()):
         process_line(filename, file_extension, clean_lines, line,
                      include_state, function_state, class_state, file_state, error)
-    class_state.check_finished(filename, error)
+    class_state.check_finished(error)
 
     check_for_include_what_you_use(filename, clean_lines, include_state, error)
 
     # We check here rather than inside process_line so that we see raw
     # lines rather than "cleaned" lines.
-    check_for_unicode_replacement_characters(filename, lines, error)
+    check_for_unicode_replacement_characters(lines, error)
 
-    check_for_new_line_at_eof(filename, lines, error)
+    check_for_new_line_at_eof(lines, error)
 
 
 class CppProcessor(object):
