@@ -1,3 +1,14 @@
+2010-01-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r54022.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObjectImp::createStructure):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapRuntimeObjectImp::createStructure):
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructure):
+
 2010-01-28  Adam Roben  <aroben@apple.com>
 
         Fix an assertion beneath SerializedScriptValue::deserialize on 32-bit
