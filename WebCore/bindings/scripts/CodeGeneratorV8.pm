@@ -1491,7 +1491,8 @@ sub GenerateImplementation
 
         # Generate special code for the constructor attributes.
         if ($attrType =~ /Constructor$/) {
-            if ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
+            if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
+                $attribute->signature->extendedAttributes->{"V8CustomGetter"}) {
                 $implIncludes{"V8CustomBinding.h"} = 1;
             } else {
                 $hasConstructors = 1;
@@ -1513,7 +1514,8 @@ sub GenerateImplementation
         }
 
         # Generate the accessor.
-        if ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
+        if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
+            $attribute->signature->extendedAttributes->{"V8CustomGetter"}) {
             $implIncludes{"V8CustomBinding.h"} = 1;
         } else {
             GenerateNormalAttrGetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
