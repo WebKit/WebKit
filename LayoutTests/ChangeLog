@@ -1,3 +1,16 @@
+2010-01-28  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Android] [Qt] Touch event page co-ordinates are incorrect when touch is received in an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=34162
+
+        Update the existing iframe touch event test to also examine the page co-ordinates of the touch that is received.
+
+        * fast/events/touch/resources/touch-inside-iframe2.html:
+        * fast/events/touch/touch-inside-iframe-expected.txt:
+        * fast/events/touch/touch-inside-iframe.html:
+
 2010-01-28  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Can DnD files to our filechooser widget (<input type="file">)

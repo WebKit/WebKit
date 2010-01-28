@@ -1,31 +1,42 @@
 <html>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-post-function.js"></script>
+<body>
+<iframe style="position:absolute; top:100px; left:100px;" src="./resources/touch-inside-iframe2.html"></iframe>
+<p id="description"></p>
+<div id="console"></div>
 <script type="text/javascript">
-if (window.layoutTestController)
+description('Test iframes receive touches correctly.');
+
+var touch = null;
+
+function testComplete(event)
 {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    touch = event.touches[0];
+    shouldBe("touch.pageX", "50");
+    shouldBe("touch.pageY", "50");
+    isSuccessfullyParsed();
+    layoutTestController.notifyDone();
 }
 
-function runTest()
-{
-    if (window.eventSender)
-    {
-        eventSender.addTouchPoint(50, 150);
+function runTest() {
+    if (window.eventSender) {
+        // Touch the center of the div in the iframe.
+        // 100px is offset to iframe in main frame,
+        // 2px for the iframe border, 50px to get to centre of the div.
+        eventSender.addTouchPoint(152, 152);
         eventSender.touchStart();
+    } else {
+       debug('This test requires DRT.');
     }
 }
 
-function testComplete()
-{
-    document.getElementById('console').innerText = 'PASS';
-    layoutTestController.notifyDone();
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
 }
+
+var successfullyParsed = true;
 </script>
-<body onload="runTest();">
-<p>Test that touch events are sent to iframes that listen for them even if the parent frame does not listen for them.</p>
-<div id="console">
-<p>FAIL - no touchstart received!</p>
-</div>
-<iframe src="./resources/touch-inside-iframe2.html" />
 </body>
 </html>

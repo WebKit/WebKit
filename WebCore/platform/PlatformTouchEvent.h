@@ -56,7 +56,7 @@ public:
 #if PLATFORM(QT)
     PlatformTouchEvent(QTouchEvent*);
 #elif PLATFORM(ANDROID)
-    PlatformTouchEvent(const IntPoint& absolutePagePos, TouchEventType, PlatformTouchPoint::State);
+    PlatformTouchEvent(const IntPoint& windowPos, TouchEventType, PlatformTouchPoint::State);
 #endif
 
     TouchEventType type() const { return m_type; }

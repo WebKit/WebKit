@@ -1,3 +1,22 @@
+2010-01-28  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Android] [Qt] Touch event page co-ordinates are incorrect when touch is received in an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=34162
+
+        The pageX/pageY co-ordinates of a touch event should be relative to the containing frame, not the main frame. This change implements that and also updates the existing touch-inside-iframe test to also examine the page co-ordinates.
+
+        * dom/Touch.cpp:
+        (WebCore::Touch::Touch): Remove dead code.
+        * dom/Touch.h: Remove dead code.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Rename framePoint to pagePoint, as it seems a clearer name. Also adjust the pagePoint to be relative to the touch target element's containing frame rather than the main frame.
+        * platform/PlatformTouchEvent.h: Rename Android specific constructor parameter to better reflect it's contents.
+        * platform/PlatformTouchPoint.h: Ditto.
+        * platform/android/PlatformTouchEventAndroid.cpp: Ditto.
+        * platform/android/PlatformTouchPointAndroid.cpp: Ditto.
+
 2010-01-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

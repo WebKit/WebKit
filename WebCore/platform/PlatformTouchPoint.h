@@ -47,7 +47,7 @@ public:
 #if PLATFORM(QT)
     PlatformTouchPoint(const QTouchEvent::TouchPoint&);
 #elif PLATFORM(ANDROID)
-    PlatformTouchPoint(const IntPoint& absolutePagePos, State);
+    PlatformTouchPoint(const IntPoint& windowPos, State);
 #endif
 
     int id() const { return m_id; }

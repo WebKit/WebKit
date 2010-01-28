@@ -1,4 +1,12 @@
-Test that touch events are sent to iframes that listen for them even if the parent frame does not listen for them.
 
-PASS
+Test iframes receive touches correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS touch.pageX is 50
+PASS touch.pageY is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
