@@ -86,7 +86,8 @@ KURL::operator QUrl() const
 #else
     // Qt 4.5 or later
     // No need for special encoding
-    QByteArray ba = m_string.utf8().data();
+    QString str = QString::fromRawData(reinterpret_cast<const QChar*>(m_string.characters()), m_string.length());
+    QByteArray ba = str.toUtf8();
 #endif
 
     QUrl url = QUrl::fromEncoded(ba);

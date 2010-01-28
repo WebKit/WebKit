@@ -1,3 +1,19 @@
+2010-01-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Speed up KURL to QUrl conversion
+        https://bugs.webkit.org/show_bug.cgi?id=33873
+
+        The WebCore::String::utf8 method will use the generic WebCore::TextCodec
+        and then call the encode method on it. In QtWebKit this class is implemented
+        around the QTextCodec class. Instead of going the generic codec way we treat
+        the WebCore::String as a QString (no copying) and then use the built-in
+        QString::toUtf8 to do the conversion.
+
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::operator QUrl):
+
 2010-01-28  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
