@@ -49,6 +49,7 @@
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
 #include "WebScrollBar.h"
+#include "WebSerializedJSValue.h"
 #include "WebTextRenderer.h"
 #include "WebURLCredential.h"
 #include "WebURLProtectionSpace.h"

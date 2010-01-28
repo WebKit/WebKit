@@ -1,3 +1,14 @@
+2010-01-27  Adam Roben  <aroben@apple.com>
+
+        Make it possible to instantiate WebSerializedJSValue using
+        WebKitCreateInstance
+
+        Reviewed by Dave Hyatt.
+
+        * ForEachCoClass.h:
+        * WebKitClassFactory.cpp:
+        Added WebSerializedJSValue.
+
 2010-01-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver Hunt.
