@@ -312,7 +312,8 @@ public:
 private:
     const TextRun& getTextRun(const TextRun& originalRun)
     {
-        // Convert the |originalRun| to NFC normalized form if combining diacritical marks
+        // Normalize the text run in two ways:
+        // 1) Convert the |originalRun| to NFC normalized form if combining diacritical marks
         // (U+0300..) are used in the run. This conversion is necessary since most OpenType
         // fonts (e.g., Arial) don't have substitution rules for the diacritical marks in
         // their GSUB tables.
@@ -321,9 +322,12 @@ private:
         // the API returns FALSE (= not normalized) for complex runs that don't require NFC
         // normalization (e.g., Arabic text). Unless the run contains the diacritical marks,
         // Harfbuzz will do the same thing for us using the GSUB table.
+        // 2) Convert spacing characters into plain spaces, as some fonts will provide glyphs
+        // for characters like '\n' otherwise.
         for (unsigned i = 0; i < originalRun.length(); ++i) {
-            UBlockCode block = ::ublock_getCode(originalRun[i]);
-            if (block == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
+            UChar ch = originalRun[i];
+            UBlockCode block = ::ublock_getCode(ch);
+            if (block == UBLOCK_COMBINING_DIACRITICAL_MARKS || (Font::treatAsSpace(ch) && ch != ' ')) {
                 return getNormalizedTextRun(originalRun);
             }
         }
@@ -341,6 +345,11 @@ private:
         m_normalizedBuffer.set(new UChar[normalizedString.length() + 1]);
         normalizedString.extract(m_normalizedBuffer.get(), normalizedString.length() + 1, error);
         ASSERT(U_SUCCESS(error));
+
+        for (unsigned i = 0; i < normalizedString.length(); ++i) {
+            if (Font::treatAsSpace(m_normalizedBuffer[i]))
+                m_normalizedBuffer[i] = ' ';
+        }
 
         m_normalizedRun.set(new TextRun(originalRun));
         m_normalizedRun->setText(m_normalizedBuffer.get(), normalizedString.length());

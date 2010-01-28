@@ -1,3 +1,27 @@
+2010-01-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] complex text draws newlines as bells
+        https://bugs.webkit.org/show_bug.cgi?id=34186
+
+        Revert r45496 -- once we've got a glyph array, it is too late to normalize
+        because we could have had multiple codepoints combine into one glyph.  The
+        Uniscribe code it mentions it's duplicating uses the log cluster map to fix
+        this.
+
+        Instead, we just normalize the input text if it contains any non-ascii-space
+        whitespace.
+
+        This fixes fast/text/international/hindi-whitespace, which currently has an
+        incorrect baseline containing a square box glyph.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::getTextRun):
+        (WebCore::TextRunWalker::getNormalizedTextRun):
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::stringToGlyphs):
+
 2010-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
