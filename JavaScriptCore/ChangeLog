@@ -1,5 +1,11 @@
 2010-01-27  Oliver Hunt  <oliver@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-01-27  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         MessageEvent.data should deserialize in the context of the MessageEvent's global object
