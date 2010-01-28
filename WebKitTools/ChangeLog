@@ -1,3 +1,9 @@
+2010-01-27  Martin Robinson  <mrobinson@webkit.org>
+
+        Adding myself to the committer list. No review necessary.
+
+        * Scripts/webkitpy/committers.py:
+
 2010-01-27  George Wright  <gwright@rim.com>
 
         Reviewed by Adam Treat.
