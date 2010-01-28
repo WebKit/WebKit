@@ -3282,7 +3282,7 @@ void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode()) {
         if ((isStackingContext() && m_zOrderListsDirty) || m_normalFlowListDirty)
-            compositor()->updateCompositingLayers(this);
+            compositor()->updateCompositingLayers(CompositingUpdateOnPaitingOrHitTest, this);
         return;
     }
 #endif

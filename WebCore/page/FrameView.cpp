@@ -444,7 +444,7 @@ void FrameView::updateCompositingLayers()
     if (!view->usesCompositing())
         return;
 
-    view->compositor()->updateCompositingLayers();
+    view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
 }
 
 void FrameView::setNeedsOneShotDrawingSynchronization()
@@ -940,22 +940,17 @@ void FrameView::scrollPositionChanged()
 {
     frame()->eventHandler()->sendScrollEvent();
 
-#if USE(ACCELERATED_COMPOSITING)
-    // We need to update layer positions after scrolling to account for position:fixed layers.
-    Document* document = m_frame->document();
-    if (!document)
-        return;
-
-    RenderLayer* layer = document->renderer() ? document->renderer()->enclosingLayer() : 0;
-    if (layer)
-        layer->updateLayerPositions(RenderLayer::UpdateCompositingLayers);
-#endif
-
-    // Update widget positions to take care of widgets inside fixed position elements,
+    // For fixed position elements, update widget positions and compositing layers after scrolling,
     // but only if we're not inside of layout.
+    // FIXME: we could skip this if we knew the page had no fixed position elements.
     if (!m_nestedLayoutCount) {
-        if (RenderView* root = m_frame->contentRenderer())
+        if (RenderView* root = m_frame->contentRenderer()) {
             root->updateWidgetPositions();
+#if USE(ACCELERATED_COMPOSITING)
+            if (root->usesCompositing())
+                root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
+#endif
+        }
     }
 }
 

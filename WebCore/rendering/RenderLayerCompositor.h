@@ -38,6 +38,12 @@ class GraphicsLayer;
 class RenderVideo;
 #endif
 
+enum CompositingUpdateType {
+    CompositingUpdateAfterLayoutOrStyleChange,
+    CompositingUpdateOnPaitingOrHitTest,
+    CompositingUpdateOnScroll
+};
+
 // RenderLayerCompositor manages the hierarchy of
 // composited RenderLayers. It determines which RenderLayers
 // become compositing, and creates and maintains a hierarchy of
@@ -47,7 +53,6 @@ class RenderVideo;
 
 class RenderLayerCompositor {
 public:
-
     RenderLayerCompositor(RenderView*);
     ~RenderLayerCompositor();
     
@@ -80,7 +85,7 @@ public:
     void scheduleSync();
     
     // Rebuild the tree of compositing layers
-    void updateCompositingLayers(RenderLayer* updateRoot = 0);
+    void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
 
     // Update the compositing state of the given layer. Returns true if that state changed.
     enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };

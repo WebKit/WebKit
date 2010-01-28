@@ -152,16 +152,30 @@ void RenderLayerCompositor::scheduleSync()
     page->chrome()->client()->scheduleCompositingLayerSync();
 }
 
-void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
+void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
-    // When m_compositingConsultsOverlap is true, then layer positions affect compositing,
-    // so we can only bail here when we're not looking at overlap.
-    if (!m_compositingLayersNeedRebuild && !m_compositingConsultsOverlap)
+    bool checkForHierarchyUpdate = false;
+    bool needGeometryUpdate = false;
+    
+    switch (updateType) {
+    case CompositingUpdateAfterLayoutOrStyleChange:
+    case CompositingUpdateOnPaitingOrHitTest:
+        checkForHierarchyUpdate = true;
+        break;
+    case CompositingUpdateOnScroll:
+        if (m_compositingConsultsOverlap)
+            checkForHierarchyUpdate = true; // Overlap can change with scrolling, so need to check for hierarchy updates.
+
+        needGeometryUpdate = true;
+        break;
+    }
+
+    if (!checkForHierarchyUpdate && !needGeometryUpdate)
         return;
 
     ASSERT(inCompositingMode());
 
-    bool needLayerRebuild = m_compositingLayersNeedRebuild;
+    bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
     if (!updateRoot) {
         // Only clear the flag if we're updating the entire hierarchy.
         m_compositingLayersNeedRebuild = false;
@@ -174,24 +188,22 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
     double startTime = WTF::currentTime();
 #endif        
 
-    // Go through the layers in presentation order, so that we can compute which
-    // RLs need compositing layers.
-    // FIXME: we could maybe do this in one pass, but the parenting logic would be more
-    // complex.
-    {
+    if (checkForHierarchyUpdate) {
+        // Go through the layers in presentation order, so that we can compute which RenderLayers need compositing layers.
+        // FIXME: we could maybe do this and the hierarchy udpate in one pass, but the parenting logic would be more complex.
         CompositingState compState(updateRoot);
-        bool layersChanged;
+        bool layersChanged = false;
         if (m_compositingConsultsOverlap) {
             OverlapMap overlapTestRequestMap;
             computeCompositingRequirements(updateRoot, &overlapTestRequestMap, compState, layersChanged);
         } else
             computeCompositingRequirements(updateRoot, 0, compState, layersChanged);
         
-        needLayerRebuild |= layersChanged;
+        needHierarchyUpdate |= layersChanged;
     }
 
-    if (needLayerRebuild) {
-        // Now updated and parent the compositing layers.
+    if (needHierarchyUpdate) {
+        // Update the hierarchy of the compositing layers.
         CompositingState compState(updateRoot);
         Vector<GraphicsLayer*> childList;
         rebuildCompositingLayerTree(updateRoot, compState, childList);
@@ -199,8 +211,9 @@ void RenderLayerCompositor::updateCompositingLayers(RenderLayer* updateRoot)
         // Host the document layer in the RenderView's root layer.
         if (updateRoot == rootRenderLayer() && !childList.isEmpty())
             m_rootPlatformLayer->setChildren(childList);
-    } else {
-        // We just need to do a geometry update.
+    } else if (needGeometryUpdate) {
+        // We just need to do a geometry update. This is only used for position:fixed scrolling;
+        // most of the time, geometry is updated via RenderLayer::styleChanged().
         updateLayerTreeGeometry(updateRoot);
     }
     

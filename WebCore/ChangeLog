@@ -1,3 +1,30 @@
+2010-01-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Video can overlap position:fixed element when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=32180
+        
+        When the scroll position changes, and we're using overlap to decide what gets composited,
+        then we need to re-evaluate what gets compositing when scrolling in case fixed postion elements
+        overlap composited elements (e.g. video).
+
+        Test: compositing/geometry/video-fixed-scrolling.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+        (WebCore::FrameView::scrollPositionChanged): Annotate the calls to updateCompositingLayers()
+        with the type of change that occurred.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateCompositingAndLayerListsIfNeeded): Ditto.
+        
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): For scroll changes, check
+        for hierarchy update if m_compositingConsultsOverlap is true, and do
+        a geometry update. For other changes, always check for hierarchy updates.
+
 2010-01-27  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
