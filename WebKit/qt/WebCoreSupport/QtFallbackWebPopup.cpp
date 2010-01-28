@@ -134,7 +134,9 @@ void QtFallbackWebPopup::populate()
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
     Q_ASSERT(model);
 
+#if !defined(Q_WS_S60) && !defined(Q_WS_MAEMO_5)
     m_combo->setFont(font());
+#endif
     for (int i = 0; i < itemCount(); ++i) {
         switch (itemType(i)) {
         case Separator:

@@ -1,3 +1,13 @@
+2010-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Do not set the combobox font on Maemo5 and S60; use the
+        default instead.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::populate):
+
 2010-01-28  Trond Kjernåsen <trond@trolltech.com>
 
         Reviewed by Simon Hausmann.
