@@ -1,3 +1,17 @@
+2010-01-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Add platform specific failing Windows results for two recently
+        added tests. I will comment on their originating bugs saying that
+        failing results were landed for Windows.
+        
+        <https://bugs.webkit.org/show_bug.cgi?id=29564>
+        <https://bugs.webkit.org/show_bug.cgi?id=32696>
+
+        * platform/win/fast/css/button-height-expected.txt: Added.
+        * platform/win/fast/forms/input-valueasnumber-datetime-expected.txt: Added.
+
 2010-01-27  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
