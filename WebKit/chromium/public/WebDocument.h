@@ -68,6 +68,7 @@ public:
     WEBKIT_API WebNodeCollection all();
     WEBKIT_API WebURL completeURL(const WebString&) const;
     WEBKIT_API WebElement getElementById(const WebString& id) const;
+    WEBKIT_API WebString applicationID() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);

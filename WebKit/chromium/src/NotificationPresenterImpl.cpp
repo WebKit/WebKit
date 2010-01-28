@@ -33,12 +33,15 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "Document.h"
 #include "Notification.h"
 #include "SecurityOrigin.h"
 
+#include "WebDocument.h"
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebNotificationPresenter.h"
+#include "WebURL.h"
 
 #include <wtf/PassRefPtr.h>
 
@@ -89,9 +92,13 @@ void NotificationPresenterImpl::notificationObjectDestroyed(Notification* notifi
     m_presenter->objectDestroyed(PassRefPtr<Notification>(notification));
 }
 
-NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(SecurityOrigin* origin)
+NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(const KURL& url, Document* document)
 {
-    int result = m_presenter->checkPermission(origin->toString());
+    WebDocument webDocument;
+    if (document)
+        webDocument = document;
+
+    int result = m_presenter->checkPermission(url, document ? &webDocument : 0);
     return static_cast<NotificationPresenter::Permission>(result);
 }
 
