@@ -1,3 +1,12 @@
+2010-01-28  Trond Kjernåsen <trond@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix for endless print loop when printing web pages
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+
 2010-01-27  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

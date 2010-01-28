@@ -1393,6 +1393,11 @@ void QWebFrame::print(QPrinter *printer) const
     // paranoia check
     fromPage = qMax(1, fromPage);
     toPage = qMin(printContext.pageCount(), toPage);
+    if (toPage < fromPage) {
+        // if the user entered a page range outside the actual number
+        // of printable pages, just return
+        return;
+    }
 
     if (printer->pageOrder() == QPrinter::LastPageFirst) {
         int tmp = fromPage;
