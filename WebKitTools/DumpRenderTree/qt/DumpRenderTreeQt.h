@@ -115,10 +115,6 @@ Q_SIGNALS:
     void quit();
     void ready();
 
-private Q_SLOTS:
-    void showPage();
-    void hidePage();
-
 private:
     QString dumpFramesAsText(QWebFrame* frame);
     QString dumpBackForwardList();

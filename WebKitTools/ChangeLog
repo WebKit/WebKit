@@ -1,3 +1,15 @@
+2010-01-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed, roll out r54000.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        (LayoutTestController::display):
+
 2010-01-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

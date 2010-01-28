@@ -75,9 +75,6 @@ protected:
 signals:
     void done();
 
-    void showPage();
-    void hidePage();
-
 public slots:
     void maybeDump(bool ok);
     void dumpAsText() { m_textDump = true; }
@@ -103,7 +100,7 @@ public slots:
     void provisionalLoad();
     void setCloseRemainingWindowsWhenComplete(bool = false) {}
     int windowCount();
-    void display();
+    void display() {}
     void clearBackForwardList();
     QString pathToLocalResource(const QString& url);
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
