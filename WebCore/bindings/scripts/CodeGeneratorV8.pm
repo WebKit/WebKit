@@ -1238,7 +1238,7 @@ sub GenerateSingleBatchedAttribute
         }
 
         # Custom Getter
-        if ($attrExt->{"CustomGetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+        if ($attrExt->{"CustomGetter"} || $attrExt->{"V8CustomGetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
             $getter = "V8${customAccessor}AccessorGetter";
         }
     }

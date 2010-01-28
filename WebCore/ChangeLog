@@ -1,3 +1,9 @@
+2010-01-27  Darin Fisher  <darin@chromium.org>
+
+        Fix chromium build bustage.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Treat V8CustomGetter like CustomGetter in all cases.
+
 2010-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
