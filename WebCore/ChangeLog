@@ -1,3 +1,45 @@
+2010-01-27  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for user stylesheet bugs where they get parsed using the wrong compatibility mode.  This was a regression
+        caused from Safari 3 -> 4 by the Acid3 fixes to create a real DOCTYPE in the DOM.
+
+        This patch makes style selector creation lazy, so that the selector isn't built unless someone asks for it.
+
+        In order to avoid creating the style selector before the compatibility mode has been determined, document
+        style is now created without having a dependence on an instantiated style selector.  The creation of the style
+        is now done as a static method on CSSStyleSelector called styleForDocument, and a couple of font-related
+        functions have been made static as well so that they can be used by this method.
+
+        m_styleSelector on Document is now an OwnPtr.
+
+        Added userscripts/mixed-case-stylesheet.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange):
+        (WebCore::CSSStyleSelector::setFontSize):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        (WebCore::CSSStyleSelector::fontSizeForKeyword):
+        * css/CSSStyleSelector.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::createStyleSelector):
+        (WebCore::Document::attach):
+        (WebCore::Document::setVisuallyOrdered):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::styleSelector):
+        (WebCore::Document::visuallyOrdered):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::determineParseMode):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+
 2010-01-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

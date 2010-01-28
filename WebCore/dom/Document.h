@@ -375,7 +375,12 @@ public:
 #endif
     virtual bool isFrameSet() const { return false; }
     
-    CSSStyleSelector* styleSelector() const { return m_styleSelector; }
+    CSSStyleSelector* styleSelector()
+    { 
+        if (!m_styleSelector)
+            createStyleSelector();
+        return m_styleSelector.get();
+    }
 
     Element* getElementByAccessKey(const String& key) const;
     
@@ -479,6 +484,7 @@ public:
     
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
+    bool visuallyOrdered() const { return m_visuallyOrdered; }
 
     void open(Document* ownerDocument = 0);
     void implicitOpen();
@@ -937,8 +943,6 @@ public:
 protected:
     Document(Frame*, bool isXHTML, bool isHTML);
 
-    void setStyleSelector(CSSStyleSelector* styleSelector) { m_styleSelector = styleSelector; }
-
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
@@ -972,7 +976,9 @@ private:
 
     void cacheDocumentElement() const;
 
-    CSSStyleSelector* m_styleSelector;
+    void createStyleSelector();
+
+    OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
 
     Frame* m_frame;
@@ -1057,7 +1063,7 @@ private:
     String m_selectedStylesheetSet;
 
     bool m_loadingSheet;
-    bool visuallyOrdered;
+    bool m_visuallyOrdered;
     bool m_bParsing;
     Timer<Document> m_styleRecalcTimer;
     bool m_inStyleRecalc;

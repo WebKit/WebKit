@@ -92,6 +92,8 @@ public:
 
         PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
 
+        static PassRefPtr<RenderStyle> styleForDocument(Document*);
+
 #if ENABLE(DATAGRID)
         // Datagrid style computation (uses unique pseudo elements and structures)
         PassRefPtr<RenderStyle> pseudoStyleForDataGridColumn(DataGridColumn*, RenderStyle* parentStyle);
@@ -112,8 +114,8 @@ public:
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
-        float fontSizeForKeyword(int keyword, bool quirksMode, bool monospace) const;
-
+        static float fontSizeForKeyword(Document*, int keyword, bool monospace);
+        
     private:
         // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
         // table, and failing that, will simply multiply by 1.2.
@@ -129,7 +131,7 @@ public:
         void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
 
     private:
-        float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
+        static float getComputedSizeFromSpecifiedSize(Document*, bool isAbsoluteSize, float specifiedSize, float zoomFactor = 1.0f);
 
     public:
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*);

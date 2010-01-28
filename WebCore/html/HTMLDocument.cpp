@@ -398,8 +398,11 @@ void HTMLDocument::determineParseMode()
         }
     }
     
-    if (inCompatMode() != wasInCompatMode)
+    if (inCompatMode() != wasInCompatMode) {
+        clearPageUserSheet();
+        clearPageGroupUserSheets();
         updateStyleSelector();
+    }
 }
 
 void HTMLDocument::clear()
