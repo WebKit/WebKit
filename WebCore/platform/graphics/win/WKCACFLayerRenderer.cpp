@@ -43,7 +43,11 @@
 
 #pragma comment(lib, "d3d9")
 #pragma comment(lib, "d3dx9")
+#ifdef DEBUG_ALL
+#pragma comment(lib, "QuartzCore_debug")
+#else
 #pragma comment(lib, "QuartzCore")
+#endif
 
 static IDirect3D9* s_d3d = 0;
 static IDirect3D9* d3d()

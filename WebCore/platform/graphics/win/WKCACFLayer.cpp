@@ -37,7 +37,11 @@
 #include <QuartzCore/CARender.h>
 #include <QuartzCoreInterface/QuartzCoreInterface.h>
 
+#ifdef DEBUG_ALL
+#pragma comment(lib, "QuartzCore_debug")
+#else
 #pragma comment(lib, "QuartzCore")
+#endif
 #pragma comment(lib, "QuartzCoreInterface")
 
 namespace WebCore {

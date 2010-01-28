@@ -1,3 +1,10 @@
+2010-01-27  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows Debug_All build fix.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+
 2010-01-27  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
