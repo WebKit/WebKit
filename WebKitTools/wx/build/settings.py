@@ -127,7 +127,6 @@ webcore_dirs = [
     'platform/image-decoders/ico', 
     'platform/image-decoders/jpeg', 
     'platform/image-decoders/png',
-    'platform/image-decoders/zlib',
     'platform/mock',
     'platform/network', 
     'platform/sql', 
