@@ -328,6 +328,9 @@ DumpRenderTree::DumpRenderTree()
     // create our controllers. This has to be done before connectFrame,
     // as it exports there to the JavaScript DOM window.
     m_controller = new LayoutTestController(this);
+    connect(m_controller, SIGNAL(showPage()), this, SLOT(showPage()));
+    connect(m_controller, SIGNAL(hidePage()), this, SLOT(hidePage()));
+
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
     m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
@@ -527,6 +530,18 @@ void DumpRenderTree::initJSObjects()
     frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
+}
+
+void DumpRenderTree::showPage()
+{
+    m_mainView->show();
+    QCoreApplication::processEvents();
+}
+
+void DumpRenderTree::hidePage()
+{
+    m_mainView->hide();
+    QCoreApplication::processEvents();
 }
 
 
