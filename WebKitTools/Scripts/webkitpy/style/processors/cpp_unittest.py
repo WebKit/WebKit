@@ -1167,10 +1167,16 @@ class CppStyleTest(CppStyleTestBase):
                          '  [whitespace/parens] [5]')
         self.assert_lint('for (foo; ba; bar ) {', 'Mismatching spaces inside () in for'
                          '  [whitespace/parens] [5]')
+        self.assert_lint('for ((foo); (ba); (bar) ) {', 'Mismatching spaces inside () in for'
+                         '  [whitespace/parens] [5]')
         self.assert_lint('for (; foo; bar) {', '')
+        self.assert_lint('for (; (foo); (bar)) {', '')
         self.assert_lint('for ( ; foo; bar) {', '')
+        self.assert_lint('for ( ; (foo); (bar)) {', '')
         self.assert_lint('for ( ; foo; bar ) {', '')
+        self.assert_lint('for ( ; (foo); (bar) ) {', '')
         self.assert_lint('for (foo; bar; ) {', '')
+        self.assert_lint('for ((foo); (bar); ) {', '')
         self.assert_lint('foreach (foo, foos ) {', 'Mismatching spaces inside () in foreach'
                          '  [whitespace/parens] [5]')
         self.assert_lint('foreach ( foo, foos) {', 'Mismatching spaces inside () in foreach'
@@ -2998,12 +3004,15 @@ class WebKitStyleTest(CppStyleTestBase):
             '        doIt();\n',
             '')
         self.assert_multi_line_lint(
+            '    if (condition) \\\n'
+            '        doIt();\n',
+            '')
+        self.assert_multi_line_lint(
             '    x++; y++;',
             'More than one command on the same line  [whitespace/newline] [4]')
-        # FIXME: Make this fail.
-        # self.assert_multi_line_lint(
-        #     '    if (condition) doIt();\n',
-        #     '')
+        self.assert_multi_line_lint(
+            '    if (condition) doIt();\n',
+            'More than one command on the same line in if  [whitespace/parens] [4]')
 
         # 2. An else statement should go on the same line as a preceding
         #   close brace if one is present, else it should line up with the
@@ -3035,6 +3044,13 @@ class WebKitStyleTest(CppStyleTestBase):
             '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
             '')
         self.assert_multi_line_lint(
+            '#define TEST_ASSERT(expression) do { if ( !(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
+            'Mismatching spaces inside () in if  [whitespace/parens] [5]')
+        # FIXME: currently we only check first conditional, so we cannot detect errors in next ones.
+        # self.assert_multi_line_lint(
+        #     '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0 )\n',
+        #     'Mismatching spaces inside () in if  [whitespace/parens] [5]')
+        self.assert_multi_line_lint(
             'if (condition) {\n'
             '    doSomething();\n'
             '    doSomethingAgain();\n'
@@ -3047,13 +3063,14 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint(
             'if (condition) doSomething(); else doSomethingElse();\n',
             ['More than one command on the same line  [whitespace/newline] [4]',
-             'Else clause should never be on same line as else (use 2 lines)  [whitespace/newline] [4]'])
-        # FIXME: Make this fail.
-        # self.assert_multi_line_lint(
-        #     'if (condition) doSomething(); else {\n'
-        #     '    doSomethingElse();\n'
-        #     '}\n',
-        #     '')
+             'Else clause should never be on same line as else (use 2 lines)  [whitespace/newline] [4]',
+             'More than one command on the same line in if  [whitespace/parens] [4]'])
+        self.assert_multi_line_lint(
+            'if (condition) doSomething(); else {\n'
+            '    doSomethingElse();\n'
+            '}\n',
+            ['More than one command on the same line in if  [whitespace/parens] [4]',
+             'One line control clauses should not use braces.  [whitespace/braces] [4]'])
 
         # 3. An else if statement should be written as an if statement
         #    when the prior if concludes with a return statement.

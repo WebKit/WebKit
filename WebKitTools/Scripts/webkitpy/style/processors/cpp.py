@@ -152,6 +152,31 @@ def subn(pattern, replacement, s):
     return _regexp_compile_cache[pattern].subn(replacement, s)
 
 
+def up_to_unmatched_closing_paren(s):
+    """Splits a string into two parts up to first unmatched ')'.
+
+    Args:
+      s: a string which is a substring of line after '('
+      (e.g., "a == (b + c))").
+
+    Returns:
+      A pair of strings (prefix before first unmatched ')',
+      reminder of s after first unmatched ')'), e.g.,
+      up_to_unmatched_closing_paren("a == (b + c)) { ")
+      returns "a == (b + c)", " {".
+      Returns None, None if there is no unmatched ')'
+
+    """
+    i = 1
+    for pos, c in enumerate(s):
+      if c == '(':
+        i += 1
+      elif c == ')':
+        i -= 1
+        if i == 0:
+          return s[:pos], s[pos + 1:]
+    return None, None
+
 class _IncludeState(dict):
     """Tracks line numbers for includes, and the order in which includes appear.
 
@@ -1309,19 +1334,32 @@ def check_spacing(filename, clean_lines, line_number, error):
     # there should either be zero or one spaces inside the parens.
     # We don't want: "if ( foo)" or "if ( foo   )".
     # Exception: "for ( ; foo; bar)" and "for (foo; bar; )" are allowed.
-    matched = search(r'\b(if|for|foreach|while|switch)\s*\(([ ]*)(.).*[^ ]+([ ]*)\)\s*{\s*$',
-                     line)
+    matched = search(r'\b(?P<statement>if|for|foreach|while|switch)\s*\((?P<reminder>.*)$', line)
     if matched:
-        if len(matched.group(2)) != len(matched.group(4)):
-            if not (matched.group(3) == ';'
-                    and len(matched.group(2)) == 1 + len(matched.group(4))
-                    or not matched.group(2) and search(r'\bfor\s*\(.*; \)', line)):
-                error(line_number, 'whitespace/parens', 5,
-                      'Mismatching spaces inside () in %s' % matched.group(1))
-        if not len(matched.group(2)) in [0, 1]:
-            error(line_number, 'whitespace/parens', 5,
-                  'Should have zero or one spaces inside ( and ) in %s' %
-                  matched.group(1))
+        statement = matched.group('statement')
+        condition, rest = up_to_unmatched_closing_paren(matched.group('reminder'))
+        if condition is not None:
+            condition_match = search(r'(?P<leading>[ ]*)(?P<separator>.).*[^ ]+(?P<trailing>[ ]*)', condition)
+            if condition_match:
+                n_leading = len(condition_match.group('leading'))
+                n_trailing = len(condition_match.group('trailing'))
+                if n_leading != n_trailing:
+                    for_exception = statement == 'for' and (
+                        (condition.startswith(' ;') and n_trailing == 0) or
+                        (condition.endswith('; ')   and n_leading == 0))
+                    if not for_exception:
+                        error(line_number, 'whitespace/parens', 5,
+                              'Mismatching spaces inside () in %s' % statement)
+                if n_leading > 1:
+                    error(line_number, 'whitespace/parens', 5,
+                          'Should have zero or one spaces inside ( and ) in %s' %
+                          statement)
+
+            # Do not check for more than one command in macros
+            in_macro = match(r'\s*#define', line)
+            if not in_macro and not match(r'((\s*{\s*}?)|(\s*;?))\s*\\?$', rest):
+                error(line_number, 'whitespace/parens', 4,
+                      'More than one command on the same line in %s' % statement)
 
     # You should always have a space after a comma (either as fn arg or operator)
     if search(r',[^\s]', line):
