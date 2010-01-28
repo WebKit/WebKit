@@ -35,10 +35,8 @@
 
 namespace WebKit {
 
-class WebDocument;
 class WebNotification;
 class WebNotificationPermissionCallback;
-class WebURL;
 
 // Provides the services to show desktop notifications to the user.
 class WebNotificationPresenter {
@@ -59,9 +57,8 @@ public:
     // being destroyed.  Does _not_ remove the notification if being shown, but detaches it from receiving events.
     virtual void objectDestroyed(const WebNotification&) = 0;
 
-    // Checks the permission level for the given URL. If the URL is being displayed in a document
-    // (as opposed to a worker or other ScriptExecutionContext), |document| will also be provided.
-    virtual Permission checkPermission(const WebURL& url, WebDocument* document) = 0;
+    // Checks the permission level of a given origin.
+    virtual Permission checkPermission(const WebString& origin) = 0;
 
     // Requests permission for a given origin.  This operation is asynchronous and the callback provided
     // will be invoked when the permission decision is made.  Callback pointer must remain

@@ -33,8 +33,6 @@
 #include "WebSecurityOrigin.h"
 #include "WebView.h"
 #include <WebCore/BString.h>
-#include <WebCore/Document.h>
-#include <WebCore/KURL.h>
 
 #if ENABLE(NOTIFICATIONS)
 
@@ -172,10 +170,10 @@ void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, 
         notificationDelegate()->requestNotificationPermission(org);
 }
 
-NotificationPresenter::Permission WebDesktopNotificationsDelegate::checkPermission(const KURL& url, Document*)
+NotificationPresenter::Permission WebDesktopNotificationsDelegate::checkPermission(SecurityOrigin* origin)
 {
     int out = 0;
-    BString org(SecurityOrigin::create(url)->toString());
+    BString org(origin->toString());
     if (hasNotificationDelegate())
         notificationDelegate()->checkNotificationPermission(org, &out);
     return (NotificationPresenter::Permission) out;
