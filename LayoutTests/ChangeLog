@@ -1,3 +1,13 @@
+2010-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, trivial baseline update.
+
+        Update baseline for "Animated scaling of background-image is too slow"
+        https://bugs.webkit.org/show_bug.cgi?id=33808
+
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.png:
+
 2010-01-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
