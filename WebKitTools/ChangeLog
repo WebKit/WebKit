@@ -1,3 +1,13 @@
+2010-01-27  George Wright  <gwright@rim.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34216
+
+        Add missing include for wtf/Platform.h
+
+        * DumpRenderTree/AccessibilityController.h:
+
 2010-01-27  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

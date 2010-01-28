@@ -27,6 +27,7 @@
 #define AccessibilityController_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/Platform.h>
 #if PLATFORM(WIN)
 #include <windows.h>
 #endif
