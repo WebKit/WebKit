@@ -1,3 +1,59 @@
+2010-01-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove ScriptState::frame which is only used for reporting exceptions
+        in some cases in a way that diverges from the regular exception reporting in
+        v8 bindings.
+        
+        Cache ScriptState directly on v8::Context instead of providing
+        implementations specific for isolated worlds and ScriptController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34266
+
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptState.cpp:
+        (WebCore::mainWorldScriptState):
+        * bindings/js/ScriptState.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptScope.cpp:
+        (WebCore::ScriptScope::ScriptScope):
+        (WebCore::ScriptScope::success):
+        * bindings/v8/ScriptScope.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::ScriptState):
+        (WebCore::ScriptState::forContext):
+        (WebCore::ScriptState::current):
+        (WebCore::ScriptState::empty):
+        (WebCore::ScriptState::weakReferenceCallback):
+        (WebCore::mainWorldScriptState):
+        (WebCore::scriptStateFromPage):
+        * bindings/v8/ScriptState.h:
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/V8IsolatedContext.cpp:
+        * bindings/v8/V8IsolatedContext.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext):
+        (WebCore::reportException):
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        (WebCore::V8NodeIterator::nextNodeCallback):
+        (WebCore::V8NodeIterator::previousNodeCallback):
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        (WebCore::V8TreeWalker::parentNodeCallback):
+        (WebCore::V8TreeWalker::firstChildCallback):
+        (WebCore::V8TreeWalker::lastChildCallback):
+        (WebCore::V8TreeWalker::nextNodeCallback):
+        (WebCore::V8TreeWalker::previousNodeCallback):
+        (WebCore::V8TreeWalker::nextSiblingCallback):
+        (WebCore::V8TreeWalker::previousSiblingCallback):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::injectedScriptForNodeId):
+
 2010-01-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

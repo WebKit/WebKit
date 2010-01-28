@@ -38,6 +38,12 @@
 
 namespace WebCore {
 
+ScriptState* mainWorldScriptState(Frame* frame)
+{
+    JSDOMWindowShell* shell = frame->script()->windowShell(mainThreadNormalWorld());
+    return shell->window()->globalExec();
+}
+
 ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
 {
     if (!node)

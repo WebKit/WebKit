@@ -60,9 +60,8 @@ v8::Handle<v8::Value> V8TreeWalker::parentNodeCallback(const v8::Arguments& args
     INC_STATS("DOM.TreeWalker.parentNode()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->parentNode(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->parentNode(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::firstChildCallback(const v8::Arguments& args)
@@ -70,9 +69,8 @@ v8::Handle<v8::Value> V8TreeWalker::firstChildCallback(const v8::Arguments& args
     INC_STATS("DOM.TreeWalker.firstChild()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->firstChild(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->firstChild(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::lastChildCallback(const v8::Arguments& args)
@@ -80,9 +78,8 @@ v8::Handle<v8::Value> V8TreeWalker::lastChildCallback(const v8::Arguments& args)
     INC_STATS("DOM.TreeWalker.lastChild()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->lastChild(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->lastChild(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::nextNodeCallback(const v8::Arguments& args)
@@ -90,9 +87,8 @@ v8::Handle<v8::Value> V8TreeWalker::nextNodeCallback(const v8::Arguments& args)
     INC_STATS("DOM.TreeWalker.nextNode()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->nextNode(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->nextNode(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::previousNodeCallback(const v8::Arguments& args)
@@ -100,9 +96,8 @@ v8::Handle<v8::Value> V8TreeWalker::previousNodeCallback(const v8::Arguments& ar
     INC_STATS("DOM.TreeWalker.previousNode()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->previousNode(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->previousNode(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::nextSiblingCallback(const v8::Arguments& args)
@@ -110,9 +105,8 @@ v8::Handle<v8::Value> V8TreeWalker::nextSiblingCallback(const v8::Arguments& arg
     INC_STATS("DOM.TreeWalker.nextSibling()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->nextSibling(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->nextSibling(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 v8::Handle<v8::Value> V8TreeWalker::previousSiblingCallback(const v8::Arguments& args)
@@ -120,9 +114,8 @@ v8::Handle<v8::Value> V8TreeWalker::previousSiblingCallback(const v8::Arguments&
     INC_STATS("DOM.TreeWalker.previousSibling()");
     TreeWalker* treeWalker = V8TreeWalker::toNative(args.Holder());
 
-    ScriptState state;
-    RefPtr<Node> result = treeWalker->previousSibling(&state);
-    return toV8(result.release(), &state);
+    RefPtr<Node> result = treeWalker->previousSibling(ScriptState::empty());
+    return toV8(result.release(), ScriptState::empty());
 }
 
 } // namespace WebCore
