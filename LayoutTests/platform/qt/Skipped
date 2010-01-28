@@ -4837,7 +4837,8 @@ http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow_unload_handler.html
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory

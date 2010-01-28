@@ -660,7 +660,8 @@ plugins/destroy-during-npp-new.html
 http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow_unload_handler.html
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=30348>
 plugins/private-browsing-mode.html

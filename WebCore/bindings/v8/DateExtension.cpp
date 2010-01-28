@@ -116,7 +116,7 @@ v8::Handle<v8::Value> DateExtension::Setup(const v8::Arguments& args)
 
 v8::Handle<v8::Value> DateExtension::OnSleepDetected(const v8::Arguments&)
 {
-    v8::V8::TerminateExecution();
+    V8Proxy::throwError(V8Proxy::GeneralError, "Too much time spent in unload handler.");
     return v8::Undefined();
 }
 

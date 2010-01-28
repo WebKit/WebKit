@@ -73,7 +73,8 @@ media/video-controls-zoomed.html
 media/video-volume-slider.html
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow_unload_handler.html
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # Skipped until we have a fix for <rdar://problem/6563117> WebKit should tell QuickTime to exclude the text importer
 media/video-empty-source.html

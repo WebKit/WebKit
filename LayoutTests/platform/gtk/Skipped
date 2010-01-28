@@ -5597,7 +5597,8 @@ http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
 http/tests/loading/basic-credentials-sent-automatically.html
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow_unload_handler.html
+fast/dom/Window/slow-unload-handler.html
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 # Tests generating new results
 fast/table/fixed-table-with-percent-inside-percent-table.html

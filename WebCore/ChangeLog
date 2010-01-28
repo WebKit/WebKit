@@ -1,3 +1,18 @@
+2010-01-27  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that when a page removes an iframe that sleeps in its unload handler and
+        terminates its JS execution, the outer page's JS continues running.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34226
+
+        Tests: fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
+               fast/dom/Window/slow-unload-handler.html
+
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::OnSleepDetected):
+
 2010-01-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
