@@ -39,8 +39,9 @@ WebInspector.WelcomeView = function(identifier, headingText, instructionsText)
     this.contentElement.className = "panel-enabler-view-content";
     this.element.appendChild(this.contentElement);
 
-    this.imageElement = document.createElement("img");
-    this.contentElement.appendChild(this.imageElement);
+    this.alignerElement = document.createElement("div");
+    this.alignerElement.className = "welcome-instructions-aligner";
+    this.contentElement.appendChild(this.alignerElement);
 
     this.instructionsElement = document.createElement("div");
     this.instructionsElement.className = "instructions";
@@ -55,22 +56,6 @@ WebInspector.WelcomeView = function(identifier, headingText, instructionsText)
 }
 
 WebInspector.WelcomeView.prototype = {
-
-    show: function(parentElement)
-    {
-        WebInspector.View.prototype.show.call(this, parentElement);
-
-        setTimeout(this.resize.bind(this), 0);
-    },
-
-    resize: function()
-    {
-        this.imageElement.removeStyleClass("hidden");
-
-        if (this.element.offsetWidth < (this.instructionsElement.offsetWidth + this.imageElement.offsetWidth))
-            this.imageElement.addStyleClass("hidden");
-    },
-
     addMessage: function(message)
     {
         var messageElement = document.createElement("div");

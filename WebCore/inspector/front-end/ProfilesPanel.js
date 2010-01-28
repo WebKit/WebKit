@@ -157,12 +157,6 @@ WebInspector.ProfilesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        this._updateInterface();
-        if (!this.visibleView) {
-            this.visibleView = this.welcomeView;
-            this.welcomeView.show();
-        }
-        this.visibleView.show();
         if (this._shouldPopulateProfiles)
             this._populateProfiles();
     },
@@ -190,6 +184,7 @@ WebInspector.ProfilesPanel.prototype = {
     {
         for (var i = 0; i < this._profiles.length; ++i)
             delete this._profiles[i]._profileView;
+        delete this.visibleView;
 
         delete this.currentQuery;
         this.searchCanceled();
@@ -209,6 +204,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViewStatusBarItemsContainer.removeChildren();
 
         this._updateInterface();
+        this.welcomeView.show();
     },
 
     registerProfileType: function(profileType)
@@ -307,7 +303,8 @@ WebInspector.ProfilesPanel.prototype = {
         profile._profilesTreeElement = profileTreeElement;
 
         sidebarParent.appendChild(profileTreeElement);
-        if (!this.visibleView || this.visibleView === this.welcomeView)
+        this.welcomeView.hide();
+        if (!this.visibleView)
             this.showProfile(profile);
     },
 
@@ -336,19 +333,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     showView: function(view)
     {
-        if (this.visibleView === view) {
-            if (this.visibleView && !this.visibleView.visible)
-                view.show();
-            return;
-        }
-
-        this._previousVisibleView = this.visibleView;
-        if (view === this.welcomeView) {
-            this.closeVisibleView();
-            this.visibleView = view;
-            view.show();
-        } else
-            this.showProfile(view.profile);
+        this.showProfile(view.profile);
     },
 
     getProfileType: function(typeId)
@@ -451,17 +436,13 @@ WebInspector.ProfilesPanel.prototype = {
                 this._profileTypeButtonsByIdMap[typeId].removeStyleClass("hidden");
             this.profileViewStatusBarItemsContainer.removeStyleClass("hidden");
             this.panelEnablerView.visible = false;
-            this.welcomeView.visible = true;
-            this.visibleView = this._previousVisibleView || this.welcomeView;
         } else {
             this.enableToggleButton.title = WebInspector.UIString("Profiling disabled. Click to enable.");
             this.enableToggleButton.toggled = false;
             for (var typeId in this._profileTypeButtonsByIdMap)
                 this._profileTypeButtonsByIdMap[typeId].addStyleClass("hidden");
             this.profileViewStatusBarItemsContainer.addStyleClass("hidden");
-            this.welcomeView.visible = false;
             this.panelEnablerView.visible = true;
-            this.visibleView = this.panelEnablerView;
         }
     },
 
