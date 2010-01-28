@@ -45,9 +45,6 @@ using namespace HTMLNames;
 
 static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
-// FIXME get this from style
-static const double cOpacityAnimationDurationFadeIn = 0.1;
-static const double cOpacityAnimationDurationFadeOut = 0.3;
 
 RenderMedia::RenderMedia(HTMLMediaElement* video)
     : RenderImage(video)
@@ -55,7 +52,7 @@ RenderMedia::RenderMedia(HTMLMediaElement* video)
     , m_opacityAnimationTimer(this, &RenderMedia::opacityAnimationTimerFired)
     , m_mouseOver(false)
     , m_opacityAnimationStartTime(0)
-    , m_opacityAnimationDuration(cOpacityAnimationDurationFadeIn)
+    , m_opacityAnimationDuration(0)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
 {
@@ -67,7 +64,7 @@ RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
     , m_opacityAnimationTimer(this, &RenderMedia::opacityAnimationTimerFired)
     , m_mouseOver(false)
     , m_opacityAnimationStartTime(0)
-    , m_opacityAnimationDuration(cOpacityAnimationDurationFadeIn)
+    , m_opacityAnimationDuration(0)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
 {
@@ -453,9 +450,9 @@ void RenderMedia::updateControlVisibility()
     }
 
     if (animateFrom < animateTo)
-        m_opacityAnimationDuration = cOpacityAnimationDurationFadeIn;
+        m_opacityAnimationDuration = m_panel->renderer()->theme()->mediaControlsFadeInDuration();
     else
-        m_opacityAnimationDuration = cOpacityAnimationDurationFadeOut;
+        m_opacityAnimationDuration = m_panel->renderer()->theme()->mediaControlsFadeOutDuration();
 
     m_opacityAnimationFrom = animateFrom;
     m_opacityAnimationTo = animateTo;

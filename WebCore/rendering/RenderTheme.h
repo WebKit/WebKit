@@ -173,6 +173,8 @@ public:
     // Media controls
     virtual bool hitTestMediaControlPart(RenderObject*, const IntPoint& absPoint);
     virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
+    virtual double mediaControlsFadeInDuration() { return 0.1; }
+    virtual double mediaControlsFadeOutDuration() { return 0.3; }
 #endif
 
 protected:
