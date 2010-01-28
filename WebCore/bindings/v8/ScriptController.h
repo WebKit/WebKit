@@ -42,6 +42,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+struct NPObject;
+
 namespace WebCore {
 
 class DOMWrapperWorld;

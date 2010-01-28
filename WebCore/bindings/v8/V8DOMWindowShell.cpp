@@ -31,7 +31,8 @@
 #include "config.h"
 #include "V8DOMWindowShell.h"
 
-#include "ChromiumBridge.h"
+#include "CString.h"
+#include "PlatformBridge.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"

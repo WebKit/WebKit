@@ -1,3 +1,16 @@
+2010-01-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Fix missing forward-declarations and includes in V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=34272
+
+        No new tests, build fix only.
+
+        * bindings/v8/ScriptController.h: Modified. Forward-declare NPObject
+        * bindings/v8/V8DOMWindowShell.cpp: Modified. Include CString.h and PlatformBridge.h
+        * bindings/v8/V8DOMWrapper.h: Modified. Forward-declare V8Proxy
+
 2010-01-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.
