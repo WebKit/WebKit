@@ -60,7 +60,7 @@ namespace WebCore {
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags)); 
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount); 
         }
 
         DOMWrapperWorld* world() { return m_world.get(); }

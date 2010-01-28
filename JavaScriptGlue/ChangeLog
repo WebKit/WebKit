@@ -1,3 +1,15 @@
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Simplify anonymous slot implementation
+        https://bugs.webkit.org/show_bug.cgi?id=34282
+
+        Update JSGlue Structure usage to pass the anonymous slot count.
+
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2010-01-12  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Geoffrey Garen.

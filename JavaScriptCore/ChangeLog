@@ -1,3 +1,96 @@
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Simplify anonymous slot implementation
+        https://bugs.webkit.org/show_bug.cgi?id=34282
+
+        A class must now specify the number of slots it needs at construction time
+        rather than later on with a transition.  This makes many things simpler,
+        we no longer need to need an additional transition on object creation to
+        add the anonymous slots, and we remove the need for a number of transition
+        type checks. 
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::createStructure):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/GlobalEvalFunction.h:
+        (JSC::GlobalEvalFunction::createStructure):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSCell.h:
+        (JSC::JSCell::createDummyStructure):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::createStructure):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        (JSC::JSObject::putAnonymousValue):
+        (JSC::JSObject::getAnonymousValue):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSString.h:
+        (JSC::Fiber::createStructure):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+        (JSC::Structure::materializePropertyMap):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::anonymousSlotCount):
+        * runtime/StructureTransitionTable.h:
+
 2010-01-27  Oliver Hunt  <oliver@apple.com>
 
         Windows build fix.

@@ -44,7 +44,7 @@ namespace JSC {
 
         static PassRefPtr<Structure> createStructure(JSValue proto) 
         { 
-            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags)); 
+            return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
         }
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | MasqueradesAsUndefined | OverridesGetPropertyNames | StringObject::StructureFlags;

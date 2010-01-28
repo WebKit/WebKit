@@ -61,7 +61,7 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue prototype)
     {
-        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames));
+        return Structure::create(prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount);
     }
 
 private:

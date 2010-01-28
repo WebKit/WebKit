@@ -157,10 +157,8 @@ Structure::Structure(JSValue prototype, const TypeInfo& typeInfo)
 Structure::~Structure()
 {
     if (m_previous) {
-        if (m_nameInPrevious)
-            m_previous->table.remove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
-        else
-            m_previous->table.removeAnonymousSlotTransition(m_anonymousSlotsInPrevious);
+        ASSERT(m_nameInPrevious);
+        m_previous->table.remove(make_pair(m_nameInPrevious.get(), m_attributesInPrevious), m_specificValueInPrevious);
 
     }
     
@@ -276,10 +274,6 @@ void Structure::materializePropertyMap()
 
     for (ptrdiff_t i = structures.size() - 2; i >= 0; --i) {
         structure = structures[i];
-        if (!structure->m_nameInPrevious) {
-            m_propertyTable->anonymousSlotCount += structure->m_anonymousSlotsInPrevious;
-            continue;
-        }
         structure->m_nameInPrevious->ref();
         PropertyMapEntry entry(structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious, ++m_propertyTable->lastIndexUsed);
         insertIntoPropertyMapHashTable(entry);
@@ -461,49 +455,6 @@ PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structur
     }
 
     return transition.release();
-}
-
-PassRefPtr<Structure> Structure::addAnonymousSlotsTransition(Structure* structure, unsigned count)
-{
-    if (Structure* transition = structure->table.getAnonymousSlotTransition(count)) {
-        ASSERT(transition->storedPrototype() == structure->storedPrototype());
-        return transition;
-    }
-    ASSERT(count);
-    ASSERT(count < ((1<<6) - 2));
-    RefPtr<Structure> transition = create(structure->m_prototype, structure->typeInfo());
-    
-    transition->m_cachedPrototypeChain = structure->m_cachedPrototypeChain;
-    transition->m_previous = structure;
-    transition->m_nameInPrevious = 0;
-    transition->m_attributesInPrevious = 0;
-    transition->m_anonymousSlotsInPrevious = count;
-    transition->m_specificValueInPrevious = 0;
-    transition->m_propertyStorageCapacity = structure->m_propertyStorageCapacity;
-    transition->m_hasGetterSetterProperties = structure->m_hasGetterSetterProperties;
-    transition->m_hasNonEnumerableProperties = structure->m_hasNonEnumerableProperties;
-    transition->m_specificFunctionThrashCount = structure->m_specificFunctionThrashCount;
-
-    if (structure->m_propertyTable) {
-        if (structure->m_isPinnedPropertyTable)
-            transition->m_propertyTable = structure->copyPropertyTable();
-        else {
-            transition->m_propertyTable = structure->m_propertyTable;
-            structure->m_propertyTable = 0;
-        }
-    } else {
-        if (structure->m_previous)
-            transition->materializePropertyMap();
-        else
-            transition->createPropertyMapHashTable();
-    }
-
-    transition->addAnonymousSlots(count);
-    if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
-        transition->growPropertyStorageCapacity();
-
-    structure->table.addAnonymousSlotTransition(count, transition.get());
-    return transition.release();    
 }
 
 PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
@@ -880,11 +831,6 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
 
     checkConsistency();
     return newOffset;
-}
-
-void Structure::addAnonymousSlots(unsigned count)
-{
-    m_propertyTable->anonymousSlotCount += count;
 }
 
 bool Structure::hasTransition(UString::Rep* rep, unsigned attributes)

@@ -296,7 +296,7 @@ namespace JSC {
         bool canGetIndex(unsigned i) { return i < m_stringLength; }
         JSString* getIndex(ExecState*, unsigned);
 
-        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion)); }
+        static PassRefPtr<Structure> createStructure(JSValue proto) { return Structure::create(proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount); }
 
     private:
         enum VPtrStealingHackType { VPtrStealingHack };

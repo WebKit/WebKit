@@ -603,7 +603,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n" .
         "    }\n\n");
 
     # markChildren function
@@ -808,7 +808,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags));\n" .
+        "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount);\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -2248,7 +2248,7 @@ public:
 
     static PassRefPtr<Structure> createStructure(JSValue proto) 
     { 
-        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags)); 
+        return Structure::create(proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount); 
     }
     
 protected:

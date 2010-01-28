@@ -1,3 +1,28 @@
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Simplify anonymous slot implementation
+        https://bugs.webkit.org/show_bug.cgi?id=34282
+
+        Update the WebCore JS DOM bindings to correctly pass and
+        propagate the anonymous slot count information.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::createStructure):
+        (WebCore::DOMConstructorObject::createStructure):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructure):
+
 2010-01-27  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
