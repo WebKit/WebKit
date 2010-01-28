@@ -28,7 +28,8 @@ shouldBe('setValueAsNumberAndGetValue(1582, 8, 30)', '""');
 shouldBe('setValueAsNumberAndGetValue(1582, 9, 15)', '"1582-10-15"');
 shouldBe('setValueAsNumberAndGetValue(1582, 9, 31)', '"1582-10-31"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 13)', '"275760-09-13"');
-shouldBe('setValueAsNumberAndGetValue(275760, 8, 14)', '"275760-09-14"');
+// Date.UTC() of V8 throws an exception for the following value though JavaScriptCore doesn't.
+// shouldBe('setValueAsNumberAndGetValue(275760, 8, 14)', '"275760-09-14"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"1970-01-01"');

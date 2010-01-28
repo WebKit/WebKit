@@ -1,3 +1,23 @@
+2010-01-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove tests for dates later than 275760-09-13T00:00Z.
+        https://bugs.webkit.org/show_bug.cgi?id=34240
+
+        Date.UTC() of V8 doesn't support such dates though Date.UTC() of
+        JavaScriptCore does.
+
+        * fast/forms/input-valueasnumber-date-expected.txt:
+        * fast/forms/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/input-valueasnumber-datetimelocal-expected.txt:
+        * fast/forms/input-valueasnumber-month-expected.txt:
+        * fast/forms/script-tests/input-valueasnumber-date.js:
+        * fast/forms/script-tests/input-valueasnumber-datetime.js:
+        * fast/forms/script-tests/input-valueasnumber-datetimelocal.js:
+        * fast/forms/script-tests/input-valueasnumber-month.js:
+        * platform/win/fast/forms/input-valueasnumber-datetime-expected.txt: Removed.
+
 2010-01-27  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
