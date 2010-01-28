@@ -1,3 +1,17 @@
+2010-01-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] Pass cookies to GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=34003
+
+        Test that cookie is being sent by the media player.
+
+        * http/tests/media/resources/setCookie.cgi: Added.
+        * http/tests/media/resources/video-cookie-check-cookie.php: Added.
+        * http/tests/media/video-cookie-expected.txt: Added.
+        * http/tests/media/video-cookie.html: Added.
+
 2010-01-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Incorrect small caps vs. normal text handling

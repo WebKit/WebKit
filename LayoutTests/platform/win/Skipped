@@ -735,3 +735,7 @@ fast/css/non-standard-checkbox-size.html
 
 # Skip Geolocation until https://bugs.webkit.org/show_bug.cgi?id=34025 is landed
 fast/dom/Window/window-properties-geolocation.html
+
+# Needs to pass cookies to the media player
+# See http://bugs.webkit.org/show_bug.cgi?id=33954
+http/tests/media/video-cookie.html

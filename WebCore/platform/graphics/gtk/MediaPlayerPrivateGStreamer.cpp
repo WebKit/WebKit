@@ -47,6 +47,7 @@
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>
+#include <webkit/webkitwebview.h>
 #include <wtf/gtk/GOwnPtr.h>
 
 using namespace std;
@@ -131,6 +132,32 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
 
     g_object_get(mp->m_playBin, "source", &element, NULL);
     gst_object_replace((GstObject**) &mp->m_source, (GstObject*) element);
+
+    if (element) {
+        GParamSpec* pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(element), "cookies");
+
+        // First check if the source element has a cookies property
+        // of the format we expect
+        if (!pspec || pspec->value_type != G_TYPE_STRV)
+            return;
+
+        // Then get the cookies for the URI and set them
+        SoupSession* session = webkit_get_default_session();
+        SoupCookieJar* cookieJar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+
+        char* location;
+        g_object_get(element, "location", &location, NULL);
+
+        SoupURI* uri = soup_uri_new(location);
+        g_free(location);
+        char* cookies = soup_cookie_jar_get_cookies(cookieJar, uri, FALSE);
+        soup_uri_free(uri);
+
+        char* cookiesStrv[] = {cookies, NULL};
+        g_object_set(element, "cookies", cookiesStrv, NULL);
+        g_free(cookies);
+    }
+
     gst_object_unref(element);
 }
 

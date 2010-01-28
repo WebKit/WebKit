@@ -1,3 +1,18 @@
+2010-01-28  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        Pass cookies to the GStreamer HTTP source
+        https://bugs.webkit.org/show_bug.cgi?id=34003
+
+        Test: http/tests/media/video-cookie.html
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        When using an appropiate GStreamer HTTP source element, pass
+        the cookies for the media URI to it. This fixes playback of
+        the YouTube HTML5 videos.
+
 2010-01-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r54022.
@@ -3778,7 +3793,7 @@
 
         * WebCore.pro: Fix warning about missing header file that isn't present anymore.
 
-2010-01-25  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+2010-01-22  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha Silva.
 
