@@ -1,3 +1,10 @@
+2010-01-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Incorrect small caps vs. normal text handling
+        https://bugs.webkit.org/show_bug.cgi?id=34286
+
+        * platform/qt/Skipped: css2.1/t1505-c524-font-var-00-b.html skipped
+
 2010-01-27  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.

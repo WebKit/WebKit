@@ -5111,3 +5111,7 @@ http/tests/history/redirect-301.pl
 http/tests/history/redirect-302.pl
 http/tests/history/redirect-303.pl
 http/tests/history/redirect-307.pl
+
+# small caps vs. normal text
+# https://bugs.webkit.org/show_bug.cgi?id=34286
+css2.1/t1505-c524-font-var-00-b.html
