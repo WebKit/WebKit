@@ -1,3 +1,13 @@
+2010-01-28  Anton Muhin  <antonm@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add layout tests to verify assignment to items of NodeList
+        https://bugs.webkit.org/show_bug.cgi?id=34213
+
+        * fast/dom/NodeList/nodelist-item-assignment-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-item-assignment.html: Added.
+
 2010-01-28  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.
