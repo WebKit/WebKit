@@ -598,7 +598,6 @@ private:
 
 SerializedScriptValueData SerializedScriptValueData::serialize(ExecState* exec, JSValue inValue)
 {
-    JSLock lock(SilenceAssertionsOnly);
     SerializingTreeWalker context(exec);
     return walk<SerializingTreeWalker>(context, inValue);
 }
@@ -761,7 +760,6 @@ private:
 
 JSValue SerializedScriptValueData::deserialize(ExecState* exec, JSGlobalObject* global, bool mustCopy) const
 {
-    JSLock lock(SilenceAssertionsOnly);
     DeserializingTreeWalker context(exec, global, mustCopy);
     return walk<DeserializingTreeWalker>(context, *this);
 }
@@ -921,6 +919,7 @@ SerializedScriptValue::~SerializedScriptValue()
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
 {
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(originContext);
     JSValue value = toJS(exec, apiValue);
     PassRefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value);
@@ -936,6 +935,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
 {
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(destinationContext);
     JSValue value = deserialize(exec, exec->lexicalGlobalObject());
     if (exec->hadException()) {

@@ -1,3 +1,22 @@
+2010-01-28  Adam Roben  <aroben@apple.com>
+
+        Fix an assertion beneath SerializedScriptValue::deserialize on 32-bit
+        builds (e.g., on Windows)
+
+        Passing a JSValue to toRef on 32-bit builds can perform an allocation,
+        so we need to make sure we hold a JSLock when that occurs.
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValueData::serialize):
+        (WebCore::SerializedScriptValueData::deserialize):
+        Moved JSLocks from here...
+
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        ...to this higher level, from which toRef can be called.
+
 2010-01-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
