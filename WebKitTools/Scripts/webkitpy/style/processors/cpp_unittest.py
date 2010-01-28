@@ -44,17 +44,12 @@ import unittest
 import cpp as cpp_style
 from cpp import CppProcessor
 
-# FIXME: Remove the need to import anything from checker. See the
-#        FIXME notes near the STYLE_CATEGORIES definition for a
-#        suggestion on how to best do this.
-from .. checker import STYLE_CATEGORIES
-
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
 # is in STYLE_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
-    _all_style_categories = STYLE_CATEGORIES
-    # This a list including all categories seen in any unit test.
+    _all_style_categories = CppProcessor.categories
+    # This is a list including all categories seen in any unit test.
     _seen_style_categories = {}
 
     def __init__(self, assert_fn):

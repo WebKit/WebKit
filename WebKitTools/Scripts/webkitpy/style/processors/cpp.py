@@ -2902,6 +2902,75 @@ class CppProcessor(object):
 
     """Processes C++ lines for checking style."""
 
+    # This list is used to--
+    #
+    # (1) generate an explicit list of all possible categories,
+    # (2) unit test that all checked categories have valid names, and
+    # (3) unit test that all categories are getting unit tested.
+    #
+    categories = set([
+        'build/class',
+        'build/deprecated',
+        'build/endif_comment',
+        'build/forward_decl',
+        'build/header_guard',
+        'build/include',
+        'build/include_order',
+        'build/include_what_you_use',
+        'build/namespaces',
+        'build/printf_format',
+        'build/storage_class',
+        'build/using_std',
+        'legal/copyright',
+        'readability/braces',
+        'readability/casting',
+        'readability/check',
+        'readability/comparison_to_zero',
+        'readability/constructors',
+        'readability/control_flow',
+        'readability/fn_size',
+        'readability/function',
+        'readability/multiline_comment',
+        'readability/multiline_string',
+        'readability/naming',
+        'readability/null',
+        'readability/streams',
+        'readability/todo',
+        'readability/utf8',
+        'runtime/arrays',
+        'runtime/casting',
+        'runtime/explicit',
+        'runtime/init',
+        'runtime/int',
+        'runtime/invalid_increment',
+        'runtime/max_min_macros',
+        'runtime/memset',
+        'runtime/printf',
+        'runtime/printf_format',
+        'runtime/references',
+        'runtime/rtti',
+        'runtime/sizeof',
+        'runtime/string',
+        'runtime/threadsafe_fn',
+        'runtime/virtual',
+        'whitespace/blank_line',
+        'whitespace/braces',
+        'whitespace/comma',
+        'whitespace/comments',
+        'whitespace/declaration',
+        'whitespace/end_of_line',
+        'whitespace/ending_newline',
+        'whitespace/indent',
+        'whitespace/labels',
+        'whitespace/line_length',
+        'whitespace/newline',
+        'whitespace/operators',
+        'whitespace/parens',
+        'whitespace/semicolon',
+        'whitespace/tab',
+        'whitespace/todo',
+        ])
+
     def __init__(self, file_path, file_extension, handle_style_error, verbosity):
         """Create a CppProcessor instance.
 

@@ -183,13 +183,14 @@ class WebKitArgumentDefaultsTest(unittest.TestCase):
     def test_filter_rules(self):
         defaults = self.defaults()
         already_seen = []
+        all_categories = style.style_categories()
         for rule in defaults.filter_rules:
             # Check no leading or trailing white space.
             self.assertEquals(rule, rule.strip())
             # All categories are on by default, so defaults should
             # begin with -.
             self.assertTrue(rule.startswith('-'))
-            self.assertTrue(rule[1:] in style.STYLE_CATEGORIES)
+            self.assertTrue(rule[1:] in all_categories)
             # Check no rule occurs twice.
             self.assertFalse(rule in already_seen)
             already_seen.append(rule)
