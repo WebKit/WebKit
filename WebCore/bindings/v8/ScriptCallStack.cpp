@@ -55,7 +55,7 @@ ScriptCallStack* ScriptCallStack::create(const v8::Arguments& arguments, unsigne
 
 ScriptCallStack::ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber)
     : m_lastCaller(String(), sourceName, sourceLineNumber, arguments, skipArgumentCount)
-    , m_scriptState(ScriptState::current())
+    , m_scriptState(ScriptController::currentScriptState())
 {
 }
 

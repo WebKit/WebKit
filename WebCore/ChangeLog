@@ -1,3 +1,54 @@
+2010-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        No review, rolling out r54012.
+        http://trac.webkit.org/changeset/54012
+        https://bugs.webkit.org/show_bug.cgi?id=34266
+
+        Introduced 33 crashes in V8 traversal/ tests.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::mainWorldScriptState):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptState.cpp:
+        * bindings/js/ScriptState.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::mainWorldScriptState):
+        (WebCore::ScriptController::currentScriptState):
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptScope.cpp:
+        (WebCore::ScriptScope::ScriptScope):
+        (WebCore::ScriptScope::success):
+        * bindings/v8/ScriptScope.h:
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::ScriptState::ScriptState):
+        (WebCore::scriptStateFromPage):
+        * bindings/v8/ScriptState.h:
+        (WebCore::ScriptState::ScriptState):
+        (WebCore::ScriptState::frame):
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::scriptState):
+        * bindings/v8/V8IsolatedContext.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext):
+        (WebCore::reportException):
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        (WebCore::V8NodeIterator::nextNodeCallback):
+        (WebCore::V8NodeIterator::previousNodeCallback):
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        (WebCore::V8TreeWalker::parentNodeCallback):
+        (WebCore::V8TreeWalker::firstChildCallback):
+        (WebCore::V8TreeWalker::lastChildCallback):
+        (WebCore::V8TreeWalker::nextNodeCallback):
+        (WebCore::V8TreeWalker::previousNodeCallback):
+        (WebCore::V8TreeWalker::nextSiblingCallback):
+        (WebCore::V8TreeWalker::previousSiblingCallback):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::injectedScriptForNodeId):
+
 2010-01-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

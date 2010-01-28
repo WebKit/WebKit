@@ -39,7 +39,6 @@ namespace WebCore {
     V(objectPrototype) \
     V(listener) \
     V(attributeListener) \
-    V(scriptState) \
     V(sleepFunction) \
     V(toStringString)
 

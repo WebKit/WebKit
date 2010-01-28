@@ -134,15 +134,13 @@ ScriptExecutionContext* getScriptExecutionContext(ScriptState* scriptState)
         return proxy->workerContext()->scriptExecutionContext();
 #endif
 
-    Frame* frame;
-    if (scriptState) {
-        v8::HandleScope handleScope;
-        frame = V8Proxy::retrieveFrame(scriptState->context());
-    } else
-        frame = V8Proxy::retrieveFrameForCurrentContext();
-
-    if (frame)
-        return frame->document()->scriptExecutionContext();
+    if (scriptState)
+        return scriptState->frame()->document()->scriptExecutionContext();
+    else {
+        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+        if (frame)
+            return frame->document()->scriptExecutionContext();
+    }
 
     return 0;
 }
@@ -172,7 +170,7 @@ void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
     ScriptExecutionContext* context = getScriptExecutionContext(scriptState);
     // During the frame teardown, there may not be a valid context.
     if (context && !context->isDocument())
-        context->reportException(errorMessage, lineNumber, sourceURL);
+      context->reportException(errorMessage, lineNumber, sourceURL);
     exceptionCatcher.Reset();
 }
 
