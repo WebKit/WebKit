@@ -1,3 +1,15 @@
+2010-01-27  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Expose HistoryItem::documentSequenceNumber
+        https://bugs.webkit.org/show_bug.cgi?id=34243
+
+        * public/WebHistoryItem.h:
+        * src/WebHistoryItem.cpp:
+        (WebKit::WebHistoryItem::documentSequenceNumber):
+        (WebKit::WebHistoryItem::setDocumentSequenceNumber):
+
 2010-01-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.

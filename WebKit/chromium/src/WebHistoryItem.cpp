@@ -218,6 +218,18 @@ void WebHistoryItem::setDocumentState(const WebVector<WebString>& state)
     m_private->setDocumentState(ds);
 }
 
+long long WebHistoryItem::documentSequenceNumber() const
+{
+    ASSERT(!isNull());
+    return m_private->documentSequenceNumber();
+}
+
+void WebHistoryItem::setDocumentSequenceNumber(long long documentSequenceNumber)
+{
+    ensureMutable();
+    m_private->setDocumentSequenceNumber(documentSequenceNumber);
+}
+
 WebString WebHistoryItem::httpContentType() const
 {
     ASSERT(!isNull());
