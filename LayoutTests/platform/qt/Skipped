@@ -223,6 +223,9 @@ editing/selection/doubleclick-beside-cr-span.html
 
 # Missing eventSender.textZoomIn() (and textZoomOut)
 svg/custom/text-zoom.xhtml
+
+# Missing eventSender.beginDragWithFiles()
+fast/dom/Window/window-postmessage-clone-frames.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

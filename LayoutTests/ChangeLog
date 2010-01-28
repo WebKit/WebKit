@@ -1,3 +1,9 @@
+2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip test introduced in r53972 because of missing eventSender.beginDragWithFiles()
+
+        * platform/qt/Skipped: fast/dom/Window/window-postmessage-clone-frames.html skipped.
+
 2010-01-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
