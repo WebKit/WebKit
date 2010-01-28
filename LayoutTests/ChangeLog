@@ -1,3 +1,14 @@
+2010-01-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] hebrew vowel marks incorrectly positioned
+        https://bugs.webkit.org/show_bug.cgi?id=34234
+
+        Add a layout test containing some Hebrew vowels.
+
+        * fast/text/international/hebrew-vowels.html: Added.
+
 2010-01-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, trivial baseline update.

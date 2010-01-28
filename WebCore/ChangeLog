@@ -1,3 +1,24 @@
+2010-01-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] hebrew vowel marks incorrectly positioned
+        https://bugs.webkit.org/show_bug.cgi?id=34234
+
+        Fix glyph metrics computation such that the glyph offsets
+        are correct, so we can now make use of them.
+
+        Test: fast/text/international/hebrew-vowels.html
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::TextRunWalker::createGlyphArrays): initialize per-glyph
+        offset table.
+        (WebCore::TextRunWalker::setGlyphXPositions): use per-glyph
+        offsets.
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::getGlyphMetrics): fix metrics computation such that
+        per-glyph offsets are computed correctly.
+
 2010-01-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix.

@@ -400,6 +400,8 @@ private:
         m_item.attributes = new HB_GlyphAttributes[m_maxGlyphs];
         m_item.advances = new HB_Fixed[m_maxGlyphs];
         m_item.offsets = new HB_FixedPoint[m_maxGlyphs];
+        // HB_FixedPoint is a struct, so we must use memset to clear it.
+        memset(m_item.offsets, 0, m_maxGlyphs * sizeof(HB_FixedPoint));
         m_glyphs16 = new uint16_t[m_maxGlyphs];
         m_xPositions = new SkScalar[m_maxGlyphs];
 
@@ -436,18 +438,19 @@ private:
 
     void setGlyphXPositions(bool isRTL)
     {
-        m_pixelWidth = 0;
-        for (unsigned i = 0; i < m_item.num_glyphs; ++i) {
-            int index;
-            if (isRTL)
-                index = m_item.num_glyphs - (i + 1);
-            else
-                index = i;
+        double position = 0;
+        for (int iter = 0; iter < m_item.num_glyphs; ++iter) {
+            // Glyphs are stored in logical order, but for layout purposes we always go left to right.
+            int i = isRTL ? m_item.num_glyphs - iter - 1 : iter;
 
             m_glyphs16[i] = m_item.glyphs[i];
-            m_xPositions[index] = m_offsetX + m_pixelWidth;
-            m_pixelWidth += truncateFixedPointToInteger(m_item.advances[index]);
+            double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
+            m_xPositions[i] = m_offsetX + position + offsetX;
+
+            double advance = truncateFixedPointToInteger(m_item.advances[i]);
+            position += advance;
         }
+        m_pixelWidth = position;
         m_offsetX += m_pixelWidth;
     }
 

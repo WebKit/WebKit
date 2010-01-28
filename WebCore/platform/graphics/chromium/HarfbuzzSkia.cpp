@@ -167,15 +167,16 @@ static void getGlyphMetrics(HB_Font hbFont, HB_Glyph glyph, HB_GlyphMetrics* met
     SkRect bounds;
     paint.getTextWidths(&glyph16, sizeof(glyph16), &width, &bounds);
 
-    metrics->x = SkiaScalarToHarfbuzzFixed(width);
+    metrics->x = SkiaScalarToHarfbuzzFixed(bounds.fLeft);
+    metrics->y = SkiaScalarToHarfbuzzFixed(bounds.fTop);
+    metrics->width = SkiaScalarToHarfbuzzFixed(bounds.width());
+    metrics->height = SkiaScalarToHarfbuzzFixed(bounds.height());
+
+    metrics->xOffset = SkiaScalarToHarfbuzzFixed(width);
     // We can't actually get the |y| correct because Skia doesn't export
     // the vertical advance. However, nor we do ever render vertical text at
     // the moment so it's unimportant.
-    metrics->y = 0;
-    metrics->width = SkiaScalarToHarfbuzzFixed(bounds.width());
-    metrics->height = SkiaScalarToHarfbuzzFixed(bounds.height());
-    metrics->xOffset = SkiaScalarToHarfbuzzFixed(bounds.fLeft);
-    metrics->yOffset = SkiaScalarToHarfbuzzFixed(bounds.fTop);
+    metrics->yOffset = 0;
 }
 
 static HB_Fixed getFontMetric(HB_Font hbFont, HB_FontMetric metric)
