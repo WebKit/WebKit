@@ -31,6 +31,7 @@ WebInspector.DatabaseQueryView = function(database)
 
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("query");
+    this.element.addStyleClass("monospace");
     this.element.tabIndex = 0;
 
     this.element.addEventListener("selectstart", this._selectStart.bind(this), false);

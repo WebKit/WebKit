@@ -121,13 +121,11 @@ String InspectorFrontendHost::hiddenPanels()
 const String& InspectorFrontendHost::platform() const
 {
 #if PLATFORM(MAC)
-#ifdef BUILDING_ON_TIGER
-    DEFINE_STATIC_LOCAL(const String, platform, ("mac-tiger"));
-#else
-    DEFINE_STATIC_LOCAL(const String, platform, ("mac-leopard"));
-#endif
+    DEFINE_STATIC_LOCAL(const String, platform, ("mac"));
 #elif OS(WINDOWS)
     DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
+#elif OS(LINUX)
+    DEFINE_STATIC_LOCAL(const String, platform, ("linux"));
 #else
     DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));
 #endif

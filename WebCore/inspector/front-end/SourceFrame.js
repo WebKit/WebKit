@@ -376,6 +376,7 @@ WebInspector.SourceFrame.prototype = {
 
         var editorElement = document.createElement("input");
         editorElement.id = "source-breakpoint-condition";
+        editorElement.className = "monospace";
         editorElement.type = "text"
         conditionElement.appendChild(editorElement);
         this._conditionEditorElement = editorElement;

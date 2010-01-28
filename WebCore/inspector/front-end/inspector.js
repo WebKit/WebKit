@@ -55,6 +55,13 @@ var WebInspector = {
     cookieDomains: {},
     missingLocalizedStrings: {},
     pendingDispatches: 0,
+    OS: {
+        Windows: "windows",
+        WindowsVistaOrLater: "windows-vista-or-later",
+        MacTiger: "mac-tiger",
+        MacLeopard: "mac-leopard",
+        MacSnowLeopard: "mac-snowleopard"
+    },
 
     // RegExp groups:
     // 1 - scheme
@@ -67,9 +74,37 @@ var WebInspector = {
     get platform()
     {
         if (!("_platform" in this))
-            this._platform = InspectorFrontendHost.platform();
+            this._platform = this._detectPlatform();
 
         return this._platform;
+    },
+
+    _detectPlatform: function()
+    {
+        const userAgent = navigator.userAgent;
+        var nativePlatform = InspectorFrontendHost.platform();
+
+        if (nativePlatform === "windows") {
+            var match = userAgent.match(/Windows NT (\d+)\.(?:\d+)/);
+            if (match && match[1] >= 6)
+                return WebInspector.OS.WindowsVistaOrLater;
+            return WebInspector.OS.Windows;
+        } else if (nativePlatform === "mac") {
+            var match = userAgent.match(/Mac OS X\s*(?:(\d+)_(\d+)_(?:\d+))?/);
+            if (!match || match[1] != 10)
+                return WebInspector.OS.MacLeopard;
+            switch (Number(match[2])) {
+                case 4:
+                    return WebInspector.OS.MacTiger;
+                case 5:
+                    return WebInspector.OS.MacLeopard;
+                case 6:
+                    return WebInspector.OS.MacSnowLeopard;
+            }
+            return WebInspector.OS.MacLeopard;
+        }
+
+        return nativePlatform;
     },
 
     get port()

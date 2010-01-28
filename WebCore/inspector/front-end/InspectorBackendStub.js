@@ -265,6 +265,10 @@ WebInspector.InspectorBackendStub.prototype = {
 
     releaseWrapperObjectGroup: function()
     {
+    },
+
+    setInjectedScriptSource: function()
+    {
     }
 }
 

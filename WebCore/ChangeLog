@@ -1,3 +1,30 @@
+2010-01-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Use platform-specific monospace fonts in the Web Inspector
+
+        Move the OS version detection code into the frontend,
+        add custom CSS monospace styles for known platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=34040
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::platform):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype._appendBreakpointElement):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.releaseWrapperObjectGroup):
+        (.WebInspector.InspectorBackendStub.prototype.setInjectedScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createConditionElement):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.URLRegExp.i.get platform):
+        (WebInspector._detectPlatform):
+
 2010-01-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

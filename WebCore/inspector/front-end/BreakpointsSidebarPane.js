@@ -99,7 +99,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         var sourceTextElement = document.createElement("div");
         sourceTextElement.textContent = breakpoint.sourceText;
-        sourceTextElement.className = "source-text";
+        sourceTextElement.className = "source-text monospace";
         breakpointElement.appendChild(sourceTextElement);
 
         var currentElement = this.listElement.firstChild;

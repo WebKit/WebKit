@@ -495,6 +495,29 @@ body.drawer-visible #drawer {
     background: none;
 }
 
+.monospace {
+    font-size: 10px;
+    font-family: monospace;
+}
+
+body.platform-mac-tiger .monospace, body.platform-mac-leopard .monospace,
+body.platform-mac-tiger .source-code, body.platform-mac-leopard .source-code {
+    font-size: 10px;
+    font-family: Monaco, monospace;
+}
+
+body.platform-mac-snowleopard .monospace,
+body.platform-mac-snowleopard .source-code {
+    font-size: 11px;
+    font-family: Menlo, monospace;
+}
+
+body.platform-windows .monospace, body.platform-windows-vista-or-later .monospace,
+body.platform-windows .source-code, body.platform-windows-vista-or-later .source-code {
+    font-size: 12px;
+    font-family: Consolas, Lucida Console, monospace;
+}
+
 #console-messages {
     position: absolute;
     z-index: 0;
@@ -502,8 +525,6 @@ body.drawer-visible #drawer {
     left: 0;
     right: 0;
     bottom: 23px;
-    font-size: initial;
-    font-family: monospace;
     padding: 2px 0;
     overflow-y: overlay;
     word-wrap: break-word;
@@ -1098,13 +1119,8 @@ body.drawer-visible #drawer {
 
 .source-code {
     font-family: monospace;
-    font-size: medium;
+    font-size: 10px;
     white-space: pre-wrap;
-}
-
-body.platform-windows .source-code {
-    font-family: Consolas, Lucida Console, monospace;
-    font-size: 12px;
 }
 
 .outline-disclosure li {
@@ -2123,8 +2139,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
 }
 
 .storage-view.query {
-    font-size: initial;
-    font-family: monospace;
     padding: 2px 0;
     overflow-y: overlay;
     overflow-x: hidden;
@@ -3787,7 +3801,6 @@ ol.breakpoint-list {
 }
 
 .breakpoint-list .source-text {
-    font-family: monospace;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -3821,7 +3834,6 @@ ol.breakpoint-list {
 }
 
 #source-breakpoint-condition {
-    font-family: monospace;
     margin: 0;
     border: 1px inset rgb(190, 190, 190) !important;
     width: 100%;
