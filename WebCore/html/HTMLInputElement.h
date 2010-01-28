@@ -106,9 +106,9 @@ public:
     // For ValidityState
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
-    // Returns the minimum value for type=number or range.  Don't call this for other types.
+    // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
-    // Returns the maximum value for type=number or range.  Don't call this for other types.
+    // Returns the maximum value for type=date, number, or range.  Don't call this for other types.
     // This always returns a value which is >= minimum().
     double maximum() const;
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
@@ -299,6 +299,12 @@ private:
     void applyStepForNumberOrRange(double count, ExceptionCode&);
     // Helper for applyStepForNumberOrRange().
     double stepBase() const;
+
+    // Parses the specified string for the current type, and return
+    // the double value for the parsing result if the parsing
+    // succeeds; Returns defaultValue otherwise. This function can
+    // return NaN or Infinity only if defaultValue is NaN or Infinity.
+    double parseToDouble(const String&, double defaultValue) const;
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;

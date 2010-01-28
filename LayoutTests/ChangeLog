@@ -1,3 +1,17 @@
+2010-01-27  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        rangeOverflow/rangeUnderflow support for type=date
+        https://bugs.webkit.org/show_bug.cgi?id=34209
+
+        * fast/forms/ValidityState-rangeOverflow-date-expected.txt: Added.
+        * fast/forms/ValidityState-rangeOverflow-date.html: Added.
+        * fast/forms/ValidityState-rangeUnderflow-date-expected.txt: Added.
+        * fast/forms/ValidityState-rangeUnderflow-date.html: Added.
+        * fast/forms/script-tests/ValidityState-rangeOverflow-date.js: Added.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow-date.js: Added.
+
 2010-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip test introduced in r53972 because of missing eventSender.beginDragWithFiles()
