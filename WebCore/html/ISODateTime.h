@@ -114,6 +114,8 @@ public:
     bool setMillisecondsSinceEpochForDate(double ms);
     // For DateTime type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
     bool setMillisecondsSinceEpochForDateTime(double ms);
+    // For DateTimeLocal type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
+    bool setMillisecondsSinceEpochForDateTimeLocal(double ms);
     // For Month type. Updates m_year and m_month.
     bool setMillisecondsSinceEpochForMonth(double ms);
     // For Week type. Updates m_year and m_week.

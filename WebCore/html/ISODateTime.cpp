@@ -504,6 +504,15 @@ bool ISODateTime::setMillisecondsSinceEpochForDateTime(double ms)
     return true;
 }
 
+bool ISODateTime::setMillisecondsSinceEpochForDateTimeLocal(double ms)
+{
+    // Internal representation of DateTimeLocal is the same as DateTime except m_type.
+    if (!setMillisecondsSinceEpochForDateTime(ms))
+        return false;
+    m_type = DateTimeLocal;
+    return true;
+}
+
 bool ISODateTime::setMillisecondsSinceEpochForMonth(double ms)
 {
     m_type = Invalid;
@@ -571,7 +580,7 @@ bool ISODateTime::setMillisecondsSinceEpochForWeek(double ms)
 
 double ISODateTime::millisecondsSinceEpochForTime() const
 {
-    ASSERT(m_type == Time || m_type == DateTime);
+    ASSERT(m_type == Time || m_type == DateTime || m_type == DateTimeLocal);
     return ((m_hour * minutesPerHour + m_minute) * secondsPerMinute + m_second) * msPerSecond + m_millisecond;
 }
 
@@ -626,13 +635,15 @@ String ISODateTime::toString(SecondFormat format) const
     case DateTime:
         return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
             + toStringForTime(format) + String("Z");
+    case DateTimeLocal:
+        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
+            + toStringForTime(format);
     case Month:
         return String::format("%04d-%02d", m_year, m_month + 1);
     case Time:
         return toStringForTime(format);
     case Week:
         return String::format("%04d-W%02d", m_year, m_week);
-    case DateTimeLocal:
     case Invalid:
         break;
     }

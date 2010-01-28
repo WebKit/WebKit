@@ -1,3 +1,26 @@
+2010-01-27  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add valueAsNumber support for type=datetime-local.
+        https://bugs.webkit.org/show_bug.cgi?id=34200
+
+        Implement necessary methods of ISODateTime, and call them from
+        HTMLInputElement.
+
+        Test: fast/forms/input-valueasnumber-datetimelocal.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueAsNumber):
+        (WebCore::HTMLInputElement::setValueAsNumber):
+        * html/ISODateTime.cpp:
+        (WebCore::ISODateTime::setMillisecondsSinceEpochForDateTimeLocal):
+          Implemented.  Just call setMillisecondsSinceEpochForDateTime().
+        (WebCore::ISODateTime::millisecondsSinceEpochForTime):
+          Accept to be called for m_type=DateTimeLocal.
+        (WebCore::ISODateTime::toString): Add DateTimeLocal support.
+        * html/ISODateTime.h: Declare new methods.
+
 2010-01-27  Steve Falkenburg  <sfalken@apple.com>
 
         Windows Debug_All build fix.

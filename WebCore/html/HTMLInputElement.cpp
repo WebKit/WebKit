@@ -1473,6 +1473,7 @@ double HTMLInputElement::valueAsNumber() const
     switch (inputType()) {
     case DATE:
     case DATETIME:
+    case DATETIMELOCAL:
     case MONTH:
     case TIME:
     case WEEK: {
@@ -1492,7 +1493,6 @@ double HTMLInputElement::valueAsNumber() const
     case BUTTON:
     case CHECKBOX:
     case COLOR:
-    case DATETIMELOCAL: // FIXME: Unlike valueAsDate, valueAsNumber should support DATETIMELOCAL type.
     case EMAIL:
     case FILE:
     case HIDDEN:
@@ -1526,12 +1526,23 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
     case WEEK:
         setValueAsDate(newValue, ec);
         return;
+    case DATETIMELOCAL: {
+        ISODateTime dateTime;
+        if (!dateTime.setMillisecondsSinceEpochForDateTimeLocal(newValue)) {
+            setValue(String());
+            return;
+        }
+        // FIXME: We should specify SecondFormat.
+        // e.g. If the step value is 60, use SecondFormat::None.
+        //      If the step value is 1, use SecondFormat::Second.
+        setValue(dateTime.toString());
+        return;
+    }
     case NUMBER:
     case RANGE:
         setValue(formStringFromDouble(newValue));
         return;
 
-    case DATETIMELOCAL: // FIXME: implement ISODateTime.toString()
     case BUTTON:
     case CHECKBOX:
     case COLOR:
