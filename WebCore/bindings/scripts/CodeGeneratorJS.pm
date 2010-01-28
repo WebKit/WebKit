@@ -1846,7 +1846,7 @@ sub JSValueToNative
         return "$value.toString(exec)";
     }
 
-    if ($type eq "SerializedScriptValue") {
+    if ($type eq "SerializedScriptValue" or $type eq "any") {
         $implIncludes{"SerializedScriptValue.h"} = 1;
         return "SerializedScriptValue::create(exec, $value)";
     }
@@ -1951,9 +1951,9 @@ sub NativeToJSValue
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
-    } elsif ($type eq "SerializedScriptValue") {
-        $implIncludes{"$type.h"} = 1;
-        return "$value->deserialize(exec)";
+    } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
+        $implIncludes{"SerializedScriptValue.h"} = 1;
+        return "$value ? $value->deserialize(exec, castedThis->globalObject()) : jsNull()";
     } else {
         # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;

@@ -1,3 +1,22 @@
+2010-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        MessageEvent.data should deserialize in the context of the MessageEvent's global object
+        https://bugs.webkit.org/show_bug.cgi?id=34227
+
+        Add logic to allow us to create an Object, Array, or Date instance
+        so we can create them in the context of a specific global object,
+        rather than just using the current lexical global object.
+
+        * JavaScriptCore.exp:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DateInstance.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyObject):
+        (JSC::constructEmptyArray):
+
 2010-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

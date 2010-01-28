@@ -40,6 +40,12 @@ DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structu
     setInternalValue(jsNaN(exec));
 }
 
+DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structure, double time)
+    : JSWrapperObject(structure)
+{
+    setInternalValue(jsNumber(exec, timeClip(time)));
+}
+
 DateInstance::DateInstance(ExecState* exec, double time)
     : JSWrapperObject(exec->lexicalGlobalObject()->dateStructure())
 {

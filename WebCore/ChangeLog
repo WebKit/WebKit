@@ -1,3 +1,33 @@
+2010-01-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        MessageEvent.data should deserialize in the context of the MessageEvent's global object
+        https://bugs.webkit.org/show_bug.cgi?id=34227
+
+        Make ScriptValue deserialisation support the provision of a specific global
+        object to use when creating new objects.  This then allows us to make
+        MessageEvent.data and PopStateEvent.state deserialize in the correct
+        context.
+
+        Test: fast/dom/Window/window-postmessage-clone-frames.html
+
+        * bindings/js/JSPopStateEventCustom.cpp:
+          Remove custom implementation of state getter
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::DeserializingTreeWalker::DeserializingTreeWalker):
+        (WebCore::DeserializingTreeWalker::createOutputArray):
+        (WebCore::DeserializingTreeWalker::createOutputObject):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        (WebCore::SerializedScriptValueData::deserialize):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/scripts/CodeGeneratorJS.pm:
+          Update bindings generation to pass the correct global object, and to
+          treat "any" as synonymous with SerializedValue.
+        * dom/PopStateEvent.idl:
+
 2010-01-27  Nicholas Young  <nicholas.young@nokia.com>
 
         Reviewed by Eric Carlson.

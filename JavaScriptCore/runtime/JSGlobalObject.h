@@ -413,10 +413,20 @@ namespace JSC {
     {
         return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
     }
+    
+    inline JSObject* constructEmptyObject(ExecState* exec, JSGlobalObject* globalObject)
+    {
+        return new (exec) JSObject(globalObject->emptyObjectStructure());
+    }
 
     inline JSArray* constructEmptyArray(ExecState* exec)
     {
         return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure());
+    }
+    
+    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
+    {
+        return new (exec) JSArray(globalObject->arrayStructure());
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
