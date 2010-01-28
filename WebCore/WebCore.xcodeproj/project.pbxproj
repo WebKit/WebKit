@@ -54,6 +54,7 @@
 		080FAE1B0EEEBDA800AACDE9 /* WMLTemplateElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 080FAE190EEEBDA800AACDE9 /* WMLTemplateElement.h */; };
 		0818AEE20EDB86BC00647B66 /* WMLEventHandlingElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0818AEE00EDB86BC00647B66 /* WMLEventHandlingElement.cpp */; };
 		0818AEE30EDB86BC00647B66 /* WMLEventHandlingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0818AEE10EDB86BC00647B66 /* WMLEventHandlingElement.h */; };
+		081AA8DA1111237E002AB06E /* SVGElementRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 081AA8D91111237E002AB06E /* SVGElementRareData.h */; };
 		081D81310EE0E74D00D73689 /* WMLTimerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 081D812F0EE0E74D00D73689 /* WMLTimerElement.cpp */; };
 		081D81320EE0E74D00D73689 /* WMLTimerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 081D81300EE0E74D00D73689 /* WMLTimerElement.h */; };
 		081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */; };
@@ -5322,6 +5323,7 @@
 		080FAE190EEEBDA800AACDE9 /* WMLTemplateElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTemplateElement.h; sourceTree = "<group>"; };
 		0818AEE00EDB86BC00647B66 /* WMLEventHandlingElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLEventHandlingElement.cpp; sourceTree = "<group>"; };
 		0818AEE10EDB86BC00647B66 /* WMLEventHandlingElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLEventHandlingElement.h; sourceTree = "<group>"; };
+		081AA8D91111237E002AB06E /* SVGElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGElementRareData.h; sourceTree = "<group>"; };
 		081D812F0EE0E74D00D73689 /* WMLTimerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTimerElement.cpp; sourceTree = "<group>"; };
 		081D81300EE0E74D00D73689 /* WMLTimerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTimerElement.h; sourceTree = "<group>"; };
 		081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilterBuilder.cpp; sourceTree = "<group>"; };
@@ -13856,6 +13858,7 @@
 				B22278260D00BF1F0071B782 /* SVGElementInstanceList.cpp */,
 				B22278270D00BF1F0071B782 /* SVGElementInstanceList.h */,
 				B22278280D00BF1F0071B782 /* SVGElementInstanceList.idl */,
+				081AA8D91111237E002AB06E /* SVGElementRareData.h */,
 				B22278290D00BF1F0071B782 /* SVGEllipseElement.cpp */,
 				B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */,
 				B222782B0D00BF1F0071B782 /* SVGEllipseElement.idl */,
@@ -18462,6 +18465,7 @@
 				084D2834110A7FCB0038239A /* SVGAnimatedPropertyTraits.h in Headers */,
 				59E842661109E5A2000305AD /* JNIBridgeJSC.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
+				081AA8DA1111237E002AB06E /* SVGElementRareData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

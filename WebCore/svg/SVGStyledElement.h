@@ -65,15 +65,14 @@ namespace WebCore {
 
         virtual void detach();
 
-        bool instanceUpdatesBlocked() const { return m_instanceUpdatesBlocked; }
-        void setInstanceUpdatesBlocked(bool value) { m_instanceUpdatesBlocked = value; }
+        bool instanceUpdatesBlocked() const;
+        void setInstanceUpdatesBlocked(bool);
 
     protected: 
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)
-        bool m_instanceUpdatesBlocked;
     };
 
 } // namespace WebCore

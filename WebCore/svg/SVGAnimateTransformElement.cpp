@@ -163,10 +163,10 @@ void SVGAnimateTransformElement::applyResultsToTarget()
         targetElement->renderer()->setNeedsLayout(true);
     
     // ...except in case where we have additional instances in <use> trees.
-    HashSet<SVGElementInstance*> instances = targetElement->instancesForElement();
+    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
-    HashSet<SVGElementInstance*>::iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::iterator it = instances.begin(); it != end; ++it) {
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         ASSERT(shadowTreeElement);
         if (shadowTreeElement->isStyledTransformable())

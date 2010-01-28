@@ -1762,6 +1762,7 @@ HEADERS += \
     svg/SVGElement.h \
     svg/SVGElementInstance.h \
     svg/SVGElementInstanceList.h \
+    svg/SVGElementRareData.h \
     svg/SVGEllipseElement.h \
     svg/SVGExternalResourcesRequired.h \
     svg/SVGFEBlendElement.h \

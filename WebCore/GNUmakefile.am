@@ -3049,6 +3049,7 @@ webcore_sources += \
 	WebCore/svg/SVGElementInstance.h \
 	WebCore/svg/SVGElementInstanceList.cpp \
 	WebCore/svg/SVGElementInstanceList.h \
+	WebCore/svg/SVGElementRareData.h \
 	WebCore/svg/SVGEllipseElement.cpp \
 	WebCore/svg/SVGEllipseElement.h \
 	WebCore/svg/SVGException.h \

@@ -3345,6 +3345,7 @@
             'svg/SVGElementInstance.h',
             'svg/SVGElementInstanceList.cpp',
             'svg/SVGElementInstanceList.h',
+            'svg/SVGElementRareData.h',
             'svg/SVGEllipseElement.cpp',
             'svg/SVGEllipseElement.h',
             'svg/SVGException.h',

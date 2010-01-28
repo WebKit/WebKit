@@ -95,15 +95,13 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     if (element->isStyled() && static_cast<SVGStyledElement*>(element)->instanceUpdatesBlocked())
         return;
 
-    HashSet<SVGElementInstance*> set = element->instancesForElement();
+    const HashSet<SVGElementInstance*>& set = element->instancesForElement();
     if (set.isEmpty())
         return;
 
     // Mark all use elements referencing 'element' for rebuilding
-    HashSet<SVGElementInstance*>::const_iterator it = set.begin();
     const HashSet<SVGElementInstance*>::const_iterator end = set.end();
-
-    for (; it != end; ++it) {
+    for (HashSet<SVGElementInstance*>::const_iterator it = set.begin(); it != end; ++it) {
         ASSERT((*it)->correspondingElement() == element);
         (*it)->correspondingUseElement()->invalidateShadowTree();
     }

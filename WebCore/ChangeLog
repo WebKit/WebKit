@@ -1,3 +1,64 @@
+2010-01-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Save additional memory in SVG*Element classes, by introducing SVGElementRareData
+        https://bugs.webkit.org/show_bug.cgi?id=34268
+
+        Introduce SVGElementRareData, to remove the need to store any members in SVGElement/SVGStyledElement.
+        This saves some additional MB for the svg-node-count-vs-scroll.xhtml testcase.
+
+        SVGElementRareData works just like NodeRareData. Unlike ElementRareData, we're not inheriting from
+        NodeRareData in SVG, as we don't need all the rare data stored there, unlike Element.
+
+        * GNUmakefile.am: Add SVGElementRareData.h to build.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/Node.cpp: Use Nodes bitfield to keep track wheter a SVGElement has a SVGElementRareData object associated.
+        (WebCore::Node::Node):
+        * dom/Node.h: Add m_hasRareSVGData flag, merged with the existing bitfield, 10 bits remaining now.
+        (WebCore::Node::hasRareSVGData):
+        * svg/SVGAnimateMotionElement.cpp: SVGElement::instancesForElement() now returns a const-reference to the HashMap instead of copying.
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateTransformElement.cpp: Ditto.
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        * svg/SVGAnimationElement.cpp: Ditto.
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        * svg/SVGElement.cpp: Move the element instances HashSet and two cursor-related pointers into SVGElementRareData.
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::rareSVGData): Modelled just like Node::rareData().
+        (WebCore::SVGElement::ensureRareSVGData): Dito.
+        (WebCore::SVGElement::accessDocumentSVGExtensions):
+        (WebCore::SVGElement::mapInstanceToElement): Route call through SVGElementRareData.
+        (WebCore::SVGElement::removeInstanceMapping): Ditto.
+        (WebCore::SVGElement::instancesForElement): Ditto.
+        (WebCore::SVGElement::setCursorElement): Ditto.
+        (WebCore::SVGElement::setCursorImageValue): Ditto.
+        * svg/SVGElement.h:
+        * svg/SVGElementInstance.cpp: Ditto.
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+        * svg/SVGElementRareData.h: Added. Based on NodeRareData - works exactly the same.
+        (WebCore::SVGElementRareData::SVGElementRareData):
+        (WebCore::SVGElementRareData::rareDataMap):
+        (WebCore::SVGElementRareData::rareDataFromMap):
+        (WebCore::SVGElementRareData::elementInstances):
+        (WebCore::SVGElementRareData::instanceUpdatesBlocked):
+        (WebCore::SVGElementRareData::setInstanceUpdatesBlocked):
+        (WebCore::SVGElementRareData::cursorElement):
+        (WebCore::SVGElementRareData::setCursorElement):
+        (WebCore::SVGElementRareData::cursorImageValue):
+        (WebCore::SVGElementRareData::setCursorImageValue):
+        * svg/SVGStyledElement.cpp: Move m_instancesUpdatesBlocked into SVGElementRareData.
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        (WebCore::SVGStyledElement::instanceUpdatesBlocked):
+        (WebCore::SVGStyledElement::setInstanceUpdatesBlocked):
+        * svg/SVGStyledElement.h:
+        * svg/SVGUseElement.cpp: Adapt to element instances changes, now passed as const-reference.
+        (WebCore::dumpInstanceTree):
+
 2010-01-28  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Adler.

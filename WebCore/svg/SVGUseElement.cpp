@@ -355,11 +355,11 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
     for (unsigned int i = 0; i < depth; ++i)
         text += "  ";
 
-    HashSet<SVGElementInstance*> elementInstances = element->instancesForElement();
+    const HashSet<SVGElementInstance*>& elementInstances = element->instancesForElement();
     text += String::format("Corresponding element is associated with %i instance(s):\n", elementInstances.size());
 
-    HashSet<SVGElementInstance*>::iterator end = elementInstances.end();
-    for (HashSet<SVGElementInstance*>::iterator it = elementInstances.begin(); it != end; ++it) {
+    const HashSet<SVGElementInstance*>::const_iterator end = elementInstances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = elementInstances.begin(); it != end; ++it) {
         for (unsigned int i = 0; i < depth; ++i)
             text += "  ";
 

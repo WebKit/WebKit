@@ -571,7 +571,10 @@ protected:
     void setTabIndexExplicitly(short);
     
     bool hasRareData() const { return m_hasRareData; }
-    
+#if ENABLE(SVG)
+    bool hasRareSVGData() const { return m_hasRareSVGData; }
+#endif
+
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
 
@@ -635,9 +638,10 @@ protected:
 #if ENABLE(SVG)
     mutable bool m_areSVGAttributesValid : 1; // Element
     mutable bool m_synchronizingSVGAttributes : 1; // SVGElement
+    bool m_hasRareSVGData : 1; // SVGElement
 #endif
 
-    // 11 bits remaining
+    // 10 bits remaining
 };
 
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()

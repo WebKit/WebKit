@@ -40837,6 +40837,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGElementRareData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGEllipseElement.h"
 				>
 			</File>
