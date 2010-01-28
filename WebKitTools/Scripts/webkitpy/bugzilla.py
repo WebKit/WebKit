@@ -467,7 +467,9 @@ class Bugzilla(object):
             self.authenticated = True
             return
 
+        attempts = 0
         while not self.authenticated:
+            attempts += 1
             (username, password) = Credentials(
                 self.bug_server_host, git_prefix="bugzilla").read_credentials()
 
@@ -483,7 +485,12 @@ class Bugzilla(object):
             # If the resulting page has a title, and it contains the word
             # "invalid" assume it's the login failure page.
             if match and re.search("Invalid", match.group(1), re.IGNORECASE):
-                log("Bugzilla login failed: %s" % match.group(1))
+                errorMessage = "Bugzilla login failed: %s" % match.group(1)
+                # raise an exception only if this was the last attempt
+                if attempts < 5:
+                    log(errorMessage)
+                else:
+                    raise Exception(errorMessage)
             else:
                 self.authenticated = True
 
