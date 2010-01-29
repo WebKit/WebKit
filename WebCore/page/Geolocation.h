@@ -138,7 +138,7 @@ private:
 
     void requestPermission();
 
-    bool startUpdating(PositionOptions*);
+    bool startUpdating(GeoNotifier*);
     void stopUpdating();
 
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
@@ -159,6 +159,8 @@ private:
     Frame* m_frame;
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
     OwnPtr<GeolocationService> m_service;
+#else
+    RefPtr<GeoNotifier> m_startRequestPermissionNotifier;
 #endif
     RefPtr<Geoposition> m_lastPosition;
     RefPtr<Geoposition> m_currentPosition;

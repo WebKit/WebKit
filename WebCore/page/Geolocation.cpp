@@ -245,7 +245,7 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
     if (isDenied())
         notifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
     else {
-        if (notifier->hasZeroTimeout() || startUpdating(notifier->m_options.get()))
+        if (notifier->hasZeroTimeout() || startUpdating(notifier.get()))
             notifier->startTimerIfNeeded();
         else
             notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, "Failed to start Geolocation service"));
@@ -300,6 +300,26 @@ void Geolocation::resume()
 void Geolocation::setIsAllowed(bool allowed)
 {
     m_allowGeolocation = allowed ? Yes : No;
+    
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (m_startRequestPermissionNotifier) {
+        if (isAllowed()) {
+            // Permission request was made during the startUpdating process
+            m_startRequestPermissionNotifier = 0;
+            if (!m_frame)
+                return;
+            Page* page = m_frame->page();
+            if (!page)
+                return;
+            page->geolocationController()->addObserver(this);
+        } else {
+            m_startRequestPermissionNotifier->setFatalError(PositionError::create(PositionError::PERMISSION_DENIED, permissionDeniedErrorMessage));
+            m_oneShots.add(m_startRequestPermissionNotifier);
+            m_startRequestPermissionNotifier = 0;
+        }
+        return;
+    }
+#endif
     
     if (isAllowed())
         makeSuccessCallbacks();
@@ -479,12 +499,17 @@ void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)
 
 #endif
 
-bool Geolocation::startUpdating(PositionOptions* options)
+bool Geolocation::startUpdating(GeoNotifier* notifier)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     // FIXME: Pass options to client.
-    UNUSED_PARAM(options);
 
+    if (!isAllowed()) {
+        m_startRequestPermissionNotifier = notifier;
+        requestPermission();
+        return true;
+    }
+    
     if (!m_frame)
         return false;
 
@@ -495,7 +520,7 @@ bool Geolocation::startUpdating(PositionOptions* options)
     page->geolocationController()->addObserver(this);
     return true;
 #else
-    return m_service->startUpdating(options);
+    return m_service->startUpdating(notifier->options);
 #endif
 }
 

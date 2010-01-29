@@ -1,3 +1,18 @@
+2010-01-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Client-based Geolocation starts updating before getting consent from the user
+        https://bugs.webkit.org/show_bug.cgi?id=34343
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::startRequest): Pass notifier instead of options to startUpdating.
+        (WebCore::Geolocation::setIsAllowed): Add the observer or notify of error for deferred startUpdating.
+        (WebCore::Geolocation::startUpdating): Pass notifier instead of options, since we may need to call it if we fail to get user consent.
+        Defer adding the observer if we don't yet have user consent, since this could kick off
+        server-based wifi Geolocation requests.
+        * page/Geolocation.h:
+
 2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Crash when posting a notification for a detached object
