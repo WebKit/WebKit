@@ -1,3 +1,13 @@
+2010-01-28  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove NULL char from input JS file because 'grep' fails if the file contains NULL char.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34252
+
+        * Scripts/make-script-test-wrappers:
+
 2010-01-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after removal of the zlib image decoder.
