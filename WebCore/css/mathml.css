@@ -1,13 +1,12 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
-/* approved */
-
 math {
     font-family: Symbol, STIXGeneral, "Times New Roman";
     display: inline-block;
     padding: 0px;
     margin: 0px;
     vertical-align: baseline;
+    line-height: 1.0;
 }
 
 math[display="block"] {
@@ -18,7 +17,7 @@ math[display="block"] {
 }
 
 math > * {
-   vertical-align: baseline;
+    vertical-align: baseline;
 }
 
 mrow, mfenced {
@@ -27,12 +26,9 @@ mrow, mfenced {
     vertical-align: middle;
 }
 
-mrow > mo, mfenced > mo, math > mo,
-mrow > mi, mfenced > mi, math > mi,
-mrow > mn, mfenced > mn, math > mn,
-mrow > mtext, mfenced > mtext, math > mtext
+mrow > mo, mfenced > mo, math > mo
 {
-   vertical-align: middle;
+    vertical-align: middle;
 }
 
 mi, mtext {
@@ -41,7 +37,7 @@ mi, mtext {
 }
 
 mi + mrow {
-   margin-left: 0.1em;
+    margin-left: 0.1em;
 }
 
 mfrac {
@@ -55,15 +51,13 @@ msub, msup {
 }
 
 msub > * + * {
-   vertical-align: sub;
-   font-size: 0.75em;
-   line-height: 0.75em;
+    vertical-align: sub;
+    font-size: 0.75em;
 }
 
 msup > * + * {
-   vertical-align: super;
-   font-size: 0.75em;
-   line-height: 0.75em;
+    vertical-align: super;
+    font-size: 0.75em;
 }
 
 msubsup {
@@ -77,8 +71,7 @@ msubsup > * {
 }
 
 msubsup > * + * {
-   font-size: 0.75em;
-   line-height: 0.75em;
+    font-size: 0.75em;
 }
 
 munder, mover, munderover {
@@ -87,39 +80,37 @@ munder, mover, munderover {
 }
 
 munderover > * + *, mover > * + *, munder > * + * {
-   font-size: 0.75em;
-   line-height: 0.5625em;
+    font-size: 0.75em;
+}
+
+mover > mi {
+    text-align: center;
 }
 
 mo, mn, mi, mtext {
-   line-height: 0.75em;
-   padding: 0px;
-   margin: 0px;
+    padding: 0px;
+    margin: 0px;
 }
 
 mo {
     display: inline-block;
-    /*height: 100%;*/
 }
 
 mo {
-   padding-left: 0.05em;
-   padding-right: 0.05em;
+    padding-left: 0.05em;
+    padding-right: 0.05em;
 }
 
 mo[mathsize="small"], mn[mathsize="small"], mi[mathsize="small"] {
-   font-size: 0.75em;
-   line-height: 0.5625em;
+    font-size: 0.75em;
 }
 
 mo[mathsize="normal"],mn[mathsize="normal"],mi[mathsize="normal"] {
-   font-size: 1em;
-   line-height: 0.75em;
+    font-size: 1em;
 }
 
 mo[mathsize="big"], mn[mathsize="big"], mi[mathsize="big"] {
-   line-height: 1.2em;
-   font-size: 1.5em;
+    font-size: 1.5em;
 }
  
 annotation, annotation-xml {
@@ -147,14 +138,12 @@ mroot {
 
 mroot > * + * {
     font-size: 0.75em;
-    line-height: 0.75em;
     vertical-align: top;
     padding-right: 0.3em;
 }
 
 mtable {
     display: inline-table;
-    line-height: 1.5em;
     text-align: center;
     vertical-align: middle;
 }
@@ -205,5 +194,5 @@ mtable[columnlines="dashed"] > mtr > mtd + mtd {
 }
 
 mspace[linebreak="newline"] {
-   display: block;
+    display: block;
 }

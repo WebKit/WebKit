@@ -1,3 +1,15 @@
+2010-01-28  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Eric Seidel.
+
+        Updates from CSS change for mathml.css
+
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+
 2010-01-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Eric Carlson.

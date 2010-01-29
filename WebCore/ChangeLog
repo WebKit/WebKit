@@ -1,3 +1,11 @@
+2010-01-28  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Eric Seidel.
+
+        Update to CSS to remove unnecessary line-height settings
+
+        * css/mathml.css:
+
 2010-01-28  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.

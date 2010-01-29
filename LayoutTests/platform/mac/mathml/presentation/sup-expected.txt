@@ -6,12 +6,12 @@ layer at (0,0) size 800x51
       RenderBlock {p} at (0,0) size 784x19
         RenderText {#text} at (0,0) size 76x18
           text run at (0,0) width 76: "superscript: "
-        RenderBlock {math} at (76,1) size 13x18
-          RenderBlock {msup} at (0,0) size 13x18
+        RenderBlock {math} at (76,0) size 13x19
+          RenderBlock {msup} at (0,0) size 13x19
             RenderInline {mi} at (0,0) size 7x16
-              RenderText {#text} at (0,2) size 7x16
-                text run at (0,2) width 7: "x"
+              RenderText {#text} at (0,3) size 7x16
+                text run at (0,3) width 7: "x"
             RenderInline {mn} at (0,0) size 6x12
-              RenderText {#text} at (7,-1) size 6x12
-                text run at (7,-1) width 6: "2"
+              RenderText {#text} at (7,0) size 6x12
+                text run at (7,0) width 6: "2"
         RenderText {#text} at (0,0) size 0x0
