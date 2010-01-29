@@ -1,3 +1,18 @@
+2010-01-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: migrate to tokenizer-based highlighting in the Elements panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34273
+
+        * inspector/syntax-highlight-css-expected.txt:
+        * inspector/syntax-highlight-css.html:
+        * inspector/syntax-highlight-javascript-expected.txt:
+        * inspector/syntax-highlight-javascript.html:
+        * inspector/syntax-highlight.js:
+        (frontend_dumpSyntaxHighlight):
+
 2010-01-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -13,11 +13,11 @@ function doit()
 
 // Frontend functions.
 
-function frontend_dumpSyntaxHighlight(str, highlighterConstructor)
+function frontend_dumpSyntaxHighlight(str, mimeType)
 {
     var node = document.createElement("span");
     node.textContent = str;
-    var javascriptSyntaxHighlighter = new highlighterConstructor(null, null);
+    var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter(mimeType);
     javascriptSyntaxHighlighter.syntaxHighlightNode(node);
     var node_parts = [];
     for (var i = 0; i < node.childNodes.length; i++) {

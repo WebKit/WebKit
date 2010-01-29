@@ -42,7 +42,7 @@
 
 WebInspector.SourceCSSTokenizer = function()
 {
-    WebInspector.TextEditorHighlighter.Tokenizer.call(this);
+    WebInspector.SourceTokenizer.call(this);
 
     this._propertyKeywords = [
         "background", "background-attachment", "background-clip", "background-color", "background-image",
@@ -212,16 +212,13 @@ WebInspector.SourceCSSTokenizer.prototype = {
                 OpenCurlyBracket = "{";
                 CloseCurlyBracket = "}";
 
-                OpenBracket = "(";
-                CloseBracket = ")";
-
                 Colon = ":";
                 Semicolon = ";";
 
                 NumericLiteral = "-"? ([0-9]+ | [0-9]* "." [0-9]+)  ("em" | "rem" | "__qem" | "ex" | "px" | "cm" | 
                     "mm" | "in" | "pt" | "pc" | "deg" | "rad" | "grad" | "turn" | "ms" | "s" | "Hz" | "kHz" | "%")?;
 
-                Identifier = [@!_\-$0-9a-zA-Z]+;
+                Identifier = [@!_\-$0-9a-zA-Z\[\]='"/]+;
 
                 DoubleStringContent = ([^\r\n\"\\] | "\\" ['"\\bfnrtv])*;
                 SingleStringContent = ([^\r\n\'\\] | "\\" ['"\\bfnrtv])*;
@@ -295,7 +292,9 @@ WebInspector.SourceCSSTokenizer.prototype = {
                         if (token === "@import" || token === "@media") {
                             this.tokenType = "css-at-rule";
                             this._parseCondition = this._parseConditions.AT_RULE;
-                        } else
+                        } else if (token.indexOf("@") === 0)
+                            this.tokenType = "css-at-rule";
+                        else
                             this.tokenType = "css-selector";
                     }
                     else if (this._parseCondition === this._parseConditions.AT_RULE && token in this._mediaTypes)
@@ -316,4 +315,4 @@ WebInspector.SourceCSSTokenizer.prototype = {
     }
 }
 
-WebInspector.SourceCSSTokenizer.prototype.__proto__ = WebInspector.TextEditorHighlighter.Tokenizer.prototype;
+WebInspector.SourceCSSTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;

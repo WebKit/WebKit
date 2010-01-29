@@ -52,19 +52,11 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._styles["html-comment"] = "rgb(35, 110, 37)";
     this._styles["html-doctype"] = "rgb(192, 192, 192)";
 
-    this._styles["js-comment"] = "rgb(0, 116, 0)";
-    this._styles["js-string"] = "rgb(196, 26, 22)";
-    this._styles["js-regex"] = "rgb(196, 26, 22)";
-    this._styles["js-keyword"] = "rgb(170, 13, 145)";
-    this._styles["js-number"] = "rgb(28, 0, 207)";
-
-    this._tokenizers = {};
-    this._tokenizerConstructors = {
-        "text/css": WebInspector.SourceCSSTokenizer,
-        "text/html": WebInspector.SourceHTMLTokenizer,
-        "text/javascript": WebInspector.SourceJavaScriptTokenizer,
-        "application/x-javascript": WebInspector.SourceJavaScriptTokenizer
-    };
+    this._styles["javascript-comment"] = "rgb(0, 116, 0)";
+    this._styles["javascript-string"] = "rgb(196, 26, 22)";
+    this._styles["javascript-regexp"] = "rgb(196, 26, 22)";
+    this._styles["javascript-keyword"] = "rgb(170, 13, 145)";
+    this._styles["javascript-number"] = "rgb(28, 0, 207)";
 
     this.mimeType = "text/html";
     this._damageCallback = damageCallback;    
@@ -73,13 +65,9 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 WebInspector.TextEditorHighlighter.prototype = {
     set mimeType(mimeType)
     {
-        if (!this._tokenizerConstructors[mimeType])
-            return;
-        this._tokenizer = this._tokenizers[mimeType];
-        if (!this._tokenizer) {
-            this._tokenizer = new this._tokenizerConstructors[mimeType]();
-            this._tokenizers[mimeType] = this._tokenizer;
-        }
+        var tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer(mimeType);
+        if (tokenizer)
+            this._tokenizer = tokenizer;
     },
 
     highlight: function(endLine)
@@ -203,46 +191,5 @@ WebInspector.TextEditorHighlighter.prototype = {
                  attributes[column] = { length: newColumn - column, style: this._styles[tokenType] };
              column = newColumn;
          } while (column < line.length)
-    }
-}
-
-WebInspector.TextEditorHighlighter.Tokenizer = function()
-{
-}
-
-WebInspector.TextEditorHighlighter.Tokenizer.prototype = {
-    set line(line) {
-        this._line = line;
-    },
-
-    set condition(condition)
-    {
-        this._lexCondition = condition.lexCondition;
-        this._parseCondition = condition.parseCondition;
-    },
-
-    get condition()
-    {
-        return { lexCondition: this._lexCondition, parseCondition: this._parseCondition };
-    },
-
-    hasCondition: function(condition)
-    {
-        return this._lexCondition === condition.lexCondition && this._parseCondition === condition.parseCondition;
-    },
-
-    getLexCondition: function()
-    {
-        return this._lexCondition;
-    },
-
-    setLexCondition: function(lexCondition)
-    {
-        this._lexCondition = lexCondition;
-    },
-
-    _charAt: function(cursor)
-    {
-        return cursor < this._line.length ? this._line.charAt(cursor) : "\n";
     }
 }

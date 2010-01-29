@@ -16,7 +16,6 @@
     <file>ConsoleView.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
-    <file>CSSSourceSyntaxHighlighter.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabaseTableView.js</file>
@@ -24,6 +23,7 @@
     <file>DOMAgent.js</file>
     <file>DOMStorage.js</file>
     <file>DOMStorageItemsView.js</file>
+    <file>DOMSyntaxHighlighter.js</file>
     <file>Drawer.js</file>
     <file>ElementsPanel.js</file>
     <file>ElementsTreeOutline.js</file>
@@ -35,7 +35,6 @@
     <file>inspector.js</file>
     <file>InspectorBackendStub.js</file>
     <file>InspectorFrontendHostStub.js</file>
-    <file>JavaScriptSourceSyntaxHighlighter.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
@@ -66,7 +65,7 @@
     <file>SourceFrame.js</file>
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
-    <file>SourceSyntaxHighlighter.js</file>
+    <file>SourceTokenizer.js</file>
     <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
     <file>StoragePanel.js</file>

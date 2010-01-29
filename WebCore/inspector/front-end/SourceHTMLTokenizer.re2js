@@ -42,7 +42,7 @@
 
 WebInspector.SourceHTMLTokenizer = function()
 {
-    WebInspector.TextEditorHighlighter.Tokenizer.call(this);
+    WebInspector.SourceTokenizer.call(this);
 
     this._lexConditions = {
         INITIAL: 0,
@@ -150,7 +150,7 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 SingleStringStart = "'" SingleStringContent [\r\n];
                 SingleStringEnd = SingleStringContent "'";
 
-                Identifier = [_a-zA-Z\x80-\xFF]+;
+                Identifier = [_a-zA-Z0-9\x80-\xFF]+;
 
                 <INITIAL> Comment { this.tokenType = "html-comment"; return cursor; }
                 <INITIAL> CommentStart => COMMENT { this.tokenType = "html-comment"; return cursor; }
@@ -255,4 +255,4 @@ WebInspector.SourceHTMLTokenizer.prototype = {
     }
 }
 
-WebInspector.SourceHTMLTokenizer.prototype.__proto__ = WebInspector.TextEditorHighlighter.Tokenizer.prototype;
+WebInspector.SourceHTMLTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;

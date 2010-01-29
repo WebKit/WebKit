@@ -979,7 +979,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
 
-                        var javascriptSyntaxHighlighter = new WebInspector.JavaScriptSourceSyntaxHighlighter(null, null);
+                        var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript");
                         javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
                         
                         info.title = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
@@ -987,7 +987,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
                         
-                        var cssSyntaxHighlighter = new WebInspector.CSSSourceSyntaxHighlighter(null, null);
+                        var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css");
                         cssSyntaxHighlighter.syntaxHighlightNode(newNode);
                         
                         info.title = "<span class=\"webkit-html-text-node webkit-html-css-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";

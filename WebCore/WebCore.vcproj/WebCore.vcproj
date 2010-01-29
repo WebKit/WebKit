@@ -42732,10 +42732,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\CSSSourceSyntaxHighlighter.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\Database.js"
 					>
 				</File>
@@ -42761,6 +42757,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\DOMStorageItemsView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DOMSyntaxHighlighter.js"
 					>
 				</File>
 				<File
@@ -42809,10 +42809,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\inspectorSyntaxHighlight.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\JavaScriptSourceSyntaxHighlighter.js"
 					>
 				</File>
 				<File
@@ -42932,7 +42928,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\SourceSyntaxHighlighter.js"
+					RelativePath="..\inspector\front-end\SourceTokenizer.js"
 					>
 				</File>
 				<File

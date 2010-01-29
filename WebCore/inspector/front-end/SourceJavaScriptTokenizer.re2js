@@ -42,7 +42,7 @@
 
 WebInspector.SourceJavaScriptTokenizer = function()
 {
-    WebInspector.TextEditorHighlighter.Tokenizer.call(this);
+    WebInspector.SourceTokenizer.call(this);
 
     this._keywords = [
         "null", "true", "false", "break", "case", "catch", "const", "default", "finally", "for",
@@ -136,33 +136,33 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                 RegexStart = "/" RegexFirstChar RegexContent "\\";
                 RegexEnd = RegexContent "/" [igm]*;
 
-                <DIV,NODIV> LineComment { this.tokenType = "js-comment"; return cursor; }
-                <DIV,NODIV> Comment { this.tokenType = "js-comment"; return cursor; }
-                <DIV,NODIV> CommentStart => COMMENT { this.tokenType = "js-comment"; return cursor; }
-                <COMMENT> CommentContent => COMMENT { this.tokenType = "js-comment"; return cursor; }
-                <COMMENT> CommentEnd => NODIV { this.tokenType = "js-comment"; return cursor; }
+                <DIV,NODIV> LineComment { this.tokenType = "javascript-comment"; return cursor; }
+                <DIV,NODIV> Comment { this.tokenType = "javascript-comment"; return cursor; }
+                <DIV,NODIV> CommentStart => COMMENT { this.tokenType = "javascript-comment"; return cursor; }
+                <COMMENT> CommentContent => COMMENT { this.tokenType = "javascript-comment"; return cursor; }
+                <COMMENT> CommentEnd => NODIV { this.tokenType = "javascript-comment"; return cursor; }
 
-                <DIV,NODIV> StringLiteral { this.tokenType = "js-string"; return cursor; }
-                <DIV,NODIV> DoubleStringStart => DSTRING { this.tokenType = "js-string"; return cursor; }
-                <DSTRING> DoubleStringContent => DSTRING { this.tokenType = "js-string"; return cursor; }
-                <DSTRING> DoubleStringEnd => NODIV { this.tokenType = "js-string"; return cursor; }
-                <DIV,NODIV> SingleStringStart => SSTRING { this.tokenType = "js-string"; return cursor; }
-                <SSTRING> SingleStringContent => SSTRING { this.tokenType = "js-string"; return cursor; }
-                <SSTRING> SingleStringEnd => NODIV { this.tokenType = "js-string"; return cursor; }
+                <DIV,NODIV> StringLiteral { this.tokenType = "javascript-string"; return cursor; }
+                <DIV,NODIV> DoubleStringStart => DSTRING { this.tokenType = "javascript-string"; return cursor; }
+                <DSTRING> DoubleStringContent => DSTRING { this.tokenType = "javascript-string"; return cursor; }
+                <DSTRING> DoubleStringEnd => NODIV { this.tokenType = "javascript-string"; return cursor; }
+                <DIV,NODIV> SingleStringStart => SSTRING { this.tokenType = "javascript-string"; return cursor; }
+                <SSTRING> SingleStringContent => SSTRING { this.tokenType = "javascript-string"; return cursor; }
+                <SSTRING> SingleStringEnd => NODIV { this.tokenType = "javascript-string"; return cursor; }
 
-                <NODIV> Regex { this.tokenType = "js-regex"; return cursor; }
-                <NODIV> RegexStart => REGEX { this.tokenType = "js-regex"; return cursor; }
-                <REGEX> RegexContent => REGEX { this.tokenType = "js-regex"; return cursor; }
-                <REGEX> RegexEnd => NODIV { this.tokenType = "js-regex"; return cursor; }
+                <NODIV> Regex { this.tokenType = "javascript-regexp"; return cursor; }
+                <NODIV> RegexStart => REGEX { this.tokenType = "javascript-regexp"; return cursor; }
+                <REGEX> RegexContent => REGEX { this.tokenType = "javascript-regexp"; return cursor; }
+                <REGEX> RegexEnd => NODIV { this.tokenType = "javascript-regexp"; return cursor; }
 
-                <DIV,NODIV> NumericLiteral => DIV { this.tokenType = "js-number"; return cursor; }
+                <DIV,NODIV> NumericLiteral => DIV { this.tokenType = "javascript-number"; return cursor; }
                 <DIV,NODIV> Identifier => DIV
                 {
                     var token = this._line.substring(cursorOnEnter, cursor);
                     if (token in this._keywords)
-                        this.tokenType = "js-keyword";
+                        this.tokenType = "javascript-keyword";
                     else
-                        this.tokenType = null;
+                        this.tokenType = "javascript-ident";
                     return cursor;
                 }
                 <DIV,NODIV> RightParen => DIV { this.tokenType = null; return cursor; }
@@ -174,4 +174,4 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
     }
 }
 
-WebInspector.SourceJavaScriptTokenizer.prototype.__proto__ = WebInspector.TextEditorHighlighter.Tokenizer.prototype;
+WebInspector.SourceJavaScriptTokenizer.prototype.__proto__ = WebInspector.SourceTokenizer.prototype;

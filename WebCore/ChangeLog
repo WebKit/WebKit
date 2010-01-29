@@ -2,6 +2,54 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: migrate to tokenizer-based highlighting in the Elements panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34273
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/CSSSourceSyntaxHighlighter.js: Removed.
+        * inspector/front-end/DOMSyntaxHighlighter.js: Added.
+        (WebInspector.DOMSyntaxHighlighter):
+        (WebInspector.DOMSyntaxHighlighter.prototype.createSpan):
+        (WebInspector.DOMSyntaxHighlighter.prototype.syntaxHighlightNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/JavaScriptSourceSyntaxHighlighter.js: Removed.
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        (WebInspector.SourceCSSTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer):
+        (WebInspector.SourceJavaScriptTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        * inspector/front-end/SourceSyntaxHighlighter.js: Removed.
+        * inspector/front-end/SourceTokenizer.js: Added.
+        (WebInspector.SourceTokenizer):
+        (WebInspector.SourceTokenizer.prototype.set line):
+        (WebInspector.SourceTokenizer.prototype.set condition):
+        (WebInspector.SourceTokenizer.prototype.get condition):
+        (WebInspector.SourceTokenizer.prototype.hasCondition):
+        (WebInspector.SourceTokenizer.prototype.getLexCondition):
+        (WebInspector.SourceTokenizer.prototype.setLexCondition):
+        (WebInspector.SourceTokenizer.prototype._charAt):
+        (WebInspector.SourceTokenizer.Registry):
+        (WebInspector.SourceTokenizer.Registry.getInstance):
+        (WebInspector.SourceTokenizer.Registry.prototype.getTokenizer):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.set mimeType):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
+2010-01-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: No need to render background sources
         when performing search.
 
