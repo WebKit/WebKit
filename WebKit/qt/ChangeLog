@@ -1,3 +1,27 @@
+2010-01-28  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Support kinetic scrolling on Maemo 5
+
+        https://bugs.webkit.org/show_bug.cgi?id=34267
+
+        Patch by Ralf Engels <ralf.engels@nokia.com> and
+        Robert Griebl <rgriebl@trolltech.com>
+
+        * Api/qwebview.cpp:
+        (QWebViewKineticScroller::QWebViewKineticScroller):
+        (QWebViewKineticScroller::eventFilter):
+        (QWebViewKineticScroller::currentFrame):
+        (QWebViewKineticScroller::scrollingFrameAt):
+        (QWebViewKineticScroller::attachToWidget):
+        (QWebViewKineticScroller::removeFromWidget):
+        (QWebViewKineticScroller::positionRange):
+        (QWebViewKineticScroller::position):
+        (QWebViewKineticScroller::viewportSize):
+        (QWebViewKineticScroller::setPosition):
+        (QWebView::QWebView):
+
 2010-01-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
