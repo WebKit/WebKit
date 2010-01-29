@@ -73,7 +73,9 @@ function shouldBe(actual, expected)
 }
 
 function onmessage(evt) {
-    eventData = evt.data
+    eventData = evt.data;
+    if (evt.data !== evt.data)
+        console.innerHTML += "MessageEvent.data does not produce the same value on multiple queries.";
     shouldBe("eventData", messages.shift());
 
     if (safeToString(evt.data) == 'done' && window.layoutTestController)

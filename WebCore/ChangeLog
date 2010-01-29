@@ -1,3 +1,15 @@
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        MessageEvent.data should not be repeated deserialised
+        https://bugs.webkit.org/show_bug.cgi?id=34311
+
+        Cache the result of deserialising the event data
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/MessageEvent.idl:
+
 2010-01-28  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.

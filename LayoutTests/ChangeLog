@@ -1,3 +1,14 @@
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        MessageEvent.data should not be repeated deserialised
+        https://bugs.webkit.org/show_bug.cgi?id=34311
+
+        Add test to ensure we get the same value back when accessing event.data multiple times
+
+        * fast/dom/Window/window-postmessage-clone.html:
+
 2010-01-28  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.

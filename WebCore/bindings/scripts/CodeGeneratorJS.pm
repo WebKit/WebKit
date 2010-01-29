@@ -37,6 +37,8 @@ my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
 my @depsContent = ();
+my $numCachedAttributes = 0;
+my $currentCachedAttribute = 0;
 
 # Default .h template
 my $headerTemplate = << "EOF";
@@ -668,9 +670,17 @@ sub GenerateHeader
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"};
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"};
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"};
+            if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                push(@headerContent, "    static const unsigned " . $attribute->signature->name . "Slot = $numCachedAttributes + Base::AnonymousSlotCount;\n");
+                $numCachedAttributes++;
+            }
         }
     }
 
+    if ($numCachedAttributes > 0) {
+        push(@headerContent, "    using $parentClassName" . "::putAnonymousValue;\n");
+        push(@headerContent, "    using $parentClassName" . "::getAnonymousValue;\n");
+    }
     if ($numCustomAttributes > 0) {
         push(@headerContent, "\n    // Custom attributes\n");
 
@@ -717,6 +727,12 @@ sub GenerateHeader
         push(@headerContent, "    }\n");
     }
     
+    # anonymous slots
+    if ($numCachedAttributes) {
+        push(@headerContent, "public:\n");
+        push(@headerContent, "    static const unsigned AnonymousSlotCount = $numCachedAttributes + Base::AnonymousSlotCount;\n");
+    }
+
     # structure flags
     push(@headerContent, "protected:\n");
     push(@headerContent, "    static const unsigned StructureFlags = ");
@@ -1169,6 +1185,10 @@ sub GenerateImplementation
         }
     }
     push(@implContent, "{\n");
+    if ($numCachedAttributes > 0) {
+        push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");
+        push(@implContent, "        putAnonymousValue(i, JSValue());\n");
+    }
     push(@implContent, "}\n\n");
 
     # Destructor
@@ -1314,12 +1334,19 @@ sub GenerateImplementation
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
                 } elsif (!@{$attribute->getterExceptions}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
+                    my $cacheIndex = 0;
+                    if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                        $cacheIndex = $currentCachedAttribute;
+                        $currentCachedAttribute++;
+                        push(@implContent, "    if (JSValue cachedValue = castedThis->getAnonymousValue(" . $className . "::" . $attribute->signature->name . "Slot))\n");
+                        push(@implContent, "        return cachedValue;\n");
+                    }
                     if ($podType) {
                         push(@implContent, "    $podType imp(*castedThis->impl());\n");
                         if ($podType eq "float") { # Special case for JSSVGNumber
-                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp", "castedThis") . ";\n");
+                            push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp", "castedThis") . ";\n");
                         } else {
-                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "castedThis") . ";\n");
+                            push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "castedThis") . ";\n");
                         }
                     } else {
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
@@ -1338,11 +1365,15 @@ sub GenerateImplementation
                         my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, $value, "castedThis");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
-                            push(@implContent, "    return toJS(exec, castedThis->globalObject(), obj.get(), imp);\n");
+                            push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get(), imp);\n");
                         } else {
-                            push(@implContent, "    return $jsType;\n");
+                            push(@implContent, "    JSValue result = $jsType;\n");
                         }
                     }
+                    
+                    push(@implContent, "    castedThis->putAnonymousValue(" . $className . "::" . $attribute->signature->name . "Slot, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
+                    push(@implContent, "    return result;\n");
+
                 } else {
                     push(@implContent, "    ExceptionCode ec = 0;\n");                    
                     if ($podType) {

@@ -29,7 +29,7 @@ module events {
     interface [
         NoStaticTables
     ] MessageEvent : Event {
-        readonly attribute SerializedScriptValue data;
+        readonly attribute [CachedAttribute] SerializedScriptValue data;
 
         readonly attribute DOMString origin;
         readonly attribute DOMString lastEventId;
