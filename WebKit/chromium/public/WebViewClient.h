@@ -65,7 +65,9 @@ class WebViewClient : virtual public WebWidgetClient {
 public:
     // Factory methods -----------------------------------------------------
 
-    // Create a new related WebView.
+    // Create a new related WebView.  This method must clone its session storage
+    // so any subsequent calls to createSessionStorageNamespace conform to the
+    // WebStorage specification.
     virtual WebView* createView(WebFrame* creator) { return 0; }
 
     // Create a new WebPopupMenu.  In the second form, the client is
@@ -73,7 +75,7 @@ public:
     virtual WebWidget* createPopupMenu(bool activatable) { return 0; }
     virtual WebWidget* createPopupMenu(const WebPopupMenuInfo&) { return 0; }
 
-    // Create a session storage namespace associated with this WebView.
+    // Create a session storage namespace object associated with this WebView.
     virtual WebStorageNamespace* createSessionStorageNamespace() { return 0; }
 
     // Misc ----------------------------------------------------------------
