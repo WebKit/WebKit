@@ -9,6 +9,36 @@
 
 2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Rubberstamped by Simon Hausmann.
+
+        [Qt] Separate implementation from class definition.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::webView):
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::~LauncherWindow):
+        (LauncherWindow::keyPressEvent):
+        (LauncherWindow::grabZoomKeys):
+        (LauncherWindow::sendTouchEvent):
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::loadStarted):
+        (LauncherWindow::loadFinished):
+        (LauncherWindow::showLinkHover):
+        (LauncherWindow::zoomIn):
+        (LauncherWindow::zoomOut):
+        (LauncherWindow::resetZoom):
+        (LauncherWindow::toggleZoomTextOnly):
+        (LauncherWindow::print):
+        (LauncherWindow::screenshot):
+        (LauncherWindow::setEditable):
+        (LauncherWindow::dumpHtml):
+        (LauncherWindow::selectElements):
+        (LauncherWindow::setTouchMocking):
+        (LauncherWindow::newWindow):
+        (LauncherWindow::setupUI):
+
+2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Ariya Hidayat.
 
         [Qt] On Maemo5, a click/touch in the location bar (when unfocused)
