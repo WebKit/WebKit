@@ -1,3 +1,12 @@
+2010-01-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Fix the ARM build.
+
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::createStructure): Call the right Structure::create overload.
+
 2010-01-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for MSW, use ThreadingWin.cpp as the Windows pthreads implementation
