@@ -1,3 +1,15 @@
+2010-01-28  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Unused variable in ThemeMac (followup to change 49103).
+        https://bugs.webkit.org/show_bug.cgi?id=34274
+
+        Covered by existing tests.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::setupButtonCell):
+
 2010-01-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.

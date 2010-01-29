@@ -355,7 +355,7 @@ static void setupButtonCell(NSButtonCell *&buttonCell, ControlPart part, Control
     } else if ([buttonCell bezelStyle] != NSRoundedBezelStyle)
         [buttonCell setBezelStyle:NSRoundedBezelStyle];
 
-    setControlSize(buttonCell, buttonSizes(), zoomedRect.size(), zoomFactor);
+    setControlSize(buttonCell, sizes, zoomedRect.size(), zoomFactor);
 
     // Update the various states we respond to.
     updateStates(buttonCell, states);
