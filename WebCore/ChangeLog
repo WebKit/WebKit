@@ -1,3 +1,161 @@
+2010-01-29  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [OpenVG] Implement a basic GraphicsContext on top of a new PainterOpenVG class
+        https://bugs.webkit.org/show_bug.cgi?id=33405
+
+        PainterOpenVG provides painter state management that works
+        on a single (EGL) context, and apart from painter state
+        implements a single drawing operation (for now), drawRect().
+
+        It is a generic painter class that cooperates with
+        SurfaceOpenVG to enable robust surface/context switching
+        (given that EGL doesn't notify us if somebody switches
+        the surface/context behind our backs), and provides
+        painting operations close to OpenVG's way of working
+        that GraphicsContext, Path, Image, Font and other WebKit
+        platform classes can use to draw on.
+
+        Initial code for state management and OpenVG scissoring by
+        Eli Fidler <efidler@rim.com>. VGRect/VGMatrix and the bulk
+        of the transformations code by Adam Treat <atreat@rim.com>.
+        Preliminary drawFocusRing() implementation by Yong Li <yoli@rim.com>.
+
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp: Added.
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::platformContext):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::drawLineForMisspellingOrBadGrammar):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setLineCap):
+        (WebCore::GraphicsContext::setLineDash):
+        (WebCore::GraphicsContext::setLineJoin):
+        (WebCore::GraphicsContext::setMiterLimit):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::origin):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::setURLForRect):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+        * platform/graphics/openvg/PainterOpenVG.cpp: Added.
+        (WebCore::isNonRotatedAffineTransformation):
+        (WebCore::toVGCapStyle):
+        (WebCore::toVGJoinStyle):
+        (WebCore::toVGFillRule):
+        (WebCore::colorToVGColor):
+        (WebCore::setVGSolidColor):
+        (WebCore::PlatformPainterState::PlatformPainterState):
+        (WebCore::PlatformPainterState::copyPaintState):
+        (WebCore::PlatformPainterState::applyState):
+        (WebCore::PlatformPainterState::applyBlending):
+        (WebCore::PlatformPainterState::applyTransformationMatrix):
+        (WebCore::PlatformPainterState::applyScissorRect):
+        (WebCore::PlatformPainterState::applyStrokeStyle):
+        (WebCore::PlatformPainterState::strokeDisabled):
+        (WebCore::PlatformPainterState::fillDisabled):
+        (WebCore::PainterOpenVG::PainterOpenVG):
+        (WebCore::PainterOpenVG::~PainterOpenVG):
+        (WebCore::PainterOpenVG::begin):
+        (WebCore::PainterOpenVG::end):
+        (WebCore::PainterOpenVG::destroyPainterStates):
+        (WebCore::PainterOpenVG::applyState):
+        (WebCore::PainterOpenVG::blitToSurface):
+        (WebCore::PainterOpenVG::transformationMatrix):
+        (WebCore::PainterOpenVG::concatTransformationMatrix):
+        (WebCore::PainterOpenVG::setTransformationMatrix):
+        (WebCore::PainterOpenVG::compositeOperation):
+        (WebCore::PainterOpenVG::setCompositeOperation):
+        (WebCore::PainterOpenVG::opacity):
+        (WebCore::PainterOpenVG::setOpacity):
+        (WebCore::PainterOpenVG::strokeThickness):
+        (WebCore::PainterOpenVG::setStrokeThickness):
+        (WebCore::PainterOpenVG::strokeStyle):
+        (WebCore::PainterOpenVG::setStrokeStyle):
+        (WebCore::PainterOpenVG::setLineDash):
+        (WebCore::PainterOpenVG::setLineCap):
+        (WebCore::PainterOpenVG::setLineJoin):
+        (WebCore::PainterOpenVG::setMiterLimit):
+        (WebCore::PainterOpenVG::strokeColor):
+        (WebCore::PainterOpenVG::setStrokeColor):
+        (WebCore::PainterOpenVG::fillColor):
+        (WebCore::PainterOpenVG::setFillColor):
+        (WebCore::PainterOpenVG::antialiasingEnabled):
+        (WebCore::PainterOpenVG::setAntialiasingEnabled):
+        (WebCore::PainterOpenVG::scale):
+        (WebCore::PainterOpenVG::rotate):
+        (WebCore::PainterOpenVG::translate):
+        (WebCore::PainterOpenVG::intersectScissorRect):
+        (WebCore::PainterOpenVG::intersectClipRect):
+        (WebCore::PainterOpenVG::drawRect):
+        (WebCore::PainterOpenVG::save):
+        (WebCore::PainterOpenVG::restore):
+        * platform/graphics/openvg/PainterOpenVG.h: Added.
+        (WebCore::PainterOpenVG::):
+        (WebCore::PainterOpenVG::surface):
+        * platform/graphics/openvg/SurfaceOpenVG.cpp:
+        (WebCore::SurfaceOpenVG::SurfaceOpenVG):
+        (WebCore::SurfaceOpenVG::~SurfaceOpenVG):
+        (WebCore::SurfaceOpenVG::makeCurrent):
+        (WebCore::SurfaceOpenVG::makeCompatibleCurrent):
+        (WebCore::SurfaceOpenVG::setActivePainter):
+        (WebCore::SurfaceOpenVG::activePainter):
+        * platform/graphics/openvg/SurfaceOpenVG.h:
+        (WebCore::SurfaceOpenVG::):
+        * platform/graphics/openvg/VGUtils.cpp: Added.
+        (WebCore::VGMatrix::VGMatrix):
+        (WebCore::VGMatrix::operator TransformationMatrix):
+        (WebCore::TransformationMatrix::operator VGMatrix):
+        (WebCore::VGRect::VGRect):
+        (WebCore::VGRect::operator FloatRect):
+        (WebCore::FloatRect::operator VGRect):
+        * platform/graphics/openvg/VGUtils.h:
+        (WebCore::VGMatrix::toVGfloat):
+        (WebCore::VGRect::toVGfloat):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2010-01-29  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

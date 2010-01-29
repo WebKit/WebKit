@@ -41,6 +41,11 @@
 typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
 typedef struct _cairo PlatformGraphicsContext;
+#elif PLATFORM(OPENVG)
+namespace WebCore {
+class SurfaceOpenVG;
+}
+typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QPainter;

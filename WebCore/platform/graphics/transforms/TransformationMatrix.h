@@ -35,6 +35,8 @@
 #include <CoreGraphics/CGAffineTransform.h>
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
+#elif PLATFORM(OPENVG)
+#include "VGUtils.h"
 #elif PLATFORM(QT)
 #include <QTransform>
 #elif PLATFORM(SKIA)
@@ -307,6 +309,8 @@ public:
     operator CGAffineTransform() const;
 #elif PLATFORM(CAIRO)
     operator cairo_matrix_t() const;
+#elif PLATFORM(OPENVG)
+    operator VGMatrix() const;
 #elif PLATFORM(QT)
     operator QTransform() const;
 #elif PLATFORM(SKIA)

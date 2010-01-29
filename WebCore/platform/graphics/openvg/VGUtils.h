@@ -56,4 +56,32 @@ static inline const char* toVGErrorConstant(VGErrorCode error)
 } while (0)
 #endif
 
+
+namespace WebCore {
+
+class FloatRect;
+class TransformationMatrix;
+
+class VGMatrix {
+public:
+    VGMatrix(const VGfloat data[9]);
+    VGMatrix(const TransformationMatrix&);
+    const VGfloat* toVGfloat() const { return m_data; }
+    operator TransformationMatrix() const;
+private:
+    VGfloat m_data[9];
+};
+
+class VGRect {
+public:
+    VGRect(const VGfloat data[4]);
+    VGRect(const FloatRect&);
+    const VGfloat* toVGfloat() const { return m_data; }
+    operator FloatRect() const;
+private:
+    VGfloat m_data[4];
+};
+
+}
+
 #endif
