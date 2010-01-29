@@ -127,7 +127,7 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
 
     QObject* obj = qtinst->getObject();
     UString ustring = identifier.ustring();
-    QString objName(QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size()));
+    QString objName((const QChar*)ustring.rep()->data(), ustring.size());
     QByteArray ba = objName.toAscii();
 
     // First check for a cached field

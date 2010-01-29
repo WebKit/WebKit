@@ -1,3 +1,17 @@
+2010-01-29  Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Speed up the WebCore::String -> QString conversion
+
+        Use QString(const QChar *, int len) constructor instead of QString::fromUtf16 to
+        avoid BOM checks and byteswapping.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fieldNamed):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2010-01-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
