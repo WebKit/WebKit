@@ -57,7 +57,7 @@ def build(bld):
         includes = ' '.join(include_paths),
         source = sources,
         target = 'DumpRenderTree',
-        uselib = 'WXWEBKIT WX ' + get_config(),
+        uselib = 'JSCORE ICU WXWEBKIT WX ' + get_config(),
         libpath = [output_dir],
         uselib_local = '',
         install_path = output_dir)

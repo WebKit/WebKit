@@ -34,13 +34,14 @@ jscore_excludes.extend(get_excludes(jscore_dir, ['*CF.cpp', '*Symbian.cpp']))
 
 sources = []
 
-jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp', '*None.cpp']))
+jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
 
 if building_on_win32:
-    jscore_excludes += ['ExecutableAllocatorPosix.cpp', 'MarkStackPosix.cpp']
+    jscore_excludes += ['ExecutableAllocatorPosix.cpp', 'MarkStackPosix.cpp', 'ThreadingPthreads.cpp']
     sources += ['jit/ExecutableAllocatorWin.cpp', 'runtime/MarkStackWin.cpp']
 else:
     jscore_excludes.append('JSStringRefBSTR.cpp')
+    jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
 
 def generate_jscore_derived_sources():
     # build the derived sources

@@ -1,3 +1,12 @@
+2010-01-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for MSW, use ThreadingWin.cpp as the Windows pthreads implementation
+        implements pthread_t in a way that makes it impossible to check its validity,
+        which is needed by ThreadingPthreads.cpp.
+
+        * DumpRenderTree/wscript:
+        * wx/build/settings.py:
+
 2010-01-28  Andras Becsi  <abecsi@webkit.org>
 
         Adding myself to the committer list. No review needed.

@@ -1,3 +1,11 @@
+2010-01-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for MSW, use ThreadingWin.cpp as the Windows pthreads implementation
+        implements pthread_t in a way that makes it impossible to check its validity,
+        which is needed by ThreadingPthreads.cpp.
+
+        * wscript:
+
 2010-01-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
