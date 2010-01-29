@@ -1,3 +1,36 @@
+2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Crash when posting a notification for a detached object
+
+        https://bugs.webkit.org/show_bug.cgi?id=34309
+        <rdar://problem/7409759>
+
+        Reviewed by Darin Adler.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::QueryService):
+        If an unrecognized service ID is passed, return early. Otherwise, return
+        the result of QueryInterface.
+        (AccessibleBase::QueryInterface):
+        Add static_casts. Check for new UUIDs.
+        (AccessibleBase::isSameObject):
+        Query the object for AccessibleBase. Return whether the pointers or the
+        wrapped objects match.
+
+        * AccessibleBase.h:
+        Give the class a UUID so we can query for it in isSameObject(). Inherit
+        from IAccessibleComparable; inherit from IServiceProvider so clients can
+        use QueryService to query for a custom interface.
+
+        * Interfaces/AccessibleComparable.idl: Added. Declares a function that
+        can be called to compare to accessible objects.
+
+        * Interfaces/WebKit.idl:
+        Include the new IDL.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        Add the new IDL to the project.
+
 2010-01-27  Aaron Boodman  <aa@chromium.org>
 
         Expand NotificationCenter::checkPermission() interface.

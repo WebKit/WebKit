@@ -83,6 +83,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             msaaEvent = EVENT_SYSTEM_SCROLLINGSTART;
             break;
 
+        case AXValueChanged:
         case AXMenuListValueChanged:
             msaaEvent = EVENT_OBJECT_VALUECHANGE;
             break;

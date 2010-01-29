@@ -28,7 +28,10 @@
 
 #include "AccessibilityUIElement.h"
 #include "DumpRenderTree.h"
+#include "FrameLoadDelegate.h"
 #include <JavaScriptCore/Assertions.h>
+#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRef.h>
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <oleacc.h>
@@ -40,6 +43,7 @@ AccessibilityController::AccessibilityController()
     : m_focusEventHook(0)
     , m_scrollingStartEventHook(0)
     , m_valueChangeEventHook(0)
+    , m_allEventsHook(0)
 {
 }
 
@@ -47,6 +51,12 @@ AccessibilityController::~AccessibilityController()
 {
     setLogFocusEvents(false);
     setLogValueChangeEvents(false);
+
+    if (m_allEventsHook)
+        UnhookWinEvent(m_allEventsHook);
+
+    for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it)
+        JSValueUnprotect(frame->globalContext(), it->second);
 }
 
 AccessibilityUIElement AccessibilityController::focusedElement()
@@ -91,7 +101,7 @@ AccessibilityUIElement AccessibilityController::rootElement()
     return rootAccessible;
 }
 
-static void CALLBACK logEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
+static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
 {
     // Get the accessible object for this event.
     COMPtr<IAccessible> parentObject;
@@ -133,6 +143,8 @@ static void CALLBACK logEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND
             printf("Received unknown event for object '%S'.\n", name.c_str());
             break;
     }
+
+    VariantClear(&vChild);
 }
 
 void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
@@ -193,4 +205,84 @@ void AccessibilityController::setLogScrollingStartEvents(bool logScrollingStartE
     m_scrollingStartEventHook = SetWinEventHook(EVENT_SYSTEM_SCROLLINGSTART, EVENT_SYSTEM_SCROLLINGSTART, GetModuleHandle(0), logEventProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
 
     ASSERT(m_scrollingStartEventHook);
+}
+
+static string stringEvent(DWORD event)
+{
+    switch(event) {
+        case EVENT_OBJECT_VALUECHANGE:
+            return "value change event";
+        default:
+            return "unknown event";
+    }
+}
+
+static void CALLBACK notificationListenerProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD, DWORD)
+{
+    // Get the accessible object for this event.
+    COMPtr<IAccessible> parentObject;
+
+    VARIANT vChild;
+    VariantInit(&vChild);
+
+    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild);
+    ASSERT(SUCCEEDED(hr));
+
+    COMPtr<IDispatch> childDispatch;
+    if (FAILED(parentObject->get_accChild(vChild, &childDispatch))) {
+        VariantClear(&vChild);
+        return;
+    }
+
+    COMPtr<IAccessible> childAccessible(Query, childDispatch);
+
+    sharedFrameLoadDelegate->accessibilityController()->notificationReceived(childAccessible, stringEvent(event));
+
+    VariantClear(&vChild);
+}
+
+static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvider>& serviceProvider)
+{
+    COMPtr<IAccessibleComparable> comparable;
+    serviceProvider->QueryService(SID_AccessibleComparable, __uuidof(IAccessibleComparable), reinterpret_cast<void**>(&comparable));
+    return comparable;
+}
+
+void AccessibilityController::notificationReceived(PlatformUIElement element, const string& eventName)
+{
+    for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it) {
+        COMPtr<IServiceProvider> thisServiceProvider(Query, it->first);
+        if (!thisServiceProvider)
+            continue;
+
+        COMPtr<IAccessibleComparable> thisComparable = comparableObject(thisServiceProvider);
+        if (!thisComparable)
+            continue;
+
+        COMPtr<IServiceProvider> elementServiceProvider(Query, element);
+        if (!elementServiceProvider)
+            continue;
+
+        COMPtr<IAccessibleComparable> elementComparable = comparableObject(elementServiceProvider);
+        if (!elementComparable)
+            continue;
+
+        BOOL isSame = FALSE;
+        thisComparable->isSameObject(elementComparable.get(), &isSame);
+        if (!isSame)
+            continue;
+
+        JSRetainPtr<JSStringRef> jsNotification(Adopt, JSStringCreateWithUTF8CString(eventName.c_str()));
+        JSValueRef argument = JSValueMakeString(frame->globalContext(), jsNotification.get());
+        JSObjectCallAsFunction(frame->globalContext(), it->second, NULL, 1, &argument, NULL);
+    }
+}
+
+void AccessibilityController::addNotificationListener(PlatformUIElement element, JSObjectRef functionCallback)
+{
+    if (!m_allEventsHook)
+        m_allEventsHook = SetWinEventHook(EVENT_MIN, EVENT_MAX, GetModuleHandle(0), notificationListenerProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);
+
+    JSValueProtect(frame->globalContext(), functionCallback);
+    m_notificationListeners.add(element, functionCallback);
 }

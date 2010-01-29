@@ -32,6 +32,7 @@
 struct IWebFrame;
 struct IWebScriptWorld;
 struct IWebView;
+struct FrameLoadDelegate;
 struct PolicyDelegate;
 typedef const struct __CFString* CFStringRef;
 typedef struct HWND__* HWND;
@@ -59,5 +60,7 @@ bool setAlwaysAcceptCookies(bool alwaysAcceptCookies);
 unsigned worldIDForWorld(IWebScriptWorld*);
 
 extern UINT_PTR waitToDumpWatchdog;
+
+extern COMPtr<FrameLoadDelegate> sharedFrameLoadDelegate;
 
 #endif // DumpRenderTreeWin_h

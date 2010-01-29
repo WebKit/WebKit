@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "DumpRenderTree.h"
-#import "AccessibilityController.h"
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
+#endif
 
-#import "AccessibilityUIElement.h"
-#import <Foundation/Foundation.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebHTMLView.h>
+import "oleacc.idl";
 
-AccessibilityController::AccessibilityController()
+cpp_quote("extern const GUID  __declspec(selectany) SID_AccessibleComparable = { 0x62b8cb5f, 0xfb7a, 0x4faf, 0x81, 0xe8, 0x52, 0xb6, 0x5f, 0x12, 0x8b, 0x31 };")
+
+[
+    object,
+    uuid(4f0381ad-dab3-42ad-9ca2-a85b0ae041c0),
+    hidden,
+    dual,
+    pointer_default(unique)
+]
+interface IAccessibleComparable : IAccessible
 {
-}
-
-AccessibilityController::~AccessibilityController()
-{
-}
-
-AccessibilityUIElement AccessibilityController::focusedElement()
-{
-    // FIXME: we could do some caching here.
-    id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityFocusedUIElement];
-    return AccessibilityUIElement(accessibilityObject);
-}
-
-AccessibilityUIElement AccessibilityController::rootElement()
-{
-    // FIXME: we could do some caching here.
-    id accessibilityObject = [[mainFrame frameView] documentView];
-    return AccessibilityUIElement(accessibilityObject);
-}
-
-void AccessibilityController::setLogFocusEvents(bool)
-{
-}
-
-void AccessibilityController::setLogScrollingStartEvents(bool)
-{
-}
-
-void AccessibilityController::setLogValueChangeEvents(bool)
-{
-}
-
-void AccessibilityController::addNotificationListener(PlatformUIElement, JSObjectRef)
-{
-}
-
-void AccessibilityController::notificationReceived(PlatformUIElement, const std::string&)
-{
+    HRESULT isSameObject([in] IAccessibleComparable* other, [out, retval] BOOL* result);
 }

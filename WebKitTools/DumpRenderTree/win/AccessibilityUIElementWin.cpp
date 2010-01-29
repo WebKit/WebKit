@@ -26,6 +26,9 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
+#include "AccessibilityController.h"
+#include "DumpRenderTree.h"
+#include "FrameLoadDelegate.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <tchar.h>
 #include <string>
@@ -530,8 +533,11 @@ JSStringRef AccessibilityUIElement::url()
 
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
 {
-    // FIXME: implement
-    return false;
+    if (!functionCallback)
+        return false;
+
+    sharedFrameLoadDelegate->accessibilityController()->addNotificationListener(m_element, functionCallback);
+    return true;
 }
 
 bool AccessibilityUIElement::isSelectable() const

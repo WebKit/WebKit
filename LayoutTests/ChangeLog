@@ -1,3 +1,15 @@
+2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Crash when posting a notification for a detached object
+
+        https://bugs.webkit.org/show_bug.cgi?id=34309
+        <rdar://problem/7409759>
+
+        Reviewed by Darin Adler.
+
+        * platform/win/accessibility/detached-object-notification-crash-expected.txt: Added.
+        * platform/win/accessibility/detached-object-notification-crash.html: Added.
+
 2010-01-29  Darin Fisher  <darin@chromium.org>
 
         Okayed by Oliver Hunt.

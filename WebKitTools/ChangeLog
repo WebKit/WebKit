@@ -1,3 +1,66 @@
+2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Crash when posting a notification for a detached object
+
+        https://bugs.webkit.org/show_bug.cgi?id=34309
+        <rdar://problem/7409759>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/AccessibilityController.h:
+        Declare new functions. Add new members to store the event hook and the
+        mapping of accessibility elements to their JS callbacks.
+
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::notificationReceived):
+        Stubbed.
+        (AccessibilityController::addNotificationListener):
+        Stubbed.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::notificationReceived):
+        Stubbed.
+        (AccessibilityController::addNotificationListener):
+        Stubbed.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::AccessibilityController):
+        Initialize the event hook.
+        (AccessibilityController::~AccessibilityController):
+        Remove the event hook. Unprotect all of the JS functions that are stored
+        in the map.
+        (logEventProc):
+        Clean-up a variable.
+        (stringEvent):
+        Return a string description of the MSAA event code.
+        (notificationListenerProc):
+        Get the accessible object from the event, and query it for IAccessible.
+        Call the AccessibilityController's notificationReceived().
+        (comparableObject):
+        Use QueryService to obtain the IAccessibleComparable for the
+        IServiceProvider.
+        (AccessibilityController::notificationReceived):
+        Iterate the map of objects that have registered for notification
+        callbacks. Query each for IServiceProvider, then use comparableObject()
+        to get an IAccessibleComparable. If we find an object matching the
+        notified object, call its callback, passing the event that was received.
+        (AccessibilityController::addNotificationListener):
+        If we have not created the event hook, create it. Protect the JS
+        callback function object, and add the object and its callback to our
+        map.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::addNotificationListener):
+        Call through to the AccessibilityController's addNotificationListener().
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        Add an extern declaration for the shared FrameLoadDelegate extern, so we
+        can access it from AccessibilityController.
+
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        (FrameLoadDelegate::accessibilityController):
+        Return the AccessibilityController.
+
 2010-01-29  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

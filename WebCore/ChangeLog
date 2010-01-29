@@ -1,3 +1,25 @@
+2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: Crash when posting a notification for a detached object
+
+        https://bugs.webkit.org/show_bug.cgi?id=34309
+        <rdar://problem/7409759>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/win/accessibility/detached-object-notification-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::document):
+        Null check m_renderer. This is the bug fix; the other changes in the
+        patch are for the test.
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        Map AXValueChanged to EVENT_OBJECT_VALUECHANGED, so we'll post a
+        notification when AXValueChanged is posted. Receiving an event of this
+        type tells us that the test passed.
+
 2010-01-29  Darin Fisher  <darin@chromium.org>
 
         Okayed by Oliver Hunt.

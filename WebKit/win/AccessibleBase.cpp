@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,15 +77,30 @@ AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj)
     return new AccessibleBase(obj);
 }
 
+HRESULT AccessibleBase::QueryService(REFGUID guidService, REFIID riid, void **ppvObject)
+{
+    if (!IsEqualGUID(guidService, SID_AccessibleComparable)) {
+        *ppvObject = 0;
+        return E_INVALIDARG;
+    }
+    return QueryInterface(riid, ppvObject);
+}
+
 // IUnknown
 HRESULT STDMETHODCALLTYPE AccessibleBase::QueryInterface(REFIID riid, void** ppvObject)
 {
     if (IsEqualGUID(riid, __uuidof(IAccessible)))
-        *ppvObject = this;
+        *ppvObject = static_cast<IAccessible*>(this);
     else if (IsEqualGUID(riid, __uuidof(IDispatch)))
-        *ppvObject = this;
+        *ppvObject = static_cast<IAccessible*>(this);
     else if (IsEqualGUID(riid, __uuidof(IUnknown)))
-        *ppvObject = this;
+        *ppvObject = static_cast<IAccessible*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IAccessibleComparable)))
+        *ppvObject = static_cast<IAccessibleComparable*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IServiceProvider)))
+        *ppvObject = static_cast<IServiceProvider*>(this);
+    else if (IsEqualGUID(riid, __uuidof(AccessibleBase)))
+        *ppvObject = static_cast<AccessibleBase*>(this);
     else {
         *ppvObject = 0;
         return E_NOINTERFACE;
@@ -698,4 +713,11 @@ AccessibleBase* AccessibleBase::wrapper(AccessibilityObject* obj)
     if (!result)
         result = createInstance(obj);
     return result;
+}
+
+HRESULT AccessibleBase::isSameObject(IAccessibleComparable* other, BOOL* result)
+{
+    COMPtr<AccessibleBase> otherAccessibleBase(Query, other);
+    *result = (otherAccessibleBase == this || otherAccessibleBase->m_object == m_object);
+    return S_OK;
 }

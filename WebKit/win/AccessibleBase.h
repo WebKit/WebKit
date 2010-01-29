@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,17 @@
 #ifndef AccessibleBase_h
 #define AccessibleBase_h
 
-#include <oleacc.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/AccessibilityObjectWrapperWin.h>
+#include <WebKit/WebKit.h>
+#include <oleacc.h>
 
-class AccessibleBase : public IAccessible, public WebCore::AccessibilityObjectWrapper {
+class DECLSPEC_UUID("3dbd565b-db22-4d88-8e0e-778bde54524a") AccessibleBase : public IAccessibleComparable, public IServiceProvider, public WebCore::AccessibilityObjectWrapper {
 public:
     static AccessibleBase* createInstance(WebCore::AccessibilityObject*);
+
+    // IServiceProvider
+    virtual HRESULT STDMETHODCALLTYPE QueryService(REFGUID guidService, REFIID riid, void **ppv);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -88,6 +92,9 @@ public:
         ASSERT(m_object);
         m_object = 0;
     }
+
+    // IAccessibleComparable
+    virtual HRESULT STDMETHODCALLTYPE isSameObject(IAccessibleComparable* other, BOOL* result);
 
 protected:
     AccessibleBase(WebCore::AccessibilityObject*);
