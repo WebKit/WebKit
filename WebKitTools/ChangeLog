@@ -2,6 +2,17 @@
 
         Reviewed by Ariya Hidayat.
 
+        [Qt] On Maemo5, a click/touch in the location bar (when unfocused)
+        should result in all text selected.
+
+        * QtLauncher/locationedit.cpp:
+        (LocationEdit::focusInEvent):
+        * QtLauncher/locationedit.h:
+
+2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         [Qt] Show progress reaching 100% for loads.
 
         * QtLauncher/locationedit.cpp:
