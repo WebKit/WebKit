@@ -1,3 +1,17 @@
+2010-01-29  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Remove disabled tests from Skiplist. The tests were disabled in r53701.
+
+        * platform/qt/Skipped: 
+          -css2.1/t1204-increment-00-c-o.html
+          -css2.1/t1204-increment-01-c-o.html
+          -css2.1/t1204-increment-02-c-o.html
+          -css2.1/t1204-reset-00-c-o.html
+          -css2.1/t1204-reset-01-c-o.html
+          -css2.1/t1204-reset-02-c-o.html
+
 2010-01-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
