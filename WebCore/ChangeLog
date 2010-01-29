@@ -1,3 +1,15 @@
+2010-01-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Use long long rather than int64 in V8Binding.h
+        https://bugs.webkit.org/show_bug.cgi?id=34270
+
+        No new tests, build fix only.
+
+        * bindings/v8/V8Binding.h: Modified.
+        (WebCore::toInt64): Returns long long
+
 2010-01-28  Avi Drissman  <avi@chromium.org>
 
         Reviewed by David Levin.
