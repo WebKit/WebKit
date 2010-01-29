@@ -1,3 +1,16 @@
+2010-01-29  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        V8 implementation of MessageEvent.initMessageEvent() does not set source correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=34292
+
+        Test: fast/events/init-events.html will pass in Chrome now.
+
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        Now properly extracts the reference to the DOMWindow object from the passed-in window parameter.
+
 2010-01-29  Ben Murdoch  <benm@google.com>
 
         Reviewed by Dimitri Glazkov.

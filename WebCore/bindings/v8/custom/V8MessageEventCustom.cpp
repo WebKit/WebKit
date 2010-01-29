@@ -68,7 +68,14 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(args[3]);
     String originArg = v8ValueToWebCoreString(args[4]);
     String lastEventIdArg = v8ValueToWebCoreString(args[5]);
-    DOMWindow* sourceArg = V8DOMWindow::HasInstance(args[6]) ? V8DOMWindow::toNative(v8::Handle<v8::Object>::Cast(args[6])) : 0;
+
+    DOMWindow* sourceArg = 0;
+    if (args[6]->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(args[6]);
+        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, wrapper);
+        if (!window.IsEmpty())
+            sourceArg = V8DOMWindow::toNative(window);
+    }
     OwnPtr<MessagePortArray> portArray;
 
     if (!isUndefinedOrNull(args[7])) {
