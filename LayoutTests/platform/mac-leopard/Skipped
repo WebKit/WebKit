@@ -43,3 +43,7 @@ media/video-controls-zoomed.html
 # Disable flakey webgl test to make the bots green again.
 # https://bugs.webkit.org/show_bug.cgi?id=33924
 fast/canvas/webgl/texImage2DImageDataTest.html
+
+# Fails on Mac
+# https://bugs.webkit.org/show_bug.cgi?id=34331
+http/tests/media/video-referer.html

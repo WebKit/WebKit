@@ -102,3 +102,7 @@ http/tests/xmlhttprequest/logout.html
 # This was flagged as a regression in Leopard and Snow Leopard, but the
 # behaviour is consistent with other platforms. <rdar://problem/5539822>
 svg/custom/stroke-width-click.svg
+
+# Fails on Mac
+# https://bugs.webkit.org/show_bug.cgi?id=34331
+http/tests/media/video-referer.html

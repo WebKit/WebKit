@@ -1,5 +1,19 @@
 2010-01-29  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, build fix.
+
+        http/tests/media/video-referer.html fails on mac
+        https://bugs.webkit.org/show_bug.cgi?id=34331
+
+        Skipping the failing test. Requires further investigation.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/Skipped:
+
+2010-01-29  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Gustavo Noronha Silva.
 
         [Gtk] Vimeo HTML5 player doesn't work

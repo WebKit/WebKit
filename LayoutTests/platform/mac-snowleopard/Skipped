@@ -82,3 +82,7 @@ platform/mac/editing/input/devanagari-ligature.html
 # Occasionally fails on bot for unknown reasons, unclear when it started.
 # https://bugs.webkit.org/show_bug.cgi?id=33742
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+
+# Fails on Mac
+# https://bugs.webkit.org/show_bug.cgi?id=34331
+http/tests/media/video-referer.html
