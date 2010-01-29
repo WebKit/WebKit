@@ -625,7 +625,12 @@ void EditorClientQt::setInputMethodState(bool active)
             }
         }
         webPageClient->setInputMethodHint(Qt::ImhHiddenText, isPasswordField);
-#endif
+#ifdef Q_WS_MAEMO_5
+        // Maemo 5 MicroB Browser disables auto-uppercase and predictive text, thus, so do we.
+        webPageClient->setInputMethodHint(Qt::ImhNoAutoUppercase, true);
+        webPageClient->setInputMethodHint(Qt::ImhNoPredictiveText, true);
+#endif // Q_WS_MAEMO_5
+#endif // QT_VERSION check
         webPageClient->setInputMethodEnabled(active);
     }
     emit m_page->microFocusChanged();

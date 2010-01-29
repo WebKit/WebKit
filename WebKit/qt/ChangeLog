@@ -1,3 +1,13 @@
+2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann
+
+        Disable auto-uppercase and predictive text on Maemo5, just like the
+        build-in MicroB Browser.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+
 2010-01-28  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
