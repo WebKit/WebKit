@@ -1,3 +1,14 @@
+2010-01-28  Nayan Kumar K  <nayankk@gmail.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Fix for compilation error in WML enabled build introduced because of the changeset 53514.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34254
+
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::WMLDocument):
+
 2010-01-28  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Eric Seidel.
