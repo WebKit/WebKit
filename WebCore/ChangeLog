@@ -1,3 +1,10 @@
+2010-01-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix after r53411 on WinCairo.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameCount):
+
 2010-01-28  Nayan Kumar K  <nayankk@gmail.com>
 
         Reviewed by Laszlo Gombos.
