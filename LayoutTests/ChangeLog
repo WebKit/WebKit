@@ -1,3 +1,15 @@
+2010-01-29  Darin Fisher  <darin@chromium.org>
+
+        Okayed by Oliver Hunt.
+
+        Rollout r53949, r53951 and r54013 due to a Chromium regression that it
+        causes.  Somehow this code change is triggering an endless repaint loop.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33808
+
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.png:
+
 2010-01-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

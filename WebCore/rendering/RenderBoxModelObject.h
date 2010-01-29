@@ -98,8 +98,6 @@ public:
     // Called by RenderObject::destroy() (and RenderWidget::destroy()) and is the only way layers should ever be destroyed
     void destroyLayer();
 
-    void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
-
 protected:
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
 

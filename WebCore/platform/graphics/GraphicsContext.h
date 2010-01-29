@@ -225,10 +225,10 @@ namespace WebCore {
         void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
                        CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
-                       CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+                       CompositeOperator = CompositeSourceOver);
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect,
                             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
-                            CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+                            CompositeOperator = CompositeSourceOver);
 
         void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;
