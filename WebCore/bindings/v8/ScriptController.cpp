@@ -47,7 +47,6 @@
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
-#include "ScriptState.h"
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -236,7 +235,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     v8::Local<v8::Value> object = m_proxy->evaluate(sourceCode, 0);
 
     // Evaluating the JavaScript could cause the frame to be deallocated
-    // so we start the keep alive timer here.
+    // so we starot the keep alive timer here.
     m_frame->keepAlive();
 
     if (object.IsEmpty() || object->IsUndefined())
@@ -354,24 +353,6 @@ void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
     worlds.append(mainThreadNormalWorld());
 }
 
-ScriptState* ScriptController::mainWorldScriptState()
-{
-    if (!m_mainWorldScriptState) {
-        v8::HandleScope handleScope;
-        m_mainWorldScriptState.set(new ScriptState(m_frame, V8Proxy::mainWorldContext(m_frame)));
-    }
-    return m_mainWorldScriptState.get();
-}
-
-ScriptState* ScriptController::currentScriptState()
-{
-    if (V8IsolatedContext* context = V8IsolatedContext::getEntered())
-        return context->scriptState();
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-    ASSERT(frame);
-    return frame->script()->mainWorldScriptState();
-}
-
 static NPObject* createNoScriptObject()
 {
     notImplemented();
@@ -434,8 +415,6 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 
 void ScriptController::clearWindowShell()
 {
-    m_mainWorldScriptState.clear();
-
     // V8 binding expects ScriptController::clearWindowShell only be called
     // when a frame is loading a new page. V8Proxy::clearForNavigation
     // creates a new context for the new page.

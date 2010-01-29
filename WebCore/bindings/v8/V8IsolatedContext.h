@@ -94,8 +94,6 @@ public:
 
     IsolatedWorld* world() const { return m_world.get(); }
 
-    ScriptState* scriptState();
-
 private:
     static v8::Handle<v8::Object> getGlobalObject(v8::Handle<v8::Context> context)
     {
@@ -111,9 +109,6 @@ private:
     RefPtr<SharedPersistent<v8::Context> > m_context;
 
     RefPtr<IsolatedWorld> m_world;
-
-    // FIXME: get rid of redundant m_context field. The context can be retrieved from the ScriptState.
-    OwnPtr<ScriptState> m_scriptState;
 };
 
 } // namespace WebCore
