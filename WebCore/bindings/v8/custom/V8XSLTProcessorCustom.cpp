@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8XSLTProcessorConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XSLTProcessor::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XSLTProcessor.Constructor");
     return V8Proxy::constructDOMObject<V8ClassIndex::XSLTPROCESSOR, XSLTProcessor>(args);

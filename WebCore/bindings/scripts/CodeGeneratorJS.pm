@@ -552,7 +552,8 @@ sub GenerateHeader
     $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"DelegatingPutFunction"};
 
     my $hasGetter = $numAttributes > 0 
-                 || !$dataNode->extendedAttributes->{"OmitConstructor"}
+                 || !($dataNode->extendedAttributes->{"OmitConstructor"}
+                 || $dataNode->extendedAttributes->{"CustomConstructor"})
                  || $dataNode->extendedAttributes->{"HasIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
@@ -655,7 +656,7 @@ sub GenerateHeader
     }
 
     # Constructor object getter
-    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if !$dataNode->extendedAttributes->{"OmitConstructor"};
+    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}));
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
@@ -838,7 +839,7 @@ sub GenerateHeader
         }
     }
 
-    if ($numAttributes > 0 || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if ($numAttributes > 0 || !($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$dataNode->attributes}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
@@ -849,7 +850,7 @@ sub GenerateHeader
             }
         }
         
-        if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+        if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             my $getter = "js" . $interfaceName . "Constructor";
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
         }
@@ -918,7 +919,7 @@ sub GenerateImplementation
 
     # - Add all attributes in a hashtable definition
     my $numAttributes = @{$dataNode->attributes};
-    $numAttributes++ if !$dataNode->extendedAttributes->{"OmitConstructor"};
+    $numAttributes++ if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}));
 
     if ($numAttributes > 0) {
         my $hashSize = $numAttributes;
@@ -959,7 +960,7 @@ sub GenerateImplementation
             }
         }
 
-        if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+        if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             push(@hashKeys, "constructor");
             my $getter = "js" . $interfaceName . "Constructor";
             push(@hashValue1, $getter);
@@ -977,7 +978,7 @@ sub GenerateImplementation
     my $numFunctions = @{$dataNode->functions};
 
     # - Add all constants
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         $hashSize = $numConstants;
         $hashName = $className . "ConstructorTable";
 
@@ -1213,7 +1214,8 @@ sub GenerateImplementation
     }
 
     my $hasGetter = $numAttributes > 0 
-                 || !$dataNode->extendedAttributes->{"OmitConstructor"} 
+                 || !($dataNode->extendedAttributes->{"OmitConstructor"} 
+                 || $dataNode->extendedAttributes->{"CustomConstructor"})
                  || $dataNode->extendedAttributes->{"HasIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasNumericIndexGetter"}
@@ -1364,7 +1366,7 @@ sub GenerateImplementation
                 push(@implContent, "\n");
             }
 
-            if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+            if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
                 push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
@@ -1505,7 +1507,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");

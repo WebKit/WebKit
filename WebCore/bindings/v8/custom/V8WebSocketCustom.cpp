@@ -76,7 +76,7 @@ v8::Handle<v8::Value> V8WebSocket::removeEventListenerCallback(const v8::Argumen
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8Custom::v8WebSocketConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.Constructor");
 

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "WebKitCSSMatrix.h"
+#include "V8WebKitCSSMatrix.h"
 
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8WebKitCSSMatrixConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WebKitCSSMatrix::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebKitCSSMatrix.Constructor");
 

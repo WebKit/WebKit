@@ -40,44 +40,9 @@ namespace WebCore {
 #define DECLARE_CALLBACK(NAME) static v8::Handle<v8::Value> v8##NAME##Callback(const v8::Arguments& args)
 #define USE_CALLBACK(NAME) V8Custom::v8##NAME##Callback
 
-        DECLARE_CALLBACK(DOMParserConstructor);
         DECLARE_CALLBACK(HTMLAudioElementConstructor);
         DECLARE_CALLBACK(HTMLImageElementConstructor);
         DECLARE_CALLBACK(HTMLOptionElementConstructor);
-        DECLARE_CALLBACK(MessageChannelConstructor);
-        DECLARE_CALLBACK(WebKitCSSMatrixConstructor);
-        DECLARE_CALLBACK(WebKitPointConstructor);
-        DECLARE_CALLBACK(XMLHttpRequestConstructor);
-        DECLARE_CALLBACK(XMLSerializerConstructor);
-        DECLARE_CALLBACK(XPathEvaluatorConstructor);
-        DECLARE_CALLBACK(XSLTProcessorConstructor);
-
-#if ENABLE(3D_CANVAS)
-        DECLARE_CALLBACK(WebGLArrayBufferConstructor);
-        DECLARE_CALLBACK(WebGLByteArrayConstructor);
-        DECLARE_CALLBACK(WebGLFloatArrayConstructor);
-        DECLARE_CALLBACK(WebGLIntArrayConstructor);
-        DECLARE_CALLBACK(WebGLShortArrayConstructor);
-        DECLARE_CALLBACK(WebGLUnsignedByteArrayConstructor);
-        DECLARE_CALLBACK(WebGLUnsignedIntArrayConstructor);
-        DECLARE_CALLBACK(WebGLUnsignedShortArrayConstructor);
-#endif
-
-#if ENABLE(WORKERS)
-        DECLARE_CALLBACK(WorkerConstructor);
-#endif
-
-#if ENABLE(SHARED_WORKERS)
-        DECLARE_CALLBACK(SharedWorkerConstructor);
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-        DECLARE_CALLBACK(WebSocketConstructor);
-#endif
-
-#if ENABLE(EVENTSOURCE)
-        DECLARE_CALLBACK(EventSourceConstructor);
-#endif
 
 #undef DECLARE_CALLBACK
     };

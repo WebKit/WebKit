@@ -299,6 +299,12 @@ END
             push(@enabledAtRuntime, $function);
         }
     }
+
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+        push(@headerContent, <<END);
+  static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
+END
+    }
     
     foreach my $attribute (@{$dataNode->attributes}) {
         my $name = $attribute->signature->name;
@@ -1534,7 +1540,7 @@ sub GenerateImplementation
     if ($hasConstructors) {
         GenerateConstructorGetter($implClassName, $classIndex);
     }
-
+   
     my $indexer;
     my $namedPropertyGetter;
     # Generate methods for functions.
@@ -1652,6 +1658,17 @@ END
 
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
+    # In namespace WebCore, add generated implementation for 'CanBeConstructed'.
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"}) {
+        push(@implContent, <<END);
+ v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& args)
+  {
+    INC_STATS("DOM.${interfaceName}.Contructor");
+    return V8Proxy::constructDOMObject<V8ClassIndex::${classIndex}, $interfaceName>(args);
+  }
+END
+   }
+
     my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
         $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::ToInt(V8ClassIndex::${classIndex})));";
@@ -1691,7 +1708,6 @@ static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Pe
   v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${interfaceName}\",
       V8ClassIndex::$parentClassIndex, V8${interfaceName}::internalFieldCount,
 END
-
     # Set up our attributes if we have them
     if ($has_attributes) {
         push(@implContent, <<END);
@@ -1710,6 +1726,12 @@ END
     } else {
         push(@implContent, <<END);
       NULL, 0);
+END
+    }
+
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+        push(@implContent, <<END);
+      desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END
     }
 

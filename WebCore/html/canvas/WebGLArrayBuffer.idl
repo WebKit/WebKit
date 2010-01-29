@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, OmitConstructor] WebGLArrayBuffer {
+    interface [Conditional=3D_CANVAS, CustomConstructor] WebGLArrayBuffer {
         readonly attribute int byteLength;
     };
 }

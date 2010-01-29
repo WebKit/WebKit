@@ -29,7 +29,7 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        OmitConstructor,
+        CustomConstructor,
         CustomToJS
     ] WebGLShortArray : WebGLArray {
         long get(in unsigned long index);

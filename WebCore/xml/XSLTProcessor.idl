@@ -34,7 +34,7 @@ module xml {
 
     interface [
         Conditional=XSLT,
-        OmitConstructor
+        CustomConstructor
     ] XSLTProcessor {
         
         [Custom] void importStylesheet(in Node stylesheet);

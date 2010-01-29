@@ -30,7 +30,7 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        OmitConstructor,
+        CustomConstructor,
         CustomToJS
     ] WebGLFloatArray : WebGLArray {
         float get(in unsigned long index);

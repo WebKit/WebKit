@@ -36,13 +36,12 @@
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
-#include "XMLHttpRequest.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8XMLHttpRequestConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.Constructor");
 

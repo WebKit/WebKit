@@ -27,10 +27,10 @@
 module html {
     interface [
         Conditional=3D_CANVAS,
+        CustomConstructor,
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        OmitConstructor,
         CustomToJS
     ] WebGLUnsignedIntArray : WebGLArray {
         unsigned long get(in unsigned long index);

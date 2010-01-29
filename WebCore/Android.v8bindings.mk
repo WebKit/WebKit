@@ -101,7 +101,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
 	bindings/v8/custom/V8DOMApplicationCacheCustom.cpp \
-	bindings/v8/custom/V8DOMParserConstructor.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
 	bindings/v8/custom/V8DatabaseCustom.cpp \
@@ -163,8 +162,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8WorkerCustom.cpp \
 	bindings/v8/custom/V8XMLHttpRequestConstructor.cpp \
 	bindings/v8/custom/V8XMLHttpRequestCustom.cpp \
-	bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp \
-	bindings/v8/custom/V8XMLSerializerConstructor.cpp
+	bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp
 
 LOCAL_SRC_FILES += \
 	bridge/jni/JNIUtility.cpp

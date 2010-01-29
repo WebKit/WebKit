@@ -29,19 +29,19 @@
  */
 
 #include "config.h"
+#include "V8WebKitPoint.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8DOMWrapper.h"
 #include "V8Index.h"
 #include "V8Proxy.h"
-#include "WebKitPoint.h"
 
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8WebKitPointConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebKitPoint.Constructor");
     float x = 0;

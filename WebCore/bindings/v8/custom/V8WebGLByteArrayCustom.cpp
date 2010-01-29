@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8WebGLByteArrayConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WebGLByteArray::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLByteArray.Contructor");
 

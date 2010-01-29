@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8WorkerConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Worker::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.Worker.Constructor");
 

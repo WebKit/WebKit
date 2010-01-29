@@ -28,9 +28,9 @@ module threads {
 
     interface [
         Conditional=WORKERS,
+        CustomConstructor,
         GenerateNativeConverter,
-        GenerateToJS,
-        OmitConstructor
+        GenerateToJS
     ] Worker : AbstractWorker {
 
         attribute EventListener onmessage;

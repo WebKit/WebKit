@@ -30,7 +30,7 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
-        OmitConstructor,
+        CustomConstructor,
         CustomToJS
     ] WebGLIntArray : WebGLArray {
         long get(in unsigned long index);

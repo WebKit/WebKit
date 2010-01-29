@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8EventSourceConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8EventSource::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.EventSource.Constructor");
 

@@ -32,7 +32,7 @@
 
 #if ENABLE(SHARED_WORKERS)
 
-#include "SharedWorker.h"
+#include "V8SharedWorker.h"
 
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Custom::v8SharedWorkerConstructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8SharedWorker::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS(L"DOM.SharedWorker.Constructor");
 

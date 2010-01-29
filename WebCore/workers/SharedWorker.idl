@@ -32,10 +32,10 @@ module threads {
 
     interface [
         Conditional=SHARED_WORKERS,
+        CustomConstructor,
         CustomMarkFunction,
         GenerateNativeConverter,
-        GenerateToJS,
-        OmitConstructor
+        GenerateToJS
     ] SharedWorker : AbstractWorker {
         readonly attribute MessagePort port;
     };

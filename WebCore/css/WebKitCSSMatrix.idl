@@ -26,7 +26,7 @@
 module css {
 
     // Introduced in DOM Level ?:
-    interface [OmitConstructor] WebKitCSSMatrix {
+    interface [CustomConstructor] WebKitCSSMatrix {
 
         // These attributes are simple aliases for certain elements of the 4x4 matrix
         attribute double a; // alias for m11
