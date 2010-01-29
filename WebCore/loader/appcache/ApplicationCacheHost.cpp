@@ -46,6 +46,7 @@ namespace WebCore {
 ApplicationCacheHost::ApplicationCacheHost(DocumentLoader* documentLoader)
     : m_domApplicationCache(0)
     , m_documentLoader(documentLoader)
+    , m_defersEvents(true)
     , m_candidateApplicationCacheGroup(0)
 {
     ASSERT(m_documentLoader);
@@ -229,11 +230,31 @@ void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplic
 
 void ApplicationCacheHost::notifyDOMApplicationCache(EventID id)
 {
+    if (m_defersEvents) {
+        // Events are deferred until document.onload has fired.
+        m_deferredEvents.append(id);
+        return;
+    }
     if (m_domApplicationCache) {
         ExceptionCode ec = 0;
         m_domApplicationCache->dispatchEvent(Event::create(DOMApplicationCache::toEventType(id), false, false), ec);
         ASSERT(!ec);    
     }
+}
+
+void ApplicationCacheHost::stopDeferringEvents()
+{
+    RefPtr<DocumentLoader> protect(documentLoader());
+    for (unsigned i = 0; i < m_deferredEvents.size(); ++i) {
+        EventID id = m_deferredEvents[i];
+        if (m_domApplicationCache) {
+            ExceptionCode ec = 0;
+            m_domApplicationCache->dispatchEvent(Event::create(DOMApplicationCache::toEventType(id), false, false), ec);
+            ASSERT(!ec);
+        }
+    }
+    m_deferredEvents.clear();
+    m_defersEvents = false;
 }
 
 void ApplicationCacheHost::setCandidateApplicationCacheGroup(ApplicationCacheGroup* group)

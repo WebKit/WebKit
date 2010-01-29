@@ -1,3 +1,15 @@
+2010-01-28  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCache events should be deferred until after Document onload has fired.
+        https://bugs.webkit.org/show_bug.cgi?id=29690
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::ApplicationCacheHost): Initialize m_isDeferringEvents to true.
+        (WebCore::ApplicationCacheHost::notifyDOMApplicationCache): Depending, defer or raise the event.
+        (WebCore::ApplicationCacheHost::stopDeferringEvents): Raise any deferred events and reset the flag.
+
 2010-01-27  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Darin Adler.

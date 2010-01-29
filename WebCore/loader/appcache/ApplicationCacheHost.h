@@ -33,6 +33,7 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -110,12 +111,16 @@ namespace WebCore {
         void setDOMApplicationCache(DOMApplicationCache* domApplicationCache);
         void notifyDOMApplicationCache(EventID id);
 
+        void stopDeferringEvents(); // Also raises the events that have been queued up.
+
     private:
         bool isApplicationCacheEnabled();
         DocumentLoader* documentLoader() { return m_documentLoader; }
 
         DOMApplicationCache* m_domApplicationCache;
         DocumentLoader* m_documentLoader;
+        bool m_defersEvents; // Events are deferred until after document onload.
+        Vector<EventID> m_deferredEvents;
 
 #if PLATFORM(CHROMIUM)
         friend class ApplicationCacheHostInternal;

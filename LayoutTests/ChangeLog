@@ -1,3 +1,15 @@
+2010-01-28  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ApplicationCache events should be deferred until after Document onload has fired.
+        https://bugs.webkit.org/show_bug.cgi?id=29690
+
+        * http/tests/appcache/deferred-events-expected.txt: Added.
+        * http/tests/appcache/deferred-events.html: Added.
+        * http/tests/appcache/deferred-events-delete-while-raising-expected.txt: Added.
+        * http/tests/appcache/deferred-events-delete-while-raising.html: Added.
+
 2010-01-28  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Eric Seidel.
