@@ -31,7 +31,8 @@
 #include "KURL.h"
 #include "ProtectionSpaceHash.h"
 #include "StringHash.h"
-
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

@@ -27,6 +27,7 @@
 #define ProtectionSpaceHash_h
 
 #include "ProtectionSpace.h"
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 

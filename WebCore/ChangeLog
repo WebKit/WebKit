@@ -1,3 +1,16 @@
+2010-01-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Add missing includes for HashMap/HashSet
+        https://bugs.webkit.org/show_bug.cgi?id=34276
+
+        No new tests, build fix only.
+
+        * platform/KURL.cpp: Modified. Include HashMap.h
+        * platform/network/CredentialStorage.cpp: Modified. Include HashMap.h and HashSet.h
+        * platform/network/ProtectionSpaceHash.h: Modified. Include HashTraits.h
+
 2010-01-28  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.

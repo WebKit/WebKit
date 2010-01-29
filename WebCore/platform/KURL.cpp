@@ -32,6 +32,7 @@
 #include "CString.h"
 #include "StringHash.h"
 #include "TextEncoding.h"
+#include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(ICU_UNICODE)
