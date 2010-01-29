@@ -49,11 +49,22 @@
 #include <qwebframe.h>
 #include <qwebinspector.h>
 #include <qwebsettings.h>
+
+#ifdef Q_WS_MAEMO_5
+#include <qx11info_x11.h>
+#endif
+
 #include "urlloader.h"
 #include "utils.h"
 #include "webinspector.h"
 #include "webpage.h"
 #include "webview.h"
+
+#ifdef Q_WS_MAEMO_5
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#undef KeyPress
+#endif
 
 #ifndef NDEBUG
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
@@ -95,7 +106,50 @@ public:
         zoomLevels << 100;
         zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
 
+        grabZoomKeys(true);
+
         load(url);
+    }
+
+    ~LauncherWindow()
+    {
+        grabZoomKeys(false);
+    }
+
+    void keyPressEvent(QKeyEvent* event)
+    {
+#ifdef Q_WS_MAEMO_5
+        switch (event->key()) {
+        case Qt::Key_F7:
+            zoomIn();
+            event->accept();
+            break;
+        case Qt::Key_F8:
+            zoomOut();
+            event->accept();
+            break;
+        }
+#endif
+        MainWindow::keyPressEvent(event);
+    }
+
+    void grabZoomKeys(bool grab)
+    {
+#ifdef Q_WS_MAEMO_5
+        if (!winId()) {
+            qWarning("Can't grab keys unless we have a window id");
+            return;
+        }
+
+        Atom atom = XInternAtom(QX11Info::display(), "_HILDON_ZOOM_KEY_ATOM", False);
+        if (!atom) {
+            qWarning("Unable to obtain _HILDON_ZOOM_KEY_ATOM");
+            return;
+        }
+
+        unsigned long val = (grab) ? 1 : 0;
+        XChangeProperty(QX11Info::display(), winId(), atom, XA_INTEGER, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&val), 1);
+#endif
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)

@@ -1,3 +1,17 @@
+2010-01-29  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add support for Maemo zoom keys in QtLauncher
+
+        https://bugs.webkit.org/show_bug.cgi?id=34160
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::~LauncherWindow):
+        (LauncherWindow::keyPressEvent):
+        (LauncherWindow::grabZoomKeys):
+
 2010-01-29  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
