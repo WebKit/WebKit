@@ -1,3 +1,15 @@
+2010-01-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Source view displays text using wrong fonts
+        https://bugs.webkit.org/show_bug.cgi?id=34269
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype._initFont):
+        * inspector/front-end/inspector.js:
+
 2010-01-29  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -78,10 +78,7 @@ WebInspector.TextEditor = function(textModel, platform)
     this._ctx = this._canvas.getContext("2d");
     this._selection = new WebInspector.TextSelectionModel(this._selectionChanged.bind(this));
 
-    this._isMacTiger = platform === "mac-tiger";
-    this._isMacLeopard = platform === "mac-leopard";
-    this._isMac = this._isMacTiger || this._isMacLeopard;
-    this._isWin = platform === "windows";
+    this._isMac = platform && (platform.indexOf("mac") === 0);
 
     this._initFont();
 
@@ -948,20 +945,27 @@ WebInspector.TextEditor.prototype = {
         this._updateCursor(this._selection.endLine, this._selection.endColumn);
     },
 
-    _initFont: function(sansSerif, fontSize)
+    _initFont: function(sansSerif)
     {
+        if (!WebInspector.TextEditor.PlatformFonts) {
+            WebInspector.TextEditor.PlatformFonts = {};
+            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.Windows] = {size: 12, face: "Lucida Console"};
+            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.WindowsVistaOrLater] = {size: 12, face: "Courier"};
+            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacSnowLeopard] = {size: 11, face: "Menlo"};
+            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacLeopard] = {size: 10, face: "Monaco"};
+            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacTiger] = {size: 10, face: "Monaco"};
+        }
+
         if (sansSerif) {
             this._isMonospace = false;
-            this._fontSize = fontSize || 11;
+            this._fontSize = 11;
             this._font = this._fontSize + "px sans-serif";
         } else {
             this._isMonospace = true;
-            this._fontSize = fontSize || 10;
-            this._font = this._fontSize + "px monospace";
-            if (this._isMac)
-                this._font = this._fontSize + "px Monaco";
-            else if (this._isWin)
-                this._font = (this._fontSize + 1) + "px Courier New";
+            const platform = WebInspector.platform;
+            const fontInfo = WebInspector.TextEditor.PlatformFonts[platform] || {size: 10, face: "monospace"};
+            this._fontSize = fontInfo.size;
+            this._font = this._fontSize + "px " + fontInfo.face;
         }
         this._ctx.font = this._font;
         this._digitWidth = this._ctx.measureText("0").width;

@@ -55,13 +55,6 @@ var WebInspector = {
     cookieDomains: {},
     missingLocalizedStrings: {},
     pendingDispatches: 0,
-    OS: {
-        Windows: "windows",
-        WindowsVistaOrLater: "windows-vista-or-later",
-        MacTiger: "mac-tiger",
-        MacLeopard: "mac-leopard",
-        MacSnowLeopard: "mac-snowleopard"
-    },
 
     // RegExp groups:
     // 1 - scheme
@@ -420,6 +413,14 @@ var WebInspector = {
             this.showingDOMNodeHighlight = false;
         }
     }
+}
+
+WebInspector.OS = {
+    Windows: "windows",
+    WindowsVistaOrLater: "windows-vista-or-later",
+    MacTiger: "mac-tiger",
+    MacLeopard: "mac-leopard",
+    MacSnowLeopard: "mac-snowleopard"
 }
 
 WebInspector.loaded = function()
