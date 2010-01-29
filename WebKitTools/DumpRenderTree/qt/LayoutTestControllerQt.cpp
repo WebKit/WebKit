@@ -75,6 +75,7 @@ void LayoutTestController::reset()
     m_webHistory = 0;
     qt_dump_editing_callbacks(false);
     qt_dump_resource_load_callbacks(false);
+    emit hidePage();
 }
 
 void LayoutTestController::processWork()
@@ -175,6 +176,11 @@ void LayoutTestController::notifyDone()
 int LayoutTestController::windowCount()
 {
     return m_drt->windowCount();
+}
+
+void LayoutTestController::display()
+{
+    emit showPage();
 }
 
 void LayoutTestController::clearBackForwardList()
