@@ -1,3 +1,25 @@
+2010-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Huge plain text pastes are slow
+        <rdar://problem/5195056>
+        https://bugs.webkit.org/show_bug.cgi?id=34237
+
+        No new tests. It is a performance improvement.
+
+        The performance of the plain text paste is now linear.
+        We treat as a special case, a fragment that has been
+        created from plain text. Finding VisiblePositions and
+        applying style is greatly simplified, given the nature of
+        the fragment.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/markup.cpp:
+        (WebCore::isPlainTextMarkup):
+        * editing/markup.h:
+
 2010-01-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

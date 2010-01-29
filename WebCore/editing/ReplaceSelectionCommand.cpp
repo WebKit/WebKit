@@ -877,6 +877,8 @@ void ReplaceSelectionCommand::doApply()
     if (!refNode->inDocument())
         return;
 
+    bool plainTextFragment = isPlainTextMarkup(refNode.get());
+
     while (node) {
         Node* next = node->nextSibling();
         fragment.removeNode(node);
@@ -887,6 +889,8 @@ void ReplaceSelectionCommand::doApply()
             return;
 
         refNode = node;
+        if (node && plainTextFragment)
+            plainTextFragment = isPlainTextMarkup(node.get());
         node = next;
     }
     
@@ -913,7 +917,7 @@ void ReplaceSelectionCommand::doApply()
     
     bool interchangeNewlineAtEnd = fragment.hasInterchangeNewlineAtEnd();
 
-    if (shouldRemoveEndBR(endBR, originalVisPosBeforeEndBR))
+    if (endBR && (plainTextFragment || shouldRemoveEndBR(endBR, originalVisPosBeforeEndBR)))
         removeNodeAndPruneAncestors(endBR);
     
     // Determine whether or not we should merge the end of inserted content with what's after it before we do
@@ -1020,6 +1024,11 @@ void ReplaceSelectionCommand::doApply()
         }
     }
     
+    // If we are dealing with a fragment created from plain text
+    // no style matching is necessary.
+    if (plainTextFragment)
+        m_matchStyle = false;
+        
     completeHTMLReplacement(lastPositionToSelect);
 }
 

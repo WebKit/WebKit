@@ -1,3 +1,18 @@
+2010-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Huge plain text pastes are slow
+        <rdar://problem/5195056>
+        https://bugs.webkit.org/show_bug.cgi?id=34237
+
+        Mail is ignoring the fragment created from plain text or HTML that is
+        passed to the delegate function, that creates a new one.
+        This fix avoids creating the fragment twice.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+
 2010-01-25  Anders Carlsson  <andersca@apple.com>
 
         Featureless build fixes.

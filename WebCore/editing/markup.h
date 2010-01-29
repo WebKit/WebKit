@@ -45,6 +45,8 @@ namespace WebCore {
     PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
     PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
 
+    bool isPlainTextMarkup(Node *node);
+
     String createMarkup(const Range*,
         Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false);
     String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0);
