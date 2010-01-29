@@ -1,10 +1,5 @@
 /*
- * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
- * Copyright (C) 2006 George Staikos <staikos@kde.org>
- * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * All rights reserved.
  *
@@ -30,40 +25,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef mainwindow_h
-#define mainwindow_h
+#ifndef locationedit_h
+#define locationedit_h
 
 #include <QtGui>
-#include "webpage.h"
 
-class LocationEdit;
-
-class MainWindow : public QMainWindow {
+class LocationEdit : public QLineEdit {
     Q_OBJECT
 
 public:
-    MainWindow(const QString& url = QString());
+    LocationEdit(QWidget* parent = 0);
 
-    void setAddressUrl(const QString& url);
-    void addCompleterEntry(const QUrl& url);
+public slots:
+    void setProgress(int progress);
 
-    void load(const QString& url);
-    void load(const QUrl& url);
-
-    WebPage* page();
-
-protected slots:
-    void openFile();
-    void changeLocation();
+protected:
+    void paintEvent(QPaintEvent*);
 
 private:
-    void buildUI();
-
-    QStringListModel urlModel;
-    QStringList urlList;
-    LocationEdit* urlEdit;
-
-    WebPage* m_page;
+    int m_progress;
 };
 
 #endif

@@ -1,10 +1,5 @@
 /*
- * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
- * Copyright (C) 2006 George Staikos <staikos@kde.org>
- * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * All rights reserved.
  *
@@ -30,40 +25,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef mainwindow_h
-#define mainwindow_h
+#include "locationedit.h"
 
-#include <QtGui>
-#include "webpage.h"
+LocationEdit::LocationEdit(QWidget* parent)
+    : QLineEdit(parent),
+      m_progress(0)
+{
+}
 
-class LocationEdit;
+void LocationEdit::setProgress(int progress)
+{
+    m_progress = progress;
+    update();
+}
 
-class MainWindow : public QMainWindow {
-    Q_OBJECT
+void LocationEdit::paintEvent(QPaintEvent* ev)
+{
+    QColor backgroundColor = QApplication::palette().color(QPalette::Base);
+    QColor progressColor = QColor(120, 180, 240);
+    QPalette p = palette();
 
-public:
-    MainWindow(const QString& url = QString());
+    if (!m_progress || m_progress == 100)
+        p.setBrush(QPalette::Base, backgroundColor);
+    else {
+        QLinearGradient gradient(0, 0, width(), 0);
+        gradient.setColorAt(0, progressColor);
+        gradient.setColorAt(((double)m_progress) / 100, progressColor);
+        gradient.setColorAt(((double)m_progress) / 100 + 0.001, backgroundColor);
+        p.setBrush(QPalette::Base, gradient);
+    }
+    setPalette(p);
 
-    void setAddressUrl(const QString& url);
-    void addCompleterEntry(const QUrl& url);
-
-    void load(const QString& url);
-    void load(const QUrl& url);
-
-    WebPage* page();
-
-protected slots:
-    void openFile();
-    void changeLocation();
-
-private:
-    void buildUI();
-
-    QStringListModel urlModel;
-    QStringList urlList;
-    LocationEdit* urlEdit;
-
-    WebPage* m_page;
-};
-
-#endif
+    QLineEdit::paintEvent(ev);
+}

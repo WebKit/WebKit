@@ -1,6 +1,7 @@
 TEMPLATE = app
 
 SOURCES += \
+    locationedit.cpp \
     main.cpp \
     mainwindow.cpp \
     urlloader.cpp \
@@ -9,6 +10,7 @@ SOURCES += \
     webview.cpp \
 
 HEADERS += \
+    locationedit.h \
     mainwindow.h \
     urlloader.h \
     utils.h \
