@@ -58,6 +58,7 @@ public:
     virtual void setWebSecurityEnabled(bool) = 0;
     virtual void setJavaScriptCanOpenWindowsAutomatically(bool) = 0;
     virtual void setLoadsImagesAutomatically(bool) = 0;
+    virtual void setImagesEnabled(bool) = 0;
     virtual void setPluginsEnabled(bool) = 0;
     virtual void setDOMPasteAllowed(bool) = 0;
     virtual void setDeveloperExtrasEnabled(bool) = 0;

@@ -98,6 +98,8 @@ namespace WebCore {
         void setDefaultFixedFontSize(int);
         int defaultFixedFontSize() const { return m_defaultFixedFontSize; }
 
+        // Unlike areImagesEnabled, this only suppresses the network load of
+        // the image URL.  A cached image will still be rendered if requested.
         void setLoadsImagesAutomatically(bool);
         bool loadsImagesAutomatically() const { return m_loadsImagesAutomatically; }
 
@@ -115,6 +117,9 @@ namespace WebCore {
 
         void setJavaEnabled(bool);
         bool isJavaEnabled() const { return m_isJavaEnabled; }
+
+        void setImagesEnabled(bool);
+        bool areImagesEnabled() const { return m_areImagesEnabled; }
 
         void setPluginsEnabled(bool);
         bool arePluginsEnabled() const { return m_arePluginsEnabled; }
@@ -302,6 +307,7 @@ namespace WebCore {
         bool m_loadsImagesAutomatically : 1;
         bool m_privateBrowsingEnabled : 1;
         bool m_caretBrowsingEnabled : 1;
+        bool m_areImagesEnabled : 1;
         bool m_arePluginsEnabled : 1;
         bool m_databasesEnabled : 1;
         bool m_localStorageEnabled : 1;

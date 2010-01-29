@@ -68,6 +68,7 @@ Settings::Settings(Page* page)
     , m_loadsImagesAutomatically(false)
     , m_privateBrowsingEnabled(false)
     , m_caretBrowsingEnabled(false)
+    , m_areImagesEnabled(true)
     , m_arePluginsEnabled(false)
     , m_databasesEnabled(false)
     , m_localStorageEnabled(false)
@@ -240,6 +241,11 @@ void Settings::setAllowUniversalAccessFromFileURLs(bool allowUniversalAccessFrom
 void Settings::setJavaEnabled(bool isJavaEnabled)
 {
     m_isJavaEnabled = isJavaEnabled;
+}
+
+void Settings::setImagesEnabled(bool areImagesEnabled)
+{
+    m_areImagesEnabled = areImagesEnabled;
 }
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)

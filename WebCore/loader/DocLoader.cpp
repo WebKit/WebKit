@@ -40,6 +40,7 @@
 #include "HTMLElement.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "loader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -120,6 +121,11 @@ void DocLoader::checkForReload(const KURL& fullURL)
 
 CachedImage* DocLoader::requestImage(const String& url)
 {
+    if (Frame* f = frame()) {
+        Settings* settings = f->settings();
+        if (!f->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
+            return 0;
+    }
     CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, url, String()));
     if (autoLoadImages() && resource && resource->stillNeedsLoad()) {
         resource->setLoading(true);

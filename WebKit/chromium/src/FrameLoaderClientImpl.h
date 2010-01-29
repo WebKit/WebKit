@@ -193,6 +193,7 @@ public:
     virtual void didChangeScrollOffset();
     virtual bool allowJavaScript(bool enabledPerSettings);
     virtual bool allowPlugins(bool enabledPerSettings);
+    virtual bool allowImages(bool enabledPerSettings);
 
 private:
     void makeDocumentView();

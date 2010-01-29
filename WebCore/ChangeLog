@@ -1,3 +1,28 @@
+2010-01-29  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add FrameLoaderClient::allowImages method to allow the client to
+        overrule image loading policy on a per frame basis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34225
+
+        For completeness, this patch also adds Settings::areImagesEnabled.
+        This is different from loadsImagesAutomatically as is explained in
+        Settings.h.
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestImage):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowImages):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::writeRawData):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setImagesEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::areImagesEnabled):
+
 2010-01-28  Nicholas Young  <nicholas.young@nokia.com>
 
         Reviewed by Eric Carlson.

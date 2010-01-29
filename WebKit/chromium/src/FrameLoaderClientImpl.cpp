@@ -172,6 +172,14 @@ bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
     return enabledPerSettings;
 }
 
+bool FrameLoaderClientImpl::allowImages(bool enabledPerSettings)
+{
+    if (m_webFrame->client())
+        return m_webFrame->client()->allowImages(m_webFrame, enabledPerSettings);
+
+    return enabledPerSettings;
+}
+
 bool FrameLoaderClientImpl::hasWebView() const
 {
     return m_webFrame->viewImpl();
