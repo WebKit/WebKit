@@ -1,3 +1,15 @@
+2010-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        JSC is failing to propagate anonymous slot count on some transitions
+        https://bugs.webkit.org/show_bug.cgi?id=34321
+
+        Add a test for modification of a type with anonymous slots.
+
+        * fast/dom/Window/anonymous-slot-with-changes-expected.txt: Added.
+        * fast/dom/Window/anonymous-slot-with-changes.html: Added.
+
 2010-01-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix.
