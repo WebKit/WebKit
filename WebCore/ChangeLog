@@ -2,6 +2,19 @@
 
         Reviewed by David Levin.
 
+        Add stub for AXObjectCache::contentChanged when HAVE(ACCESSIBILITY) is not defined
+        https://bugs.webkit.org/show_bug.cgi?id=34271
+
+        No new tests, build fix only.
+
+        * accessibility/AXObjectCache.cpp: Modified. Added HAVE(ACCESSIBILITY) guards around contentChanged
+        * accessibility/AXObjectCache.h: Modified.
+        (WebCore::AXObjectCache::contentChanged): Added stub
+
+2010-01-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
         Use long long rather than int64 in V8Binding.h
         https://bugs.webkit.org/show_bug.cgi?id=34270
 
