@@ -47,4 +47,10 @@ bool applicationIsMicrosoftMessenger()
     return isMicrosoftMessenger;
 }
 
+bool applicationIsAdobeInstaller()
+{
+    static bool isAdobeInstaller = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
+    return isAdobeInstaller;
+}
+
 } // namespace WebCore

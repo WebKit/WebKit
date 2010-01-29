@@ -281,6 +281,9 @@ namespace WebCore {
         void setGeolocationEnabled(bool);
         bool geolocationEnabled() const { return m_geolocationEnabled; }
 
+        void setLoadDeferringEnabled(bool);
+        bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
+
     private:
         Page* m_page;
         
@@ -352,6 +355,7 @@ namespace WebCore {
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
         bool m_geolocationEnabled : 1;
+        bool m_loadDeferringEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

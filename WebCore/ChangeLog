@@ -1,3 +1,29 @@
+2010-01-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7441982> REGRESSION (TOT): Adobe CS4: Installer alerts are displayed as
+        blank windows
+
+        We probably shouldn't be deferring loads below modal dialogs and alerts, because that's not
+        what being modal means. But making such a change for general Web content would require fixes
+        in other parts of code, which I'm not ready to implement right now, so making it application
+        specific.
+
+        * page/Page.cpp: (WebCore::Page::setDefersLoading): Do nothing if load deferring is not
+        enabled in page settings.
+
+        * WebCore.base.exp:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setLoadDeferringEnabled):
+        * page/Settings.h: (WebCore::Settings::loadDeferringEnabled):
+        Add the ability for client to disable page deferring (still enabled by default).
+
+        * platform/mac/RuntimeApplicationChecks.h:
+        * platform/mac/RuntimeApplicationChecks.mm: (WebCore::applicationIsAdobeInstaller):
+        Added a bundle ID test for Adobe installer.
+
 2010-01-29  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

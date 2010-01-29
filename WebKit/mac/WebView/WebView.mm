@@ -558,6 +558,11 @@ static bool runningTigerMail()
     return NO;    
 }
 
+static bool shouldEnableLoadDeferring()
+{
+    return !applicationIsAdobeInstaller();
+}
+
 - (void)_dispatchPendingLoadRequests
 {
     cache()->loader()->servePendingRequests();
@@ -1328,6 +1333,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
+    settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
 }
 
 static inline IMP getMethod(id o, SEL s)

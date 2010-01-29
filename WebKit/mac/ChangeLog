@@ -1,3 +1,15 @@
+2010-01-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7441982> REGRESSION (TOT): Adobe CS4: Installer alerts are displayed as
+        blank windows
+
+        * WebView/WebView.mm:
+        (shouldEnableLoadDeferring): Load deferring is enabled unless the application is Adobe
+        Installer.
+        (-[WebView _preferencesChangedNotification:]): Call setLoadDeferringEnabled().
+
 2010-01-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.
