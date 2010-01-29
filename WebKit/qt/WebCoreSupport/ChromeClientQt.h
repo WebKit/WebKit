@@ -132,6 +132,10 @@ namespace WebCore {
         virtual void scheduleCompositingLayerSync();
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+        virtual void needTouchEvents(bool) { }
+#endif
+
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 
         virtual void formStateDidChange(const Node*) { }

@@ -165,6 +165,10 @@ public:
     virtual void setNeedsOneShotDrawingSynchronization() {};
     virtual void scheduleCompositingLayerSync() {};
 #endif
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual void needTouchEvents(bool) { }
+#endif
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient, public Noncopyable {

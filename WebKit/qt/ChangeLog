@@ -1,3 +1,15 @@
+2010-01-29  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Android] Android needs functionality in the ChromeClient to be informed when touch events are and are not needed by the webpage.
+        https://bugs.webkit.org/show_bug.cgi?id=34215
+
+        Add needTouchEvents() to the ChromeClient which is called when the page decides it needs or no longer needs to be informed of touch events.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::needTouchEvents): Add an empty implementation.
+
 2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann

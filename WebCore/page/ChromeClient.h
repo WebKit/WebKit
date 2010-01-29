@@ -221,6 +221,10 @@ namespace WebCore {
         virtual void willPopUpMenu(NSMenu *) { }
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+        virtual void needTouchEvents(bool) = 0;
+#endif
+
     protected:
         virtual ~ChromeClient() { }
     };

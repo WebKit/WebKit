@@ -1,3 +1,24 @@
+2010-01-29  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Android] Android needs functionality in the ChromeClient to be informed when touch events are and are not needed by the webpage.
+        https://bugs.webkit.org/show_bug.cgi?id=34215
+
+        Add a function on the ChromeClient that WebCore can use to inform the platform when it needs touch events. This way the platform can optimise by not forwarding the events if they are not required.
+
+        No new tests as the only implementation is specific to Android.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach): Check if this is the top level document and if so, stop forwarding touch events.
+        (WebCore::Document::addListenerTypeIfNeeded): Inform the ChromeClient it should start forwarding touch events and guard touch event code properly.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): If the document uses touch events, inform the ChromeClient to start forwarding them.
+        (WebCore::CachedFrame::CachedFrame): If the document uses touch events, inform the ChromeClient to stop forwarding them, as the document is being put into the page cache.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::needTouchEvents): Add an empty implementation.
+        * page/ChromeClient.h: Add the needTouchEvents() function.
+
 2010-01-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
