@@ -53,9 +53,8 @@ WebInspector.TextRange.prototype = {
     }
 }
 
-WebInspector.TextEditorModel = function(changeListener)
+WebInspector.TextEditorModel = function()
 {
-    this._changeListener = changeListener;
     this._lines = [""];
     this._attributes = [];
     this._undoStack = [];
@@ -63,6 +62,10 @@ WebInspector.TextEditorModel = function(changeListener)
 }
 
 WebInspector.TextEditorModel.prototype = {
+    set changeListener(changeListener)
+    {
+        this._changeListener = changeListener;
+    },
 
     get linesCount()
     {
@@ -89,7 +92,8 @@ WebInspector.TextEditorModel.prototype = {
         var newRange = this._innerSetText(range, text);
         command.range = newRange.clone();
 
-        this._changeListener(range, newRange, command.text, text);
+        if (this._changeListener)
+            this._changeListener(range, newRange, command.text, text);
         return newRange;
     },
 

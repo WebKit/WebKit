@@ -160,6 +160,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
+            WebInspector.currentPanel.resize();
             var mainStatusBar = document.getElementById("main-status-bar");
             mainStatusBar.insertBefore(anchoredItems, mainStatusBar.firstChild);
             mainStatusBar.style.removeProperty("padding-left");

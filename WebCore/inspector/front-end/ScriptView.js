@@ -33,9 +33,7 @@ WebInspector.ScriptView = function(script)
 
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
-    this.sourceFrame = new WebInspector.SourceFrame(this._addBreakpoint.bind(this));
-
-    this.element.appendChild(this.sourceFrame.element);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this));
 }
 
 WebInspector.ScriptView.prototype = {
@@ -43,6 +41,7 @@ WebInspector.ScriptView.prototype = {
     {
         WebInspector.View.prototype.show.call(this, parentElement);
         this.setupSourceFrameIfNeeded();
+        this.sourceFrame.visible = true;
         this.resize();
     },
 

@@ -62,7 +62,8 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
     this._tokenizerConstructors = {
         "text/css": WebInspector.SourceCSSTokenizer,
         "text/html": WebInspector.SourceHTMLTokenizer,
-        "text/javascript": WebInspector.SourceJavaScriptTokenizer
+        "text/javascript": WebInspector.SourceJavaScriptTokenizer,
+        "application/x-javascript": WebInspector.SourceJavaScriptTokenizer
     };
 
     this.mimeType = "text/html";

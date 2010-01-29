@@ -28,9 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextEditor = function(platform)
+WebInspector.TextEditor = function(textModel, platform)
 {
-    this._textModel = new WebInspector.TextEditorModel(this._textChanged.bind(this));
+    this._textModel = textModel;
+    this._textModel.changeListener = this._textChanged.bind(this);
     this._highlighter = new WebInspector.TextEditorHighlighter(this._textModel, this._highlightChanged.bind(this));
 
     this.element = document.createElement("div");

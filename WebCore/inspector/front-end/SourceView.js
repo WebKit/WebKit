@@ -30,19 +30,11 @@ WebInspector.SourceView = function(resource)
 {
     WebInspector.ResourceView.call(this, resource);
 
-    this.sourceFrame = new WebInspector.SourceFrame(this._addBreakpoint.bind(this));
-
-    resource.addEventListener("finished", this._resourceLoadingFinished, this);
-
     this.element.addStyleClass("source");
 
+    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this));
+    resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
-
-    this.contentElement.appendChild(this.sourceFrame.element);
-
-    var gutterElement = document.createElement("div");
-    gutterElement.className = "webkit-line-gutter-backdrop";
-    this.contentElement.appendChild(gutterElement);
 }
 
 WebInspector.SourceView.prototype = {
@@ -50,18 +42,20 @@ WebInspector.SourceView.prototype = {
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this.setupSourceFrameIfNeeded();
+        this.sourceFrame.visible = true;
         this.resize();
     },
 
     hide: function()
     {
         WebInspector.View.prototype.hide.call(this);
+        this.sourceFrame.visible = false;
         this._currentSearchResultIndex = -1;
     },
 
     resize: function()
     {
-        if (this._sourceFrameSetup)
+        if (this.sourceFrame)
             this.sourceFrame.resize();
     },
 

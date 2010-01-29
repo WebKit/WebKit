@@ -28,26 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(addBreakpointDelegate)
+WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate)
 {
-    this._editor = new WebInspector.TextEditor(WebInspector.platform);
-    this._textModel = this._editor.textModel;
-    this._editor.lineNumberDecorator = new WebInspector.BreakpointLineNumberDecorator(this);
-    this._editor.lineDecorator = new WebInspector.ExecutionLineDecorator(this);
-    this._editor.readOnly = true;
+    this._parentElement = parentElement;
+
+    this._textModel = new WebInspector.TextEditorModel();
+
     this._messages = [];
     this._rowMessages = {};
     this._messageBubbles = {};
     this.breakpoints = [];
     this._shortcuts = {};
-    this.element = this._editor.element;
-    this.element.addEventListener("keydown", this._keyDown.bind(this), true);
+
     this._loaded = false;
 
-    this.addBreakpointDelegate = addBreakpointDelegate;
+    this._addBreakpointDelegate = addBreakpointDelegate;
 }
 
 WebInspector.SourceFrame.prototype = {
+
+    set visible(visible)
+    {
+        this._visible = visible;
+        this._createEditorIfNeeded();
+    },
 
     get executionLine()
     {
@@ -59,15 +63,16 @@ WebInspector.SourceFrame.prototype = {
         if (this._executionLine === x)
             return;
         this._executionLine = x;
-        this._editor.repaintAll();
+        if (this._editor)
+            this._editor.repaintAll();
     },
 
     revealLine: function(lineNumber)
     {
-        if (!this._loaded)
-            this._lineNumberToReveal = lineNumber;
-        else
+        if (this._editor)
             this._editor.reveal(lineNumber - 1, 0);
+        else
+            this._lineNumberToReveal = lineNumber;
     },
 
     addBreakpoint: function(breakpoint)
@@ -93,8 +98,9 @@ WebInspector.SourceFrame.prototype = {
         // Don't add the message if there is no message or valid line or if the msg isn't an error or warning.
         if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
             return;
-        this._messages.push(msg);
-        this._addMessageToSource(msg);
+        this._messages.push(msg)
+        if (this._editor)
+            this._addMessageToSource(msg);
     },
 
     clearMessages: function()
@@ -107,22 +113,46 @@ WebInspector.SourceFrame.prototype = {
         this._messages = [];
         this._rowMessages = {};
         this._messageBubbles = {};
-        this._editor.packAndRepaintAll();
+        if (this._editor)
+            this._editor.packAndRepaintAll();
     },
 
     sizeToFitContentHeight: function()
     {
-        this._editor.packAndRepaintAll();
+        if (this._editor)
+            this._editor.packAndRepaintAll();
     },
 
     setContent: function(mimeType, content)
     {
         this._loaded = true;
-        this._editor.mimeType = mimeType;
-        this._editor.text = content;
+        this._textModel.setText(null, content);
+        this._mimeType = mimeType;
+        this._createEditorIfNeeded();
+    },
+
+    _createEditorIfNeeded: function()
+    {
+        if (!this._visible || !this._loaded || this._editor)
+            return;
+
+        this._editor = new WebInspector.TextEditor(this._textModel, WebInspector.platform);
+        this._editor.lineNumberDecorator = new WebInspector.BreakpointLineNumberDecorator(this, this._editor.textModel);
+        this._editor.lineDecorator = new WebInspector.ExecutionLineDecorator(this);
+        this._editor.readOnly = true;
+        this._element = this._editor.element;
+        this._element.addEventListener("keydown", this._keyDown.bind(this), true);
+        this._parentElement.appendChild(this._element);
+
+        this._editor.mimeType = this._mimeType;
 
         this._addExistingMessagesToSource();
         this._addExistingBreakpointsToSource();
+
+        this._editor.setCoalescingUpdate(true);
+        this._editor.updateCanvasSize();
+        this._editor.packAndRepaintAll();
+
         if (this._executionLine)
             this.revealLine(this._executionLine);
 
@@ -130,9 +160,12 @@ WebInspector.SourceFrame.prototype = {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
         }
-        this._editor.setCoalescingUpdate(true);
-        this._editor.updateCanvasSize();
-        this._editor.packAndRepaintAll();
+
+        if (this._pendingSelectionRange) {
+            var range = this._pendingSelectionRange;
+            this._editor.setSelection(range.startLine, range.startColumn, range.endLine, range.endColumn);
+            delete this._pendingSelectionRange;
+        }
         this._editor.setCoalescingUpdate(false);
     },
 
@@ -180,13 +213,19 @@ WebInspector.SourceFrame.prototype = {
 
     setSelection: function(range)
     {
-        this._editor.setSelection(range.startLine, range.startColumn, range.endLine, range.endColumn);
+        if (this._editor)
+            this._editor.setSelection(range.startLine, range.startColumn, range.endLine, range.endColumn);
+        else
+            this._pendingSelectionRange = range;
     },
 
     clearSelection: function()
     {
-        var range = this._editor.selection;
-        this._editor.setSelection(range.endLine, range.endColumn, range.endLine, range.endColumn);
+        if (this._editor) {
+            var range = this._editor.selection;
+            this._editor.setSelection(range.endLine, range.endColumn, range.endLine, range.endColumn);
+        } else
+            delete this._pendingSelectionRange;
     },
 
     _incrementMessageRepeatCount: function(msg, repeatDelta)
@@ -289,7 +328,7 @@ WebInspector.SourceFrame.prototype = {
 
     _contextMenu: function(lineNumber, event)
     {
-        if (!this.addBreakpointDelegate)
+        if (!this._addBreakpointDelegate)
             return;
 
         var contextMenu = new WebInspector.ContextMenu();
@@ -297,11 +336,11 @@ WebInspector.SourceFrame.prototype = {
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
-            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this.addBreakpointDelegate.bind(this, lineNumber + 1));
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._addBreakpointDelegate.bind(this, lineNumber + 1));
 
             function addConditionalBreakpoint() 
             {
-                this.addBreakpointDelegate(lineNumber + 1);
+                this._addBreakpointDelegate(lineNumber + 1);
                 var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
                 if (breakpoint)
                     this._editBreakpointCondition(breakpoint);
@@ -327,8 +366,8 @@ WebInspector.SourceFrame.prototype = {
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
         if (breakpoint)
             WebInspector.panels.scripts.removeBreakpoint(breakpoint);
-        else if (this.addBreakpointDelegate)
-            this.addBreakpointDelegate(lineNumber + 1);
+        else if (this._addBreakpointDelegate)
+            this._addBreakpointDelegate(lineNumber + 1);
         event.preventDefault();
     },
 
@@ -421,16 +460,17 @@ WebInspector.SourceFrame.prototype = {
 
     resize: function()
     {
-        this._editor.updateCanvasSize();
+        if (this._editor)
+            this._editor.updateCanvasSize();
     }
 }
 
 WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.BreakpointLineNumberDecorator = function(sourceFrame)
+WebInspector.BreakpointLineNumberDecorator = function(sourceFrame, textModel)
 {
     this._sourceFrame = sourceFrame;
-    this._textModel = sourceFrame._editor.textModel;
+    this._textModel = textModel;
 }
 
 WebInspector.BreakpointLineNumberDecorator.prototype = {
