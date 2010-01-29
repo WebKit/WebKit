@@ -1,3 +1,17 @@
+2010-01-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Vimeo HTML5 player doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=34327
+
+        Test for HTTP Referer checking when playing remote media.
+
+        * http/tests/media/resources/setCookieAndReferer.cgi: Added.
+        * http/tests/media/resources/video-referer-check-referer.php: Added.
+        * http/tests/media/video-referer-expected.txt: Added.
+        * http/tests/media/video-referer.html: Added.
+
 2010-01-29  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed.

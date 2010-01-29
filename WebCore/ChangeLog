@@ -1,3 +1,17 @@
+2010-01-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Vimeo HTML5 player doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=34327
+
+        Send Referer when requesting media over HTTP.
+
+        Test: http/tests/media/video-referer.html
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+
 2010-01-29  Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
 
         Reviewed by Simon Hausmann.
