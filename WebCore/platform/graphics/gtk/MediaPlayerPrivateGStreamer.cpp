@@ -150,6 +150,11 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
 
         SoupURI* uri = soup_uri_new(location);
         g_free(location);
+
+        // Let Apple web servers know we want to access their nice movie trailers.
+        if (g_str_equal(uri->host, "movies.apple.com"))
+            g_object_set(element, "user-agent", "Quicktime/7.2.0", NULL);
+
         char* cookies = soup_cookie_jar_get_cookies(cookieJar, uri, FALSE);
         soup_uri_free(uri);
 
