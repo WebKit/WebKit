@@ -2,6 +2,18 @@
 
         Reviewed by Gavin Barraclough.
 
+        DOM Objects shouldn't all require custom mark functions
+        https://bugs.webkit.org/show_bug.cgi?id=34291
+
+        Make getAnonymousValue const-friendly
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::getAnonymousValue):
+
+2010-01-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Simplify anonymous slot implementation
         https://bugs.webkit.org/show_bug.cgi?id=34282
 

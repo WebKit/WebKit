@@ -71,12 +71,12 @@ namespace WebCore {
     // updated to store a globalObject pointer.
     class DOMObjectWithGlobalPointer : public DOMObject {
     public:
-        JSDOMGlobalObject* globalObject() const { return m_globalObject; }
+        JSDOMGlobalObject* globalObject() const { return static_cast<JSDOMGlobalObject*>(getAnonymousValue(GlobalObjectSlot).asCell()); }
 
         ScriptExecutionContext* scriptExecutionContext() const
         {
             // FIXME: Should never be 0, but can be due to bug 27640.
-            return m_globalObject->scriptExecutionContext();
+            return globalObject()->scriptExecutionContext();
         }
 
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
@@ -85,27 +85,19 @@ namespace WebCore {
         }
 
     protected:
-        static const unsigned StructureFlags = JSC::OverridesMarkChildren | DOMObject::StructureFlags;
+        static const unsigned AnonymousSlotCount = 1 + DOMObject::AnonymousSlotCount;
+        static const unsigned GlobalObjectSlot = AnonymousSlotCount - 1;
 
         DOMObjectWithGlobalPointer(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
             : DOMObject(structure)
-            , m_globalObject(globalObject)
         {
             // FIXME: This ASSERT is valid, but fires in fast/dom/gc-6.html when trying to create
             // new JavaScript objects on detached windows due to DOMWindow::document()
             // needing to reach through the frame to get to the Document*.  See bug 27640.
             // ASSERT(globalObject->scriptExecutionContext());
+            putAnonymousValue(GlobalObjectSlot, globalObject);
         }
         virtual ~DOMObjectWithGlobalPointer() { }
-
-        void markChildren(JSC::MarkStack& markStack)
-        {
-            DOMObject::markChildren(markStack);
-            markStack.append(m_globalObject);
-        }
-
-    private:
-        JSDOMGlobalObject* m_globalObject;
     };
 
     // Base class for all constructor objects in the JSC bindings.
