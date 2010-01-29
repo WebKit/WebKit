@@ -1,3 +1,12 @@
+2010-01-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        prepare-ChangeLog outputs useless messages for a nonexistent bug ID
+        https://bugs.webkit.org/show_bug.cgi?id=34313
+
+        * Scripts/prepare-ChangeLog:
+
 2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Ariya Hidayat.

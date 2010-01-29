@@ -257,7 +257,11 @@ if ($bugNumber) {
     my $bugXMLURL = "$bugURL&ctype=xml";
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
     my $descriptionLine = `curl --silent "$bugXMLURL" | grep short_desc`;
-    $descriptionLine =~ /<short_desc>(.*)<\/short_desc>/;
+    if ($descriptionLine !~ /<short_desc>(.*)<\/short_desc>/) {
+        print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
+        print STDERR "  The bug URL: $bugXMLURL\n";
+        exit 1;
+    }
     $bugDescription = decodeEntities($1);
     print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
 }
