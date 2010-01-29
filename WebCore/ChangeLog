@@ -1,3 +1,17 @@
+2010-01-28  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Prefer provided video element width/height properties to hard coded
+        defaults for intrinsic size when natural video size is unavailable.
+        https://bugs.webkit.org/show_bug.cgi?id=34302
+
+        No new tests needed.
+
+        * rendering/RenderVideo.cpp: Attempt to use width/height properties
+        (WebCore::RenderVideo::RenderVideo):
+        * rendering/RenderVideo.h: More appropriate constructor signature
+
 2010-01-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

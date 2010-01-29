@@ -50,18 +50,25 @@ using namespace HTMLNames;
 static const int cDefaultWidth = 300;
 static const int cDefaultHeight = 150;
 
-RenderVideo::RenderVideo(HTMLMediaElement* video)
+RenderVideo::RenderVideo(HTMLVideoElement* video)
     : RenderMedia(video)
 {
     if (video->player())
         setIntrinsicSize(video->player()->naturalSize());
     else {
-        // Video in standalone media documents should not use the default 300x150
-        // size since they also have audio thrown at them. By setting the intrinsic
-        // size to 300x1 the video will resize itself in these cases, and audio will
-        // have the correct height (it needs to be > 0 for controls to render properly).
-        if (video->ownerDocument() && video->ownerDocument()->isMediaDocument())
+        // When the natural size of the video is unavailable, we use the provided
+        // width and height attributes of the video element as the intrinsic size until
+        // better values become available. If these attributes are not set, we fall back
+        // to a default video size (300x150).
+        if (video->hasAttribute(widthAttr) && video->hasAttribute(heightAttr))
+            setIntrinsicSize(IntSize(video->width(), video->height()));
+        else if (video->ownerDocument() && video->ownerDocument()->isMediaDocument()) {
+            // Video in standalone media documents should not use the default 300x150
+            // size since they also have audio thrown at them. By setting the intrinsic
+            // size to 300x1 the video will resize itself in these cases, and audio will
+            // have the correct height (it needs to be > 0 for controls to render properly).
             setIntrinsicSize(IntSize(cDefaultWidth, 1));
+        }
         else
             setIntrinsicSize(IntSize(cDefaultWidth, cDefaultHeight));
     }

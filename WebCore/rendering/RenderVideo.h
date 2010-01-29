@@ -40,7 +40,7 @@ class GraphicsLayer;
 
 class RenderVideo : public RenderMedia {
 public:
-    RenderVideo(HTMLMediaElement*);
+    RenderVideo(HTMLVideoElement*);
     virtual ~RenderVideo();
 
     void videoSizeChanged();
