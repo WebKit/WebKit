@@ -1,5 +1,12 @@
 2010-01-29  Steve Falkenburg  <sfalken@apple.com>
 
+        Build fix.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::startUpdating):
+
+2010-01-29  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Darin Adler.
 
         Client-based Geolocation starts updating before getting consent from the user
