@@ -1,3 +1,15 @@
+2010-01-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix MacOS X version detection
+
+        MacOS X version can have 2 or 3 segments.
+        https://bugs.webkit.org/show_bug.cgi?id=34322
+
+        * inspector/front-end/inspector.js:
+        (WebInspector._detectPlatform):
+
 2010-01-29  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Nikolas Zimmermann.
