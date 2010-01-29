@@ -1,3 +1,33 @@
+2010-01-29  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by darin@apple.com.
+
+        Fix the issue that both main frome and iframe are
+        focused if window.onblur calls window.focus.
+        https://bugs.webkit.org/show_bug.cgi?id=31692
+
+        The problem is caused by the focused frame in FocusController
+        is messed up if window.onblur calls window.focus:
+        When user clicks iframe to switch focus from main frame to iframe,
+        FocusController::setFocusedFrame fires onblur event, which calls
+        window.focus and then calls setFocusedFrame again to switch back.
+        This messes up the old focused frame and new focused frame and
+        leaves the FocusController confused. As a result, controlls
+        in both main frame and iframe look like get focused.
+
+        To fix it, add a flag to FocusController and do no switch the focused
+        frame when FocusController is in the middle of changing the focused frame. 
+
+        Test: fast/events/change-frame-focus.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController):
+        (WebCore::FocusController::setFocusedFrame):
+        * page/FocusController.h:
+        (WebCore::FocusController::focusedFrame):
+        (WebCore::FocusController::isActive):
+        (WebCore::FocusController::isFocused):
+
 2010-01-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
