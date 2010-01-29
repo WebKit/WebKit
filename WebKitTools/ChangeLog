@@ -1,3 +1,16 @@
+2010-01-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Show progress reaching 100% for loads.
+
+        * QtLauncher/locationedit.cpp:
+        (LocationEdit::LocationEdit):
+        (LocationEdit::setProgress):
+        (LocationEdit::reset):
+        (LocationEdit::paintEvent):
+        * QtLauncher/locationedit.h:
+
 2010-01-29  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

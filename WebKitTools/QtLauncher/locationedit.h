@@ -39,11 +39,15 @@ public:
 public slots:
     void setProgress(int progress);
 
+private slots:
+    void reset();
+
 protected:
-    void paintEvent(QPaintEvent*);
+    virtual void paintEvent(QPaintEvent*);
 
 private:
     int m_progress;
+    QTimer m_clearTimer;
 };
 
 #endif
