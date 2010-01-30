@@ -51,6 +51,9 @@ public:
     static void setGeolocationEnabled(bool isEnabled) { isGeolocationEnabled = isEnabled; }
     static bool geolocationEnabled() { return isGeolocationEnabled; }
 
+    static void setIndexedDatabaseEnabled(bool isEnabled) { isIndexedDatabaseEnabled = isEnabled; }
+    static bool indexedDatabaseEnabled() { return isIndexedDatabaseEnabled; }
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -60,6 +63,7 @@ private:
     static bool isNotificationsEnabled;
     static bool isApplicationCacheEnabled;
     static bool isGeolocationEnabled;
+    static bool isIndexedDatabaseEnabled;
 };
 
 } // namespace WebCore

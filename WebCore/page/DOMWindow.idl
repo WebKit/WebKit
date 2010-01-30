@@ -170,6 +170,9 @@ module window {
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
+#if defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE
+        readonly attribute [EnabledAtRuntime] IndexedDatabaseRequest indexedDB;
+#endif
 
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
         // This is the interface orientation in degrees. Some examples are:

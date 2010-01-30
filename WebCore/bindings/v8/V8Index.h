@@ -453,6 +453,16 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define DOM_OBJECT_STORAGE_TYPES(V)
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+#define DOM_OBJECT_INDEXED_DATABASE_TYPES(V)                            \
+    V(IDBDATABASEERROR, IDBDatabaseError)                               \
+    V(IDBDATABASEEXCEPTION, IDBDatabaseException)                       \
+    V(IDBREQUEST, IDBRequest)                                           \
+    V(INDEXEDDATABASEREQUEST, IndexedDatabaseRequest)
+#else
+#define DOM_OBJECT_INDEXED_DATABASE_TYPES(V)
+#endif
+
 #if ENABLE(WORKERS)
 #define DOM_OBJECT_WORKERS_TYPES(V)                                     \
     V(ERROREVENT, ErrorEvent)
@@ -523,6 +533,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     DOM_OBJECT_TYPES_2(V)                                               \
     DOM_OBJECT_DATABASE_TYPES(V)                                        \
     DOM_OBJECT_STORAGE_TYPES(V)                                         \
+    DOM_OBJECT_INDEXED_DATABASE_TYPES(V)                                \
     DOM_OBJECT_WORKERS_TYPES(V)                                         \
     DOM_OBJECT_3D_CANVAS_TYPES(V)                                       \
     DOM_OBJECT_XPATH_TYPES(V)                                           \

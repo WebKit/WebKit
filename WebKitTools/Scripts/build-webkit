@@ -51,7 +51,7 @@ my $makeArgs;
 my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
-    $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport,
+    $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $indexedDatabaseSupport,
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
@@ -96,6 +96,9 @@ my @features = (
 
     { option => "icon-database", desc => "Toggle Icon database support",
       define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
+
+    { option => "indexed-database", desc => "Toggle Indexed Database API support",
+      define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },

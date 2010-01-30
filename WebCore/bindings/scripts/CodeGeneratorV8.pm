@@ -375,6 +375,7 @@ sub GetInternalFields
     return ("abstractWorkerCacheIndex", "cacheIndex") if $name eq "SharedWorker";
     return ("abstractWorkerCacheIndex", "workerContextCacheIndex", "cacheIndex") if $name eq "SharedWorkerContext";
     return ("cacheIndex") if $name eq "Notification";
+    return ("cacheIndex") if $name eq "IDBRequest";
     return ("cacheIndex") if $name eq "SVGElementInstance";
     return ("consoleIndex", "historyIndex", "locationbarIndex", "menubarIndex", "navigatorIndex", "personalbarIndex",
         "screenIndex", "scrollbarsIndex", "selectionIndex", "statusbarIndex", "toolbarIndex", "locationIndex",

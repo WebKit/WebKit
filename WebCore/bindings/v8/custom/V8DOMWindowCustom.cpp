@@ -301,6 +301,13 @@ bool V8DOMWindow::OpenDatabaseEnabled()
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+bool V8DOMWindow::IndexedDBEnabled()
+{
+    return RuntimeEnabledFeatures::indexedDatabaseEnabled();
+}
+#endif
+
 #if ENABLE(DOM_STORAGE)
 bool V8DOMWindow::LocalStorageEnabled()
 {

@@ -1,3 +1,82 @@
+2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        A first step towards the Indexed Database API
+        https://bugs.webkit.org/show_bug.cgi?id=34342
+
+        Flesh out the first part of Indexed Database API.
+        Currently only compiles with v8 + chromium for now.
+        Completely non-functional, but it seems best to do
+        this in chunks.
+
+        No tests because nothing works yet.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/RuntimeEnabledFeatures.cpp:
+        * bindings/v8/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIndexedDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::indexedDatabaseEnabled):
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::IndexedDBEnabled):
+        * bindings/v8/custom/V8IDBRequestCustom.cpp: Added.
+        (WebCore::V8IDBRequest::resultAccessorGetter):
+        * bindings/v8/custom/V8IndexedDatabaseRequestCustom.cpp: Added.
+        (WebCore::V8IndexedDatabaseRequest::openCallback):
+        * dom/EventNames.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::indexedDB):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * storage/IDBDatabaseError.h: Added.
+        (WebCore::IDBDatabaseError::create):
+        (WebCore::IDBDatabaseError::~IDBDatabaseError):
+        (WebCore::IDBDatabaseError::code):
+        (WebCore::IDBDatabaseError::setCode):
+        (WebCore::IDBDatabaseError::message):
+        (WebCore::IDBDatabaseError::setMessage):
+        (WebCore::IDBDatabaseError::IDBDatabaseError):
+        * storage/IDBDatabaseError.idl: Added.
+        * storage/IDBDatabaseException.h: Added.
+        (WebCore::IDBDatabaseException::create):
+        (WebCore::IDBDatabaseException::~IDBDatabaseException):
+        (WebCore::IDBDatabaseException::code):
+        (WebCore::IDBDatabaseException::setCode):
+        (WebCore::IDBDatabaseException::message):
+        (WebCore::IDBDatabaseException::setMessage):
+        (WebCore::IDBDatabaseException::IDBDatabaseException):
+        * storage/IDBDatabaseException.idl: Added.
+        * storage/IDBRequest.cpp: Added.
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::eventTargetData):
+        (WebCore::IDBRequest::ensureEventTargetData):
+        * storage/IDBRequest.h: Added.
+        (WebCore::IDBRequest::create):
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::result):
+        (WebCore::IDBRequest::scriptExecutionContext):
+        (WebCore::IDBRequest::toIDBRequest):
+        (WebCore::IDBRequest::refEventTarget):
+        (WebCore::IDBRequest::derefEventTarget):
+        * storage/IDBRequest.idl: Added.
+        * storage/IndexedDatabaseRequest.cpp: Added.
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+        (WebCore::IndexedDatabaseRequest::~IndexedDatabaseRequest):
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h: Added.
+        (WebCore::IndexedDatabaseRequest::create):
+        (WebCore::IndexedDatabaseRequest::request):
+        * storage/IndexedDatabaseRequest.idl: Added.
+
 2010-01-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

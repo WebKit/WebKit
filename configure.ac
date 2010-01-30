@@ -331,6 +331,14 @@ AC_ARG_ENABLE(dom_storage,
               [],[enable_dom_storage="yes"])
 AC_MSG_RESULT([$enable_dom_storage])
 
+# check whether to enable the indexed database API
+AC_MSG_CHECKING([whether to enable the indexed database API])
+AC_ARG_ENABLE(indexed_database,
+              AC_HELP_STRING([--enable-indexeddb],
+                             [enable the indexed database API [default=no]]),
+              [],[enable_indexed_database="no"])
+AC_MSG_RESULT([$enable_indexed_database])
+
 # check whether to build with database support
 AC_MSG_CHECKING([whether to enable HTML5 client-side database storage support])
 AC_ARG_ENABLE(database,
@@ -751,6 +759,7 @@ AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
+AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])

@@ -257,6 +257,13 @@
 #include "bindings/V8SQLTransaction.cpp"
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+#include "bindings/V8IDBDatabaseError.cpp"
+#include "bindings/V8IDBDatabaseException.cpp"
+#include "bindings/V8IDBRequest.cpp"
+#include "bindings/V8IndexedDatabaseRequest.cpp"
+#endif
+
 #if ENABLE(WORKERS)
 #include "bindings/V8AbstractWorker.cpp"
 #include "bindings/V8DedicatedWorkerContext.cpp"

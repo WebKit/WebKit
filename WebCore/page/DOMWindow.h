@@ -52,6 +52,7 @@ namespace WebCore {
     class FloatRect;
     class Frame;
     class History;
+    class IndexedDatabaseRequest;
     class InspectorTimelineAgent;
     class Location;
     class Media;
@@ -214,6 +215,10 @@ namespace WebCore {
 
 #if ENABLE(NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+        IndexedDatabaseRequest* indexedDB() const;
 #endif
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);

@@ -168,4 +168,20 @@ bool WebRuntimeFeatures::isGeolocationEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableIndexedDatabase(bool enable)
+{
+#if ENABLE(INDEXED_DATABASE)
+    RuntimeEnabledFeatures::setIndexedDatabaseEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isIndexedDatabaseEnabled()
+{
+#if ENABLE(INDEXED_DATABASE)
+    return RuntimeEnabledFeatures::indexedDatabaseEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

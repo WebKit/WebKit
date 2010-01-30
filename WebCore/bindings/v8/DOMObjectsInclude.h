@@ -198,6 +198,13 @@
 #include "Geoposition.h"
 #include "PositionError.h"
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseException.h"
+#include "IDBRequest.h"
+#include "IndexedDatabaseRequest.h"
+#endif // DATABASE
+
 #if ENABLE(SVG)
 #include "SVGAngle.h"
 #include "SVGAnimatedPoints.h"

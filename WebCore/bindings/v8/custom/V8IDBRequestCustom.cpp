@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,50 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebRuntimeFeatures_h
-#define WebRuntimeFeatures_h
+#include "config.h"
+#include "V8IDBRequest.h"
 
-#include "WebCommon.h"
+#include "SerializedScriptValue.h"
+#include "V8Proxy.h"
 
-namespace WebKit {
+namespace WebCore {
 
-// This class is used to enable runtime features of WebKit.  It is unspecified
-// whether a feature is enabled by default.  In the future, a feature may be
-// promoted from disabled by default to enabled by default once it reaches a
-// certain level of maturity.
-class WebRuntimeFeatures {
-public:
-    WEBKIT_API static void enableDatabase(bool);
-    WEBKIT_API static bool isDatabaseEnabled();
+v8::Handle<v8::Value> V8IDBRequest::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    IDBRequest* request = V8IDBRequest::toNative(info.Holder());
+    SerializedScriptValue* result = request->result();
+    if (!result)
+        return v8::Null();
 
-    WEBKIT_API static void enableLocalStorage(bool);
-    WEBKIT_API static bool isLocalStorageEnabled();
+    return result->deserialize();
+}
 
-    WEBKIT_API static void enableSessionStorage(bool);
-    WEBKIT_API static bool isSessionStorageEnabled();
-
-    WEBKIT_API static void enableMediaPlayer(bool);
-    WEBKIT_API static bool isMediaPlayerEnabled();
-
-    WEBKIT_API static void enableSockets(bool);
-    WEBKIT_API static bool isSocketsEnabled();
-
-    WEBKIT_API static void enableNotifications(bool);
-    WEBKIT_API static bool isNotificationsEnabled();
-
-    WEBKIT_API static void enableApplicationCache(bool);
-    WEBKIT_API static bool isApplicationCacheEnabled();
-
-    WEBKIT_API static void enableGeolocation(bool);
-    WEBKIT_API static bool isGeolocationEnabled();
-
-    WEBKIT_API static void enableIndexedDatabase(bool);
-    WEBKIT_API static bool isIndexedDatabaseEnabled();
-
-private:
-    WebRuntimeFeatures();
-};
-
-} // namespace WebKit
-
-#endif
+} // namespace WebCore

@@ -643,6 +643,13 @@ NotificationCenter* DOMWindow::webkitNotifications() const
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+IndexedDatabaseRequest* DOMWindow::indexedDB() const
+{
+    return 0;
+}
+#endif
+
 void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
 {
     MessagePortArray ports;
