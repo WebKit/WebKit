@@ -94,7 +94,4 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setAcceleratedCompositingEnabled([in] BOOL);
     HRESULT acceleratedCompositingEnabled([out, retval] BOOL*);
-
-    HRESULT setCustomDragCursorsEnabled([in] BOOL);
-    HRESULT customDragCursorsEnabled([out, retval] BOOL*);
 }
