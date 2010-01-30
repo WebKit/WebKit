@@ -1,5 +1,29 @@
 2010-01-29  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Check in a copy of the simplejson library; it will be used by
+        the Chromium port of run-webkit-tests.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=31498
+
+        * simplejson: Added.
+        * simplejson/LICENSE.txt: Added.
+        * simplejson/README.txt: Added.
+        * simplejson/__init__.py: Added.
+        * simplejson/_speedups.c: Added.
+        (ascii_escape_char):
+        (ascii_escape_unicode):
+        (ascii_escape_str):
+        (py_encode_basestring_ascii):
+        (init_speedups):
+        * simplejson/decoder.py: Added.
+        * simplejson/encoder.py: Added.
+        * simplejson/jsonfilter.py: Added.
+        * simplejson/scanner.py: Added.
+
+2010-01-29  Dirk Pranke  <dpranke@chromium.org>
+
         No review
 
         Add myself to the committers list
