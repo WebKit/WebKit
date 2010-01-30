@@ -10,26 +10,6 @@
 
         * Configurations/FeatureDefines.xcconfig:
 
-2010-01-29  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by Darin Adler.
-
-        JSC is failing to propagate anonymous slot count on some transitions
-        https://bugs.webkit.org/show_bug.cgi?id=34321
-
-        Remove the unsafe two argument Structure::create method, and correct
-        the uses of it to propagate the anonymous slot count.
-
-        * runtime/JSObject.h:
-        (JSC::JSObject::setStructure):
-        * runtime/Structure.cpp:
-        (JSC::Structure::addPropertyTransition):
-        (JSC::Structure::changePrototypeTransition):
-        (JSC::Structure::despecifyFunctionTransition):
-        (JSC::Structure::getterSetterTransition):
-        (JSC::Structure::toDictionaryTransition):
-        * runtime/Structure.h:
-
 2010-01-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Maciej Stachowiak.

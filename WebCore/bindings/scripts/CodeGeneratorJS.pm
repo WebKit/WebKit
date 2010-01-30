@@ -1185,7 +1185,6 @@ sub GenerateImplementation
         }
     }
     push(@implContent, "{\n");
-    push(@implContent, "    ASSERT(static_cast<int>(this->structure()->anonymousSlotCount()) >= static_cast<int>(AnonymousSlotCount));\n");
     if ($numCachedAttributes > 0) {
         push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");
         push(@implContent, "        putAnonymousValue(i, JSValue());\n");
