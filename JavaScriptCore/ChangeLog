@@ -1,3 +1,15 @@
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Mac build.
+
+        Disable ENABLE_INDEXED_DATABASE since it is "completely non-functional".
+
+        As the comment in FeatureDefines.xcconfig notes, the list of feature defines
+        needs to be kept in sync across the various files.  The default values also
+        need to be kept in sync between these files and build-webkit.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2010-01-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
