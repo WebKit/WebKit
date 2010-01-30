@@ -1374,6 +1374,18 @@ HRESULT WebPreferences::acceleratedCompositingEnabled(BOOL* enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::setCustomDragCursorsEnabled(BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitCustomDragCursorsEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::customDragCursorsEnabled(BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitCustomDragCursorsEnabledPreferenceKey));
+    return S_OK;
+}
+
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;

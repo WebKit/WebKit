@@ -1,3 +1,17 @@
+2010-01-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Drag and Drop: Windows uses "stop" sign as cursor when dragging
+        https://bugs.webkit.org/show_bug.cgi?id=34305
+        <rdar://problem/7589672>
+
+        Add a FIXME for the code that needs to be changed to support full
+        custom cursors.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2010-01-29  Victor Wang  <victorw@chromium.org>
 
         Reviewed by darin@apple.com.

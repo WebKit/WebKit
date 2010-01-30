@@ -1,3 +1,29 @@
+2010-01-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Drag and Drop: Windows uses "stop" sign as cursor when dragging
+        https://bugs.webkit.org/show_bug.cgi?id=34305
+        <rdar://problem/7589672>
+        
+        Add a preference in WebKit (that defaults to false), for whether or not
+        we should show the custom cursors during drag and drop. However, this is
+        currently only used on Windows, and only used to hide the "drop not allowed"
+        icon inside the WebView is the preference is set to true.
+
+        This will be off by default, so no change in behavior.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added new functions.
+        * Interfaces/WebKit.idl: Touched to force Interfaces build.
+        * WebDropSource.cpp:
+        (WebDropSource::GiveFeedback): Implementation of conditional showing cursor
+            logic.
+        * WebPreferenceKeysPrivate.h: Added new preference key.
+        * WebPreferences.cpp: Added new functions.
+        (WebPreferences::setCustomDragCursorsEnabled):
+        (WebPreferences::customDragCursorsEnabled):
+        * WebPreferences.h: Added new functions.
+
 2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Crash when posting a notification for a detached object

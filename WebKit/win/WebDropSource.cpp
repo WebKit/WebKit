@@ -29,9 +29,11 @@
 #include "WebKitDLL.h"
 #include "WebView.h"
 
+#include <WebCore/Cursor.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <wtf/CurrentTime.h>
@@ -112,7 +114,43 @@ STDMETHODIMP WebDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyS
     return S_OK;
 }
 
-STDMETHODIMP WebDropSource::GiveFeedback(DWORD)
+STDMETHODIMP WebDropSource::GiveFeedback(DWORD dwEffect)
 {
-    return DRAGDROP_S_USEDEFAULTCURSORS;
+    BOOL showCustomCursors;
+    if (FAILED(WebPreferences::sharedStandardPreferences()->customDragCursorsEnabled(&showCustomCursors)))
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+
+    // If we don't want to hide the stop icon, let Windows select the cursor.
+    if (!showCustomCursors)
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+
+    // If we are going to show something other than the not allowed arrow, then let Windows
+    // show the cursor.
+    if (dwEffect != DROPEFFECT_NONE)
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+    
+    HWND viewWindow;
+    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+
+    RECT webViewRect;
+    GetWindowRect(viewWindow, &webViewRect);
+
+    POINT cursorPoint;
+    GetCursorPos(&cursorPoint);
+
+    if (!PtInRect(&webViewRect, cursorPoint)) {
+        // If our cursor is outside the bounds of the webView, we want to let Windows select the cursor.
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+    }
+
+    FrameView* view = m_webView->page()->mainFrame()->view();
+    if (!view)
+        return DRAGDROP_S_USEDEFAULTCURSORS;
+
+    // When dragging inside a WebView and the drag is not allowed, don't show the not allowed icon,
+    // instead, show the pointer cursor.   
+    // FIXME <rdar://7577595>: Custom cursors aren't supported during drag and drop (default to pointer).
+    view->setCursor(pointerCursor()); 
+    return S_OK;
 }

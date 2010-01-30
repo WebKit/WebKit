@@ -131,3 +131,5 @@
 #define WebKitPluginAllowedRunTimePreferenceKey "WebKitPluginAllowedRunTime"
 
 #define WebKitAcceleratedCompositingEnabledPreferenceKey "WebKitAcceleratedCompositingEnabled"
+
+#define WebKitCustomDragCursorsEnabledPreferenceKey "WebKitCustomDragCursorsEnabled"
