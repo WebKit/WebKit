@@ -1,3 +1,11 @@
+2010-01-29  Dirk Pranke  <dpranke@chromium.org>
+
+        No review
+
+        Add myself to the committers list
+
+        * Scripts/webkitpy/committers.py:
+
 2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.
