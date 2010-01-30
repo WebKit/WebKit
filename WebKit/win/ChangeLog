@@ -1,16 +1,5 @@
 2010-01-29  Brian Weinstein  <bweinstein@apple.com>
 
-        Rubber-stamped by Adam Roben.
-
-        Move customDragCursorEnabled preference functions from 
-        IWebPreferences to IWebPreferencesPrivate.
-
-        * Interfaces/IWebPreferences.idl: Moved customDragFunctions from here...
-        * Interfaces/IWebPreferencesPrivate.idl: To here.
-        * Interfaces/WebKit.idl: Touched to make sure we rebuild.
-
-2010-01-29  Brian Weinstein  <bweinstein@apple.com>
-
         Reviewed by Adam Roben.
 
         Drag and Drop: Windows uses "stop" sign as cursor when dragging
