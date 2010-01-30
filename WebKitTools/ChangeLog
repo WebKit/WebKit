@@ -2,6 +2,21 @@
 
         Reviewed by Eric Siedel.
 
+        Add in the second block of python code for the Chromium port
+        of run-webkit-tests. These files execute different diffs to classify
+        the various types of failures from a test.
+
+        * Scripts/webkitpy/layout_tests/test_types: Added.
+        * Scripts/webkitpy/layout_tests/test_types/__init__.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/fuzzy_image_diff.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py: Added.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py: Added.
+
+2010-01-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
         Check in the first part of the Chromium Python port of the 
         run-webkit-tests test driver. The files under 
         layout_tests/layout_layout constitute most of the implementation;
