@@ -1,3 +1,14 @@
+2010-01-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Timeout for client-based Geolocation shouldn't start until user gives consent
+        https://bugs.webkit.org/show_bug.cgi?id=34352
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::startRequest): Don't start timer if we're blocked on user consent.
+        (WebCore::Geolocation::setIsAllowed): Start timer after user gives consent.
+
 2010-01-29  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
