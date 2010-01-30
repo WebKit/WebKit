@@ -1,5 +1,11 @@
 2010-01-29  Mark Rowe  <mrowe@apple.com>
 
+        Sort Xcode projects.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
         Fix the Mac build.
 
         Disable ENABLE_INDEXED_DATABASE since it is "completely non-functional".

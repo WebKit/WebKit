@@ -1,1 +1,7 @@
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Sort Xcode projects.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 == Rolled over to ChangeLog-2010-01-29 ==
