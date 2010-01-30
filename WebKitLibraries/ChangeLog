@@ -1,3 +1,10 @@
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Keep the Windows feature defines in sync with FeatureDefines.xcconfig.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         More Windows build fixing.
