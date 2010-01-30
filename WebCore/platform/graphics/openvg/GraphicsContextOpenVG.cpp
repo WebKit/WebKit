@@ -106,9 +106,7 @@ void GraphicsContext::drawLine(const IntPoint& from, const IntPoint& to)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(from);
-    UNUSED_PARAM(to);
+    m_data->drawLine(from, to);
 }
 
 /**
@@ -119,8 +117,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
+    m_data->drawEllipse(rect);
 }
 
 void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
@@ -128,10 +125,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
-    UNUSED_PARAM(startAngle);
-    UNUSED_PARAM(angleSpan);
+    m_data->drawArc(rect, startAngle, angleSpan, VG_STROKE_PATH);
 }
 
 void GraphicsContext::drawConvexPolygon(size_t numPoints, const FloatPoint* points, bool shouldAntialias)
@@ -139,10 +133,9 @@ void GraphicsContext::drawConvexPolygon(size_t numPoints, const FloatPoint* poin
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(numPoints);
-    UNUSED_PARAM(points);
-    UNUSED_PARAM(shouldAntialias);
+    m_data->drawPolygon(numPoints, points);
+
+    UNUSED_PARAM(shouldAntialias); // FIXME
 }
 
 void GraphicsContext::fillPath()
@@ -174,11 +167,10 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled())
         return;
 
-    PainterOpenVG* painter = m_data;
-    Color oldColor = painter->fillColor();
-    painter->setFillColor(color);
-    painter->drawRect(rect, VG_FILL_PATH);
-    painter->setFillColor(oldColor);
+    Color oldColor = m_data->fillColor();
+    m_data->setFillColor(color);
+    m_data->drawRect(rect, VG_FILL_PATH);
+    m_data->setFillColor(oldColor);
 
     UNUSED_PARAM(colorSpace); // FIXME
 }
@@ -188,14 +180,12 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
-    UNUSED_PARAM(topLeft);
-    UNUSED_PARAM(topRight);
-    UNUSED_PARAM(bottomLeft);
-    UNUSED_PARAM(bottomRight);
-    UNUSED_PARAM(color);
-    UNUSED_PARAM(colorSpace);
+    Color oldColor = m_data->fillColor();
+    m_data->setFillColor(color);
+    m_data->drawRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight, VG_FILL_PATH);
+    m_data->setFillColor(oldColor);
+
+    UNUSED_PARAM(colorSpace); // FIXME
 }
 
 void GraphicsContext::beginPath()
@@ -250,14 +240,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
         finalFocusRect.unite(focusRect);
     }
 
-    PainterOpenVG* painter = m_data;
-    StrokeStyle oldStyle = painter->strokeStyle();
-    Color oldStrokeColor = painter->strokeColor();
-    painter->setStrokeStyle(DashedStroke);
-    painter->setStrokeColor(color);
+    StrokeStyle oldStyle = m_data->strokeStyle();
+    Color oldStrokeColor = m_data->strokeColor();
+    m_data->setStrokeStyle(DashedStroke);
+    m_data->setStrokeColor(color);
     strokeRect(FloatRect(finalFocusRect), 1.f);
-    painter->setStrokeStyle(oldStyle);
-    painter->setStrokeColor(oldStrokeColor);
+    m_data->setStrokeStyle(oldStyle);
+    m_data->setStrokeColor(oldStrokeColor);
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
@@ -268,9 +257,11 @@ void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool pr
     if (width <= 0)
         return;
 
-    notImplemented();
-    UNUSED_PARAM(origin);
-    UNUSED_PARAM(width);
+    StrokeStyle oldStyle = m_data->strokeStyle();
+    m_data->setStrokeStyle(SolidStroke);
+    drawLine(origin, origin + IntSize(width, 0));
+    m_data->setStrokeStyle(oldStyle);
+
     UNUSED_PARAM(printing);
 }
 
@@ -335,12 +326,10 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    PainterOpenVG* painter = m_data;
-
-    CompositeOperator op = painter->compositeOperation();
-    painter->setCompositeOperation(CompositeClear);
-    painter->drawRect(rect, VG_FILL_PATH);
-    painter->setCompositeOperation(op);
+    CompositeOperator op = m_data->compositeOperation();
+    m_data->setCompositeOperation(CompositeClear);
+    m_data->drawRect(rect, VG_FILL_PATH);
+    m_data->setCompositeOperation(op);
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect)
@@ -356,12 +345,10 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
     if (paintingDisabled())
         return;
 
-    PainterOpenVG* painter = m_data;
-
-    float oldThickness = painter->strokeThickness();
-    painter->setStrokeThickness(lineWidth);
-    painter->drawRect(rect, VG_STROKE_PATH);
-    painter->setStrokeThickness(oldThickness);
+    float oldThickness = m_data->strokeThickness();
+    m_data->setStrokeThickness(lineWidth);
+    m_data->drawRect(rect, VG_STROKE_PATH);
+    m_data->setStrokeThickness(oldThickness);
 }
 
 void GraphicsContext::setLineCap(LineCap lc)

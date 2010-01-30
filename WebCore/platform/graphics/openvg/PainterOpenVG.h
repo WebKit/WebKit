@@ -86,6 +86,11 @@ public:
     void setAntialiasingEnabled(bool);
 
     void drawRect(const FloatRect&, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH));
+    void drawRoundedRect(const FloatRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH));
+    void drawLine(const IntPoint& from, const IntPoint& to);
+    void drawArc(const IntRect& ellipseBounds, int startAngle, int angleSpan, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH));
+    void drawEllipse(const IntRect& bounds, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH));
+    void drawPolygon(size_t numPoints, const FloatPoint* points, VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH));
 
     void scale(const FloatSize& scaleFactors);
     void rotate(float radians);

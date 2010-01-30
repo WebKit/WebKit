@@ -1,3 +1,35 @@
+2010-01-29  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [OpenVG] Implement more graphics primitives
+        https://bugs.webkit.org/show_bug.cgi?id=34339
+
+        Adds lines, arcs, ellipses, polygons and rounded
+        rectangles to PainterOpenVG and GraphicsContext.
+
+        Rounded rects support by Eli Fidler <efidler@rim.com>.
+
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::drawRect):
+        (WebCore::PainterOpenVG::drawRoundedRect):
+        (WebCore::PainterOpenVG::drawLine):
+        (WebCore::PainterOpenVG::drawArc):
+        (WebCore::PainterOpenVG::drawEllipse):
+        (WebCore::PainterOpenVG::drawPolygon):
+        * platform/graphics/openvg/PainterOpenVG.h:
+
 2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

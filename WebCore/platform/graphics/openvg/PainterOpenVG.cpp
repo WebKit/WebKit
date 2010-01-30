@@ -694,11 +694,223 @@ void PainterOpenVG::drawRect(const FloatRect& rect, VGbitfield specifiedPaintMod
         1.0 /* scale */, 0.0 /* bias */,
         5 /* expected number of segments */,
         5 /* expected number of total coordinates */,
-        VG_PATH_CAPABILITY_APPEND_TO
-    );
+        VG_PATH_CAPABILITY_APPEND_TO);
     ASSERT_VG_NO_ERROR();
 
     if (vguRect(path, rect.x(), rect.y(), rect.width(), rect.height()) == VGU_NO_ERROR) {
+        vgDrawPath(path, paintModes);
+        ASSERT_VG_NO_ERROR();
+    }
+
+    vgDestroyPath(path);
+    ASSERT_VG_NO_ERROR();
+}
+
+void PainterOpenVG::drawRoundedRect(const FloatRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, VGbitfield specifiedPaintModes)
+{
+    ASSERT(m_state);
+
+    VGbitfield paintModes = 0;
+    if (!m_state->strokeDisabled())
+        paintModes |= VG_STROKE_PATH;
+    if (!m_state->fillDisabled())
+        paintModes |= VG_FILL_PATH;
+
+    paintModes &= specifiedPaintModes;
+
+    if (!paintModes)
+        return;
+
+    m_surface->makeCurrent();
+
+    VGPath path = vgCreatePath(
+        VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+        1.0 /* scale */, 0.0 /* bias */,
+        10 /* expected number of segments */,
+        25 /* expected number of total coordinates */,
+        VG_PATH_CAPABILITY_APPEND_TO);
+    ASSERT_VG_NO_ERROR();
+
+    // clamp corner arc sizes
+    FloatSize clampedTopLeft = FloatSize(topLeft).shrunkTo(rect.size()).expandedTo(FloatSize());
+    FloatSize clampedTopRight = FloatSize(topRight).shrunkTo(rect.size()).expandedTo(FloatSize());
+    FloatSize clampedBottomLeft = FloatSize(bottomLeft).shrunkTo(rect.size()).expandedTo(FloatSize());
+    FloatSize clampedBottomRight = FloatSize(bottomRight).shrunkTo(rect.size()).expandedTo(FloatSize());
+
+    // As OpenVG's coordinate system is flipped in comparison to WebKit's,
+    // we have to specify the opposite value for the "clockwise" value.
+    static const VGubyte pathSegments[] = {
+        VG_MOVE_TO_ABS,
+        VG_HLINE_TO_REL,
+        VG_SCCWARC_TO_REL,
+        VG_VLINE_TO_REL,
+        VG_SCCWARC_TO_REL,
+        VG_HLINE_TO_REL,
+        VG_SCCWARC_TO_REL,
+        VG_VLINE_TO_REL,
+        VG_SCCWARC_TO_REL,
+        VG_CLOSE_PATH
+    };
+    // Also, the rounded rectangle path proceeds from the top to the bottom,
+    // requiring height distances and clamped radius sizes to be flipped.
+    const VGfloat pathData[] = {
+        rect.x() + clampedTopLeft.width(), rect.y(),
+        rect.width() - clampedTopLeft.width() - clampedTopRight.width(),
+        clampedTopRight.width(), clampedTopRight.height(), 0, clampedTopRight.width(), clampedTopRight.height(),
+        rect.height() - clampedTopRight.height() - clampedBottomRight.height(),
+        clampedBottomRight.width(), clampedBottomRight.height(), 0, -clampedBottomRight.width(), clampedBottomRight.height(),
+        -(rect.width() - clampedBottomLeft.width() - clampedBottomRight.width()),
+        clampedBottomLeft.width(), clampedBottomLeft.height(), 0, -clampedBottomLeft.width(), -clampedBottomLeft.height(),
+        -(rect.height() - clampedTopLeft.height() - clampedBottomLeft.height()),
+        clampedTopLeft.width(), clampedTopLeft.height(), 0, clampedTopLeft.width(), -clampedTopLeft.height(),
+    };
+
+    vgAppendPathData(path, 10, pathSegments, pathData);
+    vgDrawPath(path, paintModes);
+    vgDestroyPath(path);
+    ASSERT_VG_NO_ERROR();
+}
+
+void PainterOpenVG::drawLine(const IntPoint& from, const IntPoint& to)
+{
+    ASSERT(m_state);
+
+    if (m_state->strokeDisabled())
+        return;
+
+    m_surface->makeCurrent();
+
+    VGPath path = vgCreatePath(
+        VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+        1.0 /* scale */, 0.0 /* bias */,
+        2 /* expected number of segments */,
+        4 /* expected number of total coordinates */,
+        VG_PATH_CAPABILITY_APPEND_TO);
+    ASSERT_VG_NO_ERROR();
+
+    VGUErrorCode errorCode;
+
+    // Try to align lines to pixels, centering them between pixels for odd thickness values.
+    if (fmod(m_state->strokeThickness + 0.5, 2.0) < 1.0)
+        errorCode = vguLine(path, from.x(), from.y(), to.x(), to.y());
+    else if ((to.y() - from.y()) > (to.x() - from.x())) // more vertical than horizontal
+        errorCode = vguLine(path, from.x() + 0.5, from.y(), to.x() + 0.5, to.y());
+    else
+        errorCode = vguLine(path, from.x(), from.y() + 0.5, to.x(), to.y() + 0.5);
+
+    if (errorCode == VGU_NO_ERROR) {
+        vgDrawPath(path, VG_STROKE_PATH);
+        ASSERT_VG_NO_ERROR();
+    }
+
+    vgDestroyPath(path);
+    ASSERT_VG_NO_ERROR();
+}
+
+void PainterOpenVG::drawArc(const IntRect& rect, int startAngle, int angleSpan, VGbitfield specifiedPaintModes)
+{
+    ASSERT(m_state);
+
+    VGbitfield paintModes = 0;
+    if (!m_state->strokeDisabled())
+        paintModes |= VG_STROKE_PATH;
+    if (!m_state->fillDisabled())
+        paintModes |= VG_FILL_PATH;
+
+    paintModes &= specifiedPaintModes;
+
+    if (!paintModes)
+        return;
+
+    m_surface->makeCurrent();
+
+    VGPath path = vgCreatePath(
+        VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+        1.0 /* scale */, 0.0 /* bias */,
+        2 /* expected number of segments */,
+        4 /* expected number of total coordinates */,
+        VG_PATH_CAPABILITY_APPEND_TO);
+    ASSERT_VG_NO_ERROR();
+
+    if (vguArc(path, rect.x() + rect.width() / 2.0, rect.y() + rect.height() / 2.0, rect.width(), rect.height(), -startAngle, -angleSpan, VGU_ARC_OPEN) == VGU_NO_ERROR) {
+        vgDrawPath(path, VG_STROKE_PATH);
+        ASSERT_VG_NO_ERROR();
+    }
+
+    vgDestroyPath(path);
+    ASSERT_VG_NO_ERROR();
+}
+
+void PainterOpenVG::drawEllipse(const IntRect& rect, VGbitfield specifiedPaintModes)
+{
+    ASSERT(m_state);
+
+    VGbitfield paintModes = 0;
+    if (!m_state->strokeDisabled())
+        paintModes |= VG_STROKE_PATH;
+    if (!m_state->fillDisabled())
+        paintModes |= VG_FILL_PATH;
+
+    paintModes &= specifiedPaintModes;
+
+    if (!paintModes)
+        return;
+
+    m_surface->makeCurrent();
+
+    VGPath path = vgCreatePath(
+        VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+        1.0 /* scale */, 0.0 /* bias */,
+        4 /* expected number of segments */,
+        12 /* expected number of total coordinates */,
+        VG_PATH_CAPABILITY_APPEND_TO);
+    ASSERT_VG_NO_ERROR();
+
+    if (vguEllipse(path, rect.x() + rect.width() / 2.0, rect.y() + rect.height() / 2.0, rect.width(), rect.height()) == VGU_NO_ERROR) {
+        vgDrawPath(path, paintModes);
+        ASSERT_VG_NO_ERROR();
+    }
+
+    vgDestroyPath(path);
+    ASSERT_VG_NO_ERROR();
+}
+
+void PainterOpenVG::drawPolygon(size_t numPoints, const FloatPoint* points, VGbitfield specifiedPaintModes)
+{
+    ASSERT(m_state);
+
+    VGbitfield paintModes = 0;
+    if (!m_state->strokeDisabled())
+        paintModes |= VG_STROKE_PATH;
+    if (!m_state->fillDisabled())
+        paintModes |= VG_FILL_PATH;
+
+    paintModes &= specifiedPaintModes;
+
+    if (!paintModes)
+        return;
+
+    m_surface->makeCurrent();
+
+    // Path segments: all points + "close path".
+    const VGint numSegments = numPoints + 1;
+    const VGint numCoordinates = numPoints * 2;
+
+    VGPath path = vgCreatePath(
+        VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+        1.0 /* scale */, 0.0 /* bias */,
+        numSegments /* expected number of segments */,
+        numCoordinates /* expected number of total coordinates */,
+        VG_PATH_CAPABILITY_APPEND_TO);
+    ASSERT_VG_NO_ERROR();
+
+    Vector<VGfloat> vgPoints(numCoordinates);
+    for (int i = 0; i < numPoints; ++i) {
+        vgPoints[i*2]     = points[i].x();
+        vgPoints[i*2 + 1] = points[i].y();
+    }
+
+    if (vguPolygon(path, vgPoints.data(), numPoints, VG_TRUE /* closed */) == VGU_NO_ERROR) {
         vgDrawPath(path, paintModes);
         ASSERT_VG_NO_ERROR();
     }
