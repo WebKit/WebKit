@@ -1,3 +1,14 @@
+2010-01-29  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Correct openHTTPD() to print requests to stdout if run-webkit-httpd is used.
+        This fixes a regression introduced in r53559.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34336
+
+        * Scripts/webkitperl/httpd.pm:
+
 2010-01-28  Jon Honeycutt  <jhoneycutt@apple.com>
 
         MSAA: Crash when posting a notification for a detached object

@@ -147,7 +147,7 @@ sub openHTTPD(@)
 
     $httpdPath = "/usr/sbin/httpd" unless ($httpdPath);
 
-    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, @args);
+    open2(">&1", \*HTTPDIN, $httpdPath, @args);
 
     my $retryCount = 20;
     while (!-f $httpdPidFile && $retryCount) {
@@ -172,8 +172,6 @@ sub openHTTPD(@)
 sub closeHTTPD
 {
     close HTTPDIN;
-    close HTTPDOUT;
-
     if ($httpdPid) {
         kill 15, $httpdPid;
         my $retryCount = 20;
