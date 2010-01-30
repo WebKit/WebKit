@@ -2,6 +2,22 @@
 
         Reviewed by Eric Siedel.
 
+        Top-level test drivers for running the Chromium port of run-webkit-tests
+        and being able to rebaseline test results from the test bots.  The
+        files in the Scripts directory are simply wrappers around the files
+        in webkitpy/layout_tests for convenience.
+ 
+        https://bugs.webkit.org/show_bug.cgi?id=31498
+
+        * Scripts/rebaseline-chromium-webkit-tests: Added.
+        * Scripts/run-chromium-webkit-tests: Added.
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py: Added.
+        * Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py: Added.
+
+2010-01-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
         Add in the second block of python code for the Chromium port
         of run-webkit-tests. These files execute different diffs to classify
         the various types of failures from a test.
