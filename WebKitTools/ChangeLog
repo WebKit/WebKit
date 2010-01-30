@@ -1,5 +1,67 @@
 2010-01-29  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Siedel.
+
+        Check in the first part of the Chromium Python port of the 
+        run-webkit-tests test driver. The files under 
+        layout_tests/layout_layout constitute most of the implementation;
+        they can be roughly divided into code that parses the 
+        "test_expectations.txt" file that describes how we expect tests to
+        pass or fail, platform-specific hooks for the different Chromium 
+        ports (in platform_utils*), code for parsing the output of the
+        tests and generating results files and HTML and JSON for the
+        dashboards, auxiliary scripts for starting and stopping HTTP and
+        Web Socket servers, and then one of the actual driver files 
+        (test_shell_thread). Code for actually parsing test output for 
+        failures and the top-level driver scripts will follow shortly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31498
+
+        * Scripts/webkitpy/layout_tests: Added.
+        * Scripts/webkitpy/layout_tests/layout_package: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/__init__.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/apache_http_server.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/http_server.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/http_server_base.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/httpd2.pem: Added.
+          - scripts to start and stop apache. Note that the apache file
+            generates a conf file dynamically, and we should switch to 
+            using the same static conf file that the regular run-webkit-tests
+            uses, and we can also use the same httpd2.pem file.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py: Added.
+          - scripts to generate the JSON layout test dashboard and the
+            flakiness dashboard
+        * Scripts/webkitpy/layout_tests/layout_package/lighttpd.conf: Added.
+          - default configuration for LigHTTPd (used on Windows)
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py: Added.
+          - utility class that implements progress bars on the console to
+            be displayed while the tests are running
+        * Scripts/webkitpy/layout_tests/layout_package/path_utils.py: Added.
+          - various routines for manipulating paths and URIs
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_linux.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_mac.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_win.py: Added.
+          - platform-specific aspects of the drivers (binary names, paths,
+            process control, etc.)
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py: Added.
+          - code for parsing the 'test_expectations.txt' file to determine
+            which tests are expected to fail (and how) on which platforms
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py: Added.
+          - code for handling different kinds of failures (generating output
+            in the results, etc.)
+        * Scripts/webkitpy/layout_tests/layout_package/test_files.py: Added.
+          - code to gather the lists of tests
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py: Added.
+          - code to actually execute tests via TestShell and process
+            the output
+        * Scripts/webkitpy/layout_tests/layout_package/websocket_server.py: Added.
+          - scripts to start and stop the pywebsocket server
+
+2010-01-29  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Check in a copy of the simplejson library; it will be used by
