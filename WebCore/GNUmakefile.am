@@ -343,7 +343,6 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableRow.cpp \
 	WebCore/accessibility/AccessibilityTableRow.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
-	WebCore/bindings/js/DOMObjectWithSVGContext.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
@@ -490,6 +489,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptState.cpp \
 	WebCore/bindings/js/ScriptState.h \
 	WebCore/bindings/js/ScriptString.h \
+	WebCore/bindings/js/ScriptWrappable.h \
 	WebCore/bindings/js/ScriptValue.cpp \
 	WebCore/bindings/js/ScriptValue.h \
 	WebCore/bindings/js/SerializedScriptValue.cpp \
