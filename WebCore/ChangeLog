@@ -1,5 +1,11 @@
 2010-01-29  Mark Rowe  <mrowe@apple.com>
 
+        Stop copying an IDL file in to the framework wrapper.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
         Sort Xcode projects.
 
         * WebCore.xcodeproj/project.pbxproj:
