@@ -1,5 +1,33 @@
 2010-01-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Use CGGradient on Leopard and later, since it's faster than CGShading
+        https://bugs.webkit.org/show_bug.cgi?id=34384
+
+        Use CGGradient on Leopard and later, rather than CGShading, for
+        performance.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::sortStopsIfNecessary): Utility method to sort stops.
+        Did not call this from getColor() to avoid overhead of a function call.
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformDestroy): Use CGGradientRelease() post-Tiger.
+        (WebCore::Gradient::platformGradient): Create and return a CGGradientRef post-Tiger.
+        (WebCore::Gradient::fill): Call new paint() method.
+        (WebCore::Gradient::paint): New convenence method that avoids testing
+        isRadial() in a bunch of other places.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillPath): Call the gradient's paint() method.
+        (WebCore::GraphicsContext::strokePath): Ditto
+        (WebCore::GraphicsContext::fillRect): Ditto
+        (WebCore::GraphicsContext::strokeRect): Ditto
+
+2010-01-30  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adele Peterson.
 
         Do color animations on premultiplied colors

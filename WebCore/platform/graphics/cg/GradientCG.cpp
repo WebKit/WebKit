@@ -36,10 +36,15 @@ namespace WebCore {
 
 void Gradient::platformDestroy()
 {
+#ifdef BUILDING_ON_TIGER
     CGShadingRelease(m_gradient);
+#else
+    CGGradientRelease(m_gradient);
+#endif
     m_gradient = 0;
 }
 
+#ifdef BUILDING_ON_TIGER
 static void gradientCallback(void* info, const CGFloat* in, CGFloat* out)
 {
     float r, g, b, a;
@@ -69,11 +74,55 @@ CGShadingRef Gradient::platformGradient()
 
     return m_gradient;
 }
+#else
+CGGradientRef Gradient::platformGradient()
+{
+    if (m_gradient)
+        return m_gradient;
+
+    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+
+    sortStopsIfNecessary();
+    
+    const int cReservedStops = 3;
+    Vector<CGFloat, 4 * cReservedStops> colorComponents;
+    colorComponents.reserveCapacity(m_stops.size() * 4); // RGBA components per stop
+
+    Vector<CGFloat, cReservedStops> locations;
+    locations.reserveCapacity(m_stops.size());
+
+    for (size_t i = 0; i < m_stops.size(); ++i) {
+        colorComponents.uncheckedAppend(m_stops[i].red);
+        colorComponents.uncheckedAppend(m_stops[i].green);
+        colorComponents.uncheckedAppend(m_stops[i].blue);
+        colorComponents.uncheckedAppend(m_stops[i].alpha);
+
+        locations.uncheckedAppend(m_stops[i].stop);
+    }
+    
+    m_gradient = CGGradientCreateWithColorComponents(colorSpace, colorComponents.data(), locations.data(), m_stops.size());
+
+    return m_gradient;
+}
+#endif
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
     context->clip(rect);
+    paint(context);
+}
+
+void Gradient::paint(GraphicsContext* context)
+{
+#ifdef BUILDING_ON_TIGER
     CGContextDrawShading(context->platformContext(), platformGradient());
+#else
+    CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
+    if (m_radial)
+        CGContextDrawRadialGradient(context->platformContext(), platformGradient(), m_p0, m_r0, m_p1, m_r1, extendOptions);
+    else
+        CGContextDrawLinearGradient(context->platformContext(), platformGradient(), m_p0, m_p1, extendOptions);
+#endif
 }
 
 } //namespace

@@ -105,6 +105,16 @@ static inline bool compareStops(const Gradient::ColorStop& a, const Gradient::Co
     return a.stop < b.stop;
 }
 
+void Gradient::sortStopsIfNecessary()
+{
+    if (m_stopsSorted)
+        return;
+
+    if (m_stops.size())
+        std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
+    m_stopsSorted = true;
+}
+
 void Gradient::getColor(float value, float* r, float* g, float* b, float* a) const
 {
     ASSERT(value >= 0);
