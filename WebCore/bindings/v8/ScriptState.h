@@ -44,11 +44,6 @@ namespace WebCore {
 
     class ScriptState : public Noncopyable {
     public:
-        // FIXME: This destructor will become private shortly.
-        ~ScriptState();
-        // FIXME: This constructor will go away shortly.
-        ScriptState(Frame*, v8::Handle<v8::Context>);
-
         bool hadException() { return !m_exception.IsEmpty(); }
         void setException(v8::Local<v8::Value> exception)
         {
@@ -66,6 +61,7 @@ namespace WebCore {
 
     protected:
         ScriptState() { }
+        ~ScriptState();
 
     private:
         friend ScriptState* mainWorldScriptState(Frame*);

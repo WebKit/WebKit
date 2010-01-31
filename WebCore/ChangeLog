@@ -1,3 +1,15 @@
+2010-01-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make ScriptState destructor protected since all non-empty
+        ScriptStates are managed by GC. Remove obsolete constructor.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34266
+
+        * bindings/v8/ScriptState.cpp:
+        * bindings/v8/ScriptState.h:
+
 2010-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
