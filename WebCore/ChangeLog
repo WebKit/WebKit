@@ -2,6 +2,16 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: [REGRESSION] Breakpoint source line is not displayed
+        in the breakpoint manager.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+
+2010-01-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Introduce NativeTextViewer.
 
         This change handles rendering highlighted text, using browser's

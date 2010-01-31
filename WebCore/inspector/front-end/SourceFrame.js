@@ -318,6 +318,7 @@ WebInspector.SourceFrame.prototype = {
     _addBreakpointToSource: function(breakpoint)
     {
         this._textModel.setAttribute(breakpoint.line - 1, "breakpoint", breakpoint);
+        breakpoint.sourceText = this._textModel.line(breakpoint.line - 1);
         this._editor.paintLineNumbers();
     },
 
