@@ -418,3 +418,11 @@ bool wxWebFrame::ShouldClose() const
 
     return true;
 }
+
+wxWebKitParseMode wxWebFrame::GetParseMode() const
+{
+    if (m_impl->frame && m_impl->frame->document())
+        return (wxWebKitParseMode)m_impl->frame->document()->parseMode();
+
+    return NoDocument;
+}

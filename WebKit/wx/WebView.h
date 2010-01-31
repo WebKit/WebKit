@@ -204,6 +204,8 @@ public:
 
     wxWebSettings GetWebSettings();
 
+    wxWebKitParseMode GetParseMode() const;
+
 protected:
 
     // event handlers (these functions should _not_ be virtual)

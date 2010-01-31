@@ -972,3 +972,11 @@ wxWebSettings wxWebView::GetWebSettings()
     
     return wxWebSettings();
 }
+
+wxWebKitParseMode wxWebView::GetParseMode() const
+{
+    if (m_mainFrame)
+        return m_mainFrame->GetParseMode();
+
+    return NoDocument;
+}

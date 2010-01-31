@@ -77,6 +77,9 @@ private:
     wxString m_link;
 };
 
+// based on enums in WebCore/dom/Document.h
+enum wxWebKitParseMode { Compat, AlmostStrict, Strict, NoDocument };
+
 class WXDLLIMPEXP_WEBKIT wxWebFrame
 {
     // ChromeClientWx needs to get the Page* stored by the wxWebView
@@ -140,6 +143,8 @@ public:
     wxWebViewDOMElementInfo HitTest(const wxPoint& post) const;
     
     bool ShouldClose() const;
+    
+    wxWebKitParseMode GetParseMode() const;
     
 private:
     float m_textMagnifier;
