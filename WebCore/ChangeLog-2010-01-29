@@ -21,28 +21,6 @@
         (WebCore::Geolocation::startRequest): Don't start timer if we're blocked on user consent.
         (WebCore::Geolocation::setIsAllowed): Start timer after user gives consent.
 
-2010-01-29  Chris Marrin  <cmarrin@apple.com>
-
-        Reviewed by Simon Fraser.
-
-        Fixed changed virtual function in GraphicsLayerCACF and call order issues
-        https://bugs.webkit.org/show_bug.cgi?id=34348
-        
-        The correct virtual function in GraphicsLayerCACF is now being
-        called. We also fixed an issue in QTMovieWin where the size
-        of the movie was not being set correctly because the call order
-        was changed.
-
-        * platform/graphics/win/GraphicsLayerCACF.cpp:
-        (WebCore::GraphicsLayerCACF::setContentsToMedia):
-        (WebCore::GraphicsLayerCACF::updateContentsMedia):
-        * platform/graphics/win/GraphicsLayerCACF.h:
-        (WebCore::GraphicsLayerCACF::):
-        * platform/graphics/win/QTMovieWin.cpp:
-        (QTMovieWinPrivate::task):
-        (QTMovieWinPrivate::setSize):
-        (QTMovieWinPrivate::updateMovieSize):
-
 2010-01-29  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Nikolas Zimmermann.

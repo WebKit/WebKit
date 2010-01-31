@@ -364,18 +364,21 @@ void GraphicsLayerCACF::setContentsToImage(Image* image)
         updateSublayerList();
 }
 
-void GraphicsLayerCACF::setContentsToMedia(PlatformLayer* mediaLayer)
+void GraphicsLayerCACF::setContentsToVideo(PlatformLayer* videoLayer)
 {
-    if (mediaLayer == m_contentsLayer)
-        return;
+    bool childrenChanged = false;
 
-    m_contentsLayer = mediaLayer;
-    m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
+    if (videoLayer != m_contentsLayer.get())
+        childrenChanged = true;
 
-    updateContentsMedia();
+    m_contentsLayer = videoLayer;
+    m_contentsLayerPurpose = videoLayer ? ContentsLayerForVideo : NoContentsLayer;
 
-    // This has to happen after updateContentsMedia
-    updateSublayerList();
+    updateContentsVideo();
+
+    // This has to happen after updateContentsVideo
+    if (childrenChanged)
+        updateSublayerList();
 }
 
 void GraphicsLayerCACF::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
@@ -630,9 +633,9 @@ void GraphicsLayerCACF::updateContentsImage()
     }
 }
 
-void GraphicsLayerCACF::updateContentsMedia()
+void GraphicsLayerCACF::updateContentsVideo()
 {
-    // Media layer was set as m_contentsLayer, and will get parented in updateSublayerList().
+    // Video layer was set as m_contentsLayer, and will get parented in updateSublayerList().
     if (m_contentsLayer) {
         setupContentsLayer(m_contentsLayer.get());
         updateContentsRect();
