@@ -3716,6 +3716,7 @@
             'inspector/front-end/inspector.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MetricsSidebarPane.js',
+            'inspector/front-end/NativeTextViewer.js',
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectProxy.js',
             'inspector/front-end/ObjectPropertiesSection.js',

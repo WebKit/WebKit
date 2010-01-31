@@ -114,13 +114,13 @@ WebInspector.SourceFrame.prototype = {
         this._rowMessages = {};
         this._messageBubbles = {};
         if (this._editor)
-            this._editor.packAndRepaintAll();
+            this._editor.revalidateDecorationsAndPaint();
     },
 
     sizeToFitContentHeight: function()
     {
         if (this._editor)
-            this._editor.packAndRepaintAll();
+            this._editor.revalidateDecorationsAndPaint();
     },
 
     setContent: function(mimeType, content)
@@ -136,7 +136,8 @@ WebInspector.SourceFrame.prototype = {
         if (!this._visible || !this._loaded || this._editor)
             return;
 
-        this._editor = new WebInspector.TextEditor(this._textModel, WebInspector.platform);
+        var editorConstructor = Preferences.useCanvasBasedEditor ? WebInspector.TextEditor : WebInspector.NativeTextViewer;
+        this._editor = new editorConstructor(this._textModel, WebInspector.platform);
         this._editor.lineNumberDecorator = new WebInspector.BreakpointLineNumberDecorator(this, this._editor.textModel);
         this._editor.lineDecorator = new WebInspector.ExecutionLineDecorator(this);
         this._editor.readOnly = true;
@@ -150,8 +151,8 @@ WebInspector.SourceFrame.prototype = {
         this._addExistingBreakpointsToSource();
 
         this._editor.setCoalescingUpdate(true);
-        this._editor.updateCanvasSize();
-        this._editor.packAndRepaintAll();
+        this._editor.resize();
+        this._editor.revalidateDecorationsAndPaint();
 
         if (this._executionLine)
             this.revealLine(this._executionLine);
@@ -272,7 +273,7 @@ WebInspector.SourceFrame.prototype = {
         for (var i = 0; i < rowMessages.length; ++i) {
             if (rowMessages[i].isEqual(msg, true)) {
                 this._incrementMessageRepeatCount(rowMessages[i], msg.repeatDelta);
-                this._editor.packAndRepaintAll();
+                this._editor.revalidateDecorationsAndPaint();
                 return;
             }
         }
@@ -304,7 +305,7 @@ WebInspector.SourceFrame.prototype = {
 
         msg._resourceMessageLineElement = messageLineElement;
 
-        this._editor.packAndRepaintAll();
+        this._editor.revalidateDecorationsAndPaint();
     },
 
     _addExistingBreakpointsToSource: function()
@@ -461,7 +462,7 @@ WebInspector.SourceFrame.prototype = {
     resize: function()
     {
         if (this._editor)
-            this._editor.updateCanvasSize();
+            this._editor.resize();
     }
 }
 

@@ -36,7 +36,6 @@ WebInspector.TextEditor = function(textModel, platform)
 
     this.element = document.createElement("div");
     this.element.className = "text-editor";
-    this.element.tabIndex = 0;
 
     this._canvas = document.createElement("canvas");
     this._canvas.className = "text-editor-canvas";
@@ -44,10 +43,10 @@ WebInspector.TextEditor = function(textModel, platform)
 
     this._container = document.createElement("div");
     this._container.className = "text-editor-container";
+    this._container.tabIndex = 0;
     this.element.appendChild(this._container);
 
     this._sheet = document.createElement("div");
-    this._sheet.className = "text-editor-sheet";
     this._container.appendChild(this._sheet);
 
     var cursorElement = document.createElement("div");
@@ -56,20 +55,11 @@ WebInspector.TextEditor = function(textModel, platform)
     this._cursor = new WebInspector.TextCursor(cursorElement);
 
     this._container.addEventListener("scroll", this._scroll.bind(this), false);
-    this._sheet.addEventListener("mouseup", this._mouseUp.bind(this), false);
-    this._sheet.addEventListener("mousedown", this._mouseDown.bind(this), false);
-    this._sheet.addEventListener("mousemove", this._mouseMove.bind(this), false);
-    this._sheet.addEventListener("mouseout", this._mouseOut.bind(this), false);
-    this._sheet.addEventListener("dblclick", this._dblClick.bind(this), false);
     this._sheet.addEventListener("contextmenu", this._contextMenu.bind(this), false);
-    this.element.addEventListener("keydown", this._keyDown.bind(this), false);
-    this.element.addEventListener("textInput", this._textInput.bind(this), false);
-    this.element.addEventListener("beforecopy", this._beforeCopy.bind(this), false);
-    this.element.addEventListener("copy", this._copy.bind(this), false);
-    this.element.addEventListener("beforecut", this._beforeCut.bind(this), false);
-    this.element.addEventListener("cut", this._cut.bind(this), false);
-    this.element.addEventListener("beforepaste", this._beforePaste.bind(this), false);
-    this.element.addEventListener("paste", this._paste.bind(this), false);
+
+    this._registerMouseListeners();
+    this._registerKeyboardListeners();
+    this._registerClipboardListeners();
 
     this._desiredCaretColumn = 0;
     this._scrollLeft = 0;
@@ -148,19 +138,41 @@ WebInspector.TextEditor.prototype = {
 
     setDivDecoration: function(lineNumber, element)
     {
-        var divDecoration = this._textModel.getAttribute(lineNumber, "div-decoration");
-        if (divDecoration && divDecoration.element && divDecoration.element.parentNode)
-            divDecoration.element.parentNode.removeChild(divDecoration.element);
+        var existingElement = this._textModel.getAttribute(lineNumber, "div-decoration");
+        if (existingElement && existingElement.parentNode)
+            existingElement.parentNode.removeChild(existingElement);
         this._textModel.removeAttribute(lineNumber, "div-decoration");
 
         if (element) {
-            divDecoration = { element: element };
             this.element.appendChild(element);
-    
-            this._textModel.setAttribute(lineNumber, "div-decoration", divDecoration);
+            this._textModel.setAttribute(lineNumber, "div-decoration", element);
         }
+        this.revalidateDecorationsAndPaint();
+    },
 
-        this.packAndRepaintAll();
+    _registerMouseListeners: function()
+    {
+        this._sheet.addEventListener("mouseup", this._mouseUp.bind(this), false);
+        this._sheet.addEventListener("mousedown", this._mouseDown.bind(this), false);
+        this._sheet.addEventListener("mousemove", this._mouseMove.bind(this), false);
+        this._sheet.addEventListener("mouseout", this._mouseOut.bind(this), false);
+        this._sheet.addEventListener("dblclick", this._dblClick.bind(this), false);
+    },
+
+    _registerKeyboardListeners: function()
+    {
+        this._container.addEventListener("keydown", this._keyDown.bind(this), false);
+        this._container.addEventListener("textInput", this._textInput.bind(this), false);
+    },
+
+    _registerClipboardListeners: function()
+    {
+        this._container.addEventListener("beforecopy", this._beforeCopy.bind(this), false);
+        this._container.addEventListener("copy", this._copy.bind(this), false);
+        this._container.addEventListener("beforecut", this._beforeCut.bind(this), false);
+        this._container.addEventListener("cut", this._cut.bind(this), false);
+        this._container.addEventListener("beforepaste", this._beforePaste.bind(this), false);
+        this._container.addEventListener("paste", this._paste.bind(this), false);
     },
 
     _offsetToLine: function(offset)
@@ -205,13 +217,14 @@ WebInspector.TextEditor.prototype = {
 
     _lineHeight: function(lineNumber)
     {
-        var divDecoration = this._textModel.getAttribute(lineNumber, "div-decoration");
-        if (divDecoration)
-            return 2 * this._textLineHeight + divDecoration.element.clientHeight;
+        var element = this._textModel.getAttribute(lineNumber, "div-decoration");
+        if (element)
+            return 2 * this._textLineHeight + element.clientHeight;
         return this._textLineHeight;
     },
 
-    reveal: function(line, column) {
+    reveal: function(line, column)
+    {
         var maxScrollTop = this._lineToOffset(line);
         var minScrollTop = maxScrollTop + this._lineHeight(line) - this._canvas.height;
         if (this._scrollTop > maxScrollTop)
@@ -242,7 +255,7 @@ WebInspector.TextEditor.prototype = {
             this._highlighter.updateHighlight(newRange.startLine, lastVisibleLine);
         }
 
-        this._updateSize(newRange.startLine, Math.max(newRange.endLine, oldRange.endLine));
+        this._updatePreferredSize(newRange.startLine, Math.max(newRange.endLine, oldRange.endLine));
         if (oldRange.linesCount !== newRange.linesCount) {
             // Invalidate offset cache.
             this._lineOffsetsCache.length = oldRange.startLine + 1;
@@ -275,17 +288,18 @@ WebInspector.TextEditor.prototype = {
         this._paint();
     },
 
-    packAndRepaintAll: function()
+    revalidateDecorationsAndPaint: function()
     {
         this.setCoalescingUpdate(true);
         this._lineOffsetsCache = [0];
-        this._updateSize(0, this._textModel.linesCount);
+        this._updatePreferredSize(0, this._textModel.linesCount);
         this.repaintAll();
         this.setCoalescingUpdate(false);
     },
 
-    _updateSize: function(startLine, endLine)
+    _updatePreferredSize: function(startLine, endLine)
     {
+        this._ctx.font = this._font;
         this.setCoalescingUpdate(true);
         var guardedEndLine = Math.min(this._textModel.linesCount, endLine + 1);
         var newMaximum = false;
@@ -324,11 +338,11 @@ WebInspector.TextEditor.prototype = {
         }
 
         // Changes to size can change the client area (scrollers can appear/disappear)
-        this.updateCanvasSize();
+        this.resize();
         this.setCoalescingUpdate(false);
     },
 
-    updateCanvasSize: function()
+    resize: function()
     {
         if (this._canvas.width !== this._container.clientWidth || this._canvas.height !== this._container.clientHeight) {
             this._canvas.width = this._container.clientWidth;
@@ -426,58 +440,63 @@ WebInspector.TextEditor.prototype = {
             delete this._muteHighlightListener;
         }
         for (var i = firstLine; i < lastLine; ++i) {
-            var line = this._textModel.line(i);
             var lineOffset = this._lineToOffset(i) - this._scrollTop;
 
             if (this._lineDecorator)
                 this._lineDecorator.decorate(i, this._ctx, this._lineNumberWidth - 1, lineOffset, this._canvas.width - this._lineNumberWidth + 1, this._lineHeight(i), this._textLineHeight);
 
-            var divDecoration = this._textModel.getAttribute(i, "div-decoration");
-            if (divDecoration)
-                this._positionDivDecoration(i, divDecoration, true);
+            var element = this._textModel.getAttribute(i, "div-decoration");
+            if (element)
+                this._positionDivDecoration(i, element, true);
 
-            if (!this._highlightingEnabled) {
-                this._ctx.fillStyle = "rgb(0,0,0)";
-                this._ctx.fillText(line, this._lineNumberWidth - this._scrollLeft, lineOffset + this._textLineHeight);
-                continue;
-            }
-
-            if (line.length > 1000) {
-                // Optimization: no need to paint decorations outside visible area.
-                var firstColumn = this._columnForOffset(i, this._scrollLeft);
-                var lastColumn = this._columnForOffset(i, this._scrollLeft + this._canvas.width);
-            }
-            var highlighterState = this._textModel.getAttribute(i, "highlighter-state");
-            var plainTextStart = -1;
-            for (var j = 0; j < line.length;) {
-                var attribute = highlighterState && highlighterState.attributes[j];
-                if (attribute && firstColumn && j + attribute.length < firstColumn) {
-                    j += attribute.length;
-                    continue;
-                }
-                if (attribute && lastColumn && j > lastColumn)
-                    break;
-                if (!attribute || !attribute.style) {
-                    if (plainTextStart === -1)
-                        plainTextStart = j;
-                    j++;
-                } else {
-                    if (plainTextStart !== -1) {
-                        this._ctx.fillStyle = "rgb(0,0,0)";
-                        this._ctx.fillText(line.substring(plainTextStart, j), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(i, plainTextStart), lineOffset + this._textLineHeight);
-                        plainTextStart = -1;
-                    }
-                    this._ctx.fillStyle = attribute.style;
-                    this._ctx.fillText(line.substring(j, j + attribute.length), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(i, j), lineOffset + this._textLineHeight);
-                    j += attribute.length;
-                }
-            }
-            if (plainTextStart !== -1) {
-                this._ctx.fillStyle = "rgb(0,0,0)";
-                this._ctx.fillText(line.substring(plainTextStart, j), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(i, plainTextStart), lineOffset + this._textLineHeight);
-            }
+            this._paintLine(i, lineOffset);
         }
         this._ctx.restore();
+    },
+
+    _paintLine: function(lineNumber, lineOffset)
+    {
+        var line = this._textModel.line(lineNumber);
+        if (!this._highlightingEnabled) {
+            this._ctx.fillStyle = "rgb(0,0,0)";
+            this._ctx.fillText(line, this._lineNumberWidth - this._scrollLeft, lineOffset + this._textLineHeight);
+            return;
+        }
+
+        if (line.length > 1000) {
+            // Optimization: no need to paint decorations outside visible area.
+            var firstColumn = this._columnForOffset(lineNumber, this._scrollLeft);
+            var lastColumn = this._columnForOffset(lineNumber, this._scrollLeft + this._canvas.width);
+        }
+        var highlighterState = this._textModel.getAttribute(lineNumber, "highlighter-state");
+        var plainTextStart = -1;
+        for (var j = 0; j < line.length;) {
+            var attribute = highlighterState && highlighterState.attributes[j];
+            if (attribute && firstColumn && j + attribute.length < firstColumn) {
+                j += attribute.length;
+                continue;
+            }
+            if (attribute && lastColumn && j > lastColumn)
+                break;
+            if (!attribute || !attribute.style) {
+                if (plainTextStart === -1)
+                    plainTextStart = j;
+                j++;
+            } else {
+                if (plainTextStart !== -1) {
+                    this._ctx.fillStyle = "rgb(0,0,0)";
+                    this._ctx.fillText(line.substring(plainTextStart, j), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(lineNumber, plainTextStart), lineOffset + this._textLineHeight);
+                    plainTextStart = -1;
+                }
+                this._ctx.fillStyle = attribute.style;
+                this._ctx.fillText(line.substring(j, j + attribute.length), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(lineNumber, j), lineOffset + this._textLineHeight);
+                j += attribute.length;
+            }
+        }
+        if (plainTextStart !== -1) {
+            this._ctx.fillStyle = "rgb(0,0,0)";
+            this._ctx.fillText(line.substring(plainTextStart, j), this._lineNumberWidth - this._scrollLeft + this._columnToOffset(lineNumber, plainTextStart), lineOffset + this._textLineHeight);
+        }
     },
 
     paintLineNumbers: function()
@@ -573,7 +592,6 @@ WebInspector.TextEditor.prototype = {
     {
         if (e.offsetX < this._lineNumberWidth && this._lineNumberDecorator) {
             var location = this._caretForMouseEvent(e);
-            var line = location.line;
             if (this._lineNumberDecorator.contextMenu(location.line, e))
                 return;
         } else {
@@ -590,7 +608,6 @@ WebInspector.TextEditor.prototype = {
     _caretForMouseEvent: function(e)
     {
         var lineNumber = Math.max(0, this._offsetToLine(e.offsetY) - 1);
-        var line = this._textModel.line(lineNumber);
         var offset = e.offsetX + this._scrollLeft - this._lineNumberWidth;
         return { line: lineNumber, column: this._columnForOffset(lineNumber, offset) };
     },
@@ -793,18 +810,18 @@ WebInspector.TextEditor.prototype = {
 
         var linesCount = this._textModel.linesCount;
         for (var i = 0; i < linesCount; ++i) {
-            var divDecoration = this._textModel.getAttribute(i, "div-decoration");
-            if (divDecoration)
-                this._positionDivDecoration(i, divDecoration, i > firstLine && i < lastLine);
+            var element = this._textModel.getAttribute(i, "div-decoration");
+            if (element)
+                this._positionDivDecoration(i, element, i > firstLine && i < lastLine);
         }
     },
 
-    _positionDivDecoration: function(lineNumber, divDecoration, visible)
+    _positionDivDecoration: function(lineNumber, element, visible)
     {
-        divDecoration.element.style.position = "absolute";
-        divDecoration.element.style.top = this._lineToOffset(lineNumber) - this._scrollTop + this._textLineHeight + "px";
-        divDecoration.element.style.left = this._lineNumberWidth + "px";
-        divDecoration.element.style.setProperty("max-width", this._canvas.width + "px");
+        element.style.position = "absolute";
+        element.style.top = this._lineToOffset(lineNumber) - this._scrollTop + this._textLineHeight + "px";
+        element.style.left = this._lineNumberWidth + "px";
+        element.style.setProperty("max-width", this._canvas.width + "px");
     },
 
     _updateCursor: function(line, column)
@@ -1072,7 +1089,7 @@ WebInspector.TextEditor.prototype = {
 
     _changeFont: function(sansSerif, fontSize) {
         this._initFont(sansSerif, fontSize);
-        this._updateSize(0, this._textModel.linesCount);
+        this._updatePreferredSize(0, this._textModel.linesCount);
         this.repaintAll();
     },
 

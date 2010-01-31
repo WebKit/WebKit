@@ -1,3 +1,65 @@
+2010-01-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Introduce NativeTextViewer.
+
+        This change handles rendering highlighted text, using browser's
+        selection/drag/drop/click logic. Breakpoint decorations and
+        program counter is working.
+
+        Todo: line numbers are painted 'under' the text when scrolling
+        horizontally, search is not yet implemented.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34391
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DivBasedTextViewer.js: Added.
+        (WebInspector.DivBasedTextViewer):
+        (WebInspector.DivBasedTextViewer.prototype._textChanged):
+        (WebInspector.DivBasedTextViewer.prototype._createLineDivs):
+        (WebInspector.DivBasedTextViewer.prototype._updatePreferredSize):
+        (WebInspector.DivBasedTextViewer.prototype._scroll):
+        (WebInspector.DivBasedTextViewer.prototype._registerMouseListeners):
+        (WebInspector.DivBasedTextViewer.prototype._registerKeyboardListeners):
+        (WebInspector.DivBasedTextViewer.prototype._registerClipboardListeners):
+        (WebInspector.DivBasedTextViewer.prototype._paintSelection):
+        (WebInspector.DivBasedTextViewer.prototype._positionDivDecoration):
+        (WebInspector.DivBasedTextViewer.prototype._mouseDown):
+        (WebInspector.DivBasedTextViewer.prototype._contextMenu):
+        (WebInspector.DivBasedTextViewer.prototype._caretForMouseEvent):
+        (WebInspector.DivBasedTextViewer.prototype._paintLine):
+        (WebInspector.DivBasedTextViewer.prototype._createSpan):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.clearMessages):
+        (WebInspector.SourceFrame.prototype.sizeToFitContentHeight):
+        (WebInspector.SourceFrame.prototype._createEditorIfNeeded):
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        (WebInspector.SourceFrame.prototype.resize):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.setDivDecoration):
+        (WebInspector.TextEditor.prototype._registerMouseListeners):
+        (WebInspector.TextEditor.prototype._registerKeyboardListeners):
+        (WebInspector.TextEditor.prototype._registerClipboardListeners):
+        (WebInspector.TextEditor.prototype.reveal):
+        (WebInspector.TextEditor.prototype._textChanged):
+        (WebInspector.TextEditor.prototype.revalidateDecorationsAndPaint):
+        (WebInspector.TextEditor.prototype._updatePreferredSize):
+        (WebInspector.TextEditor.prototype.resize):
+        (WebInspector.TextEditor.prototype._paintLinesContinuation):
+        (WebInspector.TextEditor.prototype._paintLine):
+        (WebInspector.TextEditor.prototype._contextMenu):
+        (WebInspector.TextEditor.prototype._caretForMouseEvent):
+        (WebInspector.TextEditor.prototype._changeFont):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter.prototype._lex):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/textEditor.css:
+
 2010-01-31  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Eric Seidel.

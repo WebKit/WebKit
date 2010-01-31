@@ -3815,7 +3815,6 @@ ol.breakpoint-list {
 }
 
 .source-breakpoint-condition {
-    position: absolute;
     z-index: 30;
     padding: 4px;
     background-color: rgb(203, 226, 255);

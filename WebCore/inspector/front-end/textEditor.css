@@ -44,6 +44,11 @@
     pointer-events: none;
 }
 
+.native-text-editor-line {
+    height: 14px;
+    white-space: pre;
+}
+
 .webkit-html-message-bubble {
     -webkit-box-shadow: black 0px 2px 5px;
     -webkit-border-radius: 9px;

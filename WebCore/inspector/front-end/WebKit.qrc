@@ -37,6 +37,7 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>NativeTextViewer.js</file>
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>ObjectProxy.js</file>

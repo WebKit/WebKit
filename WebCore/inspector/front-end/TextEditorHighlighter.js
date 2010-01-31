@@ -188,7 +188,7 @@ WebInspector.TextEditorHighlighter.prototype = {
              var newColumn = this._tokenizer.nextToken(column);
              var tokenType = this._tokenizer.tokenType;
              if (tokenType)
-                 attributes[column] = { length: newColumn - column, style: this._styles[tokenType] };
+                 attributes[column] = { length: newColumn - column, tokenType: tokenType, style: this._styles[tokenType] };
              column = newColumn;
          } while (column < line.length)
     }
