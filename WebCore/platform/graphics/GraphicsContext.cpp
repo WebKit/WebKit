@@ -411,24 +411,35 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
         restore();
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& rect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& rect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
-
+    if (useLowQualityScale) {
+        save();
+        setImageInterpolationQuality(InterpolationLow);
+    }
     image->drawTiled(this, rect, srcPoint, tileSize, styleColorSpace, op);
+    if (useLowQualityScale)
+        restore();
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
 
+    if (useLowQualityScale) {
+        save();
+        setImageInterpolationQuality(InterpolationLow);
+    }
     if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
-        return drawImage(image, styleColorSpace, dest, srcRect, op);
-
-    image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
+        drawImage(image, styleColorSpace, dest, srcRect, op);
+    else
+        image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
+    if (useLowQualityScale)
+        restore();
 }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
