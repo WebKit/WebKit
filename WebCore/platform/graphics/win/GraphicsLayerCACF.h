@@ -82,7 +82,7 @@ public:
     virtual void setContentsRect(const IntRect&);
 
     virtual void setContentsToImage(Image*);
-    virtual void setContentsToMedia(PlatformLayer*);
+    virtual void setContentsToVideo(PlatformLayer*);
     
     virtual PlatformLayer* platformLayer() const;
 
@@ -115,7 +115,7 @@ private:
     void updateLayerBackgroundColor();
 
     void updateContentsImage();
-    void updateContentsMedia();
+    void updateContentsVideo();
     void updateContentsRect();
     void updateGeometryOrientation();
     
@@ -129,7 +129,7 @@ private:
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,
         ContentsLayerForImage,
-        ContentsLayerForMedia
+        ContentsLayerForVideo
     };
     
     ContentsLayerPurpose m_contentsLayerPurpose;
