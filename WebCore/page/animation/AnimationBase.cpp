@@ -92,10 +92,17 @@ static inline Color blendFunc(const AnimationBase* anim, const Color& from, cons
     if (progress == 1 && !to.isValid())
         return Color();
 
-    return Color(blendFunc(anim, from.red(), to.red(), progress),
-                 blendFunc(anim, from.green(), to.green(), progress),
-                 blendFunc(anim, from.blue(), to.blue(), progress),
-                 blendFunc(anim, from.alpha(), to.alpha(), progress));
+    // Contrary to the name, RGBA32 actually stores ARGB, so we can initialize Color directly from premultipliedARGBFromColor().
+    // Also, premultipliedARGBFromColor() bails on zero alpha, so special-case that.
+    Color premultFrom = from.alpha() ? premultipliedARGBFromColor(from) : 0;
+    Color premultTo = to.alpha() ? premultipliedARGBFromColor(to) : 0;
+
+    Color premultBlended(blendFunc(anim, premultFrom.red(), premultTo.red(), progress),
+                 blendFunc(anim, premultFrom.green(), premultTo.green(), progress),
+                 blendFunc(anim, premultFrom.blue(), premultTo.blue(), progress),
+                 blendFunc(anim, premultFrom.alpha(), premultTo.alpha(), progress));
+
+    return Color(colorFromPremultipliedARGB(premultBlended.rgb()));
 }
 
 static inline Length blendFunc(const AnimationBase*, const Length& from, const Length& to, double progress)

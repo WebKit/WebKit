@@ -1,3 +1,19 @@
+2010-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Do color animations on premultiplied colors
+        https://bugs.webkit.org/show_bug.cgi?id=34383
+        
+        Convert colors to premultiplied alpha before interpolating them,
+        then convert the result back to non-premultiplied. This gives better
+        results when animating from transparent colors.
+
+        Test: transitions/color-transition-premultiplied.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+
 2010-01-30  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fixes needed for make distcheck.

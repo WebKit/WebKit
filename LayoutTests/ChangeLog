@@ -1,1 +1,13 @@
+2010-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Do color animations on premultiplied colors
+        https://bugs.webkit.org/show_bug.cgi?id=34383
+        
+        Testcase for animating from transparent colors.
+
+        * transitions/color-transition-premultiplied-expected.txt: Added.
+        * transitions/color-transition-premultiplied.html: Added.
+
 == Rolled over to ChangeLog-2010-01-29 ==
