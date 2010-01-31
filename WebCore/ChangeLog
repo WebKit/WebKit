@@ -1,3 +1,132 @@
+2010-01-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add back an AffineTransform class for use by SVG
+        https://bugs.webkit.org/show_bug.cgi?id=33750
+
+        These are the first steps on reimplementing AffineTransform. Unlike
+        the old affine code, this one is platform independent like TransformationMatrix.
+        AffineTransform has the benefit, that it stores just 6 doubles instead of
+        16 in TransformationMatrix. The calculations of transformations are not that
+        complex and can improve the memory usage and speed of SVG.
+        AffineTransform can be used by HTML Canvas3D or SVG, since they are 2D related (at
+        least for the moment).
+        HTML Canvas is the first that makes use of the new AffineTransform. Next patches
+        will introduce the affine code to SVG.
+
+        No new tests. The new AffineTransformation code is tested by fast/canvas.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::getAffineCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/cairo/TransformationMatrixCairo.cpp:
+        (WebCore::AffineTransform::operator cairo_matrix_t):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::getAffineCTM):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        (WebCore::AffineTransform::operator CGAffineTransform):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::getAffineCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/haiku/PathHaiku.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getAffineCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/qt/TransformationMatrixQt.cpp:
+        (WebCore::AffineTransform::operator QTransform):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::getAffineCTM):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/skia/TransformationMatrixSkia.cpp:
+        (WebCore::AffineTransform::operator SkMatrix):
+        * platform/graphics/transforms/AffineTransform.cpp: Added.
+        (WebCore::affineTransformDecompose):
+        (WebCore::affineTransformCompose):
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::reset):
+        (WebCore::AffineTransform::setMatrix):
+        (WebCore::AffineTransform::isIdentity):
+        (WebCore::AffineTransform::det):
+        (WebCore::AffineTransform::isInvertible):
+        (WebCore::AffineTransform::inverse):
+        (WebCore::AffineTransform::multiply):
+        (WebCore::AffineTransform::multLeft):
+        (WebCore::AffineTransform::rotate):
+        (WebCore::AffineTransform::scale):
+        (WebCore::AffineTransform::translate):
+        (WebCore::AffineTransform::scaleNonUniform):
+        (WebCore::AffineTransform::rotateFromVector):
+        (WebCore::AffineTransform::flipX):
+        (WebCore::AffineTransform::flipY):
+        (WebCore::AffineTransform::shear):
+        (WebCore::AffineTransform::skew):
+        (WebCore::AffineTransform::skewX):
+        (WebCore::AffineTransform::skewY):
+        (WebCore::makeMapBetweenRects):
+        (WebCore::AffineTransform::map):
+        (WebCore::AffineTransform::mapPoint):
+        (WebCore::AffineTransform::mapRect):
+        (WebCore::AffineTransform::blend):
+        * platform/graphics/transforms/AffineTransform.h: Added.
+        (WebCore::AffineTransform::a):
+        (WebCore::AffineTransform::setA):
+        (WebCore::AffineTransform::b):
+        (WebCore::AffineTransform::setB):
+        (WebCore::AffineTransform::c):
+        (WebCore::AffineTransform::setC):
+        (WebCore::AffineTransform::d):
+        (WebCore::AffineTransform::setD):
+        (WebCore::AffineTransform::e):
+        (WebCore::AffineTransform::setE):
+        (WebCore::AffineTransform::f):
+        (WebCore::AffineTransform::setF):
+        (WebCore::AffineTransform::operator== ):
+        (WebCore::AffineTransform::operator!=):
+        (WebCore::AffineTransform::operator*=):
+        (WebCore::AffineTransform::operator*):
+        (WebCore::AffineTransform::setMatrix):
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::getAffineCTM):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::getAffineCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        (WebCore::AffineTransform::operator wxGraphicsMatrix):
+
 2010-01-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
