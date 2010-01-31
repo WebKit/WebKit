@@ -125,6 +125,10 @@ RESOURCES += \
     RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
 }
 
+mameo5|symbian|embedded {
+    DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
+}
+
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 # Disable HTML5 media compilation if phonon is unavailable
