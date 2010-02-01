@@ -35,7 +35,8 @@ WebInspector.TextEditor = function(textModel, platform)
     this._highlighter = new WebInspector.TextEditorHighlighter(this._textModel, this._highlightChanged.bind(this));
 
     this.element = document.createElement("div");
-    this.element.className = "text-editor";
+    this.element.className = "text-editor monospace";
+    this.element.tabIndex = 0;
 
     this._canvas = document.createElement("canvas");
     this._canvas.className = "text-editor-canvas";
@@ -43,7 +44,6 @@ WebInspector.TextEditor = function(textModel, platform)
 
     this._container = document.createElement("div");
     this._container.className = "text-editor-container";
-    this._container.tabIndex = 0;
     this.element.appendChild(this._container);
 
     this._sheet = document.createElement("div");
@@ -55,7 +55,6 @@ WebInspector.TextEditor = function(textModel, platform)
     this._cursor = new WebInspector.TextCursor(cursorElement);
 
     this._container.addEventListener("scroll", this._scroll.bind(this), false);
-    this._sheet.addEventListener("contextmenu", this._contextMenu.bind(this), false);
 
     this._registerMouseListeners();
     this._registerKeyboardListeners();
@@ -69,9 +68,6 @@ WebInspector.TextEditor = function(textModel, platform)
     this._selection = new WebInspector.TextSelectionModel(this._selectionChanged.bind(this));
 
     this._isMac = platform && (platform.indexOf("mac") === 0);
-
-    this._initFont();
-
     this._paintCoalescingLevel = 0;
 
     this._registerShortcuts();
@@ -84,6 +80,7 @@ WebInspector.TextEditor = function(textModel, platform)
 
     this._lineOffsetsCache = [0];
     this._readOnly = false;
+    this._selectionColor = "rgb(181, 213, 255)";
 }
 
 WebInspector.TextEditor.prototype = {
@@ -152,11 +149,12 @@ WebInspector.TextEditor.prototype = {
 
     _registerMouseListeners: function()
     {
-        this._sheet.addEventListener("mouseup", this._mouseUp.bind(this), false);
-        this._sheet.addEventListener("mousedown", this._mouseDown.bind(this), false);
-        this._sheet.addEventListener("mousemove", this._mouseMove.bind(this), false);
-        this._sheet.addEventListener("mouseout", this._mouseOut.bind(this), false);
-        this._sheet.addEventListener("dblclick", this._dblClick.bind(this), false);
+        this.element.addEventListener("contextmenu", this._contextMenu.bind(this), false);
+        this.element.addEventListener("mouseup", this._mouseUp.bind(this), false);
+        this.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
+        this.element.addEventListener("mousemove", this._mouseMove.bind(this), false);
+        this.element.addEventListener("mouseout", this._mouseOut.bind(this), false);
+        this.element.addEventListener("dblclick", this._dblClick.bind(this), false);
     },
 
     _registerKeyboardListeners: function()
@@ -180,7 +178,7 @@ WebInspector.TextEditor.prototype = {
         if (offset > this._lineOffsetsCache[this._lineOffsetsCache.length - 1]) {
             // Seeking outside cached area. Fill the cache.
             var lineNumber = this._lineOffsetsCache.length;
-            while (this._lineToOffset(lineNumber) < offset)
+            while (lineNumber < this._textModel.linesCount && this._lineToOffset(lineNumber) < offset)
                 lineNumber++;
             return lineNumber;
         }
@@ -217,6 +215,10 @@ WebInspector.TextEditor.prototype = {
 
     _lineHeight: function(lineNumber)
     {
+        // Use cached value first.
+        if (this._lineOffsetsCache[lineNumber + 1])
+            return this._lineOffsetsCache[lineNumber + 1] - this._lineOffsetsCache[lineNumber];
+
         var element = this._textModel.getAttribute(lineNumber, "div-decoration");
         if (element)
             return 2 * this._textLineHeight + element.clientHeight;
@@ -225,6 +227,9 @@ WebInspector.TextEditor.prototype = {
 
     reveal: function(line, column)
     {
+        this._scrollTop = this._container.scrollTop;
+        this._scrollLeft = this._container.scrollLeft;
+
         var maxScrollTop = this._lineToOffset(line);
         var minScrollTop = maxScrollTop + this._lineHeight(line) - this._canvas.height;
         if (this._scrollTop > maxScrollTop)
@@ -237,8 +242,10 @@ WebInspector.TextEditor.prototype = {
         var minScrollLeft = maxScrollLeft - this._container.clientWidth + this._lineNumberWidth;
         if (this._scrollLeft < minScrollLeft)
             this._container.scrollLeft = minScrollLeft + 100;
-        if (this._scrollLeft > maxScrollLeft)
+        else if (this._scrollLeft > maxScrollLeft)
             this._container.scrollLeft = maxScrollLeft;
+        else if (minScrollLeft < 0 && maxScrollLeft > 0)
+            this._container.scrollLeft = 0;
     },
 
     // WebInspector.TextModel listener
@@ -326,8 +333,9 @@ WebInspector.TextEditor.prototype = {
 
         var newLineNumberDigits = this._decimalDigits(this._textModel.linesCount);
         this._lineNumberWidth = (newLineNumberDigits + 2) * this._digitWidth;
+        this._container.style.left = this._lineNumberWidth + "px";
 
-        var newWidth = this._textWidth + this._lineNumberWidth + "px";
+        var newWidth = this._textWidth + "px";
         var newHeight = this._lineToOffset(this._textModel.linesCount) + "px";
         this._sheet.style.width = newWidth;
         this._sheet.style.height = newHeight;
@@ -345,7 +353,7 @@ WebInspector.TextEditor.prototype = {
     resize: function()
     {
         if (this._canvas.width !== this._container.clientWidth || this._canvas.height !== this._container.clientHeight) {
-            this._canvas.width = this._container.clientWidth;
+            this._canvas.width = this._container.clientWidth + this._lineNumberWidth;
             this._canvas.height = this._container.clientHeight;
             this.repaintAll();
         }
@@ -376,8 +384,13 @@ WebInspector.TextEditor.prototype = {
 
     _paint: function()
     {
+        this._scrollTop = this._container.scrollTop;
+        this._scrollLeft = this._container.scrollLeft;
+
         if (this._paintCoalescingLevel)
             return;
+
+        this._updateDivDecorations();
 
         this.paintLineNumbers();
 
@@ -385,7 +398,6 @@ WebInspector.TextEditor.prototype = {
             this._paintLines(this._damage[i].startLine, this._damage[i].endLine);
         delete this._damage;
 
-        this._updateDivDecorations();
         this._updateCursor(this._selection.endLine, this._selection.endColumn);
     },
 
@@ -556,7 +568,7 @@ WebInspector.TextEditor.prototype = {
 
         var location = this._caretForMouseEvent(e);
 
-        if (e.offsetX < this._lineNumberWidth && this._lineNumberDecorator) {
+        if (e.target === this.element && this._lineNumberDecorator) {
             if (this._lineNumberDecorator.mouseDown(location.line, e))            
                 return;
         }
@@ -590,7 +602,7 @@ WebInspector.TextEditor.prototype = {
 
     _contextMenu: function(e)
     {
-        if (e.offsetX < this._lineNumberWidth && this._lineNumberDecorator) {
+        if (e.target === this.element && this._lineNumberDecorator) {
             var location = this._caretForMouseEvent(e);
             if (this._lineNumberDecorator.contextMenu(location.line, e))
                 return;
@@ -607,8 +619,8 @@ WebInspector.TextEditor.prototype = {
 
     _caretForMouseEvent: function(e)
     {
-        var lineNumber = Math.max(0, this._offsetToLine(e.offsetY) - 1);
-        var offset = e.offsetX + this._scrollLeft - this._lineNumberWidth;
+        var lineNumber = Math.max(0, this._offsetToLine(e.offsetY + (e.target === this.element ? this._scrollTop : 0)) - 1);
+        var offset = e.offsetX + this._scrollLeft;
         return { line: lineNumber, column: this._columnForOffset(lineNumber, offset) };
     },
 
@@ -811,8 +823,10 @@ WebInspector.TextEditor.prototype = {
         var linesCount = this._textModel.linesCount;
         for (var i = 0; i < linesCount; ++i) {
             var element = this._textModel.getAttribute(i, "div-decoration");
-            if (element)
+            if (element) {
+                this._lineOffsetsCache.length = Math.min(this._lineOffsetsCache.length, i + 1);
                 this._positionDivDecoration(i, element, i > firstLine && i < lastLine);
+            }
         }
     },
 
@@ -848,7 +862,7 @@ WebInspector.TextEditor.prototype = {
         if (this._selection.isEmpty())
             return;
         var range = this._selection.range();
-        this._ctx.fillStyle = "rgb(181, 213, 255)";
+        this._ctx.fillStyle = this._selectionColor;
 
         firstLine = Math.max(firstLine, range.startLine);
         endLine = Math.min(lastLine, range.endLine + 1);
@@ -962,34 +976,14 @@ WebInspector.TextEditor.prototype = {
         this._updateCursor(this._selection.endLine, this._selection.endColumn);
     },
 
-    _initFont: function(sansSerif)
+    _initFontMetrics: function()
     {
-        if (!WebInspector.TextEditor.PlatformFonts) {
-            WebInspector.TextEditor.PlatformFonts = {};
-            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.Windows] = {size: 12, face: "Lucida Console"};
-            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.WindowsVistaOrLater] = {size: 12, face: "Courier"};
-            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacSnowLeopard] = {size: 11, face: "Menlo"};
-            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacLeopard] = {size: 10, face: "Monaco"};
-            WebInspector.TextEditor.PlatformFonts[WebInspector.OS.MacTiger] = {size: 10, face: "Monaco"};
-        }
-
-        if (sansSerif) {
-            this._isMonospace = false;
-            this._fontSize = 11;
-            this._font = this._fontSize + "px sans-serif";
-        } else {
-            this._isMonospace = true;
-            const platform = WebInspector.platform;
-            const fontInfo = WebInspector.TextEditor.PlatformFonts[platform] || {size: 10, face: "monospace"};
-            this._fontSize = fontInfo.size;
-            this._font = this._fontSize + "px " + fontInfo.face;
-        }
+        var computedStyle = window.getComputedStyle(this.element);
+        this._font = computedStyle.fontSize + " " + computedStyle.fontFamily;
         this._ctx.font = this._font;
         this._digitWidth = this._ctx.measureText("0").width;
-
-        this._textLineHeight = Math.floor(this._fontSize * 1.4);
+        this._textLineHeight = Math.floor(parseInt(this._ctx.font) * 1.4);
         this._cursor.setTextLineHeight(this._textLineHeight);
-        this._lineOffsetsCache = [0];
     },
 
     _registerShortcuts: function()
@@ -999,9 +993,6 @@ WebInspector.TextEditor.prototype = {
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", this._isMac ? modifiers.Meta : modifiers.Ctrl)] = this._handleUndo.bind(this);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | (this._isMac ? modifiers.Meta : modifiers.Ctrl))] = this._handleRedo.bind(this);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("a", this._isMac ? modifiers.Meta : modifiers.Ctrl)] = this._selectAll.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Plus, this._isMac ? modifiers.Meta : modifiers.Ctrl)] = this._handleZoomIn.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Minus, this._isMac ? modifiers.Meta : modifiers.Ctrl)] = this._handleZoomOut.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Zero, this._isMac ? modifiers.Meta : modifiers.Ctrl)] = this._handleZoomReset.bind(this);
         if (this._isMac)
             this._shortcuts[WebInspector.KeyboardShortcut.makeKey("d", modifiers.Ctrl)] = this._handleDeleteKey.bind(this);
 
@@ -1063,34 +1054,6 @@ WebInspector.TextEditor.prototype = {
     _handleToggleDebugMode: function()
     {
         this._debugMode = !this._debugMode;
-    },
-
-    _handleZoomIn: function()
-    {
-        if (this._fontSize < 25)
-            this._changeFont(!this._isMonospace, this._fontSize + 1);
-    },
-
-    _handleZoomOut: function()
-    {
-        if (this._fontSize > 1)
-            this._changeFont(!this._isMonospace, this._fontSize - 1);
-    },
-
-    _handleZoomReset: function()
-    {
-        this._changeFont(!this._isMonospace);
-    },
-
-    _handleToggleMonospaceMode: function()
-    {
-        this._changeFont(this._isMonospace, this._fontSize);
-    },
-
-    _changeFont: function(sansSerif, fontSize) {
-        this._initFont(sansSerif, fontSize);
-        this._updatePreferredSize(0, this._textModel.linesCount);
-        this.repaintAll();
     },
 
     _handleToggleHighlightMode: function()

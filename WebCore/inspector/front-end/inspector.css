@@ -505,7 +505,6 @@ body.drawer-visible #drawer {
 
 body.platform-mac-tiger .monospace, body.platform-mac-leopard .monospace,
 body.platform-mac-tiger .source-code, body.platform-mac-leopard .source-code {
-    font-size: 10px;
     font-family: Monaco, monospace;
 }
 

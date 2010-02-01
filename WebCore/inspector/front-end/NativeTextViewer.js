@@ -31,10 +31,10 @@
 WebInspector.NativeTextViewer = function(textModel, platform)
 {
     WebInspector.TextEditor.call(this, textModel, platform);
-    this._sheet.className = "monospace";
     this._sheet.tabIndex = 0;
     this._canvas.style.zIndex = 0;
     this._createLineDivs();
+    this._selectionColor = "rgb(241, 234, 0)";
 }
 
 WebInspector.NativeTextViewer.prototype = {
@@ -52,7 +52,10 @@ WebInspector.NativeTextViewer.prototype = {
         for (var i = 0; i < this._textModel.linesCount; ++i) {
             var lineDiv = document.createElement("div");
             lineDiv.className = "native-text-editor-line";
-            lineDiv.textContent = this._textModel.line(i);
+            var text = this._textModel.line(i);
+            lineDiv.textContent = text;
+            if (!text)
+                lineDiv.style.minHeight = this._textLineHeight + "px";
             this._sheet.appendChild(lineDiv);
             this._textModel.setAttribute(i, "line-div", lineDiv);
         }
@@ -68,7 +71,7 @@ WebInspector.NativeTextViewer.prototype = {
         var newLineNumberDigits = this._decimalDigits(this._textModel.linesCount);
         this._lineNumberWidth = (newLineNumberDigits + 2) * this._digitWidth;
 
-        this._sheet.style.paddingLeft = this._textWidth + this._lineNumberWidth + "px";
+        this._container.style.left = this._lineNumberWidth + "px";
 
         this._lineNumberDigits = newLineNumberDigits;
         this.repaintAll();
@@ -86,7 +89,8 @@ WebInspector.NativeTextViewer.prototype = {
 
     _registerMouseListeners: function()
     {
-        this._sheet.addEventListener("mousedown", this._mouseDown.bind(this), false);
+        this.element.addEventListener("contextmenu", this._contextMenu.bind(this), false);
+        this.element.addEventListener("mousedown", this._mouseDown.bind(this), false);
     },
 
     _registerKeyboardListeners: function()
@@ -99,44 +103,48 @@ WebInspector.NativeTextViewer.prototype = {
         // Noop - let browser take care of this.
     },
 
-    _paintSelection: function()
-    {
-        // Noop - let browser take care of this.
-    },
-
     _positionDivDecoration: function()
     {
         // Div decorations have fixed positions in our case.
     },
 
+    _registerShortcuts: function()
+    {
+        // Noop.
+    },
+
     _mouseDown: function(e)
     {
-        if (e.offsetX + e.target.offsetTop >= this._lineNumberWidth && this._lineNumberDecorator)
+        if (e.target !== this.element || e.button === 2 || (this._isMac && e.ctrlKey))
             return;
-
-        if (e.button === 2 || (this._isMac && e.ctrlKey))
-            return;
-
-        var location = this._caretForMouseEvent(e);
-        this._lineNumberDecorator.mouseDown(location.line, e);
+        this._lineNumberDecorator.mouseDown(this._lineForMouseEvent(e), e);
     },
 
     _contextMenu: function(e)
     {
-        // Override editor's implementation to add the line's offsets.
-        if (e.offsetX + e.target.offsetTop >= this._lineNumberWidth && this._lineNumberDecorator)
+        if (e.target !== this.element)
             return;
-
-        var location = this._caretForMouseEvent(e);
-        this._lineNumberDecorator.contextMenu(location.line, e);
+        this._lineNumberDecorator.contextMenu(this._lineForMouseEvent(e), e);
     },
 
-    _caretForMouseEvent: function(e)
+    _lineForMouseEvent: function(e)
     {
-        // Override editor's implementation to add the line's offsets.
-        var lineNumber = Math.max(0, this._offsetToLine(e.offsetY + e.target.offsetTop) - 1);
-        var offset = e.offsetX + e.target.offsetLeft + this._scrollLeft - this._lineNumberWidth;
-        return { line: lineNumber, column: this._columnForOffset(lineNumber, offset) };
+        return Math.max(0, this._offsetToLine(e.offsetY + this._scrollTop) - 1);
+    },
+
+    _lineHeight: function(lineNumber)
+    {
+        // Use cached value first.
+        if (this._lineOffsetsCache[lineNumber + 1])
+            return this._lineOffsetsCache[lineNumber + 1] - this._lineOffsetsCache[lineNumber];
+
+        // Get metrics from the browser.
+        var element = this._textModel.getAttribute(lineNumber, "line-div");
+        if (lineNumber + 1 < this._textModel.linesCount) {
+            var nextElement = this._textModel.getAttribute(lineNumber + 1, "line-div");
+            return nextElement.offsetTop - element.offsetTop;
+        } else
+            return element.parentElement.offsetHeight - element.offsetTop;
     },
 
     _paintLine: function(lineNumber, lineOffset)
@@ -203,6 +211,16 @@ WebInspector.NativeTextViewer.prototype = {
             this._textModel.setAttribute(lineNumber, "div-decoration", element);
         }
         this.revalidateDecorationsAndPaint();
+    },
+
+    _initFontMetrics: function()
+    {
+        WebInspector.TextEditor.prototype._initFontMetrics.call(this);
+        for (var i = 0; i < this._textModel.linesCount; ++i) {
+            var lineDiv = this._textModel.getAttribute(i, "line-div");
+            if (!this._textModel.line(i))
+                lineDiv.style.minHeight = this._textLineHeight + "px";
+        }
     }
 }
 

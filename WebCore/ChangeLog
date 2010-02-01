@@ -1,3 +1,28 @@
+2010-02-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Fix rest of the NativeTextViewer (line numbers,
+        conditional breakpoints, selection).
+
+        * inspector/front-end/NativeTextViewer.js:
+        (WebInspector.NativeTextViewer):
+        (WebInspector.NativeTextViewer.prototype._updatePreferredSize):
+        (WebInspector.NativeTextViewer.prototype._registerMouseListeners):
+        (WebInspector.NativeTextViewer.prototype._mouseDown):
+        (WebInspector.NativeTextViewer.prototype._contextMenu):
+        (WebInspector.NativeTextViewer.prototype._lineForMouseEvent):
+        (WebInspector.NativeTextViewer.prototype._lineHeight):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype._registerMouseListeners):
+        (WebInspector.TextEditor.prototype._offsetToLine):
+        (WebInspector.TextEditor.prototype._lineHeight):
+        (WebInspector.TextEditor.prototype.reveal):
+        (WebInspector.TextEditor.prototype._paint):
+        (WebInspector.TextEditor.prototype._updateDivDecorations):
+        (WebInspector.TextEditor.prototype._paintSelection):
+
 2010-02-01  Steve Block  <steveblock@google.com>
 
         Reviewed by Ariya Hidayat.
