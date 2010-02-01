@@ -162,6 +162,9 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor);
     virtual void performCustomContextMenuAction(unsigned action);
+    virtual void addUserScript(const WebString& sourceCode,
+                               bool runAtStart);
+    virtual void removeAllUserContent();
 
     // WebViewImpl
 

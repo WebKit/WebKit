@@ -262,6 +262,10 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor) = 0;
 
+    // User scripts --------------------------------------------------------
+    virtual void addUserScript(const WebString& sourceCode,
+                               bool runAtStart) = 0;
+    virtual void removeAllUserContent() = 0;
 
     // Modal dialog support ------------------------------------------------
 

@@ -353,6 +353,15 @@ void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
     worlds.append(mainThreadNormalWorld());
 }
 
+void ScriptController::evaluateInWorld(const ScriptSourceCode& source,
+                                       DOMWrapperWorld* world)
+{
+    Vector<ScriptSourceCode> sources;
+    sources.append(source);
+    // FIXME: Get an ID from the world param.
+    evaluateInIsolatedWorld(0, sources);
+}
+
 static NPObject* createNoScriptObject()
 {
     notImplemented();

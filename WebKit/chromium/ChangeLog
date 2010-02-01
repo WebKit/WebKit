@@ -1,3 +1,15 @@
+2010-01-27  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for addUserScript to chromium port.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::addUserScript):
+        (WebKit::WebViewImpl::removeAllUserContent):
+        * src/WebViewImpl.h:
+
 2010-01-29  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.

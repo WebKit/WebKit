@@ -1,3 +1,13 @@
+2010-01-27  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for addUserScript to chromium port.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/v8/ScriptController.h:
+
 2010-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
