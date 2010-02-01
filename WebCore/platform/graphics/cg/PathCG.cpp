@@ -29,6 +29,7 @@
 
 #if PLATFORM(CG)
 
+#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include "FloatRect.h"
@@ -344,6 +345,15 @@ void Path::apply(void* info, PathApplierFunction function) const
     pinfo.info = info;
     pinfo.function = function;
     CGPathApply(m_path, &pinfo, CGPathApplierToPathApplier);
+}
+
+void Path::transform(const AffineTransform& transform)
+{
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGAffineTransform transformCG = transform;
+    CGPathAddPath(path, &transformCG, m_path);
+    CGPathRelease(m_path);
+    m_path = path;
 }
 
 void Path::transform(const TransformationMatrix& transform)

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "AffineTransform.h"
 #include "CharacterNames.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
@@ -1143,6 +1144,11 @@ void GraphicsContext::endTransparencyLayer()
     m_data->restore();
 }
 
+void GraphicsContext::concatCTM(const AffineTransform& transform)
+{
+    m_data->concatCTM(transform);
+}
+
 void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {
     m_data->concatCTM(transform);
@@ -1529,6 +1535,11 @@ void GraphicsContext::fillRect(const FloatRect& r, const Gradient* gradient)
     }
 
     GradientFill(dc, tv.data(), tv.size(), mesh.data(), mesh.size(), vertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
+}
+
+AffineTransform GraphicsContext::getAffineCTM() const
+{
+    return m_data->m_transform;
 }
 
 TransformationMatrix GraphicsContext::getCTM() const

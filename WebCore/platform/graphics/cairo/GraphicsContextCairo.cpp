@@ -32,6 +32,7 @@
 
 #if PLATFORM(CAIRO)
 
+#include "AffineTransform.h"
 #include "CairoPath.h"
 #include "FEGaussianBlur.h"
 #include "FloatRect.h"
@@ -214,6 +215,14 @@ TransformationMatrix GraphicsContext::getCTM() const
     cairo_matrix_t m;
     cairo_get_matrix(cr, &m);
     return TransformationMatrix(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
+}
+
+AffineTransform GraphicsContext::getAffineCTM() const
+{
+    cairo_t* cr = platformContext();
+    cairo_matrix_t m;
+    cairo_get_matrix(cr, &m);
+    return AffineTransform(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
 }
 
 cairo_t* GraphicsContext::platformContext() const
@@ -792,6 +801,17 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 }
 
 void GraphicsContext::concatCTM(const TransformationMatrix& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+    const cairo_matrix_t matrix = cairo_matrix_t(transform);
+    cairo_transform(cr, &matrix);
+    m_data->concatCTM(transform);
+}
+
+void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;

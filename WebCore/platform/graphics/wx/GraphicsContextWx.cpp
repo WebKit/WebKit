@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "Font.h"
@@ -359,6 +360,12 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
     notImplemented();
 }
 
+AffineTransform GraphicsContext::getAffineCTM() const
+{ 
+    notImplemented();
+    return AffineTransform();
+}
+
 TransformationMatrix GraphicsContext::getCTM() const
 { 
     notImplemented();
@@ -469,6 +476,15 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
     
     if (m_data->context)
         m_data->context->SetBrush(wxBrush(color));
+}
+
+void GraphicsContext::concatCTM(const AffineTransform& transform)
+{
+    if (paintingDisabled())
+        return;
+
+    notImplemented();
+    return;
 }
 
 void GraphicsContext::concatCTM(const TransformationMatrix& transform)

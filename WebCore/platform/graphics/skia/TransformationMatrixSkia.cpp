@@ -28,6 +28,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
+#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 
 #include "SkiaUtils.h"
@@ -35,6 +36,26 @@
 namespace WebCore {
 
 TransformationMatrix::operator SkMatrix() const
+{
+    SkMatrix result;
+
+    result.setScaleX(WebCoreDoubleToSkScalar(a()));
+    result.setSkewX(WebCoreDoubleToSkScalar(c()));
+    result.setTranslateX(WebCoreDoubleToSkScalar(e()));
+
+    result.setScaleY(WebCoreDoubleToSkScalar(d()));
+    result.setSkewY(WebCoreDoubleToSkScalar(b()));
+    result.setTranslateY(WebCoreDoubleToSkScalar(f()));
+
+    // FIXME: Set perspective properly.
+    result.setPerspX(0);
+    result.setPerspY(0);
+    result.set(SkMatrix::kMPersp2, SK_Scalar1);
+
+    return result;
+}
+
+AffineTransform::operator SkMatrix() const
 {
     SkMatrix result;
 
