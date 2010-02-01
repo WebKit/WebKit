@@ -188,6 +188,11 @@ inline void ThreadSpecific<T>::set(T* ptr)
 
 #elif OS(WINDOWS)
 
+// TLS_OUT_OF_INDEXES is not defined on WinCE.
+#ifndef TLS_OUT_OF_INDEXES
+#define TLS_OUT_OF_INDEXES 0xffffffff
+#endif
+
 // The maximum number of TLS keys that can be created. For simplification, we assume that:
 // 1) Once the instance of ThreadSpecific<> is created, it will not be destructed until the program dies.
 // 2) We do not need to hold many instances of ThreadSpecific<> data. This fixed number should be far enough.
@@ -200,14 +205,14 @@ template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
     : m_index(-1)
 {
-    DWORD tls_key = TlsAlloc();
-    if (tls_key == TLS_OUT_OF_INDEXES)
+    DWORD tlsKey = TlsAlloc();
+    if (tlsKey == TLS_OUT_OF_INDEXES)
         CRASH();
 
     m_index = InterlockedIncrement(&tlsKeyCount()) - 1;
     if (m_index >= kMaxTlsKeySize)
         CRASH();
-    tlsKeys()[m_index] = tls_key;
+    tlsKeys()[m_index] = tlsKey;
 }
 
 template<typename T>
