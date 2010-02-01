@@ -1,3 +1,15 @@
+2010-01-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement CSSOM Range.getClientRects for collapsed selections
+        https://bugs.webkit.org/show_bug.cgi?id=34239
+
+        Adds two cases to getClientRects test. 
+
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/Range/getClientRects.html:
+
 2010-01-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Simon Fraser.

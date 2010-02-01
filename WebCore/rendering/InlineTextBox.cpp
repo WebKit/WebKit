@@ -108,7 +108,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int sPos = max(startPos - m_start, 0);
     int ePos = min(endPos - m_start, (int)m_len);
     
-    if (sPos >= ePos)
+    if (sPos > ePos)
         return IntRect();
 
     RenderText* textObj = textRenderer();

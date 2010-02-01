@@ -69,6 +69,10 @@
 
 <div class="box" id="test8">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 
+<br><br>
+
+<div class="box" id="test9">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
 </div>
 
 <script>
@@ -338,6 +342,29 @@
     shouldBe("rects[3].top", "1755");
     shouldBe("rects[3].width", "212");
     shouldBe("rects[3].height", "247");
+
+    debug("Test 9");
+    var range9 = document.createRange();
+    // This case should match test 9b's results. Currently though getClientRects returns an empty list.
+    range9.setStart(document.getElementById('test9'), 0);
+    show(range9);
+    rects = range9.getClientRects();
+    shouldBe("rects.length", "1");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "1903");
+    shouldBe("rects[0].width", "0");
+    shouldBe("rects[0].height", "18");
+
+    debug("Test 9b");
+    var range9 = document.createRange();
+    range9.setStart(document.getElementById('test9').firstChild, 0);
+    show(range9);
+    rects = range9.getClientRects();
+    shouldBe("rects.length", "1");
+    shouldBe("rects[0].left", "8");
+    shouldBe("rects[0].top", "1903");
+    shouldBe("rects[0].width", "0");
+    shouldBe("rects[0].height", "18");
 
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');

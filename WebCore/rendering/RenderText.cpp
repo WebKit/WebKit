@@ -288,7 +288,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
         } else {
             unsigned realEnd = min(box->end() + 1, end);
             IntRect r = box->selectionRect(0, 0, start, realEnd);
-            if (!r.isEmpty()) {
+            if (r.height()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
                     r.setHeight(box->height());
