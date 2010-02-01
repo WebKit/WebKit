@@ -76,8 +76,15 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             void seek(float);
 
             void setRate(float);
+
             void setVolume(float);
             void volumeChanged();
+            void volumeChangedCallback();
+
+            bool supportsMuting() const;
+            void setMuted(bool);
+            void muteChanged();
+            void muteChangedCallback();
 
             MediaPlayer::NetworkState networkState() const;
             MediaPlayer::ReadyState readyState() const;
@@ -149,6 +156,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool m_errorOccured;
             guint m_volumeIdleId;
             gfloat m_mediaDuration;
+            guint m_muteIdleId;
     };
 }
 

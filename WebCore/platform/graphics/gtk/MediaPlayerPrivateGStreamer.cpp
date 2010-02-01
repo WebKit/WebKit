@@ -181,13 +181,29 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
 
 void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
 {
+    // This is called when playbin receives the notify::volume signal.
     MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
     mp->volumeChanged();
 }
 
-gboolean notifyVolumeIdleCallback(MediaPlayer* mp)
+gboolean notifyVolumeIdleCallback(gpointer data)
 {
-    mp->volumeChanged();
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->volumeChangedCallback();
+    return FALSE;
+}
+
+void mediaPlayerPrivateMuteChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
+{
+    // This is called when playbin receives the notify::mute signal.
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->muteChanged();
+}
+
+gboolean notifyMuteIdleCallback(gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->muteChangedCallback();
     return FALSE;
 }
 
@@ -291,8 +307,9 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_seeking(false)
     , m_playbackRate(1)
     , m_errorOccured(false)
-    , m_volumeIdleId(-1)
+    , m_volumeIdleId(0)
     , m_mediaDuration(0.0)
+    , m_muteIdleId(0)
 {
     doGstInit();
 }
@@ -301,7 +318,12 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 {
     if (m_volumeIdleId) {
         g_source_remove(m_volumeIdleId);
-        m_volumeIdleId = -1;
+        m_volumeIdleId = 0;
+    }
+
+    if (m_muteIdleId) {
+        g_source_remove(m_muteIdleId);
+        m_muteIdleId = 0;
     }
 
     if (m_buffer)
@@ -532,15 +554,19 @@ void MediaPlayerPrivate::setVolume(float volume)
     g_object_set(m_playBin, "volume", static_cast<double>(volume), NULL);
 }
 
-void MediaPlayerPrivate::volumeChanged()
+void MediaPlayerPrivate::volumeChangedCallback()
 {
-    if (m_volumeIdleId) {
-        g_source_remove(m_volumeIdleId);
-        m_volumeIdleId = -1;
-    }
-    m_volumeIdleId = g_idle_add((GSourceFunc) notifyVolumeIdleCallback, m_player);
+    double volume;
+    g_object_get(m_playBin, "volume", &volume, NULL);
+    m_player->volumeChanged(static_cast<float>(volume));
 }
 
+void MediaPlayerPrivate::volumeChanged()
+{
+    if (m_volumeIdleId)
+        g_source_remove(m_volumeIdleId);
+    m_volumeIdleId = g_idle_add((GSourceFunc) notifyVolumeIdleCallback, this);
+}
 
 void MediaPlayerPrivate::setRate(float rate)
 {
@@ -922,6 +948,34 @@ void MediaPlayerPrivate::durationChanged()
     m_player->durationChanged();
 }
 
+bool MediaPlayerPrivate::supportsMuting() const
+{
+    return true;
+}
+
+void MediaPlayerPrivate::setMuted(bool muted)
+{
+    if (!m_playBin)
+        return;
+
+    g_object_set(m_playBin, "mute", muted, NULL);
+}
+
+void MediaPlayerPrivate::muteChangedCallback()
+{
+    gboolean muted;
+    g_object_get(m_playBin, "mute", &muted, NULL);
+    m_player->muteChanged(static_cast<bool>(muted));
+}
+
+void MediaPlayerPrivate::muteChanged()
+{
+    if (m_muteIdleId)
+        g_source_remove(m_muteIdleId);
+
+    m_muteIdleId = g_idle_add((GSourceFunc) notifyMuteIdleCallback, this);
+}
+
 void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
 {
     m_errorOccured = true;
@@ -1140,6 +1194,7 @@ void MediaPlayerPrivate::createGSTPlayBin(String url)
 
     g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
     g_signal_connect(m_playBin, "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
+    g_signal_connect(m_playBin, "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
 
     m_videoSink = webkit_video_sink_new();
 

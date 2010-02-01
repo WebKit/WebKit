@@ -1235,7 +1235,15 @@ void HTMLMediaElement::setMuted(bool muted)
 {
     if (m_muted != muted) {
         m_muted = muted;
-        updateVolume();
+        // Avoid recursion when the player reports volume changes.
+        if (!processingMediaPlayerCallback()) {
+            if (m_player && m_player->supportsMuting()) {
+                m_player->setMuted(m_muted);
+                if (renderer())
+                    renderer()->updateFromElement();
+            } else
+                updateVolume();
+        }
         scheduleEvent(eventNames().volumechangeEvent);
     }
 }
@@ -1444,7 +1452,17 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
 void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
+    if (m_player)
+        m_volume = m_player->volume();
     updateVolume();
+    endProcessingMediaPlayerCallback();
+}
+
+void HTMLMediaElement::mediaPlayerMuteChanged(MediaPlayer*)
+{
+    beginProcessingMediaPlayerCallback();
+    if (m_player)
+        setMuted(m_player->muted());
     endProcessingMediaPlayerCallback();
 }
 

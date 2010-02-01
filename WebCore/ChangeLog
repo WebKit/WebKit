@@ -1,3 +1,58 @@
+2010-01-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] set playbin mute property depending on volume value
+        https://bugs.webkit.org/show_bug.cgi?id=31586
+
+        New API in MediaPlayer for mute control. 3 new methods are
+        introduced:
+
+        - bool supportsMuting() const;
+        - bool muted() const;
+        - void setMuted(bool);
+
+        Platform MediaPlayer implementations can support it easily if the
+        underlying sound daemon/API supports muting (eg. not only setting
+        volume to 0) like PulseAudio for instance on Linux. At the moment
+        the only player supporting this new API is the
+        MediaPlayerPrivateGStreamer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::mediaPlayerVolumeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerMuteChanged):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::supportsMuting):
+        (WebCore::NullMediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::muted):
+        (WebCore::MediaPlayer::supportsMuting):
+        (WebCore::MediaPlayer::setMuted):
+        (WebCore::MediaPlayer::volumeChanged):
+        (WebCore::MediaPlayer::muteChanged):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerMuteChanged):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsMuting):
+        (WebCore::MediaPlayerPrivateInterface::setMuted):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback):
+        (WebCore::notifyVolumeIdleCallback):
+        (WebCore::mediaPlayerPrivateMuteChangedCallback):
+        (WebCore::notifyMuteIdleCallback):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::supportsMuting):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::muteChangedCallback):
+        (WebCore::MediaPlayerPrivate::muteChanged):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
 2010-02-01  Henry Haverinen  <henry.haverinen@nokia.com>
 
         Reviewed by Simon Hausmann.

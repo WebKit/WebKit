@@ -74,6 +74,9 @@ public:
 
     virtual void setVolume(float) = 0;
 
+    virtual bool supportsMuting() const { return false; }
+    virtual void setMuted(bool) { }
+
     virtual bool hasClosedCaptions() const { return false; }    
     virtual void setClosedCaptionsVisible(bool) { }
 

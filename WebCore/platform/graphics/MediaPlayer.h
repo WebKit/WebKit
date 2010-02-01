@@ -81,8 +81,11 @@ public:
     // the ready state has changed
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*) { }
 
-    // the volume or muted state has changed
+    // the volume state has changed
     virtual void mediaPlayerVolumeChanged(MediaPlayer*) { }
+
+    // the mute state has changed
+    virtual void mediaPlayerMuteChanged(MediaPlayer*) { }
 
     // time has jumped, eg. not as a result of normal playback
     virtual void mediaPlayerTimeChanged(MediaPlayer*) { }
@@ -177,6 +180,10 @@ public:
     float volume() const;
     void setVolume(float);
 
+    bool supportsMuting() const;
+    bool muted() const;
+    void setMuted(bool);
+
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
@@ -197,7 +204,8 @@ public:
 
     void networkStateChanged();
     void readyStateChanged();
-    void volumeChanged();
+    void volumeChanged(float);
+    void muteChanged(bool);
     void timeChanged();
     void sizeChanged();
     void rateChanged();
@@ -239,6 +247,7 @@ private:
     bool m_visible;
     float m_rate;
     float m_volume;
+    bool m_muted;
     bool m_preservesPitch;
     bool m_autobuffer;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

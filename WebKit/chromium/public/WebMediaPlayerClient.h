@@ -40,7 +40,8 @@ class WebMediaPlayerClient {
 public:
     virtual void networkStateChanged() = 0;
     virtual void readyStateChanged() = 0;
-    virtual void volumeChanged() = 0;
+    virtual void volumeChanged(float) = 0;
+    virtual void muteChanged(bool) = 0;
     virtual void timeChanged() = 0;
     virtual void repaint() = 0;
     virtual void durationChanged() = 0;

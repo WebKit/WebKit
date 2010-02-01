@@ -85,10 +85,16 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     m_mediaPlayer->readyStateChanged();
 }
 
-void WebMediaPlayerClientImpl::volumeChanged()
+void WebMediaPlayerClientImpl::volumeChanged(float newVolume)
 {
     ASSERT(m_mediaPlayer);
-    m_mediaPlayer->volumeChanged();
+    m_mediaPlayer->volumeChanged(newVolume);
+}
+
+void WebMediaPlayerClientImpl::muteChanged(bool newMute)
+{
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->muteChanged(newMute);
 }
 
 void WebMediaPlayerClientImpl::timeChanged()

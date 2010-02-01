@@ -87,6 +87,9 @@ public:
 
     virtual void setVolume(float) { }
 
+    virtual bool supportsMuting() const { return false; }
+    virtual void setMuted(bool) { }
+
     virtual bool hasClosedCaptions() const { return false; }
     virtual void setClosedCaptionsVisible(bool) { };
 
@@ -193,6 +196,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_visible(false)
     , m_rate(1.0f)
     , m_volume(1.0f)
+    , m_muted(false)
     , m_preservesPitch(true)
     , m_autobuffer(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -379,6 +383,22 @@ void MediaPlayer::setVolume(float volume)
     m_private->setVolume(volume);   
 }
 
+bool MediaPlayer::muted() const
+{
+    return m_muted;
+}
+
+bool MediaPlayer::supportsMuting() const
+{
+    return m_private->supportsMuting();
+}
+
+void MediaPlayer::setMuted(bool muted)
+{
+    m_muted = muted;
+    m_private->setMuted(muted);
+}
+
 bool MediaPlayer::hasClosedCaptions() const
 {
     return m_private->hasClosedCaptions();
@@ -542,10 +562,18 @@ void MediaPlayer::readyStateChanged()
         m_mediaPlayerClient->mediaPlayerReadyStateChanged(this);
 }
 
-void MediaPlayer::volumeChanged()
+void MediaPlayer::volumeChanged(float newVolume)
 {
+    m_volume = newVolume;
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerVolumeChanged(this);
+}
+
+void MediaPlayer::muteChanged(bool newMuted)
+{
+    m_muted = newMuted;
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerMuteChanged(this);
 }
 
 void MediaPlayer::timeChanged()
