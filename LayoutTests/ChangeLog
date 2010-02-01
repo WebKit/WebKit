@@ -1,3 +1,12 @@
+2010-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        No review, build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34447
+        http/tests/media/video-referer.html fails on Windows
+
+        * platform/win/Skipped:
+
 2010-02-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial fix.

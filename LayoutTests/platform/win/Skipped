@@ -743,3 +743,6 @@ http/tests/media/video-cookie.html
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
+# Fails on Windows
+# https://bugs.webkit.org/show_bug.cgi?id=34447
+http/tests/media/video-referer.html
