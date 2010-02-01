@@ -183,6 +183,8 @@ WebInspector.ResourceView.prototype = {
         this.headersElement.addStyleClass("hidden");
         if ("resize" in this)
             this.resize();
+        if ("contentTabSelected" in this)
+            this.contentTabSelected();
     },
 
     _refreshURL: function()

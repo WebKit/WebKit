@@ -1,3 +1,16 @@
+2010-02-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: lazy-load textual resources to avoid UI hangup
+        https://bugs.webkit.org/show_bug.cgi?id=34332
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._innerSelectContentTab):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.show):
+        (WebInspector.SourceView.prototype.contentTabSelected):
+
 2010-02-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele Peterson.
