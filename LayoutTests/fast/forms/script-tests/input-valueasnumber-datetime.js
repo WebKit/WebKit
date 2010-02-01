@@ -26,6 +26,7 @@ shouldBe('setValueAsNumberAndGetValue(10000, 0, 1, 12, 0, 1, 0)', '"10000-01-01T
 shouldBe('setValueAsNumberAndGetValue(794, 9, 22, 0, 0, 0, 0)', '""');
 shouldBe('setValueAsNumberAndGetValue(1582, 9, 14, 23, 59, 59, 999)', '""');
 shouldBe('setValueAsNumberAndGetValue(1582, 9, 15, 0, 0, 0, 0)', '"1582-10-15T00:00Z"');
+shouldBe('setValueAsNumberAndGetValue(275760, 8, 12, 0, 0, 0, 1)', '"275760-09-12T00:00:00.001Z"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 13, 0, 0, 0, 0)', '"275760-09-13T00:00Z"');
 // Date.UTC() of V8 throws an exception for the following value though JavaScriptCore doesn't.
 // shouldBe('setValueAsNumberAndGetValue(275760, 8, 13, 0, 0, 0, 1)', '"275760-09-13T00:00:00.001Z"');

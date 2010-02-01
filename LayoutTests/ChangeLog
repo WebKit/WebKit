@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        [Win] Fix a bug of round() with huge integral numbers
+        https://bugs.webkit.org/show_bug.cgi?id=34297
+
+        Add a test case to call round(8639999913600001).
+
+        * fast/forms/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/script-tests/input-valueasnumber-datetime.js:
+
+2010-01-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Fix valueAsNumber calculation for type=month.
         https://bugs.webkit.org/show_bug.cgi?id=34304
 

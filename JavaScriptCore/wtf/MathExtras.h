@@ -98,12 +98,25 @@ inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x
 
 #if COMPILER(MSVC) || COMPILER(RVCT)
 
-inline long long llround(double num) { return static_cast<long long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
-inline long long llroundf(float num) { return static_cast<long long>(num > 0 ? num + 0.5f : ceil(num - 0.5f)); }
-inline long lround(double num) { return static_cast<long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
-inline long lroundf(float num) { return static_cast<long>(num > 0 ? num + 0.5f : ceilf(num - 0.5f)); }
-inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num - 0.5); }
-inline float roundf(float num) { return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f); }
+// We must not do 'num + 0.5' or 'num - 0.5' because they can cause precision loss.
+static double round(double num)
+{
+    double integer = ceil(num);
+    if (num > 0)
+        return integer - num > 0.5 ? integer - 1.0 : integer;
+    return integer - num >= 0.5 ? integer - 1.0 : integer;
+}
+static float roundf(float num)
+{
+    float integer = ceilf(num);
+    if (num > 0)
+        return integer - num > 0.5f ? integer - 1.0f : integer;
+    return integer - num >= 0.5f ? integer - 1.0f : integer;
+}
+inline long long llround(double num) { return static_cast<long long>(round(num)); }
+inline long long llroundf(float num) { return static_cast<long long>(roundf(num)); }
+inline long lround(double num) { return static_cast<long>(round(num)); }
+inline long lroundf(float num) { return static_cast<long>(roundf(num)); }
 inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
 
 #endif

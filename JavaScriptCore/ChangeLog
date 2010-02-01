@@ -1,3 +1,27 @@
+2010-01-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        [Windows] Fix a bug of round() with huge integral numbers
+        https://bugs.webkit.org/show_bug.cgi?id=34297
+
+        Fix a bug that round() for huge integral numbers returns incorrect
+        results. For example, round(8639999913600001) returns
+        8639999913600002 without this change though the double type can
+        represent 8639999913600001 precisely.
+
+        Math.round() of JavaScript has a similar problem. But this change
+        doesn't fix it because Math.round() doesn't use round() of
+        MathExtra.h.
+
+        * wtf/MathExtras.h:
+        (round): Avoid to do "num + 0.5" or "num - 0.5".
+        (roundf): Fixed similarly.
+        (llround): Calls round().
+        (llroundf): Calls roundf().
+        (lround): Calls round().
+        (lroundf): Calls roundf().
+
 2010-01-29  Mark Rowe  <mrowe@apple.com>
 
         Sort Xcode projects.
