@@ -215,7 +215,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     XGetGeometry(GDK_DISPLAY(), m_drawable, &dummyW, &dummyI, &dummyI,
                  &dummyUI, &dummyUI, &dummyUI, &actualDepth);
 
-    const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
+    const unsigned int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
     ASSERT(drawableDepth == actualDepth);
 
     cairo_surface_t* drawableSurface = cairo_xlib_surface_create(GDK_DISPLAY(),
