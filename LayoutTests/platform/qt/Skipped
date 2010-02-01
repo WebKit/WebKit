@@ -5109,3 +5109,6 @@ http/tests/history/redirect-307.pl
 # small caps vs. normal text
 # https://bugs.webkit.org/show_bug.cgi?id=34286
 css2.1/t1505-c524-font-var-00-b.html
+
+# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
+fast/loader/crash-copying-backforwardlist.html

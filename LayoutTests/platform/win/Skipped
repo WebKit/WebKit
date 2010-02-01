@@ -739,3 +739,7 @@ fast/dom/Window/window-properties-geolocation.html
 # Needs to pass cookies to the media player
 # See http://bugs.webkit.org/show_bug.cgi?id=33954
 http/tests/media/video-cookie.html
+
+# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
+fast/loader/crash-copying-backforwardlist.html
+

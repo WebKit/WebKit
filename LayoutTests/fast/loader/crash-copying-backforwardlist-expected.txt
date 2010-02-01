@@ -1,0 +1,3 @@
+This test only works in DRT by tickling the [WebView _loadBackForwardListFromOtherView:] method.
+If it doesn't crash, then the test passes.
+

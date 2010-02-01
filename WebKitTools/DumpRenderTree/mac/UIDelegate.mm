@@ -38,6 +38,7 @@
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 
 DumpRenderTreeDraggingInfo *draggingInfo = nil;
@@ -121,6 +122,9 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     ASSERT(gLayoutTestController->waitToDump());
 
     WebView *webView = createWebViewAndOffscreenWindow();
+    
+    if (gLayoutTestController->newWindowsCopyBackForwardList())
+        [webView _loadBackForwardListFromOtherView:sender];
     
     return [webView autorelease];
 }

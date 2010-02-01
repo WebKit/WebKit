@@ -1,3 +1,24 @@
+2010-02-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash in Safari opening new tabs to "same page"
+        <rdar://problem/7593857> and https://bugs.webkit.org/show_bug.cgi?id=34444
+
+        Add a mode (Mac-only for now) that exercises the WebView SPI _loadBackForwardListFromOtherView:
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (setNewWindowsCopyBackForwardListCallback):
+        (LayoutTestController::staticFunctions):
+
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::newWindowsCopyBackForwardList):
+        (LayoutTestController::setNewWindowsCopyBackForwardList):
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+
 2010-02-01  Carol Szabo  <carol.szabo@nokia.com>
 
         Unreviewed.

@@ -66,28 +66,29 @@ public:
     void queueReload();
     void removeAllVisitedLinks();
     void setAcceptsEditing(bool acceptsEditing);
-    void setAppCacheMaximumSize(unsigned long long quota);
     void setAllowUniversalAccessFromFileURLs(bool);
+    void setAppCacheMaximumSize(unsigned long long quota);
     void setAuthorAndUserStylesEnabled(bool);
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
-    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
-    void setMockGeolocationError(int code, JSStringRef message);
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);
     void setJavaScriptProfilingEnabled(bool profilingEnabled);
     void setMainFrameIsFirstResponder(bool flag);
+    void setMockGeolocationError(int code, JSStringRef message);
+    void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPopupBlockingEnabled(bool flag);
     void setPrivateBrowsingEnabled(bool flag);
-    void setXSSAuditorEnabled(bool flag);
     void setSelectTrailingWhitespaceEnabled(bool flag);
     void setSmartInsertDeleteEnabled(bool flag);
     void setTabKeyCyclesThroughElements(bool cycles);
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
+    void setXSSAuditorEnabled(bool flag);
+
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();
     unsigned workerThreadCount() const;
@@ -160,6 +161,9 @@ public:
 
     bool closeRemainingWindowsWhenComplete() const { return m_closeRemainingWindowsWhenComplete; }
     void setCloseRemainingWindowsWhenComplete(bool closeRemainingWindowsWhenComplete) { m_closeRemainingWindowsWhenComplete = closeRemainingWindowsWhenComplete; }
+    
+    bool newWindowsCopyBackForwardList() const { return m_newWindowsCopyBackForwardList; }
+    void setNewWindowsCopyBackForwardList(bool newWindowsCopyBackForwardList) { m_newWindowsCopyBackForwardList = newWindowsCopyBackForwardList; }
     
     bool stopProvisionalFrameLoads() const { return m_stopProvisionalFrameLoads; }
     void setStopProvisionalFrameLoads(bool stopProvisionalFrameLoads) { m_stopProvisionalFrameLoads = stopProvisionalFrameLoads; }
@@ -248,6 +252,7 @@ private:
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;
     bool m_closeRemainingWindowsWhenComplete;
+    bool m_newWindowsCopyBackForwardList;
     bool m_stopProvisionalFrameLoads;
     bool m_testOnscreen;
     bool m_testRepaint;

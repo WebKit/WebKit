@@ -1,3 +1,16 @@
+2010-02-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash in Safari opening new tabs to "same page"
+        <rdar://problem/7593857> and https://bugs.webkit.org/show_bug.cgi?id=34444
+
+        * fast/loader/crash-copying-backforwardlist-expected.txt: Added.
+        * fast/loader/crash-copying-backforwardlist.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.

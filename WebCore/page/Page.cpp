@@ -290,7 +290,8 @@ void Page::goBackOrForward(int distance)
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
     // Abort any current load unless we're navigating the current document to a new state object
-    if (!item->stateObject() || item->documentSequenceNumber() != m_mainFrame->loader()->history()->currentItem()->documentSequenceNumber()) {
+    HistoryItem* currentItem = m_mainFrame->loader()->history()->currentItem();
+    if (!item->stateObject() || !currentItem || item->documentSequenceNumber() != currentItem->documentSequenceNumber()) {
         // Define what to do with any open database connections. By default we stop them and terminate the database thread.
         DatabasePolicy databasePolicy = DatabasePolicyStop;
 

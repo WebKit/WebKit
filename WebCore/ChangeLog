@@ -1,3 +1,18 @@
+2010-02-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Crash in Safari opening new tabs to "same page"
+        <rdar://problem/7593857> and https://bugs.webkit.org/show_bug.cgi?id=34444
+
+        Test: fast/loader/crash-copying-backforwardlist.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): Null check currentItem().
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem): Ditto.
+
 2010-02-01  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
