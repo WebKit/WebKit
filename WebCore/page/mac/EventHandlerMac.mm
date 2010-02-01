@@ -663,6 +663,11 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 #else // ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
 
+NSEvent *EventHandler::currentNSEvent()
+{
+    return 0;
+}
+
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     subframe->eventHandler()->handleMousePressEvent(mev.event());
@@ -710,6 +715,62 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
     notImplemented();
     return false;
 }
+
+PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
+{
+    return 0;
+}
+
+void EventHandler::mouseDown(NSEvent *)
+{
+    notImplemented();
+}
+
+void EventHandler::mouseDragged(NSEvent *)
+{
+    notImplemented();
+}
+
+void EventHandler::mouseUp(NSEvent *)
+{
+    notImplemented();
+}
+
+void EventHandler::mouseMoved(NSEvent *)
+{
+    notImplemented();
+}
+
+bool EventHandler::keyEvent(NSEvent *)
+{
+    notImplemented();
+    return false;
+}
+
+bool EventHandler::wheelEvent(NSEvent *)
+{
+    notImplemented();
+    return false;
+}
+
+#if ENABLE(CONTEXT_MENUS)
+bool EventHandler::sendContextMenuEvent(NSEvent *)
+{
+    notImplemented();
+    return false;
+}
+#endif
+
+bool EventHandler::eventMayStartDrag(NSEvent *)
+{
+    notImplemented();
+    return false;
+}
+
+void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *)
+{
+}
+
 
 #endif
 

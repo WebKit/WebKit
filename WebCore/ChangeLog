@@ -1,3 +1,23 @@
+2010-02-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Fix EXPERIMENTAL_SINGLE_VIEW_MODE build.
+
+        * page/EventHandler.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::currentNSEvent):
+        (WebCore::EventHandler::currentKeyboardEvent):
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseDragged):
+        (WebCore::EventHandler::mouseUp):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::wheelEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+
 2010-02-01  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium build fix.
