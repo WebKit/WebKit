@@ -64,6 +64,11 @@ void SQLiteTransaction::begin()
 
 void SQLiteTransaction::commit()
 {
+    // FIXME: this code is buggy; it assumes that COMMIT always succeeds which is not the case:
+    // the transaction could've been silently rolled back before getting to the COMMIT statement
+    // (https://bugs.webkit.org/show_bug.cgi?id=34280). However, the rest of the code does not
+    // know how to deal with a premature rollback and a failed COMMIT at this moment, so until
+    // we figure out what to do with bug 34280, it's better to leave this code as it is.
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
         m_db.executeCommand("COMMIT;");
@@ -84,8 +89,10 @@ void SQLiteTransaction::rollback()
 
 void SQLiteTransaction::stop()
 {
-    m_inProgress = false;
-    m_db.m_transactionInProgress = false;
+    if (m_inProgress) {
+        m_inProgress = false;
+        m_db.m_transactionInProgress = false;
+    }
 }
 
 } // namespace WebCore

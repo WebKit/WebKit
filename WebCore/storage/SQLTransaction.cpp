@@ -35,6 +35,7 @@
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseDetails.h"
+#include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "Page.h"
@@ -83,6 +84,7 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
 
 SQLTransaction::~SQLTransaction()
 {
+    ASSERT(!m_sqliteTransaction);
 }
 
 void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)
@@ -201,6 +203,16 @@ void SQLTransaction::performPendingCallback()
 
     if (m_nextStep)
         (this->*m_nextStep)();
+}
+
+void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
+{
+    ASSERT(currentThread() == database()->scriptExecutionContext()->databaseThread()->getThreadID());
+
+    // If the transaction is in progress, we should roll it back here, since this is our last
+    // oportunity to do something related to this transaction on the DB thread.
+    // Clearing m_sqliteTransaction invokes SQLiteTransaction's destructor which does just that.
+    m_sqliteTransaction.clear();
 }
 
 void SQLTransaction::acquireLock()
@@ -491,6 +503,7 @@ void SQLTransaction::cleanupAfterSuccessCallback()
     // There is no next step
     LOG(StorageAPI, "Transaction %p is complete\n", this);
     ASSERT(!m_database->m_sqliteDatabase.transactionInProgress());
+    m_sqliteTransaction.clear();
     m_nextStep = 0;
 
     // Release the lock on this database

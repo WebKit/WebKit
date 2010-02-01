@@ -109,6 +109,20 @@ void SQLTransactionCoordinator::releaseLock(SQLTransaction* transaction)
 
 void SQLTransactionCoordinator::shutdown()
 {
+    // Notify all transactions in progress that the database thread is shutting down
+    for (CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.begin();
+         coordinationInfoIterator != m_coordinationInfoMap.end(); ++coordinationInfoIterator) {
+        CoordinationInfo& info = coordinationInfoIterator->second;
+        if (info.activeWriteTransaction)
+            info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
+        for (HashSet<RefPtr<SQLTransaction> >::iterator activeReadTransactionsIterator =
+                     info.activeReadTransactions.begin();
+             activeReadTransactionsIterator != info.activeReadTransactions.end();
+             ++activeReadTransactionsIterator) {
+            (*activeReadTransactionsIterator)->notifyDatabaseThreadIsShuttingDown();
+        }
+    }
+
     // Clean up all pending transactions for all databases
     m_coordinationInfoMap.clear();
 }

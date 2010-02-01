@@ -1,3 +1,23 @@
+2010-02-01  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Making sure that all in-progress transactions are rolled back on
+        the database thread before they're destroyed. Otherwise,
+        SQLiteTransaction's destructor will try to do a rollback and that
+        would cause an assertion failure, if the object is not destroyed
+        on the DB thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34152
+
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::stop):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::notifyDatabaseThreadIsShuttingDown):
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionCoordinator.cpp:
+        (WebCore::SQLTransactionCoordinator::shutdown):
+
 2010-02-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
