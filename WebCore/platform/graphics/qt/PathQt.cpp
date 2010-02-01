@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin   <zack@kde.org>
  *               2006 Rob Buis     <buis@kde.org>
- *               2009, 2010 Dirk Schulze <krit@webkit.org>
+ *               2009 Dirk Schulze <krit@webkit.org>
  *
  * All rights reserved.
  *
@@ -30,13 +30,12 @@
 #include "config.h"
 #include "Path.h"
 
-#include "AffineTransform.h"
+#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
-#include "TransformationMatrix.h"
 #include <QPainterPath>
 #include <QTransform>
 #include <QString>
@@ -378,11 +377,6 @@ void Path::apply(void* info, PathApplierFunction function) const
                 Q_ASSERT(false);
         }
     }
-}
-
-void Path::transform(const AffineTransform& transform)
-{
-    m_path = QTransform(transform).map(m_path);
 }
 
 void Path::transform(const TransformationMatrix& transform)

@@ -40,7 +40,6 @@
 #include <windows.h>
 #endif
 
-#include "AffineTransform.h"
 #include "Color.h"
 #include "FloatConversion.h"
 #include "Font.h"
@@ -274,13 +273,6 @@ GraphicsContext::~GraphicsContext()
 PlatformGraphicsContext* GraphicsContext::platformContext() const
 {
     return m_data->p();
-}
-
-AffineTransform GraphicsContext::getAffineCTM() const
-{
-    QTransform matrix(platformContext()->combinedTransform());
-    return AffineTransform(matrix.m11(), matrix.m12(), matrix.m21(),
-                           matrix.m22(), matrix.dx(), matrix.dy());
 }
 
 TransformationMatrix GraphicsContext::getCTM() const
@@ -1195,24 +1187,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
     p->setClipPath(path, Qt::IntersectClip);
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
 }
-
-void GraphicsContext::concatCTM(const AffineTransform& transform)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->p()->setWorldTransform(transform, true);
-
-    // Transformations to the context shouldn't transform the currentPath.
-    // We have to undo every change made to the context from the currentPath
-    // to avoid wrong drawings.
-    if (!m_data->currentPath.isEmpty() && transform.isInvertible()) {
-        QTransform matrix = transform.inverse();
-        m_data->currentPath = m_data->currentPath * matrix;
-        m_common->state.pathTransform.multiply(transform.toTransformationMatrix());
-    }
-}
-
 
 void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {

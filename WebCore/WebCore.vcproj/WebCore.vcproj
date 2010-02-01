@@ -24107,14 +24107,6 @@
 					Name="transforms"
 					>
 					<File
-						RelativePath="..\platform\graphics\transforms\AffineTransform.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\transforms\AffineTransform.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\transforms\IdentityTransformOperation.h"
 						>
 					</File>

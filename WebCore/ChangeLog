@@ -1,3 +1,48 @@
+2010-01-31  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Revert r54112 and r54124 because of Windows build error.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::willDraw):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/cairo/PathCairo.cpp:
+        * platform/graphics/cairo/TransformationMatrixCairo.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        * platform/graphics/haiku/PathHaiku.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/PathQt.cpp:
+        * platform/graphics/qt/TransformationMatrixQt.cpp:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        * platform/graphics/skia/PathSkia.cpp:
+        * platform/graphics/skia/TransformationMatrixSkia.cpp:
+        * platform/graphics/transforms/AffineTransform.cpp: Removed.
+        * platform/graphics/transforms/AffineTransform.h: Removed.
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        * platform/graphics/wx/PathWx.cpp:
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        (WebCore::TransformationMatrix::operator wxGraphicsMatrix):
+
 2010-01-31  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

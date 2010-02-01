@@ -1601,8 +1601,6 @@ webcore_sources += \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \
 	WebCore/platform/graphics/WidthIterator.h \
-	WebCore/platform/graphics/transforms/AffineTransform.cpp \
-	WebCore/platform/graphics/transforms/AffineTransform.h \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \

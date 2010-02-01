@@ -67,7 +67,6 @@ typedef PlatformPath* PlatformPathPtr;
 
 namespace WebCore {
 
-    class AffineTransform;
     class FloatPoint;
     class FloatRect;
     class FloatSize;
@@ -146,7 +145,6 @@ namespace WebCore {
         static Path createLine(const FloatPoint&, const FloatPoint&);
 
         void apply(void* info, PathApplierFunction) const;
-        void transform(const AffineTransform&);
         void transform(const TransformationMatrix&);
 
     private:

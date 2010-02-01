@@ -25,7 +25,6 @@
 #include "config.h"
 #include "Path.h"
 
-#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 #include "CairoPath.h"
 #include "FloatRect.h"
@@ -325,14 +324,6 @@ void Path::apply(void* info, PathApplierFunction function) const
         }
     }
     cairo_path_destroy(path);
-}
-
-void Path::transform(const AffineTransform& trans)
-{
-    cairo_t* m_cr = platformPath()->m_cr;
-    cairo_matrix_t c_matrix = cairo_matrix_t(trans);
-    cairo_matrix_invert(&c_matrix);
-    cairo_transform(m_cr, &c_matrix);
 }
 
 void Path::transform(const TransformationMatrix& trans)

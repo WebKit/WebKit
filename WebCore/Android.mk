@@ -466,7 +466,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/graphics/skia/SkiaUtils.cpp \
 	platform/graphics/skia/TransformationMatrixSkia.cpp \
 	\
-	platform/graphics/transforms/AffineTransform.cpp \
 	platform/graphics/transforms/Matrix3DTransformOperation.cpp \
 	platform/graphics/transforms/MatrixTransformOperation.cpp \
 	platform/graphics/transforms/PerspectiveTransformOperation.cpp \

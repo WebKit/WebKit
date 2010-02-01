@@ -30,7 +30,6 @@
 #include "config.h"
 #include "Path.h"
 
-#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "ImageBuffer.h"
 #include "StrokeStyleApplier.h"
@@ -213,11 +212,6 @@ void Path::apply(void* info, PathApplierFunction function) const
         }
         function(info, &pathElement);
     }
-}
-
-void Path::transform(const AffineTransform& xform)
-{
-    m_path->transform(xform);
 }
 
 void Path::transform(const TransformationMatrix& xform)

@@ -28,7 +28,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "AffineTransform.h"
 #include "CString.h"
 #include "Color.h"
 #include "Font.h"
@@ -392,12 +391,6 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
     notImplemented();
 }
 
-AffineTransform GraphicsContext::getAffineCTM() const
-{
-    notImplemented();
-    return AffineTransform();
-}
-
 TransformationMatrix GraphicsContext::getCTM() const
 {
     notImplemented();
@@ -451,14 +444,6 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
 }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    notImplemented();
-}
-
-void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
