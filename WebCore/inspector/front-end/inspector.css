@@ -589,6 +589,7 @@ body.platform-windows .source-code, body.platform-windows-vista-or-later .source
     margin-right: 4px;
     text-align: left;
     font-size: 11px;
+    line-height: normal;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     text-shadow: none;
@@ -3071,6 +3072,7 @@ body.inactive .sidebar-tree-item .disclosure-button:active {
     padding: 1px 4px;
     text-align: center;
     font-size: 11px;
+    line-height: normal;
     font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     text-shadow: none;
