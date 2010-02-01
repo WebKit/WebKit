@@ -73,6 +73,7 @@ void LayoutTestController::reset()
     m_waitForPolicy = false;
     m_handleErrorPages = false;
     m_webHistory = 0;
+    m_globalFlag = false;
     qt_dump_editing_callbacks(false);
     qt_dump_resource_load_callbacks(false);
     emit hidePage();

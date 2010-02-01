@@ -53,6 +53,7 @@ class LayoutTestController : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
     Q_PROPERTY(int workerThreadCount READ workerThreadCount)
+    Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
     LayoutTestController(WebCore::DumpRenderTree* drt);
 
@@ -91,6 +92,8 @@ public slots:
     void keepWebHistory();
     void notifyDone();
     void dumpBackForwardList() { m_dumpBackForwardList = true; }
+    bool globalFlag() const { return m_globalFlag; }
+    void setGlobalFlag(bool flag) { m_globalFlag = flag; }
     void handleErrorPages() { m_handleErrorPages = true; }
     void dumpEditingCallbacks();
     void dumpResourceLoadCallbacks();
@@ -160,6 +163,7 @@ private:
     bool m_waitForPolicy;
     bool m_handleErrorPages;
     bool m_loadFinished;
+    bool m_globalFlag;
 
     QUrl m_userStyleSheetLocation;
     QBasicTimer m_timeoutTimer;
