@@ -58,6 +58,7 @@ WebInspector.NativeTextViewer.prototype = {
                 lineDiv.style.minHeight = this._textLineHeight + "px";
             this._sheet.appendChild(lineDiv);
             this._textModel.setAttribute(i, "line-div", lineDiv);
+            this._textModel.removeAttribute(i, "div-highlighted");
         }
         this._container.appendChild(this._sheet);
     },
@@ -143,8 +144,8 @@ WebInspector.NativeTextViewer.prototype = {
         if (lineNumber + 1 < this._textModel.linesCount) {
             var nextElement = this._textModel.getAttribute(lineNumber + 1, "line-div");
             return nextElement.offsetTop - element.offsetTop;
-        } else
-            return element.parentElement.offsetHeight - element.offsetTop;
+        }
+        return element.parentElement.offsetHeight - element.offsetTop;
     },
 
     _paintLine: function(lineNumber, lineOffset)
@@ -213,9 +214,9 @@ WebInspector.NativeTextViewer.prototype = {
         this.revalidateDecorationsAndPaint();
     },
 
-    _initFontMetrics: function()
+    initFontMetrics: function()
     {
-        WebInspector.TextEditor.prototype._initFontMetrics.call(this);
+        WebInspector.TextEditor.prototype.initFontMetrics.call(this);
         for (var i = 0; i < this._textModel.linesCount; ++i) {
             var lineDiv = this._textModel.getAttribute(i, "line-div");
             if (!this._textModel.line(i))

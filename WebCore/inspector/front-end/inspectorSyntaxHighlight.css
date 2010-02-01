@@ -65,3 +65,24 @@
 .webkit-javascript-string, .webkit-javascript-regexp {
     color: rgb(196, 26, 22);
 }
+
+/* Keep this in sync with view-source.css */
+.webkit-html-tag {
+    color: rgb(136, 18, 128);
+}
+
+.webkit-html-attr-name {
+    color: rgb(153, 69, 0);
+}
+
+.webkit-html-attr-value {
+    color: rgb(26, 26, 166);
+}
+
+.webkit-html-comment {
+    color: rgb(35, 110, 37);
+}
+
+.webkit-html-doctype {
+    color: rgb(192, 192, 192);
+}

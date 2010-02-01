@@ -976,7 +976,7 @@ WebInspector.TextEditor.prototype = {
         this._updateCursor(this._selection.endLine, this._selection.endColumn);
     },
 
-    _initFontMetrics: function()
+    initFontMetrics: function()
     {
         var computedStyle = window.getComputedStyle(this.element);
         this._font = computedStyle.fontSize + " " + computedStyle.fontFamily;
@@ -998,7 +998,6 @@ WebInspector.TextEditor.prototype = {
 
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("d", modifiers.Ctrl | modifiers.Alt)] = this._handleToggleDebugMode.bind(this);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("h", modifiers.Ctrl | modifiers.Alt)] = this._handleToggleHighlightMode.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("m", modifiers.Ctrl | modifiers.Alt)] = this._handleToggleMonospaceMode.bind(this);
     },
 
     _handleUndo: function()

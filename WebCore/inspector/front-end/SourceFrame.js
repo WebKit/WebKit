@@ -144,7 +144,7 @@ WebInspector.SourceFrame.prototype = {
         this._element = this._editor.element;
         this._element.addEventListener("keydown", this._keyDown.bind(this), true);
         this._parentElement.appendChild(this._element);
-        this._editor._initFontMetrics();
+        this._editor.initFontMetrics();
 
         this._editor.mimeType = this._mimeType;
 
