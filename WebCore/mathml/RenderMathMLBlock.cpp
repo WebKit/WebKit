@@ -30,6 +30,7 @@
 #include "RenderMathMLBlock.h"
 
 #include "FontSelector.h"
+#include "GraphicsContext.h"
 #include "MathMLNames.h"
 #include "RenderInline.h"
 #include "RenderText.h"
@@ -72,6 +73,39 @@ void RenderMathMLBlock::stretchToHeight(int height)
           block->stretchToHeight(height);
        }
 }
+
+#if ENABLE(DEBUG_MATH_LAYOUT)
+void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
+{
+    RenderBlock::paint(info, tx, ty);
+    
+    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
+        return;
+
+    tx += x();
+    ty += y();
+    
+    info.context->save();
+    
+    info.context->setStrokeThickness(1.0f);
+    info.context->setStrokeStyle(SolidStroke);
+    info.context->setStrokeColor(Color(0, 0, 255), sRGBColorSpace);
+    
+    info.context->drawLine(IntPoint(tx, ty), IntPoint(tx + offsetWidth(), ty));
+    info.context->drawLine(IntPoint(tx + offsetWidth(), ty), IntPoint(tx + offsetWidth(), ty + offsetHeight()));
+    info.context->drawLine(IntPoint(tx, ty + offsetHeight()), IntPoint(tx + offsetWidth(), ty + offsetHeight()));
+    info.context->drawLine(IntPoint(tx, ty), IntPoint(tx, ty + offsetHeight()));
+    
+    int baseline = baselinePosition(true);
+    
+    info.context->setStrokeColor(Color(255, 0, 0), sRGBColorSpace);
+    
+    info.context->drawLine(IntPoint(tx, ty + baseline), IntPoint(tx + offsetWidth(), ty + baseline));
+    
+    info.context->restore();
+    
+}
+#endif // ENABLE(DEBUG_MATH_LAYOUT)
 
 
 }    

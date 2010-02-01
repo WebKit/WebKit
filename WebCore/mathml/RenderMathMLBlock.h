@@ -30,6 +30,8 @@
 
 #include "RenderBlock.h"
 
+#define ENABLE_DEBUG_MATH_LAYOUT 0
+
 namespace WebCore {
     
 class RenderMathMLBlock : public RenderBlock {
@@ -44,6 +46,10 @@ public:
     virtual bool hasBase() const { return false; }
     virtual int nonOperatorHeight() const;
     virtual void stretchToHeight(int height);
+
+#if ENABLE(DEBUG_MATH_LAYOUT)
+    virtual void paint(PaintInfo&, int tx, int ty);
+#endif
     
 protected:
     virtual PassRefPtr<RenderStyle> makeBlockStyle();

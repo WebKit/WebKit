@@ -1,3 +1,14 @@
+2010-02-01  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        Added compile time debug support for mathml layout (block boundary & baseline)
+
+        * mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::stretchToHeight):
+        (WebCore::RenderMathMLBlock::paint):
+        * mathml/RenderMathMLBlock.h:
+
 2010-02-01  Philippe Normand  <pnormand@igalia.com>
 
         Rubber stamped by Xan Lopez.
