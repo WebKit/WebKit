@@ -36,5 +36,6 @@ import sys
 import unittest
 
 from checker_unittest import *
+from error_handlers_unittest import *
 from processors.cpp_unittest import *
 from processors.text_unittest import *

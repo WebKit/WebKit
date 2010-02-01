@@ -159,18 +159,18 @@ class ProcessorOptionsTest(unittest.TestCase):
         # code defines __ne__.
         self.assertFalse(ProcessorOptions() != ProcessorOptions())
 
-    def test_should_report_error(self):
-        """Test should_report_error()."""
+    def test_is_reportable(self):
+        """Test is_reportable()."""
         filter = CategoryFilter(["-xyz"])
         options = ProcessorOptions(filter=filter, verbosity=3)
 
         # Test verbosity
-        self.assertTrue(options.should_report_error("abc", 3))
-        self.assertFalse(options.should_report_error("abc", 2))
+        self.assertTrue(options.is_reportable("abc", 3))
+        self.assertFalse(options.is_reportable("abc", 2))
 
         # Test filter
-        self.assertTrue(options.should_report_error("xy", 3))
-        self.assertFalse(options.should_report_error("xyz", 3))
+        self.assertTrue(options.is_reportable("xy", 3))
+        self.assertFalse(options.is_reportable("xyz", 3))
 
 
 class WebKitArgumentDefaultsTest(unittest.TestCase):
@@ -526,65 +526,19 @@ class StyleCheckerTest(unittest.TestCase):
 
     """
 
-    def setUp(self):
-        self.error_messages = ""
-
-    def mock_stderr_write(self, error_message):
-        """A mock sys.stderr.write."""
-        self.error_messages = error_message
+    def _mock_stderr_write(self, message):
         pass
 
-    def mock_handle_style_error(self):
-        pass
-
-    def style_checker(self, options):
-        return StyleChecker(options, self.mock_stderr_write)
+    def _style_checker(self, options):
+        return StyleChecker(options, self._mock_stderr_write)
 
     def test_init(self):
         """Test __init__ constructor."""
         options = ProcessorOptions()
-        style_checker = self.style_checker(options)
+        style_checker = self._style_checker(options)
 
         self.assertEquals(style_checker.error_count, 0)
         self.assertEquals(style_checker.options, options)
-
-    def write_sample_error(self, style_checker, error_confidence):
-        """Write an error to the given style checker."""
-        handle_style_error = (
-            style_checker._default_style_error_handler("filename"))
-
-        handle_style_error(line_number=1,
-                           category="category",
-                           confidence=error_confidence,
-                           message="message")
-
-    def test_default_style_error_handler(self):
-        """Test _handle_style_error() function."""
-        options = ProcessorOptions(output_format="emacs",
-                                   verbosity=3)
-        style_checker = self.style_checker(options)
-
-        # Verify initialized properly.
-        self.assertEquals(style_checker.error_count, 0)
-        self.assertEquals(self.error_messages, "")
-
-        # Check that should_print_error is getting called appropriately.
-        self.write_sample_error(style_checker, 2)
-        self.assertEquals(style_checker.error_count, 0) # Error confidence too low.
-        self.assertEquals(self.error_messages, "")
-
-        self.write_sample_error(style_checker, 3)
-        self.assertEquals(style_checker.error_count, 1) # Error confidence just high enough.
-        self.assertEquals(self.error_messages, "filename:1:  message  [category] [3]\n")
-
-        # Clear previous errors.
-        self.error_messages = ""
-
-        # Check "vs7" output format.
-        style_checker.options.output_format = "vs7"
-        self.write_sample_error(style_checker, 3)
-        self.assertEquals(style_checker.error_count, 2) # Error confidence just high enough.
-        self.assertEquals(self.error_messages, "filename(1):  message  [category] [3]\n")
 
 
 class StyleCheckerCheckFileTest(unittest.TestCase):

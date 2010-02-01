@@ -86,8 +86,9 @@ def main():
             patch = scm.create_patch()
         style_checker.check_patch(patch)
 
-    sys.stderr.write('Total errors found: %d\n' % style_checker.error_count)
-    sys.exit(style_checker.error_count > 0)
+    error_count = style_checker.error_count
+    sys.stderr.write('Total errors found: %d\n' % error_count)
+    sys.exit(error_count > 0)
 
 
 if __name__ == "__main__":

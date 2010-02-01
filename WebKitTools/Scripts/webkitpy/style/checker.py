@@ -35,6 +35,8 @@ import os.path
 import sys
 
 from .. style_references import parse_patch
+from error_handlers import DefaultStyleErrorHandler
+from error_handlers import PatchStyleErrorHandler
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
@@ -332,10 +334,10 @@ class ProcessorOptions(object):
         # Python does not automatically deduce from __eq__().
         return not (self == other)
 
-    def should_report_error(self, category, confidence_in_error):
-        """Return whether an error should be reported.
+    def is_reportable(self, category, confidence_in_error):
+        """Return whether an error is reportable.
 
-        An error should be reported if the confidence in the error
+        An error is reportable if the confidence in the error
         is at least the current verbosity level, and if the current
         filter says that the category should be checked.
 
@@ -701,49 +703,9 @@ class StyleChecker(object):
         self.error_count = 0
         self.options = options
 
-    def _default_style_error_handler(self, file_path):
-        """Return a default style error handler for the given path.
-
-        Args:
-          file_path: The path to the file containing the error. This
-                     is meant for reporting to the user.
-
-        """
-        def handle_style_error(line_number, category, confidence, message):
-            """Handle the occurrence of a style error.
-
-            Check whether an error should be reported. If so, increment the
-            global error count and report the error details.
-
-            Args:
-              line_number: The number of the line containing the error.
-              category: A string used to describe the "category" this bug
-                        falls under: "whitespace", say, or "runtime".
-                        Categories may have a hierarchy separated by slashes:
-                        "whitespace/indent".
-              confidence: A number from 1-5 representing a confidence score
-                          for the error, with 5 meaning that we are certain
-                          of the problem, and 1 meaning that it could be a
-                          legitimate construct.
-              message: The error message.
-
-            """
-            if not self.options.should_report_error(category, confidence):
-                return
-
-            self.error_count += 1
-
-            if self.options.output_format == 'vs7':
-                format_string = "%s(%s):  %s  [%s] [%d]\n"
-            else:
-                format_string = "%s:%s:  %s  [%s] [%d]\n"
-
-            self._stderr_write(format_string % (file_path,
-                                                line_number,
-                                                message,
-                                                category,
-                                                confidence))
-        return handle_style_error
+    def _increment_error_count(self):
+        """Increment the total count of reported errors."""
+        self.error_count += 1
 
     def _process_file(self, processor, file_path, handle_style_error):
         """Process the file using the given processor."""
@@ -795,16 +757,18 @@ class StyleChecker(object):
           file_path: A string that is the path of the file to process.
           handle_style_error: The function to call when a style error
                               occurs. This parameter is meant for internal
-                              use within this class. Defaults to the
-                              style error handling method of this class.
+                              use within this class. Defaults to a
+                              DefaultStyleErrorHandler instance.
           process_file: The function to call to process the file. This
                         parameter should be used only for unit tests.
                         Defaults to the file processing method of this class.
 
         """
         if handle_style_error is None:
-            handle_style_error = self._default_style_error_handler(file_path)
-
+            handle_style_error = DefaultStyleErrorHandler(file_path,
+                                     self.options,
+                                     self._increment_error_count,
+                                     self._stderr_write)
         if process_file is None:
             process_file = self._process_file
 
@@ -835,29 +799,11 @@ class StyleChecker(object):
         """
         patch_files = parse_patch(patch_string)
         for file_path, diff in patch_files.iteritems():
-            line_numbers = set()
+            style_error_handler = PatchStyleErrorHandler(diff,
+                                      file_path,
+                                      self.options,
+                                      self._increment_error_count,
+                                      self._stderr_write)
 
-            handle_style_error = self._default_style_error_handler(file_path)
-
-            def handle_patch_style_error(line_number, category, confidence,
-                                         message):
-                """Wrapper function of cpp_style.error for patches.
-
-                This function outputs errors only if the line number
-                corresponds to lines which are modified or added.
-
-                """
-                if not line_numbers:
-                    for line in diff.lines:
-                        # When deleted line is not set, it means that
-                        # the line is newly added.
-                        if not line[0]:
-                            line_numbers.add(line[1])
-
-                # FIXME: Make sure errors having line number zero are
-                #        logged -- like carriage-return errors.
-                if line_number in line_numbers:
-                    handle_style_error(line_number, category, confidence, message)
-
-            self.check_file(file_path, handle_patch_style_error)
+            self.check_file(file_path, style_error_handler)
 

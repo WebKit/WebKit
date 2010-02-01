@@ -1,3 +1,40 @@
+2010-01-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Moved style error handler code to their own classes, and
+        related refactoring. Increased unit test code coverage of
+        style error handling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34379
+
+        * Scripts/check-webkit-style:
+          - Minor change: added error_count variable.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Renamed ProcessorOptions.should_report_error() to is_reportable().
+          - In the StyleChecker class--
+            - Removed _default_style_error_handler().
+            - Added _increment_error_count().
+            - Refactored to use DefaultStyleErrorHandler and
+              PatchStyleErrorHandler constructors.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - In the StyleStyleCheckerTest class--
+            - Removed write_sample_error().
+            - Removed test_default_style_error_handler().
+
+        * Scripts/webkitpy/style/error_handlers.py: Added.
+          - Added DefaultStyleErrorHandler class.
+          - Added PatchStyleErrorHandler class.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py: Added.
+          - Added unit tests for DefaultStyleErrorHandler and
+            PatchStyleErrorHandler.
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Added error_handlers unit tests.
+
 2010-01-29  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Stephanie Lewis.
