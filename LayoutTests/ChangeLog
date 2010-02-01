@@ -1,3 +1,19 @@
+2010-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fullscreen API should be on HTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=34438
+
+        Update fullscreen tests now that <audio> doesn't have fullscreen API.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * media/media-fullscreen-inline-expected.txt:
+        * media/media-fullscreen-not-in-document-expected.txt:
+        * media/media-fullscreen.js:
+        (buttonClickHandler):
+        (canplaythrough):
+
 2010-02-01  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

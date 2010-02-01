@@ -1,3 +1,25 @@
+2010-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fullscreen API should be on HTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=34438
+        
+        Move fullscreen DOM APIs from HTMLMediaElement to HTMLVideoElement.
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::paint): Removed outdated FIXME.
+        (WebCore::HTMLVideoElement::paintCurrentFrameInContext): Ditto.
+        (WebCore::HTMLVideoElement::webkitEnterFullScreen): Moved from HTMLMediaElement.
+        (WebCore::HTMLVideoElement::webkitExitFullScreen): Ditto.
+        (WebCore::HTMLVideoElement::webkitSupportsFullscreen): Ditto.
+        (WebCore::HTMLVideoElement::webkitDisplayingFullscreen): Ditto.
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+
 2010-02-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

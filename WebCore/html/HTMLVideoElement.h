@@ -64,6 +64,12 @@ public:
     const KURL& poster() const { return m_posterURL; }
     void setPoster(const String&);
 
+// fullscreen
+    void webkitEnterFullScreen(ExceptionCode&);
+    void webkitExitFullScreen();
+    bool webkitSupportsFullscreen();
+    bool webkitDisplayingFullscreen();
+
     void updatePosterImage();
     bool shouldDisplayPosterImage() const { return m_shouldDisplayPosterImage; }
 

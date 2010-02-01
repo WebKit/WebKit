@@ -1,16 +1,19 @@
 
 function buttonClickHandler()
 {
+    var movie = movieInfo.movies[movieInfo.current];
+
     consoleWrite("EVENT(mouseup)");
     
     consoleWrite("* event handler triggered by user gesture");
 
     // Try to enter fullscreen in response to a mouse click
 
-    if (movieInfo.movies[movieInfo.current].supportsFS)
+    if (movie.supportsFS)
         run("mediaElement.webkitEnterFullScreen()");
     else {
-        testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+        if (movie.type == 'video')
+            testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
         openNextMovie();
     }
 }
@@ -41,12 +44,18 @@ function canplaythrough()
 
     consoleWrite("* event handler NOT triggered by a user gesture");
 
-    testExpected("mediaElement.webkitSupportsFullscreen", movie.supportsFS);
-    testExpected("mediaElement.webkitDisplayingFullscreen", false);
+    if (movie.type == 'video') {
+        testExpected("mediaElement.webkitSupportsFullscreen", movie.supportsFS);
+        testExpected("mediaElement.webkitDisplayingFullscreen", false);
+    } else {
+        testExpected("mediaElement.webkitSupportsFullscreen", undefined);
+        testExpected("mediaElement.webkitDisplayingFullscreen", undefined);
+    }
     
     // Verify that we get an exception when trying to enter fullscreen since this isn't
     // called in response to a user gesture.
-    testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+    if (movie.type == 'video')
+        testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
 
     // Click on the button
     if (window.layoutTestController)

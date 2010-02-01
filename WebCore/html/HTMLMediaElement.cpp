@@ -1878,37 +1878,6 @@ PlatformMedia HTMLMediaElement::platformMedia() const
     return m_player ? m_player->platformMedia() : NoPlatformMedia;
 }
 
-void HTMLMediaElement::webkitEnterFullScreen(ExceptionCode& ec)
-{
-    if (m_isFullscreen)
-        return;
-
-    // Generate an exception if this isn't called in response to a user gesture, or if the 
-    // element does not support fullscreen.
-    if (!processingUserGesture() || !supportsFullscreen()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    enterFullscreen();
-}
-
-void HTMLMediaElement::webkitExitFullScreen()
-{
-    if (m_isFullscreen)
-        exitFullscreen();
-}
-
-bool HTMLMediaElement::webkitSupportsFullscreen()
-{
-    return supportsFullscreen();
-}
-
-bool HTMLMediaElement::webkitDisplayingFullscreen()
-{
-    return m_isFullscreen;
-}
-
 bool HTMLMediaElement::hasClosedCaptions() const
 {
     return m_player && m_player->hasClosedCaptions();

@@ -30,5 +30,13 @@ module html {
         readonly attribute unsigned long videoWidth;
         readonly attribute unsigned long videoHeight;
                  attribute [ConvertNullToNullString] DOMString poster;
+
+        readonly attribute boolean webkitSupportsFullscreen;
+        readonly attribute boolean webkitDisplayingFullscreen;
+    
+        void webkitEnterFullScreen()
+            raises (DOMException);
+        void webkitExitFullScreen();
+
     };
 }

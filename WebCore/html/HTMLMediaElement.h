@@ -132,12 +132,6 @@ public:
     void play();
     void pause();
 
-// fullscreen
-    void webkitEnterFullScreen(ExceptionCode&);
-    void webkitExitFullScreen();
-    bool webkitSupportsFullscreen();
-    bool webkitDisplayingFullscreen();
-
 // captions
     bool webkitHasClosedCaptions() const;
     bool webkitClosedCaptionsVisible() const;
@@ -190,6 +184,8 @@ protected:
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
+
+    bool processingUserGesture() const;
 
 private: // MediaPlayerClient
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*);
@@ -247,7 +243,6 @@ private:
 
     void prepareForLoad();
     
-    bool processingUserGesture() const;
     bool processingMediaPlayerCallback() const { return m_processingMediaPlayerCallback > 0; }
     void beginProcessingMediaPlayerCallback() { ++m_processingMediaPlayerCallback; }
     void endProcessingMediaPlayerCallback() { ASSERT(m_processingMediaPlayerCallback); --m_processingMediaPlayerCallback; }

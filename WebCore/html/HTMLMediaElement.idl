@@ -80,13 +80,6 @@ interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
     // WebKit extensions
     attribute boolean webkitPreservesPitch;
 
-    readonly attribute boolean webkitSupportsFullscreen;
-    readonly attribute boolean webkitDisplayingFullscreen;
-
-    void webkitEnterFullScreen()
-        raises (DOMException);
-    void webkitExitFullScreen();
-
     readonly attribute boolean webkitHasClosedCaptions;
     attribute boolean webkitClosedCaptionsVisible;
 };
