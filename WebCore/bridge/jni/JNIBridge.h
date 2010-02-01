@@ -29,10 +29,13 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "Bridge.h"
 #include "JNIUtility.h"
 
 #if USE(JSC)
 #include "JavaStringJSC.h"
+#elif USE(V8)
+#include "JavaStringV8.h"
 #endif
 
 namespace JSC {
