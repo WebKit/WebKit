@@ -85,7 +85,7 @@ RenderVideo::~RenderVideo()
 void RenderVideo::intrinsicSizeChanged()
 {
     if (videoElement()->shouldDisplayPosterImage())
-        RenderVideo::intrinsicSizeChanged();
+        RenderMedia::intrinsicSizeChanged();
     videoSizeChanged(); 
 }
 
@@ -104,7 +104,7 @@ void RenderVideo::videoSizeChanged()
 
 void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
-    RenderImage::imageChanged(newImage, rect);
+    RenderMedia::imageChanged(newImage, rect);
 
     // Cache the image intrinsic size so we can continue to use it to draw the image correctly
     // even after we know the video intrisic size but aren't able to draw video frames yet

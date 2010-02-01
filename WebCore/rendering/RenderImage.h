@@ -64,6 +64,8 @@ protected:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
 
+    virtual void intrinsicSizeChanged() { imageChanged(imagePtr()); }
+
 private:
     virtual const char* renderName() const { return "RenderImage"; }
 
@@ -88,8 +90,6 @@ private:
     virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
     virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSize(multiplier) : IntSize(); }
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
-
-    virtual void intrinsicSizeChanged() { imageChanged(imagePtr()); }
 
     int calcAspectRatioWidth() const;
     int calcAspectRatioHeight() const;

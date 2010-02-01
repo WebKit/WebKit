@@ -1,3 +1,21 @@
+2010-02-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34448
+        <rdar://problem/7598130>
+
+        RenderVideo::intrinsicSizeChanged infinite recursion
+
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::intrinsicSizeChanged): Make protected instead of private so it can
+            be called by RenderVideo.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::intrinsicSizeChanged): Call RenderMedia::intrinsicSizeChanged, not
+            RenderVideo::intrinsicSizeChanged.
+        (WebCore::RenderVideo::imageChanged): Call RenderMedia::imageChanged instead of 
+            RenderImage::imageChanged.
+
 2010-02-01  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
