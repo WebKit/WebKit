@@ -1,3 +1,15 @@
+2010-01-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] Fix a bug that a selected word is not recognized as a
+        spell-check source.
+        https://bugs.webkit.org/show_bug.cgi?id=33660
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::isASingleWord): Use wordBreakIterator(), and correctly check
+        the return value of textBreakNext().
+
 2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -79,11 +79,11 @@ static WebURL urlFromFrame(Frame* frame)
     return WebURL();
 }
 
-// Helper function to determine whether text is a single word or a sentence.
+// Helper function to determine whether text is a single word.
 static bool isASingleWord(const String& text)
 {
-    TextBreakIterator* it = characterBreakIterator(text.characters(), text.length());
-    return it && textBreakNext(it) == TextBreakDone;
+    TextBreakIterator* it = wordBreakIterator(text.characters(), text.length());
+    return it && textBreakNext(it) == static_cast<int>(text.length());
 }
 
 // Helper function to get misspelled word on which context menu
