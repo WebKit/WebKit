@@ -1,3 +1,10 @@
+2010-02-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial fix.
+        Platform dependent expected file updated after r54143.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-02-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adele Peterson.
