@@ -45,10 +45,17 @@ SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamH
     m_streamHandle = streamHandle;
     m_socket = 0;
     bool isSecure = url.protocolIs("wss");
-    if (isSecure)
+
+    if (isSecure) {
+#ifndef QT_NO_OPENSSL
         m_socket = new QSslSocket(this);
-    else
+#endif
+    } else
         m_socket = new QTcpSocket(this);
+
+    if (!m_socket)
+        return;
+
     connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
@@ -59,9 +66,11 @@ SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamH
     unsigned int port = url.hasPort() ? url.port() : (isSecure ? 443 : 80);
 
     QString host = url.host();
-    if (isSecure)
+    if (isSecure) {
+#ifndef QT_NO_OPENSSL
         static_cast<QSslSocket*>(m_socket)->connectToHostEncrypted(host, port);
-    else
+#endif
+    } else
         m_socket->connectToHost(host, port);
 }
 
@@ -88,7 +97,7 @@ void SocketStreamHandlePrivate::socketReadyRead()
 
 int SocketStreamHandlePrivate::send(const char* data, int len)
 {
-    if (m_socket->state() != QAbstractSocket::ConnectedState)
+    if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState)
         return 0;
     quint64 sentSize = m_socket->write(data, len);
     QMetaObject::invokeMethod(this, "socketSentData", Qt::QueuedConnection);
@@ -138,6 +147,7 @@ void SocketStreamHandlePrivate::socketErrorCallback(int error)
     }
 }
 
+#ifndef QT_NO_OPENSSL
 void SocketStreamHandlePrivate::socketSslErrors(const QList<QSslError>&)
 {
     // FIXME: based on http://tools.ietf.org/html/draft-hixie-thewebsocketprotocol-68#page-15
@@ -145,6 +155,8 @@ void SocketStreamHandlePrivate::socketSslErrors(const QList<QSslError>&)
     // We don't abort while this is still work in progress.
     static_cast<QSslSocket*>(m_socket)->ignoreSslErrors();
 }
+#endif
+
 SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
 {
