@@ -1,3 +1,13 @@
+2010-02-01  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        ScriptCallFrame's do not get line numbers/source id's if the caller is unkown.
+        https://bugs.webkit.org/show_bug.cgi?id=34335
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack): If the caller is unknown, the line number and source information is still availble so pass it to the ScriptCallFrame being constructed.
+
 2010-02-01  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Fraser.

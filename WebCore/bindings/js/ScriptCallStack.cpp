@@ -54,14 +54,15 @@ ScriptCallStack::ScriptCallStack(ExecState* exec, const ArgList& args, unsigned 
 
     exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, urlString, function);
 
+    unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
+
     if (function) {
         m_caller = asInternalFunction(function);
-        unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
         m_frames.append(ScriptCallFrame(m_caller->name(m_exec), urlString, lineNumber, args, skipArgumentCount));
     } else {
         // Caller is unknown, but we should still add the frame, because
         // something called us, and gave us arguments.
-        m_frames.append(ScriptCallFrame(UString(), UString(), 0, args, skipArgumentCount));
+        m_frames.append(ScriptCallFrame(UString(), urlString, lineNumber, args, skipArgumentCount));
     }
 }
 
