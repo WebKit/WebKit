@@ -1,3 +1,13 @@
+2010-02-01  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Remove unused file that doesn't seem to belong to the port.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34445
+
+        * platform/wx/KeyEventWin.cpp: Removed.
+
 2010-02-01  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
