@@ -44,7 +44,9 @@
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8CustomBinding.h"
+#include "V8HTMLElement.h"
 #include "V8Proxy.h"
+#include "V8SVGElement.h"
 
 #include <wtf/RefPtr.h>
 
@@ -127,4 +129,14 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeNSCallback(const v8::Arguments&
     return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
+v8::Handle<v8::Value> toV8(Element* impl, bool forceNewObject)
+{
+    if (!impl)
+        return v8::Null();
+    if (impl->isHTMLElement())
+        return toV8(static_cast<HTMLElement*>(impl), forceNewObject);
+    if (impl->isSVGElement())
+        return toV8(static_cast<SVGElement*>(impl), forceNewObject);
+    return V8Element::wrap(impl, forceNewObject);
+}
 } // namespace WebCore

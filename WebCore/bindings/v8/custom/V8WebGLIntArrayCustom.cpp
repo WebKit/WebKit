@@ -63,6 +63,16 @@ v8::Handle<v8::Value> V8WebGLIntArray::setCallback(const v8::Arguments& args)
     return setWebGLArray<WebGLIntArray, V8WebGLIntArray>(args, V8ClassIndex::WEBGLINTARRAY);
 }
 
+v8::Handle<v8::Value> toV8(WebGLIntArray* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = V8WebGLIntArray::wrap(impl);
+    if (!wrapper.IsEmpty())
+        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalIntArray, impl->length());
+    return wrapper;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

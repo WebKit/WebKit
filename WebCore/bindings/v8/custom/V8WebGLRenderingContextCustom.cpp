@@ -175,7 +175,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::bufferSubDataCallback(const v8::A
     return v8::Undefined();
 }
 
-static v8::Handle<v8::Value> toV8(const WebGLGetInfo& info)
+static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
 {
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
@@ -261,7 +261,7 @@ static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, Objec
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 static WebGLUniformLocation* toWebGLUniformLocation(v8::Handle<v8::Value> value, bool& ok)
@@ -317,7 +317,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Arguments& args)
@@ -342,7 +342,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const v8::Arguments& args)
@@ -368,7 +368,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getRenderbufferParameterCallback(const v8::Arguments& args)
@@ -400,7 +400,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getTexParameterCallback(const v8::Arguments& args)
@@ -434,7 +434,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8(info);
+    return toV8Object(info);
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getVertexAttribCallback(const v8::Arguments& args)

@@ -87,8 +87,13 @@ LOCAL_SRC_FILES += \
 	\
 	bindings/v8/custom/V8AbstractWorkerCustom.cpp \
 	bindings/v8/custom/V8AttrCustom.cpp \
+	bindings/v8/custom/V8BarInfoCustom.cpp \
+	bindings/v8/custom/V8CSSRuleCustom.cpp \
 	bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp \
+	bindings/v8/custom/V8CSSStyleSheetCustom.cpp \
+	bindings/v8/custom/V8CSSValueCustom.cpp \
 	bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp \
+	bindings/v8/custom/V8CanvasPixelArrayCustom.cpp \
 	bindings/v8/custom/V8ClientRectListCustom.cpp \
 	bindings/v8/custom/V8ClipboardCustom.cpp \
 	bindings/v8/custom/V8CoordinatesCustom.cpp \
@@ -101,6 +106,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
 	bindings/v8/custom/V8DOMApplicationCacheCustom.cpp \
+	bindings/v8/custom/V8DOMSelectionCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
 	bindings/v8/custom/V8DatabaseCustom.cpp \
@@ -119,6 +125,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8HTMLCollectionCustom.cpp \
 	bindings/v8/custom/V8HTMLDataGridElementCustom.cpp \
 	bindings/v8/custom/V8HTMLDocumentCustom.cpp \
+	bindings/v8/custom/V8HTMLElementCustom.cpp \
 	bindings/v8/custom/V8HTMLFormElementCustom.cpp \
 	bindings/v8/custom/V8HTMLFrameElementCustom.cpp \
 	bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp \
@@ -140,20 +147,25 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8NodeFilterCustom.cpp \
 	bindings/v8/custom/V8NodeIteratorCustom.cpp \
 	bindings/v8/custom/V8NodeListCustom.cpp \
+	bindings/v8/custom/V8ScreenCustom.cpp \
 	bindings/v8/custom/V8SQLResultSetRowListCustom.cpp \
 	bindings/v8/custom/V8SQLTransactionCustom.cpp \
 	bindings/v8/custom/V8WebSocketCustom.cpp
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES += \
+	bindings/v8/custom/V8SVGDocumentCustom.cpp \
+	bindings/v8/custom/V8SVGElementCustom.cpp \
 	bindings/v8/custom/V8SVGElementInstanceCustom.cpp \
 	bindings/v8/custom/V8SVGLengthCustom.cpp \
 	bindings/v8/custom/V8SVGMatrixCustom.cpp
+	bindings/v8/custom/V8SVGPathSegCustom.cpp \
 endif
 
 LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8SharedWorkerCustom.cpp \
 	bindings/v8/custom/V8StorageCustom.cpp \
+	bindings/v8/custom/V8StyleSheetCustom.cpp \
 	bindings/v8/custom/V8StyleSheetListCustom.cpp \
 	bindings/v8/custom/V8TreeWalkerCustom.cpp \
 	bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp \

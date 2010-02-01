@@ -35,11 +35,23 @@
 #include "EventListener.h"
 
 #include "V8AbstractEventListener.h"
+#include "V8Attr.h"
 #include "V8Binding.h"
+#include "V8CDATASection.h"
+#include "V8Comment.h"
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
+#include "V8Document.h"
+#include "V8DocumentFragment.h"
+#include "V8DocumentType.h"
+#include "V8Element.h"
+#include "V8Entity.h"
+#include "V8EntityReference.h"
 #include "V8Node.h"
+#include "V8Notation.h"
+#include "V8ProcessingInstruction.h"
 #include "V8Proxy.h"
+#include "V8Text.h"
 
 #include <wtf/RefPtr.h>
 
@@ -152,4 +164,43 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     return v8::Null();
 }
 
+v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject)
+{
+    if (!impl)
+        return v8::Null();
+
+    if (!forceNewObject) {
+        v8::Handle<v8::Value> wrapper = V8DOMWrapper::getWrapper(impl);
+        if (!wrapper.IsEmpty())
+            return wrapper;
+    }
+    switch (impl->nodeType()) {
+    case Node::ELEMENT_NODE:
+        return toV8(static_cast<Element*>(impl), forceNewObject);
+    case Node::ATTRIBUTE_NODE:
+        return toV8(static_cast<Attr*>(impl), forceNewObject);
+    case Node::TEXT_NODE:
+        return toV8(static_cast<Text*>(impl), forceNewObject);
+    case Node::CDATA_SECTION_NODE:
+        return toV8(static_cast<CDATASection*>(impl), forceNewObject);
+    case Node::ENTITY_REFERENCE_NODE:
+        return toV8(static_cast<EntityReference*>(impl), forceNewObject);
+    case Node::ENTITY_NODE:
+        return toV8(static_cast<Entity*>(impl), forceNewObject);
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        return toV8(static_cast<ProcessingInstruction*>(impl), forceNewObject);
+    case Node::COMMENT_NODE:
+        return toV8(static_cast<Comment*>(impl), forceNewObject);
+    case Node::DOCUMENT_NODE:
+        return toV8(static_cast<Document*>(impl), forceNewObject);
+    case Node::DOCUMENT_TYPE_NODE:
+        return toV8(static_cast<DocumentType*>(impl), forceNewObject);
+    case Node::DOCUMENT_FRAGMENT_NODE:
+        return toV8(static_cast<DocumentFragment*>(impl), forceNewObject);
+    case Node::NOTATION_NODE:
+        return toV8(static_cast<Notation*>(impl), forceNewObject);
+    default: break; // XPATH_NAMESPACE_NODE
+    }
+    return V8Node::wrap(impl, forceNewObject);
+}
 } // namespace WebCore

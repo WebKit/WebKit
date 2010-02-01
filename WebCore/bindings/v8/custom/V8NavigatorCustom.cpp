@@ -32,6 +32,8 @@
 #include "V8Navigator.h"
 
 #include "RuntimeEnabledFeatures.h"
+#include "V8DOMWindow.h"
+#include "V8DOMWrapper.h"
 
 namespace WebCore {
 
@@ -41,5 +43,18 @@ bool V8Navigator::GeolocationEnabled()
     return RuntimeEnabledFeatures::geolocationEnabled();
 }
 #endif
+
+v8::Handle<v8::Value> toV8(Navigator* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+    if (wrapper.IsEmpty()) {
+        wrapper = V8Navigator::wrap(impl);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::navigatorIndex, wrapper);
+    }
+    return wrapper;
+}
 
 } // namespace WebCore

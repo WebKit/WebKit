@@ -43,6 +43,7 @@
 #include "V8BindingState.h"
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
+#include "V8DOMWindow.h"
 #include "V8Location.h"
 #include "V8Utilities.h"
 #include "V8Proxy.h"
@@ -356,6 +357,19 @@ bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Va
     // Only allow same origin access
     Location* imp = V8Location::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
+}
+
+v8::Handle<v8::Value> toV8(Location* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+    if (wrapper.IsEmpty()) {
+        wrapper = V8Location::wrap(impl);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::locationIndex, wrapper);
+    }
+    return wrapper;
 }
 
 }  // namespace WebCore

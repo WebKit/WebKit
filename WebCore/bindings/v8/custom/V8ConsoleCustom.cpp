@@ -32,7 +32,7 @@
 #include "V8Console.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
+#include "V8DOMWindow.h"
 #include "V8Proxy.h"
 #include <v8.h>
 
@@ -52,6 +52,19 @@ v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
     INC_STATS("console.profileEnd()");
     v8::V8::PauseProfiler();
     return v8::Undefined();
+}
+
+v8::Handle<v8::Value> toV8(Console* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+    if (wrapper.IsEmpty()) {
+        wrapper = V8Console::wrap(impl);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::consoleIndex, wrapper);
+    }
+    return wrapper;
 }
 
 } // namespace WebCore

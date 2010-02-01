@@ -1,3 +1,59 @@
+2010-02-01  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Generate toV8() converter for most WebCore->V8 conversions,
+        and defined custom converters in their respective V8<class>Custom.cpp.
+
+        Old converters in V8DOMWrapper will be deleted in a later patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32563
+
+        * Android.v8bindings.mk:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Collection.h:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8BarInfoCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSRuleCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSValueCustom.cpp: Added.
+        * bindings/v8/custom/V8CanvasPixelArrayCustom.cpp: Added.
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        * bindings/v8/custom/V8DOMSelectionCustom.cpp: Added.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * bindings/v8/custom/V8EventCustom.cpp:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLElementCustom.cpp: Added.
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        * bindings/v8/custom/V8NavigatorCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp: Added.
+        * bindings/v8/custom/V8SVGElementCustom.cpp: Added.
+        * bindings/v8/custom/V8SVGPathSegCustom.cpp: Added.
+        * bindings/v8/custom/V8ScreenCustom.cpp: Added.
+        * bindings/v8/custom/V8StyleSheetCustom.cpp: Added.
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        * bindings/v8/custom/V8WebGLArrayCustom.cpp: Added.
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        * dom/make_names.pl: Add options to generate wrapper factory for V8 bindings.
+
 2010-02-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

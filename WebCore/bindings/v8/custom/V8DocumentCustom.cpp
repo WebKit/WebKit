@@ -42,8 +42,11 @@
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8CustomXPathNSResolver.h"
+#include "V8HTMLDocument.h"
+#include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#include "V8SVGDocument.h"
 #include "V8XPathNSResolver.h"
 #include "V8XPathResult.h"
 
@@ -129,6 +132,22 @@ v8::Handle<v8::Value> V8Document::implementationAccessorGetter(v8::Local<v8::Str
     // Store the wrapper in the internal field.
     info.Holder()->SetInternalField(implementationIndex, wrapper);
 
+    return wrapper;
+}
+
+v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
+{
+    if (!impl)
+        return v8::Null();
+    if (impl->isHTMLDocument())
+        return toV8(static_cast<HTMLDocument*>(impl), forceNewObject);
+    if (impl->isSVGDocument())
+        return toV8(static_cast<SVGDocument*>(impl), forceNewObject);
+    v8::Handle<v8::Value> wrapper = V8Document::wrap(impl, forceNewObject);
+    if (!V8IsolatedContext::getEntered()) {
+        if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
+            proxy->windowShell()->updateDocumentWrapper(wrapper);
+    }
     return wrapper;
 }
 

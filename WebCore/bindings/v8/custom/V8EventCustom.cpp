@@ -34,10 +34,28 @@
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
 #include "Event.h"
-#include "MouseEvent.h"
+#include "V8BeforeLoadEvent.h"
 #include "V8Binding.h"
+#include "V8CompositionEvent.h"
 #include "V8CustomBinding.h"
+#include "V8ErrorEvent.h"
+#include "V8KeyboardEvent.h"
+#include "V8MessageEvent.h"
+#include "V8MouseEvent.h"
+#include "V8MutationEvent.h"
+#include "V8OverflowEvent.h"
+#include "V8PageTransitionEvent.h"
+#include "V8PopStateEvent.h"
+#include "V8ProgressEvent.h"
 #include "V8Proxy.h"
+#include "V8SVGZoomEvent.h"
+#include "V8StorageEvent.h"
+#include "V8TextEvent.h"
+#include "V8UIEvent.h"
+#include "V8WebKitAnimationEvent.h"
+#include "V8WebKitTransitionEvent.h"
+#include "V8WheelEvent.h"
+#include "V8XMLHttpRequestProgressEvent.h"
 
 namespace WebCore {
 
@@ -67,4 +85,56 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     return v8::Undefined();
 }
 
+v8::Handle<v8::Value> toV8(Event* impl)
+{
+    if (!impl)
+        return v8::Null();
+    if (impl->isUIEvent()) {
+        if (impl->isKeyboardEvent())
+            return toV8(static_cast<KeyboardEvent*>(impl));
+        if (impl->isTextEvent())
+            return toV8(static_cast<TextEvent*>(impl));
+        if (impl->isMouseEvent())
+            return toV8(static_cast<MouseEvent*>(impl));
+        if (impl->isWheelEvent())
+            return toV8(static_cast<WheelEvent*>(impl));
+#if ENABLE(SVG)
+        if (impl->isSVGZoomEvent())
+            return toV8(static_cast<SVGZoomEvent*>(impl));
+#endif
+        if (impl->isCompositionEvent())
+            return toV8(static_cast<CompositionEvent*>(impl));
+        return toV8(static_cast<UIEvent*>(impl));
+    }
+    if (impl->isMutationEvent())
+        return toV8(static_cast<MutationEvent*>(impl));
+    if (impl->isOverflowEvent())
+        return toV8(static_cast<OverflowEvent*>(impl));
+    if (impl->isMessageEvent())
+        return toV8(static_cast<MessageEvent*>(impl));
+    if (impl->isPageTransitionEvent())
+        return toV8(static_cast<PageTransitionEvent*>(impl));
+    if (impl->isPopStateEvent())
+        return toV8(static_cast<PopStateEvent*>(impl));
+    if (impl->isProgressEvent()) {
+        if (impl->isXMLHttpRequestProgressEvent())
+            return toV8(static_cast<XMLHttpRequestProgressEvent*>(impl));
+        return toV8(static_cast<ProgressEvent*>(impl));
+    }
+    if (impl->isWebKitAnimationEvent())
+        return toV8(static_cast<WebKitAnimationEvent*>(impl));
+    if (impl->isWebKitTransitionEvent())
+        return toV8(static_cast<WebKitTransitionEvent*>(impl));
+#if ENABLE(WORKERS)
+    if (impl->isErrorEvent())
+        return toV8(static_cast<ErrorEvent*>(impl));
+#endif
+#if ENABLE(DOM_STORAGE)
+    if (impl->isStorageEvent())
+        return toV8(static_cast<StorageEvent*>(impl));
+#endif
+    if (impl->isBeforeLoadEvent())
+        return toV8(static_cast<BeforeLoadEvent*>(impl));
+    return V8Event::wrap(impl);
+}
 } // namespace WebCore

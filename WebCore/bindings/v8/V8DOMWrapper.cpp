@@ -45,6 +45,7 @@
 #include "V8Collection.h"
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
+#include "V8DOMApplicationCache.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8EventListenerList.h"
@@ -52,12 +53,18 @@
 #include "V8HTMLDocument.h"
 #include "V8Index.h"
 #include "V8IsolatedContext.h"
-#include "V8MessageChannel.h"
 #include "V8Location.h"
+#include "V8MessageChannel.h"
 #include "V8NamedNodeMap.h"
+#include "V8Node.h"
 #include "V8NodeList.h"
+#include "V8Notification.h"
 #include "V8Proxy.h"
+#include "V8SVGElementInstance.h"
+#include "V8SharedWorker.h"
 #include "V8StyleSheet.h"
+#include "V8WebSocket.h"
+#include "V8Worker.h"
 #include "WebGLArray.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
@@ -976,14 +983,14 @@ v8::Handle<v8::Value> V8DOMWrapper::convertDocumentToV8Object(Document* document
     return wrapper;
 }
 
-static v8::Handle<v8::Value> getWrapper(Node* node)
+v8::Handle<v8::Object> V8DOMWrapper::getWrapper(Node* node)
 {
     ASSERT(WTF::isMainThread());
     V8IsolatedContext* context = V8IsolatedContext::getEntered();
     if (LIKELY(!context)) {
         v8::Persistent<v8::Object>* wrapper = node->wrapper();
         if (!wrapper)
-            return v8::Handle<v8::Value>();
+            return v8::Handle<v8::Object>();
         return *wrapper;
     }
 
@@ -1094,75 +1101,64 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
         return v8::Null();
 
 #if ENABLE(SVG)
-    SVGElementInstance* instance = target->toSVGElementInstance();
-    if (instance)
-        return convertToV8Object(V8ClassIndex::SVGELEMENTINSTANCE, instance);
+    if (SVGElementInstance* instance = target->toSVGElementInstance())
+        return toV8(instance);
 #endif
 
 #if ENABLE(WORKERS)
-    Worker* worker = target->toWorker();
-    if (worker)
-        return convertToV8Object(V8ClassIndex::WORKER, worker);
+    if (Worker* worker = target->toWorker())
+        return toV8(worker);
 #endif // WORKERS
 
 #if ENABLE(SHARED_WORKERS)
-    SharedWorker* sharedWorker = target->toSharedWorker();
-    if (sharedWorker)
-        return convertToV8Object(V8ClassIndex::SHAREDWORKER, sharedWorker);
+    if (SharedWorker* sharedWorker = target->toSharedWorker())
+        return toV8(sharedWorker);
 #endif // SHARED_WORKERS
 
 #if ENABLE(NOTIFICATIONS)
-    Notification* notification = target->toNotification();
-    if (notification)
-        return convertToV8Object(V8ClassIndex::NOTIFICATION, notification);
+    if (Notification* notification = target->toNotification())
+        return toV8(notification);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    WebSocket* webSocket = target->toWebSocket();
-    if (webSocket)
-        return convertToV8Object(V8ClassIndex::WEBSOCKET, webSocket);
+    if (WebSocket* webSocket = target->toWebSocket())
+        return toV8(webSocket);
 #endif
 
-    Node* node = target->toNode();
-    if (node)
-        return convertNodeToV8Object(node);
+    if (Node* node = target->toNode())
+        return toV8(node);
 
     if (DOMWindow* domWindow = target->toDOMWindow())
-        return convertToV8Object(V8ClassIndex::DOMWINDOW, domWindow);
+        return toV8(domWindow);
 
     // XMLHttpRequest is created within its JS counterpart.
-    XMLHttpRequest* xmlHttpRequest = target->toXMLHttpRequest();
-    if (xmlHttpRequest) {
+    if (XMLHttpRequest* xmlHttpRequest = target->toXMLHttpRequest()) {
         v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(xmlHttpRequest);
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
 
     // MessagePort is created within its JS counterpart
-    MessagePort* port = target->toMessagePort();
-    if (port) {
+    if (MessagePort* port = target->toMessagePort()) {
         v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(port);
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
 
-    XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload();
-    if (upload) {
+    if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload()) {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(upload);
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    DOMApplicationCache* domAppCache = target->toDOMApplicationCache();
-    if (domAppCache)
-        return convertToV8Object(V8ClassIndex::DOMAPPLICATIONCACHE, domAppCache);
+    if (DOMApplicationCache* domAppCache = target->toDOMApplicationCache())
+        return toV8(domAppCache);
 #endif
 
 #if ENABLE(EVENTSOURCE)
-    EventSource* eventSource = target->toEventSource();
-    if (eventSource)
-        return convertToV8Object(V8ClassIndex::EVENTSOURCE, eventSource);
+    if (EventSource* eventSource = target->toEventSource())
+        return toV8(eventSource);
 #endif
 
     ASSERT(0);

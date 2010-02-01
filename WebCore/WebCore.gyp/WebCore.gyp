@@ -302,9 +302,8 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.h',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
-            # Pass --wrapperFactory to make_names to get these (JSC build?)
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSHTMLElementWrapperFactory.cpp',
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSHTMLElementWrapperFactory.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.h',
           ],
           'action': [
             'python',
@@ -314,6 +313,7 @@
             '<@(_inputs)',
             '--',
             '--factory',
+            '--wrapperFactoryV8',
             '--extraDefines', '<(feature_defines)'
           ],
         },
@@ -329,9 +329,8 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.h',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.h',
-            # Pass --wrapperFactory to make_names to get these (JSC build?)
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSSVGElementWrapperFactory.cpp',
-            #'<(SHARED_INTERMEDIATE_DIR)/webkit/JSSVGElementWrapperFactory.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.h',
           ],
           'action': [
             'python',
@@ -341,6 +340,7 @@
             '<@(_inputs)',
             '--',
             '--factory',
+            '--wrapperFactoryV8',
             '--extraDefines', '<(feature_defines)'
           ],
         },
@@ -586,6 +586,8 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',

@@ -38,6 +38,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "V8Binding.h"
+#include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -193,6 +194,24 @@ void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
     v8::Handle<v8::Object> holder = info.Holder();
     ASSERT(info.Holder()->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
     info.Holder()->SetInternalField(V8HTMLDocument::shadowIndex, value);
+}
+
+v8::Handle<v8::Value> toV8(HTMLDocument* impl, bool forceNewObject)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, forceNewObject);
+    if (!V8IsolatedContext::getEntered()) {
+        if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
+            proxy->windowShell()->updateDocumentWrapper(wrapper);
+    }
+    // Create marker object and insert it in two internal fields.
+    // This is used to implement temporary shadowing of document.all.
+    ASSERT(wrapper->InternalFieldCount() == V8HTMLDocument::internalFieldCount);
+    v8::Local<v8::Object> marker = v8::Object::New();
+    wrapper->SetInternalField(V8HTMLDocument::markerIndex, marker);
+    wrapper->SetInternalField(V8HTMLDocument::shadowIndex, marker);
+    return wrapper;
 }
 
 } // namespace WebCore

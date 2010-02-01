@@ -191,7 +191,9 @@ namespace WebCore {
             setSVGContext(object.get(), context);
             return object;
         }
-        static void* withSVGContext(void* object, SVGElement* context)
+
+        template <typename T>
+        static T* withSVGContext(T* object, SVGElement* context)
         {
             setSVGContext(object, context);
             return object;

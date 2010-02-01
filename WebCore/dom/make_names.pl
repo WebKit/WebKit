@@ -38,7 +38,8 @@ use InFilesParser;
 use Switch;
 
 my $printFactory = 0; 
-my $printWrapperFactory = 0;
+my $printWrapperFactory = 0; 
+my $printWrapperFactoryV8 = 0; 
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
@@ -55,7 +56,8 @@ GetOptions(
     'outputDir=s' => \$outputDir,
     'extraDefines=s' => \$extraDefines,
     'preprocessor=s' => \$preprocessor,
-    'wrapperFactory' => \$printWrapperFactory
+    'wrapperFactory' => \$printWrapperFactory,
+    'wrapperFactoryV8' => \$printWrapperFactoryV8
 );
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
@@ -71,7 +73,7 @@ $parameters{namespacePrefix} = $parameters{namespace} unless $parameters{namespa
 mkpath($outputDir);
 my $namesBasePath = "$outputDir/$parameters{namespace}Names";
 my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
-my $wrapperFactoryBasePath = "$outputDir/JS$parameters{namespace}ElementWrapperFactory";
+my $wrapperFactoryFileName = "$parameters{namespace}ElementWrapperFactory";
 
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
@@ -81,9 +83,17 @@ if ($printFactory) {
     printFactoryHeaderFile("$factoryBasePath.h");
 }
 
+die "You cannot specify both --wrapperFactory and --wrapperFactoryV8" if $printWrapperFactory && $printWrapperFactoryV8;
+my $wrapperFactoryType = "";
 if ($printWrapperFactory) {
-    printWrapperFactoryCppFile("$wrapperFactoryBasePath.cpp");
-    printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
+    $wrapperFactoryType = "JS";
+} elsif ($printWrapperFactoryV8) {
+    $wrapperFactoryType = "V8";
+}
+
+if ($wrapperFactoryType) {
+    printWrapperFactoryCppFile($outputDir, $wrapperFactoryType, $wrapperFactoryFileName);
+    printWrapperFactoryHeaderFile($outputDir, $wrapperFactoryType, $wrapperFactoryFileName);
 }
 
 ### Hash initialization
@@ -555,6 +565,7 @@ print F "\nvoid init()
 sub printJSElementIncludes
 {
     my $F = shift;
+    my $wrapperFactoryType = shift;
 
     my %tagsSeen;
     for my $tagName (sort keys %tags) {
@@ -562,7 +573,7 @@ sub printJSElementIncludes
         next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
         $tagsSeen{$JSInterfaceName} = 1;
 
-        print F "#include \"JS${JSInterfaceName}.h\"\n";
+        print F "#include \"${wrapperFactoryType}${JSInterfaceName}.h\"\n";
     }
 }
 
@@ -799,6 +810,7 @@ sub usesDefaultJSWrapper
 sub printWrapperFunctions
 {
     my $F = shift;
+    my $wrapperFactoryType = shift;
 
     my %tagsSeen;
     for my $tagName (sort keys %tags) {
@@ -813,10 +825,11 @@ sub printWrapperFunctions
             print F "#if ${conditionalString}\n\n";
         }
 
-        # Hack for the media tags
-        # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
-        if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
-            print F <<END
+        if ($wrapperFactoryType eq "JS") {
+            # Hack for the media tags
+            # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
+            if ($tags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
+                print F <<END
 static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     if (!MediaPlayer::isAvailable())
@@ -826,11 +839,21 @@ static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObjec
 
 END
 ;
-        } else {
-            print F <<END
+            } else {
+                print F <<END
 static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
     return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+}
+
+END
+;
+            }
+        } elsif ($wrapperFactoryType eq "V8") {
+            print F <<END
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+{
+    return toV8(static_cast<${JSInterfaceName}*>(element));
 }
 
 END
@@ -845,9 +868,11 @@ END
 
 sub printWrapperFactoryCppFile
 {
-    my $cppPath = shift;
+    my $outputDir = shift;
+    my $wrapperFactoryType = shift;
+    my $wrapperFactoryFileName = shift;
     my $F;
-    open F, ">$cppPath";
+    open F, ">" . $outputDir . "/" . $wrapperFactoryType . $wrapperFactoryFileName . ".cpp";
 
     printLicenseHeader($F);
 
@@ -855,38 +880,73 @@ sub printWrapperFactoryCppFile
 
     print F "#if $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
 
-    print F "#include \"JS$parameters{namespace}ElementWrapperFactory.h\"\n";
+    print F "#include \"$wrapperFactoryType$parameters{namespace}ElementWrapperFactory.h\"\n";
 
-    printJSElementIncludes($F);
+    printJSElementIncludes($F, $wrapperFactoryType);
 
     print F "\n#include \"$parameters{namespace}Names.h\"\n\n";
 
     printElementIncludes($F);
 
     print F "\n#include <wtf/StdLibExtras.h>\n\n";
-    
-    print F <<END
+
+    if ($wrapperFactoryType eq "JS") {    
+        print F <<END
 using namespace JSC;
+END
+;
+    } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+#include "V8$parameters{namespace}Element.h"
+        
+#include <v8.h>
+END
+;
+    }
+
+    print F <<END
 
 namespace WebCore {
 
 using namespace $parameters{namespace}Names;
 
+END
+;
+    if ($wrapperFactoryType eq "JS") {
+        print F <<END
 typedef JSNode* (*Create$parameters{namespace}ElementWrapperFunction)(ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{namespace}Element>);
 
 END
 ;
+    } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+typedef v8::Handle<v8::Value> (*Create$parameters{namespace}ElementWrapperFunction)($parameters{namespace}Element*);
 
-    printWrapperFunctions($F);
+END
+;
+    }
 
-    print F <<END
+    printWrapperFunctions($F, $wrapperFactoryType);
+
+    if ($wrapperFactoryType eq "JS") {
+        print F <<END
 JSNode* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
-{   
+{
     typedef HashMap<WebCore::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
     if (map.isEmpty()) {
 END
 ;
+    } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element* element, bool forceNewObject)
+{
+    typedef HashMap<WebCore::AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction> FunctionMap;
+    DEFINE_STATIC_LOCAL(FunctionMap, map, ());
+    if (map.isEmpty()) {
+END
+;
+    }
 
     for my $tag (sort keys %tags) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
@@ -910,8 +970,22 @@ END
     }
     Create$parameters{namespace}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)
+END
+;
+    if ($wrapperFactoryType eq "JS") {
+        print F <<END
         return createWrapperFunction(exec, globalObject, element);
     return CREATE_DOM_NODE_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
+END
+;
+    } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+        return createWrapperFunction(element);
+    return V8$parameters{namespace}Element::wrap(element, forceNewObject);
+END
+;
+    }
+    print F <<END
 }
 
 }
@@ -926,18 +1000,21 @@ END
 
 sub printWrapperFactoryHeaderFile
 {
-    my $headerPath = shift;
+    my $outputDir = shift;
+    my $wrapperFactoryType = shift;
+    my $wrapperFactoryFileName = shift;
     my $F;
-    open F, ">$headerPath";
+    open F, ">" . $outputDir . "/" . $wrapperFactoryType . $wrapperFactoryFileName . ".h";
 
     printLicenseHeader($F);
 
-    print F "#ifndef JS$parameters{namespace}ElementWrapperFactory_h\n";
-    print F "#define JS$parameters{namespace}ElementWrapperFactory_h\n\n";
+    print F "#ifndef $wrapperFactoryType$parameters{namespace}ElementWrapperFactory_h\n";
+    print F "#define $wrapperFactoryType$parameters{namespace}ElementWrapperFactory_h\n\n";
 
     print F "#if $parameters{guardFactoryWith}\n" if $parameters{guardFactoryWith};
 
-    print F <<END
+    if ($wrapperFactoryType eq "JS") {
+        print F <<END
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -956,10 +1033,23 @@ namespace WebCore {
  
 END
 ;
+    } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+#include <v8.h>
+
+namespace WebCore {
+
+    class $parameters{namespace}Element;
+
+    v8::Handle<v8::Value> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, bool);
+}
+END
+;
+    }
 
     print F "#endif // $parameters{guardFactoryWith}\n\n" if $parameters{guardFactoryWith};
 
-    print F "#endif // JS$parameters{namespace}ElementWrapperFactory_h\n";
+    print F "#endif // $wrapperFactoryType$parameters{namespace}ElementWrapperFactory_h\n";
 
     close F;
 }

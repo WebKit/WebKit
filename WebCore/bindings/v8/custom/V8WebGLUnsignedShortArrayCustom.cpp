@@ -63,6 +63,16 @@ v8::Handle<v8::Value> V8WebGLUnsignedShortArray::setCallback(const v8::Arguments
     return setWebGLArray<WebGLUnsignedShortArray, V8WebGLUnsignedShortArray>(args, V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY);
 }
 
+v8::Handle<v8::Value> toV8(WebGLUnsignedShortArray* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = V8WebGLUnsignedShortArray::wrap(impl);
+    if (!wrapper.IsEmpty())
+        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalUnsignedShortArray, impl->length());
+    return wrapper;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

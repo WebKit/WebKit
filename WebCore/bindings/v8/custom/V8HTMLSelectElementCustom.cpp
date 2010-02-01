@@ -76,7 +76,6 @@ v8::Handle<v8::Value> V8HTMLSelectElement::namedPropertyGetter(v8::Local<v8::Str
 v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-    ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
     RefPtr<Node> result = V8HTMLSelectElement::toNative(info.Holder())->item(index);
     if (!result)
         return notHandledByInterceptor();

@@ -37,6 +37,7 @@
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8CustomBinding.h"
+#include "V8DOMWindow.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -97,6 +98,19 @@ bool V8History::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Val
     // Only allow same origin access.
     History* history = V8History::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
+}
+
+v8::Handle<v8::Value> toV8(History* impl)
+{
+    if (!impl)
+        return v8::Null();
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
+    if (wrapper.IsEmpty()) {
+        wrapper = V8History::wrap(impl);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::historyIndex, wrapper);
+    }
+    return wrapper;
 }
 
 } // namespace WebCore

@@ -34,6 +34,7 @@
 #include "HTMLCollection.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8HTMLAllCollection.h"
 #include "V8NamedNodesCollection.h"
 #include "V8Proxy.h"
 
@@ -136,6 +137,13 @@ v8::Handle<v8::Value> V8HTMLCollection::callAsFunctionCallback(const v8::Argumen
     }
 
     return v8::Undefined();
+}
+
+v8::Handle<v8::Value> toV8(HTMLCollection* impl)
+{
+    if (impl->type() == DocAll)
+        return toV8(static_cast<HTMLAllCollection*>(impl));
+    return V8HTMLCollection::wrap(impl);
 }
 
 } // namespace WebCore

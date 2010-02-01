@@ -256,14 +256,21 @@ namespace WebCore {
                                                         int);
 #endif
 
-    private:
-        // Set hidden references in a DOMWindow object of a frame.
-        static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
-
         static V8ClassIndex::V8WrapperType htmlElementType(HTMLElement*);
 #if ENABLE(SVG)
         static V8ClassIndex::V8WrapperType svgElementType(SVGElement*);
 #endif
+        // Set hidden references in a DOMWindow object of a frame.
+        static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
+
+        static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType type, void* impl)
+        {
+            return instantiateV8Object(proxy, type, type, impl);
+        }
+
+        static v8::Handle<v8::Object> getWrapper(Node*);
+
+    private:
 
         // The first V8WrapperType specifies the function descriptor
         // used to create JS object. The second V8WrapperType specifies

@@ -109,7 +109,6 @@ namespace WebCore {
     template<class Collection> static v8::Handle<v8::Array> nodeCollectionIndexedPropertyEnumerator(const v8::AccessorInfo& info)
     {
         ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
-        ASSERT(V8DOMWrapper::domWrapperType(info.Holder()) == V8ClassIndex::NODE);
         Collection* collection = toNativeCollection<Collection>(info.Holder());
         int length = collection->length();
         v8::Handle<v8::Array> properties = v8::Array::New(length);

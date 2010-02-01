@@ -156,14 +156,15 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)) {
-    } elsif ($type =~ /SVGPathSeg/) {
-        $joinedName = $type;
-        $joinedName =~ s/Abs|Rel//;
-        $implIncludes{"${joinedName}.h"} = 1;
-    } else {
+    if (!$codeGenerator->IsPrimitiveType($type) and !AvoidInclusionOfType($type) and $type ne "Date") {
         # default, include the same named file
-        $implIncludes{GetImplementationFileName(${type})} = 1;
+        $implIncludes{GetV8HeaderName(${type})} = 1;
+
+        if ($type =~ /SVGPathSeg/) {
+            $joinedName = $type;
+            $joinedName =~ s/Abs|Rel//;
+            $implIncludes{"${joinedName}.h"} = 1;
+        }
     }
 
     # additional includes (things needed to compile the bindings but not the header)
@@ -210,17 +211,6 @@ sub AddClassForwardIfNeeded
     push(@headerContent, "class $implClassName;\n\n") unless $codeGenerator->IsSVGAnimatedType($implClassName);
 }
 
-sub GetImplementationFileName
-{
-    my $iface = shift;
-    return "Event.h" if $iface eq "DOMTimeStamp";
-    return "NamedAttrMap.h" if $iface eq "NamedNodeMap";
-    return "NameNodeList.h" if $iface eq "NodeList";
-    return "XMLHttpRequest.h" if $iface eq "XMLHttpRequest";
-
-    return "${iface}.h";
-}
-
 # If the node has a [Conditional=XXX] attribute, returns an "ENABLE(XXX)" string for use in an #if.
 sub GenerateConditionalString
 {
@@ -258,7 +248,6 @@ sub GenerateHeader
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
 
     push(@headerContent, "#include \"$podType.h\"\n") if $podType and ($podType ne "double" and $podType ne "float" and $podType ne "RGBA32");
 
@@ -268,15 +257,23 @@ sub GenerateHeader
     push(@headerContent, "#include \"V8Index.h\"\n");
     push(@headerContent, GetHeaderClassInclude($implClassName));
     push(@headerContent, "\nnamespace WebCore {\n");
+    if ($podType) {
+        push(@headerContent, "\ntemplate<typename PODType> class V8SVGPODTypeWrapper;\n");
+    }
     push(@headerContent, "\nclass $className {\n");
-    
-    my $toNativeReturnType = GetReturnTypeForToNative($interfaceName);
+
+    my $nativeType = GetNativeTypeForConversions($interfaceName);
+    if ($podType) {
+        $nativeType = "V8SVGPODTypeWrapper<${nativeType} >";
+    }
+    my $forceNewObjectParameter = IsDOMNodeType($interfaceName) ? ", bool forceNewObject = false" : "";
     push(@headerContent, <<END);
 
  public:
   static bool HasInstance(v8::Handle<v8::Value> value);
   static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
-  static ${toNativeReturnType}* toNative(v8::Handle<v8::Object>);
+  static ${nativeType}* toNative(v8::Handle<v8::Object>);
+  static v8::Handle<v8::Object> wrap(${nativeType}*${forceNewObjectParameter});
 END
 
     if ($implClassName eq "DOMWindow") {
@@ -346,7 +343,13 @@ END
   friend class V8ClassIndex;
 };
 
+  v8::Handle<v8::Value> toV8(${nativeType}*${forceNewObjectParameter});
 END
+    if (IsRefPtrType($implClassName)) {
+        push(@headerContent, <<END);
+  v8::Handle<v8::Value> toV8(PassRefPtr<${nativeType} >${forceNewObjectParameter});
+END
+    }
 
     push(@headerContent, "}\n\n");
     push(@headerContent, "#endif // $className" . "_H\n");
@@ -665,7 +668,7 @@ sub GenerateNormalAttrGetter
         $attrIsPodType = 0;
     }
 
-    my $getterStringUsesImp = $implClassName ne "double";
+    my $getterStringUsesImp = $implClassName ne "float";
 
   # Getter
     push(@implContentDecls, <<END);
@@ -821,13 +824,16 @@ END
             push(@implContentDecls, GenerateSVGContextAssignment($implClassName, "wrapper.get()", "    "));
         } else {
             push(@implContentDecls, GenerateSVGContextRetrieval($implClassName, "    "));
-            $result = "V8Proxy::withSVGContext($result, context)";
+            # The templating associated with passing withSVGContext()'s return value directly into toV8 can get compilers confused,
+            # so just manually set the return value to a PassRefPtr of the expected type.
+            push(@implContentDecls, "    PassRefPtr<$attrType> resultAsPassRefPtr = V8Proxy::withSVGContext($result, context);\n");
+            $result = "resultAsPassRefPtr";
         }
     }
 
     if ($attrIsPodType) {
-        my $classIndex = uc($attrType);
-        push(@implContentDecls, "    return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper.release());\n");
+        $implIncludes{"V8${attrType}.h"} = 1;
+        push(@implContentDecls, "    return toV8(wrapper.release().get());\n");
     } else {
         push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
     }
@@ -943,7 +949,7 @@ END
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
     }
 
-    if ($implClassName eq "double") {
+    if ($implClassName eq "float") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
@@ -1472,7 +1478,9 @@ sub GenerateImplementation
          "#include \"config.h\"\n" .
          "#include \"V8Proxy.h\"\n" .
          "#include \"V8Binding.h\"\n" .
-         "#include \"V8BindingState.h\"\n\n" .
+         "#include \"V8BindingState.h\"\n" .
+         "#include \"V8DOMWrapper.h\"\n" .
+         "#include \"V8IsolatedContext.h\"\n\n" .
          "#undef LOG\n\n");
 
     push(@implFixedHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
@@ -1888,7 +1896,10 @@ END
 END
     }
 
-    $toNativeReturnType = GetReturnTypeForToNative($interfaceName);
+    my $nativeType = GetNativeTypeForConversions($interfaceName);
+    if ($dataNode->extendedAttributes->{"PODType"}) {
+        $nativeType = "V8SVGPODTypeWrapper<${nativeType}>";
+    }
     push(@implContent, <<END);
   
   // Custom toString template
@@ -1906,8 +1917,8 @@ v8::Persistent<v8::FunctionTemplate> ${className}::GetTemplate() {
   return ${className}_cache_;
 }
 
-${toNativeReturnType}* ${className}::toNative(v8::Handle<v8::Object> object) {
-  return reinterpret_cast<${toNativeReturnType}*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex)); 
+${nativeType}* ${className}::toNative(v8::Handle<v8::Object> object) {
+  return reinterpret_cast<${nativeType}*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex)); 
 }
 
 bool ${className}::HasInstance(v8::Handle<v8::Value> value) {
@@ -1928,6 +1939,8 @@ v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate() {
 }
 END
     }
+    
+    GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType);
 
     push(@implContent, <<END);
 } // namespace WebCore
@@ -1936,7 +1949,171 @@ END
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
-sub GetReturnTypeForToNative
+sub GenerateToV8Converters 
+{
+    my $dataNode = shift;
+    my $interfaceName = shift;
+    my $className = shift;
+    my $nativeType = shift;
+    
+    my $wrapperType = "V8ClassIndex::" . uc($interfaceName);
+    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
+    my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
+    my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
+    
+    push(@implContent, <<END);   
+
+v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput}) {
+  V8Proxy* proxy = 0;
+  v8::Handle<v8::Object> wrapper;
+END
+
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+  if (impl->document()) {
+    proxy = V8Proxy::retrieve(impl->document()->frame());
+    if (proxy && static_cast<Node*>(impl->document()) == static_cast<Node*>(impl))
+      proxy->windowShell()->initContextIfNeeded();
+  }
+
+END
+    }
+
+    if ($domMapFunction) {
+        push(@implContent, "  if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
+        if (IsNodeSubType($dataNode)) {
+            push(@implContent, "  wrapper = V8DOMWrapper::getWrapper(impl);\n");
+        } else {
+            push(@implContent, "  wrapper = ${domMapFunction}.get(impl);\n");
+        }
+        push(@implContent, <<END);
+  if (!wrapper.IsEmpty())
+    return wrapper;
+END
+        push(@implContent, "  }\n") if IsDOMNodeType($interfaceName);
+    }
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+
+  v8::Handle<v8::Context> context;
+  if (proxy)
+    context = proxy->context();
+
+  // Enter the node's context and create the wrapper in that context.
+  if (!context.IsEmpty())
+    context->Enter();
+END
+    }
+
+    push(@implContent, <<END);
+  wrapper = V8DOMWrapper::instantiateV8Object(proxy, ${wrapperType}, impl);
+END
+
+    if (IsNodeSubType($dataNode)) {
+        push(@implContent, <<END);
+  // Exit the node's context if it was entered.
+  if (!context.IsEmpty())
+    context->Exit();
+END
+    }
+    
+    push(@implContent, <<END);
+  if (wrapper.IsEmpty())
+    return wrapper;
+END
+    push(@implContent, "\n  impl->ref();\n") if IsRefPtrType($interfaceName);
+
+    if ($domMapFunction) {
+        push(@implContent, <<END);
+  ${domMapFunction}.set(impl, v8::Persistent<v8::Object>::New(wrapper));
+END
+    }
+
+    push(@implContent, <<END);
+  return wrapper;
+}
+END
+
+    if (IsRefPtrType($interfaceName)) {
+        push(@implContent, <<END);
+
+v8::Handle<v8::Value> toV8(PassRefPtr<${nativeType} > impl${forceNewObjectInput}) {
+  return toV8(impl.get()${forceNewObjectCall});
+}
+END
+    }
+    
+    if (!HasCustomToV8Implementation($dataNode, $interfaceName)) {
+        push(@implContent, <<END);
+
+v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectInput}) {
+  if (!impl)
+    return v8::Null();
+  return ${className}::wrap(impl${forceNewObjectCall});
+}
+END
+    }
+}
+
+sub HasCustomToV8Implementation {
+    # FIXME: This subroutine is lame. Probably should be an .idl attribute (CustomToV8)?
+    $dataNode = shift;
+    $interfaceName = shift;
+    
+    # We generate a custom converter (but JSC doesn't) for the following:
+    return 1 if $interfaceName eq "BarInfo";
+    return 1 if $interfaceName eq "CSSStyleSheet";
+    return 1 if $interfaceName eq "CanvasPixelArray";
+    return 1 if $interfaceName eq "Console";
+    return 1 if $interfaceName eq "DOMSelection";
+    return 1 if $interfaceName eq "DOMWindow";
+    return 1 if $interfaceName eq "Element";
+    return 1 if $interfaceName eq "Location";
+    return 1 if $interfaceName eq "HTMLDocument";
+    return 1 if $interfaceName eq "HTMLElement";
+    return 1 if $interfaceName eq "History";
+    return 1 if $interfaceName eq "NamedNodeMap";
+    return 1 if $interfaceName eq "Navigator";
+    return 1 if $interfaceName eq "SVGDocument";
+    return 1 if $interfaceName eq "SVGElement";
+    return 1 if $interfaceName eq "Screen";
+    
+    # We don't generate a custom converter (but JSC does) for the following:
+    return 0 if $interfaceName eq "AbstractWorker";
+    return 0 if $interfaceName eq "CanvasRenderingContext";
+    return 0 if $interfaceName eq "ImageData";
+    return 0 if $interfaceName eq "SVGElementInstance";
+
+    # For everything else, do what JSC does.
+    return $dataNode->extendedAttributes->{"CustomToJS"};
+}
+
+sub GetDomMapFunction
+{
+    my $dataNode = shift;
+    my $type = shift;
+    return "getDOMSVGElementInstanceMap()" if $type eq "SVGElementInstance";
+    return "getDOMNodeMap()" if IsNodeSubType($dataNode);
+    # Only use getDOMSVGObjectWithContextMap() for non-node svg objects
+    return "getDOMSVGObjectWithContextMap()" if $type =~ /SVG/;
+    return "" if $type eq "DOMImplementation";
+    return "getActiveDOMObjectMap()" if IsActiveDomType($type);
+    return "getDOMObjectMap()";
+}
+
+sub IsActiveDomType
+{
+    # FIXME: Consider making this an .idl attribute.
+    my $type = shift;
+    return 1 if $type eq "MessagePort";
+    return 1 if $type eq "XMLHttpRequest";
+    return 1 if $type eq "WebSocket";
+    return 1 if $type eq "Worker";
+    return 1 if $type eq "SharedWorker";
+    return 0;
+}
+
+sub GetNativeTypeForConversions
 {
     my $type = shift;
     return "FloatRect" if $type eq "SVGRect";
@@ -1991,7 +2168,6 @@ sub GenerateFunctionCallString()
 
     my $first = 1;
     my $index = 0;
-    my $nodeToReturn = 0;
 
     foreach my $parameter (@{$function->parameters}) {
         if ($index eq $numberOfParameters) {
@@ -2013,10 +2189,6 @@ sub GenerateFunctionCallString()
         } else {
             $functionString .= $paramName;
         }
-
-        if ($parameter->extendedAttributes->{"Return"}) {
-            $nodeToReturn = $parameter->name;
-        }
         $index++;
     }
 
@@ -2035,19 +2207,7 @@ sub GenerateFunctionCallString()
     my $return = "result";
     my $returnIsRef = IsRefPtrType($returnType);
 
-    if ($nodeToReturn) {
-        # Special case for insertBefore, replaceChild, removeChild and
-        # appendChild functions from Node.
-        $result .= $indent . "bool success = $functionString;\n";
-        if (@{$function->raisesExceptions}) {
-            $result .= $indent . "if (UNLIKELY(ec)) goto fail;\n";
-        }
-        $result .= $indent . "if (success)\n";
-        $result .= $indent . "    " .
-            "return V8DOMWrapper::convertNodeToV8Object($nodeToReturn);\n";
-        $result .= $indent . "return v8::Null();\n";
-        return $result;
-    } elsif ($returnType eq "void") {
+    if ($returnType eq "void") {
         $result .= $indent . "$functionString;\n";
     } elsif ($copyFirst) {
         $result .=
@@ -2106,8 +2266,8 @@ sub GenerateFunctionCallString()
     }
 
     if ($returnsPodType) {
-        my $classIndex = uc($returnType);
-        $result .= $indent . "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper.release());\n";
+        $implIncludes{"V8${returnType}.h"} = 1;
+        $result .= $indent . "return toV8(wrapper.release());\n";
     } else {
         $return .= ".release()" if ($returnIsRef);
         $result .= $indent . ReturnNativeToJSValue($function->signature, $return, $indent) . ";\n";
@@ -2167,6 +2327,7 @@ sub IsRefPtrType
     return 0 if $type eq "unsigned";
     return 0 if $type eq "unsigned long";
     return 0 if $type eq "unsigned short";
+    return 0 if $type eq "SVGAnimatedPoints";
 
     return 1;
 }
@@ -2207,7 +2368,7 @@ sub GetNativeType
     return "SVGTransform" if $type eq "SVGTransform";
     return "SVGLength" if $type eq "SVGLength";
     return "SVGAngle" if $type eq "SVGAngle";
-    return "double" if $type eq "SVGNumber";
+    return "float" if $type eq "SVGNumber";
     return "SVGPreserveAspectRatio" if $type eq "SVGPreserveAspectRatio";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
@@ -2422,7 +2583,11 @@ sub JSValueToNative
 sub GetV8HeaderName
 {
     my $type = shift;
-    return "V8" . GetImplementationFileName($type);
+    return "V8Event.h" if $type eq "DOMTimeStamp";
+    return "EventListener.h" if $type eq "EventListener";
+    return "EventTarget.h" if $type eq "EventTarget";
+    return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
+    return "V8${type}.h";
 }
 
 
@@ -2547,7 +2712,6 @@ sub ReturnNativeToJSValue
     my $value = shift;
     my $indent = shift;
     my $type = GetTypeFromSignature($signature);
-    my $className= "V8$type";
 
     return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
     return "return v8Boolean($value)" if $type eq "boolean";
@@ -2574,29 +2738,20 @@ sub ReturnNativeToJSValue
         return "return v8String($value)";
     }
 
-    # V8 specific.
-    my $implClassName = $type;
     AddIncludesForType($type);
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        if ($signature->extendedAttributes->{"ReturnsNew"}) {
-            return "return V8DOMWrapper::convertNewNodeToV8Object($value)";
-        } else {
-            return "return V8DOMWrapper::convertNodeToV8Object($value)";
-        }
+        return "return toV8(${value}" . ($signature->extendedAttributes->{"ReturnsNew"} ? ", true)" : ")");
     }
 
-    if ($type eq "EventTarget" or $type eq "SVGElementInstance") {
+    if ($type eq "EventTarget") {
         return "return V8DOMWrapper::convertEventTargetToV8Object($value)";
     }
 
-    if ($type eq "Event") {
-        return "return V8DOMWrapper::convertEventToV8Object($value)";
-    }
-
     if ($type eq "EventListener") {
-        return "return V8DOMWrapper::convertEventListenerToV8Object(imp->scriptExecutionContext(), $value)";
+        $implIncludes{"V8AbstractEventListener.h"} = 1;
+        return "return ${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(v8::Null())";
     }
 
     if ($type eq "SerializedScriptValue") {
@@ -2616,18 +2771,15 @@ sub ReturnNativeToJSValue
         return "return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::$classIndex, $value)";
     }
 
-    else {
-        $implIncludes{"wtf/RefCounted.h"} = 1;
-        $implIncludes{"wtf/RefPtr.h"} = 1;
-        $implIncludes{"wtf/GetPtr.h"} = 1;
-        my $classIndex = uc($type);
+    $implIncludes{"wtf/RefCounted.h"} = 1;
+    $implIncludes{"wtf/RefPtr.h"} = 1;
+    $implIncludes{"wtf/GetPtr.h"} = 1;
 
-        if (IsPodType($type)) {
-            $value = GenerateSVGStaticPodTypeWrapper($type, $value);
-        }
-
-        return "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, $value)";
+    if (IsPodType($type)) {
+        $value = GenerateSVGStaticPodTypeWrapper($type, $value) . ".get()";
     }
+
+    return "return toV8($value)";
 }
 
 sub GenerateSVGStaticPodTypeWrapper {
