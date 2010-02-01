@@ -1,3 +1,23 @@
+2010-02-01  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        Failed to properly add new files for http://trac.webkit.org/changeset/54150.
+
+        * bindings/v8/custom/V8BarInfoCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSRuleCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp: Added.
+        * bindings/v8/custom/V8CSSValueCustom.cpp: Added.
+        * bindings/v8/custom/V8CanvasPixelArrayCustom.cpp: Added.
+        * bindings/v8/custom/V8DOMSelectionCustom.cpp: Added.
+        * bindings/v8/custom/V8HTMLElementCustom.cpp: Added.
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp: Added.
+        * bindings/v8/custom/V8SVGElementCustom.cpp: Added.
+        * bindings/v8/custom/V8SVGPathSegCustom.cpp: Added.
+        * bindings/v8/custom/V8ScreenCustom.cpp: Added.
+        * bindings/v8/custom/V8StyleSheetCustom.cpp: Added.
+        * bindings/v8/custom/V8WebGLArrayCustom.cpp: Added.
+
 2010-01-27  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Eric Seidel.
