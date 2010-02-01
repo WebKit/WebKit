@@ -8,26 +8,31 @@ function valueAsNumberFor(stringValue) {
     return input.valueAsNumber;
 }
 
-function setValueAsNumberAndGetValue(year, month, day) {
-    input.valueAsNumber = Date.UTC(year, month, day);
+function setValueAsNumberAndGetValue(y, m) {
+    input.valueAsNumber = (y - 1970) * 12 + m - 1;
     return input.value;
 }
 
 shouldBe('valueAsNumberFor("")', 'Number.NaN');
-shouldBe('valueAsNumberFor("1969-12")', 'Date.UTC(1969, 11, 1, 0, 0, 0, 0)');
-shouldBe('valueAsNumberFor("1970-01")', 'Date.UTC(1970, 0, 1)');
-shouldBe('valueAsNumberFor("2009-12")', 'Date.UTC(2009, 11, 1)');
+shouldBe('valueAsNumberFor("1969-01")', '-12');
+shouldBe('valueAsNumberFor("1969-12")', '-1');
+shouldBe('valueAsNumberFor("1970-01")', '0');
+shouldBe('valueAsNumberFor("1970-12")', '11');
+shouldBe('valueAsNumberFor("1971-01")', '12');
+shouldBe('valueAsNumberFor("2009-12")', '(2009-1970)*12+11');
 
-shouldBe('setValueAsNumberAndGetValue(1969, 11, 1)', '"1969-12"');
-shouldBe('setValueAsNumberAndGetValue(1970, 0, 1)', '"1970-01"');
-shouldBe('setValueAsNumberAndGetValue(2009, 11, 31)', '"2009-12"');
-shouldBe('setValueAsNumberAndGetValue(10000, 0, 1)', '"10000-01"');
+shouldBe('input.valueAsNumber = -1; input.value', '"1969-12"');
+shouldBe('input.valueAsNumber = 0; input.value', '"1970-01"');
+shouldBe('setValueAsNumberAndGetValue(2009, 12)', '"2009-12"');
+shouldBe('setValueAsNumberAndGetValue(10000, 1)', '"10000-01"');
 
-shouldBe('setValueAsNumberAndGetValue(794, 9, 22)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 8, 30)', '""');
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 1)', '"1582-10"');
-shouldBe('setValueAsNumberAndGetValue(1582, 9, 31)', '"1582-10"');
-shouldBe('setValueAsNumberAndGetValue(275760, 8, 13)', '"275760-09"');
+shouldBe('setValueAsNumberAndGetValue(794, 9)', '""');
+shouldBe('setValueAsNumberAndGetValue(1582, 9)', '""');
+shouldBe('setValueAsNumberAndGetValue(1582, 10)', '"1582-10"');
+shouldBe('setValueAsNumberAndGetValue(1582, 11)', '"1582-11"');
+shouldBe('setValueAsNumberAndGetValue(275760, 9)', '"275760-09"');
+shouldBe('setValueAsNumberAndGetValue(2147483647, 12)', '"2147483647-12"');
+
 // Date.UTC() of V8 throws an exception for the following value though JavaScriptCore doesn't.
 // shouldBe('setValueAsNumberAndGetValue(275760, 8, 14)', '"275760-09"');
 

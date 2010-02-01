@@ -37,6 +37,8 @@
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
+using namespace std;
+
 namespace WebCore {
 
 // The oldest day of Gregorian Calendar is 1582-10-15. We don't support dates older than it.
@@ -537,6 +539,25 @@ bool DateComponents::setMillisecondsSinceMidnight(double ms)
     return true;
 }
 
+bool DateComponents::setMonthsSinceEpoch(double months)
+{
+    if (!isfinite(months))
+        return false;
+    months = round(months);
+    double doubleMonth = positiveFmod(months, 12);
+    double doubleYear = 1970 + (months - doubleMonth) / 12;
+    if (doubleYear < gregorianStartYear || numeric_limits<int>::max() < doubleYear)
+        return false;
+    int year = static_cast<int>(doubleYear);
+    int month = static_cast<int>(doubleMonth);
+    if (beforeGregorianStartDate(year, month, gregorianStartDay))
+        return false;
+    m_year = year;
+    m_month = month;
+    m_type = Month;
+    return true;
+}
+
 // Offset from January 1st to Monday of the ISO 8601's first week.
 //   ex. If January 1st is Friday, such Monday is 3 days later. Returns 3.
 static int offsetTo1stWeekStart(int year)
@@ -603,6 +624,12 @@ double DateComponents::millisecondsSinceEpoch() const
     }
     ASSERT_NOT_REACHED();
     return invalidMilliseconds();
+}
+
+double DateComponents::monthsSinceEpoch() const
+{
+    ASSERT(m_type == Month);
+    return (m_year - 1970) * 12 + m_month;
 }
 
 String DateComponents::toStringForTime(SecondFormat format) const

@@ -124,10 +124,16 @@ public:
     // For Time type. Updates m_hour, m_minute, m_second and m_millisecond.
     bool setMillisecondsSinceMidnight(double ms);
 
+    // Another initializer for Month type. Updates m_year and m_month.
+    bool setMonthsSinceEpoch(double months);
+
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
     // For a DateComponents initialized with parseDateTimeLocal(),
     // millisecondsSinceEpoch() returns a value for UTC timezone.
     double millisecondsSinceEpoch() const;
+    // Returns the number of months from 1970-01.
+    // Do not call this for types other than Month.
+    double monthsSinceEpoch() const;
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
 private:

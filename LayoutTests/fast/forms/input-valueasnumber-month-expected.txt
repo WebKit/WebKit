@@ -4,18 +4,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS valueAsNumberFor("") is Number.NaN
-PASS valueAsNumberFor("1969-12") is Date.UTC(1969, 11, 1, 0, 0, 0, 0)
-PASS valueAsNumberFor("1970-01") is Date.UTC(1970, 0, 1)
-PASS valueAsNumberFor("2009-12") is Date.UTC(2009, 11, 1)
-PASS setValueAsNumberAndGetValue(1969, 11, 1) is "1969-12"
-PASS setValueAsNumberAndGetValue(1970, 0, 1) is "1970-01"
-PASS setValueAsNumberAndGetValue(2009, 11, 31) is "2009-12"
-PASS setValueAsNumberAndGetValue(10000, 0, 1) is "10000-01"
-PASS setValueAsNumberAndGetValue(794, 9, 22) is ""
-PASS setValueAsNumberAndGetValue(1582, 8, 30) is ""
-PASS setValueAsNumberAndGetValue(1582, 9, 1) is "1582-10"
-PASS setValueAsNumberAndGetValue(1582, 9, 31) is "1582-10"
-PASS setValueAsNumberAndGetValue(275760, 8, 13) is "275760-09"
+PASS valueAsNumberFor("1969-01") is -12
+PASS valueAsNumberFor("1969-12") is -1
+PASS valueAsNumberFor("1970-01") is 0
+PASS valueAsNumberFor("1970-12") is 11
+PASS valueAsNumberFor("1971-01") is 12
+PASS valueAsNumberFor("2009-12") is (2009-1970)*12+11
+PASS input.valueAsNumber = -1; input.value is "1969-12"
+PASS input.valueAsNumber = 0; input.value is "1970-01"
+PASS setValueAsNumberAndGetValue(2009, 12) is "2009-12"
+PASS setValueAsNumberAndGetValue(10000, 1) is "10000-01"
+PASS setValueAsNumberAndGetValue(794, 9) is ""
+PASS setValueAsNumberAndGetValue(1582, 9) is ""
+PASS setValueAsNumberAndGetValue(1582, 10) is "1582-10"
+PASS setValueAsNumberAndGetValue(1582, 11) is "1582-11"
+PASS setValueAsNumberAndGetValue(275760, 9) is "275760-09"
+PASS setValueAsNumberAndGetValue(2147483647, 12) is "2147483647-12"
 Tests to set invalid values to valueAsNumber:
 PASS input.value = ""; input.valueAsNumber = null; input.value is "1970-01"
 PASS input.valueAsNumber = "foo" threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
