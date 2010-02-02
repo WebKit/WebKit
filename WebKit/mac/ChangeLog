@@ -1,1 +1,16 @@
+2010-02-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7044385> Crash at NetscapePlugInStreamLoader::didReceiveResponse()
+
+        The crash was caused by having two streams with a streamID of 1.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy): Fixed a typo. Now
+        correctly increments m_currentURLRequestID to account for the manual stream.
+        (WebKit::NetscapePluginInstanceProxy::disconnectStream): If the stream is the manual stream,
+        null it out instead of trying to remove it from the map. Added an assertion.
+        (WebKit::NetscapePluginInstanceProxy::loadRequest): Added an assertion.
+
 == Rolled over to ChangeLog-2010-01-29 ==
