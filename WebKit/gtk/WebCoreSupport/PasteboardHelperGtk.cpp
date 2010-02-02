@@ -105,7 +105,8 @@ static GtkTargetList* targetListForDataObject(DataObjectGtk* dataObject)
     return list;
 }
 
-static bool settingClipboard = false;
+static DataObjectGtk* settingClipboardDataObject = 0;
+static gpointer settingClipboardData = 0;
 static void getClipboardContentsCallback(GtkClipboard* clipboard, GtkSelectionData *selectionData, guint info, gpointer data)
 {
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
@@ -115,17 +116,16 @@ static void getClipboardContentsCallback(GtkClipboard* clipboard, GtkSelectionDa
 
 static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer data)
 {
-    // GTK will call the clear clipboard callback while setting clipboard data.
-    // We don't actually want to clear the DataObject during that time.
-    if (settingClipboard)
-        return;
-
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     ASSERT(dataObject);
-    dataObject->clear();
 
-    // This will be true for clipboards other than X11 primary.
-    if (!data)
+    // Only clear the DataObject for this clipboard if we are not currently setting it.
+    if (dataObject != settingClipboardDataObject)
+        dataObject->clear();
+
+    // Only collapse the selection if this is an X11 primary clipboard
+    // and we aren't currently setting the clipboard for this WebView.
+    if (!data || data == settingClipboardData)
         return;
 
     WebKitWebView* webView = reinterpret_cast<WebKitWebView*>(data);
@@ -154,7 +154,8 @@ void PasteboardHelperGtk::writeClipboardContents(GtkClipboard* clipboard, gpoint
     GtkTargetEntry* table = gtk_target_table_new_from_list(list, &numberOfTargets);
 
     if (numberOfTargets > 0 && table) {
-        settingClipboard = true;
+        settingClipboardDataObject = dataObject;
+        settingClipboardData = data;
 
         // Protect the web view from being destroyed before one of the clipboard callbacks
         // is called. Balanced in both getClipboardContentsCallback and
@@ -168,7 +169,8 @@ void PasteboardHelperGtk::writeClipboardContents(GtkClipboard* clipboard, gpoint
         if (!succeeded)
             g_object_unref(webView);
 
-        settingClipboard = false;
+        settingClipboardDataObject = 0;
+        settingClipboardData = 0;
     } else
         gtk_clipboard_clear(clipboard);
 
