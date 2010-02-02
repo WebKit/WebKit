@@ -50,9 +50,6 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
 
     _category = "whitespace/tab"
 
-    def _options(self, output_format):
-        return ProcessorOptions(verbosity=3, output_format=output_format)
-
     def _error_handler(self, options):
         file_path = "foo.h"
         return DefaultStyleErrorHandler(file_path,
@@ -60,29 +57,28 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
                                         self._mock_increment_error_count,
                                         self._mock_stderr_write)
 
-    def _prepare_call(self, output_format="emacs"):
-        """Return options after initializing."""
-        options = self._options(output_format)
-
-        # Test that count is initialized to zero.
+    def _check_initialized(self):
+        """Check that count and error messages are initialized."""
         self.assertEquals(0, self._error_count)
         self.assertEquals("", self._error_messages)
 
-        return options
-
-    def _call_error_handler(self, options, confidence):
-        """Handle an error with given confidence."""
-        handle_error = self._error_handler(options)
-
+    def _call(self, handle_error, options, confidence):
+        """Handle an error with the given error handler."""
         line_number = 100
         message = "message"
 
         handle_error(line_number, self._category, confidence, message)
 
+    def _call_error_handler(self, options, confidence):
+        """Handle an error using a new error handler."""
+        handle_error = self._error_handler(options)
+        self._call(handle_error, options, confidence)
+
     def test_call_non_reportable(self):
         """Test __call__() method with a non-reportable error."""
         confidence = 1
-        options = self._prepare_call()
+        options = ProcessorOptions(verbosity=3)
+        self._check_initialized()
 
         # Confirm the error is not reportable.
         self.assertFalse(options.is_reportable(self._category, confidence))
@@ -95,7 +91,8 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
     def test_call_reportable_emacs(self):
         """Test __call__() method with a reportable error and emacs format."""
         confidence = 5
-        options = self._prepare_call("emacs")
+        options = ProcessorOptions(verbosity=3, output_format="emacs")
+        self._check_initialized()
 
         self._call_error_handler(options, confidence)
 
@@ -106,13 +103,44 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
     def test_call_reportable_vs7(self):
         """Test __call__() method with a reportable error and vs7 format."""
         confidence = 5
-        options = self._prepare_call("vs7")
+        options = ProcessorOptions(verbosity=3, output_format="vs7")
+        self._check_initialized()
 
         self._call_error_handler(options, confidence)
 
         self.assertEquals(1, self._error_count)
         self.assertEquals(self._error_messages,
                           "foo.h(100):  message  [whitespace/tab] [5]\n")
+
+    def test_call_max_reports_per_category(self):
+        """Test error report suppression in __call__() method."""
+        confidence = 5
+        options = ProcessorOptions(verbosity=3,
+                                   max_reports_per_category={self._category: 2})
+        error_handler = self._error_handler(options)
+
+        self._check_initialized()
+
+        # First call: usual reporting.
+        self._call(error_handler, options, confidence)
+        self.assertEquals(1, self._error_count)
+        self.assertEquals(self._error_messages,
+                          "foo.h:100:  message  [whitespace/tab] [5]\n")
+
+        # Second call: suppression message reported.
+        self._error_messages = ""
+        self._call(error_handler, options, confidence)
+        self.assertEquals(2, self._error_count)
+        self.assertEquals(self._error_messages,
+                          "foo.h:100:  message  [whitespace/tab] [5]\n"
+                          "Suppressing further [%s] reports for this file.\n"
+                          % self._category)
+
+        # Third call: no report.
+        self._error_messages = ""
+        self._call(error_handler, options, confidence)
+        self.assertEquals(3, self._error_count)
+        self.assertEquals(self._error_messages, "")
 
 
 class PatchStyleErrorHandlerTest(StyleErrorHandlerTestBase):

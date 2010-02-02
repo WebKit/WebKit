@@ -32,7 +32,9 @@ Methods:
 
     Handle the occurrence of a style error.
 
-    Check whether the error is reportable. If so, report the details.
+    Check whether the error is reportable. If so, increment the total
+    error count and report the details. Note that error reporting can
+    be suppressed after reaching a certain number of reports.
 
     Args:
       line_number: The integer line number of the line containing the error.
@@ -79,6 +81,28 @@ class DefaultStyleErrorHandler(object):
         self._options = options
         self._stderr_write = stderr_write
 
+        # A string to integer dictionary cache of the number of reportable
+        # errors per category passed to this instance.
+        self._category_totals = { }
+
+    def _add_reportable_error(self, category):
+        """Increment the error count and return the new category total."""
+        self._increment_error_count() # Increment the total.
+
+        # Increment the category total.
+        if not category in self._category_totals:
+            self._category_totals[category] = 1
+        else:
+            self._category_totals[category] += 1
+
+        return self._category_totals[category]
+
+    def _max_reports(self, category):
+        """Return the maximum number of errors to report."""
+        if not category in self._options.max_reports_per_category:
+            return None
+        return self._options.max_reports_per_category[category]
+
     def __call__(self, line_number, category, confidence, message):
         """Handle the occurrence of a style error.
 
@@ -88,12 +112,22 @@ class DefaultStyleErrorHandler(object):
         if not self._options.is_reportable(category, confidence):
             return
 
-        self._increment_error_count()
+        category_total = self._add_reportable_error(category)
+
+        max_reports = self._max_reports(category)
+
+        if (max_reports is not None) and (category_total > max_reports):
+            # Then suppress displaying the error.
+            return
 
         if self._options.output_format == 'vs7':
             format_string = "%s(%s):  %s  [%s] [%d]\n"
         else:
             format_string = "%s:%s:  %s  [%s] [%d]\n"
+
+        if category_total == max_reports:
+            format_string += ("Suppressing further [%s] reports for this "
+                              "file.\n" % category)
 
         self._stderr_write(format_string % (self._file_path,
                                             line_number,
@@ -130,7 +164,7 @@ class PatchStyleErrorHandler(object):
         if not self._line_numbers:
             for line in self._diff.lines:
                 # When deleted line is not set, it means that
-                # the line is newly added.
+                # the line is newly added (or modified).
                 if not line[0]:
                     self._line_numbers.add(line[1])
 
@@ -140,9 +174,9 @@ class PatchStyleErrorHandler(object):
         """Handle the occurrence of a style error.
 
         This function does not report errors occurring in lines not
-        modified or added.
+        marked as modified or added in the patch.
 
-        Args: see the DefaultStyleErrorHandler.__call__() documentation.
+        See the docstring of this module for more information.
 
         """
         if line_number not in self._get_line_numbers():

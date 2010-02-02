@@ -1,3 +1,41 @@
+2010-02-01  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Addressed FIXME in check-webkit-style so that the carriage-return
+        check will work for patches.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34260
+
+        Also added support for limiting the number of errors reported
+        per category, per file.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added new "whitespace/carriage_return" category from common.py.
+          - Added MAX_REPORTS_PER_CATEGORY dictionary.
+          - Added max_reports_per_category attribute to ProcessorOptions class.
+          - Refactored StyleChecker._process_file().
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated ProcessorOptionsTest tests.
+          - Added test to check MAX_REPORTS_PER_CATEGORY.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Added support for suppressing the display of errors after
+            reaching a per-category maximum (from max_reports_per_category).
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Added test for suppressing error display.
+
+        * Scripts/webkitpy/style/processors/common.py: Added.
+          - Moved carriage-return check to new file.
+
+        * Scripts/webkitpy/style/processors/common_unittest.py: Added.
+          - Added unit tests for carriage-return check.
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Added reference to common_unittest.py.
+
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

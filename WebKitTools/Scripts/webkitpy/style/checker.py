@@ -37,6 +37,8 @@ import sys
 from .. style_references import parse_patch
 from error_handlers import DefaultStyleErrorHandler
 from error_handlers import PatchStyleErrorHandler
+from processors.common import check_no_carriage_return
+from processors.common import categories as CommonCategories
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
@@ -106,10 +108,19 @@ SKIPPED_FILES_WITHOUT_WARNING = [
     ]
 
 
+# FIXME: Check that the keys are in _style_categories().
+#
+# The maximum number of errors to report per file, per category.
+# If a category is not a key, then it has no maximum.
+MAX_REPORTS_PER_CATEGORY = {
+    "whitespace/carriage_return": 1
+}
+
+
 def style_categories():
     """Return the set of all categories used by check-webkit-style."""
-    # If other processors had categories, we would take their union here.
-    return CppProcessor.categories
+    # Take the union across all processors.
+    return CommonCategories.union(CppProcessor.categories)
 
 
 def webkit_argument_defaults():
@@ -290,12 +301,19 @@ class ProcessorOptions(object):
 
     """
 
-    def __init__(self, output_format="emacs", verbosity=1, filter=None,
-                 git_commit=None, extra_flag_values=None):
-        if filter is None:
-            filter = CategoryFilter()
+    def __init__(self,
+                 output_format="emacs",
+                 verbosity=1,
+                 filter=None,
+                 max_reports_per_category=None,
+                 git_commit=None,
+                 extra_flag_values=None):
         if extra_flag_values is None:
             extra_flag_values = {}
+        if filter is None:
+            filter = CategoryFilter()
+        if max_reports_per_category is None:
+            max_reports_per_category = {}
 
         if output_format not in ("emacs", "vs7"):
             raise ValueError('Invalid "output_format" parameter: '
@@ -307,24 +325,27 @@ class ProcessorOptions(object):
                              "value must be an integer between 1-5 inclusive. "
                              'Value given: "%s".' % verbosity)
 
-        self.output_format = output_format
-        self.verbosity = verbosity
+        self.extra_flag_values = extra_flag_values
         self.filter = filter
         self.git_commit = git_commit
-        self.extra_flag_values = extra_flag_values
+        self.max_reports_per_category = max_reports_per_category
+        self.output_format = output_format
+        self.verbosity = verbosity
 
     # Useful for unit testing.
     def __eq__(self, other):
         """Return whether this ProcessorOptions instance is equal to another."""
-        if self.output_format != other.output_format:
-            return False
-        if self.verbosity != other.verbosity:
+        if self.extra_flag_values != other.extra_flag_values:
             return False
         if self.filter != other.filter:
             return False
         if self.git_commit != other.git_commit:
             return False
-        if self.extra_flag_values != other.extra_flag_values:
+        if self.max_reports_per_category != other.max_reports_per_category:
+            return False
+        if self.output_format != other.output_format:
+            return False
+        if self.verbosity != other.verbosity:
             return False
 
         return True
@@ -568,8 +589,12 @@ class ArgumentParser(object):
 
         filter = CategoryFilter(filter_rules)
 
-        options = ProcessorOptions(output_format, verbosity, filter,
-                                   git_commit, extra_flag_values)
+        options = ProcessorOptions(extra_flag_values=extra_flag_values,
+                      filter=filter,
+                      git_commit=git_commit,
+                      max_reports_per_category=MAX_REPORTS_PER_CATEGORY,
+                      output_format=output_format,
+                      verbosity=verbosity)
 
         return (filenames, options)
 
@@ -720,35 +745,36 @@ class StyleChecker(object):
             # '\r\n' as in Windows), a warning is issued below if this file
             # is processed.
             if file_path == '-':
-                lines = codecs.StreamReaderWriter(sys.stdin,
-                                                  codecs.getreader('utf8'),
-                                                  codecs.getwriter('utf8'),
-                                                  'replace').read().split('\n')
+                file = codecs.StreamReaderWriter(sys.stdin,
+                                                 codecs.getreader('utf8'),
+                                                 codecs.getwriter('utf8'),
+                                                 'replace')
             else:
-                lines = codecs.open(file_path, 'r', 'utf8', 'replace').read().split('\n')
+                file = codecs.open(file_path, 'r', 'utf8', 'replace')
 
-            carriage_return_found = False
-            # Remove trailing '\r'.
-            for line_number in range(len(lines)):
-                if lines[line_number].endswith('\r'):
-                    lines[line_number] = lines[line_number].rstrip('\r')
-                    carriage_return_found = True
+            contents = file.read()
 
         except IOError:
             self._stderr_write("Skipping input '%s': Can't open for reading\n" % file_path)
             return
 
-        processor.process(lines)
+        lines = contents.split("\n")
 
-        if carriage_return_found and os.linesep != '\r\n':
-            # FIXME: Make sure this error also shows up when checking
-            #        patches, if appropriate.
+        for line_number in range(len(lines)):
+            # FIXME: We should probably use the SVN "eol-style" property
+            #        or a white list to decide whether or not to do
+            #        the carriage-return check. Originally, we did the
+            #        check only if (os.linesep != '\r\n').
             #
-            # Use 0 for line_number since outputting only one error for
-            # potentially several lines.
-            handle_style_error(0, 'whitespace/newline', 1,
-                               'One or more unexpected \\r (^M) found;'
-                               'better to use only a \\n')
+            # FIXME: As a minor optimization, we can have
+            #        check_no_carriage_return() return whether
+            #        the line ends with "\r".
+            check_no_carriage_return(lines[line_number], line_number,
+                                     handle_style_error)
+            if lines[line_number].endswith("\r"):
+                lines[line_number] = lines[line_number].rstrip("\r")
+
+        processor.process(lines)
 
     def check_file(self, file_path, handle_style_error=None, process_file=None):
         """Check style in the given file.
