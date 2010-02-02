@@ -20933,6 +20933,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PrintContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PrintContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Screen.cpp"
 				>
 			</File>

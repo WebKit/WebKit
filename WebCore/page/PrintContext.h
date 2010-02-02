@@ -39,6 +39,7 @@ public:
 
     int pageCount() const;
     const IntRect& pageRect(int pageNumber) const;
+  const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
     void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight);
 

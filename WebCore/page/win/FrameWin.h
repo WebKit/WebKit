@@ -37,7 +37,7 @@ namespace WebCore {
     class IntRect;
 
     HBITMAP imageFromSelection(Frame* frame, bool forceWhiteText);
-    void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& pages, int& pageHeight);
+    void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
 
 }
 
