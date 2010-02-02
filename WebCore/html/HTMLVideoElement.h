@@ -65,7 +65,7 @@ public:
     void setPoster(const String&);
 
 // fullscreen
-    void webkitEnterFullScreen(ExceptionCode&);
+    void webkitEnterFullScreen(bool isUserGesture, ExceptionCode&);
     void webkitExitFullScreen();
     bool webkitSupportsFullscreen();
     bool webkitDisplayingFullscreen();

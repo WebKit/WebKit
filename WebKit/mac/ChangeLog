@@ -1,3 +1,14 @@
+2010-01-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig + Oliver Hunt.
+
+        Bug 34346 - With JSC bindings, make processingUserGesture work with events in Isolated Worlds
+
+        Pass processeing user gensture flag to media play/pause methods.
+
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController setPlaying:]):
+
 2010-02-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

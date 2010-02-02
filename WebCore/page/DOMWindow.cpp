@@ -342,8 +342,6 @@ void DOMWindow::parseModalDialogFeatures(const String& featuresArg, HashMap<Stri
 bool DOMWindow::allowPopUp(Frame* activeFrame)
 {
     ASSERT(activeFrame);
-    if (activeFrame->script()->processingUserGesture())
-        return true;
     Settings* settings = activeFrame->settings();
     return settings && settings->javaScriptCanOpenWindowsAutomatically();
 }

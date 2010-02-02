@@ -42,7 +42,7 @@ interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
     attribute boolean autobuffer;
 
     readonly attribute TimeRanges buffered;
-    void load() 
+    [NeedsUserGestureCheck] void load() 
         raises (DOMException);
     DOMString canPlayType(in DOMString type);
 
@@ -68,8 +68,8 @@ interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
     readonly attribute boolean ended;
     attribute boolean autoplay;
     attribute boolean loop;
-    void play();
-    void pause();
+    [NeedsUserGestureCheck] void play();
+    [NeedsUserGestureCheck] void pause();
 
     // controls
     attribute boolean controls;

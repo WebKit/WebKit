@@ -222,39 +222,19 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
     return windowShell;
 }
 
-bool ScriptController::processingUserGesture() const
+bool ScriptController::processingUserGesture(DOMWrapperWorld* world) const
 {
-    return m_allowPopupsFromPlugin || processingUserGestureEvent() || isJavaScriptAnchorNavigation();
+    return m_allowPopupsFromPlugin || processingUserGestureEvent(world) || isJavaScriptAnchorNavigation();
 }
 
-bool ScriptController::processingUserGestureEvent() const
+bool ScriptController::processingUserGestureEvent(DOMWrapperWorld* world) const
 {
-    JSDOMWindowShell* shell = existingWindowShell(mainThreadNormalWorld());
+    JSDOMWindowShell* shell = existingWindowShell(world);
     if (!shell)
         return false;
 
-    if (Event* event = shell->window()->currentEvent()) {
-        if (event->createdByDOM())
-            return false;
-
-        const AtomicString& type = event->type();
-        if ( // mouse events
-            type == eventNames().clickEvent || type == eventNames().mousedownEvent 
-            || type == eventNames().mouseupEvent || type == eventNames().dblclickEvent 
-            // keyboard events
-            || type == eventNames().keydownEvent || type == eventNames().keypressEvent
-            || type == eventNames().keyupEvent
-#if ENABLE(TOUCH_EVENTS)
-            // touch events
-            || type == eventNames().touchstartEvent || type == eventNames().touchmoveEvent
-            || type == eventNames().touchendEvent || type == eventNames().touchcancelEvent
-#endif
-            // other accepted events
-            || type == eventNames().selectEvent || type == eventNames().changeEvent
-            || type == eventNames().focusEvent || type == eventNames().blurEvent
-            || type == eventNames().submitEvent)
-            return true;
-    }
+    if (Event* event = shell->window()->currentEvent())
+        return event->fromUserGesture();
     
     return false;
 }
@@ -280,7 +260,20 @@ bool ScriptController::anyPageIsProcessingUserGesture() const
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (frame->script()->processingUserGesture())
+            ScriptController* script = frame->script();
+
+            if (script->m_allowPopupsFromPlugin)
+                return true;
+
+            const ShellMap::const_iterator iterEnd = m_windowShells.end();
+            for (ShellMap::const_iterator iter = m_windowShells.begin(); iter != iterEnd; ++iter) {
+                JSDOMWindowShell* shell = iter->second.get();
+                Event* event = shell->window()->currentEvent();
+                if (event && event->fromUserGesture())
+                    return true;
+            }
+
+            if (isJavaScriptAnchorNavigation())
                 return true;
         }
     }

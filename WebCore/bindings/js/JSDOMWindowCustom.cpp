@@ -716,6 +716,14 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     return newFrame;
 }
 
+static bool domWindowAllowPopUp(Frame* activeFrame, ExecState* exec)
+{
+    ASSERT(activeFrame);
+    if (activeFrame->script()->processingUserGesture(currentWorld(exec)))
+        return true;
+    return DOMWindow::allowPopUp(activeFrame);
+}
+
 JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
 {
     String urlString = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
@@ -736,7 +744,7 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!DOMWindow::allowPopUp(dynamicFrame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
+    if (!domWindowAllowPopUp(dynamicFrame, exec) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
     // Get the target frame for the special cases of _top and _parent.  In those
@@ -806,7 +814,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     if (!dynamicFrame)
         return jsUndefined();
 
-    if (!DOMWindow::canShowModalDialogNow(frame) || !DOMWindow::allowPopUp(dynamicFrame))
+    if (!DOMWindow::canShowModalDialogNow(frame) || !domWindowAllowPopUp(dynamicFrame, exec))
         return jsUndefined();
 
     HashMap<String, String> features;

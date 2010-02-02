@@ -1,3 +1,50 @@
+2010-01-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig + Oliver Hunt.
+
+        Bug 34346 - With JSC bindings, make processingUserGesture work with events in Isolated Worlds
+
+        Change HTMLMediaElement methods that require checking whether the event is a user gesture to
+        be passed a boolean.  This may be passed from the JSC bindings (where we have an exec state),
+        or read from the event.  Add a Flag to the IDL to mark this information is required.
+
+        * WebCore.Video.exp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::processingUserGesture):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::domWindowAllowPopUp):
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        (WebCore::ScriptController::processingUserGestureEvent):
+        (WebCore::ScriptController::anyPageIsProcessingUserGesture):
+        * bindings/js/ScriptController.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Event.cpp:
+        (WebCore::Event::isUserEvent):
+        * dom/Event.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::documentDidBecomeActive):
+        (WebCore::HTMLMediaElement::webkitEnterFullScreen):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isProcessingUserGesture):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::allowPopUp):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+
 2010-02-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

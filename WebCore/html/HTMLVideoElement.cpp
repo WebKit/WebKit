@@ -224,14 +224,14 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     return m_player->hasAvailableVideoFrame();
 }
 
-void HTMLVideoElement::webkitEnterFullScreen(ExceptionCode& ec)
+void HTMLVideoElement::webkitEnterFullScreen(bool isUserGesture, ExceptionCode& ec)
 {
     if (m_isFullscreen)
         return;
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen.
-    if (!processingUserGesture() || !supportsFullscreen()) {
+    if (!isUserGesture || !supportsFullscreen()) {
         ec = INVALID_STATE_ERR;
         return;
     }

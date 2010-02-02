@@ -1,3 +1,13 @@
+2010-02-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 34346 - With JSC bindings, make processingUserGesture work with events in Isolated Worlds
+
+        * http/tests/security/isolatedWorld/resources/userGestureEvents-second-window.html: Added.
+        * http/tests/security/isolatedWorld/userGestureEvents-expected.txt: Added.
+        * http/tests/security/isolatedWorld/userGestureEvents.html: Added.
+
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

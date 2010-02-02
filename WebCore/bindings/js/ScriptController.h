@@ -107,7 +107,7 @@ public:
     int eventHandlerLineNumber() { return m_handlerLineNumber; }
 
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
-    bool processingUserGesture() const;
+    bool processingUserGesture(DOMWrapperWorld*) const;
     bool anyPageIsProcessingUserGesture() const;
 
     bool canExecuteScripts();
@@ -164,7 +164,7 @@ private:
 
     void disconnectPlatformScriptObjects();
 
-    bool processingUserGestureEvent() const;
+    bool processingUserGestureEvent(DOMWrapperWorld*) const;
     bool isJavaScriptAnchorNavigation() const;
 
     ShellMap m_windowShells;

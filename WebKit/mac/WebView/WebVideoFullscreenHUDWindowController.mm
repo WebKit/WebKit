@@ -578,13 +578,15 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)setPlaying:(BOOL)playing
 {
-    if (![_delegate mediaElement])
+    HTMLMediaElement* mediaElement = [_delegate mediaElement];
+
+    if (!mediaElement)
         return;
 
     if (playing)
-        [_delegate mediaElement]->play();
+        mediaElement->play(mediaElement->processingUserGesture());
     else
-        [_delegate mediaElement]->pause();
+        mediaElement->pause(mediaElement->processingUserGesture());
 }
 
 static NSString *timeToString(double time)

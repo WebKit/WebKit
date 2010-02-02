@@ -270,7 +270,7 @@ void HTMLMediaElement::insertedIntoDocument()
 void HTMLMediaElement::removedFromDocument()
 {
     if (m_networkState > NETWORK_EMPTY)
-        pause();
+        pause(processingUserGesture());
     if (m_isFullscreen)
         exitFullscreen();
     HTMLElement::removedFromDocument();
@@ -421,9 +421,9 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     return canPlay;
 }
 
-void HTMLMediaElement::load(ExceptionCode& ec)
+void HTMLMediaElement::load(bool isUserGesture, ExceptionCode& ec)
 {
-    if (m_restrictions & RequireUserGestureForLoadRestriction && !processingUserGesture())
+    if (m_restrictions & RequireUserGestureForLoadRestriction && !isUserGesture)
         ec = INVALID_STATE_ERR;
     else {
         prepareForLoad();
@@ -1120,9 +1120,9 @@ void HTMLMediaElement::setAutobuffer(bool b)
     setBooleanAttribute(autobufferAttr, b);
 }
 
-void HTMLMediaElement::play()
+void HTMLMediaElement::play(bool isUserGesture)
 {
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !processingUserGesture())
+    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !isUserGesture)
         return;
 
     playInternal();
@@ -1155,9 +1155,9 @@ void HTMLMediaElement::playInternal()
     updatePlayState();
 }
 
-void HTMLMediaElement::pause()
+void HTMLMediaElement::pause(bool isUserGesture)
 {
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !processingUserGesture())
+    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !isUserGesture)
         return;
 
     pauseInternal();
@@ -1265,7 +1265,7 @@ void HTMLMediaElement::beginScrubbing()
             // Because a media element stays in non-paused state when it reaches end, playback resumes 
             // when the slider is dragged from the end to another position unless we pause first. Do 
             // a "hard pause" so an event is generated, since we want to stay paused after scrubbing finishes.
-            pause();
+            pause(processingUserGesture());
         } else {
             // Not at the end but we still want to pause playback so the media engine doesn't try to
             // continue playing during scrubbing. Pause without generating an event as we will 
@@ -1761,7 +1761,7 @@ void HTMLMediaElement::documentDidBecomeActive()
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         ExceptionCode ec;
-        load(ec);
+        load(processingUserGesture(), ec);
     }
 
     if (renderer())

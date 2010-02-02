@@ -1676,7 +1676,12 @@ sub GenerateImplementation
                     } else {
                         $functionString .= $name;
                     }
+                    $paramIndex++;
+                }
 
+                if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
+                    $functionString .= ", " if $paramIndex;
+                    $functionString .= "processingUserGesture(exec)";
                     $paramIndex++;
                 }
 

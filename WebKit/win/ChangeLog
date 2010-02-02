@@ -1,3 +1,15 @@
+2010-01-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig + Oliver Hunt.
+
+        Bug 34346 - With JSC bindings, make processingUserGesture work with events in Isolated Worlds
+
+        Pass processeing user gensture flag to media play/pause methods.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::play):
+        (FullscreenVideoController::pause):
+
 2010-01-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

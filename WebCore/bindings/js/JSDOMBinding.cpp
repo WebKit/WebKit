@@ -776,7 +776,7 @@ Frame* toDynamicFrame(ExecState* exec)
 bool processingUserGesture(ExecState* exec)
 {
     Frame* frame = toDynamicFrame(exec);
-    return frame && frame->script()->processingUserGesture();
+    return frame && frame->script()->processingUserGesture(currentWorld(exec));
 }
 
 KURL completeURL(ExecState* exec, const String& relativeURL)
