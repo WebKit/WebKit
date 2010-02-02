@@ -151,9 +151,6 @@ typedef union PluginPort {
 @interface WebNetscapePluginView (WebInternal)
 - (BOOL)sendEvent:(void*)event isDrawRect:(BOOL)eventIsDrawRect;
 - (NPEventModel)eventModel;
-#ifndef BUILDING_ON_TIGER
-- (CALayer *)pluginLayer;
-#endif
 - (NPError)loadRequest:(NSURLRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 - (NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
 - (NPError)getURL:(const char *)URL target:(const char *)target;

@@ -1116,12 +1116,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 }
 
 #ifndef BUILDING_ON_TIGER
-// FIXME: This method is an ideal candidate to move up to the base class
-- (CALayer *)pluginLayer
-{
-    return _pluginLayer.get();
-}
-
 - (void)setLayer:(CALayer *)newLayer
 {
     [super setLayer:newLayer];
