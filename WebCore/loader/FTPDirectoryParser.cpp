@@ -38,8 +38,27 @@ using namespace WTF;
 
 namespace WebCore {
 #if PLATFORM(QT) && defined(Q_WS_WIN32)
-// Defined in FTPDirectoryDocument.cpp.
-struct tm gmtimeQt(const QDateTime &input);
+
+// Replacement for gmtime_r() which is not available on MinGW.
+// We use this on Win32 Qt platform for portability.
+struct tm gmtimeQt(const QDateTime& input)
+{
+    tm result;
+
+    QDate date(input.date());
+    result.tm_year = date.year() - 1900;
+    result.tm_mon = date.month();
+    result.tm_mday = date.day();
+    result.tm_wday = date.dayOfWeek();
+    result.tm_yday = date.dayOfYear();
+
+    QTime time(input.time());
+    result.tm_sec = time.second();
+    result.tm_min = time.minute();
+    result.tm_hour = time.hour();
+
+    return result;
+}
 
 static struct tm *gmtimeQt(const time_t *const timep, struct tm *result)
 {

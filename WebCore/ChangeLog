@@ -1,3 +1,18 @@
+2010-02-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Use WTF::getLocalTime instead of localtime_r in FTPDirectoryDocument
+        https://bugs.webkit.org/show_bug.cgi?id=34409
+
+        Platform guards for localtime_r are not needed because we already have
+        WTF::getLocalTime which does the same thing.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::gmtimeQt):
+
 2010-02-02  Adam Roben  <aroben@apple.com>
 
         Copy WebCore's bindings generation scripts to the PrivateHeaders
