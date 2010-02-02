@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        [BREWMP] Don't define HAVE_TM_GMTOFF, HAVE_TM_ZONE and HAVE_TIMEGM
+        https://bugs.webkit.org/show_bug.cgi?id=34388
+
+        BREWMP does not have these features.
+
+        * wtf/Platform.h:
+
+2010-02-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
         [BREWMP] Define WTF_PLATFORM_BREWMP=1 when BUILDING_BREWMP is defined
         https://bugs.webkit.org/show_bug.cgi?id=34386
 
