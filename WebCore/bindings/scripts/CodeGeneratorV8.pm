@@ -962,7 +962,6 @@ END
             push(@implContentDecls, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, $result");
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
-            $implIncludes{"V8CustomBinding.h"} = 1;
             push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::cacheIndex);\n");
             push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate)");
         } else {
@@ -1506,10 +1505,8 @@ sub GenerateImplementation
 
         # Generate special code for the constructor attributes.
         if ($attrType =~ /Constructor$/) {
-            if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-                $attribute->signature->extendedAttributes->{"V8CustomGetter"}) {
-                $implIncludes{"V8CustomBinding.h"} = 1;
-            } else {
+            if (!($attribute->signature->extendedAttributes->{"CustomGetter"} ||
+                $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
                 $hasConstructors = 1;
             }
             next;
@@ -1524,25 +1521,22 @@ sub GenerateImplementation
         # implementation.
         if ($attribute->signature->extendedAttributes->{"Custom"} ||
             $attribute->signature->extendedAttributes->{"V8Custom"}) {
-            $implIncludes{"V8CustomBinding.h"} = 1;
             next;
         }
 
         # Generate the accessor.
-        if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-            $attribute->signature->extendedAttributes->{"V8CustomGetter"}) {
-            $implIncludes{"V8CustomBinding.h"} = 1;
-        } else {
+        if (!($attribute->signature->extendedAttributes->{"CustomGetter"} ||
+            $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
             GenerateNormalAttrGetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
         }
-        if ($attribute->signature->extendedAttributes->{"CustomSetter"} ||
-            $attribute->signature->extendedAttributes->{"V8CustomSetter"}) {
-            $implIncludes{"V8CustomBinding.h"} = 1;
-        } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
-            $dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"} || die "Replaceable attribute can only be used in interface that defines ExtendsDOMGlobalObject attribute!";
-            # GenerateReplaceableAttrSetter($implClassName);
-        } elsif ($attribute->type !~ /^readonly/ && !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
-            GenerateNormalAttrSetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
+        if (!($attribute->signature->extendedAttributes->{"CustomSetter"} ||
+            $attribute->signature->extendedAttributes->{"V8CustomSetter"})) {
+            if ($attribute->signature->extendedAttributes->{"Replaceable"}) {
+                $dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"} || die "Replaceable attribute can only be used in interface that defines ExtendsDOMGlobalObject attribute!";
+                # GenerateReplaceableAttrSetter($implClassName);
+            } elsif ($attribute->type !~ /^readonly/ && !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
+                GenerateNormalAttrSetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
+            }
         }
     }
 
@@ -1556,9 +1550,7 @@ sub GenerateImplementation
     foreach my $function (@{$dataNode->functions}) {
         # hack for addEventListener/RemoveEventListener
         # FIXME: avoid naming conflict
-        if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"}) {
-                $implIncludes{"V8CustomBinding.h"} = 1;
-        } else {
+        if (!($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"})) {
             GenerateFunctionCallback($function, $dataNode, $classIndex, $implClassName);
         }
 
