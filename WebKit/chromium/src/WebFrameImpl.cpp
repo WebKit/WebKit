@@ -1077,6 +1077,28 @@ WebString WebFrameImpl::selectionAsMarkup() const
     return createMarkup(range.get(), 0);
 }
 
+void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition pos)
+{
+    VisibleSelection selection(pos);
+    selection.expandUsingGranularity(WordGranularity);
+
+    if (selection.isRange())
+        frame->setSelectionGranularity(WordGranularity);
+
+    if (frame->shouldChangeSelection(selection))
+        frame->selection()->setSelection(selection);
+}
+
+bool WebFrameImpl::selectWordAroundCaret()
+{
+    SelectionController* controller = frame()->selection();
+    ASSERT(!controller->isNone());
+    if (controller->isNone() || controller->isRange())
+        return false;
+    selectWordAroundPosition(frame(), controller->selection().visibleStart());
+    return true;
+}
+
 int WebFrameImpl::printBegin(const WebSize& pageSize)
 {
     ASSERT(!frame()->document()->isFrameSet());

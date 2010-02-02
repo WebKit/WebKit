@@ -89,7 +89,7 @@ static bool isASingleWord(const String& text)
 // Helper function to get misspelled word on which context menu
 // is to be evolked. This function also sets the word on which context menu
 // has been evoked to be the selected word, as required. This function changes
-// the selection only when there were no selected characters.
+// the selection only when there were no selected characters on OS X.
 static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* selectedFrame)
 {
     // First select from selectedText to check for multiple word selection.
@@ -110,27 +110,21 @@ static String selectMisspelledWord(const ContextMenu* defaultMenu, Frame* select
     VisiblePosition pos(innerNode->renderer()->positionForPoint(
         hitTestResult.localPoint()));
 
-    VisibleSelection selection;
-    if (pos.isNotNull()) {
-        selection = VisibleSelection(pos);
-        selection.expandUsingGranularity(WordGranularity);
-    }
+    if (pos.isNull())
+        return misspelledWord; // It is empty.
 
-    if (selection.isRange())
-        selectedFrame->setSelectionGranularity(WordGranularity);
-
-    if (selectedFrame->shouldChangeSelection(selection))
-        selectedFrame->selection()->setSelection(selection);
-
+    WebFrameImpl::selectWordAroundPosition(selectedFrame, pos);
     misspelledWord = selectedFrame->selectedText().stripWhiteSpace();
 
+#if OS(DARWIN)
     // If misspelled word is still empty, then that portion should not be
     // selected. Set the selection to that position only, and do not expand.
-    if (misspelledWord.isEmpty()) {
-        selection = VisibleSelection(pos);
-        selectedFrame->selection()->setSelection(selection);
-    }
-
+    if (misspelledWord.isEmpty())
+        selectedFrame->selection()->setSelection(VisibleSelection(pos));
+#else
+    // On non-Mac, right-click should not make a range selection in any case.
+    selectedFrame->selection()->setSelection(VisibleSelection(pos));
+#endif
     return misspelledWord;
 }
 
