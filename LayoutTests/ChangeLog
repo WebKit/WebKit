@@ -1,3 +1,16 @@
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Convert textarea-rows-cols.html to dumpAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=34074
+
+        Remove checks for the size of scrollbar as scrollbar doesn't
+        appear on Windows.
+
+        * fast/forms/script-tests/textarea-rows-cols.js:
+        * fast/forms/textarea-rows-cols-expected.txt:
+
 2010-02-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

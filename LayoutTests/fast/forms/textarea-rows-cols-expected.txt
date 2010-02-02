@@ -8,10 +8,6 @@ PASS defaultRows is 2
 PASS defaultCols is 20
 PASS defaultHeight > 0 is true
 PASS defaultWidth > 0 is true
-PASS defaultScrollHeight > 0 is true
-PASS defaultScrollWidth > 0 is true
-PASS defaultScrollHeight < defaultHeight is true
-PASS defaultScrollWidth < defaultWidth is true
 rows = 1
 PASS textarea.rows is 1
 PASS textarea.offsetHeight > 0 is true
@@ -46,8 +42,6 @@ PASS textarea.cols is 1
 PASS textarea.offsetWidth > 0 is true
 PASS textarea.offsetWidth < defaultWidth is true
 PASS textarea.offsetHeight is defaultHeight
-PASS textarea.scrollHeight > defaultScrollHeight is true
-PASS textarea.scrollWidth < defaultScrollWidth is true
 cols = 20; should match default width
 PASS textarea.cols is defaultCols
 PASS textarea.offsetWidth is defaultWidth

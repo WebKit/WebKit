@@ -10,16 +10,10 @@ var defaultRows = textarea.rows;
 var defaultCols = textarea.cols;
 var defaultHeight = textarea.offsetHeight;
 var defaultWidth = textarea.offsetWidth;
-var defaultScrollHeight = textarea.scrollHeight;
-var defaultScrollWidth = textarea.scrollWidth;
 shouldBe('defaultRows', '2');
 shouldBe('defaultCols', '20');
 shouldBeTrue('defaultHeight > 0');
 shouldBeTrue('defaultWidth > 0');
-shouldBeTrue('defaultScrollHeight > 0');
-shouldBeTrue('defaultScrollWidth > 0');
-shouldBeTrue('defaultScrollHeight < defaultHeight');
-shouldBeTrue('defaultScrollWidth < defaultWidth');
 
 debug('rows = 1');
 parent.innerHTML = '<textarea rows="1">rows = 1</textarea>';
@@ -78,8 +72,6 @@ shouldBe('textarea.cols', '1');
 shouldBeTrue('textarea.offsetWidth > 0');
 shouldBeTrue('textarea.offsetWidth < defaultWidth');
 shouldBe('textarea.offsetHeight', 'defaultHeight');
-shouldBeTrue('textarea.scrollHeight > defaultScrollHeight');
-shouldBeTrue('textarea.scrollWidth < defaultScrollWidth');
 
 debug('cols = 20; should match default width');
 parent.innerHTML = '<textarea cols="20">cols = 20; should match default width</textarea>';
