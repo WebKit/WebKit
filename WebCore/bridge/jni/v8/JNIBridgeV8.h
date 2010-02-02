@@ -1,20 +1,19 @@
 /*
- * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ *  * Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
+ *  * Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,25 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Bridge_h
-#define Bridge_h
+#ifndef JNIBridgeV8_h
+#define JNIBridgeV8_h
 
-#include "BridgeJSC.h"
-#include <wtf/Noncopyable.h>
+#include "JNIBridge.h" // For JavaString
+#include "JavaInstanceV8.h" // For JObjectWrapper
 
-namespace JSC  {
+namespace JSC {
 
 namespace Bindings {
 
-class Method : public Noncopyable {
+class JavaField {
 public:
-    virtual int numParameters() const = 0;
+    JavaField(JNIEnv*, jobject aField);
 
-    virtual ~Method() { }
+    const JavaString& name() const { return m_name; }
+    const char* type() const { return m_type.UTF8String(); }
+
+    JNIType getJNIType() const { return m_JNIType; }
+
+private:
+    JavaString m_name;
+    JavaString m_type;
+    JNIType m_JNIType;
+    RefPtr<JObjectWrapper> m_field;
 };
 
 } // namespace Bindings
 
 } // namespace JSC
 
-#endif
+#endif // JNIBridgeV8_h

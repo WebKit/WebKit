@@ -2,6 +2,26 @@
 
         Reviewed by Ariya Hidayat.
 
+        Adds V8-specific JNI bridge classes
+        https://bugs.webkit.org/show_bug.cgi?id=34166
+
+        This is the V8 equivalent of bridge/jni/jsc/JNIBridgeJSC.
+
+        No new tests, build fix only.
+
+        * Android.v8bindings.mk: Modified. Added JNIBridge.cpp and JNIBridgeV8.cpp
+        * bridge/Bridge.h: Modified. Added missing include for Noncopyable.h
+        * bridge/jni/v8/JNIBridgeV8.cpp: Added.
+        (JavaField::JavaField):
+        * bridge/jni/v8/JNIBridgeV8.h: Added.
+        (JSC::Bindings::JavaField::name):
+        (JSC::Bindings::JavaField::type):
+        (JSC::Bindings::JavaField::getJNIType):
+
+2010-02-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
         Adds V8-specific JNI utility functions.
         https://bugs.webkit.org/show_bug.cgi?id=33901
 
