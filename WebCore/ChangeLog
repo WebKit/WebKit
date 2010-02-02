@@ -1,3 +1,18 @@
+2010-02-02  Adam Roben  <aroben@apple.com>
+
+        Stop copying IDL files into $(WebKitOutputDir)
+
+        No one uses these anymore (as of r52921).
+
+        Part of Bug 34496: Clean up WebCore's IDL/script copying
+        <https://bugs.webkit.org/show_bug.cgi?id=34496>
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCore.vcproj/MigrateIDLAndScripts: Don't copy the IDL files
+        anymore. Keep copying the scripts, though, since other projects
+        (outside of the WebKit repository) do use those.
+
 2010-02-02  Bryan Yeung  <bryeung@bryeung-chrome.(none)>
 
         Reviewed by Darin Adler.
