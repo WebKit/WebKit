@@ -40,7 +40,7 @@
 #include "Node.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
+#include "V8DOMWindow.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::S
         if (!doc)
             return v8::Undefined();
         if (Frame* frame = doc->frame())
-            return V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMWINDOW, frame->domWindow());
+            return toV8(frame->domWindow());
     }
     return notHandledByInterceptor();
 }

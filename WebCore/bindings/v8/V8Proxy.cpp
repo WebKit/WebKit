@@ -46,12 +46,17 @@
 #include "V8BindingState.h"
 #include "V8Collection.h"
 #include "V8ConsoleMessage.h"
-#include "V8CustomBinding.h"
+#include "V8DOMCoreException.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
+#include "V8EventException.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Index.h"
 #include "V8IsolatedContext.h"
+#include "V8RangeException.h"
+#include "V8SVGException.h"
+#include "V8XMLHttpRequestException.h"
+#include "V8XPathException.h"
 #include "WorkerContextExecutionProxy.h"
 
 #include <algorithm>
@@ -607,25 +612,25 @@ void V8Proxy::setDOMException(int exceptionCode)
     v8::Handle<v8::Value> exception;
     switch (description.type) {
     case DOMExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMCOREEXCEPTION, DOMCoreException::create(description));
+        exception = toV8(DOMCoreException::create(description));
         break;
     case RangeExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::RANGEEXCEPTION, RangeException::create(description));
+        exception = toV8(RangeException::create(description));
         break;
     case EventExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::EVENTEXCEPTION, EventException::create(description));
+        exception = toV8(EventException::create(description));
         break;
     case XMLHttpRequestExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::XMLHTTPREQUESTEXCEPTION, XMLHttpRequestException::create(description));
+        exception = toV8(XMLHttpRequestException::create(description));
         break;
 #if ENABLE(SVG)
     case SVGExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGEXCEPTION, SVGException::create(description));
+        exception = toV8(SVGException::create(description));
         break;
 #endif
 #if ENABLE(XPATH)
     case XPathExceptionType:
-        exception = V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHEXCEPTION, XPathException::create(description));
+        exception = toV8(XPathException::create(description));
         break;
 #endif
     }

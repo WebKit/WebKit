@@ -32,9 +32,8 @@
 #include "V8NodeList.h" 
 
 #include "NodeList.h"
-
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -57,7 +56,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     if (!result)
         return notHandledByInterceptor();
 
-    return V8DOMWrapper::convertNodeToV8Object(result.release());
+    return toV8(result.release());
 }
 
 // Need to support call so that list(0) works.
@@ -75,7 +74,7 @@ v8::Handle<v8::Value> V8NodeList::callAsFunctionCallback(const v8::Arguments& ar
         return v8::Undefined();
 
     RefPtr<Node> result = list->item(index->Uint32Value());
-    return V8DOMWrapper::convertNodeToV8Object(result.release());
+    return toV8(result.release());
 }
 
 } // namespace WebCore

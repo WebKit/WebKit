@@ -50,7 +50,9 @@
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
+#include "V8DOMWindow.h"
 #include "V8Event.h"
+#include "V8HTMLEmbedElement.h"
 #include "V8IsolatedContext.h"
 #include "V8NPObject.h"
 #include "V8Proxy.h"
@@ -169,7 +171,9 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 
     v8::Handle<v8::Object> global = v8Context->Global();
     v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
-    Event* event = V8DOMWrapper::isDOMEventWrapper(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
+    if (jsEvent.IsEmpty() || !jsEvent->IsObject())
+        return false;
+    Event* event = V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent));
 
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.
@@ -377,7 +381,7 @@ static NPObject* createScriptObject(Frame* frame)
 
     v8::Context::Scope scope(v8Context);
     DOMWindow* window = frame->domWindow();
-    v8::Handle<v8::Value> global = V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMWINDOW, window);
+    v8::Handle<v8::Value> global = toV8(window);
     ASSERT(global->IsObject());
     return npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(global), window);
 }
@@ -414,7 +418,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
     v8::Context::Scope scope(v8Context);
 
     DOMWindow* window = m_frame->domWindow();
-    v8::Handle<v8::Value> v8plugin = V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLEMBEDELEMENT, plugin);
+    v8::Handle<v8::Value> v8plugin = toV8(static_cast<HTMLEmbedElement*>(plugin));
     if (!v8plugin->IsObject())
         return createNoScriptObject();
 

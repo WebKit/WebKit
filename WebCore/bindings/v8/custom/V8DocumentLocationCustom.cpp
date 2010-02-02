@@ -27,8 +27,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
-#include "V8Document.h"
+#include "V8Location.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -40,7 +39,7 @@ v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> n
         return v8::Null();
 
     DOMWindow* window = document->frame()->domWindow();
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::LOCATION, window->location());
+    return toV8(window->location());
 }
 
 void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

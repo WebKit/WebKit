@@ -36,8 +36,8 @@
 #include "Event.h"
 #include "V8BeforeLoadEvent.h"
 #include "V8Binding.h"
+#include "V8Clipboard.h"
 #include "V8CompositionEvent.h"
-#include "V8CustomBinding.h"
 #include "V8ErrorEvent.h"
 #include "V8KeyboardEvent.h"
 #include "V8MessageEvent.h"
@@ -70,7 +70,7 @@ v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> 
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isDragEvent())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<MouseEvent*>(event)->clipboard());
+        return toV8(static_cast<MouseEvent*>(event)->clipboard());
 
     return v8::Undefined();
 }
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isClipboardEvent())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<ClipboardEvent*>(event)->clipboard());
+        return toV8(static_cast<ClipboardEvent*>(event)->clipboard());
 
     return v8::Undefined();
 }

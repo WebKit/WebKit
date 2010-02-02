@@ -1,3 +1,57 @@
+2010-02-02  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Use toV8() to wrap in the custom bindings, and remove
+        the old wrapping code from V8DOMWrapper.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32563
+
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptObject.cpp:
+        * bindings/v8/V8AbstractEventListener.cpp:
+        * bindings/v8/V8Collection.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        * bindings/v8/custom/V8CustomPositionCallback.cpp:
+        * bindings/v8/custom/V8CustomPositionErrorCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.cpp:
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DataGridColumnListCustom.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * bindings/v8/custom/V8EventCustom.cpp:
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp:
+        * bindings/v8/custom/V8StyleSheetListCustom.cpp:
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * bindings/v8/custom/V8XSLTProcessorCustom.cpp:
+
 2010-02-02  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by David Levin.
