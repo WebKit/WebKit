@@ -1,3 +1,11 @@
+2010-02-02  Martin Robinson  <mrobinson@webkit.org>
+
+        Unreviewed build fix.
+
+        The WinCairo build requires this script to be executable.
+
+        * win/tools/scripts/feature-defines.sh: Added property svn:executable.
+
 2010-01-29  Mark Rowe  <mrowe@apple.com>
 
         Keep the Windows feature defines in sync with FeatureDefines.xcconfig.
