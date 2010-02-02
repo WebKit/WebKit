@@ -1,3 +1,14 @@
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: editing/selection/doubleclick-beside-cr-span.html times out on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=34069
+
+        Make the sleep time shorter as this test timed out on Windows bot.
+
+        * editing/selection/doubleclick-beside-cr-span.html:
+
 2010-02-01  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
