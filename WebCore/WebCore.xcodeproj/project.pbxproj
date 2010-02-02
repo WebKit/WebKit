@@ -4618,6 +4618,10 @@
 		BCFE2F120C1B58380020235F /* JSRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFE2F100C1B58370020235F /* JSRect.h */; };
 		BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF64900EAD15C200C1D6F7 /* LengthSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */ = {isa = PBXBuildFile; fileRef = 14813BF309EDF88E00F757E1 /* IDLParser.pm */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C054CE1118C8E400CE2636 /* IDLStructure.pm in Headers */ = {isa = PBXBuildFile; fileRef = 93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */; };
 		C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */; };
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
@@ -16139,6 +16143,7 @@
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
+				C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */,
 				BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */,
 				93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */,
 				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
@@ -17085,6 +17090,7 @@
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
+				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */,
 				2E4346440F546A8200B0F1BA /* GenericWorkerTask.h in Headers */,
@@ -17218,6 +17224,8 @@
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
+				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
+				C0C054CE1118C8E400CE2636 /* IDLStructure.pm in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,

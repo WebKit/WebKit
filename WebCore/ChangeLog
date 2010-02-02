@@ -1,5 +1,19 @@
 2010-02-02  Adam Roben  <aroben@apple.com>
 
+        Copy WebCore's bindings generation scripts to the PrivateHeaders
+        directory on Mac
+
+        This will allow other projects to use these scripts.
+
+        Fixes <http://webkit.org/b/34498>.
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj: Added the bindings generation
+        scripst to the Copy Headers phase, and marked them as Private.
+
+2010-02-02  Adam Roben  <aroben@apple.com>
+
         Copy WebCore's bindings generation scripts to a more sensible location
 
         Part of Bug 34496: Clean up WebCore's IDL/script copying
