@@ -1,3 +1,15 @@
+2010-02-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Do not use a proxy widget for the QComboBox on Maemo 5, as it
+        is not working properly and it is not needed at all, as the
+        comboboxes comes up in their full width on the screen and
+        do not depend on view.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::show):
+
 2010-02-02  Jessie Berlin  <jberlin@webkit.org>
 
         Rubber Stamped by Holger Freyther.
