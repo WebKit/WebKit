@@ -37,66 +37,12 @@
 import unittest
 
 import checker as style
-from checker import CategoryFilter
 from checker import ProcessorDispatcher
 from checker import ProcessorOptions
 from checker import StyleChecker
+from filter import CategoryFilter
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
-
-class CategoryFilterTest(unittest.TestCase):
-
-    """Tests CategoryFilter class."""
-
-    def test_init(self):
-        """Test __init__ constructor."""
-        self.assertRaises(ValueError, CategoryFilter, ["no_prefix"])
-        CategoryFilter() # No ValueError: works
-        CategoryFilter(["+"]) # No ValueError: works
-        CategoryFilter(["-"]) # No ValueError: works
-
-    def test_str(self):
-        """Test __str__ "to string" operator."""
-        filter = CategoryFilter(["+a", "-b"])
-        self.assertEquals(str(filter), "+a,-b")
-
-    def test_eq(self):
-        """Test __eq__ equality function."""
-        filter1 = CategoryFilter(["+a", "+b"])
-        filter2 = CategoryFilter(["+a", "+b"])
-        filter3 = CategoryFilter(["+b", "+a"])
-
-        # == calls __eq__.
-        self.assertTrue(filter1 == filter2)
-        self.assertFalse(filter1 == filter3) # Cannot test with assertNotEqual.
-
-    def test_ne(self):
-        """Test __ne__ inequality function."""
-        # != calls __ne__.
-        # By default, __ne__ always returns true on different objects.
-        # Thus, just check the distinguishing case to verify that the
-        # code defines __ne__.
-        self.assertFalse(CategoryFilter() != CategoryFilter())
-
-    def test_should_check(self):
-        """Test should_check() method."""
-        filter = CategoryFilter()
-        self.assertTrue(filter.should_check("everything"))
-        # Check a second time to exercise cache.
-        self.assertTrue(filter.should_check("everything"))
-
-        filter = CategoryFilter(["-"])
-        self.assertFalse(filter.should_check("anything"))
-        # Check a second time to exercise cache.
-        self.assertFalse(filter.should_check("anything"))
-
-        filter = CategoryFilter(["-", "+ab"])
-        self.assertTrue(filter.should_check("abc"))
-        self.assertFalse(filter.should_check("a"))
-
-        filter = CategoryFilter(["+", "-ab"])
-        self.assertFalse(filter.should_check("abc"))
-        self.assertTrue(filter.should_check("a"))
 
 
 class ProcessorOptionsTest(unittest.TestCase):

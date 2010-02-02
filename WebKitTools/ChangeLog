@@ -1,3 +1,30 @@
+2010-02-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Moved filter-related check-webkit-style code into a separate
+        filter module.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34408
+
+        This is preparatory refactoring for Bug 33684, which will allow
+        file and folder-specific filter rules.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Removed CategoryFilter class (moved to filter.py).
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Removed CategoryFilter unit tests (moved to filter_unittest.py).
+
+        * Scripts/webkitpy/style/filter.py: Added.
+          - Added CategoryFilter class (moved from checker.py).
+
+        * Scripts/webkitpy/style/filter_unittest.py: Added.
+          - Added CategoryFilter unit tests (moved from checker_unittest.py).
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Added reference to filter_unittest.py.
+
 2010-02-01  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.

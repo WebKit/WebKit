@@ -37,6 +37,7 @@ import sys
 from .. style_references import parse_patch
 from error_handlers import DefaultStyleErrorHandler
 from error_handlers import PatchStyleErrorHandler
+from filter import CategoryFilter
 from processors.common import check_no_carriage_return
 from processors.common import categories as CommonCategories
 from processors.cpp import CppProcessor
@@ -108,8 +109,6 @@ SKIPPED_FILES_WITHOUT_WARNING = [
     ]
 
 
-# FIXME: Check that the keys are in _style_categories().
-#
 # The maximum number of errors to report per file, per category.
 # If a category is not a key, then it has no maximum.
 MAX_REPORTS_PER_CATEGORY = {
@@ -200,79 +199,6 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
        'default_output_format': defaults.output_format}
 
     return usage
-
-
-class CategoryFilter(object):
-
-    """Filters whether to check style categories."""
-
-    def __init__(self, filter_rules=None):
-        """Create a category filter.
-
-        This method performs argument validation but does not strip
-        leading or trailing white space.
-
-        Args:
-          filter_rules: A list of strings that are filter rules, which
-                        are strings beginning with the plus or minus
-                        symbol (+/-). The list should include any
-                        default filter rules at the beginning.
-                        Defaults to the empty list.
-
-        Raises:
-          ValueError: Invalid filter rule if a rule does not start with
-                      plus ("+") or minus ("-").
-
-        """
-        if filter_rules is None:
-            filter_rules = []
-
-        for rule in filter_rules:
-            if not (rule.startswith('+') or rule.startswith('-')):
-                raise ValueError('Invalid filter rule "%s": every rule '
-                                 'rule in the --filter flag must start '
-                                 'with + or -.' % rule)
-
-        self._filter_rules = filter_rules
-        self._should_check_category = {} # Cached dictionary of category to True/False
-
-    def __str__(self):
-        return ",".join(self._filter_rules)
-
-    # Useful for unit testing.
-    def __eq__(self, other):
-        """Return whether this CategoryFilter instance is equal to another."""
-        return self._filter_rules == other._filter_rules
-
-    # Useful for unit testing.
-    def __ne__(self, other):
-        # Python does not automatically deduce from __eq__().
-        return not (self == other)
-
-    def should_check(self, category):
-        """Return whether the category should be checked.
-
-        The rules for determining whether a category should be checked
-        are as follows. By default all categories should be checked.
-        Then apply the filter rules in order from first to last, with
-        later flags taking precedence.
-
-        A filter rule applies to a category if the string after the
-        leading plus/minus (+/-) matches the beginning of the category
-        name. A plus (+) means the category should be checked, while a
-        minus (-) means the category should not be checked.
-
-        """
-        if category in self._should_check_category:
-            return self._should_check_category[category]
-
-        should_check = True # All categories checked by default.
-        for rule in self._filter_rules:
-            if not category.startswith(rule[1:]):
-                continue
-            should_check = rule.startswith('+')
-        self._should_check_category[category] = should_check # Update cache.
-        return should_check
 
 
 # This class should not have knowledge of the flag key names.
