@@ -123,7 +123,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     size_t numMethods = methodList.size();
 
     // Try to find a good match for the overloaded method.  The
-    // fundamental problem is that JavaScript doesn have the
+    // fundamental problem is that JavaScript doesn't have the
     // notion of method overloading and Java does.  We could
     // get a bit more sophisticated and attempt to does some
     // type checking as we as checking the number of parameters.

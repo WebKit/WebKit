@@ -177,4 +177,5 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp
 
 LOCAL_SRC_FILES += \
-	bridge/jni/JNIUtility.cpp
+	bridge/jni/JNIUtility.cpp \
+	bridge/jni/v8/JavaInstanceV8.cpp

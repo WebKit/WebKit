@@ -1,3 +1,36 @@
+2010-02-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Adds V8 version of JavaInstance
+        https://bugs.webkit.org/show_bug.cgi?id=33951
+
+        This is the V8 equivalent of bridge/jni/jsc/JavaInstanceJSC.
+        Also fixes a typo in a comment in JavaInstanceJSC.cpp.
+
+        No new tests, build fix only.
+
+        * Android.v8bindings.mk: Modified. Added JavaInstanceV8.cpp
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: Modified.
+        (JavaInstance::invokeMethod): Modified. Fixed comment
+        * bridge/jni/v8/JavaInstanceV8.cpp: Added.
+        (JavaInstance::JavaInstance):
+        (JavaInstance::~JavaInstance):
+        (JavaInstance::getClass):
+        (JavaInstance::invokeMethod):
+        (JObjectWrapper::JObjectWrapper):
+        (JObjectWrapper::~JObjectWrapper):
+        * bridge/jni/v8/JavaInstanceV8.h: Added.
+        (JSC::Bindings::JObjectWrapper::instance):
+        (JSC::Bindings::JObjectWrapper::setInstance):
+        (JSC::Bindings::JObjectWrapper::ref):
+        (JSC::Bindings::JObjectWrapper::deref):
+        (JSC::Bindings::JavaInstance::javaInstance):
+        (JSC::Bindings::JavaInstance::begin):
+        (JSC::Bindings::JavaInstance::end):
+        (JSC::Bindings::JavaInstance::virtualBegin):
+        (JSC::Bindings::JavaInstance::virtualEnd):
+
 2010-02-01  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
