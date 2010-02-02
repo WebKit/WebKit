@@ -198,11 +198,13 @@ shouldBe("Math.round(8640000000000001)", "8640000000000001");
 shouldBe("Math.round(8640000000000002)", "8640000000000002");
 shouldBe("Math.round(9007199254740990)", "9007199254740990");
 shouldBe("Math.round(9007199254740991)", "9007199254740991");
+shouldBe("Math.round(1.7976931348623157e+308)", "1.7976931348623157e+308");
 shouldBe("Math.round(-8640000000000000)", "-8640000000000000");
 shouldBe("Math.round(-8640000000000001)", "-8640000000000001");
 shouldBe("Math.round(-8640000000000002)", "-8640000000000002");
 shouldBe("Math.round(-9007199254740990)", "-9007199254740990");
 shouldBe("Math.round(-9007199254740991)", "-9007199254740991");
+shouldBe("Math.round(-1.7976931348623157e+308)", "-1.7976931348623157e+308");
 shouldBe("Math.round(Infinity)", "Infinity");
 shouldBe("Math.round(-Infinity)", "-Infinity");
 
