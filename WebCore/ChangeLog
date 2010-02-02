@@ -1,3 +1,50 @@
+2010-02-02  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Sync up Chromium Mac render theme to Mac render theme
+        https://bugs.webkit.org/show_bug.cgi?id=34340
+
+        Covered by existing layout tests.
+
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::updateStates):
+        (WebCore::checkbox):
+        (WebCore::paintCheckbox):
+        (WebCore::radio):
+        (WebCore::paintRadio):
+        (WebCore::listButtonSizes):
+        (WebCore::setupButtonCell):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::ThemeChromiumMac::controlSize):
+        (WebCore::ThemeChromiumMac::minimumControlSize):
+        (WebCore::ThemeChromiumMac::controlBorder):
+        (WebCore::ThemeChromiumMac::paint):
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (-[WebCoreRenderThemeNotificationObserver initWithTheme:WebCore::]):
+        (WebCore::convertNSColorToColor):
+        (WebCore::RenderThemeChromiumMac::systemColor):
+        (WebCore::RenderThemeChromiumMac::isControlStyled):
+        (WebCore::RenderThemeChromiumMac::adjustRepaintRect):
+        (WebCore::RenderThemeChromiumMac::convertToPaintingRect):
+        (WebCore::RenderThemeChromiumMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeChromiumMac::paintMenuList):
+        (WebCore::RenderThemeChromiumMac::paintMenuListButton):
+        (WebCore::RenderThemeChromiumMac::adjustMenuListStyle):
+        (WebCore::RenderThemeChromiumMac::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeChromiumMac::paintSliderTrack):
+        (WebCore::RenderThemeChromiumMac::paintSliderThumb):
+        (WebCore::RenderThemeChromiumMac::paintSearchField):
+        (WebCore::RenderThemeChromiumMac::setSearchFieldSize):
+        (WebCore::RenderThemeChromiumMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeChromiumMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeChromiumMac::adjustSliderThumbSize):
+        (WebCore::RenderThemeChromiumMac::popupButton):
+        (WebCore::RenderThemeChromiumMac::sliderThumbHorizontal):
+        (WebCore::RenderThemeChromiumMac::sliderThumbVertical):
+
 2010-02-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

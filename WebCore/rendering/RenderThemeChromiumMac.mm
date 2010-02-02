@@ -41,7 +41,7 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
-#import "UserAgentStyleSheets.h"
+#import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
@@ -78,7 +78,7 @@ using std::min;
 
 // The methods in this file are specific to the Mac OS X platform.
 
-// FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeSafari. 
+// FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeSafari.
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 {
@@ -96,7 +96,7 @@ using std::min;
 {
     [super init];
     _theme = theme;
-    
+
     return self;
 }
 
@@ -322,7 +322,7 @@ static RGBA32 convertNSColorToColor(NSColor *color)
             static_cast<int>(scaleFactor * [colorInColorSpace blueComponent]));
     }
 
-    // This conversion above can fail if the NSColor in question is an NSPatternColor 
+    // This conversion above can fail if the NSColor in question is an NSPatternColor
     // (as many system colors are). These colors are actually a repeating pattern
     // not just a solid color. To work around this we simply draw a 1x1 image of
     // the color and use that pixel's color. It might be better to use an average of
@@ -390,7 +390,7 @@ Color RenderThemeChromiumMac::systemColor(int cssValueId) const
 {
     if (m_systemColorCache.contains(cssValueId))
         return m_systemColorCache.get(cssValueId);
-    
+
     Color color;
     switch (cssValueId) {
         case CSSValueActiveborder:
@@ -504,7 +504,7 @@ bool RenderThemeChromiumMac::isControlStyled(const RenderStyle* style, const Bor
 {
     if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
         return style->border() != border;
-        
+
     // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
     // scaled.  They can't really draw properly when transformed either.  We can't detect the transform case at style
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
@@ -518,13 +518,14 @@ bool RenderThemeChromiumMac::isControlStyled(const RenderStyle* style, const Bor
 void RenderThemeChromiumMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
     ControlPart part = o->style()->appearance();
-    
+
 #if USE(NEW_THEME)
     switch (part) {
         case CheckboxPart:
         case RadioPart:
         case PushButtonPart:
         case SquareButtonPart:
+        case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
             return RenderTheme::adjustRepaintRect(o, r);
@@ -565,7 +566,7 @@ IntRect RenderThemeChromiumMac::inflateRect(const IntRect& r, const IntSize& siz
 FloatRect RenderThemeChromiumMac::convertToPaintingRect(const RenderObject* inputRenderer, const RenderObject* partRenderer, const FloatRect& inputRect, const IntRect& r) const
 {
     FloatRect partRect(inputRect);
-    
+
     // Compute an offset between the part renderer and the input renderer
     FloatSize offsetFromInputRenderer;
     const RenderObject* renderer = partRenderer;
@@ -760,7 +761,7 @@ bool RenderThemeChromiumMac::paintCapsLockIndicator(RenderObject*, const RenderO
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawCapsLockIndicator(paintInfo.context->platformContext(), r);
-    
+
     return false;
 }
 
@@ -820,7 +821,7 @@ bool RenderThemeChromiumMac::paintMenuList(RenderObject* o, const RenderObject::
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(), zoomLevel);
 
     paintInfo.context->save();
-    
+
 #ifndef BUILDING_ON_TIGER
     // On Leopard, the cell will draw outside of the given rect, so we have to clip to the rect
     paintInfo.context->clip(inflatedRect);
@@ -980,10 +981,10 @@ bool RenderThemeChromiumMac::paintMenuListButton(RenderObject* o, const RenderOb
 
     if (bounds.width() < arrowWidth + arrowPaddingLeft * o->style()->effectiveZoom())
         return false;
-    
+
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->color(), DeviceColorSpace);
+    paintInfo.context->setFillColor(o->style()->color(), o->style()->colorSpace());
     paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
@@ -1036,7 +1037,7 @@ void RenderThemeChromiumMac::adjustMenuListStyle(CSSStyleSelector* selector, Ren
 
     style->resetBorder();
     style->resetPadding();
-    
+
     // Height is locked to auto.
     style->setHeight(Length(Auto));
 
@@ -1106,7 +1107,7 @@ void RenderThemeChromiumMac::adjustMenuListButtonStyle(CSSStyleSelector*, Render
 
     const int minHeight = 15;
     style->setMinHeight(Length(minHeight, Fixed));
-    
+
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
@@ -1136,6 +1137,9 @@ int RenderThemeChromiumMac::minimumMenuListSize(RenderStyle* style) const
     return sizeForSystemFont(style, menuListSizes()).width();
 }
 
+const int trackWidth = 5;
+const int trackRadius = 2;
+
 void RenderThemeChromiumMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);
@@ -1143,9 +1147,6 @@ void RenderThemeChromiumMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderSty
 
 bool RenderThemeChromiumMac::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    static const int trackWidth = 5;
-    static const int trackRadius = 2;
-  
     IntRect bounds = r;
     float zoomLevel = o->style()->effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
@@ -1179,7 +1180,7 @@ bool RenderThemeChromiumMac::paintSliderTrack(RenderObject* o, const RenderObjec
         radius, radius);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
-    
+
     return false;
 }
 
@@ -1201,7 +1202,7 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Update the various states we respond to.
-    updateActiveState(sliderThumbCell, o);
+    updateActiveState(sliderThumbCell, o->parent());
     updateEnabledState(sliderThumbCell, o->parent());
     updateFocusedState(sliderThumbCell, o->parent());
 
@@ -1233,7 +1234,7 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
 
     paintInfo.context->save();
     float zoomLevel = o->style()->effectiveZoom();
-    
+
     FloatRect unzoomedRect = bounds;
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
@@ -1251,22 +1252,6 @@ bool RenderThemeChromiumMac::paintSliderThumb(RenderObject* o, const RenderObjec
     return false;
 }
 
-void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
-{
-    static const int sliderThumbWidth = 15;
-    static const int sliderThumbHeight = 15;
-
-    float zoomLevel = o->style()->effectiveZoom();
-    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
-        o->style()->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
-    }
-
-#if ENABLE(VIDEO)
-    RenderMediaControlsChromium::adjustMediaSliderThumbSize(o);
-#endif
-}
-
 bool RenderThemeChromiumMac::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     NSSearchFieldCell* search = this->search();
@@ -1279,7 +1264,7 @@ bool RenderThemeChromiumMac::paintSearchField(RenderObject* o, const RenderObjec
     float zoomLevel = o->style()->effectiveZoom();
 
     IntRect unzoomedRect = r;
-    
+
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
         unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
@@ -1328,7 +1313,7 @@ void RenderThemeChromiumMac::setSearchFieldSize(RenderStyle* style) const
     // If the width and height are both specified, then we have nothing to do.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
-    
+
     // Use the font size to determine the intrinsic width of the control.
     setSizeFromFont(style, searchFieldSizes());
 }
@@ -1345,19 +1330,19 @@ void RenderThemeChromiumMac::adjustSearchFieldStyle(CSSStyleSelector* selector, 
     style->setBorderBottomWidth(borderWidth);
     style->setBorderBottomStyle(INSET);
     style->setBorderTopWidth(borderWidth);
-    style->setBorderTopStyle(INSET);    
-    
+    style->setBorderTopStyle(INSET);
+
     // Override height.
     style->setHeight(Length(Auto));
     setSearchFieldSize(style);
-    
+
     // Override padding size to match AppKit text positioning.
     const int padding = 1 * style->effectiveZoom();
     style->setPaddingLeft(Length(padding, Fixed));
     style->setPaddingRight(Length(padding, Fixed));
     style->setPaddingTop(Length(padding, Fixed));
     style->setPaddingBottom(Length(padding, Fixed));
-    
+
     NSControlSize controlSize = controlSizeForFont(style);
     setFontFromControlSize(selector, style, controlSize);
 
@@ -1495,7 +1480,7 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
 
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
-    
+
     IntRect unzoomedRect(localBounds);
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
@@ -1507,10 +1492,26 @@ bool RenderThemeChromiumMac::paintSearchFieldResultsButton(RenderObject* o, cons
 
     [[search searchButtonCell] drawWithFrame:unzoomedRect inView:FlippedView()];
     [[search searchButtonCell] setControlView:nil];
-    
+
     paintInfo.context->restore();
 
     return false;
+}
+
+const int sliderThumbWidth = 15;
+const int sliderThumbHeight = 15;
+
+void RenderThemeChromiumMac::adjustSliderThumbSize(RenderObject* o) const
+{
+    float zoomLevel = o->style()->effectiveZoom();
+    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
+        o->style()->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
+        o->style()->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
+    }
+
+#if ENABLE(VIDEO)
+    RenderMediaControlsChromium::adjustMediaSliderThumbSize(o);
+#endif
 }
 
 #if ENABLE(VIDEO)
@@ -1553,7 +1554,7 @@ bool RenderThemeChromiumMac::paintMediaControlsBackground(RenderObject* object, 
 {
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaTimelineContainer, object, paintInfo, rect);
 }
-    
+
 String RenderThemeChromiumMac::extraMediaControlsStyleSheet()
 {
     return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
@@ -1568,7 +1569,7 @@ NSPopUpButtonCell* RenderThemeChromiumMac::popupButton() const
         [m_popupButton.get() setUsesItemFromMenu:NO];
         [m_popupButton.get() setFocusRingType:NSFocusRingTypeExterior];
     }
-    
+
     return m_popupButton.get();
 }
 
@@ -1602,7 +1603,7 @@ NSSliderCell* RenderThemeChromiumMac::sliderThumbHorizontal() const
         [m_sliderThumbHorizontal.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbHorizontal.get() setFocusRingType:NSFocusRingTypeExterior];
     }
-    
+
     return m_sliderThumbHorizontal.get();
 }
 
@@ -1615,7 +1616,7 @@ NSSliderCell* RenderThemeChromiumMac::sliderThumbVertical() const
         [m_sliderThumbVertical.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbVertical.get() setFocusRingType:NSFocusRingTypeExterior];
     }
-    
+
     return m_sliderThumbVertical.get();
 }
 
