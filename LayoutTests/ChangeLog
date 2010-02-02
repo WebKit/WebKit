@@ -1,3 +1,12 @@
+2010-02-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        http/tests/incremental/split-hex-entities.pl timed out on Gtk Linux 32-bit Debug Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33445
+
+        * platform/gtk/Skipped: Skip this test to keep the bots green until someone with Gtk knowledge can examine why it intermittently times out.
+
 2010-02-02  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.
