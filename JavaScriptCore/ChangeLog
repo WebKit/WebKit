@@ -1,3 +1,16 @@
+2010-02-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port WTF's currentTime
+        https://bugs.webkit.org/show_bug.cgi?id=33567
+
+        Combine GETUTCSECONDS and GETTIMEMS to calculate the number
+        of milliseconds since 1970/01/01 00:00:00 UTC.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTime):
+
 2010-02-01  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.
