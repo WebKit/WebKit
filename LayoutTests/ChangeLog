@@ -1,3 +1,23 @@
+2010-02-02  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move misplaced JS files to the proper location.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34256
+
+        * fast/events/script-tests/basic-touch-events.js: Removed.
+        * fast/events/script-tests/create-touch-event.js: Removed.
+        * fast/events/script-tests/send-oncancel-event.js: Removed.
+        * fast/events/touch/basic-touch-events.html:
+        * fast/events/touch/create-touch-event.html:
+        * fast/events/touch/script-tests: Added.
+        * fast/events/touch/script-tests/TEMPLATE.html: Copied from LayoutTests/fast/events/script-tests/TEMPLATE.html.
+        * fast/events/touch/script-tests/basic-touch-events.js: Copied from LayoutTests/fast/events/script-tests/basic-touch-events.js.
+        * fast/events/touch/script-tests/create-touch-event.js: Copied from LayoutTests/fast/events/script-tests/create-touch-event.js.
+        * fast/events/touch/script-tests/send-oncancel-event.js: Copied from LayoutTests/fast/events/script-tests/send-oncancel-event.js.
+        * fast/events/touch/send-oncancel-event.html:
+
 2010-02-02  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
