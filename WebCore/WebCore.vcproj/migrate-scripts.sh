@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (C) 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -55,4 +55,4 @@ export XDSTROOT
 export WEBCORE=$XSRCROOT
 export WEBKIT_OUTPUT=$XDSTROOT
 
-make -f "$WEBCORE/WebCore.vcproj/MigrateIDLandScripts" -j ${NUMCPUS} || exit 1
+make -f "$WEBCORE/WebCore.vcproj/MigrateScripts" -j ${NUMCPUS} || exit 1
