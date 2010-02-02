@@ -1,3 +1,18 @@
+2010-02-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Allow custom memory allocation control for IconDatabaseClient class
+        https://bugs.webkit.org/show_bug.cgi?id=33252
+
+        Inherits the following struct from Noncopyable because it is 
+        instantiated by 'new' and no need to be copyable:
+
+        class name               - instantiated at: WebCore/'location'
+        class IconDatabaseClient - loader/icon/IconDatabase.cpp:89
+
+        * loader/icon/IconDatabaseClient.h:
+
 2010-02-01  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
