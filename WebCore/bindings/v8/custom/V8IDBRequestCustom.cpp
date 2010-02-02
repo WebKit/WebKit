@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(INDEXED_DATABASE)
 #include "V8IDBRequest.h"
 
 #include "SerializedScriptValue.h"
@@ -47,3 +49,5 @@ v8::Handle<v8::Value> V8IDBRequest::resultAccessorGetter(v8::Local<v8::String> n
 }
 
 } // namespace WebCore
+
+#endif

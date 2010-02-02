@@ -1,3 +1,13 @@
+2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Add compile time guards for IndexedDB custom functions
+        https://bugs.webkit.org/show_bug.cgi?id=34368
+
+        * bindings/v8/custom/V8IDBRequestCustom.cpp:
+        * bindings/v8/custom/V8IndexedDatabaseRequestCustom.cpp:
+
 2010-01-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig + Oliver Hunt.
