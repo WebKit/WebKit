@@ -1,3 +1,27 @@
+2010-02-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Adds utility functions for converting between JavaInstance and NPAPI types
+        https://bugs.webkit.org/show_bug.cgi?id=34468
+
+        This is required by Android for injecting objects into V8 JavaScript.
+
+        No new tests, added utility functions only.
+
+        * Android.v8bindings.mk: Modified. Added JavaNPObjectV8.cpp
+        * bridge/jni/v8/JavaNPObjectV8.cpp: Added.
+        (JSC::Bindings::AllocJavaNPObject):
+        (JSC::Bindings::FreeJavaNPObject):
+        (JSC::Bindings::):
+        (JSC::Bindings::JavaInstanceToNPObject):
+        (JSC::Bindings::ExtractJavaInstance):
+        (JSC::Bindings::JavaNPObjectHasMethod):
+        (JSC::Bindings::JavaNPObjectInvoke):
+        (JSC::Bindings::JavaNPObjectHasProperty):
+        (JSC::Bindings::JavaNPObjectGetProperty):
+        * bridge/jni/v8/JavaNPObjectV8.h: Added.
+
 2010-02-02  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Ariya Hidayat.
