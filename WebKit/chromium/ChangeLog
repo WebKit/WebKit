@@ -1,3 +1,148 @@
+2010-02-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Upstream DevTools code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34326
+
+        * WebKit.gyp:
+        * src/APUAgentDelegate.h: Added.
+        * src/BoundObject.cpp: Added.
+        (WebKit::BoundObject::BoundObject):
+        (WebKit::BoundObject::~BoundObject):
+        (WebKit::BoundObject::addProtoFunction):
+        (WebKit::BoundObject::build):
+        * src/BoundObject.h: Added.
+        * src/DebuggerAgent.h: Added.
+        * src/DebuggerAgentImpl.cpp: Added.
+        (WebKit::DebuggerAgentImpl::DebuggerAgentImpl):
+        (WebKit::DebuggerAgentImpl::~DebuggerAgentImpl):
+        (WebKit::DebuggerAgentImpl::getContextId):
+        (WebKit::DebuggerAgentImpl::debuggerOutput):
+        (WebKit::DebuggerAgentImpl::createUtilityContext):
+        (WebKit::DebuggerAgentImpl::executeUtilityFunction):
+        (WebKit::DebuggerAgentImpl::executeVoidJavaScript):
+        (WebKit::DebuggerAgentImpl::page):
+        * src/DebuggerAgentImpl.h: Added.
+        (WebKit::DebuggerAgentImpl::setAutoContinueOnException):
+        (WebKit::DebuggerAgentImpl::autoContinueOnException):
+        (WebKit::DebuggerAgentImpl::webdevtoolsAgent):
+        (WebKit::DebuggerAgentImpl::webView):
+        * src/DebuggerAgentManager.cpp: Added.
+        (WebKit::DebuggerAgentManager::debugHostDispatchHandler):
+        (WebKit::DebuggerAgentManager::debugAttach):
+        (WebKit::DebuggerAgentManager::debugDetach):
+        (WebKit::DebuggerAgentManager::onV8DebugMessage):
+        (WebKit::DebuggerAgentManager::pauseScript):
+        (WebKit::DebuggerAgentManager::executeDebuggerCommand):
+        (WebKit::DebuggerAgentManager::setMessageLoopDispatchHandler):
+        (WebKit::DebuggerAgentManager::setHostId):
+        (WebKit::DebuggerAgentManager::onWebViewClosed):
+        (WebKit::DebuggerAgentManager::onNavigate):
+        (WebKit::DebuggerAgentManager::sendCommandToV8):
+        (WebKit::DebuggerAgentManager::sendContinueCommandToV8):
+        (WebKit::DebuggerAgentManager::findAgentForCurrentV8Context):
+        (WebKit::DebuggerAgentManager::debuggerAgentForHostId):
+        * src/DebuggerAgentManager.h: Added.
+        (WebKit::DebuggerAgentManager::UtilityContextScope::UtilityContextScope):
+        (WebKit::DebuggerAgentManager::UtilityContextScope::~UtilityContextScope):
+        * src/DevToolsRPC.h: Added.
+        (WebKit::):
+        (WebKit::DevToolsRPC::Delegate::Delegate):
+        (WebKit::DevToolsRPC::Delegate::~Delegate):
+        (WebKit::DevToolsRPC::DevToolsRPC):
+        (WebKit::DevToolsRPC::~DevToolsRPC):
+        (WebKit::DevToolsRPC::sendRpcMessage):
+        * src/DevToolsRPCJS.h: Added.
+        * src/ProfilerAgent.h: Added.
+        * src/ProfilerAgentImpl.cpp: Added.
+        (WebKit::ProfilerAgentImpl::getActiveProfilerModules):
+        (WebKit::ProfilerAgentImpl::getLogLines):
+        * src/ProfilerAgentImpl.h: Added.
+        (WebKit::ProfilerAgentImpl::ProfilerAgentImpl):
+        (WebKit::ProfilerAgentImpl::~ProfilerAgentImpl):
+        * src/ToolsAgent.h: Added.
+        * src/WebDevToolsAgentImpl.cpp: Added.
+        (WebKit::):
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        (WebKit::WebDevToolsAgentImpl::disposeUtilityContext):
+        (WebKit::WebDevToolsAgentImpl::unhideResourcesPanelIfNecessary):
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::detach):
+        (WebKit::WebDevToolsAgentImpl::didNavigate):
+        (WebKit::WebDevToolsAgentImpl::didCommitProvisionalLoad):
+        (WebKit::WebDevToolsAgentImpl::didClearWindowObject):
+        (WebKit::WebDevToolsAgentImpl::forceRepaint):
+        (WebKit::WebDevToolsAgentImpl::dispatchOnInspectorController):
+        (WebKit::WebDevToolsAgentImpl::dispatchOnInjectedScript):
+        (WebKit::WebDevToolsAgentImpl::executeVoidJavaScript):
+        (WebKit::WebDevToolsAgentImpl::dispatchMessageFromFrontend):
+        (WebKit::WebDevToolsAgentImpl::inspectElementAt):
+        (WebKit::WebDevToolsAgentImpl::setRuntimeFeatureEnabled):
+        (WebKit::WebDevToolsAgentImpl::sendRpcMessage):
+        (WebKit::WebDevToolsAgentImpl::compileUtilityScripts):
+        (WebKit::WebDevToolsAgentImpl::initDevToolsAgentHost):
+        (WebKit::WebDevToolsAgentImpl::createInspectorBackendV8Wrapper):
+        (WebKit::WebDevToolsAgentImpl::resetInspectorFrontendProxy):
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchOnClient):
+        (WebKit::WebDevToolsAgentImpl::jsDispatchToApu):
+        (WebKit::WebDevToolsAgentImpl::jsEvaluateOnSelf):
+        (WebKit::WebDevToolsAgentImpl::jsOnRuntimeFeatureStateChanged):
+        (WebKit::WebDevToolsAgentImpl::inspectorController):
+        (WebKit::WebDevToolsAgentImpl::identifierForInitialRequest):
+        (WebKit::WebDevToolsAgentImpl::willSendRequest):
+        (WebKit::WebDevToolsAgentImpl::didReceiveData):
+        (WebKit::WebDevToolsAgentImpl::didReceiveResponse):
+        (WebKit::WebDevToolsAgentImpl::didFinishLoading):
+        (WebKit::WebDevToolsAgentImpl::didFailLoading):
+        (WebKit::WebDevToolsAgentImpl::evaluateInWebInspector):
+        (WebKit::WebDevToolsAgentImpl::setTimelineProfilingEnabled):
+        (WebKit::WebDevToolsAgent::create):
+        (WebKit::WebDevToolsAgent::executeDebuggerCommand):
+        (WebKit::WebDevToolsAgent::debuggerPauseScript):
+        (WebKit::WebDevToolsAgent::setMessageLoopDispatchHandler):
+        (WebKit::WebDevToolsAgent::dispatchMessageFromFrontendOnIOThread):
+        * src/WebDevToolsAgentImpl.h: Added.
+        (WebKit::WebDevToolsAgentImpl::hostId):
+        * src/WebDevToolsFrontendImpl.cpp: Added.
+        (WebKit::ToV8String):
+        (WebKit::WebDevToolsFrontend::create):
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::~WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::dispatchMessageFromAgent):
+        (WebKit::WebDevToolsFrontendImpl::executeScript):
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnWebInspector):
+        (WebKit::WebDevToolsFrontendImpl::sendRpcMessage):
+        (WebKit::WebDevToolsFrontendImpl::contextMenuItemSelected):
+        (WebKit::WebDevToolsFrontendImpl::contextMenuCleared):
+        (WebKit::WebDevToolsFrontendImpl::jsLoaded):
+        (WebKit::WebDevToolsFrontendImpl::jsPlatform):
+        (WebKit::WebDevToolsFrontendImpl::jsPort):
+        (WebKit::WebDevToolsFrontendImpl::jsCopyText):
+        (WebKit::WebDevToolsFrontendImpl::jsActivateWindow):
+        (WebKit::WebDevToolsFrontendImpl::jsCloseWindow):
+        (WebKit::WebDevToolsFrontendImpl::jsDockWindow):
+        (WebKit::WebDevToolsFrontendImpl::jsUndockWindow):
+        (WebKit::WebDevToolsFrontendImpl::jsLocalizedStringsURL):
+        (WebKit::WebDevToolsFrontendImpl::jsHiddenPanels):
+        (WebKit::WebDevToolsFrontendImpl::jsDebuggerCommand):
+        (WebKit::WebDevToolsFrontendImpl::jsSetting):
+        (WebKit::WebDevToolsFrontendImpl::jsSetSetting):
+        (WebKit::WebDevToolsFrontendImpl::jsDebuggerPauseScript):
+        (WebKit::WebDevToolsFrontendImpl::jsWindowUnloading):
+        (WebKit::WebDevToolsFrontendImpl::jsShowContextMenu):
+        * src/WebDevToolsFrontendImpl.h: Added.
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::create):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::~MenuProvider):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::disconnect):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::populateContextMenu):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::contextMenuItemSelected):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::contextMenuCleared):
+        (WebKit::WebDevToolsFrontendImpl::MenuProvider::MenuProvider):
+
 2010-02-01  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
