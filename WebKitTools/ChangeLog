@@ -1,3 +1,12 @@
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed fix for an invalid function call.
+
+        check-webkit-style: Remove filename parameter from all functions where no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=34249
+
+        * Scripts/webkitpy/style/checker.py:
+
 2010-02-01  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
@@ -18608,5 +18617,3 @@ w-scroll.js
         * Scripts/prepare-ChangeLog:
 
 == Rolled over to ChangeLog-2009-06-16 ==
-./Scripts/webkitpy/committers.py
-bash-3.2$ 

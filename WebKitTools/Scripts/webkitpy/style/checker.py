@@ -746,7 +746,7 @@ class StyleChecker(object):
             #
             # Use 0 for line_number since outputting only one error for
             # potentially several lines.
-            handle_style_error(file_path, 0, 'whitespace/newline', 1,
+            handle_style_error(0, 'whitespace/newline', 1,
                                'One or more unexpected \\r (^M) found;'
                                'better to use only a \\n')
 
