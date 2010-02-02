@@ -1,5 +1,19 @@
 2010-02-02  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add dummy main thread functions
+        https://bugs.webkit.org/show_bug.cgi?id=33569
+
+        Add dummy initializeMainThreadPlatform and
+        scheduleDispatchFunctionsOnMainThread.
+
+        * wtf/brew/MainThreadBrew.cpp: Added.
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
+2010-02-02  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Darin Adler.
 
         Add using WTF::getLocalTime to CurrentTime.h
