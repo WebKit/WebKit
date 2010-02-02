@@ -150,7 +150,7 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
 
-void HTMLFrameElementBase::setName()
+void HTMLFrameElementBase::setNameAndOpenURL()
 {
     m_frameName = getAttribute(nameAttr);
     if (m_frameName.isNull())
@@ -158,49 +158,13 @@ void HTMLFrameElementBase::setName()
     
     if (Frame* parentFrame = document()->frame())
         m_frameName = parentFrame->tree()->uniqueChildName(m_frameName);
-}
-
-void HTMLFrameElementBase::setNameAndOpenURL()
-{
-    setName();
+    
     openURL();
 }
 
 void HTMLFrameElementBase::setNameAndOpenURLCallback(Node* n)
 {
     static_cast<HTMLFrameElementBase*>(n)->setNameAndOpenURL();
-}
-
-// Used when live frame is moved in DOM, potentially to another page.
-void HTMLFrameElementBase::updateLiveFrame()
-{
-    ASSERT(m_remainsAliveOnRemovalFromTree);
-
-    setName();
-
-    Frame* frame = contentFrame();
-    if (!frame)
-        return;
-
-    // Switch page.
-    Page* oldPage = frame->page();
-    Page* newPage = document()->page();
-    if (oldPage != newPage) {
-        if (oldPage->focusController()->focusedFrame() == frame)
-            oldPage->focusController()->setFocusedFrame(0);
-
-        frame->setPage(document()->page());
-    }
-
-    // Update the frame tree.
-    Frame* oldParentFrame = frame->tree()->parent();
-    Frame* newParentFrame = document()->frame();
-    if (oldParentFrame != newParentFrame) {
-        if (oldParentFrame)
-            oldParentFrame->tree()->removeChild(frame);
-        if (newParentFrame)
-            newParentFrame->tree()->appendChild(frame);
-    }
 }
 
 void HTMLFrameElementBase::insertedIntoDocument()
@@ -211,9 +175,6 @@ void HTMLFrameElementBase::insertedIntoDocument()
     // Othewise, a synchronous load that executed JavaScript would see incorrect 
     // (0) values for the frame's renderer-dependent properties, like width.
     m_shouldOpenURLAfterAttach = true;
-
-    if (m_remainsAliveOnRemovalFromTree)
-        updateLiveFrame();
 }
 
 void HTMLFrameElementBase::removedFromDocument()

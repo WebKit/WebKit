@@ -1588,22 +1588,6 @@ Page* Frame::page() const
     return m_page;
 }
 
-void Frame::setPage(Page* page)
-{
-    ASSERT(m_ownerElement);
-
-    if (m_page == page)
-        return;
-
-    if (m_page)
-        m_page->decrementFrameCount();
-
-    m_page = page;
-
-    if (page)
-        page->incrementFrameCount();
-}
-
 void Frame::detachFromPage()
 {
     m_page = 0;

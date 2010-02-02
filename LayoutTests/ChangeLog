@@ -1,3 +1,16 @@
+2010-02-01  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, revert r54194 that fails new test on Qt and Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=34382
+
+        * fast/frames/iframe-reparenting-new-page-expected.txt: Removed.
+        * fast/frames/iframe-reparenting-new-page.html: Removed.
+        * fast/frames/resources/iframe-reparenting-new-page-1.html: Removed.
+        * fast/frames/resources/iframe-reparenting-new-page-2.html: Removed.
+        * fast/frames/resources/iframe-reparenting-new-page-iframe.html: Removed.
+        * fast/frames/script-tests/TEMPLATE.html: Removed.
+        * fast/frames/script-tests/iframe-reparenting-new-page.js: Removed.
+
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
