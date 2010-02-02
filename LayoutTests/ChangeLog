@@ -1,3 +1,12 @@
+2010-02-02  Adam Roben  <aroben@apple.com>
+
+        Stop skipping some tests that were failing due to buggy versions of
+        CFNetwork
+
+        Rubber-stamped by Eric Carlson.
+
+        * platform/win/Skipped:
+
 2010-02-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/frames/set-unloaded-frame-location.html timed out on Qt Linux Release Build Bot

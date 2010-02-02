@@ -696,17 +696,6 @@ plugins/reloadplugins-no-pages.html
 # These tests require Qt Widgets
 plugins/qt-qwidget-plugin.html
 
-# Some versions of CFNetwork override CGI scripts' Content-Type headers <rdar://problem/7434354>
-http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
-http/tests/loading/redirect-with-no-location-crash.html
-http/tests/misc/text-refresh.html
-http/tests/navigation/back-to-slow-frame.html
-http/tests/navigation/multiple-back-forward-entries.html
-http/tests/navigation/reload-subframe-frame.html
-http/tests/navigation/reload-subframe-iframe.html
-http/tests/plugins/post-url-file.html
-inspector/timeline-network-resource.html
-
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
