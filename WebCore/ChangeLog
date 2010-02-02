@@ -1,5 +1,18 @@
 2010-02-02  Adam Roben  <aroben@apple.com>
 
+        Copy WebCore's bindings generation scripts to a more sensible location
+
+        Part of Bug 34496: Clean up WebCore's IDL/script copying
+        <https://bugs.webkit.org/show_bug.cgi?id=34496>
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.make:
+        * WebCore.vcproj/WebCoreGenerated.vcproj:
+        Instead of copying to obj/WebKit/DOMInterfaces, copy to obj/WebCore/scripts.
+
+2010-02-02  Adam Roben  <aroben@apple.com>
+
         Rename the scripts used to copy WebCore's bindings generation scripts
 
         Part of Bug 34496: Clean up WebCore's IDL/script copying
