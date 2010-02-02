@@ -1752,6 +1752,12 @@ bool portAllowed(const KURL& url)
         3659, // apple-sasl / PasswordServer [Apple addition]
         4045, // lockd
         6000, // X11
+        6665, // Alternate IRC [Apple addition]
+        6666, // Alternate IRC [Apple addition]
+        6667, // Standard IRC [Apple addition]
+        6668, // Alternate IRC [Apple addition]
+        6669, // Alternate IRC [Apple addition]
+
     };
     const unsigned short* const blockedPortListEnd = blockedPortList + sizeof(blockedPortList) / sizeof(blockedPortList[0]);
 

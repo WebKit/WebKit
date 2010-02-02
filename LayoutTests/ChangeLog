@@ -1,3 +1,13 @@
+2010-02-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Add common IRC ports to port blocking.
+        <rdar://problem/7593895> and https://bugs.webkit.org/show_bug.cgi?id=34451
+        * platform/mac-tiger/security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+        * security/block-test.html:
+
 2010-02-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
