@@ -415,6 +415,8 @@
 #define WTF_PLATFORM_GTK 1
 #elif defined(BUILDING_HAIKU__)
 #define WTF_PLATFORM_HAIKU 1
+#elif defined(BUILDING_BREWMP__)
+#define WTF_PLATFORM_BREWMP 1
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
