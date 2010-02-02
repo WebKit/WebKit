@@ -1,3 +1,15 @@
+2010-02-01  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Enable inspecting the Web Inspector in QtLauncher
+
+        https://bugs.webkit.org/show_bug.cgi?id=34329
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::InspectorClientWebPage):
+        Allow the DeveloperExtrasEnabled setting to default to true for the page containing the Web Inspector.
+
 2010-02-02  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
