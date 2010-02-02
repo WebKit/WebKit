@@ -1,3 +1,16 @@
+2010-02-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds virtual destructors for AbstractWeakReferenceMap and AbstractWeakReferenceMap::Visitor
+        https://bugs.webkit.org/show_bug.cgi?id=34434
+
+        No new tests, build fix only.
+
+        * bindings/v8/V8DOMMap.h: Modified.
+        (WebCore::AbstractWeakReferenceMap::~AbstractWeakReferenceMap): Added.
+        (WebCore::AbstractWeakReferenceMap::Visitor::~Visitor): Added.
+
 2010-02-02  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Eric Seidel.
