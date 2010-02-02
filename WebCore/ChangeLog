@@ -1,3 +1,17 @@
+2010-02-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=34220
+
+        Port MIMETypeRegistry with an extension map as other ports do.
+
+        * platform/brew: Added.
+        * platform/brew/MIMETypeRegistryBrew.cpp: Added.
+        (WebCore::):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2010-02-01  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, revert r54194 that fails new test on Qt and Chromium.
