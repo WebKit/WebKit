@@ -40,6 +40,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
 
@@ -248,6 +249,11 @@ using namespace WebCore;
 - (NSString *)counterValueForElement:(DOMElement*)element
 {
     return counterValueForElement(core(element));
+}
+
+- (int)pageNumberForElement:(DOMElement*)element:(float)pageWidthInPixels:(float)pageHeightInPixels
+{
+    return PrintContext::pageNumberForElement(core(element), FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
 @end

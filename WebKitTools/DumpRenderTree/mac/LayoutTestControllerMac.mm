@@ -176,6 +176,18 @@ void LayoutTestController::keepWebHistory()
     }
 }
 
+int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
+    NSString *idNS = (NSString *)idCF.get();
+
+    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
+    if (!element)
+        return -1;
+
+    return [mainFrame pageNumberForElement:element:pageWidthInPixels:pageHeightInPixels];
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];

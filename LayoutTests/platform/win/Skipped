@@ -421,7 +421,8 @@ accessibility/transformed-element.html
 accessibility/visible-elements.html
 
 # No support for print-to-pdf in Windows DRT
-printing
+printing/compositing-layer-printing.html
+printing/media-queries-print.html
 
 # No upload progress events on windows
 http/tests/xmlhttprequest/upload-onload-event.html
@@ -746,3 +747,7 @@ fast/loader/crash-copying-backforwardlist.html
 # Fails on Windows
 # https://bugs.webkit.org/show_bug.cgi?id=34447
 http/tests/media/video-referer.html
+
+# Implement LayoutTestController::pageNumberForElementById().
+printing/page-break-always.html
+printing/pageNumerForElementById.html

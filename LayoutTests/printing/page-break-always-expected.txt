@@ -1,0 +1,13 @@
+Test for page-break-before:always and page-break-after:always
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS layoutTestController.pageNumberForElementById('firstPage') is 0
+PASS layoutTestController.pageNumberForElementById('secondPage1') is 1
+PASS layoutTestController.pageNumberForElementById('secondPage2') is 1
+PASS layoutTestController.pageNumberForElementById('thirdPage') is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

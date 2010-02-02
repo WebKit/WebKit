@@ -5071,3 +5071,7 @@ css2.1/t1505-c524-font-var-00-b.html
 
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
+
+# Implement LayoutTestController::pageNumberForElementById().
+printing/page-break-always.html
+printing/pageNumerForElementById.html

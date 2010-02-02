@@ -1,5 +1,23 @@
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Provide a way to get page number with layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=33840
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pageNumberForElementByIdCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::pageNumberForElementById):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pageNumberForElementById):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::pageNumberForElementById):
+
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed fix for an invalid function call.
 
         check-webkit-style: Remove filename parameter from all functions where no longer used

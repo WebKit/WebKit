@@ -36,7 +36,8 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 svg/batik/text/smallFonts.svg
 
 # see bug https://bugs.webkit.org/show_bug.cgi?id=20011 -- Printing tests should use ImageDiff
-printing
+printing/compositing-layer-printing.html
+printing/media-queries-print.html
 
 # Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
 compositing/animation/animated-composited-inside-hidden.html

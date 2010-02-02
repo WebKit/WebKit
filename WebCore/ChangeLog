@@ -1,3 +1,22 @@
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Provide a way to get page number with layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=33840
+
+        Test: printing/page-break-always.html
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageRect): Added a getter function.
+        (WebCore::PrintContext::computePageRects): Move its logic into computePageRectsWithPageSize.
+        (WebCore::PrintContext::computePageRectsWithPageSize): Factored out from computePageRects for pageNumberForElement.
+        (WebCore::enclosingBoxModelObject): Added for pageNumberForElement.
+        (WebCore::PrintContext::pageNumberForElement): Added for testing.
+        * page/PrintContext.h:
+
 2010-02-01  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

@@ -45,6 +45,11 @@ int PrintContext::pageCount() const
     return m_pageRects.size();
 }
 
+const IntRect& PrintContext::pageRect(int pageNumber) const
+{
+    return m_pageRects[pageNumber];
+}
+
 void PrintContext::computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
 {
     m_pageRects.clear();
@@ -60,11 +65,6 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
         return;
     }
 
-    if (userScaleFactor <= 0) {
-        LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
-        return;
-    }
-
     float ratio = printRect.height() / printRect.width();
 
     float pageWidth  = (float)root->rightLayoutOverflow();
@@ -77,14 +77,31 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
         return;
     }
 
-    float currPageHeight = pageHeight / userScaleFactor;
+    computePageRectsWithPageSize(FloatSize(pageWidth, pageHeight), userScaleFactor);
+}
+
+void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, float userScaleFactor)
+{
+    RenderView* root = toRenderView(m_frame->document()->renderer());
+
+    if (!root) {
+        LOG_ERROR("document to be printed has no renderer");
+        return;
+    }
+
+    if (userScaleFactor <= 0) {
+        LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
+        return;
+    }
+
+    float currPageHeight = pageSizeInPixels.height() / userScaleFactor;
     float docHeight = root->layer()->height();
-    float currPageWidth = pageWidth / userScaleFactor;
+    float currPageWidth = pageSizeInPixels.width() / userScaleFactor;
 
     // always return at least one page, since empty files should print a blank page
-    float printedPagesHeight = 0.0;
+    float printedPagesHeight = 0;
     do {
-        float proposedBottom = std::min(docHeight, printedPagesHeight + pageHeight);
+        float proposedBottom = std::min(docHeight, printedPagesHeight + pageSizeInPixels.height());
         m_frame->view()->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
         currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
 
@@ -132,6 +149,42 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
 void PrintContext::end()
 {
     m_frame->setPrinting(false, 0, 0, true);
+}
+
+static RenderBoxModelObject* enclosingBoxModelObject(RenderObject* object)
+{
+
+    while (object && !object->isBoxModelObject())
+        object = object->parent();
+    if (!object)
+        return 0;
+    return toRenderBoxModelObject(object);
+}
+
+int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSizeInPixels)
+{
+    // Make sure the element is not freed during the layout.
+    RefPtr<Element> elementRef(element);
+    element->document()->updateLayout();
+
+    RenderBoxModelObject* box = enclosingBoxModelObject(element->renderer());
+    if (!box)
+        return -1;
+
+    Frame* frame = element->document()->frame();
+    FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
+    PrintContext printContext(frame);
+    printContext.begin(pageRect.width());
+    printContext.computePageRectsWithPageSize(pageSizeInPixels, 1);
+
+    int top = box->offsetTop();
+    int left = box->offsetLeft();
+    for (int pageNumber = 0; pageNumber < printContext.pageCount(); pageNumber++) {
+        const IntRect& page = printContext.pageRect(pageNumber);
+        if (page.x() <= left && left < page.right() && page.y() <= top && top < page.bottom())
+            return pageNumber;
+    }
+    return -1;
 }
 
 }

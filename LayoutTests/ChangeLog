@@ -1,3 +1,24 @@
+2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Provide a way to get page number with layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=33840
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * printing/page-break-always-expected.txt: Added.
+        * printing/page-break-always.html: Added.
+        * printing/pageNumerForElementById-expected.txt: Added.
+        * printing/pageNumerForElementById.html: Added.
+        * printing/script-tests/TEMPLATE.html: Added.
+        * printing/script-tests/page-break-always.js: Added.
+        (createParagraph):
+        * printing/script-tests/pageNumerForElementById.js: Added.
+        (createParagraph):
+
 2010-02-01  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
