@@ -45,7 +45,8 @@ int main()
 }
 </pre>
 </li>
-<li>Code inside a namespace should not be indented.
+<li>The contents of an outermost <code>namespace</code> block (and any nested namespaces with the same scope)
+should not be indented. The contents of other nested namespaces should be indented.
 <h4 class="right">Right:</h4>
 <pre class="code">
 // Document.h
@@ -55,6 +56,10 @@ class Document {
     Document();
     ...
 };
+
+namespace NestedNamespace {
+    ...
+}
 
 } // namespace WebCore
 
@@ -78,6 +83,10 @@ namespace WebCore {
         Document();
         ...
     };
+
+    namespace NestedNamespace {
+    ...
+    }
 
 } // namespace WebCore
 
