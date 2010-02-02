@@ -1,3 +1,15 @@
+2010-02-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port systemBeep
+        https://bugs.webkit.org/show_bug.cgi?id=33601
+
+        Implement systemBeep with IShell_Beep.
+
+        * platform/brew/SoundBrew.cpp: Added.
+        (WebCore::systemBeep):
+
 2010-02-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
