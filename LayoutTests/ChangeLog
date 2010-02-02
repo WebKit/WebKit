@@ -1,3 +1,42 @@
+2010-02-01  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27312
+
+        Tests that the header "X-XSS-Protection: full-block" leads to a full page block
+        when an XSS attack is detected.
+
+        * http/tests/security/xssAuditor/full-block-base-href-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-base-href.html: Added.
+        * http/tests/security/xssAuditor/full-block-get-from-iframe-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-get-from-iframe.html: Added.
+        * http/tests/security/xssAuditor/full-block-iframe-javascript-url-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-iframe-javascript-url.html: Added.
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit.php: Added.
+        * http/tests/security/xssAuditor/full-block-javascript-link-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-javascript-link.html: Added.
+        * http/tests/security/xssAuditor/full-block-link-onclick-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-link-onclick.html: Added.
+        * http/tests/security/xssAuditor/full-block-object-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-object-tag.html: Added.
+        * http/tests/security/xssAuditor/full-block-post-from-iframe-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-post-from-iframe.html: Added.
+        * http/tests/security/xssAuditor/full-block-script-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-script-tag-with-source-expected.txt: Added.
+        * http/tests/security/xssAuditor/full-block-script-tag-with-source.html: Added.
+        * http/tests/security/xssAuditor/full-block-script-tag.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-head-base-href.pl: Modified to optionally
+        enable full page blocking.
+        * http/tests/security/xssAuditor/resources/echo-intertag-click-and-notify.pl: Ditto.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl: Ditto.
+        * http/tests/security/xssAuditor/resources/utilities.js:
+        (checkIfFrameLocationMatchesURLAndCallDone): Added.
+        (sendRequestFromIFrame): Modified to optionally call callback function when done.
+
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dmitry Titov.

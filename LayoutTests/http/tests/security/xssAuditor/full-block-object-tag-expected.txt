@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: Refused to load an object. URL found within request: "http://localhost:8000/security/xssAuditor/resources/dummy.swf".
+
+There should be no content in the iframe below:
+
+
+
+--------
+Frame: 'frame'
+--------
+

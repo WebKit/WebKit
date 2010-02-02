@@ -4,6 +4,9 @@ use CGI;
 
 my $cgi = new CGI;
 
+if ($cgi->param('enable-full-block')) {
+    print "X-XSS-Protection: 12\n";
+}
 print "Content-Type: text/html; charset=UTF-8\n\n";
 
 print "<!DOCTYPE html>\n";

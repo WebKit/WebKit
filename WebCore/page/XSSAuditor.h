@@ -36,7 +36,7 @@ namespace WebCore {
     class ScriptSourceCode;
 
     // The XSSAuditor class is used to prevent type 1 cross-site scripting
-    // vulnerabilites (also known as reflected vulnerabilities).
+    // vulnerabilities (also known as reflected vulnerabilities).
     //
     // More specifically, the XSSAuditor class decides whether the execution of
     // a script is to be allowed or denied based on the content of any
@@ -53,7 +53,7 @@ namespace WebCore {
     //
     // Bindings
     //
-    // An XSSAuditor is instantiated within the contructor of a
+    // An XSSAuditor is instantiated within the constructor of a
     // ScriptController object and passed the Frame the script originated. The
     // ScriptController calls back to the XSSAuditor to determine whether a
     // JavaScript script is safe to execute before executing it. The following
@@ -143,6 +143,8 @@ namespace WebCore {
         bool isSameOriginResource(const String& url) const;
         bool findInRequest(const FindTask&) const;
         bool findInRequest(Frame*, const FindTask&) const;
+
+        bool shouldFullPageBlockForXSSProtectionHeader() const;
 
         // The frame to audit.
         Frame* m_frame;

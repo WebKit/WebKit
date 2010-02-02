@@ -4,6 +4,9 @@ use CGI;
 
 my $cgi = new CGI;
 
+if ($cgi->param('enable-full-block')) {
+    print "X-XSS-Protection: 12\n";
+}
 print "Content-Type: text/html; charset=UTF-8\n\n";
 
 print "<!DOCTYPE html>\n";
@@ -20,9 +23,17 @@ print "</script>\n";
 print "</head>\n";
 print "<body>\n";
 print $cgi->param('q');
-print "<script>\n";
-print "if (window.layoutTestController)\n";
-print "    layoutTestController.notifyDone();\n";
-print "</script>\n";
+if ($cgi->param('enable-full-block')) {
+    # Note, when testing a full-page-block, we can't call layoutTestController.notifyDone()
+    # on the generated page because it takes some time for the frame to be redirected to
+    # about:blank. Hence, the caller of this Perl script must call layoutTestController.notifyDone()
+    # after the redirect has occurred.
+    print "<p>If you see this message then the test FAILED.</p>\n";
+} else {
+    print "<script>\n";
+    print "if (window.layoutTestController)\n";
+    print "    layoutTestController.notifyDone();\n";
+    print "</script>\n";
+}
 print "</body>\n";
 print "</html>\n";

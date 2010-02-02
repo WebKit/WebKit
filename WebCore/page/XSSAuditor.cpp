@@ -290,14 +290,38 @@ bool XSSAuditor::isSameOriginResource(const String& url) const
     return (m_frame->document()->url().host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 
+bool XSSAuditor::shouldFullPageBlockForXSSProtectionHeader() const
+{
+    // If we detect an XSS attack and find the HTTP header "X-XSS-Protection: 12" then
+    // we will stop loading the page as opposed to ignoring the script. The value "12"
+    // came from a personal communication, see <https://bugs.webkit.org/show_bug.cgi?id=27312>
+    // for more details.
+    DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, ("X-XSS-Protection"));
+
+    Frame* frame = m_frame;
+    if (frame->document()->url() == blankURL())
+        frame = m_frame->tree()->parent();
+
+    // We strip any whitespace characters to conform to the behavior in Internet Explorer.
+    String xssProtectionValue = frame->loader()->documentLoader()->response().httpHeaderField(XSSProtectionHeader).stripWhiteSpace();
+    return (xssProtectionValue.length() >= 2 && xssProtectionValue[0] == '1' && xssProtectionValue[1] == '2');
+}
+
 bool XSSAuditor::findInRequest(const FindTask& task) const
 {
     bool result = false;
     Frame* parentFrame = m_frame->tree()->parent();
+    Frame* blockFrame = parentFrame;
     if (parentFrame && m_frame->document()->url() == blankURL())
         result = findInRequest(parentFrame, task);
-    if (!result)
+    if (!result) {
         result = findInRequest(m_frame, task);
+        blockFrame = m_frame;
+    }
+    if (result && blockFrame && shouldFullPageBlockForXSSProtectionHeader()) {
+        blockFrame->loader()->stopAllLoaders();
+        blockFrame->redirectScheduler()->scheduleLocationChange(blankURL(), String());
+    }
     return result;
 }
 

@@ -1,4 +1,12 @@
-function sendRequestFromIFrame(url, params, HTTPMethod)
+function checkIfFrameLocationMatchesURLAndCallDone(frameId, expectedURL)
+{
+    if (!window.layoutTestController)
+        return;
+    if (document.getElementById(frameId).contentWindow.location == expectedURL)
+        layoutTestController.notifyDone();
+}
+
+function sendRequestFromIFrame(url, params, HTTPMethod, callbackWhenDone)
 {
     if (!params || !params.length)
         return;
@@ -23,5 +31,7 @@ function sendRequestFromIFrame(url, params, HTTPMethod)
     }
     frameContent.write('</form>');
     frameContent.close();
+    if (callbackWhenDone)
+        iFrameObj.onload = callbackWhenDone;
     frameContent.getElementById('form').submit();
 }
