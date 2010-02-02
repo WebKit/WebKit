@@ -148,7 +148,7 @@ void ScriptController::updatePlatformScriptObjects()
     notImplemented();
 }
 
-bool ScriptController::processingUserGesture() const
+bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 {
     Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
     // No script is running, so it must be run by users.

@@ -2190,6 +2190,14 @@ sub GenerateFunctionCallString()
         if ($first) { $first = 0; }
     }
 
+    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
+        $functionString .= ", " if not $first;
+        # FIXME: We need to pass DOMWrapperWorld as a parameter.
+        # See http://trac.webkit.org/changeset/54182
+        $functionString .= "processingUserGesture()";
+        if ($first) { $first = 0; }
+    }
+
     if (@{$function->raisesExceptions}) {
         $functionString .= ", " if not $first;
         $functionString .= "ec";
