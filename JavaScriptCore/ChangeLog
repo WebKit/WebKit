@@ -1,3 +1,13 @@
+2010-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that Math.round() retunrs incorrect results for huge integers
+        https://bugs.webkit.org/show_bug.cgi?id=34462
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncRound): Avoid "arg + 0.5".
+
 2010-02-01  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

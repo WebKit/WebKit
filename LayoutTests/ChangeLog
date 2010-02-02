@@ -1,3 +1,13 @@
+2010-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that Math.round() retunrs incorrect results for huge integers
+        https://bugs.webkit.org/show_bug.cgi?id=34462
+
+        * fast/js/math-expected.txt:
+        * fast/js/script-tests/math.js: Add test cases for Math.round() for huge numbers.
+
 2010-02-01  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

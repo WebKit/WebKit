@@ -191,6 +191,18 @@ shouldBe("Math.round(1.5)", "2");
 shouldBe("Math.round(-1.5)", "-1");
 shouldBe("Math.round(1.6)", "2");
 shouldBe("Math.round(-1.6)", "-2");
+shouldBe("Math.round(8640000000000000)", "8640000000000000");
+// The following is expected. Double can't represent .5 in this case.
+shouldBe("Math.round(8640000000000000.5)", "8640000000000000");
+shouldBe("Math.round(8640000000000001)", "8640000000000001");
+shouldBe("Math.round(8640000000000002)", "8640000000000002");
+shouldBe("Math.round(9007199254740990)", "9007199254740990");
+shouldBe("Math.round(9007199254740991)", "9007199254740991");
+shouldBe("Math.round(-8640000000000000)", "-8640000000000000");
+shouldBe("Math.round(-8640000000000001)", "-8640000000000001");
+shouldBe("Math.round(-8640000000000002)", "-8640000000000002");
+shouldBe("Math.round(-9007199254740990)", "-9007199254740990");
+shouldBe("Math.round(-9007199254740991)", "-9007199254740991");
 shouldBe("Math.round(Infinity)", "Infinity");
 shouldBe("Math.round(-Infinity)", "-Infinity");
 
