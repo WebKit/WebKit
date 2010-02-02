@@ -997,9 +997,7 @@ void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
     if (paintingDisabled())
         return;
 
-    SkShader* pat = pattern->createPlatformPattern(getCTM());
-    platformContext()->setFillShader(pat);
-    pat->safeUnref();
+    platformContext()->setFillShader(pattern->platformPattern(getCTM()));
 }
 
 void GraphicsContext::setPlatformShadow(const IntSize& size,
@@ -1084,9 +1082,7 @@ void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
     if (paintingDisabled())
         return;
 
-    SkShader* pat = pattern->createPlatformPattern(getCTM());
-    platformContext()->setStrokeShader(pat);
-    pat->safeUnref();
+    platformContext()->setStrokeShader(pattern->platformPattern(getCTM()));
 }
 
 void GraphicsContext::setPlatformTextDrawingMode(int mode)

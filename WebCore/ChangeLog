@@ -1,3 +1,49 @@
+2010-02-01  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix for Pattern transformations in Chromium/Skia.  This required 
+        reworking Pattern a bit to be more like the Gradient implementation.
+        In particular, it now holds an m_pattern reference to the
+        platform-specific implementation, and passes along changes to the
+        m_patternSpaceTransformation, in the same way that Gradient does for
+        m_gradientSpaceTransformation.  This is necessary since Skia creates the
+        platform-specific pattern (SkShader) once, rather than recreating it
+        on each draw.
+        For platforms other than Skia, m_pattern is unused, they will
+        continue to use the static createPlatformPattern(), and the new
+        notification functions are stubbed out.  Other platforms can switch to
+        the new implementation if they so choose.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24534 
+
+        Covered by svg/custom/pattern-y-offset.svg,
+        svg/custom/pattern-cycle-detection.svg, and many more.
+
+        * platform/graphics/Pattern.cpp:
+        (WebCore::Pattern::Pattern):
+        Initializer for m_pattern.
+        (WebCore::Pattern::~Pattern):
+        call platformDestroy().
+        (WebCore::Pattern::setPatternSpaceTransform):
+        Pass along the transform via setPlatformPatternSpaceTransform().
+        (WebCore::Pattern::platformDestroy):
+        (WebCore::Pattern::setPlatformPatternSpaceTransform):
+        Stub implementations for non-skia platforms.
+        * platform/graphics/Pattern.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        Call platformPattern() instead of static version.
+        Since Pattern now owns its SkShader, no need to unref here.
+        * platform/graphics/skia/PatternSkia.cpp:
+        (WebCore::Pattern::platformDestroy):
+        Unref the SkShader on destroy.
+        (WebCore::Pattern::platformPattern):
+        Create the platform pattern (SkShader) once, and cache it.
+        (WebCore::Pattern::setPlatformPatternSpaceTransform):
+        Set the shader's local matrix from the m_patternSpaceTransformation.
+
 2010-02-01  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.
