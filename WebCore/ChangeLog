@@ -2,6 +2,23 @@
 
         Reviewed by Ariya Hidayat.
 
+        Adds V8-specific JNI utility functions.
+        https://bugs.webkit.org/show_bug.cgi?id=33901
+
+        This is the V8 equivalent of bridge/jni/jsc/JNIUtilityPrivate.
+
+        No new tests, build fix only.
+
+        * Android.v8bindings.mk: Modified. Add JNIUtilityPrivate.cpp
+        * bridge/jni/v8/JNIUtilityPrivate.cpp: Added.
+        (JSC::Bindings::convertNPVariantToJValue):
+        (JSC::Bindings::convertJValueToNPVariant):
+        * bridge/jni/v8/JNIUtilityPrivate.h: Added.
+
+2010-02-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
         Adds V8 version of JavaClass
         https://bugs.webkit.org/show_bug.cgi?id=33898
 
