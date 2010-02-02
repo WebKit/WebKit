@@ -1,3 +1,16 @@
+2010-02-02  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [V8] Raising an exception while setting timeout/interval from a detached frame
+        https://bugs.webkit.org/show_bug.cgi?id=34453
+        This fixes the issue/failing test mentioned in Chromium bug:
+        http://code.google.com/p/chromium/issues/detail?id=32671
+
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+
 2010-02-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

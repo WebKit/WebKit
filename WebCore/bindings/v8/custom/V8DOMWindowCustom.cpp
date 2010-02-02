@@ -78,8 +78,15 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     if (argumentCount < 1)
         return v8::Undefined();
 
-    v8::Handle<v8::Value> function = args[0];
+    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+    ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->document());
 
+    if (!scriptContext) {
+        V8Proxy::setDOMException(INVALID_ACCESS_ERR);
+        return v8::Undefined();
+    }
+
+    v8::Handle<v8::Value> function = args[0];
     WebCore::String functionString;
     if (!function->IsFunction()) {
         if (function->IsString())
@@ -104,14 +111,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     if (argumentCount >= 2)
         timeout = args[1]->Int32Value();
 
-    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
-
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
-        return v8::Undefined();
-
-    ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->document());
-
-    if (!scriptContext)
         return v8::Undefined();
 
     int id;
