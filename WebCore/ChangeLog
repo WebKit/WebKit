@@ -1,3 +1,24 @@
+2010-02-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Eliminate some of the platform flavor-specific stylesheet selectors
+
+        Extract OS version into WebInspector.platformFlavor
+        https://bugs.webkit.org/show_bug.cgi?id=34469
+
+        * inspector/front-end/InspectorBackendStub.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.platform):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.pendingDispatches.0.URLRegExp.i.get platform):
+        (WebInspector.get platformFlavor):
+        (WebInspector._detectPlatformFlavor):
+        (WebInspector.loaded):
+        (WebInspector.toolbarDragStart):
+        (WebInspector.isMac):
+
 2010-02-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Ariya Hidayat.

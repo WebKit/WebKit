@@ -35,10 +35,12 @@ WebInspector.InspectorFrontendHostStub = function()
     this._attachedWindowHeight = 0;
 }
 
+WebInspector._platformFlavor = WebInspector.PlatformFlavor.MacLeopard;
+
 WebInspector.InspectorFrontendHostStub.prototype = {
     platform: function()
     {
-        return "mac-leopard";
+        return "mac";
     },
 
     port: function()

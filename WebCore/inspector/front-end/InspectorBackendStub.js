@@ -46,17 +46,6 @@ WebInspector.InspectorBackendStub.prototype = {
         return func;
     },
 
-    platform: function()
-    {
-        return "mac-leopard";
-    },
-
-    port: function()
-    {
-        return "unknown";
-    },
-
-
     closeWindow: function()
     {
         this._windowVisible = false;

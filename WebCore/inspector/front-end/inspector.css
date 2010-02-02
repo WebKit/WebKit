@@ -246,13 +246,11 @@ body.attached.port-qt .toolbar-item.close-left, body.attached.port-qt .toolbar-i
     display: none;
 }
 
-body.platform-mac-tiger .toolbar-item.close-right,
-body.platform-mac-leopard .toolbar-item.close-right,
-body.platform-mac-snowleopard .toolbar-item.close-right {
+body.platform-mac .toolbar-item.close-right {
     display: none;
 }
 
-body:not(.platform-mac-tiger):not(.platform-mac-leopard):not(.platform-mac-snowleopard) .toolbar-item.close-left {
+body:not(.platform-mac) .toolbar-item.close-left {
     display: none;
 }
 
@@ -503,19 +501,18 @@ body.drawer-visible #drawer {
     font-family: monospace;
 }
 
-body.platform-mac-tiger .monospace, body.platform-mac-leopard .monospace,
-body.platform-mac-tiger .source-code, body.platform-mac-leopard .source-code {
+body.platform-mac .monospace, body.platform-mac .source-code {
     font-family: Monaco, monospace;
 }
 
-body.platform-mac-snowleopard .monospace,
-body.platform-mac-snowleopard .source-code {
+/* Keep .platform-mac to make the rule more specific than the general one above. */
+body.platform-mac.platform-mac-snowleopard .monospace,
+body.platform-mac.platform-mac-snowleopard .source-code {
     font-size: 11px;
     font-family: Menlo, monospace;
 }
 
-body.platform-windows .monospace, body.platform-windows-vista-or-later .monospace,
-body.platform-windows .source-code, body.platform-windows-vista-or-later .source-code {
+body.platform-windows .monospace, body.platform-windows .source-code {
     font-size: 12px;
     font-family: Consolas, Lucida Console, monospace;
 }

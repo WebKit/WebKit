@@ -67,37 +67,44 @@ var WebInspector = {
     get platform()
     {
         if (!("_platform" in this))
-            this._platform = this._detectPlatform();
+            this._platform = InspectorFrontendHost.platform();
 
         return this._platform;
     },
 
-    _detectPlatform: function()
+    get platformFlavor()
+    {
+        if (!("_platformFlavor" in this))
+            this._platformFlavor = this._detectPlatformFlavor();
+
+        return this._platformFlavor;
+    },
+
+    _detectPlatformFlavor: function()
     {
         const userAgent = navigator.userAgent;
-        var nativePlatform = InspectorFrontendHost.platform();
 
-        if (nativePlatform === "windows") {
+        if (this.platform === "windows") {
             var match = userAgent.match(/Windows NT (\d+)\.(?:\d+)/);
             if (match && match[1] >= 6)
-                return WebInspector.OS.WindowsVistaOrLater;
-            return WebInspector.OS.Windows;
-        } else if (nativePlatform === "mac") {
+                return WebInspector.PlatformFlavor.WindowsVista;
+            return null;
+        } else if (this.platform === "mac") {
             var match = userAgent.match(/Mac OS X\s*(?:(\d+)_(\d+))?/);
             if (!match || match[1] != 10)
-                return WebInspector.OS.MacSnowLeopard;
+                return WebInspector.PlatformFlavor.MacSnowLeopard;
             switch (Number(match[2])) {
                 case 4:
-                    return WebInspector.OS.MacTiger;
+                    return WebInspector.PlatformFlavor.MacTiger;
                 case 5:
-                    return WebInspector.OS.MacLeopard;
+                    return WebInspector.PlatformFlavor.MacLeopard;
                 case 6:
                 default:
-                    return WebInspector.OS.MacSnowLeopard;
+                    return WebInspector.PlatformFlavor.MacSnowLeopard;
             }
         }
 
-        return nativePlatform;
+        return null;
     },
 
     get port()
@@ -415,9 +422,8 @@ var WebInspector = {
     }
 }
 
-WebInspector.OS = {
-    Windows: "windows",
-    WindowsVistaOrLater: "windows-vista-or-later",
+WebInspector.PlatformFlavor = {
+    WindowsVista: "windows-vista",
     MacTiger: "mac-tiger",
     MacLeopard: "mac-leopard",
     MacSnowLeopard: "mac-snowleopard"
@@ -429,6 +435,9 @@ WebInspector.loaded = function()
 
     var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
+    var flavor = WebInspector.platformFlavor;
+    if (flavor)
+        document.body.addStyleClass("platform-" + flavor);
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
@@ -871,7 +880,7 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
-    if ((!WebInspector.attached && WebInspector.platform !== "mac-leopard") || WebInspector.port == "qt")
+    if ((!WebInspector.attached && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port == "qt")
         return;
 
     var target = event.target;
@@ -1699,7 +1708,7 @@ WebInspector.UIString = function(string)
 WebInspector.isMac = function()
 {
     if (!("_isMac" in this))
-        this._isMac = WebInspector.platform.indexOf("mac-") === 0;
+        this._isMac = WebInspector.platform === "mac";
 
     return this._isMac;
 }
