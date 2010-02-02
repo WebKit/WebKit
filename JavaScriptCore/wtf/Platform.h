@@ -689,6 +689,10 @@
 #define HAVE_SYS_PARAM_H 1
 #endif
 
+#elif PLATFORM(BREWMP)
+
+#define HAVE_ERRNO_H 1
+
 #elif OS(QNX)
 
 #define HAVE_ERRNO_H 1
