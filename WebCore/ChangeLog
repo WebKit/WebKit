@@ -1,3 +1,17 @@
+2010-02-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add conversions between IntSize and AEESize
+        https://bugs.webkit.org/show_bug.cgi?id=34197
+
+        Make it easy to convert between IntSize and AEESize.
+
+        * platform/graphics/IntSize.h:
+        * platform/graphics/brew/IntSizeBrew.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator AEESize):
+
 2010-02-01  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel.

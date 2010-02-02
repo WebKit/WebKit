@@ -55,6 +55,10 @@ class BSize;
 class wxSize;
 #endif
 
+#if PLATFORM(BREWMP)
+typedef struct AEESize AEESize;
+#endif
+
 namespace WebCore {
 
 class IntSize {
@@ -128,6 +132,11 @@ public:
 #if PLATFORM(WX)
     IntSize(const wxSize&);
     operator wxSize() const;
+#endif
+
+#if PLATFORM(BREWMP)
+    IntSize(const AEESize&);
+    operator AEESize() const;
 #endif
 
 private:
