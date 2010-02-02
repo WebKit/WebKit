@@ -39,6 +39,17 @@
 
 2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        [Chromium] Clean up WebStorageArea
+        https://bugs.webkit.org/show_bug.cgi?id=34353
+
+        Get rid of legacy glue code and fix a typo.
+
+        * public/WebStorageArea.h:
+
+2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         A first step towards the Indexed Database API
