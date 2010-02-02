@@ -66,23 +66,42 @@
     color: rgb(196, 26, 22);
 }
 
-/* Keep this in sync with view-source.css */
-.webkit-html-tag {
-    color: rgb(136, 18, 128);
-}
-
-.webkit-html-attr-name {
-    color: rgb(153, 69, 0);
-}
-
-.webkit-html-attr-value {
-    color: rgb(26, 26, 166);
-}
-
 .webkit-html-comment {
+    /* Keep this in sync with view-source.css (.webkit-html-comment) */
     color: rgb(35, 110, 37);
 }
 
+.webkit-html-tag {
+    /* Keep this in sync with view-source.css (.webkit-html-tag) */
+    color: rgb(136, 18, 128);
+}
+
 .webkit-html-doctype {
+    /* Keep this in sync with view-source.css (.webkit-html-doctype) */
     color: rgb(192, 192, 192);
+}
+
+.webkit-html-attribute-name {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
+    color: rgb(153, 69, 0);
+}
+
+.webkit-html-attribute-value {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-value) */
+    color: rgb(26, 26, 166);
+}
+
+.webkit-html-external-link, .webkit-html-resource-link {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link, .webkit-html-resource-link) */
+    color: #00e;
+}
+
+.webkit-html-external-link {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link) */
+    text-decoration: none;
+}
+
+.webkit-html-external-link:hover {
+    /* Keep this in sync with view-source.css (.webkit-html-external-link:hover) */
+    text-decoration: underline;
 }

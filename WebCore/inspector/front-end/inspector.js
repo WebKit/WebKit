@@ -1528,6 +1528,20 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipTe
     return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
 }
 
+WebInspector.completeURL = function(baseURL, href)
+{
+    var match = baseURL.match(WebInspector.URLRegExp);
+    if (match) {
+        var path = href;
+        if (path.charAt(0) !== "/") {
+            var basePath = match[4] || "/";
+            path = basePath.substring(0, basePath.lastIndexOf("/")) + "/" + path;
+        }
+        return match[1] + "://" + match[2] + (match[3] ? (":" + match[3]) : "") + path;
+    }
+    return null;
+}
+
 WebInspector.addMainEventListeners = function(doc)
 {
     doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);

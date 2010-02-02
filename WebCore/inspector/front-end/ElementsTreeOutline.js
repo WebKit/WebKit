@@ -898,29 +898,18 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!hrefValue || hrefValue.indexOf("://") > 0)
             return hrefValue;
 
-        var match;
-        var documentURL;
         for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
             if (frameOwnerCandidate.documentURL) {
-                documentURL = frameOwnerCandidate.documentURL;
+                var result = WebInspector.completeURL(frameOwnerCandidate.documentURL, hrefValue);
+                if (result)
+                    return result;
                 break;
-            }
-        }
-        if (documentURL) {
-            match = documentURL.match(WebInspector.URLRegExp);
-            if (match) {
-                var path = hrefValue;
-                if (path.charAt(0) !== "/") {
-                    var documentPath = match[4] || "/";
-                    path = documentPath.substring(0, documentPath.lastIndexOf("/")) + "/" + path;
-                }
-                return match[1] + "://" + match[2] + (match[3] ? (":" + match[3]) : "") + path;
             }
         }
 
         // documentURL not found or has bad value
         for (var url in WebInspector.resourceURLMap) {
-            match = url.match(WebInspector.URLRegExp);
+            var match = url.match(WebInspector.URLRegExp);
             if (match && match[4] === hrefValue)
                 return url;
         }

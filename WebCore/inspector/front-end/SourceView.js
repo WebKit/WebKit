@@ -86,7 +86,7 @@ WebInspector.SourceView.prototype = {
 
     _contentLoaded: function(content)
     {
-        this.sourceFrame.setContent(this.resource.mimeType, content);
+        this.sourceFrame.setContent(this.resource.mimeType, content, this.resource.url);
         this._sourceFrameSetupFinished();
     },
 

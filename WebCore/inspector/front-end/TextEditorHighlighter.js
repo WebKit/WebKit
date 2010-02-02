@@ -47,10 +47,12 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 
     /* Keep this in sync with inspector.css and view-source.css */
     this._styles["html-tag"] = "rgb(136, 18, 128)";
-    this._styles["html-attr-name"] = "rgb(153, 69, 0)";
-    this._styles["html-attr-value"] = "rgb(26, 26, 166)";
+    this._styles["html-attribute-name"] = "rgb(153, 69, 0)";
+    this._styles["html-attribute-value"] = "rgb(26, 26, 166)";
     this._styles["html-comment"] = "rgb(35, 110, 37)";
     this._styles["html-doctype"] = "rgb(192, 192, 192)";
+    this._styles["html-external-link"] = "#00e";
+    this._styles["html-resource-link"] = "#00e";
 
     this._styles["javascript-comment"] = "rgb(0, 116, 0)";
     this._styles["javascript-string"] = "rgb(196, 26, 22)";

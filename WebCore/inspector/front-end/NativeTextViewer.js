@@ -28,12 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NativeTextViewer = function(textModel, platform)
+WebInspector.NativeTextViewer = function(textModel, platform, url)
 {
     WebInspector.TextEditor.call(this, textModel, platform);
     this._sheet.tabIndex = 0;
     this._canvas.style.zIndex = 0;
     this._createLineDivs();
+    this._url = url;
     this._selectionColor = "rgb(241, 234, 0)";
 }
 
@@ -190,10 +191,39 @@ WebInspector.NativeTextViewer.prototype = {
 
     _createSpan: function(content, className)
     {
+        if (className === "html-resource-link" || className === "html-external-link")
+            return this._createLink(content, className === "html-external-link");
+
         var span = document.createElement("span");
         span.className = "webkit-" + className;
         span.appendChild(document.createTextNode(content));
         return span;
+    },
+
+    _createLink: function(content, isExternal)
+    {
+        var quote = content.charAt(0);
+        if (content.length > 1 && (quote === "\"" ||   quote === "'"))
+            content = content.substring(1, content.length - 1);
+        else
+            quote = null;
+
+        var a = WebInspector.linkifyURLAsNode(this._rewriteHref(content), content, null, isExternal);
+        var span = document.createElement("span");
+        span.className = "webkit-html-attribute-value";
+        if (quote)
+            span.appendChild(document.createTextNode(quote));
+        span.appendChild(a);
+        if (quote)
+            span.appendChild(document.createTextNode(quote));
+        return span;
+    },
+
+    _rewriteHref: function(hrefValue, isExternal)
+    {
+        if (!this._url || !hrefValue || hrefValue.indexOf("://") > 0)
+            return hrefValue;
+        return WebInspector.completeURL(this._url, hrefValue);
     },
 
     setDivDecoration: function(lineNumber, element)

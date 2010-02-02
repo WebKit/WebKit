@@ -1,3 +1,42 @@
+2010-02-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: URLs are not syntax-higlighted as links in source view.
+
+        This change enables linkifier in the NativeTextViewer. It adds
+        "linkify" and "a_node" parse states into the highlighter in order
+        to detect links and distinguish between resource and external ones.
+        Contains drive-by fix for the webkit-html-* styles and moves them to the
+        common location.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34364
+
+        * inspector/front-end/NativeTextViewer.js:
+        (WebInspector.NativeTextViewer):
+        (WebInspector.NativeTextViewer.prototype._createSpan):
+        (WebInspector.NativeTextViewer.prototype._createLink):
+        (WebInspector.NativeTextViewer.prototype._rewriteHref):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype._createEditorIfNeeded):
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype._isExpectingAttribute):
+        (WebInspector.SourceHTMLTokenizer.prototype._isExpectingAttributeValue):
+        (WebInspector.SourceHTMLTokenizer.prototype._setExpectingAttribute):
+        (WebInspector.SourceHTMLTokenizer.prototype._setExpectingAttributeValue):
+        (WebInspector.SourceHTMLTokenizer.prototype._stringToken):
+        (WebInspector.SourceHTMLTokenizer.prototype._attrValueTokenType):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._contentLoaded):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspectorSyntaxHighlight.css:
+
 2010-02-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
