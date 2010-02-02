@@ -58,7 +58,7 @@ class InspectorClientWebPage : public QWebPage {
     friend class InspectorClientQt;
 public:
     InspectorClientWebPage(QObject* parent = 0)
-    : QWebPage(parent)
+        : QWebPage(parent)
     {
     }
 

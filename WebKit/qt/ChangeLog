@@ -1,3 +1,14 @@
+2010-02-02  Jessie Berlin  <jberlin@webkit.org>
+
+        Rubber Stamped by Holger Freyther.
+
+        [Qt] Fix style issue identified in bug:
+        https://bugs.webkit.org/show_bug.cgi?id=34329
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientWebPage::InspectorClientWebPage):
+        Fix indentation.
+
 2010-02-01  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Holger Freyther.
