@@ -1,3 +1,17 @@
+2010-02-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add conversions between IntPoint and AEEPoint
+        https://bugs.webkit.org/show_bug.cgi?id=34194
+
+        Make it easy to convert between IntPoint and AEEPoint.
+
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/brew/IntPointBrew.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator AEEPoint):
+
 2010-02-02  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

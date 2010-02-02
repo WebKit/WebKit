@@ -63,6 +63,10 @@ class BPoint;
 class wxPoint;
 #endif
 
+#if PLATFORM(BREWMP)
+typedef struct _point AEEPoint;
+#endif
+
 #if PLATFORM(SKIA)
 struct SkPoint;
 struct SkIPoint;
@@ -131,6 +135,11 @@ public:
 #if PLATFORM(WX)
     IntPoint(const wxPoint&);
     operator wxPoint() const;
+#endif
+
+#if PLATFORM(BREWMP)
+    IntPoint(const AEEPoint&);
+    operator AEEPoint() const;
 #endif
 
 #if PLATFORM(SKIA)
