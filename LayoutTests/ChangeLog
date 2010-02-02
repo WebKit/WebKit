@@ -1,3 +1,16 @@
+2010-02-01  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        When a live iframe element is moved between pages, it still depends on the old page.
+        https://bugs.webkit.org/show_bug.cgi?id=34382
+
+        * fast/frames/iframe-reparenting-new-page-expected.txt: Added.
+        * fast/frames/iframe-reparenting-new-page.html: Added.
+        * fast/frames/resources/iframe-reparenting-new-page-1.html: Added.
+        * fast/frames/resources/iframe-reparenting-new-page-2.html: Added.
+        * fast/frames/resources/iframe-reparenting-new-page-iframe.html: Added.
+
 2010-02-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.

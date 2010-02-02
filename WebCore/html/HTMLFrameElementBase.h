@@ -66,10 +66,12 @@ private:
 
     virtual void willRemove();
     void checkAttachedTimerFired(Timer<HTMLFrameElementBase>*);
+    void updateLiveFrame();
 
     bool viewSourceMode() const { return m_viewSource; }
 
     void setNameAndOpenURL();
+    void setName();
     void openURL();
 
     static void setNameAndOpenURLCallback(Node*);
