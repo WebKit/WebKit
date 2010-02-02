@@ -2,6 +2,25 @@
 
         Reviewed by Ariya Hidayat.
 
+        Adds V8 version of JavaClass
+        https://bugs.webkit.org/show_bug.cgi?id=33898
+
+        This is the V8 equivalent of bridge/jni/jsc/JavaClassJSC
+
+        No new tests, build fix only.
+
+        * Android.v8bindings.mk: Modified. Added JavaClassV8.cpp
+        * bridge/jni/v8/JavaClassV8.cpp: Added.
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        (JavaClass::methodsNamed):
+        (JavaClass::fieldNamed):
+        * bridge/jni/v8/JavaClassV8.h: Added.
+
+2010-02-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
         Adds V8 version of JavaInstance
         https://bugs.webkit.org/show_bug.cgi?id=33951
 
