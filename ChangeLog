@@ -1,3 +1,11 @@
+2010-02-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Bump version, and adjust library versioning for 1.1.20.
+
+        * configure.ac:
+
 2010-01-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

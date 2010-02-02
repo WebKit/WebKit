@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 1.1.20
+=================
+
+What's new in WebKitGTK+ 1.1.20?
+
+  - Fixes to the HTML5 Media Player infrastructure to satisfy sites
+    that require cookies, and Referer to be sent; this makes
+    WebKitGTK+ able to support the new HTML5 support added to Youtube,
+    and Vimeo, for instance.
+  - Windowless plugin support is finally here, making it possible to
+    get plugins to behave on various web pages.
+  - The usual stream of fixes, and improvements
+
+=================
 WebKitGTK+ 1.1.19
 =================
 

@@ -1,3 +1,12 @@
+2010-02-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Changes in 1.1.20, and documentation control files update.
+
+        * NEWS:
+        * docs/webkitgtk-docs.sgml:
+
 2010-02-02  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.
