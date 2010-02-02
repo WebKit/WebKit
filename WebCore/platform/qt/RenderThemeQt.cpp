@@ -129,7 +129,6 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 RenderThemeQt::RenderThemeQt(Page* page)
     : RenderTheme()
     , m_page(page)
-    , m_fallbackStyle(0)
 {
     QPushButton button;
     button.setAttribute(Qt::WA_MacSmallSize);
@@ -139,6 +138,8 @@ RenderThemeQt::RenderThemeQt(Page* page)
 #ifdef Q_WS_MAC
     m_buttonFontPixelSize = fontInfo.pixelSize();
 #endif
+
+    m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
 }
 
 RenderThemeQt::~RenderThemeQt()
@@ -147,19 +148,17 @@ RenderThemeQt::~RenderThemeQt()
 }
 
 // for some widget painting, we need to fallback to Windows style
-QStyle* RenderThemeQt::fallbackStyle()
+QStyle* RenderThemeQt::fallbackStyle() const
 {
-    if (!m_fallbackStyle)
-        m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
-
-    if (!m_fallbackStyle)
-        m_fallbackStyle = QApplication::style();
-
-    return m_fallbackStyle;
+    return (m_fallbackStyle) ? m_fallbackStyle : QApplication::style();
 }
 
 QStyle* RenderThemeQt::qStyle() const
 {
+#ifdef Q_WS_MAEMO_5
+    return fallbackStyle();
+#endif
+
     if (m_page) {
         QWebPageClient* pageClient = m_page->chrome()->client()->platformPageClient();
 
@@ -773,6 +772,11 @@ bool RenderThemeQt::supportsFocus(ControlPart appearance) const
 
 void RenderThemeQt::setPaletteFromPageClientIfExists(QPalette& palette) const
 {
+#ifdef Q_WS_MAEMO_5
+    static QPalette lightGrayPalette(Qt::lightGray);
+    palette = lightGrayPalette;
+    return;
+#endif
     // If the webview has a custom palette, use it
     if (!m_page)
         return;
