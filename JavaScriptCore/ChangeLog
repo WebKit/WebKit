@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        Date.UTC() should apply TimeClip operation.
+        https://bugs.webkit.org/show_bug.cgi?id=34461
+
+        ECMAScript 5 15.9.4.3:
+        > 9 Return TimeClip(MakeDate(MakeDay(yr, m, dt), MakeTime(h, min, s, milli))).
+
+        * runtime/DateConstructor.cpp:
+        (JSC::dateUTC): Calls WTF::timeClip().
+
+2010-02-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Fix a bug that Math.round() retunrs incorrect results for huge integers
         https://bugs.webkit.org/show_bug.cgi?id=34462
 

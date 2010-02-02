@@ -177,7 +177,7 @@ static JSValue JSC_HOST_CALL dateUTC(ExecState* exec, JSObject*, JSValue, const 
     t.minute = args.at(4).toInt32(exec);
     t.second = args.at(5).toInt32(exec);
     double ms = (n >= 7) ? args.at(6).toNumber(exec) : 0;
-    return jsNumber(exec, gregorianDateTimeToMS(exec, t, ms, true));
+    return jsNumber(exec, timeClip(gregorianDateTimeToMS(exec, t, ms, true)));
 }
 
 } // namespace JSC

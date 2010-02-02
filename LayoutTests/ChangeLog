@@ -1,5 +1,18 @@
 2010-02-01  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Date.UTC() should apply TimeClip operation.
+        https://bugs.webkit.org/show_bug.cgi?id=34461
+
+        Add tests for corner cases of Date.UTC().
+
+        * fast/js/date-utc-timeclip-expected.txt: Added.
+        * fast/js/date-utc-timeclip.html: Added.
+        * fast/js/script-tests/date-utc-timeclip.js: Added.
+
+2010-02-01  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed. Add two more test cases which I forgot to add in r54197.
         https://bugs.webkit.org/show_bug.cgi?id=34462
 
