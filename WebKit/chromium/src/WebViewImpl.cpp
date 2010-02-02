@@ -1316,9 +1316,9 @@ void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
     switch (action.type) {
     case WebMediaPlayerAction::Play:
         if (action.enable)
-            mediaElement->play();
+            mediaElement->play(mediaElement->processingUserGesture());
         else
-            mediaElement->pause();
+            mediaElement->pause(mediaElement->processingUserGesture());
         break;
     case WebMediaPlayerAction::Mute:
         mediaElement->setMuted(action.enable);
