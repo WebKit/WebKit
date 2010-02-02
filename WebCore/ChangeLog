@@ -1,3 +1,20 @@
+2010-02-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port SharedTimer with IShell_SetTimerEx.
+        https://bugs.webkit.org/show_bug.cgi?id=33599
+
+        As fireTime passed in setSharedTimerFireTime is the absolute time,
+        we must calcalute the interval by subtracting currentTime() from
+        fireTime and pass the result to ISHELL_SetTimerEx.
+
+        * platform/brew/SharedTimerBrew.cpp: Added.
+        (WebCore::invokeCallback):
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         [Chromium] Unreviewed attempt to fix the chromium build.
