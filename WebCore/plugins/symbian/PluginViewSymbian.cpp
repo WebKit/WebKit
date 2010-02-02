@@ -54,7 +54,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <QKeyEvent>
-#include <QPixmap.h>
+#include <QPixmap>
 #include <QRegion>
 #include <QVector>
 #include <QWidget>
