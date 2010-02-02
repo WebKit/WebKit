@@ -1,3 +1,18 @@
+2010-02-02  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable a way to measure FPS in QGVLauncher
+        run QGVLauncher with --show-fps to see ongoing fps measurements
+        This is not meant as accurate FPS, but rather as a way to find
+        improvements/regressions
+        https://bugs.webkit.org/show_bug.cgi?id=34450
+
+        * QGVLauncher/main.cpp:
+        (MainView::MainView): initialize FPS values
+        (MainView::paintEvent): count a painted frame here
+        (MainView::printFps): we print the fps with qDebug every 5 seconds.
+
 2010-01-29  Ben Murdoch  <benm@google.com>
 
         Reviewed by Dimitri Glazkov.

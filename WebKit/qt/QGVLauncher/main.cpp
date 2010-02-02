@@ -125,12 +125,22 @@ public:
     MainView(QWidget* parent)
         : QGraphicsView(parent)
         , m_mainWidget(0)
+        , m_measureFps(QApplication::instance()->arguments().contains("--show-fps"))
+        , m_numTotalPaints(0)
+        , m_numPaintsSinceLastMeasure(0)
     {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
         setFrameShape(QFrame::NoFrame);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        if (m_measureFps) {
+            QTimer* fpsTimer = new QTimer(this);
+            fpsTimer->setInterval(5000);
+            m_totalStartTime = m_startTime = QTime::currentTime();
+            connect(fpsTimer, SIGNAL(timeout()), this, SLOT(printFps()));
+            fpsTimer->start();
+        }
     }
 
     void setMainWidget(QGraphicsWidget* widget)
@@ -147,6 +157,15 @@ public:
             return;
         QRectF rect(QPoint(0, 0), event->size());
         m_mainWidget->setGeometry(rect);
+    }
+
+    void paintEvent(QPaintEvent* event)
+    {
+        QGraphicsView::paintEvent(event);
+        if (m_measureFps) {
+            ++m_numPaintsSinceLastMeasure;
+            ++m_numTotalPaints;            
+        }
     }
 
     void setWaitCursor()
@@ -195,11 +214,29 @@ public slots:
         emit flipRequest();
     }
 
+    void printFps()
+    {
+        // note that this might have a bug if you measure right around midnight, but we can live with that
+        QTime now = QTime::currentTime();
+        int msecs = m_startTime.msecsTo(now);
+        int totalMsecs = m_totalStartTime.msecsTo(now);
+        int totalFps = totalMsecs ? m_numTotalPaints * 1000 / totalMsecs : 0;
+        int curFps = msecs ? m_numPaintsSinceLastMeasure * 1000 / msecs : 0;
+        qDebug("[FPS] From start: %d, from last paint: %d", totalFps, curFps);
+        m_startTime = now;
+        m_numPaintsSinceLastMeasure = 0;
+    }
+
 signals:
     void flipRequest();
 
 private:
     QGraphicsWidget* m_mainWidget;
+    bool m_measureFps;
+    int m_numTotalPaints;
+    int m_numPaintsSinceLastMeasure;
+    QTime m_startTime;
+    QTime m_totalStartTime;
 };
 
 class SharedScene : public QSharedData {
