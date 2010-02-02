@@ -137,6 +137,8 @@ public:
     void addPath(const SkPath&);
     SkPath currentPathInLocalCoordinates() const;
 
+    void beginTransparencyLayer(float opacity);
+
     // Returns the fill color. The returned color has it's alpha adjusted
     // by the current alpha.
     SkColor effectiveFillColor() const;

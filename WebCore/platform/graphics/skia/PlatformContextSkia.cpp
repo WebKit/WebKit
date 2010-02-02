@@ -622,3 +622,19 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 
     m_canvas->restore();
 }
+
+void PlatformContextSkia::beginTransparencyLayer(float opacity)
+{
+    SkPaint layerPaint;
+    setupPaintCommon(&layerPaint);
+    layerPaint.setAlpha(static_cast<unsigned char>(opacity * 255));
+
+    // We need the "alpha" layer flag here because the base layer is opaque
+    // (the surface of the page) but layers on top may have transparent parts.
+    // Without explicitly setting the alpha flag, the layer will inherit the
+    // opaque setting of the base and some things won't work properly.
+    SkCanvas::SaveFlags layerFlags = static_cast<SkCanvas::SaveFlags>(
+        SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag);
+
+    m_canvas->saveLayer(0, &layerPaint, layerFlags);
+}

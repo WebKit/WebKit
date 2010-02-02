@@ -1,3 +1,22 @@
+2010-02-02  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by David Levin.
+
+        When using the Skia graphics context, the beginTransparencyLayer call
+        currently creates a new layer, but does not keep the current
+        compositing mode for use when merging the created layer back onto the
+        rest of the context. This patch fixes that.
+        https://bugs.webkit.org/show_bug.cgi?id=34491
+
+        fast/backgrounds/svg-as-mask.html is affected by this change in Chromium,
+        but not fixed. This is the first of a series of patches to fix it.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::beginTransparencyLayer):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2010-02-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
