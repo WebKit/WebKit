@@ -524,11 +524,13 @@ bool HTMLFormElement::isURLAttribute(Attribute* attr) const
 
 void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 {
+    ASSERT(imgElements.find(e) == notFound);
     imgElements.append(e);
 }
 
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 {
+    ASSERT(imgElements.find(e) != notFound);
     removeFromVector(imgElements, e);
 }
 

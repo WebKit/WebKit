@@ -54,6 +54,8 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* doc, 
 
 HTMLImageElement::~HTMLImageElement()
 {
+    if (m_form)
+        m_form->removeImgElement(this);
 }
 
 bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

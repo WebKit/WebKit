@@ -1,3 +1,13 @@
+2010-02-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34076
+        <rdar://problem/7594601> Crash in mangleme in WebCore::Element::getAttribute
+
+        * fast/forms/misplaced-img-form-registration-expected.txt: Added.
+        * fast/forms/misplaced-img-form-registration.html: Added.
+
 2010-02-02  Adam Roben  <aroben@apple.com>
 
         Stop skipping some tests that were failing due to buggy versions of

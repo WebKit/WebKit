@@ -1,3 +1,22 @@
+2010-02-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34076
+        <rdar://problem/7594601> Crash in mangleme in WebCore::Element::getAttribute
+
+        Test: fast/forms/misplaced-img-form-registration.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerImgElement): Assert that the same image isn't added
+        to vector again.
+        (WebCore::HTMLFormElement::removeImgElement): Similarly, assert that we're removing something
+        that's actually registered.
+
+        * html/HTMLImageElement.cpp: (WebCore::HTMLImageElement::~HTMLImageElement): If parser fails
+        to insert the image element, then there will be no removed from tree notification either,
+        need to unregister right away.
+
 2010-02-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
