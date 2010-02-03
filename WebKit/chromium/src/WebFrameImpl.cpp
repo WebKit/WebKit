@@ -1518,6 +1518,21 @@ WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
     return counterValueForElement(element);
 }
 
+int WebFrameImpl::pageNumberForElementById(const WebString& id,
+                                           float pageWidthInPixels,
+                                           float pageHeightInPixels) const
+{
+    if (!m_frame)
+        return -1;
+
+    Element* element = m_frame->document()->getElementById(id);
+    if (!element)
+        return -1;
+
+    FloatSize pageSize(pageWidthInPixels, pageHeightInPixels);
+    return PrintContext::pageNumberForElement(element, pageSize);
+}
+
 // WebFrameImpl public ---------------------------------------------------------
 
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)

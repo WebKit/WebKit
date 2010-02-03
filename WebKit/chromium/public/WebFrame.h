@@ -483,6 +483,13 @@ public:
     // used to support layout tests.
     virtual WebString counterValueForElementById(const WebString& id) const = 0;
 
+
+    // Returns the number of page where the specified element will be put.
+    // This method is used to support layout tests.
+    virtual int pageNumberForElementById(const WebString& id,
+                                         float pageWidthInPixels,
+                                         float pageHeightInPixels) const = 0;
+
 protected:
     ~WebFrame() { }
 };
