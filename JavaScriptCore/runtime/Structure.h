@@ -204,6 +204,8 @@ namespace JSC {
         PropertyMapHashTable* m_propertyTable;
 
         uint32_t m_propertyStorageCapacity;
+
+        // m_offset does not account for anonymous slots
         signed char m_offset;
 
         unsigned m_dictionaryKind : 2;
