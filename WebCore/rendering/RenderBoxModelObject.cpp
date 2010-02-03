@@ -118,7 +118,7 @@ bool RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(GraphicsCont
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high
     // quality.
-    if (!image->isBitmapImage())
+    if (!image || !image->isBitmapImage())
         return false;
 
     // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image

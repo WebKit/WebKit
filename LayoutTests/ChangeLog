@@ -34,8 +34,16 @@
         * fast/forms/script-tests/ValidityState-rangeUnderflow-range.js: Removed.
         * fast/forms/script-tests/ValidityState-rangeUnderflow.js: Added.
 
-2010-02-02  Fumitoshi Ukai  <ukai@chromium.org>
+2010-02-02  James Robinson  <jamesr@chromium.org>
 
+        Reviewed by Dmitry Titov.
+
+        Test that the combination of border-bottom:1px; and -webkit-gradient(linear) doesn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=34510
+
+        * fast/gradients/crash-on-1px-border.html: Added.
+
+2010-02-02  Fumitoshi Ukai  <ukai@chromium.org> 
         Reviewed by Alexey Proskuryakov.
 
         WebSocket wrapper can be collected even if events are pending

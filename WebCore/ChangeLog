@@ -1,3 +1,15 @@
+2010-02-02  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add a null check for image, which might be NULL if tileSize is empty
+        https://bugs.webkit.org/show_bug.cgi?id=34510
+
+        Test: fast/gradients/crash-on-1px-border.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality):
+
 2010-02-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
