@@ -1,3 +1,13 @@
+2010-02-03  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Enable JIT compilation for wx.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34536
+
+        * wx/build/settings.py:
+
 2010-02-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after introduction of pageNumberForElementById.

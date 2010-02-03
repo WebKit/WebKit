@@ -92,6 +92,7 @@ jscore_dirs = [
     'wtf',
     'wtf/unicode',
     'wtf/unicode/icu',
+    'yarr',
 ]
 
 webcore_dirs = [
