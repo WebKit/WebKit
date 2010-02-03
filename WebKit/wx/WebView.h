@@ -203,7 +203,6 @@ public:
                              const wxString& password = wxEmptyString);
 
     wxWebSettings GetWebSettings();
-
     wxWebKitParseMode GetParseMode() const;
 
 protected:
@@ -304,6 +303,30 @@ private:
     wxString m_url;
 };
 
+class WXDLLIMPEXP_WEBKIT wxWebKitWindowFeatures
+{
+public:
+    wxWebKitWindowFeatures()
+        : menuBarVisible(true)
+        , statusBarVisible(true)
+        , toolBarVisible(true)
+        , locationBarVisible(true)
+        , scrollbarsVisible(true)
+        , resizable(true)
+        , fullscreen(false)
+        , dialog(false)
+    { }
+
+    bool menuBarVisible;
+    bool statusBarVisible;
+    bool toolBarVisible;
+    bool locationBarVisible;
+    bool scrollbarsVisible;
+    bool resizable;
+    bool fullscreen;
+    bool dialog;
+};
+
 class WXDLLIMPEXP_WEBKIT wxWebViewNewWindowEvent : public wxCommandEvent
 {
 #ifndef SWIG
@@ -315,11 +338,17 @@ public:
     void SetURL(const wxString& url) { m_url = url; }
     wxString GetTargetName() const { return m_targetName; }
     void SetTargetName(const wxString& name) { m_targetName = name; }
+    wxWebView* GetWebView() { return m_webView; }
+    void SetWebView(wxWebView* webView) { m_webView = webView; }
+    wxWebKitWindowFeatures GetWindowFeatures() { return m_features; }
+    void SetWindowFeatures(wxWebKitWindowFeatures features) { m_features = features; }
 
     wxWebViewNewWindowEvent( wxWindow* win = static_cast<wxWindow*>(NULL));
     wxEvent *Clone(void) const { return new wxWebViewNewWindowEvent(*this); }
 
 private:
+    wxWebView* m_webView;
+    wxWebKitWindowFeatures m_features;
     wxString m_url;
     wxString m_targetName;
 };
