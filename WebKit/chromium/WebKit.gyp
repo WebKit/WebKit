@@ -70,6 +70,7 @@
             'sources': [
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRendering.h',
+                'public/linux/WebRenderTheme.h',
                 'public/x11/WebScreenInfoFactory.h',
                 'public/mac/WebInputEventFactory.h',
                 'public/mac/WebScreenInfoFactory.h',
@@ -233,6 +234,7 @@
                 'src/InspectorClientImpl.cpp',
                 'src/InspectorClientImpl.h',
                 'src/linux/WebFontRendering.cpp',
+                'src/linux/WebRenderTheme.cpp',
                 'src/x11/WebScreenInfoFactory.cpp',
                 'src/mac/WebInputEventFactory.mm',
                 'src/mac/WebScreenInfoFactory.mm',

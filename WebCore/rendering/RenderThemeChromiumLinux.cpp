@@ -25,8 +25,8 @@
 #include "config.h"
 #include "RenderThemeChromiumLinux.h"
 
-#include "Color.h"
 #include "CSSValueKeywords.h"
+#include "Color.h"
 #include "RenderObject.h"
 #include "UserAgentStyleSheets.h"
 
@@ -43,6 +43,8 @@ unsigned RenderThemeChromiumLinux::m_inactiveSelectionBackgroundColor =
     0xffc8c8c8;
 unsigned RenderThemeChromiumLinux::m_inactiveSelectionForegroundColor =
     0xff323232;
+
+double RenderThemeChromiumLinux::m_caretBlinkInterval;
 
 PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
 {

@@ -1,3 +1,19 @@
+2010-02-02  Joel Stanley  <joel@jms.id.au>
+
+        Reviewed by David Levin.
+
+        [Chromium] Add API method for setting caret blink frequency.
+        https://bugs.webkit.org/show_bug.cgi?id=31704
+
+        This enables the RenderThemeChromiumLinux::setCaretBlinkInterval method
+        to be called Chromium's API.  The API is linux-only as it is currently
+        the only port to implement RenderTheme::setCaretBlinkInterval.
+
+        * WebKit.gyp:  Add WebRenderTheme.{h,cpp}
+        * public/linux/WebRenderTheme.h: Added.
+        * src/linux/WebRenderTheme.cpp: Added.
+        (WebKit::setCaretBlinkInterval): Exposed API
+
 2010-02-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dimitri Glazkov.

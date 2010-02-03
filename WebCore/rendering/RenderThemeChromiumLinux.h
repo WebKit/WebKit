@@ -56,7 +56,7 @@ namespace WebCore {
 
         virtual void adjustSliderThumbSize(RenderObject*) const;
 
-        void setCaretBlinkInterval(double interval);
+        static void setCaretBlinkInterval(double interval);
         virtual double caretBlinkIntervalInternal() const;
 
         static void setSelectionColors(unsigned activeBackgroundColor,
@@ -78,7 +78,7 @@ namespace WebCore {
         // A general method asking if any control tinting is supported at all.
         virtual bool supportsControlTints() const;
 
-        double m_caretBlinkInterval;
+        static double m_caretBlinkInterval;
 
         static unsigned m_activeSelectionBackgroundColor;
         static unsigned m_activeSelectionForegroundColor;

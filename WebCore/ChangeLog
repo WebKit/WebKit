@@ -1,3 +1,16 @@
+2010-02-02  Joel Stanley  <joel@jms.id.au>
+
+        Reviewed by David Levin.
+
+        [Chromium] Make setCaretBlinkInterval static.
+        https://bugs.webkit.org/show_bug.cgi?id=31704
+
+        This is so it can be called from the newly exposed Chromium API setter
+        method.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        * rendering/RenderThemeChromiumLinux.h:
+
 2010-02-02  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
