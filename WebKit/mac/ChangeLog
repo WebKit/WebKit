@@ -1,16 +1,3 @@
-2010-02-02  Alexey Proskuryakov  <ap@apple.com>
-
-        Reviewed by Darin Adler.
-
-        https://bugs.webkit.org/show_bug.cgi?id=34502
-        Unused method pluginLayer in Netscape plug-in views
-
-        * Plugins/Hosted/WebHostedNetscapePluginView.h:
-        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
-        * Plugins/WebNetscapePluginView.h:
-        * Plugins/WebNetscapePluginView.mm:
-        Removed the method.
-
 2010-02-01  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

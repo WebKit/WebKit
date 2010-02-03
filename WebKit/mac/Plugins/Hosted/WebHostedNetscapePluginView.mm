@@ -129,6 +129,12 @@ extern "C" {
     return YES;
 }
 
+// FIXME: This method is an ideal candidate to move up to the base class
+- (CALayer *)pluginLayer
+{
+    return _pluginLayer.get();
+}
+
 - (void)setLayer:(CALayer *)newLayer
 {
     // FIXME: This should use the same implementation as WebNetscapePluginView (and move to the base class).
