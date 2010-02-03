@@ -144,30 +144,6 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
     return JSValueMakeUndefined(context);
 }
 
-static WPARAM buildModifierFlags(JSContextRef context, const JSValueRef modifiers)
-{
-    JSObjectRef modifiersArray = JSValueToObject(context, modifiers, 0);
-    if (!modifiersArray)
-        return 0;
-
-    WPARAM flags = 0;
-    int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, JSStringCreateWithUTF8CString("length"), 0), 0);
-    for (int i = 0; i < modifiersCount; ++i) {
-        JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
-        JSStringRef string = JSValueToStringCopy(context, value, 0);
-        if (JSStringIsEqualToUTF8CString(string, "ctrlKey")
-            || JSStringIsEqualToUTF8CString(string, "addSelectionKey"))
-            flags |= MK_CONTROL;
-        else if (JSStringIsEqualToUTF8CString(string, "shiftKey")
-                 || JSStringIsEqualToUTF8CString(string, "rangeSelectionKey"))
-            flags |= MK_SHIFT;
-        // No way to specifiy altKey in a MSG.
-
-        JSStringRelease(string);
-    }
-    return flags;
-}
-
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     COMPtr<IWebFramePrivate> framePrivate;
@@ -176,7 +152,7 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
 
     down = true;
     int mouseType = WM_LBUTTONDOWN;
-    if (argumentCount >= 1) {
+    if (argumentCount == 1) {
         int mouseNumber = JSValueToNumber(context, arguments[0], exception);
         switch (mouseNumber) {
         case 0:
@@ -197,12 +173,8 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
             break;
         }
     }
-
-    WPARAM wparam = 0;
-    if (argumentCount >= 2)
-        wparam |= buildModifierFlags(context, arguments[1]);
         
-    MSG msg = makeMsg(webViewWindow, mouseType, wparam, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
+    MSG msg = makeMsg(webViewWindow, mouseType, 0, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
     if (!msgQueue[endOfQueue].delay)
         dispatchMessage(&msg);
     else {
@@ -262,7 +234,7 @@ static void doMouseUp(MSG msg, HRESULT* oleDragAndDropReturnValue = 0)
 static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int mouseType = WM_LBUTTONUP;
-    if (argumentCount >= 1) {
+    if (argumentCount == 1) {
         int mouseNumber = JSValueToNumber(context, arguments[0], exception);
         switch (mouseNumber) {
         case 0:
@@ -284,11 +256,7 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
         }
     }
 
-    WPARAM wparam = 0;
-    if (argumentCount >= 2)
-        wparam |= buildModifierFlags(context, arguments[1]);
-
-    MSG msg = makeMsg(webViewWindow, mouseType, wparam, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
+    MSG msg = makeMsg(webViewWindow, mouseType, 0, MAKELPARAM(lastMousePosition.x, lastMousePosition.y));
 
     if ((dragMode && !replayingSavedEvents) || msgQueue[endOfQueue].delay) {
         msgQueue[endOfQueue++].msg = msg;
@@ -494,9 +462,9 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
                 for (int i = 0; i < modifiersCount; ++i) {
                     JSValueRef value = JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0);
                     JSStringRef string = JSValueToStringCopy(context, value, 0);
-                    if (JSStringIsEqualToUTF8CString(string, "ctrlKey") || JSStringIsEqualToUTF8CString(string, "addSelectionKey"))
+                    if (JSStringIsEqualToUTF8CString(string, "ctrlKey"))
                         newKeyState[VK_CONTROL] = 0x80;
-                    else if (JSStringIsEqualToUTF8CString(string, "shiftKey") || JSStringIsEqualToUTF8CString(string, "rangeSelectionKey"))
+                    else if (JSStringIsEqualToUTF8CString(string, "shiftKey"))
                         newKeyState[VK_SHIFT] = 0x80;
                     else if (JSStringIsEqualToUTF8CString(string, "altKey"))
                         newKeyState[VK_MENU] = 0x80;
