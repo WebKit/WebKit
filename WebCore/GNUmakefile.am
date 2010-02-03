@@ -2006,6 +2006,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/gtk/GRefPtrGtk.cpp \
 	WebCore/platform/gtk/GRefPtrGtk.h \
+	WebCore/platform/gtk/GOwnPtrGtk.cpp \
+	WebCore/platform/gtk/GOwnPtrGtk.h \
 	WebCore/platform/gtk/GtkPluginWidget.cpp \
 	WebCore/platform/gtk/GtkPluginWidget.h \
 	WebCore/platform/gtk/KURLGtk.cpp \

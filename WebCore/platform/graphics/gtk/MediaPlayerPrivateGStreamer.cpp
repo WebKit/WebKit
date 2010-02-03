@@ -131,52 +131,52 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
 void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec, gpointer data)
 {
     MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
-    GstElement* element;
+    GOwnPtr<GstElement> element;
 
-    g_object_get(mp->m_playBin, "source", &element, NULL);
-    gst_object_replace((GstObject**) &mp->m_source, (GstObject*) element);
+    g_object_get(mp->m_playBin, "source", &element.outPtr(), NULL);
+    gst_object_replace((GstObject**) &mp->m_source, (GstObject*) element.get());
 
-    if (element) {
-        GParamSpec* pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(element), "cookies");
+    if (!element)
+        return;
 
-        // First check if the source element has a cookies property
-        // of the format we expect
-        if (!pspec || pspec->value_type != G_TYPE_STRV)
-            return;
+    GOwnPtr<char> location;
+    g_object_get(element.get(), "location", &location.outPtr(), NULL);
 
-        // Then get the cookies for the URI and set them
-        SoupSession* session = webkit_get_default_session();
-        SoupCookieJar* cookieJar = SOUP_COOKIE_JAR(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+    GOwnPtr<SoupURI> uri(soup_uri_new(location.get()));
 
-        char* location;
-        g_object_get(element, "location", &location, NULL);
+    // Let Apple web servers know we want to access their nice movie trailers.
+    if (g_str_equal(uri->host, "movies.apple.com"))
+        g_object_set(element.get(), "user-agent", "Quicktime/7.2.0", NULL);
 
-        SoupURI* uri = soup_uri_new(location);
-        g_free(location);
-
-        // Let Apple web servers know we want to access their nice movie trailers.
-        if (g_str_equal(uri->host, "movies.apple.com"))
-            g_object_set(element, "user-agent", "Quicktime/7.2.0", NULL);
-
-        char* cookies = soup_cookie_jar_get_cookies(cookieJar, uri, FALSE);
-        soup_uri_free(uri);
-
-        char* cookiesStrv[] = {cookies, NULL};
-        g_object_set(element, "cookies", cookiesStrv, NULL);
-        g_free(cookies);
-
-        Frame* frame = mp->m_player->frameView() ? mp->m_player->frameView()->frame() : 0;
-        Document* document = frame ? frame->document() : 0;
-        if (document) {
-            GstStructure* extraHeaders = gst_structure_new("extra-headers",
-                                                           "Referer", G_TYPE_STRING,
-                                                           document->documentURI().utf8().data(), 0);
-            g_object_set(element, "extra-headers", extraHeaders, NULL);
-            gst_structure_free(extraHeaders);
-        }
+    // Set the HTTP referer.
+    Frame* frame = mp->m_player->frameView() ? mp->m_player->frameView()->frame() : 0;
+    Document* document = frame ? frame->document() : 0;
+    if (document) {
+        GstStructure* extraHeaders = gst_structure_new("extra-headers",
+                                                       "Referer", G_TYPE_STRING,
+                                                       document->documentURI().utf8().data(), 0);
+        g_object_set(element.get(), "extra-headers", extraHeaders, NULL);
+        gst_structure_free(extraHeaders);
     }
 
-    gst_object_unref(element);
+    // Deal with the cookies from now on.
+    GParamSpec* cookiesParamSpec = g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), "cookies");
+
+    // First check if the source element has a cookies property
+    // of the format we expect
+    if (!cookiesParamSpec || cookiesParamSpec->value_type != G_TYPE_STRV)
+        return;
+
+    // Then get the cookies for the URI and set them
+    SoupSession* session = webkit_get_default_session();
+    SoupSessionFeature* cookieJarFeature = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
+    if (!cookieJarFeature)
+        return;
+
+    SoupCookieJar* cookieJar = SOUP_COOKIE_JAR(cookieJarFeature);
+    GOwnPtr<char> cookies(soup_cookie_jar_get_cookies(cookieJar, uri.get(), FALSE));
+    char* cookiesStrv[] = {cookies.get(), 0};
+    g_object_set(element.get(), "cookies", cookiesStrv, NULL);
 }
 
 void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
