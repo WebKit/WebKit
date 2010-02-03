@@ -702,8 +702,7 @@ void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
 
 KURL Element::baseURI() const
 {
-    const AtomicString& baseAttribute = getAttribute(baseAttr);
-    KURL base(KURL(), baseAttribute);
+    KURL base(KURL(), getAttribute(baseAttr));
     if (!base.protocol().isEmpty())
         return base;
 
@@ -715,7 +714,7 @@ KURL Element::baseURI() const
     if (parentBase.isNull())
         return base;
 
-    return KURL(parentBase, baseAttribute);
+    return KURL(parentBase, base.string());
 }
 
 void Element::createAttributeMap() const

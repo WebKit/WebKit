@@ -1,3 +1,15 @@
+2010-02-02  David Levin  <levin@chromium.org>
+
+        No review, rolling out r54245.
+        http://trac.webkit.org/changeset/54245
+        https://bugs.webkit.org/show_bug.cgi?id=34492
+
+        This patch seems to have broken thousands of chromium tests on
+        Windows (and since it was for chromium, I'm rolling it out).
+
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+
 2010-02-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
