@@ -429,7 +429,7 @@ WebInspector.ResourcesPanel.prototype = {
             return;
 
         var newView = this._createResourceView(resource);
-        if (newView.prototype === resource._resourcesView.prototype)
+        if (newView.__proto__ === resource._resourcesView.__proto__)
             return;
 
         resource.warnings = 0;
@@ -439,6 +439,7 @@ WebInspector.ResourcesPanel.prototype = {
             resource._itemsTreeElement.updateErrorsAndWarnings();
 
         var oldView = resource._resourcesView;
+        var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
 
         resource._resourcesView.detach();
         delete resource._resourcesView;
@@ -447,8 +448,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         newView.headersVisible = oldView.headersVisible;
 
-        if (oldView.visible && oldView.element.parentNode)
-            newView.show(oldView.element.parentNode);
+        if (oldViewParentNode)
+            newView.show(oldViewParentNode);
     },
 
     canShowSourceLineForURL: function(url)
