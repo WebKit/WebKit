@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        [BREWMP] Remove COMPILE_ASSERT conflict with the underlying PLATFORM
+        https://bugs.webkit.org/show_bug.cgi?id=34190
+
+        COMPILE_ASSERT conflicts with the underlying PLATFORM because it is defined
+        both in WTF's Assertions.h and BREWMP's AEEClassIDs.h. Include AEEClassIDs.h
+        in Assertions.h and undef COMPILE_ASSERT to avoid redefining COMPILE_ASSERT.
+
+        * wtf/Assertions.h:
+
+2010-02-03  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
         [BREWMP] Implement OwnPtrBrew to make sure BREW instances are freed.
         https://bugs.webkit.org/show_bug.cgi?id=34518
 

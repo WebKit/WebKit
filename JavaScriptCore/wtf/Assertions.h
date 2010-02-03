@@ -179,6 +179,14 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 #undef ASSERT
 #endif
 
+#if PLATFORM(BREWMP)
+/* FIXME: We include this here only to avoid a conflict with the COMPILE_ASSERT macro. */
+#include <AEEClassIDs.h>
+
+/* FIXME: Change to use something other than COMPILE_ASSERT to avoid this conflict with the underlying platform */
+#undef COMPILE_ASSERT
+#endif
+
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
