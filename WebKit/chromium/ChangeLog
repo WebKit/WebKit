@@ -1,3 +1,13 @@
+2010-02-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        [Chromium] Return a consistent set of platforms from WebDevToolsFrontendImpl
+        https://bugs.webkit.org/show_bug.cgi?id=34523
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::jsPlatform):
+
 2010-02-02  Joel Stanley  <joel@jms.id.au>
 
         Reviewed by David Levin.
