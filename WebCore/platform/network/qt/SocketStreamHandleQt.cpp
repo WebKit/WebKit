@@ -56,7 +56,15 @@ SocketStreamHandlePrivate::SocketStreamHandlePrivate(SocketStreamHandle* streamH
     if (!m_socket)
         return;
 
-    connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
+    if (isSecure) {
+#ifndef QT_NO_OPENSSL
+        connect(m_socket, SIGNAL(encrypted()), this, SLOT(socketConnected()));
+        connect(m_socket, SIGNAL(encryptedBytesWritten(qint64)), this, SLOT(socketBytesWritten(qint64)));
+#endif
+    } else {
+        connect(m_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
+        connect(m_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(socketBytesWritten(qint64)));
+    }
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
     connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
@@ -99,14 +107,17 @@ int SocketStreamHandlePrivate::send(const char* data, int len)
 {
     if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState)
         return 0;
-    quint64 sentSize = m_socket->write(data, len);
-    QMetaObject::invokeMethod(this, "socketSentData", Qt::QueuedConnection);
-    return sentSize;
+    // If we are already sending something, then m_data is not empty.
+    bool sending = m_data.length() > 0;
+    m_data.append(data, len);
+    if (!sending)
+        m_socket->write(m_data);
+    return len;
 }
 
 void SocketStreamHandlePrivate::close()
 {
-    if (m_socket && m_socket->state() == QAbstractSocket::ConnectedState)
+    if (m_socket)
         m_socket->close();
 }
 
@@ -114,6 +125,18 @@ void SocketStreamHandlePrivate::socketSentdata()
 {
     if (m_streamHandle)
         m_streamHandle->sendPendingData();
+}
+
+void SocketStreamHandlePrivate::socketBytesWritten(qint64 written)
+{
+    if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState || written < 0)
+        return;
+    m_data.remove(0, written);
+    // If we are done sending all the data, then m_data is now empty
+    if (m_data.isEmpty())
+        QMetaObject::invokeMethod(this, "socketSentdata", Qt::QueuedConnection);
+    else
+        m_socket->write(m_data);
 }
 
 void SocketStreamHandlePrivate::socketClosed()
