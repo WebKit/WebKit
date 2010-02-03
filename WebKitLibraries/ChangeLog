@@ -1,3 +1,11 @@
+2010-02-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed a bug where WKSetNSURLConnectionDefersCallbacks(true) did not defer callbacks during modal dialogs.
+
+        * libWebKitSystemInterfaceLeopard.a:
+
 2010-02-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
