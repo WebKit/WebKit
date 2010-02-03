@@ -412,22 +412,9 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     setlocale(LC_ALL, "");
 }
 
-void DumpRenderTree::open(const QUrl& aurl)
+void DumpRenderTree::open(const QUrl& url)
 {
     resetToConsistentStateBeforeTesting();
-
-    QUrl url = aurl;
-    m_expectedHash = QString();
-    if (m_dumpPixels) {
-        // single quote marks the pixel dump hash
-        QString str = url.toString();
-        int i = str.indexOf('\'');
-        if (i > -1) {
-            m_expectedHash = str.mid(i + 1, str.length());
-            str.remove(i, str.length());
-            url = QUrl(str);
-        }
-    }
 
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
@@ -476,6 +463,16 @@ void DumpRenderTree::readLine()
 void DumpRenderTree::processLine(const QString &input)
 {
     QString line = input;
+
+    m_expectedHash = QString();
+    if (m_dumpPixels) {
+        // single quote marks the pixel dump hash
+        int i = line.indexOf('\'');
+        if (i > -1) {
+            m_expectedHash = line.mid(i + 1, line.length());
+            line.remove(i, line.length());
+        }
+    }
 
     if (line.startsWith(QLatin1String("http:"))
             || line.startsWith(QLatin1String("https:"))
@@ -720,14 +717,16 @@ void DumpRenderTree::dump()
             printf("Content-Type: %s\n", "image/png");
             printf("Content-Length: %lu\n", static_cast<unsigned long>(data.length()));
 
+            const quint32 bytesToWriteInOneChunk = 1 << 15;
+            quint32 dataRemainingToWrite = data.length();
             const char *ptr = data.data();
-            for(quint32 left = data.length(); left; ) {
-                quint32 block = qMin(left, quint32(1 << 15));
-                quint32 written = fwrite(ptr, 1, block, stdout);
-                ptr += written;
-                left -= written;
-                if (written == block)
+            while (dataRemainingToWrite) {
+                quint32 bytesToWriteInThisChunk = qMin(dataRemainingToWrite, bytesToWriteInOneChunk);
+                quint32 bytesWritten = fwrite(ptr, 1, bytesToWriteInThisChunk, stdout);
+                if (bytesWritten != bytesToWriteInThisChunk)
                     break;
+                dataRemainingToWrite -= bytesWritten;
+                ptr += bytesWritten;
             }
         }
 

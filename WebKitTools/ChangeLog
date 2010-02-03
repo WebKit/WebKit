@@ -1,3 +1,16 @@
+2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Fix pixel tests support.
+        https://bugs.webkit.org/show_bug.cgi?id=27813
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::processLine):
+         - Hash processing mechanism moved from DumpRenderTree::open to DumpRenderTree::processLine.
+        (WebCore::DumpRenderTree::dump): Fixed and renamed variables.
+
 2010-02-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
