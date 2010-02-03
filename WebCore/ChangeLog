@@ -1,3 +1,21 @@
+2010-02-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        rangeOverflow/rangeUnderflow support for type=datetime, datetime-local,
+        month, time and week
+        https://bugs.webkit.org/show_bug.cgi?id=34483
+
+        Tests: fast/forms/ValidityState-rangeOverflow.html
+               fast/forms/ValidityState-rangeUnderflow.html
+
+        * html/HTMLInputElement.cpp:
+          Defines the hard limits for the types as double values.
+        (WebCore::HTMLInputElement::rangeUnderflow): Supports the types.
+        (WebCore::HTMLInputElement::rangeOverflow): Supports the types.
+        (WebCore::HTMLInputElement::minimum): Supports the types.
+        (WebCore::HTMLInputElement::maximum): Supports the types.
+
 2010-02-02  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

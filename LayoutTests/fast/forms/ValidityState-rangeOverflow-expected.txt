@@ -1,0 +1,118 @@
+This test aims to check for rangeOverflow flag with input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Type=text
+PASS The value "101" doesn't overflow the maximum value "100".
+
+Type=date
+PASS The value "2010-01-27" doesn't overflow the maximum value "".
+PASS The value "2010-01-27" doesn't overflow the maximum value "".
+PASS The value "2010-01-27" doesn't overflow the maximum value "foo".
+PASS The value "2010-01-27" doesn't overflow the maximum value "2010-01-27".
+PASS The value "2010-01-27" doesn't overflow the maximum value "2010-01-28".
+PASS The value "2010-01-27" doesn't overflow the maximum value "2011-01-26".
+PASS The value "foo" doesn't overflow the maximum value "2011-01-26".
+PASS The value "2010-01-27" doesn't overflow the maximum value "1000-01-01".
+PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
+PASS The value "9999-01-01" overflows the maximum value "2010-12-31".
+PASS The value "2010-01-27" overflows the maximum value "2010-01-26".
+
+Type=datetime
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "foo".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-27T12:34Z".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-27T12:34:56Z".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2011-01-26T12:34Z".
+PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34Z".
+PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "1000-01-01T00:00Z".
+PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:33:59.999Z".
+PASS The value "9999-01-01T23:59Z" overflows the maximum value "2010-12-31T00:00Z".
+PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:34Z".
+
+Type=datetime-local
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "foo".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27T12:34".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27T12:34:56".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2011-01-26T12:34".
+PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34".
+PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "1000-01-01T00:00".
+PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:33:59.999".
+PASS The value "9999-01-01T23:59" overflows the maximum value "2010-12-31T00:00".
+PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:34".
+
+Type=month
+PASS The value "2010-01" doesn't overflow the maximum value "".
+PASS The value "2010-01" doesn't overflow the maximum value "".
+PASS The value "2010-01" doesn't overflow the maximum value "foo".
+PASS The value "2010-01" doesn't overflow the maximum value "2010-01".
+PASS The value "2010-01" doesn't overflow the maximum value "2010-02".
+PASS The value "2010-01" doesn't overflow the maximum value "2011-01".
+PASS The value "foo" doesn't overflow the maximum value "2011-01".
+PASS The value "2010-01" doesn't overflow the maximum value "1000-01".
+PASS The value "2010-01" overflows the maximum value "2009-12".
+PASS The value "9999-01" overflows the maximum value "2010-12".
+PASS The value "2010-01" overflows the maximum value "2009-12".
+
+Type=number
+PASS The value "99" doesn't overflow the maximum value "100".
+PASS The value "-101" doesn't overflow the maximum value "-100".
+PASS The value "99" doesn't overflow the maximum value "1E+2".
+PASS The value "0.99" doesn't overflow the maximum value "1.00".
+PASS The value "abc" doesn't overflow the maximum value "100".
+PASS The value "" doesn't overflow the maximum value "-1".
+PASS The value "101" doesn't overflow the maximum value "".
+PASS The value "101" doesn't overflow the maximum value "xxx".
+PASS The value "0.999999999999999999999999999999999999999999" doesn't overflow the maximum value "0.999999999999999999999999999999999999999998".
+PASS The value "101" overflows the maximum value "100".
+PASS The value "-99" overflows the maximum value "-100".
+PASS The value "101" overflows the maximum value "1E+2".
+PASS The value "101" overflows the maximum value "100".
+
+Type=range
+PASS The value "99" doesn't overflow the maximum value "100".
+PASS The value "-101" doesn't overflow the maximum value "-100".
+PASS The value "99" doesn't overflow the maximum value "1E+2".
+PASS The value "0.99" doesn't overflow the maximum value "1.00".
+PASS The value "abc" doesn't overflow the maximum value "100".
+PASS The value "" doesn't overflow the maximum value "-1".
+PASS The value "0.999999999999999999999999999999999999999999" doesn't overflow the maximum value "0.999999999999999999999999999999999999999998".
+PASS The value "101" doesn't overflow the maximum value "100".
+PASS The value "101" overflows the maximum value "100".
+PASS The value "-99" overflows the maximum value "-100".
+PASS The value "101" overflows the maximum value "1E+2".
+PASS The value "101" overflows the maximum value "".
+PASS The value "101" overflows the maximum value "xxx".
+
+Type=time
+PASS The value "13:16" doesn't overflow the maximum value "".
+PASS The value "13:16" doesn't overflow the maximum value "".
+PASS The value "13:16" doesn't overflow the maximum value "foo".
+PASS The value "13:16" doesn't overflow the maximum value "13:16".
+PASS The value "13:16" doesn't overflow the maximum value "13:17".
+PASS The value "13:16" doesn't overflow the maximum value "14:15".
+PASS The value "foo" doesn't overflow the maximum value "13:16".
+PASS The value "13:16" overflows the maximum value "13:15".
+PASS The value "23:59:59.999" overflows the maximum value "13:16".
+PASS The value "13:16" overflows the maximum value "12:00".
+
+Type=week
+PASS The value "2010-W01" doesn't overflow the maximum value "".
+PASS The value "2010-W01" doesn't overflow the maximum value "".
+PASS The value "2010-W01" doesn't overflow the maximum value "foo".
+PASS The value "2010-W01" doesn't overflow the maximum value "2010-W01".
+PASS The value "2010-W01" doesn't overflow the maximum value "2010-W02".
+PASS The value "2010-W01" doesn't overflow the maximum value "2011-W01".
+PASS The value "foo" doesn't overflow the maximum value "2011-W01".
+PASS The value "2010-W01" doesn't overflow the maximum value "1582-W01".
+PASS The value "2010-W01" overflows the maximum value "2009-W12".
+PASS The value "9999-W01" overflows the maximum value "2010-W12".
+PASS The value "2010-W01" overflows the maximum value "2009-W50".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

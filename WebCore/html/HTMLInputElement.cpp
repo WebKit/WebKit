@@ -80,12 +80,20 @@ static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
 // Constant values for minimum().
 static const double dateDefaultMinimum = -12219292800000.0; // This means 1582-10-15T00:00Z.
+static const double dateTimeDefaultMinimum = -12219292800000.0; // ditto.
+static const double monthDefaultMinimum = (1582.0 - 1970) * 12 + 10 - 1; // 1582-10
 static const double numberDefaultMinimum = -DBL_MAX;
 static const double rangeDefaultMinimum = 0.0;
+static const double timeDefaultMinimum = 0.0; // 00:00:00.000
+static const double weekDefaultMinimum = -12212380800000.0; // 1583-01-03, the first Monday of 1583.
 // Constant values for maximum().
 static const double dateDefaultMaximum = DBL_MAX;
+static const double dateTimeDefaultMaximum = DBL_MAX;
+static const double monthDefaultMaximum = DBL_MAX;
 static const double numberDefaultMaximum = DBL_MAX;
 static const double rangeDefaultMaximum = 100.0;
+static const double timeDefaultMaximum = 86399999.0; // 23:59:59.999
+static const double weekDefaultMaximum = DBL_MAX;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLTextFormControlElement(tagName, doc, f)
@@ -271,22 +279,24 @@ bool HTMLInputElement::rangeUnderflow() const
     const double nan = numeric_limits<double>::quiet_NaN();
     switch (inputType()) {
     case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case MONTH:
     case NUMBER:
-    case RANGE: {
+    case RANGE:
+    case TIME:
+    case WEEK: {
         double doubleValue = parseToDouble(value(), nan);
         return isfinite(doubleValue) && doubleValue < minimum();
     }
     case BUTTON:
     case CHECKBOX:
     case COLOR:
-    case DATETIME:
-    case DATETIMELOCAL:
     case EMAIL:
     case FILE:
     case HIDDEN:
     case IMAGE:
     case ISINDEX:
-    case MONTH:
     case PASSWORD:
     case RADIO:
     case RESET:
@@ -294,9 +304,7 @@ bool HTMLInputElement::rangeUnderflow() const
     case SUBMIT:
     case TELEPHONE:
     case TEXT:
-    case TIME:
     case URL:
-    case WEEK:
         break;
     }
     return false;
@@ -307,22 +315,24 @@ bool HTMLInputElement::rangeOverflow() const
     const double nan = numeric_limits<double>::quiet_NaN();
     switch (inputType()) {
     case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case MONTH:
     case NUMBER:
-    case RANGE: {
+    case RANGE:
+    case TIME:
+    case WEEK: {
         double doubleValue = parseToDouble(value(), nan);
         return isfinite(doubleValue) && doubleValue >  maximum();
     }
     case BUTTON:
     case CHECKBOX:
     case COLOR:
-    case DATETIME:
-    case DATETIMELOCAL:
     case EMAIL:
     case FILE:
     case HIDDEN:
     case IMAGE:
     case ISINDEX:
-    case MONTH:
     case PASSWORD:
     case RADIO:
     case RESET:
@@ -330,9 +340,7 @@ bool HTMLInputElement::rangeOverflow() const
     case SUBMIT:
     case TELEPHONE:
     case TEXT:
-    case TIME:
     case URL:
-    case WEEK:
         break;
     }
     return false;
@@ -343,21 +351,27 @@ double HTMLInputElement::minimum() const
     switch (inputType()) {
     case DATE:
         return parseToDouble(getAttribute(minAttr), dateDefaultMinimum);
+    case DATETIME:
+    case DATETIMELOCAL:
+        return parseToDouble(getAttribute(minAttr), dateTimeDefaultMinimum);
+    case MONTH:
+        return parseToDouble(getAttribute(minAttr), monthDefaultMinimum);
     case NUMBER:
         return parseToDouble(getAttribute(minAttr), numberDefaultMinimum);
     case RANGE:
         return parseToDouble(getAttribute(minAttr), rangeDefaultMinimum);
+    case TIME:
+        return parseToDouble(getAttribute(minAttr), timeDefaultMinimum);
+    case WEEK:
+        return parseToDouble(getAttribute(minAttr), weekDefaultMinimum);
     case BUTTON:
     case CHECKBOX:
     case COLOR:
-    case DATETIME:
-    case DATETIMELOCAL:
     case EMAIL:
     case FILE:
     case HIDDEN:
     case IMAGE:
     case ISINDEX:
-    case MONTH:
     case PASSWORD:
     case RADIO:
     case RESET:
@@ -365,9 +379,7 @@ double HTMLInputElement::minimum() const
     case SUBMIT:
     case TELEPHONE:
     case TEXT:
-    case TIME:
     case URL:
-    case WEEK:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -379,6 +391,11 @@ double HTMLInputElement::maximum() const
     switch (inputType()) {
     case DATE:
         return parseToDouble(getAttribute(maxAttr), dateDefaultMaximum);
+    case DATETIME:
+    case DATETIMELOCAL:
+        return parseToDouble(getAttribute(maxAttr), dateTimeDefaultMaximum);
+    case MONTH:
+        return parseToDouble(getAttribute(maxAttr), monthDefaultMaximum);
     case NUMBER:
         return parseToDouble(getAttribute(maxAttr), numberDefaultMaximum);
     case RANGE: {
@@ -390,17 +407,18 @@ double HTMLInputElement::maximum() const
             max = std::max(min, rangeDefaultMaximum);
         return max;
     }
+    case TIME:
+        return parseToDouble(getAttribute(maxAttr), timeDefaultMaximum);
+    case WEEK:
+        return parseToDouble(getAttribute(maxAttr), weekDefaultMaximum);
     case BUTTON:
     case CHECKBOX:
     case COLOR:
-    case DATETIME:
-    case DATETIMELOCAL:
     case EMAIL:
     case FILE:
     case HIDDEN:
     case IMAGE:
     case ISINDEX:
-    case MONTH:
     case PASSWORD:
     case RADIO:
     case RESET:
@@ -408,9 +426,7 @@ double HTMLInputElement::maximum() const
     case SUBMIT:
     case TELEPHONE:
     case TEXT:
-    case TIME:
     case URL:
-    case WEEK:
         break;
     }
     ASSERT_NOT_REACHED();

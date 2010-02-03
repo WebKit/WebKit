@@ -1,0 +1,119 @@
+This test aims to check for rangeUnderflow flag with input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Type=text
+PASS The value "99" doesn't underflow the minimum value "100".
+
+Type=date
+PASS The value "2010-01-27" doesn't underflow the minimum value "".
+PASS The value "2010-01-27" doesn't underflow the minimum value "".
+PASS The value "2010-01-27" doesn't underflow the minimum value "foo".
+PASS The value "1000-01-01" doesn't underflow the minimum value "".
+PASS The value "1582-10-15" doesn't underflow the minimum value "".
+PASS The value "2010-01-27" doesn't underflow the minimum value "2010-01-26".
+PASS The value "2010-01-27" doesn't underflow the minimum value "2009-01-28".
+PASS The value "foo" doesn't underflow the minimum value "2011-01-26".
+PASS The value "2010-01-27" undeflows the minimum value "2010-01-28".
+PASS The value "9999-01-01" undeflows the minimum value "10000-12-31".
+PASS The value "2010-01-27" undeflows the minimum value "2010-02-01".
+
+Type=datetime
+PASS The value "2010-01-27T12:34Z" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34Z" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34Z" doesn't underflow the minimum value "foo".
+PASS The value "1000-01-01T12:34Z" doesn't underflow the minimum value "".
+PASS The value "1582-10-15T00:00Z" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34Z" doesn't underflow the minimum value "2010-01-26T00:00Z".
+PASS The value "2010-01-27T12:34Z" doesn't underflow the minimum value "2009-01-28T00:00Z".
+PASS The value "foo" doesn't underflow the minimum value "2011-01-26T00:00Z".
+PASS The value "2010-01-27T12:34Z" undeflows the minimum value "2010-01-27T13:00Z".
+PASS The value "9999-01-01T12:00Z" undeflows the minimum value "10000-12-31T12:00Z".
+PASS The value "2010-01-27T12:00Z" undeflows the minimum value "2010-02-01T12:00Z".
+
+Type=datetime-local
+PASS The value "2010-01-27T12:34" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34" doesn't underflow the minimum value "foo".
+PASS The value "1000-01-01T12:34" doesn't underflow the minimum value "".
+PASS The value "1582-10-15T00:00" doesn't underflow the minimum value "".
+PASS The value "2010-01-27T12:34" doesn't underflow the minimum value "2010-01-26T00:00".
+PASS The value "2010-01-27T12:34" doesn't underflow the minimum value "2009-01-28T00:00".
+PASS The value "foo" doesn't underflow the minimum value "2011-01-26T00:00".
+PASS The value "2010-01-27T12:34" undeflows the minimum value "2010-01-27T13:00".
+PASS The value "9999-01-01T12:00" undeflows the minimum value "10000-12-31T12:00".
+PASS The value "2010-01-27T12:00" undeflows the minimum value "2010-02-01T12:00".
+
+Type=month
+PASS The value "2010-01" doesn't underflow the minimum value "".
+PASS The value "2010-01" doesn't underflow the minimum value "".
+PASS The value "2010-01" doesn't underflow the minimum value "foo".
+PASS The value "1000-01" doesn't underflow the minimum value "".
+PASS The value "1582-10" doesn't underflow the minimum value "".
+PASS The value "2010-01" doesn't underflow the minimum value "2009-12".
+PASS The value "2010-01" doesn't underflow the minimum value "2009-01".
+PASS The value "foo" doesn't underflow the minimum value "2011-01".
+PASS The value "2010-01" undeflows the minimum value "2010-02".
+PASS The value "9999-01" undeflows the minimum value "10000-12".
+PASS The value "2010-01" undeflows the minimum value "2010-02".
+
+Type=number
+PASS The value "101" doesn't underflow the minimum value "100".
+PASS The value "-99" doesn't underflow the minimum value "-100".
+PASS The value "101" doesn't underflow the minimum value "1E+2".
+PASS The value "1.01" doesn't underflow the minimum value "1.00".
+PASS The value "abc" doesn't underflow the minimum value "100".
+PASS The value "" doesn't underflow the minimum value "1".
+PASS The value "-1" doesn't underflow the minimum value "".
+PASS The value "-1" doesn't underflow the minimum value "xxx".
+PASS The value "0.999999999999999999999999999999999999999998" doesn't underflow the minimum value "0.999999999999999999999999999999999999999999".
+PASS The value "99" undeflows the minimum value "100".
+PASS The value "-101" undeflows the minimum value "-100".
+PASS The value "99" undeflows the minimum value "1E+2".
+PASS The value "101" undeflows the minimum value "200".
+
+Type=range
+PASS The value "101" doesn't underflow the minimum value "100".
+PASS The value "-99" doesn't underflow the minimum value "-100".
+PASS The value "101" doesn't underflow the minimum value "1E+2".
+PASS The value "1.01" doesn't underflow the minimum value "1.00".
+PASS The value "abc" doesn't underflow the minimum value "100".
+PASS The value "" doesn't underflow the minimum value "1".
+PASS The value "0.999999999999999999999999999999999999999998" doesn't underflow the minimum value "0.999999999999999999999999999999999999999999".
+PASS The value "101" doesn't underflow the minimum value "100".
+PASS The value "99" undeflows the minimum value "100".
+PASS The value "-101" undeflows the minimum value "-100".
+PASS The value "99" undeflows the minimum value "1E+2".
+PASS The value "-1" undeflows the minimum value "".
+PASS The value "-1" undeflows the minimum value "xxx".
+
+Type=time
+PASS The value "13:16" doesn't underflow the minimum value "".
+PASS The value "13:16" doesn't underflow the minimum value "".
+PASS The value "13:16" doesn't underflow the minimum value "foo".
+PASS The value "00:00:00.000" doesn't underflow the minimum value "".
+PASS The value "23:59:59.999" doesn't underflow the minimum value "".
+PASS The value "13:16" doesn't underflow the minimum value "11:00".
+PASS The value "13:16" doesn't underflow the minimum value "13:16".
+PASS The value "foo" doesn't underflow the minimum value "11:00".
+PASS The value "13:16" undeflows the minimum value "13:17".
+PASS The value "23:59" undeflows the minimum value "23:59:30".
+PASS The value "13:16" undeflows the minimum value "14:00".
+
+Type=week
+PASS The value "2010-W01" doesn't underflow the minimum value "".
+PASS The value "2010-W01" doesn't underflow the minimum value "".
+PASS The value "2010-W01" doesn't underflow the minimum value "foo".
+PASS The value "1000-W01" doesn't underflow the minimum value "".
+PASS The value "1583-W01" doesn't underflow the minimum value "".
+PASS The value "2010-W01" doesn't underflow the minimum value "2009-W51".
+PASS The value "2010-W01" doesn't underflow the minimum value "2009-W01".
+PASS The value "foo" doesn't underflow the minimum value "2011-W01".
+PASS The value "2010-W01" undeflows the minimum value "2010-W02".
+PASS The value "9999-W01" undeflows the minimum value "10000-W12".
+PASS The value "2010-W01" undeflows the minimum value "2010-W02".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
