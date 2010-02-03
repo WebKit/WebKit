@@ -28,7 +28,6 @@
 
 #include "Frame.h"
 #include "V8CustomVoidCallback.h"  // For invokeCallback
-#include "V8PositionError.h"
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ void V8CustomPositionErrorCallback::handleEvent(PositionError* error)
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> argv[] = {
-        toV8(error)
+        V8DOMWrapper::convertToV8Object(V8ClassIndex::POSITIONERROR, error)
     };
 
     // Protect the frame until the callback returns.

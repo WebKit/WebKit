@@ -35,7 +35,6 @@
 #include "Frame.h"
 #include "MessageChannel.h"
 #include "V8Binding.h"
-#include "V8MessagePort.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
@@ -67,8 +66,8 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
     // Create references from the MessageChannel wrapper to the two
     // MessagePort wrappers to make sure that the MessagePort wrappers
     // stay alive as long as the MessageChannel wrapper is around.
-    messageChannel->SetInternalField(V8MessageChannel::port1Index, toV8(obj->port1()));
-    messageChannel->SetInternalField(V8MessageChannel::port2Index, toV8(obj->port2()));
+    messageChannel->SetInternalField(V8MessageChannel::port1Index, V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port1()));
+    messageChannel->SetInternalField(V8MessageChannel::port2Index, V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port2()));
 
     // Setup the standard wrapper object internal fields.
     V8DOMWrapper::setDOMWrapper(messageChannel, V8ClassIndex::MESSAGECHANNEL, obj.get());

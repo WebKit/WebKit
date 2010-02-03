@@ -36,7 +36,6 @@
 #include "Event.h"
 #include "Frame.h"
 #include "V8Binding.h"
-#include "V8Event.h"
 #include "V8EventListenerList.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -85,7 +84,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
     v8::Context::Scope scope(v8Context);
 
     // Get the V8 wrapper for the event object.
-    v8::Handle<v8::Value> jsEvent = toV8(event);
+    v8::Handle<v8::Value> jsEvent = V8DOMWrapper::convertEventToV8Object(event);
 
     invokeEventHandler(context, event, jsEvent);
 

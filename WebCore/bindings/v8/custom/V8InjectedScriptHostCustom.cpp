@@ -40,6 +40,7 @@
 #include "Page.h"
 
 #include "V8Binding.h"
+#include "V8CustomBinding.h"
 #include "V8Database.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
@@ -84,7 +85,7 @@ static ScriptObject createInjectedScript(const String& scriptSource, InjectedScr
     v8::Context::Scope contextScope(inspectedContext);
 
     // Call custom code to create InjectedScripHost wrapper specific for the context
-    // instead of calling toV8() that would create the
+    // instead of calling V8DOMWrapper::convertToV8Object that would create the
     // wrapper in the current context.
     // FIXME: make it possible to use generic bindings factory for InjectedScriptHost.
     v8::Local<v8::Object> scriptHostWrapper = createInjectedScriptHostV8Wrapper(injectedScriptHost);
@@ -129,7 +130,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Argument
     if (!ic)
         return v8::Undefined();
 
-    return toV8(node);
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const v8::Arguments& args)
@@ -159,7 +160,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::databaseForIdCallback(const v8::Argu
     Database* database = host->databaseForId(args[0]->ToInt32()->Value());
     if (!database)
         return v8::Undefined();
-    return toV8(database);
+    return V8DOMWrapper::convertToV8Object<Database>(V8ClassIndex::DATABASE, database);
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::selectDatabaseCallback(const v8::Arguments& args)

@@ -31,13 +31,16 @@
 #include <config.h>
 
 #if ENABLE(SVG)
+
 #include "TransformationMatrix.h"
 
 #include "SVGException.h"
+
 #include "V8Binding.h"
-#include "V8Proxy.h"
+#include "V8CustomBinding.h"
 #include "V8SVGMatrix.h"
 #include "V8SVGPODTypeWrapper.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
@@ -53,8 +56,7 @@ v8::Handle<v8::Value> V8SVGMatrix::multiplyCallback(const v8::Arguments& args)
     TransformationMatrix m1 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
     TransformationMatrix m2 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(v8::Handle<v8::Object>::Cast(args[0]));
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2));
-    return toV8(wrapper.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)));
 }
 
 v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
@@ -72,8 +74,7 @@ v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
         return v8::Handle<v8::Value>();
     }
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result);
-    return toV8(wrapper.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result));
 }
 
 v8::Handle<v8::Value> V8SVGMatrix::rotateFromVectorCallback(const v8::Arguments& args)
@@ -93,8 +94,7 @@ v8::Handle<v8::Value> V8SVGMatrix::rotateFromVectorCallback(const v8::Arguments&
         return v8::Handle<v8::Value>();
     }
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result);
-    return toV8(wrapper.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result));
 }
 
 } // namespace WebCore

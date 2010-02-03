@@ -36,8 +36,6 @@
 
 #include "Frame.h"
 #include "V8CustomVoidCallback.h"
-#include "V8SQLResultSet.h"
-#include "V8SQLTransaction.h"
 
 namespace WebCore {
 
@@ -63,8 +61,8 @@ void V8CustomSQLStatementCallback::handleEvent(SQLTransaction* transaction, SQLR
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> argv[] = {
-        toV8(transaction),
-        toV8(resultSet)
+        V8DOMWrapper::convertToV8Object(V8ClassIndex::SQLTRANSACTION, transaction),
+        V8DOMWrapper::convertToV8Object(V8ClassIndex::SQLRESULTSET, resultSet)
     };
 
     // Protect the frame until the callback returns.

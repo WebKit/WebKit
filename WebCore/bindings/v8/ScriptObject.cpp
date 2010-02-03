@@ -36,10 +36,9 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "InspectorBackend.h"
+#include "InspectorFrontendHost.h"
 #include "V8Binding.h"
-#include "V8InjectedScriptHost.h"
-#include "V8InspectorBackend.h"
-#include "V8InspectorFrontendHost.h"
 #include "V8Proxy.h"
 
 #include <v8.h>
@@ -145,21 +144,21 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorBackend* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), toV8(value));
+    scope.global()->Set(v8::String::New(name), V8DOMWrapper::convertToV8Object(V8ClassIndex::INSPECTORBACKEND, value));
     return scope.success();
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), toV8(value));
+    scope.global()->Set(v8::String::New(name), V8DOMWrapper::convertToV8Object(V8ClassIndex::INSPECTORFRONTENDHOST, value));
     return scope.success();
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), toV8(value));
+    scope.global()->Set(v8::String::New(name), V8DOMWrapper::convertToV8Object(V8ClassIndex::INJECTEDSCRIPTHOST, value));
     return scope.success();
 }
 #endif

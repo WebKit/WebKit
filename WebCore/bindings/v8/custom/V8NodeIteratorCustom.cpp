@@ -35,7 +35,7 @@
 #include "ScriptState.h"
 
 #include "V8Binding.h"
-#include "V8Node.h"
+#include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 #include <wtf/PassRefPtr.h>
@@ -54,7 +54,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
     if (!object)
         return v8::Null();
 
-    return toV8(object);
+    return V8DOMWrapper::convertNodeToV8Object(object);
 }
 
 v8::Handle<v8::Value> V8NodeIterator::nextNodeCallback(const v8::Arguments& args)

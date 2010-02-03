@@ -87,7 +87,7 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeCallback(const v8::Arguments& a
     if (ec)
         throwError(ec);
 
-    return toV8(result.release());
+    return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
 v8::Handle<v8::Value> V8Element::setAttributeNSCallback(const v8::Arguments& args)
@@ -126,7 +126,7 @@ v8::Handle<v8::Value> V8Element::setAttributeNodeNSCallback(const v8::Arguments&
     if (ec)
         throwError(ec);
 
-    return toV8(result.release());
+    return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
 v8::Handle<v8::Value> toV8(Element* impl, bool forceNewObject)
