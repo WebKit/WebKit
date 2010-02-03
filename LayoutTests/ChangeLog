@@ -1,3 +1,13 @@
+2010-02-02  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket wrapper can be collected even if events are pending
+        https://bugs.webkit.org/show_bug.cgi?id=34014
+
+        * websocket/tests/websocket-pending-activity-expected.txt: Added.
+        * websocket/tests/websocket-pending-activity.html: Added.
+
 2010-02-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Gustavo Noronha Silva.

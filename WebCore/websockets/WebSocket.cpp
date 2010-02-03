@@ -151,6 +151,7 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
 
     m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this, m_url, m_protocol);
     m_channel->connect();
+    ActiveDOMObject::setPendingActivity(this);
 }
 
 bool WebSocket::send(const String& message, ExceptionCode& ec)
@@ -198,6 +199,26 @@ ScriptExecutionContext* WebSocket::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
+void WebSocket::contextDestroyed()
+{
+    LOG(Network, "WebSocket %p scriptExecutionContext destroyed", this);
+    ASSERT(!m_channel);
+    ASSERT(m_state == CLOSED);
+    ActiveDOMObject::contextDestroyed();
+}
+
+void WebSocket::stop()
+{
+    bool pending = hasPendingActivity();
+    if (m_channel)
+        m_channel->disconnect();
+    m_channel = 0;
+    m_state = CLOSED;
+    ActiveDOMObject::stop();
+    if (pending)
+        ActiveDOMObject::unsetPendingActivity(this);
+}
+
 void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect", this);
@@ -224,6 +245,9 @@ void WebSocket::didClose()
     LOG(Network, "WebSocket %p didClose", this);
     m_state = CLOSED;
     dispatchEvent(Event::create(eventNames().closeEvent, false, false));
+    m_channel = 0;
+    if (hasPendingActivity())
+        ActiveDOMObject::unsetPendingActivity(this);
 }
 
 EventTargetData* WebSocket::eventTargetData()

@@ -141,6 +141,7 @@ void WebSocketChannel::didClose(SocketStreamHandle* handle)
 void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* data, int len)
 {
     LOG(Network, "WebSocketChannel %p didReceiveData %d", this, len);
+    RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
     ASSERT(handle == m_handle);
     if (!appendToBuffer(data, len)) {
         handle->close();
