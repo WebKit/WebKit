@@ -1,3 +1,18 @@
+2010-02-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Bug 34198 -  Ruby text should not inherit line-height
+        (https://bugs.webkit.org/show_bug.cgi?id=34198)
+        
+        Resetting line-height to 'normal' in the default UA style sheet.
+        Adding layout-test to check for this.
+
+        * fast/ruby/script-tests: Added.
+        * fast/ruby/script-tests/ruby-line-height.js: Added.
+        * fast/ruby/ruby-line-height-expected.txt: Added.
+        * fast/ruby/ruby-line-height.html: Added.
+
 2010-02-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
