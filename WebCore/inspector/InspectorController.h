@@ -64,7 +64,6 @@ class DocumentLoader;
 class Element;
 class GraphicsContext;
 class HitTestResult;
-class InjectedScript;
 class InjectedScriptHost;
 class InspectorBackend;
 class InspectorClient;
@@ -158,7 +157,7 @@ public:
     void windowScriptObjectAvailable();
 
     void setFrontendProxyObject(ScriptState* state, ScriptObject webInspectorObj, ScriptObject injectedScriptObj = ScriptObject());
-    ScriptState* frontendScriptState() const { return m_frontendScriptState; }
+    ScriptState* frontendScriptState() const { return m_scriptState; }
 
     void populateScriptObjects();
     void resetScriptObjects();
@@ -249,7 +248,7 @@ public:
 
     void evaluateForTestInFrontend(long callId, const String& script);
 
-    InjectedScript injectedScriptForNodeId(long id);
+    ScriptObject injectedScriptForNodeId(long id);
 
 private:
     static const char* const FrontendSettingsSettingName;
@@ -329,7 +328,7 @@ private:
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesMap m_domStorageResources;
 #endif
-    ScriptState* m_frontendScriptState;
+    ScriptState* m_scriptState;
     bool m_windowVisible;
     SpecialPanels m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;

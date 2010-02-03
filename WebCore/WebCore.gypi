@@ -1581,8 +1581,6 @@
             'inspector/InspectorClient.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',
-            'inspector/InjectedScript.cpp',
-            'inspector/InjectedScript.h',
             'inspector/InjectedScriptHost.cpp',
             'inspector/InjectedScriptHost.h',
             'inspector/InspectorBackend.cpp',

@@ -40,7 +40,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -286,7 +285,7 @@ void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScript
     // FIXME: explicitly pass injectedScriptId along with node id to the frontend.
     bool injectedScriptIdIsNodeId = injectedScriptId <= 0;
 
-    InjectedScript injectedScript;
+    ScriptObject injectedScript;
     if (injectedScriptIdIsNodeId)
         injectedScript = m_inspectorController->injectedScriptForNodeId(-injectedScriptId);
     else
@@ -295,12 +294,19 @@ void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScript
     if (injectedScript.hasNoValue())
         return;
 
-    String result;
+    ScriptFunctionCall function(injectedScript.scriptState(), injectedScript, "dispatch");
+    function.appendArgument(methodName);
+    function.appendArgument(arguments);
+    if (async)
+        function.appendArgument(callId);
     bool hadException = false;
-    injectedScript.dispatch(callId, methodName, arguments, async, &result, &hadException);
+    ScriptValue result = function.call(hadException);
     if (async)
         return;  // InjectedScript will return result asynchronously by means of ::reportDidDispatchOnInjectedScript.
-    frontend->didDispatchOnInjectedScript(callId, result, hadException);
+    if (hadException)
+        frontend->didDispatchOnInjectedScript(callId, "", true);
+    else
+        frontend->didDispatchOnInjectedScript(callId, result.toString(injectedScript.scriptState()), false);
 }
 
 void InspectorBackend::getChildNodes(long callId, long nodeId)

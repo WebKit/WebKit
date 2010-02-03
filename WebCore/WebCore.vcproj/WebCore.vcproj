@@ -42557,14 +42557,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InjectedScript.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InjectedScript.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InjectedScriptHost.cpp"
 				>
 			</File>

@@ -38,7 +38,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InjectedScript.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
@@ -168,7 +167,7 @@ void InjectedScriptHost::reportDidDispatchOnInjectedScript(long callId, const St
         frontend->didDispatchOnInjectedScript(callId, result, isException);
 }
 
-InjectedScript InjectedScriptHost::injectedScriptForId(long id)
+ScriptObject InjectedScriptHost::injectedScriptForId(long id)
 {
     return m_idToInjectedScript.get(id);
 }
@@ -181,13 +180,13 @@ void InjectedScriptHost::discardInjectedScripts()
 void InjectedScriptHost::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
 {
     if (injectedScriptId) {
-         InjectedScript injectedScript = m_idToInjectedScript.get(injectedScriptId);
+         ScriptObject injectedScript = m_idToInjectedScript.get(injectedScriptId);
          if (!injectedScript.hasNoValue())
-             injectedScript.releaseWrapperObjectGroup(objectGroup);
+             releaseWrapperObjectGroup(injectedScript, objectGroup);
     } else {
          // Iterate over all injected scripts if injectedScriptId is not specified.
          for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
-              it->second.releaseWrapperObjectGroup(objectGroup);
+              releaseWrapperObjectGroup(it->second, objectGroup);
     }
 }
 
@@ -203,6 +202,13 @@ InspectorFrontend* InjectedScriptHost::inspectorFrontend()
     if (!m_inspectorController)
         return 0;
     return m_inspectorController->m_frontend.get();
+}
+
+void InjectedScriptHost::releaseWrapperObjectGroup(const ScriptObject& injectedScript, const String& objectGroup)
+{
+    ScriptFunctionCall releaseFunction(injectedScript.scriptState(), injectedScript, "releaseWrapperObjectGroup");
+    releaseFunction.appendArgument(objectGroup);
+    releaseFunction.call();
 }
 
 } // namespace WebCore

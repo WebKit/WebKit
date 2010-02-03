@@ -664,7 +664,6 @@ SOURCES += \
     html/PreloadScanner.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
-    inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InspectorBackend.cpp \
     inspector/InspectorController.cpp \
@@ -1356,7 +1355,6 @@ HEADERS += \
     html/TimeRanges.h \
     html/ValidityState.h \
     inspector/ConsoleMessage.h \
-    inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
     inspector/InspectorBackend.h \
     inspector/InspectorController.h \
