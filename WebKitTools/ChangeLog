@@ -1,3 +1,16 @@
+2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Ariya Hidayat.
+
+        Roll back r53889 again, because roll out didn't solve flakeyness on the Windows Test bots
+        https://bugs.webkit.org/show_bug.cgi?id=34399
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (buildModifierFlags):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (keyDownCallback):
+
 2010-02-03  Eric Seidel  <eric@webkit.org>
 
         No review, just fixing copyrights.

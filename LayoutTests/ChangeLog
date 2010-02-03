@@ -2,6 +2,15 @@
 
         Rubber-stamped by Ariya Hidayat.
 
+        Roll back r53889 again, because roll out didn't solve flakeyness on the Windows Test bots
+        https://bugs.webkit.org/show_bug.cgi?id=34399
+
+        * platform/win/Skipped:
+
+2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Ariya Hidayat.
+
         Rolling out r53889, because it might caused flakeyness on the Windows Test bots
         https://bugs.webkit.org/show_bug.cgi?id=34399
 

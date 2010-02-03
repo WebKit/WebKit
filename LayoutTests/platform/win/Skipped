@@ -450,10 +450,8 @@ fast/forms/disabled-select-change-index.html
 fast/forms/form-element-geometry.html
 fast/forms/hidden-listbox.html
 fast/forms/legend-access-key.html
-fast/forms/listbox-deselect-scroll.html
 fast/forms/listbox-hit-test-zoomed.html
 fast/forms/listbox-scrollbar-incremental-load.html
-fast/forms/listbox-selection-2.html
 fast/forms/listbox-width-change.html
 fast/forms/option-strip-whitespace.html
 fast/forms/search-zoomed.html
