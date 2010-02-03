@@ -359,3 +359,9 @@ JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStri
 {
     return 0;
 }
+
+int LayoutTestController::pageNumberForElementById(JSStringRef, float, float)
+{
+    // FIXME: implement
+    return -1;
+}
