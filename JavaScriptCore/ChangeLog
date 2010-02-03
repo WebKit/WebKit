@@ -1,3 +1,12 @@
+2010-02-03  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Export WTF::fastStrDup symbol
+        https://bugs.webkit.org/show_bug.cgi?id=34526
+
+        * JavaScriptCore.exp:
+
 2010-02-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

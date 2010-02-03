@@ -348,6 +348,7 @@ __ZN3WTF8Collator18setOrderLowerFirstEb
 __ZN3WTF8CollatorC1EPKc
 __ZN3WTF8CollatorD1Ev
 __ZN3WTF8fastFreeEPv
+__ZN3WTF10fastStrDupEPKc
 __ZN3WTF8msToYearEd
 __ZN3WTF9dayInYearEdi
 __ZN3WTF9ByteArray6createEm
