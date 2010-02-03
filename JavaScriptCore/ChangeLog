@@ -1,5 +1,37 @@
 2010-02-03  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Implement OwnPtrBrew to make sure BREW instances are freed.
+        https://bugs.webkit.org/show_bug.cgi?id=34518
+
+        Add OwnPtrBrew to release IFile, IFileMgr and IBitmap instances.
+
+        * wtf/brew/OwnPtrBrew.cpp: Added.
+        (WTF::IFileMgr):
+        (WTF::IFile):
+        (WTF::IBitmap):
+        (WTF::freeOwnedPtrBrew):
+        * wtf/brew/OwnPtrBrew.h: Added.
+        (WTF::OwnPtrBrew::OwnPtrBrew):
+        (WTF::OwnPtrBrew::~OwnPtrBrew):
+        (WTF::OwnPtrBrew::get):
+        (WTF::OwnPtrBrew::release):
+        (WTF::OwnPtrBrew::outPtr):
+        (WTF::OwnPtrBrew::set):
+        (WTF::OwnPtrBrew::clear):
+        (WTF::OwnPtrBrew::operator*):
+        (WTF::OwnPtrBrew::operator->):
+        (WTF::OwnPtrBrew::operator!):
+        (WTF::OwnPtrBrew::operator UnspecifiedBoolType):
+        (WTF::OwnPtrBrew::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+
+2010-02-03  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Darin Adler.
 
         Export WTF::fastStrDup symbol
