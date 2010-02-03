@@ -415,8 +415,19 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 
+    if (!view) {
+        context->save();
+        context->translate(inflatedRect.x(), inflatedRect.y());
+        context->scale(FloatSize(1, -1));
+        context->translate(0, -inflatedRect.height());
+        inflatedRect.setLocation(IntPoint());
+    }
+
     [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
     [buttonCell setControlView:nil];
+
+    if (!view)
+        context->restore();
 
     if (![previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:previousDefaultButtonCell];

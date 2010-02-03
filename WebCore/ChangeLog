@@ -1,3 +1,13 @@
+2010-02-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix drawing buttons in viewless WebKit.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintButton): If there is no view, make sure to flip the
+        context so that the button is drawn correctly.
+
 2010-02-03  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
