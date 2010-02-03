@@ -923,7 +923,7 @@ InjectedScript.openInInspectedWindow = function(url)
     return true;
 }
 
-InjectedScript.getCallFrames = function()
+InjectedScript.callFrames = function()
 {
     var callFrame = InjectedScriptHost.currentCallFrame();
     if (!callFrame)
