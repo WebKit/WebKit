@@ -61,25 +61,29 @@ using WebKit::WebSharedWorker;
 using WebKit::WebSharedWorkerRepository;
 
 // Callback class that keeps the SharedWorker and WebSharedWorker objects alive while loads are potentially happening, and also translates load errors into error events on the worker.
-class SharedWorkerScriptLoader : private WorkerScriptLoaderClient, private WebSharedWorker::ConnectListener, private ActiveDOMObject {
+class SharedWorkerScriptLoader : private WorkerScriptLoaderClient, private WebSharedWorker::ConnectListener {
 public:
     SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, const KURL& url, const String& name, PassOwnPtr<MessagePortChannel> port, PassOwnPtr<WebSharedWorker> webWorker)
-        : ActiveDOMObject(worker->scriptExecutionContext(), this)
-        , m_worker(worker)
+        : m_worker(worker)
         , m_url(url)
         , m_name(name)
         , m_webWorker(webWorker)
         , m_port(port)
+        , m_loading(false)
     {
     }
 
+    ~SharedWorkerScriptLoader();
     void load();
-    virtual void contextDestroyed();
+    static void stopAllLoadersForContext(ScriptExecutionContext*);
+
 private:
     // WorkerScriptLoaderClient callback
     virtual void notifyFinished();
 
     virtual void connected();
+
+    const ScriptExecutionContext* loadingContext() { return m_worker->scriptExecutionContext(); }
 
     void sendConnect();
 
@@ -89,15 +93,47 @@ private:
     OwnPtr<WebSharedWorker> m_webWorker;
     OwnPtr<MessagePortChannel> m_port;
     WorkerScriptLoader m_scriptLoader;
+    bool m_loading;
 };
+
+static Vector<SharedWorkerScriptLoader*>& pendingLoaders()
+{
+    AtomicallyInitializedStatic(Vector<SharedWorkerScriptLoader*>&, loaders = *new Vector<SharedWorkerScriptLoader*>);
+    return loaders;
+}
+
+void SharedWorkerScriptLoader::stopAllLoadersForContext(ScriptExecutionContext* context)
+{
+    // Walk our list of pending loaders and shutdown any that belong to this context.
+    Vector<SharedWorkerScriptLoader*>& loaders = pendingLoaders();
+    for (unsigned i = 0; i < loaders.size(); ) {
+        SharedWorkerScriptLoader* loader = loaders[i];
+        if (context == loader->loadingContext()) {
+            loaders.remove(i);
+            delete loader;
+        } else
+            i++;
+    }
+}
+
+SharedWorkerScriptLoader::~SharedWorkerScriptLoader()
+{
+    if (m_loading)
+        m_worker->unsetPendingActivity(m_worker.get());
+}
 
 void SharedWorkerScriptLoader::load()
 {
+    ASSERT(!m_loading);
     // If the shared worker is not yet running, load the script resource for it, otherwise just send it a connect event.
     if (m_webWorker->isStarted())
         sendConnect();
-    else
+    else {
         m_scriptLoader.loadAsynchronously(m_worker->scriptExecutionContext(), m_url, DenyCrossOriginRequests, this);
+        // Keep the worker + JS wrapper alive until the resource load is complete in case we need to dispatch an error event.
+        m_worker->setPendingActivity(m_worker.get());
+        m_loading = true;
+    }
 }
 
 // Extracts a WebMessagePortChannel from a MessagePortChannel.
@@ -126,12 +162,6 @@ void SharedWorkerScriptLoader::sendConnect()
 {
     // Send the connect event off, and linger until it is done sending.
     m_webWorker->connect(getWebPort(m_port.release()), this);
-}
-
-void SharedWorkerScriptLoader::contextDestroyed()
-{
-    ActiveDOMObject::contextDestroyed();
-    delete this;
 }
 
 void SharedWorkerScriptLoader::connected()
@@ -185,6 +215,10 @@ void SharedWorkerRepository::documentDetached(Document* document)
     WebSharedWorkerRepository* repo = WebKit::webKitClient()->sharedWorkerRepository();
     if (repo)
         repo->documentDetached(getId(document));
+
+    // Stop the creation of any pending SharedWorkers for this context.
+    // FIXME: Need a way to invoke this for WorkerContexts as well when we support for nested workers.
+    SharedWorkerScriptLoader::stopAllLoadersForContext(document);
 }
 
 bool SharedWorkerRepository::hasSharedWorkers(Document* document)

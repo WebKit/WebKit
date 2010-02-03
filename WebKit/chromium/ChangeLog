@@ -1,3 +1,24 @@
+2010-02-03  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        SharedWorkerScriptLoader should not be an ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=34513
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::SharedWorkerScriptLoader):
+        Changed SharedWorkerScriptLoader to manage its own lifecycle without using ActiveDOMObject.
+        (WebCore::SharedWorkerScriptLoader::parentContext):
+        (WebCore::pendingLoaders):
+        Now we manually track pending loads so we can shut them down when the parent context shuts down.
+        (WebCore::SharedWorkerScriptLoader::contextDetached):
+        Shuts down/frees any pending worker loads.
+        (WebCore::SharedWorkerScriptLoader::~SharedWorkerScriptLoader):
+        Marks the SharedWorker object as not having pending activity if there was a load active (handles case where load was pending when parent document exits).
+        (WebCore::SharedWorkerScriptLoader::load):
+        (WebCore::SharedWorkerRepository::documentDetached):
+        Now calls SharedWorkerScriptLoader::contextDetached() to shutdown any pending worker loads.
+
 2010-02-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.

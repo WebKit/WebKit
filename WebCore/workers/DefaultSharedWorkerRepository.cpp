@@ -248,7 +248,7 @@ private:
 };
 
 // Loads the script on behalf of a worker.
-class SharedWorkerScriptLoader : public RefCounted<SharedWorkerScriptLoader>, public ActiveDOMObject, private WorkerScriptLoaderClient {
+class SharedWorkerScriptLoader : public RefCounted<SharedWorkerScriptLoader>, private WorkerScriptLoaderClient {
 public:
     SharedWorkerScriptLoader(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, PassRefPtr<SharedWorkerProxy>);
     void load(const KURL&);
@@ -264,8 +264,7 @@ private:
 };
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
-    : ActiveDOMObject(worker->scriptExecutionContext(), this)
-    , m_worker(worker)
+    : m_worker(worker)
     , m_port(port)
     , m_proxy(proxy)
 {
@@ -274,25 +273,27 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> work
 void SharedWorkerScriptLoader::load(const KURL& url)
 {
     // Mark this object as active for the duration of the load.
-    ASSERT(!hasPendingActivity());
     m_scriptLoader = new WorkerScriptLoader();
-    m_scriptLoader->loadAsynchronously(scriptExecutionContext(), url, DenyCrossOriginRequests, this);
+    m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
 
-    // Stay alive until the load finishes.
-    setPendingActivity(this);
+    // Stay alive (and keep the SharedWorker and JS wrapper alive) until the load finishes.
+    this->ref();
     m_worker->setPendingActivity(m_worker.get());
 }
 
 void SharedWorkerScriptLoader::notifyFinished()
 {
+    // FIXME: This method is not guaranteed to be invoked if we are loading from WorkerContext (see comment for WorkerScriptLoaderClient::notifyFinished()).
+    // We need to address this before supporting nested workers.
+
     // Hand off the just-loaded code to the repository to start up the worker thread.
     if (m_scriptLoader->failed())
         m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else
-        DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
+        DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
 
     m_worker->unsetPendingActivity(m_worker.get());
-    unsetPendingActivity(this); // This frees this object - must be the last action in this function.
+    this->deref(); // This frees this object - must be the last action in this function.
 }
 
 DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
