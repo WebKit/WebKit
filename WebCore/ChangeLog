@@ -1,3 +1,22 @@
+2010-02-02  Bryan Yeung  <bryeung@google.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid using an invalidated KURL object in baseURI.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34492
+
+        This change fixes baseURI for Chromium (where the KURL implementation
+        does not allow invalid KURLs to carry relative paths).  This is
+        regression tested by
+        LayoutTests/svg/W3C-SVG-1.1/struct-image-07-t.svg
+
+        This is a re-application of this patch since it was mistakenly identified as
+        the cause of a big chromium test regression and rolled out in r54264.
+
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+
 2010-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Laszlo Gombos.
@@ -582,7 +601,7 @@
         anymore. Keep copying the scripts, though, since other projects
         (outside of the WebKit repository) do use those.
 
-2010-02-02  Bryan Yeung  <bryeung@bryeung-chrome.(none)>
+2010-02-02  Bryan Yeung  <bryeung@google.com>
 
         Reviewed by Darin Adler.
 
