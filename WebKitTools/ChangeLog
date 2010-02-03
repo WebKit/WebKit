@@ -1,3 +1,21 @@
+2010-02-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] QtLauncher, refactor argument handling in preparation of merge
+        with QGVLauncher
+
+        * QtLauncher/main.cpp:
+        (LauncherApplication::urls):
+        (LauncherApplication::isRobotized):
+        (LauncherApplication::applyDefaultSettings):
+        (LauncherApplication::LauncherApplication):
+        (LauncherApplication::formatKeys):
+        (LauncherApplication::enumToKeys):
+        (fail):
+        (LauncherApplication::handleUserOptions):
+        (main):
+
 2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Ariya Hidayat.
