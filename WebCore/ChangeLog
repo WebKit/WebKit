@@ -1,3 +1,17 @@
+2010-02-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        No review, rolling out r54261.
+        http://trac.webkit.org/changeset/54261
+        https://bugs.webkit.org/show_bug.cgi?id=34435
+
+        Causes crashes on release builds
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        * platform/gtk/GOwnPtrGtk.cpp: Removed.
+        * platform/gtk/GOwnPtrGtk.h: Removed.
+
 2010-02-02  David Levin  <levin@chromium.org>
 
         No review, rolling out r54245.
