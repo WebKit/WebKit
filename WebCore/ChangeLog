@@ -1,3 +1,28 @@
+2010-02-03  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Roll-out r54281 because it broke the build on the Qt Release bot.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::State::State):
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::setBaseTransform):
+        (WebCore::GraphicsLayerQtImpl::drawContents):
+        (WebCore::GraphicsLayerQtImpl::notifyChange):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::GraphicsLayerQt::setNeedsDisplayInRect):
+        (WebCore::applyTimingFunction):
+        (WebCore::webkitAnimationToQtAnimationValue):
+        (WebCore::AnimationQtBase::updateState):
+        (WebCore::AnimationQt::updateCurrentTime):
+        (WebCore::TransformAnimationQt::TransformAnimationQt):
+        (WebCore::TransformAnimationQt::~TransformAnimationQt):
+        (WebCore::TransformAnimationQt::applyFrame):
+        (WebCore::TransformAnimationQt::updateState):
+        (WebCore::OpacityAnimationQt::updateState):
+        (WebCore::GraphicsLayerQt::pauseAnimation):
+
 2010-02-02  Bryan Yeung  <bryeung@google.com>
 
         Reviewed by Darin Adler.
@@ -16,24 +41,6 @@
 
         * dom/Element.cpp:
         (WebCore::Element::baseURI):
-
-2010-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
-
-        Reviewed by Laszlo Gombos.
-
-        [Qt] Tuning and optimizations to GraphicsLayerQt. Reduce unnecessary
-        recaching, remove QTimer::singleShot and QPixmap::scaled, more
-        accurate strategy of handling transform operation blends. Rotating a
-        bordered-table, for example, now runs at 50FPS instead of 40FPS on Maemo5.
-
-        https://bugs.webkit.org/show_bug.cgi?id=34062
-
-        This is tested by https://bugs.webkit.org/show_bug.cgi?id=34450, fps measurements.
-
-        * platform/graphics/qt/GraphicsLayerQt.cpp:
-        (WebCore::GraphicsLayerQtImpl::flushChanges): Fine-tune caching
-        (WebCore::TransformAnimationQt::TransformAnimationQt): transform bugs
-        (WebCore::OpacityAnimationQt::updateState): style change
 
 2010-02-02  Joel Stanley  <joel@jms.id.au>
 
