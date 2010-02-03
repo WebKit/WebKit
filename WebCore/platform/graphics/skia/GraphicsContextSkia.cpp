@@ -264,7 +264,15 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     if (paintingDisabled())
         return;
 
-    platformContext()->beginTransparencyLayer(opacity);
+    // We need the "alpha" layer flag here because the base layer is opaque
+    // (the surface of the page) but layers on top may have transparent parts.
+    // Without explicitly setting the alpha flag, the layer will inherit the
+    // opaque setting of the base and some things won't work properly.
+    platformContext()->canvas()->saveLayerAlpha(
+        0,
+        static_cast<unsigned char>(opacity * 255),
+        static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag |
+                                         SkCanvas::kFullColorLayer_SaveFlag));
 }
 
 void GraphicsContext::endTransparencyLayer()
