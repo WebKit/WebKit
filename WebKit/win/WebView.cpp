@@ -1589,6 +1589,66 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     return coreFrame->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
+bool WebView::verticalScroll(WPARAM wParam, LPARAM /*lParam*/)
+{
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+    switch (LOWORD(wParam)) {
+    case SB_LINEDOWN:
+        granularity = ScrollByLine;
+        direction = ScrollDown;
+        break;
+    case SB_LINEUP:
+        granularity = ScrollByLine;
+        direction = ScrollUp;
+        break;
+    case SB_PAGEDOWN:
+        granularity = ScrollByDocument;
+        direction = ScrollDown;
+        break;
+    case SB_PAGEUP:
+        granularity = ScrollByDocument;
+        direction = ScrollUp;
+        break;
+    default:
+        return false;
+        break;
+    }
+    
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    return frame->eventHandler()->scrollRecursively(direction, granularity);
+}
+
+bool WebView::horizontalScroll(WPARAM wParam, LPARAM /*lParam*/)
+{
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+    switch (LOWORD(wParam)) {
+    case SB_LINELEFT:
+        granularity = ScrollByLine;
+        direction = ScrollLeft;
+        break;
+    case SB_LINERIGHT:
+        granularity = ScrollByLine;
+        direction = ScrollRight;
+        break;
+    case SB_PAGELEFT:
+        granularity = ScrollByDocument;
+        direction = ScrollLeft;
+        break;
+    case SB_PAGERIGHT:
+        granularity = ScrollByDocument;
+        direction = ScrollRight;
+        break;
+    default:
+        return false;
+    }
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    return frame->eventHandler()->scrollRecursively(direction, granularity);
+}
+
+
 bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
@@ -2155,6 +2215,12 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 break;
 
             __fallthrough;
+        case WM_VSCROLL:
+            handled = webView->verticalScroll(wParam, lParam);
+            break;
+        case WM_HSCROLL:
+            handled = webView->horizontalScroll(wParam, lParam);
+            break;
         default:
             handled = false;
             break;
@@ -2387,6 +2453,34 @@ static void WebKitSetApplicationCachePathIfNecessary()
 
     initialized = true;
 }
+
+bool WebView::shouldInitializeTrackPointHack()
+{
+    static bool shouldCreateScrollbars;
+    static bool hasRunTrackPointCheck;
+
+    if (hasRunTrackPointCheck)
+        return shouldCreateScrollbars;
+
+    hasRunTrackPointCheck = true;
+    const TCHAR trackPointKeys[][50] = { TEXT("Software\\Lenovo\\TrackPoint"),
+        TEXT("Software\\Lenovo\\UltraNav"),
+        TEXT("Software\\Alps\\Apoint\\TrackPoint"),
+        TEXT("Software\\Synaptics\\SynTPEnh\\UltraNavUSB"),
+        TEXT("Software\\Synaptics\\SynTPEnh\\UltraNavPS2") };
+
+    for (int i = 0; i < 5; ++i) {
+        HKEY trackPointKey;
+        int readKeyResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
+        ::RegCloseKey(trackPointKey);
+        if (readKeyResult == ERROR_SUCCESS) {
+            shouldCreateScrollbars = true;
+            return shouldCreateScrollbars;
+        }
+    }
+
+    return shouldCreateScrollbars;
+}
     
 HRESULT STDMETHODCALLTYPE WebView::initWithFrame( 
     /* [in] */ RECT frame,
@@ -2403,6 +2497,14 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_viewWindow = CreateWindowEx(0, kWebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         frame.left, frame.top, frame.right - frame.left, frame.bottom - frame.top, m_hostWindow ? m_hostWindow : HWND_MESSAGE, 0, gInstance, 0);
     ASSERT(::IsWindow(m_viewWindow));
+
+    if (shouldInitializeTrackPointHack()) {
+        // If we detected a registry key belonging to a TrackPoint driver, then create fake trackpoint
+        // scrollbars, so the WebView will receive WM_VSCROLL and WM_HSCROLL messages. We create one
+        // vertical scrollbar and one horizontal to allow for receiving both types of messages.
+        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTHSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_HORZ, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
+        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTVSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_VERT, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
+    }
 
     hr = registerDragDrop();
     if (FAILED(hr))

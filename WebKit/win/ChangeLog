@@ -1,3 +1,33 @@
+2010-02-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Scroll does not work with IBM Thinkpad.
+        <https://bugs.webkit.org/show_bug.cgi?id=14227>
+        <rdar://7142545>
+        
+        When initializing the WebView, add two scrollbar Windows inside of
+        our WebView, to allow it to receive WM_VSCROLL and WM_HSCROLL events.
+        (similar to what Firefox did in: <https://bugzilla.mozilla.org/show_bug.cgi?id=507222>.
+        
+        Only do this if the user has installed some kind of Trackpoint driver, using an algorithm
+        like <https://bugzilla.mozilla.org/show_bug.cgi?id=514927>.
+        
+        Also, add code to handle WM_HSCROLL and WM_VSCROLL messages to scroll
+        the WebView.
+
+        * WebView.cpp:
+        (WebView::verticalScroll): Handle the WM_VSCROLL messages, and scroll up and down
+            by lines or pages.
+        (WebView::horizontalScroll): Handle the WM_HSCROLL messages, and scroll left or right
+            by lines or pages.
+        (WebView::WebViewWndProc): Add cases for WM_VSCROLL and WM_HSCROLL.
+        (WebView::initWithFrame): Call shouldInitializeTrackPointHack, and if we should, create
+            vertical and horizontal scrollbars to receive WM_VSCROLL and WM_HSCROLL messages.
+        (WebView::shouldInitializeTrackPointHack): Check if there is a registry key for
+            the some kind of IBM Trackpoint driver.
+        * WebView.h:
+
 2010-02-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
