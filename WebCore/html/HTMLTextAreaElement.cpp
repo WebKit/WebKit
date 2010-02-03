@@ -150,7 +150,9 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
-    } else
+    } else if (attr->name() == maxlengthAttr)
+        setNeedsValidityCheck();
+    else
         HTMLTextFormControlElement::parseMappedAttribute(attr);
 }
 
@@ -297,9 +299,8 @@ void HTMLTextAreaElement::setValue(const String& value)
         setSelectionRange(endOfString, endOfString);
     }
 
-    setNeedsStyleRecalc();
+    setNeedsValidityCheck();
     notifyFormStateChanged(this);
-    updateValidity();
 }
 
 String HTMLTextAreaElement::defaultValue() const

@@ -713,6 +713,7 @@ void HTMLInputElement::setInputType(const String& t)
     // type change, otherwise a JavaScript programmer would be able to set a text
     // field's value to something like /etc/passwd and then change it to a file field.
     if (inputType() != newType) {
+        bool oldWillValidate = willValidate();
         if (newType == FILE && m_haveType)
             // Set the attribute back to the old value.
             // Useful in case we were called from inside parseMappedAttribute.
@@ -769,8 +770,10 @@ void HTMLInputElement::setInputType(const String& t)
             checkedRadioButtons(this).addButton(this);
         }
 
+        setNeedsValidityCheck();
+        if (oldWillValidate != willValidate())
+            setNeedsWillValidateCheck();
         InputElement::notifyFormStateChanged(this);
-        updateValidity();
     }
     m_haveType = true;
 
@@ -992,17 +995,18 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (m_data.value().isNull())
             setNeedsStyleRecalc();
         setFormControlValueMatchesRenderer(false);
-        updateValidity();
+        setNeedsValidityCheck();
     } else if (attr->name() == checkedAttr) {
         m_defaultChecked = !attr->isNull();
         if (m_useDefaultChecked) {
             setChecked(m_defaultChecked);
             m_useDefaultChecked = true;
         }
-        updateValidity();
-    } else if (attr->name() == maxlengthAttr)
+        setNeedsValidityCheck();
+    } else if (attr->name() == maxlengthAttr) {
         InputElement::parseMaxLengthAttribute(m_data, this, this, attr);
-    else if (attr->name() == sizeAttr)
+        setNeedsValidityCheck();
+    } else if (attr->name() == sizeAttr)
         InputElement::parseSizeAttribute(m_data, this, attr);
     else if (attr->name() == altAttr) {
         if (renderer() && inputType() == IMAGE)
@@ -1046,15 +1050,16 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
             attach();
         }
         setNeedsStyleRecalc();
-    } else if (attr->name() == autosaveAttr ||
-             attr->name() == incrementalAttr ||
-             attr->name() == minAttr ||
-             attr->name() == maxAttr ||
-             attr->name() == multipleAttr ||
-             attr->name() == precisionAttr)
+    } else if (attr->name() == autosaveAttr
+               || attr->name() == incrementalAttr)
         setNeedsStyleRecalc();
-    else if (attr->name() == patternAttr)
-        updateValidity();
+    else if (attr->name() == minAttr
+             || attr->name() == maxAttr
+             || attr->name() == multipleAttr
+             || attr->name() == patternAttr
+             || attr->name() == precisionAttr
+             || attr->name() == stepAttr)
+        setNeedsValidityCheck();
 #if ENABLE(DATALIST)
     else if (attr->name() == listAttr)
         m_hasNonEmptyList = !attr->isEmpty();
@@ -1496,7 +1501,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         dispatchFormControlChangeEvent();
 
     InputElement::notifyFormStateChanged(this);
-    updateValidity();
+    setNeedsValidityCheck();
 }
 
 double HTMLInputElement::parseToDouble(const String& src, double defaultValue) const
@@ -1770,7 +1775,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     m_data.setSuggestedValue(String());
     updatePlaceholderVisibility(false);
     InputElement::setValueFromRenderer(m_data, this, this, value);
-    updateValidity();
+    setNeedsValidityCheck();
 }
 
 void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
@@ -1782,7 +1787,7 @@ void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
 
     setFormControlValueMatchesRenderer(true);
     InputElement::notifyFormStateChanged(this);
-    updateValidity();
+    setNeedsValidityCheck();
 }
 
 bool HTMLInputElement::storesValueSeparateFromAttribute() const

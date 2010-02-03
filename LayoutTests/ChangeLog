@@ -1,3 +1,18 @@
+2010-02-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that changes for some constraint attributes doesn't
+        update validation CSS selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=31716
+
+        Add tests for maxLength changes and step changes.
+
+        * fast/forms/input-live-pseudo-selectors-expected.txt:
+        * fast/forms/resources/input-live-pseudo-selectors.js:
+        * fast/forms/resources/textarea-live-pseudo-selectors.js:
+        * fast/forms/textarea-live-pseudo-selectors-expected.txt:
+
 2010-02-02  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Adele Peterson.

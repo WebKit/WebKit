@@ -1,3 +1,41 @@
+2010-02-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that changes for some constraint attributes doesn't
+        update validation CSS selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=31716
+
+        - Rename HTMLFormControlElement::updateValidity() to setNeedsValidityCheck()
+        - Introduce HTMLFormControlElement::setNeedsWillValidate()
+        - Introduce HTMLFormControlElement::m_hasName to make willValidate()
+          work in parseMappedAttribute().
+        - We need to call setNeedsValidityCheck() when HTMLInputElement::step or
+          HTMLTextAreaElement::maxLength is changed.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        (WebCore::HTMLFormControlElement::insertedIntoTree):
+        (WebCore::HTMLFormControlElement::removedFromTree):
+        (WebCore::HTMLFormControlElement::formDestroyed):
+        (WebCore::HTMLFormControlElement::willValidate): Avoids function calls.
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::setNeedsValidityCheck):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::disabled): Move the code from .cpp.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::setFileListFromRenderer):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        (WebCore::HTMLTextAreaElement::setValue):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+
 2010-02-02  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Adele Peterson.

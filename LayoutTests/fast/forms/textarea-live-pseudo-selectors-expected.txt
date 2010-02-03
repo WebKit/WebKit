@@ -26,6 +26,10 @@ PASS backgroundOf(el) is invalidColor
 Change required:
 PASS backgroundOf(el) is validColor
 PASS backgroundOf(el) is invalidColor
+Change maxlength:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is validColor
 PASS successfullyParsed is true
 
 TEST COMPLETE

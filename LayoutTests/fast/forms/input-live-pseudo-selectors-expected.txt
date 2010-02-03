@@ -30,6 +30,10 @@ Change pattern:
 PASS backgroundOf(el) is validColor
 PASS backgroundOf(el) is invalidColor
 PASS backgroundOf(el) is validColor
+Change step:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is validColor
 PASS successfullyParsed is true
 
 TEST COMPLETE

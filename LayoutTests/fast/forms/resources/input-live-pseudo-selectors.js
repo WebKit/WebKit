@@ -98,5 +98,14 @@ shouldBe(elBackground, 'invalidColor');
 el.pattern = 'a.c';
 shouldBe(elBackground, 'validColor');
 
+debug('Change step:');
+el = makeInvalid();
+el.value = '1';
+el.type = 'number';
+shouldBe(elBackground, 'validColor');
+el.step = '2';
+shouldBe(elBackground, 'invalidColor');
+el.step = '0.5';
+shouldBe(elBackground, 'validColor');
 
 var successfullyParsed = true;
