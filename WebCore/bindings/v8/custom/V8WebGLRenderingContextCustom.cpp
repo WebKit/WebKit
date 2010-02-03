@@ -42,12 +42,16 @@
 
 #include "V8Binding.h"
 #include "V8WebGLArray.h"
+#include "V8WebGLBuffer.h"
 #include "V8WebGLByteArray.h"
 #include "V8WebGLFloatArray.h"
+#include "V8WebGLFramebuffer.h"
 #include "V8WebGLIntArray.h"
 #include "V8WebGLProgram.h"
+#include "V8WebGLRenderbuffer.h"
 #include "V8WebGLShader.h"
 #include "V8WebGLShortArray.h"
+#include "V8WebGLTexture.h"
 #include "V8WebGLUniformLocation.h"
 #include "V8WebGLUnsignedByteArray.h"
 #include "V8WebGLUnsignedIntArray.h"
@@ -191,23 +195,23 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
     case WebGLGetInfo::kTypeUnsignedLong:
         return v8::Integer::NewFromUnsigned(info.getUnsignedLong());
     case WebGLGetInfo::kTypeWebGLBuffer:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLBUFFER, info.getWebGLBuffer());
+        return toV8(info.getWebGLBuffer());
     case WebGLGetInfo::kTypeWebGLFloatArray:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLFLOATARRAY, info.getWebGLFloatArray());
+        return toV8(info.getWebGLFloatArray());
     case WebGLGetInfo::kTypeWebGLFramebuffer:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLFRAMEBUFFER, info.getWebGLFramebuffer());
+        return toV8(info.getWebGLFramebuffer());
     case WebGLGetInfo::kTypeWebGLIntArray:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLINTARRAY, info.getWebGLIntArray());
+        return toV8(info.getWebGLIntArray());
     // FIXME: implement WebGLObjectArray
     // case WebGLGetInfo::kTypeWebGLObjectArray:
     case WebGLGetInfo::kTypeWebGLProgram:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLPROGRAM, info.getWebGLProgram());
+        return toV8(info.getWebGLProgram());
     case WebGLGetInfo::kTypeWebGLRenderbuffer:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLRENDERBUFFER, info.getWebGLRenderbuffer());
+        return toV8(info.getWebGLRenderbuffer());
     case WebGLGetInfo::kTypeWebGLTexture:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLTEXTURE, info.getWebGLTexture());
+        return toV8(info.getWebGLTexture());
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY, info.getWebGLUnsignedByteArray());
+        return toV8(info.getWebGLUnsignedByteArray());
     default:
         notImplemented();
         return v8::Undefined();

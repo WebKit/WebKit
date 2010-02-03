@@ -48,9 +48,9 @@
 #include "V8BindingState.h"
 #include "V8Collection.h"
 #include "V8ConsoleMessage.h"
-#include "V8CustomBinding.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
+#include "V8Document.h"
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
 #include "V8Index.h"
@@ -422,7 +422,7 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
         return;
     }
 
-    v8::Handle<v8::Value> documentWrapper = V8DOMWrapper::convertNodeToV8Object(m_frame->document());
+    v8::Handle<v8::Value> documentWrapper = toV8(m_frame->document());
 
     // If instantiation of the document wrapper fails, clear the cache
     // and let the DOMWindow accessor handle access to the document.

@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "V8Binding.h"
+#include "V8Document.h"
 #include "V8HTMLAudioElement.h"
 #include "V8Proxy.h"
 
@@ -78,7 +79,7 @@ v8::Handle<v8::Value> V8Custom::v8HTMLAudioElementConstructorCallback(const v8::
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLAudioElement instance
     // may end up being the only node in the map and get garbage-ccollected prematurely.
-    V8DOMWrapper::convertNodeToV8Object(document);
+    toV8(document);
 
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, document);
     audio->setAutobuffer(true);

@@ -37,9 +37,9 @@
 
 #include "V8Binding.h"
 #include "V8Collection.h"
-#include "V8CustomBinding.h"
 #include "V8HTMLOptionElement.h"
 #include "V8HTMLSelectElementCustom.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -123,7 +123,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertyGetter(uint32_t in
     if (!result)
         return notHandledByInterceptor();
 
-    return V8DOMWrapper::convertNodeToV8Object(result.release());
+    return toV8(result.release());
 }
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

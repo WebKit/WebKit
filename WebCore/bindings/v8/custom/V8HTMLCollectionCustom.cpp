@@ -36,6 +36,8 @@
 #include "V8CustomBinding.h"
 #include "V8HTMLAllCollection.h"
 #include "V8NamedNodesCollection.h"
+#include "V8Node.h"
+#include "V8NodeList.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -49,10 +51,10 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
         return v8::Handle<v8::Value>();
 
     if (namedItems.size() == 1)
-        return V8DOMWrapper::convertNodeToV8Object(namedItems.at(0).release());
+        return toV8(namedItems.at(0).release());
 
     NodeList* list = new V8NamedNodesCollection(namedItems);
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, list);
+    return toV8(list);
 }
 
 static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::Value> argument)
@@ -68,7 +70,7 @@ static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::
     }
 
     RefPtr<Node> result = collection->item(index->Uint32Value());
-    return V8DOMWrapper::convertNodeToV8Object(result.release());
+    return toV8(result.release());
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -130,7 +132,7 @@ v8::Handle<v8::Value> V8HTMLCollection::callAsFunctionCallback(const v8::Argumen
     Node* node = imp->namedItem(name);
     while (node) {
         if (!current)
-            return V8DOMWrapper::convertNodeToV8Object(node);
+            return toV8(node);
 
         node = imp->nextNamedItem(name);
         current--;

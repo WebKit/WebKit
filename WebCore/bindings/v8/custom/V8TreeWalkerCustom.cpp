@@ -36,7 +36,7 @@
 #include "TreeWalker.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
+#include "V8Node.h"
 #include "V8Proxy.h"
 
 #include <wtf/PassRefPtr.h>
@@ -52,7 +52,7 @@ static inline v8::Handle<v8::Value> toV8Object(PassRefPtr<Node> object, ScriptSt
     if (!object)
         return v8::Null();
 
-    return V8DOMWrapper::convertNodeToV8Object(object);
+    return toV8(object);
 }
 
 v8::Handle<v8::Value> V8TreeWalker::parentNodeCallback(const v8::Arguments& args)

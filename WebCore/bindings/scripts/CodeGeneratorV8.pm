@@ -1997,9 +1997,16 @@ END
 END
     }
 
-    push(@implContent, <<END);
+    if (NeedsWorkerContextExecutionProxyToV8($interfaceName)) {
+        $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
+        push(@implContent, <<END);
+  wrapper = WorkerContextExecutionProxy::toV8(${wrapperType}, impl);
+END
+    } else {
+        push(@implContent, <<END);
   wrapper = V8DOMWrapper::instantiateV8Object(proxy, ${wrapperType}, impl);
 END
+    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
@@ -2045,6 +2052,19 @@ v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectInput}) {
 }
 END
     }
+}
+
+sub NeedsWorkerContextExecutionProxyToV8 {
+    # These objects can be constructed under WorkerContextExecutionProxy. They need special
+    # handling, since if we call V8Proxy::retrieve(), we will crash.
+    # FIXME: websocket?
+    $interfaceName = shift;
+    return 1 if $interfaceName eq "DOMCoreException";
+    return 1 if $interfaceName eq "EventException";
+    return 1 if $interfaceName eq "RangeException";
+    return 1 if $interfaceName eq "XMLHttpRequestException";
+    return 1 if $interfaceName eq "MessagePort";
+    return 0;
 }
 
 sub HasCustomToV8Implementation {

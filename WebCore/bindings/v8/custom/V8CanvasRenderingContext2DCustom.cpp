@@ -53,10 +53,10 @@ namespace WebCore {
 static v8::Handle<v8::Value> toV8Object(CanvasStyle* style)
 {
     if (style->canvasGradient())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASGRADIENT, style->canvasGradient());
+        return toV8(style->canvasGradient());
 
     if (style->canvasPattern())
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, style->canvasPattern());
+        return toV8(style->canvasPattern());
 
     return v8String(style->color());
 }
@@ -348,7 +348,7 @@ v8::Handle<v8::Value> V8CanvasRenderingContext2D::createPatternCallback(const v8
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.release());
+        return toV8(pattern.release());
     }
 
     if (V8HTMLCanvasElement::HasInstance(arg)) {
@@ -359,7 +359,7 @@ v8::Handle<v8::Value> V8CanvasRenderingContext2D::createPatternCallback(const v8
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.release());
+        return toV8(pattern.release());
     }
 
     V8Proxy::setDOMException(TYPE_MISMATCH_ERR);

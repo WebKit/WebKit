@@ -95,6 +95,11 @@ namespace WebCore {
         static v8::Handle<v8::Value> convertEventTargetToV8Object(EventTarget*);
         static v8::Handle<v8::Value> convertWorkerContextToV8Object(WorkerContext*);
 
+        static v8::Local<v8::Object> toV8(V8ClassIndex::V8WrapperType type, void* impl)
+        {
+            return toV8(type, type, impl);
+        }
+
     private:
         void initV8IfNeeded();
         void initContextIfNeeded();
