@@ -346,6 +346,7 @@ SOURCES += \
     bindings/js/ScriptEventListener.cpp \
     bindings/js/ScriptFunctionCall.cpp \
     bindings/js/ScriptObject.cpp \
+    bindings/js/ScriptProfiler.cpp \
     bindings/js/ScriptState.cpp \
     bindings/js/ScriptValue.cpp \
     bindings/js/ScheduledAction.cpp \

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +11,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -25,33 +26,24 @@
 
 #include "config.h"
 
-#include "JSConsole.h"
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "Console.h"
-#include "JavaScriptProfile.h"
-#include "ScriptCallStack.h"
-#include <runtime/JSArray.h>
+#include "ScriptProfiler.h"
 
-using namespace JSC;
+#include <profiler/Profiler.h>
 
 namespace WebCore {
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
-typedef Vector<RefPtr<JSC::Profile> > ProfilesArray;
-
-JSValue JSConsole::profiles(ExecState* exec) const
+void ScriptProfiler::start(ScriptState* state, const String& title)
 {
-    const ProfilesArray& profiles = impl()->profiles();
-    MarkedArgumentBuffer list;
-
-    ProfilesArray::const_iterator end = profiles.end();
-    for (ProfilesArray::const_iterator iter = profiles.begin(); iter != end; ++iter)
-        list.append(toJS(exec, iter->get()));
-
-    return constructArray(exec, list);
+    JSC::Profiler::profiler()->startProfiling(state, title);
 }
 
-#endif
+PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
+{
+    return JSC::Profiler::profiler()->stopProfiling(state, title);
+}
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)

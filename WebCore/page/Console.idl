@@ -51,8 +51,8 @@ module window {
 #endif
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER || defined(V8_BINDING) && V8_BINDING
-        [Custom] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
-        [Custom] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
 #endif
 
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);

@@ -1,3 +1,62 @@
+2010-02-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Start unforking debugger and profiler code.
+
+        Remove custom implementation of Console.
+        Add 'ScriptProfiler' and 'ScriptProfile' types.
+        Start migration to engine-neutral types in InspectorController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34481
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/js/ScriptProfile.h: Added.
+        * bindings/js/ScriptProfiler.cpp: Added.
+        (WebCore::ScriptProfiler::start):
+        (WebCore::ScriptProfiler::stop):
+        * bindings/js/ScriptProfiler.h: Added.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/ScriptProfile.h: Added.
+        (WebCore::ScriptProfile::create):
+        (WebCore::ScriptProfile::~ScriptProfile):
+        (WebCore::ScriptProfile::title):
+        (WebCore::ScriptProfile::uid):
+        (WebCore::ScriptProfile::ScriptProfile):
+        * bindings/v8/ScriptProfiler.cpp: Added.
+        (WebCore::ScriptProfiler::start):
+        (WebCore::ScriptProfiler::stop):
+        * bindings/v8/ScriptProfiler.h: Added.
+        * bindings/v8/custom/V8ConsoleCustom.cpp: Removed.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::endGroup):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::setDOMStorageItem):
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorController::addStartProfilingMessageToConsole):
+        (WebCore::InspectorController::createProfileHeader):
+        (WebCore::InspectorController::getCurrentUserInitiatedProfileName):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::specialPanelForJSName):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::searchingForNodeInPage):
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        * page/Console.h:
+        (WebCore::):
+        (WebCore::Console::create):
+        (WebCore::Console::profiles):
+        * page/Console.idl:
+
 2010-02-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

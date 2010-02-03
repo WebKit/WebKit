@@ -2056,7 +2056,6 @@ sub HasCustomToV8Implementation {
     return 1 if $interfaceName eq "BarInfo";
     return 1 if $interfaceName eq "CSSStyleSheet";
     return 1 if $interfaceName eq "CanvasPixelArray";
-    return 1 if $interfaceName eq "Console";
     return 1 if $interfaceName eq "DOMSelection";
     return 1 if $interfaceName eq "DOMWindow";
     return 1 if $interfaceName eq "Element";

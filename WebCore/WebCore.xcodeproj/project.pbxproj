@@ -2455,6 +2455,9 @@
 		97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */; };
 		97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
+		9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F72304C11184B4100AD0126 /* ScriptProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F72304D11184B4100AD0126 /* ScriptProfiler.cpp */; };
+		9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F72304E11184B4100AD0126 /* ScriptProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7789,6 +7792,9 @@
 		97DD4D840FDF4D6D00ECF9A4 /* XSSAuditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSSAuditor.cpp; sourceTree = "<group>"; };
 		97DD4D850FDF4D6E00ECF9A4 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSSAuditor.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
+		9F72304C11184B4100AD0126 /* ScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfile.h; sourceTree = "<group>"; };
+		9F72304D11184B4100AD0126 /* ScriptProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProfiler.cpp; sourceTree = "<group>"; };
+		9F72304E11184B4100AD0126 /* ScriptProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfiler.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
@@ -14621,6 +14627,9 @@
 				934CC1160EDCAC7300A658F2 /* ScriptInstance.h */,
 				41F066E30F64BCF600A07EAC /* ScriptObject.cpp */,
 				41F066E20F64BCF600A07EAC /* ScriptObject.h */,
+				9F72304C11184B4100AD0126 /* ScriptProfile.h */,
+				9F72304D11184B4100AD0126 /* ScriptProfiler.cpp */,
+				9F72304E11184B4100AD0126 /* ScriptProfiler.h */,
 				934CC1090EDB223900A658F2 /* ScriptSourceCode.h */,
 				CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */,
 				4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */,
@@ -18487,6 +18496,8 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
+				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
+				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20663,6 +20674,7 @@
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */,
+				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

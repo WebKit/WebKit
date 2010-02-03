@@ -35,6 +35,7 @@
 #include "PlatformString.h"
 #include "ScriptArray.h"
 #include "ScriptObject.h"
+#include "ScriptProfile.h"
 #include "ScriptState.h"
 #include "ScriptValue.h"
 #include "StringHash.h"
@@ -50,8 +51,7 @@
 #include "JavaScriptDebugListener.h"
 
 namespace JSC {
-    class Profile;
-    class UString;
+class UString;
 }
 #endif
 
@@ -149,7 +149,7 @@ public:
     void detachWindow();
 
     void toggleSearchForNodeInPage();
-    bool searchingForNodeInPage() { return m_searchingForNode; };
+    bool searchingForNodeInPage() const { return m_searchingForNode; }
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void handleMousePressOnNode(Node*);
 
@@ -220,13 +220,13 @@ public:
     void markTimeline(const String& message); 
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    void addProfile(PassRefPtr<JSC::Profile>, unsigned lineNumber, const JSC::UString& sourceURL);
-    void addProfileFinishedMessageToConsole(PassRefPtr<JSC::Profile>, unsigned lineNumber, const JSC::UString& sourceURL);
-    void addStartProfilingMessageToConsole(const JSC::UString& title, unsigned lineNumber, const JSC::UString& sourceURL);
+    void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
+    void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
+    void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 
     bool isRecordingUserInitiatedProfile() const { return m_recordingUserInitiatedProfile; }
 
-    JSC::UString getCurrentUserInitiatedProfileName(bool incrementProfileNumber);
+    String getCurrentUserInitiatedProfileName(bool incrementProfileNumber);
     void startUserInitiatedProfiling(Timer<InspectorController>* = 0);
     void stopUserInitiatedProfiling();
 
@@ -268,14 +268,14 @@ private:
     void deleteCookie(const String& cookieName, const String& domain);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    typedef HashMap<unsigned int, RefPtr<JSC::Profile> > ProfilesMap;
+    typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;
 
     void startUserInitiatedProfilingSoon();
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
     void getProfileHeaders(long callId);
     void getProfile(long callId, unsigned uid);
-    ScriptObject createProfileHeader(const JSC::Profile& profile);
+    ScriptObject createProfileHeader(const ScriptProfile& profile);
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);

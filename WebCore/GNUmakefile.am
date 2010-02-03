@@ -484,6 +484,9 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptObject.cpp \
 	WebCore/bindings/js/ScriptObject.h \
+	WebCore/bindings/js/ScriptProfile.h \
+	WebCore/bindings/js/ScriptProfiler.cpp \
+	WebCore/bindings/js/ScriptProfiler.h \
 	WebCore/bindings/js/ScriptSourceCode.h \
 	WebCore/bindings/js/ScriptSourceProvider.h \
 	WebCore/bindings/js/ScriptState.cpp \

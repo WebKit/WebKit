@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,43 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "V8Console.h"
+#ifndef ScriptProfile_h
+#define ScriptProfile_h
 
-#include "V8Binding.h"
-#include "V8DOMWindow.h"
-#include "V8Proxy.h"
-#include <v8.h>
+#include "PlatformString.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Console::profileCallback(const v8::Arguments& args)
-{
-    INC_STATS("console.profile()");
-    v8::HandleScope scope;
-    v8::Context::Scope context_scope(v8::Context::GetCurrent());
-    v8::V8::ResumeProfiler();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
-{
-    INC_STATS("console.profileEnd()");
-    v8::V8::PauseProfiler();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> toV8(Console* impl)
-{
-    if (!impl)
-        return v8::Null();
-    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
-    if (wrapper.IsEmpty()) {
-        wrapper = V8Console::wrap(impl);
-        if (!wrapper.IsEmpty())
-            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::consoleIndex, wrapper);
+class ScriptProfile : public RefCounted<ScriptProfile> {
+public:
+    static PassRefPtr<ScriptProfile> create(const String& title, unsigned uid)
+    {
+      return adoptRef(new ScriptProfile(title, uid));
     }
-    return wrapper;
-}
+    virtual ~ScriptProfile() {}
+
+    String title() const { return m_title; }
+    unsigned int uid() const { return m_uid; }
+
+protected:
+    ScriptProfile(const String& title, unsigned uid)
+        : m_title(title)
+        , m_uid(uid)
+    {}
+
+private:
+    String m_title;
+    unsigned int m_uid;
+};
 
 } // namespace WebCore
+
+#endif // ScriptProfile_h
