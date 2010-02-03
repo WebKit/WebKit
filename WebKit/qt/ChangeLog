@@ -1,3 +1,15 @@
+2010-02-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Tuning and optimizations to GraphicsLayerQt. Mainly reduced usage
+        of QTimer::singleShot, and moved syncLayers() from paint() to update()
+        https://bugs.webkit.org/show_bug.cgi?id=34062
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::update): Moved the sync operation to update
+        (QGraphicsWebView::paint): Moved the sync operation to update
+
 2010-02-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Ariya Hidayat.
