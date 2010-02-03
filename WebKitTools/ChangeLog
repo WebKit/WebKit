@@ -1,3 +1,41 @@
+2010-02-03  Eric Seidel  <eric@webkit.org>
+
+        No review, just fixing copyrights.
+
+        Concerns were expressed about "The Chromium Authors" being
+        a valid legal entity for copyright assignment in the WebKit repository,
+        so this change removes all "The Chromium Authors".
+
+        I looked at the svn logs in src.chromium.org and failed to find any
+        non-google contributions to these files, so they are all now
+        marked as copyright "Google Inc" as all Google contributers assign
+        copyright to "Google Inc" as part of their employment agreement.
+
+        * Scripts/rebaseline-chromium-webkit-tests:
+        * Scripts/run-chromium-webkit-tests:
+        * Scripts/webkitpy/layout_tests/layout_package/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/layout_package/http_server.py:
+        * Scripts/webkitpy/layout_tests/layout_package/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/layout_package/path_utils.py:
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils.py:
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_linux.py:
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_mac.py:
+        * Scripts/webkitpy/layout_tests/layout_package/platform_utils_win.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_files.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/fuzzy_image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2010-02-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Ariya Hidayat.
