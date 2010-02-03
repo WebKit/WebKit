@@ -1,3 +1,12 @@
+2010-02-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Copyright year updating for Windows version resources should be automatic
+        https://bugs.webkit.org/show_bug.cgi?id=34503
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.rc:
+
 2010-02-02  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
