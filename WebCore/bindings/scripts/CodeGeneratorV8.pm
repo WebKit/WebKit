@@ -1956,9 +1956,13 @@ sub GenerateToV8Converters
     push(@implContent, <<END);   
 
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput}) {
-  V8Proxy* proxy = 0;
   v8::Handle<v8::Object> wrapper;
 END
+    if (!NeedsWorkerContextExecutionProxyToV8($interfaceName)) {
+        push(@implContent, <<END);
+  V8Proxy* proxy = 0;
+END
+    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
