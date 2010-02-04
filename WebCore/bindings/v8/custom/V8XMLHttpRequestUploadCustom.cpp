@@ -33,7 +33,6 @@
 
 #include "ExceptionCode.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "XMLHttpRequest.h"

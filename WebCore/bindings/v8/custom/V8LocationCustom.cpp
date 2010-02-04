@@ -41,7 +41,6 @@
 #include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
-#include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
 #include "V8DOMWindow.h"
 #include "V8Location.h"

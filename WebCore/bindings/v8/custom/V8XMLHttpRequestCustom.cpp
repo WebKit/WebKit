@@ -34,7 +34,6 @@
 #include "Frame.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
-#include "V8CustomBinding.h"
 #include "V8Document.h"
 #include "V8HTMLDocument.h"
 #include "V8Proxy.h"

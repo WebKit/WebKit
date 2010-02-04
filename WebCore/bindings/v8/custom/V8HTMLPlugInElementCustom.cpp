@@ -33,7 +33,6 @@
 
 #include "ScriptInstance.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8HTMLAppletElement.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8HTMLObjectElement.h"

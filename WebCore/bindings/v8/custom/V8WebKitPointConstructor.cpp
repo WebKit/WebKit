@@ -32,7 +32,6 @@
 #include "V8WebKitPoint.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8DOMWrapper.h"
 #include "V8Index.h"
 #include "V8Proxy.h"

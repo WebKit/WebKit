@@ -41,7 +41,6 @@
 #include "V8Binding.h"
 #include "V8CanvasGradient.h"
 #include "V8CanvasPattern.h"
-#include "V8CustomBinding.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
 #include "V8HTMLVideoElement.h"

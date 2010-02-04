@@ -39,7 +39,6 @@
 #include "V8Binding.h"
 #include "V8CDATASection.h"
 #include "V8Comment.h"
-#include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
 #include "V8Document.h"
 #include "V8DocumentFragment.h"

@@ -34,7 +34,6 @@
 #include "HTMLAllCollection.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8NamedNodesCollection.h"
 #include "V8Node.h"
 #include "V8NodeList.h"

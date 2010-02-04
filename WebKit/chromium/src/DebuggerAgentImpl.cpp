@@ -51,7 +51,6 @@ using WebCore::Frame;
 using WebCore::Page;
 using WebCore::String;
 using WebCore::V8ClassIndex;
-using WebCore::V8Custom;
 using WebCore::V8DOMWindow;
 using WebCore::V8DOMWrapper;
 using WebCore::V8Proxy;

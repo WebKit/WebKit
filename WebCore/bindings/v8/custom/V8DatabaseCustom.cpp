@@ -35,7 +35,6 @@
 
 #include "Database.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8CustomSQLTransactionCallback.h"
 #include "V8CustomSQLTransactionErrorCallback.h"
 #include "V8CustomVoidCallback.h"

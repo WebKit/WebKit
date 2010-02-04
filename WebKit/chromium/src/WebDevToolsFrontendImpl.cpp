@@ -52,7 +52,6 @@
 #include "Settings.h"
 #include "ToolsAgent.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8DOMWrapper.h"
 #include "V8InspectorFrontendHost.h"
 #include "V8Node.h"

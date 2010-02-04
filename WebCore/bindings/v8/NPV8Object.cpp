@@ -34,7 +34,6 @@
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
 #include "ScriptController.h"
-#include "V8CustomBinding.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
 #include "V8Index.h"
@@ -52,7 +51,6 @@ using WebCore::npObjectInternalFieldCount;
 using WebCore::toV8Context;
 using WebCore::toV8Proxy;
 using WebCore::V8ClassIndex;
-using WebCore::V8Custom;
 using WebCore::V8DOMWrapper;
 using WebCore::V8GCController;
 using WebCore::V8Proxy;

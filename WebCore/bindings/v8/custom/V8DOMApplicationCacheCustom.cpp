@@ -36,7 +36,6 @@
 #include "ApplicationCacheHost.h"
 #include "DOMApplicationCache.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8Document.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"

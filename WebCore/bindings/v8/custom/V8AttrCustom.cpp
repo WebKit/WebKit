@@ -36,7 +36,6 @@
 #include "ExceptionCode.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
-#include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {

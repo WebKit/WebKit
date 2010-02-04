@@ -1,3 +1,14 @@
+2010-02-04  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove references to V8Custom.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32638
+
+        * src/DebuggerAgentImpl.cpp:
+        * src/WebDevToolsFrontendImpl.cpp:
+
 2010-02-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert 54333 which broke Chromium build.

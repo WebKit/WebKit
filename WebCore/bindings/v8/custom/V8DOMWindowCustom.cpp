@@ -55,7 +55,6 @@
 #include "V8Binding.h"
 #include "V8BindingDOMWindow.h"
 #include "V8BindingState.h"
-#include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
 #include "V8HTMLCollection.h"
 #include "V8MessagePortCustom.h"

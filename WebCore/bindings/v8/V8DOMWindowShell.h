@@ -31,7 +31,6 @@
 #ifndef V8DOMWindowShell_h
 #define V8DOMWindowShell_h
 
-#include "V8CustomBinding.h"
 #include "V8Index.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

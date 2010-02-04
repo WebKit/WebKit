@@ -35,7 +35,6 @@
 #include "HTMLPlugInElement.h"
 #include "IdentifierRep.h"
 #include "NPV8Object.h"
-#include "V8CustomBinding.h"
 #include "V8DOMMap.h"
 #include "V8HTMLAppletElement.h"
 #include "V8HTMLEmbedElement.h"

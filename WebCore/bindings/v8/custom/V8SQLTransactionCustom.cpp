@@ -37,7 +37,6 @@
 #include "Database.h"
 #include "SQLValue.h"
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8CustomSQLStatementCallback.h"
 #include "V8CustomSQLStatementErrorCallback.h"
 #include "V8Proxy.h"

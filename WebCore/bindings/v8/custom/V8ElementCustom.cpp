@@ -43,7 +43,6 @@
 #include "V8Attr.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
-#include "V8CustomBinding.h"
 #include "V8HTMLElement.h"
 #include "V8Proxy.h"
 #include "V8SVGElement.h"

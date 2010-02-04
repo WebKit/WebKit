@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
-#include "V8CustomBinding.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "WorkerContext.h"

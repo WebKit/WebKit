@@ -29,7 +29,6 @@
 #include "Geolocation.h"
 
 #include "V8Binding.h"
-#include "V8CustomBinding.h"
 #include "V8CustomPositionCallback.h"
 #include "V8CustomPositionErrorCallback.h"
 #include "V8Proxy.h"

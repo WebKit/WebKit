@@ -44,25 +44,7 @@
 
 namespace WebCore {
 
-v8::Persistent<v8::FunctionTemplate> V8HTMLOptionElementConstructor::GetTemplate()
-{
-    static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
-    if (!cachedTemplate.IsEmpty())
-        return cachedTemplate;
-
-    v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(USE_CALLBACK(HTMLOptionElementConstructor));
-
-    v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
-    instance->SetInternalFieldCount(V8HTMLOptionElement::internalFieldCount);
-    result->SetClassName(v8::String::New("HTMLOptionElement"));
-    result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLOPTIONELEMENT));
-
-    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
-    return cachedTemplate;
-}
-
-v8::Handle<v8::Value> V8Custom::v8HTMLOptionElementConstructorCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> v8HTMLOptionElementConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLOptionElement.Contructor");
 
@@ -108,6 +90,24 @@ v8::Handle<v8::Value> V8Custom::v8HTMLOptionElementConstructorCallback(const v8:
     option->ref();
     V8DOMWrapper::setJSWrapperForDOMNode(option.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
+}
+
+v8::Persistent<v8::FunctionTemplate> V8HTMLOptionElementConstructor::GetTemplate()
+{
+    static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
+    if (!cachedTemplate.IsEmpty())
+        return cachedTemplate;
+
+    v8::HandleScope scope;
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(v8HTMLOptionElementConstructorCallback);
+
+    v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
+    instance->SetInternalFieldCount(V8HTMLOptionElement::internalFieldCount);
+    result->SetClassName(v8::String::New("HTMLOptionElement"));
+    result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLOPTIONELEMENT));
+
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    return cachedTemplate;
 }
 
 } // namespace WebCore

@@ -39,7 +39,6 @@
 #include "V8WebGLArrayBuffer.h"
 #include "V8WebGLArrayCustom.h"
 #include "V8WebGLIntArray.h"
-#include "V8CustomBinding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {

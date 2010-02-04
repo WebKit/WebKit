@@ -1,3 +1,74 @@
+2010-02-04  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Delete V8CustomBinding.h and all references to V8Custom
+
+        https://bugs.webkit.org/show_bug.cgi?id=32638
+
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/V8DOMWindowShell.h:
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/V8Utilities.cpp:
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp:
+        * bindings/v8/custom/V8AttrCustom.cpp:
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        * bindings/v8/custom/V8CoordinatesCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h: Removed.
+        * bindings/v8/custom/V8DOMApplicationCacheCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DataGridColumnListCustom.cpp:
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * bindings/v8/custom/V8EventSourceConstructor.cpp:
+        * bindings/v8/custom/V8EventSourceCustom.cpp:
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::v8HTMLAudioElementConstructorCallback):
+        (WebCore::V8HTMLAudioElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        * bindings/v8/custom/V8HTMLDataGridElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        (WebCore::V8HTMLImageElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::v8HTMLOptionElementConstructorCallback):
+        (WebCore::V8HTMLOptionElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        * bindings/v8/custom/V8NodeFilterCustom.cpp:
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SVGElementInstanceCustom.cpp:
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp:
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        * bindings/v8/custom/V8WebGLArrayBufferCustom.cpp:
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+
 2010-02-04  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Simon Hausmann.
