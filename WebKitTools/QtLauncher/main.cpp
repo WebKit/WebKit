@@ -549,9 +549,6 @@ private:
     void handleUserOptions();
     void applyDefaultSettings();
 
-    QList<QString> enumToKeys(const QMetaObject o, const QString& name, const QString& strip);
-    QString formatKeys(QList<QString> keys);
-
 private:
     bool m_isRobotized;
     QStringList m_urls;
@@ -582,36 +579,12 @@ LauncherApplication::LauncherApplication(int& argc, char** argv)
     handleUserOptions();
 }
 
-QString LauncherApplication::formatKeys(QList<QString> keys)
+static bool useGraphicsView = false;
+static void requiresGraphicsView(const QString& option)
 {
-    QString result;
-    for (int i = 0; i < keys.count() - 1; i++)
-        result.append(keys.at(i) + "|");
-    result.append(keys.last());
-    return result;
-}
-
-QList<QString> LauncherApplication::enumToKeys(const QMetaObject o, const QString& name, const QString& strip)
-{
-    QList<QString> list;
-
-    int enumIndex = o.indexOfEnumerator(name.toLatin1().data());
-    QMetaEnum enumerator = o.enumerator(enumIndex);
-
-    if (enumerator.isValid()) {
-        for (int i = 0; i < enumerator.keyCount(); i++) {
-            QString key(enumerator.valueToKey(i));
-            list.append(key.remove(strip));
-        }
-    }
-
-    return list;
-}
-
-static void fail(const QString& errorMsg)
-{
-    qDebug() << "ERROR:" << errorMsg.toLatin1().data();
-    exit(1);
+    if (useGraphicsView)
+        return;
+    appQuit(1, QString("%1 only works in combination with the -graphicsbased option").arg(option));
 }
 
 void LauncherApplication::handleUserOptions()
@@ -625,56 +598,56 @@ void LauncherApplication::handleUserOptions()
     QList<QString> updateModes(enumToKeys(QGraphicsView::staticMetaObject,
             "ViewportUpdateMode", "ViewportUpdate"));
 
-    if (args.contains("--help")) {
+    if (args.contains("-help")) {
         qDebug() << "Usage:" << programName.toLatin1().data()
-             << "[--graphicsbased]"
-             << "[--compositing]"
-             << QString("[--viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
-             << "[--cache-webview]"
+             << "[-graphicsbased]"
+             << "[-compositing]"
+             << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
+             << "[-cache-webview]"
              << "[-r list]"
              << "URLs";
-        exit(0);
+        appQuit(0);
     }
 
-    bool useGraphicsView = false;
-
-    if (args.contains("--graphicsbased"))
+    if (args.contains("-graphicsbased"))
         useGraphicsView = true;
 
-    if (args.contains("--compositing") && useGraphicsView)
+    if (args.contains("-compositing")) {
+        requiresGraphicsView("-compositing");
         QWebSettings::globalSettings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, true);
+    }
 
-    if (args.contains("--cache-webview") && useGraphicsView)
-        ; // view->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    if (args.contains("-cache-webview")) {
+        requiresGraphicsView("-cache-webview");
+        // view->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    }
 
-    int modeIndex = args.indexOf("--viewport-update-mode");
-    if (modeIndex != -1 && ++modeIndex < args.count() && !args.at(modeIndex).startsWith("-")) {
-        QString mode = args.takeAt(modeIndex);
-        if (useGraphicsView) {
-            int idx = updateModes.indexOf(mode);
-            if (idx != -1) {
-                ; // view->setViewportUpdateMode(static_cast<QGraphicsView::ViewportUpdateMode>(idx));
-            } else {
-                fail(QString("--viewport-update-mode value has to be one of [%1]")
-                    .arg(formatKeys(updateModes)).toLatin1().data());
-            }
-        }
+    QString arg1("-viewport-update-mode");
+    int modeIndex = args.indexOf(arg1);
+    if (modeIndex != -1) {
+        requiresGraphicsView(arg1);
+
+        QString mode = takeOptionValue(&args, modeIndex);
+        if (mode.isEmpty())
+            appQuit(1, QString("%1 needs a value of one of [%2]").arg(arg1).arg(formatKeys(updateModes)));
+        int idx = updateModes.indexOf(mode);
+        if (idx == -1)
+            appQuit(1, QString("%1 value has to be one of [%2]").arg(arg1).arg(formatKeys(updateModes)));
+
+        // view->setViewportUpdateMode(static_cast<QGraphicsView::ViewportUpdateMode>(idx));
     }
 
     int robotIndex = args.indexOf("-r");
     if (robotIndex != -1) {
-        if (++robotIndex < args.count() && !args.at(robotIndex).startsWith("-")) {
-            QString listFile = args.takeAt(robotIndex);
-            if (!QFile::exists(listFile))
-                fail(QString("The list file supplied to -r does not exist."));
-            else {
-                m_isRobotized = true;
-                m_urls = QStringList(listFile);
-                return;
-            }
-        }
-        else
-            fail(QString("-r needs a list file to start in robotized mode"));
+        QString listFile = takeOptionValue(&args, robotIndex);
+        if (listFile.isEmpty())
+            appQuit(1, "-r needs a list file to start in robotized mode");
+        if (!QFile::exists(listFile))
+            appQuit(1, "The list file supplied to -r does not exist.");
+
+        m_isRobotized = true;
+        m_urls = QStringList(listFile);
+        return;
     }
 
     int lastArg = args.lastIndexOf(QRegExp("^-.*"));

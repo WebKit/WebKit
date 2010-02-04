@@ -1,3 +1,22 @@
+2010-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Oliver Hunt.
+
+        [Qt] QtLauncher cleanup.
+
+        Refactor option handling out in utility functions and make the
+        arguments more Qt compatible.
+
+        * QtLauncher/main.cpp:
+        (requiresGraphicsView):
+        (LauncherApplication::handleUserOptions):
+        * QtLauncher/utils.cpp:
+        (takeOptionValue):
+        (formatKeys):
+        (enumToKeys):
+        (appQuit):
+        * QtLauncher/utils.h:
+
 2010-02-04  Andras Becsi  <abecsi@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
