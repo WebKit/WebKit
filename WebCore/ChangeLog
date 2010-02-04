@@ -8,7 +8,7 @@
         Test: fast/dom/HTMLInputElement/cloned-input-checked-state.html
 
         * dom/Element.cpp: (WebCore::Element::cloneElementWithoutChildren): Copy non-attribute
-        properties before attributes. Otherwise, copying "checked" property would make the cloned
+        properties before attributes. Otherwise, copying "checked" attribute would make the cloned
         node checked, unchecking original (they share a name, and are thus in the same radio group).
         We do want the original to be unchecked, but we also want to know its original state in
         HTMLInputElement::copyNonAttributeProperties().
