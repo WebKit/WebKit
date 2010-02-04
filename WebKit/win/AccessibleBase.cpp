@@ -382,10 +382,10 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild
 HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT vChild)
 {
     // According to MSDN, these combinations are invalid.
-    if (((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) ||
-        ((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION)) ||
-        ((selectionFlags & (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)) ||
-        ((selectionFlags & (SELFLAG_EXTENDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)))
+    if (((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION))
+        || ((selectionFlags & (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_ADDSELECTION | SELFLAG_TAKESELECTION))
+        || ((selectionFlags & (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_REMOVESELECTION | SELFLAG_TAKESELECTION))
+        || ((selectionFlags & (SELFLAG_EXTENDSELECTION | SELFLAG_TAKESELECTION)) == (SELFLAG_EXTENDSELECTION | SELFLAG_TAKESELECTION)))
         return E_INVALIDARG;
 
     AccessibilityObject* childObject;
@@ -406,15 +406,19 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accSelect(long selectionFlags, VARIANT
             Vector<RefPtr<AccessibilityObject> > selectedChildren(1);
             selectedChildren[0] = childObject;
             static_cast<AccessibilityListBox*>(parentObject)->setSelectedChildren(selectedChildren);
-        } else if (parentObject->isMenuListPopup())
+        } else { // any element may be selectable by virtue of it having the aria-selected property
+            ASSERT(!parentObject->isMultiSelectable());
             childObject->setSelected(true);
-        else
-            return E_INVALIDARG;
+        }
     }
 
-    // MSDN says that ADD, REMOVE, and EXTENDSELECTION are invalid for
+    // MSDN says that ADD, REMOVE, and EXTENDSELECTION with no other flags are invalid for
     // single-select.
-    if (!parentObject->isMultiSelectable())
+    const long allSELFLAGs = SELFLAG_TAKEFOCUS | SELFLAG_TAKESELECTION | SELFLAG_EXTENDSELECTION | SELFLAG_ADDSELECTION | SELFLAG_REMOVESELECTION;
+    if (!parentObject->isMultiSelectable()
+        && (((selectionFlags & allSELFLAGs) == SELFLAG_ADDSELECTION)
+        || ((selectionFlags & allSELFLAGs) == SELFLAG_REMOVESELECTION)
+        || ((selectionFlags & allSELFLAGs) == SELFLAG_EXTENDSELECTION)))
         return E_INVALIDARG;
 
     if (selectionFlags & SELFLAG_ADDSELECTION)

@@ -1,3 +1,19 @@
+2010-02-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34612 " MSAA: accSelect returns error 
+        codes for most elements that arent listbox or menupopup related"
+        <rdar://problem/7436861>
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accSelect):
+        - Stop sending E_INVALIDARG for elements that request TAKE_SELECTION that 
+          aren't beneath listboxes or menupopups.  This was too restrictive since 
+          any element can be selectable.
+        - Correct the misinterpretation of MSDN's stipulation of situations involving 
+          adding, removing, and extending selection on single-select elements
+
 2010-02-04  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
