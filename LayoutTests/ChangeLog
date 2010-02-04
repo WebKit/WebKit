@@ -1,3 +1,10 @@
+2010-02-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] fast/workers/shared-worker-frame-lifecycle.html failed on Qt Bot
+        https://bugs.webkit.org/show_bug.cgi?id=34281
+
+        * platform/qt/Skipped: fast/workers/shared-worker-frame-lifecycle.html skipped until fix.
+
 2010-02-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed fix.
