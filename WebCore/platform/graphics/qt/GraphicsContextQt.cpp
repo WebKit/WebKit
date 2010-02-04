@@ -1270,7 +1270,8 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
 {
     if (paintingDisabled())
         return;
-    m_data->p()->setBrush(QBrush(color));
+    m_data->solidColor.setColor(color);
+    m_data->p()->setBrush(m_data->solidColor);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)

@@ -1,3 +1,16 @@
+2010-02-04  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Unnecessary QBrush construction for doing a solid fill
+        https://bugs.webkit.org/show_bug.cgi?id=34559
+
+        Use the similar trick like r37421, i.e. use the special brush for
+        solid color to avoid creating QBrush again and again.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformFillColor):
+
 2010-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
