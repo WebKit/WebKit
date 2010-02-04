@@ -1,3 +1,24 @@
+2010-02-02  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] libsoup critical warning in media player http cookies injection code
+        https://bugs.webkit.org/show_bug.cgi?id=34435
+
+        Fixed the critical warning and refactored the
+        User-Agent/Referer/cookies injection code, in that order. Previous
+        order (cookies first) was wrong because if cookies injection could
+        not be done neither the User-Agent nor Referer were injected. Also
+        started a non-JSC-specific, gtk-specific GOwnPtr module.
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        * platform/gtk/GOwnPtrGtk.cpp: Added.
+        (WTF::SoupURI):
+        (WTF::GstElement):
+        * platform/gtk/GOwnPtrGtk.h: Added.
+
 2010-02-04  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
