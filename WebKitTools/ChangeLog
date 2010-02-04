@@ -1,3 +1,23 @@
+2010-02-04  Andras Becsi  <abecsi@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Implement a locking and scheduling mechanism for http testing sessions to be able
+        to run multiple instances of run-webkit-tests parallel on the same machine.
+        If a test session wants to run http tests and this feature is enabled, the pending
+        sessions create lockfiles with sequential lock numbers. These locks are used to schedule
+        the running test sessions in first come first served order. An exclusive lock ensures
+        that the lock numbers are sequential to avoid deadlocks and starvation.
+        Because the buildbot master specifies the flags used by slaves we need an environment
+        variable too to be able to use the feature per-slave.
+        Exporting WEBKIT_WAIT_FOR_HTTPD=1 before testing or using the --wait-for-httpd
+        flag enables this feature, otherwise this patch has no effect on the testing whatsoever.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33153
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitperl/httpd.pm:
+
 2010-01-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

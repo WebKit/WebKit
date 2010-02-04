@@ -154,6 +154,7 @@ my $treatSkipped = "default";
 my $useRemoteLinksToTests = 0;
 my $useValgrind = 0;
 my $verbose = 0;
+my $shouldWaitForHTTPD = 0;
 
 my @leaksFilenames;
 
@@ -224,6 +225,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --exit-after-n-failures N       Exit after the first N failures instead of running all tests
   -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
+  --[no-]wait-for-httpd                Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
   --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
@@ -267,6 +269,7 @@ my $getOptionsResult = GetOptions(
     'guard-malloc|g' => \$guardMalloc,
     'help|h' => \$showHelp,
     'http!' => \$testHTTP,
+    'wait-for-httpd!' => \$shouldWaitForHTTPD,
     'ignore-metrics!' => \$ignoreMetrics,
     'ignore-tests|i=s' => \$ignoreTests,
     'iterations=i' => \$iterations,
@@ -308,6 +311,8 @@ my $skippedOnly = $treatSkipped eq "only";
 
 my $configuration = configuration();
 
+# We need an environment variable to be able to enable the feature per-slave
+$shouldWaitForHTTPD = $ENV{"WEBKIT_WAIT_FOR_HTTPD"} unless ($shouldWaitForHTTPD);
 $verbose = 1 if $testsPerDumpTool == 1;
 
 if ($shouldCheckLeaks && $testsPerDumpTool > 1000) {
@@ -943,7 +948,14 @@ for my $test (@tests) {
         }
     }
 }
-printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
+my $totalTestingTime = time - $overallStartTime;
+my $waitTime = getWaitTime();
+if ($waitTime > 0.1) {
+    my $normalizedTestingTime = $totalTestingTime - $waitTime;
+    printf "\n%0.2fs HTTPD waiting time\n", $waitTime . "";
+    printf "%0.2fs normalized testing time", $normalizedTestingTime . "";
+}
+printf "\n%0.2fs total testing time\n", $totalTestingTime . "";
 
 !$isDumpToolOpen || die "Failed to close $dumpToolName.\n";
 
@@ -1360,6 +1372,7 @@ sub configureAndOpenHTTPDIfNeeded()
     my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
     @args = (@defaultArgs, @args);
 
+    waitForHTTPDLock() if $shouldWaitForHTTPD;
     $isHttpdOpen = openHTTPD(@args);
 }
 
