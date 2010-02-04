@@ -1,3 +1,15 @@
+2010-02-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket should close the connection when unloading the document
+        https://bugs.webkit.org/show_bug.cgi?id=33248
+
+        * websocket/tests/close-on-unload-expected.txt: Added.
+        * websocket/tests/close-on-unload.html: Added.
+        * websocket/tests/close-on-unload_wsh.py: Added.
+        * websocket/tests/resources/close-on-unload-iframe.html: Added.
+
 2010-02-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Simon Fraser.
