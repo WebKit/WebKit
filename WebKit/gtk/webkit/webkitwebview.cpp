@@ -1325,7 +1325,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::create-web-view:
      * @web_view: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame
-     * @return: a newly allocated #WebKitWebView or %NULL
      *
      * Emitted when the creation of a new window is requested.
      * If this signal is handled the signal handler should return the
@@ -1337,6 +1336,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The signal handlers should not try to deal with the reference count for
      * the new #WebKitWebView. The widget to which the widget is added will
      * handle that.
+     *
+     * Return value: a newly allocated #WebKitWebView, or %NULL
      *
      * Since: 1.0.3
      */
@@ -1353,8 +1354,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::web-view-ready:
      * @web_view: the object on which the signal is emitted
-     * @return: %TRUE to stop other handlers from being invoked for
-     * the event, %FALSE to propagate the event further
      *
      * Emitted after #WebKitWebView::create-web-view when the new #WebKitWebView
      * should be displayed to the user. When this signal is emitted
@@ -1366,6 +1365,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Notice that some of that information may change during the life
      * time of the window, so you may want to connect to the ::notify
      * signal of the #WebKitWebWindowFeatures object to handle those.
+     *
+     * Return value: %TRUE to stop handlers from being invoked for the event or
+     * %FALSE to propagate the event furter
      *
      * Since: 1.0.3
      */
@@ -1381,13 +1383,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView::close-web-view:
      * @web_view: the object on which the signal is emitted
-     * @return: %TRUE to stop handlers from being invoked for the event or
-     * %FALSE to propagate the event furter
      *
      * Emitted when closing a #WebKitWebView is requested. This occurs when a
      * call is made from JavaScript's window.close function. The default
      * signal handler does not do anything. It is the owner's responsibility
      * to hide or delete the web view, if necessary.
+     *
+     * Return value: %TRUE to stop handlers from being invoked for the event or
+     * %FALSE to propagate the event furter
      *
      * Since: 1.1.11
      */
@@ -1405,9 +1408,10 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
-     * @return: a WebKitNavigationResponse
      *
      * Emitted when @frame requests a navigation to another page.
+     *
+     * Return value: a #WebKitNavigationResponse
      *
      * Deprecated: Use WebKitWebView::navigation-policy-decision-requested
      * instead
@@ -1430,8 +1434,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigation
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if a decision was made, FALSE to have the
-     *          default behavior apply
      *
      * Emitted when @frame requests opening a new window. With this
      * signal the browser can use the context of the request to decide
@@ -1452,6 +1454,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * webkit_web_policy_decision_use(), or
      * webkit_web_policy_decision_download() on the @policy_decision
      * object.
+     *
+     * Return value: %TRUE if a decision was made, %FALSE to have the
+     * default behavior apply
      *
      * Since: 1.1.4
      */
@@ -1476,8 +1481,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigation
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if a decision was made, FALSE to have the
-     *          default behavior apply
      *
      * Emitted when @frame requests a navigation to another page.
      * If this signal is not handled, the default behavior is to allow the
@@ -1489,6 +1492,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * webkit_web_policy_decision_use(), or
      * webkit_web_policy_decision_download() on the @policy_decision
      * object.
+     *
+     * Return value: %TRUE if a decision was made, %FALSE to have the
+     * default behavior apply
      *
      * Since: 1.0.3
      */
@@ -1512,8 +1518,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a WebKitNetworkRequest
      * @mimetype: the MIME type attempted to load
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if a decision was made, FALSE to have the
-     *          default behavior apply
      *
      * Decide whether or not to display the given MIME type.  If this
      * signal is not handled, the default behavior is to show the
@@ -1530,6 +1534,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * webkit_web_policy_decision_use(), or
      * webkit_web_policy_decision_download() on the @policy_decision
      * object.
+     *
+     * Return value: %TRUE if a decision was made, %FALSE to have the
+     * default behavior apply
      *
      * Since: 1.0.3
      */
@@ -1578,7 +1585,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @download: a #WebKitDownload object that lets you control the
      * download process
-     * @return: %TRUE if the download should be performed, %FALSE to cancel it.
      *
      * A new Download is being requested. By default, if the signal is
      * not handled, the download is cancelled. If you handle the download
@@ -1600,6 +1606,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * files you want your application to download (a common solution
      * is to download anything that WebKit can't handle, which you can
      * figure out by using webkit_web_view_can_show_mime_type()).
+     *
+     * Return value: TRUE if the download should be performed, %FALSE to
+     * cancel it
      *
      * Since: 1.1.2
      */
@@ -1681,6 +1690,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * handle the signal if you want to provide your own error page.
      *
      * Since: 1.1.6
+     *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
      */
     webkit_web_view_signals[LOAD_ERROR] = g_signal_new("load-error",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1774,8 +1786,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::print-requested
      * @web_view: the object in which the signal is emitted
      * @web_frame: the frame that is requesting to be printed
-     * @return: %TRUE if the print request has been handled, %FALSE if
-     * the default handler should run
      *
      * Emitted when printing is requested by the frame, usually
      * because of a javascript call. When handling this signal you
@@ -1786,6 +1796,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * print operation. Notice that this means that if you intend to
      * ignore a print request you must connect to this signal, and
      * return %TRUE.
+     *
+     * Return value: %TRUE if the print request has been handled, %FALSE if
+     * the default handler should run
      *
      * Since: 1.1.5
      */
@@ -1843,9 +1856,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @message: the message text
      * @line: the line where the error occured
      * @source_id: the source id
-     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript console message was created.
+     *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
      */
     webkit_web_view_signals[CONSOLE_MESSAGE] = g_signal_new("console-message",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1862,9 +1877,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
-     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript alert dialog was created.
+     *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
      */
     webkit_web_view_signals[SCRIPT_ALERT] = g_signal_new("script-alert",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1882,9 +1899,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @frame: the relevant frame
      * @message: the message text
      * @confirmed: whether the dialog has been confirmed
-     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript confirm dialog was created, providing Yes and No buttons.
+     *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
      */
     webkit_web_view_signals[SCRIPT_CONFIRM] = g_signal_new("script-confirm",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -1903,9 +1922,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @message: the message text
      * @default: the default value
      * @text: To be filled with the return value or NULL if the dialog was cancelled.
-     * @return: TRUE to stop other handlers from being invoked for the event. FALSE to propagate the event further.
      *
      * A JavaScript prompt dialog was created, providing an entry to input text.
+     *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
      */
     webkit_web_view_signals[SCRIPT_PROMPT] = g_signal_new("script-prompt",
             G_TYPE_FROM_CLASS(webViewClass),
@@ -2032,6 +2053,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * The #WebKitWebView::move-cursor will be emitted to apply the
      * cursor movement described by its parameters to the @view.
+     *
+     * Return value: %TRUE or %FALSE
      * 
      * Since: 1.1.4
      */
@@ -2058,6 +2081,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * case of a textual selection of the GtkWidget WebCore will attempt
      * to set the property value of "webkit-widget-is-selected". This can
      * be used to draw a visual indicator of the selection.
+     *
+     * Return value: a new #GtkWidget, or %NULL
      *
      * Since: 1.1.8
      */

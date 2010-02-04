@@ -269,6 +269,9 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
      * WebKitWebFrame:horizontal-scrollbar-policy and
      * WebKitWebFrame:vertical-scrollbar-policy properties.
      *
+     * Return value: %TRUE to stop other handlers from being invoked for the
+     * event. %FALSE to propagate the event further.
+     *
      * Since: 1.1.14
      */
     webkit_web_frame_signals[SCROLLBARS_POLICY_CHANGED] = g_signal_new("scrollbars-policy-changed",

@@ -1,3 +1,17 @@
+2010-02-04  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Add and cleanup return values of signals in view and frame
+        https://bugs.webkit.org/show_bug.cgi?id=33484
+
+        Add missing and cleanup return values of web frame and web view signals.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_class_init):
+
 2010-02-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
