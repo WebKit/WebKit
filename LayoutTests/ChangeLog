@@ -1,3 +1,12 @@
+2010-02-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r53718): When scrolling a tall window by page, the overlap between pages is too big
+        https://bugs.webkit.org/show_bug.cgi?id=34371
+
+        * platform/mac/fast/events/scrollbar-double-click-expected.txt: Added.
+
 2010-02-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/workers/shared-worker-frame-lifecycle.html failed on Qt Bot
