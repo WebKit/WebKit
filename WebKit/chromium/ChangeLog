@@ -1,3 +1,16 @@
+2010-02-04  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by David Levin.
+
+        WorkerContext.close() does not work in the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=34551
+
+        Test: Adding new downstream test.
+
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::workerContextClosedTask):
+        Now shuts down the worker thread when WorkerContext::close() is invoked.
+
 2010-02-04  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Darin Fisher.

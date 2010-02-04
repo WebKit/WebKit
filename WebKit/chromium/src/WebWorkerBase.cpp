@@ -271,6 +271,8 @@ void WebWorkerBase::workerContextClosedTask(ScriptExecutionContext* context,
 {
     if (thisPtr->commonClient())
         thisPtr->commonClient()->workerContextClosed();
+
+    thisPtr->stopWorkerThread();
 }
 
 void WebWorkerBase::workerContextDestroyed()
