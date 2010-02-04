@@ -1,5 +1,22 @@
 2010-02-04  Christian Dywan  <christian@twotoasts.de>
 
+        Reviewed by Xan Lopez.
+
+        Conditionalize third party cookie policy for libsoup 2.29.90.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookies):
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::prefetchDNS):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+        (WebCore::startHttp):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::toSoupMessage):
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
+2010-02-04  Christian Dywan  <christian@twotoasts.de>
+
         Rubber-stamped by Gustavo Noronha Silva.
 
         Add ENABLE(VIDEO) guards around freeOwnedGPtr<GstElement> implementation.

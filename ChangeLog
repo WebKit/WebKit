@@ -1,3 +1,11 @@
+2010-02-04  Christian Dywan  <christian@twotasts.de>
+
+        Reviewed by Xan Lopez.
+
+        Require either libsoup 2.28.2 or 2.29.90.
+
+        * configure.ac:
+
 2010-02-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

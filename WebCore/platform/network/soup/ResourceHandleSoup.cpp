@@ -211,12 +211,14 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     if (d->client())
         d->client()->willSendRequest(handle, request, response);
 
+#ifdef HAVE_LIBSOUP_2_29_90
     // Update the first party in case the base URL changed with the redirect
     String firstPartyString = request.firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(d->m_msg, firstParty.get());
     }
+#endif
 }
 
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
@@ -492,11 +494,13 @@ static bool startHttp(ResourceHandle* handle)
     g_signal_connect(d->m_msg, "content-sniffed", G_CALLBACK(contentSniffedCallback), handle);
     g_signal_connect(d->m_msg, "got-chunk", G_CALLBACK(gotChunkCallback), handle);
 
+#ifdef HAVE_LIBSOUP_2_29_90
     String firstPartyString = request.firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(d->m_msg, firstParty.get());
     }
+#endif
     g_object_set_data(G_OBJECT(d->m_msg), "resourceHandle", reinterpret_cast<void*>(handle));
 
     FormData* httpBody = d->m_request.httpBody();
