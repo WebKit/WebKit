@@ -1,3 +1,9 @@
+2010-02-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows Debug_All build fix.
+
+        * platform/graphics/win/WKCACFLayer.cpp:
+
 2010-02-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

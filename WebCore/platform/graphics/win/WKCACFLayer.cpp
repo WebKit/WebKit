@@ -39,10 +39,11 @@
 
 #ifdef DEBUG_ALL
 #pragma comment(lib, "QuartzCore_debug")
+#pragma comment(lib, "QuartzCoreInterface_debug")
 #else
 #pragma comment(lib, "QuartzCore")
-#endif
 #pragma comment(lib, "QuartzCoreInterface")
+#endif
 
 namespace WebCore {
 
