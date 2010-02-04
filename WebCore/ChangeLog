@@ -1,3 +1,15 @@
+2010-02-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Fix bug in V8 convertNPVariantToJValue when converting float and double types
+        https://bugs.webkit.org/show_bug.cgi?id=34593
+
+        No new tests, build fix only.
+
+        * bridge/jni/v8/JNIUtilityPrivate.cpp: Modified.
+        (JSC::Bindings::convertNPVariantToJValue): Modified. Use correct members of 'result' enum.
+
 2010-02-04  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Darin Fisher.
