@@ -2,6 +2,18 @@
 
         Rubber-stamped by Eric Seidel.
 
+        Roll back r53559 and r54084 again, because roll out didn't solve flakeyness on the Windows Test bots
+        https://bugs.webkit.org/show_bug.cgi?id=34399
+
+        * Scripts/run-iexploder-tests:
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitperl/httpd.pm: Added.
+
+2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
         Roll out r53559 and r54084, because it might caused flakeyness on the Windows Test bots
 
         * Scripts/run-iexploder-tests:
