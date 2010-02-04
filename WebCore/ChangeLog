@@ -1,3 +1,11 @@
+2010-02-04  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber stamped by Xan Lopez.
+
+        Missing include, build fix after landing of patch from the bug 34435.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+
 2010-02-02  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
