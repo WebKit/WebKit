@@ -2075,21 +2075,28 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
     const IntRect& marginRect = printerMarginRect(printDC);
 
     cairo_save(pctx);
+    spoolCtx->save();
     float scale = scaleFactor(printDC, marginRect, pageRect);
     cairo_scale(pctx, scale, scale);
 
     IntRect cairoMarginRect (marginRect);
     cairoMarginRect.scale (1 / scale);
 
-    cairo_translate(pctx, -pageRect.x() + cairoMarginRect.x(), -pageRect.y() + cairoMarginRect.y() + headerHeight);
+    // Modify Cairo and GDI World Transform to account for margin in the
+    // subsequent WebKit-controlled 'paintContents' drawing operations:
+    spoolCtx->translate(cairoMarginRect.x(), cairoMarginRect.y());
+
+    // Modify Cairo (only) to account for page position.
+    cairo_translate(pctx, -pageRect.x(), -pageRect.y() + headerHeight);
     coreFrame->view()->paintContents(spoolCtx, pageRect);
 
-    cairo_translate(pctx, pageRect.x() - cairoMarginRect.x(), pageRect.y() - cairoMarginRect.y() - headerHeight);
+    cairo_translate(pctx, pageRect.x(), pageRect.y() - headerHeight);
 
     XFORM originalWorld;
     ::GetWorldTransform(printDC, &originalWorld);
 
-    // Position world transform to account for margin
+    // Position GDI world transform to account for margin in GDI-only
+    // header/footer calls
     XFORM newWorld = originalWorld;
     newWorld.eDx = marginRect.x();
     newWorld.eDy = marginRect.y();
@@ -2106,6 +2113,7 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
 
     cairo_show_page(pctx);
     ASSERT(!cairo_status(pctx));
+    spoolCtx->restore();
     cairo_restore(pctx);
 }
 #endif

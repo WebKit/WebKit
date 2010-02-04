@@ -2,6 +2,19 @@
 
         Reviewed by Adam Roben.
 
+        Properly handle margin settings when printing Plugins in WinCairo.
+        https://bugs.webkit.org/show_bug.cgi?id=34613
+
+        * WebFrame.cpp:
+        (WebFrame::spoolPage): Adjust the GraphicsContext passed to the
+          paintContents method so that the World Transform is properly
+          positioned to account for margin settings at the time that
+          PluginViewWin.cpp processes the drawing operations.
+
+2010-02-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Properly handle margin settings in WinCairo.
         https://bugs.webkit.org/show_bug.cgi?id=34545
 
