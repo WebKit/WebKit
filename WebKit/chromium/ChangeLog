@@ -1,3 +1,12 @@
+2010-02-04  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update comments to better document the possible values of the
+        writing direction menu state variables.
+
+        * public/WebContextMenuData.h:
+
 2010-02-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -103,7 +103,8 @@ struct WebContextMenuData {
         CheckableMenuItemChecked = 0x2,
     };
 
-    // Writing direction menu items.
+    // Writing direction menu items - values are unions of
+    // CheckableMenuItemFlags.
     // Currently only used on OS X.
     int writingDirectionDefault;
     int writingDirectionLeftToRight;
