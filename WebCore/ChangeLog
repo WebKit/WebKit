@@ -1,3 +1,25 @@
+2010-02-04  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, build fix for Chromium.
+
+        Revert r54341 ("[v8] Remove clear method from DOM object maps"),
+        since it causes the worker tests to fail on Chromium.
+
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::ChunkedTable::clear):
+        (WebCore::ChunkedTable::clearEntries):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::clear):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::ChunkedTableTraits::clear):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::removeAllDOMObjectsInCurrentThreadHelper):
+        (WebCore::removeAllDOMObjectsInCurrentThread):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::clear):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+
 2010-02-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

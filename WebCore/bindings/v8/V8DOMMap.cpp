@@ -95,6 +95,45 @@ DOMWrapperMap<void>& getDOMSVGObjectWithContextMap()
 
 #endif // ENABLE(SVG)
 
+static void removeAllDOMObjectsInCurrentThreadHelper()
+{
+    v8::HandleScope scope;
+
+    // Deref all objects in the delayed queue.
+    DOMData::getCurrent()->derefDelayedObjects();
+
+    // The DOM objects with the following types only exist on the main thread.
+    if (WTF::isMainThread()) {
+        // Remove all DOM nodes.
+        DOMData::removeObjectsFromWrapperMap<Node>(getDOMNodeMap());
+
+#if ENABLE(SVG)
+        // Remove all SVG element instances in the wrapper map.
+        DOMData::removeObjectsFromWrapperMap<SVGElementInstance>(getDOMSVGElementInstanceMap());
+
+        // Remove all SVG objects with context in the wrapper map.
+        DOMData::removeObjectsFromWrapperMap<void>(getDOMSVGObjectWithContextMap());
+#endif
+    }
+
+    // Remove all DOM objects in the wrapper map.
+    DOMData::removeObjectsFromWrapperMap<void>(getDOMObjectMap());
+
+    // Remove all active DOM objects in the wrapper map.
+    DOMData::removeObjectsFromWrapperMap<void>(getActiveDOMObjectMap());
+}
+
+void removeAllDOMObjectsInCurrentThread()
+{
+    // Use the locker only if it has already been invoked before, as by worker thread.
+    if (v8::Locker::IsActive()) {
+        v8::Locker locker;
+        removeAllDOMObjectsInCurrentThreadHelper();
+    } else
+        removeAllDOMObjectsInCurrentThreadHelper();
+}
+
+
 void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor* visitor)
 {
     v8::HandleScope scope;
