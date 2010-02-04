@@ -29,11 +29,18 @@
 #import <WebKit/WebLocalizableStrings.h>
 
 #import <wtf/Assertions.h>
+#import <wtf/Threading.h>
 
 WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
 
 NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const char *key)
 {
+    // This function is not thread-safe due at least to its unguarded use of the mainBundle static variable
+    // and its use of [NSBundle localizedStringForKey:::], which is not guaranteed to be thread-safe. If
+    // we decide we need to use this on background threads, we'll need to add locking here and make sure
+    // it doesn't affect performance.
+    ASSERT(isMainThread());
+
     NSBundle *bundle;
     if (stringsBundle == NULL) {
         static NSBundle *mainBundle;

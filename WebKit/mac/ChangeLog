@@ -1,3 +1,16 @@
+2010-02-04  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=34611
+        WebLocalizedString() could use an assertion that it is being called on the main thread
+
+        Reviewed by Tim Hatcher.
+
+        * Misc/WebLocalizableStrings.m: Removed.
+        * Misc/WebLocalizableStrings.mm: Copied from mac/Misc/WebLocalizableStrings.m.
+        Renamed to use .mm extension so it can include a C++ header.
+        (WebLocalizedString):
+        Added an assertion that this is being called on the main thread.
+
 2010-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
