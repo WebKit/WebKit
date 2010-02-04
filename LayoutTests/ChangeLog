@@ -1,3 +1,14 @@
+2010-02-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Test for: <rdar://problem/7594212> 
+        https://bugs.webkit.org/show_bug.cgi?id=34549 - CSS counters crash at http://www.w3.org/TR/css3-content/
+        CrashTracer: [USER] 20 crashes in Safari at com.apple.WebCore: WebCore::CounterNode::insertAfter + 319
+
+        * fast/css/counters/counter-before-selector-crash-expected.txt: Added.
+        * fast/css/counters/counter-before-selector-crash.html: Added.
+
 2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Ariya Hidayat.

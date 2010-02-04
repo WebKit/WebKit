@@ -430,7 +430,8 @@ static void updateCounters(RenderObject* renderer)
             continue;
         if (parent)
             parent->removeChild(node, it->first.get());
-        newParent->insertAfter(node, newPreviousSibling, it->first.get());
+        if (newParent)
+            newParent->insertAfter(node, newPreviousSibling, it->first.get());
     }
 }
 
