@@ -33,13 +33,11 @@ use strict;
 use warnings;
 
 use Cwd;
-use File::Path;
 use File::Basename;
 use Getopt::Long;
 use FindBin;
 
 use lib $FindBin::Bin;
-use webkitperl::httpd;
 use webkitdirs;
 
 # Argument handling
@@ -64,7 +62,39 @@ if (!$result || @ARGV || $showHelp) {
 setConfiguration();
 my $productDir = productDir();
 chdirWebKit();
-my $testDirectory = File::Spec->catfile(getcwd(), "LayoutTests");
+
+mkdir "/tmp/WebKit";
+
+if (-f "/tmp/WebKit/httpd.pid") {
+    my $oldPid = `cat /tmp/WebKit/httpd.pid`;
+    chomp $oldPid;
+    if (0 != kill 0, $oldPid) {
+        print "\nhttpd is already running: pid $oldPid, killing...\n";
+        kill 15, $oldPid;
+        
+        my $retryCount = 20;
+        while ((0 != kill 0, $oldPid) && $retryCount) {
+            sleep 1;
+            --$retryCount;
+        }
+        
+        die "Timed out waiting for httpd to quit" unless $retryCount;
+    }
+}
+
+my $testDirectory = getcwd() . "/LayoutTests";
+my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
+my $httpdPath = "/usr/sbin/httpd";
+$httpdPath = "/usr/sbin/apache2" if isDebianBased();
+my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+$httpdConfig = "$testDirectory/http/conf/cygwin-httpd.conf" if isCygwin();
+$httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+$httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf" if isDebianBased();
+$httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf" if isFedoraBased();
+my $documentRoot = "$testDirectory/http/tests";
+my $typesConfig = "$testDirectory/http/conf/mime.types";
+my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
+
 my $listen = "127.0.0.1:$httpdPort";
 $listen = "$httpdPort" if ($allInterfaces);
 
@@ -73,13 +103,19 @@ if ($allInterfaces) {
 } else {
     print "Starting httpd on <http://$listen/>...\n";
 }
-setShouldWaitForUserInterrupt();
 print "Press Ctrl+C to stop it.\n\n";
 
 my @args = (
+    "-f", "$httpdConfig",
+    "-C", "DocumentRoot \"$documentRoot\"",
+    # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be laoded.
+    "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
     "-C", "Listen $listen",
+    "-c", "TypesConfig \"$typesConfig\"",
     "-c", "CustomLog |/usr/bin/tee common",
     "-c", "ErrorLog |/usr/bin/tee",
+    # Apache wouldn't run CGIs with permissions==700 otherwise.
+    "-c", "User \"#$<\"",
     # Run in single-process mode, do not detach from the controlling terminal.
     "-X",
     # Disable Keep-Alive support. Makes testing in multiple browsers easier (no need to wait
@@ -87,6 +123,9 @@ my @args = (
     "-c", "KeepAlive 0"
 );
 
-my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
-@args = (@defaultArgs, @args);
-openHTTPD(@args);
+# FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
+push(@args, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
+
+system($httpdPath, @args);
+
+unlink "/tmp/WebKit/httpd.pid";

@@ -1,5 +1,16 @@
 2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Roll out r53559 and r54084, because it might caused flakeyness on the Windows Test bots
+
+        * Scripts/run-iexploder-tests:
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitperl/httpd.pm: Removed.
+
+2010-02-03  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Ariya Hidayat.
 
         Roll back r53889 again, because roll out didn't solve flakeyness on the Windows Test bots

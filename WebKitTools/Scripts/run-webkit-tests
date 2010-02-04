@@ -67,7 +67,6 @@ use Time::HiRes qw(time usleep);
 use List::Util 'shuffle';
 
 use lib $FindBin::Bin;
-use webkitperl::httpd;
 use webkitdirs;
 use VCSUtils;
 use POSIX;
@@ -76,8 +75,8 @@ sub buildPlatformResultHierarchy();
 sub buildPlatformTestHierarchy(@);
 sub closeCygpaths();
 sub closeDumpTool();
+sub closeHTTPD();
 sub closeWebSocketServer();
-sub configureAndOpenHTTPDIfNeeded();
 sub countAndPrintLeaks($$$);
 sub countFinishedTest($$$$);
 sub deleteExpectedAndActualResults($);
@@ -92,6 +91,7 @@ sub resolveAndMakeTestResultsDirectory();
 sub numericcmp($$);
 sub openDiffTool();
 sub openDumpTool();
+sub openHTTPDIfNeeded();
 sub parseLeaksandPrintUniqueLeaks();
 sub openWebSocketServerIfNeeded();
 sub pathcmp($$);
@@ -143,8 +143,7 @@ my $showHelp = 0;
 my $stripEditingCallbacks = isCygwin();
 my $testHTTP = 1;
 my $testMedia = 1;
-my $tmpDir = "/tmp";
-my $testResultsDirectory = File::Spec->catfile($tmpDir, "layout-test-results");
+my $testResultsDirectory = "/tmp/layout-test-results";
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
 # DumpRenderTree has an internal timeout of 15 seconds, so this must be > 15.
@@ -384,8 +383,7 @@ my @platformTestHierarchy = buildPlatformTestHierarchy(@platformResultHierarchy)
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
-$testResultsDirectory = File::Spec->rel2abs($testResultsDirectory);
-my $testResults = File::Spec->catfile($testResultsDirectory, "results.html");
+my $testResults = catfile($testResultsDirectory, "results.html");
 
 print "Running tests from $testDirectory\n";
 if ($pixelTests) {
@@ -607,7 +605,7 @@ for my $test (@tests) {
     }
 
     if ($test =~ /^http\//) {
-        configureAndOpenHTTPDIfNeeded();
+        openHTTPDIfNeeded();
         if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
@@ -947,7 +945,7 @@ printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
 !$isDumpToolOpen || die "Failed to close $dumpToolName.\n";
 
-$isHttpdOpen = !closeHTTPD();
+closeHTTPD();
 closeWebSocketServer();
 
 # Because multiple instances of this script are running concurrently we cannot 
@@ -1347,21 +1345,95 @@ sub dumpToolDidCrash()
     return DumpRenderTreeSupport::processIsCrashing($dumpToolPID);
 }
 
-sub configureAndOpenHTTPDIfNeeded()
+sub openHTTPDIfNeeded()
 {
     return if $isHttpdOpen;
-    my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
+
+    mkdir "/tmp/WebKit";
+    
+    if (-f "/tmp/WebKit/httpd.pid") {
+        my $oldPid = `cat /tmp/WebKit/httpd.pid`;
+        chomp $oldPid;
+        if (0 != kill 0, $oldPid) {
+            print "\nhttpd is already running: pid $oldPid, killing...\n";
+            kill 15, $oldPid;
+            
+            my $retryCount = 20;
+            while ((0 != kill 0, $oldPid) && $retryCount) {
+                sleep 1;
+                --$retryCount;
+            }
+            
+            die "Timed out waiting for httpd to quit" unless $retryCount;
+        }
+    }
+    
+    my $httpdPath = "/usr/sbin/httpd";
+    my $httpdConfig;
+    if (isCygwin()) {
+        my $windowsConfDirectory = "$testDirectory/http/conf/";
+        unless (-x "/usr/lib/apache/libphp4.dll") {
+            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
+            chmod(0755, "/usr/lib/apache/libphp4.dll");
+        }
+        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } elsif (isDebianBased()) {
+        $httpdPath = "/usr/sbin/apache2";
+        $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
+    } elsif (isFedoraBased()) {
+        $httpdPath = "/usr/sbin/httpd";
+        $httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf";
+    } else {
+        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    }
+    my $documentRoot = "$testDirectory/http/tests";
+    my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
+    my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
+    my $absTestResultsDirectory = resolveAndMakeTestResultsDirectory();
+    my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";
+
     my @args = (
+        "-f", "$httpdConfig",
+        "-C", "DocumentRoot \"$documentRoot\"",
+        # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be laoded.
+        "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
+        "-C", "Listen $listen",
+        "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
         "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"",
-        "-C", "Listen $listen"
+        # Apache wouldn't run CGIs with permissions==700 otherwise
+        "-c", "User \"#$<\""
     );
 
-    my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
-    @args = (@defaultArgs, @args);
+    # FIXME: Enable this on Windows once <rdar://problem/5345985> is fixed
+    # The version of Apache we use with Cygwin does not support SSL
+    push(@args, "-c", "SSLCertificateFile \"$sslCertificate\"") unless isCygwin();
 
-    $isHttpdOpen = openHTTPD(@args);
+    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, @args);
+
+    my $retryCount = 20;
+    while (system("/usr/bin/curl -q --silent --stderr - --output " . File::Spec->devnull() . " $listen") && $retryCount) {
+        sleep 1;
+        --$retryCount;
+    }
+    
+    die "Timed out waiting for httpd to start" unless $retryCount;
+    
+    $isHttpdOpen = 1;
+}
+
+sub closeHTTPD()
+{
+    return if !$isHttpdOpen;
+
+    close HTTPDIN;
+    close HTTPDOUT;
+
+    kill 15, `cat /tmp/WebKit/httpd.pid` if -f "/tmp/WebKit/httpd.pid";
+
+    $isHttpdOpen = 0;
 }
 
 sub openWebSocketServerIfNeeded()
