@@ -27,14 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""This is the Linux implementation of the layout_package.platform_utils
+"""This is the Linux implementation of the port
    package. This file should only be imported by that package."""
 
 import os
-import path_utils
 import subprocess
 import sys
 
+import path_utils
 
 def platform_name():
     """Returns the name of the platform we're currently running on."""

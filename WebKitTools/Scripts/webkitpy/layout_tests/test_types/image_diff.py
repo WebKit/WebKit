@@ -40,7 +40,7 @@ import os
 import shutil
 import subprocess
 
-from layout_package import path_utils
+from port import path_utils
 from layout_package import test_failures
 from test_types import test_type_base
 

@@ -59,17 +59,19 @@ import sys
 import time
 import traceback
 
-from layout_package import apache_http_server
 from layout_package import test_expectations
-from layout_package import http_server
 from layout_package import json_layout_results_generator
 from layout_package import metered_stream
-from layout_package import path_utils
-from layout_package import platform_utils
 from layout_package import test_failures
 from layout_package import test_shell_thread
 from layout_package import test_files
-from layout_package import websocket_server
+
+import port
+from port import apache_http_server
+from port import http_server
+from port import path_utils
+from port import websocket_server
+
 from test_types import fuzzy_image_diff
 from test_types import image_diff
 from test_types import test_type_base
@@ -1469,7 +1471,7 @@ def main(options, args):
 
     if not options.num_test_shells:
         # TODO(ojan): Investigate perf/flakiness impact of using numcores + 1.
-        options.num_test_shells = platform_utils.get_num_cores()
+        options.num_test_shells = port.get_num_cores()
 
     write = create_logging_writer(options, 'config')
     write("Running %s test_shells in parallel" % options.num_test_shells)

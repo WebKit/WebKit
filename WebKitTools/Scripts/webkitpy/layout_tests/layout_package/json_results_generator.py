@@ -35,7 +35,7 @@ import time
 import urllib2
 import xml.dom.minidom
 
-from layout_package import path_utils
+from port import path_utils
 from layout_package import test_expectations
 
 sys.path.append(path_utils.path_from_base('third_party', 'WebKit', 

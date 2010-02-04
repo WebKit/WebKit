@@ -31,7 +31,7 @@ import logging
 import os
 
 from layout_package import json_results_generator
-from layout_package import path_utils
+from port import path_utils
 from layout_package import test_expectations
 from layout_package import test_failures
 

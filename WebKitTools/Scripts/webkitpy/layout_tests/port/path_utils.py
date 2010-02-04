@@ -29,9 +29,9 @@
 
 """This package contains utility methods for manipulating paths and
 filenames for test results and baselines. It also contains wrappers
-of a few routines in platform_utils.py so that platform_utils.py can
+of a few routines in port/ so that the port package can
 be considered a 'protected' package - i.e., this file should be
-the only file that ever includes platform_utils. This leads to
+the only file that ever includes port. This leads to
 us including a few things that don't really have anything to do
  with paths, unfortunately."""
 
@@ -40,10 +40,10 @@ import os
 import stat
 import sys
 
-import platform_utils
-import platform_utils_win
-import platform_utils_mac
-import platform_utils_linux
+import port
+import chromium_win
+import chromium_mac
+import chromium_linux
 
 # Cache some values so we don't have to recalculate them. _basedir is
 # used by PathFromBase() and caches the full (native) path to the top
@@ -69,20 +69,20 @@ def chromium_baseline_path(platform=None):
     baseline results from chromium ports. If |platform| is None, the
     currently executing platform is used.
 
-    Note: although directly referencing individual platform_utils_* files is
+    Note: although directly referencing individual port/* files is
     usually discouraged, we allow it here so that the rebaselining tool can
     pull baselines for platforms other than the host platform."""
 
     # Normalize the platform string.
     platform = platform_name(platform)
     if platform.startswith('chromium-mac'):
-        return platform_utils_mac.baseline_path(platform)
+        return chromium_mac.baseline_path(platform)
     elif platform.startswith('chromium-win'):
-        return platform_utils_win.baseline_path(platform)
+        return chromium_win.baseline_path(platform)
     elif platform.startswith('chromium-linux'):
-        return platform_utils_linux.baseline_path(platform)
+        return chromium_linux.baseline_path(platform)
 
-    return platform_utils.baseline_path()
+    return port.baseline_path()
 
 
 def webkit_baseline_path(platform):
@@ -98,19 +98,19 @@ def baseline_search_path(platform=None):
     the source tree. If parameter platform is None, returns the list for the
     current platform that the script is running on.
 
-    Note: although directly referencing individual platform_utils_* files is
+    Note: although directly referencing individual port/* files is
     usually discouraged, we allow it here so that the rebaselining tool can
     pull baselines for platforms other than the host platform."""
 
     # Normalize the platform name.
     platform = platform_name(platform)
     if platform.startswith('chromium-mac'):
-        return platform_utils_mac.baseline_search_path(platform)
+        return chromium_mac.baseline_search_path(platform)
     elif platform.startswith('chromium-win'):
-        return platform_utils_win.baseline_search_path(platform)
+        return chromium_win.baseline_search_path(platform)
     elif platform.startswith('chromium-linux'):
-        return platform_utils_linux.baseline_search_path(platform)
-    return platform_utils.baseline_search_path()
+        return chromium_linux.baseline_search_path(platform)
+    return port.baseline_search_path()
 
 
 def expected_baselines(filename, suffix, platform=None, all_baselines=False):
@@ -200,7 +200,7 @@ def _win_path_to_unix(path):
 
 #
 # Routines that are arguably platform-specific but have been made
-# generic for now (they used to be in platform_utils_*)
+# generic for now
 #
 
 
@@ -335,7 +335,7 @@ def remove_directory(*path):
     remove_with_retry(os.rmdir, file_path)
 
 #
-# Wrappers around platform_utils
+# Wrappers around port/
 #
 
 
@@ -345,51 +345,51 @@ def platform_name(platform=None):
        currently running system. If |platform| is of the form 'chromium-*',
        it is returned unchanged, otherwise 'chromium-' is prepended."""
     if platform == None:
-        return platform_utils.platform_name()
+        return port.platform_name()
     if not platform.startswith('chromium-'):
         platform = "chromium-" + platform
     return platform
 
 
 def platform_version():
-    return platform_utils.platform_version()
+    return port.platform_version()
 
 
 def lighttpd_executable_path():
-    return platform_utils.lighttpd_executable_path()
+    return port.lighttpd_executable_path()
 
 
 def lighttpd_module_path():
-    return platform_utils.lighttpd_module_path()
+    return port.lighttpd_module_path()
 
 
 def lighttpd_php_path():
-    return platform_utils.lighttpd_php_path()
+    return port.lighttpd_php_path()
 
 
 def wdiff_path():
-    return platform_utils.wdiff_path()
+    return port.wdiff_path()
 
 
 def test_shell_path(target):
-    return platform_utils.test_shell_path(target)
+    return port.test_shell_path(target)
 
 
 def image_diff_path(target):
-    return platform_utils.image_diff_path(target)
+    return port.image_diff_path(target)
 
 
 def layout_test_helper_path(target):
-    return platform_utils.layout_test_helper_path(target)
+    return port.layout_test_helper_path(target)
 
 
 def fuzzy_match_path():
-    return platform_utils.fuzzy_match_path()
+    return port.fuzzy_match_path()
 
 
 def shut_down_http_server(server_pid):
-    return platform_utils.shut_down_http_server(server_pid)
+    return port.shut_down_http_server(server_pid)
 
 
 def kill_all_test_shells():
-    platform_utils.kill_all_test_shells()
+    port.kill_all_test_shells()

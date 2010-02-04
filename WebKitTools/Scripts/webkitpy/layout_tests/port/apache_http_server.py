@@ -38,7 +38,7 @@ import sys
 
 import http_server_base
 import path_utils
-import platform_utils
+import port
 
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
@@ -78,7 +78,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         error_log = self._cygwin_safe_join(output_dir, "error_log.txt")
         document_root = self._cygwin_safe_join(test_dir, "http", "tests")
 
-        executable = platform_utils.apache_executable_path()
+        executable = port.apache_executable_path()
         if self._is_cygwin():
             executable = self._get_cygwin_path(executable)
 
@@ -146,7 +146,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
           test_dir: absolute path to the LayoutTests directory.
           output_dir: absolute path to the layout test results directory.
         """
-        httpd_config = platform_utils.apache_config_file_path()
+        httpd_config = port.apache_config_file_path()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
         httpd_conf = open(httpd_config).read()
         if self._is_cygwin():

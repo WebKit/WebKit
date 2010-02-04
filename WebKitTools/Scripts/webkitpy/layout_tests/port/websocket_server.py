@@ -40,7 +40,7 @@ import time
 import urllib
 
 import path_utils
-import platform_utils
+import port
 import http_server
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
@@ -255,7 +255,7 @@ class PyWebSocket(http_server.Lighttpd):
                 'Failed to find %s server pid.' % self._server_name)
 
         logging.debug('Shutting down %s server %d.' % (self._server_name, pid))
-        platform_utils.kill_process(pid)
+        port.kill_process(pid)
 
         if self._process:
             self._process.wait()

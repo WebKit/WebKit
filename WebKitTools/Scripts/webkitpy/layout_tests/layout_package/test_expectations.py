@@ -36,7 +36,7 @@ import os
 import re
 import sys
 import time
-import path_utils
+from port import path_utils
 
 sys.path.append(path_utils.path_from_base('third_party', 'WebKit', 
                                           'WebKitTools')) 

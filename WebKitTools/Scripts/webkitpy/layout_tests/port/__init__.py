@@ -30,7 +30,7 @@
 """Platform-specific utilities and pseudo-constants
 
 Any functions whose implementations or values differ from one platform to
-another should be defined in their respective platform_utils_<platform>.py
+another should be defined in their respective <platform>.py
 modules. The appropriate one of those will be imported into this module to
 provide callers with a common, platform-independent interface.
 
@@ -43,8 +43,8 @@ import sys
 # especially has had problems), but we'll allow the platform utils to be
 # included in any case so we don't get an import error.
 if sys.platform in ('cygwin', 'win32'):
-    from platform_utils_win import *
+    from chromium_win import *
 elif sys.platform == 'darwin':
-    from platform_utils_mac import *
+    from chromium_mac import *
 elif sys.platform in ('linux', 'linux2', 'freebsd7', 'openbsd4'):
-    from platform_utils_linux import *
+    from chromium_linux import *

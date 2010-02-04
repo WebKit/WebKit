@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""This is the Mac implementation of the layout_package.platform_utils
+"""This is the Mac implementation of the port interface
    package. This file should only be imported by that package."""
 
 import os

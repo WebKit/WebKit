@@ -39,7 +39,7 @@ import logging
 import os.path
 import subprocess
 
-from layout_package import path_utils
+from port import path_utils
 
 
 class TestArguments(object):

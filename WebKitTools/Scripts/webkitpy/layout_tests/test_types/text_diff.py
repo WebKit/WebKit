@@ -37,7 +37,7 @@ import errno
 import logging
 import os.path
 
-from layout_package import path_utils
+from port import path_utils
 from layout_package import test_failures
 from test_types import test_type_base
 

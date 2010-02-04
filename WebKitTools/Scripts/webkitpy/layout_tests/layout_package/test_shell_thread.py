@@ -46,7 +46,7 @@ import thread
 import threading
 import time
 
-import path_utils
+from port import path_utils
 import test_failures
 
 

@@ -36,7 +36,7 @@ under that directory."""
 
 import glob
 import os
-import path_utils
+from port import path_utils
 
 # When collecting test cases, we include any file with these extensions.
 _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
