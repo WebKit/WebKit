@@ -485,6 +485,9 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (!shouldPaintWithinRoot(paintInfo))
+        return;
+
     int w = width();
     int h = height();
 

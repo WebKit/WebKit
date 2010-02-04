@@ -119,6 +119,9 @@ RenderBox* RenderFieldset::findLegend() const
 
 void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (!shouldPaintWithinRoot(paintInfo))
+        return;
+
     int w = width();
     int h = height();
     RenderBox* legend = findLegend();
