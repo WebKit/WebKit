@@ -1,3 +1,26 @@
+2010-02-04  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Upstreaming gtests from chromium: UniscribeHelper and TransparencyWin.
+        https://bugs.webkit.org/show_bug.cgi?id=34509
+
+        * WebKit.gyp:
+        * tests/TransparencyWinTest.cpp: Added.
+        (WebCore::RECTToFloatRect):
+        (WebCore::drawNativeRect):
+        (WebCore::getPixelAt):
+        (WebCore::clearTopLayerAlphaChannel):
+        (WebCore::clearTopLayerAlphaPixel):
+        (WebCore::operator<<):
+        (WebCore::TEST):
+        * tests/UniscribeHelperTest.cpp: Added.
+        (WebCore::UniscribeTest::UniscribeTest):
+        (WebCore::UniscribeTest::MakeFont):
+        (WebCore::UniscribeTest::SetUp):
+        (WebCore::UniscribeTest::TearDown):
+        (WebCore::TEST_F):
+
 2010-02-04  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by David Levin.
