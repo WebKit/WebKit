@@ -541,9 +541,10 @@ sub builtDylibPathForName
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
             return "$configurationProductDir/lib/$libraryName.framework/$libraryName";
         } elsif (isWindows()) {
-            chomp(my $mkspec = `qmake -query QMAKE_MKSPECS`);
+            my $mkspec = `qmake -query QMAKE_MKSPECS`;
+            $mkspec =~ s/[\n|\r]$//g;
             my $qtMajorVersion = retrieveQMakespecVar("$mkspec/qconfig.pri", "QT_MAJOR_VERSION");
-            if ($qtMajorVersion eq "unknown") {
+            if (not $qtMajorVersion) {
                 $qtMajorVersion = "";
             }
             return "$configurationProductDir/lib/$libraryName$qtMajorVersion.dll";
@@ -1328,11 +1329,11 @@ sub retrieveQMakespecVar
     my $mkspec = $_[0];
     my $varname = $_[1];
 
-    my $compiler = "unknown";
+    my $varvalue = undef;
     #print "retrieveMakespecVar " . $mkspec . ", " . $varname . "\n";
 
     local *SPEC;
-    open SPEC, "<$mkspec" or return "make";
+    open SPEC, "<$mkspec" or return $varvalue;
     while (<SPEC>) {
         if ($_ =~ /\s*include\((.+)\)/) {
             # open the included mkspec
@@ -1340,15 +1341,15 @@ sub retrieveQMakespecVar
             (my $volume, my $directories, my $file) = File::Spec->splitpath($mkspec);
             my $newcwd = "$volume$directories";
             chdir $newcwd if $newcwd;
-            $compiler = retrieveQMakespecVar($1, $varname);
+            $varvalue = retrieveQMakespecVar($1, $varname);
             chdir $oldcwd;
         } elsif ($_ =~ /$varname\s*=\s*([^\s]+)/) {
-            $compiler = $1;
+            $varvalue = $1;
             last;
         }
     }
     close SPEC;
-    return $compiler;
+    return $varvalue;
 }
 
 sub qtMakeCommand($)
@@ -1645,9 +1646,13 @@ sub setPathForRunningWebKitApp
 {
     my ($env) = @_;
 
-    return unless isAppleWinWebKit();
-
-    $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+    if (isAppleWinWebKit()) {
+        $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+    } elsif (isQt()) {
+        my $qtLibs = `qmake -query QT_INSTALL_LIBS`;
+        $qtLibs =~ s/[\n|\r]$//g;
+        $env->{PATH} = join(';', $qtLibs, productDir() . "/lib", $env->{PATH} || "");
+    }
 }
 
 sub runSafari
