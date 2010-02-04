@@ -1,3 +1,15 @@
+2010-02-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Csaba Osztrogonac.
+
+        Fixed crash on QT introduced with the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=34609
+
+        The test has been added with the original patch.
+        
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writePlainText): Added missing allocation of m_writeData.
+
 2010-02-04  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Xan Lopez.

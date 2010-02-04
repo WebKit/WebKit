@@ -292,6 +292,8 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
 
 void ClipboardQt::writePlainText(const String& str)
 {
+    if (!m_writableData)
+        m_writableData = new QMimeData;
     QString text = str;
     text.replace(QChar(0xa0), QLatin1Char(' '));
     m_writableData->setText(text);
