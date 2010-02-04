@@ -1,3 +1,21 @@
+2010-02-04  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Check if the renderer() exists in textForObject.
+
+        This is fixing a crash in the textForObject method. It can
+        happen when inspecting AtkObjects in the accerciser, then
+        navigating to a new page and still inspecting the old tree.
+
+        In this case the AccessibilityObjectWrapperAtk was still
+        valid but the included renderer() was returning 0. Add a
+        check for the accObject->renderer() before trying to use
+        the result.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textForObject):
+
 2010-02-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

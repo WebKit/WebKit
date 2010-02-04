@@ -876,7 +876,7 @@ gchar* textForObject(AccessibilityRenderObject* accObject)
             g_string_append(str, "\n");
             range = accObject->doAXRangeForLine(++lineNumber);
         }
-    } else {
+    } else if (accObject->renderer()) {
         // For RenderBlocks, piece together the text from the RenderText objects they contain.
         for (RenderObject* obj = accObject->renderer()->firstChild(); obj; obj = obj->nextSibling()) {
             if (obj->isBR()) {
