@@ -1,3 +1,17 @@
+2010-02-04  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add function for AccessibilityObject state change notifications.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34464
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didChangeAccessibilityObjectState):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::didChangeAccessibilityObjectState):
+        * src/ChromeClientImpl.h:
+
 2010-02-04  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Darin Fisher.
