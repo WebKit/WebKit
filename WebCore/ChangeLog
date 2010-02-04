@@ -1,3 +1,14 @@
+2010-02-04  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] webkitgtk crashed when Orca open
+        https://bugs.webkit.org/show_bug.cgi?id=34463
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textForObject):
+        Checking if render objects are texts before calling toRenderText
+
 2010-02-04  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
