@@ -32,9 +32,13 @@ chomp()
     eval $1=\$value;
 }
 
-if [ "$WEBKITLIBRARIESDIR" != "" ]; then
+if [[ -n "$WEBKITLIBRARIESDIR" ]]; then
     FALLBACK_VERSION_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\VERSION"`
     FALLBACK_VERSION=$(cat "$FALLBACK_VERSION_PATH");
+
+    COPYRIGHT_END_YEAR_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\COPYRIGHT-END-YEAR"`
+    COPYRIGHT_END_YEAR=$(cat "$COPYRIGHT_END_YEAR_PATH");
+    chomp COPYRIGHT_END_YEAR
 fi
 
 OUTPUT_FILE=$(cygpath -u "$1")/include/autoversion.h
@@ -56,7 +60,7 @@ BUILD_TINY_VERSION=$(echo "$PROPOSED_VERSION.." | cut -d '.' -f 3)
 # Cut the major component down to three characters by dropping any
 # extra leading digits, then adjust the major version portion of the
 # version string to match.
-CHARACTERS_TO_DROP=$(( ${#BUILD_MAJOR_VERSION} - 3 ))
+CHARACTERS_TO_DROP=$(( ${#BUILD_MAJOR_VERSION} > 3 ? ${#BUILD_MAJOR_VERSION} - 3 : 0 ))
 BUILD_MAJOR_VERSION=${BUILD_MAJOR_VERSION:$CHARACTERS_TO_DROP}
 PROPOSED_VERSION=${PROPOSED_VERSION:$CHARACTERS_TO_DROP}
 
@@ -90,10 +94,6 @@ if [ -z ${ENVIRONMENT_VERSION} ]; then
     VERSION_TEXT="${VERSION_TEXT_SHORT} ${USER} - ${BUILD_DATE} - r${SVN_REVISION}"
 fi
 
-COPYRIGHT_END_YEAR_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\COPYRIGHT-END-YEAR"`
-COPYRIGHT_END_YEAR=$(cat "$COPYRIGHT_END_YEAR_PATH");
-chomp COPYRIGHT_END_YEAR
-
 cat > "$OUTPUT_FILE" <<EOF
 #define __VERSION_TEXT__ "${VERSION_TEXT}"
 #define __BUILD_NUMBER__ "${VERSION_TEXT}"
@@ -106,5 +106,10 @@ cat > "$OUTPUT_FILE" <<EOF
 #define __BUILD_NUMBER_MINOR__ ${BUILD_MINOR_VERSION}
 #define __BUILD_NUMBER_VARIANT__ ${BUILD_TINY_VERSION}
 #define __SVN_REVISION__ ${SVN_REVISION}
+EOF
+
+if [[ -n "${COPYRIGHT_END_YEAR}" ]]; then
+cat >> "$OUTPUT_FILE" <<EOF
 #define __COPYRIGHT_YEAR_END_TEXT__ "${COPYRIGHT_END_YEAR}"
 EOF
+fi

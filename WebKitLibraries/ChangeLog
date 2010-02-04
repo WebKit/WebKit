@@ -1,3 +1,12 @@
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Update auto-version.sh to better handle major version numbers with fewer than three digits,
+        and the case when WEBKITLIBRARIESDIR is not set.
+
+        * win/tools/scripts/auto-version.sh:
+
 2010-02-04  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix for projects not defining WebKitLibrariesDir.
