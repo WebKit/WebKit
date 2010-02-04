@@ -1,3 +1,23 @@
+2010-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure in CheckedRadioButtons::removeButton when using jQuery 1.4.1
+        https://bugs.webkit.org/show_bug.cgi?id=34520
+
+        Test: fast/dom/HTMLInputElement/cloned-input-checked-state.html
+
+        * dom/Element.cpp: (WebCore::Element::cloneElementWithoutChildren): Copy non-attribute
+        properties before attributes. Otherwise, copying "checked" property would make the cloned
+        node checked, unchecking original (they share a name, and are thus in the same radio group).
+        We do want the original to be unchecked, but we also want to know its original state in
+        HTMLInputElement::copyNonAttributeProperties().
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        Use setChecked instead of plain assignment to prevent m_checked getting out of sync with
+        checkedRadioButtons. Also, copy field related to default checked state, so that m_checked
+        won't be overridden when copying attributes.
+
 2010-02-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after addition of Clipboard::writePlainText method.

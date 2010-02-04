@@ -1370,7 +1370,9 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
     const HTMLInputElement* sourceElement = static_cast<const HTMLInputElement*>(source);
 
     m_data.setValue(sourceElement->m_data.value());
-    m_checked = sourceElement->m_checked;
+    setChecked(sourceElement->m_checked);
+    m_defaultChecked = sourceElement->m_defaultChecked;
+    m_useDefaultChecked = sourceElement->m_useDefaultChecked;
     m_indeterminate = sourceElement->m_indeterminate;
 
     HTMLFormControlElementWithState::copyNonAttributeProperties(source);

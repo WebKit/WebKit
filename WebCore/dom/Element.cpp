@@ -113,11 +113,11 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
     // This is a sanity check as HTML overloads some of the DOM methods.
     ASSERT(isHTMLElement() == clone->isHTMLElement());
 
+    clone->copyNonAttributeProperties(this);
+
     // Clone attributes.
     if (namedAttrMap)
         clone->attributes()->setAttributes(*attributes(true)); // Call attributes(true) to force attribute synchronization to occur (for svg and style) before cloning happens.
-
-    clone->copyNonAttributeProperties(this);
     
     return clone.release();
 }

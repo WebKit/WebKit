@@ -1,3 +1,13 @@
+2010-02-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure in CheckedRadioButtons::removeButton when using jQuery 1.4.1
+        https://bugs.webkit.org/show_bug.cgi?id=34520
+
+        * fast/dom/HTMLInputElement/cloned-input-checked-state-expected.txt: Added.
+        * fast/dom/HTMLInputElement/cloned-input-checked-state.html: Added.
+
 2010-02-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Oliver Hunt.
