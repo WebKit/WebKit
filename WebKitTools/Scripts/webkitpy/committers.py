@@ -155,6 +155,7 @@ committers_unable_to_review = [
     Committer("Yong Li", ["yong.li@torchmobile.com", "yong.li.webkit@gmail.com"]),
     Committer("Yongjun Zhang", "yongjun.zhang@nokia.com"),
     Committer("Yury Semikhatsky", "yurys@chromium.org"),
+    Committer("Yuzo Fujishima", "yuzo@google.com"),
     Committer("Zoltan Herczeg", "zherczeg@webkit.org"),
     Committer("Zoltan Horvath", "zoltan@webkit.org"),
 ]
