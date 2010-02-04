@@ -1,3 +1,15 @@
+2010-02-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=34547
+        static shouldTrackVisitedLinks is not initialized
+
+        For ports that don't call into WebKit to initialize this, 
+        we should initialize to true so they get the visited link behavior by default.
+
+        * page/PageGroup.cpp:
+
 2010-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
