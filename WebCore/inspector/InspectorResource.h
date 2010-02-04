@@ -92,7 +92,7 @@ namespace WebCore {
         bool isSameLoader(DocumentLoader* loader) const { return loader == m_loader; }
         void markMainResource() { m_isMainResource = true; }
         unsigned long identifier() const { return m_identifier; }
-        String requestURL() const { return m_requestURL.string(); }
+        KURL requestURL() const { return m_requestURL; }
         Frame* frame() const { return m_frame.get(); }
         const String& mimeType() const { return m_mimeType; }
         const HTTPHeaderMap& requestHeaderFields() const { return m_requestHeaderFields; }

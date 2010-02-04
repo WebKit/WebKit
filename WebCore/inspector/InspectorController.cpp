@@ -1180,7 +1180,7 @@ void InspectorController::getCookies(long callId)
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) {
         Document* document = it->second->frame()->document();
         Vector<Cookie> docCookiesList;
-        rawCookiesImplemented = getRawCookies(document, document->cookieURL(), docCookiesList);
+        rawCookiesImplemented = getRawCookies(document, it->second->requestURL(), docCookiesList);
 
         if (!rawCookiesImplemented) {
             // FIXME: We need duplication checking for the String representation of cookies.

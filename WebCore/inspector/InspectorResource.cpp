@@ -147,7 +147,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
 
     ScriptObject jsonObject = frontend->newScriptObject();
     if (m_changes.hasChange(RequestChange)) {
-        jsonObject.set("url", requestURL());
+        jsonObject.set("url", m_requestURL.string());
         jsonObject.set("documentURL", m_frame->document()->url().string());
         jsonObject.set("host", m_requestURL.host());
         jsonObject.set("path", m_requestURL.path());
@@ -231,7 +231,7 @@ CachedResource* InspectorResource::cachedResource() const
     // Try hard to find a corresponding CachedResource. During preloading, DocLoader may not have the resource in document resources set yet,
     // but Inspector will already try to fetch data that is only available via CachedResource (and it won't update once the resource is added,
     // because m_changes will not have the appropriate bits set).
-    const String& url = requestURL();
+    const String& url = m_requestURL.string();
     CachedResource* cachedResource = m_frame->document()->docLoader()->cachedResource(url);
     if (!cachedResource)
         cachedResource = cache()->resourceForURL(url);
