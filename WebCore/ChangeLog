@@ -1,3 +1,11 @@
+2010-02-04  Christian Dywan  <christian@twotoasts.de>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        Add ENABLE(VIDEO) guards around freeOwnedGPtr<GstElement> implementation.
+
+        * platform/gtk/GOwnPtrGtk.cpp:
+
 2010-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
