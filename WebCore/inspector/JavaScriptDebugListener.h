@@ -29,7 +29,7 @@
 #ifndef JavaScriptDebugListener_h
 #define JavaScriptDebugListener_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 namespace JSC {
     class ExecState;

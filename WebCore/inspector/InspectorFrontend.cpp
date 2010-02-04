@@ -43,7 +43,7 @@
 #include "ScriptString.h"
 #include <wtf/OwnPtr.h>
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 #include <parser/SourceCode.h>
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
@@ -252,7 +252,7 @@ void InspectorFrontend::addRecordToTimeline(const ScriptObject& record)
     function.call();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 void InspectorFrontend::attachDebuggerWhenShown()
 {
     callSimpleFunction("attachDebuggerWhenShown");

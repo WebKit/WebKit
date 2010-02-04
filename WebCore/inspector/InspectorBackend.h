@@ -73,7 +73,7 @@ public:
     void startTimelineProfiler();
     void stopTimelineProfiler();
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
     bool debuggerEnabled() const;
     void enableDebugger(bool always);
     void disableDebugger(bool always);

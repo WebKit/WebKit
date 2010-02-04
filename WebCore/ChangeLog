@@ -1,3 +1,40 @@
+2010-02-04  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Put JSC-specific debugger & profiler code under "USE(JSC)" defines.
+        The plan is to enable "JAVASCRIPT_DEBUGGER" in Chromium and then
+        make this code engine-agnostic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34531
+
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/JavaScriptDebugListener.h:
+        * inspector/JavaScriptDebugServer.cpp:
+        * inspector/JavaScriptDebugServer.h:
+        * inspector/JavaScriptProfile.cpp:
+        * inspector/JavaScriptProfile.h:
+        * inspector/JavaScriptProfileNode.cpp:
+        * inspector/JavaScriptProfileNode.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
 2010-02-03  Nicholas Young  <nicholas.young@nokia.com>
 
         Reviewed by Eric Carlson.

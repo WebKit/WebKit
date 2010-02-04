@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JavaScriptDebugServer.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "DOMWindow.h"
 #include "EventLoop.h"

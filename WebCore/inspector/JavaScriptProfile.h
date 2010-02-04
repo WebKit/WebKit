@@ -26,7 +26,7 @@
 #ifndef JavaScriptProfile_h
 #define JavaScriptProfile_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include <runtime/JSValue.h>
 

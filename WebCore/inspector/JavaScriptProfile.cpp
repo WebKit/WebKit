@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JavaScriptProfile.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "JavaScriptProfileNode.h"
 #include <profiler/Profile.h>

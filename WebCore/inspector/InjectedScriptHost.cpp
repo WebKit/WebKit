@@ -47,7 +47,7 @@
 #include "ScriptArray.h"
 #include "ScriptFunctionCall.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
 using namespace JSC;
@@ -131,7 +131,7 @@ long InjectedScriptHost::pushNodeByPathToFrontend(const String& path)
     return domAgent->pushNodePathToFrontend(node);
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 JavaScriptCallFrame* InjectedScriptHost::currentCallFrame() const
 {
     return JavaScriptDebugServer::shared().currentCallFrame();

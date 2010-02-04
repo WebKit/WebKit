@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JavaScriptProfileNode.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "JSDOMBinding.h"
 #include <profiler/ProfileNode.h>

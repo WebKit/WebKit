@@ -95,7 +95,7 @@
 #include "StorageArea.h"
 #endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 #include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
@@ -142,7 +142,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_inspectorBackend(InspectorBackend::create(this))
     , m_inspectorFrontendHost(InspectorFrontendHost::create(this, client))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
     , m_profilerEnabled(false)
@@ -302,13 +302,13 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
 
         if (m_nodeToFocus)
             focusNode();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         if (m_attachDebuggerWhenShown)
             enableDebugger();
 #endif
         showPanel(m_showAfterVisible);
     } else {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         // If the window is being closed with the debugger enabled,
         // remember this state to re-enable debugger on the next window
         // opening.
@@ -525,7 +525,7 @@ void InspectorController::scriptObjectReady()
     ScriptObject injectedScriptObj;
     setFrontendProxyObject(m_scriptState, webInspectorObj, injectedScriptObj);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
     String debuggerEnabled = setting(debuggerEnabledSettingName);
     if (debuggerEnabled == "true")
         enableDebugger();
@@ -594,7 +594,7 @@ void InspectorController::close()
     if (!enabled())
         return;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
     stopUserInitiatedProfiling();
     disableDebugger();
 #endif
@@ -744,7 +744,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         m_times.clear();
         m_counts.clear();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profiles.clear();
         m_currentUserInitiatedProfileNumber = 1;
         m_nextUserInitiatedProfileNumber = 1;
@@ -1343,7 +1343,7 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL)
 {
     if (!enabled())

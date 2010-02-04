@@ -29,7 +29,7 @@
 #ifndef JavaScriptDebugServer_h
 #define JavaScriptDebugServer_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "Timer.h"
 #include <debugger/Debugger.h>
