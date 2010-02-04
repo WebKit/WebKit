@@ -1,3 +1,12 @@
+2010-02-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Add Windows expected results to the new scrollbar test because Windows was trying
+        to compare to platform/mac first instead of cross-platform.
+
+        * platform/win/fast/events/scrollbar-double-click-expected.txt: Added.
+
 2010-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
