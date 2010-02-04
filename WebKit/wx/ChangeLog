@@ -1,3 +1,10 @@
+2010-02-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix after changes in r54345.
+
+        * WebView.cpp:
+        (wxWebView::OnKeyEvents):
+
 2010-02-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
