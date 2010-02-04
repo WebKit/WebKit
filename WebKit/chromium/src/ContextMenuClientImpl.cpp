@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ContextMenuClientImpl.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSStyleDeclaration.h"
 #include "ContextMenu.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -200,6 +202,22 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
         }
     }
+
+#if OS(DARWIN)
+    // Writing direction context menu.
+    data.writingDirectionDefault = WebContextMenuData::CheckableMenuItemDisabled;
+    data.writingDirectionLeftToRight = WebContextMenuData::CheckableMenuItemEnabled;
+    data.writingDirectionRightToLeft = WebContextMenuData::CheckableMenuItemEnabled;
+
+    ExceptionCode ec = 0;
+    RefPtr<CSSStyleDeclaration> style = selectedFrame->document()->createCSSStyleDeclaration();
+    style->setProperty(CSSPropertyDirection, "ltr", false, ec);
+    if (selectedFrame->editor()->selectionHasStyle(style.get()) != FalseTriState)
+        data.writingDirectionLeftToRight |= WebContextMenuData::CheckableMenuItemChecked;
+    style->setProperty(CSSPropertyDirection, "rtl", false, ec);
+    if (selectedFrame->editor()->selectionHasStyle(style.get()) != FalseTriState)
+        data.writingDirectionRightToLeft |= WebContextMenuData::CheckableMenuItemChecked;
+#endif // OS(DARWIN)
 
     // Now retrieve the security info.
     DocumentLoader* dl = selectedFrame->loader()->documentLoader();

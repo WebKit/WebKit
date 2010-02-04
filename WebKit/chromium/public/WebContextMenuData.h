@@ -97,6 +97,18 @@ struct WebContextMenuData {
     // Whether context is editable.
     bool isEditable;
 
+    enum CheckableMenuItemFlags {
+        CheckableMenuItemDisabled = 0x0,
+        CheckableMenuItemEnabled = 0x1,
+        CheckableMenuItemChecked = 0x2,
+    };
+
+    // Writing direction menu items.
+    // Currently only used on OS X.
+    int writingDirectionDefault;
+    int writingDirectionLeftToRight;
+    int writingDirectionRightToLeft;
+
     enum EditFlags {
         CanDoNone = 0x0,
         CanUndo = 0x1,

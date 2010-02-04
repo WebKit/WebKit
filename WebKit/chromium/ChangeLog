@@ -1,3 +1,15 @@
+2010-02-04  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] WebKit side of "Writing direction" context menu on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=34524
+
+        * public/WebContextMenuData.h:
+        (WebKit::WebContextMenuData::):
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2010-02-03  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
