@@ -106,3 +106,8 @@ svg/custom/stroke-width-click.svg
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# Fails on Mac Tiger
+# https://bugs.webkit.org/show_bug.cgi?id=34563
+websocket/tests/close-on-unload.html
+websocket/tests/close-on-navigate-new-location.html

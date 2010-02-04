@@ -1,5 +1,16 @@
 2010-02-03  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed fix.
+
+        websocket/tests/close-on-unload.html and
+        close-on-navigate-new-location.html will fail on mac tiger,
+        because python on the platform doesn't support set(), which is
+        used in websocket handler for these tests.
+
+        * platform/mac-tiger/Skipped: skip websocket/tests/close-on-unload.html and websocket/tests/close-on-navigate-new-location.html
+
+2010-02-03  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Alexey Proskuryakov.
 
         navigating a frame to new location closes websocket in the frame
