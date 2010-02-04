@@ -1,3 +1,55 @@
+2010-02-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Provide strongly typed C++ interface for inspector's injected script.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33616
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * inspector/InjectedScript.cpp: Added.
+        (WebCore::InjectedScript::InjectedScript):
+        (WebCore::InjectedScript::dispatch):
+        (WebCore::InjectedScript::callFrames):
+        (WebCore::InjectedScript::wrapAndStringifyForConsole):
+        (WebCore::InjectedScript::releaseWrapperObjectGroup):
+        * inspector/InjectedScript.h: Added.
+        (WebCore::InjectedScript::InjectedScript):
+        (WebCore::InjectedScript::~InjectedScript):
+        (WebCore::InjectedScript::hasNoValue):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptForId):
+        (WebCore::InjectedScriptHost::releaseWrapperObjectGroup):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::didPause):
+        (WebCore::InspectorController::injectedScriptForNodeId):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::frontendScriptState):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-02-04  Philippe Normand  <pnormand@igalia.com>
 
         Rubber stamped by Xan Lopez.

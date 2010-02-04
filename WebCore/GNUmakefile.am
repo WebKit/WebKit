@@ -1194,6 +1194,8 @@ webcore_sources += \
 	WebCore/icu/unicode/uversion.h \
 	WebCore/inspector/ConsoleMessage.cpp \
 	WebCore/inspector/ConsoleMessage.h \
+	WebCore/inspector/InjectedScript.cpp \
+	WebCore/inspector/InjectedScript.h \
 	WebCore/inspector/InjectedScriptHost.cpp \
 	WebCore/inspector/InjectedScriptHost.h \
 	WebCore/inspector/InspectorBackend.cpp \

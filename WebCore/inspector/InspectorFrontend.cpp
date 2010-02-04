@@ -34,6 +34,7 @@
 
 #include "ConsoleMessage.h"
 #include "Frame.h"
+#include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "Node.h"
@@ -105,15 +106,9 @@ void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const 
             function.appendArgument(frames[i]);
     } else if (!arguments.isEmpty()) {
         function.appendArgument(true);
-        ScriptObject injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptFor(scriptState);
+        InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptFor(scriptState);
         for (unsigned i = 0; i < arguments.size(); ++i) {
-            ScriptFunctionCall wrapFunction(scriptState, injectedScript, "wrapAndStringifyObject");
-            wrapFunction.appendArgument(arguments[i]);
-            wrapFunction.appendArgument("console");
-            ScriptValue r = wrapFunction.call();
-            if (r.hasNoValue())
-                return;
-            String s = r.toString(scriptState);
+            String s = injectedScript.wrapAndStringifyForConsole(arguments[i]);
             function.appendArgument(s);
         }
     } else {

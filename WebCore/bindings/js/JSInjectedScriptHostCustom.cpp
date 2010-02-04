@@ -43,6 +43,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
 #include "InspectorResource.h"
@@ -194,20 +195,21 @@ JSValue JSInjectedScriptHost::selectDOMStorage(ExecState*, const ArgList& args)
 }
 #endif
 
-ScriptObject InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
+InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
 {
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSObject* injectedScript = globalObject->injectedScript();
     if (injectedScript)
-        return ScriptObject(scriptState, injectedScript);
+        return InjectedScript(ScriptObject(scriptState, injectedScript));
 
     ASSERT(!m_injectedScriptSource.isEmpty());
     ScriptObject injectedScriptObject = createInjectedScript(m_injectedScriptSource, this, scriptState, m_nextInjectedScriptId);
     globalObject->setInjectedScript(injectedScriptObject.jsObject());
-    m_idToInjectedScript.set(m_nextInjectedScriptId, injectedScriptObject);
+    InjectedScript result(injectedScriptObject);
+    m_idToInjectedScript.set(m_nextInjectedScriptId, result);
     m_nextInjectedScriptId++;
-    return injectedScriptObject;
+    return result;
 }
 
 } // namespace WebCore
