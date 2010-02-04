@@ -2,6 +2,15 @@
 
         Reviewed by Brady Eidson.
 
+        Initialize the variable in the last checkin to false.  I didn't realize DRT relies on this being false.  
+        So ports that want visited link tracking need to set that flag.
+
+        * page/PageGroup.cpp:
+
+2010-02-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady Eidson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=34547
         static shouldTrackVisitedLinks is not initialized
 

@@ -51,7 +51,7 @@ static unsigned getUniqueIdentifier()
 
 // --------
 
-static bool shouldTrackVisitedLinks = true;
+static bool shouldTrackVisitedLinks = false;
 
 PageGroup::PageGroup(const String& name)
     : m_name(name)
