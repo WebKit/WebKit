@@ -1,3 +1,11 @@
+2010-02-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after addition of Clipboard::writePlainText method.
+
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::writePlainText):
+        * platform/wx/ClipboardWx.h:
+
 2010-02-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Oliver Hunt.

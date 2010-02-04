@@ -133,4 +133,9 @@ bool ClipboardWx::hasData()
     return false;
 }
 
+void ClipboardWx::writePlainText(const WebCore::String& text)
+{
+    Pasteboard::generalPasteboard()->writePlainText(text);
+}
+
 }

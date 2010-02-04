@@ -59,6 +59,8 @@ namespace WebCore {
         virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*);
         virtual void writeURL(const KURL&, const String&, Frame*);
         virtual void writeRange(Range*, Frame*);
+        virtual void writePlainText(const WebCore::String&);
+
 
         virtual bool hasData();
 
