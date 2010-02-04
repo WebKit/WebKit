@@ -1,3 +1,9 @@
+2010-02-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix for projects not defining WebKitLibrariesDir.
+
+        * win/tools/scripts/auto-version.sh:
+
 2010-02-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
