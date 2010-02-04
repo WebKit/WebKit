@@ -1473,6 +1473,7 @@ fast/events/clientXY-in-zoom-and-scroll.html
 fast/dom/elementFromPoint-relative-to-viewport.html
 
 # DnD failures https://bugs.webkit.org/show_bug.cgi?id=30576
+editing/pasteboard/drop-inputtext-acquires-style.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html

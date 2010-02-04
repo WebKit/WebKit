@@ -1,3 +1,11 @@
+2010-02-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        editing/pasteboard/drop-inputtext-acquires-style.html
+        introduced in r54368 skipped because of missing DnD support.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-02-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
