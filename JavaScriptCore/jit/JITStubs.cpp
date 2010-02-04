@@ -757,7 +757,7 @@ extern "C" {
 
 JITThunks::JITThunks(JSGlobalData* globalData)
 {
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
+    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_trampolineStructure);
 
 #if CPU(ARM_THUMB2)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),

@@ -317,10 +317,10 @@ namespace JSC {
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress);
         }
 
-        static void compileCTIMachineTrampolines(JSGlobalData* globalData, RefPtr<ExecutablePool>* executablePool, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
+        static void compileCTIMachineTrampolines(JSGlobalData* globalData, RefPtr<ExecutablePool>* executablePool, TrampolineStructure *trampolines)
         {
             JIT jit(globalData);
-            jit.privateCompileCTIMachineTrampolines(executablePool, globalData, ctiStringLengthTrampoline, ctiVirtualCallLink, ctiVirtualCall, ctiNativeCallThunk);
+            jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
         }
 
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
@@ -361,7 +361,7 @@ namespace JSC {
         void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame);
         void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, ReturnAddressPtr returnAddress);
 
-        void privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* data, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk);
+        void privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* data, TrampolineStructure *trampolines);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         void addSlowCase(Jump);

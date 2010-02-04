@@ -40,7 +40,7 @@ namespace JSC {
 
 #if USE(JSVALUE32_64)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
+void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (1) This function provides fast property access for string length
@@ -365,15 +365,15 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;
 
-    *ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
-    *ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
+    trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
+    trampolines->ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    *ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
+    trampolines->ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
 #else
     UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    *ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
+    trampolines->ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
 #else
     UNUSED_PARAM(ctiVirtualCallLink);
 #endif
@@ -1495,7 +1495,7 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 #define RECORD_JUMP_TARGET(targetOffset) \
    do { m_labels[m_bytecodeIndex + (targetOffset)].used(); } while (false)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
+void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (2) The second function provides fast property access for string length
@@ -1827,11 +1827,11 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;
 
-    *ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
-    *ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
-    *ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
+    trampolines->ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
+    trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
+    trampolines->ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    *ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
+    trampolines->ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
 #else
     UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
