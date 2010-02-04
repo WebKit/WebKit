@@ -422,9 +422,9 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
 
         switch (str[0]) {
         case '\0':
-            // the reference must be empty - the RFC says this is a
-            // reference to the same document
+            // The reference is empty, so this is a reference to the same document with any fragment identifier removed.
             *this = base;
+            removeFragmentIdentifier();
             break;
         case '#': {
             // must be fragment-only reference
