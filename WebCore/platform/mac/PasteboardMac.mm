@@ -197,6 +197,14 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
         [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
 }
+
+void Pasteboard::writePlainText(NSPasteboard* pasteboard, const String& text)
+{
+    NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
+    [pasteboard declareTypes:types owner:nil];
+    
+    [pasteboard setString:text forType:NSStringPboardType];
+}
     
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {

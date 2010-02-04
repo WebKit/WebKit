@@ -367,7 +367,12 @@ void ClipboardMac::writeRange(Range* range, Frame* frame)
     ASSERT(frame);
     Pasteboard::writeSelection(m_pasteboard.get(), range, frame->editor()->smartInsertDeleteEnabled() && frame->selectionGranularity() == WordGranularity, frame);
 }
-    
+
+void ClipboardMac::writePlainText(const String& text)
+{
+    Pasteboard::writePlainText(m_pasteboard.get(), text);
+}
+
 void ClipboardMac::writeURL(const KURL& url, const String& title, Frame* frame)
 {   
     ASSERT(frame);

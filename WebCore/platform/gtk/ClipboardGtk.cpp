@@ -176,6 +176,15 @@ void ClipboardGtk::writeRange(Range* range, Frame* frame)
     gtk_clipboard_set_text(htmlClipboard, createMarkup(range, 0, AnnotateForInterchange).utf8().data(), -1);
 }
 
+void ClipboardGtk::writePlainText(const String& text)
+{
+    GtkClipboard* textClipboard = gtk_clipboard_get(gdk_atom_intern_static_string("WebKitClipboardText"));
+    
+    gtk_clipboard_clear(textClipboard);
+    
+    gtk_clipboard_set_text(textClipboard, text.utf8().data(), -1);
+}
+    
 bool ClipboardGtk::hasData()
 {
     notImplemented();

@@ -911,6 +911,16 @@ Node *tabSpanNode(const Node *node)
     return isTabSpanTextNode(node) ? node->parentNode() : 0;
 }
 
+bool isNodeInTextFormControl(Node* node)
+{
+    if (!node)
+        return false;
+    Node* ancestor = node->shadowAncestorNode();
+    if (ancestor == node)
+        return false;
+    return ancestor->isElementNode() && static_cast<Element*>(ancestor)->isTextFormControl();
+}
+    
 Position positionBeforeTabSpan(const Position& pos)
 {
     Node *node = pos.node();

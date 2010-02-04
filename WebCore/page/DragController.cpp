@@ -697,10 +697,16 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
         }
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
-        RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
-        ASSERT(selectionRange);
-        if (!clipboard->hasData())
-            clipboard->writeRange(selectionRange.get(), src);
+        if (!clipboard->hasData()) {
+            if (isNodeInTextFormControl(src->selection()->start().node()))
+                clipboard->writePlainText(src->selectedText());
+            else {
+                RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
+                ASSERT(selectionRange);
+
+                clipboard->writeRange(selectionRange.get(), src);
+            }
+        }
         m_client->willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, clipboard);
         if (!dragImage) {
             dragImage = createDragImageForSelection(src);

@@ -776,6 +776,25 @@ void ClipboardWin::writeRange(Range* selectedRange, Frame* frame)
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
+void ClipboardWin::writePlainText(const String& text)
+{
+    if (!m_writableDataObject)
+        return;
+    
+    STGMEDIUM medium = {0};
+    medium.tymed = TYMED_HGLOBAL;
+    ExceptionCode ec = 0;
+    
+    String str = text;
+    replaceNewlinesWithWindowsStyleNewlines(str);
+    replaceNBSPWithSpace(str);
+    medium.hGlobal = createGlobalData(str);
+    if (medium.hGlobal && FAILED(m_writableDataObject->SetData(plainTextWFormat(), &medium, TRUE)))
+        ::GlobalFree(medium.hGlobal);        
+
+    medium.hGlobal = 0;
+}
+    
 bool ClipboardWin::hasData()
 {
     if (!m_dataObject)

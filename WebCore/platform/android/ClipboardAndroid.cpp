@@ -103,6 +103,10 @@ void ClipboardAndroid::writeRange(Range* selectedRange, Frame*)
     ASSERT(selectedRange);
 }
 
+void ClipboardAndroid::writePlainText(const String&)
+{
+}
+
 bool ClipboardAndroid::hasData()
 {
     return false;

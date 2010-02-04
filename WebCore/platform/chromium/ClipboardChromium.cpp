@@ -376,6 +376,19 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     m_dataObject->plainText = str;
 }
 
+void ClipboardChromium::writePlainText(const String& text)
+{
+    if (!m_dataObject)
+        return;
+
+    String str = text;
+#if OS(WINDOWS)
+    replaceNewlinesWithWindowsStyleNewlines(str);
+#endif
+    replaceNBSPWithSpace(str);
+    m_dataObject->plainText = str;
+}
+
 bool ClipboardChromium::hasData()
 {
     if (!m_dataObject)

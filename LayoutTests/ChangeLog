@@ -1,3 +1,14 @@
+2010-02-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION: Dragging plain text into a styled text region does not acquire the correct style info.
+        <rdar://problem/7595685>
+        https://bugs.webkit.org/show_bug.cgi?id=34609
+
+        * editing/pasteboard/drop-inputtext-acquires-style-expected.txt: Added.
+        * editing/pasteboard/drop-inputtext-acquires-style.html: Added.
+
 2010-02-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

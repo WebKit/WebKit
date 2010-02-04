@@ -93,7 +93,7 @@ bool isListElement(Node*);
 bool isNodeRendered(const Node*);
 bool isNodeVisiblyContainedWithin(Node*, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-    
+bool isNodeInTextFormControl(Node* node);
     
 // -------------------------------------------------------------------------
 // Position

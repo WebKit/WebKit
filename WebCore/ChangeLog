@@ -1,3 +1,54 @@
+2010-02-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION: Dragging plain text into a styled text region does not acquire the correct style info.
+        <rdar://problem/7595685>
+        https://bugs.webkit.org/show_bug.cgi?id=34609
+
+        Test: editing/pasteboard/drop-inputtext-acquires-style.html
+
+        The dragging code did not distinguish the case of dragging the content of an input control
+        as a special case. The markup placed in the pasteboard included the style information.
+        I've modified the Clipboard class interface adding a new method writePlainText to match the
+        behavior of the copy and cut commands and modified the drag code to detect the special case.
+        I've modified all the platform specific implementations of the Clipboard class.
+        
+        * dom/Clipboard.h: Added writePlainText pure virtual function.
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut): Renamed nodeIsTextFormControl to isNodeInTextFormControl.
+        (WebCore::Editor::copy): Renamed nodeIsTextFormControl to isNodeInTextFormControl.
+        * editing/htmlediting.cpp:
+        (WebCore::isNodeInTextFormControl): Added, after removing the implementation with the old name
+        in Editor.cpp
+        * editing/htmlediting.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * platform/Pasteboard.h:
+        * platform/android/ClipboardAndroid.cpp:
+        (WebCore::ClipboardAndroid::writePlainText): Added.
+        * platform/android/ClipboardAndroid.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::writePlainText): Added.
+        * platform/chromium/ClipboardChromium.h:
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::writePlainText): Added.
+        * platform/gtk/ClipboardGtk.h:
+        * platform/haiku/ClipboardHaiku.cpp:
+        (WebCore::ClipboardHaiku::writePlainText): Added.
+        * platform/haiku/ClipboardHaiku.h:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writePlainText): Added.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writePlainText): Added helper function.
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writePlainText): Added.
+        * platform/qt/ClipboardQt.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::writePlainText): Added.
+        * platform/win/ClipboardWin.h:
+
 2010-02-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Nate Chapin.
