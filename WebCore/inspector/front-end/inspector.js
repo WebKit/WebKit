@@ -1046,12 +1046,7 @@ WebInspector.updateResource = function(identifier, payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        var match = payload.documentURL.match(WebInspector.URLRegExp);
-        if (match) {
-            var protocol = match[1].toLowerCase();
-            if (protocol.indexOf("http") === 0 || protocol === "file")
-                this.addCookieDomain(protocol === "file" ? "" : match[2]);
-        }
+        this._addCookieDomain(resource.domain);
     }
 
     if (payload.didResponseChange) {
@@ -1131,7 +1126,7 @@ WebInspector.addDatabase = function(payload)
     this.panels.storage.addDatabase(database);
 }
 
-WebInspector.addCookieDomain = function(domain)
+WebInspector._addCookieDomain = function(domain)
 {
     // Eliminate duplicate domains from the list.
     if (domain in this.cookieDomains)
