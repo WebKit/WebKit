@@ -1,3 +1,21 @@
+2010-02-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Set first party URI in all SoupMessages. This allows libsoup to
+        implement a "no third party cookies" policy in case it wants
+        to. Also start a non-JSC-specific, gtk-specific GOwnPtr module and
+        use it for SoupURI.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookies):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+        (WebCore::startHttp):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::toSoupMessage):
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
 2010-02-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
