@@ -38,8 +38,7 @@
 
 #include <algorithm>
 
-using std::max;
-using std::min;
+using namespace std;
 
 namespace WebCore {
 
@@ -49,6 +48,12 @@ PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, 
     return adoptRef(new Scrollbar(client, orientation, size));
 }
 #endif
+
+int Scrollbar::maxOverlapBetweenPages()
+{
+    static int maxOverlapBetweenPages = ScrollbarTheme::nativeTheme()->maxOverlapBetweenPages();
+    return maxOverlapBetweenPages;
+}
 
 Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
                      ScrollbarTheme* theme)

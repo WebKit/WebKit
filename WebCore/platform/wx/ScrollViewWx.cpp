@@ -84,27 +84,27 @@ public:
         }
         else if (scrollType == wxEVT_SCROLLWIN_LINEDOWN) {
             if (horiz) 
-                pos.x += cScrollbarPixelsPerLineStep;
+                pos.x += Scrollbar::pixelsPerLineStep();
             else       
-                pos.y += cScrollbarPixelsPerLineStep;
+                pos.y += Scrollbar::pixelsPerLineStep();
         }
         else if (scrollType == wxEVT_SCROLLWIN_LINEUP) {
             if (horiz) 
-                pos.x -= cScrollbarPixelsPerLineStep;
+                pos.x -= Scrollbar::pixelsPerLineStep();
             else       
-                pos.y -= cScrollbarPixelsPerLineStep;
+                pos.y -= Scrollbar::pixelsPerLineStep();
         }
         else if (scrollType == wxEVT_SCROLLWIN_PAGEUP) {
             if (horiz) 
-                pos.x -= m_scrollView->visibleWidth() * cFractionToStepWhenPaging;
+                pos.x -= max<int>(m_scrollView->visibleWidth() * Scrollbar::minFractionToStepWhenPaging(), m_scrollView->visibleWidth() - Scrollbar::maxOverlapBetweenPages());
             else       
-                pos.y -= m_scrollView->visibleHeight() * cFractionToStepWhenPaging;
+                pos.y -= max<int>(m_scrollView->visibleHeight() * Scrollbar::minFractionToStepWhenPaging(), m_scrollView->visibleHeight() - Scrollbar::maxOverlapBetweenPages());
         }
         else if (scrollType == wxEVT_SCROLLWIN_PAGEDOWN) {
             if (horiz) 
-                pos.x += m_scrollView->visibleWidth() * cFractionToStepWhenPaging;
+                pos.x += max<int>(m_scrollView->visibleWidth() * Scrollbar::minFractionToStepWhenPaging(), m_scrollView->visibleWidth() - Scrollbar::maxOverlapBetweenPages());
             else       
-                pos.y += m_scrollView->visibleHeight() * cFractionToStepWhenPaging;
+                pos.y += max<int>(m_scrollView->visibleHeight() * Scrollbar::minFractionToStepWhenPaging(), m_scrollView->visibleHeight() - Scrollbar::maxOverlapBetweenPages());
         }
         else
             return e.Skip();

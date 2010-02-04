@@ -45,13 +45,13 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     BOOL continuous;
     wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
     if (continuous) {
-        m_wheelTicksX = m_deltaX / static_cast<float>(cScrollbarPixelsPerLineStep);
-        m_wheelTicksY = m_deltaY / static_cast<float>(cScrollbarPixelsPerLineStep);
+        m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
+        m_wheelTicksY = m_deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
     } else {
         m_wheelTicksX = m_deltaX;
         m_wheelTicksY = m_deltaY;
-        m_deltaX *= static_cast<float>(cScrollbarPixelsPerLineStep);
-        m_deltaY *= static_cast<float>(cScrollbarPixelsPerLineStep);
+        m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+        m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
     }
 }
 

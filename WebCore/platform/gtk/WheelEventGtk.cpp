@@ -69,8 +69,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_metaKey = event->state & GDK_META_MASK;
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
-    m_deltaX *= static_cast<float>(cScrollbarPixelsPerLineStep);
-    m_deltaY *= static_cast<float>(cScrollbarPixelsPerLineStep);
+    m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+    m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
 }
 
 }

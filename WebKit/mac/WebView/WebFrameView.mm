@@ -201,7 +201,7 @@ enum {
 - (float)_verticalPageScrollDistance
 {
     float height = [[self _contentView] bounds].size.height;
-    return max(height * cFractionToStepWhenPaging, 1.f);
+    return max<float>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages());
 }
 
 static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
@@ -342,7 +342,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [scrollView setHasVerticalScroller:NO];
     [scrollView setHasHorizontalScroller:NO];
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setLineScroll:cScrollbarPixelsPerLineStep];
+    [scrollView setLineScroll:Scrollbar::pixelsPerLineStep()];
     [self addSubview:scrollView];
 
     // Don't call our overridden version of setNextKeyView here; we need to make the standard NSView
@@ -613,7 +613,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (float)_horizontalPageScrollDistance
 {
     float width = [[self _contentView] bounds].size.width;
-    return max(width * cFractionToStepWhenPaging, 1.f);
+    return max<float>(width * Scrollbar::minFractionToStepWhenPaging(), width - Scrollbar::maxOverlapBetweenPages());
 }
 
 - (BOOL)_pageVertically:(BOOL)up

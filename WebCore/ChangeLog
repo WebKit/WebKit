@@ -1,3 +1,50 @@
+2010-02-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r53718): When scrolling a tall window by page, the overlap between pages is too big
+        https://bugs.webkit.org/show_bug.cgi?id=34371
+
+        Allow ScrollbarTheme to cap the overlap between pages, and set a cap of
+        40 in ScrollbarThemeMac.
+
+        * WebCore.base.exp: Export Scrollbar::maxOverlapBetweenPages().
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance): Use Scrollbar methods instead of
+        constants, and cap the scroll distance if needed.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Ditto.
+        (WebCore::ScrollView::wheelEvent): Ditto.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::maxOverlapBetweenPages): Added. Returns the
+        value from the native scrollbar theme.
+        * platform/Scrollbar.h: Replaced scroll amount constants with static methods.
+        (WebCore::Scrollbar::pixelsPerLineStep): Replaces cScrollbarPixelsPerLineStep.
+        (WebCore::Scrollbar::minFractionToStepWhenPaging): Replaces cFractionToStepWhenPaging.
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::maxOverlapBetweenPages): A base implementation
+        that returns the largest int.
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use Scrollbar methods instead of
+        constants.
+        * platform/haiku/PlatformWheelEventHaiku.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use Scrollbar methods instead of
+        constants.
+        * platform/mac/ScrollbarThemeMac.h:
+        (WebCore::ScrollbarThemeMac::maxOverlapBetweenPages): An override
+        that returns 40.
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use
+        Scrollbar::pixelsPerLineStep() instead of cScrollbarPixelsPerLineStep.
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Use Scrollbar methods instead of
+        constants.
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents): Use Scrollbar
+        methods instead of constants, and cap the scroll distance if needed.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Ditto.
+
 2010-02-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.

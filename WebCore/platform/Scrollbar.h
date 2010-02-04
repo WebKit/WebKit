@@ -40,19 +40,17 @@ class ScrollbarClient;
 class ScrollbarTheme;
 class PlatformMouseEvent;
 
-const int cScrollbarPixelsPerLineStep = 40;
-const float cFractionToStepWhenPaging = 0.875f;
-
 class Scrollbar : public Widget {
-protected:
-    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
-
 public:
     virtual ~Scrollbar();
 
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
     static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size);
-    
+
+    static int pixelsPerLineStep() { return 40; }
+    static float minFractionToStepWhenPaging() { return 0.875f; }
+    static int maxOverlapBetweenPages();
+
     void setClient(ScrollbarClient* client) { m_client = client; }
     ScrollbarClient* client() const { return m_client; }
 
@@ -130,6 +128,8 @@ private:
     virtual bool isScrollbar() const { return true; }
 
 protected:
+    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
+
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
 

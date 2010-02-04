@@ -54,8 +54,8 @@ PlatformWheelEvent::PlatformWheelEvent(BMessage* message)
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;
 
-    m_deltaX *= -cScrollbarPixelsPerLineStep;
-    m_deltaY *= -cScrollbarPixelsPerLineStep;
+    m_deltaX *= -Scrollbar::pixelsPerLineStep();
+    m_deltaY *= -Scrollbar::pixelsPerLineStep();
 }
 
 } // namespace WebCore

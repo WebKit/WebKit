@@ -1,3 +1,4 @@
+
 .objc_class_name_DOMAbstractView
 .objc_class_name_DOMAttr
 .objc_class_name_DOMCDATASection
@@ -760,6 +761,7 @@ __ZN7WebCore9PageGroup26setShouldTrackVisitedLinksEb
 __ZN7WebCore9PageGroup29removeUserStyleSheetFromWorldEPNS_15DOMWrapperWorldERKNS_4KURLE
 __ZN7WebCore9PageGroup30removeUserStyleSheetsFromWorldEPNS_15DOMWrapperWorldE
 __ZN7WebCore9PageGroup9pageGroupERKNS_6StringE
+__ZN7WebCore9Scrollbar22maxOverlapBetweenPagesEv
 __ZN7WebCore9TimerBase4stopEv
 __ZN7WebCore9TimerBase5startEdd
 __ZN7WebCore9TimerBaseC2Ev
@@ -1057,4 +1059,3 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
-
