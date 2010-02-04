@@ -1,3 +1,23 @@
+2010-02-03  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Defer formatting of times displayed on media controls to the current theme.
+        https://bugs.webkit.org/show_bug.cgi?id=34405
+
+        No new tests needed. Refactoring Only.
+
+        * rendering/MediaControlElements.cpp: Removed formatTime()
+        (WebCore::MediaControlTimeDisplayElement::setCurrentValue): No longer sets inner text
+        * rendering/MediaControlElements.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateTimeDisplay): Asks the theme to format the time display elements
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::formatMediaControlsTime): new virtual method
+        (WebCore::RenderTheme::formatMediaControlsCurrentTime): new virtual method
+        (WebCore::RenderTheme::formatMediaControlsRemainingTime): new virtual method
+        * rendering/RenderTheme.h:
+
 2010-02-03  Steve Falkenburg  <sfalken@apple.com>
 
         Windows Debug_All build fix.

@@ -436,6 +436,35 @@ bool RenderTheme::shouldRenderMediaControlPart(ControlPart part, Element* e)
         return true;
     }
 }
+
+String RenderTheme::formatMediaControlsTime(float time) const
+{
+    if (!isfinite(time))
+        time = 0;
+    int seconds = (int)fabsf(time);
+    int hours = seconds / (60 * 60);
+    int minutes = (seconds / 60) % 60;
+    seconds %= 60;
+    if (hours) {
+        if (hours > 9)
+            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+
+        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+    }
+
+    return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
+}
+
+String RenderTheme::formatMediaControlsCurrentTime(float currentTime, float /*duration*/) const
+{
+    return formatMediaControlsTime(currentTime);
+}
+
+String RenderTheme::formatMediaControlsRemainingTime(float currentTime, float duration) const
+{
+    return formatMediaControlsTime(currentTime - duration);
+}
+
 #endif
 
 Color RenderTheme::activeSelectionBackgroundColor() const

@@ -268,8 +268,6 @@ public:
     float currentValue() const { return m_currentValue; }
 
 private:
-    String formatTime(float time);
-
     float m_currentValue;
     bool m_isVisible;
 };

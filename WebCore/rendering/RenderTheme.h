@@ -175,6 +175,9 @@ public:
     virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
     virtual double mediaControlsFadeInDuration() { return 0.1; }
     virtual double mediaControlsFadeOutDuration() { return 0.3; }
+    virtual String formatMediaControlsTime(float time) const;
+    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+    virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
 #endif
 
 protected:

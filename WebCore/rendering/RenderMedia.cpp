@@ -412,10 +412,15 @@ void RenderMedia::updateTimeDisplay()
 {
     if (!m_currentTimeDisplay || !m_currentTimeDisplay->renderer() || m_currentTimeDisplay->renderer()->style()->display() == NONE || style()->visibility() != VISIBLE)
         return;
+
     float now = mediaElement()->currentTime();
     float duration = mediaElement()->duration();
 
+    // Allow the theme to format the time
+    ExceptionCode ec;
+    m_currentTimeDisplay->setInnerText(theme()->formatMediaControlsCurrentTime(now, duration), ec);
     m_currentTimeDisplay->setCurrentValue(now);
+    m_timeRemainingDisplay->setInnerText(theme()->formatMediaControlsRemainingTime(now, duration), ec);
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
