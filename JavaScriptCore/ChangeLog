@@ -1,3 +1,47 @@
+2010-02-04  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Increase test coverage for the QScriptValue.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34533
+
+        * qt/tests/qscriptvalue/qscriptvalue.pro:
+        * qt/tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::tst_QScriptValue):
+        (tst_QScriptValue::~tst_QScriptValue):
+        (tst_QScriptValue::dataHelper):
+        (tst_QScriptValue::newRow):
+        (tst_QScriptValue::testHelper):
+        (tst_QScriptValue::ctor):
+        * qt/tests/qscriptvalue/tst_qscriptvalue.h: Added.
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated.cpp: Added.
+        (tst_QScriptValue::initScriptValues):
+        (tst_QScriptValue::isValid_initData):
+        (tst_QScriptValue::isValid_makeData):
+        (tst_QScriptValue::isValid_test):
+        (tst_QScriptValue::isBool_initData):
+        (tst_QScriptValue::isBool_makeData):
+        (tst_QScriptValue::isBool_test):
+        (tst_QScriptValue::isBoolean_initData):
+        (tst_QScriptValue::isBoolean_makeData):
+        (tst_QScriptValue::isBoolean_test):
+        (tst_QScriptValue::isFunction_initData):
+        (tst_QScriptValue::isFunction_makeData):
+        (tst_QScriptValue::isFunction_test):
+        (tst_QScriptValue::isNull_initData):
+        (tst_QScriptValue::isNull_makeData):
+        (tst_QScriptValue::isNull_test):
+        (tst_QScriptValue::isString_initData):
+        (tst_QScriptValue::isString_makeData):
+        (tst_QScriptValue::isString_test):
+        (tst_QScriptValue::isUndefined_initData):
+        (tst_QScriptValue::isUndefined_makeData):
+        (tst_QScriptValue::isUndefined_test):
+        (tst_QScriptValue::isObject_initData):
+        (tst_QScriptValue::isObject_makeData):
+        (tst_QScriptValue::isObject_test):
+
 2010-02-03  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

@@ -17,35 +17,43 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "qscriptengine.h"
-#include "qscriptvalue.h"
-#include <QtTest/qtest.h>
+#include "tst_qscriptvalue.h"
+#include <QtCore/qnumeric.h>
 
-Q_DECLARE_METATYPE(QScriptValue*);
-Q_DECLARE_METATYPE(QScriptValue);
+tst_QScriptValue::tst_QScriptValue()
+    : engine(0)
+{
+}
 
-class tst_QScriptValue : public QObject {
-    Q_OBJECT
+tst_QScriptValue::~tst_QScriptValue()
+{
+    delete engine;
+}
 
-public:
-    tst_QScriptValue() {}
-    virtual ~tst_QScriptValue() {}
+void tst_QScriptValue::dataHelper(InitDataFunction init, DefineDataFunction define)
+{
+    QTest::addColumn<QString>("__expression__");
+    (this->*init)();
+    QHash<QString, QScriptValue>::const_iterator it;
+    for (it = m_values.constBegin(); it != m_values.constEnd(); ++it) {
+        m_currentExpression = it.key();
+        (this->*define)(it.key().toLatin1());
+    }
+    m_currentExpression = QString();
+}
 
-private slots:
-    void toString_data();
-    void toString();
-    void copyConstructor_data();
-    void copyConstructor();
-    void assignOperator_data();
-    void assignOperator();
-    void dataSharing();
-    void constructors_data();
-    void constructors();
-    void call();
+QTestData& tst_QScriptValue::newRow(const char* tag)
+{
+    return QTest::newRow(tag) << m_currentExpression;
+}
 
-    // copied from Qt's QtScript.
-    void ctor();
-};
+void tst_QScriptValue::testHelper(TestFunction fun)
+{
+    QFETCH(QString, __expression__);
+    QScriptValue value = m_values.value(__expression__);
+    (this->*fun)(__expression__.toLatin1(), value);
+}
+
 
 void tst_QScriptValue::ctor()
 {
@@ -53,7 +61,7 @@ void tst_QScriptValue::ctor()
     {
         QScriptValue v;
         QCOMPARE(v.isValid(), false);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(&eng, QScriptValue::UndefinedValue);
@@ -168,14 +176,14 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isValid(), true);
         QCOMPARE(v.isUndefined(), true);
         QCOMPARE(v.isObject(), false);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(QScriptValue::NullValue);
         QCOMPARE(v.isValid(), true);
         QCOMPARE(v.isNull(), true);
         QCOMPARE(v.isObject(), false);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(false);
@@ -184,7 +192,7 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isBool(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toBoolean(), false);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(int(1));
@@ -192,7 +200,7 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isNumber(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toNumber(), 1.0);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(uint(1));
@@ -200,7 +208,7 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isNumber(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toNumber(), 1.0);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(1.0);
@@ -208,7 +216,7 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isNumber(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toNumber(), 1.0);
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v("ciao");
@@ -216,7 +224,7 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isString(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toString(), QLatin1String("ciao"));
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     {
         QScriptValue v(QString("ciao"));
@@ -224,19 +232,19 @@ void tst_QScriptValue::ctor()
         QCOMPARE(v.isString(), true);
         QCOMPARE(v.isObject(), false);
         QCOMPARE(v.toString(), QLatin1String("ciao"));
-        QCOMPARE(v.engine(), (QScriptEngine *)0);
+        QCOMPARE(v.engine(), (QScriptEngine*)0);
     }
     // copy constructor, operator=
     {
         QScriptValue v(1.0);
         QScriptValue v2(v);
         QCOMPARE(v2.strictlyEquals(v), true);
-        QCOMPARE(v2.engine(), (QScriptEngine *)0);
+        QCOMPARE(v2.engine(), (QScriptEngine*)0);
 
         QScriptValue v3(v);
         QCOMPARE(v3.strictlyEquals(v), true);
         QCOMPARE(v3.strictlyEquals(v2), true);
-        QCOMPARE(v3.engine(), (QScriptEngine *)0);
+        QCOMPARE(v3.engine(), (QScriptEngine*)0);
 
         QScriptValue v4(2.0);
         QCOMPARE(v4.strictlyEquals(v), false);
@@ -423,5 +431,5 @@ void tst_QScriptValue::call()
     QVERIFY(incr.call().isValid()); // Exception.
 }
 
+
 QTEST_MAIN(tst_QScriptValue)
-#include "tst_qscriptvalue.moc"
