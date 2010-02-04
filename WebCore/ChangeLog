@@ -1,3 +1,14 @@
+2010-02-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Crashes when an invalid hostname is pre-fetched
+        https://bugs.webkit.org/show_bug.cgi?id=34602
+
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::prefetchDNS): NULL-check the SoupURI that is created
+        from the hostname; that will happen for invalid hostnames.
+
 2010-02-04  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Xan Lopez.

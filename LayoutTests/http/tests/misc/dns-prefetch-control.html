@@ -24,6 +24,12 @@
         contents += "<a href='" + scheme + "//" + host + "'>" + host + "</a>";
         emitFrameWithContents(contents);
     }
+    function emitFrameForHost(host) 
+    {
+        var contents = "<meta http-equiv='x-dns-prefetch-control' content='on'>";
+        contents += "<a href='http:" + "//" + host + "'>" + host + "</a>";
+        emitFrameWithContents(contents);
+    }
     function emitFrameForManualDNSPrefetch(dnsPrefetchControl) 
     {
         var host = getRandomHost();
@@ -46,6 +52,7 @@ a manual test of DNS prefetch using a networking monitoring tool.</p>
   <script>emitFrameForScheme("http:")</script>
   <script>emitFrameForScheme("https:")</script>
   <script>emitFrameForScheme("ftp:")</script>
+  <script>emitFrameForHost("%")</script>
   <iframe src="resources/dns-prefetch-control.php"></iframe>
   <iframe src="resources/dns-prefetch-control.php?value=on"></iframe>
   <iframe src="https://127.0.0.1:8443/misc/resources/dns-prefetch-control.php?value=on"></iframe>

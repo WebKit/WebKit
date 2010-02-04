@@ -1,3 +1,13 @@
+2010-02-04  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Crashes when an invalid hostname is pre-fetched
+        https://bugs.webkit.org/show_bug.cgi?id=34602
+
+        * http/tests/misc/dns-prefetch-control-expected.txt:
+        * http/tests/misc/dns-prefetch-control.html: Add broken hostname test case.
+
 2010-02-04  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Dan Bernstein.

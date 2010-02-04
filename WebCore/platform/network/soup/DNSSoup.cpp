@@ -28,18 +28,21 @@
 #include "DNS.h"
 
 #include "CString.h"
+#include "GOwnPtrGtk.h"
 #include "ResourceHandle.h"
 
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    #ifdef HAVE_LIBSOUP_2_29_3
+#ifdef HAVE_LIBSOUP_2_29_3
     String uri = "http://"+hostname;
-    SoupURI* soupUri = soup_uri_new(uri.utf8().data());
-    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupUri);
-    soup_uri_free(soupUri);
-    #endif
+    GOwnPtr<SoupURI> soupURI(soup_uri_new(uri.utf8().data()));
+    // We may get invalid hostnames, so NULL-check here.
+    if (!soupURI)
+        return;
+    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());
+#endif
 }
 
 }
