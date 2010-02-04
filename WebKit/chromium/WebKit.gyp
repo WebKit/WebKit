@@ -453,14 +453,6 @@
                 'tests/KURLTest.cpp',
                 'tests/RunAllTests.cpp',
             ],
-            'conditions': [
-                ['OS=="win"', {
-                    'sources': [
-                        'tests/TransparencyWinTest.cpp',
-                        'tests/UniscribeHelperTest.cpp',
-                    ],
-                }],
-            ],
         },
     ], # targets
 }

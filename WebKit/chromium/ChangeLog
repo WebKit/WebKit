@@ -1,3 +1,11 @@
+2010-02-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Revert 54333 which broke Chromium build.
+
+        * WebKit.gyp:
+        * tests/TransparencyWinTest.cpp: Removed.
+        * tests/UniscribeHelperTest.cpp: Removed.
+
 2010-02-04  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.
