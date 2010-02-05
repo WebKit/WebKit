@@ -1,3 +1,13 @@
+2010-02-05  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        send() should return false, after frame that opened a WebSokcet is detached
+        https://bugs.webkit.org/show_bug.cgi?id=34630
+
+        * websocket/tests/send-after-close-on-unload-expected.txt: Added.
+        * websocket/tests/send-after-close-on-unload.html: Added.
+
 2010-02-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
