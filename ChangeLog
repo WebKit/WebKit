@@ -1,3 +1,18 @@
+2010-02-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add .gitattributes file to tell git about files with Windows linefeeds
+        https://bugs.webkit.org/show_bug.cgi?id=34645
+
+        On Windows git defaults to "true" for core.autocrlf, meaning all text
+        files in the working directory are converted from CRLF to LF on checkin
+        time. Some files present in the repository have been checked in with
+        CRLF linefeeds and git should not try to convert them. The added
+        .gitattributes file tells git to not do any CRLF conversion.
+
+        * .gitattributes: Added.
+
 2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
