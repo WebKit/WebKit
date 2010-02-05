@@ -225,7 +225,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --exit-after-n-failures N       Exit after the first N failures instead of running all tests
   -h|--help                       Show this help message
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
-  --[no-]wait-for-httpd                Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
+  --[no-]wait-for-httpd           Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
   --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
