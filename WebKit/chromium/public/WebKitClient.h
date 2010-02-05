@@ -59,7 +59,6 @@ class WebStorageNamespace;
 class WebThemeEngine;
 class WebURLLoader;
 struct WebCookie;
-struct WebPluginInfo;
 template <typename T> class WebVector;
 
 class WebKitClient {
