@@ -1,3 +1,11 @@
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix the ability to #include <WebKit/DOMFile.h>.
+
+        * MigrateHeaders.make: Mark DOMBlob.h as a public header since the already-public DOMFile.h depends on it.
+
 2010-02-04  John Sullivan  <sullivan@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=34611

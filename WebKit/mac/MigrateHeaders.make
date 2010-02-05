@@ -36,7 +36,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOM.h \
     $(PUBLIC_HEADERS_DIR)/DOMAbstractView.h \
     $(PUBLIC_HEADERS_DIR)/DOMAttr.h \
-    $(PRIVATE_HEADERS_DIR)/DOMBlob.h \
+    $(PUBLIC_HEADERS_DIR)/DOMBlob.h \
     $(INTERNAL_HEADERS_DIR)/DOMBlobInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMCDATASection.h \
     $(PUBLIC_HEADERS_DIR)/DOMCSS.h \
