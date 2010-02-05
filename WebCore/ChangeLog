@@ -1,3 +1,14 @@
+2010-02-04  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, build fix.
+
+        Fix for Chromium/Mac after palindromic scrollbar change (54345).
+
+        Covered by many layout tests.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        (WebCore::ScrollbarThemeChromiumMac::maxOverlapBetweenPages):
+
 2010-02-04  Clemmitt Sigler  <cmsigler@gmail.com>
 
         Reviewed by David Levin.
