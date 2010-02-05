@@ -1491,26 +1491,20 @@ sub buildQMakeProject($@)
 
     my $dsMakefile = "Makefile.DerivedSources";
 
-    print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/JavaScriptCore\n\n";
-    if ($make eq "nmake") {
-        $result = system "pushd JavaScriptCore && $make $makeargs -f $dsMakefile generated_files && popd";
-    } else {
-        $result = system "$make $makeargs -C JavaScriptCore -f $dsMakefile generated_files";
+    # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
+    for my $subdir ("JavaScriptCore", "WebCore", "WebKit/qt/Api") {
+        print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/$subdir\n\n";
+        if ($make eq "nmake") {
+            my $subdirWindows = $subdir;
+            $subdirWindows =~ s:/:\\:g;
+            $result = system "pushd $subdirWindows && $make $makeargs -f $dsMakefile generated_files && popd";
+        } else {
+            $result = system "$make $makeargs -C $subdir -f $dsMakefile generated_files";
+        }
+        if ($result ne 0) {
+            die "Failed to generate ${subdir}'s derived sources!\n";
+        }
     }
-    if ($result ne 0) {
-        die "Failed to generate JavaScriptCore's derived sources!\n";
-    }
-
-    print "Calling '$make $makeargs -f $dsMakefile generated_files' in " . $dir . "/WebCore\n\n";
-    if ($make eq "nmake") {
-        $result = system "pushd WebCore && $make $makeargs -f $dsMakefile generated_files && popd";
-    } else {
-        $result = system "$make $makeargs -C WebCore -f $dsMakefile generated_files";
-    }
-    if ($result ne 0) {
-        die "Failed to generate WebCore's derived sources!\n";
-    }
-
 
     push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
     push @buildArgs, sourceDir() . "/WebKit.pro";

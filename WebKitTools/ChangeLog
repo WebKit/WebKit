@@ -1,3 +1,16 @@
+2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Generate convenience headers (QWebView, etc) using qmake
+
+        In Qt this is done using syncqt, but we use a pro-file instead
+        that generates makefile-rules for each of the extra headers.
+
+        These extra headers are installed alongside the normal headers.
+
+        * Scripts/webkitdirs.pm: Run qmake and make on new API-DerivedSources
+
 2010-02-05  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed typo fix.

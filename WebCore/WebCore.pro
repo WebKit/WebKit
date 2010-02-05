@@ -2662,24 +2662,24 @@ SOURCES += \
 }
 }
 
-include($$PWD/../WebKit/qt/Api/headers.pri)
-HEADERS += $$WEBKIT_API_HEADERS
 CONFIG(standalone_package) {
-
-    !symbian {
-        target.path = $$[QT_INSTALL_LIBS]
-        INSTALLS += target
-    }
-
-    include($$PWD/../include/QtWebKit/headers.pri)
-    headers.files = $$SYNCQT.HEADER_FILES $$SYNCQT.HEADER_CLASSES
-    headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-    INSTALLS += headers
-
+    include($$PWD/../include/headers.pri)
 } else {
+    include($$OUTPUT_DIR/include/headers.pri)
+}
+
+HEADERS += $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
+
+!symbian {
     target.path = $$[QT_INSTALL_LIBS]
-    headers.files = $$WEBKIT_API_HEADERS
-    headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+    INSTALLS += target
+}
+
+headers.files = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS $$OUTPUT_DIR/include/headers.pri
+headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+INSTALLS += headers
+
+!CONFIG(standalone_package) {
 
     VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
 
@@ -2691,9 +2691,6 @@ CONFIG(standalone_package) {
         dlltarget.CONFIG = no_path
         INSTALLS += dlltarget
     }
-
-
-    INSTALLS += target headers
 
     unix {
         CONFIG += create_pc create_prl
@@ -2718,7 +2715,7 @@ CONFIG(standalone_package) {
 
             CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
             FRAMEWORK_HEADERS.version = Versions
-            FRAMEWORK_HEADERS.files = $$WEBKIT_API_HEADERS
+            FRAMEWORK_HEADERS.files = $${headers.files}
             FRAMEWORK_HEADERS.path = Headers
             QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
         }

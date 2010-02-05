@@ -3,7 +3,8 @@ CONFIG += ordered
 
 SUBDIRS += \
         JavaScriptCore/DerivedSources.pro \
-        WebCore/DerivedSources.pro
+        WebCore/DerivedSources.pro \
+        WebKit/qt/Api/DerivedSources.pro
 
 for(subpro, SUBDIRS) {
     subdir = $${dirname(subpro)}
