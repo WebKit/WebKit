@@ -1,3 +1,13 @@
+2010-02-05  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Enable JAVASCRIPT_DEBUGGER in chromium port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34638
+
+        * features.gypi:
+
 2010-02-04  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Fisher.

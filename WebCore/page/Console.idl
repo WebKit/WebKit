@@ -50,7 +50,7 @@ module window {
         [DontEnum] DOMString lastWMLErrorMessage();
 #endif
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER || defined(V8_BINDING) && V8_BINDING
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
 #endif

@@ -38,9 +38,7 @@
 
 namespace WebCore {
 
-// FIXME: "USE(V8)" and "USE(JSC)" below are temporary measures until JAVASCRIPT_DEBUGGER is
-// enabled when building Chromium.
-#if ENABLE(JAVASCRIPT_DEBUGGER) || USE(V8)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
@@ -99,7 +97,7 @@ public:
 #if ENABLE(WML)
     String lastWMLErrorMessage() const;
 #endif
-#if ENABLE(JAVASCRIPT_DEBUGGER) || USE(V8)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     void profile(const String&, ScriptCallStack*);
     void profileEnd(const String&, ScriptCallStack*);
 #endif
@@ -122,7 +120,7 @@ private:
     Console(Frame*);
 
     Frame* m_frame;
-#if ENABLE(JAVASCRIPT_DEBUGGER) || USE(V8)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     ProfilesArray m_profiles;
 #endif
 };

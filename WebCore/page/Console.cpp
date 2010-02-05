@@ -312,9 +312,7 @@ String Console::lastWMLErrorMessage() const
 }
 #endif
 
-// FIXME: "USE(V8)" and "USE(JSC)" below are temporary measures until JAVASCRIPT_DEBUGGER is
-// enabled when building Chromium.
-#if ENABLE(JAVASCRIPT_DEBUGGER) || USE(V8)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 void Console::profile(const String& title, ScriptCallStack* callStack)
 {
