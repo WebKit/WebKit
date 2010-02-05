@@ -157,7 +157,7 @@ void WKCACFLayerRenderer::setScrollFrame(const IntRect& scrollFrame)
     m_scrollLayer->setPosition(CGPointMake(0, frameBounds.size.height));
 
     if (m_rootChildLayer)
-        m_rootChildLayer->setPosition(CGPointMake(m_scrollFrame.x(), m_scrollFrame.height() + m_scrollFrame.y()));
+        m_rootChildLayer->setPosition(CGPointMake(-m_scrollFrame.x(), m_scrollFrame.height() + m_scrollFrame.y()));
 }
 
 void WKCACFLayerRenderer::setRootContents(CGImageRef image)
@@ -173,6 +173,7 @@ void WKCACFLayerRenderer::setRootChildLayer(WebCore::PlatformLayer* layer)
         return;
 
     m_scrollLayer->removeAllSublayers();
+    m_rootChildLayer = layer;
     if (layer) {
         m_scrollLayer->addSublayer(layer);
 
@@ -180,9 +181,6 @@ void WKCACFLayerRenderer::setRootChildLayer(WebCore::PlatformLayer* layer)
         layer->setAnchorPoint(CGPointMake(0, 1));
         setScrollFrame(m_scrollFrame);
     }
-
-    m_rootChildLayer = layer;
-
 }
    
 void WKCACFLayerRenderer::setNeedsDisplay()
