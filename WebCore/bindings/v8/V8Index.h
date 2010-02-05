@@ -39,8 +39,6 @@ static const int v8DOMWrapperTypeIndex = 0;
 static const int v8DOMWrapperObjectIndex = 1;
 static const int v8DefaultWrapperInternalFieldCount = 2;
 
-typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
-
 #if ENABLE(DATAGRID)
 #define DATAGRID_HTMLELEMENT_TYPES(V)                                   \
     V(HTMLDATAGRIDCELLELEMENT, HTMLDataGridCellElement)                 \
@@ -664,12 +662,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
             return static_cast<V8WrapperType>(v);
         }
 
-        // FIXME: Convert to getFactory after all the bindings are in one place.
-        static FunctionTemplateFactory GetFactory(V8WrapperType type);
-
-        // Returns a field to be used as cache for the template for the given type
-        // FIXME: Convert to getCache after all the bindings are in one place.
-        static v8::Persistent<v8::FunctionTemplate>* GetCache(V8WrapperType type);
+        static v8::Persistent<v8::FunctionTemplate> getTemplate(V8WrapperType type);
     };
 
 }

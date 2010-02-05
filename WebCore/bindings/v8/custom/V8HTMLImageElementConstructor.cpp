@@ -70,7 +70,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
             image->setHeight(toInt32(args[1]));
     }
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), image.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::IMAGE), image.get());
     image->ref();
     V8DOMWrapper::setJSWrapperForDOMNode(image.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
@@ -88,7 +88,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8HTMLImageElement::internalFieldCount);
     result->SetClassName(v8::String::New("HTMLImageElement"));
-    result->Inherit(V8DOMWrapper::getTemplate(V8ClassIndex::HTMLIMAGEELEMENT));
+    result->Inherit(V8HTMLImageElement::GetTemplate());
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
     return cachedTemplate;

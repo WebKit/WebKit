@@ -356,7 +356,7 @@ v8::Local<v8::Object> WorkerContextExecutionProxy::toV8(V8ClassIndex::V8WrapperT
     if (proxy)
         function = V8DOMWrapper::getConstructor(descriptorType, proxy->workerContext());
     else
-        function = V8DOMWrapper::getTemplate(descriptorType)->GetFunction();
+        function = V8ClassIndex::getTemplate(descriptorType)->GetFunction();
 
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty())

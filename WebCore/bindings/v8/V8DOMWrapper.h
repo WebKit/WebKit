@@ -119,7 +119,7 @@ namespace WebCore {
 
         static v8::Handle<v8::Object> lookupDOMWrapper(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Object> object)
         {
-            return object.IsEmpty() ? object : object->FindInstanceInPrototypeChain(getTemplate(type));
+            return object.IsEmpty() ? object : object->FindInstanceInPrototypeChain(V8ClassIndex::getTemplate(type));
         }
 
         static V8ClassIndex::V8WrapperType domWrapperType(v8::Handle<v8::Object>);
@@ -169,7 +169,6 @@ namespace WebCore {
         // Wrap JS node filter in C++.
         static PassRefPtr<NodeFilter> wrapNativeNodeFilter(v8::Handle<v8::Value>);
 
-        static v8::Persistent<v8::FunctionTemplate> getTemplate(V8ClassIndex::V8WrapperType);
         static v8::Local<v8::Function> getConstructorForContext(V8ClassIndex::V8WrapperType, v8::Handle<v8::Context>);
         static v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType, v8::Handle<v8::Value> objectPrototype);
         static v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType, DOMWindow*);

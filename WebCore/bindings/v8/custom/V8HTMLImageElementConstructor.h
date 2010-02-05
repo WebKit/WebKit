@@ -35,12 +35,10 @@
 
 namespace WebCore {
 
-    class V8HTMLImageElementConstructor {
-    private:
-        static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-
-        friend class V8ClassIndex;
-    };
+class V8HTMLImageElementConstructor {
+public:
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate();
+};
 
 }
 

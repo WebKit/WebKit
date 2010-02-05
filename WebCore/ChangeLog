@@ -1,3 +1,39 @@
+2010-02-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Clean up code for getting a v8::FunctionTemplate.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34606
+
+        * bindings/scripts/CodeGeneratorV8.pm: Making GetTemplate() public
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::configureTemplate):
+        * bindings/v8/V8DOMWrapper.cpp: Remove getTemplate(), use V8ClassIndex::getTemplate() instead.
+        (WebCore::V8DOMWrapper::getConstructor):
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::lookupDOMWrapper):
+        * bindings/v8/V8Index.cpp: Remove duplicate caching of FunctionTemplates.
+        (WebCore::V8ClassIndex::getTemplate):
+        * bindings/v8/V8Index.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::toV8):
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::v8HTMLAudioElementConstructorCallback):
+        (WebCore::V8HTMLAudioElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.h:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        (WebCore::V8HTMLImageElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.h:
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::v8HTMLOptionElementConstructorCallback):
+        (WebCore::V8HTMLOptionElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.h:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::createInjectedScriptHostV8Wrapper):
+
 2010-02-05  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Ariya Hidayat.

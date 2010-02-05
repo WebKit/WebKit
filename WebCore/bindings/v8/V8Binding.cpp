@@ -450,7 +450,7 @@ v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>d
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     instance->SetInternalFieldCount(fieldCount);
     if (parentClassIndex)
-        desc->Inherit(V8DOMWrapper::getTemplate(parentClassIndex));
+        desc->Inherit(V8ClassIndex::getTemplate(parentClassIndex));
     if (attributeCount)
         batchConfigureAttributes(instance, desc->PrototypeTemplate(),
                                  attributes, attributeCount);

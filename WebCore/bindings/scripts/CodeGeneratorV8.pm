@@ -337,10 +337,7 @@ END
 
     push(@headerContent, <<END);
 
- private:
   static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-
-  friend class V8ClassIndex;
 };
 
   v8::Handle<v8::Value> toV8(${nativeType}*${forceNewObjectParameter});

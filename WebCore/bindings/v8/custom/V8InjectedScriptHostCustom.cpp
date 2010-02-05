@@ -60,7 +60,7 @@ static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parame
 static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHost* host)
 {
     V8ClassIndex::V8WrapperType descriptorType = V8ClassIndex::INJECTEDSCRIPTHOST;
-    v8::Local<v8::Function> function = V8DOMWrapper::getTemplate(descriptorType)->GetFunction();
+    v8::Local<v8::Function> function = V8InjectedScriptHost::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.
         return v8::Local<v8::Object>();

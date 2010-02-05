@@ -36,10 +36,8 @@
 namespace WebCore {
 
 class V8HTMLAudioElementConstructor {
-private:
+public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-
-    friend class V8ClassIndex;
 };
 
 }

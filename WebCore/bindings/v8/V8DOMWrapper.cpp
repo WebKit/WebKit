@@ -164,20 +164,6 @@ void V8DOMWrapper::setJSWrapperForDOMNode(Node* node, v8::Persistent<v8::Object>
     getDOMNodeMap().set(node, wrapper);
 }
 
-v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8WrapperType type)
-{
-    v8::Persistent<v8::FunctionTemplate>* cacheCell = V8ClassIndex::GetCache(type);
-    if (!cacheCell->IsEmpty())
-        return *cacheCell;
-
-    // Not in the cache.
-    FunctionTemplateFactory factory = V8ClassIndex::GetFactory(type);
-    v8::Persistent<v8::FunctionTemplate> descriptor = factory();
-
-    *cacheCell = descriptor;
-    return descriptor;
-}
-
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> objectPrototype)
 {
     // A DOM constructor is a function instance created from a DOM constructor
@@ -189,7 +175,7 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType
     // The reason for 2) is that, in Safari, a DOM constructor is a normal JS
     // object, but not a function. Hotmail relies on the fact that, in Safari,
     // HTMLElement.__proto__ == Object.prototype.
-    v8::Handle<v8::FunctionTemplate> functionTemplate = getTemplate(type);
+    v8::Handle<v8::FunctionTemplate> functionTemplate = V8ClassIndex::getTemplate(type);
     // Getting the function might fail if we're running out of
     // stack or memory.
     v8::TryCatch tryCatch;
@@ -295,7 +281,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
         // FIXME: Fix this to work properly with isolated worlds (see above).
         instance = proxy->windowShell()->createWrapperFromCache(type);
     else {
-        v8::Local<v8::Function> function = getTemplate(type)->GetFunction();
+        v8::Local<v8::Function> function = V8ClassIndex::getTemplate(type)->GetFunction();
         instance = SafeAllocation::newInstance(function);
     }
     if (!instance.IsEmpty()) {

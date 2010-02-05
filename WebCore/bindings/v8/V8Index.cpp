@@ -464,34 +464,16 @@
 
 namespace WebCore {
 
-FunctionTemplateFactory V8ClassIndex::GetFactory(V8WrapperType type)
+v8::Persistent<v8::FunctionTemplate> V8ClassIndex::getTemplate(V8WrapperType type)
 {
     switch (type) {
 #define MAKE_CASE(type, name)\
-    case V8ClassIndex::type: return V8##name::GetTemplate;
+    case V8ClassIndex::type: return V8##name::GetTemplate();
     WRAPPER_TYPES(MAKE_CASE)
 #undef MAKE_CASE
-    default: return NULL;
-    }
-}
-
-
-#define MAKE_CACHE(type, name)\
-    static v8::Persistent<v8::FunctionTemplate> name##_cache_;
-    ALL_WRAPPER_TYPES(MAKE_CACHE)
-#undef MAKE_CACHE
-
-
-v8::Persistent<v8::FunctionTemplate>* V8ClassIndex::GetCache(V8WrapperType type)
-{
-    switch (type) {
-#define MAKE_CASE(type, name)\
-    case V8ClassIndex::type: return &name##_cache_;
-    ALL_WRAPPER_TYPES(MAKE_CASE)
-#undef MAKE_CASE
     default:
-        ASSERT(false);
-        return NULL;
+        ASSERT_NOT_REACHED();
+        return v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
   }
 }
 
