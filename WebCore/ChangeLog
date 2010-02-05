@@ -1,3 +1,11 @@
+2010-02-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Windows build fix.
+
+        * WebCore.vcproj/WebCore.make:
+
 2010-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Dirk Schulze.
