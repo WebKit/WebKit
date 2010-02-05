@@ -33,6 +33,26 @@
 #include "webview.h"
 
 #include <QtGui>
+#include <QGraphicsScene>
+
+WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
+    : QGraphicsView(parent)
+    , m_item(new GraphicsWebView)
+{
+    setScene(new QGraphicsScene);
+    scene()->addItem(m_item);
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+}
+
+void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
+{
+    QGraphicsView::resizeEvent(event);
+    QRectF rect(QPoint(0, 0), event->size());
+    m_item->setGeometry(rect);
+}
 
 static QMenu* createContextMenu(QWebPage* page, QPoint position)
 {
@@ -49,7 +69,7 @@ static QMenu* createContextMenu(QWebPage* page, QPoint position)
     return menu;
 }
 
-void WebViewGraphicsBased::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void GraphicsWebView::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setProperty("mouseButtons", QVariant::fromValue(int(event->buttons())));
     setProperty("keyboardModifiers", QVariant::fromValue(int(event->modifiers())));
@@ -65,7 +85,7 @@ void WebViewTraditional::mousePressEvent(QMouseEvent* event)
     QWebView::mousePressEvent(event);
 }
 
-void WebViewGraphicsBased::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
+void GraphicsWebView::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
     QMenu* menu = createContextMenu(page(), event->pos().toPoint());
     menu->exec(mapToScene(event->pos()).toPoint());

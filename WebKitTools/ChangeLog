@@ -13,6 +13,33 @@
 
         Rubberstamped by Oliver Hunt.
 
+        [Qt] Make it possible to choose whether the launcher should
+        use the traditional QWidget based QWebView or the newer
+        QGraphics based QGraphicsWebView on a QGraphicsView.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::loadStarted):
+        (LauncherWindow::print):
+        (LauncherWindow::screenshot):
+        (LauncherWindow::setEditable):
+        (LauncherWindow::setupUI):
+        (main):
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::resizeEvent):
+        (GraphicsWebView::mousePressEvent):
+        (GraphicsWebView::contextMenuEvent):
+        * QtLauncher/webview.h:
+        (WebViewTraditional::WebViewTraditional):
+        (GraphicsWebView::GraphicsWebView):
+        (WebViewGraphicsBased::setPage):
+
+2010-02-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Oliver Hunt.
+
         [Qt] QtLauncher cleanup.
 
         Refactor option handling out in utility functions and make the

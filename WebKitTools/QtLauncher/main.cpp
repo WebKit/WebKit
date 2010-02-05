@@ -70,6 +70,8 @@
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
 
+static bool useGraphicsView = false;
+
 class LauncherWindow : public MainWindow {
     Q_OBJECT
 
@@ -84,8 +86,6 @@ public:
     void sendTouchEvent();
     bool eventFilter(QObject* obj, QEvent* event);
 #endif
-
-    QWebView* webView() const { return view; }
 
 protected slots:
     void loadStarted();
@@ -121,7 +121,7 @@ private:
     QVector<int> zoomLevels;
     int currentZoom;
 
-    QWebView* view;
+    QWidget* m_view;
     WebInspector* inspector;
 
     QAction* formatMenuAction;
@@ -140,11 +140,20 @@ LauncherWindow::LauncherWindow(QString url)
     QSplitter* splitter = new QSplitter(Qt::Vertical, this);
     setCentralWidget(splitter);
 
-    view = new WebViewTraditional(splitter);
-    view->setPage(page());
+    resize(800, 600);
+
+    if (!useGraphicsView) {
+        WebViewTraditional* view = new WebViewTraditional(splitter);
+        view->setPage(page());
+        m_view = view;
+    } else {
+        WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
+        view->setPage(page());
+        m_view = view;
+    }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    view->installEventFilter(this);
+    m_view->installEventFilter(this);
     touchMocking = false;
 #endif
 
@@ -238,7 +247,7 @@ void LauncherWindow::sendTouchEvent()
 
 bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
 {
-    if (!touchMocking || obj != view)
+    if (!touchMocking || obj != m_view)
         return QObject::eventFilter(obj, event);
 
     if (event->type() == QEvent::MouseButtonPress
@@ -290,7 +299,7 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
             touchPoint.setState(Qt::TouchPointPressed);
             touchPoint.setId(1);
             touchPoint.setScreenPos(QCursor::pos());
-            touchPoint.setPos(view->mapFromGlobal(QCursor::pos()));
+            touchPoint.setPos(m_view->mapFromGlobal(QCursor::pos()));
             touchPoint.setPressure(1);
             touchPoints.append(touchPoint);
             sendTouchEvent();
@@ -305,7 +314,7 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
 
 void LauncherWindow::loadStarted()
 {
-    view->setFocus(Qt::OtherFocusReason);
+    m_view->setFocus(Qt::OtherFocusReason);
 }
 
 void LauncherWindow::loadFinished()
@@ -362,14 +371,14 @@ void LauncherWindow::print()
 #if !defined(QT_NO_PRINTER)
     QPrintPreviewDialog dlg(this);
     connect(&dlg, SIGNAL(paintRequested(QPrinter*)),
-            view, SLOT(print(QPrinter*)));
+            m_view, SLOT(print(QPrinter*)));
     dlg.exec();
 #endif
 }
 
 void LauncherWindow::screenshot()
 {
-    QPixmap pixmap = QPixmap::grabWidget(view);
+    QPixmap pixmap = QPixmap::grabWidget(m_view);
     QLabel* label = new QLabel;
     label->setAttribute(Qt::WA_DeleteOnClose);
     label->setWindowTitle("Screenshot - Preview");
@@ -385,7 +394,7 @@ void LauncherWindow::screenshot()
 
 void LauncherWindow::setEditable(bool on)
 {
-    view->page()->setContentEditable(on);
+    page()->setContentEditable(on);
     formatMenuAction->setVisible(on);
 }
 
@@ -459,8 +468,8 @@ void LauncherWindow::setupUI()
     setEditable->setCheckable(true);
 
     QMenu* viewMenu = menuBar()->addMenu("&View");
-    viewMenu->addAction(view->pageAction(QWebPage::Stop));
-    viewMenu->addAction(view->pageAction(QWebPage::Reload));
+    viewMenu->addAction(page()->action(QWebPage::Stop));
+    viewMenu->addAction(page()->action(QWebPage::Reload));
     viewMenu->addSeparator();
     QAction* zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
     QAction* zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
@@ -579,7 +588,6 @@ LauncherApplication::LauncherApplication(int& argc, char** argv)
     handleUserOptions();
 }
 
-static bool useGraphicsView = false;
 static void requiresGraphicsView(const QString& option)
 {
     if (useGraphicsView)
@@ -660,10 +668,9 @@ int main(int argc, char **argv)
     LauncherApplication app(argc, argv);
 
     if (app.isRobotized()) {
-        LauncherWindow* window = new LauncherWindow;
-        QWebView* view = window->webView();
-        UrlLoader loader(view->page()->mainFrame(), app.urls().at(0));
-        QObject::connect(view->page()->mainFrame(), SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
+        LauncherWindow* window = new LauncherWindow();
+        UrlLoader loader(window->page()->mainFrame(), app.urls().at(0));
+        QObject::connect(window->page()->mainFrame(), SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
         loader.loadNext();
         window->show();
         return launcherMain(app);
