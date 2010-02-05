@@ -30,7 +30,8 @@
 
 from mod_pywebsocket import msgutil
 
-connections = set()
+# we don't use set() here, because python on mac tiger doesn't support it.
+connections = {}
 
 def web_socket_do_extra_handshake(request):
     pass  # Always accept.
@@ -38,7 +39,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
     global connections
-    connections.add(request)
+    connections[request] = True
     socketName = None
     try:
         socketName = msgutil.receive_message(request)
@@ -48,7 +49,7 @@ def web_socket_transfer_data(request):
         socketName = socketName + ': receive next message'
     finally:
         # request is closed. notify this socketName to other web sockets.
-        connections.remove(request)
-        for ws in connections:
+        del connections[request]
+        for ws in connections.keys():
             msgutil.send_message(ws, socketName)
 
