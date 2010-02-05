@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
     RenderSVGContainer {g} at (-40,-40) size 459.50x200
-      RenderPath {rect} at (-40,-40) size 200x200 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_1] [data="M 10 10L 110 10L 110 110L 10 110L 10 10"]
-      RenderPath {rect} at (160,10) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_2] [data="M 160 10L 210 10L 210 60L 160 60L 160 10"]
-      RenderPath {rect} at (319.50,9.50) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_3] [data="M 332 22L 382 22L 382 72L 332 72L 332 22"]
+      RenderPath {rect} at (-40,-40) size 200x200 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_1] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 L10.00,10.00"]
+      RenderPath {rect} at (160,10) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_2] [data="M160.00,10.00 L210.00,10.00 L210.00,60.00 L160.00,60.00 L160.00,10.00"]
+      RenderPath {rect} at (319.50,9.50) size 100x100 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [start=(0,0)] [end=(1,1)]}] [filter=filter_3] [data="M332.00,22.00 L382.00,22.00 L382.00,72.00 L332.00,72.00 L332.00,22.00"]

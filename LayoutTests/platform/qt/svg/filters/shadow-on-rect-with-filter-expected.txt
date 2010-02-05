@@ -4,4 +4,4 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (37,37) size 493x493
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderPath {rect} at (37,37) size 493x493 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M 200 200L 500 200L 500 500L 200 500L 200 200"]
+    RenderPath {rect} at (37,37) size 493x493 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M200.00,200.00 L500.00,200.00 L500.00,500.00 L200.00,500.00 L200.00,200.00"]

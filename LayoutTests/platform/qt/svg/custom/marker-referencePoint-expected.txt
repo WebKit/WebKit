@@ -5,6 +5,6 @@ layer at (0,0) size 384x192
   RenderSVGRoot {svg} at (0.48,0.48) size 383.04x191.04
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGViewportContainer {marker} at (0.50,0) size 3x3
-        RenderPath {path} at (0.50,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0L 10 5L 0 10L 0 0"]
-    RenderPath {rect} at (0.48,0.48) size 383.04x191.04 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [data="M 10 10L 3990 10L 3990 1990L 10 1990L 10 10"]
-    RenderPath {path} at (96,67.20) size 174.55x83.35 [stroke={[type=SOLID] [color=#000000] [stroke width=100.00]}] [end marker=Triangle] [data="M 1000 750L 2000 750L 2500 1250"]
+        RenderPath {path} at (0.50,0) size 3x3 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,5.00 L0.00,10.00 L0.00,0.00"]
+    RenderPath {rect} at (0.48,0.48) size 383.04x191.04 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [data="M10.00,10.00 L3990.00,10.00 L3990.00,1990.00 L10.00,1990.00 L10.00,10.00"]
+    RenderPath {path} at (96,67.20) size 174.55x83.35 [stroke={[type=SOLID] [color=#000000] [stroke width=100.00]}] [end marker=Triangle] [data="M1000.00,750.00 L2000.00,750.00 L2500.00,1250.00"]

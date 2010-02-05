@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {mask} at (100,100) size 150x150
         RenderSVGContainer {g} at (100,100) size 150x150 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
-          RenderPath {rect} at (100,100) size 150x150 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M 0 0L 150 0L 150 150L 0 150L 0 0"]
-    RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M 100 100L 200 100L 200 200L 100 200L 100 100"]
-    RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M 100 100L 200 100L 200 200L 100 200L 100 100"]
+          RenderPath {rect} at (100,100) size 150x150 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 L0.00,0.00"]
+    RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 L100.00,100.00"]
+    RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 L100.00,100.00"]

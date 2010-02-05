@@ -1,5 +1,45 @@
 2010-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Reviewed by Dirk Schulze.
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Modifying SVG path dumping to equal to other ports
+        https://bugs.webkit.org/show_bug.cgi?id=33784
+
+        Expected files updated.
+
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt:
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt:
+        * platform/qt/svg/css/mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/path-with-shadow-expected.txt:
+        * platform/qt/svg/css/stars-with-shadow-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/qt/svg/custom/marker-opacity-expected.txt:
+        * platform/qt/svg/custom/marker-referencePoint-expected.txt:
+        * platform/qt/svg/custom/marker-strokeWidth-changes-expected.txt:
+        * platform/qt/svg/custom/mask-with-default-value-expected.txt:
+        * platform/qt/svg/custom/relative-sized-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/transformedMaskFails-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/feGaussianBlur-expected.txt:
+        * platform/qt/svg/filters/feMerge-expected.txt:
+        * platform/qt/svg/filters/feMerge-wrong-input-expected.txt:
+        * platform/qt/svg/filters/feOffset-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt:
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt:
+
+2010-02-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         [Qt] fast/css/dashboard-regions-attr-crash.html skipped,

@@ -1,3 +1,14 @@
+2010-02-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Dirk Schulze.
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Modifying SVG path dumping to equal to other ports
+        https://bugs.webkit.org/show_bug.cgi?id=33784
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::debugString): Path dumping style is aproached to Mac.
+
 2010-02-05  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.

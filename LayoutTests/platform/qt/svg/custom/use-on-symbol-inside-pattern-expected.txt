@@ -9,31 +9,31 @@ layer at (0,0) size 225x425
         RenderSVGContainer {use} at (2.50,3.75) size 15x22.50 [transform={m=((0.75,0.00)(0.00,0.75)) t=(10.00,15.00)}]
           RenderSVGContainer {g} at (2.50,3.75) size 15x22.50
             RenderSVGViewportContainer {svg} at (2.50,3.75) size 15x22.50
-              RenderPath {path} at (9.25,3.75) size 1.50x22.50 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15L 0 15"]
-              RenderPath {path} at (9.25,3.75) size 4.50x3.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15C 0 -12.6667 1.66667 -11.5 5 -11.5"]
-              RenderPath {path} at (6.25,3.75) size 4.50x3.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -15C 0 -12.6667 -1.66667 -11.5 -5 -11.5"]
-              RenderPath {path} at (9.25,8.25) size 6.75x5.25 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9C 0 -5 2.66667 -3 8 -3"]
-              RenderPath {path} at (4,8.25) size 6.75x5.25 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 -9C 0 -5 -2.66667 -3 -8 -3"]
-              RenderPath {path} at (9.25,15) size 8.25x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0C 0 4.66667 3.33333 7 10 7"]
-              RenderPath {path} at (2.50,15) size 8.25x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 0C 0 4.66667 -3.33333 7 -10 7"]
+              RenderPath {path} at (9.25,3.75) size 1.50x22.50 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 L0.00,15.00"]
+              RenderPath {path} at (9.25,3.75) size 4.50x3.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 C0.00,-12.67,1.67,-11.50,5.00,-11.50"]
+              RenderPath {path} at (6.25,3.75) size 4.50x3.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 C0.00,-12.67,-1.67,-11.50,-5.00,-11.50"]
+              RenderPath {path} at (9.25,8.25) size 6.75x5.25 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-9.00 C0.00,-5.00,2.67,-3.00,8.00,-3.00"]
+              RenderPath {path} at (4,8.25) size 6.75x5.25 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-9.00 C0.00,-5.00,-2.67,-3.00,-8.00,-3.00"]
+              RenderPath {path} at (9.25,15) size 8.25x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,0.00 C0.00,4.67,3.33,7.00,10.00,7.00"]
+              RenderPath {path} at (2.50,15) size 8.25x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,0.00 C0.00,4.67,-3.33,7.00,-10.00,7.00"]
       RenderSVGContainer {pattern} at (9.31,11.56) size 11.38x15.94
         RenderSVGContainer {use} at (9.31,11.56) size 11.38x15.94 [transform={m=((0.50,0.00)(0.00,0.50)) t=(15.00,20.00)}]
           RenderSVGContainer {g} at (9.31,11.56) size 11.38x15.94
             RenderSVGViewportContainer {svg} at (9.31,11.56) size 11.38x15.94
-              RenderPath {path} at (14.50,22.50) size 1x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 15L 0 5"]
-              RenderPath {path} at (9.31,11.56) size 11.38x12.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M 0 5C -1.93923 7.10121 -5.09176 7.54205 -7.53298 6.0534C -9.97421 4.56475 -11.0258 1.56025 -10.0457 -1.12585C -9.06566 -3.81196 -6.3263 -5.43327 -3.5 -5C -5.61622 -6.51983 -6.50972 -9.23171 -5.71141 -11.7118C -4.91309 -14.1919 -2.60543 -15.8734 -1.10215e-15 -15.8734C 2.60543 -15.8734 4.91309 -14.1919 5.71141 -11.7118C 6.50972 -9.23171 5.61622 -6.51983 3.5 -5C 6.3263 -5.43327 9.06566 -3.81196 10.0457 -1.12585C 11.0258 1.56025 9.97421 4.56475 7.53298 6.0534C 5.09176 7.54205 1.93923 7.10121 -6.66134e-16 5L 0 5"]
-      RenderPath {path} at (-1.85,-1.05) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 50L 100 0L 200 20L 150 70L 50 90L 0 50"]
+              RenderPath {path} at (14.50,22.50) size 1x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,15.00 L0.00,5.00"]
+              RenderPath {path} at (9.31,11.56) size 11.38x12.38 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,5.00 C-1.94,7.10,-5.09,7.54,-7.53,6.05 C-9.97,4.56,-11.03,1.56,-10.05,-1.13 C-9.07,-3.81,-6.33,-5.43,-3.50,-5.00 C-5.62,-6.52,-6.51,-9.23,-5.71,-11.71 C-4.91,-14.19,-2.61,-15.87,-0.00,-15.87 C2.61,-15.87,4.91,-14.19,5.71,-11.71 C6.51,-9.23,5.62,-6.52,3.50,-5.00 C6.33,-5.43,9.07,-3.81,10.05,-1.13 C11.03,1.56,9.97,4.56,7.53,6.05 C5.09,7.54,1.94,7.10,-0.00,5.00 L0.00,5.00"]
+      RenderPath {path} at (-1.85,-1.05) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 L0.00,50.00"]
     RenderSVGContainer {g} at (8.15,4) size 203.87x97.07 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
       RenderSVGText {text} at (0,10) size 74x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-16) size 74x20
           chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 74.00: "coniferous"
       RenderSVGContainer {use} at (8.15,8.95) size 203.87x92.12
         RenderSVGContainer {g} at (8.15,8.95) size 203.87x92.12
-          RenderPath {path} at (8.15,8.95) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M 0 50L 100 0L 200 20L 150 70L 50 90L 0 50"]
+          RenderPath {path} at (8.15,8.95) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 L0.00,50.00"]
     RenderSVGContainer {g} at (8.15,104) size 203.87x97.07 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
       RenderSVGText {text} at (0,10) size 85x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-16) size 85x20
           chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 85.00: "broadLeave"
       RenderSVGContainer {use} at (8.15,108.95) size 203.87x92.12
         RenderSVGContainer {g} at (8.15,108.95) size 203.87x92.12
-          RenderPath {path} at (8.15,108.95) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M 0 50L 100 0L 200 20L 150 70L 50 90L 0 50"]
+          RenderPath {path} at (8.15,108.95) size 203.87x92.12 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [bbox=at (0,0) size 1x1]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 L0.00,50.00"]
