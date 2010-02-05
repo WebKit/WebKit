@@ -1,3 +1,14 @@
+2010-02-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Lars Knoll.
+
+        [Qt] Make 'make -f Makefile.DerivedSources qmake' work
+
+        Previously this target ended up generating a file named
+        Makefile.DerivedSources.DerivedSources, and so on.
+
+        * DerivedSources.pro:
+
 2010-02-04  Christian Dywan  <christian@twotasts.de>
 
         Reviewed by Xan Lopez.
