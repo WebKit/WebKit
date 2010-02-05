@@ -1,5 +1,18 @@
 2010-02-04  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        should not crash when document opened websocket is unloaded
+        https://bugs.webkit.org/show_bug.cgi?id=34562
+
+        * websocket/tests/close-on-unload-and-force-gc-expected.txt: Added.
+        * websocket/tests/close-on-unload-and-force-gc.html: Added.
+        * websocket/tests/close-on-unload-reference-in-parent-expected.txt: Added.
+        * websocket/tests/close-on-unload-reference-in-parent.html: Added.
+        * websocket/tests/resources/close-on-unload-iframe-reference-in-parent.html: Added.
+
+2010-02-04  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Shinichiro Hamaji.
 
         websocket/tests/close-on-unload.html failed on Mac Tiger
