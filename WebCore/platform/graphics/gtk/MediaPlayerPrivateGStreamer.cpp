@@ -43,6 +43,7 @@
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
+#include "WebKitWebSourceGStreamer.h"
 #include "Widget.h"
 
 #include <gst/gst.h>
@@ -137,55 +138,12 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
     g_object_get(mp->m_playBin, "source", &element.outPtr(), NULL);
     gst_object_replace((GstObject**) &mp->m_source, (GstObject*) element.get());
 
-    if (!element)
-        return;
+    if (WEBKIT_IS_WEB_SRC(element.get())) {
+        Frame* frame = mp->m_player->frameView() ? mp->m_player->frameView()->frame() : 0;
 
-    GOwnPtr<char> location;
-    g_object_get(element.get(), "location", &location.outPtr(), NULL);
-
-    // Do injection only for elements dealing with uris.
-    if (!gst_uri_is_valid(location.get()))
-        return;
-
-    GOwnPtr<SoupURI> uri(soup_uri_new(location.get()));
-
-    // Do injection only for http(s) uris.
-    if (!SOUP_URI_VALID_FOR_HTTP(uri))
-        return;
-
-    // Let Apple web servers know we want to access their nice movie trailers.
-    if (g_str_equal(uri->host, "movies.apple.com"))
-        g_object_set(element.get(), "user-agent", "Quicktime/7.2.0", NULL);
-
-    // Set the HTTP referer.
-    Frame* frame = mp->m_player->frameView() ? mp->m_player->frameView()->frame() : 0;
-    Document* document = frame ? frame->document() : 0;
-    if (document) {
-        GstStructure* extraHeaders = gst_structure_new("extra-headers",
-                                                       "Referer", G_TYPE_STRING,
-                                                       document->documentURI().utf8().data(), 0);
-        g_object_set(element.get(), "extra-headers", extraHeaders, NULL);
-        gst_structure_free(extraHeaders);
+        if (frame)
+            webKitWebSrcSetFrame(WEBKIT_WEB_SRC(element.get()), frame);
     }
-
-    // Deal with the cookies from now on.
-    GParamSpec* cookiesParamSpec = g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), "cookies");
-
-    // First check if the source element has a cookies property
-    // of the format we expect
-    if (!cookiesParamSpec || cookiesParamSpec->value_type != G_TYPE_STRV)
-        return;
-
-    // Then get the cookies for the URI and set them
-    SoupSession* session = webkit_get_default_session();
-    SoupSessionFeature* cookieJarFeature = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
-    if (!cookieJarFeature)
-        return;
-
-    SoupCookieJar* cookieJar = SOUP_COOKIE_JAR(cookieJarFeature);
-    GOwnPtr<char> cookies(soup_cookie_jar_get_cookies(cookieJar, uri.get(), FALSE));
-    char* cookiesStrv[] = {cookies.get(), 0};
-    g_object_set(element.get(), "cookies", cookiesStrv, NULL);
 }
 
 void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
@@ -270,12 +228,15 @@ static bool doGstInit()
     if (!gstInitialized) {
         GOwnPtr<GError> error;
         gstInitialized = gst_init_check(0, 0, &error.outPtr());
-        if (!gstInitialized)
+        if (!gstInitialized) {
             LOG_VERBOSE(Media, "Could not initialize GStreamer: %s",
                         error ? error->message : "unknown error occurred");
-        else
+        } else {
             gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY,
                                  WEBKIT_TYPE_DATA_SRC);
+            gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100,
+                                 WEBKIT_TYPE_WEB_SRC);
+        }
 
     }
     return gstInitialized;

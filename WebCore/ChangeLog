@@ -1,3 +1,21 @@
+2010-02-05  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha.
+
+        Add a GStreamer HTTP/HTTPS source, using WebKit infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=34317
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        (WebCore::doGstInit):
+        * platform/graphics/gtk/WebKitWebSourceGStreamer.cpp:
+        * platform/graphics/gtk/WebKitWebSourceGStreamer.h:
+        Add a GStreamer HTTP/HTTPS source, using the WebKit infrastructure.
+        This makes sure that referer, cookies, authentication information
+        and all kinds of other context are passed to GStreamer for websites
+        like Vimeo or YouTube.
+
 2010-02-05  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

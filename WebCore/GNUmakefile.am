@@ -2409,12 +2409,15 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp \
 	WebCore/platform/graphics/gtk/VideoSinkGStreamer.h \
 	WebCore/platform/graphics/gtk/DataSourceGStreamer.cpp \
-	WebCore/platform/graphics/gtk/DataSourceGStreamer.h
+	WebCore/platform/graphics/gtk/DataSourceGStreamer.h \
+	WebCore/platform/graphics/gtk/WebKitWebSourceGStreamer.cpp \
+	WebCore/platform/graphics/gtk/WebKitWebSourceGStreamer.h
 
 webcore_libadd += \
 	-lgstinterfaces-0.10 \
 	-lgstvideo-0.10 \
-	-lgstpbutils-0.10
+	-lgstpbutils-0.10 \
+	-lgstapp-0.10
 
 endif # END ENABLE_VIDEO
 
