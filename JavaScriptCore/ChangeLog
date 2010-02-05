@@ -1,3 +1,27 @@
+2010-02-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't call CRASH() in fastMalloc and fastCalloc when the requested memory size is 0
+        https://bugs.webkit.org/show_bug.cgi?id=34569
+
+        With USE_SYSTEM_MALLOC=1, fastMalloc and fastCalloc call CRASH()
+        if the return value of malloc and calloc is 0.
+        
+        However, these functions can return 0 when the request size is 0.
+        Libc manual says, "If size is 0, then malloc() returns either NULL,
+        or a unique pointer value that can later be successfully passed to free()."
+        Though malloc returns a unique pointer in most systems,
+        0 can be returned in some systems. For instance, BREW's MALLOC returns 0
+        when size is 0.
+
+        If malloc or calloc returns 0 due to allocation size, increase the size
+        to 1 and try again.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+
 2010-02-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Timothy Hatcher.

@@ -239,8 +239,16 @@ void* fastMalloc(size_t n)
     void* result = malloc(n);
 #endif
 
-    if (!result)
+    if (!result) {
+#if PLATFORM(BREWMP)
+        // The behavior of malloc(0) is implementation defined.
+        // To make sure that fastMalloc never returns 0, retry with fastMalloc(1).
+        if (!n)
+            return fastMalloc(1);
+#endif
         CRASH();
+    }
+
     return result;
 }
 
@@ -279,8 +287,16 @@ void* fastCalloc(size_t n_elements, size_t element_size)
     void* result = calloc(n_elements, element_size);
 #endif
 
-    if (!result)
+    if (!result) {
+#if PLATFORM(BREWMP)
+        // If either n_elements or element_size is 0, the behavior of calloc is implementation defined.
+        // To make sure that fastCalloc never returns 0, retry with fastCalloc(1, 1).
+        if (!n_elements || !element_size)
+            return fastCalloc(1, 1);
+#endif
         CRASH();
+    }
+
     return result;
 }
 
