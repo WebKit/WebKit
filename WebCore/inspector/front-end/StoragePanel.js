@@ -220,14 +220,14 @@ WebInspector.StoragePanel.prototype = {
             this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
-    showCookies: function(cookieDomain)
+    showCookies: function(treeElement, cookieDomain)
     {
         if (this.visibleView)
             this.visibleView.hide();
 
         var view = this._cookieViews[cookieDomain];
         if (!view) {
-            view = new WebInspector.CookieItemsView(cookieDomain);
+            view = new WebInspector.CookieItemsView(treeElement, cookieDomain);
             this._cookieViews[cookieDomain] = view;
         }
 
@@ -507,6 +507,7 @@ WebInspector.CookieSidebarTreeElement = function(cookieDomain)
 {
     WebInspector.SidebarTreeElement.call(this, "cookie-sidebar-tree-item", cookieDomain, "", null, false);
     this._cookieDomain = cookieDomain;
+    this._subtitle = "";
 
     this.refreshTitles();
 }
@@ -514,9 +515,9 @@ WebInspector.CookieSidebarTreeElement = function(cookieDomain)
 WebInspector.CookieSidebarTreeElement.prototype = {
     onselect: function()
     {
-        WebInspector.panels.storage.showCookies(this._cookieDomain);
+        WebInspector.panels.storage.showCookies(this, this._cookieDomain);
     },
-    
+
     get mainTitle()
     {
         return this._cookieDomain ? this._cookieDomain : WebInspector.UIString("Local Files");
@@ -529,12 +530,13 @@ WebInspector.CookieSidebarTreeElement.prototype = {
 
     get subtitle()
     {
-        return "";
+        return this._subtitle;
     },
 
     set subtitle(x)
     {
-        // Do nothing.
+        this._subtitle = x;
+        this.refreshTitles();
     }
 }
 

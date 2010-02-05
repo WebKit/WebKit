@@ -1,3 +1,35 @@
+2010-02-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: group cookies by frame, show total
+        cookies size, allow sorting cookie table.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34617
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::deleteCookie):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.update):
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        (WebInspector.CookieItemsView.prototype._cookiesForDomain):
+        (WebInspector.CookieItemsView.prototype.dataGridForCookies):
+        (WebInspector.CookieItemsView.prototype._createNodes):
+        (WebInspector.CookieItemsView.prototype._sortData.localeCompare):
+        (WebInspector.CookieItemsView.prototype._sortData.numberCompare):
+        (WebInspector.CookieItemsView.prototype._sortData.expiresCompare):
+        (WebInspector.CookieItemsView.prototype._sortData):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.showCookies):
+        (WebInspector.CookieSidebarTreeElement):
+        (WebInspector.CookieSidebarTreeElement.prototype.onselect):
+        (WebInspector.CookieSidebarTreeElement.prototype.get subtitle):
+        (WebInspector.CookieSidebarTreeElement.prototype.set subtitle):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+
 2010-02-05  Maxime Simone  <simon.maxime@gmail.com>
 
         Reviewed by David Levin.

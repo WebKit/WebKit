@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CookieItemsView = function(cookieDomain)
+WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 {
     WebInspector.View.call(this);
 
@@ -41,6 +41,7 @@ WebInspector.CookieItemsView = function(cookieDomain)
     this.refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this.refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
     
+    this._treeElement = treeElement;
     this._cookieDomain = cookieDomain;
 }
 
@@ -65,50 +66,60 @@ WebInspector.CookieItemsView.prototype = {
     update: function()
     {
         this.element.removeChildren();
-
-        var self = this;
-        function callback(allCookies, isAdvanced) {
-            var cookies = self._cookiesForDomain(allCookies);
-            var dataGrid = (isAdvanced ? self.dataGridForCookies(cookies) : self.simpleDataGridForCookies(cookies));
-            if (dataGrid) {
-                self._dataGrid = dataGrid;
-                self.element.appendChild(dataGrid.element);
-                self._dataGrid.updateWidths();
-                if (isAdvanced)
-                    self.deleteButton.visible = true;
-            } else {
-                var emptyMsgElement = document.createElement("div");
-                emptyMsgElement.className = "storage-table-empty";
-                emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
-                self.element.appendChild(emptyMsgElement);
-                self._dataGrid = null;
-                self.deleteButton.visible = false;
-            }
-        }
-
-        WebInspector.Cookies.getCookiesAsync(callback);
+        WebInspector.Cookies.getCookiesAsync(this._updateWithCookies.bind(this));
     },
 
-    _cookiesForDomain: function(allCookies)
+    _updateWithCookies: function(allCookies, isAdvanced)
+    {
+        var cookies = this._cookiesForDomain(allCookies, isAdvanced);
+        var dataGrid = (isAdvanced ? this.dataGridForCookies(cookies) : this.simpleDataGridForCookies(cookies));
+        if (dataGrid) {
+            this._dataGrid = dataGrid;
+            this.element.appendChild(dataGrid.element);
+            this._dataGrid.updateWidths();
+            if (isAdvanced)
+                this.deleteButton.visible = true;
+        } else {
+            var emptyMsgElement = document.createElement("div");
+            emptyMsgElement.className = "storage-table-empty";
+            emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
+            this.element.appendChild(emptyMsgElement);
+            this._dataGrid = null;
+            this.deleteButton.visible = false;
+        }
+    },
+
+    _cookiesForDomain: function(allCookies, isAdvanced)
     {
         var cookiesForDomain = [];
         var resourceURLsForDocumentURL = [];
+        var totalSize = 0;
 
         for (var id in WebInspector.resources) {
             var resource = WebInspector.resources[id];
-            var match = resource.url.match(WebInspector.URLRegExp);
+            var match = resource.documentURL.match(WebInspector.URLRegExp);
             if (match && match[2] === this._cookieDomain)
                 resourceURLsForDocumentURL.push(resource.url);
         }
 
         for (var i = 0; i < allCookies.length; ++i) {
+            var pushed = false;
+            var size = allCookies[i].size;
             for (var j = 0; j < resourceURLsForDocumentURL.length; ++j) {
                 var resourceURL = resourceURLsForDocumentURL[j];
                 if (WebInspector.Cookies.cookieMatchesResourceURL(allCookies[i], resourceURL)) {
-                    cookiesForDomain.push(allCookies[i]);
-                    break;
+                    totalSize += size;
+                    if (!pushed) {
+                        pushed = true;
+                        cookiesForDomain.push(allCookies[i]);
+                    }
                 }
             }
+        }
+
+        if (isAdvanced) {
+            this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), cookiesForDomain.length,
+                Number.bytesToString(totalSize, WebInspector.UIString));
         }
         return cookiesForDomain;
     },
@@ -124,50 +135,31 @@ WebInspector.CookieItemsView.prototype = {
         var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
         columns[0].title = WebInspector.UIString("Name");
         columns[0].width = columns[0].title.length;
+        columns[0].sortable = true;
         columns[1].title = WebInspector.UIString("Value");
         columns[1].width = columns[1].title.length;
+        columns[1].sortable = true;
         columns[2].title = WebInspector.UIString("Domain");
         columns[2].width = columns[2].title.length;
+        columns[2].sortable = true;
         columns[3].title = WebInspector.UIString("Path");
         columns[3].width = columns[3].title.length;
+        columns[3].sortable = true;
         columns[4].title = WebInspector.UIString("Expires");
         columns[4].width = columns[4].title.length;
+        columns[4].sortable = true;
         columns[5].title = WebInspector.UIString("Size");
         columns[5].width = columns[5].title.length;
         columns[5].aligned = "right";
+        columns[5].sortable = true;
         columns[6].title = WebInspector.UIString("HTTP");
         columns[6].width = columns[6].title.length;
         columns[6].aligned = "centered";
+        columns[6].sortable = true;
         columns[7].title = WebInspector.UIString("Secure");
         columns[7].width = columns[7].title.length;
         columns[7].aligned = "centered";
-
-        function updateDataAndColumn(index, value) {
-            data[index] = value;
-            if (value.length > columns[index].width)
-                columns[index].width = value.length;
-        }
-
-        var data;
-        var nodes = [];
-        for (var i = 0; i < cookies.length; ++i) {
-            var cookie = cookies[i];
-            data = {};
-
-            updateDataAndColumn(0, cookie.name);
-            updateDataAndColumn(1, cookie.value);
-            updateDataAndColumn(2, cookie.domain);
-            updateDataAndColumn(3, cookie.path);
-            updateDataAndColumn(4, (cookie.session ? WebInspector.UIString("Session") : cookie.expires.toGMTString()));
-            updateDataAndColumn(5, Number.bytesToString(cookie.size, WebInspector.UIString));
-            updateDataAndColumn(6, (cookie.httpOnly ? "\u2713" : "")); // Checkmark
-            updateDataAndColumn(7, (cookie.secure ? "\u2713" : "")); // Checkmark
-
-            var node = new WebInspector.DataGridNode(data, false);
-            node.cookie = cookie;
-            node.selectable = true;
-            nodes.push(node);
-        }
+        columns[7].sortable = true;
 
         var totalColumnWidths = 0;
         for (var columnIdentifier in columns)
@@ -211,13 +203,93 @@ WebInspector.CookieItemsView.prototype = {
             columns[columnIdentifier].width += "%";
 
         var dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCookieCallback.bind(this));
-        var length = nodes.length;
-        for (var i = 0; i < length; ++i)
+        var nodes = this._createNodes(dataGrid, cookies);
+        for (var i = 0; i < nodes.length; ++i)
             dataGrid.appendChild(nodes[i]);
-        if (length > 0)
+        if (nodes.length)
             nodes[0].selected = true;
+        dataGrid.addEventListener("sorting changed", this._sortData.bind(this, dataGrid, cookies));
 
         return dataGrid;
+    },
+
+    _createNodes: function(dataGrid, cookies)
+    {
+        function updateDataAndColumn(data, index, value) {
+            data[index] = value;
+            if (value.length > dataGrid.columns[index].width)
+                dataGrid.columns[index].width = value.length;
+        }
+
+        var nodes = [];
+        for (var i = 0; i < cookies.length; ++i) {
+            var data = {};
+            var cookie = cookies[i];
+
+            updateDataAndColumn(data, 0, cookie.name);
+            updateDataAndColumn(data, 1, cookie.value);
+            updateDataAndColumn(data, 2, cookie.domain);
+            updateDataAndColumn(data, 3, cookie.path);
+            updateDataAndColumn(data, 4, (cookie.session ? WebInspector.UIString("Session") : cookie.expires.toGMTString()));
+            updateDataAndColumn(data, 5, Number.bytesToString(cookie.size, WebInspector.UIString));
+            updateDataAndColumn(data, 6, (cookie.httpOnly ? "\u2713" : "")); // Checkmark
+            updateDataAndColumn(data, 7, (cookie.secure ? "\u2713" : "")); // Checkmark
+
+            var node = new WebInspector.DataGridNode(data);
+            node.cookie = cookie;
+            node.selectable = true;
+            nodes.push(node);
+        }
+        return nodes;
+    },
+
+    _sortData: function(dataGrid, cookies)
+    {
+        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
+
+        function localeCompare(field, cookie1, cookie2)
+        {
+            return sortDirection * (cookie1[field] + "").localeCompare(cookie2[field] + "")
+        }
+
+        function numberCompare(field, cookie1, cookie2)
+        {
+            return sortDirection * (cookie1[field] - cookie2[field]);
+        }
+
+        function expiresCompare(cookie1, cookie2)
+        {
+            if (cookie1.session !== cookie2.session)
+                return sortDirection * (cookie1.session ? 1 : -1);
+
+            if (cookie1.session)
+                return 0;
+
+            return sortDirection * (cookie1.expires.getTime() - cookie2.expires.getTime());
+        }
+
+        var comparator;
+        switch (parseInt(dataGrid.sortColumnIdentifier)) {
+            case 0: comparator = localeCompare.bind(this, "name"); break;
+            case 1: comparator = localeCompare.bind(this, "value"); break;
+            case 2: comparator = localeCompare.bind(this, "domain"); break;
+            case 3: comparator = localeCompare.bind(this, "path"); break;
+            case 4: comparator = expiresCompare; break;
+            case 5: comparator = numberCompare.bind(this, "size"); break;
+            case 6: comparator = localeCompare.bind(this, "httpOnly"); break;
+            case 7: comparator = localeCompare.bind(this, "secure"); break;
+            default: localeCompare.bind(this, "name");
+        }
+
+        cookies.sort(comparator);
+        var nodes = this._createNodes(dataGrid, cookies);
+
+        dataGrid.removeChildren();
+        for (var i = 0; i < nodes.length; ++i)
+            dataGrid.appendChild(nodes[i]);
+
+        if (nodes.length)
+            nodes[0].selected = true;
     },
 
     simpleDataGridForCookies: function(cookies)

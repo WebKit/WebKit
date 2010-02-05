@@ -1046,7 +1046,12 @@ WebInspector.updateResource = function(identifier, payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        this._addCookieDomain(resource.domain);
+        var match = payload.documentURL.match(WebInspector.URLRegExp);
+        if (match) {
+            var protocol = match[1].toLowerCase();
+            if (protocol.indexOf("http") === 0 || protocol === "file")
+                this._addCookieDomain(protocol === "file" ? "" : match[2]);
+        }
     }
 
     if (payload.didResponseChange) {
