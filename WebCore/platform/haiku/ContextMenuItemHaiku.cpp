@@ -70,7 +70,7 @@ ContextMenuItem::~ContextMenuItem()
 PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
 {
     BMenuItem* item = m_platformDescription;
-    m_platformDescription = NULL;
+    m_platformDescription = 0;
     return item;
 }
 
@@ -116,7 +116,7 @@ void ContextMenuItem::setAction(ContextMenuAction action)
         m_platformDescription->Message()->what = action;
 }
 
-String ContextMenuItem::title() const 
+String ContextMenuItem::title() const
 {
     if (m_platformDescription)
         return "";

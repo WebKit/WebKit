@@ -1,3 +1,17 @@
+2010-02-04  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        Misc coding style fixes in Haiku port code.
+        https://bugs.webkit.org/show_bug.cgi?id=34527
+
+        No tests needed.
+
+        * platform/haiku/ContextMenuItemHaiku.cpp: Trailing white space, NULL -> 0
+        * platform/haiku/DragImageHaiku.cpp: Trailing white space.
+        * platform/haiku/FileChooserHaiku.cpp: Sorted headers.
+        * platform/haiku/LocalizedStringsHaiku.cpp: Needed to include NotImplemented.h
+
 2010-02-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Csaba Osztrogonac.
