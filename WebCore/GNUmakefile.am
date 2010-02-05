@@ -2722,7 +2722,11 @@ webcore_sources += \
 	WebCore/mathml/MathMLInlineContainerElement.cpp \
 	WebCore/mathml/MathMLInlineContainerElement.h  \
 	WebCore/mathml/MathMLMathElement.cpp \
-	WebCore/mathml/MathMLMathElement.h
+	WebCore/mathml/MathMLMathElement.h \
+	WebCore/mathml/MathMLTextElement.cpp \
+	WebCore/mathml/MathMLTextElement.h \
+	WebCore/mathml/RenderMathMLBlock.cpp \
+	WebCore/mathml/RenderMathMLBlock.h
 
 webcore_built_sources += \
 	DerivedSources/MathMLElementFactory.cpp \
