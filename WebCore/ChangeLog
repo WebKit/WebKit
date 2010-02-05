@@ -1,3 +1,33 @@
+2010-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Changing display type of parent of input on focus causes input field to not receive key events
+        https://bugs.webkit.org/show_bug.cgi?id=34620
+        <rdar://problem/7584572>
+        
+        When layout affects a text input, the RenderTextControl gets destroyed and
+        recreated, which in turn makes a new innerTextElement. However, if the text field was
+        focused, the VisibleSelection is left pointing to the old innerTextElement, so text
+        input no longer works.
+        
+        The fix is to call updateFocusAppearanceSoon() when attaching the input element,
+        which will update the selection if necessary.
+
+        Test: fast/forms/restore-selection-after-layout.html
+
+        * dom/Document.h: Add a paramter to updateFocusAppearanceSoon() and a member variable,
+        m_updateFocusAppearanceRestoresSelection, to store its value until the timer fires.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_updateFocusAppearanceRestoresSelection
+        (WebCore::Document::updateFocusAppearanceSoon): New restorePreviousSelection parameter.
+        (WebCore::Document::updateFocusAppearanceTimerFired): Pass m_updateFocusAppearanceRestoresSelection down.
+        * dom/Element.cpp:
+        (WebCore::Element::attach): Call updateFocusAppearanceSoon() with false.
+        * dom/Element.h: The updateFocusAppearanceSoonAfterAttach() was undefined.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach): Call document()->updateFocusAppearanceSoon() with true.
+
 2010-02-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

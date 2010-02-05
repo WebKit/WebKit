@@ -1139,6 +1139,9 @@ void HTMLInputElement::attach()
                 imageObj->setImageSizeForAltText();
         }
     }
+
+    if (document()->focusedNode() == this)
+        document()->updateFocusAppearanceSoon(true /* restore selection */);
 }
 
 void HTMLInputElement::detach()

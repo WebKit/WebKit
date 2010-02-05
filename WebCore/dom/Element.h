@@ -304,7 +304,6 @@ private:
     virtual void updateAnimatedSVGAttribute(const QualifiedName&) const { }
 #endif
 
-    void updateFocusAppearanceSoonAfterAttach();
     void cancelFocusAppearanceUpdate();
 
     virtual const AtomicString& virtualPrefix() const { return prefix(); }

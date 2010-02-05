@@ -1,3 +1,16 @@
+2010-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Changing display type of parent of input on focus causes input field to not receive key events
+        https://bugs.webkit.org/show_bug.cgi?id=34620
+        <rdar://problem/7584572>
+        
+        Testcase that tests input into a text field after changing layout.
+
+        * fast/forms/restore-selection-after-layout-expected.txt: Added.
+        * fast/forms/restore-selection-after-layout.html: Added.
+
 2010-02-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Dirk Schulze.
