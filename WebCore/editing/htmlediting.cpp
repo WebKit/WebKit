@@ -658,6 +658,11 @@ bool isListElement(Node *n)
     return (n && (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag)));
 }
 
+bool isListItem(Node *n)
+{
+    return n && n->renderer() && n->renderer()->isListItem();
+}
+
 Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)
 {
     if (p.isNull())
@@ -779,7 +784,7 @@ static Node* appendedSublist(Node* listItem)
     for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
         if (isListElement(n))
             return static_cast<HTMLElement*>(n);
-        if (n->renderer() && n->renderer()->isListItem())
+        if (isListItem(listItem))
             return 0;
     }
     

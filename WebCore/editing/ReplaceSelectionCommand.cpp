@@ -752,9 +752,7 @@ void ReplaceSelectionCommand::doApply()
     bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.node());
     
     if ((selectionStartWasStartOfParagraph && selectionEndWasEndOfParagraph && !startIsInsideMailBlockquote) ||
-        startBlock == currentRoot ||
-        (startBlock && startBlock->renderer() && startBlock->renderer()->isListItem()) ||
-        selectionIsPlainText)
+        startBlock == currentRoot || isListItem(startBlock) || selectionIsPlainText)
         m_preventNesting = false;
     
     if (selection.isRange()) {
@@ -871,7 +869,12 @@ void ReplaceSelectionCommand::doApply()
     RefPtr<Node> node = refNode->nextSibling();
     
     fragment.removeNode(refNode);
-    insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
+
+    Node* blockStart = enclosingBlock(insertionPos.node());
+    if (isListElement(refNode.get()) && blockStart->renderer()->isListItem())
+        refNode = insertAsListItems(refNode, blockStart, insertionPos);
+    else
+        insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
 
     // Mutation events (bug 22634) may have already removed the inserted content
     if (!refNode->inDocument())
@@ -960,9 +963,15 @@ void ReplaceSelectionCommand::doApply()
         if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
             if (!isStartOfParagraph(endOfInsertedContent)) {
                 setEndingSelection(endOfInsertedContent);
-                // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
-                // block's style seems to annoy users.
-                insertParagraphSeparator(true);
+                Node* enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().node());
+                if (isListItem(enclosingNode)) {
+                    RefPtr<Node> newListItem = createListItemElement(document());
+                    insertNodeAfter(newListItem, enclosingNode);
+                    setEndingSelection(VisiblePosition(Position(newListItem, 0)));
+                } else
+                    // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
+                    // block's style seems to annoy users.
+                    insertParagraphSeparator(true);
 
                 // Select up to the paragraph separator that was added.
                 lastPositionToSelect = endingSelection().visibleStart().deepEquivalent();
@@ -1109,6 +1118,39 @@ void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<
     Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
     insertNodeBefore(insertChild, refChild);
     updateNodesInserted(nodeToUpdate);
+}
+
+// If the user is inserting a list into an existing list, instead of nesting the list,
+// we put the list items into the existing list.
+Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, Node* insertionNode, const Position& p)
+{
+    while (listElement->hasChildNodes() && isListElement(listElement->firstChild()) && listElement->childNodeCount() == 1)
+        listElement = listElement->firstChild();
+
+    bool isStart = isStartOfParagraph(p);
+    bool isEnd = isEndOfParagraph(p);
+
+    Node* lastNode = insertionNode;
+    while (RefPtr<Node> listItem = listElement->firstChild()) {
+        ExceptionCode ec = 0;
+        listElement->removeChild(listItem.get(), ec);
+        ASSERT(!ec);
+        if (isStart)
+            insertNodeBefore(listItem, lastNode);
+        else if (isEnd) {
+            insertNodeAfter(listItem, lastNode);
+            lastNode = listItem.get();
+        } else {
+            // FIXME: If we're in the middle of a list item, we should split it into two separate
+            // list items and insert these nodes between them.  For now, just append the nodes.
+            insertNodeAfter(listItem, lastNode);
+            lastNode = listItem.get();
+        }
+    }
+    if (isStart)
+        lastNode = lastNode->previousSibling();
+    updateNodesInserted(lastNode);
+    return lastNode;
 }
 
 void ReplaceSelectionCommand::updateNodesInserted(Node *node)

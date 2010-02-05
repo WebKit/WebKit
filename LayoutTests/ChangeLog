@@ -1,3 +1,14 @@
+2010-02-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24872
+        Add a test to make sure copying from a list and pasting into a list
+        keeps the list at the same indention level rather than nesting.
+
+        * editing/pasteboard/paste-list-002-expected.txt: Added.
+        * editing/pasteboard/paste-list-002.html: Added.
+
 2010-02-04  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

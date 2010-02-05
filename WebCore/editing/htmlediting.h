@@ -90,6 +90,7 @@ bool isTableCell(const Node*);
 bool isEmptyTableCell(const Node*);
 bool isTableStructureNode(const Node*);
 bool isListElement(Node*);
+bool isListItem(Node*);
 bool isNodeRendered(const Node*);
 bool isNodeVisiblyContainedWithin(Node*, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);

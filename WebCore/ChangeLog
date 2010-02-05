@@ -1,3 +1,29 @@
+2010-02-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24872
+        When pasting a list into another list should not indent another level.
+        If the cursor is at the beginning of the line, it should insert the
+        list items before the current list item.  If the cursor is at the end
+        of the line, it should insert the list items after the current list item.
+
+        This matches Firefox and IE and makes the common activity of reordering a list
+        work as expected.
+
+        This also adds a small helper method (isListItem) to htmlediting.h.
+
+        Test: editing/pasteboard/paste-list-002.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        * editing/ReplaceSelectionCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::isListItem):
+        (WebCore::appendedSublist):
+        * editing/htmlediting.h:
+
 2010-02-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Timothy Hatcher.
