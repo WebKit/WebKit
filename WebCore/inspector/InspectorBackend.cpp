@@ -49,7 +49,7 @@
 #include "InspectorResource.h"
 #include "Pasteboard.h"
 #include "ScriptArray.h"
-#include "ScriptFunctionCall.h"
+#include "SerializedScriptValue.h"
 
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
@@ -295,12 +295,12 @@ void InspectorBackend::dispatchOnInjectedScript(long callId, long injectedScript
     if (injectedScript.hasNoValue())
         return;
 
-    String result;
+    RefPtr<SerializedScriptValue> result;
     bool hadException = false;
     injectedScript.dispatch(callId, methodName, arguments, async, &result, &hadException);
     if (async)
         return;  // InjectedScript will return result asynchronously by means of ::reportDidDispatchOnInjectedScript.
-    frontend->didDispatchOnInjectedScript(callId, result, hadException);
+    frontend->didDispatchOnInjectedScript(callId, result.get(), hadException);
 }
 
 void InspectorBackend::getChildNodes(long callId, long nodeId)

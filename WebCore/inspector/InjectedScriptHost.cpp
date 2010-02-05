@@ -45,8 +45,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorResource.h"
 #include "Pasteboard.h"
-#include "ScriptArray.h"
-#include "ScriptFunctionCall.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 #include "JavaScriptCallFrame.h"
@@ -162,7 +160,7 @@ void InjectedScriptHost::selectDOMStorage(Storage* storage)
 }
 #endif
 
-void InjectedScriptHost::reportDidDispatchOnInjectedScript(long callId, const String& result, bool isException)
+void InjectedScriptHost::reportDidDispatchOnInjectedScript(long callId, SerializedScriptValue* result, bool isException)
 {
     if (InspectorFrontend* frontend = inspectorFrontend())
         frontend->didDispatchOnInjectedScript(callId, result, isException);

@@ -542,7 +542,7 @@ void InspectorController::scriptObjectReady()
 void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj, ScriptObject)
 {
     m_frontendScriptState = scriptState;
-    m_frontend.set(new InspectorFrontend(this, scriptState, webInspectorObj));
+    m_frontend.set(new InspectorFrontend(this, webInspectorObj));
     releaseDOMAgent();
     m_domAgent = InspectorDOMAgent::create(m_frontend.get());
     if (m_timelineAgent)
@@ -1569,8 +1569,8 @@ void InspectorController::didPause()
     ScriptState* scriptState = callFrame->scopeChain()->globalObject->globalExec();
     ASSERT(scriptState);
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(scriptState);
-    String callFrames = injectedScript.callFrames();
-    m_frontend->pausedScript(callFrames);
+    RefPtr<SerializedScriptValue> callFrames = injectedScript.callFrames();
+    m_frontend->pausedScript(callFrames.get());
 }
 
 void InspectorController::didContinue()
@@ -1593,7 +1593,7 @@ void InspectorController::didEvaluateForTestInFrontend(long callId, const String
     ScriptState* scriptState = scriptStateFromPage(debuggerWorld(), m_inspectedPage);
     ScriptObject window;
     ScriptGlobalObject::get(scriptState, "window", window);
-    ScriptFunctionCall function(scriptState, window, "didEvaluateForTestInFrontend");
+    ScriptFunctionCall function(window, "didEvaluateForTestInFrontend");
     function.appendArgument(callId);
     function.appendArgument(jsonResult);
     function.call();

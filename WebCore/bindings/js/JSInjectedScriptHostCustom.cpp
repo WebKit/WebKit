@@ -53,6 +53,7 @@
 #include "Node.h"
 #include "Page.h"
 #if ENABLE(DOM_STORAGE)
+#include "SerializedScriptValue.h"
 #include "Storage.h"
 #include "JSStorage.h"
 #endif
@@ -61,6 +62,7 @@
 #include <parser/SourceCode.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -194,6 +196,24 @@ JSValue JSInjectedScriptHost::selectDOMStorage(ExecState*, const ArgList& args)
     return jsUndefined();
 }
 #endif
+
+JSValue JSInjectedScriptHost::reportDidDispatchOnInjectedScript(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 3)
+        return jsUndefined();
+    
+    if (!args.at(0).isInt32())
+        return jsUndefined();
+    int callId = args.at(0).asInt32();
+    
+    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(exec, args.at(1)));
+    
+    bool isException;
+    if (!args.at(2).getBoolean(isException))
+        return jsUndefined();
+    impl()->reportDidDispatchOnInjectedScript(callId, result.get(), isException);
+    return jsUndefined();
+}
 
 InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
 {

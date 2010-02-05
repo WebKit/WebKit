@@ -55,6 +55,6 @@ module core {
         [Custom] void selectDOMStorage(in DOMObject storage);
 #endif
 
-        void reportDidDispatchOnInjectedScript(in long callId, in DOMString result, in boolean isException);
+        [Custom] void reportDidDispatchOnInjectedScript(in long callId, in DOMObject result, in boolean isException);
     };
 }

@@ -53,6 +53,10 @@ static bool handleException(ScriptState* scriptState)
 
 bool ScriptArray::set(unsigned index, const ScriptObject& value)
 {
+    if (value.scriptState() != m_scriptState) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(m_scriptState, index, value.jsObject());
     return handleException(m_scriptState);

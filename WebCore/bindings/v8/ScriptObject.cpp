@@ -67,6 +67,10 @@ bool ScriptObject::set(const String& name, const String& value)
 
 bool ScriptObject::set(const char* name, const ScriptObject& value)
 {
+    if (value.scriptState() != m_scriptState) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), value.v8Value());
     return scope.success();

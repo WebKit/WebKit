@@ -34,10 +34,12 @@
 #include "PlatformString.h"
 #include "ScriptState.h"
 #include <runtime/Protect.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class String;
+class SerializedScriptValue;
 
 class ScriptValue {
 public:
@@ -52,6 +54,9 @@ public:
     bool isUndefined() const;
     bool isObject() const;
     bool hasNoValue() const { return m_value == JSC::JSValue(); }
+
+    PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
+    static ScriptValue deserialize(ScriptState*, SerializedScriptValue*);
 
 private:
     JSC::ProtectedJSValue m_value;

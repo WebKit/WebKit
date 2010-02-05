@@ -50,6 +50,10 @@ ScriptArray::ScriptArray(ScriptState* scriptState, v8::Handle<v8::Array> v8Array
 
 bool ScriptArray::set(unsigned index, const ScriptObject& value)
 {
+    if (value.scriptState() != m_scriptState) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), value.v8Value());
     return scope.success();

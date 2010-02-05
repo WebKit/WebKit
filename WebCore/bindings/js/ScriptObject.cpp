@@ -70,6 +70,10 @@ bool ScriptObject::set(const String& name, const String& value)
 
 bool ScriptObject::set(const char* name, const ScriptObject& value)
 {
+    if (value.scriptState() != m_scriptState) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
     jsObject()->put(m_scriptState, Identifier(m_scriptState, name), value.jsObject(), slot);

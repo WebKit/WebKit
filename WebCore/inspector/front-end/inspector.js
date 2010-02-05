@@ -1203,7 +1203,6 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 
 WebInspector.pausedScript = function(callFrames)
 {
-    callFrames = JSON.parse(callFrames);
     this.panels.scripts.debuggerPaused(callFrames);
 }
 
@@ -1260,7 +1259,7 @@ WebInspector.updateConsoleMessageExpiredCount = function(count)
     WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
 }
 
-WebInspector.addConsoleMessage = function(payload, argumentsStringified, opt_args)
+WebInspector.addConsoleMessage = function(payload, opt_args)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(
         payload.source,
@@ -1270,14 +1269,7 @@ WebInspector.addConsoleMessage = function(payload, argumentsStringified, opt_arg
         payload.url,
         payload.groupLevel,
         payload.repeatCount);
-    var parsedArguments = [];
-    for (var i = 2; i < arguments.length; i++) {
-        if (argumentsStringified)
-            parsedArguments.push(JSON.parse(arguments[i]));
-        else
-            parsedArguments.push(arguments[i]);
-    }
-    consoleMessage.setMessageBody(parsedArguments);
+    consoleMessage.setMessageBody(Array.prototype.slice.call(arguments, 1));
     this.console.addMessage(consoleMessage);
 }
 

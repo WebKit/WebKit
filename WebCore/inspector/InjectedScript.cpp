@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "PlatformString.h"
+#include "SerializedScriptValue.h"
 #include "ScriptFunctionCall.h"
 
 namespace WebCore {
@@ -43,11 +44,10 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject)
 {
 }
 
-void InjectedScript::dispatch(long callId, const String& methodName, const String& arguments, bool async, String* result, bool* hadException) 
+void InjectedScript::dispatch(long callId, const String& methodName, const String& arguments, bool async, RefPtr<SerializedScriptValue>* result, bool* hadException) 
 {
     ASSERT(!hasNoValue());
-    ScriptState* scriptState = m_injectedScriptObject.scriptState();
-    ScriptFunctionCall function(scriptState, m_injectedScriptObject, "dispatch");
+    ScriptFunctionCall function(m_injectedScriptObject, "dispatch");
     function.appendArgument(methodName);
     function.appendArgument(arguments);
     if (async)
@@ -55,38 +55,33 @@ void InjectedScript::dispatch(long callId, const String& methodName, const Strin
     *hadException = false;
     ScriptValue resultValue = function.call(*hadException);
     if (!*hadException)
-        *result = resultValue.toString(scriptState);
+        *result = resultValue.serialize(m_injectedScriptObject.scriptState());
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-String InjectedScript::callFrames()
+PassRefPtr<SerializedScriptValue> InjectedScript::callFrames()
 {
     ASSERT(!hasNoValue());
-    ScriptState* scriptState = m_injectedScriptObject.scriptState();
-    ScriptFunctionCall function(scriptState, m_injectedScriptObject, "callFrames");
+    ScriptFunctionCall function(m_injectedScriptObject, "callFrames");
     ScriptValue callFramesValue = function.call();
-    return callFramesValue.toString(scriptState);
+    return callFramesValue.serialize(m_injectedScriptObject.scriptState());
 }
 #endif
 
-String InjectedScript::wrapAndStringifyForConsole(ScriptValue value)
+PassRefPtr<SerializedScriptValue> InjectedScript::wrapForConsole(ScriptValue value)
 {
     ASSERT(!hasNoValue());
-    ScriptState* scriptState = m_injectedScriptObject.scriptState();
-    ScriptFunctionCall wrapFunction(scriptState, m_injectedScriptObject, "wrapAndStringifyObject");
+    ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObject");
     wrapFunction.appendArgument(value);
     wrapFunction.appendArgument("console");
     ScriptValue r = wrapFunction.call();
-    if (r.hasNoValue())
-        return "";
-    return r.toString(scriptState);
+    return r.serialize(m_injectedScriptObject.scriptState());
 }
 
 void InjectedScript::releaseWrapperObjectGroup(const String& objectGroup)
 {
     ASSERT(!hasNoValue());
-    ScriptState* scriptState = m_injectedScriptObject.scriptState();
-    ScriptFunctionCall releaseFunction(scriptState, m_injectedScriptObject, "releaseWrapperObjectGroup");
+    ScriptFunctionCall releaseFunction(m_injectedScriptObject, "releaseWrapperObjectGroup");
     releaseFunction.appendArgument(objectGroup);
     releaseFunction.call();
 }

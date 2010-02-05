@@ -56,7 +56,7 @@ InjectedScriptAccess._installHandler = function(methodName, async)
         function myCallback(result, isException)
         {
             if (!isException)
-                callback(JSON.parse(result));
+                callback(result);
             else
                 WebInspector.console.addMessage(new WebInspector.ConsoleTextMessage("Error dispatching: " + methodName));
         }

@@ -39,12 +39,14 @@
 #include "InspectorController.h"
 #include "Node.h"
 #include "Page.h"
+#include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
 #include "V8Database.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Storage.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -193,6 +195,19 @@ v8::Handle<v8::Value> V8InjectedScriptHost::selectDOMStorageCallback(const v8::A
     return v8::Undefined();
 }
 #endif
+
+v8::Handle<v8::Value> V8InjectedScriptHost::reportDidDispatchOnInjectedScriptCallback(const v8::Arguments& args)
+{
+    INC_STATS("InjectedScriptHost.reportDidDispatchOnInjectedScript()");
+    if (args.Length() < 3)
+        return v8::Undefined();
+    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
+    int callId = args[0]->ToInt32()->Value();
+    RefPtr<SerializedScriptValue> result(SerializedScriptValue::create(args[1]));
+    bool isException = args[2]->ToBoolean()->Value();
+    host->reportDidDispatchOnInjectedScript(callId, result.get(), isException);
+    return v8::Undefined();
+}
 
 InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScriptState)
 {

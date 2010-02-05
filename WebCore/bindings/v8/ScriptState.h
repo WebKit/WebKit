@@ -38,9 +38,9 @@
 
 namespace WebCore {
     class DOMWrapperWorld;
+    class Frame;
     class Node;
     class Page;
-    class Frame;
 
     class ScriptState : public Noncopyable {
     public:

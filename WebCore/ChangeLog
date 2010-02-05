@@ -1,3 +1,123 @@
+2010-02-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        - Use SerializedScriptValue for passing data between injected script and
+        inspector frontend.
+        - Remove custom JSON implementation from the instpector utility script.
+        - Make sure that only objects created in the same ScriptState can be values
+        of ScriptObject/Array properties and arguments to ScriptFunctionCall. We don't
+        want ScriptObjects to leak between contexts.
+        - Use ScriptState of the 'this' object in ScriptFunctionCall instead of passing
+        it as additional parameter.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33592
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::reportDidDispatchOnInjectedScript):
+        * bindings/js/ScriptArray.cpp:
+        (WebCore::ScriptArray::set):
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::ScriptFunctionCall):
+        (WebCore::ScriptFunctionCall::appendArgument):
+        * bindings/js/ScriptFunctionCall.h:
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::set):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::serialize):
+        (WebCore::ScriptValue::deserialize):
+        * bindings/js/ScriptValue.h:
+        * bindings/v8/ScriptArray.cpp:
+        (WebCore::ScriptArray::set):
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::ScriptFunctionCall):
+        (WebCore::ScriptFunctionCall::appendArgument):
+        * bindings/v8/ScriptFunctionCall.h:
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptObject::set):
+        * bindings/v8/ScriptState.h:
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::ScriptValue::serialize):
+        (WebCore::deserialize):
+        * bindings/v8/ScriptValue.h:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::reportDidDispatchOnInjectedScriptCallback):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::dispatch):
+        (WebCore::InjectedScript::callFrames):
+        (WebCore::InjectedScript::wrapForConsole):
+        (WebCore::InjectedScript::releaseWrapperObjectGroup):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::reportDidDispatchOnInjectedScript):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::dispatchOnInjectedScript):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontendProxyObject):
+        (WebCore::InspectorController::didPause):
+        (WebCore::InspectorController::didEvaluateForTestInFrontend):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::InspectorFrontend):
+        (WebCore::InspectorFrontend::newScriptArray):
+        (WebCore::InspectorFrontend::newScriptObject):
+        (WebCore::InspectorFrontend::populateFrontendSettings):
+        (WebCore::InspectorFrontend::updateConsoleMessageExpiredCount):
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        (WebCore::InspectorFrontend::updateConsoleMessageRepeatCount):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::removeResource):
+        (WebCore::InspectorFrontend::didGetResourceContent):
+        (WebCore::InspectorFrontend::updateFocusedNode):
+        (WebCore::InspectorFrontend::setAttachedWindow):
+        (WebCore::InspectorFrontend::addRecordToTimeline):
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        (WebCore::InspectorFrontend::failedToParseScriptSource):
+        (WebCore::InspectorFrontend::addProfileHeader):
+        (WebCore::InspectorFrontend::setRecordingProfile):
+        (WebCore::InspectorFrontend::didGetProfileHeaders):
+        (WebCore::InspectorFrontend::didGetProfile):
+        (WebCore::InspectorFrontend::pausedScript):
+        (WebCore::InspectorFrontend::setDocument):
+        (WebCore::InspectorFrontend::setDetachedRoot):
+        (WebCore::InspectorFrontend::setChildNodes):
+        (WebCore::InspectorFrontend::childNodeCountUpdated):
+        (WebCore::InspectorFrontend::childNodeInserted):
+        (WebCore::InspectorFrontend::childNodeRemoved):
+        (WebCore::InspectorFrontend::attributesUpdated):
+        (WebCore::InspectorFrontend::didRemoveNode):
+        (WebCore::InspectorFrontend::didGetChildNodes):
+        (WebCore::InspectorFrontend::didApplyDomChange):
+        (WebCore::InspectorFrontend::didGetEventListenersForNode):
+        (WebCore::InspectorFrontend::didGetCookies):
+        (WebCore::InspectorFrontend::didDispatchOnInjectedScript):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::selectDatabase):
+        (WebCore::InspectorFrontend::didGetDatabaseTableNames):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        (WebCore::InspectorFrontend::selectDOMStorage):
+        (WebCore::InspectorFrontend::didGetDOMStorageEntries):
+        (WebCore::InspectorFrontend::didSetDOMStorageItem):
+        (WebCore::InspectorFrontend::didRemoveDOMStorageItem):
+        (WebCore::InspectorFrontend::updateDOMStorage):
+        (WebCore::InspectorFrontend::addNodesToSearchResult):
+        (WebCore::InspectorFrontend::contextMenuItemSelected):
+        (WebCore::InspectorFrontend::evaluateForTestInFrontend):
+        (WebCore::InspectorFrontend::callSimpleFunction):
+        * inspector/InspectorFrontend.h:
+        (WebCore::InspectorFrontend::scriptState):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        (injectedScriptConstructor.):
+        * inspector/front-end/InjectedScriptAccess.js:
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName.myCallback):
+        (InjectedScriptAccess._installHandler.InjectedScriptAccess.prototype.methodName):
+        (InjectedScriptAccess._installHandler):
+        * inspector/front-end/inspector.js:
+        (WebInspector.pausedScript):
+        (WebInspector.addConsoleMessage):
+
 2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
