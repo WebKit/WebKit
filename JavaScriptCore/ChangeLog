@@ -1,3 +1,15 @@
+2010-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Make MathExtras.h compatible with <cmath>
+        https://bugs.webkit.org/show_bug.cgi?id=34618
+
+        * wtf/MathExtras.h: Include <cmath> instead of <math.h>.
+        Use "using" as we do elsewhere in WTF for the four functions from <cmath>
+        we want to use without the prefix. Later we could consider making the std
+        explicit at call sites instead.
+
 2010-02-04  Tamas Szirbucz  <szirbucz@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
