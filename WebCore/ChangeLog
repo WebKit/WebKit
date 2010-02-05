@@ -1,3 +1,18 @@
+2010-02-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Tab width for javascript source is 8, should be 4
+
+        https://bugs.webkit.org/show_bug.cgi?id=31248
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.prototype.set replaceTabsWithSpaces):
+        (WebInspector.TextEditorModel.prototype._innerSetText):
+        (WebInspector.TextEditorModel.prototype._replaceTabsIfNeeded):
+
 2010-02-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

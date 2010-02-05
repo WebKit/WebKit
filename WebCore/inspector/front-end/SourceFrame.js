@@ -33,6 +33,7 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate)
     this._parentElement = parentElement;
 
     this._textModel = new WebInspector.TextEditorModel();
+    this._textModel.replaceTabsWithSpaces = true;
 
     this._messages = [];
     this._rowMessages = {};
