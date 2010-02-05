@@ -81,11 +81,12 @@ namespace WebKit {
             Time,
             Week
         };
-        
+
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isEnabledFormControl() const;
         WEBKIT_API InputType inputType() const;
         WEBKIT_API WebString formControlType() const;
+        WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
         WEBKIT_API void setValue(const WebString& value);
         WEBKIT_API WebString value() const;
@@ -97,7 +98,6 @@ namespace WebKit {
         // storing autofill data.  This is either the field name or its id, an empty
         // string if it has no name and no id.
         WEBKIT_API WebString nameForAutofill() const;
-        
     };
 
 } // namespace WebKit
