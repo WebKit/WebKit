@@ -1,3 +1,60 @@
+2010-02-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add a JSStringBuilder class (similar-to, and derived-from StringBuilder) to
+        construct JSStrings, throwing a JS exception should we run out of memory whilst
+        allocating storage for the string.
+
+        Similarly, add jsMakeNontrivialString methods to use in cases where previously
+        we were calling makeString & passing the result to jsNontrivialString.  Again,
+        these new methods throw if we hit an out of memory condition.
+
+        Move throwOutOfMemoryError into ExceptionHelpers, to make it more widely available.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        * runtime/DateConstructor.cpp:
+        (JSC::callDate):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToString):
+        (JSC::dateProtoFuncToUTCString):
+        (JSC::dateProtoFuncToGMTString):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::throwOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSStringBuilder.h: Added.
+        (JSC::JSStringBuilder::releaseJSString):
+        (JSC::jsMakeNontrivialString):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/Operations.cpp:
+        * runtime/Operations.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::append):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+
 2010-02-04  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

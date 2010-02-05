@@ -23,6 +23,7 @@
 
 #include "JSFunction.h"
 #include "JSString.h"
+#include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
 #include "UString.h"
@@ -55,11 +56,11 @@ JSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec, JSObject*, JSValue
 
     if (!name.isUndefined()) {
         if (!message.isUndefined())
-            return jsNontrivialString(exec, makeString(name.toString(exec), ": ", message.toString(exec)));
+            return jsMakeNontrivialString(exec, name.toString(exec), ": ", message.toString(exec));
         return jsNontrivialString(exec, name.toString(exec));
     }
     if (!message.isUndefined())
-        return jsNontrivialString(exec, makeString("Error: ", message.toString(exec)));
+        return jsMakeNontrivialString(exec, "Error: ", message.toString(exec));
     return jsNontrivialString(exec, "Error");
 }
 

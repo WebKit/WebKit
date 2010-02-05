@@ -41,13 +41,6 @@ bool JSValue::strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2)
     return strictEqualSlowCaseInline(exec, v1, v2);
 }
 
-NEVER_INLINE JSValue throwOutOfMemoryError(ExecState* exec)
-{
-    JSObject* error = Error::create(exec, GeneralError, "Out of memory");
-    exec->setException(error);
-    return error;
-}
-
 NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
     // exception for the Date exception in defaultValue()

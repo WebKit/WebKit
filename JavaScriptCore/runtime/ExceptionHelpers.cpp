@@ -188,4 +188,9 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     return exception;
 }
 
+JSValue throwOutOfMemoryError(ExecState* exec)
+{
+    return throwError(exec, GeneralError, "Out of memory");
+}
+
 } // namespace JSC

@@ -27,6 +27,7 @@
 #include "JSFunction.h"
 #include "JSObject.h"
 #include "JSString.h"
+#include "JSStringBuilder.h"
 #include "JSValue.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
@@ -116,7 +117,7 @@ JSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec, JSObject*, JSValu
         postfix[index] = 'm';
     UString source = asRegExpObject(thisValue)->get(exec, exec->propertyNames().source).toString(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
-    return jsNontrivialString(exec, makeString("/", source.size() ? source : UString("(?:)"), postfix));
+    return jsMakeNontrivialString(exec, "/", source.size() ? source : UString("(?:)"), postfix);
 }
 
 } // namespace JSC

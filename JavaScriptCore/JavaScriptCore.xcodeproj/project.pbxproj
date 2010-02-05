@@ -232,6 +232,7 @@
 		86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B3C210159D7F002865E7 /* RepatchBuffer.h */; };
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
+		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
 		86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */; };
 		86EAC4960F93E8D1008EC948 /* RegexCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */; };
 		86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */; };
@@ -766,6 +767,7 @@
 		86DB645F0F954E9100D7D921 /* ExecutableAllocatorWin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorWin.cpp; sourceTree = "<group>"; };
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
+		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
 		86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexCompiler.cpp; path = yarr/RegexCompiler.cpp; sourceTree = "<group>"; };
 		86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexCompiler.h; path = yarr/RegexCompiler.h; sourceTree = "<group>"; };
 		86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexInterpreter.cpp; path = yarr/RegexInterpreter.cpp; sourceTree = "<group>"; };
@@ -1544,6 +1546,7 @@
 				A7E42C180E3938830065A544 /* JSStaticScopeObject.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
+				86E85538111B9968001AF51E /* JSStringBuilder.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
 				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
 				F692A8870255597D01FF60F7 /* JSValue.cpp */,
@@ -2050,6 +2053,7 @@
 				1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */,
 				1429DABF0ED263E700B89619 /* WRECParser.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
+				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

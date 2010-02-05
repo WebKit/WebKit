@@ -28,6 +28,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSArray.h"
 #include "JSFunction.h"
+#include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
@@ -789,62 +790,62 @@ JSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec, JSObject*, J
 JSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<big>", s, "</big>"));
+    return jsMakeNontrivialString(exec, "<big>", s, "</big>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<small>", s, "</small>"));
+    return jsMakeNontrivialString(exec, "<small>", s, "</small>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<blink>", s, "</blink>"));
+    return jsMakeNontrivialString(exec, "<blink>", s, "</blink>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<b>", s, "</b>"));
+    return jsMakeNontrivialString(exec, "<b>", s, "</b>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsString(exec, makeString("<tt>", s, "</tt>"));
+    return jsMakeNontrivialString(exec, "<tt>", s, "</tt>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<i>", s, "</i>"));
+    return jsMakeNontrivialString(exec, "<i>", s, "</i>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<strike>", s, "</strike>"));
+    return jsMakeNontrivialString(exec, "<strike>", s, "</strike>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<sub>", s, "</sub>"));
+    return jsMakeNontrivialString(exec, "<sub>", s, "</sub>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
     UString s = thisValue.toThisString(exec);
-    return jsNontrivialString(exec, makeString("<sup>", s, "</sup>"));
+    return jsMakeNontrivialString(exec, "<sup>", s, "</sup>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UString s = thisValue.toThisString(exec);
     JSValue a0 = args.at(0);
-    return jsNontrivialString(exec, makeString("<font color=\"", a0.toString(exec), "\">", s, "</font>"));
+    return jsMakeNontrivialString(exec, "<font color=\"", a0.toString(exec), "\">", s, "</font>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
@@ -886,14 +887,14 @@ JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValu
         return jsNontrivialString(exec, impl);
     }
 
-    return jsNontrivialString(exec, makeString("<font size=\"", a0.toString(exec), "\">", s, "</font>"));
+    return jsMakeNontrivialString(exec, "<font size=\"", a0.toString(exec), "\">", s, "</font>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UString s = thisValue.toThisString(exec);
     JSValue a0 = args.at(0);
-    return jsNontrivialString(exec, makeString("<a name=\"", a0.toString(exec), "\">", s, "</a>"));
+    return jsMakeNontrivialString(exec, "<a name=\"", a0.toString(exec), "\">", s, "</a>");
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)

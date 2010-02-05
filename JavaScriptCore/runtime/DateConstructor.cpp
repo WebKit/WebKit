@@ -28,6 +28,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
 #include <math.h>
@@ -137,7 +138,7 @@ static JSValue JSC_HOST_CALL callDate(ExecState* exec, JSObject*, JSValue, const
     DateConversionBuffer time;
     formatDate(ts, date);
     formatTime(ts, time);
-    return jsNontrivialString(exec, makeString(date, " ", time));
+    return jsMakeNontrivialString(exec, date, " ", time);
 }
 
 CallType DateConstructor::getCallData(CallData& callData)

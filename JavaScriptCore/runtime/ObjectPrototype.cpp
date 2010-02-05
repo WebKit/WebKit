@@ -24,6 +24,7 @@
 #include "Error.h"
 #include "JSFunction.h"
 #include "JSString.h"
+#include "JSStringBuilder.h"
 #include "PrototypeFunction.h"
 
 namespace JSC {
@@ -148,7 +149,7 @@ JSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec, JSObject*, 
 
 JSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
 {
-    return jsNontrivialString(exec, makeString("[object ", thisValue.toThisObject(exec)->className(), "]"));
+    return jsMakeNontrivialString(exec, "[object ", thisValue.toThisObject(exec)->className(), "]");
 }
 
 } // namespace JSC
