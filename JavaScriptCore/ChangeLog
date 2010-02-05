@@ -1,3 +1,9 @@
+2010-02-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * wtf/MathExtras.h:
+
 2010-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by David Levin.
