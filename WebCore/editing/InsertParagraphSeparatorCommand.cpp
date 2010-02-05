@@ -44,6 +44,22 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// When inserting a new line, we want to avoid nesting empty divs if we can.  Otherwise, when
+// pasting, it's easy to have each new line be a div deeper than the previous.  E.g., in the case
+// below, we want to insert at ^ instead of |.
+// <div>foo<div>bar</div>|</div>^
+static Element* highestVisuallyEquivalentDiv(Element* startBlock)
+{
+    Element* curBlock = startBlock;
+    while (!curBlock->nextSibling() && curBlock->parentElement()->hasTagName(divTag)) {
+        NamedNodeMap* attributes = curBlock->parentElement()->attributes(true);
+        if (attributes && !attributes->isEmpty())
+            break;
+        curBlock = curBlock->parentElement();
+    }
+    return curBlock;
+}
+
 InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(Document *document, bool mustUseDefaultParagraphElement) 
     : CompositeEditCommand(document)
     , m_mustUseDefaultParagraphElement(mustUseDefaultParagraphElement)
@@ -214,7 +230,13 @@ void InsertParagraphSeparatorCommand::doApply()
                 // When inserting the newline after the blockquote, we don't want to apply the original style after the insertion
                 shouldApplyStyleAfterInsertion = false;
             }
-            insertNodeAfter(blockToInsert, startBlock);
+
+            // Most of the time we want to stay at the nesting level of the startBlock (e.g., when nesting within lists).  However,
+            // for div nodes, this can result in nested div tags that are hard to break out of.
+            Element* siblingNode = startBlock;
+            if (blockToInsert->hasTagName(divTag))
+                siblingNode = highestVisuallyEquivalentDiv(startBlock);
+            insertNodeAfter(blockToInsert, siblingNode);
         }
 
         // Recreate the same structure in the new paragraph.

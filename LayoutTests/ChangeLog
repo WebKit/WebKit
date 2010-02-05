@@ -1,3 +1,25 @@
+2010-02-04  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25002
+        When inserting a new paragraph, avoid nesting empty divs.  When
+        pasting near the end of a paragraph, this prevents each paste
+        command for getting nested one level deeper.
+
+        Three paste tests have been rebaselined since this causes the pasted
+        content to be outside the last div instead of inside.  E.g.,
+        <div>foo<div>bar</div>[pasted content]</div> is now
+        <div>foo<div>bar</div></div><div>[pasted content]</div>
+
+        The new test verifies this behavior.
+
+        * editing/inserting/paragraph-outside-nested-divs-expected.txt: Added.
+        * editing/inserting/paragraph-outside-nested-divs.html: Added.
+        * platform/mac/editing/pasteboard/paste-text-012-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-013-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-017-expected.txt:
+
 2010-02-04  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
