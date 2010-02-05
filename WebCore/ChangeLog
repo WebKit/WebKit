@@ -1,3 +1,12 @@
+2010-02-05  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Build break in QtWebkit on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=34597
+
+        * plugins/PluginView.h:
+
 2010-02-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

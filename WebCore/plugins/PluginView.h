@@ -326,7 +326,7 @@ public:
 
 private:
 
-#if defined(XP_UNIX) || PLATFORM(SYMBIAN)
+#if defined(XP_UNIX) || OS(SYMBIAN)
         void setNPWindowIfNeeded();
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;
