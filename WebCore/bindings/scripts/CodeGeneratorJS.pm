@@ -1198,7 +1198,7 @@ sub GenerateImplementation
 
         if ($eventTarget) {
             $implIncludes{"RegisteredEventListener.h"} = 1;
-            push(@implContent, "    impl()->invalidateEventListeners();\n");
+            push(@implContent, "    impl()->invalidateJSEventListeners(this);\n");
         }
 
         if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
@@ -1218,7 +1218,7 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::markChildren(MarkStack& markStack)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::markChildren(markStack);\n");
-        push(@implContent, "    impl()->markEventListeners(markStack);\n");
+        push(@implContent, "    impl()->markJSEventListeners(markStack);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1318,12 +1318,14 @@ sub GenerateImplementation
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                     push(@implContent, "    if (EventListener* listener = imp->$implGetterFunctionName()) {\n");
+                    push(@implContent, "        if (const JSEventListener* jsListener = JSEventListener::cast(listener)) {\n");
                     if ($implClassName eq "Document" || $implClassName eq "WorkerContext" || $implClassName eq "SharedWorkerContext" || $implClassName eq "DedicatedWorkerContext") {
-                        push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction(imp))\n");
+                        push(@implContent, "            if (JSObject* jsFunction = jsListener->jsFunction(imp))\n");
                     } else {
-                        push(@implContent, "        if (JSObject* jsFunction = listener->jsFunction(imp->scriptExecutionContext()))\n");
+                        push(@implContent, "            if (JSObject* jsFunction = jsListener->jsFunction(imp->scriptExecutionContext()))\n");
                     }
-                    push(@implContent, "            return jsFunction;\n");
+                    push(@implContent, "                return jsFunction;\n");
+                    push(@implContent, "        }\n");
                     push(@implContent, "    }\n");
                     push(@implContent, "    return jsNull();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
@@ -1477,7 +1479,7 @@ sub GenerateImplementation
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
-                            push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, thisObject));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

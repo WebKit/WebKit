@@ -49,7 +49,7 @@ void JSMessagePort::markChildren(MarkStack& markStack)
     if (MessagePort* entangledPort = m_impl->locallyEntangledPort())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), entangledPort);
 
-    m_impl->markEventListeners(markStack);
+    m_impl->markJSEventListeners(markStack);
 }
 
 JSValue JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
@@ -58,7 +58,7 @@ JSValue JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
+    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -68,7 +68,7 @@ JSValue JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

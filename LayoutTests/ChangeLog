@@ -1,3 +1,14 @@
+2010-01-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov and Darin Adler.
+
+        REGRESSION (r52082): Missing event handlers on JQuery demo page (33383)
+        https://bugs.webkit.org/show_bug.cgi?id=33383
+        <rdar://problem/7559449>
+
+        * fast/events/bogus-event-listener-invalidation-expected.txt: Added.
+        * fast/events/bogus-event-listener-invalidation.html: Added.
+
 2010-02-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -51,8 +51,8 @@ namespace WebCore {
         virtual bool wasCreatedFromMarkup() const { return false; }
 
 #if USE(JSC)
-        virtual JSC::JSObject* jsFunction(ScriptExecutionContext*) const { return 0; }
         virtual void markJSFunction(JSC::MarkStack&) { }
+        virtual void invalidateJSFunction(JSC::JSObject*) { }
 #endif
 
         bool isAttribute() const { return virtualisAttribute(); }

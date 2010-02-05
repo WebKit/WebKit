@@ -1,3 +1,115 @@
+2010-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov and Darin Adler.
+
+        REGRESSION (r52082): Missing event handlers on JQuery demo page (33383)
+        https://bugs.webkit.org/show_bug.cgi?id=33383
+        <rdar://problem/7559449>
+        
+        There were two bugs here:
+        
+        1. A stale wrapper would invalidate a node's event listeners, even if
+        the node had a fresh wrapper keeping it alive.
+        
+        The fix for this is for an event listener to keep a WeakGCPtr back-pointer
+        to the wrapper it expects to mark it. The wrapper destructor checks this
+        back-pointer, and only invalidates the event listener in the case of a match.
+
+        2. Conversely, a stale wrapper would not invalidate a node's event
+        listeners soon enough, if its destructor didn't have a chance to run
+        before an event fired on the node. (This can only happen in cases where
+        we've made some other error and failed to mark a wrapper that was circuitously
+        observable in the DOM. But we know we have edge case bugs like this, and
+        we don't want them to be crashes.)
+        
+        The fix for this is to check the wrapper back-pointer before firing the
+        event listener. As long as the the wrapper back-pointer is not null,
+        it's safe to fire the listener. 
+
+        * ForwardingHeaders/runtime/WeakGCPtr.h: Added. Appease build gods.
+
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        (WebCore::JSAbstractWorker::addEventListener):
+        (WebCore::JSAbstractWorker::removeEventListener):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::markChildren):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener): Updated to pass a wrapper
+        to the JSEventListener constructor.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::initializeJSFunction):
+        (WebCore::JSEventListener::invalidateJSFunction):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        (WebCore::JSEventListener::isolatedWorld):
+        (WebCore::JSEventListener::wrapper):
+        (WebCore::JSEventListener::setWrapper):
+        (WebCore::JSEventListener::jsFunction):
+        (WebCore::createJSAttributeEventListener): Implemented the back-pointer
+        described above. Refactored the jsFunction() accessor to return 0 if
+        the wrapper back-pointer is 0.
+
+        * bindings/js/JSEventSourceCustom.cpp:
+        (WebCore::JSEventSource::addEventListener):
+        (WebCore::JSEventSource::removeEventListener):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSLazyEventListener.h:
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::markChildren):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::addEventListener):
+        (WebCore::JSNode::removeEventListener):
+        (WebCore::JSNode::markChildren):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::addEventListener):
+        (WebCore::JSWebSocket::removeEventListener):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::markChildren):
+        (WebCore::JSWorkerContext::addEventListener):
+        (WebCore::JSWorkerContext::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::markChildren):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::markChildren):
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener): Updated to pass a wrapper
+        to the JSEventListener constructor.
+
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): Updated to pass a wrapper
+        to the JSEventListener constructor.
+        (WebCore::getEventListenerHandlerBody): Updated for the fact that jsFunction()
+        is no longer a virtual accessor on the EventHandler base class.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Updated for the fact that jsFunction()
+        is no longer a virtual accessor on the EventHandler base class. Added a "JS"
+        to invalidateEventListeners and markEventListeners to clarify that these
+        actions are for JS event listeners only. Added a wrapper parameter to
+        invalidateEventListeners for the back-pointer check explained above.
+
+        * dom/EventListener.h:
+        (WebCore::EventListener::invalidateJSFunction): ditto
+
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::markJSEventListeners):
+        (WebCore::EventTarget::invalidateJSEventListeners): ditto
+
 2010-02-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
