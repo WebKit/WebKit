@@ -1,3 +1,19 @@
+2010-02-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34661
+        <rdar://problem/7614067> REGRESSION (Safari 4.0-> Safari 4.0.4): NPP_SetWindow no longer sets a clipRect of (0,0,0,0) when it becomes hidden
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView updateAndSetWindow]): When clipping out NPDrawingModelCoreAnimation plug-ins, provide a zero'd out clipRect.
+        * Plugins/WebBaseNetscapePluginView.h: Moved superviewsHaveSuperviews to the base class.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView superviewsHaveSuperviews]): Added to the base class; extracted from WebNetscapePluginView.
+        (-[WebBaseNetscapePluginView shouldClipOutPlugin]): Added new method with code extracted from WebNetscapePluginView.
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]): When clipping out NPDrawingModelCoreAnimation plug-ins, provide a zero'd out clipRect.
+
 2010-02-04  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

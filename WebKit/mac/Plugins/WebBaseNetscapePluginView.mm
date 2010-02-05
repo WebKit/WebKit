@@ -545,6 +545,22 @@ String WebHaltablePlugin::pluginName() const
     return _isHalted;
 }
 
+- (BOOL)superviewsHaveSuperviews
+{
+    NSView *contentView = [[self window] contentView];
+    for (NSView *view = self; view; view = [view superview]) { 
+        if (view == contentView) 
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)shouldClipOutPlugin
+{
+    NSWindow *window = [self window];
+    return !window || [window isMiniaturized] || [NSApp isHidden] || ![self superviewsHaveSuperviews] || [self isHiddenOrHasHiddenAncestor];
+}
+    
 - (BOOL)hasBeenHalted
 {
     return _hasBeenHalted;

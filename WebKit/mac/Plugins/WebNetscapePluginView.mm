@@ -197,19 +197,6 @@ typedef struct {
 
 #pragma mark EVENTS
 
-- (BOOL)superviewsHaveSuperviews
-{
-    NSView *contentView = [[self window] contentView];
-    NSView *view;
-    for (view = self; view != nil; view = [view superview]) { 
-        if (view == contentView) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-
 // The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
 // the entire window frame (or structure region to use the Carbon term) rather then just the window content.
 // We can remove this when <rdar://problem/4201099> is fixed.
@@ -329,12 +316,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // 3) the window is miniaturized or the app is hidden
     // 4) we're inside of viewWillMoveToWindow: with a nil window. In this case, superviews may already have nil 
     // superviews and nil windows and results from convertRect:toView: are incorrect.
-    NSWindow *realWindow = [self window];
-    if (window.width <= 0 || window.height <= 0 || window.x < -100000
-            || realWindow == nil || [realWindow isMiniaturized]
-            || [NSApp isHidden]
-            || ![self superviewsHaveSuperviews]
-            || [self isHiddenOrHasHiddenAncestor]) {
+    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || [self shouldClipOutPlugin]) {
 
         // The following code tries to give plug-ins the same size they will eventually have.
         // The specifiedWidth and specifiedHeight variables are used to predict the size that
@@ -351,6 +333,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
         window.clipRect.bottom = window.clipRect.top;
         window.clipRect.left = window.clipRect.right;
+        
+        // Core Animation plug-ins need to be updated (with a 0,0,0,0 clipRect) when
+        // moved to a background tab. We don't do this for Core Graphics plug-ins as
+        // older versions of Flash have historical WebKit-specific code that isn't
+        // compatible with this behavior.
+        if (drawingModel == NPDrawingModelCoreAnimation)
+            getNPRect(NSZeroRect, window.clipRect);
     } else {
         getNPRect(visibleRectInWindow, window.clipRect);
     }

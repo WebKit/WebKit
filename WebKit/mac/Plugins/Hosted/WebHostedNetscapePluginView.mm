@@ -161,12 +161,24 @@ extern "C" {
     
     // Use AppKit to convert view coordinates to NSWindow coordinates.
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
-    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    NSRect visibleRectInWindow;
+    
+    // Core Animation plug-ins need to be updated (with a 0,0,0,0 clipRect) when
+    // moved to a background tab. We don't do this for Core Graphics plug-ins as
+    // older versions of Flash have historical WebKit-specific code that isn't
+    // compatible with this behavior.    
+    BOOL shouldClipOutPlugin = _pluginLayer && [self shouldClipOutPlugin];
+    if (!shouldClipOutPlugin)
+        visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
+    else
+        visibleRectInWindow = NSZeroRect;
     
     // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
     float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
-    visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
+        
+    if (!shouldClipOutPlugin)
+        visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
 
     BOOL sizeChanged = !NSEqualSizes(_previousSize, boundsInWindow.size);
     _previousSize = boundsInWindow.size;
