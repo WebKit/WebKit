@@ -55,33 +55,31 @@ void SQLiteTransaction::begin()
         // http://www.sqlite.org/lang_transaction.html
         // http://www.sqlite.org/lockingv3.html#locking
         if (m_readOnly)
-            m_inProgress = m_db.executeCommand("BEGIN;");
+            m_inProgress = m_db.executeCommand("BEGIN");
         else
-            m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE;");
+            m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE");
         m_db.m_transactionInProgress = m_inProgress;
     }
 }
 
 void SQLiteTransaction::commit()
 {
-    // FIXME: this code is buggy; it assumes that COMMIT always succeeds which is not the case:
-    // the transaction could've been silently rolled back before getting to the COMMIT statement
-    // (https://bugs.webkit.org/show_bug.cgi?id=34280). However, the rest of the code does not
-    // know how to deal with a premature rollback and a failed COMMIT at this moment, so until
-    // we figure out what to do with bug 34280, it's better to leave this code as it is.
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        m_db.executeCommand("COMMIT;");
-        m_inProgress = false;
-        m_db.m_transactionInProgress = false;
+        m_inProgress = !m_db.executeCommand("COMMIT");
+        m_db.m_transactionInProgress = m_inProgress;
     }
 }
 
 void SQLiteTransaction::rollback()
 {
+    // We do not use the 'm_inProgress = m_db.executeCommand("ROLLBACK")' construct here,
+    // because m_inProgress should always be set to false after a ROLLBACK, and
+    // m_db.executeCommand("ROLLBACK") can sometimes harmlessly fail, thus returning
+    // a non-zero/true result (http://www.sqlite.org/lang_transaction.html).
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        m_db.executeCommand("ROLLBACK;");
+        m_db.executeCommand("ROLLBACK");
         m_inProgress = false;
         m_db.m_transactionInProgress = false;
     }
@@ -93,6 +91,13 @@ void SQLiteTransaction::stop()
         m_inProgress = false;
         m_db.m_transactionInProgress = false;
     }
+}
+
+bool SQLiteTransaction::wasRolledBackBySqlite() const
+{
+    // According to http://www.sqlite.org/c3ref/get_autocommit.html,
+    // the auto-commit flag should be off in the middle of a transaction
+    return m_inProgress && m_db.isAutoCommitOn();
 }
 
 } // namespace WebCore

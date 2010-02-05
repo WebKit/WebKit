@@ -3,6 +3,7 @@
 <script>
 var database1;
 var database2;
+var database3;
 
 function log(message)
 {
@@ -16,10 +17,22 @@ function finishTest()
         layoutTestController.notifyDone();
 }
 
-function errorFunction(error)
+function statementErrorFunction(tx, error)
 {
-    log("Test failed - " + error.message);
+    log("Unexpected exception - " + error.message);
     finishTest();
+}
+
+function transactionErrorFunction(db, error)
+{
+    // We only expect an error message for database2
+    if (db == database2) {
+        log("Expected quota exception - " + error.message);
+        checkCompletion(db);
+    } else {
+        log("Unexpected exception - " + error.message);
+        finishTest();
+    }
 }
 
 function checkCompletion(db)
@@ -27,8 +40,10 @@ function checkCompletion(db)
     log("Done adding data");
 
     db.complete = true;
-    if (database1.complete && database2.complete)
+    if (database1.complete && database2.complete && database3.complete)
         finishTest();
+    else if (database2.complete)
+        testDatabase(database3);
     else
         testDatabase(database2);
 }
@@ -38,9 +53,20 @@ function addData(db)
     db.transaction(function(tx) {
         log("Inserting some data");
         tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(17408))", [],
-                      function(tx, result) { },
-                      function(tx, error) { errorFunction(error); });
-    }, errorFunction, function() {
+                      function(tx, result) { }, statementErrorFunction);
+        if (db == database2) {
+            // Try to run this statement on 'database2' only.
+            // It should not be run, because the previous statement should've
+            // resulted in a failure that made sqlite roll back the entire transaction.
+            tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(10))", [],
+                          function(tx, result) {
+                              log("This statement should not have been run.");
+                              finishTest();
+                          }, statementErrorFunction);
+        }
+    }, function(error) {
+        transactionErrorFunction(db, error);
+    }, function() {
         checkCompletion(db);
     });
 }
@@ -50,9 +76,10 @@ function testDatabase(db)
     db.transaction(function(tx) {
         log("Adding a table");
         tx.executeSql("CREATE TABLE DataTest (randomData)", [],
-                      function(tx, result) { },
-                      function(tx, error) { errorFunction(error); });
-    }, errorFunction, function() {
+                      function(tx, result) { }, statementErrorFunction);
+    }, function(error) {
+        transactionErrorFunction(db, error);
+    }, function() {
         addData(db);
     });
 }
@@ -69,8 +96,10 @@ function runTest()
 
     database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);
     database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
+    database3 = openDatabase("QuotaManagementDatabase3", "1.0", "Test for quota management <rdar://5628468>", 1);
     database1.complete = false;
     database2.complete = false;
+    database3.complete = false;
 
     testDatabase(database1);
 }
@@ -80,7 +109,7 @@ function runTest()
 
 <body onload="runTest()">
 This test checks to make sure that quotas are enforced per-origin instead of per-database, as they were prior to http://trac.webkit.org/projects/webkit/changeset/29983.<br>
-The test clears all databases, sets the quota for the origin to 32k, then tries to insert 17k of data into two databases.  If things go as planned, the UI Delegate will be informed of the exceeded quota.
+The test clears all databases, sets the quota for the origin to 32k, then tries to insert 17k of data into two databases. If things go as planned, the UI Delegate will be informed of the exceeded quota and should increase the quota for this origin. Inserting 17k of data the third time should succeed again.
 <pre id="console">
 </pre>
 </body>

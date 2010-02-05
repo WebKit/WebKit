@@ -44,6 +44,7 @@ public:
     void stop();
     
     bool inProgress() const { return m_inProgress; }
+    bool wasRolledBackBySqlite() const;
 private:
     SQLiteDatabase& m_db;
     bool m_inProgress;

@@ -1,3 +1,16 @@
+2010-02-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        1. Enhance quota-tracking.html: if sqlite automatically rolls back
+        a transaction because of a statement failure, make sure the rest
+        of the statements in the transaction are not executed.
+        2. Fix the expectations for quota-tracking.html. Sqlite cannot
+        recover from reaching a DB's max size.
+
+        * storage/quota-tracking-expected.txt:
+        * storage/quota-tracking.html:
+
 2010-02-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix for r54379.
