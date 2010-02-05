@@ -39,6 +39,28 @@
 
 2010-02-04  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Clearing a WeakGCPtr is weird
+        https://bugs.webkit.org/show_bug.cgi?id=34627
+
+        Added a WeakGCPtr::clear interface.
+        
+        As discussed in https://bugs.webkit.org/show_bug.cgi?id=33383, the old
+        interface made it pretty weird for a client to conditionally clear a
+        WeakGCPtr, which is exactly what clients want to do when objects are
+        finalized.
+
+        * API/JSClassRef.cpp:
+        (clearReferenceToPrototype): Use the new WeakGCPtr::clear() interface. 
+
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::clear): Added an interface for clearing a WeakGCPtr,
+        iff its current value is the value passed in. It's cumbersome for the
+        client to do this test, since WeakGCPtr sometimes pretends to be null.
+
+2010-02-04  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: export a header.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

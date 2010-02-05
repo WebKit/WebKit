@@ -56,15 +56,6 @@ void JSEventListener::markJSFunction(MarkStack& markStack)
         markStack.append(m_jsFunction);
 }
 
-void JSEventListener::invalidateJSFunction(JSC::JSObject* wrapper)
-{
-    // Since m_wrapper is a WeakGCPtr, it pretends to be null, and therefore !=
-    // to wrapper, when it's awaiting destruction. So, we check for == wrapper
-    // or == null.
-    if (!m_wrapper || m_wrapper == wrapper)
-        m_wrapper = 0;
-}
-
 void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
     ASSERT(scriptExecutionContext);
