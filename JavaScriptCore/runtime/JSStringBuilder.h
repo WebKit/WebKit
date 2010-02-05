@@ -26,9 +26,9 @@
 #ifndef JSStringBuilder_h
 #define JSStringBuilder_h
 
-#include <ExceptionHelpers.h>
-#include <JSString.h>
-#include <StringBuilder.h>
+#include "ExceptionHelpers.h"
+#include "JSString.h"
+#include "StringBuilder.h"
 
 namespace JSC {
 

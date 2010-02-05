@@ -1,3 +1,9 @@
+2010-02-04  Daniel Bates  <dbates@webkit.org>
+
+        [Qt] Unreviewed, build fix for Qt bot.
+
+        * runtime/JSStringBuilder.h: Changed #include <X.h> notation #include "X.h".
+
 2010-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: export a header.
