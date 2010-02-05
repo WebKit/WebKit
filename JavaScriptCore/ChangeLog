@@ -1,3 +1,9 @@
+2010-02-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix: export a header.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-02-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
