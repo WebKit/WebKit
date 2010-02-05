@@ -1,3 +1,16 @@
+2010-01-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Implement flattening of framesets
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Add support for testing frame flattening with the Qt DRT
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setFrameSetFlatteningEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-02-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.

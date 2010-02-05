@@ -146,6 +146,11 @@ void QWEBKIT_EXPORT qt_drt_run(bool b)
     QWebPagePrivate::drtRun = b;
 }
 
+void QWEBKIT_EXPORT qt_drt_setFrameSetFlatteningEnabled(QWebPage* page, bool enabled)
+{
+    QWebPagePrivate::core(page)->settings()->setFrameSetFlatteningEnabled(enabled);
+}
+
 void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName)
 {
     page->handle()->page->setGroupName(groupName);
@@ -442,6 +447,11 @@ QWebPagePrivate::~QWebPagePrivate()
 #endif
     delete settings;
     delete page;
+}
+
+WebCore::Page* QWebPagePrivate::core(QWebPage* page)
+{
+    return page->d->page;
 }
 
 bool QWebPagePrivate::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)

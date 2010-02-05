@@ -1,3 +1,18 @@
+2010-01-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Implement flattening of framesets
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Privately export the setFrameSetFlatteningEnabled setting for
+        use with the Qt DRT.
+
+        * Api/qwebpage.cpp:
+        (qt_drt_setFrameSetFlatteningEnabled):
+        (QWebPagePrivate::core):
+        * Api/qwebpage_p.h:
+
 2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build on Windows

@@ -1,3 +1,42 @@
+2010-01-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Implement flattening of framesets
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        The following patch, builds ontop of Antti Koivisto's frameset
+        flattening code from the iPhone source, which itself is based on
+        the old Nokia Series 60 source.
+
+        Layout tests have been added to test the functionality and the original
+        code which has then been fixed to make these pass, as well as support
+        frameset grids.
+
+        Tests: fast/frames/flattening/frameset-flattening-advanced.html
+               fast/frames/flattening/frameset-flattening-grid.html
+               fast/frames/flattening/frameset-flattening-simple.html
+               fast/frames/flattening/frameset-flattening-subframe-resize.html
+               fast/frames/flattening/frameset-flattening-subframesets.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleRelayout):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFrameSetFlatteningEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::frameSetFlatteningEnabled):
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::layoutWithFlattening):
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::positionFramesWithFlattening):
+        (WebCore::RenderFrameSet::flattenFrameSet):
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderFrameSet.h:
+
 2010-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

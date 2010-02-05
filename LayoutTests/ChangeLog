@@ -1,3 +1,24 @@
+2010-01-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Implement flattening of framesets
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Frameset flattening layout test, plus expected result for Qt.
+
+        * fast/frames/flattening/frameset-flattening-advanced.html: Added.
+        * fast/frames/flattening/frameset-flattening-grid.html: Added.
+        * fast/frames/flattening/frameset-flattening-simple.html: Added.
+        * fast/frames/flattening/frameset-flattening-subframe-resize.html: Added.
+        * fast/frames/flattening/frameset-flattening-subframesets.html: Added.
+        * fast/frames/flattening/resources/frameset-flattening-subframe-resize.html: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-grid-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-simple-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframesets-expected.txt: Added.
+
 2010-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

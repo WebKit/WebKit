@@ -62,6 +62,9 @@ class QWebPagePrivate {
 public:
     QWebPagePrivate(QWebPage*);
     ~QWebPagePrivate();
+
+    static WebCore::Page* core(QWebPage*);
+
     void createMainFrame();
 #ifndef QT_NO_CONTEXTMENU
     QMenu* createContextMenu(const WebCore::ContextMenu* webcoreMenu, const QList<WebCore::ContextMenuItem>* items, QBitArray* visitedWebActions);
