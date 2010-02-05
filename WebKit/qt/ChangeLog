@@ -1,3 +1,19 @@
+2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build on Windows
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        DerivedSources for our API headers failed on Windows,
+        due to Windows not accepting ; as a command separator,
+        not needing quotes for echo, and needing < and > escaped.
+
+        We now detect Windows and set these quote markers and
+        escape markers accordingly, as well as use && for separating
+        individual commands.
+
+        * Api/DerivedSources.pro:
+
 2010-02-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

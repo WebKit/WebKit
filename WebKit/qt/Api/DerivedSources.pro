@@ -29,18 +29,26 @@ CONFIG -= debug_and_release
 
 DESTDIR = ../../../include
 
+win32 {
+    QUOTE = ""
+    ESCAPE = "^"
+} else {
+    QUOTE = "\\\'"
+    ESCAPE = ""
+}
+
 qtheader_module.target = $${DESTDIR}/QtWebKit
 qtheader_module.depends = $${_PRO_FILE_}
-eval(qtheader_module.commands = echo \\\'\$${LITERAL_HASH}ifndef QT_QTWEBKIT_MODULE_H\\\' > $${qtheader_module.target};)
-eval(qtheader_module.commands += echo \\\'\$${LITERAL_HASH}define QT_QTWEBKIT_MODULE_H\\\' >> $${qtheader_module.target};)
-eval(qtheader_module.commands += echo \\\'\$${LITERAL_HASH}include <QtNetwork/QtNetwork>\\\' >> $${qtheader_module.target};)
+eval(qtheader_module.commands = echo $${QUOTE}\$${LITERAL_HASH}ifndef QT_QTWEBKIT_MODULE_H$${QUOTE} > $${qtheader_module.target} &&)
+eval(qtheader_module.commands += echo $${QUOTE}\$${LITERAL_HASH}define QT_QTWEBKIT_MODULE_H$${QUOTE} >> $${qtheader_module.target} &&)
+eval(qtheader_module.commands += echo $${QUOTE}\$${LITERAL_HASH}include $${ESCAPE}<QtNetwork/QtNetwork$${ESCAPE}>$${QUOTE} >> $${qtheader_module.target} &&)
 WEBKIT_CLASS_HEADERS = ../include/QtWebKit
 
 regex = ".*\sclass\sQWEBKIT_EXPORT\s(\w+)\s(.*)"
 
 for(HEADER, WEBKIT_API_HEADERS) {
     qtheader_module.depends += $$HEADER
-    eval(qtheader_module.commands += echo \\\'\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"\\\' >> $${qtheader_module.target};)
+    eval(qtheader_module.commands += echo $${QUOTE}\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"$${QUOTE} >> $${qtheader_module.target} &&)
 
     HEADER_NAME = $$basename(HEADER)
     HEADER_TARGET = $$replace(HEADER_NAME, [^a-zA-Z0-9_], -)
@@ -48,7 +56,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
 
     eval($${HEADER_TARGET}.target = $${DESTDIR}/$${HEADER_NAME})
     eval($${HEADER_TARGET}.depends = $$HEADER)
-    eval($${HEADER_TARGET}.commands = echo \\\'\$${LITERAL_HASH}include \\\"$$HEADER\\\"\\\' > $$eval($${HEADER_TARGET}.target))
+    eval($${HEADER_TARGET}.commands = echo $${QUOTE}\$${LITERAL_HASH}include \\\"$$HEADER\\\"$${QUOTE} > $$eval($${HEADER_TARGET}.target))
 
     QMAKE_EXTRA_TARGETS += $$HEADER_TARGET
 
@@ -73,7 +81,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
 
         eval($${CLASS_TARGET}.target = $${DESTDIR}/$${EXPORTED_CLASS})
         eval($${CLASS_TARGET}.depends = $$eval($${HEADER_TARGET}.target))
-        eval($${CLASS_TARGET}.commands = echo \\\'\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"\\\' > $$eval($${CLASS_TARGET}.target))
+        eval($${CLASS_TARGET}.commands = echo $${QUOTE}\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"$${QUOTE} > $$eval($${CLASS_TARGET}.target))
 
         QMAKE_EXTRA_TARGETS += $$CLASS_TARGET
         WEBKIT_CLASS_HEADERS += ../include/$${EXPORTED_CLASS}
@@ -88,14 +96,14 @@ for(HEADER, WEBKIT_API_HEADERS) {
     }
 }
 
-eval(qtheader_module.commands += echo \\\'\$${LITERAL_HASH}endif // QT_QTWEBKIT_MODULE_H\\\' >> $${qtheader_module.target})
+eval(qtheader_module.commands += echo $${QUOTE}\$${LITERAL_HASH}endif // QT_QTWEBKIT_MODULE_H$${QUOTE} >> $${qtheader_module.target})
 QMAKE_EXTRA_TARGETS += qtheader_module
 
 qtheader_pri.target = $${DESTDIR}/headers.pri
 qtheader_pri.depends = $${WEBKIT_API_HEADERS} $${WEBKIT_PRIVATE_HEADERS} $${_PRO_FILE_}
-eval(qtheader_pri.commands = echo \\\'WEBKIT_API_HEADERS = $${WEBKIT_API_HEADERS}\\\' > $${qtheader_pri.target};)
-eval(qtheader_pri.commands += echo \\\'WEBKIT_CLASS_HEADERS = $${WEBKIT_CLASS_HEADERS}\\\' >> $${qtheader_pri.target};)
-eval(qtheader_pri.commands += echo \\\'WEBKIT_PRIVATE_HEADERS = $${WEBKIT_PRIVATE_HEADERS}\\\' >> $${qtheader_pri.target};)
+eval(qtheader_pri.commands = echo $${QUOTE}WEBKIT_API_HEADERS = $${WEBKIT_API_HEADERS}$${QUOTE} > $${qtheader_pri.target} &&)
+eval(qtheader_pri.commands += echo $${QUOTE}WEBKIT_CLASS_HEADERS = $${WEBKIT_CLASS_HEADERS}$${QUOTE} >> $${qtheader_pri.target} &&)
+eval(qtheader_pri.commands += echo $${QUOTE}WEBKIT_PRIVATE_HEADERS = $${WEBKIT_PRIVATE_HEADERS}$${QUOTE} >> $${qtheader_pri.target})
 QMAKE_EXTRA_TARGETS += qtheader_pri
 
 generated_files.depends += $${qtheader_module.target} $${qtheader_pri.target}
