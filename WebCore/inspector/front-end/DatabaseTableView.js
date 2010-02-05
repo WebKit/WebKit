@@ -68,6 +68,7 @@ WebInspector.DatabaseTableView.prototype = {
         }
 
         this.element.appendChild(dataGrid.element);
+        dataGrid.autoSizeColumns(5);
     },
 
     _queryError: function(error)

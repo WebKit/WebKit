@@ -144,6 +144,7 @@ WebInspector.DatabaseQueryView.prototype = {
             return;
         dataGrid.element.addStyleClass("inline");
         this._appendQueryResult(query, dataGrid.element);
+        dataGrid.autoSizeColumns(5);
 
         if (query.match(/^create /i) || query.match(/^drop table /i))
             WebInspector.panels.storage.updateDatabaseTables(this.database);

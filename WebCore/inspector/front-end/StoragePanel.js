@@ -300,51 +300,13 @@ WebInspector.StoragePanel.prototype = {
             var data = {};
 
             var row = rows[i];
-            for (var columnIdentifier in row) {
-                var text = row[columnIdentifier];
-                data[columnIdentifier] = text;
-                if (text.length > columns[columnIdentifier].width)
-                    columns[columnIdentifier].width = text.length;
-            }
+            for (var columnIdentifier in row)
+                data[columnIdentifier] = row[columnIdentifier];
 
             var node = new WebInspector.DataGridNode(data, false);
             node.selectable = false;
             nodes.push(node);
         }
-
-        var totalColumnWidths = 0;
-        for (var columnIdentifier in columns)
-            totalColumnWidths += columns[columnIdentifier].width;
-
-        // Calculate the percentage width for the columns.
-        const minimumPrecent = Math.min(5, Math.floor(100/numColumns));
-        var recoupPercent = 0;
-        for (var columnIdentifier in columns) {
-            var width = columns[columnIdentifier].width;
-            width = Math.round((width / totalColumnWidths) * 100);
-            if (width < minimumPrecent) {
-                recoupPercent += (minimumPrecent - width);
-                width = minimumPrecent;
-            }
-
-            columns[columnIdentifier].width = width;
-        }
-
-        // Enforce the minimum percentage width.
-        while (recoupPercent > 0) {
-            for (var columnIdentifier in columns) {
-                if (columns[columnIdentifier].width > minimumPrecent) {
-                    --columns[columnIdentifier].width;
-                    --recoupPercent;
-                    if (!recoupPercent)
-                        break;
-                }
-            }
-        }
-
-        // Change the width property to a string suitable for a style width.
-        for (var columnIdentifier in columns)
-            columns[columnIdentifier].width += "%";
 
         var dataGrid = new WebInspector.DataGrid(columns);
         var length = nodes.length;

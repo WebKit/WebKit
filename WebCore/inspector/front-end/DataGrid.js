@@ -61,7 +61,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     var headerRow = document.createElement("tr");
     var columnGroup = document.createElement("colgroup");
-    var columnCount = 0;
+    this._columnCount = 0;
 
     for (var columnIdentifier in columns) {
         var column = columns[columnIdentifier];
@@ -71,6 +71,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
         var col = document.createElement("col");
         if (column.width)
             col.style.width = column.width;
+        column.element = col;
         columnGroup.appendChild(col);
 
         var cell = document.createElement("th");
@@ -98,10 +99,10 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
         headerRow.appendChild(cell);
 
-        ++columnCount;
+        ++this._columnCount;
     }
 
-    columnGroup.span = columnCount;
+    columnGroup.span = this._columnCount;
 
     var cell = document.createElement("th");
     cell.className = "corner";
@@ -114,7 +115,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     var fillerRow = document.createElement("tr");
     fillerRow.className = "filler";
 
-    for (var i = 0; i < columnCount; ++i) {
+    for (var i = 0; i < this._columnCount; ++i) {
         var cell = document.createElement("td");
         fillerRow.appendChild(cell);
     }
@@ -292,7 +293,70 @@ WebInspector.DataGrid.prototype = {
 
         return this._dataTableBody;
     },
- 
+
+    autoSizeColumns: function(minPercent, maxPercent)
+    {
+        if (minPercent)
+            minPercent = Math.min(minPercent, Math.floor(100 / this._columnCount));
+        var widths = {};
+        var columns = this.columns;
+        for (var columnIdentifier in columns)
+            widths[columnIdentifier] = (columns[columnIdentifier].title || "").length;
+
+        for (var i = 0; i < this.children.length; ++i) {
+            var node = this.children[i];
+            for (var columnIdentifier in columns) {
+                var text = node.data[columnIdentifier] || "";
+                if (text.length > widths[columnIdentifier])
+                    widths[columnIdentifier] = text.length;
+            }
+        }
+
+        var totalColumnWidths = 0;
+        for (var columnIdentifier in columns)
+            totalColumnWidths += widths[columnIdentifier];
+
+        var recoupPercent = 0;
+        for (var columnIdentifier in columns) {
+            var width = Math.round(100 * widths[columnIdentifier] / totalColumnWidths);
+            if (minPercent && width < minPercent) {
+                recoupPercent += (minPercent - width);
+                width = minPercent;
+            } else if (maxPercent && width > maxPercent) {
+                recoupPercent -= (width - maxPercent);
+                width = maxPercent;
+            }
+            widths[columnIdentifier] = width;
+        }
+
+        while (minPercent && recoupPercent > 0) {
+            for (var columnIdentifier in columns) {
+                if (widths[columnIdentifier] > minPercent) {
+                    --widths[columnIdentifier];
+                    --recoupPercent;
+                    if (!recoupPercent)
+                        break;
+                }
+            }
+        }
+
+        while (maxPercent && recoupPercent < 0) {
+            for (var columnIdentifier in columns) {
+                if (widths[columnIdentifier] < maxPercent) {
+                    ++widths[columnIdentifier];
+                    ++recoupPercent;
+                    if (!recoupPercent)
+                        break;
+                }
+            }
+        }
+
+        for (var columnIdentifier in columns)
+            columns[columnIdentifier].element.style.width = widths[columnIdentifier] + "%";
+        this.columnWidthsInitialized = false;
+        this.updateWidths();
+    },
+
     // Updates the widths of the table, including the positions of the column
     // resizers.
     //

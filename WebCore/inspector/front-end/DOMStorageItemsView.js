@@ -69,7 +69,7 @@ WebInspector.DOMStorageItemsView.prototype = {
     {
         this._dataGrid = this._dataGridForDOMStorageEntries(entries);
         this.element.appendChild(this._dataGrid.element);
-        this._dataGrid.updateWidths();
+        this._dataGrid.autoSizeColumns(10);
         this.deleteButton.visible = true;
     },
 
@@ -85,9 +85,7 @@ WebInspector.DOMStorageItemsView.prototype = {
         columns[0] = {};
         columns[1] = {};
         columns[0].title = WebInspector.UIString("Key");
-        columns[0].width = columns[0].title.length;
         columns[1].title = WebInspector.UIString("Value");
-        columns[1].width = columns[1].title.length;
 
         var nodes = [];
 
@@ -98,30 +96,13 @@ WebInspector.DOMStorageItemsView.prototype = {
 
             var key = entries[i][0];
             data[0] = key;
-            if (key.length > columns[0].width)
-                columns[0].width = key.length;
-
             var value = entries[i][1];
             data[1] = value;
-            if (value.length > columns[1].width)
-                columns[1].width = value.length;
             var node = new WebInspector.DataGridNode(data, false);
             node.selectable = true;
             nodes.push(node);
             keys.push(key);
         }
-
-        var totalColumnWidths = columns[0].width + columns[1].width;
-        var width = Math.round((columns[0].width * 100) / totalColumnWidths);
-        const minimumPrecent = 10;
-        if (width < minimumPrecent)
-            width = minimumPrecent;
-        if (width > 100 - minimumPrecent)
-            width = 100 - minimumPrecent;
-        columns[0].width = width;
-        columns[1].width = 100 - width;
-        columns[0].width += "%";
-        columns[1].width += "%";
 
         var dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
         var length = nodes.length;

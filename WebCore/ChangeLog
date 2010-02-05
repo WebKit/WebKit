@@ -1,3 +1,37 @@
+2010-02-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: simplify cookies view, introduce DataGrid::autoSizeColumns.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34646
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype.show):
+        (WebInspector.CookieItemsView.prototype._update):
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        (WebInspector.CookieItemsView.prototype._filterCookiesForDomain):
+        (WebInspector.CookieItemsView.prototype._createDataGrid):
+        (WebInspector.CookieItemsView.prototype._populateDataGrid.expiresCompare):
+        (WebInspector.CookieItemsView.prototype._populateDataGrid):
+        (WebInspector.CookieItemsView.prototype._createSimpleDataGrid):
+        (WebInspector.CookieItemsView.prototype._populateSimpleDataGrid):
+        (WebInspector.CookieItemsView.prototype._deleteCookieCallback):
+        (WebInspector.CookieItemsView.prototype._refreshButtonClicked):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype._showDOMStorageEntries):
+        (WebInspector.DOMStorageItemsView.prototype._dataGridForDOMStorageEntries):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.autoSizeColumns):
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._queryFinished):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel.prototype.dataGridForResult):
+
 2010-02-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

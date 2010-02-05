@@ -43,6 +43,11 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
     
     this._treeElement = treeElement;
     this._cookieDomain = cookieDomain;
+
+    this._emptyMsgElement = document.createElement("div");
+    this._emptyMsgElement.className = "storage-table-empty";
+    this._emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
+    this.element.appendChild(this._emptyMsgElement);
 }
 
 WebInspector.CookieItemsView.prototype = {
@@ -54,7 +59,7 @@ WebInspector.CookieItemsView.prototype = {
     show: function(parentElement)
     {
         WebInspector.View.prototype.show.call(this, parentElement);
-        this.update();
+        this._update();
     },
 
     hide: function()
@@ -63,37 +68,57 @@ WebInspector.CookieItemsView.prototype = {
         this.deleteButton.visible = false;
     },
 
-    update: function()
+    _update: function()
     {
-        this.element.removeChildren();
         WebInspector.Cookies.getCookiesAsync(this._updateWithCookies.bind(this));
     },
 
     _updateWithCookies: function(allCookies, isAdvanced)
     {
-        var cookies = this._cookiesForDomain(allCookies, isAdvanced);
-        var dataGrid = (isAdvanced ? this.dataGridForCookies(cookies) : this.simpleDataGridForCookies(cookies));
-        if (dataGrid) {
-            this._dataGrid = dataGrid;
-            this.element.appendChild(dataGrid.element);
-            this._dataGrid.updateWidths();
-            if (isAdvanced)
-                this.deleteButton.visible = true;
-        } else {
-            var emptyMsgElement = document.createElement("div");
-            emptyMsgElement.className = "storage-table-empty";
-            emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
-            this.element.appendChild(emptyMsgElement);
-            this._dataGrid = null;
+        if (isAdvanced)
+            this._filterCookiesForDomain(allCookies);
+        else
+            this._cookies = allCookies;
+
+        if (!this._cookies.length) {
+            // Nothing to show.
+            this._emptyMsgElement.removeStyleClass("hidden");
             this.deleteButton.visible = false;
+            if (this._dataGrid)
+                this._dataGrid.element.addStyleClass("hidden");
+            return;
         }
+
+        if (!this._dataGrid) {
+            if (isAdvanced) {
+                this._createDataGrid();
+                this._populateDataGrid();
+                this._dataGrid.autoSizeColumns(6, 33);
+                this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), this._cookies.length,
+                    Number.bytesToString(this._totalSize, WebInspector.UIString));
+            } else {
+                this._createSimpleDataGrid();
+                this._populateSimpleDataGrid();
+                this._dataGrid.autoSizeColumns(20, 80);
+            }
+        } else {
+            if (isAdvanced)
+                this._populateDataGrid();
+            else
+                this._populateSimpleDataGrid();
+        }
+
+        this._dataGrid.element.removeStyleClass("hidden");
+        this._emptyMsgElement.addStyleClass("hidden");
+        if (isAdvanced)
+            this.deleteButton.visible = true;
     },
 
-    _cookiesForDomain: function(allCookies, isAdvanced)
+    _filterCookiesForDomain: function(allCookies)
     {
-        var cookiesForDomain = [];
+        this._cookies = [];
         var resourceURLsForDocumentURL = [];
-        var totalSize = 0;
+        this._totalSize = 0;
 
         for (var id in WebInspector.resources) {
             var resource = WebInspector.resources[id];
@@ -108,144 +133,49 @@ WebInspector.CookieItemsView.prototype = {
             for (var j = 0; j < resourceURLsForDocumentURL.length; ++j) {
                 var resourceURL = resourceURLsForDocumentURL[j];
                 if (WebInspector.Cookies.cookieMatchesResourceURL(allCookies[i], resourceURL)) {
-                    totalSize += size;
+                    this._totalSize += size;
                     if (!pushed) {
                         pushed = true;
-                        cookiesForDomain.push(allCookies[i]);
+                        this._cookies.push(allCookies[i]);
                     }
                 }
             }
         }
-
-        if (isAdvanced) {
-            this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), cookiesForDomain.length,
-                Number.bytesToString(totalSize, WebInspector.UIString));
-        }
-        return cookiesForDomain;
     },
 
-    dataGridForCookies: function(cookies)
+    _createDataGrid: function()
     {
-        if (!cookies.length)
-            return null;
-
-        for (var i = 0; i < cookies.length; ++i)
-            cookies[i].expires = new Date(cookies[i].expires);
-
         var columns = { 0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {} };
         columns[0].title = WebInspector.UIString("Name");
-        columns[0].width = columns[0].title.length;
         columns[0].sortable = true;
         columns[1].title = WebInspector.UIString("Value");
-        columns[1].width = columns[1].title.length;
         columns[1].sortable = true;
         columns[2].title = WebInspector.UIString("Domain");
-        columns[2].width = columns[2].title.length;
         columns[2].sortable = true;
         columns[3].title = WebInspector.UIString("Path");
-        columns[3].width = columns[3].title.length;
         columns[3].sortable = true;
         columns[4].title = WebInspector.UIString("Expires");
-        columns[4].width = columns[4].title.length;
         columns[4].sortable = true;
         columns[5].title = WebInspector.UIString("Size");
-        columns[5].width = columns[5].title.length;
         columns[5].aligned = "right";
         columns[5].sortable = true;
         columns[6].title = WebInspector.UIString("HTTP");
-        columns[6].width = columns[6].title.length;
         columns[6].aligned = "centered";
         columns[6].sortable = true;
         columns[7].title = WebInspector.UIString("Secure");
-        columns[7].width = columns[7].title.length;
         columns[7].aligned = "centered";
         columns[7].sortable = true;
 
-        var totalColumnWidths = 0;
-        for (var columnIdentifier in columns)
-            totalColumnWidths += columns[columnIdentifier].width;
-
-        // Enforce the Value column (the 2nd column) to be a max of 33%
-        // tweaking the raw total width because may massively outshadow the others
-        var valueColumnWidth = columns[1].width;
-        if (valueColumnWidth / totalColumnWidths > 0.33) {
-            totalColumnWidths -= valueColumnWidth;
-            totalColumnWidths *= 1.33;
-            columns[1].width = totalColumnWidths * 0.33;
-        }
-
-        // Calculate the percentage width for the columns.
-        const minimumPrecent = 6;
-        var recoupPercent = 0;
-        for (var columnIdentifier in columns) {
-            var width = columns[columnIdentifier].width;
-            width = Math.round((width / totalColumnWidths) * 100);
-            if (width < minimumPrecent) {
-                recoupPercent += (minimumPrecent - width);
-                width = minimumPrecent;
-            }
-            columns[columnIdentifier].width = width;
-        }
-
-        // Enforce the minimum percentage width. (need to narrow total percentage due to earlier additions)
-        while (recoupPercent > 0) {
-            for (var columnIdentifier in columns) {
-                if (columns[columnIdentifier].width > minimumPrecent) {
-                    --columns[columnIdentifier].width;
-                    --recoupPercent;
-                    if (!recoupPercent)
-                        break;
-                }
-            }
-        }
-
-        for (var columnIdentifier in columns)
-            columns[columnIdentifier].width += "%";
-
-        var dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCookieCallback.bind(this));
-        var nodes = this._createNodes(dataGrid, cookies);
-        for (var i = 0; i < nodes.length; ++i)
-            dataGrid.appendChild(nodes[i]);
-        if (nodes.length)
-            nodes[0].selected = true;
-        dataGrid.addEventListener("sorting changed", this._sortData.bind(this, dataGrid, cookies));
-
-        return dataGrid;
+        this._dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCookieCallback.bind(this));
+        this._dataGrid.addEventListener("sorting changed", this._populateDataGrid, this);
+        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.updateWidths();
     },
 
-    _createNodes: function(dataGrid, cookies)
+    _populateDataGrid: function()
     {
-        function updateDataAndColumn(data, index, value) {
-            data[index] = value;
-            if (value.length > dataGrid.columns[index].width)
-                dataGrid.columns[index].width = value.length;
-        }
-
-        var nodes = [];
-        for (var i = 0; i < cookies.length; ++i) {
-            var data = {};
-            var cookie = cookies[i];
-
-            updateDataAndColumn(data, 0, cookie.name);
-            updateDataAndColumn(data, 1, cookie.value);
-            updateDataAndColumn(data, 2, cookie.domain);
-            updateDataAndColumn(data, 3, cookie.path);
-            updateDataAndColumn(data, 4, (cookie.session ? WebInspector.UIString("Session") : cookie.expires.toGMTString()));
-            updateDataAndColumn(data, 5, Number.bytesToString(cookie.size, WebInspector.UIString));
-            updateDataAndColumn(data, 6, (cookie.httpOnly ? "\u2713" : "")); // Checkmark
-            updateDataAndColumn(data, 7, (cookie.secure ? "\u2713" : "")); // Checkmark
-
-            var node = new WebInspector.DataGridNode(data);
-            node.cookie = cookie;
-            node.selectable = true;
-            nodes.push(node);
-        }
-        return nodes;
-    },
-
-    _sortData: function(dataGrid, cookies)
-    {
-        var sortDirection = dataGrid.sortOrder === "ascending" ? 1 : -1;
+        var selectedCookie = this._dataGrid.selectedNode ? this._dataGrid.selectedNode.cookie : null;
+        var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;
 
         function localeCompare(field, cookie1, cookie2)
         {
@@ -265,11 +195,11 @@ WebInspector.CookieItemsView.prototype = {
             if (cookie1.session)
                 return 0;
 
-            return sortDirection * (cookie1.expires.getTime() - cookie2.expires.getTime());
+            return sortDirection * (cookie1.expires - cookie2.expires);
         }
 
         var comparator;
-        switch (parseInt(dataGrid.sortColumnIdentifier)) {
+        switch (parseInt(this._dataGrid.sortColumnIdentifier)) {
             case 0: comparator = localeCompare.bind(this, "name"); break;
             case 1: comparator = localeCompare.bind(this, "value"); break;
             case 2: comparator = localeCompare.bind(this, "domain"); break;
@@ -281,72 +211,68 @@ WebInspector.CookieItemsView.prototype = {
             default: localeCompare.bind(this, "name");
         }
 
-        cookies.sort(comparator);
-        var nodes = this._createNodes(dataGrid, cookies);
+        this._cookies.sort(comparator);
 
-        dataGrid.removeChildren();
-        for (var i = 0; i < nodes.length; ++i)
-            dataGrid.appendChild(nodes[i]);
+        this._dataGrid.removeChildren();
+        var nodeToSelect;
+        for (var i = 0; i < this._cookies.length; ++i) {
+            var data = {};
+            var cookie = this._cookies[i];
+            data[0] = cookie.name;
+            data[1] = cookie.value;
+            data[2] = cookie.domain;
+            data[3] = cookie.path;
+            data[4] = (cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toGMTString());
+            data[5] = Number.bytesToString(cookie.size, WebInspector.UIString);
+            data[6] = (cookie.httpOnly ? "\u2713" : ""); // Checkmark
+            data[7] = (cookie.secure ? "\u2713" : ""); // Checkmark
 
-        if (nodes.length)
-            nodes[0].selected = true;
+            var node = new WebInspector.DataGridNode(data);
+            node.cookie = cookie;
+            node.selectable = true;
+            this._dataGrid.appendChild(node);
+            if (cookie === selectedCookie)
+                nodeToSelect = node;
+        }
+        if (nodeToSelect)
+            nodeToSelect.selected = true;
+        else
+            this._dataGrid.children[0].selected = true;
     },
 
-    simpleDataGridForCookies: function(cookies)
+    _createSimpleDataGrid: function()
     {
-        if (!cookies.length)
-            return null;
-
         var columns = {};
         columns[0] = {};
         columns[1] = {};
         columns[0].title = WebInspector.UIString("Name");
-        columns[0].width = columns[0].title.length;
         columns[1].title = WebInspector.UIString("Value");
-        columns[1].width = columns[1].title.length;
 
-        var nodes = [];
+        this._dataGrid = new WebInspector.DataGrid(columns);
+        this.element.appendChild(this._dataGrid.element);
+        this._dataGrid.updateWidths();
+    },
+
+    _populateSimpleDataGrid: function()
+    {
+        var cookies = this._cookies;
+        this._dataGrid.removeChildren();
+        var addedCookies = {};
         for (var i = 0; i < cookies.length; ++i) {
-            var cookie = cookies[i];
+            if (addedCookies[cookies[i].name])
+                continue;
+            addedCookies[cookies[i].name] = true;
             var data = {};
-
-            var name = cookie.name;
-            data[0] = name;
-            if (name.length > columns[0].width)
-                columns[0].width = name.length;
-
-            var value = cookie.value;
-            data[1] = value;
-            if (value.length > columns[1].width)
-                columns[1].width = value.length;
+            data[0] = cookies[i].name;
+            data[1] = cookies[i].value;
 
             var node = new WebInspector.DataGridNode(data, false);
             node.selectable = true;
-            nodes.push(node);
+            this._dataGrid.appendChild(node);
         }
-
-        var totalColumnWidths = columns[0].width + columns[1].width;
-        var width = Math.round((columns[0].width * 100) / totalColumnWidths);
-        const minimumPrecent = 20;
-        if (width < minimumPrecent)
-            width = minimumPrecent;
-        if (width > 100 - minimumPrecent)
-            width = 100 - minimumPrecent;
-        columns[0].width = width;
-        columns[1].width = 100 - width;
-        columns[0].width += "%";
-        columns[1].width += "%";
-
-        var dataGrid = new WebInspector.DataGrid(columns);
-        var length = nodes.length;
-        for (var i = 0; i < length; ++i)
-            dataGrid.appendChild(nodes[i]);
-        if (length > 0)
-            nodes[0].selected = true;
-
-        return dataGrid;
+        this._dataGrid.children[0].selected = true;
     },
-    
+
     resize: function()
     {
         if (this._dataGrid)
@@ -360,17 +286,17 @@ WebInspector.CookieItemsView.prototype = {
 
         this._deleteCookieCallback(this._dataGrid.selectedNode);
     },
-    
+
     _deleteCookieCallback: function(node)
     {
         var cookie = node.cookie;
         InspectorBackend.deleteCookie(cookie.name, this._cookieDomain);
-        this.update();
+        this._update();
     },
 
     _refreshButtonClicked: function(event)
     {
-        this.update();
+        this._update();
     }
 }
 
