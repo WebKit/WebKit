@@ -1,3 +1,12 @@
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Build fix.  Remove a symbol corresponding to an inline function from the linker export
+        file to prevent a weak external failure.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Accommodate rename of script.
+
 2010-01-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

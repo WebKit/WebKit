@@ -2108,7 +2108,7 @@
 				932F5BD20822A1C700736975 /* Frameworks */,
 				9319586B09D9F91A00A56FD4 /* Check For Global Initializers */,
 				933457200EBFDC3F00B80894 /* Check For Exit Time Destructors */,
-				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables */,
+				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
 			);
 			buildRules = (
 			);
@@ -2207,7 +2207,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# exclude NPN functions on 64-bit\nsed -e s/^.\\*NPN.\\*$// \"${SRCROOT}/JavaScriptCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp\"\n";
 		};
-		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables */ = {
+		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2215,12 +2215,12 @@
 			inputPaths = (
 				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
-			name = "Check For Weak VTables";
+			name = "Check For Weak VTables and Externals";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
 		};
 		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;

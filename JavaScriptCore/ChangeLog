@@ -1,3 +1,12 @@
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Build fix.  Remove a symbol corresponding to an inline function from the linker export
+        file to prevent a weak external failure.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Accommodate rename of script.
+
 2010-02-04  Daniel Bates  <dbates@webkit.org>
 
         [Qt] Unreviewed, build fix for Qt bot.

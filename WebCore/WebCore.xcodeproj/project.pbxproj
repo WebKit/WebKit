@@ -18526,7 +18526,7 @@
 				93F19B1208245E59001E9ABC /* Frameworks */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
-				5D0D540D0E9862F60029E223 /* Check For Weak VTables */,
+				5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */,
 			);
 			buildRules = (
 			);
@@ -18661,7 +18661,7 @@
 			shellPath = /bin/sh;
 			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/ForwardingHeaders\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/icu\" \"$BUILT_PRODUCTS_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\n";
 		};
-		5D0D540D0E9862F60029E223 /* Check For Weak VTables */ = {
+		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -18669,12 +18669,12 @@
 			inputPaths = (
 				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
-			name = "Check For Weak VTables";
+			name = "Check For Weak VTables and Externals";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
 		};
 		5D2F7DA00C6879C600B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;

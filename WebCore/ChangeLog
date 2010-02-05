@@ -1,3 +1,13 @@
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Build fix.  Remove a symbol corresponding to an inline function from the linker export
+        file to prevent a weak external failure.
+
+        * WebCore.base.exp: Remove symbol.
+        * WebCore.xcodeproj/project.pbxproj: Accommodate rename of script.
+
 2010-02-04  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: Added a forwarding header.

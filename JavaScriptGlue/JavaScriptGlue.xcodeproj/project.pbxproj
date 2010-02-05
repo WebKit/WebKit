@@ -267,7 +267,7 @@
 				DD66F3C408F73ED700C75FD7 /* Sources */,
 				DD66F3CD08F73ED700C75FD7 /* Frameworks */,
 				939D055E09DA033400984996 /* Check For Global Initializers */,
-				5D0D53490E9862A70029E223 /* Check For Weak VTables */,
+				5D0D53490E9862A70029E223 /* Check For Weak VTables and Externals */,
 				5DA0F0C00DC2B48900EA22B4 /* Remove Headers If Needed */,
 			);
 			buildRules = (
@@ -312,7 +312,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5D0D53490E9862A70029E223 /* Check For Weak VTables */ = {
+		5D0D53490E9862A70029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -320,12 +320,12 @@
 			inputPaths = (
 				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
 			);
-			name = "Check For Weak VTables";
+			name = "Check For Weak VTables and Externals";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
 		};
 		5D2F7D0A0C6878E000B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;

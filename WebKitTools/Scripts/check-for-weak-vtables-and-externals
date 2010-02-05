@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -11,7 +11,7 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution. 
-# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission. 
 #
@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# "check-for-weak-vtables" script for WebKit Open Source Project
+# "check-for-weak-vtables-and-externals" script for WebKit Open Source Project
 
 # Intended to be invoked from an Xcode build step to check if there are
-# any weak vtables in a target.
+# any weak vtables or weak externals in a target.
 
 use warnings;
 use strict;
@@ -63,22 +63,41 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
         next;
     }
     my @weakVTableClasses = ();
+    my @weakExternalSymbols = ();
     while (<NM>) {
         if (/^STDOUT:/) {
-            push @weakVTableClasses, $1 if /weak external vtable for (.*)$/;
+            # Ignore undefined, RTTI and typeinfo symbols.
+            next if /\bundefined\b/ or /\b__ZT[IS]/;
+
+            if (/weak external vtable for (.*)$/) {
+                push @weakVTableClasses, $1;
+            } elsif (/weak external (.*)$/) {
+                push @weakExternalSymbols, $1;
+            }
         } else {
             print STDERR if $_ ne "nm: no name list\n";
         }
     }
     close NM;
-    if (@weakVTableClasses) {
-        my $shortName = $executablePath;
-        $shortName =~ s/.*\///;
 
+    my $shortName = $executablePath;
+    $shortName =~ s/.*\///;
+
+    if (@weakVTableClasses) {
         print "ERROR: $shortName has a weak vtable in it ($executablePath)\n";
         print "ERROR: Fix by making sure the first virtual function in each of these classes is not an inline:\n";
         for my $class (sort @weakVTableClasses) {
             print "ERROR: class $class\n";
+        }
+        $sawError = 1;
+    }
+
+    if (@weakExternalSymbols) {
+        print "ERROR: $shortName has a weak external symbol in it ($executablePath)\n";
+        print "ERROR: A weak external symbol is generated when a symbol is defined in multiple compilation units and is also marked as being exported from the library.\n";
+        print "ERROR: A common cause of weak external symbols is when an inline function is listed in the linker export file.\n";
+        for my $symbol (sort @weakExternalSymbols) {
+            print "ERROR: symbol $symbol\n";
         }
         $sawError = 1;
     }
