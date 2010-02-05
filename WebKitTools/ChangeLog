@@ -1,3 +1,50 @@
+2010-02-03  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Provided a way in check-webkit-style to specify filter rules
+        on a per file or folder basis, via a configuration variable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33684
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added _PATH_RULES_SPECIFIER configuration variable.
+          - In ProcessorOptions class--
+            - Changed the CategoryFilter attribute to FilterConfiguration.
+            - Added path parameter to is_reportable().
+          - Renamed ArgumentDefaults filter_rules attribute to
+            base_filter_rules.
+          - Updated ArgumentPrinter class.
+          - Added filter rule validation to ArgumentParser (instead of
+            in CategoryFilter constructor).
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated unit tests as necessary.
+          - Added unit tests for PATH_RULES_SPECIFIER.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Updated DefaultStyleErrorHandler to use file path when
+            calling is_reportable().
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Updated unit tests as necessary.
+
+        * Scripts/webkitpy/style/filter.py:
+          - Marked CategoryFilter internal with an underscore.
+          - Removed argument validation from CategoryFilter.
+          - Added FilterConfiguration class.
+
+        * Scripts/webkitpy/style/filter_unittest.py:
+          - Updated CategoryFilterTest class.
+          - Added FilterConfigurationTest unit tests.
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+          - Removed _is_test_filename() code.
+          - Removed hard-coded path checks from check_include_line().
+
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+          - Removed three unit tests related to exempted files.
+
 2010-02-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Ariya Hidayat.

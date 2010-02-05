@@ -381,10 +381,6 @@ class CppStyleTest(CppStyleTestBase):
         # dynamic_cast is disallowed in most files.
         self.assert_language_rules_check('foo.cpp', statement, error_message)
         self.assert_language_rules_check('foo.h', statement, error_message)
-        # It is explicitly allowed in tests, however.
-        self.assert_language_rules_check('foo_test.cpp', statement, '')
-        self.assert_language_rules_check('foo_unittest.cpp', statement, '')
-        self.assert_language_rules_check('foo_regtest.cpp', statement, '')
 
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.
@@ -2054,16 +2050,6 @@ class OrderOfIncludesTest(CppStyleTestBase):
         self.assert_language_rules_check('foo.h',
                                          '#include "bar.h"\n'
                                          '#include <assert.h>\n',
-                                         '')
-
-    def test_webkit_api_test_excluded(self):
-        self.assert_language_rules_check('WebKitTools/WebKitAPITest/Test.h',
-                                         '#include "foo.h"\n',
-                                         '')
-
-    def test_webkit_api_test_excluded(self):
-        self.assert_language_rules_check('WebKit/qt/QGVLauncher/main.cpp',
-                                         '#include "foo.h"\n',
                                          '')
 
     def test_check_line_break_after_own_header(self):

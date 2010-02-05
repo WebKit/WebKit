@@ -83,7 +83,7 @@ class DefaultStyleErrorHandler(object):
 
         # A string to integer dictionary cache of the number of reportable
         # errors per category passed to this instance.
-        self._category_totals = { }
+        self._category_totals = {}
 
     def _add_reportable_error(self, category):
         """Increment the error count and return the new category total."""
@@ -109,7 +109,9 @@ class DefaultStyleErrorHandler(object):
         See the docstring of this module for more information.
 
         """
-        if not self._options.is_reportable(category, confidence):
+        if not self._options.is_reportable(category,
+                                           confidence,
+                                           self._file_path):
             return
 
         category_total = self._add_reportable_error(category)

@@ -48,11 +48,12 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
 
     """Tests DefaultStyleErrorHandler class."""
 
+    _file_path = "foo.h"
+
     _category = "whitespace/tab"
 
     def _error_handler(self, options):
-        file_path = "foo.h"
-        return DefaultStyleErrorHandler(file_path,
+        return DefaultStyleErrorHandler(self._file_path,
                                         options,
                                         self._mock_increment_error_count,
                                         self._mock_stderr_write)
@@ -81,7 +82,9 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         self._check_initialized()
 
         # Confirm the error is not reportable.
-        self.assertFalse(options.is_reportable(self._category, confidence))
+        self.assertFalse(options.is_reportable(self._category,
+                                               confidence,
+                                               self._file_path))
 
         self._call_error_handler(options, confidence)
 
@@ -147,9 +150,9 @@ class PatchStyleErrorHandlerTest(StyleErrorHandlerTestBase):
 
     """Tests PatchStyleErrorHandler class."""
 
-    file_path = "__init__.py"
+    _file_path = "__init__.py"
 
-    patch_string = """diff --git a/__init__.py b/__init__.py
+    _patch_string = """diff --git a/__init__.py b/__init__.py
 index ef65bee..e3db70e 100644
 --- a/__init__.py
 +++ b/__init__.py
@@ -160,13 +163,13 @@ index ef65bee..e3db70e 100644
 """
 
     def test_call(self):
-        patch_files = parse_patch(self.patch_string)
-        diff = patch_files[self.file_path]
+        patch_files = parse_patch(self._patch_string)
+        diff = patch_files[self._file_path]
 
         options = ProcessorOptions(verbosity=3)
 
         handle_error = PatchStyleErrorHandler(diff,
-                                              self.file_path,
+                                              self._file_path,
                                               options,
                                               self._mock_increment_error_count,
                                               self._mock_stderr_write)
@@ -176,7 +179,9 @@ index ef65bee..e3db70e 100644
         message = "message"
 
         # Confirm error is reportable.
-        self.assertTrue(options.is_reportable(category, confidence))
+        self.assertTrue(options.is_reportable(category,
+                                              confidence,
+                                              self._file_path))
 
         # Confirm error count initialized to zero.
         self.assertEquals(0, self._error_count)

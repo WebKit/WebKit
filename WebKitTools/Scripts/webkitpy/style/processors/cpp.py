@@ -2030,22 +2030,6 @@ def _drop_common_suffixes(filename):
     return os.path.splitext(filename)[0]
 
 
-def _is_test_filename(filename):
-    """Determines if the given filename has a suffix that identifies it as a test.
-
-    Args:
-      filename: The input filename.
-
-    Returns:
-      True if 'filename' looks like a test, False otherwise.
-    """
-    if (filename.endswith('_test.cpp')
-        or filename.endswith('_unittest.cpp')
-        or filename.endswith('_regtest.cpp')):
-        return True
-    return False
-
-
 def _classify_include(filename, include, is_system, include_state):
     """Figures out what kind of header 'include' is.
 
@@ -2110,7 +2094,6 @@ def _classify_include(filename, include, is_system, include_state):
     return _OTHER_HEADER
 
 
-
 def check_include_line(filename, file_extension, clean_lines, line_number, include_state, error):
     """Check rules that are applicable to #include lines.
 
@@ -2126,14 +2109,12 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
       include_state: An _IncludeState instance in which the headers are inserted.
       error: The function to call with any errors found.
     """
-
-    if (filename.find('WebKitTools/WebKitAPITest/') >= 0
-        or filename.find('WebKit/qt/QGVLauncher/') >= 0):
-        # Files in this directory are consumers of the WebKit API and
-        # therefore do not follow the same header including discipline as
-        # WebCore.
-        return
-
+    # FIXME: For readability or as a possible optimization, consider
+    #        exiting early here by checking whether the "build/include"
+    #        category should be checked for the given filename.  This
+    #        may involve having the error handler classes expose a
+    #        should_check() method, in addition to the usual __call__
+    #        method.
     line = clean_lines.lines[line_number]
 
     matched = _RE_PATTERN_INCLUDE.search(line)
@@ -2145,10 +2126,8 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
 
     # Look for any of the stream classes that are part of standard C++.
     if match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
-        # Many unit tests use cout, so we exempt them.
-        if not _is_test_filename(filename):
-            error(line_number, 'readability/streams', 3,
-                  'Streams are highly discouraged.')
+        error(line_number, 'readability/streams', 3,
+              'Streams are highly discouraged.')
 
     # Look for specific includes to fix.
     if include.startswith('wtf/') and not is_system:
@@ -2291,7 +2270,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               (matched.group(1), matched.group(2)))
 
     # Check that we're not using RTTI outside of testing code.
-    if search(r'\bdynamic_cast<', line) and not _is_test_filename(filename):
+    if search(r'\bdynamic_cast<', line):
         error(line_number, 'runtime/rtti', 5,
               'Do not use dynamic_cast<>.  If you need to cast within a class '
               "hierarchy, use static_cast<> to upcast.  Google doesn't support "

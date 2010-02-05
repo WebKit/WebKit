@@ -23,20 +23,47 @@
 """Contains filter-related code."""
 
 
-class CategoryFilter(object):
+def validate_filter_rules(filter_rules, all_categories):
+    """Validate the given filter rules, and raise a ValueError if not valid.
+
+    Args:
+      filter_rules: A list of boolean filter rules, for example--
+                    ["-whitespace", "+whitespace/braces"]
+      all_categories: A list of all available category names, for example--
+                      ["whitespace/tabs", "whitespace/braces"]
+
+    Raises:
+      ValueError: An error occurs if a filter rule does not begin
+                  with "+" or "-" or if a filter rule does not match
+                  the beginning of some category name in the list
+                  of all available categories.
+
+    """
+    for rule in filter_rules:
+        if not (rule.startswith('+') or rule.startswith('-')):
+            raise ValueError('Invalid filter rule "%s": every rule '
+                             "must start with + or -." % rule)
+
+        for category in all_categories:
+            if category.startswith(rule[1:]):
+                break
+        else:
+            raise ValueError('Suspected incorrect filter rule "%s": '
+                             "the rule does not match the beginning "
+                             "of any category name." % rule)
+
+
+class _CategoryFilter(object):
 
     """Filters whether to check style categories."""
 
     def __init__(self, filter_rules=None):
         """Create a category filter.
 
-        This method performs argument validation but does not strip
-        leading or trailing white space.
-
         Args:
           filter_rules: A list of strings that are filter rules, which
                         are strings beginning with the plus or minus
-                        symbol (+/-). The list should include any
+                        symbol (+/-).  The list should include any
                         default filter rules at the beginning.
                         Defaults to the empty list.
 
@@ -47,12 +74,6 @@ class CategoryFilter(object):
         """
         if filter_rules is None:
             filter_rules = []
-
-        for rule in filter_rules:
-            if not (rule.startswith('+') or rule.startswith('-')):
-                raise ValueError('Invalid filter rule "%s": every rule '
-                                 'rule in the --filter flag must start '
-                                 'with + or -.' % rule)
 
         self._filter_rules = filter_rules
         self._should_check_category = {} # Cached dictionary of category to True/False
@@ -74,13 +95,13 @@ class CategoryFilter(object):
         """Return whether the category should be checked.
 
         The rules for determining whether a category should be checked
-        are as follows. By default all categories should be checked.
+        are as follows.  By default all categories should be checked.
         Then apply the filter rules in order from first to last, with
         later flags taking precedence.
 
         A filter rule applies to a category if the string after the
         leading plus/minus (+/-) matches the beginning of the category
-        name. A plus (+) means the category should be checked, while a
+        name.  A plus (+) means the category should be checked, while a
         minus (-) means the category should not be checked.
 
         """
@@ -94,4 +115,146 @@ class CategoryFilter(object):
             should_check = rule.startswith('+')
         self._should_check_category[category] = should_check # Update cache.
         return should_check
+
+
+class FilterConfiguration(object):
+
+    """Supports filtering with path-specific and user-specified rules."""
+
+    def __init__(self, base_rules=None, path_specific=None, user_rules=None):
+        """Create a FilterConfiguration instance.
+
+        Args:
+          base_rules: The starting list of filter rules to use for
+                      processing.  The default is the empty list, which
+                      by itself would mean that all categories should be
+                      checked.
+
+          path_specific: A list of (sub_paths, path_rules) pairs
+                         that stores the path-specific filter rules for
+                         appending to the base rules.
+                             The "sub_paths" value is a list of path
+                         substrings.  If a file path contains one of the
+                         substrings, then the corresponding path rules
+                         are appended.  The first substring match takes
+                         precedence, i.e. only the first match triggers
+                         an append.
+                             The "path_rules" value is the tuple of filter
+                         rules that can be appended to the base rules.
+                         The value is a tuple rather than a list so it
+                         can be used as a dictionary key.  The dictionary
+                         is for caching purposes in the implementation of
+                         this class.
+
+          user_rules: A list of filter rules that is always appended
+                      to the base rules and any path rules.  In other
+                      words, the user rules take precedence over the
+                      everything.  In practice, the user rules are
+                      provided by the user from the command line.
+
+        """
+        if base_rules is None:
+            base_rules = []
+        if path_specific is None:
+            path_specific = []
+        if user_rules is None:
+            user_rules = []
+
+        self._base_rules = base_rules
+        self._path_specific = path_specific
+
+        # FIXME: Make user rules internal after the FilterConfiguration
+        #        attribute is removed from ProcessorOptions (since at
+        #        that point ArgumentPrinter will no longer need to
+        #        access FilterConfiguration.user_rules).
+        self.user_rules = user_rules
+
+        self._path_rules_to_filter = {}
+        """Cached dictionary of path rules to CategoryFilter instance."""
+
+        # The same CategoryFilter instance can be shared across
+        # multiple keys in this dictionary.  This allows us to take
+        # greater advantage of the caching done by
+        # CategoryFilter.should_check().
+        self._path_to_filter = {}
+        """Cached dictionary of file path to CategoryFilter instance."""
+
+    # Useful for unit testing.
+    def __eq__(self, other):
+        """Return whether this FilterConfiguration is equal to another."""
+        if self._base_rules != other._base_rules:
+            return False
+        if self._path_specific != other._path_specific:
+            return False
+        if self.user_rules != other.user_rules:
+            return False
+
+        return True
+
+    # Useful for unit testing.
+    def __ne__(self, other):
+        # Python does not automatically deduce this from __eq__().
+        return not self.__eq__(other)
+
+    def _path_rules_from_path(self, path):
+        """Determine the path-specific rules to use, and return as a tuple."""
+        for (sub_paths, path_rules) in self._path_specific:
+            for sub_path in sub_paths:
+                if path.find(sub_path) > -1:
+                    return path_rules
+        return () # Default to the empty tuple.
+
+    def _filter_from_path_rules(self, path_rules):
+        """Return the CategoryFilter associated to a path rules tuple."""
+        # We reuse the same CategoryFilter where possible to take
+        # advantage of the caching they do.
+        if path_rules not in self._path_rules_to_filter:
+            rules = list(self._base_rules) # Make a copy
+            rules.extend(path_rules)
+            rules.extend(self.user_rules)
+            self._path_rules_to_filter[path_rules] = _CategoryFilter(rules)
+
+        return self._path_rules_to_filter[path_rules]
+
+    def _filter_from_path(self, path):
+        """Return the CategoryFilter associated to a path."""
+        if path not in self._path_to_filter:
+            path_rules = self._path_rules_from_path(path)
+            filter = self._filter_from_path_rules(path_rules)
+            self._path_to_filter[path] = filter
+
+        return self._path_to_filter[path]
+
+    def should_check(self, category, path):
+        """Return whether the given category should be checked.
+
+        This method determines whether a category should be checked
+        by checking the category name against the filter rules for
+        the given path.
+
+        For a given path, the filter rules are the combination of
+        the base rules, the path-specific rules, and the user-provided
+        rules -- in that order.  As we will describe below, later rules
+        in the list take precedence.  The path-specific rules are the
+        rules corresponding to the first element of the "path_specific"
+        parameter that contains a string matching some substring of
+        the path.  If there is no such element, there are no path-
+        specific rules for that path.
+
+        Given a list of filter rules, the logic for determining whether
+        a category should be checked is as follows.  By default all
+        categories should be checked.  Then apply the filter rules in
+        order from first to last, with later flags taking precedence.
+
+        A filter rule applies to a category if the string after the
+        leading plus/minus (+/-) matches the beginning of the category
+        name.  A plus (+) means the category should be checked, while a
+        minus (-) means the category should not be checked.
+
+        Args:
+          category: The category name.
+          path: The path of the file being checked.
+
+        """
+        return self._filter_from_path(path).should_check(category)
 

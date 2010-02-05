@@ -37,7 +37,8 @@ import sys
 from .. style_references import parse_patch
 from error_handlers import DefaultStyleErrorHandler
 from error_handlers import PatchStyleErrorHandler
-from filter import CategoryFilter
+from filter import validate_filter_rules
+from filter import FilterConfiguration
 from processors.common import check_no_carriage_return
 from processors.common import categories as CommonCategories
 from processors.cpp import CppProcessor
@@ -83,6 +84,27 @@ WEBKIT_DEFAULT_FILTER_RULES = [
     '-whitespace/end_of_line',
     '-whitespace/labels',
     ]
+
+
+# The path-specific filter rules.
+#
+# Only the first substring match is used.  See the FilterConfiguration
+# documentation in filter.py for more information on this list.
+_PATH_RULES_SPECIFIER = [
+    # Files in these directories are consumers of the WebKit
+    # API and therefore do not follow the same header including
+    # discipline as WebCore.
+    (["WebKitTools/WebKitAPITest/",
+      "WebKit/qt/QGVLauncher/"],
+     ("-build/include",
+      "-readability/streams")),
+    # These are test file patterns.
+    (["_test.cpp",
+      "_unittest.cpp",
+      "_regtest.cpp"],
+     ("-readability/streams",  # Many unit tests use cout.
+      "-runtime/rtti")),
+]
 
 
 # Some files should be skipped when checking style. For example,
@@ -201,43 +223,56 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
     return usage
 
 
+# FIXME: Eliminate support for "extra_flag_values".
+#
+# FIXME: Remove everything from ProcessorOptions except for the
+#        information that can be passed via the command line, and
+#        rename to something like CheckWebKitStyleOptions.  This
+#        includes, but is not limited to, removing the
+#        max_reports_per_error attribute and the is_reportable()
+#        method.  See also the FIXME below to create a new class
+#        called something like CheckerConfiguration.
+#
 # This class should not have knowledge of the flag key names.
 class ProcessorOptions(object):
 
-    """A container to store options to use when checking style.
+    """A container to store options passed via the command line.
 
     Attributes:
-      output_format: A string that is the output format. The supported
+      extra_flag_values: A string-string dictionary of all flag key-value
+                         pairs that are not otherwise represented by this
+                         class.  The default is the empty dictionary.
+
+      filter_configuration: A FilterConfiguration instance.  The default
+                            is the "empty" filter configuration, which
+                            means that all errors should be checked.
+
+      git_commit: A string representing the git commit to check.
+                  The default is None.
+
+      max_reports_per_error: The maximum number of errors to report
+                             per file, per category.
+
+      output_format: A string that is the output format.  The supported
                      output formats are "emacs" which emacs can parse
                      and "vs7" which Microsoft Visual Studio 7 can parse.
 
       verbosity: An integer between 1-5 inclusive that restricts output
                  to errors with a confidence score at or above this value.
-                 The default is 1, which displays all errors.
-
-      filter: A CategoryFilter instance. The default is the empty filter,
-              which means that all categories should be checked.
-
-      git_commit: A string representing the git commit to check.
-                  The default is None.
-
-      extra_flag_values: A string-string dictionary of all flag key-value
-                         pairs that are not otherwise represented by this
-                         class. The default is the empty dictionary.
+                 The default is 1, which reports all errors.
 
     """
-
     def __init__(self,
-                 output_format="emacs",
-                 verbosity=1,
-                 filter=None,
-                 max_reports_per_category=None,
+                 extra_flag_values=None,
+                 filter_configuration = None,
                  git_commit=None,
-                 extra_flag_values=None):
+                 max_reports_per_category=None,
+                 output_format="emacs",
+                 verbosity=1):
         if extra_flag_values is None:
             extra_flag_values = {}
-        if filter is None:
-            filter = CategoryFilter()
+        if filter_configuration is None:
+            filter_configuration = FilterConfiguration()
         if max_reports_per_category is None:
             max_reports_per_category = {}
 
@@ -252,7 +287,7 @@ class ProcessorOptions(object):
                              'Value given: "%s".' % verbosity)
 
         self.extra_flag_values = extra_flag_values
-        self.filter = filter
+        self.filter_configuration = filter_configuration
         self.git_commit = git_commit
         self.max_reports_per_category = max_reports_per_category
         self.output_format = output_format
@@ -263,7 +298,7 @@ class ProcessorOptions(object):
         """Return whether this ProcessorOptions instance is equal to another."""
         if self.extra_flag_values != other.extra_flag_values:
             return False
-        if self.filter != other.filter:
+        if self.filter_configuration != other.filter_configuration:
             return False
         if self.git_commit != other.git_commit:
             return False
@@ -278,15 +313,16 @@ class ProcessorOptions(object):
 
     # Useful for unit testing.
     def __ne__(self, other):
-        # Python does not automatically deduce from __eq__().
-        return not (self == other)
+        # Python does not automatically deduce this from __eq__().
+        return not self.__eq__(other)
 
-    def is_reportable(self, category, confidence_in_error):
+    def is_reportable(self, category, confidence_in_error, path):
         """Return whether an error is reportable.
 
         An error is reportable if the confidence in the error
         is at least the current verbosity level, and if the current
-        filter says that the category should be checked.
+        filter says that the category should be checked for the
+        given path.
 
         Args:
           category: A string that is a style category.
@@ -294,15 +330,13 @@ class ProcessorOptions(object):
                                represents the application's confidence in
                                the error. A higher number signifies greater
                                confidence.
+          path: The path of the file being checked
 
         """
         if confidence_in_error < self.verbosity:
             return False
 
-        if self.filter is None:
-            return True # All categories should be checked by default.
-
-        return self.filter.should_check(category)
+        return self.filter_configuration.should_check(category, path)
 
 
 # This class should not have knowledge of the flag key names.
@@ -313,16 +347,16 @@ class ArgumentDefaults(object):
     Attributes:
       output_format: A string that is the default output format.
       verbosity: An integer that is the default verbosity level.
-      filter_rules: A list of strings that are boolean filter rules
-                    to prepend to any user-specified rules.
+      base_filter_rules: A list of strings that are boolean filter rules
+                         to prepend to any user-specified rules.
 
     """
 
     def __init__(self, default_output_format, default_verbosity,
-                 default_filter_rules):
+                 default_base_filter_rules):
         self.output_format = default_output_format
         self.verbosity = default_verbosity
-        self.filter_rules = default_filter_rules
+        self.base_filter_rules = default_base_filter_rules
 
 
 class ArgumentPrinter(object):
@@ -345,11 +379,10 @@ class ArgumentPrinter(object):
 
         flags['output'] = options.output_format
         flags['verbose'] = options.verbosity
-        if options.filter:
-            # Only include the filter flag if rules are present.
-            filter_string = str(options.filter)
-            if filter_string:
-                flags['filter'] = filter_string
+        # Only include the filter flag if user-provided rules are present.
+        user_rules = options.filter_configuration.user_rules
+        if user_rules:
+            flags['filter'] = ",".join(user_rules)
         if options.git_commit:
             flags['git-commit'] = options.git_commit
 
@@ -409,7 +442,7 @@ class ArgumentParser(object):
             self.doc_print('    ' + category + '\n')
 
         self.doc_print('\nDefault filter rules**:\n')
-        for filter_rule in sorted(self.defaults.filter_rules):
+        for filter_rule in sorted(self.defaults.base_filter_rules):
             self.doc_print('    ' + filter_rule + '\n')
         self.doc_print('\n**The command always evaluates the above rules, '
                        'and before any --filter flag.\n\n')
@@ -417,10 +450,7 @@ class ArgumentParser(object):
         sys.exit(0)
 
     def _parse_filter_flag(self, flag_value):
-        """Parse the value of the --filter flag.
-
-        These filters are applied when deciding whether to emit a given
-        error message.
+        """Parse the --filter flag, and return a list of filter rules.
 
         Args:
           flag_value: A string of comma-separated filter rules, for
@@ -457,7 +487,7 @@ class ArgumentParser(object):
 
         output_format = self.defaults.output_format
         verbosity = self.defaults.verbosity
-        filter_rules = self.defaults.filter_rules
+        base_rules = self.defaults.base_filter_rules
 
         # The flags already supported by the ProcessorOptions class.
         flags = ['help', 'output=', 'verbose=', 'filter=', 'git-commit=']
@@ -480,6 +510,7 @@ class ArgumentParser(object):
 
         extra_flag_values = {}
         git_commit = None
+        user_rules = []
 
         for (opt, val) in opts:
             if opt == '--help':
@@ -494,7 +525,7 @@ class ArgumentParser(object):
                 if not val:
                     self._exit_with_categories()
                 # Prepend the defaults.
-                filter_rules = filter_rules + self._parse_filter_flag(val)
+                user_rules = self._parse_filter_flag(val)
             else:
                 extra_flag_values[opt] = val
 
@@ -508,15 +539,20 @@ class ArgumentParser(object):
                              'allowed output formats are emacs and vs7.' %
                              output_format)
 
+        all_categories = style_categories()
+        validate_filter_rules(user_rules, all_categories)
+
         verbosity = int(verbosity)
         if (verbosity < 1) or (verbosity > 5):
             raise ValueError('Invalid --verbose value %s: value must '
                              'be between 1-5.' % verbosity)
 
-        filter = CategoryFilter(filter_rules)
+        filter_configuration = FilterConfiguration(base_rules=base_rules,
+                                   path_specific=_PATH_RULES_SPECIFIER,
+                                   user_rules=user_rules)
 
         options = ProcessorOptions(extra_flag_values=extra_flag_values,
-                      filter=filter,
+                      filter_configuration=filter_configuration,
                       git_commit=git_commit,
                       max_reports_per_category=MAX_REPORTS_PER_CATEGORY,
                       output_format=output_format,
@@ -621,6 +657,18 @@ class ProcessorDispatcher(object):
                                            handle_style_error,
                                            verbosity)
         return processor
+
+
+# FIXME: When creating the new CheckWebKitStyleOptions class as
+#        described in a FIXME above, add a new class here called
+#        something like CheckerConfiguration.  The class should contain
+#        attributes for options needed to process a file.  This includes
+#        a subset of the CheckWebKitStyleOptions attributes, a
+#        FilterConfiguration attribute, an stderr_write attribute, a
+#        max_reports_per_category attribute, etc.  It can also include
+#        the is_reportable() method.  The StyleChecker should accept
+#        an instance of this class rather than a ProcessorOptions
+#        instance.
 
 
 class StyleChecker(object):

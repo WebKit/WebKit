@@ -37,10 +37,13 @@
 import unittest
 
 import checker as style
+from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
+from checker import style_categories
 from checker import ProcessorDispatcher
 from checker import ProcessorOptions
 from checker import StyleChecker
-from filter import CategoryFilter
+from filter import validate_filter_rules
+from filter import FilterConfiguration
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
@@ -54,7 +57,7 @@ class ProcessorOptionsTest(unittest.TestCase):
         # Check default parameters.
         options = ProcessorOptions()
         self.assertEquals(options.extra_flag_values, {})
-        self.assertEquals(options.filter, CategoryFilter())
+        self.assertEquals(options.filter_configuration, FilterConfiguration())
         self.assertEquals(options.git_commit, None)
         self.assertEquals(options.max_reports_per_category, {})
         self.assertEquals(options.output_format, "emacs")
@@ -70,14 +73,15 @@ class ProcessorOptionsTest(unittest.TestCase):
         ProcessorOptions(verbosity=5) # works
 
         # Check attributes.
+        filter_configuration = FilterConfiguration(base_rules=["+"])
         options = ProcessorOptions(extra_flag_values={"extra_value" : 2},
-                                   filter=CategoryFilter(["+"]),
+                                   filter_configuration=filter_configuration,
                                    git_commit="commit",
                                    max_reports_per_category={"category": 3},
                                    output_format="vs7",
                                    verbosity=3)
         self.assertEquals(options.extra_flag_values, {"extra_value" : 2})
-        self.assertEquals(options.filter, CategoryFilter(["+"]))
+        self.assertEquals(options.filter_configuration, filter_configuration)
         self.assertEquals(options.git_commit, "commit")
         self.assertEquals(options.max_reports_per_category, {"category": 3})
         self.assertEquals(options.output_format, "vs7")
@@ -88,15 +92,18 @@ class ProcessorOptionsTest(unittest.TestCase):
         # == calls __eq__.
         self.assertTrue(ProcessorOptions() == ProcessorOptions())
 
-        # Verify that a difference in any argument cause equality to fail.
+        # Verify that a difference in any argument causes equality to fail.
+        filter_configuration = FilterConfiguration(base_rules=["+"])
         options = ProcessorOptions(extra_flag_values={"extra_value" : 1},
-                                   filter=CategoryFilter(["+"]),
+                                   filter_configuration=filter_configuration,
                                    git_commit="commit",
                                    max_reports_per_category={"category": 3},
                                    output_format="vs7",
                                    verbosity=1)
         self.assertFalse(options == ProcessorOptions(extra_flag_values={"extra_value" : 2}))
-        self.assertFalse(options == ProcessorOptions(filter=CategoryFilter(["-"])))
+        new_config = FilterConfiguration(base_rules=["-"])
+        self.assertFalse(options ==
+                         ProcessorOptions(filter_configuration=new_config))
         self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
         self.assertFalse(options == ProcessorOptions(max_reports_per_category=
                                                      {"category": 2}))
@@ -113,21 +120,25 @@ class ProcessorOptionsTest(unittest.TestCase):
 
     def test_is_reportable(self):
         """Test is_reportable()."""
-        filter = CategoryFilter(["-xyz"])
-        options = ProcessorOptions(filter=filter, verbosity=3)
+        filter_configuration = FilterConfiguration(base_rules=["-xyz"])
+        options = ProcessorOptions(filter_configuration=filter_configuration,
+                                   verbosity=3)
 
         # Test verbosity
-        self.assertTrue(options.is_reportable("abc", 3))
-        self.assertFalse(options.is_reportable("abc", 2))
+        self.assertTrue(options.is_reportable("abc", 3, "foo.h"))
+        self.assertFalse(options.is_reportable("abc", 2, "foo.h"))
 
         # Test filter
-        self.assertTrue(options.is_reportable("xy", 3))
-        self.assertFalse(options.is_reportable("xyz", 3))
+        self.assertTrue(options.is_reportable("xy", 3, "foo.h"))
+        self.assertFalse(options.is_reportable("xyz", 3, "foo.h"))
 
 
 class GlobalVariablesTest(unittest.TestCase):
 
     """Tests validity of the global variables."""
+
+    def _all_categories(self):
+        return style.style_categories()
 
     def defaults(self):
         return style.webkit_argument_defaults()
@@ -135,14 +146,15 @@ class GlobalVariablesTest(unittest.TestCase):
     def test_filter_rules(self):
         defaults = self.defaults()
         already_seen = []
-        all_categories = style.style_categories()
-        for rule in defaults.filter_rules:
+        validate_filter_rules(defaults.base_filter_rules,
+                              self._all_categories())
+        # Also do some additional checks.
+        for rule in defaults.base_filter_rules:
             # Check no leading or trailing white space.
             self.assertEquals(rule, rule.strip())
             # All categories are on by default, so defaults should
             # begin with -.
             self.assertTrue(rule.startswith('-'))
-            self.assertTrue(rule[1:] in all_categories)
             # Check no rule occurs twice.
             self.assertFalse(rule in already_seen)
             already_seen.append(rule)
@@ -158,11 +170,27 @@ class GlobalVariablesTest(unittest.TestCase):
         # on valid arguments elsewhere.
         parser.parse([]) # arguments valid: no error or SystemExit
 
+    def test_path_rules_specifier(self):
+        all_categories = style_categories()
+        for (sub_paths, path_rules) in PATH_RULES_SPECIFIER:
+            self.assertTrue(isinstance(path_rules, tuple),
+                            "Checking: " + str(path_rules))
+            validate_filter_rules(path_rules, self._all_categories())
+
+        # Try using the path specifier (as an "end-to-end" check).
+        config = FilterConfiguration(path_specific=PATH_RULES_SPECIFIER)
+        self.assertTrue(config.should_check("xxx_any_category",
+                                            "xxx_non_matching_path"))
+        self.assertTrue(config.should_check("xxx_any_category",
+                                            "WebKitTools/WebKitAPITest/"))
+        self.assertFalse(config.should_check("build/include",
+                                             "WebKitTools/WebKitAPITest/"))
+
     def test_max_reports_per_category(self):
         """Check that MAX_REPORTS_PER_CATEGORY is valid."""
-        categories = style.style_categories()
+        all_categories = self._all_categories()
         for category in style.MAX_REPORTS_PER_CATEGORY.iterkeys():
-            self.assertTrue(category in categories,
+            self.assertTrue(category in all_categories,
                             'Key "%s" is not a category' % category)
 
 
@@ -172,12 +200,15 @@ class ArgumentPrinterTest(unittest.TestCase):
 
     _printer = style.ArgumentPrinter()
 
-    def _create_options(self, output_format='emacs', verbosity=3,
-                        filter_rules=[], git_commit=None,
+    def _create_options(self,
+                        output_format='emacs',
+                        verbosity=3,
+                        user_rules=[],
+                        git_commit=None,
                         extra_flag_values={}):
-        filter = CategoryFilter(filter_rules)
+        filter_configuration = FilterConfiguration(user_rules=user_rules)
         return style.ProcessorOptions(extra_flag_values=extra_flag_values,
-                                      filter=filter,
+                                      filter_configuration=filter_configuration,
                                       git_commit=git_commit,
                                       output_format=output_format,
                                       verbosity=verbosity)
@@ -255,8 +286,8 @@ class ArgumentParserTest(unittest.TestCase):
         parse(['--output=vs7']) # works
 
         # Pass a filter rule not beginning with + or -.
-        self.assertRaises(ValueError, parse, ['--filter=foo'])
-        parse(['--filter=+foo']) # works
+        self.assertRaises(ValueError, parse, ['--filter=build'])
+        parse(['--filter=+build']) # works
         # Pass files and git-commit at the same time.
         self.assertRaises(SystemExit, parse, ['--git-commit=', 'file.txt'])
         # Pass an extra flag already supported.
@@ -277,8 +308,9 @@ class ArgumentParserTest(unittest.TestCase):
 
         self.assertEquals(options.output_format, 'vs7')
         self.assertEquals(options.verbosity, 3)
-        self.assertEquals(options.filter,
-                          CategoryFilter(["-", "+whitespace"]))
+        self.assertEquals(options.filter_configuration,
+                          FilterConfiguration(base_rules=["-", "+whitespace"],
+                              path_specific=PATH_RULES_SPECIFIER))
         self.assertEquals(options.git_commit, None)
 
     def test_parse_explicit_arguments(self):
@@ -291,13 +323,21 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEquals(options.verbosity, 4)
         (files, options) = parse(['--git-commit=commit'])
         self.assertEquals(options.git_commit, 'commit')
-        (files, options) = parse(['--filter=+foo,-bar'])
-        self.assertEquals(options.filter,
-                          CategoryFilter(["-", "+whitespace", "+foo", "-bar"]))
-        # Spurious white space in filter rules.
-        (files, options) = parse(['--filter=+foo ,-bar'])
-        self.assertEquals(options.filter,
-                          CategoryFilter(["-", "+whitespace", "+foo", "-bar"]))
+
+        # Pass user_rules.
+        (files, options) = parse(['--filter=+build,-whitespace'])
+        config = options.filter_configuration
+        self.assertEquals(options.filter_configuration,
+                          FilterConfiguration(base_rules=["-", "+whitespace"],
+                              path_specific=PATH_RULES_SPECIFIER,
+                              user_rules=["+build", "-whitespace"]))
+
+        # Pass spurious white space in user rules.
+        (files, options) = parse(['--filter=+build, -whitespace'])
+        self.assertEquals(options.filter_configuration,
+                          FilterConfiguration(base_rules=["-", "+whitespace"],
+                              path_specific=PATH_RULES_SPECIFIER,
+                              user_rules=["+build", "-whitespace"]))
 
         # Pass extra flag values.
         (files, options) = parse(['--extra'], ['extra'])
