@@ -1,5 +1,20 @@
 2010-02-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Add a simple test implementation and the WebKit Mac implementation
+        for the layout_tests/port package. Also add a simple test driver of
+        that interface.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34511
+
+        * Scripts/webkitpy/layout_tests/driver_test.py: Added.
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py: Added.
+        * Scripts/webkitpy/layout_tests/port/test.py: Added.
+
+2010-02-03  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Siedel.
 
         Refactor the port package into an object-oriented style and merge

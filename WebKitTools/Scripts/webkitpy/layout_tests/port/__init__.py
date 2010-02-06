@@ -38,7 +38,13 @@ def get(port_name=None, options=None):
     if port_to_use is None:
         port_to_use = 'chromium-mac'
 
-    if port_to_use.startswith('chromium-mac'):
+    if port_to_use == 'test':
+        import test
+        return test.TestPort(port_name, options)
+    elif port_to_use.startswith('mac'):
+        import mac
+        return mac.MacPort(port_name, options)
+    elif port_to_use.startswith('chromium-mac'):
         import chromium_mac
         return chromium_mac.ChromiumMacPort(port_name, options)
     elif port_to_use.startswith('chromium-linux'):
