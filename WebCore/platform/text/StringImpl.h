@@ -66,8 +66,11 @@ private:
     friend class ThreadGlobalData;
     StringImpl();
     
-    // This adopts the UChar* without copying the buffer.
+    // This constructor adopts the UChar* without copying the buffer.
     StringImpl(const UChar*, unsigned length);
+
+    // This constructor assumes that 'this' was allocated with a UChar buffer of size 'length' at the end.
+    StringImpl(unsigned length);
 
     // For use only by AtomicString's XXXTranslator helpers.
     void setHash(unsigned hash) { ASSERT(!m_hash); m_hash = hash; }
