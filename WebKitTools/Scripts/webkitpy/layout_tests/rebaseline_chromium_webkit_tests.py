@@ -54,7 +54,7 @@ import urllib
 import webbrowser
 import zipfile
 
-from port import path_utils
+from layout_package import path_utils
 from layout_package import test_expectations
 from test_types import image_diff
 from test_types import text_diff

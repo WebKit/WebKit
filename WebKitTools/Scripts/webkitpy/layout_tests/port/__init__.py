@@ -27,24 +27,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Platform-specific utilities and pseudo-constants
+"""Port-specific entrypoints for the layout tests test infrastructure."""
 
-Any functions whose implementations or values differ from one platform to
-another should be defined in their respective <platform>.py
-modules. The appropriate one of those will be imported into this module to
-provide callers with a common, platform-independent interface.
 
-This file should only ever be imported by layout_package.path_utils.
-"""
+def get(port_name=None, options=None):
+    """Returns an object implementing the Port interface. If
+    port_name is None, this routine attempts to guess at the most
+    appropriate port on this platform."""
+    port_to_use = port_name
+    if port_to_use is None:
+        port_to_use = 'chromium-mac'
 
-import sys
+    if port_to_use.startswith('chromium-mac'):
+        import chromium_mac
+        return chromium_mac.ChromiumMacPort(port_name, options)
+    elif port_to_use.startswith('chromium-linux'):
+        import chromium_linux
+        return chromium_linux.ChromiumLinuxPort(port_name, options)
+    elif port_to_use.startwith('chromium-win'):
+        import chromium_win
+        return chromium_win.ChromiumWinPort(port_name, options)
 
-# We may not support the version of Python that a user has installed (Cygwin
-# especially has had problems), but we'll allow the platform utils to be
-# included in any case so we don't get an import error.
-if sys.platform in ('cygwin', 'win32'):
-    from chromium_win import *
-elif sys.platform == 'darwin':
-    from chromium_mac import *
-elif sys.platform in ('linux', 'linux2', 'freebsd7', 'openbsd4'):
-    from chromium_linux import *
+    raise NotImplementedError('unsupported port: %s' % port_name)

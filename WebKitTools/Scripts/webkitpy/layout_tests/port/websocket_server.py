@@ -39,8 +39,6 @@ import tempfile
 import time
 import urllib
 
-import path_utils
-import port
 import http_server
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
@@ -51,37 +49,29 @@ _DEFAULT_WSS_PORT = 9323
 
 
 def url_is_alive(url):
-  """Checks to see if we get an http response from |url|.
-  We poll the url 5 times with a 1 second delay.  If we don't
-  get a reply in that time, we give up and assume the httpd
-  didn't start properly.
+    """Checks to see if we get an http response from |url|.
+    We poll the url 5 times with a 1 second delay.  If we don't
+    get a reply in that time, we give up and assume the httpd
+    didn't start properly.
 
-  Args:
-    url: The URL to check.
-  Return:
-    True if the url is alive.
-  """
-  wait_time = 5
-  while wait_time > 0:
-    try:
-      response = urllib.urlopen(url)
-      # Server is up and responding.
-      return True
-    except IOError:
-      pass
-    wait_time -= 1
-    # Wait a second and try again.
-    time.sleep(1)
+    Args:
+      url: The URL to check.
+    Return:
+      True if the url is alive.
+    """
+    wait_time = 5
+    while wait_time > 0:
+        try:
+            response = urllib.urlopen(url)
+            # Server is up and responding.
+            return True
+        except IOError:
+            pass
+        wait_time -= 1
+        # Wait a second and try again.
+        time.sleep(1)
 
-  return False
-
-
-def remove_log_files(folder, starts_with):
-    files = os.listdir(folder)
-    for file in files:
-        if file.startswith(starts_with):
-            full_path = os.path.join(folder, file)
-            os.remove(full_path)
+    return False
 
 
 class PyWebSocketNotStarted(Exception):
@@ -94,18 +84,15 @@ class PyWebSocketNotFound(Exception):
 
 class PyWebSocket(http_server.Lighttpd):
 
-    def __init__(self, output_dir, port=_DEFAULT_WS_PORT,
-                 root=None,
-                 use_tls=False,
-                 private_key=http_server.Lighttpd._pem_file,
-                 certificate=http_server.Lighttpd._pem_file,
+    def __init__(self, port_obj, output_dir, port=_DEFAULT_WS_PORT,
+                 root=None, use_tls=False,
                  register_cygwin=None,
                  pidfile=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
-        http_server.Lighttpd.__init__(self, output_dir,
-                                      port=port,
+        http_server.Lighttpd.__init__(self, port_obj, output_dir,
+                                      port=_DEFAULT_WS_PORT,
                                       root=root,
                                       register_cygwin=register_cygwin)
         self._output_dir = output_dir
@@ -113,8 +100,8 @@ class PyWebSocket(http_server.Lighttpd):
         self._port = port
         self._root = root
         self._use_tls = use_tls
-        self._private_key = private_key
-        self._certificate = certificate
+        self._private_key = self._pem_file
+        self._certificate = self._pem_file
         if self._port:
             self._port = int(self._port)
         if self._use_tls:
@@ -131,12 +118,10 @@ class PyWebSocket(http_server.Lighttpd):
                 os.path.join(self._root, 'websocket', 'tests'))
         else:
             try:
-                self._web_socket_tests = path_utils.path_from_base(
-                    'third_party', 'WebKit', 'LayoutTests', 'websocket',
-                    'tests')
-                self._layout_tests = path_utils.path_from_base(
-                    'third_party', 'WebKit', 'LayoutTests')
-            except path_utils.PathNotFound:
+                self._layout_tests = self._port_obj.layout_tests_dir()
+                self._web_socket_tests = os.path.join(self._layout_tests,
+                     'websocket', 'tests')
+            except:
                 self._web_socket_tests = None
 
     def start(self):
@@ -155,7 +140,7 @@ class PyWebSocket(http_server.Lighttpd):
         log_file_name = log_prefix + time_str
 
         # Remove old log files. We only need to keep the last ones.
-        remove_log_files(self._output_dir, log_prefix)
+        self.remove_log_files(self._output_dir, log_prefix)
 
         error_log = os.path.join(self._output_dir, log_file_name + "-err.txt")
 
@@ -163,11 +148,12 @@ class PyWebSocket(http_server.Lighttpd):
         self._wsout = open(output_log, "w")
 
         python_interp = sys.executable
-        pywebsocket_base = path_utils.path_from_base(
-            'third_party', 'WebKit', 'WebKitTools', 'pywebsocket')
-        pywebsocket_script = path_utils.path_from_base(
-            'third_party', 'WebKit', 'WebKitTools', 'pywebsocket',
-            'mod_pywebsocket', 'standalone.py')
+        pywebsocket_base = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__)))))), 'pywebsocket')
+        pywebsocket_script = os.path.join(pywebsocket_base, 'mod_pywebsocket',
+            'standalone.py')
         start_cmd = [
             python_interp, pywebsocket_script,
             '-p', str(self._port),
@@ -193,12 +179,12 @@ class PyWebSocket(http_server.Lighttpd):
         env = os.environ
         if sys.platform in ('cygwin', 'win32'):
             env['PATH'] = '%s;%s' % (
-                path_utils.path_from_base('third_party', 'cygwin', 'bin'),
+                self._port_obj._path_from_base('third_party', 'cygwin', 'bin'),
                 env['PATH'])
 
         if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = path_utils.path_from_base('third_party', 'cygwin',
-                'setup_mount.bat')
+            setup_mount = self._port_obj._path_from_base('third_party',
+                 'cygwin', 'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +
@@ -255,7 +241,7 @@ class PyWebSocket(http_server.Lighttpd):
                 'Failed to find %s server pid.' % self._server_name)
 
         logging.debug('Shutting down %s server %d.' % (self._server_name, pid))
-        port.kill_process(pid)
+        self._port_obj._kill_process(pid)
 
         if self._process:
             self._process.wait()

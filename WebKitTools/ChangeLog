@@ -1,3 +1,39 @@
+2010-02-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        Refactor the port package into an object-oriented style and merge
+        path_utils into it. We add a 'base' and a 'chromium' object to the
+        port package; this will allow us to easily add new ports (like
+        WebKit Mac).
+
+        https://bugs.webkit.org/show_bug.cgi?id=34511
+
+        * Scripts/rebaseline-chromium-webkit-tests:
+        * Scripts/run-chromium-webkit-tests:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_files.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py:
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/base.py: Added.
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Added.
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/port/path_utils.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/fuzzy_image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2010-01-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Dave Hyatt.

@@ -29,9 +29,9 @@
 
 import logging
 import os
+import simplejson
 
 from layout_package import json_results_generator
-from port import path_utils
 from layout_package import test_expectations
 from layout_package import test_failures
 
@@ -45,7 +45,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
     WONTFIX = "wontfixCounts"
     DEFERRED = "deferredCounts"
 
-    def __init__(self, builder_name, build_name, build_number,
+    def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_timings, expectations, result_summary, all_tests):
         """Modifies the results.json file. Grabs it off the archive directory
@@ -56,7 +56,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
               results.
           (see the comment of JSONResultsGenerator.__init__ for other Args)
         """
-
+        self._port = port
         self._builder_name = builder_name
         self._build_name = build_name
         self._build_number = build_number
@@ -153,7 +153,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
             test, test_name, tests)
 
         # Remove tests that don't exist anymore.
-        full_path = os.path.join(path_utils.layout_tests_dir(), test_name)
+        full_path = os.path.join(self._port.layout_tests_dir(), test_name)
         full_path = os.path.normpath(full_path)
         if not os.path.exists(full_path):
             del tests[test_name]

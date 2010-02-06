@@ -40,21 +40,22 @@ import logging
 import os
 import Queue
 import signal
-import subprocess
 import sys
 import thread
 import threading
 import time
 
-from port import path_utils
 import test_failures
 
 
-def process_output(proc, test_info, test_types, test_args, target, output_dir):
+def process_output(port, test_info, test_types, test_args, target, output_dir,
+                   crash, timeout, test_run_time, actual_checksum,
+                   output, error):
     """Receives the output from a test_shell process, subjects it to a number
     of tests, and returns a list of failure types the test produced.
 
     Args:
+      port: port-specific hooks
       proc: an active test_shell process
       test_info: Object containing the test filename, uri and timeout
       test_types: list of test types to subject the output to
@@ -64,84 +65,39 @@ def process_output(proc, test_info, test_types, test_args, target, output_dir):
 
     Returns: a list of failure objects and times for the test being processed
     """
-    outlines = []
-    extra_lines = []
     failures = []
-    crash = False
 
     # Some test args, such as the image hash, may be added or changed on a
     # test-by-test basis.
     local_test_args = copy.copy(test_args)
 
-    start_time = time.time()
+    local_test_args.hash = actual_checksum
 
-    line = proc.stdout.readline()
+    if crash:
+        failures.append(test_failures.FailureCrash())
+    if timeout:
+        failures.append(test_failures.FailureTimeout())
 
-    # Only start saving output lines once we've loaded the URL for the test.
-    url = None
-    test_string = test_info.uri.strip()
-
-    while line.rstrip() != "#EOF":
-        # Make sure we haven't crashed.
-        if line == '' and proc.poll() is not None:
-            failures.append(test_failures.FailureCrash())
-
-            # This is hex code 0xc000001d, which is used for abrupt
-            # termination. This happens if we hit ctrl+c from the prompt and
-            # we happen to be waiting on the test_shell.
-            # sdoyon: Not sure for which OS and in what circumstances the
-            # above code is valid. What works for me under Linux to detect
-            # ctrl+c is for the subprocess returncode to be negative SIGINT.
-            # And that agrees with the subprocess documentation.
-            if (-1073741510 == proc.returncode or
-                - signal.SIGINT == proc.returncode):
-                raise KeyboardInterrupt
-            crash = True
-            break
-
-        # Don't include #URL lines in our output
-        if line.startswith("#URL:"):
-            url = line.rstrip()[5:]
-            if url != test_string:
-                logging.fatal("Test got out of sync:\n|%s|\n|%s|" %
-                              (url, test_string))
-                raise AssertionError("test out of sync")
-        elif line.startswith("#MD5:"):
-            local_test_args.hash = line.rstrip()[5:]
-        elif line.startswith("#TEST_TIMED_OUT"):
-            # Test timed out, but we still need to read until #EOF.
-            failures.append(test_failures.FailureTimeout())
-        elif url:
-            outlines.append(line)
-        else:
-            extra_lines.append(line)
-
-        line = proc.stdout.readline()
-
-    end_test_time = time.time()
-
-    if len(extra_lines):
-        extra = "".join(extra_lines)
-        if crash:
-            logging.debug("Stacktrace for %s:\n%s" % (test_string, extra))
-            # Strip off "file://" since RelativeTestFilename expects
-            # filesystem paths.
-            filename = os.path.join(output_dir,
-                path_utils.relative_test_filename(test_string[7:]))
-            filename = os.path.splitext(filename)[0] + "-stack.txt"
-            path_utils.maybe_make_directory(os.path.split(filename)[0])
-            open(filename, "wb").write(extra)
-        else:
-            logging.debug("Previous test output extra lines after dump:\n%s" %
-                extra)
+    if crash:
+        logging.debug("Stacktrace for %s:\n%s" % (test_info.filename, error))
+        # Strip off "file://" since RelativeTestFilename expects
+        # filesystem paths.
+        filename = os.path.join(output_dir, test_info.filename)
+        filename = os.path.splitext(filename)[0] + "-stack.txt"
+        port.maybe_make_directory(os.path.split(filename)[0])
+        open(filename, "wb").write(error)
+    else:
+        logging.debug("Previous test output extra lines after dump:\n%s" %
+            error)
 
     # Check the output and save the results.
+    start_time = time.time()
     time_for_diffs = {}
     for test_type in test_types:
         start_diff_time = time.time()
-        new_failures = test_type.compare_output(test_info.filename,
-                                                proc, ''.join(outlines),
-                                                local_test_args, target)
+        new_failures = test_type.compare_output(port, test_info.filename,
+                                                output, local_test_args,
+                                                target)
         # Don't add any more failures if we already have a crash, so we don't
         # double-report those tests. We do double-report for timeouts since
         # we still want to see the text and image output.
@@ -150,26 +106,9 @@ def process_output(proc, test_info, test_types, test_args, target, output_dir):
         time_for_diffs[test_type.__class__.__name__] = (
             time.time() - start_diff_time)
 
-    total_time_for_all_diffs = time.time() - end_test_time
-    test_run_time = end_test_time - start_time
+    total_time_for_all_diffs = time.time() - start_diff_time
     return TestStats(test_info.filename, failures, test_run_time,
         total_time_for_all_diffs, time_for_diffs)
-
-
-def start_test_shell(command, args):
-    """Returns the process for a new test_shell started in layout-tests mode.
-    """
-    cmd = []
-    # Hook for injecting valgrind or other runtime instrumentation,
-    # used by e.g. tools/valgrind/valgrind_tests.py.
-    wrapper = os.environ.get("BROWSER_WRAPPER", None)
-    if wrapper != None:
-        cmd += [wrapper]
-    cmd += command + ['--layout-tests'] + args
-    return subprocess.Popen(cmd,
-                            stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT)
 
 
 class TestStats:
@@ -186,17 +125,19 @@ class TestStats:
 class SingleTestThread(threading.Thread):
     """Thread wrapper for running a single test file."""
 
-    def __init__(self, test_shell_command, shell_args, test_info, test_types,
-        test_args, target, output_dir):
+    def __init__(self, port, image_path, shell_args, test_info,
+        test_types, test_args, target, output_dir):
         """
         Args:
+          port: object implementing port-specific hooks
           test_info: Object containing the test filename, uri and timeout
           output_dir: Directory to put crash stacks into.
           See TestShellThread for documentation of the remaining arguments.
         """
 
         threading.Thread.__init__(self)
-        self._command = test_shell_command
+        self._port = port
+        self._image_path = image_path
         self._shell_args = shell_args
         self._test_info = test_info
         self._test_types = test_types
@@ -205,10 +146,18 @@ class SingleTestThread(threading.Thread):
         self._output_dir = output_dir
 
     def run(self):
-        proc = start_test_shell(self._command, self._shell_args +
-            ["--time-out-ms=" + self._test_info.timeout, self._test_info.uri])
-        self._test_stats = process_output(proc, self._test_info,
-            self._test_types, self._test_args, self._target, self._output_dir)
+        driver = self._port.start_test_driver(self._image_path,
+            self._shell_args)
+        start = time.time()
+        crash, timeout, actual_checksum, output, error = \
+            driver.run_test(test_info.uri.strip(), test_info.timeout,
+                            test_info.image_hash)
+        end = time.time()
+        self._test_stats = process_output(self._port,
+            self._test_info, self._test_types, self._test_args,
+            self._target, self._output_dir, crash, timeout, end - start,
+            actual_checksum, output, error)
+        driver.stop()
 
     def get_test_stats(self):
         return self._test_stats
@@ -216,17 +165,16 @@ class SingleTestThread(threading.Thread):
 
 class TestShellThread(threading.Thread):
 
-    def __init__(self, filename_list_queue, result_queue, test_shell_command,
-                 test_types, test_args, shell_args, options):
+    def __init__(self, port, filename_list_queue, result_queue,
+                 test_types, test_args, image_path, shell_args, options):
         """Initialize all the local state for this test shell thread.
 
         Args:
+          port: interface to port-specific hooks
           filename_list_queue: A thread safe Queue class that contains lists
               of tuples of (filename, uri) pairs.
           result_queue: A thread safe Queue class that will contain tuples of
               (test, failure lists) for the test results.
-          test_shell_command: A list specifying the command+args for
-              test_shell
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
@@ -236,13 +184,14 @@ class TestShellThread(threading.Thread):
               run_webkit_tests; they are typically passed via the
               run_webkit_tests.TestRunner class."""
         threading.Thread.__init__(self)
+        self._port = port
         self._filename_list_queue = filename_list_queue
         self._result_queue = result_queue
         self._filename_list = []
-        self._test_shell_command = test_shell_command
         self._test_types = test_types
         self._test_args = test_args
-        self._test_shell_proc = None
+        self._driver = None
+        self._image_path = image_path
         self._shell_args = shell_args
         self._options = options
         self._canceled = False
@@ -379,11 +328,11 @@ class TestShellThread(threading.Thread):
                 # Print the error message(s).
                 error_str = '\n'.join(['  ' + f.message() for f in failures])
                 logging.debug("%s %s failed:\n%s" % (self.getName(),
-                              path_utils.relative_test_filename(filename),
+                              self._port.relative_test_filename(filename),
                               error_str))
             else:
                 logging.debug("%s %s passed" % (self.getName(),
-                              path_utils.relative_test_filename(filename)))
+                              self._port.relative_test_filename(filename)))
             self._result_queue.put((filename, failures))
 
             if batch_size > 0 and batch_count > batch_size:
@@ -407,7 +356,7 @@ class TestShellThread(threading.Thread):
         Return:
           A list of TestFailure objects describing the error.
         """
-        worker = SingleTestThread(self._test_shell_command,
+        worker = SingleTestThread(self._port, self._image_path,
                                   self._shell_args,
                                   test_info,
                                   self._test_types,
@@ -431,7 +380,7 @@ class TestShellThread(threading.Thread):
             # tradeoff in order to avoid losing the rest of this thread's
             # results.
             logging.error('Test thread hung: killing all test_shells')
-            path_utils.kill_all_test_shells()
+            worker._driver.stop()
 
         try:
             stats = worker.get_test_stats()
@@ -454,32 +403,23 @@ class TestShellThread(threading.Thread):
           A list of TestFailure objects describing the error.
         """
         self._ensure_test_shell_is_running()
-        # Args to test_shell is a space-separated list of
-        # "uri timeout pixel_hash"
-        # The timeout and pixel_hash are optional.  The timeout is used if this
-        # test has a custom timeout. The pixel_hash is used to avoid doing an
-        # image dump if the checksums match, so it should be set to a blank
-        # value if we are generating a new baseline.
-        # (Otherwise, an image from a previous run will be copied into
-        # the baseline.)
+        # The pixel_hash is used to avoid doing an image dump if the
+        # checksums match, so it should be set to a blank value if we
+        # are generating a new baseline.  (Otherwise, an image from a
+        # previous run will be copied into the baseline.)
         image_hash = test_info.image_hash
         if image_hash and self._test_args.new_baseline:
             image_hash = ""
-        self._test_shell_proc.stdin.write(("%s %s %s\n" %
-            (test_info.uri, test_info.timeout, image_hash)))
+        start = time.time()
+        crash, timeout, actual_checksum, output, error = \
+           self._driver.run_test(test_info.uri, test_info.timeout, image_hash)
+        end = time.time()
 
-        # If the test shell is dead, the above may cause an IOError as we
-        # try to write onto the broken pipe. If this is the first test for
-        # this test shell process, than the test shell did not
-        # successfully start. If this is not the first test, then the
-        # previous tests have caused some kind of delayed crash. We don't
-        # try to recover here.
-        self._test_shell_proc.stdin.flush()
-
-        stats = process_output(self._test_shell_proc, test_info,
-                               self._test_types, self._test_args,
-                               self._options.target,
-                               self._options.results_directory)
+        stats = process_output(self._port, test_info, self._test_types,
+                               self._test_args, self._options.target,
+                               self._options.results_directory, crash,
+                               timeout, end - start, actual_checksum,
+                               output, error)
 
         self._test_stats.append(stats)
         return stats.failures
@@ -489,23 +429,12 @@ class TestShellThread(threading.Thread):
         running tests singly, since those each start a separate test shell in
         their own thread.
         """
-        if (not self._test_shell_proc or
-            self._test_shell_proc.poll() is not None):
-            self._test_shell_proc = start_test_shell(self._test_shell_command,
-                                                     self._shell_args)
+        if (not self._driver or self._driver.poll() is not None):
+            self._driver = self._port.start_driver(
+                self._image_path, self._shell_args)
 
     def _kill_test_shell(self):
         """Kill the test shell process if it's running."""
-        if self._test_shell_proc:
-            self._test_shell_proc.stdin.close()
-            self._test_shell_proc.stdout.close()
-            if self._test_shell_proc.stderr:
-                self._test_shell_proc.stderr.close()
-            if (sys.platform not in ('win32', 'cygwin') and
-                not self._test_shell_proc.poll()):
-                # Closing stdin/stdout/stderr hangs sometimes on OS X.
-                null = open(os.devnull, "w")
-                subprocess.Popen(["kill", "-9",
-                                 str(self._test_shell_proc.pid)], stderr=null)
-                null.close()
-            self._test_shell_proc = None
+        if self._driver:
+            self._driver.stop()
+            self._driver = None

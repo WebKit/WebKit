@@ -41,52 +41,21 @@ import time
 import urllib
 
 import http_server_base
-import path_utils
 
-class HttpdNotStarted(Exception): pass
 
-def remove_log_files(folder, starts_with):
-    files = os.listdir(folder)
-    for file in files:
-        if file.startswith(starts_with):
-            full_path = os.path.join(folder, file)
-            os.remove(full_path)
+class HttpdNotStarted(Exception):
+    pass
 
 
 class Lighttpd(http_server_base.HttpServerBase):
-    # Webkit tests
-    try:
-        _webkit_tests = path_utils.path_from_base('third_party', 'WebKit',
-                                                  'LayoutTests', 'http',
-                                                  'tests')
-        _js_test_resource = path_utils.path_from_base('third_party', 'WebKit',
-                                                      'LayoutTests', 'fast',
-                                                      'js', 'resources')
-    except path_utils.PathNotFound:
-        _webkit_tests = None
-        _js_test_resource = None
 
-    # Path where we can access all of the tests
-    _all_tests = path_utils.path_from_base('webkit', 'data', 'layout_tests')
-    # Self generated certificate for SSL server (for client cert get
-    # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
-    _pem_file = path_utils.path_from_base(
-        os.path.dirname(os.path.abspath(__file__)), 'httpd2.pem')
-    # One mapping where we can get to everything
-    VIRTUALCONFIG = [{'port': 8081, 'docroot': _all_tests}]
-
-    if _webkit_tests:
-        VIRTUALCONFIG.extend(
-          # Three mappings (one with SSL enabled) for LayoutTests http tests
-          [{'port': 8000, 'docroot': _webkit_tests},
-           {'port': 8080, 'docroot': _webkit_tests},
-           {'port': 8443, 'docroot': _webkit_tests, 'sslcert': _pem_file}])
-
-    def __init__(self, output_dir, background=False, port=None,
+    def __init__(self, port_obj, output_dir, background=False, port=None,
                  root=None, register_cygwin=None, run_background=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
+        # Webkit tests
+        http_server_base.HttpServerBase.__init__(self, port_obj)
         self._output_dir = output_dir
         self._process = None
         self._port = port
@@ -96,6 +65,31 @@ class Lighttpd(http_server_base.HttpServerBase):
         if self._port:
             self._port = int(self._port)
 
+        try:
+            _webkit_tests = os.path.join(self._port_obj.layout_tests_dir(),
+                 'http', 'tests')
+            _webkit_tests = os.path.join(self._port_obj.layout_tests_dir(),
+                 'fast', 'js', 'resources')
+        except:
+            _webkit_tests = None
+            _js_test_resource = None
+
+        # Self generated certificate for SSL server (for client cert get
+        # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
+        self._pem_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'httpd2.pem')
+
+        # One mapping where we can get to everything
+        VIRTUALCONFIG = []
+
+        if _webkit_tests:
+            VIRTUALCONFIG.extend(
+               # Three mappings (one with SSL) for LayoutTests http tests
+               [{'port': 8000, 'docroot': _webkit_tests},
+                {'port': 8080, 'docroot': _webkit_tests},
+                {'port': 8443, 'docroot': _webkit_tests,
+                 'sslcert': self._pem_file}])
+
     def is_running(self):
         return self._process != None
 
@@ -103,9 +97,9 @@ class Lighttpd(http_server_base.HttpServerBase):
         if self.is_running():
             raise 'Lighttpd already running'
 
-        base_conf_file = path_utils.path_from_base('third_party',
+        base_conf_file = self._port_obj.path_from_base('third_party',
             'WebKitTools', 'Scripts', 'webkitpy', 'layout_tests',
-            'layout_package', 'lighttpd.conf')
+            'port', 'lighttpd.conf')
         out_conf_file = os.path.join(self._output_dir, 'lighttpd.conf')
         time_str = time.strftime("%d%b%Y-%H%M%S")
         access_file_name = "access.log-" + time_str + ".txt"
@@ -114,8 +108,8 @@ class Lighttpd(http_server_base.HttpServerBase):
         error_log = os.path.join(self._output_dir, log_file_name)
 
         # Remove old log files. We only need to keep the last ones.
-        remove_log_files(self._output_dir, "access.log-")
-        remove_log_files(self._output_dir, "error.log-")
+        self.remove_log_files(self._output_dir, "access.log-")
+        self.remove_log_files(self._output_dir, "error.log-")
 
         # Write out the config
         f = file(base_conf_file, 'rb')
@@ -132,7 +126,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                  '               ".pl"   => "/usr/bin/env",\n'
                  '               ".asis" => "/bin/cat",\n'
                  '               ".php"  => "%s" )\n\n') %
-                                     path_utils.lighttpd_php_path())
+                                     self._port_obj._path_to_lighttpd_php())
 
         # Setup log files
         f.write(('server.errorlog = "%s"\n'
@@ -161,7 +155,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                 mappings = [{'port': 8000, 'docroot': self._root},
                             {'port': 8080, 'docroot': self._root},
                             {'port': 8443, 'docroot': self._root,
-                             'sslcert': Lighttpd._pem_file}]
+                             'sslcert': self._pem_file}]
         else:
             mappings = self.VIRTUALCONFIG
         for mapping in mappings:
@@ -176,12 +170,12 @@ class Lighttpd(http_server_base.HttpServerBase):
                      '}\n\n') % (mapping['port'], mapping['docroot']))
         f.close()
 
-        executable = path_utils.lighttpd_executable_path()
-        module_path = path_utils.lighttpd_module_path()
+        executable = self._port_obj._path_to_lighttpd()
+        module_path = self._port_obj._path_to_lighttpd_modules()
         start_cmd = [executable,
                      # Newly written config file
-                     '-f', path_utils.path_from_base(self._output_dir,
-                                                     'lighttpd.conf'),
+                     '-f', self._port_obj._path_from_base(self._output_dir,
+                                                         'lighttpd.conf'),
                      # Where it can find its module dynamic libraries
                      '-m', module_path]
 
@@ -203,11 +197,11 @@ class Lighttpd(http_server_base.HttpServerBase):
         env = os.environ
         if sys.platform in ('cygwin', 'win32'):
             env['PATH'] = '%s;%s' % (
-                path_utils.path_from_base('third_party', 'cygwin', 'bin'),
+                port.path_from_base('third_party', 'cygwin', 'bin'),
                 env['PATH'])
 
         if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = path_utils.path_from_base('third_party', 'cygwin',
+            setup_mount = port.path_from_base('third_party', 'cygwin',
                                                     'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 
@@ -235,7 +229,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         httpd_pid = None
         if self._process:
             httpd_pid = self._process.pid
-        path_utils.shut_down_http_server(httpd_pid)
+        port._shut_down_http_server(httpd_pid)
 
         if self._process:
             self._process.wait()

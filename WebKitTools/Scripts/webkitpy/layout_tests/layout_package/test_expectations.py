@@ -36,10 +36,7 @@ import os
 import re
 import sys
 import time
-from port import path_utils
 
-sys.path.append(path_utils.path_from_base('third_party', 'WebKit', 
-                                          'WebKitTools')) 
 import simplejson
 
 # Test expectation and modifier constants.
@@ -53,12 +50,28 @@ import simplejson
 class TestExpectations:
     TEST_LIST = "test_expectations.txt"
 
-    def __init__(self, tests, directory, platform, is_debug_mode, is_lint_mode,
-        tests_are_present=True):
-        """Reads the test expectations files from the given directory."""
-        path = os.path.join(directory, self.TEST_LIST)
-        self._expected_failures = TestExpectationsFile(path, tests, platform,
-            is_debug_mode, is_lint_mode, tests_are_present=tests_are_present)
+    def __init__(self, port, tests, expectations, test_platform_name,
+                 is_debug_mode, is_lint_mode, tests_are_present=True):
+        """Loads and parses the test expectations given in the string.
+        Args:
+            port: handle to object containing platform-specific functionality
+            test: list of all of the test files
+            expectations: test expectations as a string
+            test_platform_name: name of the platform to match expectations
+                against. Note that this may be different than
+                port.test_platform_name() when is_lint_mode is True.
+            is_debug_mode: whether to use the DEBUG or RELEASE modifiers
+                in the expectations
+            is_lint_mode: If True, just parse the expectations string
+                looking for errors.
+            tests_are_present: whether the test files exist in the file
+                system and can be probed for. This is useful for distinguishing
+                test files from directories, and is needed by the LTTF
+                dashboard, where the files aren't actually locally present.
+        """
+        self._expected_failures = TestExpectationsFile(port, expectations,
+            tests, test_platform_name, is_debug_mode, is_lint_mode,
+            tests_are_present=tests_are_present)
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
     # tests to run, but not when getting metrics.
@@ -230,9 +243,6 @@ class TestExpectationsFile:
     EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT,
        TEXT, IMAGE, FAIL, SKIP)
 
-    BASE_PLATFORMS = ('linux', 'mac', 'win')
-    PLATFORMS = BASE_PLATFORMS + ('win-xp', 'win-vista', 'win-7')
-
     BUILD_TYPES = ('debug', 'release')
 
     MODIFIERS = {'skip': SKIP,
@@ -251,37 +261,34 @@ class TestExpectationsFile:
                     'fail': FAIL,
                     'flaky': FLAKY}
 
-    def __init__(self, path, full_test_list, platform, is_debug_mode,
-        is_lint_mode, expectations_as_str=None, suppress_errors=False,
+    def __init__(self, port, expectations, full_test_list, test_platform_name,
+        is_debug_mode, is_lint_mode, suppress_errors=False,
         tests_are_present=True):
         """
-        path: The path to the expectation file. An error is thrown if a test is
-            listed more than once.
+        expectations: Contents of the expectations file
         full_test_list: The list of all tests to be run pending processing of
             the expections for those tests.
-        platform: Which platform from self.PLATFORMS to filter tests for.
+        test_platform_name: name of the platform to match expectations
+            against. Note that this may be different than
+            port.test_platform_name() when is_lint_mode is True.
         is_debug_mode: Whether we testing a test_shell built debug mode.
         is_lint_mode: Whether this is just linting test_expecatations.txt.
-        expectations_as_str: Contents of the expectations file. Used instead of
-            the path. This makes unittesting sane.
         suppress_errors: Whether to suppress lint errors.
         tests_are_present: Whether the test files are present in the local
             filesystem. The LTTF Dashboard uses False here to avoid having to
             keep a local copy of the tree.
         """
 
-        self._path = path
-        self._expectations_as_str = expectations_as_str
+        self._port = port
+        self._expectations = expectations
+        self._full_test_list = full_test_list
+        self._test_platform_name = test_platform_name
+        self._is_debug_mode = is_debug_mode
         self._is_lint_mode = is_lint_mode
         self._tests_are_present = tests_are_present
-        self._full_test_list = full_test_list
         self._suppress_errors = suppress_errors
         self._errors = []
         self._non_fatal_errors = []
-        self._platform = self.to_test_platform_name(platform)
-        if self._platform is None:
-            raise Exception("Unknown platform '%s'" % (platform))
-        self._is_debug_mode = is_debug_mode
 
         # Maps relative test paths as listed in the expectations file to a
         # list of maps containing modifiers and expectations for each time
@@ -320,27 +327,13 @@ class TestExpectationsFile:
         """Returns an object that can be iterated over. Allows for not caring
         about whether we're iterating over a file or a new-line separated
         string."""
-        if self._expectations_as_str:
-            iterable = [x + "\n" for x in
-                self._expectations_as_str.split("\n")]
-            # Strip final entry if it's empty to avoid added in an extra
-            # newline.
-            if iterable[len(iterable) - 1] == "\n":
-                return iterable[:len(iterable) - 1]
-            return iterable
-        else:
-            return open(self._path)
-
-    def to_test_platform_name(self, name):
-        """Returns the test expectation platform that will be used for a
-        given platform name, or None if there is no match."""
-        chromium_prefix = 'chromium-'
-        name = name.lower()
-        if name.startswith(chromium_prefix):
-            name = name[len(chromium_prefix):]
-        if name in self.PLATFORMS:
-            return name
-        return None
+        iterable = [x + "\n" for x in
+            self._expectations.split("\n")]
+        # Strip final entry if it's empty to avoid added in an extra
+        # newline.
+        if iterable[-1] == "\n":
+            return iterable[:-1]
+        return iterable
 
     def get_test_set(self, modifier, expectation=None, include_skips=True):
         if expectation is None:
@@ -398,6 +391,12 @@ class TestExpectationsFile:
           no
         """
 
+        # FIXME - remove_platform_from file worked by writing a new
+        # test_expectations.txt file over the old one. Now that we're just
+        # parsing strings, we need to change this to return the new
+        # expectations string.
+        raise NotImplementedException('remove_platform_from_file')
+
         new_file = self._path + '.new'
         logging.debug('Original file: "%s"', self._path)
         logging.debug('New file: "%s"', new_file)
@@ -430,11 +429,12 @@ class TestExpectationsFile:
             elif action == ADD_PLATFORMS_EXCEPT_THIS:
                 parts = line.split(':')
                 new_options = parts[0]
-                for p in self.PLATFORMS:
-                    p = p.upper();
+                for p in self._port.test_platform_names():
+                    p = p.upper()
                     # This is a temp solution for rebaselining tool.
                     # Do not add tags WIN-7 and WIN-VISTA to test expectations
-                    # if the original line does not specify the platform option.
+                    # if the original line does not specify the platform
+                    # option.
                     # TODO(victorw): Remove WIN-VISTA and WIN-7 once we have
                     # reliable Win 7 and Win Vista buildbots setup.
                     if not p in (platform.upper(), 'WIN-VISTA', 'WIN-7'):
@@ -517,7 +517,7 @@ class TestExpectationsFile:
 
         has_any_platform = False
         for option in options:
-            if option in self.PLATFORMS:
+            if option in self._port.test_platform_names():
                 has_any_platform = True
                 if not option == platform:
                     return REMOVE_PLATFORM
@@ -547,7 +547,7 @@ class TestExpectationsFile:
         for option in options:
             if option in self.MODIFIERS:
                 modifiers.add(option)
-            elif option in self.PLATFORMS:
+            elif option in self._port.test_platform_names():
                 has_any_platform = True
             elif option.startswith('bug'):
                 has_bug_id = True
@@ -590,7 +590,7 @@ class TestExpectationsFile:
           options: list of options
         """
         for opt in options:
-            if self._platform.startswith(opt):
+            if self._test_platform_name.startswith(opt):
                 return True
         return False
 
@@ -632,7 +632,7 @@ class TestExpectationsFile:
                     'indefinitely, then it should be just timeout.',
                     test_list_path)
 
-            full_path = os.path.join(path_utils.layout_tests_dir(),
+            full_path = os.path.join(self._port.layout_tests_dir(),
                                      test_list_path)
             full_path = os.path.normpath(full_path)
             # WebKit's way of skipping tests is to add a -disabled suffix.
@@ -662,7 +662,7 @@ class TestExpectationsFile:
             else:
                 build_type = 'RELEASE'
             print "\nFAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" \
-                % (self._platform.upper(), build_type)
+                % (self._test_platform_name.upper(), build_type)
 
             for error in self._non_fatal_errors:
                 logging.error(error)
@@ -695,7 +695,7 @@ class TestExpectationsFile:
     def _expand_tests(self, test_list_path):
         """Convert the test specification to an absolute, normalized
         path and make sure directories end with the OS path separator."""
-        path = os.path.join(path_utils.layout_tests_dir(), test_list_path)
+        path = os.path.join(self._port.layout_tests_dir(), test_list_path)
         path = os.path.normpath(path)
         path = self._fix_dir(path)
 

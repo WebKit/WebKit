@@ -33,13 +33,9 @@ Also defines the TestArguments "struct" to pass them additional arguments.
 """
 
 import cgi
-import difflib
 import errno
 import logging
 import os.path
-import subprocess
-
-from port import path_utils
 
 
 class TestArguments(object):
@@ -74,7 +70,7 @@ class TestTypeBase(object):
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_COMPARE = "-diff.png"
 
-    def __init__(self, platform, root_output_dir):
+    def __init__(self, port, platform, root_output_dir):
         """Initialize a TestTypeBase object.
 
         Args:
@@ -83,14 +79,15 @@ class TestTypeBase(object):
           root_output_dir: The unix style path to the output dir.
         """
         self._root_output_dir = root_output_dir
+        self._port = port
         self._platform = platform
 
     def _make_output_directory(self, filename):
         """Creates the output directory (if needed) for a given test
         filename."""
         output_filename = os.path.join(self._root_output_dir,
-            path_utils.relative_test_filename(filename))
-        path_utils.maybe_make_directory(os.path.split(output_filename)[0])
+            self._port.relative_test_filename(filename))
+        self._port.maybe_make_directory(os.path.split(output_filename)[0])
 
     def _save_baseline_data(self, filename, data, modifier):
         """Saves a new baseline file into the platform directory.
@@ -104,13 +101,13 @@ class TestTypeBase(object):
           modifier: type of the result file, e.g. ".txt" or ".png"
         """
         relative_dir = os.path.dirname(
-            path_utils.relative_test_filename(filename))
+            self._port.relative_test_filename(filename))
         output_dir = os.path.join(
-            path_utils.chromium_baseline_path(self._platform), relative_dir)
+            self._port.chromium_baseline_path(self._platform), relative_dir)
         output_file = os.path.basename(os.path.splitext(filename)[0] +
             self.FILENAME_SUFFIX_EXPECTED + modifier)
 
-        path_utils.maybe_make_directory(output_dir)
+        self._port.maybe_make_directory(output_dir)
         output_path = os.path.join(output_dir, output_file)
         logging.debug('writing new baseline to "%s"' % (output_path))
         open(output_path, "wb").write(data)
@@ -130,10 +127,10 @@ class TestTypeBase(object):
           The absolute windows path to the output filename
         """
         output_filename = os.path.join(self._root_output_dir,
-            path_utils.relative_test_filename(filename))
+            self._port.relative_test_filename(filename))
         return os.path.splitext(output_filename)[0] + modifier
 
-    def compare_output(self, filename, proc, output, test_args, target):
+    def compare_output(self, port, filename, output, test_args, target):
         """Method that compares the output from the test with the
         expected value.
 
@@ -141,7 +138,6 @@ class TestTypeBase(object):
 
         Args:
           filename: absolute filename to test file
-          proc: a reference to the test_shell process
           output: a string containing the output of the test
           test_args: a TestArguments object holding optional additional
               arguments
@@ -152,8 +148,8 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def write_output_files(self, filename, test_type, file_type, output,
-                           expected, diff=True, wdiff=False):
+    def write_output_files(self, port, filename, test_type, file_type,
+                           output, expected, diff=True, wdiff=False):
         """Writes the test output, the expected output and optionally the diff
         between the two to files in the results directory.
 
@@ -186,81 +182,15 @@ class TestTypeBase(object):
             return
 
         if diff:
-            diff = difflib.unified_diff(expected.splitlines(True),
-                                        output.splitlines(True),
-                                        expected_filename,
-                                        actual_filename)
-
+            diff = port.diff_text(expected, output, expected_filename,
+                                  actual_filename)
             diff_filename = self.output_filename(filename,
                 test_type + self.FILENAME_SUFFIX_DIFF + file_type)
-            open(diff_filename, "wb").write(''.join(diff))
+            open(diff_filename, "wb").write(diff)
 
         if wdiff:
             # Shell out to wdiff to get colored inline diffs.
-            executable = path_utils.wdiff_path()
-            cmd = [executable,
-                   '--start-delete=##WDIFF_DEL##',
-                   '--end-delete=##WDIFF_END##',
-                   '--start-insert=##WDIFF_ADD##',
-                   '--end-insert=##WDIFF_END##',
-                   expected_filename,
-                   actual_filename]
-            filename = self.output_filename(filename,
-                            test_type + self.FILENAME_SUFFIX_WDIFF)
-
-            global _wdiff_available
-
-            try:
-                # Python's Popen has a bug that causes any pipes opened to a
-                # process that can't be executed to be leaked.  Since this
-                # code is specifically designed to tolerate exec failures
-                # to gracefully handle cases where wdiff is not installed,
-                # the bug results in a massive file descriptor leak. As a
-                # workaround, if an exec failure is ever experienced for
-                # wdiff, assume it's not available.  This will leak one
-                # file descriptor but that's better than leaking each time
-                # wdiff would be run.
-                #
-                # http://mail.python.org/pipermail/python-list/
-                #    2008-August/505753.html
-                # http://bugs.python.org/issue3210
-                #
-                # It also has a threading bug, so we don't output wdiff if
-                # the Popen raises a ValueError.
-                # http://bugs.python.org/issue1236
-                if _wdiff_available:
-                    wdiff = subprocess.Popen(
-                        cmd, stdout=subprocess.PIPE).communicate()[0]
-                    wdiff_failed = False
-
-            except OSError, e:
-                if (e.errno == errno.ENOENT or e.errno == errno.EACCES or
-                    e.errno == errno.ECHILD):
-                    _wdiff_available = False
-                else:
-                    raise e
-            except ValueError, e:
-                wdiff_failed = True
-
-            out = open(filename, 'wb')
-
-            if not _wdiff_available:
-                out.write(
-                    "wdiff not installed.<br/> "
-                    "If you're running OS X, you can install via macports."
-                    "<br/>"
-                    "If running Ubuntu linux, you can run "
-                    "'sudo apt-get install wdiff'.")
-            elif wdiff_failed:
-                out.write('wdiff failed due to running with multiple '
-                          'test_shells in parallel.')
-            else:
-                wdiff = cgi.escape(wdiff)
-                wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
-                wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')
-                wdiff = wdiff.replace('##WDIFF_END##', '</span>')
-                out.write('<head><style>.del { background: #faa; } ')
-                out.write('.add { background: #afa; }</style></head>')
-                out.write('<pre>' + wdiff + '</pre>')
-
-            out.close()
+            wdiff = port.wdiff_text(expected_filename, actual_filename)
+            filename = self.output_filename(filename, test_type +
+                                            self.FILENAME_SUFFIX_WDIFF)
+            out = open(filename, 'wb').write(wdiff)

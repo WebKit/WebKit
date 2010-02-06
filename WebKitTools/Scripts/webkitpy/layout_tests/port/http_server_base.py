@@ -30,11 +30,15 @@
 """Base class with common routines between the Apache and Lighttpd servers."""
 
 import logging
+import os
 import time
 import urllib
 
 
 class HttpServerBase(object):
+
+    def __init__(self, port_obj):
+        self._port_obj = port_obj
 
     def wait_for_action(self, action):
         """Repeat the action for 20 seconds or until it succeeds. Returns
@@ -65,3 +69,10 @@ class HttpServerBase(object):
                 return False
 
         return True
+
+    def remove_log_files(self, folder, starts_with):
+        files = os.listdir(folder)
+        for file in files:
+            if file.startswith(starts_with):
+                full_path = os.path.join(folder, file)
+                os.remove(full_path)

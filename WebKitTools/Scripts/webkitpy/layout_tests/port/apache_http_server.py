@@ -37,19 +37,19 @@ import subprocess
 import sys
 
 import http_server_base
-import path_utils
-import port
 
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
-    def __init__(self, output_dir):
+    def __init__(self, port_obj, output_dir):
         """Args:
+          port_obj: handle to the platform-specific routines
           output_dir: the absolute path to the layout test result directory
         """
+        http_server_base.HttpServerBase.__init__(self, port_obj)
         self._output_dir = output_dir
         self._httpd_proc = None
-        path_utils.maybe_make_directory(output_dir)
+        port_obj.maybe_make_directory(output_dir)
 
         self.mappings = [{'port': 8000},
                          {'port': 8080},
@@ -59,15 +59,14 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # The upstream .conf file assumed the existence of /tmp/WebKit for
         # placing apache files like the lock file there.
         self._runtime_path = os.path.join("/tmp", "WebKit")
-        path_utils.maybe_make_directory(self._runtime_path)
+        port_obj.maybe_make_directory(self._runtime_path)
 
         # The PID returned when Apache is started goes away (due to dropping
         # privileges?). The proper controlling PID is written to a file in the
         # apache runtime directory.
         self._pid_file = os.path.join(self._runtime_path, 'httpd.pid')
 
-        test_dir = path_utils.path_from_base('third_party', 'WebKit',
-            'LayoutTests')
+        test_dir = self._port_obj.layout_tests_dir()
         js_test_resources_dir = self._cygwin_safe_join(test_dir, "fast", "js",
             "resources")
         mime_types_path = self._cygwin_safe_join(test_dir, "http", "conf",
@@ -78,7 +77,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         error_log = self._cygwin_safe_join(output_dir, "error_log.txt")
         document_root = self._cygwin_safe_join(test_dir, "http", "tests")
 
-        executable = port.apache_executable_path()
+        executable = self._port_obj._path_to_apache()
         if self._is_cygwin():
             executable = self._get_cygwin_path(executable)
 
@@ -95,7 +94,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
                 os.environ.get("USER", ""))]
 
         if self._is_cygwin():
-            cygbin = path_utils.path_from_base('third_party', 'cygwin', 'bin')
+            cygbin = self._port_obj._path_from_base('third_party', 'cygwin',
+                'bin')
             # Not entirely sure why, but from cygwin we need to run the
             # httpd command through bash.
             self._start_cmd = [
@@ -146,7 +146,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
           test_dir: absolute path to the LayoutTests directory.
           output_dir: absolute path to the layout test results directory.
         """
-        httpd_config = port.apache_config_file_path()
+        httpd_config = self._port_obj._path_to_apache_config_file()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
         httpd_conf = open(httpd_config).read()
         if self._is_cygwin():
@@ -156,21 +156,10 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             # plus the relative paths to the .so files listed in the .conf
             # file. We have apache/cygwin checked into our tree so
             # people don't have to install it into their cygwin.
-            cygusr = path_utils.path_from_base('third_party', 'cygwin', 'usr')
+            cygusr = self._port_obj._path_from_base('third_party', 'cygwin',
+                'usr')
             httpd_conf = httpd_conf.replace('ServerRoot "/usr"',
                 'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
-
-        # TODO(ojan): Instead of writing an extra file, checkin a conf file
-        # upstream. Or, even better, upstream/delete all our chrome http
-        # tests so we don't need this special-cased DocumentRoot and then
-        # just use the upstream
-        # conf file.
-        chrome_document_root = path_utils.path_from_base('webkit', 'data',
-            'layout_tests')
-        if self._is_cygwin():
-            chrome_document_root = self._get_cygwin_path(chrome_document_root)
-        httpd_conf = (httpd_conf +
-            self._get_virtual_host_config(chrome_document_root, 8081))
 
         f = open(httpd_config_copy, 'wb')
         f.write(httpd_conf)
@@ -226,4 +215,4 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         httpd_pid = None
         if os.path.exists(self._pid_file):
             httpd_pid = int(open(self._pid_file).readline())
-        path_utils.shut_down_http_server(httpd_pid)
+        self._port_obj._shut_down_http_server(httpd_pid)

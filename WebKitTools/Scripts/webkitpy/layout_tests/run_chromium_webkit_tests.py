@@ -54,10 +54,11 @@ import Queue
 import random
 import re
 import shutil
-import subprocess
 import sys
 import time
 import traceback
+
+import simplejson
 
 from layout_package import test_expectations
 from layout_package import json_layout_results_generator
@@ -65,20 +66,12 @@ from layout_package import metered_stream
 from layout_package import test_failures
 from layout_package import test_shell_thread
 from layout_package import test_files
-
-import port
-from port import apache_http_server
-from port import http_server
-from port import path_utils
-from port import websocket_server
-
 from test_types import fuzzy_image_diff
 from test_types import image_diff
 from test_types import test_type_base
 from test_types import text_diff
 
-sys.path.append(path_utils.path_from_base('third_party'))
-import simplejson
+import port
 
 # Indicates that we want detailed progress updates in the output (prints
 # directory-by-directory feedback).
@@ -96,17 +89,16 @@ TestExpectationsFile = test_expectations.TestExpectationsFile
 class TestInfo:
     """Groups information about a test for easy passing of data."""
 
-    def __init__(self, filename, timeout):
+    def __init__(self, port, filename, timeout):
         """Generates the URI and stores the filename and timeout for this test.
         Args:
           filename: Full path to the test.
           timeout: Timeout for running the test in TestShell.
           """
         self.filename = filename
-        self.uri = path_utils.filename_to_uri(filename)
+        self.uri = port.filename_to_uri(filename)
         self.timeout = timeout
-        expected_hash_file = path_utils.expected_filename(filename,
-                                                          '.checksum')
+        expected_hash_file = port.expected_filename(filename, '.checksum')
         try:
             self.image_hash = open(expected_hash_file, "r").read()
         except IOError, e:
@@ -175,24 +167,18 @@ class TestRunner:
 
     NUM_RETRY_ON_UNEXPECTED_FAILURE = 1
 
-    def __init__(self, options, meter):
+    def __init__(self, port, options, meter):
         """Initialize test runner data structures.
 
         Args:
+          port: an object implementing port-specific
           options: a dictionary of command line options
           meter: a MeteredStream object to record updates to.
         """
+        self._port = port
         self._options = options
         self._meter = meter
 
-        if options.use_apache:
-            self._http_server = apache_http_server.LayoutTestApacheHttpd(
-                options.results_directory)
-        else:
-            self._http_server = http_server.Lighttpd(options.results_directory)
-
-        self._websocket_server = websocket_server.PyWebSocket(
-            options.results_directory)
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
         #        options.results_directory, use_tls=True, port=9323)
@@ -203,8 +189,6 @@ class TestRunner:
         # a set of test files, and the same tests as a list
         self._test_files = set()
         self._test_files_list = None
-        self._file_dir = path_utils.path_from_base('webkit', 'tools',
-            'layout_tests')
         self._result_queue = Queue.Queue()
 
         # These are used for --log detailed-progress to track status by
@@ -219,20 +203,18 @@ class TestRunner:
         logging.debug("flushing stderr")
         sys.stderr.flush()
         logging.debug("stopping http server")
-        # Stop the http server.
-        self._http_server.stop()
-        # Stop the Web Socket / Web Socket Secure servers.
-        self._websocket_server.stop()
-        # self._websocket_secure_server.Stop()
+        self._port.stop_http_server()
+        logging.debug("stopping websocket server")
+        self._port.stop_websocket_server()
 
     def gather_file_paths(self, paths):
         """Find all the files to test.
 
         Args:
           paths: a list of globs to use instead of the defaults."""
-        self._test_files = test_files.gather_test_files(paths)
+        self._test_files = test_files.gather_test_files(self._port, paths)
 
-    def parse_expectations(self, platform, is_debug_mode):
+    def parse_expectations(self, test_platform_name, is_debug_mode):
         """Parse the expectations from the test_list files and return a data
         structure holding them. Throws an error if the test_list files have
         invalid syntax."""
@@ -242,9 +224,10 @@ class TestRunner:
             test_files = self._test_files
 
         try:
-            self._expectations = test_expectations.TestExpectations(test_files,
-                self._file_dir, platform, is_debug_mode,
-                self._options.lint_test_files)
+            expectations_str = self._port.test_expectations()
+            self._expectations = test_expectations.TestExpectations(
+                self._port, test_files, expectations_str, test_platform_name,
+                is_debug_mode, self._options.lint_test_files)
             return self._expectations
         except Exception, err:
             if self._options.lint_test_files:
@@ -359,7 +342,8 @@ class TestRunner:
             self._test_files = set(self._test_files_list)
 
             self._expectations = self.parse_expectations(
-                path_utils.platform_name(), self._options.target == 'Debug')
+                self._port.test_platform_name(),
+                self._options.target == 'Debug')
 
             self._test_files = set(files)
             self._test_files_list = files
@@ -424,8 +408,9 @@ class TestRunner:
         is used for looking up the timeout value (in ms) to use for the given
         test."""
         if self._expectations.has_modifier(test_file, test_expectations.SLOW):
-            return TestInfo(test_file, self._options.slow_time_out_ms)
-        return TestInfo(test_file, self._options.time_out_ms)
+            return TestInfo(self._port, test_file,
+                            self._options.slow_time_out_ms)
+        return TestInfo(self._port, test_file, self._options.time_out_ms)
 
     def _get_test_file_queue(self, test_files):
         """Create the thread safe queue of lists of (test filenames, test URIs)
@@ -490,6 +475,7 @@ class TestRunner:
         """Returns the tuple of arguments for tests and for test_shell."""
         shell_args = []
         test_args = test_type_base.TestArguments()
+        png_path = None
         if not self._options.no_pixel_tests:
             png_path = os.path.join(self._options.results_directory,
                                     "png_result%s.png" % index)
@@ -506,7 +492,7 @@ class TestRunner:
         if self._options.gp_fault_error_box:
             shell_args.append('--gp-fault-error-box')
 
-        return (test_args, shell_args)
+        return test_args, png_path, shell_args
 
     def _contains_tests(self, subdir):
         for test_file in self._test_files_list:
@@ -514,23 +500,12 @@ class TestRunner:
                 return True
         return False
 
-    def _instantiate_test_shell_threads(self, test_shell_binary, test_files,
-                                     result_summary):
+    def _instantiate_test_shell_threads(self, test_files, result_summary):
         """Instantitates and starts the TestShellThread(s).
 
         Return:
           The list of threads.
         """
-        test_shell_command = [test_shell_binary]
-
-        if self._options.wrapper:
-            # This split() isn't really what we want -- it incorrectly will
-            # split quoted strings within the wrapper argument -- but in
-            # practice it shouldn't come up and the --help output warns
-            # about it anyway.
-            test_shell_command = (self._options.wrapper.split() +
-                test_shell_command)
-
         filename_queue = self._get_test_file_queue(test_files)
 
         # Instantiate TestShellThreads and start them.
@@ -539,15 +514,16 @@ class TestRunner:
             # Create separate TestTypes instances for each thread.
             test_types = []
             for t in self._test_types:
-                test_types.append(t(self._options.platform,
+                test_types.append(t(self._port, self._options.platform,
                                     self._options.results_directory))
 
-            test_args, shell_args = self._get_test_shell_args(i)
-            thread = test_shell_thread.TestShellThread(filename_queue,
+            test_args, png_path, shell_args = self._get_test_shell_args(i)
+            thread = test_shell_thread.TestShellThread(self._port,
+                                                       filename_queue,
                                                        self._result_queue,
-                                                       test_shell_command,
                                                        test_types,
                                                        test_args,
+                                                       png_path,
                                                        shell_args,
                                                        self._options)
             if self._is_single_threaded():
@@ -558,19 +534,11 @@ class TestRunner:
 
         return threads
 
-    def _stop_layout_test_helper(self, proc):
-        """Stop the layout test helper and closes it down."""
-        if proc:
-            logging.debug("Stopping layout test helper")
-            proc.stdin.write("x\n")
-            proc.stdin.close()
-            proc.wait()
-
     def _is_single_threaded(self):
         """Returns whether we should run all the tests in the main thread."""
         return int(self._options.num_test_shells) == 1
 
-    def _run_tests(self, test_shell_binary, file_list, result_summary):
+    def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
 
         Return: A tuple (failures, thread_timings, test_timings,
@@ -584,9 +552,8 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
-        threads = self._instantiate_test_shell_threads(test_shell_binary,
-                                                    file_list,
-                                                    result_summary)
+        threads = self._instantiate_test_shell_threads(file_list,
+                                                       result_summary)
 
         # Wait for the threads to finish and collect test failures.
         failures = {}
@@ -612,7 +579,7 @@ class TestRunner:
         except KeyboardInterrupt:
             for thread in threads:
                 thread.cancel()
-            self._stop_layout_test_helper(layout_test_helper_proc)
+            self._port.stop_helper()
             raise
         for thread in threads:
             # Check whether a TestShellThread died before normal completion.
@@ -642,42 +609,20 @@ class TestRunner:
         if not self._test_files:
             return 0
         start_time = time.time()
-        test_shell_binary = path_utils.test_shell_path(self._options.target)
 
         # Start up any helper needed
-        layout_test_helper_proc = None
         if not self._options.no_pixel_tests:
-            helper_path = path_utils.layout_test_helper_path(
-                self._options.target)
-            if len(helper_path):
-                logging.debug("Starting layout helper %s" % helper_path)
-                layout_test_helper_proc = subprocess.Popen(
-                    [helper_path], stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE, stderr=None)
-                is_ready = layout_test_helper_proc.stdout.readline()
-                if not is_ready.startswith('ready'):
-                    logging.error("layout_test_helper failed to be ready")
-
-        # Check that the system dependencies (themes, fonts, ...) are correct.
-        if not self._options.nocheck_sys_deps:
-            proc = subprocess.Popen([test_shell_binary,
-                                    "--check-layout-test-sys-deps"])
-            if proc.wait() != 0:
-                logging.info("Aborting because system dependencies check "
-                             "failed.\n To override, invoke with "
-                             "--nocheck-sys-deps")
-                sys.exit(1)
+            self._port.start_helper()
 
         if self._contains_tests(self.HTTP_SUBDIR):
-            self._http_server.start()
+            self._port.start_http_server()
 
         if self._contains_tests(self.WEBSOCKET_SUBDIR):
-            self._websocket_server.start()
+            self._port.start_websocket_server()
             # self._websocket_secure_server.Start()
 
         thread_timings, test_timings, individual_test_timings = (
-            self._run_tests(test_shell_binary, self._test_files_list,
-                           result_summary))
+            self._run_tests(self._test_files_list, result_summary))
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
@@ -689,10 +634,10 @@ class TestRunner:
             logging.debug("Retrying %d unexpected failure(s)" % len(failures))
             retries += 1
             retry_summary = ResultSummary(self._expectations, failures.keys())
-            self._run_tests(test_shell_binary, failures.keys(), retry_summary)
+            self._run_tests(failures.keys(), retry_summary)
             failures = self._get_failures(retry_summary, include_crashes=True)
 
-        self._stop_layout_test_helper(layout_test_helper_proc)
+        self._port.stop_helper()
         end_time = time.time()
 
         write = create_logging_writer(self._options, 'timing')
@@ -777,7 +722,7 @@ class TestRunner:
 
         next_test = self._test_files_list[self._current_test_number]
         next_dir = os.path.dirname(
-            path_utils.relative_test_filename(next_test))
+            self._port.relative_test_filename(next_test))
         if self._current_progress_str == "":
             self._current_progress_str = "%s: " % (next_dir)
             self._current_dir = next_dir
@@ -803,7 +748,7 @@ class TestRunner:
 
             next_test = self._test_files_list[self._current_test_number]
             next_dir = os.path.dirname(
-                path_utils.relative_test_filename(next_test))
+                self._port.relative_test_filename(next_test))
 
         if result_summary.remaining:
             remain_str = " (%d)" % (result_summary.remaining)
@@ -874,7 +819,7 @@ class TestRunner:
             # Note that if a test crashed in the original run, we ignore
             # whether or not it crashed when we retried it (if we retried it),
             # and always consider the result not flaky.
-            test = path_utils.relative_test_filename(filename)
+            test = self._port.relative_test_filename(filename)
             expected = self._expectations.get_expectations_string(filename)
             actual = [keywords[result]]
 
@@ -943,7 +888,7 @@ class TestRunner:
         expectations_file.close()
 
         json_layout_results_generator.JSONLayoutResultsGenerator(
-            self._options.builder_name, self._options.build_name,
+            self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._options.results_directory,
             BUILDER_BASE_URL, individual_test_timings,
             self._expectations, result_summary, self._test_files_list)
@@ -1110,7 +1055,7 @@ class TestRunner:
         write(title)
         for test_tuple in test_list:
             filename = test_tuple.filename[len(
-                path_utils.layout_tests_dir()) + 1:]
+                self._port.layout_tests_dir()) + 1:]
             filename = filename.replace('\\', '/')
             test_run_time = round(test_tuple.test_run_time, 1)
             write("  %s took %s seconds" % (filename, test_run_time))
@@ -1328,7 +1273,7 @@ class TestRunner:
         """Prints one unexpected test result line."""
         desc = TestExpectationsFile.EXPECTATION_DESCRIPTIONS[result][0]
         self._meter.write("  %s -> unexpected %s\n" %
-                          (path_utils.relative_test_filename(test), desc))
+                          (self._port.relative_test_filename(test), desc))
 
     def _write_results_html_file(self, result_summary):
         """Write results.html which is a summary of tests that failed.
@@ -1366,12 +1311,12 @@ class TestRunner:
         for test_file in test_files:
             test_failures = result_summary.failures.get(test_file, [])
             out_file.write("<p><a href='%s'>%s</a><br />\n"
-                           % (path_utils.filename_to_uri(test_file),
-                              path_utils.relative_test_filename(test_file)))
+                           % (self._port.filename_to_uri(test_file),
+                              self._port.relative_test_filename(test_file)))
             for failure in test_failures:
                 out_file.write("&nbsp;&nbsp;%s<br/>"
                                % failure.result_html_output(
-                                 path_utils.relative_test_filename(test_file)))
+                                 self._port.relative_test_filename(test_file)))
             out_file.write("</p>\n")
 
         # footer
@@ -1382,8 +1327,7 @@ class TestRunner:
         """Launches the test shell open to the results.html page."""
         results_filename = os.path.join(self._options.results_directory,
                                         "results.html")
-        subprocess.Popen([path_utils.test_shell_path(self._options.target),
-                          path_utils.filename_to_uri(results_filename)])
+        self._port.show_results_html_file(results_filename)
 
 
 def _add_to_dict_of_lists(dict, key, value):
@@ -1444,19 +1388,19 @@ def main(options, args):
         else:
             options.target = "Release"
 
+    port_obj = port.get(options.platform, options)
+
     if not options.use_apache:
         options.use_apache = sys.platform in ('darwin', 'linux2')
 
     if options.results_directory.startswith("/"):
         # Assume it's an absolute path and normalize.
-        options.results_directory = path_utils.get_absolute_path(
+        options.results_directory = port_obj.get_absolute_path(
             options.results_directory)
     else:
         # If it's a relative path, make the output directory relative to
         # Debug or Release.
-        basedir = path_utils.path_from_base('webkit')
-        options.results_directory = path_utils.get_absolute_path(
-            os.path.join(basedir, options.target, options.results_directory))
+        options.results_directory = port_obj.results_directory()
 
     if options.clobber_old_results:
         # Just clobber the actual test results directories since the other
@@ -1466,12 +1410,9 @@ def main(options, args):
         if os.path.exists(path):
             shutil.rmtree(path)
 
-    # Ensure platform is valid and force it to the form 'chromium-<platform>'.
-    options.platform = path_utils.platform_name(options.platform)
-
     if not options.num_test_shells:
         # TODO(ojan): Investigate perf/flakiness impact of using numcores + 1.
-        options.num_test_shells = port.get_num_cores()
+        options.num_test_shells = port_obj.num_cores()
 
     write = create_logging_writer(options, 'config')
     write("Running %s test_shells in parallel" % options.num_test_shells)
@@ -1499,62 +1440,46 @@ def main(options, args):
         paths += read_test_files(options.test_list)
 
     # Create the output directory if it doesn't already exist.
-    path_utils.maybe_make_directory(options.results_directory)
+    port_obj.maybe_make_directory(options.results_directory)
     meter.update("Gathering files ...")
 
-    test_runner = TestRunner(options, meter)
+    test_runner = TestRunner(port_obj, options, meter)
     test_runner.gather_file_paths(paths)
 
     if options.lint_test_files:
         # Creating the expecations for each platform/target pair does all the
         # test list parsing and ensures it's correct syntax (e.g. no dupes).
-        for platform in TestExpectationsFile.PLATFORMS:
+        for platform in port_obj.test_platform_names():
             test_runner.parse_expectations(platform, is_debug_mode=True)
             test_runner.parse_expectations(platform, is_debug_mode=False)
         print ("If there are no fail messages, errors or exceptions, then the "
             "lint succeeded.")
         sys.exit(0)
 
-    try:
-        test_shell_binary_path = path_utils.test_shell_path(options.target)
-    except path_utils.PathNotFound:
-        print "\nERROR: test_shell is not found. Be sure that you have built"
-        print "it and that you are using the correct build. This script"
-        print "will run the Release one by default. Use --debug to use the"
-        print "Debug build.\n"
-        sys.exit(1)
+    # Check that the system dependencies (themes, fonts, ...) are correct.
+    if not options.nocheck_sys_deps:
+        if not port_obj.check_sys_deps():
+            sys.exit(1)
 
     write = create_logging_writer(options, "config")
-    write("Using platform '%s'" % options.platform)
+    write("Using port '%s'" % port_obj.name())
     write("Placing test results in %s" % options.results_directory)
     if options.new_baseline:
-        write("Placing new baselines in %s" %
-              path_utils.chromium_baseline_path(options.platform))
-    write("Using %s build at %s" % (options.target, test_shell_binary_path))
+        write("Placing new baselines in %s" % port_obj.baseline_path())
+    write("Using %s build" % options.target)
     if options.no_pixel_tests:
         write("Not running pixel tests")
     write("")
 
     meter.update("Parsing expectations ...")
-    test_runner.parse_expectations(options.platform, options.target == 'Debug')
+    test_runner.parse_expectations(port_obj.test_platform_name(),
+                                   options.target == 'Debug')
 
     meter.update("Preparing tests ...")
     write = create_logging_writer(options, "expected")
     result_summary = test_runner.prepare_lists_and_print_output(write)
 
-    if 'cygwin' == sys.platform:
-        logging.warn("#" * 40)
-        logging.warn("# UNEXPECTED PYTHON VERSION")
-        logging.warn("# This script should be run using the version of python")
-        logging.warn("# in third_party/python_24/")
-        logging.warn("#" * 40)
-        sys.exit(1)
-
-    # Delete the disk cache if any to ensure a clean test run.
-    cachedir = os.path.split(test_shell_binary_path)[0]
-    cachedir = os.path.join(cachedir, "cache")
-    if os.path.exists(cachedir):
-        shutil.rmtree(cachedir)
+    port_obj.setup_test_run()
 
     test_runner.add_test_type(text_diff.TestTextDiff)
     if not options.no_pixel_tests:

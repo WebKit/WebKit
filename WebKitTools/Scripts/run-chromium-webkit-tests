@@ -11,7 +11,7 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the Chromium name nor the names of its
+#     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -33,6 +33,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
                              "webkitpy", "layout_tests"))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
 import run_chromium_webkit_tests
 
 if __name__ == '__main__':
