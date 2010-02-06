@@ -1,5 +1,16 @@
 2010-02-05  Kwang Yul Seo  <skyul@company100.net>
 
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Define SYSTEM_MALLOC 1
+        https://bugs.webkit.org/show_bug.cgi?id=34640
+
+        Make BREWMP use system malloc because FastMalloc is not ported.
+
+        * wtf/Platform.h:
+
+2010-02-05  Kwang Yul Seo  <skyul@company100.net>
+
         Reviewed by Alexey Proskuryakov.
 
         Don't call CRASH() in fastMalloc and fastCalloc when the requested memory size is 0
