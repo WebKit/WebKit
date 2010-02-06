@@ -252,9 +252,6 @@ public:
     // accessibility object.
     virtual void focusAccessibilityObject(const WebAccessibilityObject&) { }
 
-    // Notifies embedder that the state of an accessibility object has changed.
-    virtual void didChangeAccessibilityObjectState(const WebAccessibilityObject&) { }
-
 
     // Developer tools -----------------------------------------------------
 

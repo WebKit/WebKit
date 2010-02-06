@@ -659,13 +659,6 @@ void ChromeClientImpl::getPopupMenuInfo(PopupContainer* popupContainer,
     info->items.swap(outputItems);
 }
 
-void ChromeClientImpl::didChangeAccessibilityObjectState(AccessibilityObject* obj)
-{
-    // Alert assistive technology about the accessibility object state change
-    if (obj)
-        m_webView->client()->didChangeAccessibilityObjectState(WebAccessibilityObject(obj));
-}
-
 #if ENABLE(NOTIFICATIONS)
 NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 {
