@@ -1,3 +1,58 @@
+2010-02-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Change UStringImpl::create to CRASH if the string cannot be allocated,
+        rather than returning a null string (which will behave like a zero-length
+        string if used).
+
+        Also move createRep function from UString to become new overloaded
+        UStringImpl::create methods.  In doing so, bring their behaviour closer to
+        being in line with WebCore::StringImpl, in removing the behaviour that they
+        can be used to produce null UStrings (ASSERT the char* provided is non-null).
+        This behaviour of converting null C-strings to null UStrings is inefficient
+        (cmompared to just using UString::null()), incompatible with WebCore::StringImpl's
+        behaviour, and may generate unexpected behaviour, since in many cases a null
+        UString can be used like an empty string.
+
+        With these changes UStringImpl need not have a concept of null impls, we can
+        start transitioning this to become an implementation detail of UString, that
+        internally it chooses to use a null-object rather than an actually zero impl
+        pointer.
+
+        * JavaScriptCore.exp:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::calculatedFunctionName):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * profiler/Profile.cpp:
+        (JSC::Profile::Profile):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::stopProfiling):
+        * runtime/Error.cpp:
+        (JSC::Error::create):
+        (JSC::throwError):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/UString.cpp:
+        (JSC::initializeUString):
+        (JSC::UString::UString):
+        (JSC::UString::operator=):
+        * runtime/UString.h:
+        (JSC::UString::isNull):
+        (JSC::UString::null):
+        (JSC::UString::rep):
+        (JSC::UString::UString):
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::create):
+        * runtime/UStringImpl.h:
+
 2010-02-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

@@ -157,7 +157,7 @@ namespace JSC {
 
         const UChar* data() const { return m_rep->data(); }
 
-        bool isNull() const { return m_rep == &Rep::null(); }
+        bool isNull() const { return m_rep == s_nullRep; }
         bool isEmpty() const { return !m_rep->size(); }
 
         bool is8Bit() const;
@@ -183,10 +183,9 @@ namespace JSC {
 
         UString substr(int pos = 0, int len = -1) const;
 
-        static const UString& null() { return *nullUString; }
+        static const UString& null() { return *s_nullUString; }
 
         Rep* rep() const { return m_rep.get(); }
-        static Rep* nullRep();
 
         UString(PassRefPtr<Rep> r)
             : m_rep(r)
@@ -197,10 +196,10 @@ namespace JSC {
         size_t cost() const { return m_rep->cost(); }
 
     private:
-        void makeNull();
-
         RefPtr<Rep> m_rep;
-        static UString* nullUString;
+
+        JS_EXPORTDATA static Rep* s_nullRep;
+        static UString* s_nullUString;
 
         friend void initializeUString();
         friend bool operator==(const UString&, const UString&);
@@ -255,7 +254,7 @@ namespace JSC {
     int compare(const UString&, const UString&);
 
     inline UString::UString()
-        : m_rep(&Rep::null())
+        : m_rep(s_nullRep)
     {
     }
 

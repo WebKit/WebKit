@@ -58,7 +58,7 @@ JSValue createInterruptedExecutionException(JSGlobalData* globalData)
 
 static JSValue createError(ExecState* exec, ErrorType e, const char* msg)
 {
-    return Error::create(exec, e, msg, -1, -1, 0);
+    return Error::create(exec, e, msg, -1, -1, UString());
 }
 
 JSValue createStackOverflowError(ExecState* exec)

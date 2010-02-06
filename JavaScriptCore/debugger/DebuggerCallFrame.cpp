@@ -50,11 +50,11 @@ const UString* DebuggerCallFrame::functionName() const
 UString DebuggerCallFrame::calculatedFunctionName() const
 {
     if (!m_callFrame->codeBlock())
-        return 0;
+        return UString();
     
     JSFunction* function = asFunction(m_callFrame->callee());
     if (!function)
-        return 0;
+        return UString();
     return function->calculatedDisplayName(m_callFrame);
 }
 

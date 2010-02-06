@@ -124,7 +124,7 @@ void ProfileGenerator::stopProfiling()
     m_currentNode = m_currentNode->parent();
 
    if (double headSelfTime = m_head->selfTime()) {
-        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), m_head.get(), m_head.get());
+        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, UString(), 0), m_head.get(), m_head.get());
 
         idleNode->setTotalTime(headSelfTime);
         idleNode->setSelfTime(headSelfTime);

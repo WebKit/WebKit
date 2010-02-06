@@ -94,7 +94,7 @@ JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message,
 
 JSObject* Error::create(ExecState* exec, ErrorType type, const char* message)
 {
-    return create(exec, type, message, -1, -1, NULL);
+    return create(exec, type, message, -1, -1, UString());
 }
 
 JSObject* throwError(ExecState* exec, JSObject* error)
@@ -105,21 +105,21 @@ JSObject* throwError(ExecState* exec, JSObject* error)
 
 JSObject* throwError(ExecState* exec, ErrorType type)
 {
-    JSObject* error = Error::create(exec, type, UString(), -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, UString(), -1, -1, UString());
     exec->setException(error);
     return error;
 }
 
 JSObject* throwError(ExecState* exec, ErrorType type, const UString& message)
 {
-    JSObject* error = Error::create(exec, type, message, -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, message, -1, -1, UString());
     exec->setException(error);
     return error;
 }
 
 JSObject* throwError(ExecState* exec, ErrorType type, const char* message)
 {
-    JSObject* error = Error::create(exec, type, message, -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, message, -1, -1, UString());
     exec->setException(error);
     return error;
 }

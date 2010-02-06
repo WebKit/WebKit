@@ -34,7 +34,44 @@ using namespace WTF::Unicode;
 using namespace std;
 
 namespace JSC {
- 
+
+PassRefPtr<UStringImpl> UStringImpl::create(const char* c)
+{
+    ASSERT(c);
+
+    if (!c[0])
+        return &UStringImpl::empty();
+
+    size_t length = strlen(c);
+    UChar* d;
+    PassRefPtr<UStringImpl> result = UStringImpl::createUninitialized(length, d);
+    for (size_t i = 0; i < length; i++)
+        d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+    return result;
+}
+
+PassRefPtr<UStringImpl> UStringImpl::create(const char* c, int length)
+{
+    ASSERT(c);
+
+    if (!length)
+        return &UStringImpl::empty();
+
+    UChar* d;
+    PassRefPtr<UStringImpl> result = UStringImpl::createUninitialized(length, d);
+    for (int i = 0; i < length; i++)
+        d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
+    return result;
+}
+
+PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, int length)
+{
+    UChar* newBuffer;
+    PassRefPtr<UStringImpl> impl = createUninitialized(length, newBuffer);
+    copyChars(newBuffer, buffer, length);
+    return impl;
+}
+
 SharedUChar* UStringImpl::baseSharedBuffer()
 {
     ASSERT((bufferOwnership() == BufferShared)
