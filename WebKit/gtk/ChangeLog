@@ -1,3 +1,14 @@
+2010-02-05  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Implement layoutTestController.pageNumberForElementById
+        https://bugs.webkit.org/show_bug.cgi?id=34572
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_page_number_for_element_by_id):
+
 2010-02-04  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha Silva.

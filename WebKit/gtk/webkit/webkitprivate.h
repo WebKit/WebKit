@@ -298,6 +298,9 @@ extern "C" {
     WEBKIT_API gchar*
     webkit_web_frame_counter_value_for_element_by_id (WebKitWebFrame* frame, const gchar* id);
 
+    WEBKIT_API int
+    webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const gchar* id, float pageWidth, float pageHeight);
+
     WEBKIT_API guint
     webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* frame);
 

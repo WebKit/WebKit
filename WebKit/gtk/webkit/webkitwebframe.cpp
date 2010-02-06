@@ -844,6 +844,29 @@ gchar* webkit_web_frame_counter_value_for_element_by_id(WebKitWebFrame* frame, c
 }
 
 /**
+ * webkit_web_frame_page_number_for_element_by_id
+ * @frame: a #WebKitWebFrame
+ * @id: an element ID string
+ * @pageWidth: width of a page
+ * @pageHeight: height of a page
+ *
+ * Return value: The number of page where the specified element will be put
+ */
+int webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const gchar* id, float pageWidth, float pageHeight)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return -1;
+
+    Element* coreElement = coreFrame->document()->getElementById(AtomicString(id));
+    if (!coreElement)
+        return -1;
+    return PrintContext::pageNumberForElement(coreElement, FloatSize(pageWidth, pageHeight));
+}
+
+/**
  * webkit_web_frame_get_pending_unload_event_count:
  * @frame: a #WebKitWebFrame
  *
