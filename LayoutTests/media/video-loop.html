@@ -1,80 +1,66 @@
-<!DOCTYPE html>
 <html>
-    <head>
-        <script src=media-file.js></script>
-        <script src=video-test.js></script>
-    
-        <script>
-            var seekCount = 0;
-    
-            function play()
-            {
-                consoleWrite("<br>++ seek to near the end, wait for 'seeked' event to announce loop");
-                testExpected("video.paused", false);
-                waitForEvent("seeked", seeked);
-                run("video.currentTime = video.duration - 0.4");
-                consoleWrite("");
-            }
-    
-            function seeked()
-            {
-                ++seekCount;
-                if (seekCount == 2) {
-                    consoleWrite("<br>++ video just looped, toggle 'loop' and seek to near end");
-                    testExpected("video.paused", false);
-                    testExpected("video.ended", false);
-                    testExpected("mediaElement.currentTime", 0, '>=');
 
-                    // don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines
-                    reportExpected(mediaElement.currentTime < mediaElement.duration, "mediaElement.currentTime", "<", "mediaElement.duration", mediaElement.currentTime);
-                    run("video.loop = false");
-                    run("video.currentTime = video.duration - 0.4");
-                    consoleWrite("");
-                }
-            }
-    
-            function ended() 
-            {
-                testExpected("video.ended", true);
+    <video controls autoplay ></video>
 
-                // don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    
+        testExpected("video.getAttribute('loop')", null);
+        testExpected("video.loop", false);
+    
+        run("video.loop = true");
+        testExpected("video.loop", true);
+        testExpected("video.getAttribute('loop')", null, "!=");
+    
+        run("video.removeAttribute('loop')");
+        testExpected("video.loop", false);
+    
+        var respondToTimeUpdate = false;
+        var firstTimeCheck = true;
+
+        waitForEvent('pause');
+        waitForEvent('playing');
+
+        // make sure we are playing, seek to near the end so the test doesn't take too long
+        waitForEvent('play', function () { 
+            testExpected("video.paused", false);
+            run("video.currentTime = video.duration - 0.4");
+            
+            consoleWrite("");
+            setTimeout(timeCheck, 800);
+        } );
+    
+        function timeCheck() { 
+            testExpected("video.ended", !firstTimeCheck);
+            if (!firstTimeCheck)
+            {
+                // don't use "testExpected()" so we won't log the actual duration to the
+                //  results file, as the floating point result may differ with different engines
                 reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
-
-                consoleWrite("");
                 endTest();
+                return;
             }
     
-            function start()
-            {
-                findMediaElement();
-
-                consoleWrite("++ Test setting/removing the attribute");
-                testExpected("video.getAttribute('loop')", null);
-                testExpected("video.loop", false);
-            
-                run("video.loop = true");
-                testExpected("video.loop", true);
-                testExpected("video.getAttribute('loop')", null, "!=");
-            
-                run("video.removeAttribute('loop')");
-                testExpected("video.loop", false);
-            
-                waitForEvent('pause');
-                waitForEvent('play', play);
-                waitForEvent("ended", ended);
-
-                consoleWrite("<br>++ Set 'loop' to true and start playing");
-                var mediaFile = findMediaFile("video", "content/test");
-                run("video.loop = true");
-                video.src = mediaFile;
-                consoleWrite("");
-            }
-        </script>
+            testExpected("mediaElement.currentTime", 0, '>');
+            testExpected("mediaElement.currentTime", (video.duration - 0.4).toFixed(2), '<');
+            run("video.loop = false");
+            run("video.currentTime = video.duration - 0.3");
+            respondToTimeUpdate = true;
+            firstTimeCheck = false;
+    
+            consoleWrite("");
+            setTimeout(timeCheck, 800);
+        }
+    
+        consoleWrite("");
+        run("video.loop = true");
+        var mediaFile = findMediaFile("video", "content/test");
+        run("video.src = '" + mediaFile + "'");
+        consoleWrite("");
+    </script>
 
     </head>
-    <body>
-        <video controls autoplay ></video>
-        <p>Test looping.</p>
-        <script>start()</script>
-    </body>
+
 </html>

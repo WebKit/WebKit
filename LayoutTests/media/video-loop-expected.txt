@@ -1,6 +1,3 @@
-Test looping.
-
-++ Test setting/removing the attribute
 EXPECTED (video.getAttribute('loop') == 'null') OK
 EXPECTED (video.loop == 'false') OK
 RUN(video.loop = true)
@@ -9,31 +6,21 @@ EXPECTED (video.getAttribute('loop') != 'null') OK
 RUN(video.removeAttribute('loop'))
 EXPECTED (video.loop == 'false') OK
 
-++ Set 'loop' to true and start playing
 RUN(video.loop = true)
 RUN(video.src = 'content/test.mp4')
 
 EVENT(play)
-
-++ seek to near the end, wait for 'seeked' event to announce loop
 EXPECTED (video.paused == 'false') OK
 RUN(video.currentTime = video.duration - 0.4)
 
-EVENT(seeked)
-EVENT(seeked)
-
-++ video just looped, toggle 'loop' and seek to near end
-EXPECTED (video.paused == 'false') OK
+EVENT(playing)
 EXPECTED (video.ended == 'false') OK
-EXPECTED (mediaElement.currentTime >= '0') OK
-EXPECTED (mediaElement.currentTime < 'mediaElement.duration') OK
+EXPECTED (mediaElement.currentTime > '0') OK
+EXPECTED (mediaElement.currentTime < '5.63') OK
 RUN(video.loop = false)
-RUN(video.currentTime = video.duration - 0.4)
+RUN(video.currentTime = video.duration - 0.3)
 
-EVENT(seeked)
-EVENT(ended)
 EXPECTED (video.ended == 'true') OK
 EXPECTED (mediaElement.currentTime == 'mediaElement.duration') OK
-
 END OF TEST
 
