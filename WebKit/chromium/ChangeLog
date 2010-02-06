@@ -2,6 +2,34 @@
 
         Reviewed by David Levin.
 
+        [Chromium] Rename autocomplete* to suggestions* to prepare for the
+        refactoring of AutocompletePopupMenuClient.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34664
+
+        * public/WebView.h:
+        * src/AutocompletePopupMenuClient.cpp:
+        (WebKit::AutocompletePopupMenuClient::popupDidHide):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::doAutofill):
+        * src/WebViewImpl.cpp:
+        (WebKit::):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        (WebKit::WebViewImpl::hideAutofillPopup):
+        (WebKit::WebViewImpl::hideSuggestionsPopup):
+        (WebKit::WebViewImpl::refreshSuggestionsPopup):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::suggestionsPopupDidHide):
+
+2010-02-05  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by David Levin.
+
         [Chromium] Remove an unused forward declaration in WebKitClient.h.
 
         https://bugs.webkit.org/show_bug.cgi?id=34622

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -154,6 +154,7 @@ public:
         const WebVector<WebString>& suggestions,
         int defaultSuggestionIndex);
     virtual void hideAutofillPopup();
+    virtual void hideSuggestionsPopup();
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,
                                     unsigned trackColor);
@@ -261,9 +262,10 @@ public:
         const WebDragData& dragData,
         WebDragOperationsMask dragSourceOperationMask);
 
-    // Hides the autocomplete popup if it is showing.
-    void hideAutoCompletePopup();
-    void autoCompletePopupDidHide();
+    void suggestionsPopupDidHide()
+    {
+        m_suggestionsPopupShowing = false;
+    }
 
 #if ENABLE(NOTIFICATIONS)
     // Returns the provider of desktop notifications.
@@ -295,10 +297,10 @@ private:
     // Returns true if the autocomple has consumed the event.
     bool autocompleteHandleKeyEvent(const WebKeyboardEvent&);
 
-    // Repaints the autofill popup.  Should be called when the suggestions have
-    // changed.  Note that this should only be called when the autofill popup is
-    // showing.
-    void refreshAutofillPopup();
+    // Repaints the suggestions popup.  Should be called when the suggestions
+    // have changed.  Note that this should only be called when the suggestions
+    // popup is showing.
+    void refreshSuggestionsPopup();
 
     // Returns true if the view was scrolled.
     bool scrollViewWithKeyboard(int keyCode, int modifiers);
@@ -393,12 +395,12 @@ private:
     // current drop target in this WebView (the drop target can accept the drop).
     WebDragOperation m_dragOperation;
 
-    // The autocomplete popup.  Kept around and reused every-time new suggestions
+    // The suggestions popup.  Kept around and reused every-time new suggestions
     // should be shown.
-    RefPtr<WebCore::PopupContainer> m_autocompletePopup;
+    RefPtr<WebCore::PopupContainer> m_suggestionsPopup;
 
-    // Whether the autocomplete popup is currently showing.
-    bool m_autocompletePopupShowing;
+    // Whether the suggestions popup is currently showing.
+    bool m_suggestionsPopupShowing;
 
     // The autocomplete client.
     OwnPtr<AutocompletePopupMenuClient> m_autocompletePopupClient;

@@ -120,7 +120,7 @@ int AutocompletePopupMenuClient::clientPaddingRight() const
 
 void AutocompletePopupMenuClient::popupDidHide()
 {
-    m_webView->autoCompletePopupDidHide();
+    m_webView->suggestionsPopupDidHide();
 }
 
 void AutocompletePopupMenuClient::setTextFromItem(unsigned listIndex)
