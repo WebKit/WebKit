@@ -126,6 +126,12 @@ static void setCGStrokeColorSpace(CGContextRef context, ColorSpace colorSpace)
     }
 }
 
+CGColorSpaceRef deviceRGBColorSpaceRef()
+{
+    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
+    return deviceSpace;
+}
+
 GraphicsContext::GraphicsContext(CGContextRef cgContext)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate(cgContext))

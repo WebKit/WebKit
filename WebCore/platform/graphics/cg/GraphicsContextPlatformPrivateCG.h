@@ -28,11 +28,7 @@
 namespace WebCore {
 
 // FIXME: This would be in GraphicsContextCG.h if that existed.
-inline CGColorSpaceRef deviceRGBColorSpaceRef()
-{
-    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
-    return deviceSpace;
-}
+CGColorSpaceRef deviceRGBColorSpaceRef();
 
 // FIXME: This would be in GraphicsContextCG.h if that existed.
 inline CGColorSpaceRef sRGBColorSpaceRef()
