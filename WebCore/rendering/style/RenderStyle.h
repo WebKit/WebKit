@@ -183,7 +183,7 @@ protected:
 
         unsigned _empty_cells : 1; // EEmptyCell
         unsigned _caption_side : 2; // ECaptionSide
-        unsigned _list_style_type : 6; // EListStyleType
+        unsigned _list_style_type : 7; // EListStyleType
         unsigned _list_style_position : 1; // EListStylePosition
         unsigned _visibility : 2; // EVisibility
         unsigned _text_align : 3; // ETextAlign
@@ -194,14 +194,14 @@ protected:
         bool _border_collapse : 1 ;
         unsigned _white_space : 3; // EWhiteSpace
         unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
-        // 33 bits
+        // 34 bits
         
         // non CSS2 inherited
         bool _visuallyOrdered : 1;
         bool _htmlHacks : 1;
         bool _force_backgrounds_to_white : 1;
         unsigned _pointerEvents : 4; // EPointerEvents
-        // 40 bits
+        // 41 bits
     } inherited_flags;
 
 // don't inherit

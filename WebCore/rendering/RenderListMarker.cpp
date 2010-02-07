@@ -41,6 +41,8 @@ namespace WebCore {
 
 const int cMarkerPadding = 7;
 
+enum SequenceType { NumericSequence, AlphabeticSequence };
+
 static String toRoman(int number, bool upper)
 {
     // FIXME: CSS3 describes how to make this work for much larger numbers,
@@ -78,29 +80,61 @@ static String toRoman(int number, bool upper)
     return String(&letters[lettersSize - length], length);
 }
 
-static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
+static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, int sequenceSize, SequenceType type)
 {
-    ASSERT(alphabetSize >= 10);
+    ASSERT(sequenceSize >= 2);
 
-    if (number < 1)
-        return String::number(number);
+    const int lettersSize = sizeof(number) * 8 + 1; // Binary is the worst case; requires one character per bit plus a minus sign.
 
-    const int lettersSize = 10; // big enough for a 32-bit int, with a 10-letter alphabet
     UChar letters[lettersSize];
 
-    --number;
-    letters[lettersSize - 1] = alphabet[number % alphabetSize];
+    bool isNegativeNumber = false;
+    unsigned numberShadow = number;
+    if (type == AlphabeticSequence) {
+        ASSERT(number > 0);
+        --numberShadow;
+    } else if (number < 0) {
+        numberShadow = -number;
+        isNegativeNumber = true;
+    }
+    letters[lettersSize - 1] = sequence[numberShadow % sequenceSize];
     int length = 1;
-    while ((number /= alphabetSize) > 0)
-        letters[lettersSize - ++length] = alphabet[number % alphabetSize - 1];
+
+    if (type == AlphabeticSequence) {
+        while ((numberShadow /= sequenceSize) > 0)
+            letters[lettersSize - ++length] = sequence[numberShadow % sequenceSize - 1];
+    } else {
+        while ((numberShadow /= sequenceSize) > 0)
+            letters[lettersSize - ++length] = sequence[numberShadow % sequenceSize];
+    }
+    if (isNegativeNumber)
+        letters[lettersSize - ++length] = hyphenMinus;
 
     ASSERT(length <= lettersSize);
     return String(&letters[lettersSize - length], length);
 }
 
+static String toAlphabetic(int number, const UChar* alphabet, int alphabetSize)
+{
+    if (number < 1)
+        return String::number(number);
+
+    return toAlphabeticOrNumeric(number, alphabet, alphabetSize, AlphabeticSequence);
+}
+
+static String toNumeric(int number, const UChar* numerals, int numeralsSize)
+{
+    return toAlphabeticOrNumeric(number, numerals, numeralsSize, NumericSequence);
+}
+
 template <size_t size> static inline String toAlphabetic(int number, const UChar(&alphabet)[size])
 {
     return toAlphabetic(number, alphabet, size);
+}
+
+template <size_t size> static inline String toNumeric(int number, const UChar(&alphabet)[size])
+{
+    return toNumeric(number, alphabet, size);
 }
 
 static int toHebrewUnder1000(int number, UChar letters[5])
@@ -383,29 +417,51 @@ static UChar listMarkerSuffix(EListStyleType type)
     case TigrinyaEtAbegede:
         return ethiopicPrefaceColon;
     case Armenian:
+    case ArabicIndic:
+    case Bengali:
+    case BinaryListStyle:
+    case Cambodian:
     case CJKIdeographic:
     case CjkEarthlyBranch:
     case CjkHeavenlyStem:
     case DecimalLeadingZero:
     case DecimalListStyle:
+    case Devanagari:
     case Georgian:
+    case Gujarati:
+    case Gurmukhi:
     case Hangul:
     case HangulConsonant:
     case Hebrew:
     case Hiragana:
     case HiraganaIroha:
+    case Kannada:
     case Katakana:
     case KatakanaIroha:
+    case Khmer:
+    case Lao:
     case LowerAlpha:
     case LowerGreek:
+    case LowerHexadecimal:
     case LowerLatin:
     case LowerNorwegian:
     case LowerRoman:
+    case Malayalam:
+    case Mongolian:
+    case Myanmar:
+    case Octal:
+    case Oriya:
+    case Persian:
+    case Telugu:
+    case Thai:
+    case Tibetan:
     case UpperAlpha:
     case UpperGreek:
+    case UpperHexadecimal:
     case UpperLatin:
     case UpperNorwegian:
     case UpperRoman:
+    case Urdu:
         return '.';
     }
 
@@ -438,6 +494,129 @@ String listMarkerText(EListStyleType type, int value)
             if (value < 0)
                 return "-0" + String::number(-value); // -01 to -09
             return "0" + String::number(value); // 00 to 09
+
+        case ArabicIndic: {
+            static const UChar arabicIndicNumerals[10] = {
+                0x0660, 0x0661, 0x0662, 0x0663, 0x0664, 0x0665, 0x0666, 0x0667, 0x0668, 0x0669
+            };
+            return toNumeric(value, arabicIndicNumerals);
+        }
+        case BinaryListStyle: {
+            static const UChar binaryNumerals[2] = {
+                '0', '1'
+            };
+            return toNumeric(value, binaryNumerals);
+        }
+        case Bengali: {
+            static const UChar bengaliNumerals[10] = {
+                0x09E6, 0x09E7, 0x09E8, 0x09E9, 0x09EA, 0x09EB, 0x09EC, 0x09ED, 0x09EE, 0x09EF
+            };
+            return toNumeric(value, bengaliNumerals);
+        }
+        case Cambodian:
+        case Khmer: {
+            static const UChar khmerNumerals[10] = {
+                0x17E0, 0x17E1, 0x17E2, 0x17E3, 0x17E4, 0x17E5, 0x17E6, 0x17E7, 0x17E8, 0x17E9
+            };
+            return toNumeric(value, khmerNumerals);
+        }
+        case Devanagari: {
+            static const UChar devanagariNumerals[10] = {
+                0x0966, 0x0967, 0x0968, 0x0969, 0x096A, 0x096B, 0x096C, 0x096D, 0x096E, 0x096F
+            };
+            return toNumeric(value, devanagariNumerals);
+        }
+        case Gujarati: {
+            static const UChar gujaratiNumerals[10] = {
+                0x0AE6, 0x0AE7, 0x0AE8, 0x0AE9, 0x0AEA, 0x0AEB, 0x0AEC, 0x0AED, 0x0AEE, 0x0AEF
+            };
+            return toNumeric(value, gujaratiNumerals);
+        }
+        case Gurmukhi: {
+            static const UChar gurmukhiNumerals[10] = {
+                0x0A66, 0x0A67, 0x0A68, 0x0A69, 0x0A6A, 0x0A6B, 0x0A6C, 0x0A6D, 0x0A6E, 0x0A6F
+            };
+            return toNumeric(value, gurmukhiNumerals);
+        }
+        case Kannada: {
+            static const UChar kannadaNumerals[10] = {
+                0x0CE6, 0x0CE7, 0x0CE8, 0x0CE9, 0x0CEA, 0x0CEB, 0x0CEC, 0x0CED, 0x0CEE, 0x0CEF
+            };
+            return toNumeric(value, kannadaNumerals);
+        }
+        case LowerHexadecimal: {
+            static const UChar lowerHexadecimalNumerals[16] = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            };
+            return toNumeric(value, lowerHexadecimalNumerals);
+        }
+        case Lao: {
+            static const UChar laoNumerals[10] = {
+                0x0ED0, 0x0ED1, 0x0ED2, 0x0ED3, 0x0ED4, 0x0ED5, 0x0ED6, 0x0ED7, 0x0ED8, 0x0ED9
+            };
+            return toNumeric(value, laoNumerals);
+        }
+        case Malayalam: {
+            static const UChar malayalamNumerals[10] = {
+                0x0D66, 0x0D67, 0x0D68, 0x0D69, 0x0D6A, 0x0D6B, 0x0D6C, 0x0D6D, 0x0D6E, 0x0D6F
+            };
+            return toNumeric(value, malayalamNumerals);
+        }
+        case Mongolian: {
+            static const UChar mongolianNumerals[10] = {
+                0x1810, 0x1811, 0x1812, 0x1813, 0x1814, 0x1815, 0x1816, 0x1817, 0x1818, 0x1819
+            };
+            return toNumeric(value, mongolianNumerals);
+        }
+        case Myanmar: {
+            static const UChar myanmarNumerals[10] = {
+                0x1040, 0x1041, 0x1042, 0x1043, 0x1044, 0x1045, 0x1046, 0x1047, 0x1048, 0x1049
+            };
+            return toNumeric(value, myanmarNumerals);
+        }
+        case Octal: {
+            static const UChar octalNumerals[8] = {
+                '0', '1', '2', '3', '4', '5', '6', '7'
+            };
+            return toNumeric(value, octalNumerals);
+        }
+        case Oriya: {
+            static const UChar oriyaNumerals[10] = {
+                0x0B66, 0x0B67, 0x0B68, 0x0B69, 0x0B6A, 0x0B6B, 0x0B6C, 0x0B6D, 0x0B6E, 0x0B6F
+            };
+            return toNumeric(value, oriyaNumerals);
+        }
+        case Persian:
+        case Urdu: {
+            static const UChar urduNumerals[10] = {
+                0x06F0, 0x06F1, 0x06F2, 0x06F3, 0x06F4, 0x06F5, 0x06F6, 0x06F7, 0x06F8, 0x06F9
+            };
+            return toNumeric(value, urduNumerals);
+        }
+        case Telugu: {
+            static const UChar teluguNumerals[10] = {
+                0x0C66, 0x0C67, 0x0C68, 0x0C69, 0x0C6A, 0x0C6B, 0x0C6C, 0x0C6D, 0x0C6E, 0x0C6F
+            };
+            return toNumeric(value, teluguNumerals);
+        }
+        case Tibetan: {
+            static const UChar tibetanNumerals[10] = {
+                0x0F20, 0x0F21, 0x0F22, 0x0F23, 0x0F24, 0x0F25, 0x0F26, 0x0F27, 0x0F28, 0x0F29
+            };
+            return toNumeric(value, tibetanNumerals);
+        }
+        case Thai: {
+            static const UChar thaiNumerals[10] = {
+                0x0E50, 0x0E51, 0x0E52, 0x0E53, 0x0E54, 0x0E55, 0x0E56, 0x0E57, 0x0E58, 0x0E59
+            };
+            return toNumeric(value, thaiNumerals);
+        }
+        case UpperHexadecimal: {
+            static const UChar upperHexadecimalNumerals[16] = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+            };
+            return toNumeric(value, upperHexadecimalNumerals);
+        }
 
         case LowerAlpha:
         case LowerLatin: {
@@ -851,12 +1030,17 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         case Afar:
         case Amharic:
         case AmharicAbegede:
+        case ArabicIndic:
         case Armenian:
+        case BinaryListStyle:
+        case Bengali:
+        case Cambodian:
         case CJKIdeographic:
         case CjkEarthlyBranch:
         case CjkHeavenlyStem:
         case DecimalLeadingZero:
         case DecimalListStyle:
+        case Devanagari:
         case Ethiopic:
         case EthiopicAbegede:
         case EthiopicAbegedeAmEt:
@@ -874,21 +1058,36 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         case EthiopicHalehameTiEt:
         case EthiopicHalehameTig:
         case Georgian:
+        case Gujarati:
+        case Gurmukhi:
         case Hangul:
         case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
+        case Kannada:
         case Katakana:
         case KatakanaIroha:
+        case Khmer:
+        case Lao:
         case LowerAlpha:
         case LowerGreek:
+        case LowerHexadecimal:
         case LowerLatin:
         case LowerNorwegian:
         case LowerRoman:
+        case Malayalam:
+        case Mongolian:
+        case Myanmar:
+        case Octal:
+        case Oriya:
         case Oromo:
+        case Persian:
         case Sidama:
         case Somali:
+        case Telugu:
+        case Thai:
+        case Tibetan:
         case Tigre:
         case TigrinyaEr:
         case TigrinyaErAbegede:
@@ -896,9 +1095,11 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         case TigrinyaEtAbegede:
         case UpperAlpha:
         case UpperGreek:
+        case UpperHexadecimal:
         case UpperLatin:
         case UpperNorwegian:
         case UpperRoman:
+        case Urdu:
             break;
     }
     if (m_text.isEmpty())
@@ -1004,12 +1205,17 @@ void RenderListMarker::calcPrefWidths()
         case Afar:
         case Amharic:
         case AmharicAbegede:
+        case ArabicIndic:
         case Armenian:
+        case BinaryListStyle:
+        case Bengali:
+        case Cambodian:
         case CJKIdeographic:
         case CjkEarthlyBranch:
         case CjkHeavenlyStem:
         case DecimalLeadingZero:
         case DecimalListStyle:
+        case Devanagari:
         case Ethiopic:
         case EthiopicAbegede:
         case EthiopicAbegedeAmEt:
@@ -1027,21 +1233,36 @@ void RenderListMarker::calcPrefWidths()
         case EthiopicHalehameTiEt:
         case EthiopicHalehameTig:
         case Georgian:
+        case Gujarati:
+        case Gurmukhi:
         case Hangul:
         case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
+        case Kannada:
         case Katakana:
         case KatakanaIroha:
+        case Khmer:
+        case Lao:
         case LowerAlpha:
         case LowerGreek:
+        case LowerHexadecimal:
         case LowerLatin:
         case LowerNorwegian:
         case LowerRoman:
+        case Malayalam:
+        case Mongolian:
+        case Myanmar:
+        case Octal:
+        case Oriya:
         case Oromo:
+        case Persian:
         case Sidama:
         case Somali:
+        case Telugu:
+        case Thai:
+        case Tibetan:
         case Tigre:
         case TigrinyaEr:
         case TigrinyaErAbegede:
@@ -1049,9 +1270,11 @@ void RenderListMarker::calcPrefWidths()
         case TigrinyaEtAbegede:
         case UpperAlpha:
         case UpperGreek:
+        case UpperHexadecimal:
         case UpperLatin:
         case UpperNorwegian:
         case UpperRoman:
+        case Urdu:
             m_text = listMarkerText(type, m_listItem->value());
             if (m_text.isEmpty())
                 width = 0;
@@ -1185,12 +1408,17 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case Afar:
         case Amharic:
         case AmharicAbegede:
+        case ArabicIndic:
         case Armenian:
+        case BinaryListStyle:
+        case Bengali:
+        case Cambodian:
         case CJKIdeographic:
         case CjkEarthlyBranch:
         case CjkHeavenlyStem:
         case DecimalLeadingZero:
         case DecimalListStyle:
+        case Devanagari:
         case Ethiopic:
         case EthiopicAbegede:
         case EthiopicAbegedeAmEt:
@@ -1208,21 +1436,36 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case EthiopicHalehameTiEt:
         case EthiopicHalehameTig:
         case Georgian:
+        case Gujarati:
+        case Gurmukhi:
         case Hangul:
         case HangulConsonant:
         case Hebrew:
         case Hiragana:
         case HiraganaIroha:
+        case Kannada:
         case Katakana:
         case KatakanaIroha:
+        case Khmer:
+        case Lao:
         case LowerAlpha:
         case LowerGreek:
+        case LowerHexadecimal:
         case LowerLatin:
         case LowerNorwegian:
         case LowerRoman:
+        case Malayalam:
+        case Mongolian:
+        case Myanmar:
+        case Octal:
+        case Oriya:
         case Oromo:
+        case Persian:
         case Sidama:
         case Somali:
+        case Telugu:
+        case Thai:
+        case Tibetan:
         case Tigre:
         case TigrinyaEr:
         case TigrinyaErAbegede:
@@ -1230,9 +1473,11 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case TigrinyaEtAbegede:
         case UpperAlpha:
         case UpperGreek:
+        case UpperHexadecimal:
         case UpperLatin:
         case UpperNorwegian:
         case UpperRoman:
+        case Urdu:
             if (m_text.isEmpty())
                 return IntRect();
             const Font& font = style()->font();

@@ -1,3 +1,14 @@
+2010-02-07  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34402
+
+        Tests that all of the numeric CSS3 list-style-types are supported.
+
+        * fast/lists/w3-css3-list-styles-numeric.html: Added.
+        * platform/mac/fast/lists/w3-css3-list-styles-numeric-expected.txt: Added.
+
 2010-02-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -1,3 +1,35 @@
+2010-02-07  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34402
+
+        Implements all of the numeric CSS3 list-style-types as per
+        section 4.3 of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#numeric>.
+
+        Test: fast/lists/w3-css3-list-styles-numeric.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * platform/text/CharacterNames.h: Added constant hyphenMinus.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::): Defined enum SequenceType.
+        (WebCore::toAlphabeticOrNumeric): Added.
+        (WebCore::toAlphabetic): Modified to call WebCore::toAlphabeticOrNumeric.
+        (WebCore::toNumeric): Added.
+        (WebCore::listMarkerSuffix):
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::calcPrefWidths):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        * rendering/style/RenderStyleConstants.h: Added numeric list style types
+        and fixed indent level for the enum values.
+        (WebCore::):
+
 2010-02-07  Ismail Donmez  <ismail@namtrac.org>
 
         Reviewed by Darin Adler.

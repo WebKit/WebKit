@@ -945,8 +945,20 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case AmharicAbegede:
         m_value.ident = CSSValueAmharicAbegede;
         break;
+    case ArabicIndic:
+        m_value.ident = CSSValueArabicIndic;
+        break;
     case Armenian:
         m_value.ident = CSSValueArmenian;
+        break;
+    case BinaryListStyle:
+        m_value.ident = CSSValueBinary;
+        break;
+    case Bengali:
+        m_value.ident = CSSValueBengali;
+        break;
+    case Cambodian:
+        m_value.ident = CSSValueCambodian;
         break;
     case Circle:
         m_value.ident = CSSValueCircle;
@@ -965,6 +977,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
         break;
     case DecimalListStyle:
         m_value.ident = CSSValueDecimal;
+        break;
+    case Devanagari:
+        m_value.ident = CSSValueDevanagari;
         break;
     case Disc:
         m_value.ident = CSSValueDisc;
@@ -1020,6 +1035,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case Georgian:
         m_value.ident = CSSValueGeorgian;
         break;
+    case Gujarati:
+        m_value.ident = CSSValueGujarati;
+        break;
+    case Gurmukhi:
+        m_value.ident = CSSValueGurmukhi;
+        break;
     case Hangul:
         m_value.ident = CSSValueHangul;
         break;
@@ -1035,17 +1056,29 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case HiraganaIroha:
         m_value.ident = CSSValueHiraganaIroha;
         break;
+    case Kannada:
+        m_value.ident = CSSValueKannada;
+        break;
     case Katakana:
         m_value.ident = CSSValueKatakana;
         break;
     case KatakanaIroha:
         m_value.ident = CSSValueKatakanaIroha;
         break;
+    case Khmer:
+        m_value.ident = CSSValueKhmer;
+        break;
+    case Lao:
+        m_value.ident = CSSValueLao;
+        break;
     case LowerAlpha:
         m_value.ident = CSSValueLowerAlpha;
         break;
     case LowerGreek:
         m_value.ident = CSSValueLowerGreek;
+        break;
+    case LowerHexadecimal:
+        m_value.ident = CSSValueLowerHexadecimal;
         break;
     case LowerLatin:
         m_value.ident = CSSValueLowerLatin;
@@ -1056,11 +1089,29 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case LowerRoman:
         m_value.ident = CSSValueLowerRoman;
         break;
+    case Malayalam:
+        m_value.ident = CSSValueMalayalam;
+        break;
+    case Mongolian:
+        m_value.ident = CSSValueMongolian;
+        break;
+    case Myanmar:
+        m_value.ident = CSSValueMyanmar;
+        break;
     case NoneListStyle:
         m_value.ident = CSSValueNone;
         break;
+    case Octal:
+        m_value.ident = CSSValueOctal;
+        break;
+    case Oriya:
+        m_value.ident = CSSValueOriya;
+        break;
     case Oromo:
         m_value.ident = CSSValueOromo;
+        break;
+    case Persian:
+        m_value.ident = CSSValuePersian;
         break;
     case Sidama:
         m_value.ident = CSSValueSidama;
@@ -1070,6 +1121,15 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
         break;
     case Square:
         m_value.ident = CSSValueSquare;
+        break;
+    case Telugu:
+        m_value.ident = CSSValueTelugu;
+        break;
+    case Thai:
+        m_value.ident = CSSValueThai;
+        break;
+    case Tibetan:
+        m_value.ident = CSSValueTibetan;
         break;
     case Tigre:
         m_value.ident = CSSValueTigre;
@@ -1092,6 +1152,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
     case UpperGreek:
         m_value.ident = CSSValueUpperGreek;
         break;
+    case UpperHexadecimal:
+        m_value.ident = CSSValueUpperHexadecimal;
+        break;
     case UpperLatin:
         m_value.ident = CSSValueUpperLatin;
         break;
@@ -1100,6 +1163,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
         break;
     case UpperRoman:
         m_value.ident = CSSValueUpperRoman;
+        break;
+    case Urdu:
+        m_value.ident = CSSValueUrdu;
         break;
     }
 }
