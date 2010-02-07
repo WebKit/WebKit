@@ -28,6 +28,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
+#include <wtf/StringExtras.h>
 #include <string.h>
 
 namespace WebCore {
