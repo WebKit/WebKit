@@ -6,7 +6,13 @@
 
 function doit()
 {
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(document.createElement("p"));
+
     console.dirxml(document);
+    console.dirxml(fragment);
+    console.dirxml(fragment.firstChild);
+    console.log([fragment.firstChild]);
 
     dumpConsoleMessages();
 }

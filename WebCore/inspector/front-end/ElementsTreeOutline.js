@@ -925,6 +925,10 @@ WebInspector.ElementsTreeElement.prototype = {
                 info.title = "Document";
                 break;
                 
+            case Node.DOCUMENT_FRAGMENT_NODE:
+                info.title = "Document Fragment";
+                break;
+
             case Node.ELEMENT_NODE:
                 info.title = "<span class=\"webkit-html-tag\">&lt;" + node.nodeName.toLowerCase().escapeHTML();
                 
