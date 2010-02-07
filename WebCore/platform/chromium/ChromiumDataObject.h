@@ -60,6 +60,7 @@ namespace WebCore {
         String urlTitle;
 
         KURL downloadURL;
+        String downloadMetadata;
 
         String fileExtension;
         Vector<String> filenames;

@@ -100,6 +100,18 @@ void WebDragData::setDownloadURL(const WebURL& downloadURL)
     m_private->downloadURL = downloadURL;
 }
 
+WebString WebDragData::downloadMetadata() const
+{
+    ASSERT(!isNull());
+    return m_private->downloadMetadata;
+}
+
+void WebDragData::setDownloadMetadata(const WebString& downloadMetadata)
+{
+    ensureMutable();
+    m_private->downloadMetadata = downloadMetadata;
+}
+
 WebString WebDragData::fileExtension() const
 {
     ASSERT(!isNull());

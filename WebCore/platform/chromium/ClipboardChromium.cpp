@@ -160,11 +160,11 @@ bool ClipboardChromium::setData(const String& type, const String& data)
     }
     
     if (winType == ClipboardDataTypeDownloadURL) {
+        m_dataObject->downloadMetadata = data;
         KURL url = KURL(ParsedURLString, data);
-        if (url.isValid()) {
+        if (url.isValid())
             m_dataObject->downloadURL = url;
-            return true;
-        }
+        return true;
     }
 
     return false;
