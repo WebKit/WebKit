@@ -1,5 +1,15 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Attempt to fix all mac/win bots (expect for leopard which already passes)
+
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/mac/svg/custom/junk-data-expected.txt:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/hixie/error/012-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Next set of Qt DRT result updates.
 
         * platform/qt/svg/custom/js-update-image-and-display-expected.txt:
