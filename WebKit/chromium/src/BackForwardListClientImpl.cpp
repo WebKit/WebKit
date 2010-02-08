@@ -90,7 +90,7 @@ HistoryItem* BackForwardListClientImpl::currentItem()
 
 HistoryItem* BackForwardListClientImpl::itemAtIndex(int index)
 {
-    if (!m_webView->client())
+    if (!m_webView->client() || index > forwardListCount() || -index > backListCount())
         return 0;
 
     // Since we don't keep the entire back/forward list, we have no way to

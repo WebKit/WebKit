@@ -1,3 +1,15 @@
+2010-02-08  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Check that the index passed into BackForwardListClientImpl::itemAtIndex()
+        is valid, and return null if it isn't.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34722
+
+        * src/BackForwardListClientImpl.cpp:
+        (WebKit::BackForwardListClientImpl::itemAtIndex):
+
 2010-02-05  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Jeremy Orlow.
