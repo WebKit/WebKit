@@ -1,3 +1,21 @@
+2010-02-07  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix 2 pixel test baselines that are incorrect but passing
+        the fuzzy image diff.
+
+        editing/deleting/5390681.html should show a cursor, but doesn't.
+        In r42549, whitespace collapsing was changed but
+        editing/pasteboard/5387578.html's result wasn't updated to
+        reflect the collapsed whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=34632
+
+        * platform/mac/editing/deleting/5390681-2-expected.checksum:
+        * platform/mac/editing/deleting/5390681-2-expected.png:
+        * platform/mac/editing/pasteboard/5387578-expected.checksum:
+        * platform/mac/editing/pasteboard/5387578-expected.png:
+
 2010-02-07  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed, fix Tiger layout test failure.
