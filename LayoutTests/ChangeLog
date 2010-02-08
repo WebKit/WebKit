@@ -1,5 +1,25 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fixing first set of platform specific SVG results for the Qt port.
+        Unfortunately the bots exit after 20 test failures, so I can't fix the whole set of expected txt files in one go :(
+
+        * platform/qt/svg/css/arrow-with-shadow-expected.txt:
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/clippath-with-shadow-expected.txt:
+        * platform/qt/svg/css/mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/path-with-shadow-expected.txt:
+        * platform/qt/svg/css/shadow-and-opacity-expected.txt: Added.
+        * platform/qt/svg/css/shadow-with-large-radius-expected.txt: Added.
+        * platform/qt/svg/css/shadow-with-negative-offset-expected.txt: Added.
+        * platform/qt/svg/css/stars-with-shadow-expected.txt:
+        * platform/qt/svg/custom/createImageElement-expected.txt:
+        * platform/qt/svg/custom/createImageElement2-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/js-repaint-rect-on-path-with-stroke-expected.txt: Added.
+        * platform/qt/svg/custom/js-update-image-and-display2-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         All SVG *-expected.txt files contain wrong results
