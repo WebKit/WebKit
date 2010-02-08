@@ -1,3 +1,15 @@
+2010-02-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Build fix for Qt on Windows.
+
+        Don't use noreturn directly since it's a gcc attribute.
+        Instead use the NO_RETURN macro from AlwaysInline.h
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/utils.h:
+
 2010-02-05  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
