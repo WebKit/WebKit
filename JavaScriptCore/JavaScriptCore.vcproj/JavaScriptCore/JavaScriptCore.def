@@ -126,6 +126,7 @@ EXPORTS
     ?fastFree@WTF@@YAXPAX@Z
     ?fastMalloc@WTF@@YAPAXI@Z
     ?fastRealloc@WTF@@YAPAXPAXI@Z
+    ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAVJSValue@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
