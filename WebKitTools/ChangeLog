@@ -1,3 +1,14 @@
+2010-02-08  Leith Bade  <leith@leithalweapon.geek.nz>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=34637
+        Corrects the newline inserted into WebKitOutputDir, and WebKitLibrariesDir Windows
+        environemnt variables when there is a space in the user's /home path.
+
+        * Scripts/webkitdirs.pm:
+         - Added missing quotes around $sourceDir in argument list of cygpath in determineWindowsSourceDir().
+
 2010-02-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

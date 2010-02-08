@@ -1107,7 +1107,7 @@ sub determineWindowsSourceDir()
 {
     return if $windowsSourceDir;
     my $sourceDir = sourceDir();
-    chomp($windowsSourceDir = `cygpath -w $sourceDir`);
+    chomp($windowsSourceDir = `cygpath -w '$sourceDir'`);
 }
 
 sub windowsSourceDir()
