@@ -1,5 +1,15 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Update mac-tiger specific SVG results.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003a-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fixing first set of platform specific SVG results for the Qt port.
         Unfortunately the bots exit after 20 test failures, so I can't fix the whole set of expected txt files in one go :(
 
