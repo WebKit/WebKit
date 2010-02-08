@@ -1,3 +1,15 @@
+2010-02-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Implement FrameLoaderClient::hasWebView
+        https://bugs.webkit.org/show_bug.cgi?id=34682
+
+        Used for sanity-check ASSERTS in the FrameLoader code.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::hasWebView):
+
 2010-02-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
