@@ -1,5 +1,13 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Should turn Qt slave green again, all platform specific results updated.
+
+        * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/qt/svg/filters/subRegion-two-effects-expected.txt:
+        * platform/qt/svg/text/selection-background-color-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Hopefully the last set of updates for Gtk/Qt/Win/Mac.
 
         * platform/gtk/svg/custom/text-zoom-expected.txt:
