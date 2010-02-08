@@ -55,7 +55,7 @@ private:
     IdentifierRep(const char* name)
         : m_isString(true)
     {
-        m_value.m_string = strdup(name);
+        m_value.m_string = fastStrDup(name);
     }
     
     ~IdentifierRep()

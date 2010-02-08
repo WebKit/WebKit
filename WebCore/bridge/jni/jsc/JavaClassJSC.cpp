@@ -41,16 +41,16 @@ JavaClass::JavaClass(jobject anInstance)
 
     if (!aClass) {
         fprintf(stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
-        m_name = strdup("<Unknown>");
+        m_name = fastStrDup("<Unknown>");
         return;
     }
 
     if (jstring className = (jstring)callJNIMethod<jobject>(aClass, "getName", "()Ljava/lang/String;")) {
         const char* classNameC = getCharactersFromJString(className);
-        m_name = strdup(classNameC);
+        m_name = fastStrDup(classNameC);
         releaseCharactersForJString(className, classNameC);
     } else
-        m_name = strdup("<Unknown>");
+        m_name = fastStrDup("<Unknown>");
 
     int i;
     JNIEnv* env = getJNIEnv();
@@ -97,7 +97,7 @@ JavaClass::JavaClass(jobject anInstance)
 
 JavaClass::~JavaClass()
 {
-    free(const_cast<char*>(m_name));
+    fastFree(const_cast<char*>(m_name));
 
     JSLock lock(SilenceAssertionsOnly);
 

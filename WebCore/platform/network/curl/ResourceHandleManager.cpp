@@ -135,13 +135,13 @@ ResourceHandleManager::~ResourceHandleManager()
     curl_multi_cleanup(m_curlMultiHandle);
     curl_share_cleanup(m_curlShareHandle);
     if (m_cookieJarFileName)
-        free(m_cookieJarFileName);
+        fastFree(m_cookieJarFileName);
     curl_global_cleanup();
 }
 
 void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
 {
-    m_cookieJarFileName = strdup(cookieJarFileName);
+    m_cookieJarFileName = fastStrDup(cookieJarFileName);
 }
 
 ResourceHandleManager* ResourceHandleManager::sharedInstance()
@@ -741,7 +741,7 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     ASSERT(!d->m_url);
 
     // url is in ASCII so latin1() will only convert it to char* without character translation.
-    d->m_url = strdup(url.latin1().data());
+    d->m_url = fastStrDup(url.latin1().data());
     curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
 
     if (m_cookieJarFileName) {

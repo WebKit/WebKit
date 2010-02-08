@@ -1,3 +1,34 @@
+2010-02-08  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Use fastStrDup instead of strdup
+        https://bugs.webkit.org/show_bug.cgi?id=33943
+
+        Replace strdup/free with fastStrDup/fastFree.
+
+        * bridge/IdentifierRep.h:
+        (WebCore::IdentifierRep::IdentifierRep):
+        * bridge/jni/JNIBridge.cpp:
+        (JavaMethod::~JavaMethod):
+        (appendClassName):
+        (JavaMethod::signature):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::ResourceHandleManager::setCookieJarFileName):
+        (WebCore::ResourceHandleManager::initializeHandle):
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::~PluginStream):
+        (WebCore::PluginStream::startStream):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+        (WebCore::freeXsltParamArray):
+
 2010-02-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
