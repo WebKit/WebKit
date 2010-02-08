@@ -585,9 +585,9 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
 
     // The plugin expects the DC to be in client coordinates, so we translate
     // the DC to make that so.
-    TransformationMatrix ctm = context->getCTM();
+    AffineTransform ctm = context->getCTM();
     ctm.translate(locationInWindow.x(), locationInWindow.y());
-    XFORM transform = static_cast<XFORM>(ctm);
+    XFORM transform = static_cast<XFORM>(ctm.toTransformationMatrix());
 
     SetWorldTransform(hdc, &transform);
 

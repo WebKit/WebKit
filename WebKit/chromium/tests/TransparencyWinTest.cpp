@@ -29,13 +29,13 @@
  */
 
 #include "config.h"
+#include "TransparencyWin.h"
+
+#include "AffineTransform.h"
+#include "ImageBuffer.h"
 
 #include <gtest/gtest.h>
 #include <windows.h>
-
-#include "ImageBuffer.h"
-#include "TransformationMatrix.h"
-#include "TransparencyWin.h"
 
 namespace WebCore {
 
@@ -416,10 +416,7 @@ TEST(TransparencyWin, RotateOpaqueCompositeLayer)
     // antialiasing or other rounding problems since we're testing exact pixel
     // values.
     src->context()->save();
-    TransformationMatrix cw90(0, 1, 0, 0,
-                              -1, 0, 0, 0,
-                              0, 0, 1, 0,
-                              0, 0, 0, 1);
+    AffineTransform cw90(0, 1, -1, 0, 0, 0);
     src->context()->concatCTM(cw90);
 
     // Make a transparency layer consisting of a horizontal line of 50% black.
@@ -497,16 +494,16 @@ TEST(TransparencyWin, TranslateScaleOpaqueCompositeLayer)
     src->context()->save();
 
     // Translate left by one pixel.
-    TransformationMatrix left;
+    AffineTransform left;
     left.translate(-1, 0);
 
     // Scale by 2x.
-    TransformationMatrix scale;
+    AffineTransform scale;
     scale.scale(2.0);
     src->context()->concatCTM(scale);
 
     // Then translate up by one pixel (which will actually be 2 due to scaling).
-    TransformationMatrix up;
+    AffineTransform up;
     up.translate(0, -1);
     src->context()->concatCTM(up);
 
@@ -538,7 +535,7 @@ TEST(TransparencyWin, Scale)
 
     // Scale by 2x.
     src->context()->save();
-    TransformationMatrix scale;
+    AffineTransform scale;
     scale.scale(2.0);
     src->context()->concatCTM(scale);
 
@@ -599,7 +596,7 @@ TEST(TransparencyWin, ScaleTransparency)
 
     // Scale by 2x.
     src->context()->save();
-    TransformationMatrix scale;
+    AffineTransform scale;
     scale.scale(2.0);
     src->context()->concatCTM(scale);
 

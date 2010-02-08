@@ -21,14 +21,14 @@
 
 #include "config.h"
 #include "Font.h"
+
+#include "AffineTransform.h"
 #include "FontDescription.h"
 #include "FontFallbackList.h"
 #include "FontSelector.h"
-
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
-#include "TransformationMatrix.h"
 
 #include <QBrush>
 #include <QFontInfo>
@@ -79,7 +79,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
             brush.setTransform(ctx->fillGradient()->gradientSpaceTransform());
             p->setPen(QPen(brush, 0));
         } else if (ctx->fillPattern()) {
-            TransformationMatrix affine;
+            AffineTransform affine;
             p->setPen(QPen(QBrush(ctx->fillPattern()->createPlatformPattern(affine)), 0));
         } else
             p->setPen(QColor(ctx->fillColor()));
@@ -91,7 +91,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
             brush.setTransform(ctx->strokeGradient()->gradientSpaceTransform());
             p->setPen(QPen(brush, ctx->strokeThickness()));
         } else if (ctx->strokePattern()) {
-            TransformationMatrix affine;
+            AffineTransform affine;
             p->setPen(QPen(QBrush(ctx->strokePattern()->createPlatformPattern(affine)), ctx->strokeThickness()));
         } else
             p->setPen(QPen(QColor(ctx->strokeColor()), ctx->strokeThickness()));

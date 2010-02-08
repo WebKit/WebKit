@@ -22,6 +22,7 @@
 #if ENABLE(SVG)
 #include "SVGTextPathElement.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "MappedAttribute.h"
 #include "RenderSVGTextPath.h"
@@ -29,7 +30,6 @@
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGTransformList.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
 

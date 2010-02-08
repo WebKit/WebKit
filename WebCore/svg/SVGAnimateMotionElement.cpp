@@ -149,7 +149,7 @@ void SVGAnimateMotionElement::resetToBaseValue(const String&)
     if (!hasValidTarget())
         return;
     SVGElement* target = targetElement();
-    TransformationMatrix* transform = target->supplementalTransform();
+    AffineTransform* transform = target->supplementalTransform();
     if (!transform)
         return;
     transform->makeIdentity();
@@ -176,7 +176,7 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned,
     SVGElement* target = targetElement();
     if (!target)
         return;
-    TransformationMatrix* transform = target->supplementalTransform();
+    AffineTransform* transform = target->supplementalTransform();
     if (!transform)
         return;
     
@@ -220,8 +220,8 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         ASSERT(shadowTreeElement);
-        TransformationMatrix* transform = shadowTreeElement->supplementalTransform();
-        TransformationMatrix* t = targetElement->supplementalTransform();
+        AffineTransform* transform = shadowTreeElement->supplementalTransform();
+        AffineTransform* t = targetElement->supplementalTransform();
         transform->setMatrix(t->a(), t->b(), t->c(), t->d(), t->e(), t->f());
         if (shadowTreeElement->renderer())
             shadowTreeElement->renderer()->setNeedsLayout(true);

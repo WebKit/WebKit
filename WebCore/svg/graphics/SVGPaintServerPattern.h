@@ -28,7 +28,7 @@
 
 #if ENABLE(SVG)
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "Pattern.h"
 #include "SVGPaintServer.h"
@@ -59,8 +59,8 @@ namespace WebCore {
         ImageBuffer* tile() const;
         void setTile(PassOwnPtr<ImageBuffer>);
 
-        TransformationMatrix patternTransform() const;
-        void setPatternTransform(const TransformationMatrix&);
+        AffineTransform patternTransform() const;
+        void setPatternTransform(const AffineTransform&);
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
@@ -72,7 +72,7 @@ namespace WebCore {
         
         OwnPtr<ImageBuffer> m_tile;
         const SVGPatternElement* m_ownerElement;
-        TransformationMatrix m_patternTransform;
+        AffineTransform m_patternTransform;
         FloatRect m_patternBoundaries;
 
         mutable RefPtr<Pattern> m_pattern;

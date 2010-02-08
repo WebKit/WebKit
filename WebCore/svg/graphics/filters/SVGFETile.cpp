@@ -23,10 +23,10 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETile.h"
 
+#include "AffineTransform.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
-#include "TransformationMatrix.h"
 #include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
@@ -75,7 +75,7 @@ void FETile::apply(Filter* filter)
     tileImageContext->drawImage(m_in->resultImage()->image(), DeviceColorSpace, IntPoint());
     RefPtr<Pattern> pattern = Pattern::create(tileImage->image(), true, true);
 
-    TransformationMatrix matrix;
+    AffineTransform matrix;
     matrix.translate(m_in->scaledSubRegion().x() - scaledSubRegion().x(), m_in->scaledSubRegion().y() - scaledSubRegion().y());
     pattern.get()->setPatternSpaceTransform(matrix);
 

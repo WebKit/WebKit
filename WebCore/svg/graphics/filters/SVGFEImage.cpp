@@ -25,11 +25,11 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEImage.h"
 
+#include "AffineTransform.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderTreeAsText.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
 

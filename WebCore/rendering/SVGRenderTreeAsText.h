@@ -45,7 +45,7 @@ namespace WebCore {
     class RenderPath;
     class RenderSVGRoot;
     class RenderText;
-    class TransformationMatrix;
+    class AffineTransform;
 
 // functions used by the main RenderTreeAsText code
 void write(TextStream&, const RenderPath&, int indent);
@@ -58,7 +58,7 @@ void writeSVGText(TextStream&, const RenderBlock&, int indent);
 void writeRenderResources(TextStream&, Node* parent);
 
 // helper operators defined used in various classes to dump the render tree.
-TextStream& operator<<(TextStream&, const TransformationMatrix&);
+TextStream& operator<<(TextStream&, const AffineTransform&);
 TextStream& operator<<(TextStream&, const IntRect&);
 TextStream& operator<<(TextStream&, const Color&);
 TextStream& operator<<(TextStream&, const IntPoint&);

@@ -29,9 +29,9 @@
 #include "config.h"
 #include "Pattern.h"
 
+#include "AffineTransform.h"
 #include "Image.h"
 #include "NativeImageSkia.h"
-#include "TransformationMatrix.h"
 
 #include "SkCanvas.h"
 #include "SkColor.h"
@@ -46,7 +46,7 @@ void Pattern::platformDestroy()
     m_pattern = 0;
 }
 
-PlatformPatternPtr Pattern::platformPattern(const TransformationMatrix& patternTransform)
+PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransform)
 {
     if (m_pattern)
         return m_pattern;

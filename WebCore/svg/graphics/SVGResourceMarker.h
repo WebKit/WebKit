@@ -35,7 +35,7 @@
 namespace WebCore {
 
     class RenderSVGViewportContainer;
-    class TransformationMatrix;
+    class AffineTransform;
 
     class SVGResourceMarker : public SVGResource {
     public:
@@ -55,8 +55,8 @@ namespace WebCore {
         void setUseStrokeWidth(bool useStrokeWidth = true) { m_useStrokeWidth = useStrokeWidth; }
         bool useStrokeWidth() const { return m_useStrokeWidth; }
 
-        TransformationMatrix markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
-        void draw(RenderObject::PaintInfo&, const TransformationMatrix&);
+        AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
+        void draw(RenderObject::PaintInfo&, const AffineTransform&);
 
         virtual SVGResourceType resourceType() const { return MarkerResourceType; }
         virtual TextStream& externalRepresentation(TextStream&) const;

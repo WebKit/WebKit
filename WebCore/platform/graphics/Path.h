@@ -74,7 +74,6 @@ namespace WebCore {
     class GraphicsContext;
     class String;
     class StrokeStyleApplier;
-    class TransformationMatrix;
 
     enum WindRule {
         RULE_NONZERO = 0,
@@ -147,7 +146,6 @@ namespace WebCore {
 
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);
-        void transform(const TransformationMatrix&);
 
     private:
         PlatformPathPtr m_path;

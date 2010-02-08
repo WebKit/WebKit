@@ -26,14 +26,14 @@
 #include "config.h"
 #include "Pattern.h"
 
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
-#include "TransformationMatrix.h"
 
 #include <cairo.h>
 
 namespace WebCore {
 
-cairo_pattern_t* Pattern::createPlatformPattern(const TransformationMatrix&) const
+cairo_pattern_t* Pattern::createPlatformPattern(const AffineTransform&) const
 {
     cairo_surface_t* surface = tileImage()->nativeImageForCurrentFrame();
     if (!surface)

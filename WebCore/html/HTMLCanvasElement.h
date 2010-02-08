@@ -27,7 +27,7 @@
 #ifndef HTMLCanvasElement_h
 #define HTMLCanvasElement_h
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #if ENABLE(3D_CANVAS)    
@@ -100,7 +100,7 @@ public:
 
     void setObserver(CanvasObserver* observer) { m_observer = observer; }
 
-    TransformationMatrix baseTransform() const;
+    AffineTransform baseTransform() const;
 
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 

@@ -192,9 +192,9 @@ void RenderSVGRoot::calcViewport()
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
 // relative to our borderBox origin.  This method gives us exactly that.
-TransformationMatrix RenderSVGRoot::localToBorderBoxTransform() const
+AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
 {
-    TransformationMatrix ctm;
+    AffineTransform ctm;
     IntSize borderAndPadding = borderOriginToContentBox();
     ctm.translate(borderAndPadding.width(), borderAndPadding.height());
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
@@ -213,18 +213,18 @@ IntSize RenderSVGRoot::borderOriginToContentBox() const
     return IntSize(borderLeft() + paddingLeft(), borderTop() + paddingTop());
 }
 
-TransformationMatrix RenderSVGRoot::localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const
+AffineTransform RenderSVGRoot::localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const
 {
-    TransformationMatrix parentToContainer;
+    AffineTransform parentToContainer;
     parentToContainer.translate(parentOriginInContainer.x(), parentOriginInContainer.y());
     return localToParentTransform() * parentToContainer;
 }
 
-const TransformationMatrix& RenderSVGRoot::localToParentTransform() const
+const AffineTransform& RenderSVGRoot::localToParentTransform() const
 {
     IntSize parentToBorderBoxOffset = parentOriginToBorderBox();
 
-    TransformationMatrix borderBoxOriginToParentOrigin;
+    AffineTransform borderBoxOriginToParentOrigin;
     borderBoxOriginToParentOrigin.translate(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height());
 
     m_localToParentTransform = localToBorderBoxTransform() * borderBoxOriginToParentOrigin;
@@ -244,9 +244,9 @@ FloatRect RenderSVGRoot::repaintRectInLocalCoordinates() const
     return repaintRect;
 }
 
-TransformationMatrix RenderSVGRoot::localTransform() const
+AffineTransform RenderSVGRoot::localTransform() const
 {
-    return TransformationMatrix();
+    return AffineTransform();
 }
 
 void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)

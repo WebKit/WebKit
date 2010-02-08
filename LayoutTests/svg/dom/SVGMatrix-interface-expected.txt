@@ -80,7 +80,7 @@ PASS parseFloat(m.f) is 0
 
 Test flipX()
 PASS m4.a is -5
-PASS m4.b is 0
+PASS Math.abs(m4.b) is 0
 PASS m4.c is 0
 PASS m4.d is 5
 PASS m4.e is 100
@@ -97,7 +97,7 @@ PASS parseFloat(m3.f) is 50
 Test flipY()
 PASS m4.a is 5
 PASS m4.b is 0
-PASS m4.c is 0
+PASS Math.abs(m4.c) is 0
 PASS m4.d is -5
 PASS m4.e is 100
 PASS m4.f is 50

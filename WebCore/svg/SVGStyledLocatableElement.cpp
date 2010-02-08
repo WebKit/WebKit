@@ -23,9 +23,9 @@
 #if ENABLE(SVG)
 #include "SVGStyledLocatableElement.h"
 
+#include "AffineTransform.h"
 #include "RenderPath.h"
 #include "SVGElement.h"
-#include "TransformationMatrix.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -55,12 +55,12 @@ FloatRect SVGStyledLocatableElement::getBBox() const
     return SVGLocatable::getBBox(this);
 }
 
-TransformationMatrix SVGStyledLocatableElement::getCTM() const
+AffineTransform SVGStyledLocatableElement::getCTM() const
 {
     return SVGLocatable::getCTM(this);
 }
 
-TransformationMatrix SVGStyledLocatableElement::getScreenCTM() const
+AffineTransform SVGStyledLocatableElement::getScreenCTM() const
 {
     return SVGLocatable::getScreenCTM(this);
 }

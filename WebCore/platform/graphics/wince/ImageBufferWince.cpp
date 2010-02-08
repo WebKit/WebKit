@@ -42,7 +42,7 @@ public:
     virtual void destroyDecodedData(bool destroyAll = true) {}
     virtual unsigned decodedSize() const { return 0; }
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
 
     const ImageBufferData* m_data;
@@ -55,7 +55,7 @@ void BufferedImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const 
     m_data->m_bitmap->draw(ctxt, intDstRect, intSrcRect, compositeOp);
 }
 
-void BufferedImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn, const TransformationMatrix& patternTransform,
+void BufferedImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn, const AffineTransform& patternTransform,
                              const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
     m_data->m_bitmap->drawPattern(ctxt, tileRectIn, patternTransform, phase, op, destRect, size());

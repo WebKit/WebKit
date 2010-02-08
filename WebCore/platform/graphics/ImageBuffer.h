@@ -27,7 +27,7 @@
 #ifndef ImageBuffer_h
 #define ImageBuffer_h
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
@@ -84,11 +84,11 @@ namespace WebCore {
 
         String toDataURL(const String& mimeType) const;
 #if !PLATFORM(CG)
-        TransformationMatrix baseTransform() const { return TransformationMatrix(); }
+        AffineTransform baseTransform() const { return AffineTransform(); }
         void transformColorSpace(ImageColorSpace srcColorSpace, ImageColorSpace dstColorSpace);
         void platformTransformColorSpace(const Vector<int>&);
 #else
-        TransformationMatrix baseTransform() const { return TransformationMatrix(1, 0, 0, -1, 0, m_size.height()); }
+        AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_size.height()); }
 #endif
     private:
         ImageBufferData m_data;

@@ -50,7 +50,7 @@ static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
 class RenderBoxModelScaleData : public Noncopyable {
 public:
-    RenderBoxModelScaleData(RenderBoxModelObject* object, const IntSize& size, const TransformationMatrix& transform, double time, bool lowQualityScale)
+    RenderBoxModelScaleData(RenderBoxModelObject* object, const IntSize& size, const AffineTransform& transform, double time, bool lowQualityScale)
         : m_size(size)
         , m_transform(transform)
         , m_lastPaintTime(time)
@@ -71,8 +71,8 @@ public:
     double lastPaintTime() const { return m_lastPaintTime; }
     void setLastPaintTime(double t) { m_lastPaintTime = t; }
     bool useLowQualityScale() const { return m_lowQualityScale; }
-    const TransformationMatrix& transform() const { return m_transform; }
-    void setTransform(const TransformationMatrix& transform) { m_transform = transform; }
+    const AffineTransform& transform() const { return m_transform; }
+    void setTransform(const AffineTransform& transform) { m_transform = transform; }
     void setUseLowQualityScale(bool b)
     {
         m_highQualityRepaintTimer.stop();
@@ -83,7 +83,7 @@ public:
 
 private:
     IntSize m_size;
-    TransformationMatrix m_transform;
+    AffineTransform m_transform;
     double m_lastPaintTime;
     bool m_lowQualityScale;
     Timer<RenderBoxModelObject> m_highQualityRepaintTimer;
@@ -130,7 +130,7 @@ bool RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(GraphicsCont
     if (gBoxModelObjects)
         data = gBoxModelObjects->get(object);
 
-    const TransformationMatrix& currentTransform = context->getCTM();
+    const AffineTransform& currentTransform = context->getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslation();
     if (!contextIsScaled && imageSize == size) {
         // There is no scale in effect.  If we had a scale in effect before, we can just delete this data.
@@ -1390,7 +1390,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
                 // edges if they are not pixel-aligned. Those are avoided by insetting the clipping path
                 // by one pixel.
                 if (hasOpaqueBackground) {
-                    TransformationMatrix currentTransformation = context->getCTM();
+                    AffineTransform currentTransformation = context->getCTM();
                     if (currentTransformation.a() != 1 || (currentTransformation.d() != 1 && currentTransformation.d() != -1)
                             || currentTransformation.b() || currentTransformation.c())
                         rectToClipOut.inflate(-1);

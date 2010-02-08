@@ -106,12 +106,12 @@ void SVGPaintServerGradient::setBoundingBoxMode(bool mode)
     m_boundingBoxMode = mode;
 }
 
-TransformationMatrix SVGPaintServerGradient::gradientTransform() const
+AffineTransform SVGPaintServerGradient::gradientTransform() const
 {
     return m_gradientTransform;
 }
 
-void SVGPaintServerGradient::setGradientTransform(const TransformationMatrix& transform)
+void SVGPaintServerGradient::setGradientTransform(const AffineTransform& transform)
 {
     m_gradientTransform = transform;
 }
@@ -127,9 +127,9 @@ static inline const RenderObject* findTextRootObject(const RenderObject* start)
     return start;
 }
 
-static inline TransformationMatrix absoluteTransformForRenderer(const RenderObject* object)
+static inline AffineTransform absoluteTransformForRenderer(const RenderObject* object)
 {
-    TransformationMatrix absoluteTransform;
+    AffineTransform absoluteTransform;
 
     const RenderObject* currentObject = object;
     while (currentObject) {
@@ -146,7 +146,7 @@ static inline bool createMaskAndSwapContextForTextGradient(
 {
     const RenderObject* textRootBlock = findTextRootObject(object);
 
-    TransformationMatrix transform = absoluteTransformForRenderer(textRootBlock);
+    AffineTransform transform = absoluteTransformForRenderer(textRootBlock);
     FloatRect maskAbsoluteBoundingBox = transform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
 
     IntRect maskImageRect = enclosingIntRect(maskAbsoluteBoundingBox);
@@ -171,14 +171,14 @@ static inline bool createMaskAndSwapContextForTextGradient(
     return true;
 }
 
-static inline TransformationMatrix clipToTextMask(GraphicsContext* context,
+static inline AffineTransform clipToTextMask(GraphicsContext* context,
     OwnPtr<ImageBuffer>& imageBuffer, const RenderObject* object,
     const SVGPaintServerGradient* gradientServer)
 {
     const RenderObject* textRootBlock = findTextRootObject(object);
     context->clipToImageBuffer(textRootBlock->repaintRectInLocalCoordinates(), imageBuffer.get());
 
-    TransformationMatrix matrix;
+    AffineTransform matrix;
     if (gradientServer->boundingBoxMode()) {
         FloatRect maskBoundingBox = textRootBlock->objectBoundingBox();
         matrix.translate(maskBoundingBox.x(), maskBoundingBox.y());
@@ -222,7 +222,7 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
         applyStrokeStyleToContext(context, object->style(), object);
     }
 
-    TransformationMatrix matrix;
+    AffineTransform matrix;
     // CG platforms will handle the gradient space transform for text in
     // teardown, so we don't apply it here.  For non-CG platforms, we
     // want the text bounding box applied to the gradient space transform now,
@@ -258,7 +258,7 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
         context = m_savedContext;
         m_savedContext = 0;
 
-        TransformationMatrix matrix = clipToTextMask(context, m_imageBuffer, object, this);
+        AffineTransform matrix = clipToTextMask(context, m_imageBuffer, object, this);
         m_gradient->setGradientSpaceTransform(matrix);
         context->setFillGradient(m_gradient);
         

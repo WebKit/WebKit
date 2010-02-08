@@ -20,11 +20,11 @@
 #include "config.h"
 #include "PlatformPathWince.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Path.h"
 #include "PlatformString.h"
-#include "TransformationMatrix.h"
 #include "WinceGraphicsExtras.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
@@ -232,7 +232,7 @@ static void addArcPoints(PathPolygon& poly, const PlatformPathElement::ArcTo& da
         poly.append(data.m_end);
 }
 
-static void drawPolygons(HDC dc, const Vector<PathPolygon>& polygons, bool fill, const TransformationMatrix* transformation)
+static void drawPolygons(HDC dc, const Vector<PathPolygon>& polygons, bool fill, const AffineTransform* transformation)
 {
     MemoryAllocationCanFail canFail;
     for (Vector<PathPolygon>::const_iterator i = polygons.begin(); i != polygons.end(); ++i) {
@@ -317,7 +317,7 @@ void PathPolygon::move(const FloatSize& offset)
         i->move(offset);
 }
 
-void PathPolygon::transform(const TransformationMatrix& t)
+void PathPolygon::transform(const AffineTransform& t)
 {
     for (Vector<PathPoint>::iterator i = begin(); i < end(); ++i)
         *i = t.mapPoint(*i);
@@ -403,7 +403,7 @@ void PlatformPathElement::move(const FloatSize& offset)
         m_data.m_points[i].move(offset);
 }
 
-void PlatformPathElement::transform(const TransformationMatrix& t)
+void PlatformPathElement::transform(const AffineTransform& t)
 {
     int n = numControlPoints();
     for (int i = 0; i < n; ++i) {
@@ -571,12 +571,12 @@ void PlatformPath::clear()
     m_penLifted = true;
 }
 
-void PlatformPath::strokePath(HDC dc, const TransformationMatrix* transformation) const
+void PlatformPath::strokePath(HDC dc, const AffineTransform* transformation) const
 {
     drawPolygons(dc, m_subpaths, false, transformation);
 }
 
-void PlatformPath::fillPath(HDC dc, const TransformationMatrix* transformation) const
+void PlatformPath::fillPath(HDC dc, const AffineTransform* transformation) const
 {
     HGDIOBJ oldPen = SelectObject(dc, GetStockObject(NULL_PEN));
     drawPolygons(dc, m_subpaths, true, transformation);
@@ -593,7 +593,7 @@ void PlatformPath::translate(const FloatSize& size)
         it->move(size);
 }
 
-void PlatformPath::transform(const TransformationMatrix& t)
+void PlatformPath::transform(const AffineTransform& t)
 {
     for (PlatformPathElements::iterator it(m_elements.begin()); it != m_elements.end(); ++it)
         it->transform(t);

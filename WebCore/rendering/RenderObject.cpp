@@ -2520,15 +2520,15 @@ FloatRect RenderObject::repaintRectInLocalCoordinates() const
     return FloatRect();
 }
 
-TransformationMatrix RenderObject::localTransform() const
+AffineTransform RenderObject::localTransform() const
 {
-    static const TransformationMatrix identity;
+    static const AffineTransform identity;
     return identity;
 }
 
-const TransformationMatrix& RenderObject::localToParentTransform() const
+const AffineTransform& RenderObject::localToParentTransform() const
 {
-    static const TransformationMatrix identity;
+    static const AffineTransform identity;
     return identity;
 }
 

@@ -606,7 +606,7 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
     V(SVGLENGTH, SVGLength)                                             \
     V(SVGPRESERVEASPECTRATIO, SVGPreserveAspectRatio)                   \
     V(SVGTRANSFORM, SVGTransform)                                       \
-    V(SVGMATRIX, TransformationMatrix)                                  \
+    V(SVGMATRIX, AffineTransform)                                       \
     V(SVGNUMBER, float)                                                 \
     V(SVGPOINT, FloatPoint)                                             \
     V(SVGRECT, FloatRect)

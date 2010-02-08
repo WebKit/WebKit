@@ -2236,7 +2236,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         
         // Apply the transform.
         p->save();
-        p->concatCTM(transform);
+        p->concatCTM(transform.toAffineTransform());
 
         // Now do a paint with the root layer shifted to be us.
         paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintBehavior, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);

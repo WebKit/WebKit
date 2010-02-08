@@ -26,12 +26,12 @@
 #include "config.h"
 #include "Pattern.h"
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
 
-QBrush Pattern::createPlatformPattern(const TransformationMatrix&) const
+QBrush Pattern::createPlatformPattern(const AffineTransform&) const
 {
     QPixmap* pixmap = tileImage()->nativeImageForCurrentFrame();
     if (!pixmap)

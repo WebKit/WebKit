@@ -31,7 +31,7 @@
 #include <config.h>
 
 #if ENABLE(SVG)
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 
 #include "SVGException.h"
 #include "V8Binding.h"
@@ -50,19 +50,19 @@ v8::Handle<v8::Value> V8SVGMatrix::multiplyCallback(const v8::Arguments& args)
     if (!V8SVGMatrix::HasInstance(args[0]))
         return throwError("secondMatrix argument was not a SVGMatrix");
 
-    TransformationMatrix m1 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
-    TransformationMatrix m2 = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(v8::Handle<v8::Object>::Cast(args[0]));
+    AffineTransform m1 = *V8SVGPODTypeWrapper<AffineTransform>::toNative(args.Holder());
+    AffineTransform m2 = *V8SVGPODTypeWrapper<AffineTransform>::toNative(v8::Handle<v8::Object>::Cast(args[0]));
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2));
+    RefPtr<V8SVGStaticPODTypeWrapper<AffineTransform> > wrapper = V8SVGStaticPODTypeWrapper<AffineTransform>::create(m1.multLeft(m2));
     return toV8(wrapper.get());
 }
 
 v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGMatrix.inverse()");
-    TransformationMatrix matrix = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
+    AffineTransform matrix = *V8SVGPODTypeWrapper<AffineTransform>::toNative(args.Holder());
     ExceptionCode ec = 0;
-    TransformationMatrix result = matrix.inverse();
+    AffineTransform result = matrix.inverse();
 
     if (!matrix.isInvertible())
         ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
@@ -72,18 +72,18 @@ v8::Handle<v8::Value> V8SVGMatrix::inverseCallback(const v8::Arguments& args)
         return v8::Handle<v8::Value>();
     }
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result);
+    RefPtr<V8SVGStaticPODTypeWrapper<AffineTransform> > wrapper = V8SVGStaticPODTypeWrapper<AffineTransform>::create(result);
     return toV8(wrapper.get());
 }
 
 v8::Handle<v8::Value> V8SVGMatrix::rotateFromVectorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.SVGMatrix.rotateFromVector()");
-    TransformationMatrix matrix = *V8SVGPODTypeWrapper<TransformationMatrix>::toNative(args.Holder());
+    AffineTransform matrix = *V8SVGPODTypeWrapper<AffineTransform>::toNative(args.Holder());
     ExceptionCode ec = 0;
     float x = toFloat(args[0]);
     float y = toFloat(args[1]);
-    TransformationMatrix result = matrix;
+    AffineTransform result = matrix;
     result.rotateFromVector(x, y);
     if (x == 0.0 || y == 0.0)
         ec = SVGException::SVG_INVALID_VALUE_ERR;
@@ -93,7 +93,7 @@ v8::Handle<v8::Value> V8SVGMatrix::rotateFromVectorCallback(const v8::Arguments&
         return v8::Handle<v8::Value>();
     }
 
-    RefPtr<V8SVGStaticPODTypeWrapper<TransformationMatrix> > wrapper = V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result);
+    RefPtr<V8SVGStaticPODTypeWrapper<AffineTransform> > wrapper = V8SVGStaticPODTypeWrapper<AffineTransform>::create(result);
     return toV8(wrapper.get());
 }
 

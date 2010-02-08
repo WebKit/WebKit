@@ -107,16 +107,16 @@ namespace WebCore {
         static SVGLength createSVGLength();
         static SVGAngle createSVGAngle();
         static FloatPoint createSVGPoint();
-        static TransformationMatrix createSVGMatrix();
+        static AffineTransform createSVGMatrix();
         static FloatRect createSVGRect();
         static SVGTransform createSVGTransform();
-        static SVGTransform createSVGTransformFromMatrix(const TransformationMatrix&);
+        static SVGTransform createSVGTransformFromMatrix(const AffineTransform&);
 
         virtual void parseMappedAttribute(MappedAttribute*);
 
         // 'virtual SVGLocatable' functions
-        virtual TransformationMatrix getCTM() const;
-        virtual TransformationMatrix getScreenCTM() const;
+        virtual AffineTransform getCTM() const;
+        virtual AffineTransform getScreenCTM() const;
 
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -127,7 +127,7 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-        TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         void inheritViewAttributes(SVGViewElement*);
 

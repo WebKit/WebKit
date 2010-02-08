@@ -20,11 +20,11 @@
 #include "config.h"
 #include "Path.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
 #include "PlatformPathWince.h"
 #include "PlatformString.h"
-#include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -133,7 +133,7 @@ void Path::apply(void* info, PathApplierFunction function) const
     m_path->apply(info, function);
 }
 
-void Path::transform(const TransformationMatrix& t)
+void Path::transform(const AffineTransform& t)
 {
     m_path->transform(t);
 }

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderThemeGtk.h"
 
+#include "AffineTransform.h"
 #include "CString.h"
 #include "GOwnPtr.h"
 #include "GraphicsContext.h"
@@ -32,7 +33,6 @@
 #include "NotImplemented.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
-#include "TransformationMatrix.h"
 #include "UserAgentStyleSheets.h"
 #include "gtkdrawing.h"
 
@@ -307,7 +307,7 @@ static bool paintMozillaGtkWidget(const RenderThemeGtk* theme, GtkThemeWidgetTyp
         break;
     }
 
-    TransformationMatrix ctm = i.context->getCTM();
+    AffineTransform ctm = i.context->getCTM();
 
     IntPoint pos = ctm.mapPoint(rect.location());
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());

@@ -1,3 +1,15 @@
+2010-02-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add back an AffineTransform class for use by SVG
+        https://bugs.webkit.org/show_bug.cgi?id=33750
+
+        Use AffineTransform instead of TransformationMatrix here.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::TEST):
+
 2010-02-07  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.

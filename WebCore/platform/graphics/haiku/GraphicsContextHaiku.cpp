@@ -36,7 +36,6 @@
 #include "NotImplemented.h"
 #include "Path.h"
 #include "Pen.h"
-#include "TransformationMatrix.h"
 #include <GraphicsDefs.h>
 #include <Region.h>
 #include <View.h>
@@ -392,16 +391,10 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
     notImplemented();
 }
 
-AffineTransform GraphicsContext::getAffineCTM() const
+AffineTransform GraphicsContext::getCTM() const
 {
     notImplemented();
     return AffineTransform();
-}
-
-TransformationMatrix GraphicsContext::getCTM() const
-{
-    notImplemented();
-    return TransformationMatrix();
 }
 
 void GraphicsContext::translate(float x, float y)
@@ -459,14 +452,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transform)
-{
-    if (paintingDisabled())
-        return;
-
-    notImplemented();
-}
-
-void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {
     if (paintingDisabled())
         return;

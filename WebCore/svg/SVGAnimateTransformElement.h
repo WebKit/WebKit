@@ -30,34 +30,34 @@
 
 namespace WebCore {
 
-    class TransformationMatrix;
+class AffineTransform;
 
-    class SVGAnimateTransformElement : public SVGAnimationElement {
-    public:
-        SVGAnimateTransformElement(const QualifiedName&, Document*);
-        virtual ~SVGAnimateTransformElement();
-        
-        virtual bool hasValidTarget() const;
+class SVGAnimateTransformElement : public SVGAnimationElement {
+public:
+    SVGAnimateTransformElement(const QualifiedName&, Document*);
+    virtual ~SVGAnimateTransformElement();
+    
+    virtual bool hasValidTarget() const;
 
-        virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
-    private:
-        virtual void resetToBaseValue(const String&);
-        virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-        virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-        virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
-        virtual void applyResultsToTarget();
-        virtual float calculateDistance(const String& fromString, const String& toString);
+private:
+    virtual void resetToBaseValue(const String&);
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
+    virtual void applyResultsToTarget();
+    virtual float calculateDistance(const String& fromString, const String& toString);
 
-        SVGTransform parseTransformValue(const String&) const;
-        
-        SVGTransform::SVGTransformType m_type;
-        
-        unsigned m_baseIndexInTransformList;
+    SVGTransform parseTransformValue(const String&) const;
+    
+    SVGTransform::SVGTransformType m_type;
+    
+    unsigned m_baseIndexInTransformList;
 
-        SVGTransform m_toTransform;
-        SVGTransform m_fromTransform;
-    };
+    SVGTransform m_toTransform;
+    SVGTransform m_fromTransform;
+};
 
 } // namespace WebCore
 

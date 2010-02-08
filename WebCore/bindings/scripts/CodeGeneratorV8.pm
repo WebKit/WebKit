@@ -2105,7 +2105,7 @@ sub GetNativeTypeForConversions
     my $type = shift;
     return "FloatRect" if $type eq "SVGRect";
     return "FloatPoint" if $type eq "SVGPoint";
-    return "TransformationMatrix" if $type eq "SVGMatrix";
+    return "AffineTransform" if $type eq "SVGMatrix";
     return "float" if $type eq "SVGNumber";
     return $type;
 }
@@ -2359,7 +2359,7 @@ sub GetNativeType
     return "Range::CompareHow" if $type eq "CompareHow";
     return "FloatRect" if $type eq "SVGRect";
     return "FloatPoint" if $type eq "SVGPoint";
-    return "TransformationMatrix" if $type eq "SVGMatrix";
+    return "AffineTransform" if $type eq "SVGMatrix";
     return "SVGTransform" if $type eq "SVGTransform";
     return "SVGLength" if $type eq "SVGLength";
     return "SVGAngle" if $type eq "SVGAngle";

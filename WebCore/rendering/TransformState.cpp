@@ -49,6 +49,12 @@ void TransformState::move(int x, int y, TransformAccumulation accumulate)
     m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
+// FIXME: We transform AffineTransform to TransformationMatrix. This is rather inefficient.
+void TransformState::applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation accumulate)
+{
+    applyTransform(transformFromContainer.toTransformationMatrix(), accumulate);
+}
+
 void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
 {
     // If we have an accumulated transform from last time, multiply in this transform

@@ -187,7 +187,7 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
     context->fillRect(rect);
 }
 
-void Gradient::setPlatformGradientSpaceTransform(const TransformationMatrix& matrix)
+void Gradient::setPlatformGradientSpaceTransform(const AffineTransform& matrix)
 {
     if (m_gradient)
         m_gradient->setLocalMatrix(m_gradientSpaceTransformation);

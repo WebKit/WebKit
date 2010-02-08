@@ -999,6 +999,12 @@ void TransformationMatrix::makeAffine()
     m_matrix[3][3] = 1;
 }
 
+AffineTransform TransformationMatrix::toAffineTransform() const
+{
+    return AffineTransform(m_matrix[0][0], m_matrix[0][1], m_matrix[1][0],
+                           m_matrix[1][1], m_matrix[3][0], m_matrix[3][1]);
+}
+
 static inline void blendFloat(double& from, double to, double progress)
 {
     if (from != to)

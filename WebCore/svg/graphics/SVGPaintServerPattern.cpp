@@ -29,6 +29,7 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerPattern.h"
 
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"
@@ -36,7 +37,6 @@
 #include "RenderObject.h"
 #include "SVGPatternElement.h"
 #include "SVGRenderTreeAsText.h"
-#include "TransformationMatrix.h"
 
 using namespace std;
 
@@ -73,12 +73,12 @@ void SVGPaintServerPattern::setTile(PassOwnPtr<ImageBuffer> tile)
     m_tile = tile;
 }
 
-TransformationMatrix SVGPaintServerPattern::patternTransform() const
+AffineTransform SVGPaintServerPattern::patternTransform() const
 {
     return m_patternTransform;
 }
 
-void SVGPaintServerPattern::setPatternTransform(const TransformationMatrix& transform)
+void SVGPaintServerPattern::setPatternTransform(const AffineTransform& transform)
 {
     m_patternTransform = transform;
 }
@@ -153,7 +153,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         applyStrokeStyleToContext(context, object->style(), object);
     }
 
-    TransformationMatrix matrix;
+    AffineTransform matrix;
     matrix.translate(patternBoundaries().x(), patternBoundaries().y());
     matrix.multiply(patternTransform());
     m_pattern->setPatternSpaceTransform(matrix);

@@ -22,9 +22,9 @@
 
 module svg {
 
-    interface [Conditional=SVG, PODType=TransformationMatrix] SVGMatrix {
+    interface [Conditional=SVG, PODType=AffineTransform] SVGMatrix {
         // FIXME: these attributes should all be floats but since we implement
-        // TransformationMatrix with doubles setting these as doubles makes more sense.
+        // AffineTransform with doubles setting these as doubles makes more sense.
         attribute double a;
         attribute double b;
         attribute double c;

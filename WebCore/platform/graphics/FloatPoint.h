@@ -61,6 +61,7 @@ struct SkPoint;
 
 namespace WebCore {
 
+class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
 
@@ -106,6 +107,7 @@ public:
 #endif
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;
+    FloatPoint matrixTransform(const AffineTransform&) const;
 
 private:
     float m_x, m_y;

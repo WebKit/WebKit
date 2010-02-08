@@ -24,7 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGPreserveAspectRatio.h"
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 
@@ -235,12 +235,12 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
     }
 }
 
-TransformationMatrix SVGPreserveAspectRatio::getCTM(double logicX, double logicY,
+AffineTransform SVGPreserveAspectRatio::getCTM(double logicX, double logicY,
                                                double logicWidth, double logicHeight,
                                                double /*physX*/, double /*physY*/,
                                                double physWidth, double physHeight) const
 {
-    TransformationMatrix temp;
+    AffineTransform temp;
 
     if (align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return temp;

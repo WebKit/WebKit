@@ -27,7 +27,6 @@
 #include "GraphicsContext.h"
 
 #include "AffineTransform.h"
-#include "TransformationMatrix.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "IntRect.h"
@@ -360,16 +359,10 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
     notImplemented();
 }
 
-AffineTransform GraphicsContext::getAffineCTM() const
+AffineTransform GraphicsContext::getCTM() const
 { 
     notImplemented();
     return AffineTransform();
-}
-
-TransformationMatrix GraphicsContext::getCTM() const
-{ 
-    notImplemented();
-    return TransformationMatrix();
 }
 
 void GraphicsContext::translate(float tx, float ty) 
@@ -479,15 +472,6 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transform)
-{
-    if (paintingDisabled())
-        return;
-
-    notImplemented();
-    return;
-}
-
-void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 {
     if (paintingDisabled())
         return;

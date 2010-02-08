@@ -1,3 +1,338 @@
+2010-02-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add back an AffineTransform class for use by SVG
+        https://bugs.webkit.org/show_bug.cgi?id=33750
+
+        This adds back AffineTransform. This saves additional 4% memory consumption
+        on the 50k rects stress test: https://bugs.webkit.org/attachment.cgi?id=46721
+        It also makes it possible to optimize the calculations internally of
+        AffineTransform to the needs of 2D transformations (the second benefit for SVG,
+        which uses transformations relative often at the moment.
+        Everything that is 2D related (like images, patterns, gradients, fonts), uses
+        AffineTransform now.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp:
+        (WebCore::V8SVGMatrix::multiplyCallback):
+        (WebCore::V8SVGMatrix::inverseCallback):
+        (WebCore::V8SVGMatrix::rotateFromVectorCallback):
+        * html/HTMLCanvasElement.cpp: Changed to AffineTransform now
+        (WebCore::HTMLCanvasElement::baseTransform):
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::matrixTransform):
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern):
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::setGradientSpaceTransform):
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::gradientSpaceTransform):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::baseTransform):
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.cpp:
+        (WebCore::Pattern::setPatternSpaceTransform):
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::create):
+        (WebCore::Pattern::tileImage):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill):
+        (WebCore::setPlatformStroke):
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cairo/PathCairo.cpp:
+        * platform/graphics/cairo/PatternCairo.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/haiku/ImageHaiku.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/haiku/PathHaiku.cpp:
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/qt/PathQt.cpp:
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/PathSkia.cpp:
+        * platform/graphics/skia/PatternSkia.cpp:
+        (WebCore::Pattern::platformPattern):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleTextDrawing):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::makeIdentity): needed by some parts of WebCore
+        (WebCore::AffineTransform::scale): Didn't scale the complete matrix
+        (WebCore::AffineTransform::translate): Didn't respect other transformations
+        (WebCore::AffineTransform::shear): direct calculation, no extra multiply of matrices
+        (WebCore::AffineTransform::map):
+        (WebCore::AffineTransform::mapPoint):
+        (WebCore::AffineTransform::mapRect):
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::isIdentityOrTranslation):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::toAffineTransform):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/wince/FontWince.cpp:
+        * platform/graphics/wince/GraphicsContextWince.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::drawBitmapPattern):
+        * platform/graphics/wince/ImageBufferWince.cpp:
+        (WebCore::):
+        (WebCore::BufferedImage::drawPattern):
+        * platform/graphics/wince/PathWince.cpp:
+        (WebCore::Path::transform):
+        * platform/graphics/wince/PlatformPathWince.cpp:
+        (WebCore::drawPolygons):
+        (WebCore::PathPolygon::transform):
+        (WebCore::PlatformPathElement::transform):
+        (WebCore::PlatformPath::strokePath):
+        (WebCore::PlatformPath::fillPath):
+        (WebCore::PlatformPath::transform):
+        * platform/graphics/wince/PlatformPathWince.h:
+        (WebCore::):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/wx/PathWx.cpp:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozillaGtkWidget):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localTransform):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelScaleData::RenderBoxModelScaleData):
+        (WebCore::RenderBoxModelScaleData::transform):
+        (WebCore::RenderBoxModelScaleData::setTransform):
+        (WebCore::RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        (WebCore::RenderForeignObject::localToParentTransform):
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::localTransform):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localTransform):
+        (WebCore::RenderObject::localToParentTransform):
+        (WebCore::RenderObject::absoluteTransform):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::localToParentTransform):
+        (WebCore::RenderPath::localTransform):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::absoluteTransform):
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::localToParentTransform):
+        (WebCore::RenderSVGImage::localTransform):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::localToRepaintContainerTransform):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::absoluteTransform):
+        (WebCore::RenderSVGRoot::localTransform):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::localToParentTransform):
+        (WebCore::RenderSVGText::localTransform):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::localToParentTransform):
+        (WebCore::RenderSVGTransformableContainer::localTransform):
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::markerBoundaries):
+        (WebCore::RenderSVGViewportContainer::markerContentTransformation):
+        (WebCore::RenderSVGViewportContainer::viewportTransform):
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        (WebCore::RenderSVGViewportContainer::absoluteTransform):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGChar::characterTransform):
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkWalker::operator()):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::calculateGlyphBoundaries):
+        (WebCore::SVGInlineTextBoxClosestCharacterToPositionWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBoxSelectionRectWalker::chunkPortionCallback):
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        * rendering/SVGMarkerLayoutInfo.h:
+        (WebCore::MarkerLayout::MarkerLayout):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::applyTransformToPaintInfo):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/SVGRenderTreeAsText.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+        (WebCore::SVGRootInlineBox::buildLayoutInformation):
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::applyTransform):
+        * rendering/TransformState.h:
+        * svg/GradientAttributes.h:
+        (WebCore::GradientAttributes::gradientTransform):
+        (WebCore::GradientAttributes::setGradientTransform):
+        * svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::patternTransform):
+        (WebCore::PatternAttributes::setPatternTransform):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::resetToBaseValue):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::supplementalTransform):
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::viewBoxToViewTransform):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getCTM):
+        (WebCore::SVGLocatable::getScreenCTM):
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGLocatable.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::viewBoxToViewTransform):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGMatrix.idl:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::getCTM):
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::createSVGMatrix):
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::getCTM):
+        (WebCore::SVGStyledLocatableElement::getScreenCTM):
+        * svg/SVGStyledLocatableElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::getCTM):
+        (WebCore::SVGStyledTransformableElement::getScreenCTM):
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+        (WebCore::SVGStyledTransformableElement::supplementalTransform):
+        * svg/SVGStyledTransformableElement.h:
+        (WebCore::SVGStyledTransformableElement::isStyledTransformable):
+        (WebCore::SVGStyledTransformableElement::toPathData):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getScreenCTM):
+        (WebCore::SVGTextElement::getCTM):
+        (WebCore::SVGTextElement::animatedLocalTransform):
+        (WebCore::SVGTextElement::supplementalTransform):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTransform.cpp:
+        (SVGTransform::SVGTransform):
+        (SVGTransform::matrix):
+        (SVGTransform::setMatrix):
+        * svg/SVGTransform.h:
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::scaledDistance):
+        (WebCore::SVGTransformDistance::isZero):
+        * svg/SVGTransformDistance.h:
+        * svg/SVGTransformList.cpp:
+        (SVGTransformList::createSVGTransformFromMatrix):
+        (SVGTransformList::concatenate):
+        (SVGTransformList::valueAsString):
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::getCTM):
+        (WebCore::SVGTransformable::getScreenCTM):
+        (WebCore::SVGTransformable::parseTransformValue):
+        * svg/SVGTransformable.h:
+        (WebCore::SVGTransformable::):
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::gradientTransform):
+        (WebCore::SVGPaintServerGradient::setGradientTransform):
+        (WebCore::clipToTextMask):
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/SVGPaintServerGradient.h:
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::patternTransform):
+        (WebCore::SVGPaintServerPattern::setPatternTransform):
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/SVGPaintServerPattern.h:
+        * svg/graphics/SVGResourceClipper.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::markerTransformation):
+        (WebCore::SVGResourceMarker::draw):
+        * svg/graphics/SVGResourceMarker.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
 2010-02-08  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

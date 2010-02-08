@@ -36,7 +36,6 @@
 #include "ImageBuffer.h"
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
-#include "TransformationMatrix.h"
 #include <QPainterPath>
 #include <QTransform>
 #include <QString>
@@ -381,11 +380,6 @@ void Path::apply(void* info, PathApplierFunction function) const
 }
 
 void Path::transform(const AffineTransform& transform)
-{
-    m_path = QTransform(transform).map(m_path);
-}
-
-void Path::transform(const TransformationMatrix& transform)
 {
     m_path = QTransform(transform).map(m_path);
 }

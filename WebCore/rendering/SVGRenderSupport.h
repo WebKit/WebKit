@@ -75,7 +75,7 @@ namespace WebCore {
 
     // FIXME: This should move to RenderObject or PaintInfo
     // Used for transforming the GraphicsContext and damage rect before passing PaintInfo to child renderers.
-    void applyTransformToPaintInfo(RenderObject::PaintInfo&, const TransformationMatrix& localToChildTransform);
+    void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& localToChildTransform);
 
     // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
     void renderSubtreeToImage(ImageBuffer*, RenderObject*);

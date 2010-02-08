@@ -31,7 +31,7 @@ class Path;
 class SVGResourceMarker;
 
 struct MarkerLayout {
-    MarkerLayout(SVGResourceMarker* markerObj = 0, TransformationMatrix matrixObj = TransformationMatrix())
+    MarkerLayout(SVGResourceMarker* markerObj = 0, AffineTransform matrixObj = AffineTransform())
         : marker(markerObj)
         , matrix(matrixObj)
     {
@@ -39,7 +39,7 @@ struct MarkerLayout {
     }
 
     SVGResourceMarker* marker;
-    TransformationMatrix matrix;
+    AffineTransform matrix;
 };
 
 class SVGMarkerLayoutInfo : public Noncopyable {

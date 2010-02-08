@@ -25,10 +25,10 @@
 #define RenderPath_h
 
 #if ENABLE(SVG)
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
 #include "SVGMarkerLayoutInfo.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ private:
     virtual FloatRect markerBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-    virtual const TransformationMatrix& localToParentTransform() const;
+    virtual const AffineTransform& localToParentTransform() const;
 
     void setPath(const Path&);
 
@@ -68,7 +68,7 @@ private:
     void calculateMarkerBoundsIfNeeded() const;
 
 private:
-    virtual TransformationMatrix localTransform() const;
+    virtual AffineTransform localTransform() const;
 
     mutable Path m_path;
     mutable FloatRect m_cachedLocalFillBBox;
@@ -76,7 +76,7 @@ private:
     mutable FloatRect m_cachedLocalRepaintRect;
     mutable FloatRect m_cachedLocalMarkerBBox;
     mutable SVGMarkerLayoutInfo m_markerLayoutInfo;
-    TransformationMatrix m_localTransform;
+    AffineTransform m_localTransform;
 };
 
 inline RenderPath* toRenderPath(RenderObject* object)

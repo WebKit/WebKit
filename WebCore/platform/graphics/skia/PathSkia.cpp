@@ -220,11 +220,6 @@ void Path::transform(const AffineTransform& xform)
     m_path->transform(xform);
 }
 
-void Path::transform(const TransformationMatrix& xform)
-{
-    m_path->transform(xform);
-}
-
 String Path::debugString() const
 {
     String result;

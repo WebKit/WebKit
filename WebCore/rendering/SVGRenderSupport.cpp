@@ -27,6 +27,7 @@
 #if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
+#include "AffineTransform.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
@@ -37,7 +38,6 @@
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "TransformState.h"
-#include "TransformationMatrix.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -299,7 +299,7 @@ FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object
     return FloatRect();
 }
 
-void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const TransformationMatrix& localToAncestorTransform)
+void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const AffineTransform& localToAncestorTransform)
 {
     if (localToAncestorTransform.isIdentity())
         return;

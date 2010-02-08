@@ -34,12 +34,12 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransf
 {
 }
 
-const TransformationMatrix& RenderSVGTransformableContainer::localToParentTransform() const
+const AffineTransform& RenderSVGTransformableContainer::localToParentTransform() const
 {
     return m_localTransform;
 }
 
-TransformationMatrix RenderSVGTransformableContainer::localTransform() const
+AffineTransform RenderSVGTransformableContainer::localTransform() const
 {
     return m_localTransform;
 }
@@ -54,7 +54,7 @@ void RenderSVGTransformableContainer::calculateLocalTransform()
     if (translation.width() == 0 && translation.height() == 0)
         return;
 
-    m_localTransform.translateRight(translation.width(), translation.height());
+    m_localTransform.translate(translation.width(), translation.height());
 }
 
 }

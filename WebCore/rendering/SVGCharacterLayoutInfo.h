@@ -24,15 +24,15 @@
 #define SVGCharacterLayoutInfo_h
 
 #if ENABLE(SVG)
+#include "AffineTransform.h"
+#include "SVGRenderStyle.h"
+#include "SVGTextContentElement.h"
+
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
-
-#include "TransformationMatrix.h"
 #include <wtf/RefCounted.h>
-#include "SVGRenderStyle.h"
-#include "SVGTextContentElement.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -234,7 +234,7 @@ struct SVGChar {
 
     // Helper methods
     bool isHidden() const;
-    TransformationMatrix characterTransform() const;
+    AffineTransform characterTransform() const;
 };
 
 struct SVGInlineBoxCharacterRange {
@@ -275,7 +275,7 @@ struct SVGTextChunk {
     // textLength & lengthAdjust support
     float textLength;
     ELengthAdjust lengthAdjust;
-    TransformationMatrix ctm;
+    AffineTransform ctm;
 
     // status flags
     bool isVerticalText : 1;
@@ -291,7 +291,7 @@ struct SVGTextChunk {
 struct SVGTextChunkWalkerBase {
     virtual ~SVGTextChunkWalkerBase() { }
 
-    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const TransformationMatrix& chunkCtm,
+    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const AffineTransform& chunkCtm,
                             const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end) = 0;
 
     // Followings methods are only used for painting text chunks
@@ -309,7 +309,7 @@ struct SVGTextChunkWalker : public SVGTextChunkWalkerBase {
 public:
     typedef void (CallbackClass::*SVGTextChunkWalkerCallback)(SVGInlineTextBox* textBox,
                                                               int startOffset,
-                                                              const TransformationMatrix& chunkCtm,
+                                                              const AffineTransform& chunkCtm,
                                                               const Vector<SVGChar>::iterator& start,
                                                               const Vector<SVGChar>::iterator& end);
 
@@ -343,7 +343,7 @@ public:
         ASSERT(walker);
     }
 
-    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const TransformationMatrix& chunkCtm,
+    virtual void operator()(SVGInlineTextBox* textBox, int startOffset, const AffineTransform& chunkCtm,
                             const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end)
     {
         (*m_object.*m_walkerCallback)(textBox, startOffset, chunkCtm, start, end);

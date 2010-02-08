@@ -31,13 +31,13 @@
 #include "config.h"
 #include "SkiaFontWin.h"
 
+#include "AffineTransform.h"
 #include "PlatformContextSkia.h"
 #include "Gradient.h"
 #include "Pattern.h"
 #include "SkCanvas.h"
 #include "SkPaint.h"
 #include "SkShader.h"
-#include "TransformationMatrix.h"
 
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
@@ -237,7 +237,7 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
     // in using Skia will show you the hinted outlines for the smaller size,
     // which look weird. All else being equal, it's better to use Windows' text
     // drawing, so we don't check for zooms.
-    const TransformationMatrix& matrix = context->getCTM();
+    const AffineTransform& matrix = context->getCTM();
     if (matrix.b() != 0 || matrix.c() != 0)  // Check for skew.
         return false;
 

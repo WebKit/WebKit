@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "JSSVGMatrix.h"
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "SVGException.h"
 #include <runtime/Error.h>
 
@@ -41,19 +41,19 @@ JSValue JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
 
     JSSVGMatrix* matrixObj = static_cast<JSSVGMatrix*>(asObject(args.at(0)));
 
-    TransformationMatrix m1(*impl());
-    TransformationMatrix m2(*(matrixObj->impl()));
+    AffineTransform m1(*impl());
+    AffineTransform m2(*(matrixObj->impl()));
 
     SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
-    return toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(m1.multLeft(m2)).get(), context);
+    return toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<AffineTransform>::create(m1.multLeft(m2)).get(), context);
 }
 
 JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 {
-    TransformationMatrix imp(*impl());
+    AffineTransform imp(*impl());
 
     SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
-    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.inverse()).get(), context);
+    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.inverse()).get(), context);
 
     if (!imp.isInvertible())
         setDOMException(exec, SVGException::SVG_MATRIX_NOT_INVERTABLE);
@@ -63,13 +63,13 @@ JSValue JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 
 JSValue JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
-    TransformationMatrix imp(*impl());
+    AffineTransform imp(*impl());
  
     float x = args.at(0).toFloat(exec);
     float y = args.at(1).toFloat(exec);
 
     SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
-    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<TransformationMatrix>::create(imp.rotateFromVector(x, y)).get(), context);
+    JSValue result = toJS(exec, globalObject(), JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.rotateFromVector(x, y)).get(), context);
 
     if (x == 0.0 || y == 0.0)
         setDOMException(exec, SVGException::SVG_INVALID_VALUE_ERR);

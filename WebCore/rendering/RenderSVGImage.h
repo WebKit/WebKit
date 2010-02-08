@@ -24,11 +24,11 @@
 #define RenderSVGImage_h
 
 #if ENABLE(SVG)
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderImage.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderSupport.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSVGImage"; }
         virtual bool isSVGImage() const { return true; }
 
-        virtual const TransformationMatrix& localToParentTransform() const { return m_localTransform; }
+        virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
         virtual FloatRect objectBoundingBox() const;
         virtual FloatRect strokeBoundingBox() const { return m_localBounds; }
@@ -68,9 +68,9 @@ namespace WebCore {
         virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
         virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-        virtual TransformationMatrix localTransform() const { return m_localTransform; }
+        virtual AffineTransform localTransform() const { return m_localTransform; }
 
-        TransformationMatrix m_localTransform;
+        AffineTransform m_localTransform;
         FloatRect m_localBounds;
         mutable FloatRect m_cachedLocalRepaintRect;
     };

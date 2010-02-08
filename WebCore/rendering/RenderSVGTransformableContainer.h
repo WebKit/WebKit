@@ -31,14 +31,14 @@ namespace WebCore {
     public:
         RenderSVGTransformableContainer(SVGStyledTransformableElement*);
 
-        virtual const TransformationMatrix& localToParentTransform() const;
+        virtual const AffineTransform& localToParentTransform() const;
 
     private:
         virtual void calculateLocalTransform();
         // FIXME: This can be made non-virtual once SVGRenderTreeAsText stops using localTransform()
-        virtual TransformationMatrix localTransform() const;
+        virtual AffineTransform localTransform() const;
 
-        TransformationMatrix m_localTransform;
+        AffineTransform m_localTransform;
     };
 }
 

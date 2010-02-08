@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "Path.h"
 
 #include <CoreGraphics/CGBitmapContext.h>

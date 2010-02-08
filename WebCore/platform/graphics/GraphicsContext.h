@@ -122,7 +122,6 @@ namespace WebCore {
     class Path;
     class Pattern;
     class TextRun;
-    class TransformationMatrix;
 
     // These bits can be ORed together for a total of 8 possible text drawing modes.
     const int cTextInvisible = 0;
@@ -304,10 +303,8 @@ namespace WebCore {
 
         void setURLForRect(const KURL&, const IntRect&);
 
-        void concatCTM(const TransformationMatrix&);
         void concatCTM(const AffineTransform&);
-        TransformationMatrix getCTM() const;
-        AffineTransform getAffineCTM() const;
+        AffineTransform getCTM() const;
 
 #if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);
@@ -320,7 +317,7 @@ namespace WebCore {
         void drawFocusRect(const IntRect& rect);
         void paintTextField(const IntRect& rect, unsigned state);
         void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator compositeOp);
-        void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const TransformationMatrix& patternTransform, const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
+        void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
         void drawIcon(HICON icon, const IntRect& dstRect, UINT flags);
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.

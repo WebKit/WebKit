@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Font.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontData.h"
@@ -37,7 +38,6 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
-#include "TransformationMatrix.h"
 #include "WidthIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>

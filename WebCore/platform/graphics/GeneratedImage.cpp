@@ -47,7 +47,7 @@ void GeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, co
     context->restore();
 }
 
-void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
+void GeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                                  const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.

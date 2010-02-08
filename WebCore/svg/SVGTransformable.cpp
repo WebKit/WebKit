@@ -26,7 +26,7 @@
 #if ENABLE(SVG)
 #include "SVGTransformable.h"
 
-#include "TransformationMatrix.h"
+#include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -43,15 +43,15 @@ SVGTransformable::~SVGTransformable()
 {
 }
 
-TransformationMatrix SVGTransformable::getCTM(const SVGElement* element) const
+AffineTransform SVGTransformable::getCTM(const SVGElement* element) const
 {
-    TransformationMatrix ctm = SVGLocatable::getCTM(element);
+    AffineTransform ctm = SVGLocatable::getCTM(element);
     return animatedLocalTransform() * ctm;
 }
 
-TransformationMatrix SVGTransformable::getScreenCTM(const SVGElement* element) const
+AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
 {
-    TransformationMatrix ctm = SVGLocatable::getScreenCTM(element);
+    AffineTransform ctm = SVGLocatable::getScreenCTM(element);
     return animatedLocalTransform() * ctm;
 }
 
@@ -147,7 +147,7 @@ bool SVGTransformable::parseTransformValue(unsigned type, const UChar*& ptr, con
                   t.setRotate(values[0], values[1], values[2]);
             break;
         case SVGTransform::SVG_TRANSFORM_MATRIX:
-            t.setMatrix(TransformationMatrix(values[0], values[1], values[2], values[3], values[4], values[5]));
+            t.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
             break;
     }
 

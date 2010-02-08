@@ -57,7 +57,7 @@ namespace WebCore {
         SVGMarkerElement(const QualifiedName&, Document*);
         virtual ~SVGMarkerElement();
 
-        TransformationMatrix viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
         void setOrientToAuto();
         void setOrientToAngle(const SVGAngle&);

@@ -26,13 +26,13 @@
 #include "config.h"
 #include "Image.h"
 
+#include "AffineTransform.h"
 #include "BitmapImage.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "NotImplemented.h"
-#include "TransformationMatrix.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -176,7 +176,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         observer->didDraw(this);
 }
 
-void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& dstRect)
+void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& dstRect)
 {
     if (!m_source.initialized())
         return;
@@ -261,7 +261,7 @@ void BitmapImage::invalidatePlatformData()
 
 }
 
-void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& destRect)
+void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& destRect)
 {
     notImplemented();
 }

@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGTextElement.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "MappedAttribute.h"
 #include "RenderSVGText.h"
@@ -30,7 +31,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
 #include "SVGTransformList.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
 
@@ -72,25 +72,25 @@ FloatRect SVGTextElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-TransformationMatrix SVGTextElement::getScreenCTM() const
+AffineTransform SVGTextElement::getScreenCTM() const
 {
     return SVGTransformable::getScreenCTM(this);
 }
 
-TransformationMatrix SVGTextElement::getCTM() const
+AffineTransform SVGTextElement::getCTM() const
 {
     return SVGTransformable::getCTM(this);
 }
 
-TransformationMatrix SVGTextElement::animatedLocalTransform() const
+AffineTransform SVGTextElement::animatedLocalTransform() const
 {
     return m_supplementalTransform ? transform()->concatenate().matrix() * *m_supplementalTransform : transform()->concatenate().matrix();
 }
 
-TransformationMatrix* SVGTextElement::supplementalTransform()
+AffineTransform* SVGTextElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform.set(new TransformationMatrix());
+        m_supplementalTransform.set(new AffineTransform());
     return m_supplementalTransform.get();
 }
 

@@ -51,7 +51,7 @@ namespace WebCore {
 
     struct PathPolygon: public Vector<PathPoint> {
         void move(const FloatSize& offset);
-        void transform(const TransformationMatrix& t);
+        void transform(const AffineTransform& t);
         bool contains(const FloatPoint& point) const;
     };
 
@@ -113,7 +113,7 @@ namespace WebCore {
         int numPoints() const;
         int numControlPoints() const;
         void move(const FloatSize& offset);
-        void transform(const TransformationMatrix& t);
+        void transform(const AffineTransform& t);
         PathElementType type() const;
         PlaformPathElementType platformType() const { return m_type; }
         void inflateRectToContainMe(FloatRect& r, const FloatPoint& lastPoint) const;
@@ -141,14 +141,14 @@ namespace WebCore {
         void clear();
         bool isEmpty() const { return m_elements.isEmpty(); }
 
-        void strokePath(HDC, const TransformationMatrix* tr) const;
-        void fillPath(HDC, const TransformationMatrix* tr) const;
+        void strokePath(HDC, const AffineTransform* tr) const;
+        void fillPath(HDC, const AffineTransform* tr) const;
         FloatPoint lastPoint() const { return m_elements.isEmpty() ? FloatPoint(0, 0) : m_elements.last().lastPoint(); }
 
         const FloatRect& boundingRect() const { return m_boundingRect; }
         bool contains(const FloatPoint& point, WindRule rule) const;
         void translate(const FloatSize& size);
-        void transform(const TransformationMatrix& t);
+        void transform(const AffineTransform& t);
 
         void moveTo(const FloatPoint&);
         void addLineTo(const FloatPoint&);

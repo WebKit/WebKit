@@ -47,7 +47,7 @@ Pattern::~Pattern()
     platformDestroy();
 }
 
-void Pattern::setPatternSpaceTransform(const TransformationMatrix& patternSpaceTransformation)
+void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation)
 {
     m_patternSpaceTransformation = patternSpaceTransformation;
     setPlatformPatternSpaceTransform();

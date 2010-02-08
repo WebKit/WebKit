@@ -28,10 +28,10 @@
 #ifndef Gradient_h
 #define Gradient_h
 
+#include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "Generator.h"
 #include "GraphicsTypes.h"
-#include "TransformationMatrix.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -107,14 +107,14 @@ namespace WebCore {
         
         void setSpreadMethod(GradientSpreadMethod);
         GradientSpreadMethod spreadMethod() { return m_spreadMethod; }
-        void setGradientSpaceTransform(const TransformationMatrix& gradientSpaceTransformation);
+        void setGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
         // Qt and CG transform the gradient at draw time
-        TransformationMatrix gradientSpaceTransform() { return m_gradientSpaceTransformation; }
+        AffineTransform gradientSpaceTransform() { return m_gradientSpaceTransformation; }
 
         virtual void fill(GraphicsContext*, const FloatRect&);
         virtual void adjustParametersForTiledDrawing(IntSize& size, FloatRect& srcRect);
 
-        void setPlatformGradientSpaceTransform(const TransformationMatrix& gradientSpaceTransformation);
+        void setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
 
 #if PLATFORM(CG)
         void paint(GraphicsContext*);
@@ -138,7 +138,7 @@ namespace WebCore {
         mutable bool m_stopsSorted;
         mutable int m_lastStop;
         GradientSpreadMethod m_spreadMethod;
-        TransformationMatrix m_gradientSpaceTransformation;
+        AffineTransform m_gradientSpaceTransformation;
 
         PlatformGradient m_gradient;
     };

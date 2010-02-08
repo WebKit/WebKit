@@ -36,7 +36,6 @@
 #include "KURL.h"
 #include "Path.h"
 #include "Pattern.h"
-#include "TransformationMatrix.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGPDFContext.h>
@@ -985,25 +984,10 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::concatCTM(const TransformationMatrix& transform)
-{
-    if (paintingDisabled())
-        return;
-    CGContextConcatCTM(platformContext(), transform);
-    m_data->concatCTM(transform);
-    m_data->m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-AffineTransform GraphicsContext::getAffineCTM() const
+AffineTransform GraphicsContext::getCTM() const
 {
     CGAffineTransform t = CGContextGetCTM(platformContext());
     return AffineTransform(t.a, t.b, t.c, t.d, t.tx, t.ty);
-}
-
-TransformationMatrix GraphicsContext::getCTM() const
-{
-    CGAffineTransform t = CGContextGetCTM(platformContext());
-    return TransformationMatrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)

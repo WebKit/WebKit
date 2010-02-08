@@ -42,7 +42,6 @@
 #include "NativeImageSkia.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
-#include "TransformationMatrix.h"
 
 #include "SkBitmap.h"
 #include "SkBlurDrawLooper.h"
@@ -447,13 +446,6 @@ void GraphicsContext::concatCTM(const AffineTransform& affine)
     platformContext()->canvas()->concat(affine);
 }
 
-void GraphicsContext::concatCTM(const TransformationMatrix& xform)
-{
-    if (paintingDisabled())
-        return;
-    platformContext()->canvas()->concat(xform);
-}
-
 void GraphicsContext::drawConvexPolygon(size_t numPoints,
                                         const FloatPoint* points,
                                         bool shouldAntialias)
@@ -813,26 +805,15 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
     platformContext()->canvas()->drawPath(path, paint);
 }
 
-AffineTransform GraphicsContext::getAffineCTM() const
+AffineTransform GraphicsContext::getCTM() const
 {
     const SkMatrix& m = platformContext()->canvas()->getTotalMatrix();
-    return AffineTransform(SkScalarToDouble(m.getScaleX()),      // a
-                           SkScalarToDouble(m.getSkewY()),       // b
-                           SkScalarToDouble(m.getSkewX()),       // c
-                           SkScalarToDouble(m.getScaleY()),      // d
-                           SkScalarToDouble(m.getTranslateX()),  // e
-                           SkScalarToDouble(m.getTranslateY())); // f
-}
-
-TransformationMatrix GraphicsContext::getCTM() const
-{
-    const SkMatrix& m = platformContext()->canvas()->getTotalMatrix();
-    return TransformationMatrix(SkScalarToDouble(m.getScaleX()),      // a
-                                SkScalarToDouble(m.getSkewY()),       // b
-                                SkScalarToDouble(m.getSkewX()),       // c
-                                SkScalarToDouble(m.getScaleY()),      // d
-                                SkScalarToDouble(m.getTranslateX()),  // e
-                                SkScalarToDouble(m.getTranslateY())); // f
+    return AffineTransform(SkScalarToDouble(m.getScaleX()),
+                           SkScalarToDouble(m.getSkewY()),
+                           SkScalarToDouble(m.getSkewX()),
+                           SkScalarToDouble(m.getScaleY()),
+                           SkScalarToDouble(m.getTranslateX()),
+                           SkScalarToDouble(m.getTranslateY()));
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)

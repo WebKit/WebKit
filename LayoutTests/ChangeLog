@@ -1,3 +1,27 @@
+2010-02-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add back an AffineTransform class for use by SVG
+        https://bugs.webkit.org/show_bug.cgi?id=33750
+
+        Some negative zero problems fixed, but new one were added on other places. A seperate
+        patch should fix it all at once.
+        use-on-disallowed-foreign-object-3 and 4 had wrong results. The old SVG code
+        with TransformationMatrix used translateRight, that was wrong at this place and is
+        fixed now.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * svg/dom/SVGMatrix-interface-expected.txt:
+        * svg/dom/SVGMatrix-interface.xhtml:
+
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix last problematic SVG testcase, update coords-trans-01-b.svg win results, marking the end of the baseline regeneration for all platforms.

@@ -27,7 +27,6 @@
 #include "Path.h"
 
 #include "AffineTransform.h"
-#include "TransformationMatrix.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
@@ -204,14 +203,6 @@ void Path::addEllipse(const FloatRect& rect)
 }
 
 void Path::transform(const AffineTransform& transform) 
-{
-#if USE(WXGC)
-    if (m_path)
-        m_path->Transform(transform);
-#endif
-}
-
-void Path::transform(const TransformationMatrix& transform) 
 {
 #if USE(WXGC)
     if (m_path)

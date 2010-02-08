@@ -51,6 +51,7 @@ class FloatQuad;
 class FloatRect;
 class IntPoint;
 class IntRect;
+class TransformationMatrix;
 
 class AffineTransform : public FastAllocBase {
 public:
@@ -61,7 +62,7 @@ public:
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
 
-    void map(double x, double y, double* x2, double* y2) const;
+    void map(double x, double y, double& x2, double& y2) const;
 
     // Rounds the mapped point to the nearest integer value.
     IntPoint mapPoint(const IntPoint&) const;
@@ -89,7 +90,7 @@ public:
     double f() const { return m_transform[5]; }
     void setF(double f) { m_transform[5] = f; }
 
-    void reset();
+    void makeIdentity();
 
     AffineTransform& multiply(const AffineTransform&);
     AffineTransform& multLeft(const AffineTransform&);
@@ -113,6 +114,11 @@ public:
     void blend(const AffineTransform& from, double progress);
 
     TransformationMatrix toTransformationMatrix() const;
+
+    bool isIdentityOrTranslation() const
+    {
+        return m_transform[0] == 1 && m_transform[1] == 0 && m_transform[2] == 0 && m_transform[3] == 1;
+    }
 
     bool operator== (const AffineTransform& m2) const
     {

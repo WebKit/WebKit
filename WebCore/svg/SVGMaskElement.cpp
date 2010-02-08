@@ -198,7 +198,7 @@ PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const RenderObject* ob
         repaintRect.unite(node->renderer()->localToParentTransform().mapRect(node->renderer()->repaintRectInLocalCoordinates()));
     }
 
-    TransformationMatrix contextTransform;
+    AffineTransform contextTransform;
     // We need to scale repaintRect for objectBoundingBox to get the drawing area.
     if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         contextTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());

@@ -34,7 +34,7 @@ namespace WebCore {
     class SVGElementInstance;
     class SVGElementRareData;
     class SVGSVGElement;
-    class TransformationMatrix;
+    class AffineTransform;
 
     class SVGElement : public StyledElement {
     public:
@@ -70,7 +70,7 @@ namespace WebCore {
 
         void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
         
-        virtual TransformationMatrix* supplementalTransform() { return 0; }
+        virtual AffineTransform* supplementalTransform() { return 0; }
 
         void setSynchronizedSVGAttributes(bool value) { m_areSVGAttributesValid = value; }
 
