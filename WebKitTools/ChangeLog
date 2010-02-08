@@ -1,5 +1,21 @@
 2010-02-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Backport No'am Rosenthal's frame rate measurement
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherApplication::handleUserOptions):
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::enableFrameRateMeasurement):
+        (WebViewGraphicsBased::updateFrameRate):
+        (WebViewGraphicsBased::paintEvent):
+        * QtLauncher/webview.h:
+
+2010-02-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Reviewed by Tor Arne Vestbø.
 
         [Qt] Make overridePreference complain when it does not

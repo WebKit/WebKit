@@ -38,6 +38,7 @@
 #include <qgraphicswebview.h>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
+#include <QTime>
 
 class WebViewTraditional : public QWebView {
     Q_OBJECT
@@ -72,8 +73,19 @@ public:
     void setPage(QWebPage* page) { m_item->setPage(page); }
     void setItemCacheMode(QGraphicsItem::CacheMode mode) { m_item->setCacheMode(mode); }
 
+    void enableFrameRateMeasurement();
+    virtual void paintEvent(QPaintEvent* event);
+
+public slots:
+    void updateFrameRate();
+
 private:
     GraphicsWebView* m_item;
+    int m_numPaintsTotal;
+    int m_numPaintsSinceLastMeasure;
+    QTime m_startTime;
+    QTime m_lastConsultTime;
+    bool m_measureFps;
 };
 
 #endif
