@@ -1,5 +1,22 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Next set of Qt DRT result updates.
+
+        * platform/qt/svg/custom/js-update-image-and-display-expected.txt:
+        * platform/qt/svg/custom/js-update-image-and-display3-expected.txt:
+        * platform/qt/svg/custom/marker-opacity-expected.txt:
+        * platform/qt/svg/custom/marker-referencePoint-expected.txt:
+        * platform/qt/svg/custom/marker-strokeWidth-changes-expected.txt:
+        * platform/qt/svg/custom/mask-with-default-value-expected.txt:
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/qt/svg/custom/transformedMaskFails-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Update mac-tiger specific SVG results.
 
         * platform/mac-tiger/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
