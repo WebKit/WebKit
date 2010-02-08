@@ -50,7 +50,7 @@ public:
     }
 
     static void setGlobalException(JSC::UString exception);
-    static void moveGlobalExceptionToExecState(ExecState* exec);
+    static void moveGlobalExceptionToExecState(ExecState*);
 
     ~CInstance ();
 
