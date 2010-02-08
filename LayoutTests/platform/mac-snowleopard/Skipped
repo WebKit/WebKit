@@ -8,6 +8,7 @@ plugins/mouse-events.html
 
 # These need a newer version of Safari.
 plugins/private-browsing-mode.html
+plugins/netscape-plugin-property-access-exception.html
 plugins/netscape-throw-exception.html
 
 # Radar bugs needed for these

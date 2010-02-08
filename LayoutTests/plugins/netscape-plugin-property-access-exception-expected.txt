@@ -1,0 +1,8 @@
+
+SUCCESS: Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
+SUCCESS: Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
+One could expect exceptions to be raised in the below cases, too - but Firefox doesn't do that in most of these (I do get an exception in the first case, but that's inconsistent with not getting it in the seconfd one).
+No exception caught on getting via testCallback.
+No exception caught on setting via testCallback.
+No exception caught on getting via testGetBrowserProperty.
+No exception caught on setting via testSetBrowserProperty.

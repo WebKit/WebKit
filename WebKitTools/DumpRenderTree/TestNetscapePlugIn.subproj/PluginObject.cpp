@@ -133,6 +133,7 @@ enum {
     ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM,
     ID_PROPERTY_PRIVATE_BROWSING_ENABLED,
     ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED,
+    ID_PROPERTY_THROW_EXCEPTION_PROPERTY,
     NUM_PROPERTY_IDENTIFIERS
 };
 
@@ -146,6 +147,7 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "returnErrorFromNewStream",
     "privateBrowsingEnabled",
     "cachedPrivateBrowsingEnabled",
+    "testThrowExceptionProperty"
 };
 
 enum {
@@ -172,6 +174,8 @@ enum {
     ID_DESTROY_NULL_STREAM,
     ID_TEST_RELOAD_PLUGINS_NO_PAGES,
     ID_TEST_RELOAD_PLUGINS_AND_PAGES,
+    ID_TEST_GET_BROWSER_PROPERTY,
+    ID_TEST_SET_BROWSER_PROPERTY,
     NUM_METHOD_IDENTIFIERS
 };
 
@@ -199,7 +203,9 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testFail",
     "destroyNullStream",
     "reloadPluginsNoPages",
-    "reloadPluginsAndPages"
+    "reloadPluginsAndPages",
+    "testGetBrowserProperty",
+    "testSetBrowserProperty"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -264,6 +270,9 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED]) {
         BOOLEAN_TO_NPVARIANT(plugin->cachedPrivateBrowsingMode, *result);
         return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
+        browser->setexception(obj, "plugin object testThrowExceptionProperty SUCCESS");
+        return true;
     }
     return false;
 }
@@ -279,6 +288,9 @@ static bool pluginSetProperty(NPObject* obj, NPIdentifier name, const NPVariant*
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
         plugin->returnErrorFromNewStream = NPVARIANT_TO_BOOLEAN(*variant);
+        return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
+        browser->setexception(obj, "plugin object testThrowExceptionProperty SUCCESS");
         return true;
     }
 
@@ -788,6 +800,12 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return true;
     } else if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_AND_PAGES]) {
         browser->reloadplugins(true);
+        return true;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_GET_BROWSER_PROPERTY]) {
+        browser->getproperty(plugin->npp, NPVARIANT_TO_OBJECT(args[0]), stringVariantToIdentifier(args[1]), result);
+        return true;
+    } else if (name == pluginMethodIdentifiers[ID_TEST_SET_BROWSER_PROPERTY]) {
+        browser->setproperty(plugin->npp, NPVARIANT_TO_OBJECT(args[0]), stringVariantToIdentifier(args[1]), &args[2]);
         return true;
     }
     

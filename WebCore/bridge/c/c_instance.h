@@ -50,6 +50,7 @@ public:
     }
 
     static void setGlobalException(JSC::UString exception);
+    static void moveGlobalExceptionToExecState(ExecState* exec);
 
     ~CInstance ();
 
@@ -74,7 +75,6 @@ public:
     NPObject *getObject() const { return _object; }
 
 private:
-    static void moveGlobalExceptionToExecState(ExecState* exec);
     CInstance(NPObject*, PassRefPtr<RootObject>);
 
     mutable CClass *_class;

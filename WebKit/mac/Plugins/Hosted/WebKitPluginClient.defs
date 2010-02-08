@@ -149,18 +149,18 @@ simpleroutine PCGetProperty(clientPort :mach_port_t;
                             objectID :uint32_t;
                             propertyNameIdentifier :uint64_t);
 
-routine PCSetProperty(clientPort :mach_port_t;
+simpleroutine PCSetProperty(clientPort :mach_port_t;
                     pluginID :uint32_t;
+                    requestID :uint32_t;
                     objectID :uint32_t;
                     propertyNameIdentifier :uint64_t;
-                    value :data_t;
-                    out returnValue :boolean_t);
+                    value :data_t);
 
-routine PCRemoveProperty(clientPort :mach_port_t;
+simpleroutine PCRemoveProperty(clientPort :mach_port_t;
                        pluginID :uint32_t;
+                       requestID :uint32_t;
                        objectID :uint32_t;
-                       propertyNameIdentifier :uint64_t;
-                       out returnValue :boolean_t);
+                       propertyNameIdentifier :uint64_t);
 
 simpleroutine PCHasProperty(clientPort :mach_port_t;
                             pluginID :uint32_t;
