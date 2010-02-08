@@ -1,5 +1,11 @@
 2010-02-08  Alexey Proskuryakov  <ap@apple.com>
 
+        Put the test back on skipped list - it needs a newer version of Safari to pass.
+
+        * platform/mac-snowleopard/Skipped:
+
+2010-02-08  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/6530010> OOP: Support NPN_SetException

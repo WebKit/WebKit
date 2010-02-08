@@ -6,8 +6,9 @@ plugins/open-and-close-window-with-plugin.html
 plugins/document-open.html
 plugins/mouse-events.html
 
-# This needs a newer version of Safari.
+# These need a newer version of Safari.
 plugins/private-browsing-mode.html
+plugins/netscape-throw-exception.html
 
 # Radar bugs needed for these
 fast/canvas/set-colors.html
