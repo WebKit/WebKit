@@ -1,5 +1,20 @@
 2010-02-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Make makeString CRASH if we fail to allocate a string.
+
+        (tryMakeString or jsMakeNontrivialString can be used where we
+        expect allocation may fail and want to handle the error).
+
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/UString.h:
+        (JSC::tryMakeString):
+        (JSC::makeString):
+
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber Stamped by Oliver Hunt.
 
         Remove a couple of unnecesary C-style casts spotted by Darin.
