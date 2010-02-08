@@ -192,6 +192,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSONObject.h \
 	JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
+	JavaScriptCore/runtime/JSStringBuilder.h \
 	JavaScriptCore/runtime/JSZombie.h \
 	JavaScriptCore/runtime/LiteralParser.cpp \
 	JavaScriptCore/runtime/LiteralParser.h \

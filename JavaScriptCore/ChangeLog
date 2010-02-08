@@ -1,3 +1,9 @@
+2010-02-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Build fix for make distcheck.
+
+        * GNUmakefile.am:
+
 2010-02-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed RVCT build fix.
