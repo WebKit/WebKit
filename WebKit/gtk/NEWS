@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 1.1.21
+=================
+
+What's new in WebKitGTK+ 1.1.21?
+
+  - New custom-made GStreamer source element that uses the WebCore
+    network layer to download media data; this makes sure any headers
+    and cookies will automatically get added when making requests.
+  - WebKit will now let libsoup know who the first party for a given
+    message is, making it possible to implement accept/deny policies in
+    Soup.
+  - The usual stream of fixes, and improvements
+
+=================
 WebKitGTK+ 1.1.20
 =================
 

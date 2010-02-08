@@ -1,3 +1,11 @@
+2010-02-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Bump version to 1.1.21, and adjust library versioning accordingly.
+
+        * configure.ac:
+
 2010-02-05  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
 
         Reviewed by Gustavo Noronha.
