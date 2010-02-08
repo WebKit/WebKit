@@ -1,5 +1,11 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix last problematic SVG testcase, update coords-trans-01-b.svg win results, marking the end of the baseline regeneration for all platforms.
+
+        * platform/win/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Should turn Qt slave green again, all platform specific results updated.
 
         * platform/qt/svg/filters/subRegion-one-effect-expected.txt:
