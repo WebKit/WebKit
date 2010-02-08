@@ -1,3 +1,15 @@
+2010-02-08  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed build fix of ChromiumWin.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::):
+        (WebCore::TransparencyWin::setupLayerForOpaqueCompositeLayer):
+        (WebCore::TransparencyWin::setupTransformForKeepTransform):
+        * platform/graphics/chromium/TransparencyWin.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+
 2010-02-05  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -33,9 +33,9 @@
 
 #include <windows.h>
 
+#include "AffineTransform.h"
 #include "ImageBuffer.h"
 #include "Noncopyable.h"
-#include "TransformationMatrix.h"
 #include "wtf/OwnPtr.h"
 
 class SkBitmap;
@@ -193,7 +193,7 @@ private:
     GraphicsContext* m_destContext;
 
     // The original transform from the destination context.
-    TransformationMatrix m_orgTransform;
+    AffineTransform m_orgTransform;
 
     LayerMode m_layerMode;
     TransformMode m_transformMode;
