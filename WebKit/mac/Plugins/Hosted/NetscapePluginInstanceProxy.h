@@ -140,7 +140,7 @@ public:
                                data_t& usernameData, mach_msg_type_number_t& usernameLength, data_t& passwordData, mach_msg_type_number_t& passwordLength);
     bool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, 
                       double& destX, double& destY, NPCoordinateSpace destSpace);
-    
+
     PassRefPtr<JSC::Bindings::Instance> createBindingsInstance(PassRefPtr<JSC::Bindings::RootObject>);
     RetainPtr<NSData *> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
     void marshalValue(JSC::ExecState*, JSC::JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength);
@@ -167,6 +167,9 @@ public:
     void didDraw();
     void privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled);
     
+    static void setGlobalException(const WebCore::String&);
+    static void moveGlobalExceptionToExecState(JSC::ExecState*);
+
     // Reply structs
     struct Reply {
         enum Type {

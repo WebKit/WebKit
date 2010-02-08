@@ -147,6 +147,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
         return jsUndefined();
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
     
@@ -253,7 +254,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
         return;
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-  
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
     if (!reply.get() || !reply->m_returnValue)
         return;
     
@@ -361,6 +362,7 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
         return jsUndefined();
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
     
@@ -387,6 +389,7 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
         return;
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 }
 
 void ProxyInstance::invalidate()

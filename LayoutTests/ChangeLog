@@ -1,3 +1,11 @@
+2010-02-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6530010> OOP: Support NPN_SetException
+
+        * platform/mac-snowleopard/Skipped: Unskipped plugins/netscape-throw-exception.html.
+
 2010-02-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

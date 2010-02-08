@@ -39,6 +39,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/ScriptController.h>
+#import <string>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -1148,5 +1149,15 @@ kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mac
     return KERN_FAILURE;
 }
 #endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+
+kern_return_t WKPCSetException(mach_port_t clientPort, data_t message, mach_msg_type_number_t messageCnt)
+{
+    DataDeallocator deallocator(message, messageCnt);
+
+    string str(message, messageCnt);
+    NetscapePluginInstanceProxy::setGlobalException(str.c_str());
+
+    return KERN_SUCCESS;
+}
 
 #endif // USE(PLUGIN_HOST_PROCESS)

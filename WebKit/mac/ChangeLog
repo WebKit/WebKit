@@ -1,3 +1,27 @@
+2010-02-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6530010> OOP: Support NPN_SetException
+
+        Tested by plugins/netscape-throw-exception.html (removed it from skipped list).
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCSetException):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::globalExceptionString):
+        (WebKit::NetscapePluginInstanceProxy::setGlobalException):
+        (WebKit::NetscapePluginInstanceProxy::moveGlobalExceptionToExecState):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        (WebKit::ProxyInstance::getPropertyNames):
+        (WebKit::ProxyInstance::fieldValue):
+        (WebKit::ProxyInstance::setFieldValue):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Route exception string to a global that's checked after calling into plug-in (just like in
+        in-process case).
+
 2010-02-05  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Mark Rowe.

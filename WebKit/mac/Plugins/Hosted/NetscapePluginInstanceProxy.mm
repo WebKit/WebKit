@@ -40,6 +40,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/PropertyNameArray.h>
 #import <WebCore/CString.h>
@@ -1490,6 +1491,30 @@ void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target
 void NetscapePluginInstanceProxy::privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled)
 {
     _WKPHPluginInstancePrivateBrowsingModeDidChange(m_pluginHostProxy->port(), m_pluginID, isPrivateBrowsingEnabled);
+}
+
+static String& globalExceptionString()
+{
+    DEFINE_STATIC_LOCAL(String, exceptionString, ());
+    return exceptionString;
+}
+
+void NetscapePluginInstanceProxy::setGlobalException(const String& exception)
+{
+    globalExceptionString() = exception;
+}
+
+void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec)
+{
+    if (globalExceptionString().isNull())
+        return;
+
+    {
+        JSLock lock(SilenceAssertionsOnly);
+        throwError(exec, GeneralError, globalExceptionString());
+    }
+
+    globalExceptionString() = UString();
 }
 
 } // namespace WebKit
