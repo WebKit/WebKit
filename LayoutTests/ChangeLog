@@ -1,5 +1,26 @@
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Hopefully the last set of updates for Gtk/Qt/Win/Mac.
+
+        * platform/gtk/svg/custom/text-zoom-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/feGaussianBlur-expected.txt:
+        * platform/qt/svg/filters/feMerge-expected.txt:
+        * platform/qt/svg/filters/feMerge-wrong-input-expected.txt:
+        * platform/qt/svg/filters/feOffset-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/filters/filter-source-position-expected.txt:
+        * platform/qt/svg/filters/shadow-on-filter-expected.txt:
+        * platform/qt/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/filters/subRegion-in-userSpace-expected.txt:
+        * platform/win/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/win/svg/hixie/mixed/003-expected.txt:
+
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Attempt to fix all mac/win bots (expect for leopard which already passes)
 
         * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:

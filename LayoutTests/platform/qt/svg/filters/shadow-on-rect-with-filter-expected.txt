@@ -2,6 +2,6 @@ KCanvasResource {id="filter" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bo
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (37,37) size 493x493
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderPath {rect} at (37,37) size 493x493 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M200.00,200.00 L500.00,200.00 L500.00,500.00 L200.00,500.00 L200.00,200.00"]
+    RenderPath {rect} at (24,24) size 506x506 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M200.00,200.00 L500.00,200.00 L500.00,500.00 L200.00,500.00 L200.00,200.00"]

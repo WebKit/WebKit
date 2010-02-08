@@ -8,7 +8,7 @@ KCanvasResource {id="filter_1effect_07" [type=FILTER]  [bounding box=at (0,0) si
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (30,30) size 660x60
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (30,30) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
       RenderPath {rect} at (30,30) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [filter=filter_1effect_01] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 L25.00,25.00"]

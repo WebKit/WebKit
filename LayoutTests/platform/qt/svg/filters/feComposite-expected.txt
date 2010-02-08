@@ -7,7 +7,7 @@ KCanvasResource {id="arithmetic" [type=FILTER]  [bounding box=at (0,0) size 0x0]
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
-  RenderSVGRoot {svg} at (10,10) size 189x184
+  RenderSVGRoot {svg} at (0,0) size 400x400
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderPath {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#000000]}] [filter=over] [data="M10.00,10.00 L60.00,10.00 L60.00,60.00 L10.00,60.00 L10.00,10.00"]
     RenderSVGText {text} at (10,90) size 31x20 contains 1 chunk(s)
