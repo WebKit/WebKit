@@ -2532,15 +2532,6 @@ const TransformationMatrix& RenderObject::localToParentTransform() const
     return identity;
 }
 
-TransformationMatrix RenderObject::absoluteTransform() const
-{
-    // FIXME: This should use localToParentTransform(), but much of the SVG code
-    // depends on RenderBox::absoluteTransform() being the sum of the localTransform()s of all parent renderers.
-    if (parent())
-        return localTransform() * parent()->absoluteTransform();
-    return localTransform();
-}
-
 bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction)
 {
     ASSERT_NOT_REACHED();

@@ -1,10 +1,10 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
-    RenderSVGContainer {g} at (10,8.73) size 365x294.27
-      RenderSVGContainer {g} at (10,8.73) size 365x294.27
-        RenderSVGContainer {g} at (16.97,8.73) size 358.03x155.70 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (10,8) size 365x295
+      RenderSVGContainer {g} at (10,8) size 365x295
+        RenderSVGContainer {g} at (16,8) size 359x157 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
           RenderSVGText {text} at (30,150) size 344x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-18) size 344x23
               chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 344.00: "Rotated Text for testing SVGLocatable"
@@ -34,4 +34,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.1 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

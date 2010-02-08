@@ -258,6 +258,17 @@ void SVGRenderBase::layoutChildren(RenderObject* start, bool selfNeedsLayout)
     }
 }
 
+bool SVGRenderBase::isOverflowHidden(const RenderObject* object)
+{
+    if (object->style()->overflowX() == OHIDDEN) {
+        // SVG doesn't support independent x/y overflow
+        ASSERT(object->style()->overflowY() == OHIDDEN);
+        return true;
+    }
+
+    return false;
+}
+
 FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object) const
 {
 #if ENABLE(FILTERS)

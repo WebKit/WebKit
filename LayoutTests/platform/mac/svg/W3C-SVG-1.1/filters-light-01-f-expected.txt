@@ -13,8 +13,8 @@ KCanvasResource {id="spotLightD" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0.50) size 536.50x359
-    RenderSVGContainer {g} at (70,9) size 467x266
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (70,9) size 410x266
       RenderSVGText {text} at (113,20) size 254x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 254x14
           chunk 1 (middle anchor) text run 1 at (113.50,20.00) startOffset 0 endOffset 50 width 253.00: "Filters: feDistantLight, fePointLight, feSpotLight"
@@ -60,7 +60,7 @@ layer at (0,0) size 480x360
         RenderSVGImage {image} at (165,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(165.00,150.00)}] [filter=pointLightB]
         RenderSVGImage {image} at (260,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,150.00)}] [filter=pointLightC]
         RenderSVGImage {image} at (355,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(355.00,150.00)}] [filter=pointLightD]
-      RenderSVGContainer {g} at (70,196) size 467x48 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+      RenderSVGContainer {g} at (70,196) size 410x48 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
         RenderSVGText {text} at (70,0) size 467x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 467x18
             chunk 1 text run 1 at (70.00,0.00) startOffset 0 endOffset 73 width 467.00: "Various values for feSpotLight's x, y, z, pointsAtX, pointsAtY, pointsAtZ"
@@ -90,4 +90,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

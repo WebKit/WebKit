@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 0x0
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderForeignObject {foreignObject} at (0,0) size 580x380
           RenderBlock {xhtml:div} at (0,0) size 580x18
             RenderText {#text} at (0,0) size 244x18
               text run at (0,0) width 244: "You should only see this string ONCE"
-    RenderSVGContainer {use} at (250,-50) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
-      RenderSVGContainer {g} at (250,-35.86) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-        RenderSVGContainer {g} at (250,-35.86) size 0x0
-          RenderSVGContainer {g} at (250,-35.86) size 0x0
-    RenderSVGContainer {use} at (250,-50) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
-      RenderSVGContainer {g} at (250,-35.86) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-        RenderSVGContainer {g} at (462.13,119.71) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(260.00,-40.00)}]
-          RenderSVGContainer {g} at (462.13,119.71) size 0x0
-            RenderSVGContainer {g} at (462.13,119.71) size 0x0
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+        RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+        RenderSVGContainer {g} at (462,119) size 1x1 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(260.00,-40.00)}]
+          RenderSVGContainer {g} at (462,119) size 1x1
+            RenderSVGContainer {g} at (462,119) size 1x1

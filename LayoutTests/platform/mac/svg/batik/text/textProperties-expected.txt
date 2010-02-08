@@ -4,7 +4,7 @@ KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000F
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (0,36) size 430x434
+  RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (-22,0) size 44x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 44x18
@@ -14,7 +14,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,-14) size 332x17
           chunk 1 (middle anchor) text run 1 at (59.00,50.00) startOffset 0 endOffset 47 width 332.00: "Text Alignment, Geometry, References, and Spans"
       RenderSVGContainer {g} at (111,70) size 231x70
-        RenderPath {line} at (224.50,70) size 1x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,70.00 L225.00,140.00"]
+        RenderPath {line} at (224,70) size 2x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,70.00 L225.00,140.00"]
         RenderSVGText {text} at (225,90) size 117x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 117x17
             chunk 1 text run 1 at (225.00,90.00) startOffset 0 endOffset 19 width 117.00: "text-anchor=\"start\""
@@ -118,10 +118,10 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-85,15) size 170x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 170x18
             chunk 1 (middle anchor) text run 1 at (-84.50,15.00) startOffset 0 endOffset 27 width 169.00: "filter=\"url(#gaussianBlur)\""
-      RenderSVGContainer {g} at (150,342) size 150x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,370.00)}]
-        RenderSVGContainer {g} at (183,342) size 84x36
-          RenderSVGContainer {use} at (183,342) size 84x36
-            RenderSVGContainer {g} at (183,342) size 84x36
+      RenderSVGContainer {g} at (150,341) size 150x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,370.00)}]
+        RenderSVGContainer {g} at (182,341) size 86x38
+          RenderSVGContainer {use} at (182,341) size 86x38
+            RenderSVGContainer {g} at (182,341) size 86x38
               RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,-28) size 84x36
                   chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"

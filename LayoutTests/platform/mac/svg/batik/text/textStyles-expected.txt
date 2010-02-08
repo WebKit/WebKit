@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (-71,36) size 582x397
+  RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (-22,0) size 44x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 44x18
           chunk 1 (middle anchor) text run 1 at (-22.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
-    RenderSVGContainer {g} at (-71,36) size 582x397
+    RenderSVGContainer {g} at (0,36) size 450x397
       RenderSVGText {text} at (135,50) size 180x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 180x17
           chunk 1 (middle anchor) text run 1 at (135.00,50.00) startOffset 0 endOffset 26 width 180.00: "Text Font Faces and Styles"
       RenderSVGText {text} at (184,75) size 82x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-10) size 82x13
           chunk 1 (middle anchor) text run 1 at (184.00,75.00) startOffset 0 endOffset 19 width 82.00: "Standard Font Faces"
-      RenderSVGContainer {g} at (-52,82) size 304x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,110.00)}]
+      RenderSVGContainer {g} at (0,82) size 252x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,110.00)}]
         RenderSVGContainer {use} at (58,82) size 84x36
           RenderSVGContainer {g} at (58,82) size 84x36
             RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
@@ -31,7 +31,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-92,15) size 184x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 184x36
             chunk 1 (middle anchor) text run 1 at (-92.00,15.00) startOffset 0 endOffset 15 width 184.00: "SansSerif, bold"
-      RenderSVGContainer {g} at (240,82) size 220x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,110.00)}]
+      RenderSVGContainer {g} at (240,82) size 210x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,110.00)}]
         RenderSVGContainer {use} at (307,82) size 86x36
           RenderSVGContainer {g} at (307,82) size 86x36
             RenderSVGText {text} at (-43,0) size 86x36 contains 1 chunk(s)
@@ -40,7 +40,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-110,15) size 220x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 220x36
             chunk 1 (middle anchor) text run 1 at (-110.00,15.00) startOffset 0 endOffset 18 width 220.00: "SansSerif, oblique"
-      RenderSVGContainer {g} at (-24,132) size 248x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,160.00)}]
+      RenderSVGContainer {g} at (0,132) size 224x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,160.00)}]
         RenderSVGContainer {use} at (58,132) size 84x36
           RenderSVGContainer {g} at (58,132) size 84x36
             RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
@@ -67,7 +67,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-82,15) size 164x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 164x36
             chunk 1 (middle anchor) text run 1 at (-81.50,15.00) startOffset 0 endOffset 14 width 163.00: "Serif, oblique"
-      RenderSVGContainer {g} at (-71,182) size 342x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,210.00)}]
+      RenderSVGContainer {g} at (0,182) size 271x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,210.00)}]
         RenderSVGContainer {use} at (58,182) size 84x36
           RenderSVGContainer {g} at (58,182) size 84x36
             RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
@@ -85,7 +85,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-111,15) size 222x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 222x36
             chunk 1 (middle anchor) text run 1 at (-111.00,15.00) startOffset 0 endOffset 16 width 222.00: "Monospaced, bold"
-      RenderSVGContainer {g} at (221,182) size 258x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,210.00)}]
+      RenderSVGContainer {g} at (221,182) size 229x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,210.00)}]
         RenderSVGContainer {use} at (307,182) size 86x36
           RenderSVGContainer {g} at (307,182) size 86x36
             RenderSVGText {text} at (-43,0) size 86x36 contains 1 chunk(s)
@@ -112,7 +112,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-128,15) size 256x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 256x36
             chunk 1 (middle anchor) text run 1 at (-128.00,15.00) startOffset 0 endOffset 22 width 256.00: "default, bold, oblique"
-      RenderSVGContainer {g} at (196,231) size 308x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,260.00)}]
+      RenderSVGContainer {g} at (196,231) size 254x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,260.00)}]
         RenderSVGContainer {use} at (307,231) size 86x38
           RenderSVGContainer {g} at (307,231) size 86x38
             RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
@@ -154,7 +154,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-57,15) size 114x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 114x36
             chunk 1 (middle anchor) text run 1 at (-56.50,15.00) startOffset 0 endOffset 9 width 113.00: "Helvetica"
-      RenderSVGContainer {g} at (-8,383) size 216x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,410.00)}]
+      RenderSVGContainer {g} at (0,383) size 208x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,410.00)}]
         RenderSVGText {text} at (-49,0) size 98x33 contains 1 chunk(s)
           RenderSVGInline {tref} at (0,0) size 98x33
             RenderSVGInlineText {#text} at (0,-27) size 98x33
@@ -171,7 +171,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-41,15) size 82x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-28) size 82x36
             chunk 1 (middle anchor) text run 1 at (-41.00,15.00) startOffset 0 endOffset 6 width 82.00: "Impact"
-      RenderSVGContainer {g} at (189,382) size 322x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,410.00)}]
+      RenderSVGContainer {g} at (189,382) size 261x51 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,410.00)}]
         RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)
           RenderSVGInline {tref} at (0,0) size 84x36
             RenderSVGInlineText {#text} at (0,-28) size 84x36

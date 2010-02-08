@@ -9,7 +9,7 @@ layer at (0,0) size 800x104
           text run at (0,86) width 55: "Test 123"
       RenderText {#text} at (55,86) size 4x18
         text run at (55,86) width 4: " "
-      RenderSVGRoot {svg} at (59,-14) size 193x114
+      RenderSVGRoot {svg} at (59,0) size 100x100
         RenderSVGText {text} at (0,0) size 193x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 193x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 29 width 193.00: "You should see an error above"

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 0x0
-    RenderSVGContainer {g} at (195.31,7.81) size 0x0 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(250.00,10.00)}]
+  RenderSVGRoot {svg} at (0,0) size 625x469
+    RenderSVGContainer {g} at (195,7) size 1x1 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(250.00,10.00)}]
     RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGContainer {g} at (568.35,-134.18) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(727.49,-171.75)}]
+    RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(727.49,-171.75)}]

@@ -9,7 +9,7 @@ KRenderingPaintServer {id="gradient2" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF00
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,10) size 444x144
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0

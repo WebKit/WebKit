@@ -6,7 +6,7 @@ KCanvasResource {id="SphereMapTest" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
+  RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (15,15) size 415x333
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (15,15) size 415x333
@@ -27,7 +27,7 @@ layer at (0,0) size 480x360
             RenderSVGInlineText {#text} at (6,2) size 94x14
               chunk 2 (middle anchor) text run 1 at (175.50,138.00) startOffset 0 endOffset 18 width 93.00: "(20 deg. rotation)"
         RenderPath {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [filter=RotateMapTest] [data="M301.00,15.00 L429.00,15.00 L429.00,143.00 L301.00,143.00 Z"]
-        RenderPath {rect} at (323.99,37.99) size 82.03x82.03 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M-1.00,-1.00 L1.00,-1.00 L1.00,1.00 L-1.00,1.00 Z"]
+        RenderPath {rect} at (323,37) size 84x84 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M-1.00,-1.00 L1.00,-1.00 L1.00,1.00 L-1.00,1.00 Z"]
         RenderSVGText {text} at (300,160) size 130x38 contains 3 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 35x14
             RenderSVGInlineText {#text} at (46,-11) size 35x14
@@ -65,4 +65,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

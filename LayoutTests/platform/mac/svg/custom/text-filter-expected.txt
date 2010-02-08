@@ -2,7 +2,7 @@ KCanvasResource {id="myfilter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (-52.70,4.70) size 680.40x75.60
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGText {text} at (4,60) size 567x63 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-49) size 567x63

@@ -353,11 +353,6 @@ public:
     // This includes any viewport transforms and x/y offsets as well as the transform="" value off the element.
     virtual const TransformationMatrix& localToParentTransform() const;
 
-    // Walks up the parent chain to create a transform which maps from local to document coords
-    // NOTE: This method is deprecated!  It doesn't respect scroll offsets or repaint containers.
-    // FIXME: This is only virtual so that RenderSVGHiddenContainer can override it to match old LayoutTest results.
-    virtual TransformationMatrix absoluteTransform() const;
-
     // SVG uses FloatPoint precise hit testing, and passes the point in parent
     // coordinates instead of in repaint container coordinates.  Eventually the
     // rest of the rendering tree will move to a similar model.

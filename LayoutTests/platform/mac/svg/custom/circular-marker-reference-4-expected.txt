@@ -3,9 +3,9 @@ KCanvasResource {id="mark2" [type=MARKER] [angle=0.00] [ref x=4.00 y=4.00]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (95.75,258.78) size 472.09x116.22
-    RenderSVGViewportContainer {marker} at (290.75,258.78) size 172.09x24.35
-      RenderPath {path} at (290.75,258.78) size 172.09x24.35 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark2] [middle marker=mark2] [end marker=mark2] [data="M-5.00,-2.00 L0.00,-2.00 L5.00,-2.00"]
-    RenderSVGViewportContainer {marker} at (303.67,295.08) size 158.91x33.05
-      RenderPath {path} at (303.67,295.08) size 158.91x33.05 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
-    RenderPath {path} at (95.75,273.78) size 472.09x101.22 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
+  RenderSVGRoot {svg} at (400,300) size 400x300
+    RenderSVGViewportContainer {marker} at (280,240) size 210x60
+      RenderPath {path} at (280,240) size 210x60 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark2] [middle marker=mark2] [end marker=mark2] [data="M-5.00,-2.00 L0.00,-2.00 L5.00,-2.00"]
+    RenderSVGViewportContainer {marker} at (280,270) size 210x90
+      RenderPath {path} at (280,270) size 210x90 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]
+    RenderPath {path} at (70,270) size 510x120 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M-5.00,2.00 L0.00,2.00 L5.00,2.00"]

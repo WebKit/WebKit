@@ -115,22 +115,13 @@ const TransformationMatrix& RenderSVGViewportContainer::localToParentTransform()
     // return viewportTransform() * localTransform() * viewportTranslation;
 }
 
-// FIXME: This method should be removed as soon as callers to RenderBox::absoluteTransform() can be removed.
-TransformationMatrix RenderSVGViewportContainer::absoluteTransform() const
-{
-    // This would apply localTransform() twice if localTransform() were not the identity.
-    return localToParentTransform() * RenderSVGContainer::absoluteTransform();
-}
-
 bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& pointInParent)
 {
-    // Respect the viewport clip (which is in parent coords).  SVG does not support separate x/y overflow rules.
-    if (style()->overflowX() == OHIDDEN) {
-        ASSERT(style()->overflowY() == OHIDDEN);
-        if (!m_viewport.contains(pointInParent))
-            return false;
-    }
-    return true;
+    // Respect the viewport clip (which is in parent coords)
+    if (!SVGRenderBase::isOverflowHidden(this))
+        return true;
+    
+    return m_viewport.contains(pointInParent);
 }
 
 }

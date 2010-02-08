@@ -127,30 +127,45 @@ static inline const RenderObject* findTextRootObject(const RenderObject* start)
     return start;
 }
 
+static inline TransformationMatrix absoluteTransformForRenderer(const RenderObject* object)
+{
+    TransformationMatrix absoluteTransform;
+
+    const RenderObject* currentObject = object;
+    while (currentObject) {
+        absoluteTransform = currentObject->localToParentTransform() * absoluteTransform;
+        currentObject = currentObject->parent();
+    }
+
+    return absoluteTransform;
+}
+
 static inline bool createMaskAndSwapContextForTextGradient(
     GraphicsContext*& context, GraphicsContext*& savedContext,
     OwnPtr<ImageBuffer>& imageBuffer, const RenderObject* object)
 {
-    FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->objectBoundingBox();
-    IntRect maskRect = enclosingIntRect(object->absoluteTransform().mapRect(maskBBox));
+    const RenderObject* textRootBlock = findTextRootObject(object);
 
-    IntSize maskSize(maskRect.width(), maskRect.height());
-    clampImageBufferSizeToViewport(object->view()->frameView(), maskSize);
+    TransformationMatrix transform = absoluteTransformForRenderer(textRootBlock);
+    FloatRect maskAbsoluteBoundingBox = transform.mapRect(textRootBlock->repaintRectInLocalCoordinates());
 
-    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskSize);
+    IntRect maskImageRect = enclosingIntRect(maskAbsoluteBoundingBox);
+    if (maskImageRect.isEmpty())
+        return false;
 
+    // Allocate an image buffer as big as the absolute unclipped size of the object
+    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskImageRect.size());
     if (!maskImage)
         return false;
 
     GraphicsContext* maskImageContext = maskImage->context();
 
-    maskImageContext->save();
-    maskImageContext->translate(-maskRect.x(), -maskRect.y());
-    maskImageContext->concatCTM(object->absoluteTransform());
+    // Transform the mask image coordinate system to absolute screen coordinates
+    maskImageContext->translate(-maskAbsoluteBoundingBox.x(), -maskAbsoluteBoundingBox.y());
+    maskImageContext->concatCTM(transform);
 
     imageBuffer.set(maskImage.release());
     savedContext = context;
-
     context = maskImageContext;
 
     return true;
@@ -160,25 +175,14 @@ static inline TransformationMatrix clipToTextMask(GraphicsContext* context,
     OwnPtr<ImageBuffer>& imageBuffer, const RenderObject* object,
     const SVGPaintServerGradient* gradientServer)
 {
-    FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->objectBoundingBox();
-
-    // Fixup transformations to be able to clip to mask
-    TransformationMatrix transform = object->absoluteTransform();
-    FloatRect textBoundary = transform.mapRect(maskBBox);
-
-    IntSize maskSize(lroundf(textBoundary.width()), lroundf(textBoundary.height()));
-    clampImageBufferSizeToViewport(object->view()->frameView(), maskSize);
-    textBoundary.setSize(textBoundary.size().shrunkTo(maskSize));
-
-    // Clip current context to mask image (gradient)
-    context->concatCTM(transform.inverse());
-    context->clipToImageBuffer(textBoundary, imageBuffer.get());
-    context->concatCTM(transform);
+    const RenderObject* textRootBlock = findTextRootObject(object);
+    context->clipToImageBuffer(textRootBlock->repaintRectInLocalCoordinates(), imageBuffer.get());
 
     TransformationMatrix matrix;
     if (gradientServer->boundingBoxMode()) {
-        matrix.translate(maskBBox.x(), maskBBox.y());
-        matrix.scaleNonUniform(maskBBox.width(), maskBBox.height());
+        FloatRect maskBoundingBox = textRootBlock->objectBoundingBox();
+        matrix.translate(maskBoundingBox.x(), maskBoundingBox.y());
+        matrix.scaleNonUniform(maskBoundingBox.width(), maskBoundingBox.height());
     }
     matrix.multiply(gradientServer->gradientTransform());
     return matrix;
@@ -250,7 +254,6 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
 #if PLATFORM(CG)
     // renderPath() is not used when painting text, so we paint the gradient during teardown()
     if (isPaintingText && m_savedContext) {
-
         // Restore on-screen drawing context
         context = m_savedContext;
         m_savedContext = 0;
@@ -258,12 +261,11 @@ void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObj
         TransformationMatrix matrix = clipToTextMask(context, m_imageBuffer, object, this);
         m_gradient->setGradientSpaceTransform(matrix);
         context->setFillGradient(m_gradient);
+        
+        const RenderObject* textRootBlock = findTextRootObject(object);
+        context->fillRect(textRootBlock->repaintRectInLocalCoordinates());
 
-        FloatRect maskBBox = const_cast<RenderObject*>(findTextRootObject(object))->objectBoundingBox();
-
-        context->fillRect(maskBBox);
-
-        m_imageBuffer.clear(); // we're done with our text mask buffer
+        m_imageBuffer.clear();
     }
 #endif
     context->restore();

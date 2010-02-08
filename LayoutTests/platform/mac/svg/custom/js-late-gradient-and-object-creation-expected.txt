@@ -3,8 +3,8 @@ KRenderingPaintServer {id="strokeLinearGradient" [type=LINEAR-GRADIENT] [stops=[
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (-250,15) size 1008.33x363.33
-    RenderSVGContainer {g} at (-250,15) size 1008.33x363.33
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (0,15) size 760x365
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0

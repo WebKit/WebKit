@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 600x400
-  RenderSVGRoot {svg} at (-300,-400) size 4000x4000
-    RenderPath {rect} at (-300,-400) size 4000x4000 [fill={[type=SOLID] [color=#FF0000]}] [data="M-100.00,-100.00 L900.00,-100.00 L900.00,900.00 L-100.00,900.00 Z"]
-    RenderPath {rect} at (-4,-4) size 608x408 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-26.00,-1.00 L126.00,-1.00 L126.00,101.00 L-26.00,101.00 Z"]
+  RenderSVGRoot {svg} at (100,0) size 500x400
+    RenderPath {rect} at (0,0) size 600x400 [fill={[type=SOLID] [color=#FF0000]}] [data="M-100.00,-100.00 L900.00,-100.00 L900.00,900.00 L-100.00,900.00 Z"]
+    RenderPath {rect} at (0,0) size 600x400 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-26.00,-1.00 L126.00,-1.00 L126.00,101.00 L-26.00,101.00 Z"]
     RenderPath {rect} at (100,0) size 400x400 [fill={[type=SOLID] [color=#000080]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-    RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,100.00"]
-    RenderPath {line} at (98.59,-1.41) size 402.83x402.83 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,0.00 L0.00,100.00"]
+    RenderPath {line} at (96,0) size 408x400 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,100.00"]
+    RenderPath {line} at (96,0) size 408x400 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,0.00 L0.00,100.00"]
     RenderSVGText {text} at (9,30) size 82x8 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-6) size 82x8
         chunk 1 (middle anchor) text run 1 at (9.00,30.00) startOffset 0 endOffset 24 width 82.00: "This should be a SQUARE."
@@ -19,12 +19,12 @@ layer at (0,0) size 600x400
     RenderSVGText {text} at (5,90) size 90x6 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-5) size 90x6
         chunk 1 (middle anchor) text run 1 at (5.50,90.00) startOffset 0 endOffset 42 width 89.00: "The orange line should be 600 pixels long:"
-    RenderPath {line} at (0,366) size 600x4 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00 L125.00,92.00"]
+    RenderPath {line} at (0,364) size 600x8 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00 L125.00,92.00"]
     RenderSVGText {text} at (-25,90) size 2x3 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-2) size 2x3
         chunk 1 text run 1 at (-25.00,90.00) startOffset 0 endOffset 1 width 2.00: "0"
-    RenderPath {line} at (-2,362) size 4x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00 L-25.00,90.50"]
+    RenderPath {line} at (0,360) size 4x8 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M-25.00,92.00 L-25.00,90.50"]
     RenderSVGText {text} at (120,90) size 6x3 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-2) size 6x3
         chunk 1 (end anchor) text run 1 at (120.00,90.00) startOffset 0 endOffset 3 width 5.00: "600"
-    RenderPath {line} at (598,362) size 4x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,92.00 L125.00,90.50"]
+    RenderPath {line} at (596,360) size 4x8 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [data="M125.00,92.00 L125.00,90.50"]

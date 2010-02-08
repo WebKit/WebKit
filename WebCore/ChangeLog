@@ -1,3 +1,52 @@
+2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        All SVG *-expected.txt files contain wrong results
+        https://bugs.webkit.org/show_bug.cgi?id=34703
+
+        Finally dump meaningful information for SVG layout tests.
+        Use 'absoluteClippedOverflowRect' which goes through the same code paths used
+        to actually calculate repaint rects etc - instead of the legacy CSS-unaware
+        code path that mapped 'repaintRectInLocalCoordinates' through 'absoluteTransform'.
+        Remove absoluteTransform() - a long standing TODO, finally not needed anymore.
+
+        Despite SVGRenderTreeAsText, SVGPaintServerGradient was also using absoluteTransform().
+        Rewrite the code in question, fixing svg/W3C-SVG-1.1/pserver-grad-08-b.svg alignment issues
+        when scaling/panning text using gradient on stroke/fill. Affects some other gradient tests as well.
+
+        As we're now dumping clipped overflow rects any problems with repaint rects will become
+        immediate visible - it turns out we're not supporting the overflow rules on the outermost <svg>
+        element properly (repaint rects and bounding boxes need to take special SVG overflow rules into account).
+        Fixing that magically gives pixel-perfect clipped overflow rects for all types of shapes/text/containers.
+
+        Note: This will break any overriden platform-specific SVG results, need to wait for build bots in order to update them.
+
+        * rendering/RenderObject.cpp: Remove absoluteTransform() method, centralize overflow query code in SVGRenderSupport::isOverflowHidden().
+        * rendering/RenderObject.h: Remove absoluteTransform() method.
+        * rendering/RenderSVGHiddenContainer.h: Ditto.
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint): Use SVGRenderSupport::isOverflowHidden() to query SVG overflow mode.
+        (WebCore::RenderSVGRoot::computeRectForRepaint): Respect SVG overflow rules here: clip repaintRect against overflow rect _before_ passing
+                                                         along to RenderBox. This is the key issue behind wrong absoluteClippedOverflowRect() values.
+        (WebCore::RenderSVGRoot::nodeAtPoint): Use SVGRenderSupport::isOverflowHidden() to query SVG overflow mode.
+        * rendering/RenderSVGRoot.h: Remove absoluteTransform(). Don't expose viewportSize() anymore.
+        * rendering/RenderSVGText.cpp: 
+        (WebCore::RenderSVGText::strokeBoundingBox): Fix default stroke width to 1. This was the only wrong place -> fixes repaint rects for stroked text.
+        * rendering/RenderSVGViewportContainer.cpp: Remove absoluteTransform() method.
+        (WebCore::RenderSVGViewportContainer::pointIsInsideViewportClip): Use SVGRenderSupport::isOverflowHidden() to query SVG overflow mode.
+        * rendering/RenderSVGViewportContainer.h: Remove absoluteTransform() method.
+        * rendering/SVGRenderSupport.cpp: Refactored overflow queries in one place, centralizing SVG specific assumptions about overflowX/Y.
+        (WebCore::SVGRenderBase::isOverflowHidden):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp: Dump absoluteClippedOverflowRect() instead of absoluteTransform().mapRect(repaintRectInLocalCoordinates()).
+        (WebCore::writePositionAndStyle): Affects all layout tests dumping render trees.
+        * svg/graphics/SVGPaintServerGradient.cpp: Rewrite Gradient on text fill/stroke support on Cg, to avoid using absoluteTransform().
+        (WebCore::absoluteTransformForRenderer):
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::SVGPaintServerGradient::setup):
+
 2010-02-07  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Darin Adler.

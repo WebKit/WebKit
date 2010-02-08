@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
-    RenderSVGContainer {g} at (30,16) size 243x255.50
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (30,16) size 243x256
       RenderSVGText {text} at (30,30) size 243x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 243x18
           chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 42 width 243.00: "Default entities: amp, lt, gt, apos, quot:"
@@ -30,9 +30,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (179,228) size 52x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 52x18
           chunk 1 (middle anchor) text run 1 at (179.50,228.00) startOffset 0 endOffset 8 width 51.00: "outlined"
-      RenderSVGContainer {g} at (189.50,234.50) size 37x37 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]
-        RenderPath {path} at (189.50,234.50) size 37x37 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [data="M60.00,0.00 L120.00,0.00 L180.00,60.00 L180.00,120.00 L120.00,180.00 L60.00,180.00 L0.00,120.00 L0.00,60.00 Z"]
+      RenderSVGContainer {g} at (189,234) size 38x38 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]
+        RenderPath {path} at (189,234) size 38x38 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [data="M60.00,0.00 L120.00,0.00 L180.00,60.00 L180.00,120.00 L120.00,180.00 L60.00,180.00 L0.00,120.00 L0.00,60.00 Z"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.9 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

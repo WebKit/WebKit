@@ -3,7 +3,7 @@ KCanvasResource {id="emptyrect" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [p
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 452x154
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
       RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0

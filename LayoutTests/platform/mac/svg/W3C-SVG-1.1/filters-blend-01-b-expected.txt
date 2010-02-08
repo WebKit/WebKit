@@ -6,7 +6,7 @@ KCanvasResource {id="BlendLighten" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (2.25,2.25) size 475.50x355.50
+  RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (15,15) size 435x294
       RenderSVGImage {image} at (120,15) size 300x294
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -43,4 +43,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (3,112) size 78x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-11) size 78x14
         chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 78.00: "$Revision: 1.8 $"
-    RenderPath {rect} at (2.25,2.25) size 475.50x355.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [data="M1.00,1.00 L159.00,1.00 L159.00,119.00 L1.00,119.00 Z"]

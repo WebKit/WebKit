@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 0x0
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGViewportContainer {svg} at (0,0) size 0x0
         RenderForeignObject {foreignObject} at (0,0) size 580x380
@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 244x18
           text run at (0,0) width 244: "You should only see this string ONCE"
     RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (25,25) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
-        RenderSVGViewportContainer {svg} at (25,25) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
     RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (10,10) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
-        RenderSVGContainer {g} at (35,35) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
-          RenderSVGViewportContainer {svg} at (35,35) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+        RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
+          RenderSVGViewportContainer {svg} at (0,0) size 0x0

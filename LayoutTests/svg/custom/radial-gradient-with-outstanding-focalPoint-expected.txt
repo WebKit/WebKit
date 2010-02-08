@@ -5,7 +5,7 @@ KRenderingPaintServer {id="rad22" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF),
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 220x220
+  RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0

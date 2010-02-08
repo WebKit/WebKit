@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (-4,0.50) size 483.50x359
-    RenderSVGContainer {g} at (-4,4) size 480x262
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,4) size 476x262
       RenderSVGText {text} at (5,40) size 346x44 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-36) size 346x44
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 346.00: "Test of 'text-anchor'"
@@ -10,12 +10,12 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 75x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 75x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 75.00: "end text tref"
-        RenderPath {path} at (-5,260) size 225x0 [fill={[type=SOLID] [color=#000000]}] [data="M-5.00,260.00 L220.00,260.00"]
+        RenderPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M-5.00,260.00 L220.00,260.00"]
       RenderSVGText {text} at (20,80) size 218x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-27) size 218x33
           chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 218.00: "Tspan, tref, toap"
-      RenderPath {line} at (219.50,120) size 1x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00 L220.00,260.00"]
-      RenderSVGContainer {g} at (-4,113) size 480x153
+      RenderPath {line} at (219,120) size 2x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M220.00,120.00 L220.00,260.00"]
+      RenderSVGContainer {g} at (0,113) size 476x153
         RenderSVGText {text} at (220,140) size 256x33 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-27) size 122x33
             chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 11 width 122.00: "start text "
@@ -41,4 +41,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.5 $"
-    RenderPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

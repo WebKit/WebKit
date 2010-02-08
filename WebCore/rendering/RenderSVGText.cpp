@@ -192,7 +192,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
 
     // SVG needs to include the strokeWidth(), not the textStrokeWidth().
     if (style()->svgStyle()->hasStroke()) {
-        float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 0.0f);
+        float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0f);
 
 #if ENABLE(SVG_FONTS)
         const Font& font = style()->font();
