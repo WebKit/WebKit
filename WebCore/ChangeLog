@@ -1,3 +1,15 @@
+2010-02-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix Qt build on Windows.
+
+        nmake fails to pick the right cpp file, so we have to
+        rename the file to to a unique name.
+
+        * WebCore.pro:
+        * platform/graphics/qt/FontCustomPlatformDataQt.cpp: Renamed from WebCore/platform/graphics/qt/FontCustomPlatformData.cpp.
+
 2010-02-08  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
