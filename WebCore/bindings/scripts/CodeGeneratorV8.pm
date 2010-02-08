@@ -272,6 +272,7 @@ sub GenerateHeader
  public:
   static bool HasInstance(v8::Handle<v8::Value> value);
   static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
+  static v8::Persistent<v8::FunctionTemplate> GetTemplate();
   static ${nativeType}* toNative(v8::Handle<v8::Object>);
   static v8::Handle<v8::Object> wrap(${nativeType}*${forceNewObjectParameter});
 END
@@ -336,8 +337,6 @@ END
     }
 
     push(@headerContent, <<END);
-
-  static v8::Persistent<v8::FunctionTemplate> GetTemplate();
 };
 
   v8::Handle<v8::Value> toV8(${nativeType}*${forceNewObjectParameter});
@@ -608,7 +607,6 @@ END
     return V8DOMWrapper::getConstructor(type, V8DOMWindow::toNative(info.Holder()));
 END
     } elsif ($classIndex eq "DEDICATEDWORKERCONTEXT" or $classIndex eq "WORKERCONTEXT" or $classIndex eq "SHAREDWORKERCONTEXT") {
-        $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
     return V8DOMWrapper::getConstructor(type, V8WorkerContext::toNative(info.Holder()));
 END
@@ -1954,12 +1952,8 @@ sub GenerateToV8Converters
 
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput}) {
   v8::Handle<v8::Object> wrapper;
-END
-    if (!NeedsWorkerContextExecutionProxyToV8($interfaceName)) {
-        push(@implContent, <<END);
   V8Proxy* proxy = 0;
 END
-    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
@@ -1997,17 +1991,10 @@ END
     context->Enter();
 END
     }
-
-    if (NeedsWorkerContextExecutionProxyToV8($interfaceName)) {
-        $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
-        push(@implContent, <<END);
-  wrapper = WorkerContextExecutionProxy::toV8(${wrapperType}, impl);
-END
-    } else {
-        push(@implContent, <<END);
+    
+    push(@implContent, <<END);
   wrapper = V8DOMWrapper::instantiateV8Object(proxy, ${wrapperType}, impl);
 END
-    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
@@ -2055,19 +2042,6 @@ END
     }
 }
 
-sub NeedsWorkerContextExecutionProxyToV8 {
-    # These objects can be constructed under WorkerContextExecutionProxy. They need special
-    # handling, since if we call V8Proxy::retrieve(), we will crash.
-    # FIXME: websocket?
-    $interfaceName = shift;
-    return 1 if $interfaceName eq "DOMCoreException";
-    return 1 if $interfaceName eq "EventException";
-    return 1 if $interfaceName eq "RangeException";
-    return 1 if $interfaceName eq "XMLHttpRequestException";
-    return 1 if $interfaceName eq "MessagePort";
-    return 0;
-}
-
 sub HasCustomToV8Implementation {
     # FIXME: This subroutine is lame. Probably should be an .idl attribute (CustomToV8)?
     $dataNode = shift;
@@ -2089,6 +2063,7 @@ sub HasCustomToV8Implementation {
     return 1 if $interfaceName eq "SVGDocument";
     return 1 if $interfaceName eq "SVGElement";
     return 1 if $interfaceName eq "Screen";
+    return 1 if $interfaceName eq "WorkerContext";
     
     # We don't generate a custom converter (but JSC does) for the following:
     return 0 if $interfaceName eq "AbstractWorker";
@@ -2777,18 +2752,6 @@ sub ReturnNativeToJSValue
     if ($type eq "SerializedScriptValue") {
         $implIncludes{"$type.h"} = 1;
         return "return $value->deserialize()";
-    }
-
-    if ($type eq "DedicatedWorkerContext" or $type eq "WorkerContext" or $type eq "SharedWorkerContext") {
-        $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
-        return "return WorkerContextExecutionProxy::convertWorkerContextToV8Object($value)";
-    }
-
-    if ($type eq "WorkerLocation" or $type eq "WorkerNavigator" or $type eq "NotificationCenter") {
-        $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
-        my $classIndex = uc($type);
-
-        return "return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::$classIndex, $value)";
     }
 
     $implIncludes{"wtf/RefCounted.h"} = 1;

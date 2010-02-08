@@ -34,8 +34,9 @@
 
 #include "V8WorkerContextEventListener.h"
 
-#include "Event.h"
 #include "V8Binding.h"
+#include "V8DOMWrapper.h"
+#include "V8Event.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -76,7 +77,7 @@ void V8WorkerContextEventListener::handleEvent(ScriptExecutionContext* context, 
     v8::Context::Scope scope(v8Context);
 
     // Get the V8 wrapper for the event object.
-    v8::Handle<v8::Value> jsEvent = WorkerContextExecutionProxy::convertEventToV8Object(event);
+    v8::Handle<v8::Value> jsEvent = toV8(event);
 
     invokeEventHandler(context, event, jsEvent);
 }
@@ -155,7 +156,7 @@ v8::Local<v8::Object> V8WorkerContextEventListener::getReceiverObject(ScriptExec
         return listener;
 
     EventTarget* target = event->currentTarget();
-    v8::Handle<v8::Value> value = WorkerContextExecutionProxy::convertEventTargetToV8Object(target);
+    v8::Handle<v8::Value> value = V8DOMWrapper::convertEventTargetToV8Object(target);
     if (value.IsEmpty())
         return v8::Local<v8::Object>();
     return v8::Local<v8::Object>::New(v8::Handle<v8::Object>::Cast(value));

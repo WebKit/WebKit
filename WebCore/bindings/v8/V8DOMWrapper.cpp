@@ -64,6 +64,8 @@
 #include "V8StyleSheet.h"
 #include "V8WebSocket.h"
 #include "V8Worker.h"
+#include "V8WorkerContext.h"
+#include "V8XMLHttpRequest.h"
 #include "WebGLArray.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
@@ -267,13 +269,16 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
 
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType type, void* impl)
 {
+    // Get the WorkerContextExecutionProxy first. If we are in a WorkerContext and we try to call V8Proxy::retrieve(),
+    // we crash trying to retrieve a DOMWindow.
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
     if (V8IsolatedContext::getEntered()) {
         // This effectively disables the wrapper cache for isolated worlds.
         proxy = 0;
         // FIXME: Do we need a wrapper cache for the isolated world?  We should
         //        see if the performance gains are worth while.
         // We'll get one once we give the isolated context a proper window shell.
-    } else if (!proxy)
+    } else if (!proxy && !workerContextProxy)
         proxy = V8Proxy::retrieve();
 
     v8::Local<v8::Object> instance;
@@ -281,7 +286,11 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
         // FIXME: Fix this to work properly with isolated worlds (see above).
         instance = proxy->windowShell()->createWrapperFromCache(type);
     else {
-        v8::Local<v8::Function> function = V8ClassIndex::getTemplate(type)->GetFunction();
+        v8::Local<v8::Function> function;
+        if (workerContextProxy)
+            function = getConstructor(type, workerContextProxy->workerContext());
+        else
+            function = V8ClassIndex::getTemplate(type)->GetFunction();
         instance = SafeAllocation::newInstance(function);
     }
     if (!instance.IsEmpty()) {
@@ -365,11 +374,17 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(WORKERS)
     if (Worker* worker = target->toWorker())
         return toV8(worker);
+
+    if (DedicatedWorkerContext* workerContext = target->toDedicatedWorkerContext())
+        return toV8(workerContext);
 #endif // WORKERS
 
 #if ENABLE(SHARED_WORKERS)
     if (SharedWorker* sharedWorker = target->toSharedWorker())
         return toV8(sharedWorker);
+
+    if (SharedWorkerContext* sharedWorkerContext = target->toSharedWorkerContext())
+        return toV8(sharedWorkerContext);
 #endif // SHARED_WORKERS
 
 #if ENABLE(NOTIFICATIONS)
@@ -394,6 +409,9 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
+
+    if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
+        return toV8(xhr);
 
     // MessagePort is created within its JS counterpart
     if (MessagePort* port = target->toMessagePort()) {

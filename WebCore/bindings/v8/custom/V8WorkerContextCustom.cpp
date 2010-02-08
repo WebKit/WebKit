@@ -173,6 +173,16 @@ v8::Handle<v8::Value> V8WorkerContext::removeEventListenerCallback(const v8::Arg
     return v8::Undefined();
 }
 
+v8::Handle<v8::Value> toV8(WorkerContext* impl)
+{
+    if (!impl)
+        return v8::Null();
+
+    v8::Handle<v8::Object> global = impl->script()->proxy()->context()->Global();
+    ASSERT(!global.IsEmpty());
+    return global;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

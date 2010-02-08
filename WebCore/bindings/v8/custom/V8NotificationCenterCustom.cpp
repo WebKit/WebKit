@@ -43,7 +43,6 @@
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 
@@ -91,9 +90,6 @@ v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const
     if (ec)
         return throwError(ec);
 
-    if (notificationCenter->context()->isWorkerContext())
-        return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::NOTIFICATION, notification.get());
-
     return toV8(notification.get());
 }
 
@@ -107,9 +103,6 @@ v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8:
 
     if (ec)
         return throwError(ec);
-
-    if (notificationCenter->context()->isWorkerContext())
-        return WorkerContextExecutionProxy::convertToV8Object(V8ClassIndex::NOTIFICATION, notification.get());
 
     return toV8(notification.get());
 }
