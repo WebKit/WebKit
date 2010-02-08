@@ -1,3 +1,11 @@
+2010-02-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed RVCT build fix.
+
+        Similar to r54391, don't import the cmath functions from std:: for RVCT.
+
+        * wtf/MathExtras.h:
+
 2010-02-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
