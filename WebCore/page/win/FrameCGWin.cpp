@@ -45,7 +45,7 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* 
     rect.move(-offset.width(), -offset.height());
     rect = view->convertToContainingWindow(rect);
 
-    gc->concatCTM(TransformationMatrix().translate(-rect.x(), -rect.y()));
+    gc->concatCTM(AffineTransform().translate(-rect.x(), -rect.y()));
 
     view->paint(gc, rect);
 }

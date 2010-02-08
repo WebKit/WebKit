@@ -1,5 +1,12 @@
 2010-02-08  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed windows build-fix.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::drawRectIntoContext):
+
+2010-02-08  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Add back an AffineTransform class for use by SVG
