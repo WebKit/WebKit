@@ -48,6 +48,11 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
+#ifdef Q_OS_WIN
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 #include <limits.h>
 #include <signal.h>
 
@@ -101,6 +106,11 @@ static NO_RETURN void crashHandler(int sig)
 
 int main(int argc, char* argv[])
 {
+#ifdef Q_OS_WIN
+    _setmode(1, _O_BINARY);
+    _setmode(2, _O_BINARY);
+#endif
+
 #ifdef Q_WS_X11
     FcInit();
     WebCore::DumpRenderTree::initializeFonts();

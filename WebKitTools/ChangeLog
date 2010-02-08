@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] Set stdout/stderr to binary mode for DRT on Windows
+
+        This makes sure we don't end up with lots of CRLFs in the
+        DRT output, which breaks tons of results. Matches what
+        the Windows DRT does.
+
+        * DumpRenderTree/qt/main.cpp:
+
+2010-02-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Build fix for Qt on Windows.
 
         Don't use noreturn directly since it's a gcc attribute.
