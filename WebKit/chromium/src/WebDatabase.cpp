@@ -32,7 +32,9 @@
 #include "WebDatabase.h"
 
 #include "Database.h"
+#include "DatabaseTask.h"
 #include "DatabaseThread.h"
+#include "DatabaseTracker.h"
 #include "Document.h"
 #include "KURL.h"
 #include "QuotaTracker.h"
@@ -104,6 +106,22 @@ void WebDatabase::updateDatabaseSize(
 {
     WebCore::QuotaTracker::instance().updateDatabaseSizeAndSpaceAvailableToOrigin(
         originIdentifier, databaseName, databaseSize, spaceAvailable);
+}
+
+void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
+{
+    HashSet<RefPtr<Database> > databaseHandles;
+    PassRefPtr<SecurityOrigin> originPrp(*WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<SecurityOrigin> origin = originPrp;
+    DatabaseTracker::tracker().getOpenDatabases(origin.get(), databaseName, &databaseHandles);
+    for (HashSet<RefPtr<Database> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it) {
+        Database* database = it->get();
+        DatabaseThread* databaseThread = database->scriptExecutionContext()->databaseThread();
+        if (databaseThread && !databaseThread->terminationRequested()) {
+            database->stop();
+            databaseThread->scheduleTask(DatabaseCloseTask::create(database, 0));
+        }
+    }
 }
 
 WebDatabase::WebDatabase(const WTF::PassRefPtr<Database>& database)

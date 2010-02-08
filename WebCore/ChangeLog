@@ -1,3 +1,22 @@
+2010-02-05  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adding a way to get the set of all open database handles pointing
+        to a given database.
+        https://bugs.webkit.org/show_bug.cgi?id=34619
+
+        Sometimes we need to be able to close all handles to a database as
+        soon as possible (to delete the DB file, for example).
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        * storage/DatabaseTracker.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+
 2010-02-08  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed windows build-fix.

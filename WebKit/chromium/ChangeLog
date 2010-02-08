@@ -1,3 +1,15 @@
+2010-02-05  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adding a way to close all database handles pointing to a certain
+        database as soon as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=34619
+
+        * public/WebDatabase.h:
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::closeDatabaseImmediately):
+
 2010-02-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

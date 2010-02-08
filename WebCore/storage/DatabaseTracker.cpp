@@ -478,6 +478,24 @@ void DatabaseTracker::removeOpenDatabase(Database* database)
     delete nameMap;
 }
 
+void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<Database> >* databases)
+{
+    MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+    if (!m_openDatabaseMap)
+        return;
+
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    if (!nameMap)
+        return;
+
+    DatabaseSet* databaseSet = nameMap->get(name);
+    if (!databaseSet)
+        return;
+
+    for (DatabaseSet::iterator it = databaseSet->begin(); it != databaseSet->end(); ++it)
+        databases->add(*it);
+}
+
 unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 {
     ASSERT(currentThread() == m_thread);

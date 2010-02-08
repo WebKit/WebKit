@@ -72,6 +72,8 @@ public:
     WEBKIT_API static void updateDatabaseSize(
         const WebString& originIdentifier, const WebString& databaseName,
         unsigned long long databaseSize, unsigned long long spaceAvailable);
+    WEBKIT_API static void closeDatabaseImmediately(
+        const WebString& originIdentifier, const WebString& databaseName);
 
 #if WEBKIT_IMPLEMENTATION
     WebDatabase(const WTF::PassRefPtr<WebCore::Database>&);
