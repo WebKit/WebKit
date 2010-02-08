@@ -1,3 +1,23 @@
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use an empty identifier instead of a null identifier for parse
+        tokens without an identifier.
+
+        This helps encapsulate the null UStringImpl within UString.
+
+        * parser/Grammar.y:
+        * parser/NodeConstructors.h:
+        (JSC::ContinueNode::ContinueNode):
+        (JSC::BreakNode::BreakNode):
+        (JSC::ForInNode::ForInNode):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+
 2010-02-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix for make distcheck.

@@ -741,7 +741,7 @@ namespace JSC {
 
     inline ContinueNode::ContinueNode(JSGlobalData* globalData)
         : StatementNode(globalData)
-        , m_ident(globalData->propertyNames->nullIdentifier)
+        , m_ident(globalData->propertyNames->emptyIdentifier)
     {
     }
 
@@ -753,7 +753,7 @@ namespace JSC {
     
     inline BreakNode::BreakNode(JSGlobalData* globalData)
         : StatementNode(globalData)
-        , m_ident(globalData->propertyNames->nullIdentifier)
+        , m_ident(globalData->propertyNames->emptyIdentifier)
     {
     }
 
@@ -877,7 +877,7 @@ namespace JSC {
 
     inline ForInNode::ForInNode(JSGlobalData* globalData, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(globalData)
-        , m_ident(globalData->propertyNames->nullIdentifier)
+        , m_ident(globalData->propertyNames->emptyIdentifier)
         , m_init(0)
         , m_lexpr(l)
         , m_expr(expr)

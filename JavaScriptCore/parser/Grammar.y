@@ -1147,7 +1147,7 @@ ThrowStatement:
 ;
 
 TryStatement:
-    TRY Block FINALLY Block             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, GLOBAL_DATA->propertyNames->nullIdentifier, false, 0, $4.m_node),
+    TRY Block FINALLY Block             { $$ = createNodeDeclarationInfo<StatementNode*>(new (GLOBAL_DATA) TryNode(GLOBAL_DATA, $2.m_node, GLOBAL_DATA->propertyNames->emptyIdentifier, false, 0, $4.m_node),
                                                                                          mergeDeclarationLists($2.m_varDeclarations, $4.m_varDeclarations),
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $4.m_funcDeclarations),
                                                                                          $2.m_features | $4.m_features,
@@ -1188,10 +1188,10 @@ FunctionDeclaration:
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, GLOBAL_DATA->lexer->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); setStatementLocation($5, @4, @6); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->emptyIdentifier, $5, GLOBAL_DATA->lexer->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); setStatementLocation($5, @4, @6); }
     | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       {
-          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
+          $$ = createNodeInfo(new (GLOBAL_DATA) FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->emptyIdentifier, $6, GLOBAL_DATA->lexer->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_features | ClosureFeature, 0);
           if ($3.m_features & ArgumentsFeature)
               $6->setUsesArguments();
           setStatementLocation($6, @5, @7);
@@ -1981,7 +1981,7 @@ static PropertyNode* makeGetterOrSetterPropertyNode(JSGlobalData* globalData, co
         type = PropertyNode::Setter;
     else
         return 0;
-    return new (globalData) PropertyNode(globalData, name, new (globalData) FuncExprNode(globalData, globalData->propertyNames->nullIdentifier, body, source, params), type);
+    return new (globalData) PropertyNode(globalData, name, new (globalData) FuncExprNode(globalData, globalData->propertyNames->emptyIdentifier, body, source, params), type);
 }
 
 static ExpressionNode* makeNegateNode(JSGlobalData* globalData, ExpressionNode* n)
