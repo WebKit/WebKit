@@ -193,6 +193,17 @@
 
         Reviewed by Simon Hausmann.
 
+        Notify user that run-webkit-tests has to be run under Cygwin
+
+        The script will bail out if run under Windows shell or Msys.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
+2010-02-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Generate convenience headers (QWebView, etc) using qmake
 
         In Qt this is done using syncqt, but we use a pro-file instead

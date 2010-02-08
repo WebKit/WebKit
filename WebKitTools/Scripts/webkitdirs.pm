@@ -954,6 +954,11 @@ sub isWindows()
     return ($^O eq "MSWin32") || 0;
 }
 
+sub isMsys()
+{
+    return ($^O eq "msys") || 0;
+}
+
 sub isLinux()
 {
     return ($^O eq "linux") || 0;

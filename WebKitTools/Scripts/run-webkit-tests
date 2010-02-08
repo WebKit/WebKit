@@ -158,6 +158,11 @@ my $shouldWaitForHTTPD = 0;
 
 my @leaksFilenames;
 
+if (isWindows() || isMsys()) {
+    print "This script has to be run under Cygwin to function correctly.\n";
+    exit 1;
+}
+
 # Default to --no-http for wx for now.
 $testHTTP = 0 if (isWx());
 
