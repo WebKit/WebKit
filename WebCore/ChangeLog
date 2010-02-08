@@ -1,3 +1,18 @@
+2010-02-08  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make an inline function containing a static var out-of-line.  This is
+        a workaround for Xcode 3.1 bug radar 7070016.  We tripped on this in
+        deviceRGBColorSpaceRef on the Chromium canaries.  This is a proactive
+        fix for the same problem in sRGBColorSpaceRef().
+
+        https://bugs.webkit.org/show_bug.cgi?id=34663
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::sRGBColorSpaceRef):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+
 2010-02-08  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
