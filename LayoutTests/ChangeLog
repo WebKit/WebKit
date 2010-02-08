@@ -1,3 +1,11 @@
+2010-02-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Generate new results for this test.
+
+        * platform/gtk/editing/execCommand/indent-paragraphs-expected.txt:
+
 2010-02-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.
