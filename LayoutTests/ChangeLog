@@ -1,5 +1,11 @@
 2010-02-08  Xan Lopez  <xlopez@igalia.com>
 
+        Try to do some clean-up in our Skipped list.
+
+        * platform/gtk/Skipped:
+
+2010-02-08  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Generate new results for this test.

@@ -220,8 +220,6 @@ css1/units/urls.html
 
 # Tests in css2.1/ directory
 #   Tests generating new results
-css2.1/bogus-color-span.html
-css2.1/css1_forward_compatible_parsing.html
 css2.1/t09-c5526c-display-00-e.html
 css2.1/t0402-c71-fwd-parsing-00-f.html
 css2.1/t0402-c71-fwd-parsing-01-f.html
@@ -1273,6 +1271,7 @@ fast/canvas/canvas-zoom.html
 fast/canvas/pointInPath.html
 fast/canvas/set-colors.html
 fast/canvas/toDataURL-supportedTypes.html
+fast/css/css1_forward_compatible_parsing.html
 fast/css/invalid-percentage-property.html
 fast/css/text-align.html
 fast/css/zoom-body-scroll.html
@@ -1408,6 +1407,8 @@ fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
 fast/loader/stop-provisional-loads.html
 fast/loading/subframe-removes-itself.html
+fast/fast-mobile-scrolling/fixed-position-element.html
+fast/fast-mobile-scrolling/no-fixed-position-elements.html
 fast/regex/test1.html
 fast/regex/test4.html
 fast/replaced/table-percent-height-text-controls.html
@@ -1998,6 +1999,7 @@ fast/css/background-image-with-baseurl.html
 fast/css/background-shorthand-invalid-url.html
 fast/css/beforeSelectorOnCodeElement.html
 fast/css/begin-end-contain-selector-empty-value.html
+fast/css/bogus-color-span.html
 fast/css/border-height.html
 fast/css/border-radius-outline-offset.html
 fast/css/clip-zooming.html
@@ -2623,6 +2625,7 @@ fast/lists/007.html
 fast/lists/008.html
 fast/lists/009.html
 fast/lists/alpha-list-wrap.html
+fast/lists/anonymous-items.html
 fast/lists/big-list-marker.html
 fast/lists/decimal-leading-zero.html
 fast/lists/drag-into-marker.html
@@ -2646,6 +2649,7 @@ fast/lists/ol-start-parsing.html
 fast/lists/olstart.html
 fast/lists/ordered-list-with-no-ol-tag.html
 fast/lists/scrolled-marker-paint.html
+fast/lists/w3-css3-list-styles-numeric.html
 fast/lists/w3-list-styles.html
 fast/loader/start-load-in-unload.html
 fast/loader/text-document-wrapping.html
@@ -3287,6 +3291,7 @@ fast/text/international/bidi-neutral-directionality-paragraph-start.html
 fast/text/international/bidi-neutral-run.html
 fast/text/international/bidi-override.html
 fast/text/international/complex-character-based-fallback.html
+fast/text/international/hebrew-vowels.html
 fast/text/international/hindi-spacing.html
 fast/text/international/hindi-whitespace.html
 fast/text/international/rtl-caret.html
@@ -3695,6 +3700,8 @@ svg/custom/glyph-setting-d-attribute.svg
 svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/no-inherited-dashed-stroke.xhtml
+svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml
+svg/custom/relative-sized-use-on-symbol.xhtml
 svg/custom/stroke-width-click.svg
 svg/custom/svg-disallowed-in-dashboard-object.html
 svg/custom/svg-fonts-in-text-controls.html
@@ -5357,6 +5364,7 @@ tables/mozilla_expected_failures/other/test4.html
 # Tests in transforms/ directory
 #   Tests generating new results
 transforms/2d/zoom-menulist.html
+transforms/2d/transform-fixed-container.html
 
 # Tests in webarchive/ directory
 #   Tests failing
@@ -5396,6 +5404,7 @@ fast/events/tab-focus-anchor.html
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
+http/tests/misc/slow-loading-mask.html
 
 # Tests that require editing callbacks (and possibly Glib DOM bindings)
 editing/execCommand/indent-with-style.html
@@ -5413,8 +5422,6 @@ fast/box-shadow/spread.html
 fast/box-shadow/transform-fringing.html
 fast/canvas/image-pattern-rotate.html
 fast/css/attribute-selector-dynamic.xml
-fast/css/counters/t1204-increment-00-c-o.html
-fast/css/counters/t1204-increment-01-c-o.html
 fast/css/font-smoothing.html
 fast/css/nested-floating-relative-position-percentages.html
 fast/css/nth-child-dynamic.html
