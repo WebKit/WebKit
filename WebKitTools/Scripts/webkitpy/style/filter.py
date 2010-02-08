@@ -162,6 +162,8 @@ class FilterConfiguration(object):
 
         self._base_rules = base_rules
         self._path_specific = path_specific
+        self._path_specific_lower = None
+        """The backing store for self._get_path_specific_lower()."""
 
         # FIXME: Make user rules internal after the FilterConfiguration
         #        attribute is removed from ProcessorOptions (since at
@@ -196,9 +198,21 @@ class FilterConfiguration(object):
         # Python does not automatically deduce this from __eq__().
         return not self.__eq__(other)
 
+    # We use the prefix "_get" since the name "_path_specific_lower"
+    # is already taken up by the data attribute backing store.
+    def _get_path_specific_lower(self):
+        """Return a copy of self._path_specific with the paths lower-cased."""
+        if self._path_specific_lower is None:
+            self._path_specific_lower = []
+            for (sub_paths, path_rules) in self._path_specific:
+                sub_paths = map(str.lower, sub_paths)
+                self._path_specific_lower.append((sub_paths, path_rules))
+        return self._path_specific_lower
+
     def _path_rules_from_path(self, path):
         """Determine the path-specific rules to use, and return as a tuple."""
-        for (sub_paths, path_rules) in self._path_specific:
+        path = path.lower()
+        for (sub_paths, path_rules) in self._get_path_specific_lower():
             for sub_path in sub_paths:
                 if path.find(sub_path) > -1:
                     return path_rules
@@ -237,9 +251,9 @@ class FilterConfiguration(object):
         rules -- in that order.  As we will describe below, later rules
         in the list take precedence.  The path-specific rules are the
         rules corresponding to the first element of the "path_specific"
-        parameter that contains a string matching some substring of
-        the path.  If there is no such element, there are no path-
-        specific rules for that path.
+        parameter that contains a string case-insensitively matching
+        some substring of the path.  If there is no such element,
+        there are no path-specific rules for that path.
 
         Given a list of filter rules, the logic for determining whether
         a category should be checked is as follows.  By default all

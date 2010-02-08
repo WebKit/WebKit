@@ -1,3 +1,38 @@
+2010-02-05  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Suppressed check-webkit-style's underscore check in Qt's autotests.
+        Also made the path-specific filter check case-insensitive.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34574
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a list element to _PATH_RULES_SPECIFIER for
+            directories that should be excluded from the
+            "readability/naming" category (the category that relates to
+            underscores in identifiers, for example).
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added an "end-to-end" test for "WebKit/qt/tests/".
+
+        * Scripts/webkitpy/style/filter.py:
+          - Altered FilterConfiguration's should_check() method to
+            check for path substring matches case-insensitively.
+
+        * Scripts/webkitpy/style/filter_unittest.py:
+          - Added a test to check case-insensitive path substring matching.
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+          - Removed the hard-coded "WebKit/gtk/webkit/" path reference
+            since this is now taken care of by the _PATH_RULES_SPECIFIER
+            configuration variable.
+
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+          - Removed the unit test for the GTK directory since this
+            is now taken care of by the checker._PATH_RULES_SPECIFIER
+            end-to-end tests.
+
 2010-02-08  Leith Bade  <leith@leithalweapon.geek.nz>
 
         Reviewed by Darin Adler.

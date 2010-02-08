@@ -185,6 +185,8 @@ class GlobalVariablesTest(unittest.TestCase):
                                             "WebKitTools/WebKitAPITest/"))
         self.assertFalse(config.should_check("build/include",
                                              "WebKitTools/WebKitAPITest/"))
+        self.assertFalse(config.should_check("readability/naming",
+                             "WebKit/qt/tests/qwebelement/tst_qwebelement.cpp"))
 
     def test_max_reports_per_category(self):
         """Check that MAX_REPORTS_PER_CATEGORY is valid."""

@@ -86,10 +86,18 @@ WEBKIT_DEFAULT_FILTER_RULES = [
     ]
 
 
+# FIXME: Change the second value of each tuple from a tuple to a list,
+#        and alter the filter code so it accepts lists instead.  (The
+#        filter code will need to convert incoming values from a list
+#        to a tuple prior to caching).  This will make this
+#        configuration setting a bit simpler since tuples have an
+#        unusual syntax case.
+#
 # The path-specific filter rules.
 #
-# Only the first substring match is used.  See the FilterConfiguration
-# documentation in filter.py for more information on this list.
+# This list is order sensitive.  Only the first path substring match
+# is used.  See the FilterConfiguration documentation in filter.py
+# for more information on this list.
 _PATH_RULES_SPECIFIER = [
     # Files in these directories are consumers of the WebKit
     # API and therefore do not follow the same header including
@@ -98,6 +106,15 @@ _PATH_RULES_SPECIFIER = [
       "WebKit/qt/QGVLauncher/"],
      ("-build/include",
       "-readability/streams")),
+    ([# The GTK+ APIs use GTK+ naming style, which includes
+      # lower-cased, underscore-separated values.
+      "WebKit/gtk/webkit/",
+      # There is no clean way to avoid "xxx_data" methods inside
+      # Qt's autotests since they are called automatically by the
+      # QtTest module.
+      "WebKit/qt/tests/",
+      "JavaScriptCore/qt/tests"],
+     ("-readability/naming",)),
     # These are test file patterns.
     (["_test.cpp",
       "_unittest.cpp",

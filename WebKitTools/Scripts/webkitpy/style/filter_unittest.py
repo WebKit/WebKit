@@ -230,6 +230,19 @@ class FilterConfigurationTest(unittest.TestCase):
         # Test that first match takes precedence.
         self.assertFalse(config.should_check("c", "path2/path1"))
 
+    def test_path_with_different_case(self):
+        """Test a path that differs only in case."""
+        base_rules = ["-"]
+        path_specific = [(["Foo/"], ("+whitespace",))]
+        user_rules = []
+
+        config = self._config(base_rules, path_specific, user_rules)
+
+        self.assertFalse(config.should_check("whitespace", "Fooo/bar.txt"))
+        self.assertTrue(config.should_check("whitespace", "Foo/bar.txt"))
+        # Test different case.
+        self.assertTrue(config.should_check("whitespace", "FOO/bar.txt"))
+
     def test_user_rules(self):
         """Test effect of user_rules on should_check()."""
         base_rules = ["-"]
