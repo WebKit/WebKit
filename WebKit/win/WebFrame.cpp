@@ -2084,13 +2084,13 @@ void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCt
 
     // Modify Cairo and GDI World Transform to account for margin in the
     // subsequent WebKit-controlled 'paintContents' drawing operations:
-    spoolCtx->translate(cairoMarginRect.x(), cairoMarginRect.y());
+    spoolCtx->translate(cairoMarginRect.x(), cairoMarginRect.y() + headerHeight);
 
     // Modify Cairo (only) to account for page position.
-    cairo_translate(pctx, -pageRect.x(), -pageRect.y() + headerHeight);
+    cairo_translate(pctx, -pageRect.x(), -pageRect.y());
     coreFrame->view()->paintContents(spoolCtx, pageRect);
 
-    cairo_translate(pctx, pageRect.x(), pageRect.y() - headerHeight);
+    cairo_translate(pctx, pageRect.x(), pageRect.y());
 
     XFORM originalWorld;
     ::GetWorldTransform(printDC, &originalWorld);
