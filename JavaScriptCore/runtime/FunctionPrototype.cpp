@@ -25,6 +25,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSString.h"
+#include "JSStringBuilder.h"
 #include "Interpreter.h"
 #include "Lexer.h"
 #include "PrototypeFunction.h"
@@ -90,13 +91,13 @@ JSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec, JSObject*, JSVa
             FunctionExecutable* executable = function->jsExecutable();
             UString sourceString = executable->source().toString();
             insertSemicolonIfNeeded(sourceString);
-            return jsString(exec, makeString("function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
+            return jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString);
         }
     }
 
     if (thisValue.inherits(&InternalFunction::info)) {
         InternalFunction* function = asInternalFunction(thisValue);
-        return jsString(exec, makeString("function ", function->name(exec), "() {\n    [native code]\n}"));
+        return jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}");
     }
 
     return throwError(exec, TypeError);

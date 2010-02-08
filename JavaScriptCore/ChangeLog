@@ -1,5 +1,21 @@
 2010-02-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Switch some more StringBuilder/jsNontrivialString code to use
+        JSStringBuilder/jsMakeNontrivialString - these methods will
+        throw an exception if we hit out-of-memory, rather than just
+        CRASHing.
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEscape):
+
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Use an empty identifier instead of a null identifier for parse
