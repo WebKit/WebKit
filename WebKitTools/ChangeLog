@@ -1,3 +1,13 @@
+2010-02-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Make overridePreference complain when it does not
+        support the preference given.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::overridePreference):
+
 2010-02-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
