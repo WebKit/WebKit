@@ -66,7 +66,7 @@ static JSValue encode(ExecState* exec, const ArgList& args, const char* doNotEsc
         else {
             char tmp[4];
             snprintf(tmp, 4, "%%%02X", static_cast<unsigned char>(c));
-            builder.append((const char*)tmp);
+            builder.append(tmp);
         }
     }
     return builder.releaseJSString(exec);
@@ -386,13 +386,13 @@ JSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec, JSObject*, JSValue, cons
         if (u > 255) {
             char tmp[7];
             sprintf(tmp, "%%u%04X", u);
-            builder.append((const char*)tmp);
+            builder.append(tmp);
         } else if (u != 0 && strchr(do_not_escape, static_cast<char>(u)))
             builder.append(c, 1);
         else {
             char tmp[4];
             sprintf(tmp, "%%%02X", u);
-            builder.append((const char*)tmp);
+            builder.append(tmp);
         }
     }
 

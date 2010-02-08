@@ -1,5 +1,15 @@
 2010-02-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Oliver Hunt.
+
+        Remove a couple of unnecesary C-style casts spotted by Darin.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::globalFuncEscape):
+
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Switch some more StringBuilder/jsNontrivialString code to use
