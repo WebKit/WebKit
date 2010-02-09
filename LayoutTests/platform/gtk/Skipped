@@ -5809,3 +5809,6 @@ http/tests/incremental/split-hex-entities.pl
 # Skip frame flattening tests until it can be tested by this DRT
 # https://bugs.webkit.org/show_bug.cgi?id=32717
 fast/frames/flattening/
+
+# Implement LayoutTestController::numberOfPages().
+printing/numberOfPages.html

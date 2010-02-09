@@ -85,4 +85,5 @@
 - (NSString *)renderTreeAsExternalRepresentation;
 - (NSString *)counterValueForElement:(DOMElement*)element;
 - (int)pageNumberForElement:(DOMElement*)element:(float)pageWidthInPixels:(float)pageHeightInPixels;
+- (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels;
 @end

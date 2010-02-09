@@ -1,0 +1,11 @@
+Test for layoutTestController.numberOfPages()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS layoutTestController.numberOfPages(1000, 1000) is 2
+PASS layoutTestController.numberOfPages(10000, 10000) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

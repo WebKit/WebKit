@@ -149,6 +149,12 @@ int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWid
     return pageNumber;
 }
 
+int LayoutTestController::numberOfPages(float, float)
+{
+    // FIXME: implement
+    return -1;
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     // FIXME: implement

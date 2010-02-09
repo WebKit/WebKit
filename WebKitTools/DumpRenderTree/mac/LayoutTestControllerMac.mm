@@ -188,6 +188,11 @@ int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWid
     return [mainFrame pageNumberForElement:element:pageWidthInPixels:pageHeightInPixels];
 }
 
+int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
+{
+    return [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];
+}
+
 size_t LayoutTestController::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];

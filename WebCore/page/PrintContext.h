@@ -39,7 +39,7 @@ public:
 
     int pageCount() const;
     const IntRect& pageRect(int pageNumber) const;
-  const Vector<IntRect>& pageRects() const { return m_pageRects; }
+    const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
     void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight);
 
@@ -53,6 +53,7 @@ public:
 
     // Used by layout tests.
     static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels);
+    static int numberOfPages(Frame*, const FloatSize& pageSizeInPixels);
 
 protected:
     void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, float userScaleFactor);

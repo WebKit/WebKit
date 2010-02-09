@@ -1,3 +1,19 @@
+2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to get total number of pages to be printed
+        https://bugs.webkit.org/show_bug.cgi?id=34699
+
+        Test: printing/numberOfPages.html
+
+        * WebCore.base.exp:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageNumberForElement):
+        (WebCore::PrintContext::numberOfPages):
+        * page/PrintContext.h:
+        (WebCore::PrintContext::pageRects):
+
 2010-02-08  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Adam Barth.

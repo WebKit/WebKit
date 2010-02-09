@@ -1,3 +1,18 @@
+2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Provide a way to get total number of pages to be printed
+        https://bugs.webkit.org/show_bug.cgi?id=34699
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * printing/numberOfPages-expected.txt: Added.
+        * printing/numberOfPages.html: Added.
+        * printing/script-tests/numberOfPages.js: Added.
+        (createParagraph):
+
 2010-02-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.

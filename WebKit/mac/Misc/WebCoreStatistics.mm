@@ -256,4 +256,9 @@ using namespace WebCore;
     return PrintContext::pageNumberForElement(core(element), FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
+- (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels
+{
+    return PrintContext::numberOfPages(_private->coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
+}
+
 @end
