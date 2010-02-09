@@ -709,6 +709,8 @@ FAIL inner.setInterval.isInner should be true. Was false.
 FAIL inner.setInterval.constructor.isInner should be true. Was false.
 FAIL inner.setTimeout.isInner should be true. Was false.
 FAIL inner.setTimeout.constructor.isInner should be true. Was false.
+FAIL inner.showModalDialog.isInner should be true. Was false.
+FAIL inner.showModalDialog.constructor.isInner should be true. Was false.
 FAIL inner.status.isInner should be true. Was false.
 FAIL inner.status.constructor.isInner should be true. Was false.
 PASS inner.statusbar.isInner is true
