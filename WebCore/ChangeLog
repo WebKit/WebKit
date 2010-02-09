@@ -1,3 +1,32 @@
+2010-02-08  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Barth.
+
+        [V8] Move Element custom methods into generic bindings
+
+        This patch moves the security checks in setAttribute,
+        setAttributeNode, setAttributeNS and setAttributeNodeNS from
+        V8ElementCustom into the generic bindings so that they can be
+        reused in other bindings. This is in a similar vein to
+        <https://bugs.webkit.org/attachment.cgi?id=45872>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34554
+
+        LayoutTests: None
+
+        * WebCore.gypi:
+        * bindings/generic/BindingElement.h: Added.
+        (WebCore::::setAttribute):
+        (WebCore::::setAttributeNode):
+        (WebCore::::setAttributeNS):
+        (WebCore::::setAttributeNodeNS):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::V8Element::setAttributeCallback):
+        (WebCore::V8Element::setAttributeNodeCallback):
+        (WebCore::V8Element::setAttributeNSCallback):
+        (WebCore::V8Element::setAttributeNodeNSCallback):
+
 2010-02-08  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.
