@@ -1,3 +1,21 @@
+2010-02-09  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Set GtkAdjustments on our FrameView when loading a page in the PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=34754
+
+        Set the Gtk Adjustments of the FrameViews when they are restored
+        from the PageCache too. Right we only do it for the newly created
+        FrameViews in transitionToCommittedForNewPage, but we it also
+        needs to be done in the equilavent transition method for cached
+        pages.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup):
+        (WebKit::FrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2010-02-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

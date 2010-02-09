@@ -25,6 +25,7 @@
 #include "FrameLoaderClientGtk.h"
 
 #include "ArchiveResource.h"
+#include "CachedFrame.h"
 #include "Color.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
@@ -1119,8 +1120,30 @@ void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 {
 }
 
-void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
+static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view)
 {
+    WebKitWebView* containingWindow = getViewFromFrame(frame);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
+    view->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
+
+    if (priv->currentMenu) {
+        GtkMenu* menu = priv->currentMenu;
+        priv->currentMenu = 0;
+
+        gtk_menu_popdown(menu);
+        g_object_unref(menu);
+    }
+}
+
+void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cachedFrame)
+{
+    ASSERT(cachedFrame->view());
+
+    Frame* frame = core(m_frame);
+    if (frame != frame->page()->mainFrame())
+        return;
+
+    postCommitFrameViewSetup(m_frame, cachedFrame->view());
 }
 
 void FrameLoaderClient::transitionToCommittedForNewPage()
@@ -1139,16 +1162,7 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     if (frame != frame->page()->mainFrame())
         return;
 
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
-    frame->view()->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
-
-    if (priv->currentMenu) {
-        GtkMenu* menu = priv->currentMenu;
-        priv->currentMenu = NULL;
-
-        gtk_menu_popdown(menu);
-        g_object_unref(menu);
-    }
+    postCommitFrameViewSetup(m_frame, frame->view());
 }
 
 }
