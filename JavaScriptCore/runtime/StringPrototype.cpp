@@ -228,6 +228,84 @@ static inline int localeCompare(const UString& a, const UString& b)
     return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.data()), a.size(), reinterpret_cast<const ::UChar*>(b.data()), b.size());
 }
 
+struct StringRange {
+public:
+    StringRange(int pos, int len)
+        : position(pos)
+        , length(len)
+    {
+    }
+
+    StringRange()
+    {
+    }
+
+    int position;
+    int length;
+};
+
+JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, JSString* sourceVal, const UString& source, const StringRange* substringRanges, int rangeCount, const UString* separators, int separatorCount)
+{
+    if (rangeCount == 1 && separatorCount == 0) {
+        int sourceSize = source.size();
+        int position = substringRanges[0].position;
+        int length = substringRanges[0].length;
+        if (position <= 0 && length >= sourceSize)
+            return sourceVal;
+        // We could call UString::substr, but this would result in redundant checks
+        return jsString(exec, UStringImpl::create(source.rep(), max(0, position), min(sourceSize, length)));
+    }
+
+    int totalLength = 0;
+    for (int i = 0; i < rangeCount; i++)
+        totalLength += substringRanges[i].length;
+    for (int i = 0; i < separatorCount; i++)
+        totalLength += separators[i].size();
+
+    if (totalLength == 0)
+        return jsString(exec, "");
+
+    UChar* buffer;
+    PassRefPtr<UStringImpl> impl = UStringImpl::tryCreateUninitialized(totalLength, buffer);
+    if (!impl)
+        return throwOutOfMemoryError(exec);
+
+    int maxCount = max(rangeCount, separatorCount);
+    int bufferPos = 0;
+    for (int i = 0; i < maxCount; i++) {
+        if (i < rangeCount) {
+            UStringImpl::copyChars(buffer + bufferPos, source.data() + substringRanges[i].position, substringRanges[i].length);
+            bufferPos += substringRanges[i].length;
+        }
+        if (i < separatorCount) {
+            UStringImpl::copyChars(buffer + bufferPos, separators[i].data(), separators[i].size());
+            bufferPos += separators[i].size();
+        }
+    }
+
+    return jsString(exec, impl);
+}
+
+JSValue jsReplaceRange(ExecState* exec, const UString& source, int rangeStart, int rangeLength, const UString& replacement)
+{
+    int replacementLength = replacement.size();
+    int totalLength = source.size() - rangeLength + replacementLength;
+    if (totalLength == 0)
+        return jsString(exec, "");
+
+    UChar* buffer;
+    PassRefPtr<UStringImpl> impl = UStringImpl::tryCreateUninitialized(totalLength, buffer);
+    if (!impl)
+        return throwOutOfMemoryError(exec);
+
+    UStringImpl::copyChars(buffer, source.data(), rangeStart);
+    UStringImpl::copyChars(buffer + rangeStart, replacement.data(), replacementLength);
+    int rangeEnd = rangeStart + rangeLength;
+    UStringImpl::copyChars(buffer + rangeStart + replacementLength, source.data() + rangeEnd, source.size() - rangeEnd);
+
+    return jsString(exec, impl);
+}
+
 JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     JSString* sourceVal = thisValue.toThisJSString(exec);
@@ -251,7 +329,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
         int lastIndex = 0;
         int startPosition = 0;
 
-        Vector<UString::Range, 16> sourceRanges;
+        Vector<StringRange, 16> sourceRanges;
         Vector<UString, 16> replacements;
 
         // This is either a loop (if global is set) or a one-way (if not).
@@ -270,7 +348,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
                 if (matchIndex < 0)
                     break;
                 
-                sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
+                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
 
                 int completeMatchStart = ovector[0];
                 unsigned i = 0;
@@ -312,7 +390,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
                 if (matchIndex < 0)
                     break;
 
-                sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
+                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
 
                 if (callType != CallTypeNone) {
                     int completeMatchStart = ovector[0];
@@ -353,10 +431,9 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
             return sourceVal;
 
         if (lastIndex < source.size())
-            sourceRanges.append(UString::Range(lastIndex, source.size() - lastIndex));
+            sourceRanges.append(StringRange(lastIndex, source.size() - lastIndex));
 
-        return jsString(exec, source.spliceSubstringsWithSeparators(sourceRanges.data(), sourceRanges.size(),
-            replacements.data(), replacements.size()));
+        return jsSpliceSubstringsWithSeparators(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
     }
 
     // Not a regular expression, so treat the pattern as a string.
@@ -378,7 +455,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
     }
 
     int ovector[2] = { matchPos, matchPos + matchLen };
-    return jsString(exec, source.replaceRange(matchPos, matchLen, substituteBackreferences(replacementString, source, ovector, 0)));
+    return jsReplaceRange(exec, source, matchPos, matchLen, substituteBackreferences(replacementString, source, ovector, 0));
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)

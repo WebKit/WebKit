@@ -311,71 +311,6 @@ UString UString::from(double d)
     return UString(buffer, length);
 }
 
-UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const
-{
-    m_rep->checkConsistency();
-
-    if (rangeCount == 1 && separatorCount == 0) {
-        int thisSize = size();
-        int position = substringRanges[0].position;
-        int length = substringRanges[0].length;
-        if (position <= 0 && length >= thisSize)
-            return *this;
-        return UString::Rep::create(m_rep, max(0, position), min(thisSize, length));
-    }
-
-    int totalLength = 0;
-    for (int i = 0; i < rangeCount; i++)
-        totalLength += substringRanges[i].length;
-    for (int i = 0; i < separatorCount; i++)
-        totalLength += separators[i].size();
-
-    if (totalLength == 0)
-        return "";
-
-    UChar* buffer;
-    PassRefPtr<Rep> rep = Rep::tryCreateUninitialized(totalLength, buffer);
-    if (!rep)
-        return null();
-
-    int maxCount = max(rangeCount, separatorCount);
-    int bufferPos = 0;
-    for (int i = 0; i < maxCount; i++) {
-        if (i < rangeCount) {
-            UStringImpl::copyChars(buffer + bufferPos, data() + substringRanges[i].position, substringRanges[i].length);
-            bufferPos += substringRanges[i].length;
-        }
-        if (i < separatorCount) {
-            UStringImpl::copyChars(buffer + bufferPos, separators[i].data(), separators[i].size());
-            bufferPos += separators[i].size();
-        }
-    }
-
-    return rep;
-}
-
-UString UString::replaceRange(int rangeStart, int rangeLength, const UString& replacement) const
-{
-    m_rep->checkConsistency();
-
-    int replacementLength = replacement.size();
-    int totalLength = size() - rangeLength + replacementLength;
-    if (totalLength == 0)
-        return "";
-
-    UChar* buffer;
-    PassRefPtr<Rep> rep = Rep::tryCreateUninitialized(totalLength, buffer);
-    if (!rep)
-        return null();
-
-    UStringImpl::copyChars(buffer, data(), rangeStart);
-    UStringImpl::copyChars(buffer + rangeStart, replacement.data(), replacementLength);
-    int rangeEnd = rangeStart + rangeLength;
-    UStringImpl::copyChars(buffer + rangeStart + replacementLength, data() + rangeEnd, size() - rangeEnd);
-
-    return rep;
-}
-
 bool UString::getCString(CStringBuffer& buffer) const
 {
     int length = size();
@@ -419,30 +354,6 @@ char* UString::ascii() const
     *q = '\0';
 
     return asciiBuffer;
-}
-
-UString& UString::operator=(const char* c)
-{
-    if (!c) {
-        m_rep = s_nullRep;
-        return *this;
-    }
-
-    if (!c[0]) {
-        m_rep = &Rep::empty();
-        return *this;
-    }
-
-    int l = static_cast<int>(strlen(c));
-    UChar* d = 0;
-    m_rep = Rep::tryCreateUninitialized(l, d);
-    if (m_rep) {
-        for (int i = 0; i < l; i++)
-            d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
-    } else
-        m_rep = s_nullRep;;
-
-    return *this;
 }
 
 bool UString::is8Bit() const

@@ -1,3 +1,24 @@
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        Make String.replace throw an exception on out-of-memory, rather than
+        returning a null (err, empty-ish) string.  Move String::replaceRange
+        and String::spliceSubstringsWithSeparators out to StringPrototype -
+        these were fairly specific use anyway, and we can better integrate
+        throwing the JS expcetion this way.
+
+        Also removes redundant assignment operator from UString.
+
+        * JavaScriptCore.exp:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringRange::StringRange):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::jsReplaceRange):
+        (JSC::stringProtoFuncReplace):
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+
 2010-02-08  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

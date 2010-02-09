@@ -117,26 +117,6 @@ namespace JSC {
         static UString from(long);
         static UString from(double);
 
-        struct Range {
-        public:
-            Range(int pos, int len)
-                : position(pos)
-                , length(len)
-            {
-            }
-
-            Range()
-            {
-            }
-
-            int position;
-            int length;
-        };
-
-        UString spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const;
-
-        UString replaceRange(int rangeStart, int RangeEnd, const UString& replacement) const;
-
         bool getCString(CStringBuffer&) const;
 
         // NOTE: This method should only be used for *debugging* purposes as it
@@ -152,8 +132,6 @@ namespace JSC {
          * In strict mode, error is returned as null CString.
          */
         CString UTF8String(bool strict = false) const;
-
-        UString& operator=(const char*c);
 
         const UChar* data() const { return m_rep->data(); }
 
