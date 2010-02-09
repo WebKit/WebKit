@@ -41,7 +41,7 @@ using namespace WTF::Unicode;
 
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-UString tryCreateStringFromUTF8(const char* string)
+static inline UString tryCreateStringFromUTF8(const char* string)
 {
     if (!string)
         return UString::null();

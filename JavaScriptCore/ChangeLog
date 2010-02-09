@@ -1,3 +1,10 @@
+2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Try to fix build problem on SnowLeopard slaves to bring them back.
+
+        * API/JSClassRef.cpp:
+        (tryCreateStringFromUTF8): Mark method as 'static inline' to suppress "warning: no previous prototype for ..."
+
 2010-02-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
