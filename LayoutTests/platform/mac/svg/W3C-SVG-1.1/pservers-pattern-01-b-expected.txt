@@ -1,7 +1,7 @@
-KRenderingPaintServer {id="pat1" [type=PATTERN] [bbox=at (10,10) size 1x1]}
-KRenderingPaintServer {id="pat2" [type=PATTERN] [bbox=at (0,0) size 1x1]}
-KRenderingPaintServer {id="pat3" [type=PATTERN] [bbox=at (0,0) size 1x1]}
-KRenderingPaintServer {id="pat4" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="pat1" [type=PATTERN] [bbox=at (10,10) size 20x20]}
+KRenderingPaintServer {id="pat2" [type=PATTERN] [bbox=at (0,0) size 20x20]}
+KRenderingPaintServer {id="pat3" [type=PATTERN] [bbox=at (0,0) size 10x20]}
+KRenderingPaintServer {id="pat4" [type=PATTERN] [bbox=at (0,0) size 20x10]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {pattern} at (5,5) size 15x15
         RenderPath {rect} at (5,5) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
         RenderPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
-      RenderPath {rect} at (24,9) size 432x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (10,10) size 1x1]}] [data="M25.00,10.00 L455.00,10.00 L455.00,70.00 L25.00,70.00 Z"]
+      RenderPath {rect} at (24,9) size 432x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (10,10) size 20x20]}] [data="M25.00,10.00 L455.00,10.00 L455.00,70.00 L25.00,70.00 Z"]
       RenderSVGText {text} at (25,85) size 395x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 395x14
           chunk 1 text run 1 at (25.00,85.00) startOffset 0 endOffset 75 width 395.00: "Pattern created using red and green rectangles applied to fill of rectangle"
@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00 L20.00,0.00 L20.00,10.00 L10.00,10.00 Z"]
         RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
         RenderPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
-      RenderPath {rect} at (25,100) size 430x60 [stroke={[type=PATTERN] [bbox=at (0,0) size 1x1] [stroke width=20.00]}] [data="M35.00,110.00 L445.00,110.00 L445.00,150.00 L35.00,150.00 Z"]
+      RenderPath {rect} at (25,100) size 430x60 [stroke={[type=PATTERN] [bbox=at (0,0) size 20x20] [stroke width=20.00]}] [data="M35.00,110.00 L445.00,110.00 L445.00,150.00 L35.00,150.00 Z"]
       RenderSVGText {text} at (25,175) size 305x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 305x14
           chunk 1 text run 1 at (25.00,175.00) startOffset 0 endOffset 59 width 305.00: "Pattern of 4 rectangles applied to a stroke of a rectangle."

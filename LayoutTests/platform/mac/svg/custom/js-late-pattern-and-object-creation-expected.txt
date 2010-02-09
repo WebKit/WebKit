@@ -1,5 +1,5 @@
-KRenderingPaintServer {id="fillPattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
-KRenderingPaintServer {id="strokePattern" [type=PATTERN] [bbox=at (0,0) size 1x1]}
+KRenderingPaintServer {id="fillPattern" [type=PATTERN] [bbox=at (0,0) size 20x20]}
+KRenderingPaintServer {id="strokePattern" [type=PATTERN] [bbox=at (0,0) size 20x20]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

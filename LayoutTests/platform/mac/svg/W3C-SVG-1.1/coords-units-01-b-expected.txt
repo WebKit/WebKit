@@ -6,7 +6,7 @@ KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [st
 KRenderingPaintServer {id="radialUserSpace" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(15,15)] [focal=(15,15)] [radius=15.00]}
 KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}
 KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}
-KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (12.50,7.50) size 1x1]}
+KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (12.50,7.50) size 25x15]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -79,7 +79,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (29,249) size 433x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,250.00)}]
         RenderPath {rect} at (29,249) size 52x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
         RenderPath {rect} at (179,249) size 52x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0.25,0.25) size 0.50x0.50]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
-        RenderPath {rect} at (329,249) size 52x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (12.50,7.50) size 1x1]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
+        RenderPath {rect} at (329,249) size 52x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (12.50,7.50) size 25x15]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
         RenderSVGText {text} at (60,20) size 69x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 69x18
             chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 10 width 69.00: "Percentage"

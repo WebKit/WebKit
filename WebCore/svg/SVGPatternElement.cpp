@@ -209,13 +209,6 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
                                       attributes.width().value(this),
                                       attributes.height().value(this));
 
-    // Clip pattern boundaries to target boundaries
-    if (patternBoundaries.width() > targetRect.width())
-        patternBoundaries.setWidth(targetRect.width());
-
-    if (patternBoundaries.height() > targetRect.height())
-        patternBoundaries.setHeight(targetRect.height());
-
     IntSize patternSize(patternBoundaries.width(), patternBoundaries.height());
     clampImageBufferSizeToViewport(document()->view(), patternSize);
 
