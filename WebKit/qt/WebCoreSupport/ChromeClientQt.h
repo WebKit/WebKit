@@ -34,6 +34,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 
+class QEventLoop;
 class QWebPage;
 
 namespace WebCore {
@@ -158,6 +159,7 @@ namespace WebCore {
         bool toolBarsVisible;
         bool statusBarVisible;
         bool menuBarVisible;
+        QEventLoop* m_eventLoop;
     };
 }
 

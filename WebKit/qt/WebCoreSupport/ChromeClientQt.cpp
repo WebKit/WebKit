@@ -44,6 +44,7 @@
 #include "SecurityOrigin.h"
 
 #include <qdebug.h>
+#include <qeventloop.h>
 #include <qtextdocument.h>
 #include <qtooltip.h>
 
@@ -62,13 +63,15 @@ namespace WebCore {
 
 ChromeClientQt::ChromeClientQt(QWebPage* webPage)
     : m_webPage(webPage)
+    , m_eventLoop(0)
 {
     toolBarsVisible = statusBarVisible = menuBarVisible = true;
 }
 
 ChromeClientQt::~ChromeClientQt()
 {
-
+    if (m_eventLoop)
+        m_eventLoop->exit();
 }
 
 void ChromeClientQt::setWindowRect(const FloatRect& rect)
@@ -173,14 +176,16 @@ void ChromeClientQt::show()
 
 bool ChromeClientQt::canRunModal()
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 
 void ChromeClientQt::runModal()
 {
-    notImplemented();
+    m_eventLoop = new QEventLoop();
+    QEventLoop* eventLoop = m_eventLoop;
+    m_eventLoop->exec();
+    delete eventLoop;
 }
 
 

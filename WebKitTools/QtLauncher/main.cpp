@@ -520,9 +520,11 @@ void LauncherWindow::setupUI()
 #endif
 }
 
-QWebPage* WebPage::createWindow(QWebPage::WebWindowType)
+QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
 {
     LauncherWindow* mw = new LauncherWindow;
+    if (type == WebModalDialog)
+        mw->setWindowModality(Qt::ApplicationModal);
     mw->show();
     return mw->page();
 }

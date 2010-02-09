@@ -1,3 +1,15 @@
+2010-02-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Webkit in Qt does not have window.showModalDialog
+        https://bugs.webkit.org/show_bug.cgi?id=25585
+
+        Set the modality flag when createWindow is called with window type WebWindowDialog.
+
+        * QtLauncher/main.cpp:
+        (WebPage::createWindow):
+
 2010-02-09  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed trivial warning fix.
