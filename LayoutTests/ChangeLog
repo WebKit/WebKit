@@ -1,3 +1,22 @@
+2010-02-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Add numerous parse-only tests.
+        https://bugs.webkit.org/show_bug.cgi?id=34019
+
+        The input file contains a lot of strings, and tests whether they are
+        valid JavaScript code snippets or contains various syntax errors.
+        No semantic checks: even if a tests throws an exception, which is not
+        syntax error, it is considered successfull.
+
+        * fast/js/parser-syntax-check-expected.txt: Added.
+        * fast/js/parser-syntax-check.html: Added.
+        * fast/js/script-tests/parser-syntax-check.js: Added.
+        (runTest):
+        (valid):
+        (invalid):
+
 2010-02-08  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed GTK+ test fix.
