@@ -1,0 +1,223 @@
+#scripts-files option.injected {
+    color: rgb(70, 134, 240);
+}
+
+.data-grid table {
+    line-height: 120%;
+}
+
+body.attached #toolbar {
+    height: 34px;
+    border-top: 1px solid rgb(100, 100, 100);
+    cursor: default; /* overriden */
+    padding-left: 0;
+}
+
+
+/* Chrome theme overrides */
+body.platform-windows #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242, 247, 253)), to(rgb(223, 234, 248)));
+}
+
+body.platform-windows.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(248, 248, 248)), to(rgb(237, 237, 237)));
+}
+
+
+/* Heap Profiler Styles */
+
+.heap-snapshot-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/focusButtonGlyph.png);
+}
+
+.heap-snapshot-sidebar-tree-item .icon {
+    content: url(Images/profileIcon.png);
+}
+
+.heap-snapshot-sidebar-tree-item.small .icon {
+    content: url(Images/profileSmallIcon.png);
+}
+
+.heap-snapshot-view {
+    display: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.heap-snapshot-view.visible {
+    display: block;
+}
+
+.heap-snapshot-view .data-grid {
+    border: none;
+    max-height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 93px;
+}
+
+.heap-snapshot-view .data-grid th.count-column {
+    text-align: center;
+}
+
+.heap-snapshot-view .data-grid td.count-column {
+    text-align: right;
+}
+
+.heap-snapshot-view .data-grid th.size-column {
+    text-align: center;
+}
+
+.heap-snapshot-view .data-grid td.size-column {
+    text-align: right;
+}
+
+.heap-snapshot-view .data-grid th.countDelta-column {
+    text-align: center;
+}
+
+.heap-snapshot-view .data-grid td.countDelta-column {
+    text-align: right;
+}
+
+.heap-snapshot-view .data-grid th.sizeDelta-column {
+    text-align: center;
+}
+
+.heap-snapshot-view .data-grid td.sizeDelta-column {
+    text-align: right;
+}
+
+#heap-snapshot-summary-container {
+    position: absolute;
+    padding-top: 20px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 93px;
+    margin-left: -1px;
+    border-left: 1px solid rgb(102, 102, 102);
+    background-color: rgb(101, 111, 130);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0)));
+    background-repeat: repeat-x;
+    background-position: top;
+    text-align: center;
+    text-shadow: black 0 1px 1px;
+    white-space: nowrap;
+    color: white;
+    -webkit-background-size: 1px 6px;
+    -webkit-background-origin: padding;
+    -webkit-background-clip: padding;
+}
+
+.heap-snapshot-summary {
+    display: inline-block;
+    width: 50%;
+    min-width: 300px;
+    position: relative;
+}
+
+.heap-snapshot-summary canvas.summary-graph {
+    width: 225px;
+}
+
+.heap-snapshot-summary-label {
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 1px;
+    width: 50%;
+    left: 25%;
+}
+
+body.platform-windows .section > .header {
+    border: 1px solid rgb(92, 116, 157);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(105, 133, 180)), to(rgb(92, 116, 157)));
+}
+
+body.platform-windows .console-group-messages .section > .header {
+    padding: 0 8px 0 0;
+    background-image: none;
+    border: none;
+    min-height: 0;
+}
+
+body.platform-windows #resources-filter {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(233, 233, 233)), to(rgb(233, 233, 233)));
+}
+
+body.platform-windows .crumbs .crumb {
+    -webkit-border-image: url(Images/segmentChromium.png) 0 12 0 2;
+}
+
+body.platform-windows .crumbs .crumb.end {
+    -webkit-border-image: url(Images/segmentEndChromium.png) 0 2 0 2;
+}
+
+body.platform-windows .crumbs .crumb.selected {
+    -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
+    color: white;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 0px 0;
+}
+
+body.platform-windows .crumbs .crumb.selected:hover {
+    -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
+}
+
+body.platform-windows .crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover {
+    -webkit-border-image: url(Images/segmentSelectedEndChromium.png) 0 2 0 2;
+}
+
+body.platform-windows .crumbs .crumb:hover {
+    -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
+}
+
+body.platform-windows .crumbs .crumb.dimmed:hover {
+    -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
+}
+
+body.platform-windows .crumbs .crumb.end:hover {
+    -webkit-border-image: url(Images/segmentHoverEndChromium.png) 0 2 0 2;
+}
+
+body.platform-windows body.drawer-visible #main-status-bar {
+    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackgroundChromium.png);
+}
+
+body.platform-windows .status-bar {
+    background-image: url(Images/statusbarBackgroundChromium.png);
+}
+
+body.platform-windows button.status-bar-item {
+    background-image: url(Images/statusbarButtonsChromium.png);
+}
+
+body.platform-windows select.status-bar-item:active {
+    -webkit-border-image: url(Images/statusbarMenuButtonSelectedChromium.png) 0 17 0 2;
+}
+
+body.platform-windows #drawer {
+    background-image: url(Images/statusbarBottomBackgroundChromium.png);
+}
+
+body.platform-windows select.status-bar-item {
+    -webkit-border-image: url(Images/statusbarMenuButtonChromium.png) 0 17 0 2;
+}
+
+.scope-bar li.selected {
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+}
+
+.scope-bar li:active {
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+}
+
+.timeline-category-tree-item input {
+    vertical-align: middle;
+}
