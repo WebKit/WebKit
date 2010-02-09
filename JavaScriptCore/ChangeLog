@@ -1,3 +1,16 @@
+2010-02-09  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] use nanval() for Symbian as nonInlineNaN
+        https://bugs.webkit.org/show_bug.cgi?id=34170
+
+        numeric_limits<double>::quiet_NaN is broken in Symbian
+        causing NaN to be evaluated as a number.
+
+        * runtime/JSValue.cpp:
+        (JSC::nonInlineNaN):
+
 2010-02-09  Tamas Szirbucz  <szirbucz@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
