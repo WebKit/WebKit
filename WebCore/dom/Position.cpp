@@ -1046,7 +1046,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
 
             candidate = box;
         }
-        if (candidate && !box && affinity == DOWNSTREAM) {
+        if (candidate && candidate == textRenderer->lastTextBox() && affinity == DOWNSTREAM) {
             box = searchAheadForBetterMatch(textRenderer);
             if (box)
                 caretOffset = box->caretMinOffset();

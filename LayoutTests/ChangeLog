@@ -1,3 +1,16 @@
+2010-02-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Problems navigating by caret in links whose text wraps onto
+        subsequent lines.
+        https://bugs.webkit.org/show_bug.cgi?id=25676
+
+        Added tests showing the problem.
+
+        * fast/events/multiline-link-arrow-navigation.html
+        * fast/events/multiline-link-arrow-navigation-expected.txt
+
 2010-02-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
