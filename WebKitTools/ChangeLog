@@ -1,3 +1,16 @@
+2010-02-09  Chang Shu  <Chang.Shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable appcache feature.
+        https://bugs.webkit.org/show_bug.cgi?id=34713
+
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
