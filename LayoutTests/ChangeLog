@@ -1,3 +1,14 @@
+2010-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash due to layout not done in case involving removal of absolute positioning
+        https://bugs.webkit.org/show_bug.cgi?id=34734
+        rdar://problem/7588280
+
+        * fast/dynamic/position-change-layout-expected.txt: Added.
+        * fast/dynamic/position-change-layout.html: Added.
+
 2010-02-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,18 @@
+2010-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash due to layout not done in case involving removal of absolute positioning
+        https://bugs.webkit.org/show_bug.cgi?id=34734
+        rdar://problem/7588280
+
+        Test: fast/dynamic/position-change-layout.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleDidChange): Call markContainingBlocksForLayout in
+        a case where the object already needs layout, but might have a new containing
+        block and so needs to mark the new containing block.
+
 2010-02-08  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Adler.
