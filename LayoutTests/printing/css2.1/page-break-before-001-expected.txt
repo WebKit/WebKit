@@ -1,0 +1,4 @@
+There must not be a page break after this line of text.
+This test should produce only one page of output.
+PASS
+

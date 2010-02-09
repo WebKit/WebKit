@@ -5074,6 +5074,7 @@ fast/loader/crash-copying-backforwardlist.html
 # Implement LayoutTestController::pageNumberForElementById().
 printing/page-break-always.html
 printing/pageNumerForElementById.html
+printing/css2.1
 
 # Because ENABLE_DASHBOARD_SUPPORT=0 is the default option. (Apple's dashboard support in OS X)
 fast/css/dashboard-regions-attr-crash.html

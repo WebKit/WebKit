@@ -1,0 +1,4 @@
+This test should produce two pages of output. This text should be at the top of the first page.
+This text should be at the top of the second and final page.
+PASS
+
