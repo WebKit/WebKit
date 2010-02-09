@@ -169,6 +169,9 @@ if (isQt()) {
     }
 }
 
+# Additional environment parameters
+push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'});
+
 # Initialize values from defaults
 foreach (@ARGV) {
     if ($_ eq '--minimal') {

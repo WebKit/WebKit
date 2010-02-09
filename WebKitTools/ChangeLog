@@ -1,3 +1,12 @@
+2010-02-09 Gabor Rapcsanyi <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add possibility of passing parameters to build-webkit by environment variable,
+        because the buildbot slaves can't control the arguments.
+
+        * Scripts/build-webkit:
+
 2010-02-09  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
