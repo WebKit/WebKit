@@ -1,5 +1,14 @@
 2010-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed trivial fix.
+
+        platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt updated 
+        by r54560. Qt platform specific expected file should be updated too.
+
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt: Updated.
+
+2010-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] fast/events/multiline-link-arrow-navigation.html introduced in r54566, but our
         LayoutTestController::overridePreference() does not support the 'WebKitEnableCaretBrowsing' preference now.
 
