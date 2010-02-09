@@ -1,3 +1,17 @@
+2010-02-09  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add the chromium interface to support Blob.slice.
+        https://bugs.webkit.org/show_bug.cgi?id=34652
+
+        * WebKit.gyp:
+        * public/WebFileInfo.h: Added.
+        * public/WebHTTPBody.h:
+        * src/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+        (WebKit::WebHTTPBody::appendFile):
+
 2010-02-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Follow-up fix.

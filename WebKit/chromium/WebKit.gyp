@@ -112,6 +112,7 @@
                 'public/WebEventListener.h',
                 'public/WebFileChooserCompletion.h',
                 'public/WebFileChooserParams.h',
+                'public/WebFileInfo.h',
                 'public/WebFindOptions.h',
                 'public/WebFrame.h',
                 'public/WebFrameClient.h',

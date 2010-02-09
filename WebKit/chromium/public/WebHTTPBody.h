@@ -32,6 +32,7 @@
 #define WebHTTPBody_h
 
 #include "WebData.h"
+#include "WebFileInfo.h"
 #include "WebNonCopyable.h"
 #include "WebString.h"
 
@@ -50,6 +51,9 @@ public:
         enum { TypeData, TypeFile } type;
         WebData data;
         WebString filePath;
+        long long fileStart;
+        long long fileLength; // -1 means to the end of the file.
+        WebFileInfo fileInfo;
     };
 
     ~WebHTTPBody() { reset(); }
@@ -77,7 +81,9 @@ public:
 
     // Append to the list of elements.
     WEBKIT_API void appendData(const WebData&);
-    WEBKIT_API void appendFile(const WebString&);
+    WEBKIT_API void appendFile(const WebString&); // FIXME: to be removed.
+    // Passing -1 to fileLength means to the end of the file.
+    WEBKIT_API void appendFile(const WebString&, long long fileStart, long long fileLength, const WebFileInfo&);
 
     // Identifies a particular form submission instance.  A value of 0 is
     // used to indicate an unspecified identifier.

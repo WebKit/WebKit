@@ -32,6 +32,7 @@
 #include "WebHTTPBody.h"
 
 #include "FormData.h"
+#include "WebFileInfo.h"
 
 using namespace WebCore;
 
@@ -78,11 +79,17 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
         result.type = Element::TypeData;
         result.data.assign(element.m_data.data(), element.m_data.size());
         result.filePath.reset();
+        result.fileStart = 0;
+        result.fileLength = 0;
+        result.fileInfo.modificationTime = 0.0;
         break;
     case FormDataElement::encodedFile:
         result.type = Element::TypeFile;
         result.data.reset();
         result.filePath = element.m_filename;
+        result.fileStart = 0; // FIXME: to be set from FormData.
+        result.fileLength = -1; // FIXME: to be set from FormData.
+        result.fileInfo.modificationTime = 0.0; // FIXME: to be set from FormData.
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -104,6 +111,11 @@ void WebHTTPBody::appendFile(const WebString& filePath)
 {
     ensureMutable();
     m_private->appendFile(filePath);
+}
+
+void WebHTTPBody::appendFile(const WebString& filePath, long long fileStart, long long fileLength, const WebFileInfo& fileInfo)
+{
+    // FIXME: to be implemented.
 }
 
 long long WebHTTPBody::identifier() const
