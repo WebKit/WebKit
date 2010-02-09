@@ -363,9 +363,6 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
 
     m_dataObject->textHtml = createMarkup(selectedRange, 0,
         AnnotateForInterchange);
-#if OS(DARWIN)
-    m_dataObject->textHtml = String("<meta charset='utf-8' id='webkit-interchange-charset'>") + m_dataObject->textHtml;
-#endif
     m_dataObject->htmlBaseUrl = frame->document()->url();
 
     String str = frame->selectedText();
