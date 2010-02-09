@@ -1,5 +1,12 @@
 2010-02-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (SL/win build fixes).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/StringPrototype.cpp:
+
+2010-02-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt
 
         Make String.replace throw an exception on out-of-memory, rather than
