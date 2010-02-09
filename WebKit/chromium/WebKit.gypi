@@ -42,6 +42,21 @@
             'src/js/DevToolsHostStub.js',
             'src/js/Tests.js',
         ],
+        'devtools_css_files': [
+            'src/js/devTools.css',
+        ],
+        'devtools_image_files': [
+            'src/js/Images/segmentChromium.png',
+            'src/js/Images/segmentHoverChromium.png',
+            'src/js/Images/segmentHoverEndChromium.png',
+            'src/js/Images/segmentSelectedChromium.png',
+            'src/js/Images/segmentSelectedEndChromium.png',
+            'src/js/Images/statusbarBackgroundChromium.png',
+            'src/js/Images/statusbarBottomBackgroundChromium.png',
+            'src/js/Images/statusbarButtonsChromium.png',
+            'src/js/Images/statusbarMenuButtonChromium.png',
+            'src/js/Images/statusbarMenuButtonSelectedChromium.png',
+        ],
     },
 }
 

@@ -2,6 +2,27 @@
 
         Reviewed by Pavel Feldman.
 
+        Upstream DevTools Images and .css files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34756
+
+        * WebKit.gypi:
+        * src/js/DevTools.css: Added.
+        * src/js/Images/segmentChromium.png: Added.
+        * src/js/Images/segmentHoverChromium.png: Added.
+        * src/js/Images/segmentHoverEndChromium.png: Added.
+        * src/js/Images/segmentSelectedChromium.png: Added.
+        * src/js/Images/segmentSelectedEndChromium.png: Added.
+        * src/js/Images/statusbarBackgroundChromium.png: Added.
+        * src/js/Images/statusbarBottomBackgroundChromium.png: Added.
+        * src/js/Images/statusbarButtonsChromium.png: Added.
+        * src/js/Images/statusbarMenuButtonChromium.png: Added.
+        * src/js/Images/statusbarMenuButtonSelectedChromium.png: Added.
+
+2010-02-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Upstream JavaScript part of DevTools WebKit API implementation(now
         with the added files).
 
