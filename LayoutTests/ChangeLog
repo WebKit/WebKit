@@ -1,3 +1,15 @@
+2010-02-09  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed.
+
+        Fix build brekage introduced by r54536.
+
+        Add the following two to Skipped:
+        fast/css/inline-element-line-break.html and
+        fast/css/pseudo-element-line-break.html
+
+        * platform/gtk/Skipped:
+
 2010-02-09  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Laszlo Gombos.

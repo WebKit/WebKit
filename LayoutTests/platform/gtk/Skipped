@@ -5770,6 +5770,8 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 # Tests generating new results
 fast/backgrounds/quirks-mode-line-box-backgrounds.html
 fast/css/css3-space-in-nth-and-lang.html
+fast/css/inline-element-line-break.html
+fast/css/pseudo-element-line-break.html
 fast/lists/w3-css3-list-styles-alphabetic.html
 fast/repaint/block-no-inflow-children.html
 fast/repaint/moving-shadow-on-container.html
