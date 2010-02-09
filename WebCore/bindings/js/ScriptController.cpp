@@ -155,6 +155,9 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 // An DOMWrapperWorld other than the thread's normal world.
 class IsolatedWorld : public DOMWrapperWorld {
 public:
+    static PassRefPtr<IsolatedWorld> create(JSGlobalData* globalData) { return adoptRef(new IsolatedWorld(globalData)); }
+
+protected:
     IsolatedWorld(JSGlobalData* globalData)
         : DOMWrapperWorld(globalData, false)
     {
@@ -162,8 +165,6 @@ public:
         ASSERT(clientData);
         static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
     }
-
-    static PassRefPtr<IsolatedWorld> create(JSGlobalData* globalData) { return adoptRef(new IsolatedWorld(globalData)); }
 };
 
 PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()

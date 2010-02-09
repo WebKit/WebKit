@@ -1,3 +1,35 @@
+2010-02-08  David Levin  <levin@chromium.org>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION (before r54472): Various tests in fast/workers are crashing on the buildbot.
+        https://bugs.webkit.org/show_bug.cgi?id=34728
+
+        The core part of the fix is to change WebCoreJSClientData::m_normalWorld
+        from DOMWrapperWorld to RefPtr<DOMWrapperWorld> so that the DOMWrapperWorld
+        is really ref counted.
+
+        No new tests because current tests sufficiently cover this as evidenced as
+        the buildbot crashes.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld): Made this robust to m_globalData
+        being 0.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMWrapperWorld::create): Made this class follow the standard
+        create pattern for RefCounted classes.
+        (WebCore::DOMWrapperWorld::detachFromGlobalData): Since this class can
+        now outlive JSGlobalData, this method tells it to stop using its JSGlobalData.
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData): Adjusted due to
+        m_normalWorld being a RefPtr.
+        (WebCore::WebCoreJSClientData::~WebCoreJSClientData): Ditto (and added
+        asserts for the FIXME).
+        (WebCore::WebCoreJSClientData::normalWorld): Ditto.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::IsolatedWorld::create): Made the constructor protected.
+        (WebCore::IsolatedWorld::IsolatedWorld): Made the constructor protected, so
+        that code would have to use the create method.
+
 2010-02-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
