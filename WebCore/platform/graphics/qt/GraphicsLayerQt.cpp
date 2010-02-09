@@ -44,6 +44,55 @@
 
 namespace WebCore {
 
+class MaskEffectQt : public QGraphicsEffect {
+public:
+    MaskEffectQt(QObject* parent, QGraphicsItem* maskLayer)
+            : QGraphicsEffect(parent)
+            , m_maskLayer(maskLayer)
+    {
+    }
+
+    void draw(QPainter* painter)
+    {
+        // this is a modified clone of QGraphicsOpacityEffect.
+        // It's more efficient to do it this way because
+        // (a) we don't need the QBrush abstraction - we always end up using QGraphicsItem::paint from the mask layer
+        // (b) QGraphicsOpacityEffect detaches the pixmap, which is inefficient on OpenGL.
+        QPixmap maskPixmap(sourceBoundingRect().toAlignedRect().size());
+
+        // we need to do this so the pixmap would have hasAlpha()
+        maskPixmap.fill(Qt::transparent);
+        QPainter maskPainter(&maskPixmap);
+        QStyleOptionGraphicsItem option;
+        option.exposedRect = option.rect = maskPixmap.rect();
+        maskPainter.setRenderHints(painter->renderHints(), true);
+        m_maskLayer->paint(&maskPainter, &option, 0);
+        maskPainter.end();
+        QPoint offset;
+        QPixmap srcPixmap = sourcePixmap(Qt::LogicalCoordinates, &offset, QGraphicsEffect::NoPad);
+
+        // we have to use another intermediate pixmap, to make sure the mask applies only to this item
+        // and doesn't modify pixels already painted into this paint-device
+        QPixmap pixmap(srcPixmap.size());
+        pixmap.fill(Qt::transparent);
+
+        if (pixmap.isNull())
+            return;
+
+        QPainter pixmapPainter(&pixmap);
+        pixmapPainter.setRenderHints(painter->renderHints());
+        pixmapPainter.setCompositionMode(QPainter::CompositionMode_Source);
+        // We use drawPixmap rather than detaching, because it's more efficient on OpenGL
+        pixmapPainter.drawPixmap(0, 0, srcPixmap);
+        pixmapPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        pixmapPainter.drawPixmap(0, 0, maskPixmap);
+        pixmapPainter.end();
+        painter->drawPixmap(offset, pixmap);
+    }
+
+    QGraphicsItem* m_maskLayer;
+};
+
 class GraphicsLayerQtImpl : public QGraphicsObject {
     Q_OBJECT
 
@@ -88,7 +137,6 @@ public:
 
     // we manage transforms ourselves because transform-origin acts differently in webkit and in Qt
     void setBaseTransform(const QTransform&);
-    void drawContents(QPainter*, const QRectF&, bool mask = false);
 
     // let the compositor-API tell us which properties were changed
     void notifyChange(ChangeMask);
@@ -121,6 +169,7 @@ public:
     QTransform m_baseTransform;
     bool m_transformAnimationRunning;
     bool m_opacityAnimationRunning;
+    QWeakPointer<MaskEffectQt> m_maskEffect;
 
     struct ContentData {
         QPixmap pixmap;
@@ -183,6 +232,7 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
     : QGraphicsObject(0)
     , m_layer(newLayer)
     , m_transformAnimationRunning(false)
+    , m_opacityAnimationRunning(false)
     , m_changeMask(NoChanges)
 {
     // we use graphics-view for compositing, not for interactivity
@@ -277,49 +327,22 @@ QRectF GraphicsLayerQtImpl::boundingRect() const
 
 void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    if (m_state.maskLayer && m_state.maskLayer->platformLayer()) {
-        // FIXME: see if this is better done somewhere else
-        GraphicsLayerQtImpl* otherMask = static_cast<GraphicsLayerQtImpl*>(m_state.maskLayer->platformLayer());
-        otherMask->flushChanges(true);
-        
-        // CSS3 mask and QGraphicsOpacityEffect are the same thing! we just need to convert...
-        // The conversion is as fast as we can make it - we render the layer once and send it to the QGraphicsOpacityEffect
-        if (!graphicsEffect()) {
-            QPixmap mask(QSize(m_state.maskLayer->size().width(), m_state.maskLayer->size().height()));
-            mask.fill(Qt::transparent);
-            {
-                QPainter p(&mask);
-                p.setRenderHints(painter->renderHints(), true);
-                p.setCompositionMode(QPainter::CompositionMode_Source);
-                static_cast<GraphicsLayerQtImpl*>(m_state.maskLayer->platformLayer())->drawContents(&p, option->exposedRect, true);
-            }
-            QGraphicsOpacityEffect* opacityEffect = new QGraphicsOpacityEffect(this);
-            opacityEffect->setOpacity(1);
-            opacityEffect->setOpacityMask(QBrush(mask));
-            setGraphicsEffect(opacityEffect);
-        }
-    }
-    drawContents(painter, option->exposedRect);
-}
-
-void GraphicsLayerQtImpl::drawContents(QPainter* painter, const QRectF& exposedRect, bool mask)
-{
     if (m_currentContent.backgroundColor.isValid())
-        painter->fillRect(exposedRect, QColor(m_currentContent.backgroundColor));
+        painter->fillRect(option->exposedRect, QColor(m_currentContent.backgroundColor));
 
     switch (m_currentContent.contentType) {
+    case HTMLContentType:
+        if (m_state.drawsContent) {
+            // this is the expensive bit. we try to minimize calls to this area by proper caching
+            GraphicsContext gc(painter);
+            m_layer->paintGraphicsLayerContents(gc, option->exposedRect.toAlignedRect());
+        }
+        break;
     case PixmapContentType:
         painter->drawPixmap(m_state.contentsRect, m_currentContent.pixmap);
         break;
     case ColorContentType:
         painter->fillRect(m_state.contentsRect, m_currentContent.contentsBackgroundColor);
-        break;
-    default:
-        if (m_state.drawsContent) {
-            // this is the "expensive" bit. we try to minimize calls to this neck of the woods by proper caching
-            GraphicsContext gc(painter);
-            m_layer->paintGraphicsLayerContents(gc, exposedRect.toAlignedRect());
-        }
         break;
     }
 }
@@ -381,12 +404,15 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
     if (m_changeMask & MaskLayerChange) {
         // we can't paint here, because we don't know if the mask layer
         // itself is ready... we'll have to wait till this layer tries to paint
+        setFlag(ItemClipsChildrenToShape, m_layer->maskLayer() || m_layer->masksToBounds());
         setGraphicsEffect(0);
-        if (m_layer->maskLayer())
-            setFlag(ItemClipsChildrenToShape, true);
-        else
-            setFlag(ItemClipsChildrenToShape, m_layer->masksToBounds());
-        update();
+        if (m_layer->maskLayer()) {
+            if (GraphicsLayerQtImpl* mask = qobject_cast<GraphicsLayerQtImpl*>(m_layer->maskLayer()->platformLayer()->toGraphicsObject())) {
+                mask->m_maskEffect = new MaskEffectQt(this, mask);
+                mask->setCacheMode(NoCache);
+                setGraphicsEffect(mask->m_maskEffect.data());
+            }
+        }
     }
 
     if ((m_changeMask & PositionChange) && (m_layer->position() != m_state.pos))
@@ -407,7 +433,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
             setBaseTransform(m_layer->transform());
     }
 
-    if (m_changeMask & (ContentChange | DrawsContentChange)) {
+    if (m_changeMask & (ContentChange | DrawsContentChange | MaskLayerChange)) {
         switch (m_pendingContent.contentType) {
         case PixmapContentType:
             update();
@@ -419,7 +445,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
 
         case ColorContentType:
             // no point in caching a solid-color rectangle
-            setCacheMode(QGraphicsItem::NoCache);
+            setCacheMode(m_layer->maskLayer() ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
             if (m_pendingContent.contentType != m_currentContent.contentType || m_pendingContent.contentsBackgroundColor != m_currentContent.contentsBackgroundColor)
                 update();
             m_state.drawsContent = false;
@@ -434,7 +460,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
                 update();
             if (!m_state.drawsContent && m_layer->drawsContent())
                 update();
-                if (m_layer->drawsContent()) {
+                if (m_layer->drawsContent() && !m_maskEffect) {
                     const QGraphicsItem::CacheMode mewCacheMode = isTransformAnimationRunning() ? ItemCoordinateCache : DeviceCoordinateCache;
 
                     // optimization: QGraphicsItem doesn't always perform this test
@@ -473,7 +499,9 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
     if ((m_changeMask & ContentsOpaqueChange) && m_state.contentsOpaque != m_layer->contentsOpaque())
         prepareGeometryChange();
 
-    if (m_changeMask & DisplayChange)
+    if (m_maskEffect)
+        m_maskEffect.data()->update();
+    else if (m_changeMask & DisplayChange)
         update(m_pendingContent.regionToUpdate.boundingRect());
 
     if ((m_changeMask & BackgroundColorChange) && (m_pendingContent.backgroundColor != m_currentContent.backgroundColor))
@@ -509,7 +537,9 @@ afterLayerChanges:
     if (!recursive)
         return;    
 
-    const QList<QGraphicsItem*> children = childItems();
+    QList<QGraphicsItem*> children = childItems();
+    if (m_state.maskLayer)
+        children.append(m_state.maskLayer->platformLayer());
 
     for (QList<QGraphicsItem*>::const_iterator it = children.begin(); it != children.end(); ++it) {
         if (QGraphicsItem* item = *it)
