@@ -61,12 +61,10 @@ PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tag
 
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
-    RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? toRenderWidget(renderer()) : 0;
-    if (renderWidget && !renderWidget->widget()) {
-        document()->updateLayoutIgnorePendingStylesheets();
-        renderWidget = (renderer() && renderer()->isWidget()) ? toRenderWidget(renderer()) : 0;
-    }
-    return renderWidget;
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (!renderer() || !renderer()->isWidget())
+        return 0;
+    return toRenderWidget(renderer());
 }
 
 void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)

@@ -1,3 +1,15 @@
+2010-02-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7400160> Netscape plug-ins are not instantiated on property access if there are pending stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=34776
+
+        * plugins/instance-available-before-stylesheets-loaded-expected.txt: Added.
+        * plugins/instance-available-before-stylesheets-loaded-object-expected.txt: Added.
+        * plugins/instance-available-before-stylesheets-loaded-object.html: Added.
+        * plugins/instance-available-before-stylesheets-loaded.html: Added.
+
 2010-02-09  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Darin Adler.

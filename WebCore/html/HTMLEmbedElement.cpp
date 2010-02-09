@@ -69,12 +69,8 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
 
 RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings() const
 {
-    RenderWidget* renderWidget = findWidgetRenderer(this);
-    if (renderWidget && !renderWidget->widget()) {
-        document()->updateLayoutIgnorePendingStylesheets();
-        renderWidget = findWidgetRenderer(this);
-    }
-    return renderWidget;
+    document()->updateLayoutIgnorePendingStylesheets();
+    return findWidgetRenderer(this);
 }
 
 bool HTMLEmbedElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
