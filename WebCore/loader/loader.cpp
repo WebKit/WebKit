@@ -322,6 +322,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         bool shouldLimitRequests = !m_name.isNull() || docLoader->doc()->parsing() || !docLoader->doc()->haveStylesheetsLoaded();
         if (shouldLimitRequests && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
+            cache()->loader()->scheduleServePendingRequests();
             return;
         }
         requestsPending.removeFirst();

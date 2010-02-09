@@ -1,3 +1,17 @@
+2010-02-08  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Schedule a loading request when there are many in-flight requests beyond
+        the limit to avoid forever page loading.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31227
+
+        Test: http/tests/loading/load-javascript-after-many-xhrs.html
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+
 2010-02-08  David Levin  <levin@chromium.org>
 
         Reviewed by Gavin Barraclough.
