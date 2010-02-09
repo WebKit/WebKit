@@ -1,3 +1,13 @@
+2010-02-09  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium Mac: Control-A shouldn't select all/Control-C shouldn't copy
+        https://bugs.webkit.org/show_bug.cgi?id=34615
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEventDefault):
+
 2010-02-08  Evan Martin  <evan@chromium.org>
 
         dlopen() knows how to search the library search path, so just rely on

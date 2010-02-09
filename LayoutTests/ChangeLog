@@ -1,3 +1,13 @@
+2010-02-09  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium Mac: Control-A shouldn't select all/Control-C shouldn't copy
+        https://bugs.webkit.org/show_bug.cgi?id=34615
+
+        * fast/events/attempt-select-all-with-wrong-modifier-expected.txt: Added.
+        * fast/events/attempt-select-all-with-wrong-modifier.html: Added.
+
 2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

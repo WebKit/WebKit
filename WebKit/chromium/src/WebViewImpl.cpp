@@ -697,6 +697,7 @@ bool WebViewImpl::keyEventDefault(const WebKeyboardEvent& event)
     case WebInputEvent::RawKeyDown:
         if (event.modifiers == WebInputEvent::ControlKey) {
             switch (event.windowsKeyCode) {
+#if !OS(DARWIN)
             case 'A':
                 focusedFrame()->executeCommand(WebString::fromUTF8("SelectAll"));
                 return true;
@@ -704,6 +705,7 @@ bool WebViewImpl::keyEventDefault(const WebKeyboardEvent& event)
             case 'C':
                 focusedFrame()->executeCommand(WebString::fromUTF8("Copy"));
                 return true;
+#endif
             // Match FF behavior in the sense that Ctrl+home/end are the only Ctrl
             // key combinations which affect scrolling. Safari is buggy in the
             // sense that it scrolls the page for all Ctrl+scrolling key
