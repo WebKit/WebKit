@@ -260,13 +260,16 @@ void SVGRenderBase::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 
 bool SVGRenderBase::isOverflowHidden(const RenderObject* object)
 {
-    if (object->style()->overflowX() == OHIDDEN) {
-        // SVG doesn't support independent x/y overflow
-        ASSERT(object->style()->overflowY() == OHIDDEN);
-        return true;
-    }
+    // SVG doesn't support independent x/y overflow
+    ASSERT(object->style()->overflowX() == object->style()->overflowY());
 
-    return false;
+    // OSCROLL is never set for SVG - see CSSStyleSelector::adjustRenderStyle
+    ASSERT(object->style()->overflowX() != OSCROLL);
+
+    // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
+    ASSERT(!object->isRoot());
+
+    return object->style()->overflowX() == OHIDDEN;
 }
 
 FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object) const

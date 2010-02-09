@@ -618,9 +618,11 @@ void FrameView::layout(bool allowSubtree)
             if (documentElement->isSVGElement()) {
                 if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
                     rootRenderer->setChildNeedsLayout(true);
-            }
-#endif
+            } else
+                applyOverflowToViewport(rootRenderer, hMode, vMode);
+#else
             applyOverflowToViewport(rootRenderer, hMode, vMode);
+#endif
         }
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (m_firstLayout && !document->ownerElement())

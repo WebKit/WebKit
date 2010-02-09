@@ -1,3 +1,76 @@
+2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        No scroll bars are displayed for standalone SVG image
+        https://bugs.webkit.org/show_bug.cgi?id=11225
+
+        Height and width defined for svg element are not honored
+        https://bugs.webkit.org/show_bug.cgi?id=24033
+
+        SVG file does not pan and has no scroll bars
+        https://bugs.webkit.org/show_bug.cgi?id=24448
+
+        Modify some tests to account that overflow is now properly handled. Add new results for several overflow tests.
+
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac/svg/custom/focus-ring-expected.txt:
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * platform/mac/svg/overflow: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-defaults-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-defaults-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-defaults-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-inner-svg-element-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.txt: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt: Added.
+        * platform/mac/svg/text/text-gradient-positioning-expected.checksum:
+        * platform/mac/svg/text/text-gradient-positioning-expected.png:
+        * platform/mac/svg/text/text-gradient-positioning-expected.txt:
+        * svg/custom/focus-ring.svg: Shrink viewport size to avoid displaying scrollbars.
+        * svg/custom/foreignObject-crash-on-hover.xml: Ditto.
+        * svg/custom/path-bad-data.svg: Ditto.
+        * svg/overflow: Added.
+        * svg/overflow/overflow-on-inner-svg-element-defaults.svg: Added.
+        * svg/overflow/overflow-on-inner-svg-element.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-defaults.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto.xhtml: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml: Added.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml: Added.
+        * svg/text/text-gradient-positioning.svg: Shrink viewport size to avoid displaying scrollbars.
+
 2010-02-09  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed.

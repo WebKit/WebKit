@@ -63,8 +63,8 @@ AffineTransform RenderSVGViewportContainer::markerContentTransformation(const Af
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 {
-    if (style()->overflowX() != OVISIBLE)
-        paintInfo.context->clip(enclosingIntRect(m_viewport)); // FIXME: Eventually we'll want float-precision clipping
+    if (SVGRenderBase::isOverflowHidden(this))
+        paintInfo.context->clip(m_viewport);
 }
 
 void RenderSVGViewportContainer::calcViewport()

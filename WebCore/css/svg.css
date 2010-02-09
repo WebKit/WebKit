@@ -32,18 +32,23 @@
     which does not use CSS layout [CSS2-LAYOUT] or XSL formatting [XSL], the 'overflow' property on the 
     outermost 'svg' element is ignored for the purposes of visual rendering and the initial clipping path is set 
     to the bounds of the initial viewport.
+
+    When an outermost 'svg' element is embedded inline within a parent XML grammar which uses CSS layout
+    [CSS2-LAYOUT] or XSL formatting [XSL], if the 'overflow' property has the value hidden or scroll, then
+    the user agent will establish an initial clipping path equal to the bounds of the initial viewport; otherwise,
+    the initial clipping path is set according to the clipping rules as defined in [CSS2-overflow].
+
+    Opera/Firefox & WebKit agreed on NOT setting "overflow: hidden" for the outermost svg element - SVG 1.1 Errata
+    contains these changes as well as all future SVG specifications: see http://lists.w3.org/Archives/Public/public-svg-wg/2008JulSep/0347.html
 */
-svg:root {
-    overflow: hidden !important
+
+svg:not(:root), symbol, image, marker, pattern, foreignObject {
+    overflow: hidden
 }
 
 svg {
     width: 100%;
     height: 100%;
-}
-
-svg, symbol, marker, pattern {
-    overflow: hidden
 }
 
 text, foreignObject {

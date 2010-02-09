@@ -4,7 +4,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:html="http://www.w3.org/1999/xhtml"
-     height="800" width="800">
+     height="600" width="800">
   <g transform="translate(50,50)">
     <polygon points="0,0 300,0 300,300 0,300" style="fill:lightblue; stroke:red;"/>
     <!-- switch -->

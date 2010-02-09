@@ -1,3 +1,46 @@
+2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        No scroll bars are displayed for standalone SVG image
+        https://bugs.webkit.org/show_bug.cgi?id=11225
+
+        Height and width defined for svg element are not honored
+        https://bugs.webkit.org/show_bug.cgi?id=24033
+
+        SVG file does not pan and has no scroll bars
+        https://bugs.webkit.org/show_bug.cgi?id=24448
+
+        Adapt to SVG 1.1 errata to change the overflow handling:
+        Replace "svg { overflow: hidden }"  by "svg:not(:root) { overflow: hidden }" to allow standalone SVG documents to contain scrolllbars.
+        Agreed by SVG WG to make this the default behaviour, already implemented by Opera & FireFox (partial support).
+
+        Add new tests in svg/overflow covering all special SVG css overflow handling rules on inner/outer svg elements.
+
+        Tests: svg/overflow/overflow-on-inner-svg-element-defaults.svg
+               svg/overflow/overflow-on-inner-svg-element.svg
+               svg/overflow/overflow-on-outermost-svg-element-defaults.svg
+               svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg
+               svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg
+               svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg
+               svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto.xhtml
+               svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml
+               svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml
+               svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml
+               svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml
+
+        * css/svg.css: Change default <svg> overflow rule to only apply to inner <svg> elements.
+        * page/FrameView.cpp: 
+        (WebCore::FrameView::layout): Only apply overflow rules for non-standalone SVG documents.
+        * rendering/RenderSVGRoot.cpp: Remove all calls to isOverflowHidden - it's always the case for the outermost SVG element, see spec + errata.
+        (WebCore::RenderSVGRoot::paint): Always clip to initial viewport size.
+        (WebCore::RenderSVGRoot::computeRectForRepaint): Ditto.
+        (WebCore::RenderSVGRoot::nodeAtPoint): Simplify.
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::applyViewportClip): Use isOverflowHidden() instead of a manual oveflow query and clip in float precision.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::isOverflowHidden): Simplify implementation, assure the function is not called anymore for RenderSVGRoot objects.
+
 2010-02-09  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

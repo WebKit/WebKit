@@ -140,10 +140,8 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     RenderObject::PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
 
-    // In SVG special rules need to be applied that differ from the CSS overflow handling,
-    // see comments in svg.css for spec references, explaining this behaviour
-    if (SVGRenderBase::isOverflowHidden(this))
-        childPaintInfo.context->clip(overflowClipRect(borderBoxOriginInContainer.x(), borderBoxOriginInContainer.y()));
+    // Apply initial viewport clip - not affected by overflow handling
+    childPaintInfo.context->clip(overflowClipRect(borderBoxOriginInContainer.x(), borderBoxOriginInContainer.y()));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
@@ -255,10 +253,8 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     // and then call RenderBox's method to handle all the normal CSS Box model bits
     repaintRect = localToBorderBoxTransform().mapRect(repaintRect);
 
-    // In SVG special rules need to be applied that differ from the CSS overflow handling,
-    // see comments in svg.css for spec references, explaining this behaviour
-    if (SVGRenderBase::isOverflowHidden(this))
-        repaintRect.intersect(enclosingIntRect(FloatRect(FloatPoint(), m_viewportSize)));
+    // Apply initial viewport clip - not affected by overflow settings    
+    repaintRect.intersect(enclosingIntRect(FloatRect(FloatPoint(), m_viewportSize)));
 
     style()->svgStyle()->inflateForShadow(repaintRect);
     RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
@@ -283,11 +279,9 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     IntPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
 
     // Note: For now, we're ignoring hits to border and padding for <svg>
-    if (SVGRenderBase::isOverflowHidden(this)) {
-        IntPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
-        if (!contentBoxRect().contains(pointInContentBox))
-            return false;
-    }
+    IntPoint pointInContentBox = pointInBorderBox - borderOriginToContentBox();
+    if (!contentBoxRect().contains(pointInContentBox))
+        return false;
 
     IntPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 

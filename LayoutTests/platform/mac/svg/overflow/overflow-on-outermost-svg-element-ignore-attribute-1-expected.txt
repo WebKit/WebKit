@@ -1,0 +1,5 @@
+layer at (0,0) size 4000x4000
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 4000x4000
+  RenderSVGRoot {svg} at (0,0) size 4000x4000
+    RenderPath {rect} at (0,0) size 4000x4000 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L4000.00,0.00 L4000.00,4000.00 L0.00,4000.00 Z"]
