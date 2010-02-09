@@ -1,3 +1,381 @@
+2010-02-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Upstream JavaScript part of DevTools WebKit API implementation
+
+        https://bugs.webkit.org/show_bug.cgi?id=34744
+
+        * WebKit.gypi: Added.
+        * src/js/DebuggerAgent.js: Added.
+        (devtools.DebuggerAgent):
+        (devtools.DebuggerAgent.prototype.reset):
+        (devtools.DebuggerAgent.prototype.initUI):
+        (devtools.DebuggerAgent.prototype.resolveScriptSource.this.requestSeqToCallback_.cmd.getSequenceNumber):
+        (devtools.DebuggerAgent.prototype.resolveScriptSource):
+        (devtools.DebuggerAgent.prototype.pauseExecution):
+        (devtools.DebuggerAgent.prototype.addBreakpoint):
+        (devtools.DebuggerAgent.prototype.removeBreakpoint):
+        (devtools.DebuggerAgent.prototype.updateBreakpoint):
+        (devtools.DebuggerAgent.prototype.stepIntoStatement):
+        (devtools.DebuggerAgent.prototype.stepOutOfFunction):
+        (devtools.DebuggerAgent.prototype.stepOverStatement):
+        (devtools.DebuggerAgent.prototype.resumeExecution):
+        (devtools.DebuggerAgent.prototype.createExceptionMessage_):
+        (devtools.DebuggerAgent.prototype.showPendingExceptionMessage_):
+        (devtools.DebuggerAgent.prototype.clearExceptionMessage_):
+        (devtools.DebuggerAgent.prototype.pauseOnExceptions):
+        (devtools.DebuggerAgent.prototype.setPauseOnExceptions):
+        (devtools.DebuggerAgent.prototype.requestEvaluate):
+        (devtools.DebuggerAgent.prototype.resolveChildren):
+        (devtools.DebuggerAgent.prototype.resolveScope.this.requestSeqToCallback_.cmd.getSequenceNumber):
+        (devtools.DebuggerAgent.prototype.resolveScope):
+        (devtools.DebuggerAgent.prototype.resolveFrameVariables_.scopeResponseHandler):
+        (devtools.DebuggerAgent.prototype.resolveFrameVariables_):
+        (devtools.DebuggerAgent.prototype.resolveCompletionsOnFrame):
+        (devtools.DebuggerAgent.prototype.getScriptContextType):
+        (devtools.DebuggerAgent.prototype.requestClearBreakpoint_):
+        (devtools.DebuggerAgent.prototype.requestChangeBreakpoint_):
+        (devtools.DebuggerAgent.prototype.requestBacktrace_):
+        (devtools.DebuggerAgent.sendCommand_):
+        (devtools.DebuggerAgent.prototype.stepCommand_):
+        (devtools.DebuggerAgent.prototype.requestLookup_):
+        (devtools.DebuggerAgent.prototype.setContextId_.this.requestSeqToCallback_.cmd.getSequenceNumber):
+        (devtools.DebuggerAgent.prototype.setContextId_):
+        (devtools.DebuggerAgent.prototype.handleDebuggerOutput_):
+        (devtools.DebuggerAgent.prototype.handleBreakEvent_):
+        (devtools.DebuggerAgent.prototype.handleExceptionEvent_):
+        (devtools.DebuggerAgent.prototype.handleScriptsResponse_):
+        (devtools.DebuggerAgent.prototype.isScriptFromInspectedContext_):
+        (devtools.DebuggerAgent.prototype.handleSetBreakpointResponse_):
+        (devtools.DebuggerAgent.prototype.handleAfterCompileEvent_):
+        (devtools.DebuggerAgent.prototype.addScriptInfo_):
+        (devtools.DebuggerAgent.prototype.handleClearBreakpointResponse_):
+        (devtools.DebuggerAgent.prototype.handleBacktraceResponse_):
+        (devtools.DebuggerAgent.prototype.doHandleBacktraceResponse_):
+        (devtools.DebuggerAgent.prototype.evaluateInCallFrame):
+        (devtools.DebuggerAgent.prototype.invokeCallbackForResponse_):
+        (devtools.DebuggerAgent.prototype.formatCallFrame_):
+        (devtools.DebuggerAgent.formatObjectProperties_):
+        (devtools.DebuggerAgent.propertiesToProxies_):
+        (devtools.DebuggerAgent.formatObjectProxy_):
+        (devtools.DebuggerAgent.webkitToV8LineNumber_):
+        (devtools.DebuggerAgent.v8ToWwebkitLineNumber_):
+        (devtools.ScriptInfo):
+        (devtools.ScriptInfo.prototype.getLineOffset):
+        (devtools.ScriptInfo.prototype.getContextType):
+        (devtools.ScriptInfo.prototype.getUrl):
+        (devtools.ScriptInfo.prototype.isUnresolved):
+        (devtools.ScriptInfo.prototype.getBreakpointInfo):
+        (devtools.ScriptInfo.prototype.addBreakpointInfo):
+        (devtools.ScriptInfo.prototype.removeBreakpointInfo):
+        (devtools.BreakpointInfo):
+        (devtools.BreakpointInfo.prototype.getLine):
+        (devtools.BreakpointInfo.prototype.getV8Id):
+        (devtools.BreakpointInfo.prototype.setV8Id):
+        (devtools.BreakpointInfo.prototype.markAsRemoved):
+        (devtools.BreakpointInfo.prototype.isRemoved):
+        (devtools.CallFrame):
+        (devtools.CallFrame.prototype.evaluate_):
+        (devtools.DebugCommand):
+        (devtools.DebugCommand.prototype.getSequenceNumber):
+        (devtools.DebugCommand.prototype.toJSONProtocol):
+        (devtools.DebuggerMessage):
+        (devtools.DebuggerMessage.prototype.getType):
+        (devtools.DebuggerMessage.prototype.getEvent):
+        (devtools.DebuggerMessage.prototype.getCommand):
+        (devtools.DebuggerMessage.prototype.getRequestSeq):
+        (devtools.DebuggerMessage.prototype.isRunning):
+        (devtools.DebuggerMessage.prototype.isSuccess):
+        (devtools.DebuggerMessage.prototype.getMessage):
+        (devtools.DebuggerMessage.prototype.getBody):
+        (devtools.DebuggerMessage.prototype.lookup):
+        * src/js/DevTools.js: Added.
+        (devtools.dispatch):
+        (devtools.ToolsAgent):
+        (devtools.ToolsAgent.prototype.reset):
+        (devtools.ToolsAgent.prototype.evaluateJavaScript):
+        (devtools.ToolsAgent.prototype.getDebuggerAgent):
+        (devtools.ToolsAgent.prototype.getProfilerAgent):
+        (devtools.ToolsAgent.prototype.frameNavigate_):
+        (devtools.ToolsAgent.prototype.dispatchOnClient_):
+        (devtools.ToolsAgent.prototype.evaluate):
+        (WebInspector.setResourcesPanelEnabled):
+        (debugPrint):
+        (devtools):
+        (WebInspector.loaded):
+        ():
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        (WebInspector.ScriptView.prototype.didResolveScriptSource_):
+        (WebInspector.UnresolvedPropertyValue):
+        (WebInspector.UIString):
+        (WebInspector.resourceTrackingWasEnabled):
+        (WebInspector.resourceTrackingWasDisabled):
+        (WebInspector.TestController.prototype.runAfterPendingDispatches):
+        (WebInspector.queuesAreEmpty):
+        (WebInspector.pausedScript):
+        * src/js/DevToolsHostStub.js: Added.
+        (.RemoteDebuggerAgentStub):
+        (.RemoteDebuggerAgentStub.prototype.getContextId):
+        (.RemoteProfilerAgentStub):
+        (.RemoteProfilerAgentStub.prototype.getActiveProfilerModules):
+        (.RemoteProfilerAgentStub.prototype.getLogLines):
+        (.RemoteToolsAgentStub):
+        (.RemoteToolsAgentStub.prototype.dispatchOnInjectedScript):
+        (.RemoteToolsAgentStub.prototype.dispatchOnInspectorController):
+        (.RemoteToolsAgentStub.prototype.executeVoidJavaScript):
+        (.ProfilerStubHelper):
+        (.ProfilerStubHelper.GetInstance):
+        (.ProfilerStubHelper.prototype.StopProfiling):
+        (.ProfilerStubHelper.prototype.StartProfiling):
+        (.ProfilerStubHelper.prototype.getActiveProfilerModules):
+        (.ProfilerStubHelper.prototype.getLogLines):
+        (.RemoteDebuggerCommandExecutorStub):
+        (.RemoteDebuggerCommandExecutorStub.prototype.DebuggerCommand):
+        (.RemoteDebuggerCommandExecutorStub.prototype.DebuggerPauseScript):
+        (.RemoteDebuggerCommandExecutorStub.prototype.sendResponse_):
+        (.DevToolsHostStub):
+        (.DevToolsHostStub.prototype.reset):
+        (.DevToolsHostStub.prototype.setting):
+        (.DevToolsHostStub.prototype.setSetting):
+        * src/js/HeapProfilerPanel.js: Added.
+        (WebInspector.ProfilesPanel.prototype.addSnapshot):
+        (WebInspector.HeapSnapshotView):
+        (WebInspector.HeapSnapshotView.prototype.get statusBarItems):
+        (WebInspector.HeapSnapshotView.prototype.get profile):
+        (WebInspector.HeapSnapshotView.prototype.set profile):
+        (WebInspector.HeapSnapshotView.prototype.show):
+        (WebInspector.HeapSnapshotView.prototype.hide):
+        (WebInspector.HeapSnapshotView.prototype.resize):
+        (WebInspector.HeapSnapshotView.prototype.refresh):
+        (WebInspector.HeapSnapshotView.prototype.refreshShowAsPercents):
+        (WebInspector.HeapSnapshotView.prototype._deleteSearchMatchedFlags):
+        (WebInspector.HeapSnapshotView.prototype.searchCanceled):
+        (WebInspector.HeapSnapshotView.prototype.performSearch):
+        (WebInspector.HeapSnapshotView.prototype.jumpToFirstSearchResult.WebInspector.CPUProfileView.prototype.jumpToFirstSearchResult.jumpToLastSearchResult.WebInspector.CPUProfileView.prototype.jumpToLastSearchResult.jumpToNextSearchResult.WebInspector.CPUProfileView.prototype.jumpToNextSearchResult.jumpToPreviousSearchResult.WebInspector.CPUProfileView.prototype.jumpToPreviousSearchResult.showingFirstSearchResult.WebInspector.CPUProfileView.prototype.showingFirstSearchResult.showingLastSearchResult.WebInspector.CPUProfileView.prototype.showingLastSearchResult._jumpToSearchResult.WebInspector.CPUProfileView.prototype._jumpToSearchResult.refreshVisibleData):
+        (WebInspector.HeapSnapshotView.prototype._changeBase):
+        (WebInspector.HeapSnapshotView.prototype._createSnapshotDataGridList):
+        (WebInspector.HeapSnapshotView.prototype._mouseDownInDataGrid):
+        (WebInspector.HeapSnapshotView.prototype.get _isShowingAsPercent):
+        (WebInspector.HeapSnapshotView.prototype._percentClicked):
+        (WebInspector.HeapSnapshotView.prototype._resetDataGridList):
+        (WebInspector.HeapSnapshotView.prototype._sortData):
+        (WebInspector.HeapSnapshotView.prototype._updateBaseOptions):
+        (WebInspector.HeapSnapshotView.prototype._updatePercentButton):
+        (WebInspector.HeapSnapshotView.prototype._updateSummaryGraph):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.LESS):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.LESS_OR_EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.GREATER_OR_EQUAL):
+        (WebInspector.HeapSnapshotView.SearchHelper.operations.GREATER):
+        (WebInspector.HeapSnapshotView.SearchHelper.parseOperationAndNumber):
+        (WebInspector.HeapSummaryCalculator):
+        (WebInspector.HeapSummaryCalculator.prototype.computeSummaryValues):
+        (WebInspector.HeapSummaryCalculator.prototype.formatValue):
+        (WebInspector.HeapSummaryCalculator.prototype.get showAsPercent):
+        (WebInspector.HeapSummaryCalculator.prototype.set showAsPercent):
+        (WebInspector.HeapSummaryCountCalculator):
+        (WebInspector.HeapSummaryCountCalculator.prototype._highFromLow):
+        (WebInspector.HeapSummaryCountCalculator.prototype._valueToString):
+        (WebInspector.HeapSummarySizeCalculator):
+        (WebInspector.HeapSummarySizeCalculator.prototype._highFromLow):
+        (WebInspector.HeapSnapshotSidebarTreeElement):
+        (WebInspector.HeapSnapshotSidebarTreeElement.prototype.get mainTitle):
+        (WebInspector.HeapSnapshotSidebarTreeElement.prototype.set mainTitle):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get _hasRetainers):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get _parent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype._populate.if):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype._populate):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.produceDiff):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.sort):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.signForDelta):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.showDeltaAsPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.getTotalCount):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.getTotalSize):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get countPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get sizePercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get countDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get sizeDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.get data):
+        (WebInspector.HeapSnapshotDataGridNodeWithRetainers.prototype.createCell):
+        (WebInspector.HeapSnapshotDataGridNode):
+        (WebInspector.HeapSnapshotDataGridList):
+        (WebInspector.HeapSnapshotDataGridList.prototype.appendChild):
+        (WebInspector.HeapSnapshotDataGridList.prototype.insertChild):
+        (WebInspector.HeapSnapshotDataGridList.prototype.removeChildren):
+        (WebInspector.HeapSnapshotDataGridList.prototype.populateChildren):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator.comparator):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator):
+        (WebInspector.HeapSnapshotDataGridRetainerNode):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype.get sizePercent):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype.get sizeDeltaPercent):
+        (WebInspector.HeapSnapshotDataGridRetainerNode.prototype._calculateRetainers):
+        (WebInspector.HeapSnapshotProfileType):
+        (WebInspector.HeapSnapshotProfileType.prototype.get buttonTooltip):
+        (WebInspector.HeapSnapshotProfileType.prototype.get buttonStyle):
+        (WebInspector.HeapSnapshotProfileType.prototype.buttonClicked):
+        (WebInspector.HeapSnapshotProfileType.prototype.get welcomeMessage):
+        (WebInspector.HeapSnapshotProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.HeapSnapshotProfileType.prototype.createView):
+        ():
+        * src/js/InjectDispatch.js: Added.
+        (InspectorControllerDispatcher.dispatch):
+        (ApuAgentDispatcher.dispatchToApu):
+        (dispatch):
+        (devtools):
+        * src/js/InspectorControllerImpl.js: Added.
+        (devtools.InspectorBackendImpl):
+        (devtools.InspectorBackendImpl.prototype.toggleNodeSearch):
+        (devtools.InspectorBackendImpl.prototype.debuggerEnabled):
+        (devtools.InspectorBackendImpl.prototype.profilerEnabled):
+        (devtools.InspectorBackendImpl.prototype.addBreakpoint):
+        (devtools.InspectorBackendImpl.prototype.removeBreakpoint):
+        (devtools.InspectorBackendImpl.prototype.updateBreakpoint):
+        (devtools.InspectorBackendImpl.prototype.pauseInDebugger):
+        (devtools.InspectorBackendImpl.prototype.resumeDebugger):
+        (devtools.InspectorBackendImpl.prototype.stepIntoStatementInDebugger):
+        (devtools.InspectorBackendImpl.prototype.stepOutOfFunctionInDebugger):
+        (devtools.InspectorBackendImpl.prototype.stepOverStatementInDebugger):
+        (devtools.InspectorBackendImpl.prototype.setPauseOnExceptionsState):
+        (devtools.InspectorBackendImpl.prototype.pauseOnExceptionsState):
+        (devtools.InspectorBackendImpl.prototype.pauseOnExceptions):
+        (devtools.InspectorBackendImpl.prototype.setPauseOnExceptions):
+        (devtools.InspectorBackendImpl.prototype.startProfiling):
+        (devtools.InspectorBackendImpl.prototype.stopProfiling):
+        (devtools.InspectorBackendImpl.prototype.getProfileHeaders):
+        (devtools.InspectorBackendImpl.prototype.addFullProfile):
+        (devtools.InspectorBackendImpl.prototype.getProfile):
+        (devtools.InspectorBackendImpl.prototype.takeHeapSnapshot):
+        (devtools.InspectorBackendImpl.prototype.dispatchOnInjectedScript):
+        (devtools.InspectorBackendImpl.prototype.installInspectorControllerDelegate_):
+        (devtools.InspectorBackendImpl.prototype.callInspectorController_):
+        * src/js/ProfilerAgent.js: Added.
+        (devtools.ProfilerAgent):
+        (devtools.ProfilerAgent.prototype.setupProfilerProcessorCallbacks):
+        (devtools.ProfilerAgent.prototype.initializeProfiling):
+        (devtools.ProfilerAgent.prototype.startProfiling):
+        (devtools.ProfilerAgent.prototype.stopProfiling):
+        (devtools.ProfilerAgent.prototype.didGetActiveProfilerModules_):
+        (devtools.ProfilerAgent.prototype.didGetLogLines_):
+        * src/js/ProfilerProcessor.js: Added.
+        (devtools.profiler.WebKitViewBuilder):
+        (devtools.profiler.WebKitViewBuilder.prototype.createViewNode):
+        (devtools.profiler.WebKitViewNode):
+        (set get devtools.profiler.WebKitViewNode.prototype.initFuncInfo_):
+        (devtools.profiler.JsProfile):
+        (devtools.profiler.JsProfile.prototype.skipThisFunction):
+        (devtools.profiler.Processor):
+        (devtools.profiler.Processor.prototype.printError):
+        (devtools.profiler.Processor.prototype.skipDispatch):
+        (devtools.profiler.Processor.prototype.setCallbacks):
+        (devtools.profiler.Processor.prototype.setNewProfileCallback):
+        (devtools.profiler.Processor.prototype.processProfiler_.switch.break):
+        (devtools.profiler.Processor.prototype.processProfiler_):
+        (devtools.profiler.Processor.prototype.processCodeCreation_):
+        (devtools.profiler.Processor.prototype.processCodeMove_):
+        (devtools.profiler.Processor.prototype.processCodeDelete_):
+        (devtools.profiler.Processor.prototype.processFunctionCreation_):
+        (devtools.profiler.Processor.prototype.processFunctionMove_):
+        (devtools.profiler.Processor.prototype.processFunctionDelete_):
+        (devtools.profiler.Processor.prototype.processTick_):
+        (devtools.profiler.Processor.prototype.processTickV2_):
+        (devtools.profiler.Processor.prototype.processHeapSampleBegin_):
+        (devtools.profiler.Processor.prototype.processHeapSampleStats_):
+        (devtools.profiler.Processor.prototype.processHeapSampleItem_):
+        (devtools.profiler.Processor.prototype.processHeapJsConsItem_):
+        (devtools.profiler.Processor.prototype.processHeapJsRetItem_.mergeRetainers):
+        (devtools.profiler.Processor.prototype.processHeapJsRetItem_):
+        (devtools.profiler.Processor.prototype.processHeapSampleEnd_):
+        (devtools.profiler.Processor.prototype.createProfileForView):
+        * src/js/Tests.js: Added.
+        (.TestSuite):
+        (.TestSuite.prototype.fail):
+        (.TestSuite.prototype.assertEquals):
+        (.TestSuite.prototype.assertTrue):
+        (.TestSuite.prototype.assertContains):
+        (.TestSuite.prototype.takeControl):
+        (.TestSuite.prototype.releaseControl):
+        (.TestSuite.prototype.reportOk_):
+        (.TestSuite.prototype.reportFailure_):
+        (.TestSuite.prototype.runTest):
+        (.TestSuite.prototype.showPanel):
+        (.TestSuite.prototype.addSniffer.receiver.methodName):
+        (.TestSuite.prototype.addSniffer):
+        (.TestSuite.prototype.testHostIsPresent):
+        (.TestSuite.prototype.testElementsTreeRoot):
+        (.TestSuite.prototype.testMainResource):
+        (.TestSuite.prototype.testResourceContentLength.this.addSniffer.):
+        (.TestSuite.prototype.testResourceHeaders):
+        (.TestSuite.prototype.testCachedResourceMimeType.this.addSniffer.):
+        (.TestSuite.prototype.testCachedResourceMimeType):
+        (.TestSuite.prototype.testProfilerTab):
+        (.TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh.waitUntilScriptIsParsed):
+        (.TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh.checkScriptsPanel):
+        (.TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh):
+        (.TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch.switchToElementsTab):
+        (.TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch.switchToScriptsTab):
+        (.TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch.checkScriptsPanel):
+        (.TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch.checkNoDuplicates):
+        (.TestSuite.prototype.testPauseOnException):
+        (.TestSuite.prototype.testPauseWhenLoadingDevTools):
+        (.TestSuite.prototype.testPauseWhenScriptIsRunning.testScriptPauseAfterDelay):
+        (.TestSuite.prototype.testPauseWhenScriptIsRunning.testScriptPause):
+        (.TestSuite.prototype.testPauseWhenScriptIsRunning):
+        (.TestSuite.prototype.optionsToString_):
+        (.TestSuite.prototype.evaluateInConsole_):
+        (.TestSuite.prototype.waitForSetBreakpointResponse_):
+        (.TestSuite.prototype.testEvalOnCallFrame.setBreakpointCallback):
+        (.TestSuite.prototype.testEvalOnCallFrame.waitForBreakpointHit):
+        (.TestSuite.prototype.testCompletionOnPause):
+        (.TestSuite.prototype.testCompletionOnPause.testLocalsCompletion):
+        (.TestSuite.prototype.testCompletionOnPause.testThisCompletion):
+        (.TestSuite.prototype.testCompletionOnPause.testFieldCompletion):
+        (.TestSuite.prototype.testCompletionOnPause.checkCompletions):
+        (.TestSuite.prototype.testAutoContinueOnSyntaxError.checkScriptsList):
+        (.TestSuite.prototype.testAutoContinueOnSyntaxError.waitForExceptionEvent.test):
+        (.TestSuite.prototype.testAutoContinueOnSyntaxError.waitForExceptionEvent):
+        (.TestSuite.prototype._checkExecutionLine):
+        (.TestSuite.prototype._scriptsAreParsed):
+        (.TestSuite.prototype._waitForScriptPause):
+        (.TestSuite.prototype._checkSourceFrameWhenLoaded.checkExecLine):
+        (.TestSuite.prototype._checkSourceFrameWhenLoaded):
+        (.TestSuite.prototype._performSteps.doNextAction):
+        (.TestSuite.prototype._performSteps):
+        (.TestSuite.prototype._executeCodeWhenScriptsAreParsed.executeFunctionInInspectedPage):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed.waitForAllScripts):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed):
+        (.TestSuite.prototype._executeFunctionForStepTest):
+        (.TestSuite.prototype.testStepOver):
+        (.TestSuite.prototype.testStepOut):
+        (.TestSuite.prototype.testStepIn):
+        (.TestSuite.prototype._evaluateXpath):
+        (.TestSuite.prototype._findNode):
+        (.TestSuite.prototype._findText):
+        (.TestSuite.prototype._nodeIterator):
+        (.TestSuite.prototype._checkScopeSectionDiv):
+        (.TestSuite.prototype._expandScopeSections.updateListener):
+        (.TestSuite.prototype._expandScopeSections):
+        (.TestSuite.prototype.testExpandScope):
+        (.TestSuite.prototype.testExpandScope.examineScopes):
+        (.TestSuite.prototype._findChildProperty):
+        (.TestSuite.prototype._hookGetPropertiesCallback.accessor.getProperties):
+        (.TestSuite.prototype._hookGetPropertiesCallback.try):
+        (.TestSuite.prototype._hookGetPropertiesCallback):
+        (.TestSuite.prototype.testDebugIntrinsicProperties.expandLocalScope):
+        (.TestSuite.prototype.testDebugIntrinsicProperties):
+        (.TestSuite.prototype.testDebugIntrinsicProperties.expandAndCheckNextProperty):
+        (.TestSuite.prototype.testDebugIntrinsicProperties.checkProperty):
+        (.TestSuite.createKeyEvent):
+        (.TestSuite.prototype.testConsoleLog.assertNext):
+        (.TestSuite.prototype.testConsoleLog):
+        (.TestSuite.prototype.testEvalGlobal.initEval):
+        (.TestSuite.prototype.testEvalGlobal):
+        (.TestSuite.prototype.testShowStoragePanel.this.addSniffer.):
+        (.TestSuite.prototype.testShowStoragePanel.this.addSniffer):
+        (.uiTests.runAllTests):
+        (.uiTests.runTest):
+
 2010-02-09  Avi Drissman  <avi@chromium.org>
 
         Reviewed by David Levin.
