@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 
 #include "AffineTransform.h"
+#include "FloatPoint.h"
 #include "RenderSVGBlock.h"
 
 namespace WebCore {
@@ -55,7 +56,7 @@ public:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const;
 
  private:
-    AffineTransform translationForAttributes() const;
+    FloatPoint translationForAttributes() const;
 
     virtual AffineTransform localTransform() const { return m_localTransform; }
 

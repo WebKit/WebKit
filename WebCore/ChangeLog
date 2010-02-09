@@ -2,6 +2,39 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        More optimization for AffineTransform with SVG
+        https://bugs.webkit.org/show_bug.cgi?id=34774
+
+        Some optimizations to safe unnecessary summations and multiplications.
+        Optimize AffineTransform to handle an identity or translation matrix
+        more efficient.
+        Added translationRight to avoid multiplications of matrices as much as
+        possible.
+
+        No tests added, no change of functionality.   
+
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::inverse):
+        (WebCore::AffineTransform::translate):
+        (WebCore::AffineTransform::translateRight):
+        * platform/graphics/transforms/AffineTransform.h:
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        (WebCore::RenderForeignObject::localToParentTransform):
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::localToRepaintContainerTransform):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::localToParentTransform):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::applyTextLengthCorrectionToTextChunk):
+
+2010-02-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         SVG patterns with some scale patternTransform are not displayed correctly for small elements
         https://bugs.webkit.org/show_bug.cgi?id=25484
 

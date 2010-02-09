@@ -933,9 +933,8 @@ static void applyTextLengthCorrectionToTextChunk(SVGTextChunk& chunk)
         SVGChar& firstChar = *(chunk.start);
 
         // Assure we apply the chunk scaling in the right origin
-        AffineTransform newChunkCtm;
-        newChunkCtm.translate(firstChar.x, firstChar.y);
-        newChunkCtm = chunk.ctm * newChunkCtm;
+        AffineTransform newChunkCtm(chunk.ctm);
+        newChunkCtm.translateRight(firstChar.x, firstChar.y);
         newChunkCtm.translate(-firstChar.x, -firstChar.y);
 
         chunk.ctm = newChunkCtm;

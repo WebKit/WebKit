@@ -192,11 +192,10 @@ void RenderSVGRoot::calcViewport()
 // relative to our borderBox origin.  This method gives us exactly that.
 AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
 {
-    AffineTransform ctm;
     IntSize borderAndPadding = borderOriginToContentBox();
-    ctm.translate(borderAndPadding.width(), borderAndPadding.height());
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    ctm.scale(svg->currentScale());
+    float scale = svg->currentScale();
+    AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width(), borderAndPadding.height());
     ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
     return svg->viewBoxToViewTransform(width(), height()) * ctm;
 }
@@ -213,19 +212,18 @@ IntSize RenderSVGRoot::borderOriginToContentBox() const
 
 AffineTransform RenderSVGRoot::localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const
 {
-    AffineTransform parentToContainer;
-    parentToContainer.translate(parentOriginInContainer.x(), parentOriginInContainer.y());
-    return localToParentTransform() * parentToContainer;
+    AffineTransform parentToContainer(localToParentTransform());
+    return parentToContainer.translateRight(parentOriginInContainer.x(), parentOriginInContainer.y());
 }
 
 const AffineTransform& RenderSVGRoot::localToParentTransform() const
 {
     IntSize parentToBorderBoxOffset = parentOriginToBorderBox();
 
-    AffineTransform borderBoxOriginToParentOrigin;
-    borderBoxOriginToParentOrigin.translate(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height());
+    AffineTransform borderBoxOriginToParentOrigin(localToBorderBoxTransform());
+    borderBoxOriginToParentOrigin.translateRight(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height());
 
-    m_localToParentTransform = localToBorderBoxTransform() * borderBoxOriginToParentOrigin;
+    m_localToParentTransform = borderBoxOriginToParentOrigin;
     return m_localToParentTransform;
 }
 

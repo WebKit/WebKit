@@ -136,6 +136,12 @@ AffineTransform AffineTransform::inverse() const
         return AffineTransform();
 
     AffineTransform result;
+    if (isIdentityOrTranslation()) {
+        result.m_transform[4] = -m_transform[4];
+        result.m_transform[5] = -m_transform[5];
+        return result;
+    }
+
     result.m_transform[0] = m_transform[3] / determinant;
     result.m_transform[1] = -m_transform[1] / determinant;
     result.m_transform[2] = -m_transform[2] / determinant;
@@ -194,10 +200,25 @@ AffineTransform& AffineTransform::scale(double sx, double sy)
     return *this;
 }
 
+// *this = *this * translation
 AffineTransform& AffineTransform::translate(double tx, double ty)
 {
+    if (isIdentityOrTranslation()) {
+        m_transform[4] += tx;
+        m_transform[5] += ty;
+        return *this;
+    }
+        
     m_transform[4] += tx * m_transform[0] + ty * m_transform[2];
     m_transform[5] += tx * m_transform[1] + ty * m_transform[3];
+    return *this;
+}
+
+// *this = translation * *this
+AffineTransform& AffineTransform::translateRight(double tx, double ty)
+{
+    m_transform[4] += tx;
+    m_transform[5] += ty;
     return *this;
 }
 

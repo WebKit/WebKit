@@ -100,6 +100,7 @@ public:
     AffineTransform& rotate(double d);
     AffineTransform& rotateFromVector(double x, double y);
     AffineTransform& translate(double tx, double ty);
+    AffineTransform& translateRight(double tx, double ty);
     AffineTransform& shear(double sx, double sy);
     AffineTransform& flipX();
     AffineTransform& flipY();
