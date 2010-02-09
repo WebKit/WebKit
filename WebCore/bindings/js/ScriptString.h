@@ -61,7 +61,7 @@ public:
         JSC::StringBuilder buffer;
         buffer.append(m_str);
         buffer.append(s);
-        m_str = buffer.release();
+        m_str = buffer.build();
         return *this;
     }
 

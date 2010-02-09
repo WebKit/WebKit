@@ -1,3 +1,13 @@
+2010-02-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Geoff Garen.
+
+        Rename StringBuilder::release && JSStringBuilder::releaseJSString
+        to 'build()'.
+
+        * bindings/js/ScriptString.h:
+        (WebCore::ScriptString::operator+=):
+
 2010-02-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

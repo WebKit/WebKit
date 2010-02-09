@@ -95,7 +95,7 @@ static UString integerPartNoExp(double d)
         builder.append((const char*)(buf.data()));
     }
 
-    return builder.release();
+    return builder.build();
 }
 
 static UString charSequence(char c, int count)
@@ -263,7 +263,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue
         for (int i = 0; i < f + 1 - k; i++)
             z.append('0');
         z.append(m);
-        m = z.release();
+        m = z.build();
         k = f + 1;
         ASSERT(k == m.size());
     }

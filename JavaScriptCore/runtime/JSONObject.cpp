@@ -268,7 +268,7 @@ JSValue Stringifier::stringify(JSValue value)
     if (m_exec->hadException())
         return jsNull();
 
-    return jsString(m_exec, result.release());
+    return jsString(m_exec, result.build());
 }
 
 void Stringifier::appendQuotedString(StringBuilder& builder, const UString& value)

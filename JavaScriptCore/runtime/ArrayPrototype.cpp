@@ -244,7 +244,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, J
         }
     }
     arrayVisitedElements.remove(thisObj);
-    return strBuffer.releaseJSString(exec);
+    return strBuffer.build(exec);
 }
 
 JSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
@@ -281,7 +281,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue thi
             strBuffer.append(element.toString(exec));
     }
     arrayVisitedElements.remove(thisObj);
-    return strBuffer.releaseJSString(exec);
+    return strBuffer.build(exec);
 }
 
 JSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
