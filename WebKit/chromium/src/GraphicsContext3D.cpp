@@ -275,14 +275,6 @@ private:
             , m_glXGetCurrentContext(getCurrentContext)
         {
         }
-
-        static void* tryLoad(const char* libName)
-        {
-            // We use RTLD_GLOBAL semantics so that GLEW initialization works;
-            // GLEW expects to be able to open the current process's handle
-            // and do dlsym's of GL entry points from there.
-            return dlopen(libName, RTLD_LAZY | RTLD_GLOBAL);
-        }
     };
 
     static GLConnection* s_gl;
@@ -304,22 +296,13 @@ GraphicsContext3DInternal::GLConnection* GraphicsContext3DInternal::GLConnection
         return 0;
     }
 
-    void* libGL = 0;
-    const char* libNames[] = {
-        "/usr/lib/libGL.so.1",
-        "/usr/lib32/libGL.so.1",
-        "/usr/lib64/libGL.so.1",
-    };
-    for (int i = 0; i < sizeof(libNames) / sizeof(const char*); i++) {
-        libGL = tryLoad(libNames[i]);
-        if (libGL)
-            break;
-    }
+    // We use RTLD_GLOBAL semantics so that GLEW initialization works;
+    // GLEW expects to be able to open the current process's handle
+    // and do dlsym's of GL entry points from there.
+    void* libGL = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
     if (!libGL) {
-        printf("GraphicsContext3D: error opening libGL.so.1\n");
-        printf("GraphicsContext3D: tried:\n");
-        for (int i = 0; i < sizeof(libNames) / sizeof(const char*); i++)
-            printf(" %s\n", libNames[i]);
+        XCloseDisplay(dpy);
+        printf("GraphicsContext3D: error opening libGL.so.1: %s\n", dlerror());
         return 0;
     }
 

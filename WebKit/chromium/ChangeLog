@@ -1,3 +1,15 @@
+2010-02-08  Evan Martin  <evan@chromium.org>
+
+        dlopen() knows how to search the library search path, so just rely on
+        it.  While I'm at it, print out the dlerror() error message on failure.
+
+        [chromium] webgl shouldn't hard code library search path
+        https://bugs.webkit.org/show_bug.cgi?id=34659
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GLConnection::GLConnection):
+        (WebCore::GraphicsContext3DInternal::GLConnection::create):
+
 2010-02-08  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Adler.
