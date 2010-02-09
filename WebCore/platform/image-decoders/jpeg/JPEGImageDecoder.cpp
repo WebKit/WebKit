@@ -41,7 +41,7 @@
 #include "JPEGImageDecoder.h"
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
 
-#if OS(WINCE)
+#if OS(WINCE) || PLATFORM(BREWMP_SIMULATOR)
 // Remove warning: 'FAR' macro redefinition
 #undef FAR
 
