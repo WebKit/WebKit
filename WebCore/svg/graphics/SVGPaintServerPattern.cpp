@@ -95,13 +95,13 @@ TextStream& SVGPaintServerPattern::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, const RenderStyle* style, SVGPaintTargetType type, bool isPaintingText) const
 {
     FloatRect targetRect = object->objectBoundingBox();
 
-    const SVGRenderStyle* style = object->style()->svgStyle();
-    bool isFilled = (type & ApplyToFillTargetType) && style->hasFill();
-    bool isStroked = (type & ApplyToStrokeTargetType) && style->hasStroke();
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    bool isFilled = (type & ApplyToFillTargetType) && svgStyle->hasFill();
+    bool isStroked = (type & ApplyToStrokeTargetType) && svgStyle->hasStroke();
 
     ASSERT((isFilled && !isStroked) || (!isFilled && isStroked));
 
@@ -131,7 +131,7 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
             tileImageContext->translate(0, patternBoundaries().height());
             for (int j = numX; j > 0; j--) {
                 tileImageContext->translate(patternBoundaries().width(), 0);
-                tileImageContext->drawImage(tile()->image(), object->style()->colorSpace(), tileRect, tileRect);
+                tileImageContext->drawImage(tile()->image(), style->colorSpace(), tileRect, tileRect);
             }
             tileImageContext->translate(-patternBoundaries().width() * numX, 0);
         }
@@ -143,14 +143,14 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
         m_pattern = Pattern::create(tile()->image(), true, true);
 
     if (isFilled) {
-        context->setAlpha(style->fillOpacity());
+        context->setAlpha(svgStyle->fillOpacity());
         context->setFillPattern(m_pattern);
-        context->setFillRule(style->fillRule());
+        context->setFillRule(svgStyle->fillRule());
     }
     if (isStroked) {
-        context->setAlpha(style->strokeOpacity());
+        context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokePattern(m_pattern);
-        applyStrokeStyleToContext(context, object->style(), object);
+        applyStrokeStyleToContext(context, style, object);
     }
 
     AffineTransform matrix;

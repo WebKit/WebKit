@@ -66,7 +66,7 @@ namespace WebCore {
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
-        virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
+        virtual bool setup(GraphicsContext*&, const RenderObject*, const RenderStyle*, SVGPaintTargetType, bool isPaintingText) const;
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
 
     protected:

@@ -1,3 +1,59 @@
+2010-02-09  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG selection text foreground colour does not respect user settings
+        https://bugs.webkit.org/show_bug.cgi?id=15997
+
+        Add two subphases SVGTextPaintSubphaseGlyphFillSelection and
+        SVGTextPaintSubphaseGlyphStrokeSelection for painting selected
+        text on SVG. Selected texts are painted with style from
+        getCachedPseudoStyle() instead of style().
+        
+        Tests: svg/text/selection-styles.xhtml
+
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkWalker::SVGTextChunkWalker):
+        (WebCore::SVGTextChunkWalker::setupFillSelection):
+        (WebCore::SVGTextChunkWalker::setupStrokeSelection):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::mayHaveSelection):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupFillSelectionCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkSetupStrokeSelectionCallback):
+        (WebCore::SVGRootInlineBoxPaintWalker::activePaintServer):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::walkTextChunks):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::):        
+        Add callback hooks and its implementation for handle new
+        subphases.
+        
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::chunkSelectionStartEnd):
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        Split box text into selected part and non-selected part, and use
+        separate subphases to paint them.
+        
+        * svg/SVGFont.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        Relax ASSERT() condition to accept a part of text.
+        
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::SVGPaintServer::setup):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/SVGPaintServerGradient.h:
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/SVGPaintServerPattern.h:
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * svg/graphics/SVGPaintServerSolid.h:
+        Change setup() signature to accept RenderStyle instead of always
+        using RenderObject::style().
+
 2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

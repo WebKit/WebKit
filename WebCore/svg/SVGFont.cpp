@@ -240,8 +240,7 @@ struct SVGTextRunWalker {
 
     void walk(const TextRun& run, bool isVerticalText, const String& language, int from, int to)
     {
-        // Should hold true for SVG text, otherwhise sth. is wrong
-        ASSERT(to - from == run.length());
+        ASSERT(0 <= from && from <= to && to - from <= run.length());
 
         const String text = Font::normalizeSpaces(String(run.data(from), run.length()));
         Vector<SVGGlyphIdentifier::ArabicForm> chars(charactersWithArabicForm(text, run.rtl()));

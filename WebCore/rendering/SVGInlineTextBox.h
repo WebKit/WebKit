@@ -35,7 +35,9 @@ namespace WebCore {
     enum SVGTextPaintSubphase {
         SVGTextPaintSubphaseBackground,
         SVGTextPaintSubphaseGlyphFill,
+        SVGTextPaintSubphaseGlyphFillSelection,
         SVGTextPaintSubphaseGlyphStroke,
+        SVGTextPaintSubphaseGlyphStrokeSelection,
         SVGTextPaintSubphaseForeground
     };
 
@@ -83,6 +85,7 @@ namespace WebCore {
     private:
         friend class RenderSVGInlineText;
         bool svgCharacterHitsPosition(int x, int y, int& offset) const;
+        bool chunkSelectionStartEnd(const UChar* chunk, int chunkLength, int& selectionStart, int& selectionEnd);
         
         int m_height;
     };

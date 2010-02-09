@@ -1,3 +1,25 @@
+2010-02-09  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG selection text foreground colour does not respect user settings
+        https://bugs.webkit.org/show_bug.cgi?id=15997
+
+        Add two subphases SVGTextPaintSubphaseGlyphFillSelection and
+        SVGTextPaintSubphaseGlyphStrokeSelection for painting SVG text
+        selection. texts are painted with style from getCachedPseudoStyle() instead of style().
+
+        * platform/mac/svg/text/selection-styles-expected.checksum: Added.
+        * platform/mac/svg/text/selection-styles-expected.png: Added.
+        * platform/mac/svg/text/selection-styles-expected.txt: Added.
+        * platform/mac/svg/text/text-deco-01-b-expected.checksum: Updated pixel tests to account for marginal painting differences.
+        * platform/mac/svg/text/text-deco-01-b-expected.png: Ditto.
+        * platform/mac/svg/text/text-path-01-b-expected.checksum: Dito.
+        * platform/mac/svg/text/text-path-01-b-expected.png: Ditto.
+        * platform/mac/svg/text/text-text-03-b-expected.checksum: Ditto.
+        * platform/mac/svg/text/text-text-03-b-expected.png: Ditto.
+        * svg/text/selection-styles.xhtml: Added.
+
 2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
