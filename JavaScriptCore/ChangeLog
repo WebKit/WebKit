@@ -1,3 +1,25 @@
+2010-02-08  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Darin Adler.
+
+        audio engine: add Vector3 class
+        https://bugs.webkit.org/show_bug.cgi?id=34548
+
+        * wtf/Vector3.h: Added.
+        (WebCore::Vector3::Vector3):
+        (WebCore::Vector3::abs):
+        (WebCore::Vector3::isZero):
+        (WebCore::Vector3::normalize):
+        (WebCore::Vector3::x):
+        (WebCore::Vector3::y):
+        (WebCore::Vector3::z):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+        (WebCore::dot):
+        (WebCore::cross):
+        (WebCore::distance):
+
 2010-02-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
