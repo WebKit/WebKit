@@ -1,3 +1,9 @@
+2010-02-09  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed; added myself to committers
+
+        * Scripts/webkitpy/committers.py:
+
 2010-02-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
