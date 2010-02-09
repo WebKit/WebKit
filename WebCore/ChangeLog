@@ -1,3 +1,20 @@
+2010-02-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix the following bugs:
+        https://bugs.webkit.org/show_bug.cgi?id=18926 - dt:after generate a line break. Boost documentation page renders poorly
+        https://bugs.webkit.org/show_bug.cgi?id=7276 - Most W3C padding related tests fail
+
+        Tests: fast/css/inline-element-line-break.html
+               fast/css/pseudo-element-line-break.html
+
+        findNextLineBreak() unconditionally allowed lines to break between elements when no other line breaking opportunity had been found,
+        but that was unnecessary and led to incorrect layout. Disallow that kind of line breaks.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

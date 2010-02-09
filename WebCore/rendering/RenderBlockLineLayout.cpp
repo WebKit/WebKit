@@ -2158,19 +2158,12 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 lBreak.nextBreakablePosition = -1;
             }
         } else if (lBreak.obj) {
-            if (last != o && !last->isListMarker()) {
-                // better to break between object boundaries than in the middle of a word (except for list markers)
-                lBreak.obj = o;
-                lBreak.pos = 0;
-                lBreak.nextBreakablePosition = -1;
-            } else {
-                // Don't ever break in the middle of a word if we can help it.
-                // There's no room at all. We just have to be on this line,
-                // even though we'll spill out.
-                lBreak.obj = o;
-                lBreak.pos = pos;
-                lBreak.nextBreakablePosition = -1;
-            }
+            // Don't ever break in the middle of a word if we can help it.
+            // There's no room at all. We just have to be on this line,
+            // even though we'll spill out.
+            lBreak.obj = o;
+            lBreak.pos = pos;
+            lBreak.nextBreakablePosition = -1;
         }
     }
 
