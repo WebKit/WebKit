@@ -422,6 +422,8 @@
 #else
 #define WTF_PLATFORM_BREWMP_SIMULATOR 0
 #endif
+#undef WTF_OS_WINDOWS
+#undef WTF_PLATFORM_WIN
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
