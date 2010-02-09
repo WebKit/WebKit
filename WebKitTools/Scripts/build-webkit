@@ -170,7 +170,7 @@ if (isQt()) {
 }
 
 # Additional environment parameters
-push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'});
+push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
 # Initialize values from defaults
 foreach (@ARGV) {

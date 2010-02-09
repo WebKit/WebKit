@@ -1,3 +1,9 @@
+2010-02-09  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed trivial warning fix.
+
+        * Scripts/build-webkit:
+
 2010-02-09 Gabor Rapcsanyi <rgabor@inf.u-szeged.hu>
 
         Reviewed by Tor Arne Vestbø.
