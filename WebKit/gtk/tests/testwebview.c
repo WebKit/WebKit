@@ -55,6 +55,12 @@ server_callback(SoupServer* server, SoupMessage* msg,
         g_assert(!error);
 
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, length);
+    } else if (g_str_equal(path, "/bigdiv.html")) {
+        char* contents = g_strdup("<html><body><div style=\"background-color: green; height: 1200px;\"></div></body></html>");
+        soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, strlen(contents));
+    } else if (g_str_equal(path, "/iframe.html")) {
+        char* contents = g_strdup("<html><body><div style=\"background-color: green; height: 50px;\"></div><iframe src=\"bigdiv.html\"></iframe></body></html>");
+        soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, strlen(contents));
     } else {
         char* contents = g_strdup("<html><body>test</body></html>");
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, strlen(contents));
@@ -121,6 +127,106 @@ static void test_webkit_web_view_icon_uri()
     g_object_unref(view);
 }
 
+static gboolean map_event_cb(GtkWidget *widget, GdkEvent* event, gpointer data)
+{
+    GMainLoop* loop = (GMainLoop*)data;
+    g_main_loop_quit(loop);
+
+    return FALSE;
+}
+
+static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
+{
+    char* effective_uri = g_strconcat(base_uri, "bigdiv.html", NULL);
+    char* second_uri = g_strconcat(base_uri, "iframe.html", NULL);
+    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget* scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    GtkAdjustment* adjustment;
+    double lower;
+    double upper;
+
+    if (with_page_cache) {
+        WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+        g_object_set(settings, "enable-page-cache", TRUE, NULL);
+    }
+
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
+
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(view));
+
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_object_connect(G_OBJECT(view),
+                     "signal::notify::progress", idle_quit_loop_cb, NULL,
+                     NULL);
+
+    /* Wait for window to show up */
+    gtk_widget_show_all(window);
+    g_signal_connect(window, "map-event",
+                     G_CALLBACK(map_event_cb), loop);
+    g_main_loop_run(loop);
+
+    /* Load a page with a big div that will cause scrollbars to appear */
+    webkit_web_view_load_uri(view, effective_uri);
+    g_main_loop_run(loop);
+
+    adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0.0);
+
+    lower = gtk_adjustment_get_lower(adjustment);
+    upper = gtk_adjustment_get_upper(adjustment);
+
+    /* Scroll the view using JavaScript */
+    webkit_web_view_execute_script(view, "window.scrollBy(0, 100)");
+
+    /* Make sure the ScrolledWindow noticed the scroll */
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
+
+    /* Load a second URI */
+    webkit_web_view_load_uri(view, second_uri);
+    g_main_loop_run(loop);
+
+    /* Make sure the scrollbar has been reset */
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0.0);
+
+    /* Go back */
+    webkit_web_view_go_back(view);
+
+    /* When using page cache, go_back will return syncronously */
+    if (!with_page_cache)
+        g_main_loop_run(loop);
+
+    /* Make sure upper and lower bounds have been restored correctly */
+    g_assert_cmpfloat(lower, ==, gtk_adjustment_get_lower(adjustment));
+    g_assert_cmpfloat(upper, ==, gtk_adjustment_get_upper(adjustment));
+
+    /* Scrollbar should return to the same position it was in.
+     * FIXME: with page cache enabled, the result is different, we
+     * need to figure out why!
+     */
+    if (!with_page_cache)
+        g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
+    else
+        g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 20.0);
+
+    g_free(effective_uri);
+    g_free(second_uri);
+
+    gtk_widget_destroy(window);
+}
+
+static void test_webkit_web_view_adjustments()
+{
+    /* Test this with page cache disabled, and enabled. */
+    do_test_webkit_web_view_adjustments(FALSE);
+    do_test_webkit_web_view_adjustments(TRUE);
+}
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -153,6 +259,7 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webview/icon-uri", test_webkit_web_view_icon_uri);
+    g_test_add_func("/webkit/webview/adjustments", test_webkit_web_view_adjustments);
 
     return g_test_run ();
 }
