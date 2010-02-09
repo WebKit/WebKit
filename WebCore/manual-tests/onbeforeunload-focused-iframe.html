@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+</head>
+<BODY onbeforeunload="return 'onBeforeUnloadHandler return string is displayed here.';">
+<p><b>BUG ID:</b> <a href="https://bugs.webkit.org/show_bug.cgi?id=27481">27481</a> onbeforeunload not called at window close + frame or iframe focused</p>
+
+<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
+<ol>
+    <li>Close this browser window while the inner frame has focus.
+</ol>
+</p>
+
+<p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
+After the close button is clicked, you should see a dialog that reads:</p>
+<pre>Are you sure you want to navigate away from this page?
+
+onBeforeUnloadHandler return string is displayed here.
+
+Press OK to continue or Cancel to stay on the current page.</pre>
+
+<p id="failure" style="background-color:#FF3300; padding:3px;"><b>TEST FAIL:</b>  
+No dialog (as described above) when closing the browser window.
+</p>
+
+<BODY onbeforeunload="return 'onBeforeUnloadHandler return string is displayed here.';">
+<iframe src="resources/focused-iframe.html"></iframe>
+<p>Close this browser window.</p>
+</body>
+</html>

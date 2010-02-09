@@ -1182,7 +1182,7 @@ bool WebViewImpl::dispatchBeforeUnloadEvent()
     // FIXME: This should really cause a recursive depth-first walk of all
     // frames in the tree, calling each frame's onbeforeunload.  At the moment,
     // we're consistent with Safari 3.1, not IE/FF.
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->mainFrame();
     if (!frame)
         return true;
 

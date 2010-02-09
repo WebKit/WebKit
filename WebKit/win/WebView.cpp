@@ -5060,7 +5060,7 @@ HRESULT STDMETHODCALLTYPE WebView::shouldClose(
     }
 
     *result = TRUE;
-    if (Frame* frame = m_page->focusController()->focusedOrMainFrame())
+    if (Frame* frame = m_page->mainFrame())
         *result = frame->shouldClose() ? TRUE : FALSE;
     return S_OK;
 }

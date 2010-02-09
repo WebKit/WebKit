@@ -1,3 +1,20 @@
+2010-02-08  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        onbeforeunload not called at window close + frame or iframe focused
+        https://bugs.webkit.org/show_bug.cgi?id=27481
+        
+        Chromium and WebKit on Windows will now fire beforeunload handlers
+        even if an inner frame is focused.  
+
+        Layout tests aren't able to test this bug, since it requires closing
+        the actual browser window, not calling window.close().  Instead,
+        test with WebCore/manual-tests/onbeforeunload-focused-iframe.html.
+
+        * WebView.cpp:
+        (WebView::shouldClose):
+
 2010-02-08  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
