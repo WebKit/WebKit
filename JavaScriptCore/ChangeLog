@@ -1,3 +1,14 @@
+2010-02-09  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=34772
+        Overzealous new assertion in URStringImpl::adopt()
+
+        Reviewed by Adam Barth.
+
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::adopt):
+        Only assert that vector.data() is non-zero if vector.size() is non-zero.
+
 2010-02-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Try to fix build problem on SnowLeopard slaves to bring them back.
