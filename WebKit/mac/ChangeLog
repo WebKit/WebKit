@@ -1,3 +1,14 @@
+2010-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34771
+        A stray mouse moved event is sent to plug-ins after mouse exit
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (NetscapePluginWidget::handleEvent): A mouseout
+        DOM event is dispatched while handling NSMouseMoved - but we shouldn't be sending a
+        mouse moved event to plug-ins at this point.
+
 2010-02-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
