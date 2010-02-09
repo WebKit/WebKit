@@ -1,3 +1,29 @@
+2010-02-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Three small string fixes:
+        (1) StringBuilder::release should CRASH if the buffer allocation failed.
+        (2) Remove weird, dead code from JSString::tryGetValue, replace with an ASSERT.
+        (3) Move UString::createFromUTF8 out to the API, as tryCreateStringFromUTF8.
+            This is only used from the API, and (now) unlike other UString::create
+            methods may return UString::null() to indicate failure cases.  Better
+            handle these in the API.
+
+        * API/JSClassRef.cpp:
+        (tryCreateStringFromUTF8):
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * runtime/JSString.h:
+        (JSC::Fiber::tryGetValue):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::release):
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        (JSC::UString::from):
+        (JSC::UString::find):
+        * runtime/UString.h:
+
 2010-02-09  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Laszlo Gombos.

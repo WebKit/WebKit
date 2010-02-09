@@ -87,6 +87,7 @@ public:
     template<size_t inlineCapacity>
     static PassRefPtr<UStringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
     {
+        ASSERT(vector.data());
         if (unsigned length = vector.size())
             return adoptRef(new UStringImpl(vector.releaseBuffer(), length, BufferOwned));
         return &empty();

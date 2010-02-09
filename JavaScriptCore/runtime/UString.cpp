@@ -53,7 +53,7 @@ using namespace WTF::Unicode;
 using namespace std;
 
 namespace JSC {
- 
+
 extern const double NaN;
 extern const double Inf;
 
@@ -146,7 +146,7 @@ bool operator==(const CString& c1, const CString& c2)
     return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
-// These static strings are immutable, except for rc, whose initial value is chosen to 
+// These static strings are immutable, except for rc, whose initial value is chosen to
 // reduce the possibility of it becoming zero due to ref/deref not being thread-safe.
 static UChar sharedEmptyChar;
 UStringImpl* UStringImpl::s_empty;
@@ -174,24 +174,10 @@ UString::UString(const char* c, int length)
 
 UString::UString(const UChar* c, int length)
 {
-    if (length == 0) 
+    if (length == 0)
         m_rep = &Rep::empty();
     else
         m_rep = Rep::create(c, length);
-}
-
-UString UString::createFromUTF8(const char* string)
-{
-    if (!string)
-        return null();
-
-    size_t length = strlen(string);
-    Vector<UChar, 1024> buffer(length);
-    UChar* p = buffer.data();
-    if (conversionOK != convertUTF8ToUTF16(&string, string + length, &p, p + length))
-        return null();
-
-    return UString(buffer.data(), p - buffer.data());
 }
 
 UString UString::from(int i)
@@ -199,7 +185,7 @@ UString UString::from(int i)
     UChar buf[1 + sizeof(i) * 3];
     UChar* end = buf + sizeof(buf) / sizeof(UChar);
     UChar* p = end;
-  
+
     if (i == 0)
         *--p = '0';
     else if (i == INT_MIN) {
@@ -261,7 +247,7 @@ UString UString::from(unsigned int u)
     UChar buf[sizeof(u) * 3];
     UChar* end = buf + sizeof(buf) / sizeof(UChar);
     UChar* p = end;
-    
+
     if (u == 0)
         *--p = '0';
     else {
@@ -270,7 +256,7 @@ UString UString::from(unsigned int u)
             u /= 10;
         }
     }
-    
+
     return UString(p, static_cast<int>(end - p));
 }
 
@@ -597,7 +583,7 @@ int UString::find(UChar ch, int pos) const
         if (*c == ch)
             return static_cast<int>(c - data());
     }
-    
+
     return -1;
 }
 

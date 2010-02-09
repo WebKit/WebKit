@@ -283,8 +283,9 @@ namespace JSC {
         }
         const UString tryGetValue() const
         {
-            if (isRope())
-                UString();
+            // If this is a rope, m_value should be null -
+            // if this is not a rope, m_value should be non-null.
+            ASSERT(isRope() == m_value.isNull());
             return m_value;
         }
         unsigned length() { return m_stringLength; }
