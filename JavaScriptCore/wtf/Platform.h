@@ -885,6 +885,13 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 
 #endif /* !defined(ENABLE_JIT) */
 
+/* CPU architecture specific optimizations */
+#if CPU(ARM_TRADITIONAL)
+#if ENABLE(JIT) && !defined(ENABLE_JIT_OPTIMIZE_MOD) && WTF_ARM_ARCH_AT_LEAST(5)
+#define ENABLE_JIT_OPTIMIZE_MOD 1
+#endif
+#endif
+
 #if ENABLE(JIT)
 #ifndef ENABLE_JIT_OPTIMIZE_CALL
 #define ENABLE_JIT_OPTIMIZE_CALL 1
@@ -897,6 +904,9 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #endif
 #ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
 #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
+#endif
+#ifndef ENABLE_JIT_OPTIMIZE_MOD
+#define ENABLE_JIT_OPTIMIZE_MOD 0
 #endif
 #endif
 

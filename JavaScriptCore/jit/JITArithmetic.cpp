@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
+#include "JITStubs.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
@@ -1186,14 +1187,40 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
+#if ENABLE(JIT_OPTIMIZE_MOD)    
+    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+    addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
+    addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
+    
+    addSlowCase(branch32(Equal, regT2, Imm32(0)));
+    
+    emitNakedCall(m_globalData->jitStubs.ctiSoftModulo());
+
+    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+#else
     JITStubCall stubCall(this, cti_op_mod);
     stubCall.addArgument(op1);
     stubCall.addArgument(op2);
     stubCall.call(dst);
+#endif
 }
 
-void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
+void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+#if ENABLE(JIT_OPTIMIZE_MOD)
+    unsigned result = currentInstruction[1].u.operand;
+    unsigned op1 = currentInstruction[2].u.operand;
+    unsigned op2 = currentInstruction[3].u.operand;
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_mod);
+    stubCall.addArgument(op1);
+    stubCall.addArgument(op2);
+    stubCall.call(result);
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 #endif // CPU(X86) || CPU(X86_64)
@@ -2138,15 +2165,40 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
+#if ENABLE(JIT_OPTIMIZE_MOD)    
+    emitGetVirtualRegisters(op1, regT0, op2, regT2);
+    emitJumpSlowCaseIfNotImmediateInteger(regT0);
+    emitJumpSlowCaseIfNotImmediateInteger(regT2);
+    
+    addSlowCase(branch32(Equal, regT2, Imm32(1)));
+
+    emitNakedCall(m_globalData->jitStubs.ctiSoftModulo());
+
+    emitPutVirtualRegister(result, regT0);
+#else
     JITStubCall stubCall(this, cti_op_mod);
     stubCall.addArgument(op1, regT2);
     stubCall.addArgument(op2, regT2);
     stubCall.call(result);
+#endif
 }
 
-void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
+void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+#if ENABLE(JIT_OPTIMIZE_MOD)
+    unsigned result = currentInstruction[1].u.operand;
+    unsigned op1 = currentInstruction[2].u.operand;
+    unsigned op2 = currentInstruction[3].u.operand;
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_mod);
+    stubCall.addArgument(op1, regT2);
+    stubCall.addArgument(op2, regT2);
+    stubCall.call(result);
+#else
     ASSERT_NOT_REACHED();
+#endif
 }
 
 #endif // CPU(X86) || CPU(X86_64)

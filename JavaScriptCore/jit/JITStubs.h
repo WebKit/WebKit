@@ -80,6 +80,7 @@ namespace JSC {
         MacroAssemblerCodePtr ctiVirtualCallLink;
         MacroAssemblerCodePtr ctiVirtualCall;
         MacroAssemblerCodePtr ctiNativeCallThunk;
+        MacroAssemblerCodePtr ctiSoftModulo;
     };
 
 #if CPU(X86_64)
@@ -250,6 +251,7 @@ namespace JSC {
         MacroAssemblerCodePtr ctiVirtualCallLink() { return m_trampolineStructure.ctiVirtualCallLink; }
         MacroAssemblerCodePtr ctiVirtualCall() { return m_trampolineStructure.ctiVirtualCall; }
         MacroAssemblerCodePtr ctiNativeCallThunk() { return m_trampolineStructure.ctiNativeCallThunk; }
+        MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
     private:
         RefPtr<ExecutablePool> m_executablePool;

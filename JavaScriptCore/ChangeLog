@@ -1,3 +1,23 @@
+2010-02-09  Tamas Szirbucz  <szirbucz@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Add a soft modulo operation to ARM JIT using a trampoline function.
+        The performance progression is about ~1.8% on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=34424
+
+        Developed in cooperation with Gabor Loki.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::softModulo):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiSoftModulo):
+        * wtf/Platform.h:
+
 2010-02-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (SL/win build fixes).
