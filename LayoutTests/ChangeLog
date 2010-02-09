@@ -1,3 +1,16 @@
+2010-02-08  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed GTK+ test fix.
+
+        Web site is stuck loading forever
+        https://bugs.webkit.org/show_bug.cgi?id=31227
+
+        It seems the following bug is addressing this issue.
+        [GTK] Needs proper reporting of frame loader callbacks, in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=32170
+
+        * platform/gtk/Skipped:
+
 2010-02-08  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Darin Adler.

@@ -5716,6 +5716,8 @@ fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.h
 fast/loader/stateobjects/document-destroyed-navigate-back.html
 http/tests/loading/state-object-security-exception.html
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
+# Seems to be the same issue as above.
+http/tests/loading/load-javascript-after-many-xhrs.html
 
 # Fails because of new behaviour enforced by libsoup
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825
