@@ -1686,7 +1686,7 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
         // If the object already needs layout, then setNeedsLayout won't do
         // any work. But if the containing block has changed, then we may need
-        // to make the new containing blocks for layout. The change that can
+        // to mark the new containing blocks for layout. The change that can
         // directly affect the containing block of this object is a change to
         // the position style.
         if (m_needsLayout && oldStyle->position() != m_style->position())

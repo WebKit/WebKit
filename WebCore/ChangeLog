@@ -1,3 +1,8 @@
+2010-02-09  Darin Adler  <darin@apple.com>
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleDidChange): Fixed typo in comment.
+
 2010-02-09  MORITA Hajime  <morrita@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
