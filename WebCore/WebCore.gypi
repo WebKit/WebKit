@@ -801,6 +801,8 @@
             'bindings/v8/ScriptCallStack.h',
             'bindings/v8/ScriptController.cpp',
             'bindings/v8/ScriptController.h',
+            'bindings/v8/ScriptDebugServer.cpp',
+            'bindings/v8/ScriptDebugServer.h',
             'bindings/v8/ScriptEventListener.cpp',
             'bindings/v8/ScriptEventListener.h',
             'bindings/v8/ScriptFunctionCall.cpp',

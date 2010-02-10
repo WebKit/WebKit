@@ -1,3 +1,33 @@
+2010-02-10  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Remove several #if USE(JSC) branches. Introduce ScriptDebugServer class for
+        making JavaScriptDebugServer engine-agnostic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34795
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/ScriptDebugServer.cpp: Added.
+        (WebCore::ScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsSoon):
+        * bindings/js/ScriptDebugServer.h: Added.
+        * bindings/v8/ScriptDebugServer.cpp: Added.
+        (WebCore::ScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsSoon):
+        * bindings/v8/ScriptDebugServer.h: Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+
 2009-10-06  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.

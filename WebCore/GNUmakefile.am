@@ -477,6 +477,8 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptCallStack.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
+	WebCore/bindings/js/ScriptDebugServer.cpp \
+	WebCore/bindings/js/ScriptDebugServer.h \
 	WebCore/bindings/js/ScriptEventListener.cpp \
 	WebCore/bindings/js/ScriptEventListener.h \
 	WebCore/bindings/js/ScriptFunctionCall.cpp \

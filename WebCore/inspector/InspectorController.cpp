@@ -53,8 +53,8 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
-#include "InjectedScriptHost.h"
 #include "InjectedScript.h"
+#include "InjectedScriptHost.h"
 #include "InspectorBackend.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
@@ -72,6 +72,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
+#include "ScriptDebugServer.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
@@ -1429,9 +1430,7 @@ void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>
 
     if (!profilerEnabled()) {
         enableProfiler(false, true);
-#if USE(JSC)
-        JavaScriptDebugServer::shared().recompileAllJSFunctions();
-#endif
+        ScriptDebugServer::recompileAllJSFunctions();
     }
 
     m_recordingUserInitiatedProfile = true;
@@ -1488,10 +1487,8 @@ void InspectorController::enableProfiler(bool always, bool skipRecompile)
 
     m_profilerEnabled = true;
 
-#if USE(JSC)
     if (!skipRecompile)
-        JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-#endif
+        ScriptDebugServer::recompileAllJSFunctionsSoon();
 
     if (m_frontend)
         m_frontend->profilerWasEnabled();
@@ -1507,9 +1504,7 @@ void InspectorController::disableProfiler(bool always)
 
     m_profilerEnabled = false;
 
-#if USE(JSC)
-    JavaScriptDebugServer::shared().recompileAllJSFunctionsSoon();
-#endif
+    ScriptDebugServer::recompileAllJSFunctionsSoon();
 
     if (m_frontend)
         m_frontend->profilerWasDisabled();
