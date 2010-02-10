@@ -2,6 +2,16 @@
 
         Reviewed by Pavel Feldman.
 
+        Rolling Chromium dependencies to match Chromium revision 38580.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34789
+
+        * DEPS:
+
+2010-02-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Use v8::Debug::ProcessDebugMessages instead of executing an empty function
 
         https://bugs.webkit.org/show_bug.cgi?id=34704
