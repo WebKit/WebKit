@@ -1,3 +1,11 @@
+2010-02-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Not reviewed (build fix).
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont): Return a
+        SimpleFontData here.
+
 2010-02-10 Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Eric Seidel.
