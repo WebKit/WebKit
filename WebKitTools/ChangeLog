@@ -1,3 +1,18 @@
+2010-02-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7436875> Crash in Flash when visiting
+        http://www.cctv.com/default.shtml (WER ID 819298200) [watson 2502260]
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (executeScript):
+        Moved to an earlier point in the file.
+        (NPP_New):
+        If the plug-in has an onDestroy attribute, store its value.
+        (NPP_Destroy):
+        If the plug-in has code to run on destruction, run it and free it.
+
 2010-02-10  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

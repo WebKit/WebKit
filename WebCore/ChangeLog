@@ -1,3 +1,59 @@
+2010-02-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7436875> Crash in Flash when visiting
+        http://www.cctv.com/default.shtml (WER ID 819298200) [watson 2502260]
+
+        Reviewed by Darin Adler.
+
+        Test: platform/win/plugins/plugin-delayed-destroy.html
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        If Flash calls this to evaluate a script that destroys the PluginView,
+        we crash when returning to Flash code. Before evaluating the script,
+        call PluginView::keepAlive() to hold a ref to this instance (and release
+        it asynchronously).
+
+        * plugins/PluginView.cpp:
+        (WebCore::instanceMap):
+        Return a map from the NPP to the PluginView.
+        (WebCore::PluginView::~PluginView):
+        Assert that the keep alive timer is not running; remove ourselves from
+        the instance map.
+        (WebCore::PluginView::performRequest):
+        The parent Frame is now a RefPtr; use .get().
+        (WebCore::PluginView::status):
+        Ditto.
+        (WebCore::PluginView::didReceiveResponse):
+        Ditto.
+        (WebCore::PluginView::PluginView):
+        Add the view to the instance map.
+        (WebCore::PluginView::lifeSupportTimerFired):
+        Deref the PluginView.
+        (WebCore::PluginView::keepAlive):
+        Ref the PluginView, then start a time to release the reference
+        asynchronously.
+        (WebCore::PluginView::keepAlive):
+        Find the PluginView in the map, and call its keepAlive() function.
+
+        * plugins/PluginView.h:
+        Made m_parentFrame a RefPtr, so that it will remain valid when the
+        keep alive timer fires.
+        (WebCore::PluginView::parentFrame):
+        Use .get().
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        Use .get().
+        (WebCore::PluginView::handleKeyboardEvent):
+        Use .get().
+        (WebCore::PluginView::handleMouseEvent):
+        Use .get().
+
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::keepAlive):
+        Stubbed.
+
 2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1,0 +1,3 @@
+The should be printed before destroy.
+Plug-in destroyed.
+

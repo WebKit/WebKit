@@ -137,7 +137,7 @@ void PluginView::updatePluginWidget()
         if (m_drawable)
             XFreePixmap(GDK_DISPLAY(), m_drawable);
 
-        m_drawable = XCreatePixmap(GDK_DISPLAY(), getRootWindow(m_parentFrame),
+        m_drawable = XCreatePixmap(GDK_DISPLAY(), getRootWindow(m_parentFrame.get()),
                                    m_windowRect.width(), m_windowRect.height(),
                                    ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
         XSync(GDK_DISPLAY(), False); // make sure that the server knows about the Drawable
@@ -319,7 +319,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     GdkEventKey* gdkEvent = event->keyEvent()->gdkEventKey();
 
     xEvent.type = (event->type() == eventNames().keydownEvent) ? 2 : 3; // KeyPress/Release get unset somewhere
-    xEvent.xkey.root = getRootWindow(m_parentFrame);
+    xEvent.xkey.root = getRootWindow(m_parentFrame.get());
     xEvent.xkey.subwindow = 0; // we have no child window
     xEvent.xkey.time = event->timeStamp();
     xEvent.xkey.state = gdkEvent->state; // GdkModifierType mirrors xlib state masks
@@ -445,11 +445,11 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
 
     if (event->type() == eventNames().mousedownEvent || event->type() == eventNames().mouseupEvent)
-        setXButtonEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame);
+        setXButtonEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
     else if (event->type() == eventNames().mousemoveEvent)
-        setXMotionEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame);
+        setXMotionEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
     else if (event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mouseoverEvent)
-        setXCrossingEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame);
+        setXCrossingEventSpecificFields(&xEvent, event, postZoomPos, m_parentFrame.get());
     else
         return;
 #endif

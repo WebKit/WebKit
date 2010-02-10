@@ -1,3 +1,13 @@
+2010-02-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7436875> Crash in Flash when visiting
+        http://www.cctv.com/default.shtml (WER ID 819298200) [watson 2502260]
+
+        Reviewed by Darin Adler.
+
+        * platform/win/plugins/plugin-delayed-destroy-expected.txt: Added.
+        * platform/win/plugins/plugin-delayed-destroy.html: Added.
+
 2010-02-10  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

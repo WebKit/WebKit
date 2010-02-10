@@ -86,6 +86,14 @@ using namespace HTMLNames;
 
 static int s_callingPlugin;
 
+typedef HashMap<NPP, PluginView*> InstanceMap;
+
+static InstanceMap& instanceMap()
+{
+    static InstanceMap& map = *new InstanceMap;
+    return map;
+}
+
 static String scriptStringIfJavaScriptURL(const KURL& url)
 {
     if (!protocolIsJavaScript(url))
@@ -258,6 +266,10 @@ PluginView::~PluginView()
 {
     LOG(Plugins, "PluginView::~PluginView()");
 
+    ASSERT(!m_lifeSupportTimer.isActive());
+
+    instanceMap().remove(m_instance);
+
     removeFromUnstartedListIfNecessary();
 
     stop();
@@ -423,7 +435,7 @@ void PluginView::performRequest(PluginRequest* request)
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
         if (targetFrameName.isEmpty()) {
-            RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+            RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
             m_streams.add(stream);
             stream->start();
         } else {
@@ -461,7 +473,7 @@ void PluginView::performRequest(PluginRequest* request)
         if (getString(parentFrame->script(), result, resultString))
             cstr = resultString.utf8();
 
-        RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+        RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
         m_streams.add(stream);
         stream->sendJavaScriptStream(requestURL, cstr);
     }
@@ -600,7 +612,7 @@ NPError PluginView::destroyStream(NPStream* stream, NPReason reason)
 void PluginView::status(const char* message)
 {
     if (Page* page = m_parentFrame->page())
-        page->chrome()->setStatusbarText(m_parentFrame, String(message));
+        page->chrome()->setStatusbarText(m_parentFrame.get(), String(message));
 }
 
 NPError PluginView::setValue(NPPVariable variable, void* value)
@@ -792,6 +804,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_requestTimer(this, &PluginView::requestTimerFired)
     , m_invalidateTimer(this, &PluginView::invalidateTimerFired)
     , m_popPopupsStateTimer(this, &PluginView::popPopupsStateTimerFired)
+    , m_lifeSupportTimer(this, &PluginView::lifeSupportTimerFired)
     , m_mode(loadManually ? NP_FULL : NP_EMBED)
     , m_paramNames(0)
     , m_paramValues(0)
@@ -845,6 +858,8 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     m_instance->ndata = this;
     m_instance->pdata = 0;
 
+    instanceMap().add(m_instance, this);
+
     setParameters(paramNames, paramValues);
 
     memset(&m_npWindow, 0, sizeof(m_npWindow));
@@ -871,7 +886,7 @@ void PluginView::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
 
-    m_manualStream = PluginStream::create(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+    m_manualStream = PluginStream::create(this, m_parentFrame.get(), m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
     m_manualStream->setLoadManually(true);
 
     m_manualStream->didReceiveResponse(0, response);
@@ -1247,6 +1262,29 @@ Node* PluginView::node() const
 String PluginView::pluginName() const
 {
     return m_plugin->name();
+}
+
+void PluginView::lifeSupportTimerFired(Timer<PluginView>*)
+{
+    deref();
+}
+
+void PluginView::keepAlive()
+{
+    if (m_lifeSupportTimer.isActive())
+        return;
+
+    ref();
+    m_lifeSupportTimer.startOneShot(0);
+}
+
+void PluginView::keepAlive(NPP instance)
+{
+    PluginView* view = instanceMap().get(instance);
+    if (!view)
+        return;
+
+    view->keepAlive();
 }
 
 } // namespace WebCore
