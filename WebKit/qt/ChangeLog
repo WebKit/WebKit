@@ -1,3 +1,15 @@
+2010-02-09  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Unit test for window.runModalDialog
+        https://bugs.webkit.org/show_bug.cgi?id=34755
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (TestModalPage::TestModalPage):
+        (TestModalPage::createWindow):
+        (tst_QWebPage::showModalDialog):
+
 2010-02-09  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

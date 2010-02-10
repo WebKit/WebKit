@@ -110,6 +110,7 @@ private slots:
 
     void originatingObjectInNetworkRequests();
     void testJSPrompt();
+    void showModalDialog();
 
 private:
     QWebView* m_view;
@@ -1826,6 +1827,27 @@ void tst_QWebPage::testJSPrompt()
             "var retval = prompt('test4');"
             "retval===null;").toBool();
     QVERIFY(res);
+}
+
+class TestModalPage : public QWebPage
+{
+    Q_OBJECT
+public:
+    TestModalPage(QObject* parent = 0) : QWebPage(parent) {
+    }
+    virtual QWebPage* createWindow(WebWindowType) {
+        QWebPage* page = new TestModalPage();
+        connect(page, SIGNAL(windowCloseRequested()), page, SLOT(deleteLater()));
+        return page;
+    }
+};
+
+void tst_QWebPage::showModalDialog()
+{
+    TestModalPage page;
+    page.mainFrame()->setHtml(QString("<html></html>"));
+    QString res = page.mainFrame()->evaluateJavaScript("window.showModalDialog('javascript:window.returnValue=dialogArguments; window.close();', 'This is a test');").toString();
+    QCOMPARE(res, QString("This is a test"));
 }
 
 QTEST_MAIN(tst_QWebPage)
