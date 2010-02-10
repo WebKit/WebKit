@@ -1,6 +1,6 @@
 2010-02-10  Jeremy Orlow  <jorlow@chromium.org>
 
-        Revert 54599
+        Revert 54599 because it breaks a lot of tests on Windows Chrome
 
         * inspector/front-end/DOMAgent.js:
         (WebInspector.DOMNode.prototype._insertChild):

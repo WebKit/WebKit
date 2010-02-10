@@ -1,6 +1,6 @@
 2010-02-10  Jeremy Orlow  <jorlow@chromium.org>
 
-        Revert 54599
+        Revert 54599 because it breaks a lot of tests on Windows Chrome
 
         * inspector/elements-panel-limited-children-expected.txt: Removed.
         * inspector/elements-panel-limited-children.html: Removed.
