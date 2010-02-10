@@ -1,3 +1,13 @@
+2010-02-10  Eric Seidel  <eric@webkit.org>
+
+        No review, Mac build fix.
+
+        Crash in Flash at http://www.cctv.com/
+        https://bugs.webkit.org/show_bug.cgi?id=34673
+
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::getValueStatic):
+
 2010-02-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
