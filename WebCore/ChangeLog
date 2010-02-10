@@ -1,3 +1,11 @@
+2010-02-09  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Remove old, outdated unused code block.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2010-02-09  Chris Guillory  <ctguil@google.com>
 
         Reviewed by Darin Fisher.
