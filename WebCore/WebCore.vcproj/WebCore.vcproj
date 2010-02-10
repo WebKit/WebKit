@@ -5373,7 +5373,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFrameSetElement.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFrameSetElement.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -5425,7 +5425,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFrameSetElement.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFrameSetElement.h"
 				>
 			</File>
 			<File

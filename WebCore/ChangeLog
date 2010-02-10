@@ -1,3 +1,17 @@
+2010-02-10  Adam Roben  <aroben@apple.com>
+
+        Fix bad paths in WebCore.vcproj
+
+        These were harmless in VS2005, but cause project conversion errors in
+        VS2010 RC.
+
+        Fixes <http://webkit.org/b/34801>.
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.vcproj/WebCore.vcproj: Removed leading "." from paths to
+        JSHTMLFrameSetElement.{cpp,h}.
+
 2010-02-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed (build fix).
