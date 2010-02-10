@@ -50,6 +50,11 @@ RemoteDebuggerAgentStub.prototype.getContextId = function()
 };
 
 
+RemoteDebuggerAgentStub.prototype.processDebugCommands = function()
+{
+};
+
+
 /**
  * @constructor
  */
@@ -84,11 +89,6 @@ RemoteToolsAgentStub.prototype.dispatchOnInjectedScript = function()
 
 
 RemoteToolsAgentStub.prototype.dispatchOnInspectorController = function()
-{
-};
-
-
-RemoteToolsAgentStub.prototype.executeVoidJavaScript = function()
 {
 };
 

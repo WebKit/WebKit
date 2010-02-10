@@ -613,7 +613,7 @@ TestSuite.prototype.testSetBreakpoint = function()
               function(view, url) {
                 view._addBreakpoint(breakpointLine);
                 // Force v8 execution.
-                RemoteToolsAgent.executeVoidJavaScript();
+                RemoteDebuggerAgent.processDebugCommands();
                 test.waitForSetBreakpointResponse_(url, breakpointLine,
                     function() {
                         test.releaseControl();
@@ -869,7 +869,7 @@ TestSuite.prototype.testEvalOnCallFrame = function()
               function(view, url) {
                   view._addBreakpoint(breakpointLine);
                   // Force v8 execution.
-                  RemoteToolsAgent.executeVoidJavaScript();
+                  RemoteDebuggerAgent.processDebugCommands();
                   test.waitForSetBreakpointResponse_(url, breakpointLine, setBreakpointCallback);
               });
         });

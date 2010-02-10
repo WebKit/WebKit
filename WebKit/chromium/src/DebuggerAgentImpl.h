@@ -62,6 +62,7 @@ public:
 
     // DebuggerAgent implementation.
     virtual void getContextId();
+    virtual void processDebugCommands();
 
     void debuggerOutput(const WebCore::String& out);
 
@@ -81,10 +82,6 @@ public:
         bool async,
         WebCore::String* exception);
 
-    // Executes a no-op function in the utility context. We don't use
-    // executeUtilityFunction for that to avoid script evaluation leading to
-    // undesirable AfterCompile events.
-    void executeVoidJavaScript(v8::Handle<v8::Context> context);
 
     WebCore::Page* page();
     WebDevToolsAgentImpl* webdevtoolsAgent() { return m_webdevtoolsAgent; }

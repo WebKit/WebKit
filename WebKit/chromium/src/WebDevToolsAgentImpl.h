@@ -70,7 +70,6 @@ public:
     // ToolsAgent implementation.
     virtual void dispatchOnInspectorController(int callId, const WebCore::String& functionName, const WebCore::String& jsonArgs);
     virtual void dispatchOnInjectedScript(int callId, int injectedScriptId, const WebCore::String& functionName, const WebCore::String& jsonArgs, bool async);
-    virtual void executeVoidJavaScript();
 
     // WebDevToolsAgentPrivate implementation.
     virtual void didClearWindowObject(WebFrameImpl* frame);

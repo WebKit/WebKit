@@ -79,6 +79,12 @@ void DebuggerAgentImpl::getContextId()
     m_delegate->setContextId(m_webdevtoolsAgent->hostId());
 }
 
+void DebuggerAgentImpl::processDebugCommands()
+{
+    DebuggerAgentManager::UtilityContextScope utilityScope;
+    v8::Debug::ProcessDebugMessages();
+}
+
 void DebuggerAgentImpl::debuggerOutput(const String& command)
 {
     m_delegate->debuggerOutput(command);
@@ -177,22 +183,6 @@ String DebuggerAgentImpl::executeUtilityFunction(
         return "";
     }
     return WebCore::toWebCoreStringWithNullCheck(resObj);
-}
-
-void DebuggerAgentImpl::executeVoidJavaScript(v8::Handle<v8::Context> context)
-{
-    v8::HandleScope scope;
-    ASSERT(!context.IsEmpty());
-    v8::Context::Scope contextScope(context);
-    DebuggerAgentManager::UtilityContextScope utilityScope;
-
-    v8::Handle<v8::Value> function =
-        context->Global()->Get(v8::String::New("devtools$$void"));
-    ASSERT(function->IsFunction());
-    v8::Handle<v8::Value> args[] = {
-        v8::Local<v8::Value>()
-    };
-    v8::Handle<v8::Function>::Cast(function)->Call(context->Global(), 0, args);
 }
 
 WebCore::Page* DebuggerAgentImpl::page()

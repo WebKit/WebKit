@@ -265,11 +265,6 @@ void WebDevToolsAgentImpl::dispatchOnInjectedScript(int callId, int injectedScri
         async);
 }
 
-void WebDevToolsAgentImpl::executeVoidJavaScript()
-{
-    m_debuggerAgentImpl->executeVoidJavaScript(m_utilityContext);
-}
-
 void WebDevToolsAgentImpl::dispatchMessageFromFrontend(const WebDevToolsMessageData& data)
 {
     if (ToolsAgentDispatch::dispatch(this, data))

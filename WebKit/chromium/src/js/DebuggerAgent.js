@@ -208,7 +208,7 @@ devtools.DebuggerAgent.prototype.resolveScriptSource = function(scriptId, callba
     });
     devtools.DebuggerAgent.sendCommand_(cmd);
     // Force v8 execution so that it gets to processing the requested command.
-    RemoteToolsAgent.executeVoidJavaScript();
+    RemoteDebuggerAgent.processDebugCommands();
 
     this.requestSeqToCallback_[cmd.getSequenceNumber()] = function(msg) {
         if (msg.isSuccess()) {
@@ -290,7 +290,7 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condit
     // Force v8 execution so that it gets to processing the requested command.
     // It is necessary for being able to change a breakpoint just after it
     // has been created (since we need an existing breakpoint id for that).
-    RemoteToolsAgent.executeVoidJavaScript();
+    RemoteDebuggerAgent.processDebugCommands();
 };
 
 
@@ -749,7 +749,7 @@ devtools.DebuggerAgent.prototype.setContextId_ = function(contextId)
         });
         devtools.DebuggerAgent.sendCommand_(cmd);
         // Force v8 execution so that it gets to processing the requested command.
-        RemoteToolsAgent.executeVoidJavaScript();
+        RemoteDebuggerAgent.processDebugCommands();
 
         var debuggerAgent = this;
         this.requestSeqToCallback_[cmd.getSequenceNumber()] = function(msg) {

@@ -144,7 +144,7 @@ devtools.ProfilerAgent.prototype.startProfiling = function(modules)
         "modules": modules,
         "command": "resume"});
     devtools.DebuggerAgent.sendCommand_(cmd);
-    RemoteToolsAgent.executeVoidJavaScript();
+    RemoteDebuggerAgent.processDebugCommands();
     if (modules & devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_SNAPSHOT) {
         var pos = this.logPosition_;
         // Active modules will not change, instead, a snapshot will be logged.
@@ -162,7 +162,7 @@ devtools.ProfilerAgent.prototype.stopProfiling = function(modules)
         "modules": modules,
         "command": "pause"});
     devtools.DebuggerAgent.sendCommand_(cmd);
-    RemoteToolsAgent.executeVoidJavaScript();
+    RemoteDebuggerAgent.processDebugCommands();
 };
 
 
