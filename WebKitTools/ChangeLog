@@ -1,3 +1,21 @@
+2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support frameset flattening
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Add FrameSet Flattening support to Mac DRT.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setFrameSetFlatteningEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setFrameSetFlatteningEnabled):
+
 2010-02-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7436875> Crash in Flash when visiting
