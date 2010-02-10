@@ -204,6 +204,8 @@ v8::Handle<v8::Value> toV8(HTMLDocument* impl, bool forceNewObject)
     if (!impl)
         return v8::Null();
     v8::Handle<v8::Object> wrapper = V8HTMLDocument::wrap(impl, forceNewObject);
+    if (wrapper.IsEmpty())
+        return wrapper;
     if (!V8IsolatedContext::getEntered()) {
         if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
             proxy->windowShell()->updateDocumentWrapper(wrapper);
