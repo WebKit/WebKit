@@ -1,3 +1,16 @@
+2010-02-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test to ensure that a call to history.forward() at the top of
+        a page doesn't prevent the page from loading when there is no
+        forward list.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34722
+
+        * fast/history/forward-during-load-expected.txt: Added.
+        * fast/history/forward-during-load.html: Added.
+
 2010-02-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
