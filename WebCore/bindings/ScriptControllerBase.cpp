@@ -33,6 +33,7 @@ namespace WebCore {
 
 bool ScriptController::canExecuteScripts()
 {
+    // FIXME: We should get this information from the document instead of the frame.
     if (m_frame->loader()->isSandboxed(SandboxScripts))
         return false;
 

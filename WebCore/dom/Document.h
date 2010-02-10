@@ -915,8 +915,6 @@ public:
     void updateURLForPushOrReplaceState(const KURL&);
     void statePopped(SerializedScriptValue*);
 
-    void updateSandboxFlags(); // Set sandbox flags as determined by the frame.
-
     bool processingLoadEvent() const { return m_processingLoadEvent; }
 
 #if ENABLE(DATABASE)

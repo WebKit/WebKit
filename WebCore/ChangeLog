@@ -1,3 +1,30 @@
+2010-02-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Freeze sandbox attributes on creation
+        https://bugs.webkit.org/show_bug.cgi?id=34184
+
+        This is how the spec works now.
+
+        Test: fast/frames/sandboxed-iframe-forms-dynamic.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::requestObject):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        (WebCore::FrameLoader::updateSandboxFlags):
+        * page/SecurityOrigin.cpp:
+        * page/SecurityOrigin.h:
+
 2010-02-09  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

@@ -114,7 +114,6 @@ public:
     // WARNING: This is an extremely powerful ability. Use with caution!
     void grantUniversalAccess();
 
-    void setSandboxFlags(SandboxFlags);
     bool isSandboxed(SandboxFlags mask) const { return m_sandboxFlags & mask; }
 
     bool canAccessDatabase() const { return !isUnique(); }

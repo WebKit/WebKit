@@ -286,15 +286,6 @@ void SecurityOrigin::grantUniversalAccess()
     m_universalAccess = true;
 }
 
-void SecurityOrigin::setSandboxFlags(SandboxFlags flags)
-{
-    // Although you might think that we should set m_isUnique based on
-    // SandboxOrigin, that's not actually the right behavior. We're supposed to
-    // freeze the origin of a document when it is created, even if the sandbox
-    // flags change after that point in time.
-    m_sandboxFlags = flags;
-}
-
 bool SecurityOrigin::isLocal() const
 {
     return shouldTreatURLSchemeAsLocal(m_protocol);

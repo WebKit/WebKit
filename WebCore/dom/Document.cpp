@@ -4492,12 +4492,6 @@ void Document::statePopped(SerializedScriptValue* stateObject)
         m_pendingStateObject = stateObject;
 }
 
-void Document::updateSandboxFlags()
-{
-    if (m_frame && securityOrigin())
-        securityOrigin()->setSandboxFlags(m_frame->loader()->sandboxFlags());
-}
-
 void Document::updateFocusAppearanceSoon(bool restorePreviousSelection)
 {
     m_updateFocusAppearanceRestoresSelection = restorePreviousSelection;

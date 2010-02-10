@@ -666,9 +666,11 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     ASSERT(lexicalFrame);
     ASSERT(dynamicFrame);
 
-    // Sandboxed iframes cannot open new auxiliary browsing contexts.
-    if (lexicalFrame && lexicalFrame->loader()->isSandboxed(SandboxNavigation))
-        return 0;
+    if (Document* lexicalDocument = lexicalFrame->document()) {
+        // Sandboxed iframes cannot open new auxiliary browsing contexts.
+        if (lexicalDocument->securityOrigin()->isSandboxed(SandboxNavigation))
+            return 0;
+    }
 
     ResourceRequest request;
 
