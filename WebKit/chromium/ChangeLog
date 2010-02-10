@@ -1,3 +1,36 @@
+2010-02-09  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Refactor AutocompletePopupMenuClient into a base class,
+        SuggestionsPopupMenuClient, and two derived classes,
+        AutocompletePopupMenuClient and AutoFillPopupMenuClient.  Currently
+        the behavior of suggestions popups has not changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34721
+
+        * WebKit.gyp:
+        * public/WebView.h:
+        * src/AutoFillPopupMenuClient.cpp: Added.
+        * src/AutoFillPopupMenuClient.h: Added.
+        * src/AutocompletePopupMenuClient.cpp:
+        (WebKit::AutocompletePopupMenuClient::getSuggestionsCount):
+        (WebKit::AutocompletePopupMenuClient::getSuggestion):
+        (WebKit::AutocompletePopupMenuClient::removeSuggestionAtIndex):
+        (WebKit::AutocompletePopupMenuClient::initialize):
+        (WebKit::AutocompletePopupMenuClient::setSuggestions):
+        * src/AutocompletePopupMenuClient.h:
+        * src/SuggestionsPopupMenuClient.cpp: Added.
+        * src/SuggestionsPopupMenuClient.h: Added.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        * src/WebViewImpl.h:
+
 2010-02-09  Chris Guillory  <ctguil@google.com>
 
         Reviewed by Darin Fisher.

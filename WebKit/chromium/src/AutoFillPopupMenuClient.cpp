@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "AutocompletePopupMenuClient.h"
+#include "AutoFillPopupMenuClient.h"
 
 #include "HTMLInputElement.h"
 #include "WebString.h"
@@ -39,45 +39,67 @@ using namespace WebCore;
 
 namespace WebKit {
 
-unsigned AutocompletePopupMenuClient::getSuggestionsCount() const
+unsigned AutoFillPopupMenuClient::getSuggestionsCount() const
 {
-    return m_suggestions.size();
+    return m_names.size();
 }
 
-WebString AutocompletePopupMenuClient::getSuggestion(unsigned listIndex) const
+WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
 {
-    ASSERT(listIndex >= 0 && listIndex < m_suggestions.size());
-    return m_suggestions[listIndex];
+    // FIXME: Modify the PopupMenu to add the label in gray right-justified.
+    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    return m_names[listIndex] + String(" (") + m_labels[listIndex] + String(")");
 }
 
-void AutocompletePopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
+void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
-    ASSERT(listIndex >= 0 && listIndex < m_suggestions.size());
-    m_suggestions.remove(listIndex);
+    // FIXME: Do we want to remove AutoFill suggestions?
+    ASSERT(listIndex >= 0 && listIndex < static_cast<int>(m_names.size()));
+    m_names.remove(listIndex);
+    m_labels.remove(listIndex);
 }
 
-void AutocompletePopupMenuClient::initialize(
+void AutoFillPopupMenuClient:: selectionChanged(unsigned listIndex,
+                                                bool fireEvents) {
+    if (listIndex == static_cast<unsigned>(-1)) {
+        SuggestionsPopupMenuClient::selectionChanged(listIndex, fireEvents);
+        return;
+    }
+
+    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+    setSuggestedValue(m_names[listIndex]);
+}
+
+void AutoFillPopupMenuClient::initialize(
     HTMLInputElement* textField,
-    const WebVector<WebString>& suggestions,
+    const WebVector<WebString>& names,
+    const WebVector<WebString>& labels,
     int defaultSuggestionIndex)
 {
-    ASSERT(defaultSuggestionIndex < static_cast<int>(suggestions.size()));
+    ASSERT(names.size() == labels.size());
+    ASSERT(defaultSuggestionIndex < static_cast<int>(names.size()));
 
     // The suggestions must be set before initializing the
     // SuggestionsPopupMenuClient.
-    setSuggestions(suggestions);
+    setSuggestions(names, labels);
 
     SuggestionsPopupMenuClient::initialize(textField, defaultSuggestionIndex);
 }
 
-void AutocompletePopupMenuClient::setSuggestions(const WebVector<WebString>& suggestions)
+void AutoFillPopupMenuClient::setSuggestions(const WebVector<WebString>& names,
+                                             const WebVector<WebString>& labels)
 {
-    m_suggestions.clear();
-    for (size_t i = 0; i < suggestions.size(); ++i)
-        m_suggestions.append(suggestions[i]);
+    ASSERT(names.size() == labels.size());
+
+    m_names.clear();
+    m_labels.clear();
+    for (size_t i = 0; i < names.size(); ++i) {
+        m_names.append(names[i]);
+        m_labels.append(labels[i]);
+    }
 
     // Try to preserve selection if possible.
-    if (getSelectedIndex() >= static_cast<int>(suggestions.size()))
+    if (getSelectedIndex() >= static_cast<int>(names.size()))
         setSelectedIndex(-1);
 }
 

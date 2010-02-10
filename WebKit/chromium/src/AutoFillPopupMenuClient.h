@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AutocompletePopupMenuClient_h
-#define AutocompletePopupMenuClient_h
- 
+#ifndef AutoFillPopupMenuClient_h
+#define AutoFillPopupMenuClient_h
+
 #include "SuggestionsPopupMenuClient.h"
 
 namespace WebCore {
@@ -41,23 +41,29 @@ namespace WebKit {
 class WebString;
 template <typename T> class WebVector;
 
-// The Autocomplete suggestions popup menu client, used to display a list of
-// autocomplete suggestions.
-class AutocompletePopupMenuClient : public SuggestionsPopupMenuClient {
+// The AutoFill suggestions popup menu client, used to display name suggestions
+// with right-justified labels.
+class AutoFillPopupMenuClient : public SuggestionsPopupMenuClient {
 public:
     // SuggestionsPopupMenuClient implementation:
     virtual unsigned getSuggestionsCount() const;
     virtual WebString getSuggestion(unsigned listIndex) const;
     virtual void removeSuggestionAtIndex(unsigned listIndex);
 
+    // WebCore::PopupMenuClient implementation:
+    virtual void selectionChanged(unsigned listIndex, bool fireEvents);
+
     void initialize(WebCore::HTMLInputElement*,
-                    const WebVector<WebString>& suggestions,
+                    const WebVector<WebString>& names,
+                    const WebVector<WebString>& labels,
                     int defaultSuggestionIndex);
 
-    void setSuggestions(const WebVector<WebString>&);
+    void setSuggestions(const WebVector<WebString>& names,
+                        const WebVector<WebString>& labels);
 
 private:
-    Vector<WebCore::String> m_suggestions;
+    Vector<WebCore::String> m_names;
+    Vector<WebCore::String> m_labels;
 };
 
 } // namespace WebKit

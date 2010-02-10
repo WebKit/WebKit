@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebViewImpl.h"
 
+#include "AutoFillPopupMenuClient.h"
 #include "AutocompletePopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "Chrome.h"
@@ -240,6 +241,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_operationsAllowed(WebDragOperationNone)
     , m_dragOperation(WebDragOperationNone)
     , m_suggestionsPopupShowing(false)
+    , m_suggestionsPopupClient(0)
+    , m_suggestionsPopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
 {
@@ -468,7 +471,7 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     // event.
     m_suppressNextKeypressEvent = false;
 
-    // Give autocomplete a chance to consume the key events it is interested in.
+    // Give Autocomplete a chance to consume the key events it is interested in.
     if (autocompleteHandleKeyEvent(event))
         return true;
 
@@ -541,7 +544,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
         m_client->removeAutofillSuggestions(name, value);
         // Update the entries in the currently showing popup to reflect the
         // deletion.
-        m_autocompletePopupClient->removeItemAtIndex(selectedIndex);
+        m_autocompletePopupClient->removeSuggestionAtIndex(selectedIndex);
         refreshSuggestionsPopup();
         return false;
     }
@@ -1560,58 +1563,118 @@ void WebViewImpl::applyAutofillSuggestions(
     const WebVector<WebString>& suggestions,
     int defaultSuggestionIndex)
 {
+    applyAutocompleteSuggestions(node, suggestions, defaultSuggestionIndex);
+}
+
+void WebViewImpl::applyAutoFillSuggestions(
+    const WebNode& node,
+    const WebVector<WebString>& names,
+    const WebVector<WebString>& labels,
+    int defaultSuggestionIndex)
+{
+    ASSERT(names.size() == labels.size());
+    ASSERT(defaultSuggestionIndex < static_cast<int>(names.size()));
+
+    if (names.isEmpty()) {
+        hideSuggestionsPopup();
+        return;
+    }
+
+    RefPtr<Node> focusedNode = focusedWebCoreNode();
+    // If the node for which we queried the AutoFill suggestions is not the
+    // focused node, then we have nothing to do.  FIXME: also check the
+    // caret is at the end and that the text has not changed.
+    if (!focusedNode || focusedNode != PassRefPtr<Node>(node)) {
+        hideSuggestionsPopup();
+        return;
+    }
+
+    HTMLInputElement* inputElem =
+        static_cast<HTMLInputElement*>(focusedNode.get());
+
+    // The first time the AutoFill popup is shown we'll create the client and
+    // the popup.
+    if (!m_autoFillPopupClient.get())
+        m_autoFillPopupClient.set(new AutoFillPopupMenuClient);
+
+    m_autoFillPopupClient->initialize(inputElem, names, labels,
+                                      defaultSuggestionIndex);
+
+    if (m_suggestionsPopupClient != m_autoFillPopupClient.get()) {
+        hideSuggestionsPopup();
+        m_suggestionsPopupClient = m_autoFillPopupClient.get();
+    }
+
+    if (!m_autoFillPopup.get()) {
+        m_autoFillPopup = PopupContainer::create(m_suggestionsPopupClient,
+                                                 suggestionsPopupSettings);
+    }
+
+    if (m_suggestionsPopup != m_autoFillPopup.get())
+        m_suggestionsPopup = m_autoFillPopup.get();
+
+    if (m_suggestionsPopupShowing) {
+        m_autoFillPopupClient->setSuggestions(names, labels);
+        refreshSuggestionsPopup();
+    } else {
+        m_suggestionsPopup->show(focusedNode->getRect(),
+                                 focusedNode->ownerDocument()->view(), 0);
+        m_suggestionsPopupShowing = true;
+    }
+}
+
+void WebViewImpl::applyAutocompleteSuggestions(
+    const WebNode& node,
+    const WebVector<WebString>& suggestions,
+    int defaultSuggestionIndex)
+{
+    ASSERT(defaultSuggestionIndex < static_cast<int>(suggestions.size()));
+
     if (!m_page.get() || suggestions.isEmpty()) {
         hideSuggestionsPopup();
         return;
     }
 
-    ASSERT(defaultSuggestionIndex < static_cast<int>(suggestions.size()));
+    RefPtr<Node> focusedNode = focusedWebCoreNode();
+    // If the node for which we queried the Autocomplete suggestions is not the
+    // focused node, then we have nothing to do.  FIXME: also check the
+    // caret is at the end and that the text has not changed.
+    if (!focusedNode || focusedNode != PassRefPtr<Node>(node)) {
+        hideSuggestionsPopup();
+        return;
+    }
 
-    if (RefPtr<Frame> focused = m_page->focusController()->focusedFrame()) {
-        RefPtr<Document> document = focused->document();
-        if (!document.get()) {
-            hideSuggestionsPopup();
-            return;
-        }
+    HTMLInputElement* inputElem =
+        static_cast<HTMLInputElement*>(focusedNode.get());
 
-        RefPtr<Node> focusedNode = document->focusedNode();
-        // If the node for which we queried the autofill suggestions is not the
-        // focused node, then we have nothing to do.  FIXME: also check the
-        // carret is at the end and that the text has not changed.
-        if (!focusedNode.get() || focusedNode != PassRefPtr<Node>(node)) {
-            hideSuggestionsPopup();
-            return;
-        }
+    // The first time the Autocomplete is shown we'll create the client and the
+    // popup.
+    if (!m_autocompletePopupClient.get())
+        m_autocompletePopupClient.set(new AutocompletePopupMenuClient);
 
-        if (!focusedNode->hasTagName(HTMLNames::inputTag)) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
+    m_autocompletePopupClient->initialize(inputElem, suggestions,
+                                          defaultSuggestionIndex);
 
-        HTMLInputElement* inputElem =
-            static_cast<HTMLInputElement*>(focusedNode.get());
+    if (m_suggestionsPopupClient != m_autocompletePopupClient.get()) {
+        hideSuggestionsPopup();
+        m_suggestionsPopupClient = m_autocompletePopupClient.get();
+    }
 
-        // The first time the suggestions popup is shown we'll create the client
-        // and the popup.
-        if (!m_autocompletePopupClient.get())
-            m_autocompletePopupClient.set(new AutocompletePopupMenuClient(this));
-        m_autocompletePopupClient->initialize(inputElem,
-                                              suggestions,
-                                              defaultSuggestionIndex);
-        if (!m_suggestionsPopup.get()) {
-            m_suggestionsPopup =
-                PopupContainer::create(m_autocompletePopupClient.get(),
-                                       suggestionsPopupSettings);
-        }
+    if (!m_autocompletePopup.get()) {
+        m_autocompletePopup = PopupContainer::create(m_suggestionsPopupClient,
+                                                     suggestionsPopupSettings);
+    }
 
-        if (m_suggestionsPopupShowing) {
-            m_autocompletePopupClient->setSuggestions(suggestions);
-            refreshSuggestionsPopup();
-        } else {
-            m_suggestionsPopup->show(focusedNode->getRect(),
-                                     focusedNode->ownerDocument()->view(), 0);
-            m_suggestionsPopupShowing = true;
-        }
+    if (m_suggestionsPopup != m_autocompletePopup.get())
+        m_suggestionsPopup = m_autocompletePopup.get();
+
+    if (m_suggestionsPopupShowing) {
+        m_autocompletePopupClient->setSuggestions(suggestions);
+        refreshSuggestionsPopup();
+    } else {
+        m_suggestionsPopup->show(focusedNode->getRect(),
+                                 focusedNode->ownerDocument()->view(), 0);
+        m_suggestionsPopupShowing = true;
     }
 }
 

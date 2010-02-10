@@ -58,6 +58,7 @@ class KeyboardEvent;
 class Page;
 class PlatformKeyboardEvent;
 class PopupContainer;
+class PopupMenuClient;
 class Range;
 class RenderTheme;
 class Widget;
@@ -65,7 +66,9 @@ class Widget;
 
 namespace WebKit {
 class AutocompletePopupMenuClient;
+class AutoFillPopupMenuClient;
 class ContextMenuClientImpl;
+class SuggestionsPopupMenuClient;
 class WebAccessibilityObject;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
@@ -150,6 +153,15 @@ public:
     virtual void setDevToolsAgent(WebDevToolsAgent*);
     virtual WebAccessibilityObject accessibilityObject();
     virtual void applyAutofillSuggestions(
+        const WebNode&,
+        const WebVector<WebString>& suggestions,
+        int defaultSuggestionIndex);
+    virtual void applyAutoFillSuggestions(
+        const WebNode&,
+        const WebVector<WebString>& names,
+        const WebVector<WebString>& labels,
+        int defaultSuggestionIndex);
+    virtual void applyAutocompleteSuggestions(
         const WebNode&,
         const WebVector<WebString>& suggestions,
         int defaultSuggestionIndex);
@@ -395,15 +407,28 @@ private:
     // current drop target in this WebView (the drop target can accept the drop).
     WebDragOperation m_dragOperation;
 
-    // The suggestions popup.  Kept around and reused every-time new suggestions
-    // should be shown.
-    RefPtr<WebCore::PopupContainer> m_suggestionsPopup;
-
-    // Whether the suggestions popup is currently showing.
+    // Whether a suggestions popup is currently showing.
     bool m_suggestionsPopupShowing;
 
-    // The autocomplete client.
+    // A pointer to the current suggestions popup menu client.  This can be
+    // either an AutoFillPopupMenuClient or an AutocompletePopupMenuClient.  We
+    // do not own this pointer.
+    SuggestionsPopupMenuClient* m_suggestionsPopupClient;
+
+    // The AutoFill popup client.
+    OwnPtr<AutoFillPopupMenuClient> m_autoFillPopupClient;
+
+    // The Autocomplete popup client.
     OwnPtr<AutocompletePopupMenuClient> m_autocompletePopupClient;
+
+    // A pointer to the current suggestions popup.  We do not own this pointer.
+    WebCore::PopupContainer* m_suggestionsPopup;
+
+    // The AutoFill suggestions popup.
+    RefPtr<WebCore::PopupContainer> m_autoFillPopup;
+
+    // The AutoComplete suggestions popup.
+    RefPtr<WebCore::PopupContainer> m_autocompletePopup;
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
 
