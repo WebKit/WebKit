@@ -1,3 +1,19 @@
+2010-02-10  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove automatic viewport resizing
+        https://bugs.webkit.org/show_bug.cgi?id=34766
+
+        Removed automatic viewport resizing per conclusions on the WebGL
+        mailing list. Added test verifying new behavior and updated a
+        couple of previous tests failing after this change.
+
+        Test: fast/canvas/webgl/viewport-unchanged-upon-resize.html
+
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+
 2010-02-10  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -223,7 +223,6 @@ void GraphicsContext3D::reshape(int width, int height)
         notImplemented();
     }
 
-    ::glViewport(0, 0, m_currentWidth, m_currentHeight);
     ::glClear(GL_COLOR_BUFFER_BIT);
     ::glFlush();
 }

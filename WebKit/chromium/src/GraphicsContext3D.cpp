@@ -709,7 +709,6 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 #endif  // FLIP_FRAMEBUFFER_VERTICALLY
 
     glClear(GL_COLOR_BUFFER_BIT);
-    viewportImpl(0, 0, width, height);
 
 #if PLATFORM(CG)
     // Need to reallocate the client-side backing store.
