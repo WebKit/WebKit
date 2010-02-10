@@ -88,16 +88,18 @@ namespace WebCore {
         void attachDebuggerWhenShown();
         void debuggerWasEnabled();
         void debuggerWasDisabled();
-        void profilerWasEnabled();
-        void profilerWasDisabled();
         void parsedScriptSource(const JSC::SourceCode&);
         void failedToParseScriptSource(const JSC::SourceCode&, int errorLine, const JSC::UString& errorMessage);
+        void pausedScript(SerializedScriptValue* callFrames);
+        void resumedScript();
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        void profilerWasEnabled();
+        void profilerWasDisabled();
         void addProfileHeader(const ScriptValue& profile);
         void setRecordingProfile(bool isProfiling);
         void didGetProfileHeaders(int callId, const ScriptArray& headers);
         void didGetProfile(int callId, const ScriptValue& profile);
-        void pausedScript(SerializedScriptValue* callFrames);
-        void resumedScript();
 #endif
 
 #if ENABLE(DATABASE)

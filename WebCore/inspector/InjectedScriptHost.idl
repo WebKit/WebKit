@@ -41,7 +41,7 @@ module core {
         void addNodesToSearchResult(in DOMString nodeIds);
         long pushNodeByPathToFrontend(in DOMString path);
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER && !(defined(V8_BINDING) && V8_BINDING)
         [Custom] DOMObject currentCallFrame();
         [Custom] boolean isActivation(in DOMObject object);
 #endif

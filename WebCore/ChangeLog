@@ -1,3 +1,37 @@
+2010-02-09  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Continuing debugger and profiler unforking: narrow scope of JSC-specific ifdefs.
+        Also, enable JAVASCRIPT_DEBUGGER explicitly in features, it appears to be required
+        for really enabling it in V8 bindings generation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34706
+
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::currentCallFrame):
+        (WebCore::InspectorBackend::getProfile):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::pausedScript):
+        (WebCore::InspectorFrontend::resumedScript):
+        (WebCore::InspectorFrontend::profilerWasEnabled):
+        (WebCore::InspectorFrontend::profilerWasDisabled):
+        (WebCore::InspectorFrontend::didGetProfile):
+        * inspector/InspectorFrontend.h:
+        * page/Console.idl:
+
 2010-02-09  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Geoff Garen.

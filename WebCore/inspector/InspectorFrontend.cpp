@@ -266,16 +266,6 @@ void InspectorFrontend::debuggerWasDisabled()
     callSimpleFunction("debuggerWasDisabled");
 }
 
-void InspectorFrontend::profilerWasEnabled()
-{
-    callSimpleFunction("profilerWasEnabled");
-}
-
-void InspectorFrontend::profilerWasDisabled()
-{
-    callSimpleFunction("profilerWasDisabled");
-}
-
 void InspectorFrontend::parsedScriptSource(const JSC::SourceCode& source)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
@@ -297,6 +287,32 @@ void InspectorFrontend::failedToParseScriptSource(const JSC::SourceCode& source,
     function.appendArgument(errorLine);
     function.appendArgument(errorMessage);
     function.call();
+}
+
+void InspectorFrontend::pausedScript(SerializedScriptValue* callFrames)
+{
+    ScriptValue callFramesValue = ScriptValue::deserialize(scriptState(), callFrames);
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("pausedScript");
+    function.appendArgument(callFramesValue);
+    function.call();
+}
+
+void InspectorFrontend::resumedScript()
+{
+    callSimpleFunction("resumedScript");
+}
+#endif
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorFrontend::profilerWasEnabled()
+{
+    callSimpleFunction("profilerWasEnabled");
+}
+
+void InspectorFrontend::profilerWasDisabled()
+{
+    callSimpleFunction("profilerWasDisabled");
 }
 
 void InspectorFrontend::addProfileHeader(const ScriptValue& profile)
@@ -331,20 +347,6 @@ void InspectorFrontend::didGetProfile(int callId, const ScriptValue& profile)
     function.appendArgument(callId);
     function.appendArgument(profile);
     function.call();
-}
-
-void InspectorFrontend::pausedScript(SerializedScriptValue* callFrames)
-{
-    ScriptValue callFramesValue = ScriptValue::deserialize(scriptState(), callFrames);
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("pausedScript");
-    function.appendArgument(callFramesValue);
-    function.call();
-}
-
-void InspectorFrontend::resumedScript()
-{
-    callSimpleFunction("resumedScript");
 }
 #endif
 
