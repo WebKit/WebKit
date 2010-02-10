@@ -79,6 +79,12 @@ private slots:
     void toNumber_data();
     void toNumber();
 
+    void toBool_data();
+    void toBool();
+
+    void toBoolean_data();
+    void toBoolean();
+
 private:
     typedef void (tst_QScriptValue::*InitDataFunction)();
     typedef void (tst_QScriptValue::*DefineDataFunction)(const char*);
@@ -131,6 +137,14 @@ private:
     void toNumber_initData();
     void toNumber_makeData(const char*);
     void toNumber_test(const char*, const QScriptValue&);
+
+    void toBool_initData();
+    void toBool_makeData(const char*);
+    void toBool_test(const char*, const QScriptValue&);
+
+    void toBoolean_initData();
+    void toBoolean_makeData(const char*);
+    void toBoolean_test(const char*, const QScriptValue&);
 
 private:
     QScriptEngine* engine;

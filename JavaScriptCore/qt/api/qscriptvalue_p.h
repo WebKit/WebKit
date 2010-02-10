@@ -505,16 +505,18 @@ bool QScriptValuePrivate::toBool() const
     switch (m_state) {
     case JSValue:
     case JSNative:
-    case JSObject:
         return JSValueToBoolean(context(), value());
+    case JSObject:
+        return true;
     case CNumber:
+        return !(qIsNaN(m_number) || !m_number);
     case CBool:
         return m_number;
     case Invalid:
     case CSpecial:
         return false;
     case CString:
-        return m_string.isEmpty();
+        return m_string.length();
     }
 
     Q_ASSERT_X(false, "toBool()", "Not all states are included in the previous switch statement.");
