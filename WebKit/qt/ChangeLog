@@ -1,3 +1,28 @@
+2010-02-10  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement pageNumberForElementById() method in Qt DRT LayoutTestController,
+        to make Qt DRT able to get page number.
+
+        LayoutTests:
+            printing/page-break-always.html
+            printing/pageNumerForElementById.html
+            printing/css2.1/page-break-before-000.html
+            printing/css2.1/page-break-after-000.html
+            printing/css2.1/page-break-after-004.html
+            printing/css2.1/page-break-before-001.html
+            printing/css2.1/page-break-after-001.html
+            printing/css2.1/page-break-after-002.html
+            printing/css2.1/page-break-before-002.html
+            printing/css2.1/page-break-inside-000.html
+
+        [Qt] Make possible Qt DRT get a page number for element by ID
+        https://bugs.webkit.org/show_bug.cgi?id=34777
+
+        * Api/qwebframe.cpp:
+        (qt_drt_pageNumberForElementById):
+
 2010-02-09  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Adam Barth.

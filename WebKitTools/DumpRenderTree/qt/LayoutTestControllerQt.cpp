@@ -49,6 +49,7 @@ extern void qt_drt_setDomainRelaxationForbiddenForURLScheme(bool forbidden, cons
 extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 extern QString qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id);
 extern int qt_drt_workerThreadCount();
+extern int qt_drt_pageNumberForElementById(QWebFrame* qFrame, const QString& id, float width, float height);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
@@ -453,4 +454,15 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidd
 int LayoutTestController::workerThreadCount()
 {
     return qt_drt_workerThreadCount();
+}
+
+int LayoutTestController::pageNumberForElementById(const QString& id, float width, float height)
+{
+    // If no size specified, webpage viewport size is used
+    if (!width && !height) {
+        width = m_drt->webPage()->viewportSize().width();
+        height = m_drt->webPage()->viewportSize().height();
+    }
+
+    return qt_drt_pageNumberForElementById(m_drt->webPage()->mainFrame(), id, width, height);
 }
