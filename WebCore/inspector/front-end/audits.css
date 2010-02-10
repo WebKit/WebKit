@@ -262,11 +262,11 @@ body.inactive .audit-launcher-view button, .audit-launcher-view button:disabled 
     margin: 0 5px 5px 0;
 }
 
-.audit-launcher-view input[type="radio"]:active {
+.audit-launcher-view input[type="radio"]:active:not(:disabled) {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
 }
 
-.audit-launcher-view input[type="radio"]:checked {
+.audit-launcher-view input[type="radio"]:checked:not(:disabled), .audit-launcher-view input[type="radio"]:checked:disabled {
     background: url(Images/radioDot.png) center no-repeat,
                 -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
 }

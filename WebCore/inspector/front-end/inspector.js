@@ -468,17 +468,8 @@ WebInspector.loaded = function()
     var previousToolbarItem = toolbarElement.children[0];
 
     this.panelOrder = [];
-    for (var panelName in this.panels) {
-        var panel = this.panels[panelName];
-        var panelToolbarItem = panel.toolbarItem;
-        this.panelOrder.push(panel);
-        panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
-        if (previousToolbarItem)
-            toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
-        else
-            toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
-        previousToolbarItem = panelToolbarItem;
-    }
+    for (var panelName in this.panels)
+        previousToolbarItem = WebInspector.addPanelToolbarIcon(toolbarElement, this.panels[panelName], previousToolbarItem);
 
     this.Tips = {
         ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
@@ -527,6 +518,18 @@ WebInspector.loaded = function()
     document.getElementById("close-button-right").addEventListener("click", this.close, true);
 
     InspectorFrontendHost.loaded();
+}
+
+WebInspector.addPanelToolbarIcon = function(toolbarElement, panel, previousToolbarItem)
+{
+    var panelToolbarItem = panel.toolbarItem;
+    this.panelOrder.push(panel);
+    panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
+    if (previousToolbarItem)
+        toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
+    else
+        toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
+    return panelToolbarItem;
 }
 
 var windowLoaded = function()
@@ -749,8 +752,11 @@ WebInspector.documentKeyDown = function(event)
                 var shouldShowAuditsPanel = event.ctrlKey && !event.shiftKey && !event.metaKey && event.altKey;
 
             if (shouldShowAuditsPanel) {
-                if (!this.panels.audits)
+                if (!this.panels.audits) {
                     this.panels.audits = new WebInspector.AuditsPanel();
+                    var toolbarElement = document.getElementById("toolbar");
+                    WebInspector.addPanelToolbarIcon(toolbarElement, this.panels.audits, this.panels.console.toolbarItem);
+                }
                 this.currentPanel = this.panels.audits;
             }
 

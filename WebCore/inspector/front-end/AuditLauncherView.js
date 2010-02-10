@@ -63,11 +63,11 @@ WebInspector.AuditLauncherView = function(categoriesById, runnerCallback)
 }
 
 WebInspector.AuditLauncherView.prototype = {
-    updateResourceTrackingState: function()
+    updateResourceTrackingState: function(isTracking)
     {
         if (!this._auditPresentStateLabelElement)
             return;
-        if (InspectorBackend.resourceTrackingEnabled()) {
+        if (isTracking) {
             this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State");
             this._auditPresentStateElement.disabled = false;
             this._auditPresentStateElement.parentElement.removeStyleClass("disabled");
@@ -197,7 +197,6 @@ WebInspector.AuditLauncherView.prototype = {
         this._selectAllClicked(this._selectAllCheckboxElement.checked);
         this.updateResourceTrackingState();
         this._updateButton();
-        this.resize();
     },
 
     _updateButton: function()
@@ -207,6 +206,12 @@ WebInspector.AuditLauncherView.prototype = {
             this._launchButton.textContent = WebInspector.UIString("Running...");
         else
             this._launchButton.textContent = WebInspector.UIString("Run");
+    },
+
+    show: function(parentElement)
+    {
+        WebInspector.View.prototype.show.call(this, parentElement);
+        setTimeout(this.resize(), 0);
     },
 
     resize: function()

@@ -42700,11 +42700,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\AuditCategories.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\AuditLauncherView.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\AuditResultView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\AuditRules.js"
 					>
 				</File>
 				<File

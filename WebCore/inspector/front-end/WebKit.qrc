@@ -2,8 +2,10 @@
 <qresource prefix="/webkit/inspector">
     <file>inspector.html</file>
     <file>AbstractTimelinePanel.js</file>
+    <file>AuditCategories.js</file>
     <file>AuditLauncherView.js</file>
     <file>AuditResultView.js</file>
+    <file>AuditRules.js</file>
     <file>AuditsPanel.js</file>
     <file>BottomUpProfileDataGridTree.js</file>
     <file>Breakpoint.js</file>

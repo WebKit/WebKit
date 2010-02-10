@@ -3700,8 +3700,10 @@
 
             'inspector/front-end/inspector.html',
             'inspector/front-end/AbstractTimelinePanel.js',
+            'inspector/front-end/AuditCategories.js',
             'inspector/front-end/AuditLauncherView.js',
             'inspector/front-end/AuditResultView.js',
+            'inspector/front-end/AuditRules.js',
             'inspector/front-end/AuditsPanel.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
             'inspector/front-end/Breakpoint.js',

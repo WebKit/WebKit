@@ -105,7 +105,8 @@ WebInspector.AuditsPanel.prototype = {
         this._auditCategoriesById = {};
         for (var categoryCtorID in WebInspector.AuditCategories) {
             var auditCategory = new WebInspector.AuditCategories[categoryCtorID]();
-            this.categoriesById[auditCategory.id] = auditCategory;
+            auditCategory._id = categoryCtorID;
+            this.categoriesById[categoryCtorID] = auditCategory;
         }
     },
 
@@ -185,15 +186,13 @@ WebInspector.AuditsPanel.prototype = {
 
     _reloadResources: function(callback)
     {
-        function nullCallback()
-        {
-        }
         this._resourceTrackingCallback = callback;
+
         if (!InspectorBackend.resourceTrackingEnabled()) {
             InspectorBackend.enableResourceTracking(false);
-            this._updateLauncherViewControls();
+            this._updateLauncherViewControls(true);
         } else
-            InjectedScriptAccess.getDefault().evaluate("window.location.reload()", nullCallback);
+            InjectedScriptAccess.getDefault().evaluate("window.location.reload()", switchCallback);
     },
 
     _didMainResourceLoad: function()
@@ -239,7 +238,7 @@ WebInspector.AuditsPanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
 
         this.showView();
-        this._updateLauncherViewControls();
+        this._updateLauncherViewControls(InspectorBackend.resourceTrackingEnabled());
     },
 
     attach: function()
@@ -254,10 +253,10 @@ WebInspector.AuditsPanel.prototype = {
         this.viewsContainerElement.style.left = width + "px";
     },
 
-    _updateLauncherViewControls: function()
+    _updateLauncherViewControls: function(isTracking)
     {
         if (this._launcherView)
-            this._launcherView.updateResourceTrackingState();
+            this._launcherView.updateResourceTrackingState(isTracking);
     },
 
     _clearButtonClicked: function()
@@ -278,9 +277,8 @@ WebInspector.AuditsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
 
-WebInspector.AuditCategory = function(id, displayName)
+WebInspector.AuditCategory = function(displayName)
 {
-    this._id = id;
     this._displayName = displayName;
     this._rules = [];
 }
@@ -288,6 +286,7 @@ WebInspector.AuditCategory = function(id, displayName)
 WebInspector.AuditCategory.prototype = {
     get id()
     {
+        // this._id value is injected at construction time.
         return this._id;
     },
 
@@ -298,6 +297,7 @@ WebInspector.AuditCategory.prototype = {
 
     get ruleCount()
     {
+        this._ensureInitialized();
         return this._rules.length;
     },
 
@@ -308,8 +308,18 @@ WebInspector.AuditCategory.prototype = {
 
     runRules: function(resources, callback)
     {
+        this._ensureInitialized();
         for (var i = 0; i < this._rules.length; ++i)
             this._rules[i].run(resources, callback);
+    },
+
+    _ensureInitialized: function()
+    {
+        if (!this._initialized) {
+            if ("initialize" in this)
+                this.initialize();
+            this._initialized = true;
+        }
     }
 }
 
@@ -354,7 +364,6 @@ WebInspector.AuditRule.prototype = {
 
 WebInspector.AuditCategoryResult = function(category)
 {
-    this.categoryId = category.id;
     this.title = category.displayName;
     this.entries = [];
 }
@@ -378,8 +387,13 @@ WebInspector.AuditRuleResult = function(value)
 }
 
 WebInspector.AuditRuleResult.Type = {
+    // Does not denote a discovered flaw but rather represents an informational message.
     NA: 0,
+
+    // Denotes a minor impact on the checked metric.
     Hint: 1,
+
+    // Denotes a major impact on the checked metric.
     Violation: 2
 }
 
