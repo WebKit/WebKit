@@ -1,3 +1,10 @@
+2010-02-10  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, build fix for Chromium Mac.
+
+        * src/AutoFillPopupMenuClient.cpp:
+        (WebKit::AutoFillPopupMenuClient::removeSuggestionAtIndex):
+
 2010-02-09  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -54,7 +54,7 @@ WebString AutoFillPopupMenuClient::getSuggestion(unsigned listIndex) const
 void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
 {
     // FIXME: Do we want to remove AutoFill suggestions?
-    ASSERT(listIndex >= 0 && listIndex < static_cast<int>(m_names.size()));
+    ASSERT(listIndex >= 0U && listIndex < static_cast<int>(m_names.size()));
     m_names.remove(listIndex);
     m_labels.remove(listIndex);
 }
