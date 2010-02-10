@@ -1,5 +1,12 @@
 2010-02-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed. Roll-out r54543, because layout tests crash in debug mode.
+        https://bugs.webkit.org/show_bug.cgi?id=34713
+
+        * platform/qt/Skipped:
+
+2010-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed trivial fix.
 
         platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt updated 

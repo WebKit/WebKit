@@ -1,3 +1,13 @@
+2010-02-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Roll-out r54543, because layout tests crash in debug mode.
+        https://bugs.webkit.org/show_bug.cgi?id=34713
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2010-02-09  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed; added myself to committers
