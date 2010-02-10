@@ -95,11 +95,11 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
     if (proxy)
         execute(proxy);
 #if ENABLE(WORKERS)
-    else {
-        ASSERT(context->isWorkerContext());
+    else if (context->isWorkerContext())
         execute(static_cast<WorkerContext*>(context));
-    }
 #endif
+    // It's possible that Javascript is disabled and that we have neither a V8Proxy
+    // nor a WorkerContext.  Do nothing in that case.
 }
 
 void ScheduledAction::execute(V8Proxy* proxy)

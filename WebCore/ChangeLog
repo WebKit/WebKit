@@ -1,3 +1,14 @@
+2010-02-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Handle the possibility that ScheduledAction::execute() may
+        retrieve a null V8Proxy* even if not in a WorkerContext (e.g., if
+        JS was disallowed).
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+
 2010-02-10  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
