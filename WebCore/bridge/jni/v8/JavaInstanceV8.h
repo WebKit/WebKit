@@ -50,16 +50,16 @@ public:
     jobject instance() const { return m_instance; }
     void setInstance(jobject instance) { m_instance = instance; }
 
-protected:
-    JObjectWrapper(jobject);
-    ~JObjectWrapper();
-
     void ref() { m_refCount++; }
     void deref()
     {
         if (!(--m_refCount))
             delete this;
     }
+
+protected:
+    JObjectWrapper(jobject);
+    ~JObjectWrapper();
 
     jobject m_instance;
 

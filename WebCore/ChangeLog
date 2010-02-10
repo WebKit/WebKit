@@ -1,3 +1,17 @@
+2009-10-06  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make JObjectWrapper::ref() and deref() public accessible to derefIfNull().
+
+        Will be reverted when the following winscw compiler bug is fixed.
+        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812
+
+        https://bugs.webkit.org/show_bug.cgi?id=28054
+
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jni/v8/JavaInstanceV8.h:
+
 2010-02-10  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.

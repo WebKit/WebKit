@@ -2,6 +2,19 @@
 
         Reviewed by Simon Hausmann.
 
+        Use derefIfNotNull() to work around WINSCW compiler forward declaration bug
+
+        The compiler bug is reported at
+        https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812.
+
+        The change should be reverted when the above bug is fixed in WINSCW compiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28054
+
+2009-10-06  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Get rid of WINSCW hack for UnSpecifiedBoolType
 
         Add parenthesis around (RefPtr::*UnspecifiedBoolType) to make the WINSCW
