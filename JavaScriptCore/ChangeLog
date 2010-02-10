@@ -1,3 +1,16 @@
+2009-10-06  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Get rid of WINSCW hack for UnSpecifiedBoolType
+
+        Add parenthesis around (RefPtr::*UnspecifiedBoolType) to make the WINSCW
+        compiler work with the default UnSpecifiedBoolType() operator.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28054
+
+        * wtf/RefPtr.h:
+
 2010-02-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
