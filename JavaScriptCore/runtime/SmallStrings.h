@@ -57,6 +57,7 @@ namespace JSC {
         UString::Rep* singleCharacterStringRep(unsigned char character);
 
         void markChildren(MarkStack&);
+        void clear();
 
         unsigned count() const;
 
