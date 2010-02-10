@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2007, 2009 Holger Hans Peter Freyther zecke@selfish.org
+ *  Copyright (C) 2010 Gustavo Noronha Silva <gns@gnome.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -87,6 +88,32 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
 
 ScrollbarGtk::~ScrollbarGtk()
 {
+    if (m_adjustment)
+        detachAdjustment();
+}
+
+void ScrollbarGtk::attachAdjustment(GtkAdjustment* adjustment)
+{
+    if (platformWidget())
+        return;
+
+    if (m_adjustment)
+        detachAdjustment();
+
+    m_adjustment = adjustment;
+
+    g_object_ref(m_adjustment);
+    g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+
+    updateThumbProportion();
+    updateThumbPosition();
+}
+
+void ScrollbarGtk::detachAdjustment()
+{
+    if (!m_adjustment)
+        return;
+
     g_signal_handlers_disconnect_by_func(G_OBJECT(m_adjustment), (gpointer)ScrollbarGtk::gtkValueChanged, this);
 
     // For the case where we only operate on the GtkAdjustment it is best to
@@ -98,6 +125,7 @@ ScrollbarGtk::~ScrollbarGtk()
     gtk_adjustment_changed(m_adjustment);
     gtk_adjustment_value_changed(m_adjustment);
     g_object_unref(m_adjustment);
+    m_adjustment = 0;
 }
 
 IntPoint ScrollbarGtk::getLocationInParentWindow(const IntRect& rect)

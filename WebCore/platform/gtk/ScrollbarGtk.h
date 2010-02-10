@@ -59,7 +59,9 @@ protected:
 
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
-    
+
+    void detachAdjustment();
+    void attachAdjustment(GtkAdjustment*);
 private:
     static void gtkValueChanged(GtkAdjustment*, ScrollbarGtk*);
     IntPoint getLocationInParentWindow(const IntRect&);

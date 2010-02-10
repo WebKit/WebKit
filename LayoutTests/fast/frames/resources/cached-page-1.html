@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+var intervalId;
+
+function endTest() {
+    window.opener.log("PASS.");
+    window.opener.finish();
+}
+
+function loadNext() {
+    if (window.opener.canExit2) {
+        endTest();
+        return;
+    }
+
+    intervalId = setInterval(endTest, 100);
+
+    window.opener.log("page-1, about to navigate to page-2.")
+    location.href = "cached-page-2.html";
+}
+
+// This unload handler exists just to make sure this page is not added
+// to the page cache!
+function myUnload() {
+    window.opener.log("page-1 running unload handler");
+}
+</script>
+</head>
+<body onload="loadNext()" onunload="myUnload()">
+</body>
+</html>

@@ -1,3 +1,22 @@
+2010-02-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Hits assertion on history back, with page cache enabled, in specific conditions
+        https://bugs.webkit.org/show_bug.cgi?id=34773
+
+        When unsetting the adjustments from a ScrollView, also disconnect
+        them from the Scrollbars.
+
+        Test: fast/frames/frame-crash-with-page-cache.html
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setGtkAdjustments):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::~ScrollbarGtk):
+        (ScrollbarGtk::detachAdjustment):
+        * platform/gtk/ScrollbarGtk.h:
+
 2010-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

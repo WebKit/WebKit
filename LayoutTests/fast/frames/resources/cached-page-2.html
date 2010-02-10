@@ -1,0 +1,27 @@
+<script>
+var intervalId;
+
+function goBack() {
+    if (!window.opener.canExit3)
+        return;
+
+    clearInterval(intervalId);
+    window.opener.log("Back on page-2, timer is still firing.");
+    history.back();
+}
+
+function loadNext() {
+    window.opener.canExit2 = true;
+
+    // The crash only happens when we scroll here!
+    window.scrollBy(0, 100);
+
+    intervalId = setInterval(goBack, 20);
+
+    window.opener.log("page-2, about to navigate to page-3.")
+    location.href = "cached-page-3.html";
+}
+</script>
+<body onload="loadNext()">
+<div style="height: 1200px; background-color: green"></div>
+</body>

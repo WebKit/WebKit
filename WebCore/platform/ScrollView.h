@@ -314,7 +314,7 @@ private:
 
 #if PLATFORM(GTK)
 public:
-    void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
+    void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, bool resetValues = true);
     GtkAdjustment* m_horizontalAdjustment;
     GtkAdjustment* m_verticalAdjustment;
     void setScrollOffset(const IntSize& offset) { m_scrollOffset = offset; }

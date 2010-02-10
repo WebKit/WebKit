@@ -201,18 +201,15 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     if (!with_page_cache)
         g_main_loop_run(loop);
 
+    /* Make sure GTK+ has time to process the changes in size, for the adjusments */
+    while (gtk_events_pending())
+        gtk_main_iteration();
+
     /* Make sure upper and lower bounds have been restored correctly */
     g_assert_cmpfloat(lower, ==, gtk_adjustment_get_lower(adjustment));
     g_assert_cmpfloat(upper, ==, gtk_adjustment_get_upper(adjustment));
 
-    /* Scrollbar should return to the same position it was in.
-     * FIXME: with page cache enabled, the result is different, we
-     * need to figure out why!
-     */
-    if (!with_page_cache)
-        g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
-    else
-        g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 20.0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100.0);
 
     g_free(effective_uri);
     g_free(second_uri);

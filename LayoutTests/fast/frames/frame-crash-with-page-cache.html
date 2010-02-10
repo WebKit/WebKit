@@ -1,0 +1,34 @@
+<html>
+<script>
+window.finish = function()
+{
+    if (layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+window.log = function(message) {
+     document.getElementById("result").innerHTML += message + "<br>";
+}
+
+window.failure = function(message) {
+    log("FAIL: " + message);
+    finish();
+}
+
+function test() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+    log("open page-1");
+    window.open("resources/cached-page-1.html");
+}
+</script>
+
+<body onload="test()">
+If WebKit does not assert or crash, you passed.
+<div id="result"></div>
+</body>
+</html>
