@@ -1,3 +1,11 @@
+2010-02-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Addressing issues found by style bot.
+
+        * wtf/ValueCheck.h: Renamed header guard to match final file name.
+
+        * wtf/Vector.h: (WTF::::checkConsistency): Remove braces around a one-line clause.
+
 2010-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

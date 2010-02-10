@@ -993,9 +993,8 @@ namespace WTF {
     inline void Vector<T, inlineCapacity>::checkConsistency()
     {
 #if !ASSERT_DISABLED
-        for (size_t i = 0; i < size(); ++i) {
+        for (size_t i = 0; i < size(); ++i)
             ValueCheck<T>::checkConsistency(at(i));
-        }
 #endif
     }
 

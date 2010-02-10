@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ValueTraits_h
-#define ValueTraits_h
+#ifndef ValueCheck_h
+#define ValueCheck_h
 
 // For malloc_size and _msize.
 #if OS(DARWIN)
@@ -61,4 +61,4 @@ template<typename P> struct ValueCheck<P*> {
 
 }
 
-#endif // ValueTraits_h
+#endif // ValueCheck_h
