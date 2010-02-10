@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function finalCallback(result)
+    {
+        var output = document.getElementById("outputPre");
+        output.textContent = result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<").replace(/\$\$\$/g, "\n");
+        notifyDone();
+    }
+    function expandCallback()
+    {
+        var dataElement = document.getElementById("data");
+        dataElement.appendChild(document.createElement("a"));
+        dataElement.removeChild(document.getElementById("id2"));
+        dataElement.insertBefore(document.createElement("a"), document.getElementById("id1"));
+        setTimeout(evaluateInWebInspector("frontend_dumpBeforeAndAfterShowAll", finalCallback), 0);
+    }
+    evaluateInWebInspector("frontend_expandDataElement", expandCallback);
+}
+
+
+// Frontend functions.
+
+function frontend_expandDataElement(testController)
+{
+    testController.waitUntilDone();
+
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+
+    // Need test to be async to expand whole the tree first.
+    testController.runAfterPendingDispatches(function() {
+        var dataDivTreeElement = frontend_treeElementForDataDiv();
+        if (!dataDivTreeElement) {
+            testController.notifyDone("No data div found");
+            return;
+        }
+
+        dataDivTreeElement._expandedChildrenLimit = 5;
+        dataDivTreeElement.expand();
+
+        testController.notifyDone();
+    });
+}
+
+function frontend_dumpBeforeAndAfterShowAll(testController)
+{
+    testController.waitUntilDone();
+
+    var dataDivTreeElement = frontend_treeElementForDataDiv();
+    if (!dataDivTreeElement) {
+        testController.notifyDone("No data div found");
+        return;
+    }
+    var contentBeforeLoadAll = frontend_getTreeElementContents();
+
+    dataDivTreeElement.handleLoadAllChildren();
+    testController.runAfterPendingDispatches(function() {
+        testController.notifyDone(contentBeforeLoadAll + "$$$---" + frontend_getTreeElementContents());
+    });
+}
+
+function frontend_getTreeElementContents()
+{
+    var dataDivTreeElement = frontend_treeElementForDataDiv();
+    if (!dataDivTreeElement)
+        return "No data div found";
+    return dataDivTreeElement.listItemElement.textContent + dataDivTreeElement.childrenListElement.textContent;
+}
+
+function frontend_treeElementForDataDiv()
+{
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+    var dataDiv = null;
+
+    for (var nodeId in innerMapping) {
+        if (innerMapping[nodeId].nodeName === "DIV" && innerMapping[nodeId].getAttribute("id") === "data") {
+            dataDiv = innerMapping[nodeId];
+            break;
+        }
+    }
+    if (!dataDiv)
+        return null;
+
+    return WebInspector.panels.elements.treeOutline.createTreeElementFor(dataDiv);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+
+<p>
+Tests that elements panel shows limited amount of node children and responds to DOM updates.
+</p>
+
+<div id="data">
+<div id="id1">1</div>
+<div id="id2">2</div>
+<div id="id3">3</div>
+<div id="id4">4</div>
+<div id="id5">5</div>
+<div id="id6">6</div>
+<div id="id7">7</div>
+<div id="id8">8</div>
+<div id="id9">9</div>
+<div id="id10">10</div>
+</div>
+
+<pre id="outputPre">
+</pre>
+
+</body>
+</html>

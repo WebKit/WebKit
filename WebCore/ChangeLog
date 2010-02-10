@@ -1,3 +1,34 @@
+2010-02-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Elements Panel: Limit the number of initially loaded element children
+        https://bugs.webkit.org/show_bug.cgi?id=34421
+
+        Test: inspector/elements-panel-limited-children.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._insertChild):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.createTreeElementFor):
+        (WebInspector.ElementsTreeOutline.prototype.revealAndSelectNode):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype.get expandedChildrenLimit):
+        (WebInspector.ElementsTreeElement.prototype.set expandedChildrenLimit):
+        (WebInspector.ElementsTreeElement.prototype.get expandedChildCount):
+        (WebInspector.ElementsTreeElement.prototype.showChild):
+        (WebInspector.ElementsTreeElement.prototype.insertChildElement):
+        (WebInspector.ElementsTreeElement.prototype.moveChild):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype.adjustCollapsedRange):
+        (WebInspector.ElementsTreeElement.prototype.handleLoadAllChildren):
+        ():
+        * inspector/front-end/inspector.css:
+
 2010-02-10  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

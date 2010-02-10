@@ -153,10 +153,13 @@ WebInspector.DOMNode.prototype = {
     _insertChild: function(prev, payload)
     {
         var node = new WebInspector.DOMNode(this.ownerDocument, payload);
-        if (!prev)
-            // First node
-            this.children = [ node ];
-        else
+        if (!prev) {
+            if (!this.children) {
+                // First node
+                this.children = [ node ];
+            } else
+                this.children.unshift(node);
+        } else
             this.children.splice(this.children.indexOf(prev) + 1, 0, node);
         this._renumber();
         return node;
