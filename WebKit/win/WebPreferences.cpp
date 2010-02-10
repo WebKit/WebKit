@@ -206,6 +206,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitXSSAuditorEnabledPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitFrameSetFlatteningEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitDatabasesEnabledPreferenceKey), kCFBooleanTrue);
@@ -802,6 +803,20 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setXSSAuditorEnabled(
     /* [in] */ BOOL enabled)
 {
     setBoolValue(CFSTR(WebKitXSSAuditorEnabledPreferenceKey), enabled);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::isFrameSetFlatteningEnabled(
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitFrameSetFlatteningEnabledPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setFrameSetFlatteningEnabled(
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitFrameSetFlatteningEnabledPreferenceKey), enabled);
     return S_OK;
 }
 

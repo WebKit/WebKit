@@ -1,3 +1,22 @@
+2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support frameset flattening
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Add support for enabling/disabling FrameSet Flattening on the Windows port.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::isFrameSetFlatteningEnabled):
+        (WebPreferences::setFrameSetFlatteningEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2010-02-10  Adam Roben  <aroben@apple.com>
 
         Remove unnecessary #include of shfolder.h
