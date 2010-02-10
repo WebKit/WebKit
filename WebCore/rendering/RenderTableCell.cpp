@@ -629,6 +629,9 @@ int RenderTableCell::borderHalfBottom(bool outer) const
 void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
+        if (!shouldPaintWithinRoot(paintInfo))
+            return;
+
         tx += x();
         ty += y();
         int os = 2 * maximalOutlineSize(paintInfo.phase);

@@ -1,3 +1,15 @@
+2010-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Complete the fix for <rdar://problem/7577604> Drag and Drop: background elements are bleeding through
+        https://bugs.webkit.org/show_bug.cgi?id=34546
+
+        * manual-tests/drag-image-table-part-decorations.html:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint): Don’t paint collapsed borders if this object shouldn’t
+        paint within the current painting root.
+
 2010-02-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7436875> Crash in Flash when visiting
