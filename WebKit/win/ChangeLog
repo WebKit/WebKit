@@ -1,3 +1,16 @@
+2010-02-10  Adam Roben  <aroben@apple.com>
+
+        Remove unnecessary #include of shfolder.h
+
+        shfolder.h has been deprecated in newer versions of the Windows SDK.
+
+        Fixes <http://webkit.org/b/34803> WebPreferences.cpp fails to compile
+        under VS2010 RC due to #include of shfolder.h.
+
+        Reviewed by Darin Adler.
+
+        * WebPreferences.cpp: Removed #include.
+
 2010-02-08  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Adler.

@@ -43,7 +43,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <limits>
 #include <shlobj.h>
-#include <shfolder.h>
 #include <tchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
