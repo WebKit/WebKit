@@ -55,6 +55,9 @@ private slots:
     void isBoolean_data();
     void isBoolean();
 
+    void isNumber_data();
+    void isNumber();
+
     void isFunction_data();
     void isFunction();
 
@@ -93,6 +96,10 @@ private:
     void isBoolean_initData();
     void isBoolean_makeData(const char* expr);
     void isBoolean_test(const char* expr, const QScriptValue& value);
+
+    void isNumber_initData();
+    void isNumber_makeData(const char* expr);
+    void isNumber_test(const char* expr, const QScriptValue&);
 
     void isFunction_initData();
     void isFunction_makeData(const char* expr);

@@ -1,3 +1,23 @@
+2010-02-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix QScriptValue::isNumber().
+
+        The isNumber() should return 'true' if the value is in the CNumber
+        state.
+
+        [Qt] QScriptValue::isNumber() returns an incorrect value
+        https://bugs.webkit.org/show_bug.cgi?id=34575
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isNumber):
+        * qt/tests/qscriptvalue/tst_qscriptvalue.h:
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated.cpp:
+        (tst_QScriptValue::isNumber_initData):
+        (tst_QScriptValue::isNumber_makeData):
+        (tst_QScriptValue::isNumber_test):
+
 2010-02-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

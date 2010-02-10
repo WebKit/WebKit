@@ -315,6 +315,70 @@ void tst_QScriptValue::isBoolean_test(const char*, const QScriptValue& value)
 
 DEFINE_TEST_FUNCTION(isBoolean)
 
+void tst_QScriptValue::isNumber_initData()
+{
+    QTest::addColumn<bool>("expected");
+    initScriptValues();
+}
+
+void tst_QScriptValue::isNumber_makeData(const char* expr)
+{
+    static QSet<QString> isNumber;
+    if (isNumber.isEmpty()) {
+        isNumber << "QScriptValue(int(122))"
+                << "QScriptValue(uint(124))"
+                << "QScriptValue(0)"
+                << "QScriptValue(0.0)"
+                << "QScriptValue(123.0)"
+                << "QScriptValue(6.37e-8)"
+                << "QScriptValue(-6.37e-8)"
+                << "QScriptValue(0x43211234)"
+                << "QScriptValue(0x10000)"
+                << "QScriptValue(0x10001)"
+                << "QScriptValue(qSNaN())"
+                << "QScriptValue(qQNaN())"
+                << "QScriptValue(qInf())"
+                << "QScriptValue(-qInf())"
+                << "QScriptValue(0, int(122))"
+                << "QScriptValue(0, uint(124))"
+                << "QScriptValue(0, 0)"
+                << "QScriptValue(0, 0.0)"
+                << "QScriptValue(0, 123.0)"
+                << "QScriptValue(0, 6.37e-8)"
+                << "QScriptValue(0, -6.37e-8)"
+                << "QScriptValue(0, 0x43211234)"
+                << "QScriptValue(0, 0x10000)"
+                << "QScriptValue(0, 0x10001)"
+                << "QScriptValue(0, qSNaN())"
+                << "QScriptValue(0, qQNaN())"
+                << "QScriptValue(0, qInf())"
+                << "QScriptValue(0, -qInf())"
+                << "QScriptValue(engine, int(122))"
+                << "QScriptValue(engine, uint(124))"
+                << "QScriptValue(engine, 0)"
+                << "QScriptValue(engine, 0.0)"
+                << "QScriptValue(engine, 123.0)"
+                << "QScriptValue(engine, 6.37e-8)"
+                << "QScriptValue(engine, -6.37e-8)"
+                << "QScriptValue(engine, 0x43211234)"
+                << "QScriptValue(engine, 0x10000)"
+                << "QScriptValue(engine, 0x10001)"
+                << "QScriptValue(engine, qSNaN())"
+                << "QScriptValue(engine, qQNaN())"
+                << "QScriptValue(engine, qInf())"
+                << "QScriptValue(engine, -qInf())";
+    }
+    newRow(expr) << isNumber.contains(expr);
+}
+
+void tst_QScriptValue::isNumber_test(const char*, const QScriptValue& value)
+{
+    QFETCH(bool, expected);
+    QCOMPARE(value.isNumber(), expected);
+}
+
+DEFINE_TEST_FUNCTION(isNumber)
+
 
 void tst_QScriptValue::isFunction_initData()
 {
@@ -491,5 +555,4 @@ void tst_QScriptValue::isObject_test(const char*, const QScriptValue& value)
 }
 
 DEFINE_TEST_FUNCTION(isObject)
-
 
