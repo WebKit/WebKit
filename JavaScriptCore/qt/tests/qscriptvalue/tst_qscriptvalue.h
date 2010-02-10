@@ -76,6 +76,9 @@ private slots:
     void isValid_data();
     void isValid();
 
+    void toNumber_data();
+    void toNumber();
+
 private:
     typedef void (tst_QScriptValue::*InitDataFunction)();
     typedef void (tst_QScriptValue::*DefineDataFunction)(const char*);
@@ -124,6 +127,10 @@ private:
     void isValid_initData();
     void isValid_makeData(const char* expr);
     void isValid_test(const char* expr, const QScriptValue& value);
+
+    void toNumber_initData();
+    void toNumber_makeData(const char*);
+    void toNumber_test(const char*, const QScriptValue&);
 
 private:
     QScriptEngine* engine;
