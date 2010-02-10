@@ -55,6 +55,12 @@ class wxMouseEvent;
 class BMessage;
 #endif
 
+#if PLATFORM(BREWMP)
+typedef unsigned short    uint16;
+typedef unsigned long int uint32;
+#define AEEEvent uint16
+#endif
+
 namespace WebCore {
     
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
@@ -141,6 +147,10 @@ namespace WebCore {
 
 #if PLATFORM(HAIKU)
         PlatformMouseEvent(const BMessage*);
+#endif
+
+#if PLATFORM(BREWMP)
+        PlatformMouseEvent(AEEEvent, uint16 wParam, uint32 dwParam);
 #endif
 
     protected:

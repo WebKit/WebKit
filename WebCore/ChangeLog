@@ -1,3 +1,17 @@
+2010-02-09  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Adam Barth.
+
+        [BREWMP] Port PlatformMouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=34600
+
+        Retrieve the event type, position, key modifiers, time stamp
+        and click count from AEEEvent.
+
+        * platform/PlatformMouseEvent.h:
+        * platform/brew/PlatformMouseEventBrew.cpp: Added.
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2010-02-09  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Timothy Hatcher.
