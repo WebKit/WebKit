@@ -1,3 +1,10 @@
+2010-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Mac build fix. Unreviewed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add PluginViewNone.cpp to the Mac project.
+
 2010-02-10  Adam Roben  <aroben@apple.com>
 
         Optimize ImageBuffer::toDataURL's CG implementation
