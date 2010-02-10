@@ -101,9 +101,13 @@ sub runSafariWithIExploder()
     print REDIRECT_HTML "</html>\n";
     close REDIRECT_HTML;
     
-    local %ENV;
-    $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
-    system "WebKitTools/Scripts/run-safari", "-NSOpen", "$iExploderTestDirectory/redirect.html";
+    if (!isAppleWebKit()) {
+        system "WebKitTools/Scripts/run-launcher", "$iExploderTestDirectory/redirect.html";
+    } else {
+        local %ENV;
+        $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
+        system "WebKitTools/Scripts/run-safari", "-NSOpen", "$iExploderTestDirectory/redirect.html";
+    }
 }
 
 sub configureAndOpenHTTPDIfNeeded()
@@ -114,8 +118,9 @@ sub configureAndOpenHTTPDIfNeeded()
     my $webkitDirectory = getcwd();
     my $testDirectory = $webkitDirectory . "/LayoutTests";
     my $iExploderDirectory = $webkitDirectory . "/WebKitTools/iExploder";
-    my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
-    $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+
+    my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
+
     my $documentRoot = "$iExploderDirectory/htdocs";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $sslCertificate = "$testDirectory/http/conf/webkit-httpd.pem";

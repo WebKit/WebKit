@@ -44,7 +44,14 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&getHTTPDPath &getDefaultConfigForTestDirectory &openHTTPD &closeHTTPD &setShouldWaitForUserInterrupt &waitForHTTPDLock &getWaitTime);
+   @EXPORT      = qw(&getHTTPDPath
+                     &getHTTPDConfigPathForTestDirectory
+                     &getDefaultConfigForTestDirectory
+                     &openHTTPD
+                     &closeHTTPD
+                     &setShouldWaitForUserInterrupt
+                     &waitForHTTPDLock
+                     &getWaitTime);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -79,24 +86,7 @@ sub getDefaultConfigForTestDirectory
     my ($testDirectory) = @_;
     die "No test directory has been specified." unless ($testDirectory);
 
-    my $httpdConfig;
-    getHTTPDPath();
-    if (isCygwin()) {
-        my $windowsConfDirectory = "$testDirectory/http/conf/";
-        unless (-x "/usr/lib/apache/libphp4.dll") {
-            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
-            chmod(0755, "/usr/lib/apache/libphp4.dll");
-        }
-        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
-    } elsif (isDebianBased()) {
-        $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
-    } elsif (isFedoraBased()) {
-        $httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf";
-    } else {
-        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
-        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
-    }
-
+    my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
     my $documentRoot = "$testDirectory/http/tests";
     my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
@@ -123,6 +113,30 @@ sub getDefaultConfigForTestDirectory
 
     return @httpdArgs;
 
+}
+
+sub getHTTPDConfigPathForTestDirectory
+{
+    my ($testDirectory) = @_;
+    die "No test directory has been specified." unless ($testDirectory);
+    my $httpdConfig;
+    getHTTPDPath();
+    if (isCygwin()) {
+        my $windowsConfDirectory = "$testDirectory/http/conf/";
+        unless (-x "/usr/lib/apache/libphp4.dll") {
+            copy("$windowsConfDirectory/libphp4.dll", "/usr/lib/apache/libphp4.dll");
+            chmod(0755, "/usr/lib/apache/libphp4.dll");
+        }
+        $httpdConfig = "$windowsConfDirectory/cygwin-httpd.conf";
+    } elsif (isDebianBased()) {
+        $httpdConfig = "$testDirectory/http/conf/apache2-debian-httpd.conf";
+    } elsif (isFedoraBased()) {
+        $httpdConfig = "$testDirectory/http/conf/fedora-httpd.conf";
+    } else {
+        $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+        $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+    }
+    return $httpdConfig;
 }
 
 sub openHTTPD(@)
