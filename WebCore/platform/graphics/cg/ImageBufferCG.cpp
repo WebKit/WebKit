@@ -280,34 +280,19 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     if (!image)
         return "data:,";
 
-    size_t width = CGImageGetWidth(image.get());
-    size_t height = CGImageGetHeight(image.get());
-
-    OwnArrayPtr<uint32_t> imageData(new uint32_t[width * height]);
-    if (!imageData)
-        return "data:,";
-    
-    RetainPtr<CGImageRef> transformedImage(AdoptCF, CGBitmapContextCreateImage(context()->platformContext()));
-    if (!transformedImage)
+    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
+    if (!data)
         return "data:,";
 
-    RetainPtr<CFMutableDataRef> transformedImageData(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
-    if (!transformedImageData)
+    RetainPtr<CGImageDestinationRef> destination(AdoptCF, CGImageDestinationCreateWithData(data.get(), utiFromMIMEType(mimeType).get(), 1, 0));
+    if (!destination)
         return "data:,";
 
-    RetainPtr<CGImageDestinationRef> imageDestination(AdoptCF, CGImageDestinationCreateWithData(transformedImageData.get(),
-        utiFromMIMEType(mimeType).get(), 1, 0));
-    if (!imageDestination)
-        return "data:,";
-
-    CGImageDestinationAddImage(imageDestination.get(), transformedImage.get(), 0);
-    CGImageDestinationFinalize(imageDestination.get());
-
-    Vector<char> in;
-    in.append(CFDataGetBytePtr(transformedImageData.get()), CFDataGetLength(transformedImageData.get()));
+    CGImageDestinationAddImage(destination.get(), image.get(), 0);
+    CGImageDestinationFinalize(destination.get());
 
     Vector<char> out;
-    base64Encode(in, out);
+    base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), out);
     out.append('\0');
 
     return String::format("data:%s;base64,%s", mimeType.utf8().data(), out.data());

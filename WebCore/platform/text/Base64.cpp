@@ -62,21 +62,24 @@ static const char base64DecMap[128] = {
 
 void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
 {
+    base64Encode(in.data(), in.size(), out, insertLFs);
+}
+
+void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insertLFs)
+{
     out.clear();
-    if (in.isEmpty())
+    if (!len)
         return;
 
     // If the input string is pathologically large, just return nothing.
     // Note: Keep this in sync with the "out_len" computation below.
     // Rather than being perfectly precise, this is a bit conservative.
     const unsigned maxInputBufferSize = UINT_MAX / 77 * 76 / 4 * 3 - 2;
-    if (in.size() > maxInputBufferSize)
+    if (len > maxInputBufferSize)
         return;
 
     unsigned sidx = 0;
     unsigned didx = 0;
-    const char* data = in.data();
-    const unsigned len = in.size();
 
     unsigned out_len = ((len + 2) / 3) * 4;
 

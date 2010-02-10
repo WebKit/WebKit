@@ -1,3 +1,27 @@
+2010-02-10  Adam Roben  <aroben@apple.com>
+
+        Optimize ImageBuffer::toDataURL's CG implementation
+
+        There was some unused code that could have been removed in r31830 when
+        this function was changed not to flip the CG image anymore.
+
+        Fixes <http://webkit.org/b/34808> ImageBuffer::toDataURL allocates
+        unnecessary memory under CoreGraphics
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::toDataURL): Don't allocate an unused CGImageRef
+        and buffer, and switch to the new overload of base64Encode that
+        doesn't require us to copy all the image data into a Vector first.
+
+        * platform/text/Base64.cpp:
+        (WebCore::base64Encode):
+        * platform/text/Base64.h:
+        Added an overload that takes a raw data pointer and length, just like
+        we have for base64Decode. The overload that takes a Vector as input
+        just calls through to the new overload.
+
 2010-02-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
