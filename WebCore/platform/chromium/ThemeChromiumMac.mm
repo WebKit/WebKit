@@ -33,6 +33,7 @@
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #include <wtf/StdLibExtras.h>
+#import <objc/runtime.h>
 
 using namespace std;
 
@@ -47,12 +48,137 @@ using namespace std;
 //   rendering.
 // - In updateStates() the code to update the cells' inactive state.
 // - In paintButton() the code to save/restore the window's default button cell.
+// - The Snow Leopard focus ring bug fix and its use around every call to
+//   -[NSButtonCell drawWithFrame:inView:].
 //
 // For all other differences, if it was introduced in this file, then the
 // maintainer forgot to include it in the list; otherwise it is an update that
 // should have been applied to this file but was not.
 
 // FIXME: Default buttons really should be more like push buttons and not like buttons.
+
+// --- START fix for Snow Leopard focus ring bug ---
+
+// There is a bug in the Cocoa focus ring drawing code. The code calls +[NSView
+// focusView] (to get the currently focused view) and then calls an NSRect-
+// returning method on that view to obtain a clipping rect. However, if there is
+// no focused view (as there won't be if the destination is a context), the rect
+// returned from the method invocation on nil is garbage.
+//
+// The garbage fortunately does not clip the focus ring on Leopard, but
+// unfortunately does so on Snow Leopard. Therefore, if a runtime test shows
+// that focus ring drawing fails, we swizzle NSView to ensure it returns a valid
+// view with a valid clipping rectangle.
+//
+// FIXME: After the referenced bug is fixed on all supported platforms, remove
+// this code.
+//
+// References:
+//  <http://crbug.com/27493>
+//  <rdar://problem/7604051> (<http://openradar.appspot.com/7604051>)
+
+@interface TCMVisibleView : NSView
+
+@end
+
+@implementation TCMVisibleView
+
+- (struct CGRect)_focusRingVisibleRect
+{
+    return CGRectZero;
+}
+
+- (id)_focusRingClipAncestor
+{
+    return self;
+}
+
+@end
+
+@interface NSView (TCMInterposing)
++ (NSView *)TCMInterposing_focusView;
+@end
+
+namespace FocusIndicationFix {
+
+bool currentOSHasSetFocusRingStyleInBitmapBug()
+{
+    UInt32 pixel = 0;
+    UInt32* pixelPlane = &pixel;
+    UInt32** pixelPlanes = &pixelPlane;
+    NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:(UInt8**)pixelPlanes
+                                                                       pixelsWide:1
+                                                                       pixelsHigh:1
+                                                                    bitsPerSample:8
+                                                                  samplesPerPixel:4
+                                                                         hasAlpha:YES
+                                                                         isPlanar:NO
+                                                                   colorSpaceName:NSCalibratedRGBColorSpace
+                                                                     bitmapFormat:NSAlphaFirstBitmapFormat
+                                                                      bytesPerRow:4
+                                                                     bitsPerPixel:32];
+    [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:bitmap]];
+    NSSetFocusRingStyle(NSFocusRingOnly);
+    NSRectFill(NSMakeRect(0, 0, 1, 1));
+    [NSGraphicsContext restoreGraphicsState];
+    [bitmap release];
+
+    return !pixel;
+}
+
+bool swizzleFocusView()
+{
+    if (!currentOSHasSetFocusRingStyleInBitmapBug())
+        return false;
+
+    Class nsview = [NSView class];
+    Method m1 = class_getClassMethod(nsview, @selector(focusView));
+    Method m2 = class_getClassMethod(nsview, @selector(TCMInterposing_focusView));
+    if (m1 && m2) {
+        method_exchangeImplementations(m1, m2);
+        return true;
+    }
+
+    return false;
+}
+
+static bool interpose = false;
+
+// A class to restrict the amount of time spent messing with interposing. It
+// only stacks one-deep.
+class ScopedFixer {
+public:
+    ScopedFixer()
+    {
+        static bool swizzled = swizzleFocusView();
+        interpose = swizzled;
+    }
+
+    ~ScopedFixer()
+    {
+        interpose = false;
+    }
+};
+
+}  // namespace FocusIndicationFix
+
+@implementation NSView (TCMInterposing)
+
++ (NSView *)TCMInterposing_focusView
+{
+    NSView *view = [self TCMInterposing_focusView];  // call original (was swizzled)
+    if (!view && FocusIndicationFix::interpose) {
+        static TCMVisibleView* fixedView = [[TCMVisibleView alloc] init];
+        view = fixedView;
+    }
+
+    return view;
+}
+
+@end
+
+// --- END fix for Snow Leopard focus ring bug ---
 
 namespace WebCore {
 
@@ -241,7 +367,10 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
         context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
-    [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    {
+        FocusIndicationFix::ScopedFixer fix;
+        [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    }
     [checkboxCell setControlView:nil];
 
     context->restore();
@@ -319,7 +448,10 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [radioCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    {
+        FocusIndicationFix::ScopedFixer fix;
+        [radioCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    }
     [radioCell setControlView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -429,7 +561,10 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
         }
     }
 
-    [buttonCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    {
+        FocusIndicationFix::ScopedFixer fix;
+        [buttonCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
+    }
     [buttonCell setControlView:nil];
 
     END_BLOCK_OBJC_EXCEPTIONS
