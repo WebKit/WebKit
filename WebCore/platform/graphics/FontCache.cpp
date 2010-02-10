@@ -257,6 +257,15 @@ const int cMaxInactiveFontData = 120;  // Pretty Low Threshold
 const float cTargetInactiveFontData = 100;
 static ListHashSet<const SimpleFontData*>* gInactiveFontData = 0;
 
+SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
+{
+    FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, checkingAlternateName);
+    if (!platformData)
+        return 0;
+
+    return getCachedFontData(platformData);
+}
+
 SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
 {
     if (!platformData)
@@ -361,7 +370,7 @@ size_t FontCache::inactiveFontDataCount()
 
 const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)
 {
-    FontPlatformData* result = 0;
+    SimpleFontData* result = 0;
 
     int startIndex = familyIndex;
     const FontFamily* startFamily = &font.fontDescription().family();
@@ -376,7 +385,7 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
                 if (data)
                     return data;
             }
-            result = getCachedFontPlatformData(font.fontDescription(), currFamily->family());
+            result = getCachedFontData(font.fontDescription(), currFamily->family());
         }
         currFamily = currFamily->next();
     }
@@ -403,9 +412,7 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
         // Still no result.  Hand back our last resort fallback font.
         result = getLastResortFallbackFont(font.fontDescription());
     }
-
-    // Now that we have a result, we need to go from FontPlatformData -> FontData.
-    return getCachedFontData(result);
+    return result;
 }
 
 static HashSet<FontSelector*>* gClients;

@@ -107,8 +107,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 #else
     if (!m_font) {
 #endif
-        FontPlatformData* data = fontCache()->getCachedFontPlatformData(fontDescription, m_string);
-        SimpleFontData* fontData = fontCache()->getCachedFontData(data);
+        SimpleFontData* fontData = fontCache()->getCachedFontData(fontDescription, m_string);
 
         // We're local. Just return a SimpleFontData from the normal cache.
         return fontData;
@@ -179,10 +178,11 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         if (DocLoader* docLoader = fontSelector->docLoader())
             m_font->beginLoadIfNeeded(docLoader);
         // FIXME: m_string is a URL so it makes no sense to pass it as a family name.
-        FontPlatformData* tempData = fontCache()->getCachedFontPlatformData(fontDescription, m_string);
+        SimpleFontData* tempData = fontCache()->getCachedFontData(fontDescription, m_string);
         if (!tempData)
             tempData = fontCache()->getLastResortFallbackFont(fontDescription);
-        fontData.set(new SimpleFontData(*tempData, true, true));
+
+        fontData.set(new SimpleFontData(tempData->platformData(), true, true));
     }
 
     m_fontDataTable.set(hashKey, fontData.get());

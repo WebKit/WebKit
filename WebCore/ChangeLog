@@ -1,3 +1,53 @@
+2010-02-10 Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 23287 -  Avoid using FontPlatformData outside the FontCache
+
+        No functional change, only refactored the code using FontPlatformData to use SimpleFontData.
+
+        This change leaves the class FontCached as it needs some thoughts and more refactoring.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Call getCachedFontData with the 2 parameters directly.
+        * css/CSSFontSelector.cpp:
+        (WebCore::fontDataForGenericFamily): Ditto.
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontData): This method is meant to replace getCachedFontPlatformData
+        that was moved in the private section of the class. It calls getCachedFontPlatformData and cache
+        the returned FontPlatformData if it is not null.
+        (WebCore::FontCache::getFontData): Updated to use the new getCachedFontData.
+        * platform/graphics/FontCache.h: Updated several methods to return a SimpleFontData in lieu of a
+        FontPlatformData. Moved some method in the private sections.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/haiku/FontCacheHaiku.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/wince/FontCacheWince.cpp:
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        Updated all the previous platform methods to return a SimpleFontData.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getSimilarFontPlatformData): Updated to return a SimpleFontData.
+        (WebCore::FontCache::getLastResortFallbackFont): Ditto. Also refactored the code
+        and moved a DEFINE_STATIC_LOCAL where it is needed.
+
 2010-02-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

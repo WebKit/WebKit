@@ -51,18 +51,18 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return getCachedFontData(&data);
 }
 
-FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     notImplemented();
     return 0;
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.
     // For now we'll pick the default that the user would get without changing any prefs.
     static AtomicString defaultString("DejaVu Serif");
-    return getCachedFontPlatformData(fontDescription, defaultString);
+    return getCachedFontData(fontDescription, defaultString);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

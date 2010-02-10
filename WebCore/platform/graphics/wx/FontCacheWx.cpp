@@ -46,17 +46,17 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return fontData;
 }
 
-FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
-    return new FontPlatformData(font.fontDescription(), font.family().family());
+    return getCachedFontData(font.fontDescription(), font.family().family());
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
     static AtomicString timesStr("systemfont");
-    return getCachedFontPlatformData(fontDescription, timesStr);
+    return getCachedFontData(fontDescription, timesStr);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

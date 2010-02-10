@@ -146,43 +146,43 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     return getCachedFontData(&alternateFont);
 }
 
-FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
+SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
     // Attempt to find an appropriate font using a match based on 
     // the presence of keywords in the the requested names.  For example, we'll
     // match any name that contains "Arabic" to Geeza Pro.
-    FontPlatformData* platformData = 0;
+    SimpleFontData* simpleFontData = 0;
     const FontFamily* currFamily = &font.fontDescription().family();
-    while (currFamily && !platformData) {
+    while (currFamily && !simpleFontData) {
         if (currFamily->family().length()) {
             static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
             DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro"));
-            for (int j = 0; j < 3 && !platformData; ++j)
+            for (int j = 0; j < 3 && !simpleFontData; ++j)
                 if (currFamily->family().contains(*matchWords[j], false))
-                    platformData = getCachedFontPlatformData(font.fontDescription(), geezaStr);
+                    simpleFontData = getCachedFontData(font.fontDescription(), geezaStr);
         }
         currFamily = currFamily->next();
     }
 
-    return platformData;
+    return simpleFontData;
 }
 
-FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times"));
-    DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande"));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    FontPlatformData* platformFont = getCachedFontPlatformData(fontDescription, timesStr);
-    if (!platformFont)
-        // The Times fallback will almost always work, but in the highly unusual case where
-        // the user doesn't have it, we fall back on Lucida Grande because that's
-        // guaranteed to be there, according to Nathan Taylor. This is good enough
-        // to avoid a crash at least.
-        platformFont = getCachedFontPlatformData(fontDescription, lucidaGrandeStr);
+    SimpleFontData* simpleFontData = getCachedFontData(fontDescription, timesStr);
+    if (simpleFontData)
+        return simpleFontData;
 
-    return platformFont;
+    // The Times fallback will almost always work, but in the highly unusual case where
+    // the user doesn't have it, we fall back on Lucida Grande because that's
+    // guaranteed to be there, according to Nathan Taylor. This is good enough
+    // to avoid a crash at least.
+    DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande"));
+    return getCachedFontData(fontDescription, lucidaGrandeStr);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
