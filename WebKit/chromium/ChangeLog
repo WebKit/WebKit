@@ -2,6 +2,16 @@
 
         Reviewed by Pavel Feldman.
 
+        Chromium Win build fix. Add third_party/nss to the dependencies list on Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34789
+
+        * DEPS:
+
+2010-02-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Rolling Chromium dependencies to match Chromium revision 38580.
 
         https://bugs.webkit.org/show_bug.cgi?id=34789
