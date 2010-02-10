@@ -38,6 +38,8 @@ public:
     QScriptValue evaluate(const QString& program, const QString& fileName = QString(), int lineNumber = 1);
     void collectGarbage();
 
+    QScriptValue nullValue();
+    QScriptValue undefinedValue();
 private:
     friend class QScriptEnginePrivate;
 

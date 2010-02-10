@@ -86,3 +86,23 @@ void QScriptEngine::collectGarbage()
 {
     d_ptr->collectGarbage();
 }
+
+/*!
+  Returns a QScriptValue of the primitive type Null.
+
+  \sa undefinedValue()
+*/
+QScriptValue QScriptEngine::nullValue()
+{
+    return QScriptValue(this, QScriptValue::NullValue);
+}
+
+/*!
+  Returns a QScriptValue of the primitive type Undefined.
+
+  \sa nullValue()
+*/
+QScriptValue QScriptEngine::undefinedValue()
+{
+    return QScriptValue(this, QScriptValue::UndefinedValue);
+}

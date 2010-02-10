@@ -35,6 +35,8 @@ public slots:
 private slots:
     void evaluate();
     void collectGarbage();
+    void nullValue();
+    void undefinedValue();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -54,5 +56,22 @@ void tst_QScriptEngine::collectGarbage()
     engine.collectGarbage();
     QCOMPARE(foo.call().toString(), QString::fromAscii("pong"));
 }
+
+void tst_QScriptEngine::nullValue()
+{
+    QScriptEngine engine;
+    QScriptValue value = engine.nullValue();
+    QVERIFY(value.isValid());
+    QVERIFY(value.isNull());
+}
+
+void tst_QScriptEngine::undefinedValue()
+{
+    QScriptEngine engine;
+    QScriptValue value = engine.undefinedValue();
+    QVERIFY(value.isValid());
+    QVERIFY(value.isUndefined());
+}
+
 QTEST_MAIN(tst_QScriptEngine)
 #include "tst_qscriptengine.moc"
