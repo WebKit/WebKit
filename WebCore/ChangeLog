@@ -1,3 +1,19 @@
+2010-02-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert 54599
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._insertChild):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.revealAndSelectNode):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        ():
+        * inspector/front-end/inspector.css:
+
 2010-02-10  Adam Roben  <aroben@apple.com>
 
         Fix bad paths in WebCore.vcproj

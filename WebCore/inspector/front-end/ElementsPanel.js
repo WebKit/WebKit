@@ -523,8 +523,7 @@ WebInspector.ElementsPanel.prototype = {
 
             if (this.recentlyModifiedNodes[i].updated) {
                 var nodeItem = this.treeOutline.findTreeElement(node);
-                if (nodeItem)
-                    nodeItem.updateTitle();
+                nodeItem.updateTitle();
                 continue;
             }
             

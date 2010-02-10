@@ -1,3 +1,11 @@
+2010-02-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Revert 54599
+
+        * inspector/elements-panel-limited-children-expected.txt: Removed.
+        * inspector/elements-panel-limited-children.html: Removed.
+        * platform/qt/Skipped:
+
 2010-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
