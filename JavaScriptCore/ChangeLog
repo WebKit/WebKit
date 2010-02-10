@@ -1,3 +1,29 @@
+2010-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34490
+        WebCore::ImageEventSender::dispatchPendingEvents() crashes in certain conditions
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added ValueCheck.h.
+
+        * wtf/ValueCheck.h: Added. Moved code out of HashTraits, since it would be awkward to
+        include that from Vector.h.
+        (WTF::ValueCheck::checkConsistency): Allow null pointers, those are pretty consistent.
+
+        * wtf/HashTraits.h: Moved value checking code out of here.
+
+        * wtf/HashTable.h: (WTF::::checkTableConsistencyExceptSize): Updated for the above changes.
+
+        * wtf/Vector.h:
+        (WTF::::checkConsistency): Check all vector elements.
+        (WTF::ValueCheck): Support checking a Vector as an element in other containers. Currently
+        unused.
+
 2010-02-10  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

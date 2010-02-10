@@ -24,6 +24,7 @@
 
 #include "FastMalloc.h"
 #include "HashTraits.h"
+#include "ValueCheck.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
 
@@ -1021,7 +1022,7 @@ namespace WTF {
             ASSERT(entry == it.m_position);
             ++count;
 
-            KeyTraits::checkValueConsistency(it->first);
+            ValueCheck<Key>::checkConsistency(it->first);
         }
 
         ASSERT(count == m_keyCount);

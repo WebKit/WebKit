@@ -49,7 +49,7 @@ public:
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
-    void setImage(CachedImage*);
+    void setImage(CachedImage*); // Cancels pending beforeload and load events, and doesn't dispatch new ones.
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
@@ -69,8 +69,6 @@ private:
     friend class ImageEventSender;
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
-
-    void setLoadingImage(CachedImage*);
 
     void updateRenderer();
 

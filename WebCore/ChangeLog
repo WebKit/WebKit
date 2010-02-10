@@ -1,3 +1,35 @@
+2010-02-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34490
+        WebCore::ImageEventSender::dispatchPendingEvents() crashes in certain conditions
+
+        Test: fast/images/destroyed-image-load-event.html
+
+        * ForwardingHeaders/wtf/ValueCheck.h: Added.
+
+        * loader/ImageLoader.cpp:
+        (WTF::ValueCheck): Special case value check for ImageLoader - it's allocated inside elements,
+        so check the owner instead.
+        (WebCore::ImageEventSender::hasPendingEvents): Added a debugging aid for ImageLoader destructor.
+        (WebCore::ImageLoader::~ImageLoader): Assert that we're not going to leave dangling pointers
+        in ImageEventSender.
+        (WebCore::ImageLoader::setImage): Cancel events that could be dispatched for the previous
+        image. The only client using this method that I could find was DeleteButton, which doesn't
+        care about load events for the new image, so I didn't add any code for firing those.
+        (WebCore::ImageLoader::setLoadingImage): This method only existed to confuse readers -
+        there wasn't any meaningful code shared (callers just undid most assignments made there).
+        Merged the logic into callers.
+        (WebCore::ImageLoader::updateFromElement): We're forgetting the old image, so forget its
+        old events, too.
+        (WebCore::ImageLoader::notifyFinished): This can be called from setImage(), in which case
+        no one is going to dispatch the event "soon". So, don't queue it.
+        (WebCore::ImageEventSender::dispatchPendingEvents): Call checkConsistency(). This didn't
+        help catch this particuar bug, but seems like a useful check anyway.
+
+        * loader/ImageLoader.h: Removed setLoadingImage().
+
 2010-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Mac build fix. Unreviewed.

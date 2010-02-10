@@ -441,6 +441,7 @@
             'wtf/unicode/UTF8.cpp',
             'wtf/unicode/UTF8.h',
             'wtf/UnusedParam.h',
+            'wtf/ValueCheck.h',
             'wtf/Vector.h',
             'wtf/VectorTraits.h',
             'wtf/VMTags.h',

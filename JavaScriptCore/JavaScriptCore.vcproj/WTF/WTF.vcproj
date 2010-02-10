@@ -545,6 +545,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ValueCheck.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Vector.h"
 			>
 		</File>
