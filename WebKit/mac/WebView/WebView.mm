@@ -1334,6 +1334,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
+    settings->setFrameSetFlatteningEnabled([preferences isFrameSetFlatteningEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)

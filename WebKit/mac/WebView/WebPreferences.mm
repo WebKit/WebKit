@@ -356,6 +356,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitFrameSetFlatteningEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -1202,6 +1203,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setPluginAllowedRunTime:(unsigned)allowedRunTime
 {
     return [self _setIntegerValue:allowedRunTime forKey:WebKitPluginAllowedRunTimePreferenceKey];
+}
+
+- (BOOL)isFrameSetFlatteningEnabled
+{
+    return [self _boolValueForKey:WebKitFrameSetFlatteningEnabledPreferenceKey];
+}
+
+- (void)setFrameSetFlatteningEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitFrameSetFlatteningEnabledPreferenceKey];
 }
 
 - (void)didRemoveFromWebView

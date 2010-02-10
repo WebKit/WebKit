@@ -1,3 +1,14 @@
+2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support frameset flattening
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Add support for enabling/disabling FrameSet Flattening on the Mac port.
+
+        * WebCore.base.exp:
+
 2010-02-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Revert 54599 because it breaks a lot of tests on Windows Chrome

@@ -113,6 +113,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (unsigned)pluginAllowedRunTime;
 - (void)setPluginAllowedRunTime:(unsigned)allowedRunTime;
 
+- (BOOL)isFrameSetFlatteningEnabled;
+- (void)setFrameSetFlatteningEnabled:(BOOL)flag;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
