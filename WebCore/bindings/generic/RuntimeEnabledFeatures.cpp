@@ -28,44 +28,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RuntimeEnabledFeatures_h
-#define RuntimeEnabledFeatures_h
+#include "config.h"
+#include "RuntimeEnabledFeatures.h"
+
+#include "Database.h"
+#include "MediaPlayer.h"
+#include "SharedWorkerRepository.h"
+#include "WebSocket.h"
 
 namespace WebCore {
 
-// A class that stores static enablers for all experimental features
-class RuntimeEnabledFeatures {
-public:
-    static void setLocalStorageEnabled(bool isEnabled) { isLocalStorageEnabled = isEnabled; }
-    static bool localStorageEnabled() { return isLocalStorageEnabled; }
+bool RuntimeEnabledFeatures::isLocalStorageEnabled = true;
+bool RuntimeEnabledFeatures::isSessionStorageEnabled = true;
+bool RuntimeEnabledFeatures::isWebkitNotificationsEnabled = false;
+bool RuntimeEnabledFeatures::isApplicationCacheEnabled = false;
+bool RuntimeEnabledFeatures::isGeolocationEnabled = false;
+bool RuntimeEnabledFeatures::isIndexedDBEnabled = false;
 
-    static void setSessionStorageEnabled(bool isEnabled) { isSessionStorageEnabled = isEnabled; }
-    static bool sessionStorageEnabled() { return isSessionStorageEnabled; }
+#if ENABLE(VIDEO)
 
-    static void setNotificationsEnabled(bool isEnabled) { isNotificationsEnabled = isEnabled; }
-    static bool notificationsEnabled() { return isNotificationsEnabled; }
+bool RuntimeEnabledFeatures::audioEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
 
-    static void setApplicationCacheEnabled(bool isEnabled) { isApplicationCacheEnabled = isEnabled; }
-    static bool applicationCacheEnabled() { return isApplicationCacheEnabled; }
+bool RuntimeEnabledFeatures::htmlMediaElementEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
 
-    static void setGeolocationEnabled(bool isEnabled) { isGeolocationEnabled = isEnabled; }
-    static bool geolocationEnabled() { return isGeolocationEnabled; }
+bool RuntimeEnabledFeatures::htmlAudioElementEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
 
-    static void setIndexedDatabaseEnabled(bool isEnabled) { isIndexedDatabaseEnabled = isEnabled; }
-    static bool indexedDatabaseEnabled() { return isIndexedDatabaseEnabled; }
+bool RuntimeEnabledFeatures::htmlVideoElementEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
 
-private:
-    // Never instantiate.
-    RuntimeEnabledFeatures() { }
+bool RuntimeEnabledFeatures::mediaErrorEnabled()
+{
+    return MediaPlayer::isAvailable();
+}
 
-    static bool isLocalStorageEnabled;
-    static bool isSessionStorageEnabled;
-    static bool isNotificationsEnabled;
-    static bool isApplicationCacheEnabled;
-    static bool isGeolocationEnabled;
-    static bool isIndexedDatabaseEnabled;
-};
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+bool RuntimeEnabledFeatures::sharedWorkerEnabled()
+{
+    return SharedWorkerRepository::isAvailable();
+}
+#endif
+
+#if ENABLE(WEB_SOCKETS)
+bool RuntimeEnabledFeatures::webSocketEnabled()
+{
+    return WebSocket::isAvailable();
+}
+#endif
+
+#if ENABLE(DATABASE)
+bool RuntimeEnabledFeatures::openDatabaseEnabled()
+{
+    return Database::isAvailable();
+}
+#endif
 
 } // namespace WebCore
-
-#endif // RuntimeEnabledFeatures_h

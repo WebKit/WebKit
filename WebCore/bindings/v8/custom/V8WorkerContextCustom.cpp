@@ -35,7 +35,6 @@
 
 #include "DOMTimer.h"
 #include "ExceptionCode.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -46,20 +45,6 @@
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
-
-#if ENABLE(NOTIFICATIONS)
-bool V8WorkerContext::WebkitNotificationsEnabled()
-{
-    return RuntimeEnabledFeatures::notificationsEnabled();
-}
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-bool V8WorkerContext::WebSocketEnabled()
-{
-    return WebSocket::isAvailable();
-}
-#endif
 
 v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singleShot)
 {

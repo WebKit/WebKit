@@ -1,3 +1,42 @@
+2010-02-10  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Simplified RuntimeEnabledFeatures and corresponding v8 generated code
+        https://bugs.webkit.org/show_bug.cgi?id=34667
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Added.
+        (WebCore::RuntimeEnabledFeatures::audioEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlMediaElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlAudioElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlVideoElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaErrorEnabled):
+        (WebCore::RuntimeEnabledFeatures::sharedWorkerEnabled):
+        (WebCore::RuntimeEnabledFeatures::webSocketEnabled):
+        (WebCore::RuntimeEnabledFeatures::openDatabaseEnabled):
+        * bindings/generic/RuntimeEnabledFeatures.h: Added.
+        (WebCore::RuntimeEnabledFeatures::setLocalStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::localStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::setSessionStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::sessionStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitNotificationsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitNotificationsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setApplicationCacheEnabled):
+        (WebCore::RuntimeEnabledFeatures::applicationCacheEnabled):
+        (WebCore::RuntimeEnabledFeatures::setGeolocationEnabled):
+        (WebCore::RuntimeEnabledFeatures::geolocationEnabled):
+        (WebCore::RuntimeEnabledFeatures::setIndexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::indexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/RuntimeEnabledFeatures.cpp: Removed.
+        * bindings/v8/RuntimeEnabledFeatures.h: Removed.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8NavigatorCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+
 2010-02-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

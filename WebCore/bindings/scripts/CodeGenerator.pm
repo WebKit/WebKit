@@ -1,26 +1,26 @@
 #
 # WebKit IDL parser
-# 
+#
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
 # version 2 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Library General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Library General Public License
 # aint with this library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-# 
+#
 
 package CodeGenerator;
 
@@ -39,10 +39,10 @@ my $codeGenerator = 0;
 
 my $verbose = 0;
 
-my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1, 
+my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
                          "unsigned int" => 1, "unsigned short" => 1,
-                         "unsigned long" => 1, "unsigned long long" => 1, 
-                         "float" => 1, "double" => 1, 
+                         "unsigned long" => 1, "unsigned long long" => 1,
+                         "float" => 1, "double" => 1,
                          "boolean" => 1, "void" => 1,
                          "Date" => 1);
 
@@ -328,10 +328,10 @@ sub IsSVGAnimatedType
     my $type = shift;
 
     return 1 if $svgAnimatedTypeHash{$type};
-    return 0; 
+    return 0;
 }
 
-# Uppercase the first letter while respecting WebKit style guidelines. 
+# Uppercase the first letter while respecting WebKit style guidelines.
 # E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
 sub WK_ucfirst
 {
@@ -341,12 +341,13 @@ sub WK_ucfirst
     return $ret;
 }
 
-# Lowercase the first letter while respecting WebKit style guidelines. 
+# Lowercase the first letter while respecting WebKit style guidelines.
 # URL becomes url, but SetURL becomes setURL.
 sub WK_lcfirst
 {
     my ($object, $param) = @_;
     my $ret = lcfirst($param);
+    $ret =~ s/hTML/html/ if $ret =~ /^hTML/;
     $ret =~ s/uRL/url/ if $ret =~ /^uRL/;
     $ret =~ s/jS/js/ if $ret =~ /^jS/;
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;

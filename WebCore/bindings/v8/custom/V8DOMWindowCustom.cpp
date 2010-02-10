@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -45,7 +45,6 @@
 #include "MediaPlayer.h"
 #include "Page.h"
 #include "PlatformScreen.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SerializedScriptValue.h"
@@ -95,9 +94,9 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         else {
             v8::Handle<v8::Value> v8String = function->ToString();
 
-            // Bail out if string conversion failed. 
-            if (v8String.IsEmpty()) 
-                return v8::Undefined(); 
+            // Bail out if string conversion failed.
+            if (v8String.IsEmpty())
+                return v8::Undefined();
 
             functionString = toWebCoreString(v8String);
         }
@@ -228,7 +227,7 @@ void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
 
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return;
-  
+
     // Opener can be shadowed if it is in the same domain.
     // Have a special handling of null value to behave
     // like Firefox. See bug http://b/1224887 & http://b/791706.
@@ -254,85 +253,6 @@ v8::Handle<v8::Value> V8DOMWindow::AudioAccessorGetter(v8::Local<v8::String> nam
     return V8DOMWrapper::getConstructor(V8ClassIndex::AUDIO, window);
 }
 
-bool V8DOMWindow::AudioEnabled()
-{
-    return MediaPlayer::isAvailable();
-}
-
-bool V8DOMWindow::HTMLMediaElementEnabled()
-{
-    return MediaPlayer::isAvailable();
-}
-
-bool V8DOMWindow::HTMLAudioElementEnabled()
-{
-    return MediaPlayer::isAvailable();
-}
-
-bool V8DOMWindow::HTMLVideoElementEnabled()
-{
-    return MediaPlayer::isAvailable();
-}
-
-bool V8DOMWindow::MediaErrorEnabled()
-{
-    return MediaPlayer::isAvailable();
-}
-
-#endif
-
-#if ENABLE(SHARED_WORKERS)
-bool V8DOMWindow::SharedWorkerEnabled()
-{
-    return SharedWorkerRepository::isAvailable();
-}
-#endif
-
-#if ENABLE(WEB_SOCKETS)
-bool V8DOMWindow::WebSocketEnabled()
-{
-    return WebSocket::isAvailable();
-}
-#endif
-
-#if ENABLE(DATABASE)
-bool V8DOMWindow::OpenDatabaseEnabled()
-{
-    return Database::isAvailable();
-}
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-bool V8DOMWindow::IndexedDBEnabled()
-{
-    return RuntimeEnabledFeatures::indexedDatabaseEnabled();
-}
-#endif
-
-#if ENABLE(DOM_STORAGE)
-bool V8DOMWindow::LocalStorageEnabled()
-{
-    return RuntimeEnabledFeatures::localStorageEnabled();
-}
-
-bool V8DOMWindow::SessionStorageEnabled()
-{
-    return RuntimeEnabledFeatures::sessionStorageEnabled();
-}
-#endif
-
-#if ENABLE(NOTIFICATIONS)
-bool V8DOMWindow::WebkitNotificationsEnabled()
-{
-    return RuntimeEnabledFeatures::notificationsEnabled();
-}
-#endif
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-bool V8DOMWindow::ApplicationCacheEnabled()
-{
-    return RuntimeEnabledFeatures::applicationCacheEnabled();
-}
 #endif
 
 v8::Handle<v8::Value> V8DOMWindow::ImageAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -595,7 +515,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
     // default here came from frame size of dialog in MacIE.
     windowFeatures.height = WindowFeatures::floatFeature(features, "dialogheight", 100, screenRect.height(), 450);
     windowFeatures.heightSet = true;
-  
+
     windowFeatures.x = WindowFeatures::floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - windowFeatures.width, -1);
     windowFeatures.xSet = windowFeatures.x > 0;
     windowFeatures.y = WindowFeatures::floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - windowFeatures.height, -1);
@@ -694,11 +614,11 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     if (topOrParent) {
         if (!shouldAllowNavigation(frame))
             return v8::Undefined();
-    
+
         String completedUrl;
         if (!urlString.isEmpty())
             completedUrl = completeURL(urlString);
-    
+
         if (!completedUrl.isEmpty() &&
             (!protocolIsJavaScript(completedUrl) || ScriptController::isSafeScript(frame))) {
             bool userGesture = processingUserGesture();
