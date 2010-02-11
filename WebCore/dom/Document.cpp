@@ -370,7 +370,6 @@ Document::Document(Frame* frame, bool isXHTML, bool isHTML)
     , m_bindingManager(new XBLBindingManager(this))
 #endif
     , m_savedRenderer(0)
-    , m_secureForms(0)
     , m_designMode(inherit)
     , m_selfOnlyRefCount(0)
 #if ENABLE(SVG)

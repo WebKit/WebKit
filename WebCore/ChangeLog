@@ -1,3 +1,16 @@
+2010-02-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Levin.
+
+        Clean up unused member var and initialization in Document
+        https://bugs.webkit.org/show_bug.cgi?id=34820
+
+        Remove unused m_secureForms member variable in Document.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+
 2010-02-10  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

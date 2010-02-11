@@ -1134,7 +1134,6 @@ private:
 #endif
 
     RenderObject* m_savedRenderer;
-    int m_secureForms;
     
     RefPtr<TextResourceDecoder> m_decoder;
 
