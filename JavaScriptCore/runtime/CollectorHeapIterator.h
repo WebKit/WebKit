@@ -38,7 +38,7 @@ namespace JSC {
     
     protected:
         CollectorHeapIterator(CollectorHeap&, size_t startBlock, size_t startCell);
-        void advance(size_t cellsPerBlock);
+        void advance(size_t max);
 
         CollectorHeap& m_heap;
         size_t m_block;
@@ -80,10 +80,12 @@ namespace JSC {
         return reinterpret_cast<JSCell*>(m_heap.blocks[m_block]->cells + m_cell);
     }
     
-    inline void CollectorHeapIterator::advance(size_t cellsPerBlock)
+    // Iterators advance up to the next-to-last -- and not the last -- cell in a
+    // block, since the last cell is a dummy sentinel.
+    inline void CollectorHeapIterator::advance(size_t max)
     {
         ++m_cell;
-        if (m_cell == cellsPerBlock) {
+        if (m_cell == max) {
             m_cell = 0;
             ++m_block;
         }
@@ -97,14 +99,12 @@ namespace JSC {
 
     inline LiveObjectIterator& LiveObjectIterator::operator++()
     {
-        if (m_block < m_heap.nextBlock || m_cell < m_heap.nextCell) {
-            advance(HeapConstants::cellsPerBlock);
+        advance(HeapConstants::cellsPerBlock - 1);
+        if (m_block < m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell < m_heap.nextCell))
             return *this;
-        }
 
-        do {
-            advance(HeapConstants::cellsPerBlock);
-        } while (m_block < m_heap.usedBlocks && !m_heap.blocks[m_block]->marked.get(m_cell));
+        while (m_block < m_heap.usedBlocks && !m_heap.blocks[m_block]->marked.get(m_cell))
+            advance(HeapConstants::cellsPerBlock - 1);
         return *this;
     }
 
@@ -117,7 +117,7 @@ namespace JSC {
     inline DeadObjectIterator& DeadObjectIterator::operator++()
     {
         do {
-            advance(HeapConstants::cellsPerBlock);
+            advance(HeapConstants::cellsPerBlock - 1);
             ASSERT(m_block > m_heap.nextBlock || (m_block == m_heap.nextBlock && m_cell >= m_heap.nextCell));
         } while (m_block < m_heap.usedBlocks && m_heap.blocks[m_block]->marked.get(m_cell));
         return *this;
@@ -131,7 +131,7 @@ namespace JSC {
 
     inline ObjectIterator& ObjectIterator::operator++()
     {
-        advance(HeapConstants::cellsPerBlock);
+        advance(HeapConstants::cellsPerBlock - 1);
         return *this;
     }
 

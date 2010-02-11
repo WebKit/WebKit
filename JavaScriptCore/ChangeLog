@@ -1,3 +1,31 @@
+2010-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added an SPI for asking about all the different live objects on the heap.
+        Useful for memory debugging.
+
+        * JavaScriptCore.exp: Export the new SPI.
+
+        * runtime/Collector.cpp:
+        (JSC::typeName): Use a little capitalization. Don't crash in the case of
+        a non-object cell, since it might just be an uninitialized cell.
+
+        (JSC::Heap::objectTypeCounts): The new SPI.
+
+        * runtime/Collector.h:
+        * runtime/CollectorHeapIterator.h:
+        (JSC::CollectorHeapIterator::advance):
+        (JSC::LiveObjectIterator::operator++):
+        (JSC::DeadObjectIterator::operator++):
+        (JSC::ObjectIterator::operator++): Made 2 tweaks to these iterators:
+        (1) Skip the last cell in the block, since it's a dummy sentinel, and
+        we don't want it to confuse the object count; (2) Fixed a logic error
+        in LiveObjectIterator that could cause it to iterate dead objects if
+        m_block were equal to m_heap.nextBlock and m_cell were less than
+        m_heap.nextCell. No test for this since I can't think of a way that this
+        could make WebKit behave badly.
+
 2010-02-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
