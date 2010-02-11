@@ -1,3 +1,32 @@
+2010-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        postMessage does not send ImageData
+        https://bugs.webkit.org/show_bug.cgi?id=34825
+
+        Implement serialisation of ImageData, and for testing reasons
+        expose the ImageData constructor (which should already have
+        been exposed).
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedImageData::create):
+        (WebCore::SerializedImageData::width):
+        (WebCore::SerializedImageData::height):
+        (WebCore::SerializedImageData::data):
+        (WebCore::SerializedImageData::SerializedImageData):
+        (WebCore::SerializedScriptValueData::SerializedScriptValueData):
+        (WebCore::SharedSerializedData::asImageData):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::convertIfTerminal):
+        (WebCore::TeardownTreeWalker::convertIfTerminal):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValueData::):
+        (WebCore::SerializedScriptValueData::asImageData):
+        * html/canvas/CanvasPixelArray.h:
+        (WebCore::CanvasPixelArray::data):
+        * page/DOMWindow.idl:
+
 2010-02-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

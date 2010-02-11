@@ -1,3 +1,23 @@
+2010-02-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        postMessage does not send ImageData
+        https://bugs.webkit.org/show_bug.cgi?id=34825
+
+        Add test for postMessage passing ImageData
+
+        Update a few other tests to cover the fact that ImageData's constructor
+        is now available on the window object.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/Window/window-postmessage-clone.html:
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2010-02-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser and Darin Adler.
