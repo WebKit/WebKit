@@ -1,3 +1,23 @@
+2010-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        run-chromium-webkit-tests fails random pixel tests on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=34862
+
+        This is due to the fact that the Mac port has an
+        invalid path to the image diff tool.  Currently it points
+        to image_diff even though ImageDiff would be correct.  We
+        can't change it to the right path yet without causing the
+        script to hang.  ImageDiff expects to be long-running and
+        be passed image data over stdin.  image_diff (chromium's fork)
+        expects to be passed command line arguments.
+        This fix works around the random failures by disabling pixel
+        tests on mac and logging if the user was trying to run with pixel
+        tests enabled.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Adam Roben.
