@@ -1,3 +1,14 @@
+2010-02-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make it possible to toggle accelerated compositing from the menu
+        at run-time.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::toggleAcceleratedCompositing):
+        (LauncherWindow::setupUI):
+
 2010-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

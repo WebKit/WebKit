@@ -115,6 +115,7 @@ protected slots:
     void selectElements();
 
     void setTouchMocking(bool on);
+    void toggleAcceleratedCompositing(bool toggle);
 
 public slots:
     void newWindow(const QString& url = QString());
@@ -449,6 +450,11 @@ void LauncherWindow::setTouchMocking(bool on)
 #endif
 }
 
+void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
+{
+    page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, toggle);
+}
+
 void LauncherWindow::newWindow(const QString& url)
 {
     LauncherWindow* mw = new LauncherWindow(url);
@@ -518,6 +524,10 @@ void LauncherWindow::setupUI()
     touchMockAction->setCheckable(true);
     touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
 #endif
+
+    QAction* toggleAcceleratedCompositing = toolsMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
+    toggleAcceleratedCompositing->setCheckable(true);
+    toggleAcceleratedCompositing->setChecked(false);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
