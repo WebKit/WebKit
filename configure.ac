@@ -723,7 +723,7 @@ if test "$enable_video" = "yes"; then
                      gstreamer-app-0.10
                      gstreamer-base-0.10
                      gstreamer-pbutils-0.10
-                     gstreamer-plugins-base-0.10
+                     gstreamer-plugins-base-0.10.23
                      gstreamer-video-0.10])
    AC_SUBST([GSTREAMER_CFLAGS])
    AC_SUBST([GSTREAMER_LIBS])
