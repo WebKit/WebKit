@@ -108,7 +108,7 @@ public:
 
     void display(PlatformGraphicsContext*);
 
-    bool isTransformLayer() const { return CACFLayerGetClass(layer()) == kCACFTransformLayer; }
+    bool isTransformLayer() const;
 
     void addSublayer(PassRefPtr<WKCACFLayer> sublayer);
     void insertSublayer(PassRefPtr<WKCACFLayer>, size_t index);
@@ -223,6 +223,11 @@ public:
     void setGeometryFlipped(bool flipped) { CACFLayerSetGeometryFlipped(layer(), flipped); setNeedsCommit(); }
     bool geometryFlipped() const { return CACFLayerIsGeometryFlipped(layer()); }
 
+#ifndef NDEBUG
+    // Print the tree from the root. Also does consistency checks
+    void printTree() const;
+#endif
+
 private:
     WKCACFLayer(LayerType, GraphicsLayerCACF* owner);
 
@@ -233,6 +238,8 @@ private:
         CFArrayRef sublayers = CACFLayerGetSublayers(layer());
         return sublayers ? CFArrayGetCount(sublayers) : 0;
     }
+
+    const WKCACFLayer* sublayerAtIndex(int) const;
     
     // Returns the index of the passed layer in this layer's sublayers list
     // or -1 if not found
@@ -240,6 +247,11 @@ private:
 
     // This should only be called from removeFromSuperlayer.
     void removeSublayer(const WKCACFLayer*);
+
+#ifndef NDEBUG
+    // Print this layer and its children to the console
+    void printLayer(int indent) const;
+#endif
 
     RetainPtr<CACFLayerRef> m_layer;
     bool m_needsDisplayOnBoundsChange;

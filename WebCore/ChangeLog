@@ -1,3 +1,31 @@
+2010-02-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added CA_PRINT_TREE functionality to WKCACFLayer implementation
+        https://bugs.webkit.org/show_bug.cgi?id=34779
+        
+        I've tried to duplicate the look of the output on Mac, but
+        it's not quite the same. It shows all the useful information though.
+        It is enabled by setting the environment variable CA_PRINT_TREE=1
+        
+        * platform/graphics/win/WKCACFLayer.cpp:Implementation of printTree
+        (WebCore::WKCACFLayer::isTransformLayer):
+            Moved function to cpp file because it needs to use the function form
+            of kCACFTransformLayer because the DLL is delay loaded, and that function
+            can only be called from the cpp file.
+        (WebCore::WKCACFLayer::sublayerAtIndex):
+        (WebCore::printIndent):
+        (WebCore::printTransform):
+        (WebCore::WKCACFLayer::printTree):Prints from this layer down
+        (WebCore::WKCACFLayer::printLayer):Prints this layer and recursively calls sublayers
+        * platform/graphics/win/WKCACFLayer.h:
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::createRenderer):Adds a name to the root layers
+        (WebCore::WKCACFLayerRenderer::render):Calls printTree when CA_PRINT_TREE is 1
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        
 2010-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

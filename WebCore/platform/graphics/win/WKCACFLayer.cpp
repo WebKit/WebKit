@@ -29,6 +29,7 @@
 
 #include "WKCACFLayer.h"
 
+#include "CString.h"
 #include "WKCACFContextFlusher.h"
 #include "WKCACFLayerRenderer.h"
 
@@ -36,6 +37,10 @@
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARender.h>
 #include <QuartzCoreInterface/QuartzCoreInterface.h>
+
+#ifndef NDEBUG
+#include <wtf/CurrentTime.h>
+#endif
 
 #ifdef DEBUG_ALL
 #pragma comment(lib, "QuartzCore_debug")
@@ -282,6 +287,11 @@ void WKCACFLayer::setNeedsCommit()
         m_owner->notifySyncRequired();
 }
 
+bool WKCACFLayer::isTransformLayer() const
+{
+    return CACFLayerGetClass(layer()) == kCACFTransformLayer();
+}
+
 void WKCACFLayer::addSublayer(PassRefPtr<WKCACFLayer> sublayer)
 {
     insertSublayer(sublayer, numSublayers());
@@ -370,6 +380,15 @@ void WKCACFLayer::removeSublayer(const WKCACFLayer* sublayer)
 
     CACFLayerRemoveFromSuperlayer(sublayer->layer());
     setNeedsCommit();
+}
+
+const WKCACFLayer* WKCACFLayer::sublayerAtIndex(int index) const
+{
+    CFArrayRef sublayers = CACFLayerGetSublayers(layer());
+    if (index < 0 || CFArrayGetCount(sublayers) <= index)
+        return 0;
+    
+    return layer(static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, index))));
 }
 
 int WKCACFLayer::indexOfSublayer(const WKCACFLayer* reference)
@@ -518,7 +537,108 @@ void WKCACFLayer::setNeedsDisplay()
     setNeedsCommit();
 }
 
+#ifndef NDEBUG
+static void printIndent(int indent)
+{
+    for ( ; indent > 0; --indent)
+        fprintf(stderr, "  ");
+}
 
+static void printTransform(const CATransform3D& transform)
+{
+    fprintf(stderr, "[%g %g %g %g; %g %g %g %g; %g %g %g %g; %g %g %g %g]",
+                    transform.m11, transform.m12, transform.m13, transform.m14, 
+                    transform.m21, transform.m22, transform.m23, transform.m24, 
+                    transform.m31, transform.m32, transform.m33, transform.m34, 
+                    transform.m41, transform.m42, transform.m43, transform.m44);
+}
+
+void WKCACFLayer::printTree() const
+{
+    // Print heading info
+    CGRect rootBounds = bounds();
+    fprintf(stderr, "\n\n** Render tree at time %g (bounds %g, %g %gx%g) **\n\n", 
+        currentTime(), rootBounds.origin.x, rootBounds.origin.y, rootBounds.size.width, rootBounds.size.height);
+
+    // Print layer tree from the root
+    printLayer(0);
+}
+
+void WKCACFLayer::printLayer(int indent) const
+{
+    CGPoint layerPosition = position();
+    CGPoint layerAnchorPoint = anchorPoint();
+    CGRect layerBounds = bounds();
+    printIndent(indent);
+    fprintf(stderr, "(%s [%g %g %g] [%g %g %g %g] [%g %g %g]\n",
+        isTransformLayer() ? "transform-layer" : "layer",
+        layerPosition.x, layerPosition.y, zPosition(), 
+        layerBounds.origin.x, layerBounds.origin.y, layerBounds.size.width, layerBounds.size.height,
+        layerAnchorPoint.x, layerAnchorPoint.y, anchorPointZ());
+
+    // Print name if needed
+    String layerName = name();
+    if (!layerName.isEmpty()) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(name %s)\n", layerName.utf8().data());
+    }
+
+    // Print masksToBounds if needed
+    bool layerMasksToBounds = masksToBounds();
+    if (layerMasksToBounds) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(masksToBounds true)\n");
+    }
+
+    // Print opacity if needed
+    float layerOpacity = opacity();
+    if (layerOpacity != 1) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(opacity %hf)\n", layerOpacity);
+    }
+
+    // Print sublayerTransform if needed
+    CATransform3D layerTransform = sublayerTransform();
+    if (!CATransform3DIsIdentity(layerTransform)) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(sublayerTransform ");
+        printTransform(layerTransform);
+        fprintf(stderr, ")\n");
+    }
+
+    // Print transform if needed
+    layerTransform = transform();
+    if (!CATransform3DIsIdentity(layerTransform)) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(transform ");
+        printTransform(layerTransform);
+        fprintf(stderr, ")\n");
+    }
+
+    // Print contents if needed
+    CGImageRef layerContents = contents();
+    if (layerContents) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(contents (image [%d %d]))\n",
+            CGImageGetWidth(layerContents), CGImageGetHeight(layerContents));
+    }
+
+    // Print sublayers if needed
+    int n = numSublayers();
+    if (n > 0) {
+        printIndent(indent + 1);
+        fprintf(stderr, "(sublayers\n");
+        for (int i = 0; i < n; ++i)
+            sublayerAtIndex(i)->printLayer(indent + 2);
+
+        printIndent(indent + 1);
+        fprintf(stderr, ")\n");
+    }
+
+    printIndent(indent);
+    fprintf(stderr, ")\n");
+}
+#endif // #ifndef NDEBUG
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
