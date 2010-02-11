@@ -248,7 +248,6 @@ EXPORTS
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?sharedBuffer@UStringImpl@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
-    ?sharedWorker@JSDOMWindow@WebCore@@QBE?AVJSValue@JSC@@PAVExecState@4@@Z
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
