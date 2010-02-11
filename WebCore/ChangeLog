@@ -2,6 +2,17 @@
 
         Reviewed by Jeremy Orlow.
 
+        Updates Android V8 Makefile to generate Notifications and WebSockets headers required by V8DOMWrapper.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=34815
+
+        No new tests, build fix only.
+
+        * Android.derived.v8bindings.mk:
+
+2010-02-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         Updates Android V8 Makefile to generate XPath header required by V8Proxy.cpp
         https://bugs.webkit.org/show_bug.cgi?id=34814
 

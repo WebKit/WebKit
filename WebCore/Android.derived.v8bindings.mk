@@ -547,6 +547,36 @@ LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
 # above rules.  Specifying this explicitly makes -j2 work.
 $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)/bindings/%.h
 
+# Notifications
+# These headers are required by the V8 bindings even when Notifications are disabled
+GEN := \
+    $(intermediates)/bindings/V8Notification.h
+
+$(GEN): PRIVATE_PATH := $(LOCAL_PATH)
+$(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --outputdir $(dir $@) $<
+$(GEN): $(intermediates)/bindings/V8%.h : $(LOCAL_PATH)/notifications/%.idl $(js_binding_scripts)
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
+
+# We also need the .cpp files, which are generated as side effects of the
+# above rules.  Specifying this explicitly makes -j2 work.
+$(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)/bindings/%.h
+
+# Web Sockets
+# These headers are required by the V8 bindings even when Web Sockets are disabled
+GEN := \
+    $(intermediates)/bindings/V8WebSocket.h
+
+$(GEN): PRIVATE_PATH := $(LOCAL_PATH)
+$(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --outputdir $(dir $@) $<
+$(GEN): $(intermediates)/bindings/V8%.h : $(LOCAL_PATH)/websockets/%.idl $(js_binding_scripts)
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)
+
+# We also need the .cpp files, which are generated as side effects of the
+# above rules.  Specifying this explicitly makes -j2 work.
+$(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)/bindings/%.h
+
 # HTML tag and attribute names
 GEN:= $(intermediates)/HTMLNames.cpp $(intermediates)/HTMLElementFactory.cpp
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
