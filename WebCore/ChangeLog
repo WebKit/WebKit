@@ -1,3 +1,40 @@
+2010-02-10  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        Fixes to rect conversion and image rendering on Haiku
+        https://bugs.webkit.org/show_bug.cgi?id=34684
+
+        Covered by existing tests.
+
+        The changes to the rect conversions are indeed correct. In Haiku (to stay
+        compatibly with BeOS), a BRect specifies the left/top and bottom/right pixel
+        *indices*, even though the values are floating point. So a rectangle covering
+        just one pixel would be specified as BRect(0, 0, 0, 0). In WebCore and other
+        frame works, such rectangles would be expressed as 0, 0, 1, 1. In WebCore, the
+        width and height of rectangles refer to the distance between pixels, while on
+        Haiku, a one pixel rect has indeed a width and height of 0, as confusing as
+        that may be.
+
+        The part of the patch that affects
+        WebCore/platform/graphics/haiku/ImageHaiku.cpp also implements the drawing
+        methods more correctly. Image observers are notified, and pattern drawing takes
+        the "phase" into account which makes scrolled backgrounds render correctly.
+        Transformations are still not supported, since the Haiku drawing backend itself
+        does not yet support them.
+
+        Use OwnPtr when creating the BBitmap to avoid future leaks with early returns.
+
+        Convert the bitmap data to non pre-multiplied until Haiku supports drawing
+        pre-multiplied bitmaps.
+
+        * platform/graphics/haiku/FloatRectHaiku.cpp: Fixed conversion
+        * platform/graphics/haiku/ImageHaiku.cpp:
+        (WebCore::BitmapImage::draw): Fixed placement, notify observers
+        (WebCore::Image::drawPattern): Implemented using "phase" to fix scrolling, notify observers
+        * platform/graphics/haiku/IntRectHaiku.cpp: Fixed conversion
+        * platform/image-decoders/haiku/ImageDecoderHaiku.cpp: Fixed conversion
+
 2010-02-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by David Levin.
