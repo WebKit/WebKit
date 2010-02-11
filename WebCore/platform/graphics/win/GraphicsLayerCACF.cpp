@@ -135,6 +135,9 @@ GraphicsLayerCACF::~GraphicsLayerCACF()
     if (m_layer)
         m_layer->removeFromSuperlayer();
     
+    if (m_contentsLayer)
+        m_contentsLayer->removeFromSuperlayer();
+
     if (m_transformLayer)
         m_transformLayer->removeFromSuperlayer();
 }

@@ -1,3 +1,19 @@
+2010-02-10  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Crash in WebKit!WebCore::RenderTextControlSingleLine::createInnerTextStyle doing anything in Safari after sitting on a page with 3D site        
+        <rdar://problem/7557201>
+        https://bugs.webkit.org/show_bug.cgi?id=34823
+        
+        No tests added because the code is exercised by the existing tests.
+        
+        The root cause was the fact that we were not releasing a reference that was held by CA.
+        In debug builds we had an assert in the destructor of WKCACFLayer.
+        
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::~GraphicsLayerCACF):
+
 2010-02-10  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
