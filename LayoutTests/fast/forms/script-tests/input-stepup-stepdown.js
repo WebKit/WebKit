@@ -1,0 +1,206 @@
+description('Check stepUp() and stepDown() bahevior for type=date, datetime, datetime-local, month, time, week.');
+// FIXME: Merge input-step-* into this.
+
+var input = document.createElement('input');
+var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
+
+function stepUp(value, step, max, optionalStepCount) {
+    input.value = value;
+    input.step = step;
+    input.min = null;
+    input.max = max;
+    if (typeof optionalStepCount != "undefined")
+        input.stepUp(optionalStepCount);
+    else
+        input.stepUp();
+    return input.value;
+}
+
+function stepDown(value, step, min, optionalStepCount) {
+    input.value = value;
+    input.step = step;
+    input.min = min;
+    input.max = null;
+    if (typeof optionalStepCount != "undefined")
+        input.stepDown(optionalStepCount);
+    else
+        input.stepDown();
+    return input.value;
+}
+
+debug('Date type');
+input.type = 'date';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("2010-02-10", null, null, "0")', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, "0")', '"2010-02-10"');
+shouldBe('stepUp("2010-02-10", null, null, "foo")', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, "foo")', '"2010-02-10"');
+shouldBe('stepUp("2010-02-10", null, null, null)', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, null)', '"2010-02-10"');
+debug('Normal cases');
+shouldBe('stepUp("2010-02-10", null, null)', '"2010-02-11"');
+shouldBe('stepDown("2010-02-10", null, null)', '"2010-02-09"');
+shouldBe('stepUp("2010-02-10", null, null, 10)', '"2010-02-20"');
+shouldBe('stepDown("2010-02-10", null, null, 11)', '"2010-01-30"');
+shouldBe('stepUp("1970-01-01", "4", null, 2)', '"1970-01-09"');
+shouldBe('stepDown("1970-01-01", "4", null, 3)', '"1969-12-20"');
+debug('Step=any');
+shouldThrow('stepUp("2010-02-10", "any", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("2010-02-10", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("2010-02-10", "1", "2010-02-10")', invalidStateErr);
+shouldThrow('stepDown("2010-02-10", "1", "2010-02-10")', invalidStateErr);
+
+debug('');
+debug('Datetime type');
+input.type = 'datetime';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("2010-02-10T20:13Z", null, null, "0")', '"2010-02-10T20:13Z"');
+shouldBe('stepDown("2010-02-10T20:13Z", null, null, "0")', '"2010-02-10T20:13Z"');
+shouldBe('stepUp("2010-02-10T20:13Z", null, null, "foo")', '"2010-02-10T20:13Z"');
+shouldBe('stepDown("2010-02-10T20:13Z", null, null, "foo")', '"2010-02-10T20:13Z"');
+shouldBe('stepUp("2010-02-10T20:13Z", null, null, null)', '"2010-02-10T20:13Z"');
+shouldBe('stepDown("2010-02-10T20:13Z", null, null, null)', '"2010-02-10T20:13Z"');
+debug('Normal cases');
+shouldBe('stepUp("2010-02-10T20:13Z", null, null)', '"2010-02-10T20:14Z"');
+shouldBe('stepDown("2010-02-10T20:13Z", null, null)', '"2010-02-10T20:12Z"');
+shouldBe('stepUp("2010-02-10T20:13Z", null, null, 10)', '"2010-02-10T20:23Z"');
+shouldBe('stepDown("2010-02-10T20:13Z", null, null, 11)', '"2010-02-10T20:02Z"');
+shouldBe('stepUp("1970-01-01T20:13Z", "4", null, 2)', '"1970-01-01T20:13:08Z"');
+shouldBe('stepDown("1970-01-01T20:13Z", "4", null, 3)', '"1970-01-01T20:12:48Z"');
+debug('Step=any');
+shouldThrow('stepUp("2010-02-10T20:13Z", "any", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13Z", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("2010-02-10T20:13Z", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13Z", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z")', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z")', invalidStateErr);
+
+debug('');
+debug('Datetime-local type');
+input.type = 'datetime-local';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
+shouldBe('stepDown("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
+shouldBe('stepUp("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
+shouldBe('stepDown("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
+shouldBe('stepUp("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
+shouldBe('stepDown("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
+debug('Normal cases');
+shouldBe('stepUp("2010-02-10T20:13", null, null)', '"2010-02-10T20:14"');
+shouldBe('stepDown("2010-02-10T20:13", null, null)', '"2010-02-10T20:12"');
+shouldBe('stepUp("2010-02-10T20:13", null, null, 10)', '"2010-02-10T20:23"');
+shouldBe('stepDown("2010-02-10T20:13", null, null, 11)', '"2010-02-10T20:02"');
+shouldBe('stepUp("1970-01-01T20:13", "4", null, 2)', '"1970-01-01T20:13:08"');
+shouldBe('stepDown("1970-01-01T20:13", "4", null, 3)', '"1970-01-01T20:12:48"');
+debug('Step=any');
+shouldThrow('stepUp("2010-02-10T20:13", "any", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("2010-02-10T20:13", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
+shouldThrow('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
+
+debug('');
+debug('Month type');
+input.type = 'month';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("2010-02", null, null, "0")', '"2010-02"');
+shouldBe('stepDown("2010-02", null, null, "0")', '"2010-02"');
+shouldBe('stepUp("2010-02", null, null, "foo")', '"2010-02"');
+shouldBe('stepDown("2010-02", null, null, "foo")', '"2010-02"');
+shouldBe('stepUp("2010-02", null, null, null)', '"2010-02"');
+shouldBe('stepDown("2010-02", null, null, null)', '"2010-02"');
+debug('Normal cases');
+shouldBe('stepUp("2010-02", null, null)', '"2010-03"');
+shouldBe('stepDown("2010-02", null, null)', '"2010-01"');
+shouldBe('stepUp("2010-02", null, null, 10)', '"2010-12"');
+shouldBe('stepDown("2010-02", null, null, 11)', '"2009-03"');
+shouldBe('stepUp("1970-01", "4", null, 2)', '"1970-09"');
+shouldBe('stepDown("1970-01", "4", null, 3)', '"1969-01"');
+debug('Step=any');
+shouldThrow('stepUp("2010-02", "any", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("2010-02", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("2010-02", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("2010-02", "1", "2010-02")', invalidStateErr);
+shouldThrow('stepDown("2010-02", "1", "2010-02")', invalidStateErr);
+
+debug('');
+debug('Time type');
+input.type = 'time';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("20:13", null, null, "0")', '"20:13"');
+shouldBe('stepDown("20:13", null, null, "0")', '"20:13"');
+shouldBe('stepUp("20:13", null, null, "foo")', '"20:13"');
+shouldBe('stepDown("20:13", null, null, "foo")', '"20:13"');
+shouldBe('stepUp("20:13", null, null, null)', '"20:13"');
+shouldBe('stepDown("20:13", null, null, null)', '"20:13"');
+debug('Normal cases');
+shouldBe('stepUp("20:13", null, null)', '"20:14"');
+shouldBe('stepDown("20:13", null, null)', '"20:12"');
+shouldBe('stepUp("20:13", null, null, 10)', '"20:23"');
+shouldBe('stepDown("20:13", null, null, 11)', '"20:02"');
+shouldBe('stepUp("20:13", "4", null, 2)', '"20:13:08"');
+shouldBe('stepDown("20:13", "4", null, 3)', '"20:12:48"');
+debug('Step=any');
+shouldThrow('stepUp("20:13", "any", null)', invalidStateErr);
+shouldThrow('stepDown("20:13", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("20:13", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("20:13", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("20:13", "1", "20:13")', invalidStateErr);
+shouldThrow('stepDown("20:13", "1", "20:13")', invalidStateErr);
+shouldThrow('stepUp("23:59", null, null)', invalidStateErr);
+shouldThrow('stepDown("00:00", null, null)', invalidStateErr);
+
+debug('');
+debug('Week type');
+input.type = 'week';
+debug('Invalid value');
+shouldThrow('stepUp("", null, null)', invalidStateErr);
+shouldThrow('stepDown("", null, null)', invalidStateErr);
+debug('Non-number arguments');
+shouldBe('stepUp("2010-W02", null, null, "0")', '"2010-W02"');
+shouldBe('stepDown("2010-W02", null, null, "0")', '"2010-W02"');
+shouldBe('stepUp("2010-W02", null, null, "foo")', '"2010-W02"');
+shouldBe('stepDown("2010-W02", null, null, "foo")', '"2010-W02"');
+shouldBe('stepUp("2010-W02", null, null, null)', '"2010-W02"');
+shouldBe('stepDown("2010-W02", null, null, null)', '"2010-W02"');
+debug('Normal cases');
+shouldBe('stepUp("2010-W02", null, null)', '"2010-W03"');
+shouldBe('stepDown("2010-W02", null, null)', '"2010-W01"');
+shouldBe('stepUp("2010-W02", null, null, 10)', '"2010-W12"');
+shouldBe('stepDown("2010-W02", null, null, 11)', '"2009-W44"');
+shouldBe('stepUp("1970-W01", "4", null, 2)', '"1970-W09"');
+shouldBe('stepDown("1970-W01", "4", null, 3)', '"1969-W41"');
+debug('Step=any');
+shouldThrow('stepUp("2010-W02", "any", null)', invalidStateErr);
+shouldThrow('stepDown("2010-W02", "any", null)', invalidStateErr);
+debug('Overflow/underflow');
+shouldThrow('stepUp("2010-W02", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepDown("2010-W02", "1.7976931348623156e+308", null)', invalidStateErr);
+shouldThrow('stepUp("2010-W02", "1", "2010-W02")', invalidStateErr);
+shouldThrow('stepDown("2010-W02", "1", "2010-W02")', invalidStateErr);
+
+var successfullyParsed = true;

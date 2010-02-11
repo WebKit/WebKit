@@ -1,3 +1,33 @@
+2010-02-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Step attribute support for date&time types.
+        https://bugs.webkit.org/show_bug.cgi?id=30847
+
+        - Add implementation for ValidityState.stepMismatch, stepUp() and
+          stepDown() for date, datetime, datetime-local, month, time, week types.
+        - Fix string representation of DateComponents.
+
+        Tests: fast/forms/ValidityState-stepMismatch.html
+               fast/forms/input-stepup-stepdown.html
+
+        * html/HTMLInputElement.cpp:
+          - Change monthDefaultMaximum so that DateComponents::m_year doesn't overflow.
+        (WebCore::HTMLInputElement::stepBase):
+        (WebCore::HTMLInputElement::stepMismatch):
+        (WebCore::HTMLInputElement::getStepParameters):
+        (WebCore::HTMLInputElement::getAllowedValueStep):
+        (WebCore::HTMLInputElement::applyStep):
+          Renamed from applyStepForNumberOrRange(), and add support for other types.
+        (WebCore::HTMLInputElement::stepUp): Rename applyStepForNumberOrRange().
+        (WebCore::HTMLInputElement::stepDown): Rename applyStepForNumberOrRange().
+        (WebCore::HTMLInputElement::setValueAsDate): Use setDateValue().
+        (WebCore::HTMLInputElement::setDateValue):
+          A helper function to make the best representation of DateComponents.
+        (WebCore::HTMLInputElement::setValueAsNumber):  Use setDateValue().
+        * html/HTMLInputElement.h:
+
 2010-02-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

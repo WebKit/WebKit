@@ -1,3 +1,29 @@
+2010-02-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Step attribute support for date&time types.
+        https://bugs.webkit.org/show_bug.cgi?id=30847
+
+        Add tests for ValidityState.stepMismatch, stepUp() and stepDown()
+        for date, datetime, datetime-local, month, time, week types.
+        Update valueAsDate and valueAsNumber tests for a string representation
+        change.
+
+        * fast/forms/ValidityState-stepMismatch-expected.txt: Added.
+        * fast/forms/ValidityState-stepMismatch.html: Added.
+        * fast/forms/input-stepup-stepdown-expected.txt: Added.
+        * fast/forms/input-stepup-stepdown.html: Added.
+        * fast/forms/input-valueasdate-datetime-expected.txt:
+        * fast/forms/input-valueasdate-time-expected.txt:
+        * fast/forms/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/input-valueasnumber-datetimelocal-expected.txt:
+        * fast/forms/input-valueasnumber-time-expected.txt:
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: Added.
+        * fast/forms/script-tests/input-stepup-stepdown.js: Added.
+        * fast/forms/script-tests/input-valueasdate-datetime.js:
+        * fast/forms/script-tests/input-valueasnumber-datetime.js:
+
 2010-02-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

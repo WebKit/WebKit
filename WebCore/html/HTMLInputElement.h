@@ -295,8 +295,8 @@ private:
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
     // Helper for getAllowedValueStep();
     bool getStepParameters(double* defaultStep, double* stepScaleFactor) const;
-    // Helper for stepUp()/stepDown().  Adds step value * count to the current number/range value.
-    void applyStepForNumberOrRange(double count, ExceptionCode&);
+    // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
+    void applyStep(double count, ExceptionCode&);
     // Helper for applyStepForNumberOrRange().
     double stepBase() const;
 
@@ -305,6 +305,11 @@ private:
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     double parseToDouble(const String&, double defaultValue) const;
+
+    // Generates a suitable string for the specified DateComponents and the
+    // step value, and calls setValue() with it.
+    void setDateValue(const DateComponents&);
+
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;

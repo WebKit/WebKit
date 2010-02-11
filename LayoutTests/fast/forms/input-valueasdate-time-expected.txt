@@ -22,8 +22,8 @@ Invalid objects:
 PASS input.value = "00:00"; input.valueAsDate = document; input.value is ""
 PASS input.value = "00:00"; input.valueAsDate = null; input.value is ""
 Step attribute value and string representation:
-FAIL input.step = "1"; setValueAsDateAndGetValue(0, 0, 0, 0) should be 00:00:00. Was 00:00.
-FAIL input.step = "0.001"; setValueAsDateAndGetValue(0, 0, 0, 0) should be 00:00:00.000. Was 00:00.
+PASS input.step = "1"; setValueAsDateAndGetValue(0, 0, 0, 0) is "00:00:00"
+PASS input.step = "0.001"; setValueAsDateAndGetValue(0, 0, 0, 0) is "00:00:00.000"
 PASS successfullyParsed is true
 
 TEST COMPLETE

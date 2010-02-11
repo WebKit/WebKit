@@ -25,8 +25,8 @@ PASS input.valueAsNumber = Infinity threw exception Error: NOT_SUPPORTED_ERR: DO
 PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 Step attribute value and string representation:
-FAIL input.step = "1"; setValueAsNumberAndGetValue(0, 0, 0, 0) should be 00:00:00. Was 00:00.
-FAIL input.step = "0.001"; setValueAsNumberAndGetValue(0, 0, 0, 0) should be 00:00:00.000. Was 00:00.
+PASS input.step = "1"; setValueAsNumberAndGetValue(0, 0, 0, 0) is "00:00:00"
+PASS input.step = "0.001"; setValueAsNumberAndGetValue(0, 0, 0, 0) is "00:00:00.000"
 PASS successfullyParsed is true
 
 TEST COMPLETE

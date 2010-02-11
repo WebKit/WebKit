@@ -42,8 +42,8 @@ shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NOT_SUPPO
 
 debug('Step attribute value and string representation:');
 // If the step attribute value is 1 second and the second part is 0, we should show the second part.
-shouldBe('input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00"');
+shouldBe('input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00Z"');
 // If the step attribute value is 0.001 second and the millisecond part is 0, we should show the millisecond part.
-shouldBe('input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00.000"');
+shouldBe('input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00.000Z"');
 
 var successfullyParsed = true;
