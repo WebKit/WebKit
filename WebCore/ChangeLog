@@ -1,3 +1,14 @@
+2010-02-10  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Typedef DragImageRef
+        https://bugs.webkit.org/show_bug.cgi?id=34791
+
+        Use IImage* as it is the BREW's image type.
+
+        * platform/DragImage.h:
+
 2010-02-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser and Darin Adler.
