@@ -1,3 +1,14 @@
+2010-02-11  Andras Becsi  <abecsi@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] Update expected results for the following tests after r54646 because of ImageData support.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2010-02-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

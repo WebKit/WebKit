@@ -114,6 +114,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTitleElement') is 'obje
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLUListElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLVideoElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Image') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'ImageData') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Infinity') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'JSON') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'KeyboardEvent') is 'object'

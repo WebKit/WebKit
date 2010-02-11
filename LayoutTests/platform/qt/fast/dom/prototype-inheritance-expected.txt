@@ -215,6 +215,8 @@ PASS inner.HTMLVideoElement.isInner is true
 PASS inner.HTMLVideoElement.constructor.isInner is true
 PASS inner.Image.isInner is true
 PASS inner.Image.constructor.isInner is true
+PASS inner.ImageData.isInner is true
+PASS inner.ImageData.constructor.isInner is true
 PASS inner.KeyboardEvent.isInner is true
 PASS inner.KeyboardEvent.constructor.isInner is true
 PASS inner.MediaError.isInner is true
