@@ -1,3 +1,10 @@
+2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. Add stub for new LayoutTestController method.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::numberOfPages):
+
 2010-02-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Roll out r54626, because it broke GTK and Win build.

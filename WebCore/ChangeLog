@@ -1,3 +1,12 @@
+
+2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix. Switch drawPattern to Image class like other platforms.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::Image::drawPattern):
+
 2010-02-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.
