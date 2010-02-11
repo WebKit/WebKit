@@ -177,7 +177,6 @@ IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
 
 void RenderSVGImage::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    style()->svgStyle()->inflateForShadow(repaintRect);
     SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 

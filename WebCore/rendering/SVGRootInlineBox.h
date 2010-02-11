@@ -44,7 +44,7 @@ struct LastGlyphInfo {
     bool isValid;
 };
 
-class SVGRootInlineBox : public RootInlineBox, SVGRenderBase {
+class SVGRootInlineBox : public RootInlineBox, protected SVGRenderBase {
 public:
     SVGRootInlineBox(RenderObject* obj)
         : RootInlineBox(obj)
