@@ -45,6 +45,7 @@ import websocket_server
 _wdiff_available = True
 
 
+# FIXME: This class should merge with webkitpy.webkit_port at some point.
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package.
     """

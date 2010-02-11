@@ -42,6 +42,8 @@ import webbrowser
 
 import base
 
+import webkitpy
+from webkitpy import executive
 
 class MacPort(base.Port):
     """WebKit Mac implementation of the Port class."""
@@ -50,6 +52,7 @@ class MacPort(base.Port):
         if port_name is None:
             port_name = 'mac' + self.version()
         base.Port.__init__(self, port_name, options)
+        self._cached_build_root = None
 
     def baseline_search_path(self):
         dirs = []
@@ -63,7 +66,8 @@ class MacPort(base.Port):
         return dirs
 
     def check_sys_deps(self):
-        # There are no platform-specific checks we need to do.
+        # FIXME: This should run build-dumprendertree.
+        # This should also validate that all of the tool paths are valid.
         return True
 
     def num_cores(self):
@@ -174,8 +178,9 @@ class MacPort(base.Port):
     #
 
     def _build_path(self, *comps):
-        return self.path_from_webkit_base('WebKitBuild', self._options.target,
-                                          *comps)
+        if not self._cached_build_root:
+            self._cached_build_root = executive.run_command(["webkit-build-directory", "--base"]).rstrip()
+        return os.path.join(self._cached_build_root, self._options.target, *comps)
 
     def _kill_process(self, pid):
         """Forcefully kill the process.
@@ -210,10 +215,10 @@ class MacPort(base.Port):
         return None
 
     def _path_to_image_diff(self):
-        return self._build_path('image_diff')
+        return self._build_path('image_diff') # FIXME: This is wrong and should be "ImageDiff", but having the correct path causes other parts of the script to hang.
 
     def _path_to_wdiff(self):
-        return 'wdiff'
+        return 'wdiff' # FIXME: This does not exist on a default Mac OS X Leopard install.
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the lighttpd web server. Blocks until it's fully
@@ -265,6 +270,7 @@ class MacDriver(base.Driver):
             # practice it shouldn't come up and the --help output warns
             # about it anyway.
             cmd += self._options.wrapper.split()
+        # FIXME: Using arch here masks any possible file-not-found errors from a non-existant driver executable.
         cmd += ['arch', '-i386', port._path_to_driver(), '-']
         if not self._port._options.no_pixel_tests:
             cmd.append('--pixel-tests')
@@ -272,8 +278,7 @@ class MacDriver(base.Driver):
         #if driver_options:
         #    cmd += driver_options
         env = os.environ
-        env['DYLD_FRAMEWORK_PATH'] = self._port.path_from_webkit_base(
-            'WebKitBuild', port._options.target)
+        env['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         self._cmd = cmd
         self._env = env
         self.restart()

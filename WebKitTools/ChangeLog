@@ -1,3 +1,24 @@
+2010-02-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        run-chromium-webkit-tests --platform=mac-leopard crashes when using a custom build directory
+        https://bugs.webkit.org/show_bug.cgi?id=34817
+
+        This doesn't fix the root cause of us not
+        correctly failing when support binaries are missing.
+        This only causes the DumpRenderTree binary not to be
+        missing in the custom build directory case.
+        Later patches will make us correctly fail fast when
+        support binaries (like DumpRenderTree or ImageDiff) are missing.
+
+        * Scripts/webkit-build-directory: Added.
+         - Need a way to re-use the perl logic for finding build directories in non-perl scripts.
+        * Scripts/webkitpy/layout_tests/port/base.py: Add a FIXME.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+         - Call webkit-build-directory to find the build directory instead of assuming "WebKitBuild"
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py: Add FIXMEs.
+
 2010-02-10  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

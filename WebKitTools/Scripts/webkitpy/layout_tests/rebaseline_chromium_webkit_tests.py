@@ -76,6 +76,7 @@ ARCHIVE_DIR_NAME_DICT = {'win': 'webkit-rel',
                          'linux-canary': 'webkit-rel-linux-webkit-org'}
 
 
+# FIXME: Should be rolled into webkitpy.Executive
 def run_shell_with_return_code(command, print_output=False):
     """Executes a command and returns the output and process return code.
 
@@ -109,6 +110,7 @@ def run_shell_with_return_code(command, print_output=False):
     return output, p.returncode
 
 
+# FIXME: Should be rolled into webkitpy.Executive
 def run_shell(command, print_output=False):
     """Executes a command and returns the output.
 
