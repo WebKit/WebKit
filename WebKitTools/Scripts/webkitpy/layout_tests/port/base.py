@@ -105,7 +105,7 @@ class Port(object):
                 raise e
         except ValueError:
             # work around a race condition in Python 2.4's implementation
-            # of subprocess.Popen
+            # of subprocess.Popen. See http://bugs.python.org/issue1199282 .
             pass
         return result
 
@@ -485,8 +485,13 @@ class Port(object):
             # the Popen raises a ValueError.
             # http://bugs.python.org/issue1236
             if _wdiff_available:
-                wdiff = subprocess.Popen(cmd,
-                    stdout=subprocess.PIPE).communicate()[0]
+                try:
+                    wdiff = subprocess.Popen(cmd,
+                        stdout=subprocess.PIPE).communicate()[0]
+                except ValueError, e:
+                    # Working around a race in Python 2.4's implementation
+                    # of Popen().
+                    wdiff = ''
                 wdiff = cgi.escape(wdiff)
                 wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
                 wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')

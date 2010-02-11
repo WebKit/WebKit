@@ -86,7 +86,7 @@ def process_output(port, test_info, test_types, test_args, target, output_dir,
         filename = os.path.splitext(filename)[0] + "-stack.txt"
         port.maybe_make_directory(os.path.split(filename)[0])
         open(filename, "wb").write(error)
-    else:
+    elif error:
         logging.debug("Previous test output extra lines after dump:\n%s" %
             error)
 

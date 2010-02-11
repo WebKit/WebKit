@@ -33,6 +33,7 @@ import os
 import platform
 import signal
 import subprocess
+import sys
 
 import chromium
 
@@ -46,13 +47,14 @@ class ChromiumWinPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
+        dirs = []
         if self._name == 'chromium-win-xp':
-            dirs.append(self.baseline_path(self._name))
+            dirs.append(self._chromium_baseline_path(self._name))
         if self._name in ('chromium-win-xp', 'chromium-win-vista'):
-            dirs.append(self.baseline_path('chromium-win-vista'))
-        dirs.append(self.baseline_path('chromium-win'))
-        dirs.append(self.webkit_baseline_path('win'))
-        dirs.append(self.webkit_baseline_path('mac'))
+            dirs.append(self._chromium_baseline_path('chromium-win-vista'))
+        dirs.append(self._chromium_baseline_path('chromium-win'))
+        dirs.append(self._webkit_baseline_path('win'))
+        dirs.append(self._webkit_baseline_path('mac'))
         return dirs
 
     def check_sys_deps(self):
@@ -62,10 +64,14 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def get_absolute_path(self, filename):
         """Return the absolute path in unix format for the given filename."""
         abspath = os.path.abspath(filename)
-        return path.replace('\\', '/')
+        return abspath.replace('\\', '/')
 
     def num_cores(self):
         return int(os.environ.get('NUMBER_OF_PROCESSORS', 1))
+
+    def relative_test_filename(self, filename):
+        path = filename[len(self.layout_tests_dir()) + 1:]
+        return path.replace('\\', '/')
 
     def test_platform_name(self):
         # We return 'win-xp', not 'chromium-win-xp' here, for convenience.
@@ -113,13 +119,13 @@ class ChromiumWinPort(chromium.ChromiumPort):
                             'cygwin-httpd.conf')
 
     def _path_to_lighttpd(self):
-        return self._lighttp_path('LightTPD.exe')
+        return self._lighttpd_path('LightTPD.exe')
 
     def _path_to_lighttpd_modules(self):
-        return self._lighttp_path('lib')
+        return self._lighttpd_path('lib')
 
     def _path_to_lighttpd_php(self):
-        return self._lighttp_path('php5', 'php-cgi.exe')
+        return self._lighttpd_path('php5', 'php-cgi.exe')
 
     def _path_to_driver(self):
         return self._build_path('test_shell.exe')
@@ -128,7 +134,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return self._build_path('layout_test_helper.exe')
 
     def _path_to_image_diff(self):
-        return self._build_path('layout_test_helper.exe')
+        return self._build_path('image_diff.exe')
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',

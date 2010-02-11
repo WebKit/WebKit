@@ -47,9 +47,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def baseline_search_path(self):
         return [self.baseline_path(),
-                self.chromium_baseline_path('chromium-win'),
-                self.webkit_baseline_path('win'),
-                self.webkit_baseline_path('mac')]
+                self._chromium_baseline_path('chromium-win'),
+                self._webkit_baseline_path('win'),
+                self._webkit_baseline_path('mac')]
 
     def check_sys_deps(self):
         # We have no platform-specific dependencies to check.
@@ -74,8 +74,13 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        return self.path_from_chromium_base('sconsbuild', self._options.target,
-                                            *comps)
+        base = self.path_from_chromium_base()
+        if os.path.exists(os.path.join(base, 'sconsbuild')):
+            return self.path_from_chromium_base('sconsbuild',
+                self._options.target, *comps)
+        else:
+            return self.path_from_chromium_base('out',
+                self._options.target, *comps)
 
     def _kill_process(self, pid):
         """Forcefully kill the process.

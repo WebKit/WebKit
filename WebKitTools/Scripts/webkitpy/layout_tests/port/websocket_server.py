@@ -179,12 +179,13 @@ class PyWebSocket(http_server.Lighttpd):
         env = os.environ
         if sys.platform in ('cygwin', 'win32'):
             env['PATH'] = '%s;%s' % (
-                self._port_obj._path_from_base('third_party', 'cygwin', 'bin'),
+                self._port_obj.path_from_chromium_base('third_party',
+                                                       'cygwin', 'bin'),
                 env['PATH'])
 
         if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = self._port_obj._path_from_base('third_party',
-                 'cygwin', 'setup_mount.bat')
+            setup_mount = self._port_obj.path_from_chromium_base(
+                'third_party', 'cygwin', 'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +

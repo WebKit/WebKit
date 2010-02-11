@@ -66,13 +66,13 @@ class Lighttpd(http_server_base.HttpServerBase):
             self._port = int(self._port)
 
         try:
-            _webkit_tests = os.path.join(self._port_obj.layout_tests_dir(),
-                 'http', 'tests')
-            _webkit_tests = os.path.join(self._port_obj.layout_tests_dir(),
-                 'fast', 'js', 'resources')
+            self._webkit_tests = os.path.join(
+                self._port_obj.layout_tests_dir(), 'http', 'tests')
+            self._js_test_resource = os.path.join(
+                self._port_obj.layout_tests_dir(), 'fast', 'js', 'resources')
         except:
-            _webkit_tests = None
-            _js_test_resource = None
+            self._webkit_tests = None
+            self._js_test_resource = None
 
         # Self generated certificate for SSL server (for client cert get
         # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
@@ -80,14 +80,14 @@ class Lighttpd(http_server_base.HttpServerBase):
             os.path.dirname(os.path.abspath(__file__)), 'httpd2.pem')
 
         # One mapping where we can get to everything
-        VIRTUALCONFIG = []
+        self.VIRTUALCONFIG = []
 
-        if _webkit_tests:
-            VIRTUALCONFIG.extend(
+        if self._webkit_tests:
+            self.VIRTUALCONFIG.extend(
                # Three mappings (one with SSL) for LayoutTests http tests
-               [{'port': 8000, 'docroot': _webkit_tests},
-                {'port': 8080, 'docroot': _webkit_tests},
-                {'port': 8443, 'docroot': _webkit_tests,
+               [{'port': 8000, 'docroot': self._webkit_tests},
+                {'port': 8080, 'docroot': self._webkit_tests},
+                {'port': 8443, 'docroot': self._webkit_tests,
                  'sslcert': self._pem_file}])
 
     def is_running(self):
@@ -97,9 +97,8 @@ class Lighttpd(http_server_base.HttpServerBase):
         if self.is_running():
             raise 'Lighttpd already running'
 
-        base_conf_file = self._port_obj.path_from_base('third_party',
-            'WebKitTools', 'Scripts', 'webkitpy', 'layout_tests',
-            'port', 'lighttpd.conf')
+        base_conf_file = self._port_obj.path_from_webkit_base('WebKitTools',
+            'Scripts', 'webkitpy', 'layout_tests', 'port', 'lighttpd.conf')
         out_conf_file = os.path.join(self._output_dir, 'lighttpd.conf')
         time_str = time.strftime("%d%b%Y-%H%M%S")
         access_file_name = "access.log-" + time_str + ".txt"
@@ -174,8 +173,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         module_path = self._port_obj._path_to_lighttpd_modules()
         start_cmd = [executable,
                      # Newly written config file
-                     '-f', self._port_obj._path_from_base(self._output_dir,
-                                                         'lighttpd.conf'),
+                     '-f', os.path.join(self._output_dir, 'lighttpd.conf'),
                      # Where it can find its module dynamic libraries
                      '-m', module_path]
 
@@ -197,12 +195,13 @@ class Lighttpd(http_server_base.HttpServerBase):
         env = os.environ
         if sys.platform in ('cygwin', 'win32'):
             env['PATH'] = '%s;%s' % (
-                port.path_from_base('third_party', 'cygwin', 'bin'),
+                self._port_obj.path_from_chromium_base('third_party',
+                                                       'cygwin', 'bin'),
                 env['PATH'])
 
         if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = port.path_from_base('third_party', 'cygwin',
-                                                    'setup_mount.bat')
+            setup_mount = port.path_from_chromium_base('third_party',
+                'cygwin', 'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 
         logging.debug('Starting http server')
@@ -229,7 +228,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         httpd_pid = None
         if self._process:
             httpd_pid = self._process.pid
-        port._shut_down_http_server(httpd_pid)
+        self._port_obj._shut_down_http_server(httpd_pid)
 
         if self._process:
             self._process.wait()
