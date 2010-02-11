@@ -275,11 +275,6 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
     m_privateBrowsingEnabled = privateBrowsingEnabled;
 }
 
-void Settings::setLocalStorageOverridesPrivateBrowsing(bool localStorageOverrides)
-{
-    m_localStorageOverridesPrivateBrowsing = localStorageOverrides;
-}
-
 void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)
 {
     m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
