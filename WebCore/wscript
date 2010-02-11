@@ -53,6 +53,7 @@ if build_port == "wx":
         webcore_sources['wx-mac'] = [
                'platform/mac/WebCoreNSStringExtras.mm',
                'platform/mac/PurgeableBufferMac.cpp',
+               'platform/wx/wxcode/mac/carbon/fontprops.mm',
                'plugins/wx/PluginDataWx.cpp',
                'plugins/mac/PluginPackageMac.cpp',
                'plugins/mac/PluginViewMac.cpp'

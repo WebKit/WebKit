@@ -1,3 +1,11 @@
+2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for wxMac/Cocoa.
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp: Removed.
+        * platform/wx/wxcode/mac/carbon/fontprops.mm: Copied from WebCore/platform/wx/wxcode/mac/carbon/fontprops.cpp.
+        * wscript:
+
 2010-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(24929): PDF page doesn't load in background tab
