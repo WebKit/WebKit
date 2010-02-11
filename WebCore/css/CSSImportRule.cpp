@@ -117,16 +117,16 @@ void CSSImportRule::insertedIntoParent()
         return;
 
     String absHref = m_strHref;
-    if (!parentSheet->putativeBaseURL().isNull())
+    if (!parentSheet->finalURL().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->putativeBaseURL(), m_strHref).string();
+        absHref = KURL(parentSheet->finalURL(), m_strHref).string();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
     StyleBase* root = this;
     for (StyleBase* curr = parent(); curr; curr = curr->parent()) {
-        // FIXME: This is wrong if the putativeBaseURL was updated via document::updateBaseURL. 
-        if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->putativeBaseURL().string())
+        // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL. 
+        if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->finalURL().string())
             return;
         root = curr;
     }

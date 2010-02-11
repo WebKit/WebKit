@@ -1,3 +1,41 @@
+2010-02-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Address last round of review comments on r53607
+        https://bugs.webkit.org/show_bug.cgi?id=33940
+
+        Mostly renaming and cleaning up.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::createInline):
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::baseURL):
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::StyleSheet):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::href):
+        (WebCore::StyleSheet::setFinalURL):
+        (WebCore::StyleSheet::finalURL):
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::create):
+        (WebCore::XSLStyleSheet::createInline):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::parseString):
+        (WebCore::XSLStyleSheet::loadChildSheets):
+        * xml/XSLStyleSheetQt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+
 2010-02-10  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.
