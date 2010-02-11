@@ -295,12 +295,12 @@ void HistoryController::updateForStandardLoad()
     if (!frameLoader->documentLoader()->isClientRedirect()) {
         if (!historyURL.isEmpty()) {
             updateBackForwardListClippedAtTarget(true);
-            if (!needPrivacy) {
+//            if (!needPrivacy) {
                 frameLoader->client()->updateGlobalHistory();
                 frameLoader->documentLoader()->setDidCreateGlobalHistoryEntry(true);
                 if (frameLoader->documentLoader()->unreachableURL().isEmpty())
                     frameLoader->client()->updateGlobalHistoryRedirectLinks();
-            }
+//            }
             if (Page* page = m_frame->page())
                 page->setGlobalHistoryItem(needPrivacy ? 0 : page->backForwardList()->currentItem());
         }

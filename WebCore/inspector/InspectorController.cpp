@@ -1847,3 +1847,4 @@ InjectedScript InspectorController::injectedScriptForNodeId(long id)
 } // namespace WebCore
     
 #endif // ENABLE(INSPECTOR)
+
