@@ -1325,6 +1325,8 @@ END
             push(@implContent, <<END);
   setCollectionIndexedGetter<${interfaceName}, ${indexerType}>(desc, V8ClassIndex::${indexerClassIndex});
 END
+            # Include the header for this indexer type, because setCollectionIndexedGetter() requires toV8() for this type.
+            $implIncludes{"V8${indexerType}.h"} = 1;
         }
 
         return;
