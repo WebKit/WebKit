@@ -1,5 +1,16 @@
 2010-02-11  Steve Block  <steveblock@google.com>
 
+        Reviewed by Nate Chapin.
+
+        Update Android V8 Makefile to generate Inspector headers required by V8 ScriptObject.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=34806
+
+        No new tests, build fix only.
+
+        * Android.derived.v8bindings.mk:
+
+2010-02-11  Steve Block  <steveblock@google.com>
+
         Reviewed by David Levin.
 
         Guards SVG code in V8 bindings with ENABLE(SVG)
