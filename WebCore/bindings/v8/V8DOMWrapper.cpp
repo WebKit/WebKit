@@ -267,32 +267,36 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(condition);
 }
 
+v8::Local<v8::Object> V8DOMWrapper::instantiateV8ObjectInWorkerContext(V8ClassIndex::V8WrapperType type, void* impl)
+{
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
+    if (!workerContextProxy)
+        return instantiateV8Object(0, type, impl);
+    v8::Local<v8::Object> instance = SafeAllocation::newInstance(getConstructor(type, workerContextProxy->workerContext()));
+    if (!instance.IsEmpty()) {
+        // Avoid setting the DOM wrapper for failed allocations.
+        setDOMWrapper(instance, V8ClassIndex::ToInt(type), impl);
+    }
+    return instance;
+}
+
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType type, void* impl)
 {
-    // Get the WorkerContextExecutionProxy first. If we are in a WorkerContext and we try to call V8Proxy::retrieve(),
-    // we crash trying to retrieve a DOMWindow.
-    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
     if (V8IsolatedContext::getEntered()) {
         // This effectively disables the wrapper cache for isolated worlds.
         proxy = 0;
         // FIXME: Do we need a wrapper cache for the isolated world?  We should
         //        see if the performance gains are worth while.
         // We'll get one once we give the isolated context a proper window shell.
-    } else if (!proxy && !workerContextProxy)
+    } else if (!proxy)
         proxy = V8Proxy::retrieve();
 
     v8::Local<v8::Object> instance;
     if (proxy)
         // FIXME: Fix this to work properly with isolated worlds (see above).
         instance = proxy->windowShell()->createWrapperFromCache(type);
-    else {
-        v8::Local<v8::Function> function;
-        if (workerContextProxy)
-            function = getConstructor(type, workerContextProxy->workerContext());
-        else
-            function = V8ClassIndex::getTemplate(type)->GetFunction();
-        instance = SafeAllocation::newInstance(function);
-    }
+    else
+        instance = SafeAllocation::newInstance(V8ClassIndex::getTemplate(type)->GetFunction());
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
         setDOMWrapper(instance, V8ClassIndex::ToInt(type), impl);
