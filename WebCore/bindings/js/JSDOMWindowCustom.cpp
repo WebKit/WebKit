@@ -1030,3 +1030,4 @@ DOMWindow* toDOMWindow(JSValue value)
 }
 
 } // namespace WebCore
+
