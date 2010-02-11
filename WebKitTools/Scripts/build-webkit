@@ -52,7 +52,7 @@ my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
     $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $indexedDatabaseSupport,
-    $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $sharedWorkersSupport,
+    $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
@@ -111,6 +111,9 @@ my @features = (
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
+
+    { option => "ruby", desc => "Toggle HTML5 Ruby support",
+      define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },

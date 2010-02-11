@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(RUBY)
 #include "RenderRubyRun.h"
 
 #include "RenderRubyBase.h"
@@ -222,3 +224,5 @@ RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby
 }
 
 } // namespace WebCore
+
+#endif

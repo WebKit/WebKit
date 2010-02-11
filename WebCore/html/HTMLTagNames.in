@@ -90,9 +90,9 @@ param createWithNew
 plaintext interfaceName=HTMLElement
 pre createWithNew
 q interfaceName=HTMLQuoteElement, createWithNew
-rp interfaceName=HTMLElement
-rt interfaceName=HTMLElement
-ruby interfaceName=HTMLElement
+rp interfaceName=HTMLElement, conditional=RUBY
+rt interfaceName=HTMLElement, conditional=RUBY
+ruby interfaceName=HTMLElement, conditional=RUBY
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser, createWithNew

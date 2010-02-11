@@ -1,3 +1,26 @@
+2010-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Restore ENABLE_RUBY flag so vendors can ship with Ruby disabled if they choose.
+        https://bugs.webkit.org/show_bug.cgi?id=34698
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * html/HTMLTagNames.in: Make the ruby-related tag names conditional.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): ifdef the code that would create ruby elements.
+        * rendering/RenderObject.h: ditto above
+        * rendering/RenderRuby.cpp: ifdef this whole file
+        * rendering/RenderRuby.h: ditto
+        * rendering/RenderRubyBase.cpp: ditto
+        * rendering/RenderRubyBase.h: ditto
+        * rendering/RenderRubyRun.cpp: ditto
+        * rendering/RenderRubyRun.h: ditto
+        * rendering/RenderRubyText.cpp: ditto
+        * rendering/RenderRubyText.h: ditto
+
 2010-02-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

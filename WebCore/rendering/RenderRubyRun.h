@@ -31,6 +31,8 @@
 #ifndef RenderRubyRun_h
 #define RenderRubyRun_h
 
+#if ENABLE(RUBY)
+
 #include "RenderBlock.h"
 
 namespace WebCore {
@@ -77,5 +79,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // RenderRubyRun_h
