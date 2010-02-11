@@ -3772,7 +3772,7 @@ ol.breakpoint-list {
     white-space: pre;
 }
 
-.source-breakpoint-condition {
+.source-frame-breakpoint-condition {
     z-index: 30;
     padding: 4px;
     background-color: rgb(203, 226, 255);
@@ -3781,7 +3781,7 @@ ol.breakpoint-list {
     width: 90%; 
 }
 
-.source-breakpoint-message {
+.source-frame-breakpoint-message {
     background-color: transparent;
     font-family: Lucida Grande, sans-serif; 
     font-weight: normal;
@@ -3793,7 +3793,7 @@ ol.breakpoint-list {
     margin: 0 0 2px 0; 
 }
 
-#source-breakpoint-condition {
+#source-frame-breakpoint-condition {
     margin: 0;
     border: 1px inset rgb(190, 190, 190) !important;
     width: 100%;

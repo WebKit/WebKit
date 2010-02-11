@@ -42848,10 +42848,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NativeTextViewer.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\Object.js"
 					>
 				</File>
@@ -42992,10 +42988,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TextEditor.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\TextEditorHighlighter.js"
 					>
 				</File>
@@ -43004,11 +42996,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\textEditor.css"
+					RelativePath="..\inspector\front-end\TextPrompt.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TextPrompt.js"
+					RelativePath="..\inspector\front-end\TextViewer.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\textViewer.css"
 					>
 				</File>
 				<File

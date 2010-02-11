@@ -1,0 +1,139 @@
+.text-editor {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    white-space: pre-wrap;
+    overflow: auto;
+}
+
+.text-editor-lines {
+    border: 0;
+    width: 100%;
+    vertical-align: baseline;
+    -webkit-border-horizontal-spacing: 0;
+    -webkit-border-vertical-spacing: 0;
+    -webkit-user-select: text;
+}
+
+.webkit-html-message-bubble {
+    -webkit-box-shadow: black 0px 2px 5px;
+    -webkit-border-radius: 9px;
+    -webkit-border-fit: lines;
+    font-size: 10px;
+    font-family: Lucida Grande, sans-serif;
+    font-weight: bold;
+    margin: 6px 25px;
+    padding: 0 7px 1px;
+    z-index:20;
+    max-width: 80%;
+    
+}
+
+.webkit-html-warning-message {
+    background-color: rgb(100%, 62%, 42%);
+    border: 2px solid rgb(100%, 52%, 21%);
+}
+
+.webkit-html-error-message {
+    background-color: rgb(100%, 42%, 42%);
+    border: 2px solid rgb(100%, 31%, 31%);
+}
+
+.webkit-html-message-line {
+    padding-left: 23px;
+    text-indent: -20px;
+}
+
+.webkit-html-message-line-hover {
+    padding-left: 23px;
+    text-indent: -20px;
+    white-space: auto;
+    text-overflow: auto;
+    overflow: auto;
+}
+
+.webkit-html-message-icon {
+    position: relative;
+    top: 2px;
+    margin: 0 4px;
+}
+
+.webkit-line-number {
+    color: rgb(128, 128, 128);
+    text-align: right;
+    white-space: pre;
+    word-break: normal;
+    -webkit-user-select: none;
+    background-color: rgb(240, 240, 240);
+    border-right: 1px solid rgb(187, 187, 187) !important;
+    padding-left: 2px;
+    padding-right: 2px;
+    vertical-align: top;
+    background-repeat: no-repeat;
+    background-position: right 1px;
+}
+
+.webkit-line-content {
+    white-space: pre-wrap;
+    padding-left: 2px;
+}
+
+.webkit-execution-line .webkit-line-number {
+    color: transparent;
+    background-image: -webkit-canvas(program-counter);
+}
+
+.webkit-breakpoint .webkit-line-number {
+    color: white;
+    background-image: -webkit-canvas(breakpoint);
+}
+
+.webkit-breakpoint-disabled .webkit-line-number {
+    color: white;
+    background-image: -webkit-canvas(breakpoint-disabled);
+}
+
+.webkit-breakpoint.webkit-execution-line .webkit-line-number {
+    color: transparent;
+    background-image: -webkit-canvas(breakpoint-program-counter);
+}
+
+.webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number {
+    color: transparent;
+    background-image: -webkit-canvas(breakpoint-disabled-program-counter);
+}
+
+.webkit-breakpoint.webkit-breakpoint-conditional .webkit-line-number {
+    color: white;
+    background-image: -webkit-canvas(breakpoint-conditional);
+}
+
+.webkit-breakpoint-disabled.webkit-breakpoint-conditional .webkit-line-number {
+    color: white;
+    background-image: -webkit-canvas(breakpoint-disabled-conditional);
+}
+
+.webkit-breakpoint.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number {
+    color: transparent;
+    background-image: -webkit-canvas(breakpoint-conditional-program-counter);
+}
+
+.webkit-breakpoint-disabled.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number {
+    color: transparent;
+    background-image: -webkit-canvas(breakpoint-disabled-conditional-program-counter);
+}
+
+.webkit-execution-line .webkit-line-content {
+    background-color: rgb(171, 191, 254);
+    outline: 1px solid rgb(64, 115, 244);
+}
+
+.webkit-markup {
+    background-color: rgb(241, 234, 0);
+}
+
+.webkit-highlighted-line .webkit-line-content {
+    background-color: rgb(255, 255, 120);
+}

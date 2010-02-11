@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate)
+WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate)
 {
     this._parentElement = parentElement;
 
@@ -44,6 +44,7 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate)
     this._loaded = false;
 
     this._addBreakpointDelegate = addBreakpointDelegate;
+    this._removeBreakpointDelegate = removeBreakpointDelegate;
 }
 
 WebInspector.SourceFrame.prototype = {
@@ -51,7 +52,7 @@ WebInspector.SourceFrame.prototype = {
     set visible(visible)
     {
         this._visible = visible;
-        this._createEditorIfNeeded();
+        this._createViewerIfNeeded();
     },
 
     get executionLine()
@@ -63,15 +64,18 @@ WebInspector.SourceFrame.prototype = {
     {
         if (this._executionLine === x)
             return;
+
+        var previousLine = this._executionLine;
         this._executionLine = x;
-        if (this._editor)
-            this._editor.repaintAll();
+
+        if (this._textViewer)
+            this._updateExecutionLine(previousLine);
     },
 
     revealLine: function(lineNumber)
     {
-        if (this._editor)
-            this._editor.reveal(lineNumber - 1, 0);
+        if (this._textViewer)
+            this._textViewer.revealLine(lineNumber - 1, 0);
         else
             this._lineNumberToReveal = lineNumber;
     },
@@ -82,7 +86,8 @@ WebInspector.SourceFrame.prototype = {
         breakpoint.addEventListener("enabled", this._breakpointChanged, this);
         breakpoint.addEventListener("disabled", this._breakpointChanged, this);
         breakpoint.addEventListener("condition-changed", this._breakpointChanged, this);
-        this._addBreakpointToSource(breakpoint);
+        if (this._textViewer)
+            this._addBreakpointToSource(breakpoint);
     },
 
     removeBreakpoint: function(breakpoint)
@@ -91,7 +96,8 @@ WebInspector.SourceFrame.prototype = {
         breakpoint.removeEventListener("enabled", null, this);
         breakpoint.removeEventListener("disabled", null, this);
         breakpoint.removeEventListener("condition-changed", null, this);
-        this._removeBreakpointFromSource(breakpoint);
+        if (this._textViewer)
+            this._removeBreakpointFromSource(breakpoint);
     },
 
     addMessage: function(msg)
@@ -100,7 +106,7 @@ WebInspector.SourceFrame.prototype = {
         if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
             return;
         this._messages.push(msg)
-        if (this._editor)
+        if (this._textViewer)
             this._addMessageToSource(msg);
     },
 
@@ -114,14 +120,14 @@ WebInspector.SourceFrame.prototype = {
         this._messages = [];
         this._rowMessages = {};
         this._messageBubbles = {};
-        if (this._editor)
-            this._editor.revalidateDecorationsAndPaint();
+        if (this._textViewer)
+            this._textViewer.resize();
     },
 
     sizeToFitContentHeight: function()
     {
-        if (this._editor)
-            this._editor.revalidateDecorationsAndPaint();
+        if (this._textViewer)
+            this._textViewer.revalidateDecorationsAndPaint();
     },
 
     setContent: function(mimeType, content, url)
@@ -130,47 +136,56 @@ WebInspector.SourceFrame.prototype = {
         this._textModel.setText(null, content);
         this._mimeType = mimeType;
         this._url = url;
-        this._createEditorIfNeeded();
+        this._createViewerIfNeeded();
     },
 
-    _createEditorIfNeeded: function()
+    highlightLine: function(line)
     {
-        if (!this._visible || !this._loaded || this._editor)
+        if (this._textViewer)
+            this._textViewer.highlightLine(line - 1);
+        else
+            this._lineToHighlight = line;
+    },
+
+    _createViewerIfNeeded: function()
+    {
+        if (!this._visible || !this._loaded || this._textViewer)
             return;
 
-        var editorConstructor = Preferences.useCanvasBasedEditor ? WebInspector.TextEditor : WebInspector.NativeTextViewer;
-        this._editor = new editorConstructor(this._textModel, WebInspector.platform, this._url);
-        this._editor.lineNumberDecorator = new WebInspector.BreakpointLineNumberDecorator(this, this._editor.textModel);
-        this._editor.lineDecorator = new WebInspector.ExecutionLineDecorator(this);
-        this._editor.readOnly = true;
-        this._element = this._editor.element;
-        this._element.addEventListener("keydown", this._keyDown.bind(this), true);
-        this._parentElement.appendChild(this._element);
-        this._editor.initFontMetrics();
+        this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
+        var element = this._textViewer.element;
+        element.addEventListener("keydown", this._keyDown.bind(this), true);
+        element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
+        element.addEventListener("mousedown", this._mouseDown.bind(this), true);
+        this._parentElement.appendChild(element);
 
-        this._editor.mimeType = this._mimeType;
+        this._needsProgramCounterImage = true;
+        this._needsBreakpointImages = true;
 
+        this._textViewer.beginUpdates();
+
+        this._textViewer.mimeType = this._mimeType;
         this._addExistingMessagesToSource();
         this._addExistingBreakpointsToSource();
-
-        this._editor.setCoalescingUpdate(true);
-        this._editor.resize();
-        this._editor.revalidateDecorationsAndPaint();
-
-        if (this._executionLine)
-            this.revealLine(this._executionLine);
+        this._updateExecutionLine();
+        this._textViewer.resize();
 
         if (this._lineNumberToReveal) {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
         }
 
-        if (this._pendingSelectionRange) {
-            var range = this._pendingSelectionRange;
-            this._editor.setSelection(range.startLine, range.startColumn, range.endLine, range.endColumn);
-            delete this._pendingSelectionRange;
+        if (this._pendingMarkRange) {
+            var range = this._pendingMarkRange;
+            this.markAndRevealRange(range);
+            delete this._pendingMarkRange;
         }
-        this._editor.setCoalescingUpdate(false);
+
+        if (this._lineToHighlight) {
+            this.highlightLine(this._lineToHighlight);
+            delete this._lineToHighlight;
+        }
+        this._textViewer.endUpdates();
     },
 
     findSearchMatches: function(query)
@@ -215,21 +230,20 @@ WebInspector.SourceFrame.prototype = {
         return ranges;
     },
 
-    setSelection: function(range)
+    markAndRevealRange: function(range)
     {
-        if (this._editor)
-            this._editor.setSelection(range.startLine, range.startColumn, range.endLine, range.endColumn);
+        if (this._textViewer)
+            this._textViewer.markAndRevealRange(range);
         else
-            this._pendingSelectionRange = range;
+            this._pendingMarkRange = range;
     },
 
-    clearSelection: function()
+    clearMarkedRange: function()
     {
-        if (this._editor) {
-            var range = this._editor.selection;
-            this._editor.setSelection(range.endLine, range.endColumn, range.endLine, range.endColumn);
+        if (this._textViewer) {
+            this._textViewer.markAndRevealRange(null);
         } else
-            delete this._pendingSelectionRange;
+            delete this._pendingMarkRange;
     },
 
     _incrementMessageRepeatCount: function(msg, repeatDelta)
@@ -245,6 +259,40 @@ WebInspector.SourceFrame.prototype = {
 
         msg.repeatCount += repeatDelta;
         msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
+    },
+
+    _breakpointChanged: function(event)
+    {
+        var breakpoint = event.target;
+        var lineNumber = breakpoint.line - 1;
+        if (lineNumber >= this._textModel.linesCount)
+            return;
+
+        if (breakpoint.enabled)
+            this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
+        else
+            this._textViewer.addDecoration(lineNumber, "webkit-breakpoint-disabled");
+
+        if (breakpoint.condition)
+            this._textViewer.addDecoration(lineNumber, "webkit-breakpoint-conditional");
+        else
+            this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
+    },
+
+    _updateExecutionLine: function(previousLine)
+    {
+        if (previousLine) {
+            if (previousLine - 1 < this._textModel.linesCount)
+                this._textViewer.removeDecoration(previousLine - 1, "webkit-execution-line");
+        }
+
+        if (!this._executionLine)
+            return;
+
+        this._drawProgramCounterImageIfNeeded();
+
+        if (this._executionLine < this._textModel.linesCount)
+            this._textViewer.addDecoration(this._executionLine - 1, "webkit-execution-line");
     },
 
     _addExistingMessagesToSource: function()
@@ -264,7 +312,7 @@ WebInspector.SourceFrame.prototype = {
             messageBubbleElement = document.createElement("div");
             messageBubbleElement.className = "webkit-html-message-bubble";
             this._messageBubbles[msg.line] = messageBubbleElement;
-            this._editor.setDivDecoration(msg.line - 1, messageBubbleElement);
+            this._textViewer.addDecoration(msg.line - 1, messageBubbleElement);
         }
 
         var rowMessages = this._rowMessages[msg.line];
@@ -276,7 +324,6 @@ WebInspector.SourceFrame.prototype = {
         for (var i = 0; i < rowMessages.length; ++i) {
             if (rowMessages[i].isEqual(msg, true)) {
                 this._incrementMessageRepeatCount(rowMessages[i], msg.repeatDelta);
-                this._editor.revalidateDecorationsAndPaint();
                 return;
             }
         }
@@ -307,35 +354,51 @@ WebInspector.SourceFrame.prototype = {
         messageLineElement.appendChild(document.createTextNode(msg.message));
 
         msg._resourceMessageLineElement = messageLineElement;
-
-        this._editor.revalidateDecorationsAndPaint();
     },
 
     _addExistingBreakpointsToSource: function()
     {
-        var length = this.breakpoints.length;
-        for (var i = 0; i < length; ++i)
+        for (var i = 0; i < this.breakpoints.length; ++i)
             this._addBreakpointToSource(this.breakpoints[i]);
     },
 
     _addBreakpointToSource: function(breakpoint)
     {
-        this._textModel.setAttribute(breakpoint.line - 1, "breakpoint", breakpoint);
+        var lineNumber = breakpoint.line - 1;
+        if (lineNumber >= this._textModel.linesCount)
+            return;
+
+        this._textModel.setAttribute(lineNumber, "breakpoint", breakpoint);
         breakpoint.sourceText = this._textModel.line(breakpoint.line - 1);
-        this._editor.paintLineNumbers();
+        this._drawBreakpointImagesIfNeeded();
+
+        this._textViewer.beginUpdates();
+        this._textViewer.addDecoration(lineNumber, "webkit-breakpoint");
+        if (!breakpoint.enabled)
+            this._textViewer.addDecoration(lineNumber, "webkit-breakpoint-disabled");
+        if (breakpoint.condition)
+            this._textViewer.addDecoration(lineNumber, "webkit-breakpoint-conditional");
+        this._textViewer.endUpdates();
     },
 
     _removeBreakpointFromSource: function(breakpoint)
     {
-        this._textModel.removeAttribute(breakpoint.line - 1, "breakpoint");
-        this._editor.paintLineNumbers();
+        var lineNumber = breakpoint.line - 1;
+        this._textViewer.beginUpdates();
+        this._textModel.removeAttribute(lineNumber, "breakpoint");
+        this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint");
+        this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
+        this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
+        this._textViewer.endUpdates();
     },
 
-    _contextMenu: function(lineNumber, event)
+    _contextMenu: function(event)
     {
-        if (!this._addBreakpointDelegate)
+        if (event.target.className !== "webkit-line-number")
             return;
+        var row = event.target.parentElement;
 
+        var lineNumber = row.lineNumber;
         var contextMenu = new WebInspector.ContextMenu();
 
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
@@ -364,13 +427,19 @@ WebInspector.SourceFrame.prototype = {
         contextMenu.show(event);
     },
 
-    _toggleBreakpoint: function(lineNumber, event)
+    _mouseDown: function(event)
     {
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
             return;
+        if (event.target.className !== "webkit-line-number")
+            return;
+        var row = event.target.parentElement;
+
+        var lineNumber = row.lineNumber;
+
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
         if (breakpoint)
-            WebInspector.panels.scripts.removeBreakpoint(breakpoint);
+            this._removeBreakpointDelegate(breakpoint);
         else if (this._addBreakpointDelegate)
             this._addBreakpointDelegate(lineNumber + 1);
         event.preventDefault();
@@ -383,14 +452,15 @@ WebInspector.SourceFrame.prototype = {
         function committed(element, newText)
         {
             breakpoint.condition = newText;
-            this._editor.paintLineNumbers();
             dismissed.call(this);
         }
 
         function dismissed()
         {
-            this._editor.setDivDecoration(breakpoint.line - 1, null);
+            if (this._conditionElement)
+                this._textViewer.removeDecoration(breakpoint.line - 1, this._conditionElement);
             delete this._conditionEditorElement;
+            delete this._conditionElement;
         }
 
         var dismissedHandler = dismissed.bind(this);
@@ -403,23 +473,23 @@ WebInspector.SourceFrame.prototype = {
 
     _showBreakpointConditionPopup: function(lineNumber)
     {
-        var conditionElement = this._createConditionElement(lineNumber);
-        this._editor.setDivDecoration(lineNumber - 1, conditionElement);
+        this._conditionElement = this._createConditionElement(lineNumber);
+        this._textViewer.addDecoration(lineNumber - 1, this._conditionElement);
     },
 
     _createConditionElement: function(lineNumber)
     {
         var conditionElement = document.createElement("div");
-        conditionElement.className = "source-breakpoint-condition";
+        conditionElement.className = "source-frame-breakpoint-condition";
 
         var labelElement = document.createElement("label");
-        labelElement.className = "source-breakpoint-message";
-        labelElement.htmlFor = "source-breakpoint-condition";
+        labelElement.className = "source-frame-breakpoint-message";
+        labelElement.htmlFor = "source-frame-breakpoint-condition";
         labelElement.appendChild(document.createTextNode(WebInspector.UIString("The breakpoint on line %d will stop only if this expression is true:", lineNumber)));
         conditionElement.appendChild(labelElement);
 
         var editorElement = document.createElement("input");
-        editorElement.id = "source-breakpoint-condition";
+        editorElement.id = "source-frame-breakpoint-condition";
         editorElement.className = "monospace";
         editorElement.type = "text"
         conditionElement.appendChild(editorElement);
@@ -435,9 +505,8 @@ WebInspector.SourceFrame.prototype = {
         if (handler) {
             handler(event);
             event.preventDefault();
-        } else {
+        } else
             WebInspector.documentKeyDown(event);
-        }
     },
 
     _evalSelectionInCallFrame: function(event)
@@ -458,146 +527,139 @@ WebInspector.SourceFrame.prototype = {
         });
     },
 
-    _breakpointChanged: function(event)
-    {
-        this._editor.paintLineNumbers();
-    },
-
     resize: function()
     {
-        if (this._editor)
-            this._editor.resize();
-    }
-}
-
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
-
-WebInspector.BreakpointLineNumberDecorator = function(sourceFrame, textModel)
-{
-    this._sourceFrame = sourceFrame;
-    this._textModel = textModel;
-}
-
-WebInspector.BreakpointLineNumberDecorator.prototype = {
-    decorate: function(lineNumber, ctx, x, y, width, height, lineHeight)
-    {
-        var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
-        var isExecutionLine = lineNumber + 1 === this._sourceFrame._executionLine;
-        if (breakpoint || isExecutionLine) {
-            ctx.save();
-            ctx.translate(x + 4, y + 2);
-            var breakpointWidth = width - 6;
-            var breakpointHeight = lineHeight - 4;
-    
-            if (breakpoint)
-                this._paintBreakpoint(ctx, breakpointWidth, breakpointHeight, breakpoint);
-    
-            if (isExecutionLine)
-                this._paintProgramCounter(ctx, breakpointWidth, breakpointHeight, false);
-
-            ctx.restore();
-        }
-
-        if (isExecutionLine) {
-            // Override default behavior.
-            return true;
-        }
-
-        ctx.fillStyle = breakpoint ? "rgb(255,255,255)" : "rgb(155,155,155)";
-        return false;
+        if (this._textViewer)
+            this._textViewer.resize();
     },
 
-    _paintBreakpoint: function(ctx, width, height, breakpoint)
+    _drawProgramCounterInContext: function(ctx, glow)
     {
-        ctx.beginPath();
-        ctx.moveTo(0, 2);
-        ctx.lineTo(2, 0);
-        ctx.lineTo(width - 5, 0);
-        ctx.lineTo(width, height / 2);
-        ctx.lineTo(width - 5, height);
-        ctx.lineTo(2, height);
-        ctx.lineTo(0, height - 2);
-        ctx.closePath();
-        ctx.fillStyle = breakpoint.condition ? "rgb(217, 142, 1)" : "rgb(1, 142, 217)";
-        ctx.strokeStyle = breakpoint.condition ? "rgb(205, 103, 0)" : "rgb(0, 103, 205)";
-        ctx.lineWidth = 3;
-        ctx.fill();
-
-        ctx.save();
-        ctx.clip();
-        ctx.stroke();
-        ctx.restore();
-
-        if (!breakpoint.enabled) {
+        if (glow)
             ctx.save();
-            ctx.globalCompositeOperation = "destination-out";
-            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-            ctx.fillRect(0, 0, width, height);
-            ctx.restore();
-        }
-    },
-
-    _paintProgramCounter: function(ctx, width, height)
-    {
-        ctx.save();
 
         ctx.beginPath();
-        ctx.moveTo(width - 9, 2);
-        ctx.lineTo(width - 7, 2);
-        ctx.lineTo(width - 7, 0);
-        ctx.lineTo(width - 5, 0);
-        ctx.lineTo(width, height / 2);
-        ctx.lineTo(width - 5, height);
-        ctx.lineTo(width - 7, height);
-        ctx.lineTo(width - 7, height - 2);
-        ctx.lineTo(width - 9, height - 2);
+        ctx.moveTo(17, 2);
+        ctx.lineTo(19, 2);
+        ctx.lineTo(19, 0);
+        ctx.lineTo(21, 0);
+        ctx.lineTo(26, 5.5);
+        ctx.lineTo(21, 11);
+        ctx.lineTo(19, 11);
+        ctx.lineTo(19, 9);
+        ctx.lineTo(17, 9);
         ctx.closePath();
         ctx.fillStyle = "rgb(142, 5, 4)";
 
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = "rgb(255, 255, 255)";
-        ctx.shadowOffsetX = -1;
-        ctx.shadowOffsetY = 0;
+        if (glow) {
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "rgb(255, 255, 255)";
+            ctx.shadowOffsetX = -1;
+            ctx.shadowOffsetY = 0;
+        }
 
         ctx.fill();
         ctx.fill(); // Fill twice to get a good shadow and darker anti-aliased pixels.
 
-        ctx.restore();
+        if (glow)
+            ctx.restore();
     },
 
-    mouseDown: function(lineNumber, e)
+    _drawProgramCounterImageIfNeeded: function()
     {
-        this._sourceFrame._toggleBreakpoint(lineNumber, e);
-        return true;
-    },
-
-    contextMenu: function(lineNumber, e)
-    {
-        this._sourceFrame._contextMenu(lineNumber, e);
-        return true;
-    }
-}
-
-WebInspector.ExecutionLineDecorator = function(sourceFrame)
-{
-    this._sourceFrame = sourceFrame;
-}
-
-WebInspector.ExecutionLineDecorator.prototype = {
-    decorate: function(lineNumber, ctx, x, y, width, height, lineHeight)
-    {
-        if (this._sourceFrame._executionLine !== lineNumber + 1)
+        if (!this._needsProgramCounterImage)
             return;
-        ctx.save();
-        ctx.fillStyle = "rgb(171, 191, 254)";
-        ctx.fillRect(x, y, width, height);
-        
-        ctx.beginPath();
-        ctx.rect(x - 1, y, width + 2, height);
-        ctx.clip();
-        ctx.strokeStyle = "rgb(64, 115, 244)";
-        ctx.stroke();
 
-        ctx.restore();
+        var ctx = document.getCSSCanvasContext("2d", "program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+        delete this._needsProgramCounterImage;
+    },
+
+    _drawBreakpointImagesIfNeeded: function(conditional)
+    {
+        if (!this._needsBreakpointImages)
+            return;
+
+        function drawBreakpoint(ctx, disabled, conditional)
+        {
+            ctx.beginPath();
+            ctx.moveTo(0, 2);
+            ctx.lineTo(2, 0);
+            ctx.lineTo(21, 0);
+            ctx.lineTo(26, 5.5);
+            ctx.lineTo(21, 11);
+            ctx.lineTo(2, 11);
+            ctx.lineTo(0, 9);
+            ctx.closePath();
+            ctx.fillStyle = conditional ? "rgb(217, 142, 1)" : "rgb(1, 142, 217)";
+            ctx.strokeStyle = conditional ? "rgb(205, 103, 0)" : "rgb(0, 103, 205)";
+            ctx.lineWidth = 3;
+            ctx.fill();
+            ctx.save();
+            ctx.clip();
+            ctx.stroke();
+            ctx.restore();
+
+            if (!disabled)
+                return;
+
+            ctx.save();
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+            ctx.fillRect(0, 0, 26, 11);
+            ctx.restore();
+        }
+
+
+        // Unconditional breakpoints.
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+
+        // Conditional breakpoints.
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-conditional", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, false, true);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-conditional-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, false, true);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-conditional", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true, true);
+
+        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-conditional-program-counter", 26, 11);
+        ctx.clearRect(0, 0, 26, 11);
+        drawBreakpoint(ctx, true, true);
+        ctx.clearRect(20, 0, 6, 11);
+        this._drawProgramCounterInContext(ctx, true);
+
+        delete this._needsBreakpointImages;
     }
 }
+
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;

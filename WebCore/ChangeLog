@@ -1,3 +1,119 @@
+2010-02-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: split source code into chunks in order to improve text
+        viewer performance on large files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34816
+
+        This change brings back SourceFrame's canvas+style magic, restores line
+        wrapping and makes things a lot like they used to be.
+        It removes TextEditor for now and renames NativeTextViewer into TextViewer.
+        TextViewer is no longer derived from TextEditor.
+        This TextViewer is still based on TextEditorModel, no iframes are involved.
+
+        Instead of creating div per line, TextViewer splits source code into 50 line
+        chunks. Upon scroll event, visible chunks are sharded into lines and individual
+        lines are highlighted. Whenever highlighted region gets outside of the visible
+        area, highlight spans are thrown away and region is replaced with the original
+        plain text chunk.
+
+        Complex stuff:
+        - Whenever there is a need to manipulate individual lines (add message bubble /
+        set breakpoint / reveal / etc.), individual chunks for such lines are created.
+        - There is also an implicit machinery that is maintaining selection when it
+        goes beyond the visible area.
+        - Search occurrences are implemented as artificial spans interweaving
+        highlighting markup.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/NativeTextViewer.js: Removed.
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.set visible):
+        (WebInspector.SourceFrame.prototype.set executionLine):
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype.removeBreakpoint):
+        (WebInspector.SourceFrame.prototype.addMessage):
+        (WebInspector.SourceFrame.prototype.clearMessages):
+        (WebInspector.SourceFrame.prototype.sizeToFitContentHeight):
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype.highlightLine):
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype.markAndRevealRange):
+        (WebInspector.SourceFrame.prototype.clearMarkedRange):
+        (WebInspector.SourceFrame.prototype._breakpointChanged):
+        (WebInspector.SourceFrame.prototype._updateExecutionLine):
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        (WebInspector.SourceFrame.prototype._addExistingBreakpointsToSource):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame.prototype._removeBreakpointFromSource):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.committed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition.dismissed):
+        (WebInspector.SourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._showBreakpointConditionPopup):
+        (WebInspector.SourceFrame.prototype._createConditionElement):
+        (WebInspector.SourceFrame.prototype._keyDown):
+        (WebInspector.SourceFrame.prototype.resize):
+        (WebInspector.SourceFrame.prototype._drawProgramCounterInContext):
+        (WebInspector.SourceFrame.prototype._drawProgramCounterImageIfNeeded):
+        (WebInspector.SourceFrame.prototype._drawBreakpointImagesIfNeeded.drawBreakpoint):
+        (WebInspector.SourceFrame.prototype._drawBreakpointImagesIfNeeded):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype._removeBreakpoint):
+        (WebInspector.SourceView.prototype.searchCanceled):
+        (WebInspector.SourceView.prototype._jumpToSearchResult):
+        * inspector/front-end/TextEditor.js: Removed.
+        * inspector/front-end/TextViewer.js: Added.
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype.set mimeType):
+        (WebInspector.TextViewer.prototype.get textModel):
+        (WebInspector.TextViewer.prototype.revealLine):
+        (WebInspector.TextViewer.prototype.addDecoration):
+        (WebInspector.TextViewer.prototype.removeDecoration):
+        (WebInspector.TextViewer.prototype.markAndRevealRange):
+        (WebInspector.TextViewer.prototype.highlightLine):
+        (WebInspector.TextViewer.prototype._textChanged):
+        (WebInspector.TextViewer.prototype._createChunkRow):
+        (WebInspector.TextViewer.prototype._makeLineAChunk):
+        (WebInspector.TextViewer.prototype._indexChunks):
+        (WebInspector.TextViewer.prototype._highlightChanged):
+        (WebInspector.TextViewer.prototype._scroll):
+        (WebInspector.TextViewer.prototype.setCoalescingUpdate):
+        (WebInspector.TextViewer.prototype._repaintAll):
+        (WebInspector.TextViewer.prototype._chunkForOffset):
+        (WebInspector.TextViewer.prototype._chunkNumberForLine):
+        (WebInspector.TextViewer.prototype._chunkStartLine):
+        (WebInspector.TextViewer.prototype._restoreChunks):
+        (WebInspector.TextViewer.prototype._repaint):
+        (WebInspector.TextViewer.prototype._getSelection):
+        (WebInspector.TextViewer.prototype._restoreSelection):
+        (WebInspector.TextViewer.prototype._selectionToPosition):
+        (WebInspector.TextViewer.prototype._createLineRow):
+        (WebInspector.TextViewer.prototype._paintLine):
+        (WebInspector.TextViewer.prototype._createSpan):
+        (WebInspector.TextViewer.prototype._createLink):
+        (WebInspector.TextViewer.prototype._rewriteHref):
+        (WebInspector.TextViewer.prototype._markRange):
+        (WebInspector.TextViewer.prototype._decimalDigits):
+        (WebInspector.TextViewer.prototype.resize):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/textEditor.css: Removed.
+        * inspector/front-end/textViewer.css: Added.
+        * inspector/front-end/utilities.js:
+        (Node.prototype.traverseNextTextNode):
+        (Node.prototype.rangeBoundaryForOffset):
+
 2010-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

@@ -38,8 +38,7 @@ var Preferences = {
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
     samplingCPUProfiler: false,
-    showColorNicknames: true,
-    useCanvasBasedEditor: false
+    showColorNicknames: true
 }
 
 WebInspector.populateFrontendSettings = function(settingsString)

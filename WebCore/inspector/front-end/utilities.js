@@ -145,6 +145,30 @@ Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, di
     return result;
 }
 
+Node.prototype.traverseNextTextNode = function(stayWithin)
+{
+    var node = this.traverseNextNode(stayWithin);
+    if (!node)
+        return;
+
+    while (node && node.nodeType !== Node.TEXT_NODE)
+        node = node.traverseNextNode(stayWithin);
+
+    return node;
+}
+
+Node.prototype.rangeBoundaryForOffset = function(offset)
+{
+    var node = this.traverseNextTextNode(this);
+    while (node && offset > node.nodeValue.length) {
+        offset -= node.nodeValue.length;
+        node = node.traverseNextTextNode(this);
+    }
+    if (!node)
+        return { container: this, offset: 0 };
+    return { container: node, offset: offset };
+}
+
 Element.prototype.removeStyleClass = function(className) 
 {
     // Test for the simple case first.

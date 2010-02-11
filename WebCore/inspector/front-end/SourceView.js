@@ -32,7 +32,7 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
-    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this));
+    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this));
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }
@@ -56,16 +56,6 @@ WebInspector.SourceView.prototype = {
     {
         if (this.sourceFrame)
             this.sourceFrame.resize();
-    },
-
-    detach: function()
-    {
-        WebInspector.ResourceView.prototype.detach.call(this);
-
-        // FIXME: We need to mark the frame for setup on detach because the frame DOM is cleared
-        // when it is removed from the document. Is this a bug?
-        this._frameNeedsSetup = true;
-        this._sourceFrameSetup = false;
     },
 
     setupSourceFrameIfNeeded: function()
@@ -118,6 +108,12 @@ WebInspector.SourceView.prototype = {
         }
     },
 
+    _removeBreakpoint: function(breakpoint)
+    {
+        if (WebInspector.panels.scripts)
+            WebInspector.panels.scripts.removeBreakpoint(breakpoint);
+    },
+
     // The rest of the methods in this prototype need to be generic enough to work with a ScriptView.
     // The ScriptView prototype pulls these methods into it's prototype to avoid duplicate code.
 
@@ -125,7 +121,7 @@ WebInspector.SourceView.prototype = {
     {
         this._currentSearchResultIndex = -1;
         this._searchResults = [];
-        this.sourceFrame.clearSelection();
+        this.sourceFrame.clearMarkedRange();
         delete this._delayedFindSearchMatches;
     },
 
@@ -225,7 +221,7 @@ WebInspector.SourceView.prototype = {
         if (!foundRange)
             return;
 
-        this.sourceFrame.setSelection(foundRange);
+        this.sourceFrame.markAndRevealRange(foundRange);
     },
 
     _sourceFrameSetupFinished: function()

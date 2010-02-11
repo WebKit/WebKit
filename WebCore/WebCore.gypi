@@ -3739,7 +3739,6 @@
             'inspector/front-end/inspector.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MetricsSidebarPane.js',
-            'inspector/front-end/NativeTextViewer.js',
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectProxy.js',
             'inspector/front-end/ObjectPropertiesSection.js',
@@ -3775,10 +3774,10 @@
             'inspector/front-end/StylesSidebarPane.js',
             'inspector/front-end/SummaryBar.js',
             'inspector/front-end/TestController.js',
-            'inspector/front-end/TextEditor.js',
             'inspector/front-end/TextEditorHighlighter.js',
             'inspector/front-end/TextEditorModel.js',
             'inspector/front-end/TextPrompt.js',
+            'inspector/front-end/TextViewer.js',
             'inspector/front-end/TimelineAgent.js',
             'inspector/front-end/TimelineOverviewPane.js',
             'inspector/front-end/TimelineGrid.js',
@@ -3792,7 +3791,7 @@
             'inspector/front-end/audits.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',
-            'inspector/front-end/textEditor.css',
+            'inspector/front-end/textViewer.css',
         ],
         'webinspector_image_files': [
 
