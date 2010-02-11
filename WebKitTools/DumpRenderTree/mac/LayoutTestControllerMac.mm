@@ -324,11 +324,6 @@ void LayoutTestController::setXSSAuditorEnabled(bool enabled)
     [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
 }
 
-void LayoutTestController::setFrameSetFlatteningEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setFrameSetFlatteningEnabled:enabled];
-}
-
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     [[[mainFrame webView] preferences] setAllowUniversalAccessFromFileURLs:enabled];

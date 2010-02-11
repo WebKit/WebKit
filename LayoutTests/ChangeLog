@@ -1,3 +1,16 @@
+2010-02-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Roll out r54626, because it broke GTK and Win build.
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        * platform/mac/Skipped:
+        * platform/mac/fast/frames/flattening: Removed.
+        * platform/mac/fast/frames/flattening/frameset-flattening-advanced-expected.txt: Removed.
+        * platform/mac/fast/frames/flattening/frameset-flattening-grid-expected.txt: Removed.
+        * platform/mac/fast/frames/flattening/frameset-flattening-simple-expected.txt: Removed.
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt: Removed.
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframesets-expected.txt: Removed.
+
 2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
