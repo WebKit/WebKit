@@ -516,6 +516,7 @@ GEN := \
     $(intermediates)/bindings/V8XMLHttpRequestProgressEvent.h \
     $(intermediates)/bindings/V8XMLHttpRequestUpload.h \
     $(intermediates)/bindings/V8XMLSerializer.h \
+    $(intermediates)/bindings/V8XPathException.h \
     $(intermediates)/bindings/V8XPathNSResolver.h
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)

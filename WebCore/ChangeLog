@@ -1,5 +1,16 @@
 2010-02-11  Steve Block  <steveblock@google.com>
 
+        Reviewed by Jeremy Orlow.
+
+        Updates Android V8 Makefile to generate XPath header required by V8Proxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=34814
+
+        No new tests, build fix only.
+
+        * Android.derived.v8bindings.mk:
+
+2010-02-11  Steve Block  <steveblock@google.com>
+
         Reviewed by Nate Chapin.
 
         Update Android V8 Makefile to generate Inspector headers required by V8 ScriptObject.cpp
