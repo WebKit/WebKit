@@ -142,8 +142,10 @@ v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
         return v8::Null();
     if (impl->isHTMLDocument())
         return toV8(static_cast<HTMLDocument*>(impl), forceNewObject);
+#if ENABLE(SVG)
     if (impl->isSVGDocument())
         return toV8(static_cast<SVGDocument*>(impl), forceNewObject);
+#endif
     v8::Handle<v8::Value> wrapper = V8Document::wrap(impl, forceNewObject);
     if (wrapper.IsEmpty())
         return wrapper;

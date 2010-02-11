@@ -49,10 +49,12 @@ v8::Handle<v8::Value> toV8(CSSValue* impl)
         return toV8(static_cast<CSSValueList*>(impl));
     if (impl->isPrimitiveValue())
         return toV8(static_cast<CSSPrimitiveValue*>(impl));
+#if ENABLE(SVG)
     if (impl->isSVGPaint())
         return toV8(static_cast<SVGPaint*>(impl));
     if (impl->isSVGColor())
         return toV8(static_cast<SVGColor*>(impl));
+#endif
     return V8CSSValue::wrap(impl);
 }
 

@@ -122,8 +122,10 @@ v8::Handle<v8::Value> toV8(Element* impl, bool forceNewObject)
         return v8::Null();
     if (impl->isHTMLElement())
         return toV8(static_cast<HTMLElement*>(impl), forceNewObject);
+#if ENABLE(SVG)
     if (impl->isSVGElement())
         return toV8(static_cast<SVGElement*>(impl), forceNewObject);
+#endif
     return V8Element::wrap(impl, forceNewObject);
 }
 } // namespace WebCore

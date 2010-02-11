@@ -1,3 +1,22 @@
+2010-02-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Guards SVG code in V8 bindings with ENABLE(SVG)
+        https://bugs.webkit.org/show_bug.cgi?id=34812
+
+        Also updates Android V8 Makefile to generate required SVG headers.
+
+        No new tests, build fix only.
+
+        * Android.derived.v8bindings.mk:
+        * bindings/v8/custom/V8CSSValueCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::toV8):
+
 2010-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
