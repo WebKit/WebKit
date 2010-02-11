@@ -1,3 +1,58 @@
+2010-02-11  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Test that Web Inspector can inspect styles of elements in iframe from a domain
+        different from main frame domain.
+
+        inspector-tests.js moved to LayoutTests/http/tests/inspector because it can
+        be referenced by relative path from LayoutTests/inspector but not vice versa
+        (html files served from LayoutTests/http/tests cannot refer it because WebKit
+        tests httpd doesn't serve content not under LayoutTests/http). 
+
+        https://bugs.webkit.org/show_bug.cgi?id=31587
+
+        * http/tests/inspector/inspect-iframe-from-different-domain-expected.txt: Added.
+        * http/tests/inspector/inspect-iframe-from-different-domain.html: Added.
+        * http/tests/inspector/inspector-test.js: Renamed from LayoutTests/inspector/inspector-test.js.
+        (onload):
+        (evaluateInWebInspector):
+        (notifyDone):
+        (output):
+        (didEvaluateForTestInFrontend):
+        * http/tests/inspector/resources/iframe-from-different-domain-data.html: Added.
+        * inspector/console-clear.html:
+        * inspector/console-dir.html:
+        * inspector/console-dirxml.html:
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-collections.html:
+        * inspector/console-format.html:
+        * inspector/console-log-before-inspector-open.html:
+        * inspector/console-tests.html:
+        * inspector/cookie-resource-match.html:
+        * inspector/elements-img-tooltip.html:
+        * inspector/elements-panel-rewrite-href-expected.txt:
+        * inspector/elements-panel-rewrite-href.html:
+        * inspector/elements-panel-selection-on-refresh.html:
+        * inspector/elements-panel-structure.html:
+        * inspector/evaluate-in-frontend.html:
+        * inspector/inspected-objects-not-overriden.html:
+        * inspector/styles-iframe.html:
+        * inspector/syntax-highlight-css.html:
+        * inspector/syntax-highlight-javascript.html:
+        * inspector/timeline-enum-stability.html:
+        * inspector/timeline-event-dispatch.html:
+        * inspector/timeline-layout.html:
+        * inspector/timeline-mark-timeline.html:
+        * inspector/timeline-network-resource.html:
+        * inspector/timeline-paint.html:
+        * inspector/timeline-parse-html.html:
+        * inspector/timeline-recalculate-styles.html:
+        * inspector/timeline-script-tag-1.html:
+        * inspector/timeline-script-tag-2.html:
+        * inspector/timeline-trivial.html:
+        * platform/qt/Skipped:
+
 2010-02-11  Andras Becsi  <abecsi@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.
