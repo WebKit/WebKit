@@ -13,7 +13,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_3D_CANVAS"
-		Value="ENABLE_3D_CANVAS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
