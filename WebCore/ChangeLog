@@ -1,3 +1,20 @@
+2010-02-10  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] GraphicsLayer: somtimes the item flickers at the end of an animation
+        This is because we try to delete the animation when finished: that is
+        unnecessary. WebCore manages the animation's lifecycle and makes sure
+        to call the right function when the animation can be deleted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34761
+
+        No new tests.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQt::addAnimation): No need to delete here
+        (WebCore::GraphicsLayerQt::removeAnimationsForProperty): deleteLater
+
 2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for wxMac/Cocoa.
