@@ -4551,6 +4551,9 @@
 		BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE65BE80EACDF16007E4533 /* Length.cpp */; };
 		BCE65BEB0EACDF16007E4533 /* Length.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE65BE90EACDF16007E4533 /* Length.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE65D310EAD1211007E4533 /* Theme.cpp */; };
+		BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE789151120D6080060ECE5 /* InlineIterator.h */; };
+		BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE789851120E7A60060ECE5 /* BidiRun.h */; };
+		BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7898A1120E8020060ECE5 /* BidiRun.cpp */; };
 		BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */; };
 		BCE99EC30DCA624100182683 /* JSXSLTProcessorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE99EC10DCA624100182683 /* JSXSLTProcessorConstructor.cpp */; };
 		BCE99EC40DCA624100182683 /* JSXSLTProcessorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */; };
@@ -9816,6 +9819,9 @@
 		BCE65BE80EACDF16007E4533 /* Length.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Length.cpp; sourceTree = "<group>"; };
 		BCE65BE90EACDF16007E4533 /* Length.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Length.h; sourceTree = "<group>"; };
 		BCE65D310EAD1211007E4533 /* Theme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Theme.cpp; sourceTree = "<group>"; };
+		BCE789151120D6080060ECE5 /* InlineIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineIterator.h; sourceTree = "<group>"; };
+		BCE789851120E7A60060ECE5 /* BidiRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiRun.h; sourceTree = "<group>"; };
+		BCE7898A1120E8020060ECE5 /* BidiRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BidiRun.cpp; sourceTree = "<group>"; };
 		BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHistoryCustom.cpp; sourceTree = "<group>"; };
 		BCE99EC10DCA624100182683 /* JSXSLTProcessorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessorConstructor.cpp; sourceTree = "<group>"; };
 		BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessorConstructor.h; sourceTree = "<group>"; };
@@ -15565,6 +15571,8 @@
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
+				BCE7898A1120E8020060ECE5 /* BidiRun.cpp */,
+				BCE789851120E7A60060ECE5 /* BidiRun.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				9392F14F0AD1862300691BD4 /* CounterNode.cpp */,
@@ -15581,6 +15589,7 @@
 				A8CFF5DE0A155A05000A4234 /* InlineBox.h */,
 				A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */,
 				A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */,
+				BCE789151120D6080060ECE5 /* InlineIterator.h */,
 				A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
@@ -18514,6 +18523,8 @@
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
 				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
+				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
+				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -20693,6 +20704,7 @@
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */,
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
+				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,
 				76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */,
 			);

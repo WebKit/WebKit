@@ -24,6 +24,7 @@
 
 #include "BidiResolver.h"
 #include "CharacterNames.h"
+#include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "RenderArena.h"
@@ -45,36 +46,6 @@ namespace WebCore {
 
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
-
-class InlineIterator {
-public:
-    InlineIterator()
-        : block(0)
-        , obj(0)
-        , pos(0)
-        , nextBreakablePosition(-1)
-    {
-    }
-
-    InlineIterator(RenderBlock* b, RenderObject* o, unsigned p)
-        : block(b)
-        , obj(o)
-        , pos(p)
-        , nextBreakablePosition(-1)
-    {
-    }
-
-    void increment(InlineBidiResolver* resolver = 0);
-    bool atEnd() const;
-
-    UChar current() const;
-    Direction direction() const;
-
-    RenderBlock* block;
-    RenderObject* obj;
-    unsigned pos;
-    int nextBreakablePosition;
-};
 
 static int getBorderPaddingMargin(RenderBoxModelObject* child, bool endOfInline)
 {
@@ -99,247 +70,6 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
     }
     return extraWidth;
 }
-
-struct BidiRun : BidiCharacterRun {
-    BidiRun(int start, int stop, RenderObject* object, BidiContext* context, Direction dir)
-        : BidiCharacterRun(start, stop, context, dir)
-        , m_object(object)
-        , m_box(0)
-    {
-    }
-
-    void destroy();
-
-    // Overloaded new operator.
-    void* operator new(size_t, RenderArena*) throw();
-
-    // Overridden to prevent the normal delete from being called.
-    void operator delete(void*, size_t);
-
-    BidiRun* next() { return static_cast<BidiRun*>(m_next); }
-
-private:
-    // The normal operator new is disallowed.
-    void* operator new(size_t) throw();
-
-public:
-    RenderObject* m_object;
-    InlineBox* m_box;
-};
-
-#ifndef NDEBUG
-static RefCountedLeakCounter bidiRunCounter("BidiRun");
-
-static bool inBidiRunDestroy;
-#endif
-
-void BidiRun::destroy()
-{
-#ifndef NDEBUG
-    inBidiRunDestroy = true;
-#endif
-    RenderArena* renderArena = m_object->renderArena();
-    delete this;
-#ifndef NDEBUG
-    inBidiRunDestroy = false;
-#endif
-
-    // Recover the size left there for us by operator delete and free the memory.
-    renderArena->free(*reinterpret_cast<size_t*>(this), this);
-}
-
-void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
-{
-#ifndef NDEBUG
-    bidiRunCounter.increment();
-#endif
-    return renderArena->allocate(sz);
-}
-
-void BidiRun::operator delete(void* ptr, size_t sz)
-{
-#ifndef NDEBUG
-    bidiRunCounter.decrement();
-#endif
-    ASSERT(inBidiRunDestroy);
-
-    // Stash size where destroy() can find it.
-    *(size_t*)ptr = sz;
-}
-
-// ---------------------------------------------------------------------
-
-inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
-{
-    return it1.pos == it2.pos && it1.obj == it2.obj;
-}
-
-inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
-{
-    return it1.pos != it2.pos || it1.obj != it2.obj;
-}
-
-static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
-{
-    RenderObject* next = 0;
-    bool oldEndOfInline = endOfInlinePtr ? *endOfInlinePtr : false;
-    bool endOfInline = false;
-
-    while (current) {
-        next = 0;
-        if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned() && !current->isText()) {
-            next = current->firstChild();
-            if (next && resolver && next->isRenderInline()) {
-                EUnicodeBidi ub = next->style()->unicodeBidi();
-                if (ub != UBNormal) {
-                    TextDirection dir = next->style()->direction();
-                    Direction d = (ub == Embed
-                        ? (dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding)
-                        : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
-                    resolver->embed(d);
-                }
-            }
-        }
-
-        if (!next) {
-            if (!skipInlines && !oldEndOfInline && current->isRenderInline()) {
-                next = current;
-                endOfInline = true;
-                break;
-            }
-
-            while (current && current != block) {
-                if (resolver && current->isRenderInline() && current->style()->unicodeBidi() != UBNormal)
-                    resolver->embed(PopDirectionalFormat);
-
-                next = current->nextSibling();
-                if (next) {
-                    if (resolver && next->isRenderInline()) {
-                        EUnicodeBidi ub = next->style()->unicodeBidi();
-                        if (ub != UBNormal) {
-                            TextDirection dir = next->style()->direction();
-                            Direction d = (ub == Embed
-                                ? (dir == RTL ? RightToLeftEmbedding: LeftToRightEmbedding)
-                                : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
-                            resolver->embed(d);
-                        }
-                    }
-                    break;
-                }
-                
-                current = current->parent();
-                if (!skipInlines && current && current != block && current->isRenderInline()) {
-                    next = current;
-                    endOfInline = true;
-                    break;
-                }
-            }
-        }
-
-        if (!next)
-            break;
-
-        if (next->isText() || next->isFloating() || next->isReplaced() || next->isPositioned()
-            || ((!skipInlines || !next->firstChild()) // Always return EMPTY inlines.
-                && next->isRenderInline()))
-            break;
-        current = next;
-    }
-
-    if (endOfInlinePtr)
-        *endOfInlinePtr = endOfInline;
-
-    return next;
-}
-
-static RenderObject* bidiFirst(RenderBlock* block, InlineBidiResolver* resolver, bool skipInlines = true)
-{
-    if (!block->firstChild())
-        return 0;
-    
-    RenderObject* o = block->firstChild();
-    if (o->isRenderInline()) {
-        if (resolver) {
-            EUnicodeBidi ub = o->style()->unicodeBidi();
-            if (ub != UBNormal) {
-                TextDirection dir = o->style()->direction();
-                Direction d = (ub == Embed
-                    ? (dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding)
-                    : (dir == RTL ? RightToLeftOverride : LeftToRightOverride));
-                resolver->embed(d);
-            }
-        }
-        if (skipInlines && o->firstChild())
-            o = bidiNext(block, o, resolver, skipInlines);
-        else {
-            // Never skip empty inlines.
-            if (resolver)
-                resolver->commitExplicitEmbedding();
-            return o; 
-        }
-    }
-
-    if (o && !o->isText() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
-        o = bidiNext(block, o, resolver, skipInlines);
-
-    if (resolver)
-        resolver->commitExplicitEmbedding();
-    return o;
-}
-
-inline void InlineIterator::increment(InlineBidiResolver* resolver)
-{
-    if (!obj)
-        return;
-    if (obj->isText()) {
-        pos++;
-        if (pos >= toRenderText(obj)->textLength()) {
-            obj = bidiNext(block, obj, resolver);
-            pos = 0;
-            nextBreakablePosition = -1;
-        }
-    } else {
-        obj = bidiNext(block, obj, resolver);
-        pos = 0;
-        nextBreakablePosition = -1;
-    }
-}
-
-template<>
-inline void InlineBidiResolver::increment()
-{
-    current.increment(this);
-}
-
-inline bool InlineIterator::atEnd() const
-{
-    return !obj;
-}
-
-inline UChar InlineIterator::current() const
-{
-    if (!obj || !obj->isText())
-        return 0;
-
-    RenderText* text = toRenderText(obj);
-    if (pos >= text->textLength())
-        return 0;
-
-    return text->characters()[pos];
-}
-
-ALWAYS_INLINE Direction InlineIterator::direction() const
-{
-    if (UChar c = current())
-        return Unicode::direction(c);
-
-    if (obj && obj->isListMarker())
-        return obj->style()->direction() == LTR ? LeftToRight : RightToLeft;
-
-    return OtherNeutral;
-}
-
-// -------------------------------------------------------------------------------------------------
 
 static void chopMidpointsAt(LineMidpointState& lineMidpointState, RenderObject* obj, unsigned pos)
 {
@@ -398,7 +128,7 @@ static void addMidpoint(LineMidpointState& lineMidpointState, const InlineIterat
     midpoints[lineMidpointState.numMidpoints++] = midpoint;
 }
 
-static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
+void RenderBlock::appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
 {
     if (start > end || obj->isFloating() ||
         (obj->isPositioned() && !obj->style()->hasStaticX() && !obj->style()->hasStaticY() && !obj->container()->isRenderInline()))
@@ -439,36 +169,6 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBid
         } else
            resolver.addRun(new (obj->renderArena()) BidiRun(start, end, obj, resolver.context(), resolver.dir()));
     }
-}
-
-template <>
-void InlineBidiResolver::appendRun()
-{
-    if (!emptyRun && !eor.atEnd()) {
-        int start = sor.pos;
-        RenderObject *obj = sor.obj;
-        while (obj && obj != eor.obj && obj != endOfLine.obj) {
-            appendRunsForObject(start, obj->length(), obj, *this);        
-            start = 0;
-            obj = bidiNext(sor.block, obj);
-        }
-        if (obj) {
-            unsigned pos = obj == eor.obj ? eor.pos : UINT_MAX;
-            if (obj == endOfLine.obj && endOfLine.pos <= pos) {
-                reachedEndOfLine = true;
-                pos = endOfLine.pos;
-            }
-            // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-            int end = obj->length() ? pos+1 : 0;
-            appendRunsForObject(start, end, obj, *this);
-        }
-        
-        eor.increment();
-        sor = eor;
-    }
-
-    m_direction = OtherNeutral;
-    m_status.eor = OtherNeutral;
 }
 
 static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRootLineBox, bool isOnlyRun = false)
@@ -1444,7 +1144,7 @@ static bool inlineFlowRequiresLineBox(RenderInline* flow)
     return !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
 }
 
-static inline bool requiresLineBox(const InlineIterator& it, bool isLineEmpty, bool previousLineBrokeCleanly)
+bool RenderBlock::requiresLineBox(const InlineIterator& it, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     if (it.obj->isFloatingOrPositioned())
         return false;

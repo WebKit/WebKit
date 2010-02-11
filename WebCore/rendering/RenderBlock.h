@@ -138,6 +138,9 @@ public:
     // style from this RenderBlock.
     RenderBlock* createAnonymousBlock(bool isFlexibleBox = false) const;
 
+    static void appendRunsForObject(int start, int end, RenderObject*, InlineBidiResolver&);    
+    static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
+
 protected:
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* child);
     void moveChildTo(RenderObject* to, RenderObjectChildList* toChildList, RenderObject* beforeChild, RenderObject* child);

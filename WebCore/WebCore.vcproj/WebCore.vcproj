@@ -27044,6 +27044,14 @@
 				RelativePath="..\rendering\break_lines.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\rendering\BidiRun.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\BidiRun.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\CounterNode.cpp"
 				>
@@ -27098,6 +27106,10 @@
 			</File>
 			<File
 				RelativePath="..\rendering\InlineFlowBox.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\rendering\InlineIterator.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,39 @@
+2010-02-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34857
+        Move InlineIterator and BidiRun into new files so subclasses can access them.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/BidiRun.cpp: Added.
+        (WebCore::BidiRun::destroy):
+        (WebCore::throw):
+        (WebCore::BidiRun::operator delete):
+        * rendering/BidiRun.h: Added.
+        (WebCore::BidiRun::BidiRun):
+        (WebCore::BidiRun::next):
+        * rendering/InlineIterator.h: Added.
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineIterator::atEnd):
+        (WebCore::InlineIterator::current):
+        (WebCore::InlineIterator::direction):
+        (WebCore::InlineBidiResolver::increment):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendRunsForObject):
+        (WebCore::RenderBlock::requiresLineBox):
+
 2010-02-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.
