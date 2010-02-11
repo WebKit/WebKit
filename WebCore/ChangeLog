@@ -1,3 +1,12 @@
+2010-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] ENABLE_RUBY flag was restored by r54649, but default value wasn't added for Qt port.
+        https://bugs.webkit.org/show_bug.cgi?id=34698
+
+        * WebCore.pri: Add ENABLE_RUBY=1 as default setting.
+
 2010-02-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
