@@ -1,3 +1,14 @@
+2010-02-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(24929): PDF page doesn't load in background tab
+
+        Reviewed by Dan Bernstein.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::startOrAddToUnstartedList):
+        Only delay loading of the plug-in if we'll kick off our own load of the
+        plug-in data later, in start().
+
 2010-02-10  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.

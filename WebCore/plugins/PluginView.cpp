@@ -201,7 +201,10 @@ bool PluginView::startOrAddToUnstartedList()
     if (!m_parentFrame->page())
         return false;
 
-    if (!m_parentFrame->page()->canStartPlugins()) {
+    // We only delay starting the plug-in if we're going to kick off the load
+    // ourselves. Otherwise, the loader will try to deliver data before we've
+    // started the plug-in.
+    if (!m_loadManually && !m_parentFrame->page()->canStartPlugins()) {
         m_parentFrame->page()->addUnstartedPlugin(this);
         m_isWaitingToStart = true;
         return true;
