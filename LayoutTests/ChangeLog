@@ -1,5 +1,14 @@
 2010-02-11  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Remove platform-specific expected results that only existed
+        because we diverged from other ports regarding enabling
+        GeoLocation (Apple ports now enable it).
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt: Removed.
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt: Removed.
+
+2010-02-11  Gustavo Noronha Silva  <gns@gnome.org>
+
         Rebaseline test after 54646, and skip tests that need results
         generated.
 
