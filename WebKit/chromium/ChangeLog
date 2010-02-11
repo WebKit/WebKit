@@ -1,3 +1,21 @@
+2010-02-11  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Ignore subsequent requests of the same profiler log
+        chunks. This eliminates emission of several instances for the same
+        heap snapshot.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34833
+
+        * src/js/ProfilerAgent.js:
+        (devtools.ProfilerAgent):
+        (devtools.ProfilerAgent.prototype.initializeProfiling):
+        (devtools.ProfilerAgent.prototype._getNextLogLines):
+        (devtools.ProfilerAgent.prototype.startProfiling):
+        (devtools.ProfilerAgent.prototype._didGetActiveProfilerModules):
+        (devtools.ProfilerAgent.prototype._didGetLogLines):
+
 2010-02-10  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Eric Seidel.

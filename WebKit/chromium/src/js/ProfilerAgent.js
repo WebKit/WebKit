@@ -33,43 +33,48 @@
  */
 
 /**
- * FIXME: change field naming style to use trailing underscore.
  * @constructor
  */
 devtools.ProfilerAgent = function()
 {
-    RemoteProfilerAgent.didGetActiveProfilerModules = this.didGetActiveProfilerModules_.bind(this);
-    RemoteProfilerAgent.didGetLogLines = this.didGetLogLines_.bind(this);
+    RemoteProfilerAgent.didGetActiveProfilerModules = this._didGetActiveProfilerModules.bind(this);
+    RemoteProfilerAgent.didGetLogLines = this._didGetLogLines.bind(this);
 
     /**
      * Active profiler modules flags.
      * @type {number}
      */
-    this.activeProfilerModules_ = devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE;
+    this._activeProfilerModules = devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE;
 
     /**
      * Interval for polling profiler state.
      * @type {number}
      */
-    this.getActiveProfilerModulesInterval_ = null;
+    this._getActiveProfilerModulesInterval = null;
 
     /**
      * Profiler log position.
      * @type {number}
      */
-    this.logPosition_ = 0;
+    this._logPosition = 0;
+
+    /**
+     * Last requested log position.
+     * @type {number}
+     */
+    this._lastRequestedLogPosition = -1;
 
     /**
      * Whether log contents retrieval must be forced next time.
      * @type {boolean}
      */
-    this.forceGetLogLines_ = false;
+    this._forceGetLogLines = false;
 
     /**
      * Profiler processor instance.
      * @type {devtools.profiler.Processor}
      */
-    this.profilerProcessor_ = new devtools.profiler.Processor();
+    this._profilerProcessor = new devtools.profiler.Processor();
 };
 
 
@@ -98,7 +103,7 @@ devtools.ProfilerAgent.prototype.setupProfilerProcessorCallbacks = function()
         '', null, false);
     var profilesSidebar = WebInspector.panels.profiles.getProfileType(WebInspector.CPUProfileType.TypeId).treeElement;
 
-    this.profilerProcessor_.setCallbacks(
+    this._profilerProcessor.setCallbacks(
         function onProfileProcessingStarted() {
             // Set visually empty string. Subtitle hiding is done via styles
             // manipulation which doesn't play well with dynamic append / removal.
@@ -129,8 +134,25 @@ devtools.ProfilerAgent.prototype.setupProfilerProcessorCallbacks = function()
 devtools.ProfilerAgent.prototype.initializeProfiling = function()
 {
     this.setupProfilerProcessorCallbacks();
-    this.forceGetLogLines_ = true;
-    this.getActiveProfilerModulesInterval_ = setInterval(function() { RemoteProfilerAgent.getActiveProfilerModules(); }, 1000);
+    this._forceGetLogLines = true;
+    this._getActiveProfilerModulesInterval = setInterval(function() { RemoteProfilerAgent.getActiveProfilerModules(); }, 1000);
+};
+
+
+/**
+ * Requests the next chunk of log lines.
+ * @param {boolean} immediately Do not postpone the request.
+ * @private
+ */
+devtools.ProfilerAgent.prototype._getNextLogLines = function(immediately)
+{
+    if (this._lastRequestedLogPosition == this._logPosition)
+        return;
+    var pos = this._lastRequestedLogPosition = this._logPosition;
+    if (immediately)
+        RemoteProfilerAgent.getLogLines(pos);
+    else
+        setTimeout(function() { RemoteProfilerAgent.getLogLines(pos); }, 500);
 };
 
 
@@ -146,9 +168,8 @@ devtools.ProfilerAgent.prototype.startProfiling = function(modules)
     devtools.DebuggerAgent.sendCommand_(cmd);
     RemoteDebuggerAgent.processDebugCommands();
     if (modules & devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_HEAP_SNAPSHOT) {
-        var pos = this.logPosition_;
         // Active modules will not change, instead, a snapshot will be logged.
-        setTimeout(function() { RemoteProfilerAgent.getLogLines(pos); }, 500);
+        this._getNextLogLines();
     }
 };
 
@@ -170,16 +191,16 @@ devtools.ProfilerAgent.prototype.stopProfiling = function(modules)
  * Handles current profiler status.
  * @param {number} modules List of active (started) modules.
  */
-devtools.ProfilerAgent.prototype.didGetActiveProfilerModules_ = function(modules)
+devtools.ProfilerAgent.prototype._didGetActiveProfilerModules = function(modules)
 {
     var profModules = devtools.ProfilerAgent.ProfilerModules;
     var profModuleNone = profModules.PROFILER_MODULE_NONE;
-    if (this.forceGetLogLines_ || (modules !== profModuleNone && this.activeProfilerModules_ === profModuleNone)) {
-        this.forceGetLogLines_ = false;
+    if (this._forceGetLogLines || (modules !== profModuleNone && this._activeProfilerModules === profModuleNone)) {
+        this._forceGetLogLines = false;
         // Start to query log data.
-        RemoteProfilerAgent.getLogLines(this.logPosition_);
+        this._getNextLogLines(true);
     }
-    this.activeProfilerModules_ = modules;
+    this._activeProfilerModules = modules;
     // Update buttons.
     WebInspector.setRecordingProfile(modules & profModules.PROFILER_MODULE_CPU);
 };
@@ -190,14 +211,17 @@ devtools.ProfilerAgent.prototype.didGetActiveProfilerModules_ = function(modules
  * @param {number} pos Current position in log.
  * @param {string} log A portion of profiler log.
  */
-devtools.ProfilerAgent.prototype.didGetLogLines_ = function(pos, log)
+devtools.ProfilerAgent.prototype._didGetLogLines = function(pos, log)
 {
-    this.logPosition_ = pos;
+    this._logPosition = pos;
     if (log.length > 0)
-        this.profilerProcessor_.processLogChunk(log);
-    else if (this.activeProfilerModules_ === devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE) {
-        // No new data and profiling is stopped---suspend log reading.
-        return;
+        this._profilerProcessor.processLogChunk(log);
+    else {
+        // Allow re-reading from the last position.
+        this._lastRequestedLogPosition = this._logPosition - 1;
+        if (this._activeProfilerModules === devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE)
+            // No new data and profiling is stopped---suspend log reading.
+            return;
     }
-    setTimeout(function() { RemoteProfilerAgent.getLogLines(pos); }, 500);
+    this._getNextLogLines();
 };
