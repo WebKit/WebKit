@@ -1,3 +1,14 @@
+2010-02-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Guard cmath using declarations in MathExtras.h on Android
+        https://bugs.webkit.org/show_bug.cgi?id=34840
+
+        Android does not provide these functions.
+
+        * wtf/MathExtras.h:
+
 2010-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
