@@ -1,3 +1,16 @@
+2010-02-10  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add dummy Frame::dragImageForSelection
+        https://bugs.webkit.org/show_bug.cgi?id=34792
+
+        Add FrameBrew.cpp which contains a dummy implementation of
+        Frame::dragImageForSelection.
+
+        * page/brew/FrameBrew.cpp: Added.
+        (WebCore::Frame::dragImageForSelection):
+
 
 2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
 
