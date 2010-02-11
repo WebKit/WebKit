@@ -4658,7 +4658,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 #endif
 
 #if ENABLE(3D_CANVAS)
-    settings->setExperimentalWebGLEnabled(true);
+    settings->setWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)
 
     if (!m_closeWindowTimer.isActive())
