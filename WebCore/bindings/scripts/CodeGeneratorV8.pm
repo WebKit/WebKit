@@ -528,7 +528,6 @@ sub GenerateDomainSafeFunctionGetter
 {
     my $function = shift;
     my $dataNode = shift;
-    my $classIndex = shift;
     my $implClassName = shift;
 
     my $className = "V8" . $dataNode->name;
@@ -546,7 +545,7 @@ sub GenerateDomainSafeFunctionGetter
     INC_STATS(\"DOM.$implClassName.$funcName._get\");
     static v8::Persistent<v8::FunctionTemplate> private_template =
         v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(${className}::GetTemplate(), info.This());
     if (holder.IsEmpty()) {
       // can only reach here by 'object.__proto__.func', and it should passed
       // domain security check already
@@ -605,7 +604,6 @@ sub GenerateNormalAttrGetter
 {
     my $attribute = shift;
     my $dataNode = shift;
-    my $classIndex = shift;
     my $implClassName = shift;
     my $interfaceName = shift;
 
@@ -663,14 +661,14 @@ END
         }
 
     } elsif ($attrExt->{"v8OnProto"} || $attrExt->{"V8DisallowShadowing"}) {
-      if ($classIndex eq "DOMWINDOW") {
+      if ($interfaceName eq "DOMWindow") {
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
       } else {
         # perform lookup first
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8${interfaceName}::GetTemplate(), info.This());
     if (holder.IsEmpty()) return v8::Handle<v8::Value>();
 END
       }
@@ -838,7 +836,6 @@ sub GenerateNormalAttrSetter
 {
     my $attribute = shift;
     my $dataNode = shift;
-    my $classIndex = shift;
     my $implClassName = shift;
     my $interfaceName = shift;
 
@@ -860,14 +857,14 @@ sub GenerateNormalAttrSetter
         push(@implContentDecls, "    $implClassName* imp = &imp_instance;\n");
 
     } elsif ($attrExt->{"v8OnProto"}) {
-      if ($classIndex eq "DOMWINDOW") {
+      if ($interfaceName eq "DOMWindow") {
         push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = info.Holder();
 END
       } else {
         # perform lookup first
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::$classIndex, info.This());
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8${interfaceName}::GetTemplate(), info.This());
     if (holder.IsEmpty()) return;
 END
       }
@@ -1503,7 +1500,7 @@ sub GenerateImplementation
         # Generate the accessor.
         if (!($attribute->signature->extendedAttributes->{"CustomGetter"} ||
             $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
-            GenerateNormalAttrGetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
+            GenerateNormalAttrGetter($attribute, $dataNode, $implClassName, $interfaceName);
         }
         if (!($attribute->signature->extendedAttributes->{"CustomSetter"} ||
             $attribute->signature->extendedAttributes->{"V8CustomSetter"})) {
@@ -1511,7 +1508,7 @@ sub GenerateImplementation
                 $dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"} || die "Replaceable attribute can only be used in interface that defines ExtendsDOMGlobalObject attribute!";
                 # GenerateReplaceableAttrSetter($implClassName);
             } elsif ($attribute->type !~ /^readonly/ && !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
-                GenerateNormalAttrSetter($attribute, $dataNode, $classIndex, $implClassName, $interfaceName);
+                GenerateNormalAttrSetter($attribute, $dataNode, $implClassName, $interfaceName);
             }
         }
     }
@@ -1542,7 +1539,7 @@ sub GenerateImplementation
         # generate an access getter that returns different function objects
         # for different calling context.
         if (($dataNode->extendedAttributes->{"CheckDomainSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-            GenerateDomainSafeFunctionGetter($function, $dataNode, $classIndex, $implClassName);
+            GenerateDomainSafeFunctionGetter($function, $dataNode, $implClassName);
         }
     }
 
@@ -1670,20 +1667,23 @@ END
     }
 
     # find the super descriptor
-    my $parentClassIndex = "INVALID_CLASS_INDEX";
+    my $parentClassTemplate = "";
     foreach (@{$dataNode->parents}) {
         my $parent = $codeGenerator->StripModule($_);
         if ($parent eq "EventTarget") { next; }
         $implIncludes{"V8${parent}.h"} = 1;
-        $parentClassIndex = uc($codeGenerator->StripModule($parent));
+        $parentClassTemplate = "V8" . $parent . "::GetTemplate()";
         last;
+    }
+    if (!$parentClassTemplate) {
+        $parentClassTemplate = "v8::Persistent<v8::FunctionTemplate>()";
     }
 
     # Generate the template configuration method
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc) {
   v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${interfaceName}\",
-      V8ClassIndex::$parentClassIndex, V8${interfaceName}::internalFieldCount,
+      $parentClassTemplate, V8${interfaceName}::internalFieldCount,
 END
     # Set up our attributes if we have them
     if ($has_attributes) {

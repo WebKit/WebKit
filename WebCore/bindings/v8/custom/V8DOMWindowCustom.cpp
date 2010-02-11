@@ -171,7 +171,7 @@ static v8::Handle<v8::Value> convertBase64(const String& str, bool encode)
 
 v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), info.This());
     if (holder.IsEmpty())
         return v8::Undefined();
 
@@ -192,7 +192,7 @@ v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> nam
 
 void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), info.This());
     if (holder.IsEmpty())
         return;
 
@@ -409,7 +409,7 @@ v8::Handle<v8::Value> V8DOMWindow::btoaCallback(const v8::Arguments& args)
 v8::Handle<v8::Value> V8DOMWindow::toStringCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.toString()");
-    v8::Handle<v8::Object> domWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, args.This());
+    v8::Handle<v8::Object> domWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), args.This());
     if (domWrapper.IsEmpty())
         return args.This()->ObjectProtoToString();
     return domWrapper->ObjectProtoToString();
@@ -801,7 +801,7 @@ v8::Handle<v8::Value> V8DOMWindow::clearIntervalCallback(const v8::Arguments& ar
 bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value> data)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::DOMWINDOW);
-    v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+    v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
     if (window.IsEmpty())
         return false;  // the frame is gone.
 
@@ -827,7 +827,7 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
 bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::DOMWINDOW);
-    v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+    v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
     if (window.IsEmpty())
         return false;
 
@@ -863,7 +863,7 @@ v8::Handle<v8::Value> toV8(DOMWindow* window)
     // necessarily the first global object associated with that DOMWindow.
     v8::Handle<v8::Context> currentContext = v8::Context::GetCurrent();
     v8::Handle<v8::Object> currentGlobal = currentContext->Global();
-    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, currentGlobal);
+    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), currentGlobal);
     if (!windowWrapper.IsEmpty()) {
         if (V8DOMWindow::toNative(windowWrapper) == window)
             return currentGlobal;

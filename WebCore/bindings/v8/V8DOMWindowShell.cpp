@@ -94,7 +94,7 @@ static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> da
     Frame* target = 0;
     switch (V8ClassIndex::FromInt(data->Int32Value())) {
     case V8ClassIndex::DOMWINDOW: {
-        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
         if (window.IsEmpty())
             return target;
 
@@ -196,7 +196,7 @@ void V8DOMWindowShell::clearForNavigation()
         clearDocumentWrapperCache();
 
         // Turn on access check on the old DOMWindow wrapper.
-        v8::Handle<v8::Object> wrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, m_global);
+        v8::Handle<v8::Object> wrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), m_global);
         ASSERT(!wrapper.IsEmpty());
         wrapper->TurnOnAccessCheck();
 

@@ -99,7 +99,7 @@ void DebuggerAgentImpl::createUtilityContext(Frame* frame, v8::Persistent<v8::Co
     // Set up the DOM window as the prototype of the new global object.
     v8::Handle<v8::Context> windowContext = V8Proxy::context(frame);
     v8::Handle<v8::Object> windowGlobal = windowContext->Global();
-    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, windowGlobal);
+    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), windowGlobal);
 
     ASSERT(V8DOMWindow::toNative(windowWrapper) == frame->domWindow());
 
