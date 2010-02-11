@@ -1,3 +1,15 @@
+2010-02-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=34185 REGRESSION: 
+        Mask not invalidating
+
+        * platform/mac/svg/custom/mask-invalidation-expected.checksum: Added.
+        * platform/mac/svg/custom/mask-invalidation-expected.png: Added.
+        * platform/mac/svg/custom/mask-invalidation-expected.txt: Added.
+        * svg/custom/mask-invalidation.svg: Added.
+
 2010-02-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Roll out r54626, because it broke GTK and Win build.

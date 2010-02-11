@@ -251,13 +251,17 @@ void SVGStyledElement::invalidateResourcesInAncestorChain() const
             break;
 
         SVGElement* element = static_cast<SVGElement*>(node);
-        if (SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element->isStyled() ? element : 0)) {
-            if (SVGResource* resource = styledElement->canvasResource(node->renderer()))
-                resource->invalidate();
-        }
+        if (SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element->isStyled() ? element : 0))
+            styledElement->invalidateCanvasResources();
 
         node = node->parentNode();
     }
+}
+
+void SVGStyledElement::invalidateCanvasResources()
+{
+    if (SVGResource* resource = canvasResource(renderer()))
+        resource->invalidate();
 }
 
 void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

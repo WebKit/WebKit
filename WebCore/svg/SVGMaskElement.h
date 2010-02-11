@@ -71,6 +71,8 @@ namespace WebCore {
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
+        virtual void invalidateCanvasResources();
+
         HashMap<const RenderObject*, RefPtr<SVGResourceMasker> > m_masker;
     };
 

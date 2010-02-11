@@ -1,3 +1,25 @@
+2010-02-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=34185 REGRESSION: 
+        Mask not invalidating
+
+        SVGMaskElement is the only class that keeps a HashMap of canvas 
+        resources rather than just a pointer to a resource. This 
+        patch makes SVGMaskElement invalidate all of its resources in the 
+        HashMap instead of just one.
+
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        (WebCore::SVGMaskElement::invalidateCanvasResources):
+        * svg/SVGMaskElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResourcesInAncestorChain):
+        (WebCore::SVGStyledElement::invalidateCanvasResources):
+        * svg/SVGStyledElement.h:
+
 2010-02-10  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by David Levin.
