@@ -59,17 +59,6 @@ void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
     m_labels.remove(listIndex);
 }
 
-void AutoFillPopupMenuClient:: selectionChanged(unsigned listIndex,
-                                                bool fireEvents) {
-    if (listIndex == static_cast<unsigned>(-1)) {
-        SuggestionsPopupMenuClient::selectionChanged(listIndex, fireEvents);
-        return;
-    }
-
-    ASSERT(listIndex >= 0 && listIndex < m_names.size());
-    setSuggestedValue(m_names[listIndex]);
-}
-
 void AutoFillPopupMenuClient::initialize(
     HTMLInputElement* textField,
     const WebVector<WebString>& names,

@@ -61,7 +61,6 @@ public:
 
     // WebCore::PopupMenuClient methods:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
-    virtual void selectionChanged(unsigned listIndex, bool fireEvents = true);
     virtual WebCore::String itemText(unsigned listIndex) const;
     virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
@@ -90,26 +89,19 @@ public:
 protected:
     void initialize(WebCore::HTMLInputElement* textField,
                     int defaultSuggestionIndex);
-    void setInitialSuggestion();
 
     int getSelectedIndex() const { return m_selectedIndex; }
     void setSelectedIndex(int index) { m_selectedIndex = index; }
-
-    void setSuggestedValue(const WebString& suggestion);
 
     WebViewImpl* getWebView() const;
     WebCore::HTMLInputElement* getTextField() const { return m_textField.get(); }
 
 private:
     WebCore::RenderStyle* textFieldStyle() const;
-    void resetLastSuggestion();
 
     RefPtr<WebCore::HTMLInputElement> m_textField;
     int m_selectedIndex;
-    WebCore::String m_typedFieldValue;
     OwnPtr<WebCore::PopupMenuStyle> m_style;
-    typedef HashMap<WebCore::String, WebCore::String> FieldValuesMap;
-    OwnPtr<FieldValuesMap> m_lastFieldValues;
 };
 
 } // namespace WebKit

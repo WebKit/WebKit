@@ -50,9 +50,6 @@ public:
     virtual WebString getSuggestion(unsigned listIndex) const;
     virtual void removeSuggestionAtIndex(unsigned listIndex);
 
-    // WebCore::PopupMenuClient implementation:
-    virtual void selectionChanged(unsigned listIndex, bool fireEvents);
-
     void initialize(WebCore::HTMLInputElement*,
                     const WebVector<WebString>& names,
                     const WebVector<WebString>& labels,

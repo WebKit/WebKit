@@ -1,3 +1,21 @@
+2010-02-10  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove code from SuggestionsPopup that was removed in a
+        previous revision of AutocompletePopup and accidentally added back in
+        the refactoring.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34818
+
+        * src/AutoFillPopupMenuClient.cpp:
+        * src/AutoFillPopupMenuClient.h: Added property svn:eol-style.
+        * src/SuggestionsPopupMenuClient.cpp:
+        (WebKit::SuggestionsPopupMenuClient::popupDidHide):
+        (WebKit::SuggestionsPopupMenuClient::setTextFromItem):
+        (WebKit::SuggestionsPopupMenuClient::initialize):
+        * src/SuggestionsPopupMenuClient.h:
+
 2010-02-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

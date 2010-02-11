@@ -69,20 +69,6 @@ void SuggestionsPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvent
         static_cast<HTMLInputElement*>(m_textField.get()));
 }
 
-void SuggestionsPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
-{
-    if (listIndex != static_cast<unsigned>(-1)) {
-        const WebString& suggestion = getSuggestion(listIndex);
-        setSuggestedValue(suggestion);
-    } else {
-        m_textField->setValue(m_typedFieldValue);
-        if (m_lastFieldValues->contains(m_textField->name()))
-            m_lastFieldValues->set(m_textField->name(), m_typedFieldValue);
-        else
-            m_lastFieldValues->add(m_textField->name(), m_typedFieldValue);
-    }
-}
-
 String SuggestionsPopupMenuClient::itemText(unsigned listIndex) const
 {
     return getSuggestion(listIndex);
@@ -120,8 +106,6 @@ int SuggestionsPopupMenuClient::clientPaddingRight() const
 
 void SuggestionsPopupMenuClient::popupDidHide()
 {
-    m_textField->setValue(m_typedFieldValue);
-    resetLastSuggestion();
     WebViewImpl* webView = getWebView();
     if (webView)
         webView->suggestionsPopupDidHide();
@@ -130,15 +114,6 @@ void SuggestionsPopupMenuClient::popupDidHide()
 void SuggestionsPopupMenuClient::setTextFromItem(unsigned listIndex)
 {
     m_textField->setValue(getSuggestion(listIndex));
-    resetLastSuggestion();
-}
-
-void SuggestionsPopupMenuClient::resetLastSuggestion()
-{
-    if (m_lastFieldValues->contains(m_textField->name()))
-        m_lastFieldValues->set(m_textField->name(), m_textField->value());
-    else
-        m_lastFieldValues->add(m_textField->name(), m_textField->value());
 }
 
 FontSelector* SuggestionsPopupMenuClient::fontSelector() const
@@ -175,14 +150,8 @@ RenderStyle* SuggestionsPopupMenuClient::textFieldStyle() const
 void SuggestionsPopupMenuClient::initialize(HTMLInputElement* textField,
                                             int defaultSuggestionIndex)
 {
-    if (!m_lastFieldValues)
-        m_lastFieldValues.set(new FieldValuesMap);
-
     m_textField = textField;
-    m_typedFieldValue = textField->value();
     m_selectedIndex = defaultSuggestionIndex;
-
-    setInitialSuggestion();
 
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
@@ -199,51 +168,6 @@ void SuggestionsPopupMenuClient::initialize(HTMLInputElement* textField,
     m_style.set(new PopupMenuStyle(Color::black, Color::white, font, true,
                                    Length(WebCore::Fixed),
                                    textField->renderer()->style()->direction()));
-}
-
-void SuggestionsPopupMenuClient::setInitialSuggestion()
-{
-    if (!getSuggestionsCount() || !m_textField->name().length() || !m_typedFieldValue.length())
-        return;
-
-    int newIndex = m_selectedIndex >= 0 ? m_selectedIndex : 0;
-    const String& suggestion = getSuggestion(newIndex);
-    bool hasPreviousValue = m_lastFieldValues->contains(m_textField->name());
-
-    String prevValue;
-    if (hasPreviousValue)
-        prevValue = m_lastFieldValues->get(m_textField->name());
-
-    if (!hasPreviousValue || m_typedFieldValue.length() > m_lastFieldValues->get(m_textField->name()).length()) {
-        if (suggestion.startsWith(m_typedFieldValue))
-            m_selectedIndex = newIndex;
-
-        int start = 0;
-        String newSuggestion = suggestion;
-        if (suggestion.startsWith(m_typedFieldValue, false)) {
-            newSuggestion = m_typedFieldValue;
-            if (suggestion.length() > m_typedFieldValue.length()) {
-                newSuggestion.append(suggestion.substring(m_typedFieldValue.length(),
-                    suggestion.length() - m_typedFieldValue.length()));
-            }
-            start = m_typedFieldValue.length();
-        }
-
-        m_textField->setSuggestedValue(newSuggestion);
-        m_textField->setSelectionRange(start, newSuggestion.length());
-    }
-
-    if (hasPreviousValue)
-        m_lastFieldValues->set(m_textField->name(), m_typedFieldValue);
-    else
-        m_lastFieldValues->add(m_textField->name(), m_typedFieldValue);
-}
-
-void SuggestionsPopupMenuClient::setSuggestedValue(const WebString& suggestion)
-{
-    m_textField->setSuggestedValue(suggestion);
-    m_textField->setSelectionRange(m_typedFieldValue.length(),
-                                   suggestion.length());
 }
 
 WebViewImpl* SuggestionsPopupMenuClient::getWebView() const
