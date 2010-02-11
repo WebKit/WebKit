@@ -113,6 +113,13 @@ public:
 
     bool isHashTableDeletedValue() const { return m_fontState == DELETED; }
     
+    bool roundsGlyphAdvances() const { return false; }
+    
+#if OS(WINDOWS)
+    bool useGDI() const;
+    HFONT hfont() const;
+#endif
+
 #ifndef NDEBUG
     String description() const;
 #endif

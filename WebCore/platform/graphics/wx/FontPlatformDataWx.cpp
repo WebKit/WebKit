@@ -129,4 +129,16 @@ String FontPlatformData::description() const
 }
 #endif
 
+#if OS(WINDOWS)
+bool FontPlatformData::useGDI() const
+{
+    return true;
+}
+
+HFONT FontPlatformData::hfont() const
+{
+    return static_cast<HFONT>(m_font->font()->GetHFONT());
+}
+#endif
+
 }

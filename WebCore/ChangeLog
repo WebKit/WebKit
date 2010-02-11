@@ -1,5 +1,44 @@
-2010-02-10  Kwang Yul Seo  <skyul@company100.net>
+2010-02-10  Kevin Watters  <kevinwatters@gmail.com>
 
+        Reviewed by Kevin Ollivier.
+
+        [wx] Add Windows complex text support and Mac support for containsCharacters.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34759
+        
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::roundsGlyphAdvances):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::useGDI):
+        (WebCore::FontPlatformData::hfont):
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::canReturnFallbackFontsForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        (WebCore::SimpleFontData::scriptFontProperties):
+        (WebCore::SimpleFontData::initGDIFont):
+        (WebCore::SimpleFontData::platformCommonDestroy):
+        (WebCore::SimpleFontData::widthForGDIGlyph):
+        * platform/wx/wxcode/fontprops.h:
+        * platform/wx/wxcode/gtk/fontprops.cpp:
+        (wxFontContainsCharacters):
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontContainsCharacters):
+        * platform/wx/wxcode/win/fontprops.cpp:
+        (wxFontContainsCharacters):
+        * platform/wx/wxcode/win/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+        * wscript:
+
+2010-02-10  Kwang Yul Seo  <skyul@company100.net>
         Reviewed by Eric Seidel.
 
         [BREWMP] Add dummy Frame::dragImageForSelection
@@ -10,7 +49,6 @@
 
         * page/brew/FrameBrew.cpp: Added.
         (WebCore::Frame::dragImageForSelection):
-
 
 2010-02-10  Kevin Ollivier  <kevino@theolliviers.com>
 

@@ -48,3 +48,4 @@ private:
         
 };
 
+bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int length);

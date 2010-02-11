@@ -122,7 +122,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
 
     // draw text with optional character widths array
     wxString string = wxString((wxChar*)(&glyphs[from]), numGlyphs);
-    ::ExtTextOut(hdc, x, y, 0, NULL, string.c_str(), string.length(), spacing);
+    ::ExtTextOut(hdc, x, y,  ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphs), numGlyphs, spacing);
 
     ::SetBkMode(hdc, TRANSPARENT);
 

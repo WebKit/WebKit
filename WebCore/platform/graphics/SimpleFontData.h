@@ -35,7 +35,8 @@
 typedef struct OpaqueATSUStyle* ATSUStyle;
 #endif
 
-#if PLATFORM(WIN) && !OS(WINCE)
+#if (PLATFORM(WIN) && !OS(WINCE)) \
+    || (OS(WINDOWS) && PLATFORM(WX))
 #include <usp10.h>
 #endif
 
@@ -86,7 +87,7 @@ public:
     float spaceWidth() const { return m_spaceWidth; }
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
 
-#if PLATFORM(CG) || PLATFORM(CAIRO)
+#if PLATFORM(CG) || PLATFORM(CAIRO) || (OS(WINDOWS) && PLATFORM(WX))
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
@@ -138,7 +139,7 @@ public:
     QFont getQtFont() const { return m_platformData.font(); }
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
     bool isSystemFont() const { return m_isSystemFont; }
 #if !OS(WINCE) // disable unused members to save space
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
@@ -162,7 +163,8 @@ private:
 
     void commonInit();
 
-#if PLATFORM(WIN) && !OS(WINCE)
+#if (PLATFORM(WIN) && !OS(WINCE)) \
+    || (OS(WINDOWS) && PLATFORM(WX))
     void initGDIFont();
     void platformCommonDestroy();
     float widthForGDIGlyph(Glyph glyph) const;
@@ -198,7 +200,7 @@ private:
 
     mutable SimpleFontData* m_smallCapsFontData;
 
-#if PLATFORM(CG) || PLATFORM(CAIRO)
+#if PLATFORM(CG) || PLATFORM(CAIRO) || (OS(WINDOWS) && PLATFORM(WX))
     float m_syntheticBoldOffset;
 #endif
 
@@ -224,7 +226,7 @@ private:
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
     bool m_isSystemFont;
 #if !OS(WINCE) // disable unused members to save space
     mutable SCRIPT_CACHE m_scriptCache;

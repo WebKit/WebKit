@@ -276,7 +276,9 @@ def common_configure(conf):
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
         # Apple does not ship the ICU headers with Mac OS X, so WebKit includes a copy of 3.2 headers
-        conf.env['CPPPATH_ICU'] = [os.path.join(jscore_dir, 'icu'), os.path.join(webcore_dir, 'icu')]
+        conf.env.append_value('CPPPATH_JSCORE', os.path.join(jscore_dir, 'icu'))
+        
+        conf.env.append_value('CPPPATH_WEBCORE', os.path.join(webcore_dir, 'icu'))
     
         conf.env.append_value('CPPPATH', wklibs_dir)
         conf.env.append_value('LIBPATH', wklibs_dir)
@@ -335,7 +337,7 @@ def common_configure(conf):
         conf.env.append_value('LIB', [
             'kernel32', 'user32','gdi32','comdlg32','winspool','winmm',
             'shell32', 'shlwapi', 'comctl32', 'ole32', 'oleaut32', 'uuid', 'advapi32', 
-            'wsock32', 'gdiplus', 'version'])
+            'wsock32', 'gdiplus', 'usp10','version'])
 
         conf.env['LIB_ICU'] = ['icudt', 'icule', 'iculx', 'icuuc', 'icuin', 'icuio', 'icutu']
         

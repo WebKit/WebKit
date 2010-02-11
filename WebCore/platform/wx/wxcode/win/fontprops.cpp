@@ -24,14 +24,20 @@
  */
 
 #include "config.h"
-#include <wx/defs.h>
-#include <wx/gdicmn.h>
+// this needs to be included before fontprops.h for UChar* to be defined.
+#include <wtf/unicode/Unicode.h>
+
 #include "fontprops.h"
 #include "math.h"
 #include "MathExtras.h"
 
+#include <wx/defs.h>
+#include <wx/gdicmn.h>
 #include <wx/wx.h>
 #include "wx/msw/private.h"
+
+#include <mlang.h>
+#include <usp10.h>
 
 inline long  my_round(double x)
 {
@@ -58,6 +64,46 @@ m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
     }
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
+}
+
+bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int length)
+{
+    // FIXME: Microsoft documentation seems to imply that characters can be output using a given font and DC
+    // merely by testing code page intersection.  This seems suspect though.  Can't a font only partially
+    // cover a given code page?
+    static IMultiLanguage *multiLanguage;
+    if (!multiLanguage) {
+        if (CoCreateInstance(CLSID_CMultiLanguage, 0, CLSCTX_ALL, IID_IMultiLanguage, (void**)&multiLanguage) != S_OK)
+            return true;
+    }
+
+    static IMLangFontLink2* langFontLink;
+    if (!langFontLink) {
+        if (multiLanguage->QueryInterface(&langFontLink) != S_OK)
+            return true;
+    }
+
+    HDC dc = GetDC(0);
+    
+    DWORD acpCodePages;
+    langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages);
+
+    DWORD fontCodePages;
+    langFontLink->GetFontCodePages(dc, static_cast<HFONT>(font.GetHFONT()), &fontCodePages);
+
+    DWORD actualCodePages;
+    long numCharactersProcessed;
+    long offset = 0;
+    while (offset < length) {
+        langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &numCharactersProcessed);
+        if ((actualCodePages & fontCodePages))
+            return false;
+        offset += numCharactersProcessed;
+    }
+
+    ReleaseDC(0, dc);
+
+    return true;
 }
 
 void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxCoord *height,

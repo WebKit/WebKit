@@ -72,6 +72,8 @@ def build(bld):
     full_dirs = get_dirs_for_features(jscore_dir, features=[build_port], dirs=jscore_dirs)
 
     includes = common_includes + full_dirs
+    if sys.platform.startswith('darwin'):
+        includes.append(os.path.join(jscore_dir, 'icu'))
 
     # 1. A simple program
     jscore = bld.new_task_gen(

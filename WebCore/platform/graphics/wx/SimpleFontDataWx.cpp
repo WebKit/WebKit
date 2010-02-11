@@ -55,6 +55,13 @@ void SimpleFontData::platformInit()
         m_unitsPerEm = 1; // FIXME!
         m_lineGap = props.GetLineGap();
     }
+
+#if OS(WINDOWS)
+    m_scriptCache = 0;
+    m_scriptFontProperties = 0;
+    m_isSystemFont = false;
+    m_syntheticBoldOffset = 0.0f;
+#endif
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -68,6 +75,16 @@ void SimpleFontData::platformDestroy()
 {
     delete m_smallCapsFontData;
     m_smallCapsFontData = 0;
+    
+#if OS(WINDOWS)
+    if (m_scriptFontProperties) {
+        delete m_scriptFontProperties;
+        m_scriptFontProperties = 0;
+    }
+
+    if (m_scriptCache)
+        ScriptFreeCache(&m_scriptCache);
+#endif
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
@@ -84,7 +101,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     // FIXME: We will need to implement this to load non-ASCII encoding sites
-    return true;
+    return wxFontContainsCharacters(*m_platformData.font(), characters, length);
 }
 
 void SimpleFontData::determinePitch()
@@ -97,10 +114,44 @@ void SimpleFontData::determinePitch()
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
+#if __WXMSW__
+    // under Windows / wxMSW we currently always use GDI fonts.
+    return widthForGDIGlyph(glyph);
+#else
     // TODO: fix this! Make GetTextExtents a method of wxFont in 2.9
     int width = 10;
     GetTextExtent(*m_platformData.font(), (wxChar)glyph, &width, NULL);
     return width;
+#endif
 }
+
+#if OS(WINDOWS)
+SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const
+{
+    // AFAICT this is never called even by the Win port anymore.
+    return 0;
+}
+
+void SimpleFontData::initGDIFont()
+{
+    // unused by wx port
+}
+
+void SimpleFontData::platformCommonDestroy()
+{
+    // unused by wx port
+}
+
+float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
+{
+    HDC hdc = GetDC(0);
+    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
+    int width;
+    GetCharWidthI(hdc, glyph, 1, 0, &width);
+    SelectObject(hdc, oldFont);
+    ReleaseDC(0, hdc);
+    return width;
+}
+#endif
 
 }
