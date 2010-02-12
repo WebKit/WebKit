@@ -52,6 +52,7 @@ from webkitpy.steps.steps_unittest import *
 from webkitpy.steps.closebugforlanddiff_unittest import *
 from webkitpy.steps.updatechangelogswithreview_unittests import *
 from webkitpy.style.unittests import * # for check-webkit-style
+from webkitpy.user_unittest import *
 from webkitpy.webkit_logging_unittest import *
 from webkitpy.webkitport_unittest import *
 

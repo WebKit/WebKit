@@ -45,6 +45,7 @@ from webkitpy.grammar import pluralize, join_with_separators
 from webkitpy.webkit_logging import error, log
 from webkitpy.mock import Mock
 from webkitpy.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.user import User
 
 class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     name = "commit-message"
@@ -423,7 +424,7 @@ class CreateBug(AbstractDeclarativeCommand):
         bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
-        bug_title = raw_input("Bug title: ")
+        bug_title = User.prompt("Bug title: ")
         print "Bug comment (hit ^D on blank line to end):"
         lines = sys.stdin.readlines()
         try:

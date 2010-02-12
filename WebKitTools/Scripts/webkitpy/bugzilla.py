@@ -39,6 +39,7 @@ from datetime import datetime # used in timestamp()
 from webkitpy.webkit_logging import error, log
 from webkitpy.committers import CommitterList
 from webkitpy.credentials import Credentials
+from webkitpy.user import User
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
 # so this import should always succeed.
@@ -559,7 +560,7 @@ class Bugzilla(object):
         for name in components:
             i += 1
             log("%2d. %s" % (i, name))
-        result = int(raw_input("Enter a number: ")) - 1
+        result = int(User.prompt("Enter a number: ")) - 1
         return components[result]
 
     def _check_create_bug_response(self, response_html):

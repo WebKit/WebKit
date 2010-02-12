@@ -1,3 +1,20 @@
+2010-02-11  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34830
+
+        Makes method User.prompt static and adds the parameter repeat
+        to prompt the user up to repeat times.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/bugzilla.py: Substituted method User.prompt for method raw_input.
+        * Scripts/webkitpy/commands/upload.py: Ditto
+        * Scripts/webkitpy/credentials.py: Ditto
+        * Scripts/mock_bugzillatool.py: Updated prototype of MockUser.prompt to match User.prompt.
+        * Scripts/webkitpy/user.py: Made method prompt static and added parameter repeat.
+        * Scripts/webkitpy/user_unittest.py: Added.
+
 2010-02-10  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

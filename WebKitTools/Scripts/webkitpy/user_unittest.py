@@ -1,19 +1,19 @@
-# Copyright (c) 2009, Google Inc. All rights reserved.
-# 
+# Copyright (C) 2010 Research in Motion Ltd. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
-#     * Redistributions of source code must retain the above copyright
+#
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Research in Motion Ltd. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,38 +26,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import shlex
-import subprocess
-import webbrowser
+import unittest
+from webkitpy.user import User
 
-class User(object):
-    @staticmethod
-    def prompt(message, repeat=1, raw_input=raw_input):
-        response = None
-        while (repeat and not response):
-            repeat -= 1
-            response = raw_input(message)
-        return response
+class UserTest(unittest.TestCase):
 
-    def edit(self, files):
-        editor = os.environ.get("EDITOR") or "vi"
-        args = shlex.split(editor)
-        subprocess.call(args + files)
+    example_user_response = "example user response"
 
-    def page(self, message):
-        pager = os.environ.get("PAGER") or "less"
-        try:
-            child_process = subprocess.Popen([pager], stdin=subprocess.PIPE)
-            child_process.communicate(input=message)
-        except IOError, e:
-            pass
+    def test_prompt_repeat(self):
+        self.repeatsRemaining = 2
+        def mock_raw_input(message):
+            self.repeatsRemaining -= 1
+            if not self.repeatsRemaining:
+                return UserTest.example_user_response
+            return None
+        self.assertEqual(User.prompt("input", repeat=self.repeatsRemaining, raw_input=mock_raw_input), UserTest.example_user_response)
 
-    def confirm(self, message=None):
-        if not message:
-            message = "Continue?"
-        response = raw_input("%s [Y/n]: " % message)
-        return not response or response.lower() == "y"
+    def test_prompt_when_exceeded_repeats(self):
+        self.repeatsRemaining = 2
+        def mock_raw_input(message):
+            self.repeatsRemaining -= 1
+            return None
+        self.assertEqual(User.prompt("input", repeat=self.repeatsRemaining, raw_input=mock_raw_input), None)
 
-    def open_url(self, url):
-        webbrowser.open(url)
+if __name__ == '__main__':
+    unittest.main()

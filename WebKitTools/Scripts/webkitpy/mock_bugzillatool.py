@@ -321,7 +321,8 @@ class MockSCM(Mock):
 
 class MockUser(object):
 
-    def prompt(self, message):
+    @staticmethod
+    def prompt(message, repeat=1, raw_input=raw_input):
         return "Mock user response"
 
     def edit(self, files):

@@ -37,6 +37,7 @@ import re
 from webkitpy.executive import Executive, ScriptError
 from webkitpy.webkit_logging import log
 from webkitpy.scm import Git
+from webkitpy.user import User
 
 
 class Credentials(object):
@@ -124,7 +125,7 @@ class Credentials(object):
             (username, password) = self._credentials_from_keychain(username)
 
         if not username:
-            username = raw_input("%s login: " % self.host)
+            username = User.prompt("%s login: " % self.host)
         if not password:
             password = getpass.getpass("%s password for %s: " % (self.host,
                                                                  username))
