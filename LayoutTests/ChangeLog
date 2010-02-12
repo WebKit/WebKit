@@ -1,3 +1,62 @@
+2010-02-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Repaint bug on Text selection in foreignObject
+        https://bugs.webkit.org/show_bug.cgi?id=16939
+
+        Update SVG tests that contain <foreignObject> - now that it's reporting proper repaint rects.
+        Some of our tests use <foreignObject> to draw XHTML text (logging facility) - all these tests
+        were missing width/height attributes on <foreignObject>, fix that otherwhise they won't show
+        up anymore - as expected.
+
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt:
+        * platform/mac/svg/custom/foreign-object-skew-expected.txt:
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/mac/svg/custom/getPresentationAttribute-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.checksum:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.png:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.checksum:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.png:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/mac/svg/hixie/mixed/008-expected.txt:
+        * platform/mac/svg/overflow/overflow-on-foreignObject-expected.checksum: Added.
+        * platform/mac/svg/overflow/overflow-on-foreignObject-expected.png: Added.
+        * platform/mac/svg/overflow/overflow-on-foreignObject-expected.txt: Added.
+        * platform/mac/svg/text/foreignObject-repaint-expected.txt:
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.checksum: Added.
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.png: Added.
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.txt: Added.
+        * svg/custom/baseval-animval-equality.svg:
+        * svg/custom/dominant-baseline-hanging.svg:
+        * svg/custom/dynamic-svg-document-creation.svg:
+        * svg/custom/fill-SVGPaint-interface.svg:
+        * svg/custom/getPresentationAttribute.svg:
+        * svg/overflow/overflow-on-foreignObject.svg: Added.
+        * svg/text/foreignObject-text-clipping-bug.xml: Added.
+
 2010-02-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

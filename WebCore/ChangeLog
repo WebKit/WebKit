@@ -1,3 +1,48 @@
+2010-02-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Repaint bug on Text selection in foreignObject
+        https://bugs.webkit.org/show_bug.cgi?id=16939
+
+        Tests: svg/overflow/overflow-on-foreignObject.svg
+               svg/text/foreignObject-text-clipping-bug.xml
+
+        Selecting text contained in <foreignObject> leads to artefacts. Same for zooming/panning.
+        RenderForeignObject contained old legacy code returning FloatRect() for repaintRectInLocalCoordinates,
+        which is obviously wrong. Fixing that leads to even more problems, as the underlying RenderBlock
+        did not reflect the x/y translation set on the <foreignObject>. This is problematic, as laying out
+        positioned objects in the XHTML subtree depends on proper size/location values of the frameRect.
+
+        Correctly clip on overflow="hidden". overflow="scroll" & friends are not yet supported, see lengthy
+        comment in RenderSVGBlock why we either need RenderLayer for RenderForeignObject or need to rework
+        overflow handling to avoid RenderLayer.
+
+        SVGForeignObjectElement uses a hacky custom solution to synchronize CSS width/height properties with
+        the SVG width/height attributes. Remove all of that code and just implement calcWidth/calcHeight in
+        RenderForeignObject, grabbing the right values from SVGForeignObjectElement::width/height upon layout.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint): Clip properly to the actual bounds of the foreignObject, respecting that x/y translation is handled by RenderBlock now.
+        (WebCore::RenderForeignObject::clippedOverflowRectForRepaint): Added missing function, forward to SVGRenderBase just like all other SVG renderers.
+        (WebCore::RenderForeignObject::computeRectForRepaint): Remove manual implementation, forward to SVGRenderBase.
+        (WebCore::RenderForeignObject::localToParentTransform): Respect x/y translation here _after_ applying localTransform().
+        (WebCore::RenderForeignObject::calcWidth): Override RenderBlock::calcWidth to grab width() from SVGForeignObjectElement.
+        (WebCore::RenderForeignObject::calcHeight): Override RenderBlock::calcHeight to grab height() from SVGForeignObjectElement.
+        (WebCore::RenderForeignObject::layout): Calculate viewport once and cache it. Push x/y location down to RenderBlock - analogous to RenderSVGText.
+        (WebCore::RenderForeignObject::nodeAtFloatPoint): Adapt to x/y translation changes (map through localTransform, not localToParentTransform). Respect overflow clipping.
+        (WebCore::RenderForeignObject::mapLocalToContainer): Set useTransforms=true, to avoid assertions when selecting text in foreign objects.
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::objectBoundingBox): Return cached m_viewport.
+        (WebCore::RenderForeignObject::strokeBoundingBox): Ditto.
+        (WebCore::RenderForeignObject::repaintRectInLocalCoordinates): Ditto.
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::setStyle): Cleanup code, move setHasOverflowClip() overrides in updateBoxModelInfoFromStyle where it belongs.
+        (WebCore::RenderSVGBlock::updateBoxModelInfoFromStyle): Added to force setting setHasOverflowClip(false).
+        * rendering/RenderSVGBlock.h:
+        * svg/SVGForeignObjectElement.cpp: Kill a lot of custom code - it was just plain wrong to utilize CSS to push width/height information down to RenderBlock.
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+
 2010-02-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -27,7 +27,7 @@
     <text x="2" font-size="20" dominant-baseline="hanging">This is hanging from the top-left corner</text>
   </g>
 
-  <foreignObject x="10" y="45" width="380">
+  <foreignObject x="10" y="45" width="380" height="150">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <body>
         <p>

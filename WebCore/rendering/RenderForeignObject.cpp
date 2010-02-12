@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved. 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +28,9 @@
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"
-#include "SVGLength.h"
 #include "SVGRenderSupport.h"
-#include "SVGTransformList.h"
+#include "SVGSVGElement.h"
+#include "TransformState.h"
 
 namespace WebCore {
 
@@ -38,22 +39,18 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 {
 }
 
-FloatPoint RenderForeignObject::translationForAttributes() const
-{
-    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
-    return FloatPoint(foreign->x().value(foreign), foreign->y().value(foreign));
-}
-
 void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled())
         return;
 
-    // Copy the paint info so that modifications to the damage rect do not affect callers
-    PaintInfo childPaintInfo = paintInfo;
+    PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
-    applyTransformToPaintInfo(childPaintInfo, localToParentTransform());
-    childPaintInfo.context->clip(clipRect(0, 0));
+
+    applyTransformToPaintInfo(childPaintInfo, localTransform());
+
+    if (SVGRenderBase::isOverflowHidden(this))
+        childPaintInfo.context->clip(m_viewport);
 
     float opacity = style()->opacity();
     if (opacity < 1.0f)
@@ -67,32 +64,33 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
     childPaintInfo.context->restore();
 }
 
-FloatRect RenderForeignObject::objectBoundingBox() const
+IntRect RenderForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
-    return borderBoxRect();
+    return SVGRenderBase::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-FloatRect RenderForeignObject::repaintRectInLocalCoordinates() const
+void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
-    // HACK: to maintain historical LayoutTest results for now.
-    // RenderForeignObject is a RenderBlock (not a RenderSVGModelObject) so this
-    // should not affect repaint correctness.  But it should really be:
-    // return borderBoxRect();
-    return FloatRect();
-}
-
-void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
-{
-    rect = localToParentTransform().mapRect(rect);
-    style()->svgStyle()->inflateForShadow(rect);
-    RenderBlock::computeRectForRepaint(repaintContainer, rect, fixed);
+    SVGRenderBase::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
 const AffineTransform& RenderForeignObject::localToParentTransform() const
 {
-    FloatPoint attributeTranslation(translationForAttributes());
-    m_localToParentTransform = localTransform().translateRight(attributeTranslation.x(), attributeTranslation.y());
+    m_localToParentTransform = localTransform();
+    m_localToParentTransform.translate(m_viewport.x(), m_viewport.y());
     return m_localToParentTransform;
+}
+
+void RenderForeignObject::calcWidth()
+{
+    // FIXME: Investigate in size rounding issues
+    setWidth(static_cast<int>(roundf(m_viewport.width())));
+}
+
+void RenderForeignObject::calcHeight()
+{
+    // FIXME: Investigate in size rounding issues
+    setHeight(static_cast<int>(roundf(m_viewport.height())));
 }
 
 void RenderForeignObject::layout()
@@ -101,18 +99,36 @@ void RenderForeignObject::layout()
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    m_localTransform = static_cast<SVGForeignObjectElement*>(node())->animatedLocalTransform();
 
+    SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
+    m_localTransform = foreign->animatedLocalTransform();
+
+    // Cache viewport boundaries
+    FloatPoint viewportLocation(foreign->x().value(foreign), foreign->y().value(foreign));
+    m_viewport = FloatRect(viewportLocation, FloatSize(foreign->width().value(foreign), foreign->height().value(foreign)));
+
+    // Set box origin to the foreignObject x/y translation, so positioned objects in XHTML content get correct
+    // positions. A regular RenderBoxModelObject would pull this information from RenderStyle - in SVG those
+    // properties are ignored for non <svg> elements, so we mimic what happens when specifying them through CSS.
+
+    // FIXME: Investigate in location rounding issues - only affects RenderForeignObject & RenderSVGText
+    setLocation(roundedIntPoint(viewportLocation));
     RenderBlock::layout();
-    repainter.repaintAfterLayout();
 
+    repainter.repaintAfterLayout();
     setNeedsLayout(false);
 }
 
 bool RenderForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
-    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
-    return RenderBlock::nodeAtPoint(request, result, static_cast<int>(localPoint.x()), static_cast<int>(localPoint.y()), 0, 0, hitTestAction);
+    FloatPoint localPoint = localTransform().inverse().mapPoint(pointInParent);
+
+    // Early exit if local point is not contained in clipped viewport area
+    if (SVGRenderBase::isOverflowHidden(this) && !m_viewport.contains(localPoint))
+        return false;
+
+    IntPoint roundedLocalPoint = roundedIntPoint(localPoint);
+    return RenderBlock::nodeAtPoint(request, result, roundedLocalPoint.x(), roundedLocalPoint.y(), 0, 0, hitTestAction);
 }
 
 bool RenderForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
@@ -121,11 +137,14 @@ bool RenderForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int
     return false;
 }
 
-void RenderForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
+void RenderForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
+    // When crawling up the hierachy starting from foreignObject child content, useTransforms may not be set to true.
+    if (!useTransforms)
+        useTransforms = true;
     SVGRenderBase::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
 }
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#endif

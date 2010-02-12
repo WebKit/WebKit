@@ -1,8 +1,7 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,9 +39,7 @@ void RenderSVGBlock::setStyle(PassRefPtr<RenderStyle> style)
     RefPtr<RenderStyle> useStyle = style;
 
     // SVG text layout code expects us to be a block-level style element.   
-    if (useStyle->display() == NONE)
-        setChildrenInline(false);
-    else if (useStyle->isDisplayInlineType()) {
+    if (useStyle->isDisplayInlineType()) {
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(useStyle.get());
         newStyle->setDisplay(BLOCK);
@@ -50,14 +47,27 @@ void RenderSVGBlock::setStyle(PassRefPtr<RenderStyle> style)
     }
 
     RenderBlock::setStyle(useStyle.release());
-    setReplaced(false);
+}
 
-    //FIXME: Once overflow rules are supported by SVG we should
-    //probably map the CSS overflow rules rather than just ignoring
-    //them
+void RenderSVGBlock::updateBoxModelInfoFromStyle()
+{
+    RenderBlock::updateBoxModelInfoFromStyle();
+
+    // RenderSVGlock, used by Render(SVGText|ForeignObject), is not allowed to call setHasOverflowClip(true).
+    // RenderBlock assumes a layer to be present when the overflow clip functionality is requested. Both
+    // Render(SVGText|ForeignObject) return 'false' on 'requiresLayer'. Fine for RenderSVGText.
+    //
+    // If we want to support overflow rules for <foreignObject> we can choose between two solutions:
+    // a) make RenderForeignObject require layers and SVG layer aware
+    // b) reactor overflow logic out of RenderLayer (as suggested by dhyatt), which is a large task
+    //
+    // Until this is resolved, disable overflow support. Opera/FF don't support it as well at the moment (Feb 2010).
+    //
+    // Note: This does NOT affect overflow handling on outer/inner <svg> elements - this is handled
+    // manually by RenderSVGRoot - which owns the documents enclosing root layer and thus works fine.
     setHasOverflowClip(false);
 }
 
 }
 
-#endif // ENABLE(SVG)
+#endif

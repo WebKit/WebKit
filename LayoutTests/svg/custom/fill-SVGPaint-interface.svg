@@ -23,7 +23,7 @@
 </script>
 This test tests that the type of the fill css attribute is correctly reported as SVGPaint.
 See <a href="http://bugs.webkit.org/show_bug.cgi?id=14064">Bug 14064</a>.
-<foreignObject>
+<foreignObject width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml">
         <div id="log">
 This test tests that the type of the fill css attribute is correctly reported as SVGPaint.

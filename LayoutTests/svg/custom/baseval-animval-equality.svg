@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <svg xmlns="http://www.w3.org/2000/svg" id="svg" width="600" height="400">
-  <foreignObject>
+  <foreignObject width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <div id="log">
         This tests to make sure that baseVal and animVal are tied when animation is not enabled:

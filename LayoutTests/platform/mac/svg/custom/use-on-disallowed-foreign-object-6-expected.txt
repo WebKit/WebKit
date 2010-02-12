@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGViewportContainer {svg} at (0,0) size 0x0
-        RenderForeignObject {foreignObject} at (0,0) size 580x380
+      RenderSVGViewportContainer {svg} at (86,87) size 714x513
+        RenderForeignObject {foreignObject} at (10,10) size 580x380
           RenderBlock {xhtml:div} at (0,0) size 580x18
             RenderText {#text} at (0,0) size 244x18
               text run at (0,0) width 244: "You should only see this string ONCE"
-    RenderForeignObject {foreignObject} at (0,0) size 580x380
+    RenderForeignObject {foreignObject} at (10,10) size 580x380
       RenderBlock {xhtml:div} at (0,0) size 580x18
         RenderText {#text} at (0,0) size 244x18
           text run at (0,0) width 244: "You should only see this string ONCE"

@@ -31,7 +31,7 @@
 </script>
 This test tests that getPresentationAttribute succefully returns SVG presentation attributes, but not ones that are defined in the inline style and not non SVG css properties like border.
 See <a href="http://bugs.webkit.org/show_bug.cgi?id=13976">Bug 13976</a>.
-<foreignObject>
+<foreignObject width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml">
         <div id="log">
 This test tests that getPresentationAttribute succesfully returns SVG presentation attributes, but not ones that are defined in the inline style and not non SVG css properties like border.

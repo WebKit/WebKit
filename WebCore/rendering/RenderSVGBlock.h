@@ -1,6 +1,4 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +20,8 @@
 
 #ifndef RenderSVGBlock_h
 #define RenderSVGBlock_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "RenderBlock.h"
 #include "SVGRenderSupport.h"
 
@@ -39,8 +37,9 @@ public:
 
 private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
+    virtual void updateBoxModelInfoFromStyle();
 };
 
 }
-#endif // ENABLE(SVG)
-#endif // !RenderSVGBlock_h
+#endif
+#endif

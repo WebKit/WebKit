@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <svg onload="init()" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-<foreignObject>
+<foreignObject width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml">
         <div id="log">
             This tests assures dynamic SVGDocument creation via DOMParser interface works.
