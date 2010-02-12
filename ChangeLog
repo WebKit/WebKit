@@ -1,3 +1,13 @@
+2010-02-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Manually add support for the install target on Symbian.
+
+        This is required to copy the headers over the ones in Qt.
+
+        * WebKit.pro:
+
 2010-02-11  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Gustavo Noronha Silva.

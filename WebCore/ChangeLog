@@ -2,6 +2,16 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Manually add support for the install target on Symbian.
+
+        This is required to copy the headers over the ones in Qt.
+
+        * WebCore.pro:
+
+2010-02-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Minor fixes on QtWebKit headers generation.
 
         - Adds QtWebKit to the generated headers destination path
