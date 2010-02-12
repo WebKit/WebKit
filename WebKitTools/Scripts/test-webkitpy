@@ -43,6 +43,7 @@ from webkitpy.committers_unittest import *
 from webkitpy.credentials_unittest import *
 from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
+from webkitpy.grammar_unittest import *
 from webkitpy.multicommandtool_unittest import *
 from webkitpy.networktransaction_unittest import *
 from webkitpy.patchcollection_unittest import *

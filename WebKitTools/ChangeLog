@@ -2,6 +2,24 @@
 
         Reviewed by Adam Barth.
 
+        Need a command to clear r+ on obsolete patches in the pending-commit queue.
+        https://bugs.webkit.org/show_bug.cgi?id=34863
+
+        Unfortunately our http://webkit.org/pending-commit bugzilla query is not
+        smart enough to ignore obsolete patches, so bugs show up there which are
+        still open, but do not have patches ready for landing on them.
+        This new command "clean-pending-commit" will remove r+ from obsolete patches
+        in the pending-commit list.
+
+        * Scripts/test-webkitpy: Add grammar_unittest
+        * Scripts/webkitpy/commands/upload.py: Add clean-pending-commit and make assign-to-committer ignore cq+'d patches.
+        * Scripts/webkitpy/grammar.py: Add join_with_separators
+        * Scripts/webkitpy/grammar_unittest.py: Added.
+
+2010-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         run-chromium-webkit-tests fails random pixel tests on Mac
         https://bugs.webkit.org/show_bug.cgi?id=34862
 

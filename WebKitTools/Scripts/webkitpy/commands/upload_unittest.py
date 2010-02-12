@@ -40,9 +40,12 @@ class UploadCommandsTest(CommandsTest):
         expected_stdout = "Mock message\n"
         self.assert_execute_outputs(CommitMessageForCurrentDiff(), [], expected_stdout=expected_stdout, tool=tool)
 
+    def test_clean_pending_commit(self):
+        self.assert_execute_outputs(CleanPendingCommit(), [])
+
     def test_assign_to_committer(self):
         tool = MockBugzillaTool()
-        expected_stderr = "Bug 77 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
+        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nBug 77 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
         self.assert_execute_outputs(AssignToCommitter(), [], expected_stderr=expected_stderr, tool=tool)
         tool.bugs.reassign_bug.assert_called_with(42, "eric@webkit.org", "Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.")
 
