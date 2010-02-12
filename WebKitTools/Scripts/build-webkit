@@ -36,6 +36,7 @@ use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
+use webkitperl::features;
 use POSIX;
 
 sub formatBuildTime($);
@@ -322,7 +323,7 @@ if (isGtk()) {
 }
 
 # Force re-link of existing libraries if different than expected
-removeLibraryDependingOnSVG("WebCore", $svgSupport);
+removeLibraryDependingOnFeature("SVG", "WebCore", $svgSupport);
 
 if (isInspectorFrontend()) {
     exit exitStatus(copyInspectorFrontendFiles());

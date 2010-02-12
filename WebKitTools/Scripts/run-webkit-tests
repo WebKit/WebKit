@@ -67,6 +67,7 @@ use Time::HiRes qw(time usleep);
 use List::Util 'shuffle';
 
 use lib $FindBin::Bin;
+use webkitperl::features;
 use webkitperl::httpd;
 use webkitdirs;
 use VCSUtils;
@@ -420,12 +421,12 @@ my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources script-tests);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
 
-if (!checkWebCoreMathMLSupport(0)) { 
+if (!checkWebCoreFeatureSupport("MathML", 0)) {
     $ignoredDirectories{'mathml'} = 1;
 }
 
-# FIXME: We should fix webkitdirs.pm:hasSVG/WMLSupport() to do the correct feature detection for Cygwin.
-if (checkWebCoreSVGSupport(0)) { 
+# FIXME: We should fix webkitperl/features.pm:hasFeature() to do the correct feature detection for Cygwin.
+if (checkWebCoreFeatureSupport("SVG", 0)) {
     $supportedFileExtensions{'svg'} = 1;
 } elsif (isCygwin()) {
     $supportedFileExtensions{'svg'} = 1;
@@ -443,20 +444,20 @@ if (!$testMedia) {
     $ignoredDirectories{'http/tests/media'} = 1;
 }
 
-if (!checkWebCoreAcceleratedCompositingSupport(0)) {
+if (!checkWebCoreFeatureSupport("Accelerated Compositing", 0)) {
     $ignoredDirectories{'compositing'} = 1;
 }
 
-if (!checkWebCore3DRenderingSupport(0)) {
+if (!checkWebCoreFeatureSupport("3D Rendering", 0)) {
     $ignoredDirectories{'animations/3d'} = 1;
     $ignoredDirectories{'transforms/3d'} = 1;
 }
 
-if (!checkWebCore3DCanvasSupport(0)) {
+if (!checkWebCoreFeatureSupport("3D Canvas", 0)) {
     $ignoredDirectories{'fast/canvas/webgl'} = 1;
 }
 
-if (checkWebCoreWMLSupport(0)) { 
+if (checkWebCoreFeatureSupport("WML", 0)) {
     $supportedFileExtensions{'wml'} = 1;
 } else {
     $ignoredDirectories{'http/tests/wml'} = 1;
@@ -464,12 +465,8 @@ if (checkWebCoreWMLSupport(0)) {
     $ignoredDirectories{'wml'} = 1;
 }
 
-if (!checkWebCoreXHTMLMPSupport(0)) {
+if (!checkWebCoreFeatureSupport("XHTMLMP", 0)) {
     $ignoredDirectories{'fast/xhtmlmp'} = 1;
-}
-
-if (!checkWebCoreWCSSSupport(0)) {
-    $ignoredDirectories{'fast/wcss'} = 1;
 }
 
 processIgnoreTests($ignoreTests, "ignore-tests") if $ignoreTests;

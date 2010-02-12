@@ -1,3 +1,19 @@
+2010-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkitdirs.pm has a crazy amount of duplicated feature detection code
+        https://bugs.webkit.org/show_bug.cgi?id=34869
+
+        In editing run-webkit-tests I found these tests were
+        skipped on all platforms.  Removing them since no one is running them.
+        If we ever need them we can dig them out of SVN history.
+
+        * fast/wcss/marquee-dir.xhtml: Removed.
+        * fast/wcss/marquee-loop.xhtml: Removed.
+        * fast/wcss/marquee-speed.xhtml: Removed.
+        * fast/wcss/marquee-style.xhtml: Removed.
+
 2010-02-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

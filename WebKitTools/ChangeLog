@@ -1,3 +1,16 @@
+2010-02-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkitdirs.pm has a crazy amount of duplicated feature detection code
+        https://bugs.webkit.org/show_bug.cgi?id=34869
+
+        * Scripts/build-webkit: Use the new hotness.
+        * Scripts/run-webkit-tests: ditto
+        * Scripts/webkitdirs.pm: Remove a bunch of bad duplicate code.
+        * Scripts/webkitperl/features.pm: Added.
+         - Simplified the 10 methods in webkitdirs.pm into 2 exported methods in this new file.
+
 2010-02-11  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.
