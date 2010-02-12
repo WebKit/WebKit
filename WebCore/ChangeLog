@@ -1,3 +1,28 @@
+2010-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7609268> REGRESSION (r50301): Problem selecting text in a Devanagari website
+        https://bugs.webkit.org/show_bug.cgi?id=34865
+
+        Test: fast/text/glyph-reordering.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::ComplexTextRun::setIsNonMonotonic): Added. Sets m_isMonotonic
+        and populates m_glyphEndOffsets with the end offsets of each glyph’s corresponding character range.
+        (WebCore::ComplexTextController::advance): For non-monotonic runs, use endOffsetAt() to get
+        glyphs’ end offsets.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Check for monotonicity and call
+        setIsNonMonotonic() if needed.
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::lastIndexAt): Added this getter.
+        (WebCore::ComplexTextController::ComplexTextRun::isMonotonic): Ditto.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Initialize m_isMonotonic.
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Ditto.
+
 2010-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by David Levin.

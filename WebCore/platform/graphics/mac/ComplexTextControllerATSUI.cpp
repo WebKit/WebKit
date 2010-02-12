@@ -145,8 +145,8 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(ATSUTextLayout atsuTextLay
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
-    , m_ltr(ltr)
     , m_directionalOverride(directionalOverride)
+    , m_isMonotonic(true)
 {
     OSStatus status;
 

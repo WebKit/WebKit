@@ -1,0 +1,26 @@
+<p>
+    This tests text selection in complex scripts where glyph reordering occurs.
+</p>
+<div id="target" style="font-size: 48px;">&#x0939;&#x093F;&#x0928;&#x094D;&#x0926;&#x0940;</div>
+<div id="reference" style="font-size: 48px;">&#x093F;&#x200C;&#x0939;&#x0928;&#x094D;&#x0926;&#x0940;</div>
+<p id="result">Test did not run</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var target = document.getElementById("target");
+
+    var textNode = target.firstChild;
+    var range = document.createRange();
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, 2);
+    var width = range.getClientRects()[0].width;
+
+    var reference = document.getElementById("reference");
+    textNode = reference.firstChild;
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, 3);
+    var referenceWidth = range.getClientRects()[0].width;
+
+    document.getElementById("result").innerText = width === referenceWidth ? "PASS" : "FAIL: width was " + width + " instead of " + referenceWidth;
+</script>

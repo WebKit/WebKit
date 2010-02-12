@@ -316,6 +316,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
+    , m_isMonotonic(true)
 {
 #if USE(CORE_TEXT) && USE(ATSUI)
     shouldUseATSUIAPI() ? createTextRunFromFontDataATSUI(ltr) : createTextRunFromFontDataCoreText(ltr);
@@ -324,6 +325,30 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* font
 #elif USE(CORE_TEXT)
     createTextRunFromFontDataCoreText(ltr);
 #endif
+}
+
+void ComplexTextController::ComplexTextRun::setIsNonMonotonic()
+{
+    ASSERT(m_isMonotonic);
+    m_isMonotonic = false;
+
+    Vector<bool, 64> mappedIndices(m_stringLength);
+    for (size_t i = 0; i < m_glyphCount; ++i) {
+        ASSERT(indexAt(i) < static_cast<CFIndex>(m_stringLength));
+        mappedIndices[indexAt(i)] = true;
+    }
+
+    m_glyphEndOffsets.grow(m_glyphCount);
+    for (size_t i = 0; i < m_glyphCount; ++i) {
+        CFIndex nextMappedIndex = m_stringLength;
+        for (size_t j = indexAt(i) + 1; j < m_stringLength; ++j) {
+            if (mappedIndices[j]) {
+                nextMappedIndex = j;
+                break;
+            }
+        }
+        m_glyphEndOffsets[i] = nextMappedIndex;
+    }
 }
 
 void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
@@ -348,10 +373,13 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         while (m_glyphInCurrentRun < glyphCount) {
             unsigned glyphStartOffset = complexTextRun.indexAt(g);
             unsigned glyphEndOffset;
-            if (ltr)
-                glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? complexTextRun.indexAt(g + 1) : complexTextRun.stringLength());
-            else
-                glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? complexTextRun.indexAt(g - 1) : complexTextRun.stringLength());
+            if (complexTextRun.isMonotonic()) {
+                if (ltr)
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g + 1 < glyphCount ? complexTextRun.indexAt(g + 1) : complexTextRun.stringLength());
+                else
+                    glyphEndOffset = max<unsigned>(glyphStartOffset, g > 0 ? complexTextRun.indexAt(g - 1) : complexTextRun.stringLength());
+            } else
+                glyphEndOffset = complexTextRun.endOffsetAt(g);
 
             CGSize adjustedAdvance = m_adjustedAdvances[k];
 
@@ -393,7 +421,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 {
     size_t runCount = m_complexTextRuns.size();
     for (size_t r = 0; r < runCount; ++r) {
-        const ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
+        ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
         const SimpleFontData* fontData = complexTextRun.fontData();
 
@@ -405,10 +433,18 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         CGFloat roundedSpaceWidth = roundCGFloat(fontData->spaceWidth());
         bool roundsAdvances = !m_font.isPrinterFont() && fontData->platformData().roundsGlyphAdvances();
         bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_padding) && !m_run.spacingDisabled();
-
+        CFIndex lastCharacterIndex = m_run.ltr() ? numeric_limits<CFIndex>::min() : numeric_limits<CFIndex>::max();
+        bool isMonotonic = true;
 
         for (unsigned i = 0; i < glyphCount; i++) {
             CFIndex characterIndex = complexTextRun.indexAt(i);
+            if (m_run.ltr()) {
+                if (characterIndex < lastCharacterIndex)
+                    isMonotonic = false;
+            } else {
+                if (characterIndex > lastCharacterIndex)
+                    isMonotonic = false;
+            }
             UChar ch = *(cp + characterIndex);
             bool lastGlyph = lastRun && i + 1 == glyphCount;
             UChar nextCh;
@@ -500,7 +536,10 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             advance.height *= -1;
             m_adjustedAdvances.append(advance);
             m_adjustedGlyphs.append(glyph);
+            lastCharacterIndex = characterIndex;
         }
+        if (!isMonotonic)
+            complexTextRun.setIsNonMonotonic();
     }
 }
 

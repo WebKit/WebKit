@@ -1,3 +1,13 @@
+2010-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7609268> REGRESSION (r50301): Problem selecting text in a Devanagari website
+        https://bugs.webkit.org/show_bug.cgi?id=34865
+
+        * fast/text/glyph-reordering-expected.txt: Added.
+        * fast/text/glyph-reordering.html: Added.
+
 2010-02-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed trivial fix.

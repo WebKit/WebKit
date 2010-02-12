@@ -88,8 +88,11 @@ private:
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_stringLength; }
         ALWAYS_INLINE CFIndex indexAt(size_t i) const;
+        CFIndex endOffsetAt(size_t i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
         const CGGlyph* glyphs() const { return m_glyphs; }
         const CGSize* advances() const { return m_advances; }
+        bool isMonotonic() const { return m_isMonotonic; }
+        void setIsNonMonotonic();
 
     private:
 #if USE(CORE_TEXT)
@@ -124,14 +127,15 @@ private:
 #if USE(ATSUI)
         Vector<CFIndex, 64> m_atsuiIndices;
 #endif
+        Vector<CFIndex, 64> m_glyphEndOffsets;
         Vector<CGGlyph, 64> m_glyphsVector;
         const CGGlyph* m_glyphs;
         Vector<CGSize, 64> m_advancesVector;
         const CGSize* m_advances;
 #if USE(ATSUI)
-        bool m_ltr;
         bool m_directionalOverride;
 #endif
+        bool m_isMonotonic;
     };
 
     void collectComplexTextRuns();
