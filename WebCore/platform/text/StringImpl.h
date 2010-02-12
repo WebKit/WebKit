@@ -26,8 +26,8 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnFastMallocPtr.h>
-#include <wtf/PtrAndFlags.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StringHashFunctions.h>
 #include <wtf/Vector.h>
@@ -58,25 +58,33 @@ enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
 
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 
-class StringImpl : public RefCounted<StringImpl> {
+class StringImpl : public Noncopyable {
     friend struct CStringTranslator;
     friend struct HashAndCharactersTranslator;
     friend struct UCharBufferTranslator;
 private:
     friend class ThreadGlobalData;
-    StringImpl();
-    
-    // This constructor adopts the UChar* without copying the buffer.
-    StringImpl(const UChar*, unsigned length);
 
-    // This constructor assumes that 'this' was allocated with a UChar buffer of size 'length' at the end.
+    enum BufferOwnership {
+        BufferInternal,
+        BufferOwned,
+        BufferShared,
+    };
+
+    typedef CrossThreadRefCounted<OwnFastMallocPtr<UChar> > SharedUChar;
+
+    // Used to create the empty string (""), automatically hashes.
+    StringImpl();
+    // Create a StringImpl with internal storage (BufferInternal)
     StringImpl(unsigned length);
+    // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
+    StringImpl(const UChar*, unsigned length);
+    // Create a StringImpl using a shared buffer (BufferShared)
+    StringImpl(const UChar*, unsigned length, PassRefPtr<SharedUChar>);
 
     // For use only by AtomicString's XXXTranslator helpers.
     void setHash(unsigned hash) { ASSERT(!m_hash); m_hash = hash; }
     
-    typedef CrossThreadRefCounted<OwnFastMallocPtr<UChar> > SharedUChar;
-
 public:
     ~StringImpl();
 
@@ -99,16 +107,20 @@ public:
     const UChar* characters() { return m_data; }
     unsigned length() { return m_length; }
 
-    bool hasTerminatingNullCharacter() const { return m_sharedBufferAndFlags.isFlagSet(HasTerminatingNullCharacter); }
+    bool hasTerminatingNullCharacter() const { return m_refCountAndFlags & s_refCountFlagHasTerminatingNullCharacter; }
 
-    bool inTable() const { return m_sharedBufferAndFlags.isFlagSet(InTable); }
-    void setInTable() { return m_sharedBufferAndFlags.setFlag(InTable); }
+    bool inTable() const { return m_refCountAndFlags & s_refCountFlagInTable; }
+    void setInTable() { m_refCountAndFlags |= s_refCountFlagInTable; }
 
     unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
     inline static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
     inline static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
-    
+
+    StringImpl* ref() { m_refCountAndFlags += s_refCountIncrement; return this; }
+    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & s_refCountMask)) delete this; }
+    ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & s_refCountMask) == s_refCountIncrement; }
+
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
     // Makes a deep copy. Helpful only if you need to use a String on another thread
@@ -178,31 +190,27 @@ public:
     operator NSString*();
 #endif
 
-    void operator delete(void*);
-
 private:
-    // Allocation from a custom buffer is only allowed internally to avoid
-    // mismatched allocators. Callers should use create().
-    void* operator new(size_t size);
-    void* operator new(size_t size, void* address);
+    using Noncopyable::operator new;
+    void* operator new(size_t, void* inPlace) { ASSERT(inPlace); return inPlace; }
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
     
     // The StringImpl struct and its data may be allocated within a single heap block.
     // In this case, the m_data pointer is an "internal buffer", and does not need to be deallocated.
-    bool bufferIsInternal() { return m_data == reinterpret_cast<const UChar*>(this + 1); }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
 
-    enum StringImplFlags {
-        HasTerminatingNullCharacter,
-        InTable,
-    };
+    static const unsigned s_refCountMask = 0xFFFFFFF0;
+    static const unsigned s_refCountIncrement = 0x10;
+    static const unsigned s_refCountFlagHasTerminatingNullCharacter = 0x8;
+    static const unsigned s_refCountFlagInTable = 0x4;
+    static const unsigned s_refCountMaskBufferOwnership = 0x3;
 
     const UChar* m_data;
+    SharedUChar* m_sharedBuffer;
     unsigned m_length;
+    unsigned m_refCountAndFlags;
     mutable unsigned m_hash;
-    PtrAndFlags<SharedUChar, StringImplFlags> m_sharedBufferAndFlags;
-    // There is a fictitious variable-length UChar array at the end, which is used
-    // as the internal buffer by the createUninitialized and create methods.
 };
 
 bool equal(StringImpl*, StringImpl*);
