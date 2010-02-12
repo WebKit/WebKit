@@ -75,12 +75,14 @@ PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, int length)
 SharedUChar* UStringImpl::baseSharedBuffer()
 {
     ASSERT((bufferOwnership() == BufferShared)
-        || ((bufferOwnership() == BufferOwned) && !m_dataBuffer.asPtr<void*>()));
+        || ((bufferOwnership() == BufferOwned) && !m_buffer));
 
-    if (bufferOwnership() != BufferShared)
-        m_dataBuffer = UntypedPtrAndBitfield(SharedUChar::create(new OwnFastMallocPtr<UChar>(m_data)).releaseRef(), BufferShared);
+    if (bufferOwnership() != BufferShared) {
+        m_refCountAndFlags = (m_refCountAndFlags & ~s_refCountMaskBufferOwnership) | BufferShared;
+        m_bufferShared = SharedUChar::create(new OwnFastMallocPtr<UChar>(m_data)).releaseRef();
+    }
 
-    return m_dataBuffer.asPtr<SharedUChar*>();
+    return m_bufferShared;
 }
 
 SharedUChar* UStringImpl::sharedBuffer()
@@ -108,10 +110,10 @@ UStringImpl::~UStringImpl()
         if (bufferOwnership() == BufferOwned)
             fastFree(m_data);
         else if (bufferOwnership() == BufferSubstring)
-            m_dataBuffer.asPtr<UStringImpl*>()->deref();
+            m_bufferSubstring->deref();
         else {
             ASSERT(bufferOwnership() == BufferShared);
-            m_dataBuffer.asPtr<SharedUChar*>()->deref();
+            m_bufferShared->deref();
         }
     }
 }
