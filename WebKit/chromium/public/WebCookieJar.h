@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,43 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CookieJar.h"
+#ifndef WebCookieJar_h
+#define WebCookieJar_h
 
-#include "Cookie.h"
-#include "ChromiumBridge.h"
-#include "Document.h"
+namespace WebKit {
+class WebString;
+class WebURL;
+struct WebCookie;
+template <typename T> class WebVector;
 
-namespace WebCore {
+class WebCookieJar {
+public:
+    virtual void setCookie(const WebURL&, const WebURL& firstPartyForCookies, const WebString& cookie) { }
+    virtual WebString cookies(const WebURL&, const WebURL& firstPartyForCookies) { return WebString(); }
+    virtual WebString cookieRequestHeaderFieldValue(const WebURL&, const WebURL& firstPartyForCookies) { return WebString(); }
+    virtual void rawCookies(const WebURL&, const WebURL& firstPartyForCookies, WebVector<WebCookie>&) { }
+    virtual void deleteCookie(const WebURL&, const WebString& cookieName) { }
+    virtual bool cookiesEnabled(const WebURL&, const WebURL& firstPartyForCookies) { return true; }
 
-void setCookies(Document* document, const KURL& url, const String& value)
-{
-    ChromiumBridge::setCookies(document, url, value);
-}
+protected:
+    ~WebCookieJar() { }
+};
 
-String cookies(const Document* document, const KURL& url)
-{
-    return ChromiumBridge::cookies(document, url);
-}
+} // namespace WebKit
 
-String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
-{
-    return ChromiumBridge::cookieRequestHeaderFieldValue(document, url);
-}
-
-bool cookiesEnabled(const Document* document)
-{
-    return ChromiumBridge::cookiesEnabled(document);
-}
-
-bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
-{
-    return ChromiumBridge::rawCookies(document, url, rawCookies);
-}
-
-void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
-{
-    return ChromiumBridge::deleteCookie(document, url, cookieName);
-}
-
-} // namespace WebCore
+#endif

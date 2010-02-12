@@ -92,6 +92,7 @@
                 'public/WebConsoleMessage.h',
                 'public/WebContextMenuData.h',
                 'public/WebCookie.h',
+                'public/WebCookieJar.h',
                 'public/WebCrossOriginPreflightResultCache.h',
                 'public/WebCString.h',
                 'public/WebCursorInfo.h',
