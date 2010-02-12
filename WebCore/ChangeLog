@@ -1,3 +1,29 @@
+2010-02-11  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix two issues on maxLength.
+        https://bugs.webkit.org/show_bug.cgi?id=34783
+
+        - ValidityState.tooLong behavior was inconsistent with UIs of
+        <input> and <textarea>. tooLong checked Unicode code point length
+        though the UIs checks grapheme cluster length.
+
+        - Setting HTMLTextAreaElement::value didn't update the dirty flag.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::tooLong): Use numGraphemeClusters() instead of length().
+        * html/HTMLTextAreaElement.cpp:
+          Rename setValue() to setNonDirtyValue(), and introduce setValue()
+          which calls setNonDirtyValue() and sets the dirty flag.
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        (WebCore::HTMLTextAreaElement::reset):
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::setNonDirtyValue):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        (WebCore::HTMLTextAreaElement::tooLong): Use numGraphemeClusters() instead of length().
+        * html/HTMLTextAreaElement.h:
+
 2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

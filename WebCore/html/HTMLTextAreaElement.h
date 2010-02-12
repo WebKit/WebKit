@@ -94,6 +94,7 @@ private:
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
     void updateValue() const;
+    void setNonDirtyValue(const String&);
 
     virtual bool supportsPlaceholder() const { return true; }
     virtual bool isEmptyValue() const { return value().isEmpty(); }

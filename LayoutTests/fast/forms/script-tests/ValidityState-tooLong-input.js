@@ -3,10 +3,11 @@ description('Tests for tooLong flag with &lt;input> elements.');
 var input = document.createElement('input');
 document.body.appendChild(input);
 
-// No maxlength and no value
+debug('No maxlength and no value');
 shouldBeFalse('input.validity.tooLong');
 
-// Non-dirty value.
+debug('');
+debug('Non-dirty value');
 input.setAttribute('value', 'abcde');
 input.maxLength = 3;
 shouldBe('input.value.length', '5');
@@ -16,7 +17,8 @@ input.setAttribute('value', 'abcdef');
 shouldBe('input.value.length', '6');
 shouldBeFalse('input.validity.tooLong');
 
-// Dirty value and longer than maxLength.
+debug('');
+debug('Dirty value and longer than maxLength');
 input = document.createElement('input');
 document.body.appendChild(input);
 input.setAttribute('value', 'abcde');
@@ -30,11 +32,28 @@ shouldBeTrue('input.validity.tooLong');
 document.execCommand('delete');
 shouldBeFalse('input.validity.tooLong');
 
-// Sets a value via DOM property.
+debug('');
+debug('Sets a value via DOM property');
+input.maxLength = 3;
 input.value = 'abcde';
 shouldBeTrue('input.validity.tooLong');
 
-// Change the type with a too long value.
+debug('');
+debug('Grapheme length is not greater than maxLength though character length is greater');
+// fancyX should be treated as 1 grapheme.
+// U+0305 COMBINING OVERLINE
+// U+0332 COMBINING LOW LINE
+var fancyX = "x\u0305\u0332";
+input = document.createElement('input');
+document.body.appendChild(input);
+input.value = fancyX; // 3 characters, 1 grapheme clusters.
+input.maxLength = 1;
+shouldBeFalse('input.validity.tooLong');
+
+debug('');
+debug('Change the type with a too long value');
+input.maxLength = 3;
+input.value = 'abcde';
 input.type = 'search';
 shouldBeTrue('input.validity.tooLong');
 
