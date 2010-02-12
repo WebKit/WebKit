@@ -84,7 +84,7 @@ unsigned long WorkerThreadableWebSocketChannel::bufferedAmount() const
 
 void WorkerThreadableWebSocketChannel::close()
 {
-    if (!m_bridge)
+    if (m_bridge)
         m_bridge->close();
 }
 

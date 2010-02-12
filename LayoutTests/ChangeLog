@@ -1,3 +1,17 @@
+2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket in Worker failed to close
+        https://bugs.webkit.org/show_bug.cgi?id=34785
+
+        * websocket/tests/workers/close-in-shared-worker-expected.txt: Added.
+        * websocket/tests/workers/close-in-shared-worker.html: Added.
+        * websocket/tests/workers/close-in-worker-expected.txt: Added.
+        * websocket/tests/workers/close-in-worker.html: Added.
+        * websocket/tests/workers/resources/close-in-worker.js: Added.
+        * websocket/tests/workers/resources/echo_wsh.py: Copied from LayoutTests/websocket/tests/echo_wsh.py.
+
 2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Oops, move mac-lepard results for mask-invalidation.svg into the correct folder.

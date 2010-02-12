@@ -1,3 +1,16 @@
+2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket in Worker failed to close
+        https://bugs.webkit.org/show_bug.cgi?id=34785
+
+        Tests: websocket/tests/workers/close-in-shared-worker.html
+               websocket/tests/workers/close-in-worker.html
+
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::close):
+
 2010-02-11  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
