@@ -1,6 +1,7 @@
 #!/usr/bin/perl -wT
 use strict;
 
+print "Content-Type: text/html\r\n";
 print "Set-Cookie: WK-websocket-test=1\r\n";
 print "Set-Cookie: WK-websocket-test-httponly=1; HttpOnly\r\n";
 print "\r\n";

@@ -1,3 +1,10 @@
+2010-02-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed trivial fix.
+        Set Content-Type header.
+
+        * websocket/tests/cookies/httponly-cookie.pl:
+
 2010-02-12  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
