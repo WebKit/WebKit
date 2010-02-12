@@ -186,7 +186,7 @@ inline float deg2turn(float d) { return d / 360.0f; }
 inline float rad2grad(float r) { return r * 200.0f / piFloat; }
 inline float grad2rad(float g) { return g * piFloat / 200.0f; }
 
-#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(ANDROID)
+#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(ANDROID) && !COMPILER(WINSCW)
 using std::isfinite;
 using std::isinf;
 using std::isnan;

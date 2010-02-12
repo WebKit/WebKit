@@ -1,3 +1,11 @@
+2010-02-12  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Don't import the cmath functions from std:: for WINSCW.
+
+        * wtf/MathExtras.h:
+
 2010-02-12  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Adam Barth.
