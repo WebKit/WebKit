@@ -1,3 +1,14 @@
+2010-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Removed unneeded custom implementation of isDescendantOf.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView shouldClipOutPlugin]): Use the
+        -[NSView isDescendantOf:] method instead of our own method
+        named superviewsHaveSuperviews.
+
 2010-02-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
