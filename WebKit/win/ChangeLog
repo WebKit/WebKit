@@ -1,3 +1,17 @@
+2010-02-12  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        onmouseout fired when moving over tooltip on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=16794
+        <rdar://5762038>.
+        
+        Add WS_EX_TRANSPARENT to out tooltip HWND so it isn't subject to hit testing, and when
+        you mouse over the tooltip, it doesn't send a mouseout to the web content.
+
+        * WebView.cpp:
+        (WebView::initializeToolTipWindow): Add WS_EX_TRANSPARENT.
+
 2010-02-10  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
