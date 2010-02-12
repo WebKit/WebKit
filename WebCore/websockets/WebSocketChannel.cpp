@@ -57,6 +57,7 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_handshake(url, protocol, context)
     , m_buffer(0)
     , m_bufferSize(0)
+    , m_unhandledBufferSize(0)
 {
 }
 
@@ -77,18 +78,22 @@ void WebSocketChannel::connect()
 bool WebSocketChannel::send(const String& msg)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, msg.utf8().data());
-    ASSERT(m_handle);
     Vector<char> buf;
     buf.append('\0');  // frame type
     buf.append(msg.utf8().data(), msg.utf8().length());
     buf.append('\xff');  // frame end
+    if (!m_handle) {
+        m_unhandledBufferSize += buf.size();
+        return false;
+    }
     return m_handle->send(buf.data(), buf.size());
 }
 
 unsigned long WebSocketChannel::bufferedAmount() const
 {
     LOG(Network, "WebSocketChannel %p bufferedAmount", this);
-    ASSERT(m_handle);
+    if (!m_handle)
+        return m_unhandledBufferSize;
     return m_handle->bufferedAmount();
 }
 
@@ -121,14 +126,14 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
 void WebSocketChannel::didClose(SocketStreamHandle* handle)
 {
     LOG(Network, "WebSocketChannel %p didClose", this);
-    ASSERT_UNUSED(handle, handle == m_handle || !m_handle);
+    ASSERT(handle == m_handle || !m_handle);
     if (m_handle) {
-        unsigned long unhandledBufferedAmount = m_handle->bufferedAmount();
+        m_unhandledBufferSize = handle->bufferedAmount();
         WebSocketChannelClient* client = m_client;
         m_client = 0;
         m_handle = 0;
         if (client)
-            client->didClose(unhandledBufferedAmount);
+            client->didClose();
     }
     deref();
 }
