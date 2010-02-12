@@ -1,3 +1,12 @@
+2010-02-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Add ENABLE_RUBY to the feature defines gypi
+        https://bugs.webkit.org/show_bug.cgi?id=34841
+
+        * features.gypi:
+
 2010-02-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
