@@ -70,16 +70,6 @@
     return PDFDocumentClass;
 }
 
-+ (void)initialize
-{
-    if (self != [WebPDFRepresentation class])
-        return;
-
-    Class pdfDocumentClass = [self PDFDocumentClass];
-    if (pdfDocumentClass)
-        addWebPDFDocumentExtras(pdfDocumentClass);
-}
-
 - (void)setDataSource:(WebDataSource *)dataSource;
 {
 }
@@ -136,7 +126,7 @@
     PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:data];
     [view setPDFDocument:doc];
 
-    NSArray *scripts = [doc _web_allScripts];
+    NSArray *scripts = allScriptsInPDFDocument(doc);
     [doc release];
     doc = nil;
 

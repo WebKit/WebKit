@@ -1,3 +1,18 @@
+2010-02-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7615234> REGRESSION (r48586): Loading an HTML page causes
+        PDFKit to be loaded
+
+        * WebView/WebPDFDocumentExtras.h: Removed the category declaration and
+        addWebPDFDocumentExtras(). Declare allScriptsInPDFDocument().
+        * WebView/WebPDFDocumentExtras.mm:
+        (allScriptsInPDFDocument): Changed the -_web_allScripts method into this function.
+        * WebView/WebPDFRepresentation.mm: Removed +initialize.
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]): Use
+        allScriptsInPDFDocument() instead of -_web_allScripts.
+
 2010-02-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -23,10 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <PDFKit/PDFDocument.h>
+@class PDFDocument;
 
-@interface PDFDocument (WebPDFDocumentExtras)
-- (NSArray *)_web_allScripts;
-@end
-
-void addWebPDFDocumentExtras(Class);
+NSArray *allScriptsInPDFDocument(PDFDocument *);

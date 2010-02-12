@@ -68,10 +68,10 @@ static void getAllValuesInPDFNameTree(CGPDFDictionaryRef tree, Vector<CGPDFObjec
     appendValuesInPDFNameSubtreeToVector(tree, allValues);
 }
 
-static NSArray *web_PDFDocumentAllScripts(id self, SEL _cmd)
+NSArray *allScriptsInPDFDocument(PDFDocument *document)
 {
     NSMutableArray *scripts = [NSMutableArray array];
-    CGPDFDocumentRef pdfDocument = [self documentRef];
+    CGPDFDocumentRef pdfDocument = [document documentRef];
     if (!pdfDocument)
         return scripts;
 
@@ -128,14 +128,4 @@ static NSArray *web_PDFDocumentAllScripts(id self, SEL _cmd)
     }
 
     return scripts;
-}
-
-void addWebPDFDocumentExtras(Class pdfDocumentClass)
-{
-#ifndef BUILDING_ON_TIGER
-    class_addMethod(pdfDocumentClass, @selector(_web_allScripts), (IMP)web_PDFDocumentAllScripts, "@@:");
-#else
-    static struct objc_method_list methodList = { 0, 1, { @selector(_web_allScripts), (char*)"@@:", (IMP)web_PDFDocumentAllScripts } };
-    class_addMethods(pdfDocumentClass, &methodList);
-#endif
 }
