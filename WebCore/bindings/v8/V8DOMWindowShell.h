@@ -63,7 +63,7 @@ public:
     static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow*);
 
     void initContextIfNeeded();
-    void updateDocumentWrapper(v8::Handle<v8::Value> wrapper);
+    void updateDocumentWrapper(v8::Handle<v8::Object> wrapper);
 
     void clearForNavigation();
     void clearForClose();
@@ -113,7 +113,7 @@ private:
 
     v8::Persistent<v8::Context> m_context;
     v8::Persistent<v8::Object> m_global;
-    v8::Persistent<v8::Value> m_document;
+    v8::Persistent<v8::Object> m_document;
 };
 
 } // namespace WebCore

@@ -383,12 +383,12 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
     return true;
 }
 
-void V8DOMWindowShell::updateDocumentWrapper(v8::Handle<v8::Value> wrapper)
+void V8DOMWindowShell::updateDocumentWrapper(v8::Handle<v8::Object> wrapper)
 {
     clearDocumentWrapper();
 
     ASSERT(m_document.IsEmpty());
-    m_document = v8::Persistent<v8::Value>::New(wrapper);
+    m_document = v8::Persistent<v8::Object>::New(wrapper);
 #ifndef NDEBUG
     V8GCController::registerGlobalHandle(PROXY, this, m_document);
 #endif
@@ -430,6 +430,7 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
         clearDocumentWrapperCache();
         return;
     }
+    ASSERT(documentWrapper->IsObject());
     m_context->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
 }
 
