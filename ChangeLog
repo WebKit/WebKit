@@ -1,3 +1,11 @@
+2010-02-11  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Detect properly different versions of libpng out there.
+
+        * configure.ac:
+
 2010-02-11  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix GTK+ build.

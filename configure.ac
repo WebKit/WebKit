@@ -131,12 +131,19 @@ fi
 AC_SUBST([JPEG_LIBS])
 
 # Check for libpng the way Gtk+ does it
-AC_MSG_CHECKING(for libpng12)
-if $PKG_CONFIG --exists libpng12 ; then
+for l in libpng libpng14 libpng12; do
+  AC_MSG_CHECKING(for $l)
+  if $PKG_CONFIG --exists $l ; then
     AC_MSG_RESULT(yes)
-    PNG_LIBS=`$PKG_CONFIG --libs libpng12`
-else
-  AC_MSG_RESULT(no)
+    PNG_LIBS=`$PKG_CONFIG --libs $l`
+    png_ok=yes
+    break
+  else
+    AC_MSG_RESULT(no)
+    png_ok=no
+  fi
+done
+if test "$png_ok" != yes; then
   AC_CHECK_LIB(png, png_read_info,
     [AC_CHECK_HEADER(png.h,
       png_ok=yes,
@@ -155,7 +162,7 @@ else
       AC_MSG_ERROR([PNG library (libpng) not found])
     fi
   else
-   AC_MSG_ERROR([PNG library (libpng) not found])
+    AC_MSG_ERROR([PNG library (libpng) not found])
   fi
 fi
 AC_SUBST([PNG_LIBS])
