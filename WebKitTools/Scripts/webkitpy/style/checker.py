@@ -109,6 +109,8 @@ _PATH_RULES_SPECIFIER = [
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
       "WebKit/gtk/webkit/",
+      # There is no clean way to avoid "yy_*" names used by flex.
+      "WebCore/css/CSSParser.cpp",
       # There is no clean way to avoid "xxx_data" methods inside
       # Qt's autotests since they are called automatically by the
       # QtTest module.

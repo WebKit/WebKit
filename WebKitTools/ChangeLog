@@ -1,3 +1,17 @@
+2010-02-10  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Allow underscored identifiers in CSSParser.cpp
+
+        Flex (http://flex.sourceforge.net/) uses identifiers named as yy_*.
+        WebCore/css/CSSParser.cpp needs to handle some such identifiers.
+        We should relax the style rule for the file to allow underscored identifiers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34787
+
+        * Scripts/webkitpy/style/checker.py:
+
 2010-02-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
