@@ -36,6 +36,7 @@ WebInspector.TextViewer = function(textModel, platform, url)
 
     this.element = document.createElement("div");
     this.element.className = "text-editor monospace";
+    this.element.tabIndex = 0;
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
 
@@ -100,7 +101,6 @@ WebInspector.TextViewer.prototype = {
 
     highlightLine: function(lineNumber)
     {
-        // FIXME: restore animation.
         if (typeof this._highlightedLine === "number") {
             var chunk = this._makeLineAChunk(this._highlightedLine);
             chunk.removeDecoration("webkit-highlighted-line");

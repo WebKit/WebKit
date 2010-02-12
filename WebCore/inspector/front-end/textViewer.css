@@ -131,9 +131,19 @@
 }
 
 .webkit-markup {
+    -webkit-border-radius: 4px;
+    padding: 2px 1px 2px 3px;
+    margin-left: -4px;
+    margin-top: -2px;
+    -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
     background-color: rgb(241, 234, 0);
 }
 
 .webkit-highlighted-line .webkit-line-content {
-    background-color: rgb(255, 255, 120);
+    -webkit-animation: "fadeout" 2s 0s;
+}
+
+@-webkit-keyframes fadeout {
+    from {background-color: rgb(255, 255, 120); }
+    to { background-color: white; }
 }
