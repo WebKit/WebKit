@@ -28,6 +28,8 @@
 #ifndef FloatSize_h
 #define FloatSize_h
 
+#include "IntSize.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Platform.h>
 
 #if PLATFORM(CG)
@@ -126,6 +128,11 @@ inline bool operator==(const FloatSize& a, const FloatSize& b)
 inline bool operator!=(const FloatSize& a, const FloatSize& b)
 {
     return a.width() != b.width() || a.height() != b.height();
+}
+
+inline IntSize roundedIntSize(const FloatSize& p)
+{
+    return IntSize(static_cast<int>(roundf(p.width())), static_cast<int>(roundf(p.height())));
 }
 
 } // namespace WebCore

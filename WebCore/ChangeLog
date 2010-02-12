@@ -1,3 +1,12 @@
+2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Add roundedIntSize() convenience method converting FloatSize to IntSize, just like roundedIntPoint() converting FloatPoint to IntPoint.
+
+        * platform/graphics/FloatSize.h:
+        (WebCore::roundedIntSize):
+
 2010-02-11  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
