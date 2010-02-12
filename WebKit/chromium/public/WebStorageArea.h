@@ -45,6 +45,12 @@ class WebStorageArea {
 public:
     virtual ~WebStorageArea() { }
 
+    enum Result {
+        ResultOK = 0,
+        ResultBlockedByQuota,
+        ResultBlockedByPolicy
+    };
+
     // The number of key/value pairs in the storage area.
     virtual unsigned length() = 0;
 
@@ -57,10 +63,22 @@ public:
     // no entry for that key.
     virtual WebString getItem(const WebString& key) = 0;
 
-    // Set the value that corresponds to a specific key. QuotaException is set if
-    // the StorageArea would have exceeded its quota. The value is NOT set when there's
-    // an exception.  url is the url that should be used if a storage event fires.
-    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& url, bool& quotaException, WebString& oldValue) = 0;
+    // Set the value that corresponds to a specific key. Result will either be ResultOK
+    // or some particular error. The value is NOT set when there's an error.  url is the
+    // url that should be used if a storage event fires.
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& url, Result& result, WebString& oldValue)
+    {
+        bool quotaException = false;
+        setItem(key, newValue, url, quotaException, oldValue);
+        result = quotaException ? ResultBlockedByQuota : ResultOK;
+    }
+    // FIXME: Remove soon (once Chrome has rolled past this revision).
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& url, bool& quotaException, WebString& oldValue)
+    {
+        Result result;
+        setItem(key, newValue, url, result, oldValue);
+        quotaException = result != ResultOK;
+    }
 
     // Remove the value associated with a particular key.  url is the url that should be used
     // if a storage event fires.

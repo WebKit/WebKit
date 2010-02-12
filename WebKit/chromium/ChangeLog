@@ -1,3 +1,16 @@
+2010-02-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add a blockedByPolicy output to WebStorageArea::setItem.
+        https://bugs.webkit.org/show_bug.cgi?id=34897
+
+        * public/WebStorageArea.h:
+        (WebKit::WebStorageArea::setItem):
+        * src/WebStorageAreaImpl.cpp:
+        (WebKit::WebStorageAreaImpl::setItem):
+        * src/WebStorageAreaImpl.h:
+
 2010-02-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by David Levin.
