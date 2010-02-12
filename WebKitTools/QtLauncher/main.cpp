@@ -148,7 +148,11 @@ LauncherWindow::LauncherWindow(QString url)
     QSplitter* splitter = new QSplitter(Qt::Vertical, this);
     setCentralWidget(splitter);
 
+#if defined(Q_WS_S60)
+    showMaximized();
+#else
     resize(800, 600);
+#endif
 
     m_view = 0;
     initializeView();

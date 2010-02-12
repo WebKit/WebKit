@@ -1,3 +1,19 @@
+2010-02-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Make QtLauncher somewhat useable on S60.
+
+        Show the window fullscreen to make scrollbars appear, resize
+        the toolbar buttons to 16x16 to give more screen space to
+        web content and moved the location lineedit into a separate
+        line.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        * QtLauncher/mainwindow.cpp:
+        (MainWindow::buildUI):
+
 2010-02-12  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

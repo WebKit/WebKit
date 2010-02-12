@@ -50,6 +50,9 @@ MainWindow::MainWindow(const QString& url)
 void MainWindow::buildUI()
 {
     QToolBar* bar = addToolBar("Navigation");
+#if defined(Q_WS_S60)
+    bar->setIconSize(QSize(16, 16));
+#endif
     bar->addAction(page()->action(QWebPage::Back));
     bar->addAction(page()->action(QWebPage::Forward));
     bar->addAction(page()->action(QWebPage::Reload));
@@ -61,7 +64,12 @@ void MainWindow::buildUI()
     QCompleter* completer = new QCompleter(this);
     urlEdit->setCompleter(completer);
     completer->setModel(&urlModel);
+#if defined(Q_WS_S60)
+    addToolBarBreak();
+    addToolBar("Location")->addWidget(urlEdit);
+#else
     bar->addWidget(urlEdit);
+#endif
 
     connect(page()->mainFrame(), SIGNAL(titleChanged(const QString&)),
             this, SLOT(setWindowTitle(const QString&)));
