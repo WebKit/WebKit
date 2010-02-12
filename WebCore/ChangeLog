@@ -2,6 +2,16 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Focusing a resource in the inspector should default to content not header
+        https://bugs.webkit.org/show_bug.cgi?id=34861
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings.prototype._load): changed initial default to content tab
+
+2010-02-11  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Editing Styles Cannot Tab Backwards from a New Style Item
         https://bugs.webkit.org/show_bug.cgi?id=34872
 

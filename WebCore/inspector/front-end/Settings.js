@@ -67,7 +67,7 @@ WebInspector.Settings.prototype = {
         this._installSetting("lastViewedScriptFile", "last-viewed-script-file");
         this._installSetting("showInheritedComputedStyleProperties", "show-inherited-computed-style-properties", false);
         this._installSetting("showUserAgentStyles", "show-user-agent-styles", true);
-        this._installSetting("resourceViewTab", "resource-view-tab", "headers");
+        this._installSetting("resourceViewTab", "resource-view-tab", "content");
         this.dispatchEventToListeners("loaded");
     },
 
