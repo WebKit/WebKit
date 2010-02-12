@@ -1,3 +1,12 @@
+2010-02-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        Turn back on SVG Filters on Windows, as they were accidentally disabled and cause
+        test breakage.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2010-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
