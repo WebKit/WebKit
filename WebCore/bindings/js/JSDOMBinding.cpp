@@ -151,11 +151,9 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
-    if (m_globalData) {
-        JSGlobalData::ClientData* clientData = m_globalData->clientData;
-        ASSERT(clientData);
-        static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
-    }
+    JSGlobalData::ClientData* clientData = m_globalData->clientData;
+    ASSERT(clientData);
+    static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
 
     for (HashSet<Document*>::iterator iter = documentsWithWrappers.begin(); iter != documentsWithWrappers.end(); ++iter)
         forgetWorldOfDOMNodesForDocument(*iter, this);

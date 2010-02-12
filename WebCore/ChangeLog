@@ -2,6 +2,40 @@
 
         Reviewed by Sam Weinig.
 
+        Workers' EventListeners should be removed before JSGlobalData is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=34903
+
+        (Patch co-developed with Alexey Proskuryakov).
+
+        Since http://trac.webkit.org/changeset/54460 the EventListeners registered by a
+        worker thread are not removed until after the thread's JSGlobalData has been
+        destroyed.  This is slightly worrisome since the JSEventListener contains
+        JSObject*s, which will be dangling once the heap is destroyed.  The
+        JSEventListeners may also reference the worker thread's normal world, which
+        again it makes no sense to keep around after the JSGlobalData is freed.
+
+        Remove all event listeners immediately prior to tearing down the JSGlobalData.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34728 addressed the symptoms of this
+        problem, and it is probably cleaner to make the client data's normal world no
+        longer be a member (since it is a ref-counted object), however they should be
+        no requirement to 'detatch' – it makes no sense for anyone to be referencing
+        the world after the JSGlobalData has gone away (the world's purpose is to hold
+        wrapper objects in the JSGlobalData's heap).  Keep the restructuring that makes
+        the normal world no longer be a member, but remove the detach mechanism this
+        patch added & replace with stronger ASSERTs.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::WebCoreJSClientData::~WebCoreJSClientData):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+
+2010-02-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=33731
         Remove uses of PtrAndFlags from WebCore::StringImpl.
 
