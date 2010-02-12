@@ -1,3 +1,14 @@
+2010-02-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Chromium: Web Inspector on an element in a page where JS is blocked crashes the renderer
+
+        https://bugs.webkit.org/show_bug.cgi?id=34890
+
+        * src/DebuggerAgentImpl.cpp:
+        (WebKit::DebuggerAgentImpl::createUtilityContext):
+
 2010-02-11  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
