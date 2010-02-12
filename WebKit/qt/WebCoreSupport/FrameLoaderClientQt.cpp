@@ -672,11 +672,17 @@ void FrameLoaderClientQt::dispatchDidChangeBackForwardIndex() const
 
 void FrameLoaderClientQt::didDisplayInsecureContent()
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("didDisplayInsecureContent\n");
+
     notImplemented();
 }
 
 void FrameLoaderClientQt::didRunInsecureContent(WebCore::SecurityOrigin*)
 {
+    if (dumpFrameLoaderCallbacks)
+        printf("didRunInsecureContent\n");
+
     notImplemented();
 }
 

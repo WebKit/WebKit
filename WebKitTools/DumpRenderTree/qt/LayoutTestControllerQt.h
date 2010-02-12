@@ -96,6 +96,7 @@ public slots:
     void setGlobalFlag(bool flag) { m_globalFlag = flag; }
     void handleErrorPages() { m_handleErrorPages = true; }
     void dumpEditingCallbacks();
+    void dumpFrameLoadCallbacks();
     void dumpResourceLoadCallbacks();
     void queueBackNavigation(int howFarBackward);
     void queueForwardNavigation(int howFarForward);
