@@ -116,6 +116,7 @@ protected slots:
 
     void setTouchMocking(bool on);
     void toggleAcceleratedCompositing(bool toggle);
+    void initializeView(bool useGraphicsView = false);
 
 public slots:
     void newWindow(const QString& url = QString());
@@ -149,25 +150,8 @@ LauncherWindow::LauncherWindow(QString url)
 
     resize(800, 600);
 
-    if (!gUseGraphicsView) {
-        WebViewTraditional* view = new WebViewTraditional(splitter);
-        view->setPage(page());
-        m_view = view;
-    } else {
-        WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
-        view->setPage(page());
-        view->setViewportUpdateMode(gViewportUpdateMode);
-        view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
-        if (gShowFrameRate)
-            view->enableFrameRateMeasurement();
-        page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, gUseCompositing);
-        m_view = view;
-    }
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    m_view->installEventFilter(this);
-    touchMocking = false;
-#endif
+    m_view = 0;
+    initializeView();
 
     connect(page(), SIGNAL(loadStarted()), this, SLOT(loadStarted()));
     connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
@@ -455,6 +439,33 @@ void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
     page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, toggle);
 }
 
+void LauncherWindow::initializeView(bool useGraphicsView)
+{
+    delete m_view;
+
+    QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
+
+    if (!useGraphicsView) {
+        WebViewTraditional* view = new WebViewTraditional(splitter);
+        view->setPage(page());
+        m_view = view;
+    } else {
+        WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
+        view->setPage(page());
+        view->setViewportUpdateMode(gViewportUpdateMode);
+        view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
+        if (gShowFrameRate)
+            view->enableFrameRateMeasurement();
+        page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, gUseCompositing);
+        m_view = view;
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    m_view->installEventFilter(this);
+    touchMocking = false;
+#endif
+}
+
 void LauncherWindow::newWindow(const QString& url)
 {
     LauncherWindow* mw = new LauncherWindow(url);
@@ -528,6 +539,10 @@ void LauncherWindow::setupUI()
     QAction* toggleAcceleratedCompositing = toolsMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
     toggleAcceleratedCompositing->setCheckable(true);
     toggleAcceleratedCompositing->setChecked(false);
+
+    QAction* toggleGraphicsView = toolsMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
+    toggleGraphicsView->setCheckable(true);
+    toggleGraphicsView->setChecked(false);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
