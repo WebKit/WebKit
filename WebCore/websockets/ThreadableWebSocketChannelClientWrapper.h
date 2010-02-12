@@ -99,10 +99,10 @@ public:
             m_client->didReceiveMessage(msg);
     }
 
-    void didClose()
+    void didClose(unsigned long unhandledBufferedAmount)
     {
         if (m_client)
-            m_client->didClose();
+            m_client->didClose(unhandledBufferedAmount);
     }
 
 protected:
