@@ -212,8 +212,6 @@ WebCore/platform/chromium/SuddenTerminationChromium.cpp -crlf
 WebCore/platform/network/win/NetworkStateNotifierWin.cpp -crlf
 WebCore/platform/wx/wxcode/non-kerned-drawing.h -crlf
 WebCore/rendering/RenderThemeChromiumWin.h -crlf
-WebCore/wml/WMLInputElement.cpp -crlf
-WebCore/wml/WMLInputElement.h -crlf
 WebKit/chromium/src/EventListenerWrapper.cpp -crlf
 WebKit/chromium/src/EventListenerWrapper.h -crlf
 WebKit/chromium/src/WebEventListener.cpp -crlf
