@@ -1,5 +1,28 @@
 2010-02-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt and Darin Adler.
+
+        The rest of the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=34864 | <rdar://problem/7594198>
+        Many objects left uncollected after visiting mail.google.com and closing
+        window
+        
+        Don't unconditionally hang onto small strings. Instead, hang onto all
+        small strings as long as any small string is still referenced.
+        
+        SunSpider reports no change.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::markRoots): Mark the small strings cache last, so it can
+        check if anything else has kept any strings alive.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::isMarked):
+        (JSC::SmallStrings::markChildren): Only keep our strings alive if some
+        other reference to at least one of them exists, too.
+
+2010-02-11  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Some progress toward fixing
