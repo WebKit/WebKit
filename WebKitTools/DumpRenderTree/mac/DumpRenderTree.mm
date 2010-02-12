@@ -421,7 +421,6 @@ static void resetDefaultsToConsistentValues()
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
     [preferences setDeveloperExtrasEnabled:NO];
-    [preferences setXSSAuditorEnabled:NO];
     [preferences setLoadsImagesAutomatically:YES];
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];

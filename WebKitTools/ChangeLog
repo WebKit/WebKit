@@ -1,3 +1,15 @@
+2010-02-11  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Dan Bernstein.
+
+        [Mac] Duplicated setXSSAuditorEnabled preference at Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=34798
+
+        Remove duplicated setXSSAuditorEnabled preference at Mac DRT
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2010-02-11  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
