@@ -83,7 +83,7 @@ void SmallStrings::markChildren(MarkStack& markStack)
 
     bool isAnyStringMarked = isMarked(m_emptyString);
     for (unsigned i = 0; i < numCharactersToStore && !isAnyStringMarked; ++i)
-        isAnyStringMarked |= isMarked(m_singleCharacterStrings[i]);
+        isAnyStringMarked = isMarked(m_singleCharacterStrings[i]);
     
     if (!isAnyStringMarked) {
         clear();

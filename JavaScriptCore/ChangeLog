@@ -1,3 +1,13 @@
+2010-02-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removed an unnecessary data dependency from my last patch.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::markChildren): Since isAnyStringMarked being false
+        is a condition of entering the loop, we can just use '=' instead of '|='.
+
 2010-02-12  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Tor Arne Vestbø.
