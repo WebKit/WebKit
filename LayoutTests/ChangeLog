@@ -1,5 +1,14 @@
 2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Oops, move mac-lepard results for mask-invalidation.svg into the correct folder.
+
+        * platform/mac-leopard/mask-invalidation-expected.checksum: Removed.
+        * platform/mac-leopard/mask-invalidation-expected.png: Removed.
+        * platform/mac-leopard/svg/custom/mask-invalidation-expected.checksum: Copied from platform/mac-leopard/mask-invalidation-expected.checksum.
+        * platform/mac-leopard/svg/custom/mask-invalidation-expected.png: Copied from platform/mac-leopard/mask-invalidation-expected.png.
+
+2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Rubber-stamped by Dirk Schulze.
 
         Add special mac-leopard pixel test results for svg/mask-invalidation.svg - has marginal 0.01% diff to snow leopard baseline.
