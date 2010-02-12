@@ -1,3 +1,12 @@
+2010-02-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber-stamped by Dirk Schulze.
+
+        Add special mac-leopard pixel test results for svg/mask-invalidation.svg - has marginal 0.01% diff to snow leopard baseline.
+
+        * platform/mac-leopard/mask-invalidation-expected.checksum: Added.
+        * platform/mac-leopard/mask-invalidation-expected.png: Added.
+
 2010-02-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         Remove platform-specific expected results that only existed
