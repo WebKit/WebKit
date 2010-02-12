@@ -112,10 +112,6 @@ http/tests/media/video-cookie.html
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
 
-# Skip frame flattening tests until it can be tested by this DRT
-# https://bugs.webkit.org/show_bug.cgi?id=32717
-fast/frames/flattening/
-
 # Fails intermittently on Leopard and Tiger.
 # https://bugs.webkit.org/show_bug.cgi?id=29154
 storage/database-lock-after-reload.html

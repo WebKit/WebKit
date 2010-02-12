@@ -422,6 +422,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setOfflineWebApplicationCacheEnabled:YES];
     [preferences setDeveloperExtrasEnabled:NO];
     [preferences setLoadsImagesAutomatically:YES];
+    [preferences setFrameSetFlatteningEnabled:NO];
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
         [preferences setUserStyleSheetEnabled:YES];

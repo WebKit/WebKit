@@ -1,3 +1,19 @@
+2010-02-12  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support frameset flattening
+        https://bugs.webkit.org/show_bug.cgi?id=32717
+
+        Add expected results of the FrameSet Flattening tests.
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-advanced-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/frameset-flattening-grid-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/frameset-flattening-simple-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframesets-expected.txt: Added.
+        * platform/mac/Skipped:
+
 2010-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] perl websocket test(s) time out

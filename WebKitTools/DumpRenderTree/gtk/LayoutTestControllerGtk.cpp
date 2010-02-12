@@ -334,6 +334,11 @@ void LayoutTestController::setXSSAuditorEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-xss-auditor", flag, NULL);
 }
 
+void LayoutTestController::setFrameSetFlatteningEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
