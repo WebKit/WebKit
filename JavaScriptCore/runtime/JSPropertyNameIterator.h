@@ -49,6 +49,8 @@ namespace JSC {
         {
             return Structure::create(prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount);
         }
+        
+        virtual ~JSPropertyNameIterator();
 
         virtual bool isPropertyNameIterator() const { return true; }
 
@@ -81,23 +83,21 @@ namespace JSC {
         OwnArrayPtr<JSValue> m_jsStrings;
     };
 
-inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
-    : JSCell(exec->globalData().propertyNameIteratorStructure.get())
-    , m_cachedStructure(0)
-    , m_numCacheableSlots(numCacheableSlots)
-    , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
-    , m_jsStrings(new JSValue[m_jsStringsSize])
-{
-    PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
-    for (size_t i = 0; i < m_jsStringsSize; ++i)
-        m_jsStrings[i] = jsOwnedString(exec, propertyNameVector[i].ustring());
-}
+    inline void Structure::setEnumerationCache(JSPropertyNameIterator* enumerationCache)
+    {
+        ASSERT(!isDictionary());
+        m_enumerationCache = enumerationCache;
+    }
 
-inline void Structure::setEnumerationCache(JSPropertyNameIterator* enumerationCache)
-{
-    ASSERT(!isDictionary());
-    m_enumerationCache = enumerationCache;
-}
+    inline void Structure::clearEnumerationCache(JSPropertyNameIterator* enumerationCache)
+    {
+        m_enumerationCache.clear(enumerationCache);
+    }
+
+    inline JSPropertyNameIterator* Structure::enumerationCache()
+    {
+        return m_enumerationCache.get();
+    }
 
 } // namespace JSC
 

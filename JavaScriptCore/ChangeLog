@@ -1,3 +1,43 @@
+2010-02-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Some progress toward fixing
+        https://bugs.webkit.org/show_bug.cgi?id=34864 | <rdar://problem/7594198>
+        Many objects left uncollected after visiting mail.google.com and closing
+        window
+        
+        SunSpider reports no change.
+        
+        Keep weak references, rather than protected references, to cached for-in
+        property name enumerators.
+        
+        One problem with protected references is that a chain like 
+            [ gc object 1 ] => [ non-gc object ] => [ gc object 2 ]
+        takes two GC passes to break, since the first pass collects [ gc object 1 ],
+        releasing [ non-gc object ] and unprotecting [ gc object 2 ], and only
+        then can a second pass collect [ gc object 2 ].
+        
+        Another problem with protected references is that they can keep a bunch
+        of strings alive long after they're useful. In SunSpider and a few popular
+        websites, the size-speed tradeoff seems to favor weak references.
+
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator): Moved this constructor
+        into the .cpp file, since it's not used elsewhere.
+
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator): Added a destructor
+        to support our weak reference.
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::Structure::setEnumerationCache):
+        (JSC::Structure::clearEnumerationCache):
+        (JSC::Structure::enumerationCache): Added a function for clearing a
+        Structure's enumeration cache, used by our new destructor. Also fixed
+        indentation to match the rest of the file.
+
+        * runtime/Structure.h: Changed from protected pointer to weak pointer.
+
 2010-02-11  Chris Rogers  <crogers@google.com>
 
         Reviewed by David Levin.

@@ -35,6 +35,24 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
+inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
+    : JSCell(exec->globalData().propertyNameIteratorStructure.get())
+    , m_cachedStructure(0)
+    , m_numCacheableSlots(numCacheableSlots)
+    , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
+    , m_jsStrings(new JSValue[m_jsStringsSize])
+{
+    PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
+    for (size_t i = 0; i < m_jsStringsSize; ++i)
+        m_jsStrings[i] = jsOwnedString(exec, propertyNameVector[i].ustring());
+}
+
+JSPropertyNameIterator::~JSPropertyNameIterator()
+{
+    if (m_cachedStructure)
+        m_cachedStructure->clearEnumerationCache(this);
+}
+
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)
 {
     ASSERT(!o->structure()->enumerationCache() ||
