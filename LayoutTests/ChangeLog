@@ -1,3 +1,14 @@
+2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket ignores HttpOnly cookies, but should use in Handshake.
+        https://bugs.webkit.org/show_bug.cgi?id=34289
+
+        * websocket/tests/cookies/echo-cookie_wsh.py: Added.
+        * websocket/tests/cookies/httponly-cookie-expected.txt: Added.
+        * websocket/tests/cookies/httponly-cookie.pl: Added.
+
 2010-02-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -85,6 +85,7 @@ namespace WebCore {
         // Cookies ------------------------------------------------------------
         static void setCookies(const KURL& url, const KURL& firstPartyForCookies, const String& value);
         static String cookies(const KURL& url, const KURL& firstPartyForCookies);
+        static String cookieRequestHeaderFieldValue(const KURL& url, const KURL& firstPartyForCookies);
         static bool rawCookies(const KURL& url, const KURL& firstPartyForCookies, Vector<Cookie>*);
         static void deleteCookie(const KURL& url, const String& cookieName);
         static bool cookiesEnabled(const KURL& url, const KURL& firstPartyForCookies);

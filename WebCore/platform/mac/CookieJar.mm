@@ -86,6 +86,18 @@ String cookies(const Document*, const KURL& url)
     return String();
 }
 
+String cookieRequestHeaderFieldValue(const Document*, const KURL& url)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    NSURL *cookieURL = url;
+    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
+    return [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] objectForKey:@"Cookie"];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 void setCookies(Document* document, const KURL& url, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

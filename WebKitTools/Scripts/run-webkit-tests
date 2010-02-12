@@ -1398,6 +1398,7 @@ sub openWebSocketServerIfNeeded()
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
         "-m", "$webSocketHandlerMapFile",
+        "-x", "/websocket/tests/cookies",
         "-l", "$logFile",
         "--strict",
     );

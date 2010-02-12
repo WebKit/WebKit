@@ -41,6 +41,12 @@ String cookies(const Document*, const KURL& url)
     return PlatformBridge::cookies(url);
 }
 
+String cookieRequestHeaderFieldValue(const Document*, const KURL& url)
+{
+    // FIXME: include HttpOnly cookie.
+    return PlatformBridge::cookies(url);
+}
+
 bool cookiesEnabled(const Document*)
 {
     return PlatformBridge::cookiesEnabled();

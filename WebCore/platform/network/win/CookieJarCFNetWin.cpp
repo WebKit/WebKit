@@ -106,6 +106,20 @@ String cookies(const Document* /*document*/, const KURL& url)
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
+String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& url)
+{
+    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    if (!cookieStorage)
+        return String();
+
+    RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
+
+    bool secure = url.protocolIs("https");
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), secure));
+    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesCF.get()));
+    return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
+}
+
 bool cookiesEnabled(const Document* /*document*/)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;

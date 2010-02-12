@@ -52,6 +52,12 @@ String cookies(const Document*, const KURL& url)
     return cookieJar.get(url.string());
 }
 
+String cookieRequestHeaderFieldValue(const Document*, const KURL& url)
+{
+    // FIXME: include HttpOnly cookies.
+    return cookieJar.get(url.string());
+}
+
 bool cookiesEnabled(const Document*)
 {
     // FIXME: This should probably be a setting

@@ -103,6 +103,26 @@ String cookies(const Document* document, const KURL& url)
     return resultCookies.join(QLatin1String("; "));
 }
 
+String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
+{
+    QUrl u(url);
+    QNetworkCookieJar* jar = cookieJar(document);
+    if (!jar)
+        return String();
+
+    QList<QNetworkCookie> cookies = jar->cookiesForUrl(u);
+    if (cookies.isEmpty())
+        return String();
+
+    QStringList resultCookies;
+    foreach (QNetworkCookie networkCookie, cookies) {
+        resultCookies.append(QString::fromAscii(
+                             networkCookie.toRawForm(QNetworkCookie::NameAndValueOnly).constData()));
+    }
+
+    return resultCookies.join(QLatin1String("; "));
+}
+
 bool cookiesEnabled(const Document* document)
 {
     QNetworkCookieJar* jar = cookieJar(document);

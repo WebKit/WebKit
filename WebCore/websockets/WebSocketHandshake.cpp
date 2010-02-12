@@ -36,6 +36,7 @@
 
 #include "AtomicString.h"
 #include "CString.h"
+#include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
 #include "HTTPHeaderMap.h"
@@ -186,7 +187,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     // Set "Authorization: <credentials>" if authentication information exists for url.
     if (m_context->isDocument()) {
         Document* document = static_cast<Document*>(m_context);
-        String cookie = cookies(document, url);
+        String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty()) {
             builder.append("Cookie: ");
             builder.append(cookie);

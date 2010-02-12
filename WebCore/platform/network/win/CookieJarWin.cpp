@@ -59,6 +59,12 @@ String cookies(const Document* /*document*/, const KURL& url)
     return String::adopt(buffer);
 }
 
+String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
+{
+    // FIXME: include HttpOnly cookie
+    return cookies(document, url);
+}
+
 bool cookiesEnabled(const Document* /*document*/)
 {
     return true;

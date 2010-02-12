@@ -1,3 +1,36 @@
+2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket ignores HttpOnly cookies, but should use in Handshake.
+        https://bugs.webkit.org/show_bug.cgi?id=34289
+
+        Test: websocket/tests/cookies/httponly-cookie.pl
+
+        * platform/CookieJar.h: add cookieRequestHeaderFieldValue()
+        * platform/chromium/ChromiumBridge.h:
+        * platform/haiku/CookieJarHaiku.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/android/CookieJarAndroid.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage): use cookieRequestHeaderFieldValue() instead of cookies() to include HttpOnly cookies.
+
 2010-02-11  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -93,6 +93,22 @@ String cookies(const Document* /*document*/, const KURL& url)
     return result;
 }
 
+String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& url)
+{
+    SoupCookieJar* jar = defaultCookieJar();
+    if (!jar)
+        return String();
+
+    SoupURI* uri = soup_uri_new(url.string().utf8().data());
+    char* cookies = soup_cookie_jar_get_cookies(jar, uri, TRUE);
+    soup_uri_free(uri);
+
+    String result(String::fromUTF8(cookies));
+    g_free(cookies);
+
+    return result;
+}
+
 bool cookiesEnabled(const Document* /*document*/)
 {
     return defaultCookieJar();

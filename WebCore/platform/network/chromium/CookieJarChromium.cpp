@@ -47,6 +47,25 @@ String cookies(const Document* document, const KURL& url)
     return ChromiumBridge::cookies(url, document->firstPartyForCookies());
 }
 
+String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
+{
+    // FIXME: move in ChromiumBridge?
+    Vector<Cookie> cookies;
+    getRawCookies(document, url, cookies);
+    String cookieLine;
+    // FIXME: Set $Version=v;
+    for (size_t i = 0; i < cookies.size(); i++) {
+        Cookie cookie = cookies[i];
+        if (i > 0)
+            cookieLine += "; ";
+        if (!cookie.name.isEmpty())
+            cookieLine += cookie.name + "=";
+        cookieLine += cookie.value;
+        // FIXME: set $Path, $Domain, ...
+    }
+    return cookieLine;
+}
+
 bool cookiesEnabled(const Document* document)
 {
     return ChromiumBridge::cookiesEnabled(document->cookieURL(), document->firstPartyForCookies());

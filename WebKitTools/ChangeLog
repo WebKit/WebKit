@@ -1,3 +1,19 @@
+2010-02-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket ignores HttpOnly cookies, but should use in Handshake.
+        https://bugs.webkit.org/show_bug.cgi?id=34289
+
+        Update pywebsocket to 0.4.8, which supports cgi directories.
+        run-webkit-tests and run-webkit-websocketserver will run
+        pywebsocket, specifying /websocket/test/cookies as cgi directory.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/run-webkit-websocketserver:
+        * pywebsocket/mod_pywebsocket/standalone.py:
+        * pywebsocket/setup.py:
+
 2010-02-11  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Dan Bernstein.

@@ -36,7 +36,9 @@ namespace WebCore {
 
     struct Cookie;
 
+    // cookies omits HttpOnly cookies.
     String cookies(const Document*, const KURL&);
+    String cookieRequestHeaderFieldValue(const Document*, const KURL&);
     void setCookies(Document*, const KURL&, const String&);
     bool cookiesEnabled(const Document*);
     bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
