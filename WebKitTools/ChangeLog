@@ -14,6 +14,17 @@
 
 2010-02-11  Eric Seidel  <eric@webkit.org>
 
+        Rubber-stamped by Adam Barth.
+
+        Remove DrawTest, the application I used when bringing up SVG support on the Mac.
+        The code hasn't been touched (or used) in years.  No sense in keeping it in trunk.
+
+        * Scripts/build-drawtest: Removed.
+        * Scripts/run-drawtest: Removed.
+        * DrawTest: Removed.
+
+2010-02-11  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Need a command to clear r+ on obsolete patches in the pending-commit queue.
