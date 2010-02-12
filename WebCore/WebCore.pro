@@ -2664,9 +2664,10 @@ SOURCES += \
 }
 }
 
-include(../include/QtWebKit/headers.pri)
+include($$PWD/../WebKit/qt/Api/headers.pri)
+include(../include/QtWebKit/classheaders.pri)
 HEADERS += $$WEBKIT_API_HEADERS
-WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS $$OUTPUT_DIR/include/headers.pri
+WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
 !symbian {
     headers.files = $$WEBKIT_INSTALL_HEADERS
