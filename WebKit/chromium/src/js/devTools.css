@@ -13,8 +13,8 @@ body.attached #toolbar {
     padding-left: 0;
 }
 
-
 /* Chrome theme overrides */
+
 body.platform-windows #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242, 247, 253)), to(rgb(223, 234, 248)));
 }
@@ -23,6 +23,21 @@ body.platform-windows.inactive #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(248, 248, 248)), to(rgb(237, 237, 237)));
 }
 
+body.detached.platform-mac-leopard #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(175, 175, 175)), to(rgb(151, 151, 151))) !important;
+}
+
+body.detached.platform-mac-leopard.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(221, 221, 221)), to(rgb(207, 207, 207))) !important;
+}
+
+body.detached.platform-mac-snowleopard #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(189, 189, 189)), to(rgb(151, 151, 151))) !important;
+}
+
+body.detached.platform-mac-snowleopard.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(215, 215, 215)), to(rgb(207, 207, 207))) !important;
+}
 
 /* Heap Profiler Styles */
 
