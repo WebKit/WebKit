@@ -62,16 +62,16 @@ def run_tests(port, options, tests):
 
 if __name__ == '__main__':
     optparser = optparse.OptionParser()
-    optparser.add_option('-p', '--port', action='store', default='mac',
-                         'Platform to test (e.g., "mac", "chromium-mac", etc.')
+    optparser.add_option('-p', '--platform', action='store', default='mac',
+                         help='Platform to test (e.g., "mac", "chromium-mac", etc.')
     optparser.add_option('-t', '--target', action='store', default='Release',
-                         'build type ("Debug" or "Release")')
+                         help='build type ("Debug" or "Release")')
     optparser.add_option('', '--timeout', action='store', default='2000',
-                         'test timeout in milliseconds (2000 by default)')
+                         help='test timeout in milliseconds (2000 by default)')
     optparser.add_option('', '--wrapper', action='store')
     optparser.add_option('', '--no-pixel-tests', action='store_true',
                          default=False,
                          help='disable pixel-to-pixel PNG comparisons')
     options, args = optparser.parse_args()
-    p = port.get(options.port, options)
+    p = port.get(options.platform, options)
     run_tests(p, options, args)

@@ -1,3 +1,13 @@
+2010-02-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix typos in driver_test.py 
+
+        https://bugs.webkit.org/show_bug.cgi?id=34810
+
+        * Scripts/webkitpy/layout_tests/driver_test.py:
+
 2010-02-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
