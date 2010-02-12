@@ -18,13 +18,13 @@
 */
 
 
-#include <../util.h>
 #include <QtTest/QtTest>
 #include <qwebpage.h>
 #include <qwidget.h>
 #include <qwebview.h>
 #include <qwebframe.h>
 #include <qwebelement.h>
+#include <util.h>
 //TESTED_CLASS=
 //TESTED_FILES=
 

@@ -1,3 +1,12 @@
+2010-02-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
+        [Qt] Fix standalone build with MinGW.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        * tests/tests.pri:
+
 2010-02-10  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

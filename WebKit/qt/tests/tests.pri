@@ -3,6 +3,7 @@ CONFIG -= app_bundle
 
 TARGET = tst_$$TARGET
 SOURCES += $$_PRO_FILE_PWD_/$${TARGET}.cpp
+INCLUDEPATH += $$PWD
 
 exists($$_PRO_FILE_PWD_/$${TARGET}.qrc):RESOURCES += $$_PRO_FILE_PWD_/$${TARGET}.qrc
 
