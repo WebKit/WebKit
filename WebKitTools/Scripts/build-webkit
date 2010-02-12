@@ -323,7 +323,7 @@ if (isGtk()) {
 }
 
 # Force re-link of existing libraries if different than expected
-removeLibraryDependingOnFeature("SVG", "WebCore", $svgSupport);
+removeLibraryDependingOnFeature("WebCore", "SVG", $svgSupport);
 
 if (isInspectorFrontend()) {
     exit exitStatus(copyInspectorFrontendFiles());
