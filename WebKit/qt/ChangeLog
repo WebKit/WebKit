@@ -1,3 +1,14 @@
+2010-02-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Minor fixes on QtWebKit headers generation.
+
+        - Adds QtWebKit to the generated headers destination path
+        - Improve compatibility with MinGW
+
+        * Api/DerivedSources.pro:
+
 2010-02-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.

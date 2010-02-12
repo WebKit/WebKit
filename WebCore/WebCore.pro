@@ -2664,11 +2664,7 @@ SOURCES += \
 }
 }
 
-CONFIG(standalone_package) {
-    include($$PWD/../include/headers.pri)
-} else {
-    include($$OUTPUT_DIR/include/headers.pri)
-}
+include(../include/QtWebKit/headers.pri)
 
 HEADERS += $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
@@ -2681,18 +2677,19 @@ headers.files = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS $$OUTPUT_DIR/include
 headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
 INSTALLS += headers
 
+# Qt will set the version for us when building in Qt's tree
+!CONFIG(QTDIR_build): VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
+
+win32-*|wince* {
+    DLLDESTDIR = $$OUTPUT_DIR/bin
+    TARGET = $$qtLibraryTarget($$TARGET)
+
+    dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
+    dlltarget.CONFIG = no_path
+    INSTALLS += dlltarget
+}
+
 !CONFIG(standalone_package) {
-
-    VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
-
-    win32-*|wince* {
-        DLLDESTDIR = $$OUTPUT_DIR/bin
-        TARGET = $$qtLibraryTarget($$TARGET)
-
-        dlltarget.commands = $(COPY_FILE) $(DESTDIR)$(TARGET) $$[QT_INSTALL_BINS]
-        dlltarget.CONFIG = no_path
-        INSTALLS += dlltarget
-    }
 
     unix {
         CONFIG += create_pc create_prl
