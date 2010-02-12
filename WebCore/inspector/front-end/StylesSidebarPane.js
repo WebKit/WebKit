@@ -60,8 +60,8 @@ WebInspector.StylesSidebarPane = function()
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);        
-    
+    WebInspector.settings.addEventListener("loaded", this._settingsLoaded, this);
+
     this.titleElement.appendChild(this.settingsSelectElement);
 }
 
@@ -354,7 +354,7 @@ WebInspector.StylesSidebarPane.prototype = {
         var blankSection = new WebInspector.BlankStylePropertiesSection(appropriateSelectorForNode(this.node, true));
         blankSection.pane = this;
 
-        var elementStyleSection = this.sections[1];        
+        var elementStyleSection = this.sections[1];
         this.bodyElement.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
 
         this.sections.splice(2, 0, blankSection);
@@ -445,7 +445,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 
     this.identifier = styleRule.selectorText;
     if (this.subtitle)
-        this.identifier += ":" + this.subtitleElement.textContent;    
+        this.identifier += ":" + this.subtitleElement.textContent;
 }
 
 WebInspector.StylePropertiesSection.prototype = {
@@ -530,6 +530,11 @@ WebInspector.StylePropertiesSection.prototype = {
             }
         }
 
+        this.afterUpdate();
+    },
+
+    afterUpdate: function()
+    {
         if (this._afterUpdate) {
             this._afterUpdate(this);
             delete this._afterUpdate;
@@ -1296,8 +1301,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 if (alreadyNew && !valueChanged)
                     return;
 
-                var item = section.addNewBlankProperty();
-                item.startEditing();
+                section.addNewBlankProperty().startEditing();
                 return;
             }
 
@@ -1315,6 +1319,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (this._newProperty) {
                 // The user deleted everything, so remove the tree element and update.
                 this.parent.removeChild(this);
+                section.afterUpdate();
                 return;
             } else {
                 delete section._afterUpdate;
