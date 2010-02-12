@@ -2,6 +2,15 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Make qtlauncher and qgvlauncher use the generated headers
+        path to make sure they are correctly generated.
+
+        * tests/tests.pri:
+
+2010-02-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Ensure relative paths in generated .pri files to ensure that
         a source package with pre-generated derived sources can be compiled.
 

@@ -2,6 +2,15 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Make qtlauncher and qgvlauncher use the generated headers
+        path to make sure they are correctly generated.
+
+        * WebKit.pri:
+
+2010-02-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Manually add support for the install target on Symbian.
 
         This is required to copy the headers over the ones in Qt.

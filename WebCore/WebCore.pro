@@ -213,6 +213,7 @@ INCLUDEPATH = \
     $$PWD/platform/graphics/qt \
     $$PWD/platform/network/qt \
     $$PWD/platform/qt \
+    $$PWD/../WebKit/qt/Api \
     $$PWD/../WebKit/qt/WebCoreSupport \
     $$INCLUDEPATH
 
