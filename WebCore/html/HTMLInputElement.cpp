@@ -500,7 +500,7 @@ bool HTMLInputElement::stepMismatch() const
         return false;
     case NUMBER: {
         double doubleValue;
-        if (!formStringToDouble(value(), &doubleValue))
+        if (!parseToDoubleForNumberType(value(), &doubleValue))
             return false;
         doubleValue = fabs(doubleValue - stepBase());
         if (isinf(doubleValue))
@@ -621,7 +621,7 @@ bool HTMLInputElement::getAllowedValueStep(double* step) const
     if (equalIgnoringCase(stepString, "any"))
         return false;
     double parsed;
-    if (!formStringToDouble(stepString, &parsed) || parsed <= 0.0) {
+    if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
         *step = defaultStep * stepScaleFactor;
         return true;
     }
@@ -1607,7 +1607,7 @@ double HTMLInputElement::parseToDouble(const String& src, double defaultValue) c
     case TIME:
     case WEEK: {
         DateComponents date;
-        if (!formStringToDateComponents(inputType(), src, &date))
+        if (!parseToDateComponents(inputType(), src, &date))
             return defaultValue;
         double msec = date.millisecondsSinceEpoch();
         ASSERT(isfinite(msec));
@@ -1615,7 +1615,7 @@ double HTMLInputElement::parseToDouble(const String& src, double defaultValue) c
     }
     case MONTH: {
         DateComponents date;
-        if (!formStringToDateComponents(inputType(), src, &date))
+        if (!parseToDateComponents(inputType(), src, &date))
             return defaultValue;
         double months = date.monthsSinceEpoch();
         ASSERT(isfinite(months));
@@ -1624,7 +1624,7 @@ double HTMLInputElement::parseToDouble(const String& src, double defaultValue) c
     case NUMBER:
     case RANGE: {
         double numberValue;
-        if (!formStringToDouble(src, &numberValue))
+        if (!parseToDoubleForNumberType(src, &numberValue))
             return defaultValue;
         ASSERT(isfinite(numberValue));
         return numberValue;
@@ -1662,7 +1662,7 @@ double HTMLInputElement::valueAsDate() const
         return parseToDouble(value(), DateComponents::invalidMilliseconds());
     case MONTH: {
         DateComponents date;
-        if (!formStringToDateComponents(inputType(), value(), &date))
+        if (!parseToDateComponents(inputType(), value(), &date))
             return DateComponents::invalidMilliseconds();
         double msec = date.millisecondsSinceEpoch();
         ASSERT(isfinite(msec));
@@ -1696,24 +1696,22 @@ double HTMLInputElement::valueAsDate() const
 
 void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
 {
-    DateComponents date;
-    bool success;
     switch (inputType()) {
     case DATE:
-        success = date.setMillisecondsSinceEpochForDate(value);
-        break;
     case DATETIME:
-        success = date.setMillisecondsSinceEpochForDateTime(value);
-        break;
-    case MONTH:
-        success = date.setMillisecondsSinceEpochForMonth(value);
-        break;
     case TIME:
-        success = date.setMillisecondsSinceMidnight(value);
-        break;
     case WEEK:
-        success = date.setMillisecondsSinceEpochForWeek(value);
-        break;
+        setValue(serializeForDateTimeTypes(value));
+        return;
+    case MONTH: {
+        DateComponents date;
+        if (!date.setMillisecondsSinceEpochForMonth(value)) {
+            setValue(String());
+            return;
+        }
+        setValue(date.toString());
+        return;
+    }
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -1735,33 +1733,8 @@ void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
     case URL:
         ec = INVALID_STATE_ERR;
         return;
-    default:
-        ASSERT_NOT_REACHED();
-        success = false;
     }
-    if (!success) {
-        setValue(String());
-        return;
-    }
-    setDateValue(date);
-}
-
-void HTMLInputElement::setDateValue(const DateComponents& date)
-{
-    double step;
-    if (!getAllowedValueStep(&step)) {
-        setValue(date.toString());
-        return;
-    }
-    if (!fmod(step, msecPerMinute)) {
-        setValue(date.toString(DateComponents::None));
-        return;
-    }
-    if (!fmod(step, msecPerSecond)) {
-        setValue(date.toString(DateComponents::Second));
-        return;
-    }
-    setValue(date.toString(DateComponents::Millisecond));
+    ASSERT_NOT_REACHED();
 }
 
 double HTMLInputElement::valueAsNumber() const
@@ -1809,31 +1782,13 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
     switch (inputType()) {
     case DATE:
     case DATETIME:
-    case TIME:
-    case WEEK:
-        setValueAsDate(newValue, ec);
-        return;
-    case MONTH: {
-        DateComponents date;
-        if (!date.setMonthsSinceEpoch(newValue)) {
-            setValue(String());
-            return;
-        }
-        setValue(date.toString());
-        return;
-    }
-    case DATETIMELOCAL: {
-        DateComponents date;
-        if (!date.setMillisecondsSinceEpochForDateTimeLocal(newValue)) {
-            setValue(String());
-            return;
-        }
-        setDateValue(date);
-        return;
-    }
+    case DATETIMELOCAL:
+    case MONTH:
     case NUMBER:
     case RANGE:
-        setValue(formStringFromDouble(newValue));
+    case TIME:
+    case WEEK:
+        setValue(serialize(newValue));
         return;
 
     case BUTTON:
@@ -1856,7 +1811,101 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
         return;
     }
     ASSERT_NOT_REACHED();
-    return;
+}
+
+String HTMLInputElement::serializeForDateTimeTypes(double value) const
+{
+    bool success;
+    DateComponents date;
+    switch (inputType()) {
+    case DATE:
+        success = date.setMillisecondsSinceEpochForDate(value);
+        break;
+    case DATETIME:
+        success = date.setMillisecondsSinceEpochForDateTime(value);
+        break;
+    case DATETIMELOCAL:
+        success = date.setMillisecondsSinceEpochForDateTimeLocal(value);
+        break;
+    case MONTH:
+        success = date.setMonthsSinceEpoch(value);
+        break;
+    case TIME:
+        success = date.setMillisecondsSinceMidnight(value);
+        break;
+    case WEEK:
+        success = date.setMillisecondsSinceEpochForWeek(value);
+        break;
+    case NUMBER:
+    case RANGE:
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case PASSWORD:
+    case RADIO:
+    case RESET:
+    case SEARCH:
+    case SUBMIT:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        ASSERT_NOT_REACHED();
+        return String();
+    }
+    if (!success)
+        return String();
+
+    double step;
+    if (!getAllowedValueStep(&step))
+        return date.toString();
+    if (!fmod(step, msecPerMinute))
+        return date.toString(DateComponents::None);
+    if (!fmod(step, msecPerSecond))
+        return date.toString(DateComponents::Second);
+    return date.toString(DateComponents::Millisecond);
+}
+
+String HTMLInputElement::serialize(double value) const
+{
+    if (!isfinite(value))
+        return String();
+    switch (inputType()) {
+    case DATE:
+    case DATETIME:
+    case DATETIMELOCAL:
+    case MONTH:
+    case TIME:
+    case WEEK:
+        return serializeForDateTimeTypes(value);
+    case NUMBER:
+    case RANGE:
+        return serializeForNumberType(value);
+
+    case BUTTON:
+    case CHECKBOX:
+    case COLOR:
+    case EMAIL:
+    case FILE:
+    case HIDDEN:
+    case IMAGE:
+    case ISINDEX:
+    case PASSWORD:
+    case RADIO:
+    case RESET:
+    case SEARCH:
+    case SUBMIT:
+    case TELEPHONE:
+    case TEXT:
+    case URL:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 String HTMLInputElement::placeholder() const
@@ -2561,7 +2610,7 @@ bool HTMLInputElement::willValidate() const
            inputType() != BUTTON && inputType() != RESET;
 }
 
-String HTMLInputElement::formStringFromDouble(double number)
+String HTMLInputElement::serializeForNumberType(double number)
 {
     // According to HTML5, "the best representation of the number n as a floating
     // point number" is a string produced by applying ToString() to n.
@@ -2571,7 +2620,7 @@ String HTMLInputElement::formStringFromDouble(double number)
     return String(buffer, length);
 }
 
-bool HTMLInputElement::formStringToDouble(const String& src, double* out)
+bool HTMLInputElement::parseToDoubleForNumberType(const String& src, double* out)
 {
     // See HTML5 2.4.4.3 `Real numbers.'
 
@@ -2597,7 +2646,7 @@ bool HTMLInputElement::formStringToDouble(const String& src, double* out)
     return true;
 }
 
-bool HTMLInputElement::formStringToDateComponents(InputType type, const String& formString, DateComponents* out)
+bool HTMLInputElement::parseToDateComponents(InputType type, const String& formString, DateComponents* out)
 {
     if (formString.isEmpty())
         return false;

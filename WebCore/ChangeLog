@@ -1,3 +1,47 @@
+2010-02-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Refactor parsing/serialization functions in HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=34852
+
+        - Rename formStringToDouble() to parseToDoubleForNumberType()
+        - Rename formStringToDateComponents() to parseToDateComponents()
+        - Rename formStringFromDouble() to serializeForNumberType()
+        - Add serializeForDateTimeTypes()
+          The code is moved from setValueAsDate() and setDateValue().
+        - Add serialize()
+        
+        parseToDouble() is the top-level function to parse a
+        type-dependent string and return a double
+        value. parseToDoubleForNumber() and parseToDateComponents()
+        functions are helper functions for it. serialize() is the
+        top-level function to serialize a double value to a type-dependent
+        string, and serializeForNumberType() and
+        serializeForDateTimeTypes() are helper functions for it.
+
+        No tests because of no functional changes.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepMismatch):
+        (WebCore::HTMLInputElement::getAllowedValueStep):
+        (WebCore::HTMLInputElement::parseToDouble):
+        (WebCore::HTMLInputElement::valueAsDate):
+        (WebCore::HTMLInputElement::setValueAsDate):
+        (WebCore::HTMLInputElement::setValueAsNumber):
+        (WebCore::HTMLInputElement::serializeForDateTimeTypes):
+        (WebCore::HTMLInputElement::serialize):
+        (WebCore::HTMLInputElement::serializeForNumberType):
+        (WebCore::HTMLInputElement::parseToDoubleForNumberType):
+        (WebCore::HTMLInputElement::parseToDateComponents):
+        * html/HTMLInputElement.h:
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderRange::valueFromElement):
+        (WebCore::RenderSlider::updateFromElement):
+        (WebCore::RenderSlider::setValueForPosition):
+
 2010-01-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.

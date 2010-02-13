@@ -80,7 +80,7 @@ bool ValidityState::typeMismatch() const
     case HTMLInputElement::COLOR:
         return !isValidColorString(value);
     case HTMLInputElement::NUMBER:
-        return !HTMLInputElement::formStringToDouble(value, 0);
+        return !HTMLInputElement::parseToDoubleForNumberType(value, 0);
     case HTMLInputElement::URL:
         return !KURL(KURL(), value).isValid();
     case HTMLInputElement::EMAIL: {
@@ -100,7 +100,7 @@ bool ValidityState::typeMismatch() const
     case HTMLInputElement::MONTH:
     case HTMLInputElement::TIME:
     case HTMLInputElement::WEEK:
-        return !HTMLInputElement::formStringToDateComponents(input->inputType(), value, 0);
+        return !HTMLInputElement::parseToDateComponents(input->inputType(), value, 0);
     case HTMLInputElement::BUTTON:
     case HTMLInputElement::CHECKBOX:
     case HTMLInputElement::FILE:

@@ -262,14 +262,14 @@ public:
     // Converts the specified string to a floating number.
     // If the conversion fails, the return value is false. Take care that leading or trailing unnecessary characters make failures.  This returns false for an empty string input.
     // The double* parameter may be 0.
-    static bool formStringToDouble(const String&, double*);
+    static bool parseToDoubleForNumberType(const String&, double*);
     // Converts the specified number to a string. This is an implementation of
     // HTML5's "algorithm to convert a number to a string" for NUMBER/RANGE types.
-    static String formStringFromDouble(double);
+    static String serializeForNumberType(double);
     // Parses the specified string as the InputType, and returns true if it is successfully parsed.
     // An instance pointed by the DateComponents* parameter will have parsed values and be
     // modified even if the parsing fails.  The DateComponents* parameter may be 0.
-    static bool formStringToDateComponents(InputType, const String&, DateComponents*);
+    static bool parseToDateComponents(InputType, const String&, DateComponents*);
     
 protected:
     virtual void willMoveToNewOwnerDocument();
@@ -305,11 +305,14 @@ private:
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     double parseToDouble(const String&, double defaultValue) const;
-
-    // Generates a suitable string for the specified DateComponents and the
-    // step value, and calls setValue() with it.
-    void setDateValue(const DateComponents&);
-
+    // Create a string representation of the specified double value for the
+    // current input type. If NaN or Infinity is specified, this returns an
+    // emtpy string. This should not be called for types without valueAsNumber.
+    String serialize(double) const;
+    // Create a string representation of the specified double value for the
+    // current input type. The type must be one of DATE, DATETIME,
+    // DATETIMELOCAL, MONTH, TIME, and WEEK.
+    String serializeForDateTimeTypes(double) const;
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
