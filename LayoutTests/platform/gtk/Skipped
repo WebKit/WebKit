@@ -5831,3 +5831,7 @@ fast/frames/flattening/
 
 # Implement LayoutTestController::numberOfPages().
 printing/numberOfPages.html
+
+# New test that reports wrong values
+# See https://bugs.webkit.org/show_bug.cgi?id=34918
+fast/text/glyph-reordering.html
