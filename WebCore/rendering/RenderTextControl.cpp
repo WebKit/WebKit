@@ -459,6 +459,78 @@ IntRect RenderTextControl::controlClipRect(int tx, int ty) const
     return clipRect;
 }
 
+static const char* fontFamiliesWithInvalidCharWidth[] = {
+    "American Typewriter",
+    "Arial Hebrew",
+    "Chalkboard",
+    "Cochin",
+    "Corsiva Hebrew",
+    "Courier",
+    "Euphemia UCAS",
+    "Geneva",
+    "Gill Sans",
+    "Hei",
+    "Helvetica",
+    "Hoefler Text",
+    "InaiMathi",
+    "Kai",
+    "Lucida Grande",
+    "Marker Felt",
+    "Monaco",
+    "Mshtakan",
+    "New Peninim MT",
+    "Osaka",
+    "Raanana",
+    "STHeiti",
+    "Symbol",
+    "Times",
+    "Apple Braille",
+    "Apple LiGothic",
+    "Apple LiSung",
+    "Apple Symbols",
+    "AppleGothic",
+    "AppleMyungjo",
+    "#GungSeo",
+    "#HeadLineA",
+    "#PCMyungjo",
+    "#PilGi",
+};
+
+// For font families where any of the fonts don't have a valid entry in the OS/2 table
+// for avgCharWidth, fallback to the legacy webkit behavior of getting the avgCharWidth
+// from the width of a '0'. This only seems to apply to a fixed number of Mac fonts,
+// but, in order to get similar rendering across platforms, we do this check for
+// all platforms.
+bool RenderTextControl::hasValidAvgCharWidth(AtomicString family)
+{
+    static HashSet<AtomicString>* fontFamiliesWithInvalidCharWidthMap = 0;
+    
+    if (!fontFamiliesWithInvalidCharWidthMap) {
+        fontFamiliesWithInvalidCharWidthMap = new HashSet<AtomicString>;
+        
+        for (unsigned i = 0; i < sizeof(fontFamiliesWithInvalidCharWidth) / sizeof(fontFamiliesWithInvalidCharWidth[0]); i++)
+            fontFamiliesWithInvalidCharWidthMap->add(AtomicString(fontFamiliesWithInvalidCharWidth[i]));
+    }
+
+    return !fontFamiliesWithInvalidCharWidthMap->contains(family);
+}
+
+float RenderTextControl::getAvgCharWidth(AtomicString family)
+{
+    if (hasValidAvgCharWidth(family))
+        return roundf(style()->font().primaryFont()->avgCharWidth());
+
+    const UChar ch = '0'; 
+    return style()->font().floatWidth(TextRun(&ch, 1, false, 0, 0, false, false, false));
+}
+
+float RenderTextControl::scaleEmToUnits(int x) const
+{
+    // This matches the unitsPerEm value for MS Shell Dlg and Courier New from the "head" font table.
+    float unitsPerEm = 2048.0f;
+    return roundf(style()->font().size() * x / unitsPerEm);
+}
+
 void RenderTextControl::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
@@ -470,8 +542,8 @@ void RenderTextControl::calcPrefWidths()
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else {
         // Use average character width. Matches IE.
-        float charWidth = style()->font().primaryFont()->avgCharWidth();
-        m_maxPrefWidth = preferredContentWidth(charWidth) + m_innerText->renderBox()->paddingLeft() + m_innerText->renderBox()->paddingRight();
+        AtomicString family = style()->font().family().family();
+        m_maxPrefWidth = preferredContentWidth(getAvgCharWidth(family)) + m_innerText->renderBox()->paddingLeft() + m_innerText->renderBox()->paddingRight();
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {

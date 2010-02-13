@@ -24,16 +24,16 @@ layer at (0,0) size 800x600
           text run at (359,18) width 65: "assertions."
       RenderBlock {DIV} at (0,54) size 784x40
         RenderBlock {DIV} at (0,0) size 784x40
-          RenderText {#text} at (452,22) size 4x18
-            text run at (452,22) width 4: " "
+          RenderText {#text} at (468,22) size 4x18
+            text run at (468,22) width 4: " "
           RenderInline {SPAN} at (0,0) size 8x18
-            RenderText {#text} at (456,22) size 8x18
-              text run at (456,22) width 8: "x"
+            RenderText {#text} at (472,22) size 8x18
+              text run at (472,22) width 8: "x"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,94) size 784x0
-layer at (329,64) size 129x32 clip at (330,65) size 127x30
-  RenderTextControl {TEXTAREA} at (321,2) size 129x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 123x13
+layer at (313,64) size 161x32 clip at (314,65) size 159x30
+  RenderTextControl {TEXTAREA} at (305,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13
       RenderText {#text} at (0,0) size 3x13
         text run at (0,0) width 3: " "
 caret: position 1 of child 0 {#text} of child 3 {SPAN} of child 1 {DIV} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,4 +1,44 @@
-    2010-02-11  Ariya Hidayat  <ariya.hidayat@gmail.com>
+2010-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Improve text control intrinsic widths.
+        https://bugs.webkit.org/show_bug.cgi?id=25566
+        https://bugs.webkit.org/show_bug.cgi?id=25581
+        https://bugs.webkit.org/show_bug.cgi?id=25958
+
+        For Mac fonts that have invalid avgCharWidth entries in the OS/2 table,
+        fallback to the Safari 4- behavior of using the width of a zero. For other
+        fonts, make Mac match Windows (and thus IE) metrics.
+
+        Lucida Grande is hard-coded to match MS Shell Dlg for inputs and
+        Courier New for textareas in order to match Safari Win, Firefox and, in
+        some cases IE (IE uses different default fonts depending on encoding).
+
+        The only case where we still don't match Windows is if no font-size is
+        set. The default font-size for form controls on the Mac is smaller and
+        thus text-control widths will be slightly smaller.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::):
+        (WebCore::RenderTextControl::hasValidAvgCharWidth):
+        (WebCore::RenderTextControl::getAvgCharWidth):
+        (WebCore::RenderTextControl::calcPrefWidths):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::scaleEmToUnits):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::getAvgCharWidth):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::getAvgCharWidth):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        * rendering/RenderTextControlSingleLine.h:
+
+2010-02-11  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
 

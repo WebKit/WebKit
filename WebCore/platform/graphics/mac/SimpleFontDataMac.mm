@@ -273,37 +273,54 @@ void SimpleFontData::platformInit()
     } else
         m_xHeight = [m_platformData.font() xHeight];
 }
+    
+static CFDataRef copyFontTableForTag(FontPlatformData platformData, FourCharCode tableName)
+{
+#ifdef BUILDING_ON_TIGER
+    ATSFontRef atsFont = FMGetATSFontRefFromFont(platformData.m_atsuFontID);
+
+    ByteCount tableSize;
+    if (ATSFontGetTable(atsFont, tableName, 0, 0, NULL, &tableSize) != noErr)
+        return 0;
+    
+    CFMutableDataRef data = CFDataCreateMutable(kCFAllocatorDefault, tableSize);
+    if (!data)
+        return 0;
+    
+    CFDataIncreaseLength(data, tableSize);
+    if (ATSFontGetTable(atsFont, tableName, 0, tableSize, CFDataGetMutableBytePtr(data), &tableSize) != noErr) {
+        CFRelease(data);
+        return 0;
+    }
+    
+    return data;
+#else
+    return CGFontCopyTableForTag(platformData.cgFont(), tableName);
+#endif
+}
 
 void SimpleFontData::platformCharWidthInit()
 {
-    m_avgCharWidth = 0.f;
-
-    // Calculate avgCharWidth according to http://developer.apple.com/textfonts/TTRefMan/RM06/Chap6OS2.html
-    // We can try grabbing it out of the OS/2 table or via ATSFontGetHorizontalMetrics, but
-    // ATSFontGetHorizontalMetrics never seems to return a non-zero value and the OS/2 table
-    // contains zero for a large number of fonts.
-    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
-    if (glyphPageZero) {
-        static int weights[] = { 64, 14, 27, 35, 100, 20, 14, 42, 63, 3, 6, 35, 20, 56, 56, 17, 4, 49, 56, 71, 31, 10, 18, 3, 18, 2, 166 };
-        int numGlyphs = 27;
-        ASSERT(numGlyphs == sizeof(weights) / sizeof(int));
-        // Compute the weighted sum of the space character and the lowercase letters in the Latin alphabet.
-        float sum = 0.f;
-        int totalWeight = 0;
-        for (int i = 0; i < numGlyphs; i++) {
-            Glyph glyph = glyphPageZero->glyphDataForCharacter((i < 26 ? i + 'a' : ' ')).glyph;
-            if (glyph) {
-                totalWeight += weights[i];
-                sum += widthForGlyph(glyph) * weights[i];
-            }
-        }
-        if (sum > 0.f && totalWeight > 0)
-            m_avgCharWidth = sum / totalWeight;
+    m_avgCharWidth = 0;
+    m_maxCharWidth = 0;
+    
+    RetainPtr<CFDataRef> os2Table(AdoptCF, copyFontTableForTag(m_platformData, 'OS/2'));
+    if (os2Table && CFDataGetLength(os2Table.get()) >= 4) {
+        const UInt8* os2 = CFDataGetBytePtr(os2Table.get());
+        SInt16 os2AvgCharWidth = os2[2] * 256 + os2[3];
+        m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_unitsPerEm) * m_platformData.m_size;
     }
 
-    m_maxCharWidth = 0.f;
-    if (m_platformData.font())
-        m_maxCharWidth = [m_platformData.font() maximumAdvancement].width;
+    RetainPtr<CFDataRef> headTable(AdoptCF, copyFontTableForTag(m_platformData, 'head'));
+    if (headTable && CFDataGetLength(headTable.get()) >= 42) {
+        const UInt8* head = CFDataGetBytePtr(headTable.get());
+        ushort uxMin = head[36] * 256 + head[37];
+        ushort uxMax = head[40] * 256 + head[41];
+        SInt16 xMin = static_cast<SInt16>(uxMin);
+        SInt16 xMax = static_cast<SInt16>(uxMax);
+        float diff = static_cast<float>(xMax - xMin);
+        m_maxCharWidth = scaleEmToUnits(diff, m_unitsPerEm) * m_platformData.m_size;
+    }
 
     // Fallback to a cross-platform estimate, which will populate these values if they are non-positive.
     initCharWidths();
