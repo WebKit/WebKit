@@ -82,7 +82,7 @@ committers_unable_to_review = [
     Committer("Brian Weinstein", "bweinstein@apple.com"),
     Committer("Cameron McCormack", "cam@webkit.org"),
     Committer("Carol Szabo", "carol.szabo@nokia.com"),
-    Committer("Chang Shu", "chang.shu@nokia.com"),
+    Committer("Chang Shu", "Chang.Shu@nokia.com"),
     Committer("Chris Fleizach", "cfleizach@apple.com"),
     Committer("Chris Jerdonek", "cjerdonek@webkit.org"),
     Committer("Chris Marrin", "cmarrin@apple.com"),
