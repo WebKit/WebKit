@@ -5090,3 +5090,7 @@ printing/numberOfPages.html
 # [Qt] perl websocket test(s) time out
 # https://bugs.webkit.org/show_bug.cgi?id=34882
 websocket/tests/cookies/httponly-cookie.pl
+
+# New test that reports wrong values
+# See https://bugs.webkit.org/show_bug.cgi?id=34918
+fast/text/glyph-reordering.html

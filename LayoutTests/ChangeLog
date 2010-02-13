@@ -1,3 +1,9 @@
+2010-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test that fails. See https://webkit.org/b/34918.
+
+        * platform/qt/Skipped: fast/text/glyph-reordering.html skipped.
+
 2010-02-13  Gustavo Noronha Silva  <gns@gnome.org>
 
         Skip new test that fails. See https://webkit.org/b/34918.
