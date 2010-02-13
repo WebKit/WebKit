@@ -1815,7 +1815,7 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
 
 String HTMLInputElement::serializeForDateTimeTypes(double value) const
 {
-    bool success;
+    bool success = false;
     DateComponents date;
     switch (inputType()) {
     case DATE:
