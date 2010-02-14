@@ -50,6 +50,8 @@ WebInspector.TextViewer = function(textModel, platform, url)
 
     this._defaultChunkSize = 50;
     this._paintCoalescingLevel = 0;
+
+    this.freeCachedElements();
 }
 
 WebInspector.TextViewer.prototype = {
@@ -111,14 +113,20 @@ WebInspector.TextViewer.prototype = {
         chunk.addDecoration("webkit-highlighted-line");
     },
 
+    freeCachedElements: function()
+    {
+        this._cachedSpans = [];
+        this._cachedTextNodes = [];
+        this._cachedRows = [];
+    },
+
     _buildChunks: function()
     {
         this._linesContainerElement.removeChildren();
 
-        var paintLinesCallback = this._paintLines.bind(this);
         this._textChunks = [];
         for (var i = 0; i < this._textModel.linesCount; i += this._defaultChunkSize) {
-            var chunk = new WebInspector.TextChunk(this._textModel, i, i + this._defaultChunkSize, paintLinesCallback);
+            var chunk = new WebInspector.TextChunk(this, i, i + this._defaultChunkSize);
             this._textChunks.push(chunk);
             this._linesContainerElement.appendChild(chunk.element);
         }
@@ -140,23 +148,22 @@ WebInspector.TextViewer.prototype = {
         oldChunk.expanded = false;
 
         var insertIndex = oldChunk.chunkNumber + 1;
-        var paintLinesCallback = this._paintLines.bind(this);
 
         // Prefix chunk.
         if (lineNumber > oldChunk.startLine) {
-            var prefixChunk = new WebInspector.TextChunk(this._textModel, oldChunk.startLine, lineNumber, paintLinesCallback);
+            var prefixChunk = new WebInspector.TextChunk(this, oldChunk.startLine, lineNumber);
             this._textChunks.splice(insertIndex++, 0, prefixChunk);
             this._linesContainerElement.insertBefore(prefixChunk.element, oldChunk.element);
         }
 
         // Line chunk.
-        var lineChunk = new WebInspector.TextChunk(this._textModel, lineNumber, lineNumber + 1, paintLinesCallback);
+        var lineChunk = new WebInspector.TextChunk(this, lineNumber, lineNumber + 1);
         this._textChunks.splice(insertIndex++, 0, lineChunk);
         this._linesContainerElement.insertBefore(lineChunk.element, oldChunk.element);
 
         // Suffix chunk.
         if (oldChunk.startLine + oldChunk.linesCount > lineNumber + 1) {
-            var suffixChunk = new WebInspector.TextChunk(this._textModel, lineNumber + 1, oldChunk.startLine + oldChunk.linesCount, paintLinesCallback);
+            var suffixChunk = new WebInspector.TextChunk(this, lineNumber + 1, oldChunk.startLine + oldChunk.linesCount);
             this._textChunks.splice(insertIndex, 0, suffixChunk);
             this._linesContainerElement.insertBefore(suffixChunk.element, oldChunk.element);
         }
@@ -339,19 +346,41 @@ WebInspector.TextViewer.prototype = {
                 j++;
             } else {
                 if (plainTextStart !== -1) {
-                    element.appendChild(document.createTextNode(line.substring(plainTextStart, j)));
+                    this._appendTextNode(element, line.substring(plainTextStart, j));
                     plainTextStart = -1;
                 }
-                element.appendChild(this._createSpan(line.substring(j, j + attribute.length), attribute.tokenType));
+                this._appendSpan(element, line.substring(j, j + attribute.length), attribute.tokenType);
                 j += attribute.length;
             }
         }
         if (plainTextStart !== -1)
-            element.appendChild(document.createTextNode(line.substring(plainTextStart, line.length)));
+            this._appendTextNode(element, line.substring(plainTextStart, line.length));
         if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
             this._markRange(element, line, this._rangeToMark.startColumn, this._rangeToMark.endColumn);
         if (lineRow.decorationsElement)
             element.appendChild(lineRow.decorationsElement);
+    },
+
+    _releaseLinesHighlight: function(fromLine, toLine)
+    {
+        for (var i = fromLine; i < toLine; ++i) {
+            var lineRow = this._textModel.getAttribute(i, "line-row");
+            if (!lineRow)
+                continue;
+            var element = lineRow.lastChild;
+            if ("spans" in element) {
+                var spans = element.spans;
+                for (var j = 0; j < spans.length; ++j)
+                    this._cachedSpans.push(spans[j]);
+                delete element.spans;
+            }
+            if ("textNodes" in element) {
+                var textNodes = element.textNodes;
+                for (var j = 0; j < textNodes.length; ++j)
+                    this._cachedTextNodes.push(textNodes[j]);
+                delete element.textNodes;
+            }
+        }
     },
 
     _getSelection: function()
@@ -447,15 +476,33 @@ WebInspector.TextViewer.prototype = {
         return { line: lineRow.lineNumber, column: column };
     },
 
-    _createSpan: function(content, className)
+    _appendSpan: function(element, content, className)
     {
-        if (className === "html-resource-link" || className === "html-external-link")
-            return this._createLink(content, className === "html-external-link");
+        if (className === "html-resource-link" || className === "html-external-link") {
+            element.appendChild(this._createLink(content, className === "html-external-link"));
+            return;
+        }
 
-        var span = document.createElement("span");
+        var span = this._cachedSpans.pop() || document.createElement("span");
         span.className = "webkit-" + className;
-        span.appendChild(document.createTextNode(content));
-        return span;
+        span.textContent = content;
+        element.appendChild(span);
+        if (!("spans" in element))
+            element.spans = [];
+        element.spans.push(span);
+    },
+
+    _appendTextNode: function(element, text)
+    {
+        var textNode = this._cachedTextNodes.pop();
+        if (textNode) {
+            textNode.nodeValue = text;
+        } else
+            textNode = document.createTextNode(text);
+        element.appendChild(textNode);
+        if (!("textNodes" in element))
+            element.textNodes = [];
+        element.textNodes.push(textNode);
     },
 
     _createLink: function(content, isExternal)
@@ -532,10 +579,13 @@ WebInspector.TextViewer.prototype = {
     }
 }
 
-WebInspector.TextChunk = function(textModel, startLine, endLine, paintLinesCallback)
+var cachedSpans = [];
+
+WebInspector.TextChunk = function(textViewer, startLine, endLine)
 {
+    this._textViewer = textViewer;
     this.element = document.createElement("tr");
-    this._textModel = textModel;
+    this._textModel = textViewer._textModel;
     this.element.chunk = this;
     this.element.lineNumber = startLine;
 
@@ -558,7 +608,6 @@ WebInspector.TextChunk = function(textModel, startLine, endLine, paintLinesCallb
     for (var i = this.startLine; i < this.startLine + this.linesCount; ++i)
         lines.push(this._textModel.line(i));
     this._lineContentElement.textContent = lines.join("\n");
-    this._paintLines = paintLinesCallback;
 }
 
 WebInspector.TextChunk.prototype = {
@@ -601,40 +650,30 @@ WebInspector.TextChunk.prototype = {
         if (this.linesCount === 1) {
             this._textModel.setAttribute(this.startLine, "line-row", this.element);
             if (expanded)
-                this._paintLines(this.startLine, this.startLine + 1);
+                this._textViewer._paintLines(this.startLine, this.startLine + 1);
             return;
         }
 
         if (expanded) {
             var parentElement = this.element.parentElement;
             for (var i = this.startLine; i < this.startLine + this.linesCount; ++i) {
-                var lineRow = document.createElement("tr");
-                lineRow.lineNumber = i;
-
-                var lineNumberElement = document.createElement("td");
-                lineNumberElement.className = "webkit-line-number";
-                lineNumberElement.textContent = this._lineNumberText(i);
-                lineRow.appendChild(lineNumberElement);
-
-                var lineContentElement = document.createElement("td");
-                lineContentElement.className = "webkit-line-content";
-                lineContentElement.textContent = this._textModel.line(i);
-                lineRow.appendChild(lineContentElement);
-
+                var lineRow = this._createRow(i);
                 this._textModel.setAttribute(i, "line-row", lineRow);
                 parentElement.insertBefore(lineRow, this.element);
             }
             parentElement.removeChild(this.element);
 
-            this._paintLines(this.startLine, this.startLine + this.linesCount);
+            this._textViewer._paintLines(this.startLine, this.startLine + this.linesCount);
         } else {
             var firstLine = this._textModel.getAttribute(this.startLine, "line-row");
             var parentElement = firstLine.parentElement;
+            this._textViewer._releaseLinesHighlight(this.startLine, this.startLine + this.linesCount);
 
             parentElement.insertBefore(this.element, firstLine);
             for (var i = this.startLine; i < this.startLine + this.linesCount; ++i) {
                 var lineRow = this._textModel.getAttribute(i, "line-row");
                 this._textModel.removeAttribute(i, "line-row");
+                this._textViewer._cachedRows.push(lineRow);
                 parentElement.removeChild(lineRow);
             }
         }
@@ -662,5 +701,30 @@ WebInspector.TextChunk.prototype = {
             text += " ";
         text += lineNumber + 1;
         return text;
+    },
+
+    _createRow: function(lineNumber)
+    {
+        var cachedRows = this._textViewer._cachedRows;
+        if (cachedRows.length) {
+            var lineRow = cachedRows[cachedRows.length - 1];
+            cachedRows.length--;
+            var lineNumberElement = lineRow.firstChild;
+            var lineContentElement = lineRow.lastChild;
+        } else {
+            var lineRow = document.createElement("tr");
+
+            var lineNumberElement = document.createElement("td");
+            lineNumberElement.className = "webkit-line-number";
+            lineRow.appendChild(lineNumberElement);
+
+            var lineContentElement = document.createElement("td");
+            lineContentElement.className = "webkit-line-content";
+            lineRow.appendChild(lineContentElement);        
+        }
+        lineRow.lineNumber = lineNumber;
+        lineNumberElement.textContent = this._lineNumberText(lineNumber);
+        lineContentElement.textContent = this._textModel.line(lineNumber);
+        return lineRow;
     }
 }

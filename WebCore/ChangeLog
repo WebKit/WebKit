@@ -1,3 +1,28 @@
+2010-02-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: cache created row, span and text elements
+        in TextView to improve scroller performance on debug build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34921
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.set visible):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype.freeCachedElements):
+        (WebInspector.TextViewer.prototype._buildChunks):
+        (WebInspector.TextViewer.prototype._makeLineAChunk):
+        (WebInspector.TextViewer.prototype._paintLine):
+        (WebInspector.TextViewer.prototype._releaseLines):
+        (WebInspector.TextViewer.prototype._appendSpan):
+        (WebInspector.TextViewer.prototype._appendTextNode):
+        (WebInspector.TextChunk):
+        (WebInspector.TextChunk.prototype.set expanded):
+        (WebInspector.TextChunk.prototype._lineNumberText):
+        (WebInspector.TextChunk.prototype._createRow):
+
 2010-02-13  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
