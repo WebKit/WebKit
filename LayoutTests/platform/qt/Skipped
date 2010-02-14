@@ -15,13 +15,24 @@ svg/batik/filters/feTile.svg
 # =========================================================================== #
 
 # Disabled HTTP subdirs for now, needs investigation.
-http/tests/appcache
 http/tests/webarchive
 http/tests/globalhistory
 http/tests/incremental
 http/tests/media
 http/tests/webarchive
 http/tests/wml
+
+# Skip failed appcache test cases
+http/tests/appcache/auth.html
+http/tests/appcache/empty-manifest.html
+http/tests/appcache/fallback.html
+http/tests/appcache/foreign-iframe-main.html
+http/tests/appcache/manifest-redirect-2.html
+http/tests/appcache/manifest-with-empty-file.html
+http/tests/appcache/max-size.html
+http/tests/appcache/offline-access.html
+http/tests/appcache/resource-redirect-2.html
+http/tests/appcache/resource-redirect.html
 
 # Failing URL test
 http/tests/uri/escaped-entity.html

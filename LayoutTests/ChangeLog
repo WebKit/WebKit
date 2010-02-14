@@ -1,3 +1,12 @@
+2010-02-14  Chang Shu  <Chang.Shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable http/tests/appcache but skip the failed cases.
+        https://bugs.webkit.org/show_bug.cgi?id=34713
+
+        * platform/qt/Skipped:
+
 2010-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new test that fails. See https://webkit.org/b/34918.

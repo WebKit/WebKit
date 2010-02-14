@@ -1,3 +1,17 @@
+2010-02-14  Chang Shu  <Chang.Shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable appcache feature.
+        https://bugs.webkit.org/show_bug.cgi?id=34713
+
+        Re-land r54543 without the change in DumpRenderTree/qt/main.cpp.
+        Persistent storage for AppCache is already initialized in
+        DumpRenderTreeQt.cpp.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+
 2010-02-12  Chang Shu  <Chang.Shu@nokia.com>
 
         Not Reviewed.
