@@ -310,7 +310,7 @@ private:
     bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
     void demarshalValues(JSC::ExecState*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
 
-    class LocalObjectMap {
+    class LocalObjectMap : Noncopyable {
     public:
         LocalObjectMap();
         ~LocalObjectMap();
@@ -319,8 +319,8 @@ private:
         void release(JSC::JSObject*);
         void clear();
         bool forget(uint32_t);
-        bool contains(uint32_t objectID) const { return m_idToJSObjectMap.contains(objectID); }
-        JSC::JSObject* get(uint32_t objectID) const { return m_idToJSObjectMap.get(objectID); }
+        bool contains(uint32_t) const;
+        JSC::JSObject* get(uint32_t) const;
 
     private:
         HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> > m_idToJSObjectMap;

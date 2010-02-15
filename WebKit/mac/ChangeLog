@@ -1,5 +1,16 @@
 2010-02-15  Alexey Proskuryakov  <ap@apple.com>
 
+        More build fixing (for what is actually a 64-bit failure, as 32-bit apparently includes
+        headers that aren't included in 64-bit).
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::contains):
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::get):
+        Move inline functions to .cpp; also made the class Noncopyable.
+
+2010-02-15  Alexey Proskuryakov  <ap@apple.com>
+
         Mac release build fix attempt.
 
         * Plugins/Hosted/NetscapePluginInstanceProxy.h:
