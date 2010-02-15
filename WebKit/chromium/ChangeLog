@@ -1,3 +1,16 @@
+2010-02-14  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add support for the showDebugBorders setting to Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34906
+
+        * public/WebSettings.h: Add declaration for setShowDebugBorders
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setShowDebugBorders): Add method implementation
+        * src/WebSettingsImpl.h: Added declaration for setShowDebugBorders
+
 2010-02-11  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Jeremy Orlow.
