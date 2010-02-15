@@ -179,6 +179,20 @@ namespace JSC {
             // Since the number of transitions is always the same as m_offset, we keep the size of Structure down by not storing both.
             return m_offset == noOffset ? 0 : m_offset + 1;
         }
+
+        typedef std::pair<Structure*, Structure*> Transition;
+        typedef HashMap<StructureTransitionTableHash::Key, Transition, StructureTransitionTableHash, StructureTransitionTableHashTraits> TransitionTable;
+
+        inline bool transitionTableContains(const StructureTransitionTableHash::Key& key, JSCell* specificValue);
+        inline void transitionTableRemove(const StructureTransitionTableHash::Key& key, JSCell* specificValue);
+        inline void transitionTableAdd(const StructureTransitionTableHash::Key& key, Structure* structure, JSCell* specificValue);
+        inline bool transitionTableHasTransition(const StructureTransitionTableHash::Key& key) const;
+        inline Structure* transitionTableGet(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const;
+
+        TransitionTable* transitionTable() const { ASSERT(!m_isUsingSingleSlot); return m_transitions.m_table; }
+        inline void setTransitionTable(TransitionTable* table);
+        Structure* singleTransition() const { ASSERT(m_isUsingSingleSlot); return m_transitions.m_singleTransition; }
+        void setSingleTransition(Structure* structure) { ASSERT(m_isUsingSingleSlot); m_transitions.m_singleTransition = structure; }
         
         bool isValid(ExecState*, StructureChain* cachedPrototypeChain) const;
 
@@ -199,7 +213,11 @@ namespace JSC {
         RefPtr<UString::Rep> m_nameInPrevious;
         JSCell* m_specificValueInPrevious;
 
-        StructureTransitionTable table;
+        // 'm_isUsingSingleSlot' indicates whether we are using the single transition optimisation.
+        union {
+            TransitionTable* m_table;
+            Structure* m_singleTransition;
+        } m_transitions;
 
         WeakGCPtr<JSPropertyNameIterator> m_enumerationCache;
 
@@ -224,7 +242,8 @@ namespace JSC {
 #endif
         unsigned m_specificFunctionThrashCount : 2;
         unsigned m_anonymousSlotCount : 5;
-        // 5 free bits
+        unsigned m_isUsingSingleSlot : 1;
+        // 4 free bits
     };
 
     inline size_t Structure::get(const Identifier& propertyName)
@@ -271,58 +290,7 @@ namespace JSC {
                 return m_propertyTable->entries()[entryIndex - 1].offset;
         }
     }
-    
-    bool StructureTransitionTable::contains(const StructureTransitionTableHash::Key& key, JSCell* specificValue)
-    {
-        if (usingSingleTransitionSlot()) {
-            Structure* existingTransition = singleTransition();
-            return existingTransition && existingTransition->m_nameInPrevious.get() == key.first
-                   && existingTransition->m_attributesInPrevious == key.second
-                   && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0);
-        }
-        TransitionTable::iterator find = table()->find(key);
-        if (find == table()->end())
-            return false;
 
-        return find->second.first || find->second.second->transitionedFor(specificValue);
-    }
-
-    Structure* StructureTransitionTable::get(const StructureTransitionTableHash::Key& key, JSCell* specificValue) const
-    {
-        if (usingSingleTransitionSlot()) {
-            Structure* existingTransition = singleTransition();
-            if (existingTransition && existingTransition->m_nameInPrevious.get() == key.first
-                && existingTransition->m_attributesInPrevious == key.second
-                && (existingTransition->m_specificValueInPrevious == specificValue || existingTransition->m_specificValueInPrevious == 0))
-                return existingTransition;
-            return 0;
-        }
-
-        Transition transition = table()->get(key);
-        if (transition.second && transition.second->transitionedFor(specificValue))
-            return transition.second;
-        return transition.first;
-    }
-
-    bool StructureTransitionTable::hasTransition(const StructureTransitionTableHash::Key& key) const
-    {
-        if (usingSingleTransitionSlot()) {
-            Structure* transition = singleTransition();
-            return transition && transition->m_nameInPrevious == key.first
-            && transition->m_attributesInPrevious == key.second;
-        }
-        return table()->contains(key);
-    }
-    
-    void StructureTransitionTable::reifySingleTransition()
-    {
-        ASSERT(usingSingleTransitionSlot());
-        Structure* existingTransition = singleTransition();
-        TransitionTable* transitionTable = new TransitionTable;
-        setTransitionTable(transitionTable);
-        if (existingTransition)
-            add(std::make_pair(existingTransition->m_nameInPrevious.get(), existingTransition->m_attributesInPrevious), existingTransition, existingTransition->m_specificValueInPrevious);
-    }
 } // namespace JSC
 
 #endif // Structure_h

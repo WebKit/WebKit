@@ -1,3 +1,50 @@
+2010-02-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33731
+        Many false leaks in release builds due to PtrAndFlags
+
+        StructureTransitionTable was effectively a smart pointer type,
+        one machine word in size and wholly contained as a member of
+        of Structure.  It either pointed to an actual table, or could
+        be used to describe a single transtion entry without use of a
+        table.
+
+        This, however, worked by using a PtrAndFlags, which is not
+        compatible with the leaks tool.  Since there is no clear way to
+        obtain another bit for 'free' here, and since there are bits
+        available up in Structure, merge this functionality back up into
+        Structure.  Having this in a separate class was quite clean
+        from an enacapsulation perspective, but this solution doesn't
+        seem to bad - all table access is now intermediated through the
+        Structure::structureTransitionTableFoo methods, keeping the
+        optimization fairly well contained.
+
+        This was the last use of PtrAndFlags, so removing the file too.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::hasTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::):
+        (JSC::Structure::structureTransitionTableContains):
+        (JSC::Structure::structureTransitionTableGet):
+        (JSC::Structure::structureTransitionTableHasTransition):
+        (JSC::Structure::structureTransitionTableRemove):
+        (JSC::Structure::structureTransitionTableAdd):
+        (JSC::Structure::structureTransitionTable):
+        (JSC::Structure::setStructureTransitionTable):
+        (JSC::Structure::singleTransition):
+        (JSC::Structure::setSingleTransition):
+        * runtime/StructureTransitionTable.h:
+        * wtf/PtrAndFlags.h: Removed.
+
 2010-02-15  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Geoff Garen.
