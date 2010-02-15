@@ -100,6 +100,84 @@ private:
     bool m_allowPopups;
 };
 
+NetscapePluginInstanceProxy::LocalObjectMap::LocalObjectMap()
+    : m_objectIDCounter(0)
+{
+}
+
+uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSObject* object)
+{
+    // This method creates objects with refcount of 1, but doesn't increase refcount when returning
+    // found objects. This extra count accounts for the main "reference" kept by plugin process.
+
+    // To avoid excessive IPC, plugin process doesn't send each NPObject release/retain call to
+    // Safari. It only sends one when the last reference is removed, and it can destroy the proxy
+    // NPObject.
+
+    // However, the browser may be sending the same object out to plug-in as a function call
+    // argument at the same time - neither side can know what the other one is doing. So,
+    // is to make PCForgetBrowserObject call return a boolean result, making it possible for 
+    // the browser to make plugin host keep the proxy with zero refcount for a little longer.
+
+    uint32_t objectID = 0;
+    
+    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
+    if (iter != m_jsObjectToIDMap.end())
+        return iter->second.first;
+    
+    do {
+        objectID = ++m_objectIDCounter;
+    } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
+
+    m_idToJSObjectMap.set(objectID, object);
+    m_jsObjectToIDMap.set(object, make_pair<uint32_t, uint32_t>(objectID, 1));
+
+    return objectID;
+}
+
+void NetscapePluginInstanceProxy::LocalObjectMap::retain(JSC::JSObject* object)
+{
+    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
+    ASSERT(iter != m_jsObjectToIDMap.end());
+
+    iter->second.second = iter->second.second + 1;
+}
+
+void NetscapePluginInstanceProxy::LocalObjectMap::release(JSC::JSObject* object)
+{
+    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
+    ASSERT(iter != m_jsObjectToIDMap.end());
+
+    ASSERT(iter->second.second > 0);
+    iter->second.second = iter->second.second - 1;
+    if (!iter->second.second) {
+        m_idToJSObjectMap.remove(iter->second.first);
+        m_jsObjectToIDMap.remove(iter);
+    }
+}
+
+void NetscapePluginInstanceProxy::LocalObjectMap::clear()
+{
+    m_idToJSObjectMap.clear();
+    m_jsObjectToIDMap.clear();
+}
+
+bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
+{
+    HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
+    ASSERT(iter != m_idToJSObjectMap.end());
+
+    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator rIter = m_jsObjectToIDMap.find(iter->second.get());
+
+    // If the object is being sent to plug-in right now, then it's not the time to forget.
+    if (rIter->second.second != 1)
+        return false;
+
+    m_jsObjectToIDMap.remove(rIter);
+    m_idToJSObjectMap.remove(iter);
+    return true;
+}
+
 static uint32_t pluginIDCounter;
 
 #ifndef NDEBUG
@@ -114,7 +192,6 @@ NetscapePluginInstanceProxy::NetscapePluginInstanceProxy(NetscapePluginHostProxy
     , m_renderContextID(0)
     , m_useSoftwareRenderer(false)
     , m_waitingForReply(false)
-    , m_objectIDCounter(0)
     , m_urlCheckCounter(0)
     , m_pluginFunctionCallDepth(0)
     , m_shouldStopSoon(false)
@@ -185,7 +262,7 @@ void NetscapePluginInstanceProxy::cleanup()
     
     // Clear the object map, this will cause any outstanding JS objects that the plug-in had a reference to 
     // to go away when the next garbage collection takes place.
-    m_objects.clear();
+    m_localObjects.clear();
     
     if (Frame* frame = core([m_pluginView webFrame]))
         frame->script()->cleanupScriptObjectsForPlugin(m_pluginView);
@@ -683,20 +760,6 @@ NetscapePluginInstanceProxy::Reply* NetscapePluginInstanceProxy::processRequests
     return reply;
 }
     
-uint32_t NetscapePluginInstanceProxy::idForObject(JSObject* object)
-{
-    uint32_t objectID = 0;
-    
-    // Assign an object ID.
-    do {
-        objectID = ++m_objectIDCounter;
-    } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_objects.contains(objectID));
-    
-    m_objects.set(objectID, object);
-    
-    return objectID;
-}
-
 // NPRuntime support
 bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
 {
@@ -707,7 +770,7 @@ bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
     if (!frame->script()->canExecuteScripts())
         objectID = 0;
     else
-        objectID = idForObject(frame->script()->windowShell(pluginWorld())->window());
+        objectID = m_localObjects.idForObject(frame->script()->windowShell(pluginWorld())->window());
         
     return true;
 }
@@ -719,16 +782,16 @@ bool NetscapePluginInstanceProxy::getPluginElementNPObject(uint32_t& objectID)
         return false;
     
     if (JSObject* object = frame->script()->jsObjectForPluginElement([m_pluginView element]))
-        objectID = idForObject(object);
+        objectID = m_localObjects.idForObject(object);
     else
         objectID = 0;
     
     return true;
 }
 
-void NetscapePluginInstanceProxy::releaseObject(uint32_t objectID)
+bool NetscapePluginInstanceProxy::forgetBrowserObjectID(uint32_t objectID)
 {
-    m_objects.remove(objectID);
+    return m_localObjects.forget(objectID);
 }
  
 bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script, data_t& resultData, mach_msg_type_number_t& resultLength, bool allowPopups)
@@ -736,7 +799,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     resultData = 0;
     resultLength = 0;
 
-    if (!m_objects.contains(objectID))
+    if (!m_localObjects.contains(objectID))
         return false;
 
     Frame* frame = core([m_pluginView webFrame]);
@@ -778,7 +841,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     if (m_inDestroy)
         return false;
     
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -812,7 +875,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -845,7 +908,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -879,7 +942,7 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -898,7 +961,7 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
     
 bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned propertyName, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -920,7 +983,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -944,7 +1007,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -967,7 +1030,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -992,7 +1055,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -1017,7 +1080,7 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const Identifie
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -1037,7 +1100,7 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned proper
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -1057,7 +1120,7 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
 
@@ -1077,7 +1140,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     if (m_inDestroy)
         return false;
 
-    JSObject* object = m_objects.get(objectID);
+    JSObject* object = m_localObjects.get(objectID);
     if (!object)
         return false;
     
@@ -1136,7 +1199,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
             }
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
-            [array addObject:[NSNumber numberWithInt:idForObject(object)]];
+            [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(object)]];
         }
     } else
         [array addObject:[NSNumber numberWithInt:VoidValueType]];
@@ -1198,7 +1261,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
         case JSObjectValueType: {
             uint32_t objectID = [[array objectAtIndex:index++] intValue];
             
-            result = m_objects.get(objectID);
+            result = m_localObjects.get(objectID);
             ASSERT(result);
             return true;
         }
@@ -1253,6 +1316,30 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
     JSValue value;
     while (demarshalValueFromArray(exec, array.get(), position, value))
         result.append(value);
+}
+
+void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
+{
+    if (!value.isObject())
+        return;
+
+    JSObject* object = asObject(value);
+    if (object->classInfo() == &RuntimeObjectImp::s_info)
+        return;
+
+    m_localObjects.retain(object);
+}
+
+void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
+{
+    if (!value.isObject())
+        return;
+
+    JSObject* object = asObject(value);
+    if (object->classInfo() == &RuntimeObjectImp::s_info)
+        return;
+
+    m_localObjects.release(object);
 }
 
 PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRefPtr<RootObject> rootObject)

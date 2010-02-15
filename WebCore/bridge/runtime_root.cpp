@@ -71,6 +71,10 @@ RootObject* findRootObject(JSGlobalObject* globalObject)
     return 0;
 }
 
+RootObject::InvalidationCallback::~InvalidationCallback()
+{
+}
+
 PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObject* globalObject)
 {
     return adoptRef(new RootObject(nativeHandle, globalObject));
@@ -108,6 +112,14 @@ void RootObject::invalidate()
 
     m_nativeHandle = 0;
     m_globalObject = 0;
+
+    {
+        HashSet<InvalidationCallback*>::iterator end = m_invalidationCallbacks.end();
+        for (HashSet<InvalidationCallback*>::iterator iter = m_invalidationCallbacks.begin(); iter != end; ++iter)
+            (**iter)(this);
+
+        m_invalidationCallbacks.clear();
+    }
 
     ProtectCountSet::iterator end = m_protectCountSet.end();
     for (ProtectCountSet::iterator it = m_protectCountSet.begin(); it != end; ++it)

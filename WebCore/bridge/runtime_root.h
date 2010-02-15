@@ -72,6 +72,13 @@ public:
 
     void addRuntimeObject(RuntimeObjectImp*);
     void removeRuntimeObject(RuntimeObjectImp*);
+
+    struct InvalidationCallback {
+        virtual void operator()(RootObject*) = 0;
+        virtual ~InvalidationCallback();
+    };
+    void addInvalidationCallback(InvalidationCallback* callback) { m_invalidationCallbacks.add(callback); }
+
 private:
     RootObject(const void* nativeHandle, JSGlobalObject*);
     
@@ -79,9 +86,11 @@ private:
     
     const void* m_nativeHandle;
     ProtectedPtr<JSGlobalObject> m_globalObject;
-    ProtectCountSet m_protectCountSet;
 
+    ProtectCountSet m_protectCountSet;
     HashSet<RuntimeObjectImp*> m_runtimeObjects;    
+
+    HashSet<InvalidationCallback*> m_invalidationCallbacks;
 };
 
 } // namespace Bindings

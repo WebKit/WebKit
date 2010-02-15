@@ -112,7 +112,7 @@ routine PCGetPluginElementNPObject(clientPort :mach_port_t;
                                  pluginID :uint32_t;
                                  out objectID :uint32_t);
                       
-routine PCReleaseObject(clientPort :mach_port_t;
+routine PCForgetBrowserObject(clientPort :mach_port_t;
                       pluginID :uint32_t;
                       objectID :uint32_t);
                       

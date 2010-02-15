@@ -546,7 +546,7 @@ kern_return_t WKPCGetPluginElementNPObject(mach_port_t clientPort, uint32_t plug
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID)
+kern_return_t WKPCForgetBrowserObject(mach_port_t clientPort, uint32_t pluginID, uint32_t objectID)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
@@ -556,8 +556,7 @@ kern_return_t WKPCReleaseObject(mach_port_t clientPort, uint32_t pluginID, uint3
     if (!instanceProxy)
         return KERN_FAILURE;
 
-    instanceProxy->releaseObject(objectID);
-    return KERN_SUCCESS;
+    return instanceProxy->forgetBrowserObjectID(objectID) ? KERN_SUCCESS : KERN_FAILURE;
 }
 
 kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t requestID, uint32_t objectID, data_t scriptData, mach_msg_type_number_t scriptLength, boolean_t allowPopups)

@@ -1,3 +1,28 @@
+2010-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7130641> Browser objects identity is not preserved by Safari
+
+        Test: plugins/netscape-browser-object-identity.html
+
+        * bridge/runtime_root.h: (JSC::Bindings::RootObject::addInvalidationCallback):
+        RootObject can now call out during invalidation, making it possible for other code to know
+        when this happens.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::InvalidationCallback::~InvalidationCallback): Empty destructor,
+        in cpp file since it's virtual.
+        (JSC::Bindings::RootObject::invalidate): Invoke invalidation callbacks.
+
+        * bridge/NP_jsobject.cpp:
+        (ObjectMap): Keep a JSObject->NPObject map for each RootObject. It somewhat cleaner to
+        keep it outside RootObject, because (1) it is agnostic of what kinds of objects can wrap
+        JSObject, and (2) out of process NPAPI implementation also keeps its corresponding map
+        separately, due to supporting per-instance granularity (as opposed to per-RootObject here).
+        (jsDeallocate): Remove the corresponding map entry.
+        (_NPN_CreateScriptObject): Try to fetch existing object from the map, incrementing refcount.
+
 2010-02-15  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Gustavo Noronha Silva.

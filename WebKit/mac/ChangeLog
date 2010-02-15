@@ -1,3 +1,70 @@
+2010-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7130641> Browser objects identity is not preserved by Safari
+
+        Out of process part.
+
+        To avoid excessive IPC, plugin process doesn't send each NPObject release/retain call to
+        Safari. It only sends one when the last one is removed, and it can destroy the proxy
+        NPObject.
+
+        However, the browser may be sending the same object out to plug-in as a function call
+        argument at the same time - neither side can know what the other one is up to. The solution
+        is to make the "destroying object" call return a boolean result, making it possible for 
+        the browser to make plugin host keep the proxy with zero refcount for a little longer.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCForgetBrowserObject): This function (that used to be named ReleaseObject) is only
+        called when plug-in releases all of its references, so renamed it. Its boolean result
+        is returned as call success or failure.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap): Made the numeric ID to JSObject map
+        two-way.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::idForObject): This method is tricky
+        in that it creates objects with refcount of 1, but doesn't increase refcount when returning
+        found objects. This extra count accounts for the "reference" kept by plugin process.
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::retain): Only retaining for the
+        duration of calls out to plug-in, which means that refcount is almost always equal to 1.
+        Note that we can't use "++" here, due to how std::pair works!
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::release): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::clear): Clear all references when
+        stopping plug-in.
+        (WebKit::NetscapePluginInstanceProxy::LocalObjectMap::forget): Like release(), but only
+        functional when recount is 1 (meaning that the object is not being sent out to plug-in at
+        the moment).
+        (WebKit::NetscapePluginInstanceProxy::NetscapePluginInstanceProxy): Updated for other changes.
+        (WebKit::NetscapePluginInstanceProxy::cleanup): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::getPluginElementNPObject): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::forgetBrowserObjectID): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::evaluate): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::invoke): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::construct): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::getProperty): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::setProperty): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::removeProperty): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::hasProperty): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::hasMethod): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::enumerate): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::retainLocalObject): Helper for calling retain when
+        making calls out to plug-in. No-op for objects that aren't wrapped to be sent (i.e. for
+        objects wrapping ProxyInstance wrappers for plug-in objects being sent bak).
+        (WebKit::NetscapePluginInstanceProxy::releaseLocalObject): Ditto.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke): Retain/release arguments during call. 
+        (WebKit::ProxyInstance::setFieldValue): Ditto.
+
+        * Plugins/Hosted/WebKitPluginClient.defs: Renamed PCReleaseObject to PCForgetBrowserObject.
+
 2010-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -137,17 +137,27 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 {
     if (!m_instanceProxy)
         return jsUndefined();
-    
+
     RetainPtr<NSData*> arguments(m_instanceProxy->marshalValues(exec, args));
 
     uint32_t requestID = m_instanceProxy->nextRequestID();
 
+    for (unsigned i = 0; i < args.size(); i++)
+        m_instanceProxy->retainLocalObject(args.at(i));
+
     if (_WKPHNPObjectInvoke(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID,
-                            type, identifier, (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS)
+                            type, identifier, (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS) {
+        for (unsigned i = 0; i < args.size(); i++)
+            m_instanceProxy->releaseLocalObject(args.at(i));
         return jsUndefined();
+    }
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
+
+    for (unsigned i = 0; i < args.size(); i++)
+        m_instanceProxy->releaseLocalObject(args.at(i));
+
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
     
@@ -381,10 +391,12 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
     mach_msg_type_number_t valueLength;
 
     m_instanceProxy->marshalValue(exec, value, valueData, valueLength);
+    m_instanceProxy->retainLocalObject(value);
     kern_return_t kr = _WKPHNPObjectSetProperty(m_instanceProxy->hostProxy()->port(),
                                                 m_instanceProxy->pluginID(), requestID,
                                                 m_objectID, serverIdentifier, valueData, valueLength);
     mig_deallocate(reinterpret_cast<vm_address_t>(valueData), valueLength);
+    m_instanceProxy->releaseLocalObject(value);
     if (kr != KERN_SUCCESS)
         return;
     

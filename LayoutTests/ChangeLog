@@ -1,3 +1,13 @@
+2010-02-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7130641> Browser objects identity is not preserved by Safari
+
+        * plugins/netscape-browser-object-identity-expected.txt: Added.
+        * plugins/netscape-browser-object-identity.html: Added.
+        * plugins/script-tests/netscape-browser-object-identity.js: Added.
+
 2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -51,6 +51,64 @@ using namespace JSC;
 using namespace JSC::Bindings;
 using namespace WebCore;
 
+class ObjectMap {
+public:
+    NPObject* get(RootObject* rootObject, JSObject* jsObject)
+    {
+        return m_map.get(rootObject).get(jsObject);
+    }
+
+    void add(RootObject* rootObject, JSObject* jsObject, NPObject* npObject)
+    {
+        HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
+        if (iter == m_map.end()) {
+            rootObject->addInvalidationCallback(&m_invalidationCallback);
+            iter = m_map.add(rootObject, JSToNPObjectMap()).first;
+        }
+
+        ASSERT(iter->second.find(jsObject) == iter->second.end());
+        iter->second.add(jsObject, npObject);
+    }
+
+    void remove(RootObject* rootObject)
+    {
+        HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
+        ASSERT(iter != m_map.end());
+        m_map.remove(iter);
+    }
+
+    void remove(RootObject* rootObject, JSObject* jsObject)
+    {
+        HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
+        ASSERT(iter != m_map.end());
+        ASSERT(iter->second.find(jsObject) != iter->second.end());
+
+        iter->second.remove(jsObject);
+    }
+
+private:
+    struct RootObjectInvalidationCallback : public RootObject::InvalidationCallback {
+        virtual void operator()(RootObject*);
+    };
+    RootObjectInvalidationCallback m_invalidationCallback;
+
+    // JSObjects are protected by RootObject.
+    typedef HashMap<JSObject*, NPObject*> JSToNPObjectMap;
+    HashMap<RootObject*, JSToNPObjectMap> m_map;
+};
+
+
+static ObjectMap& objectMap()
+{
+    DEFINE_STATIC_LOCAL(ObjectMap, map, ());
+    return map;
+}
+
+void ObjectMap::RootObjectInvalidationCallback::operator()(RootObject* rootObject)
+{
+    objectMap().remove(rootObject);
+}
+
 static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
     for (unsigned i = 0; i < argCount; ++i)
@@ -66,8 +124,10 @@ static void jsDeallocate(NPObject* npObj)
 {
     JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(npObj);
 
-    if (obj->rootObject && obj->rootObject->isValid())
+    if (obj->rootObject && obj->rootObject->isValid()) {
+        objectMap().remove(obj->rootObject, obj->imp);
         obj->rootObject->gcUnprotect(obj->imp);
+    }
 
     if (obj->rootObject)
         obj->rootObject->deref();
@@ -83,12 +143,18 @@ static NPClass* NPNoScriptObjectClass = &noScriptClass;
 
 NPObject* _NPN_CreateScriptObject(NPP npp, JSObject* imp, PassRefPtr<RootObject> rootObject)
 {
+    if (NPObject* object = objectMap().get(rootObject.get(), imp))
+        return _NPN_RetainObject(object);
+
     JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(_NPN_CreateObject(npp, NPScriptObjectClass));
 
     obj->rootObject = rootObject.releaseRef();
 
-    if (obj->rootObject)
+    if (obj->rootObject) {
         obj->rootObject->gcProtect(imp);
+        objectMap().add(obj->rootObject, imp, reinterpret_cast<NPObject*>(obj));
+    }
+
     obj->imp = imp;
 
     return reinterpret_cast<NPObject*>(obj);
