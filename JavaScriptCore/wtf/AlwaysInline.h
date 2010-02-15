@@ -33,6 +33,8 @@
 #ifndef NEVER_INLINE
 #if COMPILER(GCC)
 #define NEVER_INLINE __attribute__((__noinline__))
+#elif COMPILER(RVCT)
+#define NEVER_INLINE __declspec(noinline)
 #else
 #define NEVER_INLINE
 #endif
@@ -57,6 +59,8 @@
 #ifndef NO_RETURN
 #if COMPILER(GCC)
 #define NO_RETURN __attribute((__noreturn__))
+#elif COMPILER(RVCT)
+#define NO_RETURN __declspec(noreturn)
 #else
 #define NO_RETURN
 #endif
