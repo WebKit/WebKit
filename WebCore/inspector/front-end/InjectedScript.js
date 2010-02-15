@@ -496,7 +496,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
         var propertyName = propertyNames[i];
 
         var property = {};
-        property.name = propertyName;
+        property.name = propertyName + "";
         property.parentObjectProxy = objectProxy;
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
@@ -584,7 +584,7 @@ InjectedScript._populatePropertyNames = function(object, resultSet)
         try {
             var names = Object.getOwnPropertyNames(o);
             for (var i = 0; i < names.length; ++i)
-                resultSet[names[i]] = true;
+                resultSet[names[i] + ""] = true;
         } catch (e) {
         }
     }

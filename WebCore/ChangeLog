@@ -1,5 +1,13 @@
 2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed, Chromium build fix (force conversion of property names to
+        strings in Web Inspector's injected script).
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
+2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: touch InspectorController in order to kick win bot tests
         with new injected script contents.
 
