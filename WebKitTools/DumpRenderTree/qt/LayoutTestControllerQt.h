@@ -115,11 +115,13 @@ public slots:
     QString decodeHostName(const QString& host);
     void dumpSelectionRect() const {}
     void showWebInspector();
-    void hideWebInspector();
+    void closeWebInspector();
+    void evaluateInWebInspector(long callId, const QString& script);
 
     void setFrameSetFlatteningEnabled(bool enable);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setJavaScriptProfilingEnabled(bool enable);
+    void setTimelineProfilingEnabled(bool enable);
     void setFixedContentsSize(int width, int height);
     void setPrivateBrowsingEnabled(bool enable);
     void setPopupBlockingEnabled(bool enable);

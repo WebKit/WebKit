@@ -161,6 +161,38 @@ QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page)
     return page->handle()->page->groupName();
 }
 
+void QWEBKIT_EXPORT qt_drt_webinspector_executeScript(QWebPage* page, long callId, const QString& script)
+{
+    if (!page->handle()->page->inspectorController())
+        return;
+    page->handle()->page->inspectorController()->evaluateForTestInFrontend(callId, script);
+}
+
+void QWEBKIT_EXPORT qt_drt_webinspector_close(QWebPage* page)
+{
+    if (!page->handle()->page->inspectorController())
+        return;
+    page->handle()->page->inspectorController()->close();
+}
+
+void QWEBKIT_EXPORT qt_drt_webinspector_show(QWebPage* page)
+{
+    if (!page->handle()->page->inspectorController())
+        return;
+    page->handle()->page->inspectorController()->show();
+}
+
+void QWEBKIT_EXPORT qt_drt_setTimelineProfilingEnabled(QWebPage* page, bool enabled)
+{
+    InspectorController* controller = page->handle()->page->inspectorController();
+    if (!controller)
+        return;
+    if (enabled)
+        controller->startTimelineProfiler();
+    else
+        controller->stopTimelineProfiler();
+}
+
 class QWebPageWidgetClient : public QWebPageClient {
 public:
     QWebPageWidgetClient(QWidget* view)

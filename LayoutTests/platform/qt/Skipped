@@ -158,21 +158,6 @@ http/tests/security/local-video-source-from-remote.html
 #            Missing features in our DumpRenderTree implementation              #
 # ============================================================================= #
 
-# Missing layoutTestController.showWebInspector()
-inspector/console-format-collections.html
-inspector/styles-iframe.html
-inspector/syntax-highlight-css.html
-inspector/syntax-highlight-javascript.html
-inspector/timeline-enum-stability.html
-inspector/timeline-layout.html
-inspector/timeline-mark-timeline.html
-inspector/timeline-paint.html
-inspector/timeline-parse-html.html
-inspector/timeline-recalculate-styles.html
-inspector/timeline-script-tag-1.html
-inspector/timeline-script-tag-2.html
-inspector/timeline-trivial.html
-
 # Missing textInputController.selectedRange()
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
@@ -229,17 +214,6 @@ http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.htm
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
 
 http/tests/cache/subresource-failover-to-network.html
-
-# Missing layoutTestController.evaluateInWebInspector()
-# https://bugs.webkit.org/show_bug.cgi?id=33096
-http/tests/inspector/inspect-iframe-from-different-domain.html
-inspector/cookie-resource-match.html
-inspector/elements-img-tooltip.html
-inspector/elements-panel-selection-on-refresh.html
-inspector/inspected-objects-not-overriden.html
-inspector/timeline-event-dispatch.html
-inspector/timeline-network-resource.html
-inspector/elements-panel-rewrite-href.html
 
 # Missing layoutTestController.setSmartInsertDeleteEnabled()
 editing/selection/doubleclick-beside-cr-span.html
@@ -4864,15 +4838,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 # This port doesn't have a global history delegate yet
 http/tests/globalhistory
 
-# Skip inspector tests
-inspector/console-dir.html
-inspector/console-dirxml.html
-inspector/console-format.html
-inspector/console-log-before-inspector-open.html
-inspector/console-tests.html
-inspector/elements-panel-structure.html
-inspector/evaluate-in-frontend.html
-
 # Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
 http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
@@ -5002,7 +4967,6 @@ fast/css/namespaces/namespaces-empty.xml
 # https://bugs.webkit.org/show_bug.cgi?id=31626
 fast/dom/javascript-url-crash-function.html
 fast/dom/location-new-window-no-crash.html
-inspector/console-clear.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
 
 # This test requires ogg codecs

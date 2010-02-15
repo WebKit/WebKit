@@ -83,16 +83,19 @@ void InspectorClientQt::inspectorDestroyed()
 
 Page* InspectorClientQt::createPage()
 {
-    QWebView* inspectorView = new QWebView;
-    InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
-    inspectorView->setPage(inspectorPage);
-    m_inspectorView.set(inspectorView);
+    QWebView* inspectorView = m_inspectorView.get();
+    if (!inspectorView) {
+        inspectorView = new QWebView;
+        InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
+        inspectorView->setPage(inspectorPage);
+        m_inspectorView.set(inspectorView);
+    }
 
-    inspectorPage->mainFrame()->load(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
+    inspectorView->page()->mainFrame()->load(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
     m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(inspectorView);
 
-    return m_inspectorView->page()->d->page;
+    return inspectorView->page()->d->page;
 }
 
 String InspectorClientQt::localizedStringsURL()

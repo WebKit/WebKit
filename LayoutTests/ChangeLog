@@ -1,3 +1,45 @@
+2010-02-15  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] DRT: Support evaluateInWebInspector(), setTimelineProfilingEnabled().
+
+        Support LayoutTestController.evaluateInWebInspector(), setTimelineProfilingEnabled() in Qt DRT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33096
+
+        This allows the following tests to pass:
+
+        inspector/console-format-collections.html
+        inspector/styles-iframe.html
+        inspector/syntax-highlight-css.html
+        inspector/syntax-highlight-javascript.html
+        inspector/timeline-enum-stability.html
+        inspector/timeline-layout.html
+        inspector/timeline-mark-timeline.html
+        inspector/timeline-paint.html
+        inspector/timeline-parse-html.html
+        inspector/timeline-recalculate-styles.html
+        inspector/timeline-script-tag-1.html
+        inspector/timeline-script-tag-2.html
+        inspector/timeline-trivial.html
+        inspector/cookie-resource-match.html
+        inspector/elements-img-tooltip.html
+        inspector/elements-panel-selection-on-refresh.html
+        inspector/inspected-objects-not-overriden.html
+        inspector/timeline-event-dispatch.html
+        inspector/timeline-network-resource.html
+        inspector/elements-panel-rewrite-href.html
+        inspector/console-dir.html
+        inspector/console-dirxml.html
+        inspector/console-format.html
+        inspector/console-tests.html
+        inspector/elements-panel-structure.html
+        inspector/evaluate-in-frontend.html
+        inspector/console-clear.html
+
+        * platform/qt/Skipped:
+
 2010-02-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

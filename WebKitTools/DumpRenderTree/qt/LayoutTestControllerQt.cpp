@@ -41,6 +41,7 @@ extern void qt_dump_frame_loader(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_drt_setFrameSetFlatteningEnabled(QWebPage*, bool);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
+extern void qt_drt_setTimelineProfilingEnabled(QWebPage*, bool enabled);
 extern bool qt_drt_pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern bool qt_drt_pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
 extern bool qt_drt_pauseSVGAnimation(QWebFrame*, const QString& animationId, double time, const QString& elementId);
@@ -51,6 +52,9 @@ extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const 
 extern QString qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id);
 extern int qt_drt_workerThreadCount();
 extern int qt_drt_pageNumberForElementById(QWebFrame* qFrame, const QString& id, float width, float height);
+extern void qt_drt_webinspector_executeScript(QWebPage* page, long callId, const QString& script);
+extern void qt_drt_webinspector_show(QWebPage *page);
+extern void qt_drt_webinspector_close(QWebPage *page);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
@@ -285,15 +289,22 @@ QString LayoutTestController::decodeHostName(const QString& host)
     return decoded;
 }
 
+
+void LayoutTestController::closeWebInspector()
+{
+    qt_drt_webinspector_close(m_drt->webPage());
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
+}
+
 void LayoutTestController::showWebInspector()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-    m_drt->webPage()->webInspector()->show();
+    qt_drt_webinspector_show(m_drt->webPage());
 }
 
-void LayoutTestController::hideWebInspector()
+void LayoutTestController::evaluateInWebInspector(long callId, const QString& script)
 {
-    m_drt->webPage()->webInspector()->hide();
+    qt_drt_webinspector_executeScript(m_drt->webPage(), callId, script);
 }
 
 void LayoutTestController::setFrameSetFlatteningEnabled(bool enabled)
@@ -310,6 +321,11 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
 {
     m_topLoadingFrame->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     qt_drt_setJavaScriptProfilingEnabled(m_topLoadingFrame, enable);
+}
+
+void LayoutTestController::setTimelineProfilingEnabled(bool enable)
+{
+    qt_drt_setTimelineProfilingEnabled(m_drt->webPage(), enable);
 }
 
 void LayoutTestController::setFixedContentsSize(int width, int height)
