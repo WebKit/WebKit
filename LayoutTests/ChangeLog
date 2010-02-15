@@ -1,3 +1,9 @@
+2010-02-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip more plugin tests on Snow Leopard buildbot, as they need updated closed source components.
+
+        * platform/mac-snowleopard/Skipped: Skip netscape-dom-access.html and netscape-browser-object-identity.html.
+
 2010-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/multicol/client-rects.html fails in QtLauncher

@@ -10,6 +10,8 @@ plugins/mouse-events.html
 plugins/private-browsing-mode.html
 plugins/netscape-plugin-property-access-exception.html
 plugins/netscape-throw-exception.html
+plugins/netscape-dom-access.html
+plugins/netscape-browser-object-identity.html
 
 # Radar bugs needed for these
 fast/canvas/set-colors.html
