@@ -1,3 +1,19 @@
+2010-02-14  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] The original test case failed on Qt because its real output
+        "A B C DE F" did not match the expected "A B C D E F". The input
+        field between D and E failed to generate the space in the dumped
+        text as it normally would if it was broken into a new line.
+        This DRT issue can be addressed in a seperate bug if necessary
+        but shrinking the size of font so as to fit all fields into one
+        line is an immediate fix to pass the test case.
+        https://bugs.webkit.org/show_bug.cgi?id=33093
+
+        * fast/html/text-field-input-types.html:
+        * platform/qt/Skipped:
+
 2010-02-14  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
