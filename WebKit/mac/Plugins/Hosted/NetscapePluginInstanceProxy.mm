@@ -105,6 +105,10 @@ NetscapePluginInstanceProxy::LocalObjectMap::LocalObjectMap()
 {
 }
 
+NetscapePluginInstanceProxy::LocalObjectMap::~LocalObjectMap()
+{
+}
+
 uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSObject* object)
 {
     // This method creates objects with refcount of 1, but doesn't increase refcount when returning
