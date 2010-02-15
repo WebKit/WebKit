@@ -1,3 +1,23 @@
+2010-02-15  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebkit bridge: enable passing a QWebElement to a signal/slot/property
+        https://bugs.webkit.org/show_bug.cgi?id=34901
+
+        When a signal/slot/property is of type QWebElement, it can seamlessly
+        connect with JS objects that hold a WebCore element.
+
+        New tests, see WebKit/qt/ChangeLog
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtWebElementRuntime::create): A proxy to QWebElement
+        constructor
+        (JSC::Bindings::QtWebElementRuntime::get): A proxy to
+        QWebElement::element
+        (JSC::Bindings::convertValueToQVariant): handle QWebElement
+        (JSC::Bindings::convertQVariantToValue): handle QWebElement
+
 2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed, Chromium build fix (force conversion of property names to

@@ -1,3 +1,18 @@
+2010-02-15  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] QtWebkit bridge: enable passing a QWebElement to a signal/slot/property
+        Add Q_DECLARE_METATYPE to QWebElement, add relevant tests to
+        tst_qwebframe
+        https://bugs.webkit.org/show_bug.cgi?id=34901
+
+        * Api/qwebelement.h: declare metatype
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (MyQObject::webElementProperty): new test for QWebElement
+        (MyQObject::setWebElementProperty): new test for QWebElement
+        (MyQObject::myOverloadedSlot): new test for QWebElement
+
 2010-02-15  Robert Hogan  <robert@roberthogan.net>, Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

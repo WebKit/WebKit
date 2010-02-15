@@ -29,7 +29,10 @@
 #include "JSArray.h"
 #include "JSByteArray.h"
 #include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
+#include <JSFunction.h>
 #include "JSGlobalObject.h"
+#include "JSHTMLElement.h"
 #include "JSLock.h"
 #include "JSObject.h"
 #include "ObjectPrototype.h"
@@ -45,7 +48,7 @@
 #include "qt_instance.h"
 #include "qt_pixmapruntime.h"
 #include "qvarlengtharray.h"
-#include <JSFunction.h>
+#include "qwebelement.h"
 #include <limits.h>
 #include <runtime/Error.h>
 #include <runtime_array.h>
@@ -113,6 +116,21 @@ QDebug operator<<(QDebug dbg, const JSRealType &c)
      return dbg.space();
 }
 #endif
+
+// this is here as a proxy, so we'd have a class to friend in QWebElement,
+// as getting/setting a WebCore in QWebElement is private
+class QtWebElementRuntime {
+public:
+    static QWebElement create(Element* element)
+    {
+        return QWebElement(element);
+    }
+
+    static Element* get(const QWebElement& element)
+    {
+        return element.m_element;
+    }
+};
 
 static JSRealType valueRealType(ExecState* exec, JSValue val)
 {
@@ -722,6 +740,11 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 break;
             } else if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
                 ret = QtPixmapInstance::variantFromObject(object, static_cast<QMetaType::Type>(hint));
+            } else if (hint == (QMetaType::Type) qMetaTypeId<QWebElement>()) {
+                if (object && object->inherits(&JSHTMLElement::s_info))
+                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSHTMLElement*>(object))->impl()));
+                else
+                    ret = QVariant::fromValue<QWebElement>(QWebElement());
             } else if (hint == (QMetaType::Type) qMetaTypeId<QVariant>()) {
                 if (value.isUndefinedOrNull()) {
                     if (distance)
@@ -853,6 +876,17 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
     if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type())))
         return QtPixmapInstance::createRuntimeObject(exec, root, variant);
+
+    if (type == qMetaTypeId<QWebElement>()) {
+        if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
+            return jsUndefined();
+
+        Document* document = (static_cast<JSDOMWindow*>(root->globalObject()))->impl()->document();
+        if (!document)
+            return jsUndefined();
+
+        return toJS(exec, toJSDOMGlobalObject(document, exec), QtWebElementRuntime::get(variant.value<QWebElement>()));
+    }
 
     if (type == QMetaType::QVariantMap) {
         // create a new object, and stuff properties into it
