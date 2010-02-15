@@ -1,3 +1,17 @@
+2010-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed some mistaken code added in http://trac.webkit.org/changeset/53860.
+
+        * API/APIShims.h:
+        (JSC::APICallbackShim::APICallbackShim):
+        (JSC::APICallbackShim::~APICallbackShim): No need to start/stop the
+        timeout checker when calling out from the API to the client; we want to
+        monitor the VM for timeouts, not the client. This mistake was harmless /
+        undetectable, since it's totally redundant with the APIEntryShim, which
+        also starts / stops the timeout checker.
+
 2010-02-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

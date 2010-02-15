@@ -80,12 +80,10 @@ public:
         , m_globalData(&exec->globalData())
     {
         resetCurrentIdentifierTable();
-        m_globalData->timeoutChecker.start();
     }
 
     ~APICallbackShim()
     {
-        m_globalData->timeoutChecker.stop();
         setCurrentIdentifierTable(m_globalData->identifierTable);
     }
 
