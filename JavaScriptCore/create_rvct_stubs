@@ -1,6 +1,7 @@
 #! /usr/bin/perl -w
 #
 # Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+# Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -18,18 +19,31 @@
 # Boston, MA 02110-1301, USA.
 
 use strict;
+use File::Basename;
+use Getopt::Long;
 
-my $file = $ARGV[0];
-shift;
+my $usage = basename($0) . " [--offset offset] file";
+
+my $rtype_template = quotemeta("#rtype#");
+my $offset_template = quotemeta("#offset#");
+my $op_template = quotemeta("#op#");
+
+my $offset = 32;
+my $file;
+
+my $getOptionsResult = GetOptions(
+    'offset=i' => \$offset
+);
+
+$file = $ARGV[0];
+
+die "$usage\n" unless ($file);
 
 my $stub_template = "";
 my $stub = "";
 
 my $rtype = "";
 my $op = "";
-
-my $rtype_template = quotemeta("#rtype#");
-my $op_template = quotemeta("#op#");
 
 print STDERR "Creating RVCT stubs for $file \n";
 open(IN, $file) or die "No such file $file";
@@ -42,6 +56,7 @@ while ( $_ = <IN> ) {
         $stub = $stub_template;
         $rtype = quotemeta($1);
         $op = quotemeta($2);
+        $stub =~ s/$offset_template/$offset/g;
         $stub =~ s/$rtype_template/$rtype/g;
         $stub =~ s/$op_template/$op/g;
         $stub =~ s/\\\*/\*/g;
