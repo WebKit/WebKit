@@ -1,0 +1,7 @@
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+EVENT(loadedmetadata)
+EXPECTED (video.videoWidth == '426') OK
+EXPECTED (video.videoHeight == '240') OK
+END OF TEST
+

@@ -1,3 +1,17 @@
+2010-02-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] wrong video aspect ratio
+        https://bugs.webkit.org/show_bug.cgi?id=34790
+
+        Test checking the size of a 4:3 video with a 16:9 pixel aspect
+        ratio.
+
+        * media/content/test-par-16-9.mp4: Added.
+        * media/video-display-aspect-ratio-expected.txt: Added.
+        * media/video-display-aspect-ratio.html: Added.
+
 2010-02-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

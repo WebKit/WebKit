@@ -55,9 +55,22 @@
 #include <webkit/webkitwebview.h>
 #include <wtf/gtk/GOwnPtr.h>
 
+#define LOG_VERBOSE(channel, fmt, args...) g_printerr(fmt "\n", ##args)
+
 using namespace std;
 
 namespace WebCore {
+
+static int greatestCommonDivisor(int a, int b)
+{
+    while (b) {
+        int temp = a;
+        a = b;
+        b = temp % b;
+    }
+
+    return ABS(a);
+}
 
 gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data)
 {
@@ -473,30 +486,60 @@ IntSize MediaPlayerPrivate::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
+    GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink");
+    if (!pad)
+        return IntSize();
+
+    int width = 0, height = 0;
+    GstCaps* caps = GST_PAD_CAPS(pad);
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator;
+    int displayWidth, displayHeight, displayAspectRatioGCD;
+    int originalWidth = 0, originalHeight = 0;
+
     // TODO: handle possible clean aperture data. See
     // https://bugzilla.gnome.org/show_bug.cgi?id=596571
     // TODO: handle possible transformation matrix. See
     // https://bugzilla.gnome.org/show_bug.cgi?id=596326
-    int width = 0, height = 0;
-    if (GstPad* pad = gst_element_get_static_pad(m_videoSink, "sink")) {
-        GstCaps* caps = GST_PAD_CAPS(pad);
-        gfloat pixelAspectRatio;
-        gint pixelAspectRatioNumerator, pixelAspectRatioDenominator;
 
-        if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps)
-            || !gst_video_format_parse_caps(caps, 0, &width, &height)
-            || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
-                                                        &pixelAspectRatioDenominator)) {
-            gst_object_unref(GST_OBJECT(pad));
-            return IntSize();
-        }
-
-        pixelAspectRatio = (gfloat) pixelAspectRatioNumerator / (gfloat) pixelAspectRatioDenominator;
-        width *= pixelAspectRatio;
-        height /= pixelAspectRatio;
+    // Get the video PAR and original size.
+    if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps)
+        || !gst_video_format_parse_caps(caps, 0, &originalWidth, &originalHeight)
+        || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
+                                                    &pixelAspectRatioDenominator)) {
         gst_object_unref(GST_OBJECT(pad));
+        return IntSize();
     }
 
+    gst_object_unref(GST_OBJECT(pad));
+
+    LOG_VERBOSE(Media, "Original video size: %dx%d", originalWidth, originalHeight);
+    LOG_VERBOSE(Media, "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
+
+    // Calculate DAR based on PAR and video size.
+    displayWidth = originalWidth * pixelAspectRatioNumerator;
+    displayHeight = originalHeight * pixelAspectRatioDenominator;
+
+    // Divide display width and height by their GCD to avoid possible overflows.
+    displayAspectRatioGCD = greatestCommonDivisor(displayWidth, displayHeight);
+    displayWidth /= displayAspectRatioGCD;
+    displayHeight /= displayAspectRatioGCD;
+
+    // Apply DAR to original video size. This is the same behavior as in xvimagesink's setcaps function.
+    if (!(originalHeight % displayHeight)) {
+        LOG_VERBOSE(Media, "Keeping video original height");
+        width = gst_util_uint64_scale_int(originalHeight, displayWidth, displayHeight);
+        height = originalHeight;
+    } else if (!(originalWidth % displayWidth)) {
+        LOG_VERBOSE(Media, "Keeping video original width");
+        height = gst_util_uint64_scale_int(originalWidth, displayHeight, displayWidth);
+        width = originalWidth;
+    } else {
+        LOG_VERBOSE(Media, "Approximating while keeping original video height");
+        width = gst_util_uint64_scale_int(originalHeight, displayWidth, displayHeight);
+        height = originalHeight;
+    }
+
+    LOG_VERBOSE(Media, "Natural size: %dx%d", width, height);
     return IntSize(width, height);
 }
 
