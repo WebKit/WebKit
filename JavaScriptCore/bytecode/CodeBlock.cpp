@@ -49,8 +49,8 @@ namespace JSC {
 static UString escapeQuotes(const UString& str)
 {
     UString result = str;
-    int pos = 0;
-    while ((pos = result.find('\"', pos)) >= 0) {
+    unsigned pos = 0;
+    while ((pos = result.find('\"', pos)) != UString::NotFound) {
         result = makeString(result.substr(0, pos), "\"\\\"\"", result.substr(pos + 1));
         pos += 4;
     }

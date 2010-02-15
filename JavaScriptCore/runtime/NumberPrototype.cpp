@@ -265,11 +265,11 @@ JSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue
         z.append(m);
         m = z.build();
         k = f + 1;
-        ASSERT(k == m.size());
+        ASSERT(k == static_cast<int>(m.size()));
     }
     int kMinusf = k - f;
 
-    if (kMinusf < m.size())
+    if (kMinusf < static_cast<int>(m.size()))
         return jsString(exec, makeString(s, m.substr(0, kMinusf), ".", m.substr(kMinusf)));
     return jsString(exec, makeString(s, m.substr(0, kMinusf)));
 }
@@ -444,7 +444,7 @@ JSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSV
     if (e == precision - 1)
         return jsString(exec, makeString(s, m));
     if (e >= 0) {
-        if (e + 1 < m.size())
+        if (e + 1 < static_cast<int>(m.size()))
             return jsString(exec, makeString(s, m.substr(0, e + 1), ".", m.substr(e + 1)));
         return jsString(exec, makeString(s, m));
     }

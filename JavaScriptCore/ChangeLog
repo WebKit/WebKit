@@ -2,6 +2,59 @@
 
         Reviewed by Geoff Garen.
 
+        Bug 34952 - String lengths in UString should be unsigned.
+        This matches WebCore::StringImpl, and better unifies behaviour throughout JSC.
+
+        * JavaScriptCore.exp:
+        * bytecode/EvalCodeCache.h:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        * runtime/Identifier.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEscape):
+        * runtime/JSONObject.cpp:
+        (JSC::gap):
+        (JSC::Stringifier::indent):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncSplit):
+        (JSC::trimString):
+        * runtime/UString.cpp:
+        (JSC::UString::UString):
+        (JSC::UString::from):
+        (JSC::UString::getCString):
+        (JSC::UString::ascii):
+        (JSC::UString::operator[]):
+        (JSC::UString::toStrictUInt32):
+        (JSC::UString::find):
+        (JSC::UString::rfind):
+        (JSC::UString::substr):
+        (JSC::operator<):
+        (JSC::operator>):
+        (JSC::compare):
+        (JSC::equal):
+        (JSC::UString::UTF8String):
+        * runtime/UString.h:
+        (JSC::UString::size):
+        (JSC::operator==):
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::create):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::create):
+        (JSC::UStringImpl::size):
+        (JSC::UStringImpl::computeHash):
+        (JSC::UStringImpl::UStringImpl):
+
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 34948 - tryMakeString should fail on error in length calculation
 
         The sum of the length of substrings could overflow.

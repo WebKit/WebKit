@@ -50,7 +50,7 @@ PassRefPtr<UStringImpl> UStringImpl::create(const char* c)
     return result;
 }
 
-PassRefPtr<UStringImpl> UStringImpl::create(const char* c, int length)
+PassRefPtr<UStringImpl> UStringImpl::create(const char* c, unsigned length)
 {
     ASSERT(c);
 
@@ -59,12 +59,12 @@ PassRefPtr<UStringImpl> UStringImpl::create(const char* c, int length)
 
     UChar* d;
     PassRefPtr<UStringImpl> result = UStringImpl::createUninitialized(length, d);
-    for (int i = 0; i < length; i++)
+    for (unsigned i = 0; i < length; i++)
         d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
     return result;
 }
 
-PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, int length)
+PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, unsigned length)
 {
     UChar* newBuffer;
     PassRefPtr<UStringImpl> impl = createUninitialized(length, newBuffer);

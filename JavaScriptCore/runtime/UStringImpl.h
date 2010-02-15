@@ -53,17 +53,17 @@ public:
     }
 
     static PassRefPtr<UStringImpl> create(const char* c);
-    static PassRefPtr<UStringImpl> create(const char* c, int length);
-    static PassRefPtr<UStringImpl> create(const UChar* buffer, int length);
+    static PassRefPtr<UStringImpl> create(const char* c, unsigned length);
+    static PassRefPtr<UStringImpl> create(const UChar* buffer, unsigned length);
 
-    static PassRefPtr<UStringImpl> create(PassRefPtr<UStringImpl> rep, int offset, int length)
+    static PassRefPtr<UStringImpl> create(PassRefPtr<UStringImpl> rep, unsigned offset, unsigned length)
     {
         ASSERT(rep);
         rep->checkConsistency();
         return adoptRef(new UStringImpl(rep->m_data + offset, length, rep->bufferOwnerString()));
     }
 
-    static PassRefPtr<UStringImpl> create(PassRefPtr<SharedUChar> sharedBuffer, UChar* buffer, int length)
+    static PassRefPtr<UStringImpl> create(PassRefPtr<SharedUChar> sharedBuffer, UChar* buffer, unsigned length)
     {
         return adoptRef(new UStringImpl(buffer, length, sharedBuffer));
     }
@@ -100,7 +100,7 @@ public:
 
     SharedUChar* sharedBuffer();
     UChar* data() const { return m_data; }
-    int size() const { return m_length; }
+    unsigned size() const { return m_length; }
     size_t cost()
     {
         // For substrings, return the cost of the base string.
@@ -136,8 +136,8 @@ public:
             memcpy(destination, source, numCharacters * sizeof(UChar));
     }
 
-    static unsigned computeHash(const UChar* s, int length) { ASSERT(length >= 0); return WTF::stringHash(s, length); }
-    static unsigned computeHash(const char* s, int length) { ASSERT(length >= 0); return WTF::stringHash(s, length); }
+    static unsigned computeHash(const UChar* s, unsigned length) { return WTF::stringHash(s, length); }
+    static unsigned computeHash(const char* s, unsigned length) { return WTF::stringHash(s, length); }
     static unsigned computeHash(const char* s) { return WTF::stringHash(s); }
 
     static UStringImpl& empty() { return *s_empty; }
@@ -162,7 +162,7 @@ private:
     UStringImpl() { }
 
     // Used to construct normal strings with an internal or external buffer.
-    UStringImpl(UChar* data, int length, BufferOwnership ownership)
+    UStringImpl(UChar* data, unsigned length, BufferOwnership ownership)
         : m_data(data)
         , m_buffer(0)
         , m_length(length)
@@ -177,7 +177,7 @@ private:
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
     enum StaticStringConstructType { ConstructStaticString };
-    UStringImpl(UChar* data, int length, StaticStringConstructType)
+    UStringImpl(UChar* data, unsigned length, StaticStringConstructType)
         : m_data(data)
         , m_buffer(0)
         , m_length(length)
@@ -188,7 +188,7 @@ private:
     }
 
     // Used to create new strings that are a substring of an existing string.
-    UStringImpl(UChar* data, int length, PassRefPtr<UStringImpl> base)
+    UStringImpl(UChar* data, unsigned length, PassRefPtr<UStringImpl> base)
         : m_data(data)
         , m_bufferSubstring(base.releaseRef())
         , m_length(length)
@@ -204,7 +204,7 @@ private:
     }
 
     // Used to construct new strings sharing an existing shared buffer.
-    UStringImpl(UChar* data, int length, PassRefPtr<SharedUChar> sharedBuffer)
+    UStringImpl(UChar* data, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
         : m_data(data)
         , m_bufferShared(sharedBuffer.releaseRef())
         , m_length(length)
@@ -220,13 +220,13 @@ private:
     ~UStringImpl();
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
-    static const int s_minLengthToShare = 10;
+    static const unsigned s_minLengthToShare = 10;
     static const unsigned s_copyCharsInlineCutOff = 20;
     // We initialize and increment/decrement the refCount for all normal (non-static) strings by the value 2.
     // We initialize static strings with an odd number (specifically, 1), such that the refCount cannot reach zero.
     static const unsigned s_refCountMask = 0xFFFFFFF0;
-    static const int s_refCountIncrement = 0x20;
-    static const int s_refCountFlagStatic = 0x10;
+    static const unsigned s_refCountIncrement = 0x20;
+    static const unsigned s_refCountFlagStatic = 0x10;
     static const unsigned s_refCountFlagHasReportedCost = 0x8;
     static const unsigned s_refCountFlagIsIdentifier = 0x4;
     static const unsigned s_refCountMaskBufferOwnership = 0x3;
@@ -244,7 +244,7 @@ private:
         UStringImpl* m_bufferSubstring;
         SharedUChar* m_bufferShared;
     };
-    int m_length;
+    unsigned m_length;
     unsigned m_refCountAndFlags;
     mutable unsigned m_hash;
 

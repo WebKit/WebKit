@@ -381,7 +381,7 @@ JSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec, JSObject*, JSValue, cons
     JSStringBuilder builder;
     UString str = args.at(0).toString(exec);
     const UChar* c = str.data();
-    for (int k = 0; k < str.size(); k++, c++) {
+    for (unsigned k = 0; k < str.size(); k++, c++) {
         int u = c[0];
         if (u > 255) {
             char tmp[7];

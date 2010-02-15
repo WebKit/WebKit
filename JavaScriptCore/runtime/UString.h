@@ -82,8 +82,8 @@ namespace JSC {
     public:
         UString();
         UString(const char*); // Constructor for null-terminated string.
-        UString(const char*, int length);
-        UString(const UChar*, int length);
+        UString(const char*, unsigned length);
+        UString(const UChar*, unsigned length);
         UString(const Vector<UChar>& buffer);
 
         UString(const UString& s)
@@ -136,9 +136,9 @@ namespace JSC {
 
         bool is8Bit() const;
 
-        int size() const { return m_rep->size(); }
+        unsigned size() const { return m_rep->size(); }
 
-        UChar operator[](int pos) const;
+        UChar operator[](unsigned pos) const;
 
         double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
         double toDouble(bool tolerateTrailingJunk) const;
@@ -150,12 +150,13 @@ namespace JSC {
 
         unsigned toArrayIndex(bool* ok = 0) const;
 
-        int find(const UString& f, int pos = 0) const;
-        int find(UChar, int pos = 0) const;
-        int rfind(const UString& f, int pos) const;
-        int rfind(UChar, int pos) const;
+        static const unsigned NotFound = 0xFFFFFFFFu;
+        unsigned find(const UString& f, unsigned pos = 0) const;
+        unsigned find(UChar, unsigned pos = 0) const;
+        unsigned rfind(const UString& f, unsigned pos) const;
+        unsigned rfind(UChar, unsigned pos) const;
 
-        UString substr(int pos = 0, int len = -1) const;
+        UString substr(unsigned pos = 0, unsigned len = 0xFFFFFFFF) const;
 
         static const UString& null() { return *s_nullUString; }
 
@@ -181,7 +182,7 @@ namespace JSC {
 
     ALWAYS_INLINE bool operator==(const UString& s1, const UString& s2)
     {
-        int size = s1.size();
+        unsigned size = s1.size();
         switch (size) {
         case 0:
             return !s2.size();
@@ -245,9 +246,7 @@ namespace JSC {
     // We'd rather not do shared substring append for small strings, since
     // this runs too much risk of a tiny initial string holding down a
     // huge buffer.
-    // FIXME: this should be size_t but that would cause warnings until we
-    // fix UString sizes to be size_t instead of int
-    static const int minShareSize = Heap::minExtraCost / sizeof(UChar);
+    static const unsigned minShareSize = Heap::minExtraCost / sizeof(UChar);
 
     struct IdentifierRepHash : PtrHash<RefPtr<JSC::UString::Rep> > {
         static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->existingHash(); }

@@ -954,7 +954,7 @@ JSValue JSDOMWindow::atob(ExecState* exec, const ArgList& args)
     }
 
     Vector<char> in(s.size());
-    for (int i = 0; i < s.size(); ++i)
+    for (unsigned i = 0; i < s.size(); ++i)
         in[i] = static_cast<char>(s.data()[i]);
     Vector<char> out;
 
@@ -980,7 +980,7 @@ JSValue JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
     }
 
     Vector<char> in(s.size());
-    for (int i = 0; i < s.size(); ++i)
+    for (unsigned i = 0; i < s.size(); ++i)
         in[i] = static_cast<char>(s.data()[i]);
     Vector<char> out;
 

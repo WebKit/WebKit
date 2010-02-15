@@ -150,7 +150,7 @@ bool StringPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier
 
 // ------------------------------ Functions --------------------------
 
-static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacement, const UString& source, const int* ovector, RegExp* reg, int i)
+static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacement, const UString& source, const int* ovector, RegExp* reg, unsigned i)
 {
     Vector<UChar> substitutedReplacement;
     int offset = 0;
@@ -206,7 +206,7 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
         i += 1 + advance;
         offset = i + 1;
         substitutedReplacement.append(source.data() + backrefStart, backrefLength);
-    } while ((i = replacement.find('$', i + 1)) != -1);
+    } while ((i = replacement.find('$', i + 1)) != UString::NotFound);
 
     if (replacement.size() - offset)
         substitutedReplacement.append(replacement.data() + offset, replacement.size() - offset);
@@ -217,8 +217,8 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
 
 static inline UString substituteBackreferences(const UString& replacement, const UString& source, const int* ovector, RegExp* reg)
 {
-    int i = replacement.find('$', 0);
-    if (UNLIKELY(i != -1))
+    unsigned i = replacement.find('$', 0);
+    if (UNLIKELY(i != UString::NotFound))
         return substituteBackreferencesSlow(replacement, source, ovector, reg, i);
     return replacement;
 }
@@ -329,7 +329,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
         RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
         int lastIndex = 0;
-        int startPosition = 0;
+        unsigned startPosition = 0;
 
         Vector<StringRange, 16> sourceRanges;
         Vector<UString, 16> replacements;
@@ -432,7 +432,7 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
         if (!lastIndex && replacements.isEmpty())
             return sourceVal;
 
-        if (lastIndex < source.size())
+        if (static_cast<unsigned>(lastIndex) < source.size())
             sourceRanges.append(StringRange(lastIndex, source.size() - lastIndex));
 
         return jsSpliceSubstringsWithSeparators(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
@@ -441,9 +441,9 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
     // Not a regular expression, so treat the pattern as a string.
 
     UString patternString = pattern.toString(exec);
-    int matchPos = source.find(patternString);
+    unsigned matchPos = source.find(patternString);
 
-    if (matchPos == -1)
+    if (matchPos == UString::NotFound)
         return sourceVal;
 
     int matchLen = patternString.size();
@@ -541,7 +541,10 @@ JSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec, JSObject*, JSValue
         pos = static_cast<int>(dpos);
     }
 
-    return jsNumber(exec, s.find(u2, pos));
+    unsigned result = s.find(u2, pos);
+    if (result == UString::NotFound)
+        return jsNumber(exec, -1);
+    return jsNumber(exec, result);
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
@@ -563,7 +566,11 @@ JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSV
     else if (isnan(dpos))
         dpos = len;
 #endif
-    return jsNumber(exec, s.rfind(u2, static_cast<int>(dpos)));
+
+    unsigned result = s.rfind(u2, static_cast<unsigned>(dpos));
+    if (result == UString::NotFound)
+        return jsNumber(exec, -1);
+    return jsNumber(exec, result);
 }
 
 JSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
@@ -675,7 +682,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue t
 
     JSArray* result = constructEmptyArray(exec);
     unsigned i = 0;
-    int p0 = 0;
+    unsigned p0 = 0;
     unsigned limit = a1.isUndefined() ? 0xFFFFFFFFU : a1.toUInt32(exec);
     if (a0.inherits(&RegExpObject::info)) {
         RegExp* reg = asRegExpObject(a0)->regExp();
@@ -683,7 +690,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue t
             // empty string matched by regexp -> empty array
             return result;
         }
-        int pos = 0;
+        unsigned pos = 0;
         while (i != limit && pos < s.size()) {
             Vector<int, 32> ovector;
             int mpos = reg->match(s, pos, &ovector);
@@ -691,7 +698,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue t
                 break;
             int mlen = ovector[1] - ovector[0];
             pos = mpos + (mlen == 0 ? 1 : mlen);
-            if (mpos != p0 || mlen) {
+            if (static_cast<unsigned>(mpos) != p0 || mlen) {
                 result->put(exec, i++, jsSubstring(exec, s, p0, mpos - p0));
                 p0 = mpos + mlen;
             }
@@ -713,8 +720,9 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue t
             while (i != limit && p0 < s.size() - 1)
                 result->put(exec, i++, jsSingleCharacterSubstring(exec, s, p0++));
         } else {
-            int pos;
-            while (i != limit && (pos = s.find(u2, p0)) >= 0) {
+            unsigned pos;
+            
+            while (i != limit && (pos = s.find(u2, p0)) != UString::NotFound) {
                 result->put(exec, i++, jsSubstring(exec, s, p0, pos - p0));
                 p0 = pos + u2.size();
             }
@@ -1022,12 +1030,12 @@ static inline bool isTrimWhitespace(UChar c)
 static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKind)
 {
     UString str = thisValue.toThisString(exec);
-    int left = 0;
+    unsigned left = 0;
     if (trimKind & TrimLeft) {
         while (left < str.size() && isTrimWhitespace(str[left]))
             left++;
     }
-    int right = str.size();
+    unsigned right = str.size();
     if (trimKind & TrimRight) {
         while (right > left && isTrimWhitespace(str[right - 1]))
             right--;

@@ -167,12 +167,12 @@ UString::UString(const char* c)
 {
 }
 
-UString::UString(const char* c, int length)
+UString::UString(const char* c, unsigned length)
     : m_rep(Rep::create(c, length))
 {
 }
 
-UString::UString(const UChar* c, int length)
+UString::UString(const UChar* c, unsigned length)
 {
     if (length == 0)
         m_rep = &Rep::empty();
@@ -206,7 +206,7 @@ UString UString::from(int i)
             *--p = '-';
     }
 
-    return UString(p, static_cast<int>(end - p));
+    return UString(p, static_cast<unsigned>(end - p));
 }
 
 UString UString::from(long long i)
@@ -239,7 +239,7 @@ UString UString::from(long long i)
             *--p = '-';
     }
 
-    return UString(p, static_cast<int>(end - p));
+    return UString(p, static_cast<unsigned>(end - p));
 }
 
 UString UString::from(unsigned int u)
@@ -257,7 +257,7 @@ UString UString::from(unsigned int u)
         }
     }
 
-    return UString(p, static_cast<int>(end - p));
+    return UString(p, static_cast<unsigned>(end - p));
 }
 
 UString UString::from(long l)
@@ -286,7 +286,7 @@ UString UString::from(long l)
             *--p = '-';
     }
 
-    return UString(p, static_cast<int>(end - p));
+    return UString(p, end - p);
 }
 
 UString UString::from(double d)
@@ -299,8 +299,8 @@ UString UString::from(double d)
 
 bool UString::getCString(CStringBuffer& buffer) const
 {
-    int length = size();
-    int neededSize = length + 1;
+    unsigned length = size();
+    unsigned neededSize = length + 1;
     buffer.resize(neededSize);
     char* buf = buffer.data();
 
@@ -324,8 +324,8 @@ char* UString::ascii() const
 {
     static char* asciiBuffer = 0;
 
-    int length = size();
-    int neededSize = length + 1;
+    unsigned length = size();
+    unsigned neededSize = length + 1;
     delete[] asciiBuffer;
     asciiBuffer = new char[neededSize];
 
@@ -355,7 +355,7 @@ bool UString::is8Bit() const
     return true;
 }
 
-UChar UString::operator[](int pos) const
+UChar UString::operator[](unsigned pos) const
 {
     if (pos >= size())
         return '\0';
@@ -495,7 +495,7 @@ uint32_t UString::toStrictUInt32(bool* ok) const
         *ok = false;
 
     // Empty string is not OK.
-    int len = m_rep->size();
+    unsigned len = m_rep->size();
     if (len == 0)
         return 0;
     const UChar* p = m_rep->data();
@@ -539,12 +539,9 @@ uint32_t UString::toStrictUInt32(bool* ok) const
     }
 }
 
-int UString::find(const UString& f, int pos) const
+unsigned UString::find(const UString& f, unsigned pos) const
 {
-    int fsz = f.size();
-
-    if (pos < 0)
-        pos = 0;
+    unsigned fsz = f.size();
 
     if (fsz == 1) {
         UChar ch = f[0];
@@ -553,16 +550,16 @@ int UString::find(const UString& f, int pos) const
             if (*c == ch)
                 return static_cast<int>(c - data());
         }
-        return -1;
+        return NotFound;
     }
 
-    int sz = size();
+    unsigned sz = size();
     if (sz < fsz)
-        return -1;
+        return NotFound;
     if (fsz == 0)
         return pos;
     const UChar* end = data() + sz - fsz;
-    int fsizeminusone = (fsz - 1) * sizeof(UChar);
+    unsigned fsizeminusone = (fsz - 1) * sizeof(UChar);
     const UChar* fdata = f.data();
     unsigned short fchar = fdata[0];
     ++fdata;
@@ -571,48 +568,44 @@ int UString::find(const UString& f, int pos) const
             return static_cast<int>(c - data());
     }
 
-    return -1;
+    return NotFound;
 }
 
-int UString::find(UChar ch, int pos) const
+unsigned UString::find(UChar ch, unsigned pos) const
 {
-    if (pos < 0)
-        pos = 0;
     const UChar* end = data() + size();
     for (const UChar* c = data() + pos; c < end; c++) {
         if (*c == ch)
             return static_cast<int>(c - data());
     }
 
-    return -1;
+    return NotFound;
 }
 
-int UString::rfind(const UString& f, int pos) const
+unsigned UString::rfind(const UString& f, unsigned pos) const
 {
-    int sz = size();
-    int fsz = f.size();
+    unsigned sz = size();
+    unsigned fsz = f.size();
     if (sz < fsz)
-        return -1;
-    if (pos < 0)
-        pos = 0;
+        return NotFound;
     if (pos > sz - fsz)
         pos = sz - fsz;
     if (fsz == 0)
         return pos;
-    int fsizeminusone = (fsz - 1) * sizeof(UChar);
+    unsigned fsizeminusone = (fsz - 1) * sizeof(UChar);
     const UChar* fdata = f.data();
     for (const UChar* c = data() + pos; c >= data(); c--) {
         if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))
             return static_cast<int>(c - data());
     }
 
-    return -1;
+    return NotFound;
 }
 
-int UString::rfind(UChar ch, int pos) const
+unsigned UString::rfind(UChar ch, unsigned pos) const
 {
     if (isEmpty())
-        return -1;
+        return NotFound;
     if (pos + 1 >= size())
         pos = size() - 1;
     for (const UChar* c = data() + pos; c >= data(); c--) {
@@ -620,21 +613,18 @@ int UString::rfind(UChar ch, int pos) const
             return static_cast<int>(c - data());
     }
 
-    return -1;
+    return NotFound;
 }
 
-UString UString::substr(int pos, int len) const
+UString UString::substr(unsigned pos, unsigned len) const
 {
-    int s = size();
+    unsigned s = size();
 
-    if (pos < 0)
-        pos = 0;
-    else if (pos >= s)
+    if (pos >= s)
         pos = s;
-    if (len < 0)
-        len = s;
-    if (pos + len >= s)
-        len = s - pos;
+    unsigned limit = s - pos;
+    if (len > limit)
+        len = limit;
 
     if (pos == 0 && len == s)
         return *this;
@@ -661,12 +651,12 @@ bool operator==(const UString& s1, const char *s2)
 
 bool operator<(const UString& s1, const UString& s2)
 {
-    const int l1 = s1.size();
-    const int l2 = s2.size();
-    const int lmin = l1 < l2 ? l1 : l2;
+    const unsigned l1 = s1.size();
+    const unsigned l2 = s2.size();
+    const unsigned lmin = l1 < l2 ? l1 : l2;
     const UChar* c1 = s1.data();
     const UChar* c2 = s2.data();
-    int l = 0;
+    unsigned l = 0;
     while (l < lmin && *c1 == *c2) {
         c1++;
         c2++;
@@ -680,12 +670,12 @@ bool operator<(const UString& s1, const UString& s2)
 
 bool operator>(const UString& s1, const UString& s2)
 {
-    const int l1 = s1.size();
-    const int l2 = s2.size();
-    const int lmin = l1 < l2 ? l1 : l2;
+    const unsigned l1 = s1.size();
+    const unsigned l2 = s2.size();
+    const unsigned lmin = l1 < l2 ? l1 : l2;
     const UChar* c1 = s1.data();
     const UChar* c2 = s2.data();
-    int l = 0;
+    unsigned l = 0;
     while (l < lmin && *c1 == *c2) {
         c1++;
         c2++;
@@ -699,12 +689,12 @@ bool operator>(const UString& s1, const UString& s2)
 
 int compare(const UString& s1, const UString& s2)
 {
-    const int l1 = s1.size();
-    const int l2 = s2.size();
-    const int lmin = l1 < l2 ? l1 : l2;
+    const unsigned l1 = s1.size();
+    const unsigned l2 = s2.size();
+    const unsigned lmin = l1 < l2 ? l1 : l2;
     const UChar* c1 = s1.data();
     const UChar* c2 = s2.data();
-    int l = 0;
+    unsigned l = 0;
     while (l < lmin && *c1 == *c2) {
         c1++;
         c2++;
@@ -722,12 +712,12 @@ int compare(const UString& s1, const UString& s2)
 
 bool equal(const UString::Rep* r, const UString::Rep* b)
 {
-    int length = r->size();
+    unsigned length = r->size();
     if (length != b->size())
         return false;
     const UChar* d = r->data();
     const UChar* s = b->data();
-    for (int i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         if (d[i] != s[i])
             return false;
     }
@@ -737,7 +727,7 @@ bool equal(const UString::Rep* r, const UString::Rep* b)
 CString UString::UTF8String(bool strict) const
 {
     // Allocate a buffer big enough to hold all the characters.
-    const int length = size();
+    const unsigned length = size();
     Vector<char, 1024> buffer(length * 3);
 
     // Convert to runs of 8-bit characters.

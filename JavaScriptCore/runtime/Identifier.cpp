@@ -87,12 +87,12 @@ bool Identifier::equal(const UString::Rep* r, const char* s)
     return s[length] == 0;
 }
 
-bool Identifier::equal(const UString::Rep* r, const UChar* s, int length)
+bool Identifier::equal(const UString::Rep* r, const UChar* s, unsigned length)
 {
     if (r->size() != length)
         return false;
     const UChar* d = r->data();
-    for (int i = 0; i != length; ++i)
+    for (unsigned i = 0; i != length; ++i)
         if (d[i] != s[i])
             return false;
     return true;
