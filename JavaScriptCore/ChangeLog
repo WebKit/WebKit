@@ -1,5 +1,17 @@
 2010-02-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Geoff Garen.
+
+        Bug 34948 - tryMakeString should fail on error in length calculation
+
+        Ooops! - "bool overflow" argument should have been "bool& overflow".
+
+        * runtime/UString.h:
+        (JSC::sumWithOverflow):
+        (JSC::tryMakeString):
+
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Build Fix (pt 2!)).
 
         Some symbol names have changed, remove, will readd if required.

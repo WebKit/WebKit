@@ -325,7 +325,7 @@ namespace JSC {
         unsigned m_length;
     };
 
-    inline void sumWithOverflow(unsigned& total, unsigned addend, bool overflow)
+    inline void sumWithOverflow(unsigned& total, unsigned addend, bool& overflow)
     {
         unsigned oldTotal = total;
         total = oldTotal + addend;
