@@ -26,14 +26,14 @@
 #include "config.h"
 #include "JavaScriptProfile.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "JavaScriptProfileNode.h"
+#include <profiler/Profile.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include <profiler/Profile.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
 #include <wtf/StdLibExtras.h>
@@ -47,7 +47,7 @@ namespace WebCore {
 typedef HashMap<Profile*, JSObject*> ProfileMap;
 
 static ProfileMap& profileCache()
-{
+{ 
     DEFINE_STATIC_LOCAL(ProfileMap, staticProfiles, ());
     return staticProfiles;
 }

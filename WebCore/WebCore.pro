@@ -339,10 +339,6 @@ SOURCES += \
     bindings/js/JSLazyEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/JSPopStateEventCustom.cpp \
-    bindings/js/JavaScriptProfile.h \
-    bindings/js/JavaScriptProfileNode.h \
-    bindings/js/JavaScriptProfile.cpp \
-    bindings/js/JavaScriptProfileNode.cpp
     bindings/js/ScriptArray.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \
@@ -1375,6 +1371,8 @@ HEADERS += \
     inspector/InspectorTimelineAgent.h \
     inspector/JavaScriptCallFrame.h \
     inspector/JavaScriptDebugServer.h \
+    inspector/JavaScriptProfile.h \
+    inspector/JavaScriptProfileNode.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \
@@ -2630,6 +2628,8 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
         bindings/js/JSJavaScriptCallFrameCustom.cpp \
         inspector/JavaScriptCallFrame.cpp \
         inspector/JavaScriptDebugServer.cpp \
+        inspector/JavaScriptProfile.cpp \
+        inspector/JavaScriptProfileNode.cpp
 }
 
 contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {

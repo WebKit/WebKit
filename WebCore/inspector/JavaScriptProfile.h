@@ -26,18 +26,18 @@
 #ifndef JavaScriptProfile_h
 #define JavaScriptProfile_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include <runtime/JSValue.h>
 
 namespace JSC {
-class ExecState;
-class Profile;
+    class ExecState;
+    class Profile;
 }
 
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState*, JSC::Profile*);
+    JSC::JSValue toJS(JSC::ExecState*, JSC::Profile*);
 
 } // namespace WebCore
 

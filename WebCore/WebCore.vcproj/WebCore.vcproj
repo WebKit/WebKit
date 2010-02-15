@@ -39896,22 +39896,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JavaScriptProfile.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfile.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfileNode.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfileNode.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\ScheduledAction.cpp"
 					>
 					<FileConfiguration
@@ -42694,6 +42678,22 @@
 			</File>
 			<File
 				RelativePath="..\inspector\JavaScriptDebugServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\JavaScriptProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\JavaScriptProfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\JavaScriptProfileNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\JavaScriptProfileNode.h"
 				>
 			</File>
 			<File
