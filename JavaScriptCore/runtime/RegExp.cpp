@@ -188,7 +188,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
     if (ovector)
         ovector->clear();
 
-    if (startOffset > s.size() || s.isNull())
+    if (static_cast<unsigned>(startOffset) > s.size() || s.isNull())
         return -1;
 
 #if ENABLE(WREC)

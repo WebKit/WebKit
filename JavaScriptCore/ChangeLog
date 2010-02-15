@@ -1,3 +1,12 @@
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Add missing cast for !YARR (PPC) builds.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+
 2010-02-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
