@@ -59,6 +59,7 @@ WTFLogChannel LogMedia =             { 0x01000000, "WebCoreLogLevel", WTFLogChan
 
 WTFLogChannel LogPlugins =           { 0x02000000, "WebCoreLogLevel", WTFLogChannelOff };
 WTFLogChannel LogArchives =          { 0x04000000, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogProgress =          { 0x08000000, "WebCoreLogLevel", WTFLogChannelOff };
 
 WTFLogChannel* getChannelFromName(const String& channelName)
 {
@@ -110,6 +111,9 @@ WTFLogChannel* getChannelFromName(const String& channelName)
     if (equalIgnoringCase(channelName, String("PopupBlocking")))
         return &LogPopupBlocking;
 
+    if (equalIgnoringCase(channelName, String("Progress")))
+        return &LogProgress;
+        
     if (equalIgnoringCase(channelName, String("SpellingAndGrammar")))
         return &LogSpellingAndGrammar;
 

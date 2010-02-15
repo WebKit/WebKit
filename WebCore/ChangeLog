@@ -1,3 +1,23 @@
+2010-02-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a progress-indicator logging channel to WebCore, and convert the old WebKit Logging
+        messages over to WebCore-style.
+
+        No new tests. (Logging changes only)
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+
+        * platform/Logging.cpp:
+        (WebCore::):
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+
 2010-02-15  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
