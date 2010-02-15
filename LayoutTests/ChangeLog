@@ -1,3 +1,17 @@
+2010-02-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 iframe sandbox bypass of window.top.location navigation via <form target="_top">
+        https://bugs.webkit.org/show_bug.cgi?id=33277
+
+        Add a test that _top is covered by @sandbox.
+
+        * http/tests/security/resources/fail.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-form-top.html: Added.
+        * http/tests/security/sandboxed-iframe-form-top-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-form-top.html: Added.
+
 2010-02-14  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Adam Barth.

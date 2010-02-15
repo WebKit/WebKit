@@ -1,3 +1,20 @@
+2010-02-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 iframe sandbox bypass of window.top.location navigation via <form target="_top">
+        https://bugs.webkit.org/show_bug.cgi?id=33277
+
+        submitForm wasn't respecting shouldAllowNavigation.  Instead of calling
+        the wrapper function, we need to call shouldAllowNavigation because we
+        need to handle the "frame not found" case differently than the
+        "navigation denied" case.
+
+        Test: http/tests/security/sandboxed-iframe-form-top.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+
 2010-02-14  Kent Tamura  <tkent@chromium.org>
 
         No review. Touch RenderRuny*.cpp to fix Chromium/Windows build bot.

@@ -463,7 +463,9 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     FrameLoadRequest frameRequest;
 
     String targetOrBaseTarget = target.isEmpty() ? m_frame->document()->baseTarget() : target;
-    Frame* targetFrame = findFrameForNavigation(targetOrBaseTarget);
+    Frame* targetFrame = m_frame->tree()->find(targetOrBaseTarget);
+    if (!shouldAllowNavigation(targetFrame))
+        return;
     if (!targetFrame) {
         targetFrame = m_frame;
         frameRequest.setFrameName(targetOrBaseTarget);
