@@ -1577,6 +1577,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: rgb(100, 100, 100);
 }
 
+.section .properties .value.error {
+    color: red;
+}
+
 .section .properties .number, .event-properties .number {
     color: blue;
 }

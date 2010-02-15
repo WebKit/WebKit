@@ -77,6 +77,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
             var infoElement = new TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
+        this.propertiesForTest = properties;
     }
 }
 
@@ -86,6 +87,10 @@ WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, pro
 {
     var a = propertyA.name;
     var b = propertyB.name;
+    if (a === "__proto__")
+        return 1;
+    if (b === "__proto__")
+        return -1;
 
     // if used elsewhere make sure to
     //  - convert a and b to strings (not needed here, properties are all strings)
@@ -174,7 +179,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.valueElement.className = "value";
         this.valueElement.textContent = this.property.value.description;
         if (this.property.isGetter)
-           this.valueElement.addStyleClass("dimmed");
+            this.valueElement.addStyleClass("dimmed");
+        if (this.property.isError)
+            this.valueElement.addStyleClass("error");
 
         this.listItemElement.removeChildren();
 

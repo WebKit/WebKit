@@ -487,23 +487,30 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
         return false;
 
     var properties = [];
+    var propertyNames = ignoreHasOwnProperty ? InjectedScript._getPropertyNames(object) : Object.getOwnPropertyNames(object);
+    if (!ignoreHasOwnProperty && object.__proto__)
+        propertyNames.push("__proto__");
 
     // Go over properties, prepare results.
-    for (var propertyName in object) {
-        if (!ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
-            continue;
+    for (var i = 0; i < propertyNames.length; ++i) {
+        var propertyName = propertyNames[i];
 
         var property = {};
         property.name = propertyName;
         property.parentObjectProxy = objectProxy;
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
         if (!property.isGetter) {
-            var childObject = object[propertyName];
-            var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, abbreviate);
-            childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
-            childObjectProxy.path.push(propertyName);
-            childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
-            property.value = childObjectProxy;
+            try {
+                var childObject = object[propertyName];
+                var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, abbreviate);
+                childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
+                childObjectProxy.path.push(propertyName);
+                childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
+                property.value = childObjectProxy;
+            } catch(e) {
+                property.value = { description: e.toString() };
+                property.isError = true;
+            }
         } else {
             // FIXME: this should show something like "getter" (bug 16734).
             property.value = { description: "\u2014" }; // em dash
@@ -571,22 +578,23 @@ InjectedScript.setOuterHTML = function(nodeId, value, expanded)
     return InjectedScriptHost.pushNodePathToFrontend(newNode, expanded, false);
 }
 
+InjectedScript._populatePropertyNames = function(object, resultSet)
+{
+    for (var o = object; o; o = o.__proto__) {
+        try {
+            var names = Object.getOwnPropertyNames(o);
+            for (var i = 0; i < names.length; ++i)
+                resultSet[names[i]] = true;
+        } catch (e) {
+        }
+    }
+}
+
 InjectedScript._getPropertyNames = function(object, resultSet)
 {
-    if (Object.getOwnPropertyNames) {
-        for (var o = object; o; o = o.__proto__) {
-            try {
-                var names = Object.getOwnPropertyNames(o);
-                for (var i = 0; i < names.length; ++i)
-                    resultSet[names[i]] = true;
-            } catch (e) {
-            }
-        }
-    } else {
-        // Chromium doesn't support getOwnPropertyNames yet.
-        for (var name in object)
-            resultSet[name] = true;
-    }
+    var propertyNameSet = {};
+    InjectedScript._populatePropertyNames(object, propertyNameSet);
+    return Object.keys(propertyNameSet);
 }
 
 InjectedScript.getCompletions = function(expression, includeInspectorCommandLineAPI, callFrameId)
@@ -605,7 +613,7 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
                 // Evaluate into properties in scope of the selected call frame.
                 var scopeChain = callFrame.scopeChain;
                 for (var i = 0; i < scopeChain.length; ++i)
-                    InjectedScript._getPropertyNames(scopeChain[i], props);
+                    InjectedScript._populatePropertyNames(scopeChain[i], props);
             }
         } else {
             if (!expression)
@@ -613,7 +621,7 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
             expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
         }
         if (typeof expressionResult == "object")
-            InjectedScript._getPropertyNames(expressionResult, props);
+            InjectedScript._populatePropertyNames(expressionResult, props);
         if (includeInspectorCommandLineAPI)
             for (var prop in InjectedScript._window().console._inspectorCommandLineAPI)
                 if (prop.charAt(0) !== '_')

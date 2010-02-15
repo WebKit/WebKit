@@ -31,6 +31,7 @@ WebInspector.Section = function(title, subtitle)
 {
     this.element = document.createElement("div");
     this.element.className = "section";
+    this.element.sectionForTest = this;
 
     this.headerElement = document.createElement("div");
     this.headerElement.className = "header";
