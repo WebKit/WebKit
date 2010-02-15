@@ -752,3 +752,6 @@ fast/frames/flattening/
 
 # Implement LayoutTestController::numberOfPages().
 printing/numberOfPages.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=34933
+media/video-display-aspect-ratio.html

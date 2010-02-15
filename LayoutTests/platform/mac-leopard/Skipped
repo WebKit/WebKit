@@ -47,3 +47,7 @@ fast/canvas/webgl/texImage2DImageDataTest.html
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# Fails on Mac
+# https://bugs.webkit.org/show_bug.cgi?id=34933
+media/video-display-aspect-ratio.html

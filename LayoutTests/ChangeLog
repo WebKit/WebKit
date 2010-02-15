@@ -1,3 +1,14 @@
+2010-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        media/video-display-aspect-ratio.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=34933
+
+        Skipped the new test that fails.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/win/Skipped:
+
 2010-02-12  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
