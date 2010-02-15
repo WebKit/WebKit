@@ -380,6 +380,7 @@ static gboolean parseDataUrl(gpointer callback_data)
     String charset = extractCharsetFromMediaType(mediaType);
 
     ResourceResponse response;
+    response.setURL(handle->request().url());
     response.setMimeType(mimeType);
 
     if (isBase64) {
