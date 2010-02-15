@@ -77,6 +77,7 @@ public:
     QGraphicsWebViewPrivate(QGraphicsWebView* parent)
         : q(parent)
         , page(0)
+        , resizesToContents(false)
 #if USE(ACCELERATED_COMPOSITING)
         , rootGraphicsLayer(0)
         , shouldSync(false)
@@ -117,12 +118,18 @@ public:
     virtual void markForSync(bool scheduleSync);
     void updateCompositingScrollPosition();
 #endif
+    
+    void updateResizesToContentsForPage();
 
     void syncLayers();
     void _q_doLoadFinished(bool success);
+    void _q_contentsSizeChanged(const QSize&);
 
     QGraphicsWebView* q;
     QWebPage* page;
+
+    bool resizesToContents;
+
 #if USE(ACCELERATED_COMPOSITING)
     QGraphicsItem* rootGraphicsLayer;
 
@@ -302,6 +309,30 @@ QObject* QGraphicsWebViewPrivate::pluginParent() const
 QStyle* QGraphicsWebViewPrivate::style() const
 {
     return q->style();
+}
+
+void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
+{
+    ASSERT(page);
+
+    if (resizesToContents) {
+        // resizes to contents mode requires preferred contents size to be set
+        if (!page->preferredContentsSize().isValid())
+            page->setPreferredContentsSize(QSize(960, 800));
+
+        QObject::connect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
+            q, SLOT(_q_contentsSizeChanged(const QSize&)), Qt::UniqueConnection);
+    } else {
+        QObject::disconnect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
+                         q, SLOT(_q_contentsSizeChanged(const QSize&)));
+    }
+}
+
+void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
+{
+    if (!resizesToContents)
+        return;
+    q->setGeometry(QRectF(q->geometry().topLeft(), size));
 }
 
 /*!
@@ -586,6 +617,9 @@ void QGraphicsWebView::setPage(QWebPage* page)
 
     QSize size = geometry().size().toSize();
     page->setViewportSize(size);
+    
+    if (d->resizesToContents)
+        d->updateResizesToContentsForPage();
 
     QWebFrame* mainFrame = d->page->mainFrame();
 
@@ -916,6 +950,34 @@ bool QGraphicsWebView::findText(const QString &subString, QWebPage::FindFlags op
     if (d->page)
         return d->page->findText(subString, options);
     return false;
+}
+
+/*!
+    \property QGraphicsWebView::resizesToContents
+    \brief whether the size of the QGraphicsWebView and its viewport changes to match the contents size
+    \since 4.7 
+
+    If this property is set, the QGraphicsWebView will automatically change its
+    size to match the size of the main frame contents. As a result the top level frame
+    will never have scrollbars.
+
+    This property should be used in conjunction with the QWebPage::preferredContentsSize property.
+    If not explicitly set, the preferredContentsSize is automatically set to a reasonable value.
+
+    \sa QWebPage::setPreferredContentsSize
+*/
+void QGraphicsWebView::setResizesToContents(bool enabled)
+{
+    if (d->resizesToContents == enabled)
+        return;
+    d->resizesToContents = enabled;
+    if (d->page)
+        d->updateResizesToContentsForPage();
+}
+
+bool QGraphicsWebView::resizesToContents() const
+{
+    return d->resizesToContents;
 }
 
 /*! \reimp

@@ -1,3 +1,30 @@
+2010-02-12  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen and Simon Hausmann.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34885
+        Add a QGraphicsWebView mode that makes it automatically resize itself to the size of the content.
+
+        This is useful for cases where the client wants to implement page panning and zooming by manipulating
+        the graphics item.
+        
+        Add a option to QGVLauncher to test this mode.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::QGraphicsWebViewPrivate):
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+        (QGraphicsWebViewPrivate::_q_contentsSizeChanged):
+        (QGraphicsWebView::setPage):
+        (QGraphicsWebView::setResizesToContents):
+        (QGraphicsWebView::resizesToContents):
+        * Api/qgraphicswebview.h:
+        * QGVLauncher/main.cpp:
+        (WebView::WebView):
+        (MainView::MainView):
+        (MainView::setMainWidget):
+        (MainView::resizeEvent):
+        (main):
+
 2010-02-12  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

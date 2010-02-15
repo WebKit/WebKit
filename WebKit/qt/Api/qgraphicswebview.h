@@ -45,6 +45,7 @@ class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
     Q_PROPERTY(bool modified READ isModified)
+    Q_PROPERTY(bool resizesToContents READ resizesToContents WRITE setResizesToContents)
 
 public:
     explicit QGraphicsWebView(QGraphicsItem* parent = 0);
@@ -78,6 +79,9 @@ public:
     void triggerPageAction(QWebPage::WebAction action, bool checked = false);
 
     bool findText(const QString& subString, QWebPage::FindFlags options = 0);
+
+    bool resizesToContents() const;
+    void setResizesToContents(bool enabled);
 
     virtual void setGeometry(const QRectF& rect);
     virtual void updateGeometry();
@@ -137,6 +141,7 @@ private:
     // we don't want to change the moc based on USE() macro, so this function is here
     // but will be empty if ACCLERATED_COMPOSITING is disabled
     Q_PRIVATE_SLOT(d, void syncLayers())
+    Q_PRIVATE_SLOT(d, void _q_contentsSizeChanged(const QSize&))
 
     QGraphicsWebViewPrivate* const d;
     friend class QGraphicsWebViewPrivate;
