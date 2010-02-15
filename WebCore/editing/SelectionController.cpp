@@ -840,7 +840,6 @@ void SelectionController::layout()
             RenderObject* caretPainter = caretRenderer();
 
             // Compute an offset between the renderer and the caretPainter
-            IntSize offsetFromPainter;
             bool unrooted = false;
             while (renderer != caretPainter) {
                 RenderObject* containerObject = renderer->container();
@@ -848,15 +847,12 @@ void SelectionController::layout()
                     unrooted = true;
                     break;
                 }
-                offsetFromPainter += renderer->offsetFromContainer(containerObject);
+                localRect.move(renderer->offsetFromContainer(containerObject, localRect.location()));
                 renderer = containerObject;
             }
             
-            if (!unrooted) {
-                // Move the caret rect to the coords of the painter
-                localRect.move(offsetFromPainter);
+            if (!unrooted)
                 m_caretRect = localRect;
-            }
             
             m_absCaretBoundsDirty = true;
         }

@@ -119,7 +119,7 @@ private:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void paintMask(PaintInfo&, int tx, int ty);
 
-    virtual IntSize offsetFromContainer(RenderObject*) const;
+    virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
 

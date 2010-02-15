@@ -44,7 +44,7 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    virtual IntSize offsetFromContainer(RenderObject*) const;
+    virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;
 
     IntRect linesBoundingBox() const;
     IntRect linesVisibleOverflowBoundingBox() const;

@@ -230,27 +230,32 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     start = min(start, static_cast<unsigned>(INT_MAX));
     end = min(end, static_cast<unsigned>(INT_MAX));
     
-    FloatPoint absPos = localToAbsolute(FloatPoint());
-
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = IntRect(absPos.x() + box->x(), absPos.y() + box->y(), box->width(), box->height());
+            IntRect r = IntRect(box->x(), box->y(), box->width(), box->height());
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(absPos.x(), absPos.y(), start, end);
+                IntRect selectionRect = box->selectionRect(0, 0, start, end);
                 r.setHeight(selectionRect.height());
                 r.setY(selectionRect.y());
             }
+            FloatPoint origin = localToAbsolute(r.location());
+            r.setX(origin.x());
+            r.setY(origin.y());
             rects.append(r);
         } else {
             unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(absPos.x(), absPos.y(), start, realEnd);
+            IntRect r = box->selectionRect(0, 0, start, realEnd);
             if (!r.isEmpty()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
                     r.setHeight(box->height());
-                    r.setY(absPos.y() + box->y());
+                    r.setY(box->y());
                 }
+                FloatPoint origin = localToAbsolute(r.location());
+                localToAbsolute(origin);
+                r.setX(origin.x());
+                r.setY(origin.y());
                 rects.append(r);
             }
         }

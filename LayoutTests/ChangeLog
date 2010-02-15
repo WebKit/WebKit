@@ -1,3 +1,15 @@
+2010-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7647300> Incorrect client rects for blocks the span multiple columns and their descendants
+        https://bugs.webkit.org/show_bug.cgi?id=34923
+
+        * fast/multicol/client-rects-expected.checksum: Added.
+        * fast/multicol/client-rects-expected.png: Added.
+        * fast/multicol/client-rects-expected.txt: Added.
+        * fast/multicol/client-rects.html: Added.
+
 2010-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Kevin Decker.

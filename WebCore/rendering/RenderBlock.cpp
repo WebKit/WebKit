@@ -3874,6 +3874,31 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     r = result;
 }
 
+void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
+{
+    if (!hasColumns())
+        return;
+
+    // FIXME: This is incorrect for right-to-left columns.
+
+    Vector<IntRect>& columnRects = *this->columnRects();
+
+    int gapWidth = columnGap();
+    int xOffset = 0;
+    int yOffset = 0;
+    size_t columnCount = columnRects.size();
+    for (size_t i = 0; i < columnCount; ++i) {
+        IntRect columnRect = columnRects[i];
+        if (point.y() < columnRect.bottom() + yOffset) {
+            offset.expand(xOffset, -yOffset);
+            return;
+        }
+
+        xOffset += columnRect.width() + gapWidth;
+        yOffset += columnRect.height();
+    }
+}
+
 void RenderBlock::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());

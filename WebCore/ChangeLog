@@ -1,3 +1,71 @@
+2010-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7647300> Incorrect client rects for blocks the span multiple columns and their descendants
+        https://bugs.webkit.org/show_bug.cgi?id=34923
+
+        Test: fast/multicol/client-rects.html
+
+        In column layout, a different transform applies to different points in
+        the block and its descendants, depending on their y coordinate within the
+        block. offsetFromContainer() used to return the offset that applied to
+        the origin. With this change, it returns the offset that applies to a
+        given reference point. When mapping a quad from local to absolute
+        coordinates, the top left of the quad’s bounding box is used as that
+        reference point.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::layout): Pass the caret’s origin as the
+        reference point to offsetFromContainer().
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForColumns): Adds the offset between the
+        given point and its image under the column paint-time transform to the
+        given offset. Used by offsetFromContainer() where it had previously used
+        adjustRectForColumns(), which takes a rect and operates less efficiently.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer): Pass the transformed point as
+        the reference point to offsetFromContainer().
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint): Pass a point to
+        offsetFromContainer().
+        (WebCore::RenderBox::offsetFromContainer): Use adjustForColumns() instead
+        of adjustRectForColumns(), and use the reference point to get the right
+        adjustment for the point of interest, instead of the origin, in case this
+        box spans multiple columns.
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetFromContainer): Ditto. Actually apply the
+        column offset to the computation, which previously this function didn’t
+        do.
+        (WebCore::RenderInline::mapLocalToContainer): Pass the transformed point
+        as the reference point to offsetFromContainer().
+        (WebCore::RenderInline::mapAbsoluteToLocalPoint): Pass a point to
+        offsetFromContainer().
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer): Apply column adjustment,
+        based on the reference point, to the transform if needed.
+        (WebCore::RenderObject::localToContainerQuad): Initialize the
+        TransformState with the top left corner of the quad’s bounding box. It
+        is later used as the reference point when deciding on which column to
+        base the calculations.
+        (WebCore::RenderObject::offsetFromContainer): Adjust for columns.
+        (WebCore::RenderObject::offsetFromAncestorContainer): Pass the origin
+        as the reference point to offsetFromContainer().
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::adjustForColumns): Added.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer): Pass the reference
+        point through.
+        * rendering/RenderTableCell.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange): Map (the origin of) each
+        rect to absolute coordinates individually.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::convertToPaintingRect): Pass a point to
+        offsetFromContainer().
+
 2010-02-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Kevin Decker.
