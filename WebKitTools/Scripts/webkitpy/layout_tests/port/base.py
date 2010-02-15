@@ -83,18 +83,20 @@ class Port(object):
         interface so that it can be overriden for testing purposes."""
         return actual_text != expected_text
 
-    def diff_image(self, actual_filename, expected_filename, diff_filename):
+    def diff_image(self, actual_filename, expected_filename,
+                   diff_filename=None):
         """Compare two image files and produce a delta image file.
 
         Return 1 if the two files are different, 0 if they are the same.
         Also produce a delta image of the two images and write that into
-        |diff_filename|.
+        |diff_filename| if it is not None.
 
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""
         executable = self._path_to_image_diff()
-        cmd = [executable, '--diff', actual_filename, expected_filename,
-               diff_filename]
+        cmd = [executable, '--diff', actual_filename, expected_filename]
+        if diff_filename:
+            cmd.append(diff_filename)
         result = 1
         try:
             result = subprocess.call(cmd)
@@ -275,6 +277,13 @@ class Port(object):
             self._webkit_base_dir = abspath[0:abspath.find('WebKitTools')]
         return os.path.join(self._webkit_base_dir, *comps)
 
+    def path_to_test_expectations_file(self):
+        """Update the test expectations to the passed-in string.
+
+        This is used by the rebaselining tool. Raises NotImplementedError
+        if the port does not use expectations files."""
+        raise NotImplementedError('Port.path_to_test_expectations_file')
+ 
     def remove_directory(self, *path):
         """Recursively removes a directory, even if it's marked read-only.
 

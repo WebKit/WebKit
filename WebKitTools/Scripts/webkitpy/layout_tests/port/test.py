@@ -55,7 +55,8 @@ class TestPort(base.Port):
     def check_sys_deps(self):
         return True
 
-    def diff_image(self, actual_filename, expected_filename, diff_filename):
+    def diff_image(self, actual_filename, expected_filename,
+                   diff_filename=None):
         return False
 
     def compare_text(self, actual_text, expected_text):

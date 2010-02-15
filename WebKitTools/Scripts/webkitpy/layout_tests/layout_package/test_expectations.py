@@ -35,7 +35,6 @@ import logging
 import os
 import re
 import sys
-import time
 
 import simplejson
 
@@ -133,10 +132,9 @@ class TestExpectations:
     def has_modifier(self, test, modifier):
         return self._expected_failures.has_modifier(test, modifier)
 
-    def remove_platform_from_file(self, tests, platform, backup=False):
-        return self._expected_failures.remove_platform_from_file(tests,
-                                                                 platform,
-                                                                 backup)
+    def remove_platform_from_expectations(self, tests, platform):
+        return self._expected_failures.remove_platform_from_expectations(
+            tests, platform)
 
 
 def strip_comments(line):
@@ -373,8 +371,9 @@ class TestExpectationsFile:
     def contains(self, test):
         return test in self._test_to_expectations
 
-    def remove_platform_from_file(self, tests, platform, backup=False):
-        """Remove the platform option from test expectations file.
+    def remove_platform_from_expectations(self, tests, platform):
+        """Returns a copy of the expectations with the tests matching the
+        platform remove.
 
         If a test is in the test list and has an option that matches the given
         platform, remove the matching platform and save the updated test back
@@ -384,24 +383,13 @@ class TestExpectationsFile:
         Args:
           tests: list of tests that need to update..
           platform: which platform option to remove.
-          backup: if true, the original test expectations file is saved as
-                  [self.TEST_LIST].orig.YYYYMMDDHHMMSS
 
         Returns:
-          no
+          the updated string.
         """
 
-        # FIXME - remove_platform_from file worked by writing a new
-        # test_expectations.txt file over the old one. Now that we're just
-        # parsing strings, we need to change this to return the new
-        # expectations string.
-        raise NotImplementedException('remove_platform_from_file')
-
-        new_file = self._path + '.new'
-        logging.debug('Original file: "%s"', self._path)
-        logging.debug('New file: "%s"', new_file)
         f_orig = self._get_iterable_expectations()
-        f_new = open(new_file, 'w')
+        f_new = []
 
         tests_removed = 0
         tests_updated = 0
@@ -413,7 +401,7 @@ class TestExpectationsFile:
             if action == NO_CHANGE:
                 # Save the original line back to the file
                 logging.debug('No change to test: %s', line)
-                f_new.write(line)
+                f_new.append(line)
             elif action == REMOVE_TEST:
                 tests_removed += 1
                 logging.info('Test removed: %s', line)
@@ -421,7 +409,7 @@ class TestExpectationsFile:
                 parts = line.split(':')
                 new_options = parts[0].replace(platform.upper() + ' ', '', 1)
                 new_line = ('%s:%s' % (new_options, parts[1]))
-                f_new.write(new_line)
+                f_new.append(new_line)
                 tests_updated += 1
                 logging.info('Test updated: ')
                 logging.info('  old: %s', line)
@@ -440,7 +428,7 @@ class TestExpectationsFile:
                     if not p in (platform.upper(), 'WIN-VISTA', 'WIN-7'):
                         new_options += p + ' '
                 new_line = ('%s:%s' % (new_options, parts[1]))
-                f_new.write(new_line)
+                f_new.append(new_line)
                 tests_updated += 1
                 logging.info('Test updated: ')
                 logging.info('  old: %s', line)
@@ -452,23 +440,7 @@ class TestExpectationsFile:
         logging.info('Total tests removed: %d', tests_removed)
         logging.info('Total tests updated: %d', tests_updated)
 
-        f_orig.close()
-        f_new.close()
-
-        if backup:
-            date_suffix = time.strftime('%Y%m%d%H%M%S',
-                                        time.localtime(time.time()))
-            backup_file = ('%s.orig.%s' % (self._path, date_suffix))
-            if os.path.exists(backup_file):
-                os.remove(backup_file)
-            logging.info('Saving original file to "%s"', backup_file)
-            os.rename(self._path, backup_file)
-        else:
-            os.remove(self._path)
-
-        logging.debug('Saving new file to "%s"', self._path)
-        os.rename(new_file, self._path)
-        return True
+        return "".join(f_new)
 
     def parse_expectations_line(self, line, lineno):
         """Parses a line from test_expectations.txt and returns a tuple

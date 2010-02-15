@@ -44,6 +44,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, options=None):
         if port_name is None:
             port_name = 'chromium-win' + self.version()
+        if options and not hasattr(options, 'target'):
+            options.target = 'Release'
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):

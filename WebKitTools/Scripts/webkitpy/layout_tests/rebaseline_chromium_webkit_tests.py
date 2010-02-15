@@ -54,7 +54,7 @@ import urllib
 import webbrowser
 import zipfile
 
-from layout_package import path_utils
+import port
 from layout_package import test_expectations
 from test_types import image_diff
 from test_types import text_diff
@@ -200,9 +200,10 @@ class Rebaseliner(object):
 
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
-    def __init__(self, platform, options):
-        self._file_dir = path_utils.path_from_base('webkit', 'tools',
+    def __init__(self, port, platform, options):
+        self._file_dir = port.path_from_chromium_base('webkit', 'tools',
             'layout_tests')
+        self._port = port
         self._platform = platform
         self._options = options
         self._rebaselining_tests = []
@@ -212,10 +213,12 @@ class Rebaseliner(object):
         #   -. compile list of tests that need rebaselining.
         #   -. update the tests in test_expectations file after rebaseline
         #      is done.
+        expectations_str = self._port.test_expectations()
         self._test_expectations = \
-            test_expectations.TestExpectations(None,
-                                               self._file_dir,
-                                               platform,
+            test_expectations.TestExpectations(self._port,
+                                               None,
+                                               expectations_str,
+                                               self._platform,
                                                False,
                                                False)
 
@@ -359,7 +362,6 @@ class Rebaseliner(object):
         latest_revision = self._get_latest_revision(url_base)
         if latest_revision is None or latest_revision <= 0:
             return None
-
         archive_url = ('%s%s/layout-test-results.zip' % (url_base,
                                                          latest_revision))
         logging.info('Archive url: "%s"', archive_url)
@@ -399,7 +401,7 @@ class Rebaseliner(object):
         for name in zip_namelist:
             logging.debug('  ' + name)
 
-        platform = path_utils.platform_name(self._platform)
+        platform = self._port.name()
         logging.debug('Platform dir: "%s"', platform)
 
         test_no = 1
@@ -412,7 +414,7 @@ class Rebaseliner(object):
             test_basename = os.path.splitext(test)[0]
             for suffix in BASELINE_SUFFIXES:
                 archive_test_name = ('layout-test-results/%s-actual%s' %
-                                     (test_basename, suffix))
+                                      (test_basename, suffix))
                 logging.debug('  Archive test file name: "%s"',
                               archive_test_name)
                 if not archive_test_name in zip_namelist:
@@ -431,7 +433,7 @@ class Rebaseliner(object):
 
                 expected_filename = '%s-expected%s' % (test_basename, suffix)
                 expected_fullpath = os.path.join(
-                    path_utils.chromium_baseline_path(platform),
+                    self._port._chromium_baseline_path(platform),
                     expected_filename)
                 expected_fullpath = os.path.normpath(expected_fullpath)
                 logging.debug('  Expected file full path: "%s"',
@@ -443,17 +445,17 @@ class Rebaseliner(object):
                 # and lower
                 # levels and remove all duplicated baselines.
                 if self._is_dup_baseline(temp_name,
-                                       expected_fullpath,
-                                       test,
-                                       suffix,
-                                       self._platform):
+                                        expected_fullpath,
+                                        test,
+                                        suffix,
+                                        self._platform):
                     os.remove(temp_name)
                     self._delete_baseline(expected_fullpath)
                     continue
 
                 # Create the new baseline directory if it doesn't already
                 # exist.
-                path_utils.maybe_make_directory(
+                self._port.maybe_make_directory(
                     os.path.dirname(expected_fullpath))
 
                 shutil.move(temp_name, expected_fullpath)
@@ -497,9 +499,9 @@ class Rebaseliner(object):
           True if the baseline is unnecessary.
           False otherwise.
         """
-        test_filepath = os.path.join(path_utils.layout_tests_dir(), test)
-        all_baselines = path_utils.expected_baselines(test_filepath,
-                                                      suffix, platform, True)
+        test_filepath = os.path.join(self._port.layout_tests_dir(), test)
+        all_baselines = self._port.expected_baselines(test_filepath,
+                                                      suffix, True)
         for (fallback_dir, fallback_file) in all_baselines:
             if fallback_dir and fallback_file:
                 fallback_fullpath = os.path.normpath(
@@ -534,11 +536,11 @@ class Rebaseliner(object):
             return True
 
         if ext1 == '.PNG':
-            return image_diff.ImageDiff(self._platform, '').diff_files(file1,
-                                                                       file2)
+            return image_diff.ImageDiff(self._port, self._platform,
+                '').diff_files(self._port, file1, file2)
         else:
-            return text_diff.TestTextDiff(self._platform, '').diff_files(file1,
-                                                                         file2)
+            return text_diff.TestTextDiff(self._port, self._platform,
+                '').diff_files(self._port, file1, file2)
 
     def _delete_baseline(self, filename):
         """Remove the file from repository and delete it from disk.
@@ -570,8 +572,21 @@ class Rebaseliner(object):
         """
 
         if self._rebaselined_tests:
-            self._test_expectations.remove_platform_from_file(
-                self._rebaselined_tests, self._platform, backup)
+            new_expectations = (
+                self._test_expectations.remove_platform_from_expectations(
+                self._rebaselined_tests, self._platform))
+            path = self._port.path_to_test_expectations_file()
+            if backup:
+                date_suffix = time.strftime('%Y%m%d%H%M%S',
+                                            time.localtime(time.time()))
+                backup_file = ('%s.orig.%s' % (path, date_suffix))
+                if os.path.exists(backup_file):
+                    os.remove(backup_file)
+                logging.info('Saving original file to "%s"', backup_file)
+                os.rename(path, backup_file)
+            f = open(path, "w")
+            f.write(new_expectations)
+            f.close()
         else:
             logging.info('No test was rebaselined so nothing to remove.')
 
@@ -777,8 +792,9 @@ class HtmlGenerator(object):
                         '<img style="width: 200" src="%(uri)s" /></a></td>')
     HTML_TR = '<tr>%s</tr>'
 
-    def __init__(self, options, platforms, rebaselining_tests):
+    def __init__(self, port, options, platforms, rebaselining_tests):
         self._html_directory = options.html_directory
+        self._port = port
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
         self._html_file = os.path.join(options.html_directory,
@@ -817,7 +833,7 @@ class HtmlGenerator(object):
 
         logging.info('Launching html: "%s"', self._html_file)
 
-        html_uri = path_utils.filename_to_uri(self._html_file)
+        html_uri = self._port.filename_to_uri(self._html_file)
         webbrowser.open(html_uri, 1)
 
         logging.info('Html launched.')
@@ -855,13 +871,13 @@ class HtmlGenerator(object):
         links = ''
         if os.path.exists(old_file):
             links += html_td_link % {
-                'uri': path_utils.filename_to_uri(old_file),
+                'uri': self._port.filename_to_uri(old_file),
                 'name': baseline_filename}
         else:
             logging.info('    No old baseline file: "%s"', old_file)
             links += self.HTML_TD_NOLINK % ''
 
-        links += html_td_link % {'uri': path_utils.filename_to_uri(new_file),
+        links += html_td_link % {'uri': self._port.filename_to_uri(new_file),
                                  'name': baseline_filename}
 
         diff_file = get_result_file_fullpath(self._html_directory,
@@ -869,7 +885,7 @@ class HtmlGenerator(object):
                                              'diff')
         logging.info('    Baseline diff file: "%s"', diff_file)
         if os.path.exists(diff_file):
-            links += html_td_link % {'uri': path_utils.filename_to_uri(
+            links += html_td_link % {'uri': self._port.filename_to_uri(
                 diff_file), 'name': 'Diff'}
         else:
             logging.info('    No baseline diff file: "%s"', diff_file)
@@ -908,8 +924,8 @@ class HtmlGenerator(object):
                     rows.append(self.HTML_TR % row)
 
         if rows:
-            test_path = os.path.join(path_utils.layout_tests_dir(), test)
-            html = self.HTML_TR_TEST % (path_utils.filename_to_uri(test_path),
+            test_path = os.path.join(self._port.layout_tests_dir(), test)
+            html = self.HTML_TR_TEST % (self._port.filename_to_uri(test_path),
                 test)
             html += self.HTML_TEST_DETAIL % ' '.join(rows)
 
@@ -967,6 +983,7 @@ def main():
                                    ' rebaselining comparison.'))
 
     options = option_parser.parse_args()[0]
+    port_obj = port.get(None, options)
 
     # Set up our logging format.
     log_level = logging.INFO
@@ -1002,7 +1019,7 @@ def main():
     rebaselining_tests = set()
     backup = options.backup
     for platform in rebaseline_platforms:
-        rebaseliner = Rebaseliner(platform, options)
+        rebaseliner = Rebaseliner(port_obj, platform, options)
 
         logging.info('')
         log_dashed_string('Rebaseline started', platform)
@@ -1017,7 +1034,8 @@ def main():
 
     logging.info('')
     log_dashed_string('Rebaselining result comparison started', None)
-    html_generator = HtmlGenerator(options,
+    html_generator = HtmlGenerator(port_obj,
+                                   options,
                                    rebaseline_platforms,
                                    rebaselining_tests)
     html_generator.generate_html()

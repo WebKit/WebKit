@@ -1,3 +1,25 @@
+2010-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update rebaseline-chromium-webkit-tests to work with the new code
+        structure (port objects instead of path_utils and platform_utils).
+
+        Added a path_to_test_expectations_file() to the Port interface.
+  
+        Fixed a bug in the chromium_* platform implementations where the
+        'target' option was assumed to be set.
+
+        * Scripts/rebaseline-chromium-webkit-tests:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-02-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
