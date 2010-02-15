@@ -180,7 +180,7 @@ class MacPort(base.Port):
 
     def _build_path(self, *comps):
         if not self._cached_build_root:
-            self._cached_build_root = executive.run_command(["webkit-build-directory", "--base"]).rstrip()
+            self._cached_build_root = executive.run_command(["webkit-build-directory", "--top-level"]).rstrip()
         return os.path.join(self._cached_build_root, self._options.target, *comps)
 
     def _kill_process(self, pid):

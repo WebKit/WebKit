@@ -1,3 +1,15 @@
+2010-02-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        webkit-build-directory misuses terms
+        https://bugs.webkit.org/show_bug.cgi?id=34822
+
+        * Scripts/webkit-build-directory:
+         - Add --top-level and --configuration options and make using one of them required.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+         - Use --top-level instead of --base.
+
 2010-02-14  Chang Shu  <Chang.Shu@nokia.com>
 
         Reviewed by Laszlo Gombos.

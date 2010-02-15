@@ -34,31 +34,35 @@ use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $showBaseProductDirectory = 0;
+my $showConfigurationDirectory = 0;
 my $showHelp = 0;
+my $showTopLevelDirectory = 0;
+
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
-  --base      Show the root build directory instead of one corresponding to the current target (e.g. Debug, Release)
-  --debug     Show build directory for the Debug target
-  -h|--help   Show this help message
-  --release   Show build directory for the Release target
+  --configuration  Show the build directory for a specific configuration (e.g. Debug, Release.  Defaults to the active configuration set by set-webkit-configuration)
+  -h|--help        Show this help message
+  --top-level      Show the top-level build directory
+
+Either --configuration or --top-level is required.
 EOF
 
 setConfiguration(); # Figure out from the command line if we're --debug or --release or the default.
 
 my $getOptionsResult = GetOptions(
-    'base' => \$showBaseProductDirectory,
+    'configuration' => \$showConfigurationDirectory,
+    'top-level' => \$showTopLevelDirectory,
     'help|h' => \$showHelp,
 );
 
-if (!$getOptionsResult || $showHelp) {
+if (!$getOptionsResult || $showHelp || (!$showConfigurationDirectory && !$showTopLevelDirectory)) {
     print STDERR $usage;
     exit 1;
 }
 
-if ($showBaseProductDirectory) {
+if ($showTopLevelDirectory) {
     print baseProductDir() . "\n";
 } else {
     print productDir() . "\n";
