@@ -70,7 +70,7 @@ class DownloadClient : public Noncopyable, public ResourceHandleClient {
 struct _WebKitDownloadPrivate {
     gchar* destinationURI;
     gchar* suggestedFilename;
-    guint currentSize;
+    guint64 currentSize;
     GTimer* timer;
     WebKitDownloadStatus status;
     GFileOutputStream* outputStream;
@@ -755,7 +755,7 @@ guint64 webkit_download_get_total_size(WebKitDownload* download)
     if (!message)
         return 0;
 
-    return MAX(priv->currentSize, soup_message_headers_get_content_length(message->response_headers));
+    return MAX(priv->currentSize, static_cast<guint64>(soup_message_headers_get_content_length(message->response_headers)));
 }
 
 /**
