@@ -1,3 +1,34 @@
+2010-02-15  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix QScriptValue::toIntXX methods.
+
+        More ECMA Script compliance.
+
+        [Qt] QScriptValue::toIntXX returns incorrect values
+        https://bugs.webkit.org/show_bug.cgi?id=34847
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::toInteger):
+        (QScriptValuePrivate::toInt32):
+        (QScriptValuePrivate::toUInt32):
+        (QScriptValuePrivate::toUInt16):
+        * qt/tests/qscriptvalue/tst_qscriptvalue.h:
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated.cpp:
+        (tst_QScriptValue::toInteger_initData):
+        (tst_QScriptValue::toInteger_makeData):
+        (tst_QScriptValue::toInteger_test):
+        (tst_QScriptValue::toInt32_initData):
+        (tst_QScriptValue::toInt32_makeData):
+        (tst_QScriptValue::toInt32_test):
+        (tst_QScriptValue::toUInt32_initData):
+        (tst_QScriptValue::toUInt32_makeData):
+        (tst_QScriptValue::toUInt32_test):
+        (tst_QScriptValue::toUInt16_initData):
+        (tst_QScriptValue::toUInt16_makeData):
+        (tst_QScriptValue::toUInt16_test):
+
 2010-02-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Adam Barth.

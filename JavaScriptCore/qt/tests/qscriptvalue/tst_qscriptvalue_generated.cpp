@@ -940,3 +940,511 @@ void tst_QScriptValue::toBoolean_test(const char*, const QScriptValue& value)
 }
 
 DEFINE_TEST_FUNCTION(toBoolean)
+
+
+void tst_QScriptValue::toInteger_initData()
+{
+    QTest::addColumn<qsreal>("expected");
+    initScriptValues();
+}
+
+void tst_QScriptValue::toInteger_makeData(const char* expr)
+{
+    static QHash<QString, qsreal> toInteger;
+    if (toInteger.isEmpty()) {
+        toInteger.insert("QScriptValue()", 0);
+        toInteger.insert("QScriptValue(QScriptValue::UndefinedValue)", 0);
+        toInteger.insert("QScriptValue(QScriptValue::NullValue)", 0);
+        toInteger.insert("QScriptValue(true)", 1);
+        toInteger.insert("QScriptValue(false)", 0);
+        toInteger.insert("QScriptValue(int(122))", 122);
+        toInteger.insert("QScriptValue(uint(124))", 124);
+        toInteger.insert("QScriptValue(0)", 0);
+        toInteger.insert("QScriptValue(0.0)", 0);
+        toInteger.insert("QScriptValue(123.0)", 123);
+        toInteger.insert("QScriptValue(6.37e-8)", 0);
+        toInteger.insert("QScriptValue(-6.37e-8)", 0);
+        toInteger.insert("QScriptValue(0x43211234)", 1126240820);
+        toInteger.insert("QScriptValue(0x10000)", 65536);
+        toInteger.insert("QScriptValue(0x10001)", 65537);
+        toInteger.insert("QScriptValue(qSNaN())", 0);
+        toInteger.insert("QScriptValue(qQNaN())", 0);
+        toInteger.insert("QScriptValue(qInf())", qInf());
+        toInteger.insert("QScriptValue(-qInf())", qInf());
+        toInteger.insert("QScriptValue(\"NaN\")", 0);
+        toInteger.insert("QScriptValue(\"Infinity\")", qInf());
+        toInteger.insert("QScriptValue(\"-Infinity\")", qInf());
+        toInteger.insert("QScriptValue(\"ciao\")", 0);
+        toInteger.insert("QScriptValue(QString::fromLatin1(\"ciao\"))", 0);
+        toInteger.insert("QScriptValue(QString(\"\"))", 0);
+        toInteger.insert("QScriptValue(QString())", 0);
+        toInteger.insert("QScriptValue(QString(\"0\"))", 0);
+        toInteger.insert("QScriptValue(QString(\"123\"))", 123);
+        toInteger.insert("QScriptValue(QString(\"12.4\"))", 12);
+        toInteger.insert("QScriptValue(0, QScriptValue::UndefinedValue)", 0);
+        toInteger.insert("QScriptValue(0, QScriptValue::NullValue)", 0);
+        toInteger.insert("QScriptValue(0, true)", 1);
+        toInteger.insert("QScriptValue(0, false)", 0);
+        toInteger.insert("QScriptValue(0, int(122))", 122);
+        toInteger.insert("QScriptValue(0, uint(124))", 124);
+        toInteger.insert("QScriptValue(0, 0)", 0);
+        toInteger.insert("QScriptValue(0, 0.0)", 0);
+        toInteger.insert("QScriptValue(0, 123.0)", 123);
+        toInteger.insert("QScriptValue(0, 6.37e-8)", 0);
+        toInteger.insert("QScriptValue(0, -6.37e-8)", 0);
+        toInteger.insert("QScriptValue(0, 0x43211234)", 1126240820);
+        toInteger.insert("QScriptValue(0, 0x10000)", 65536);
+        toInteger.insert("QScriptValue(0, 0x10001)", 65537);
+        toInteger.insert("QScriptValue(0, qSNaN())", 0);
+        toInteger.insert("QScriptValue(0, qQNaN())", 0);
+        toInteger.insert("QScriptValue(0, qInf())", qInf());
+        toInteger.insert("QScriptValue(0, -qInf())", qInf());
+        toInteger.insert("QScriptValue(0, \"NaN\")", 0);
+        toInteger.insert("QScriptValue(0, \"Infinity\")", qInf());
+        toInteger.insert("QScriptValue(0, \"-Infinity\")", qInf());
+        toInteger.insert("QScriptValue(0, \"ciao\")", 0);
+        toInteger.insert("QScriptValue(0, QString::fromLatin1(\"ciao\"))", 0);
+        toInteger.insert("QScriptValue(0, QString(\"\"))", 0);
+        toInteger.insert("QScriptValue(0, QString())", 0);
+        toInteger.insert("QScriptValue(0, QString(\"0\"))", 0);
+        toInteger.insert("QScriptValue(0, QString(\"123\"))", 123);
+        toInteger.insert("QScriptValue(0, QString(\"12.3\"))", 12);
+        toInteger.insert("QScriptValue(engine, QScriptValue::UndefinedValue)", 0);
+        toInteger.insert("QScriptValue(engine, QScriptValue::NullValue)", 0);
+        toInteger.insert("QScriptValue(engine, true)", 1);
+        toInteger.insert("QScriptValue(engine, false)", 0);
+        toInteger.insert("QScriptValue(engine, int(122))", 122);
+        toInteger.insert("QScriptValue(engine, uint(124))", 124);
+        toInteger.insert("QScriptValue(engine, 0)", 0);
+        toInteger.insert("QScriptValue(engine, 0.0)", 0);
+        toInteger.insert("QScriptValue(engine, 123.0)", 123);
+        toInteger.insert("QScriptValue(engine, 6.37e-8)", 0);
+        toInteger.insert("QScriptValue(engine, -6.37e-8)", 0);
+        toInteger.insert("QScriptValue(engine, 0x43211234)", 1126240820);
+        toInteger.insert("QScriptValue(engine, 0x10000)", 65536);
+        toInteger.insert("QScriptValue(engine, 0x10001)", 65537);
+        toInteger.insert("QScriptValue(engine, qSNaN())", 0);
+        toInteger.insert("QScriptValue(engine, qQNaN())", 0);
+        toInteger.insert("QScriptValue(engine, qInf())", qInf());
+        toInteger.insert("QScriptValue(engine, -qInf())", qInf());
+        toInteger.insert("QScriptValue(engine, \"NaN\")", 0);
+        toInteger.insert("QScriptValue(engine, \"Infinity\")", qInf());
+        toInteger.insert("QScriptValue(engine, \"-Infinity\")", qInf());
+        toInteger.insert("QScriptValue(engine, \"ciao\")", 0);
+        toInteger.insert("QScriptValue(engine, QString::fromLatin1(\"ciao\"))", 0);
+        toInteger.insert("QScriptValue(engine, QString(\"\"))", 0);
+        toInteger.insert("QScriptValue(engine, QString())", 0);
+        toInteger.insert("QScriptValue(engine, QString(\"0\"))", 0);
+        toInteger.insert("QScriptValue(engine, QString(\"123\"))", 123);
+        toInteger.insert("QScriptValue(engine, QString(\"1.23\"))", 1);
+        toInteger.insert("engine->evaluate(\"[]\")", 0);
+        toInteger.insert("engine->evaluate(\"{}\")", 0);
+        toInteger.insert("engine->evaluate(\"Object.prototype\")", 0);
+        toInteger.insert("engine->evaluate(\"Date.prototype\")", 0);
+        toInteger.insert("engine->evaluate(\"Array.prototype\")", 0);
+        toInteger.insert("engine->evaluate(\"Function.prototype\")", 0);
+        toInteger.insert("engine->evaluate(\"Error.prototype\")", 0);
+        toInteger.insert("engine->evaluate(\"Object\")", 0);
+        toInteger.insert("engine->evaluate(\"Array\")", 0);
+        toInteger.insert("engine->evaluate(\"Number\")", 0);
+        toInteger.insert("engine->evaluate(\"Function\")", 0);
+        toInteger.insert("engine->evaluate(\"(function() { return 1; })\")", 0);
+        toInteger.insert("engine->evaluate(\"(function() { return 'ciao'; })\")", 0);
+        toInteger.insert("engine->evaluate(\"(function() { throw new Error('foo'); })\")", 0);
+        toInteger.insert("engine->evaluate(\"/foo/\")", 0);
+        toInteger.insert("engine->evaluate(\"new Object()\")", 0);
+        toInteger.insert("engine->evaluate(\"new Array()\")", 0);
+        toInteger.insert("engine->evaluate(\"new Error()\")", 0);
+    }
+    newRow(expr) << toInteger.value(expr);
+}
+
+void tst_QScriptValue::toInteger_test(const char*, const QScriptValue& value)
+{
+    QFETCH(qsreal, expected);
+    if (qIsInf(expected)) {
+        QVERIFY(qIsInf(value.toInteger()));
+        return;
+    }
+    QCOMPARE(value.toInteger(), expected);
+}
+
+DEFINE_TEST_FUNCTION(toInteger)
+
+
+void tst_QScriptValue::toInt32_initData()
+{
+    QTest::addColumn<qint32>("expected");
+    initScriptValues();
+}
+
+void tst_QScriptValue::toInt32_makeData(const char* expr)
+{
+    static QHash<QString, qint32> toInt32;
+    if (toInt32.isEmpty()) {
+        toInt32.insert("QScriptValue()", 0);
+        toInt32.insert("QScriptValue(QScriptValue::UndefinedValue)", 0);
+        toInt32.insert("QScriptValue(QScriptValue::NullValue)", 0);
+        toInt32.insert("QScriptValue(true)", 1);
+        toInt32.insert("QScriptValue(false)", 0);
+        toInt32.insert("QScriptValue(int(122))", 122);
+        toInt32.insert("QScriptValue(uint(124))", 124);
+        toInt32.insert("QScriptValue(0)", 0);
+        toInt32.insert("QScriptValue(0.0)", 0);
+        toInt32.insert("QScriptValue(123.0)", 123);
+        toInt32.insert("QScriptValue(6.37e-8)", 0);
+        toInt32.insert("QScriptValue(-6.37e-8)", 0);
+        toInt32.insert("QScriptValue(0x43211234)", 1126240820);
+        toInt32.insert("QScriptValue(0x10000)", 65536);
+        toInt32.insert("QScriptValue(0x10001)", 65537);
+        toInt32.insert("QScriptValue(qSNaN())", 0);
+        toInt32.insert("QScriptValue(qQNaN())", 0);
+        toInt32.insert("QScriptValue(qInf())", 0);
+        toInt32.insert("QScriptValue(-qInf())", 0);
+        toInt32.insert("QScriptValue(\"NaN\")", 0);
+        toInt32.insert("QScriptValue(\"Infinity\")", 0);
+        toInt32.insert("QScriptValue(\"-Infinity\")", 0);
+        toInt32.insert("QScriptValue(\"ciao\")", 0);
+        toInt32.insert("QScriptValue(QString::fromLatin1(\"ciao\"))", 0);
+        toInt32.insert("QScriptValue(QString(\"\"))", 0);
+        toInt32.insert("QScriptValue(QString())", 0);
+        toInt32.insert("QScriptValue(QString(\"0\"))", 0);
+        toInt32.insert("QScriptValue(QString(\"123\"))", 123);
+        toInt32.insert("QScriptValue(QString(\"12.4\"))", 12);
+        toInt32.insert("QScriptValue(0, QScriptValue::UndefinedValue)", 0);
+        toInt32.insert("QScriptValue(0, QScriptValue::NullValue)", 0);
+        toInt32.insert("QScriptValue(0, true)", 1);
+        toInt32.insert("QScriptValue(0, false)", 0);
+        toInt32.insert("QScriptValue(0, int(122))", 122);
+        toInt32.insert("QScriptValue(0, uint(124))", 124);
+        toInt32.insert("QScriptValue(0, 0)", 0);
+        toInt32.insert("QScriptValue(0, 0.0)", 0);
+        toInt32.insert("QScriptValue(0, 123.0)", 123);
+        toInt32.insert("QScriptValue(0, 6.37e-8)", 0);
+        toInt32.insert("QScriptValue(0, -6.37e-8)", 0);
+        toInt32.insert("QScriptValue(0, 0x43211234)", 1126240820);
+        toInt32.insert("QScriptValue(0, 0x10000)", 65536);
+        toInt32.insert("QScriptValue(0, 0x10001)", 65537);
+        toInt32.insert("QScriptValue(0, qSNaN())", 0);
+        toInt32.insert("QScriptValue(0, qQNaN())", 0);
+        toInt32.insert("QScriptValue(0, qInf())", 0);
+        toInt32.insert("QScriptValue(0, -qInf())", 0);
+        toInt32.insert("QScriptValue(0, \"NaN\")", 0);
+        toInt32.insert("QScriptValue(0, \"Infinity\")", 0);
+        toInt32.insert("QScriptValue(0, \"-Infinity\")", 0);
+        toInt32.insert("QScriptValue(0, \"ciao\")", 0);
+        toInt32.insert("QScriptValue(0, QString::fromLatin1(\"ciao\"))", 0);
+        toInt32.insert("QScriptValue(0, QString(\"\"))", 0);
+        toInt32.insert("QScriptValue(0, QString())", 0);
+        toInt32.insert("QScriptValue(0, QString(\"0\"))", 0);
+        toInt32.insert("QScriptValue(0, QString(\"123\"))", 123);
+        toInt32.insert("QScriptValue(0, QString(\"12.3\"))", 12);
+        toInt32.insert("QScriptValue(engine, QScriptValue::UndefinedValue)", 0);
+        toInt32.insert("QScriptValue(engine, QScriptValue::NullValue)", 0);
+        toInt32.insert("QScriptValue(engine, true)", 1);
+        toInt32.insert("QScriptValue(engine, false)", 0);
+        toInt32.insert("QScriptValue(engine, int(122))", 122);
+        toInt32.insert("QScriptValue(engine, uint(124))", 124);
+        toInt32.insert("QScriptValue(engine, 0)", 0);
+        toInt32.insert("QScriptValue(engine, 0.0)", 0);
+        toInt32.insert("QScriptValue(engine, 123.0)", 123);
+        toInt32.insert("QScriptValue(engine, 6.37e-8)", 0);
+        toInt32.insert("QScriptValue(engine, -6.37e-8)", 0);
+        toInt32.insert("QScriptValue(engine, 0x43211234)", 1126240820);
+        toInt32.insert("QScriptValue(engine, 0x10000)", 65536);
+        toInt32.insert("QScriptValue(engine, 0x10001)", 65537);
+        toInt32.insert("QScriptValue(engine, qSNaN())", 0);
+        toInt32.insert("QScriptValue(engine, qQNaN())", 0);
+        toInt32.insert("QScriptValue(engine, qInf())", 0);
+        toInt32.insert("QScriptValue(engine, -qInf())", 0);
+        toInt32.insert("QScriptValue(engine, \"NaN\")", 0);
+        toInt32.insert("QScriptValue(engine, \"Infinity\")", 0);
+        toInt32.insert("QScriptValue(engine, \"-Infinity\")", 0);
+        toInt32.insert("QScriptValue(engine, \"ciao\")", 0);
+        toInt32.insert("QScriptValue(engine, QString::fromLatin1(\"ciao\"))", 0);
+        toInt32.insert("QScriptValue(engine, QString(\"\"))", 0);
+        toInt32.insert("QScriptValue(engine, QString())", 0);
+        toInt32.insert("QScriptValue(engine, QString(\"0\"))", 0);
+        toInt32.insert("QScriptValue(engine, QString(\"123\"))", 123);
+        toInt32.insert("QScriptValue(engine, QString(\"1.23\"))", 1);
+        toInt32.insert("engine->evaluate(\"[]\")", 0);
+        toInt32.insert("engine->evaluate(\"{}\")", 0);
+        toInt32.insert("engine->evaluate(\"Object.prototype\")", 0);
+        toInt32.insert("engine->evaluate(\"Date.prototype\")", 0);
+        toInt32.insert("engine->evaluate(\"Array.prototype\")", 0);
+        toInt32.insert("engine->evaluate(\"Function.prototype\")", 0);
+        toInt32.insert("engine->evaluate(\"Error.prototype\")", 0);
+        toInt32.insert("engine->evaluate(\"Object\")", 0);
+        toInt32.insert("engine->evaluate(\"Array\")", 0);
+        toInt32.insert("engine->evaluate(\"Number\")", 0);
+        toInt32.insert("engine->evaluate(\"Function\")", 0);
+        toInt32.insert("engine->evaluate(\"(function() { return 1; })\")", 0);
+        toInt32.insert("engine->evaluate(\"(function() { return 'ciao'; })\")", 0);
+        toInt32.insert("engine->evaluate(\"(function() { throw new Error('foo'); })\")", 0);
+        toInt32.insert("engine->evaluate(\"/foo/\")", 0);
+        toInt32.insert("engine->evaluate(\"new Object()\")", 0);
+        toInt32.insert("engine->evaluate(\"new Array()\")", 0);
+        toInt32.insert("engine->evaluate(\"new Error()\")", 0);
+    }
+    newRow(expr) << toInt32.value(expr);
+}
+
+void tst_QScriptValue::toInt32_test(const char*, const QScriptValue& value)
+{
+    QFETCH(qint32, expected);
+    QCOMPARE(value.toInt32(), expected);
+}
+
+DEFINE_TEST_FUNCTION(toInt32)
+
+
+void tst_QScriptValue::toUInt32_initData()
+{
+    QTest::addColumn<quint32>("expected");
+    initScriptValues();
+}
+
+void tst_QScriptValue::toUInt32_makeData(const char* expr)
+{
+    static QHash<QString, quint32> toUInt32;
+    if (toUInt32.isEmpty()) {
+        toUInt32.insert("QScriptValue()", 0);
+        toUInt32.insert("QScriptValue(QScriptValue::UndefinedValue)", 0);
+        toUInt32.insert("QScriptValue(QScriptValue::NullValue)", 0);
+        toUInt32.insert("QScriptValue(true)", 1);
+        toUInt32.insert("QScriptValue(false)", 0);
+        toUInt32.insert("QScriptValue(int(122))", 122);
+        toUInt32.insert("QScriptValue(uint(124))", 124);
+        toUInt32.insert("QScriptValue(0)", 0);
+        toUInt32.insert("QScriptValue(0.0)", 0);
+        toUInt32.insert("QScriptValue(123.0)", 123);
+        toUInt32.insert("QScriptValue(6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(-6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(0x43211234)", 1126240820);
+        toUInt32.insert("QScriptValue(0x10000)", 65536);
+        toUInt32.insert("QScriptValue(0x10001)", 65537);
+        toUInt32.insert("QScriptValue(qSNaN())", 0);
+        toUInt32.insert("QScriptValue(qQNaN())", 0);
+        toUInt32.insert("QScriptValue(qInf())", 0);
+        toUInt32.insert("QScriptValue(-qInf())", 0);
+        toUInt32.insert("QScriptValue(\"NaN\")", 0);
+        toUInt32.insert("QScriptValue(\"Infinity\")", 0);
+        toUInt32.insert("QScriptValue(\"-Infinity\")", 0);
+        toUInt32.insert("QScriptValue(\"ciao\")", 0);
+        toUInt32.insert("QScriptValue(QString::fromLatin1(\"ciao\"))", 0);
+        toUInt32.insert("QScriptValue(QString(\"\"))", 0);
+        toUInt32.insert("QScriptValue(QString())", 0);
+        toUInt32.insert("QScriptValue(QString(\"0\"))", 0);
+        toUInt32.insert("QScriptValue(QString(\"123\"))", 123);
+        toUInt32.insert("QScriptValue(QString(\"12.4\"))", 12);
+        toUInt32.insert("QScriptValue(0, QScriptValue::UndefinedValue)", 0);
+        toUInt32.insert("QScriptValue(0, QScriptValue::NullValue)", 0);
+        toUInt32.insert("QScriptValue(0, true)", 1);
+        toUInt32.insert("QScriptValue(0, false)", 0);
+        toUInt32.insert("QScriptValue(0, int(122))", 122);
+        toUInt32.insert("QScriptValue(0, uint(124))", 124);
+        toUInt32.insert("QScriptValue(0, 0)", 0);
+        toUInt32.insert("QScriptValue(0, 0.0)", 0);
+        toUInt32.insert("QScriptValue(0, 123.0)", 123);
+        toUInt32.insert("QScriptValue(0, 6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(0, -6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(0, 0x43211234)", 1126240820);
+        toUInt32.insert("QScriptValue(0, 0x10000)", 65536);
+        toUInt32.insert("QScriptValue(0, 0x10001)", 65537);
+        toUInt32.insert("QScriptValue(0, qSNaN())", 0);
+        toUInt32.insert("QScriptValue(0, qQNaN())", 0);
+        toUInt32.insert("QScriptValue(0, qInf())", 0);
+        toUInt32.insert("QScriptValue(0, -qInf())", 0);
+        toUInt32.insert("QScriptValue(0, \"NaN\")", 0);
+        toUInt32.insert("QScriptValue(0, \"Infinity\")", 0);
+        toUInt32.insert("QScriptValue(0, \"-Infinity\")", 0);
+        toUInt32.insert("QScriptValue(0, \"ciao\")", 0);
+        toUInt32.insert("QScriptValue(0, QString::fromLatin1(\"ciao\"))", 0);
+        toUInt32.insert("QScriptValue(0, QString(\"\"))", 0);
+        toUInt32.insert("QScriptValue(0, QString())", 0);
+        toUInt32.insert("QScriptValue(0, QString(\"0\"))", 0);
+        toUInt32.insert("QScriptValue(0, QString(\"123\"))", 123);
+        toUInt32.insert("QScriptValue(0, QString(\"12.3\"))", 12);
+        toUInt32.insert("QScriptValue(engine, QScriptValue::UndefinedValue)", 0);
+        toUInt32.insert("QScriptValue(engine, QScriptValue::NullValue)", 0);
+        toUInt32.insert("QScriptValue(engine, true)", 1);
+        toUInt32.insert("QScriptValue(engine, false)", 0);
+        toUInt32.insert("QScriptValue(engine, int(122))", 122);
+        toUInt32.insert("QScriptValue(engine, uint(124))", 124);
+        toUInt32.insert("QScriptValue(engine, 0)", 0);
+        toUInt32.insert("QScriptValue(engine, 0.0)", 0);
+        toUInt32.insert("QScriptValue(engine, 123.0)", 123);
+        toUInt32.insert("QScriptValue(engine, 6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(engine, -6.37e-8)", 0);
+        toUInt32.insert("QScriptValue(engine, 0x43211234)", 1126240820);
+        toUInt32.insert("QScriptValue(engine, 0x10000)", 65536);
+        toUInt32.insert("QScriptValue(engine, 0x10001)", 65537);
+        toUInt32.insert("QScriptValue(engine, qSNaN())", 0);
+        toUInt32.insert("QScriptValue(engine, qQNaN())", 0);
+        toUInt32.insert("QScriptValue(engine, qInf())", 0);
+        toUInt32.insert("QScriptValue(engine, -qInf())", 0);
+        toUInt32.insert("QScriptValue(engine, \"NaN\")", 0);
+        toUInt32.insert("QScriptValue(engine, \"Infinity\")", 0);
+        toUInt32.insert("QScriptValue(engine, \"-Infinity\")", 0);
+        toUInt32.insert("QScriptValue(engine, \"ciao\")", 0);
+        toUInt32.insert("QScriptValue(engine, QString::fromLatin1(\"ciao\"))", 0);
+        toUInt32.insert("QScriptValue(engine, QString(\"\"))", 0);
+        toUInt32.insert("QScriptValue(engine, QString())", 0);
+        toUInt32.insert("QScriptValue(engine, QString(\"0\"))", 0);
+        toUInt32.insert("QScriptValue(engine, QString(\"123\"))", 123);
+        toUInt32.insert("QScriptValue(engine, QString(\"1.23\"))", 1);
+        toUInt32.insert("engine->evaluate(\"[]\")", 0);
+        toUInt32.insert("engine->evaluate(\"{}\")", 0);
+        toUInt32.insert("engine->evaluate(\"Object.prototype\")", 0);
+        toUInt32.insert("engine->evaluate(\"Date.prototype\")", 0);
+        toUInt32.insert("engine->evaluate(\"Array.prototype\")", 0);
+        toUInt32.insert("engine->evaluate(\"Function.prototype\")", 0);
+        toUInt32.insert("engine->evaluate(\"Error.prototype\")", 0);
+        toUInt32.insert("engine->evaluate(\"Object\")", 0);
+        toUInt32.insert("engine->evaluate(\"Array\")", 0);
+        toUInt32.insert("engine->evaluate(\"Number\")", 0);
+        toUInt32.insert("engine->evaluate(\"Function\")", 0);
+        toUInt32.insert("engine->evaluate(\"(function() { return 1; })\")", 0);
+        toUInt32.insert("engine->evaluate(\"(function() { return 'ciao'; })\")", 0);
+        toUInt32.insert("engine->evaluate(\"(function() { throw new Error('foo'); })\")", 0);
+        toUInt32.insert("engine->evaluate(\"/foo/\")", 0);
+        toUInt32.insert("engine->evaluate(\"new Object()\")", 0);
+        toUInt32.insert("engine->evaluate(\"new Array()\")", 0);
+        toUInt32.insert("engine->evaluate(\"new Error()\")", 0);
+    }
+    newRow(expr) << toUInt32.value(expr);
+}
+
+void tst_QScriptValue::toUInt32_test(const char*, const QScriptValue& value)
+{
+    QFETCH(quint32, expected);
+    QCOMPARE(value.toUInt32(), expected);
+}
+
+DEFINE_TEST_FUNCTION(toUInt32)
+
+
+void tst_QScriptValue::toUInt16_initData()
+{
+    QTest::addColumn<quint16>("expected");
+    initScriptValues();
+}
+
+void tst_QScriptValue::toUInt16_makeData(const char* expr)
+{
+    static QHash<QString, quint16> toUInt16;
+    if (toUInt16.isEmpty()) {
+        toUInt16.insert("QScriptValue()", 0);
+        toUInt16.insert("QScriptValue(QScriptValue::UndefinedValue)", 0);
+        toUInt16.insert("QScriptValue(QScriptValue::NullValue)", 0);
+        toUInt16.insert("QScriptValue(true)", 1);
+        toUInt16.insert("QScriptValue(false)", 0);
+        toUInt16.insert("QScriptValue(int(122))", 122);
+        toUInt16.insert("QScriptValue(uint(124))", 124);
+        toUInt16.insert("QScriptValue(0)", 0);
+        toUInt16.insert("QScriptValue(0.0)", 0);
+        toUInt16.insert("QScriptValue(123.0)", 123);
+        toUInt16.insert("QScriptValue(6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(-6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(0x43211234)", 4660);
+        toUInt16.insert("QScriptValue(0x10000)", 0);
+        toUInt16.insert("QScriptValue(0x10001)", 1);
+        toUInt16.insert("QScriptValue(qSNaN())", 0);
+        toUInt16.insert("QScriptValue(qQNaN())", 0);
+        toUInt16.insert("QScriptValue(qInf())", 0);
+        toUInt16.insert("QScriptValue(-qInf())", 0);
+        toUInt16.insert("QScriptValue(\"NaN\")", 0);
+        toUInt16.insert("QScriptValue(\"Infinity\")", 0);
+        toUInt16.insert("QScriptValue(\"-Infinity\")", 0);
+        toUInt16.insert("QScriptValue(\"ciao\")", 0);
+        toUInt16.insert("QScriptValue(QString::fromLatin1(\"ciao\"))", 0);
+        toUInt16.insert("QScriptValue(QString(\"\"))", 0);
+        toUInt16.insert("QScriptValue(QString())", 0);
+        toUInt16.insert("QScriptValue(QString(\"0\"))", 0);
+        toUInt16.insert("QScriptValue(QString(\"123\"))", 123);
+        toUInt16.insert("QScriptValue(QString(\"12.4\"))", 12);
+        toUInt16.insert("QScriptValue(0, QScriptValue::UndefinedValue)", 0);
+        toUInt16.insert("QScriptValue(0, QScriptValue::NullValue)", 0);
+        toUInt16.insert("QScriptValue(0, true)", 1);
+        toUInt16.insert("QScriptValue(0, false)", 0);
+        toUInt16.insert("QScriptValue(0, int(122))", 122);
+        toUInt16.insert("QScriptValue(0, uint(124))", 124);
+        toUInt16.insert("QScriptValue(0, 0)", 0);
+        toUInt16.insert("QScriptValue(0, 0.0)", 0);
+        toUInt16.insert("QScriptValue(0, 123.0)", 123);
+        toUInt16.insert("QScriptValue(0, 6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(0, -6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(0, 0x43211234)", 4660);
+        toUInt16.insert("QScriptValue(0, 0x10000)", 0);
+        toUInt16.insert("QScriptValue(0, 0x10001)", 1);
+        toUInt16.insert("QScriptValue(0, qSNaN())", 0);
+        toUInt16.insert("QScriptValue(0, qQNaN())", 0);
+        toUInt16.insert("QScriptValue(0, qInf())", 0);
+        toUInt16.insert("QScriptValue(0, -qInf())", 0);
+        toUInt16.insert("QScriptValue(0, \"NaN\")", 0);
+        toUInt16.insert("QScriptValue(0, \"Infinity\")", 0);
+        toUInt16.insert("QScriptValue(0, \"-Infinity\")", 0);
+        toUInt16.insert("QScriptValue(0, \"ciao\")", 0);
+        toUInt16.insert("QScriptValue(0, QString::fromLatin1(\"ciao\"))", 0);
+        toUInt16.insert("QScriptValue(0, QString(\"\"))", 0);
+        toUInt16.insert("QScriptValue(0, QString())", 0);
+        toUInt16.insert("QScriptValue(0, QString(\"0\"))", 0);
+        toUInt16.insert("QScriptValue(0, QString(\"123\"))", 123);
+        toUInt16.insert("QScriptValue(0, QString(\"12.3\"))", 12);
+        toUInt16.insert("QScriptValue(engine, QScriptValue::UndefinedValue)", 0);
+        toUInt16.insert("QScriptValue(engine, QScriptValue::NullValue)", 0);
+        toUInt16.insert("QScriptValue(engine, true)", 1);
+        toUInt16.insert("QScriptValue(engine, false)", 0);
+        toUInt16.insert("QScriptValue(engine, int(122))", 122);
+        toUInt16.insert("QScriptValue(engine, uint(124))", 124);
+        toUInt16.insert("QScriptValue(engine, 0)", 0);
+        toUInt16.insert("QScriptValue(engine, 0.0)", 0);
+        toUInt16.insert("QScriptValue(engine, 123.0)", 123);
+        toUInt16.insert("QScriptValue(engine, 6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(engine, -6.37e-8)", 0);
+        toUInt16.insert("QScriptValue(engine, 0x43211234)", 4660);
+        toUInt16.insert("QScriptValue(engine, 0x10000)", 0);
+        toUInt16.insert("QScriptValue(engine, 0x10001)", 1);
+        toUInt16.insert("QScriptValue(engine, qSNaN())", 0);
+        toUInt16.insert("QScriptValue(engine, qQNaN())", 0);
+        toUInt16.insert("QScriptValue(engine, qInf())", 0);
+        toUInt16.insert("QScriptValue(engine, -qInf())", 0);
+        toUInt16.insert("QScriptValue(engine, \"NaN\")", 0);
+        toUInt16.insert("QScriptValue(engine, \"Infinity\")", 0);
+        toUInt16.insert("QScriptValue(engine, \"-Infinity\")", 0);
+        toUInt16.insert("QScriptValue(engine, \"ciao\")", 0);
+        toUInt16.insert("QScriptValue(engine, QString::fromLatin1(\"ciao\"))", 0);
+        toUInt16.insert("QScriptValue(engine, QString(\"\"))", 0);
+        toUInt16.insert("QScriptValue(engine, QString())", 0);
+        toUInt16.insert("QScriptValue(engine, QString(\"0\"))", 0);
+        toUInt16.insert("QScriptValue(engine, QString(\"123\"))", 123);
+        toUInt16.insert("QScriptValue(engine, QString(\"1.23\"))", 1);
+        toUInt16.insert("engine->evaluate(\"[]\")", 0);
+        toUInt16.insert("engine->evaluate(\"{}\")", 0);
+        toUInt16.insert("engine->evaluate(\"Object.prototype\")", 0);
+        toUInt16.insert("engine->evaluate(\"Date.prototype\")", 0);
+        toUInt16.insert("engine->evaluate(\"Array.prototype\")", 0);
+        toUInt16.insert("engine->evaluate(\"Function.prototype\")", 0);
+        toUInt16.insert("engine->evaluate(\"Error.prototype\")", 0);
+        toUInt16.insert("engine->evaluate(\"Object\")", 0);
+        toUInt16.insert("engine->evaluate(\"Array\")", 0);
+        toUInt16.insert("engine->evaluate(\"Number\")", 0);
+        toUInt16.insert("engine->evaluate(\"Function\")", 0);
+        toUInt16.insert("engine->evaluate(\"(function() { return 1; })\")", 0);
+        toUInt16.insert("engine->evaluate(\"(function() { return 'ciao'; })\")", 0);
+        toUInt16.insert("engine->evaluate(\"(function() { throw new Error('foo'); })\")", 0);
+        toUInt16.insert("engine->evaluate(\"/foo/\")", 0);
+        toUInt16.insert("engine->evaluate(\"new Object()\")", 0);
+        toUInt16.insert("engine->evaluate(\"new Array()\")", 0);
+        toUInt16.insert("engine->evaluate(\"new Error()\")", 0);
+    }
+    newRow(expr) << toUInt16.value(expr);
+}
+
+void tst_QScriptValue::toUInt16_test(const char*, const QScriptValue& value)
+{
+    QFETCH(quint16, expected);
+    QCOMPARE(value.toUInt16(), expected);
+}
+
+DEFINE_TEST_FUNCTION(toUInt16)

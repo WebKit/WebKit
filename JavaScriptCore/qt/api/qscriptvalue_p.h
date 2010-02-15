@@ -525,26 +525,37 @@ bool QScriptValuePrivate::toBool() const
 
 qsreal QScriptValuePrivate::toInteger() const
 {
-    // TODO it is not true implementation!
-    return toNumber();
+    qsreal result = toNumber();
+    if (qIsNaN(result))
+        return 0;
+    if (qIsInf(result))
+        return result;
+    return (result > 0) ? qFloor(result) : -1 * qFloor(-result);
 }
 
 qint32 QScriptValuePrivate::toInt32() const
 {
-    // TODO it is not true implementation!
-    return toNumber();
+    qsreal result = toInteger();
+    // Orginaly it should look like that (result == 0 || qIsInf(result) || qIsNaN(result)), but
+    // some of these operation are invoked in toInteger subcall.
+    if (qIsInf(result))
+        return 0;
+    return result;
 }
 
 quint32 QScriptValuePrivate::toUInt32() const
 {
-    // TODO it is not true implementation!
-    return toNumber();
+    qsreal result = toInteger();
+    // Orginaly it should look like that (result == 0 || qIsInf(result) || qIsNaN(result)), but
+    // some of these operation are invoked in toInteger subcall.
+    if (qIsInf(result))
+        return 0;
+    return result;
 }
 
 quint16 QScriptValuePrivate::toUInt16() const
 {
-    // TODO it is not true implementation!
-    return toNumber();
+    return toInt32();
 }
 
 
