@@ -194,4 +194,4 @@ void RenderRubyAsBlock::removeChild(RenderObject* child)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(RUBY)
