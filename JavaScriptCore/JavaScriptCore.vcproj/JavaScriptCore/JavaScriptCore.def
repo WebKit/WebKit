@@ -17,7 +17,6 @@ EXPORTS
     ??0Structure@JSC@@AAE@VJSValue@1@ABVTypeInfo@1@I@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
-    ??0UString@JSC@@QAE@PB_WH@Z
     ??1CString@JSC@@QAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
@@ -61,7 +60,6 @@ EXPORTS
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
-    ?computeHash@UStringImpl@JSC@@SAIPB_WH@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
@@ -257,7 +255,6 @@ EXPORTS
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?strtod@WTF@@YANPBDPAPAD@Z
-    ?substr@UString@JSC@@QBE?AV12@HH@Z
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?synthesizePrototype@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ

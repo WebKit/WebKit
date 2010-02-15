@@ -1,3 +1,11 @@
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (Build Fix (pt 1?)).
+
+        Some symbol names have changed, remove, will readd if required.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
