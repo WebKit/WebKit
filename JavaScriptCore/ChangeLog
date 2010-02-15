@@ -1,3 +1,15 @@
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 34948 - tryMakeString should fail on error in length calculation
+
+        The sum of the length of substrings could overflow.
+
+        * runtime/UString.h:
+        (JSC::sumWithOverflow):
+        (JSC::tryMakeString):
+
 2010-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
