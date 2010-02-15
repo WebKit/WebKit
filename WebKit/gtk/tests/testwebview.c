@@ -234,11 +234,12 @@ int main(int argc, char** argv)
 
     /* Hopefully make test independent of the path it's called from. */
     while (!g_file_test ("WebKit/gtk/tests/resources/test.html", G_FILE_TEST_EXISTS)) {
-        char path_name[PATH_MAX];
+        gchar *path_name;
 
         g_chdir("..");
 
-        g_assert(!g_str_equal(getcwd(path_name, PATH_MAX), "/"));
+        g_assert(!g_str_equal((path_name = g_get_current_dir()), "/"));
+        g_free(path_name);
     }
 
     g_chdir("WebKit/gtk/tests/resources/");

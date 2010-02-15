@@ -1,3 +1,18 @@
+2010-02-15  Emilio Pozuelo Monfort  <pochu27@gmail.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Fails to build on GNU/Hurd because of PATH_MAX usage
+        https://bugs.webkit.org/show_bug.cgi?id=34920
+
+        Use dynamic allocation instead of fixed PATH_MAX size buffers to
+        fix the build on GNU/Hurd, where PATH_MAX is undefined.
+
+        * tests/testmimehandling.c:
+        (main):
+        * tests/testwebview.c:
+        (main):
+
 2010-02-14  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
