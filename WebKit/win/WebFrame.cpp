@@ -1192,6 +1192,24 @@ HRESULT WebFrame::pauseSVGAnimation(BSTR elementId, IDOMNode* node, double secon
     return S_OK;
 }
 
+HRESULT WebFrame::visibleContentRect(RECT* rect)
+{
+    if (!rect)
+        return E_POINTER;
+    SetRectEmpty(rect);
+
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    FrameView* view = frame->view();
+    if (!view)
+        return E_FAIL;
+
+    *rect = view->visibleContentRect(false);
+    return S_OK;
+}
+
 HRESULT WebFrame::numberOfActiveAnimations(UINT* number)
 {
     if (!number)

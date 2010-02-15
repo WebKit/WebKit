@@ -1,3 +1,21 @@
+2010-02-15  Adam Roben  <aroben@apple.com>
+
+        Add IWebFramePrivate::visibleContentRect
+
+        Fixes <http://webkit.org/b/34956> Add API to get a WebFrame's visible
+        content rect
+
+        Reviewed by Jon Honeycutt.
+
+        * Interfaces/IWebFramePrivate.idl: Added visibleContentRect.
+
+        * Interfaces/WebKit.idl: Touched to force a build.
+
+        * WebFrame.cpp:
+        (WebFrame::visibleContentRect):
+        * WebFrame.h:
+        Added. Calls through to FrameView::visibleContentRect.
+
 2010-02-12  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
