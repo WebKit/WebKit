@@ -1,3 +1,12 @@
+2010-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        Removed redefine of LOG_VERBOSE. This should not have commited in
+        the first place.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+
 2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
