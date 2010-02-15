@@ -1,3 +1,14 @@
+2010-02-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: incorrect syntax highlighting as HTML in a script tag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34934
+
+        * inspector/syntax-highlight-html-expected.txt: Added.
+        * inspector/syntax-highlight-html.html: Added.
+
 2010-02-15  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
