@@ -1,3 +1,49 @@
+2010-02-15  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Move JSC-specific wrappers for Profile and ProfileNode to bindings/js.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34848
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JavaScriptProfile.cpp: Added.
+        (WebCore::profileCache):
+        (WebCore::getTitleCallback):
+        (WebCore::getHeadCallback):
+        (WebCore::getUniqueIdCallback):
+        (WebCore::focus):
+        (WebCore::exclude):
+        (WebCore::restoreAll):
+        (WebCore::finalize):
+        (WebCore::ProfileClass):
+        (WebCore::toJS):
+        * bindings/js/JavaScriptProfile.h: Added.
+        * bindings/js/JavaScriptProfileNode.cpp: Added.
+        (WebCore::profileNodeCache):
+        (WebCore::getFunctionName):
+        (WebCore::getURL):
+        (WebCore::getLineNumber):
+        (WebCore::getTotalTime):
+        (WebCore::getSelfTime):
+        (WebCore::getNumberOfCalls):
+        (WebCore::getChildren):
+        (WebCore::getVisible):
+        (WebCore::getCallUID):
+        (WebCore::finalize):
+        (WebCore::ProfileNodeClass):
+        (WebCore::toJS):
+        * bindings/js/JavaScriptProfileNode.h: Added.
+        * inspector/JavaScriptProfile.cpp: Removed.
+        * inspector/JavaScriptProfile.h: Removed.
+        * inspector/JavaScriptProfileNode.cpp: Removed.
+        * inspector/JavaScriptProfileNode.h: Removed.
+
 2010-02-15  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
