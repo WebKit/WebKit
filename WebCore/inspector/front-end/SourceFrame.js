@@ -196,14 +196,7 @@ WebInspector.SourceFrame.prototype = {
         var ranges = [];
 
         // First do case-insensitive search.
-        var regex = "";
-        for (var i = 0; i < query.length; ++i) {
-            var char = query.charAt(i);
-            if (char === "]")
-                char = "\\]";
-            regex += "[" + char + "]";
-        }
-        var regexObject = new RegExp(regex, "i");
+        var regexObject = createSearchRegex(query);
         this._collectRegexMatches(regexObject, ranges);
 
         // Then try regex search if user knows the / / hint.

@@ -327,7 +327,7 @@ WebInspector.TextViewer.prototype = {
 
         if (!highlighterState) {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-                this._markRange(element, line, this._rangeToMark.startColumn, this._rangeToMark.endColumn);
+                highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             return;
         }
 
@@ -356,7 +356,7 @@ WebInspector.TextViewer.prototype = {
         if (plainTextStart !== -1)
             this._appendTextNode(element, line.substring(plainTextStart, line.length));
         if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-            this._markRange(element, line, this._rangeToMark.startColumn, this._rangeToMark.endColumn);
+            highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
         if (lineRow.decorationsElement)
             element.appendChild(lineRow.decorationsElement);
     },
@@ -529,48 +529,6 @@ WebInspector.TextViewer.prototype = {
         if (!this._url || !hrefValue || hrefValue.indexOf("://") > 0)
             return hrefValue;
         return WebInspector.completeURL(this._url, hrefValue);
-    },
-
-    _markRange: function(element, lineText, startOffset, endOffset)
-    {
-        var markNode = document.createElement("span");
-        markNode.className = "webkit-markup";
-        markNode.textContent = lineText.substring(startOffset, endOffset);
-
-        var markLength = endOffset - startOffset;
-        var boundary = element.rangeBoundaryForOffset(startOffset);
-        var textNode = boundary.container;
-        var text = textNode.textContent;
-
-        if (boundary.offset + markLength < text.length) {
-            // Selection belong to a single split mode.
-            textNode.textContent = text.substring(boundary.offset + markLength);
-            textNode.parentElement.insertBefore(markNode, textNode);
-            var prefixNode = document.createTextNode(text.substring(0, boundary.offset));
-            textNode.parentElement.insertBefore(prefixNode, markNode);
-            return;
-        }
-
-        var parentElement = textNode.parentElement;
-        var anchorElement = textNode.nextSibling;
-
-        markLength -= text.length - boundary.offset;
-        textNode.textContent = text.substring(0, boundary.offset);
-        textNode = textNode.traverseNextTextNode(element);
-
-        while (textNode) {
-            var text = textNode.textContent;
-            if (markLength < text.length) {
-                textNode.textContent = text.substring(markLength);
-                break;
-            }
-
-            markLength -= text.length;
-            textNode.textContent = "";
-            textNode = textNode.traverseNextTextNode(element);
-        }
-
-        parentElement.insertBefore(markNode, anchorElement);
     },
 
     resize: function()

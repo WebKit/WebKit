@@ -296,27 +296,17 @@ WebInspector.ElementsTreeElement = function(node)
 
     if (this.representedObject.nodeType == Node.ELEMENT_NODE)
         this._canAddAttributes = true;
+    this._searchQuery = null;
 }
 
 WebInspector.ElementsTreeElement.prototype = {
-    get highlighted()
+    highlightSearchResults: function(searchQuery)
     {
-        return this._highlighted;
-    },
-
-    set highlighted(x)
-    {
-        if (this._highlighted === x)
+        if (this._searchQuery === searchQuery)
             return;
 
-        this._highlighted = x;
-
-        if (this.listItemElement) {
-            if (x)
-                this.listItemElement.addStyleClass("highlighted");
-            else
-                this.listItemElement.removeStyleClass("highlighted");
-        }
+        this._searchQuery = searchQuery;
+        this.updateTitle();
     },
 
     get hovered()
@@ -385,9 +375,6 @@ WebInspector.ElementsTreeElement.prototype = {
     onattach: function()
     {
         this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
-
-        if (this._highlighted)
-            this.listItemElement.addStyleClass("highlighted");
 
         if (this._hovered) {
             this.updateSelection();
@@ -884,6 +871,7 @@ WebInspector.ElementsTreeElement.prototype = {
             delete self.selectionElement;
             self.updateSelection();
             self._preventFollowingLinksOnDoubleClick();
+            self._highlightSearchResults();
         };
 
         // TODO: Replace with InjectedScriptAccess.getBasicProperties(obj, [names]).
@@ -1077,6 +1065,23 @@ WebInspector.ElementsTreeElement.prototype = {
     _copyHTML: function()
     {
         InspectorBackend.copyNode(this.representedObject.id);
+    },
+
+    _highlightSearchResults: function()
+    {
+        if (!this._searchQuery)
+            return;
+        var text = this.listItemElement.textContent;
+        var regexObject = createSearchRegex(this._searchQuery);
+
+        var offset = 0;
+        var match = regexObject.exec(text);
+        while (match) {
+            highlightSearchResult(this.listItemElement, offset + match.index, match[0].length);
+            offset += match.index + 1;
+            text = text.substring(match.index + 1);
+            match = regexObject.exec(text);
+        }
     }
 }
 

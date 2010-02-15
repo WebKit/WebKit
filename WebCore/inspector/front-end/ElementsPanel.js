@@ -245,13 +245,8 @@ WebInspector.ElementsPanel.prototype = {
 
     searchCanceled: function()
     {
-        if (this._searchResults) {
-            for (var i = 0; i < this._searchResults.length; ++i) {
-                var treeElement = this.treeOutline.findTreeElement(this._searchResults[i]);
-                if (treeElement)
-                    treeElement.highlighted = false;
-            }
-        }
+        delete this._searchQuery;
+        this._hideSearchHighlights();
 
         WebInspector.updateSearchMatchesCount(0, this);
 
@@ -271,6 +266,7 @@ WebInspector.ElementsPanel.prototype = {
 
         this._updatedMatchCountOnce = false;
         this._matchesCountUpdateTimeout = null;
+        this._searchQuery = query;
 
         InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, function() {});
     },
@@ -304,25 +300,10 @@ WebInspector.ElementsPanel.prototype = {
             if (!node)
                 continue;
 
-            if (!this._searchResults.length) {
-                this._currentSearchResultIndex = 0;
-
-                // Only change the focusedDOMNode if the search was manually performed, because
-                // the search may have been performed programmatically and we wouldn't want to
-                // change the current focusedDOMNode.
-                if (WebInspector.currentFocusElement === document.getElementById("search"))
-                    this.focusedDOMNode = node;
-            }
-
+            this._currentSearchResultIndex = 0;
             this._searchResults.push(node);
-
-            // Highlight the tree element to show it matched the search.
-            // FIXME: highlight the substrings in text nodes and attributes.
-            var treeElement = this.treeOutline.findTreeElement(node);
-            if (treeElement)
-                treeElement.highlighted = true;
         }
-
+        this._highlightCurrentSearchResult();
         this._updateMatchesCountSoon();
     },
 
@@ -330,18 +311,41 @@ WebInspector.ElementsPanel.prototype = {
     {
         if (!this._searchResults || !this._searchResults.length)
             return;
+
         if (++this._currentSearchResultIndex >= this._searchResults.length)
             this._currentSearchResultIndex = 0;
-        this.focusedDOMNode = this._searchResults[this._currentSearchResultIndex];
+        this._highlightCurrentSearchResult();
     },
 
     jumpToPreviousSearchResult: function()
     {
         if (!this._searchResults || !this._searchResults.length)
             return;
+
         if (--this._currentSearchResultIndex < 0)
             this._currentSearchResultIndex = (this._searchResults.length - 1);
-        this.focusedDOMNode = this._searchResults[this._currentSearchResultIndex];
+        this._highlightCurrentSearchResult();
+    },
+
+    _highlightCurrentSearchResult: function()
+    {
+        this._hideSearchHighlights();
+        var node = this._searchResults[this._currentSearchResultIndex];
+        var treeElement = this.treeOutline.findTreeElement(node);
+        if (treeElement) {
+            treeElement.highlightSearchResults(this._searchQuery);
+            treeElement.reveal();
+        }
+    },
+
+    _hideSearchHighlights: function(node)
+    {
+        for (var i = 0; this._searchResults && i < this._searchResults.length; ++i) {
+            var node = this._searchResults[i];
+            var treeElement = this.treeOutline.findTreeElement(node);
+            if (treeElement)
+                treeElement.highlightSearchResults(null);
+        }
     },
 
     renameSelector: function(oldIdentifier, newIdentifier, oldSelector, newSelector)

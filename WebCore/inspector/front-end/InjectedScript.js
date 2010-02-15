@@ -685,6 +685,12 @@ InjectedScript.addInspectedNode = function(nodeId)
 
 InjectedScript.performSearch = function(whitespaceTrimmedQuery)
 {
+    // FIXME: Few things are missing here:
+    // 1) Search works with node granularity - number of matches within node is not calculated.
+    // 2) Search does not work outside main documents' domain - we need to use specific InjectedScript instances
+    //    for other domains.
+    // 3) There is no need to push all search results to the front-end at a time, pushing next / previous result
+    //    is sufficient.
     var tagNameQuery = whitespaceTrimmedQuery;
     var attributeNameQuery = whitespaceTrimmedQuery;
     var startTagFound = (tagNameQuery.indexOf("<") === 0);
