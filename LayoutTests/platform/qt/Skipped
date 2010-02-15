@@ -5068,3 +5068,7 @@ websocket/tests/cookies/httponly-cookie.pl
 # New test that reports wrong values
 # See https://bugs.webkit.org/show_bug.cgi?id=34918
 fast/text/glyph-reordering.html
+
+# [Qt] fast/multicol/client-rects.html fails in QtLauncher
+# https://bugs.webkit.org/show_bug.cgi?id=34959
+fast/multicol/client-rects.html
