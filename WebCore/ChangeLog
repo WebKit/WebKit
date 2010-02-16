@@ -1,3 +1,21 @@
+2010-02-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] canvas clipping is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=32405
+
+        Apparently the bug was in GraphicsContext::roundToDevicePixels, we
+        didn't take unto accounts rotation, so the device pixels were rounded
+        incorrectly. The new formula is a 1:1 copy from GraphicsContextCG so
+        it should be rather safe
+
+        Test: http://glimr.rubyforge.org/cake/canvas.html#Polaroids now looks right
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels): Copy the formula from
+        GraphicsContextCG
+
 2010-02-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Not Reviewed, build fix.
