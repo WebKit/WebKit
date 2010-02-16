@@ -1,3 +1,11 @@
+2010-02-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Not Reviewed, build fix.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::center): make conversion from float to int explicit so that compiler
+        doesn't complain about that.
+
 2010-02-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
