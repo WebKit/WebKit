@@ -465,6 +465,10 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.h \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
+	WebCore/bindings/js/JavaScriptProfile.cpp \
+	WebCore/bindings/js/JavaScriptProfile.h \
+	WebCore/bindings/js/JavaScriptProfileNode.cpp \
+	WebCore/bindings/js/JavaScriptProfileNode.h \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptArray.cpp \
@@ -1224,10 +1228,6 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptDebugListener.h \
 	WebCore/inspector/JavaScriptDebugServer.cpp \
 	WebCore/inspector/JavaScriptDebugServer.h \
-	WebCore/inspector/JavaScriptProfile.cpp \
-	WebCore/inspector/JavaScriptProfile.h \
-	WebCore/inspector/JavaScriptProfileNode.cpp \
-	WebCore/inspector/JavaScriptProfileNode.h \
 	WebCore/inspector/TimelineRecordFactory.cpp \
 	WebCore/inspector/TimelineRecordFactory.h \
 	WebCore/loader/Cache.cpp \

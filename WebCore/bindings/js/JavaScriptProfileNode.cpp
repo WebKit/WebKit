@@ -26,15 +26,15 @@
 #include "config.h"
 #include "JavaScriptProfileNode.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "JSDOMBinding.h"
-#include <profiler/ProfileNode.h>
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <profiler/ProfileNode.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <wtf/StdLibExtras.h>
