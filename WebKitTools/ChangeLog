@@ -1,3 +1,15 @@
+2010-02-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        re-factor Skipped list parsing code into multiple functions and unit test it
+        https://bugs.webkit.org/show_bug.cgi?id=34986
+
+        * Scripts/test-webkitpy: Add new unit test.
+        * Scripts/webkitpy/layout_tests/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+        * Scripts/webkitpy/layout_tests/port/mac.py: Split parsing function into multiple functions for testing.
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py: Added.
+
 2010-02-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

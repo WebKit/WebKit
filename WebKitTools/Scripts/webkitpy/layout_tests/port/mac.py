@@ -103,8 +103,67 @@ class MacPort(base.Port):
         # to return something.
         return ('mac',)
 
+    def _skipped_file_paths(self):
+        # This method will need to be made work for non-mac platforms and moved into base.Port.
+        skipped_files = []
+        if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
+            skipped_files.append(os.path.join(
+                self._webkit_baseline_path(self._name), 'Skipped'))
+        skipped_files.append(os.path.join(self._webkit_baseline_path('mac'),
+                                          'Skipped'))
+        return skipped_files
+
+    def _tests_for_other_platforms(self):
+        # The original run-webkit-tests builds up a "whitelist" of tests to run, and passes that to DumpRenderTree.
+        # run-chromium-webkit-tests assumes we run *all* tests and test_expectations.txt functions as a blacklist.
+        # FIXME: This list could be dynamic based on platform name and pushed into base.Port.
+        return [
+            "platform/chromium",
+            "platform/gtk",
+            "platform/qt",
+            "platform/win",
+        ]
+
+    def _tests_for_disabled_features(self):
+        # FIXME: This should use the feature detection from webkitperl/features.pm to match run-webkit-tests.
+        # For now we hard-code a list of features known to be disabled on the Mac platform.
+        disabled_feature_tests = [
+            "fast/xhtmlmp",
+            "http/tests/wml",
+            "mathml",
+            "wml",
+        ]
+        # FIXME: webarchive tests expect to read-write from -expected.webarchive files instead of .txt files.
+        # This script doesn't know how to do that yet, so pretend they're just "disabled".
+        webarchive_tests = [
+            "webarchive",
+            "svg/webarchive",
+            "http/tests/webarchive",
+            "svg/custom/image-with-prefix-in-webarchive.svg",
+        ]
+        return disabled_feature_tests + webarchive_tests
+
+    def _tests_from_skipped_file(self, skipped_file):
+        tests_to_skip = []
+        for line in skipped_file.readlines():
+            line = line.strip()
+            if line.startswith('#') or not len(line):
+                continue
+            tests_to_skip.append(line)
+        return tests_to_skip
+
+    def _expectations_from_skipped_files(self):
+        tests_to_skip = []
+        for filename in self._skipped_file_paths():
+            if not os.path.exists(filename):
+                logging.warn("Failed to open Skipped file: %s" % filename)
+                continue
+            skipped_file = file(filename)
+            tests_to_skip.extend(self._tests_from_skipped_file(skipped_file))
+            skipped_file.close()
+        return tests_to_skip
+
     def test_expectations(self):
-        #
         # The WebKit mac port uses 'Skipped' files at the moment. Each
         # file contains a list of files or directories to be skipped during
         # the test run. The total list of tests to skipped is given by the
@@ -112,44 +171,11 @@ class MacPort(base.Port):
         # a version-specific file found in platform/X-version. Duplicate
         # entries are allowed. This routine reads those files and turns
         # contents into the format expected by test_expectations.
-        expectations = []
-        skipped_files = []
-        if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
-            skipped_files.append(os.path.join(
-                self._webkit_baseline_path(self._name), 'Skipped'))
-        skipped_files.append(os.path.join(self._webkit_baseline_path('mac'),
-                                          'Skipped'))
-        for filename in skipped_files:
-            if os.path.exists(filename):
-                f = file(filename)
-                for l in f.readlines():
-                    l = l.strip()
-                    if not l.startswith('#') and len(l):
-                        l = 'BUG_SKIPPED SKIP : ' + l + ' = FAIL'
-                        if l not in expectations:
-                            expectations.append(l)
-                f.close()
-
-        # TODO - figure out how to check for these dynamically
-        expectations.append('BUG_SKIPPED SKIP : fast/wcss = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : fast/xhtmlmp = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : http/tests/wml = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : mathml = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : platform/chromium = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : platform/gtk = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : platform/qt = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : platform/win = FAIL')
-        expectations.append('BUG_SKIPPED SKIP : wml = FAIL')
-
-        # TODO - figure out how to handle webarchive tests
-        expectations.append('BUG_SKIPPED SKIP : webarchive = PASS')
-        expectations.append('BUG_SKIPPED SKIP : svg/webarchive = PASS')
-        expectations.append('BUG_SKIPPED SKIP : http/tests/webarchive = PASS')
-        expectations.append('BUG_SKIPPED SKIP : svg/custom/'
-                            'image-with-prefix-in-webarchive.svg = PASS')
-
-        expectations_str = '\n'.join(expectations)
-        return expectations_str
+        tests_to_skip = set(self._expectations_from_skipped_files()) # Use a set to allow duplicates
+        tests_to_skip.update(self._tests_for_other_platforms())
+        tests_to_skip.update(self._tests_for_disabled_features())
+        expectations = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" % test_path, tests_to_skip)
+        return "\n".join(expectations)
 
     def test_platform_name(self):
         # At the moment we don't use test platform names, but we have
@@ -390,7 +416,6 @@ class MacDriver(base.Driver):
 
         return (crash, timeout, actual_image_hash,
                 ''.join(output), ''.join(error))
-        pass
 
     def stop(self):
         if self._proc:
