@@ -1,3 +1,22 @@
+2010-02-16  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        Refactor and split up basic-touch-events test
+        https://bugs.webkit.org/show_bug.cgi?id=34476
+
+        Split the basic-touch-events test into two separate tests, one for single and another for multi touch. Also refactor the tests to run in an asynchronous manner.
+
+        * fast/events/touch/basic-multi-touch-events.html: Copied from LayoutTests/fast/events/touch/basic-touch-events.html. Tests the same multi touch tests cases from the old basic-touch-events test.
+        * fast/events/touch/basic-multi-touch-events-expected.txt: Added.
+        * fast/events/touch/script-tests/basic-multi-touch-events.js: Added.
+        * fast/events/touch/basic-single-touch-events.html: Copied from LayoutTests/fast/events/touch/basic-touch-events.html. Tests the same single touch tests cases from the old basic-touch-events test.
+        * fast/events/touch/script-tests/basic-single-touch-events.js: Added.
+        * fast/events/touch/basic-single-touch-events-expected.txt: Added. 
+        * fast/events/touch/basic-touch-events.html: Removed.
+        * fast/events/touch/script-tests/basic-touch-events.js: Removed.
+        * fast/events/touch/basic-touch-events-expected.txt: Removed.
+
 2010-02-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
