@@ -1,3 +1,12 @@
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix for Tiger.
+
+        Add #if USE(ACCELERATED_COMPOSITING) around the call to mediaPlayerRenderingModeChanged().
+        
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+
 2010-02-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Carlson.
