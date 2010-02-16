@@ -1,3 +1,12 @@
+2010-02-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r54811) fast/canvas/drawImage-with-negative-source-destination.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=35005
+
+        * platform/qt/Skipped:
+         - fast/canvas/drawImage-with-negative-source-destination.html skipped until fix.
+         - inspector/timeline-paint.html skipped because it is flakey.
+
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Carlson.

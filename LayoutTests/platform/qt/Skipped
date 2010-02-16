@@ -123,6 +123,8 @@ http/tests/cookies/simple-cookies-max-age.html
 http/tests/cookies/simple-cookies-expired.html
 http/tests/xmlhttprequest/workers/close.html
 http/tests/xmlhttprequest/workers/shared-worker-close.html
+inspector/timeline-paint.html
+
 storage/database-lock-after-reload.html
 storage/empty-statement.html
 storage/execute-sql-args.html
@@ -5072,3 +5074,7 @@ fast/text/glyph-reordering.html
 # [Qt] fast/multicol/client-rects.html fails in QtLauncher
 # https://bugs.webkit.org/show_bug.cgi?id=34959
 fast/multicol/client-rects.html
+
+# [Qt] REGRESSION(r54811) fast/canvas/drawImage-with-negative-source-destination.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=35005
+fast/canvas/drawImage-with-negative-source-destination.html
