@@ -696,4 +696,6 @@ EXPORTS
 	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameii @ 695 NONAME
 	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 696 NONAME
 	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME
+	_ZN16QGraphicsWebView20setResizesToContentsEb @ 698 NONAME
+	_ZNK16QGraphicsWebView17resizesToContentsEv @ 699 NONAME
 

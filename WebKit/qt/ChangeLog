@@ -1,3 +1,11 @@
+2010-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Symbian build fix.
+
+        Updated the def file with two new exports used by QtLauncher.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-02-16  Ismail Donmez  <ismail@namtrac.org>
 
         Reviewed by Pavel Feldman.
