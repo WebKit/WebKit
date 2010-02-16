@@ -1057,7 +1057,7 @@ sub buildXCodeProject($$@)
         push(@extraOptions, "clean");
     }
 
-    return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
+    return system "pump", "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
 sub buildVisualStudioProject
