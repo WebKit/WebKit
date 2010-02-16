@@ -1,3 +1,14 @@
+2010-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add test case for <rdar://problem/7645609> [webView selectionRect] API is broken for multicolumn layout
+
+        * fast/multicol/client-rects-expected.checksum:
+        * fast/multicol/client-rects-expected.png:
+        * fast/multicol/client-rects-expected.txt:
+        * fast/multicol/client-rects.html:
+
 2010-02-15  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Dan Bernstein.

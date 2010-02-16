@@ -61,6 +61,14 @@
     <br><div><br><img id="t6" style="width: 25px; height: 25px; background-color: lightblue;"></div>
 </div>
 
+<p>
+    Except here, where the blue border should be around the bigger slice of the blue square, on the right.
+</p>
+
+<div class="columns">
+    <div id="t7" style=" margin-top: 40px; width: 25px; height: 25px; background-color: lightblue;"></div>
+</div>
+
 <script>
     function placeMarker(clientRect)
     {
@@ -110,4 +118,8 @@
     var image = document.getElementById("t6");
     range.selectNode(image);
     placeMarkersForRange(range);
+
+    var div = document.getElementById("t7");
+    range.selectNode(div);
+    placeMarkersForRange(div);
 </script>

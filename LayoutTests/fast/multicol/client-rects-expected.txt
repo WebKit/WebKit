@@ -1,9 +1,9 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x29
+layer at (0,0) size 785x695
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x695
+  RenderBlock {HTML} at (0,0) size 785x695
+    RenderBody {BODY} at (8,8) size 769x677
+      RenderBlock {P} at (0,0) size 769x29
         RenderText {#text} at (0,11) size 421x18
           text run at (0,11) width 421: "The blue borders should coincide with light blue squares, like this: "
         RenderBlock {SPAN} at (421,0) size 25x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
@@ -60,6 +60,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (13,38) size 50x50
           RenderBR {BR} at (0,0) size 0x25
           RenderImage {IMG} at (0,25) size 25x25 [bgcolor=#ADD8E6]
+      RenderBlock {P} at (0,567) size 769x18
+        RenderText {#text} at (0,0) size 633x18
+          text run at (0,0) width 633: "Except here, where the blue border should be around the bigger slice of the blue square, on the right."
+      RenderBlock {DIV} at (0,601) size 136x76 [color=#ADD8E6] [border: (3px solid #000000)]
+        RenderBlock {DIV} at (13,53) size 25x25 [bgcolor=#ADD8E6]
 layer at (21,91) size 25x25
   RenderBlock (positioned) {DIV} at (21,91) size 25x25 [border: (3px solid #0000FF7F)]
 layer at (81,66) size 25x25
@@ -86,3 +91,5 @@ layer at (83,412) size 25x25
   RenderBlock (positioned) {DIV} at (83,412) size 25x25 [border: (3px solid #0000FF7F)]
 layer at (81,521) size 25x25
   RenderBlock (positioned) {DIV} at (81,521) size 25x25 [border: (3px solid #0000FF7F)]
+layer at (81,612) size 25x25
+  RenderBlock (positioned) {DIV} at (81,612) size 25x25 [border: (3px solid #0000FF7F)]

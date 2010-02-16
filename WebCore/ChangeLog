@@ -1,3 +1,20 @@
+2010-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7645609> [webView selectionRect] API is broken for multicolumn layout
+
+        Refine the fix for https://bugs.webkit.org/show_bug.cgi?id=34923 by using the center of
+        a quad’s bounding box, rather than its top left, as the reference point passed to
+        offsetFromContainer(). This ensures that if a sliver off the top of the selection rect is in
+        one column, but most of it is on another column, the single rect we return will be for the
+        second column.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::center): Added.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToContainerQuad): Use the center instead of the top left.
+
 2010-02-15  MORITA Hajime  <morrita@gmail.com>
 
         Reviewed by Nikolas Zimmermann.
