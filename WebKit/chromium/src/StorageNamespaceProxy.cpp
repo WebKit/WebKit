@@ -67,13 +67,14 @@ StorageNamespaceProxy::~StorageNamespaceProxy()
 PassRefPtr<StorageNamespace> StorageNamespaceProxy::copy()
 {
     ASSERT(m_storageType == SessionStorage);
-    // The WebViewClient knows what its session storage namespace id is but we
-    // do not.  Returning 0 here causes it to be fetched (via the WebViewClient)
-    // on its next use.  Note that it is WebViewClient::createView's
-    // responsibility to clone the session storage namespace id and that the
-    // only time copy() is called is directly after the createView call...which
-    // is why all of this is safe.
-    return 0;
+    WebKit::WebStorageNamespace* newNamespace = m_storageNamespace->copy();
+    // Some embedders hook into WebViewClient::createView to make the copy of
+    // session storage and then return the object lazily.  Other embedders
+    // choose to make the copy now and return a pointer immediately.  So handle
+    // both cases.
+    if (!newNamespace)
+        return 0;
+    return adoptRef(new StorageNamespaceProxy(newNamespace, m_storageType));
 }
 
 PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOrigin> origin)

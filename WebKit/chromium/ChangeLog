@@ -1,3 +1,17 @@
+2010-02-15  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Fix StorageNamespaceProxy::copy() for test shell
+        https://bugs.webkit.org/show_bug.cgi?id=34949
+
+        Chromium passes back NULL when you call WebStorageNamespace::proxy()
+        but TestShell returns a valid object.  Both need to work via
+        the WebStorageNamespace.
+
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespaceProxy::copy):
+
 2010-02-14  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Darin Fisher.
