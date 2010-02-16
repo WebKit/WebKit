@@ -1,3 +1,15 @@
+2010-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7288853> Message about missing plugin does not specify
+        the type or download link for download
+
+        Reviewed by Mark Rowe.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::findPlugin):
+        Only update the mimeType out param if we find a plug-in for the file
+        extension.
+
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix for Tiger.
