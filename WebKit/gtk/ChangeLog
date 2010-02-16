@@ -1,3 +1,19 @@
+2010-02-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add a new WebKitWebSettings setting, 'auto-resize-window', set to
+        FALSE by default, that when enabled will apply any resizes or
+        moves done by a page through various DOM methods (moveTo,
+        resizeTo, moveBy, resizeBy).
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+
 2010-02-15  Emilio Pozuelo Monfort  <pochu27@gmail.com>
 
         Reviewed by Gustavo Noronha Silva.

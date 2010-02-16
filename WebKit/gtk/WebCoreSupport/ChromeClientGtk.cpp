@@ -88,6 +88,23 @@ void ChromeClient::setWindowRect(const FloatRect& rect)
                  "width", intrect.width(),
                  "height", intrect.height(),
                  NULL);
+
+    gboolean autoResizeWindow;
+    WebKitWebSettings* settings = webkit_web_view_get_settings(m_webView);
+    g_object_get(settings, "auto-resize-window", &autoResizeWindow, NULL);
+
+    if (!autoResizeWindow)
+        return;
+
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+#if GTK_CHECK_VERSION(2, 18, 0)
+    if (gtk_widget_is_toplevel(window)) {
+#else
+    if (GTK_WIDGET_TOPLEVEL(window)) {
+#endif
+        gtk_window_move(GTK_WINDOW(window), intrect.x(), intrect.y());
+        gtk_window_resize(GTK_WINDOW(window), intrect.width(), intrect.height());
+    }
 }
 
 FloatRect ChromeClient::pageRect()
