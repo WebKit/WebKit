@@ -31,6 +31,8 @@ WEBKIT_CLASS_HEADERS = $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${
 regex = ".*\sclass\sQWEBKIT_EXPORT\s(\w+)\s(.*)"
 
 for(HEADER, WEBKIT_API_HEADERS) {
+    # 1. Append to QtWebKit header that includes all other header files
+
     qtheader_module.depends += $$HEADER
     # Quotes need to be escaped once more when placed in eval()
     eval(qtheader_module.commands += echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"$${DOUBLE_ESCAPED_QUOTE} >> $${qtheader_module.target} &&)
@@ -39,11 +41,21 @@ for(HEADER, WEBKIT_API_HEADERS) {
     HEADER_TARGET = $$replace(HEADER_NAME, [^a-zA-Z0-9_], -)
     HEADER_TARGET = "qtheader-$${HEADER_TARGET}"
 
+    # 2. Create forwarding header files for qwebframe.h, etc.
+    # Normally they contain absolute paths, for package builds we make the path relative so that
+    # the package sources are relocatable.
+
+    PATH_TO_HEADER = $$HEADER
+    CONFIG(standalone_package): PATH_TO_HEADER = ../../WebKit/qt/Api/$$basename(HEADER)
+
     eval($${HEADER_TARGET}.target = $${DESTDIR}/$${HEADER_NAME})
     eval($${HEADER_TARGET}.depends = $$HEADER)
-    eval($${HEADER_TARGET}.commands = echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$HEADER\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${HEADER_TARGET}.target))
+    eval($${HEADER_TARGET}.commands = echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$PATH_TO_HEADER\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${HEADER_TARGET}.target))
 
     QMAKE_EXTRA_TARGETS += $$HEADER_TARGET
+
+    # 3. Extract class names of exported classes from the headers and generate
+    # the class name header files
 
     src_words = $$cat($$HEADER)
     # Really make sure we're dealing with words

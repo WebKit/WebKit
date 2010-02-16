@@ -1,3 +1,12 @@
+2010-02-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausman.
+
+        [Qt] Fix include paths for forwarding headers in standalone builds.
+
+        * Api/DerivedSources.pro: Use relative paths for package builds and added some
+        documentation.
+
 2010-02-15  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
