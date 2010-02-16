@@ -27,7 +27,6 @@ EXPORTS
     ??1JSGlobalObject@JSC@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
-    ??1Rope@JSString@JSC@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1UStringImpl@JSC@@AAE@XZ

@@ -1,5 +1,11 @@
 2010-02-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Build Fix!).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Some general Rope related refactoring.
