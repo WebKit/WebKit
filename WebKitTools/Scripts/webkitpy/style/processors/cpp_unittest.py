@@ -3392,12 +3392,25 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.m')
 
-        # Make sure that the NULL check does not apply to g_object_{set,get}
+        # Make sure that the NULL check does not apply to g_object_{set,get} and
+        # g_str{join,concat}
         self.assert_lint(
             'g_object_get(foo, "prop", &bar, NULL);',
             '')
         self.assert_lint(
             'g_object_set(foo, "prop", bar, NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = g_strconcat("part1", "part2", "part3", NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = g_strconcat("part1", NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = g_strjoin(",", "part1", "part2", "part3", NULL);',
+            '')
+        self.assert_lint(
+            'gchar* result = g_strjoin(",", "part1", NULL);',
             '')
 
         # 2. C++ and C bool values should be written as true and

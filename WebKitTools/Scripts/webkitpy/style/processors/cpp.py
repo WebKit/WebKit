@@ -1868,6 +1868,10 @@ def check_for_null(file_extension, clean_lines, line_number, error):
     if search(r'\bg_object_[sg]et\b', line):
         return
 
+    # Don't warn about NULL usage in g_str{join,concat}(). See Bug 34834
+    if search(r'\bg_str(join|concat)\b', line):
+        return
+
     if search(r'\bNULL\b', line):
         error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return
