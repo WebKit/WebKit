@@ -1,3 +1,13 @@
+2010-02-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34988
+        WebHTMLView.mm has two -willRemoveSubview: methods
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView willRemoveSubview:]): Consolidate the two copies of this method.
+
 2010-02-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen and Kevin Decker.

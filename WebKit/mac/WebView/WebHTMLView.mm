@@ -1239,15 +1239,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (_private->enumeratingSubviews)
         LOG(View, "A view of class %s was added during subview enumeration for layout or printing mode change. This view might paint without first receiving layout.", object_getClassName([subview class]));
 }
-
-- (void)willRemoveSubview:(NSView *)subview
-{
-    // Have to null-check _private, since this can be called via -dealloc when
-    // cleaning up the the layerHostingView.
-    if (_private && _private->enumeratingSubviews)
-        LOG(View, "A view of class %s was removed during subview enumeration for layout or printing mode change. We will still do layout or the printing mode change even though this view is no longer in the view hierarchy.", object_getClassName([subview class]));
-}
-
 #endif
 
 #ifdef BUILDING_ON_TIGER
@@ -2971,6 +2962,13 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)willRemoveSubview:(NSView *)subview
 {
+#ifndef NDEBUG
+    // Have to null-check _private, since this can be called via -dealloc when
+    // cleaning up the the layerHostingView.
+    if (_private && _private->enumeratingSubviews)
+        LOG(View, "A view of class %s was removed during subview enumeration for layout or printing mode change. We will still do layout or the printing mode change even though this view is no longer in the view hierarchy.", object_getClassName([subview class]));
+#endif
+
     if ([WebPluginController isPlugInView:subview])
         [[self _pluginController] destroyPlugin:subview];
 
