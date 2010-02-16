@@ -1,3 +1,13 @@
+2010-02-16  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed: Chromium build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34998
+
+        Move include of JavaScriptProfile.h behind if (USE_JSC).
+
+        * inspector/InspectorController.cpp:
+
 2010-02-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen and Kevin Decker.

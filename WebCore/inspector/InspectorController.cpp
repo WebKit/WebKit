@@ -64,7 +64,6 @@
 #include "InspectorFrontendHost.h"
 #include "InspectorResource.h"
 #include "InspectorTimelineAgent.h"
-#include "JavaScriptProfile.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "Range.h"
@@ -101,6 +100,7 @@
 #include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
 #include "JavaScriptDebugServer.h"
+#include "JavaScriptProfile.h"
 
 #include <runtime/JSLock.h>
 #include <runtime/UString.h>
