@@ -1,3 +1,13 @@
+2010-02-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Elements Panel: Limit the number of initially loaded element children
+        https://bugs.webkit.org/show_bug.cgi?id=34421
+
+        * inspector/elements-panel-limited-children-expected.txt: Added.
+        * inspector/elements-panel-limited-children.html: Added.
+
 2010-02-16  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.

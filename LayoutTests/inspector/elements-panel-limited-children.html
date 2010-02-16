@@ -1,0 +1,180 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function preOutput(result)
+    {
+        var output = document.getElementById("outputPre");
+        output.textContent += result.replace(/\u200b/g, "").replace(/\n/g, "").replace(/</g, "\n<");
+    }
+
+    function nodeDumpAfterCallback(dump)
+    {
+        preOutput(dump);
+        notifyDone();
+    }
+
+    function showAllCallback(result)
+    {
+        if (result) {
+            preOutput(result);
+            notifyDone();
+        }
+        evaluateInWebInspector("frontend_dumpNode", nodeDumpAfterCallback);
+    }
+
+    function nodeDumpBeforeCallback(dump)
+    {
+        preOutput(dump);
+        evaluateInWebInspector("frontend_showAll", showAllCallback);
+    }
+
+    function nodeExpandedCallback(result)
+    {
+        if (result) {
+            preOutput(result);
+            notifyDone();
+        }
+        var dataElement = document.getElementById("data");
+        dataElement.appendChild(document.createElement("a"));
+        dataElement.removeChild(document.getElementById("id2"));
+        dataElement.insertBefore(document.createElement("a"), document.getElementById("id1"));
+        evaluateInWebInspector("frontend_dumpNode", nodeDumpBeforeCallback);
+    }
+
+    function domLoadedCallback(result)
+    {
+        if (result) {
+            preOutput(result);
+            notifyDone();
+        }
+        evaluateInWebInspector("frontend_expandNode", nodeExpandedCallback);
+    }
+
+    evaluateInWebInspector("frontend_loadDOM", domLoadedCallback);
+}
+
+
+// Frontend functions.
+
+function frontend_showAll(testController)
+{
+    try {
+        var dataDivTreeElement = frontend_getDataTreeElement();
+        if (!dataDivTreeElement) {
+            testController.notifyDone("show_All: No data div tree element found");
+            return;
+        }
+        window.__oldUpdateChildren = WebInspector.ElementsTreeElement.prototype._updateChildren;
+        window.__newUpdateChildren = function() {
+            window.__oldUpdateChildren.apply(this, arguments);
+            WebInspector.ElementsTreeElement.prototype._updateChildren = window.__oldUpdateChildren;
+            testController.notifyDone("");
+        }
+        WebInspector.ElementsTreeElement.prototype._updateChildren = window.__newUpdateChildren;
+
+        WebInspector.ElementsTreeElement.prototype.handleLoadAllChildren.call(dataDivTreeElement);
+        testController.waitUntilDone();
+    } catch(e) {
+        testController.notifyDone("showAll: " + e);
+    }
+}
+
+function frontend_dumpNode(testController)
+{
+    testController.waitUntilDone();
+    function dumpFunction()
+    {
+        var dataDivTreeElement = frontend_getDataTreeElement();
+        if (!dataDivTreeElement) {
+            testController.notifyDone("dumpNode: No data div tree element found");
+            return;
+        }
+
+        var liContent = dataDivTreeElement.listItemElement ? dataDivTreeElement.listItemElement.textContent : "{EMPTY}";
+        var childrenContent = dataDivTreeElement.childrenListElement ? dataDivTreeElement.childrenListElement.textContent : "{EMPTY}";
+        testController.notifyDone(liContent + "/" + childrenContent);
+    }
+    // Ensure all asynchronous updates to the Elements tree outline are processed before dumping.
+    setTimeout(dumpFunction, 0);
+}
+
+function frontend_expandNode(testController)
+{
+    var dataDivTreeElement = frontend_getDataTreeElement();
+    if (!dataDivTreeElement) {
+        testController.notifyDone("No data div tree element found");
+        return;
+    }
+
+    try {
+        dataDivTreeElement._expandedChildrenLimit = 5;
+        dataDivTreeElement.reveal();
+        dataDivTreeElement.expand();
+        testController.notifyDone("");
+    } catch(e) {
+        testController.notifyDone("expandNode: " + e);
+    }
+}
+
+function frontend_loadDOM(testController)
+{
+    testController.waitUntilDone();
+    // Need test to be async to expand whole the tree first.
+    try {
+        frontend_expandDOMSubtree(WebInspector.domAgent.document);
+        testController.runAfterPendingDispatches(function() {
+            testController.notifyDone("");
+        });
+    } catch(e) {
+        testController.notifyDone("loadDOM: " + e);
+    }
+}
+
+function frontend_getDataTreeElement()
+{
+    var node = frontend_getDataDOMElement();
+    if (!node)
+        return null;
+    return WebInspector.panels.elements.treeOutline.createTreeElementFor(node);
+}
+
+
+function frontend_getDataDOMElement()
+{
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+
+    for (var nodeId in innerMapping) {
+        var node = innerMapping[nodeId];
+        if (node.nodeName === "DIV" || node.getAttribute("id") === "data")
+            return node;
+    }
+    return null;
+}
+</script>
+</head>
+
+<body onload="onload()">
+<div id="data">
+<div id="id1">1</div>
+<div id="id2">2</div>
+<div id="id3">3</div>
+<div id="id4">4</div>
+<div id="id5">5</div>
+<div id="id6">6</div>
+<div id="id7">7</div>
+<div id="id8">8</div>
+<div id="id9">9</div>
+<div id="id10">10</div>
+</div>
+<p>
+Tests that src and href element targets are rewritten properly.
+</p>
+<pre id="outputPre">
+</pre>
+</body>
+</html>

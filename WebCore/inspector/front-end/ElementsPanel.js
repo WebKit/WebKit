@@ -527,7 +527,8 @@ WebInspector.ElementsPanel.prototype = {
 
             if (this.recentlyModifiedNodes[i].updated) {
                 var nodeItem = this.treeOutline.findTreeElement(node);
-                nodeItem.updateTitle();
+                if (nodeItem)
+                    nodeItem.updateTitle();
                 continue;
             }
             

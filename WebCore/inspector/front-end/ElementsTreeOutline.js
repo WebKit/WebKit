@@ -155,12 +155,27 @@ WebInspector.ElementsTreeOutline.prototype = {
         return treeElement;
     },
 
+    createTreeElementFor: function(node)
+    {
+        var treeElement = this.findTreeElement(node);
+        if (treeElement)
+            return treeElement;
+        if (!node.parentNode)
+            return null;
+
+        var treeElement = this.createTreeElementFor(node.parentNode);
+        if (treeElement && treeElement.showChild(node.index))
+            return treeElement.children[node.index];
+
+        return null;
+    },
+
     revealAndSelectNode: function(node)
     {
         if (!node)
             return;
 
-        var treeElement = this.findTreeElement(node);
+        var treeElement = this.createTreeElementFor(node);
         if (!treeElement)
             return;
 
@@ -297,7 +312,10 @@ WebInspector.ElementsTreeElement = function(node)
     if (this.representedObject.nodeType == Node.ELEMENT_NODE)
         this._canAddAttributes = true;
     this._searchQuery = null;
+    this._expandedChildrenLimit = WebInspector.ElementsTreeElement.InitialChildrenLimit;
 }
+
+WebInspector.ElementsTreeElement.InitialChildrenLimit = 500;
 
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
@@ -329,6 +347,42 @@ WebInspector.ElementsTreeElement.prototype = {
                 this.listItemElement.removeStyleClass("hovered");
             }
         }
+    },
+
+    get expandedChildrenLimit()
+    {
+        return this._expandedChildrenLimit;
+    },
+
+    set expandedChildrenLimit(x)
+    {
+        if (this._expandedChildrenLimit === x)
+            return;
+
+        this._expandedChildrenLimit = x;
+        if (this.treeOutline && !this._updateChildrenInProgress)
+            this._updateChildren(true);
+    },
+
+    get expandedChildCount()
+    {
+        var count = this.children.length;
+        if (count && this.children[count - 1].elementCloseTag)
+            count--;
+        if (count && this.children[count - 1].expandAllButton)
+            count--;
+        return count;
+    },
+
+    showChild: function(index)
+    {
+        if (index >= this.expandedChildrenLimit) {
+            this._expandedChildrenLimit = index + 1;
+            this._updateChildren(true);
+        }
+
+        // Whether index-th child is visible in the children tree
+        return this.expandedChildCount > index;
     },
 
     createTooltipForImageNode: function(node, callback)
@@ -409,9 +463,34 @@ WebInspector.ElementsTreeElement.prototype = {
         WebInspector.domAgent.getChildNodesAsync(this.representedObject, this._updateChildren.bind(this, fullRefresh));
     },
 
+    insertChildElement: function(child, index)
+    {
+        var newElement = new WebInspector.ElementsTreeElement(child);
+        newElement.selectable = this.treeOutline.selectEnabled;
+        this.insertChild(newElement, index);
+        return newElement;
+    },
+
+    moveChild: function(child, targetIndex)
+    {
+        var wasSelected = child.selected;
+        treeElement.removeChild(child);
+        treeElement.insertChild(child, targetIndex);
+        if (wasSelected)
+            existingTreeElement.select();
+    },
+
     _updateChildren: function(fullRefresh)
     {
+        if (this._updateChildrenInProgress)
+            return;
+
+        this._updateChildrenInProgress = true;
+        var focusedNode = this.treeOutline.focusedDOMNode;
+        var originalScrollTop;
         if (fullRefresh) {
+            var treeOutlineContainerElement = this.treeOutline.element.parentNode;
+            originalScrollTop = treeOutlineContainerElement.scrollTop;
             var selectedTreeElement = this.treeOutline.selectedTreeElement;
             if (selectedTreeElement && selectedTreeElement.hasAncestor(this))
                 this.select();
@@ -420,6 +499,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var treeElement = this;
         var treeChildIndex = 0;
+        var elementToSelect;
 
         function updateChildrenOfNode(node)
         {
@@ -430,7 +510,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (!currentTreeElement || currentTreeElement.representedObject !== child) {
                     // Find any existing element that is later in the children list.
                     var existingTreeElement = null;
-                    for (var i = (treeChildIndex + 1); i < treeElement.children.length; ++i) {
+                    for (var i = (treeChildIndex + 1), size = treeElement.expandedChildCount; i < size; ++i) {
                         if (treeElement.children[i].representedObject === child) {
                             existingTreeElement = treeElement.children[i];
                             break;
@@ -439,16 +519,16 @@ WebInspector.ElementsTreeElement.prototype = {
 
                     if (existingTreeElement && existingTreeElement.parent === treeElement) {
                         // If an existing element was found and it has the same parent, just move it.
-                        var wasSelected = existingTreeElement.selected;
-                        treeElement.removeChild(existingTreeElement);
-                        treeElement.insertChild(existingTreeElement, treeChildIndex);
-                        if (wasSelected)
-                            existingTreeElement.select();
+                        treeElement.moveChild(existingTreeElement, treeChildIndex);
                     } else {
                         // No existing element found, insert a new element.
-                        var newElement = new WebInspector.ElementsTreeElement(child);
-                        newElement.selectable = treeOutline.selectEnabled;
-                        treeElement.insertChild(newElement, treeChildIndex);
+                        if (treeChildIndex < treeElement.expandedChildrenLimit) {
+                            var newElement = treeElement.insertChildElement(child, treeChildIndex);
+                            if (child === focusedNode)
+                                elementToSelect = newElement;
+                            if (treeElement.expandedChildCount > treeElement.expandedChildrenLimit)
+                                treeElement.expandedChildrenLimit++;
+                        }
                     }
                 }
 
@@ -477,6 +557,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         updateChildrenOfNode(this.representedObject);
+        this.adjustCollapsedRange(false);
 
         var lastChild = this.children[this.children.length - 1];
         if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild.elementCloseTag)) {
@@ -486,6 +567,55 @@ WebInspector.ElementsTreeElement.prototype = {
             item.elementCloseTag = true;
             this.appendChild(item);
         }
+
+        // We want to restore the original selection and tree scroll position after a full refresh, if possible.
+        if (fullRefresh && elementToSelect) {
+            elementToSelect.select();
+            if (treeOutlineContainerElement && originalScrollTop <= treeOutlineContainerElement.scrollHeight)
+                treeOutlineContainerElement.scrollTop = originalScrollTop;
+        }
+
+        delete this._updateChildrenInProgress;
+    },
+
+    adjustCollapsedRange: function()
+    {
+        // Ensure precondition: only the tree elements for node children are found in the tree
+        // (not the Expand All button or the closing tag).
+        if (this.expandAllButtonElement && this.expandAllButtonElement.__treeElement.parent)
+            this.removeChild(this.expandAllButtonElement.__treeElement);
+
+        const node = this.representedObject;
+        if (!node.children)
+            return;
+        const childNodeCount = node.children.length;
+
+        // In case some nodes from the expanded range were removed, pull some nodes from the collapsed range into the expanded range at the bottom.
+        for (var i = this.expandedChildCount, limit = Math.min(this.expandedChildrenLimit, childNodeCount); i < limit; ++i)
+            this.insertChildElement(node.children[i], i);
+
+        const expandedChildCount = this.expandedChildCount;
+        if (childNodeCount > this.expandedChildCount) {
+            var targetButtonIndex = expandedChildCount;
+            if (!this.expandAllButtonElement) {
+                var title = "<button class=\"show-all-nodes\" value=\"\" />";
+                var item = new TreeElement(title, null, false);
+                item.selectable = false;
+                item.expandAllButton = true;
+                this.insertChild(item, targetButtonIndex);
+                this.expandAllButtonElement = item.listItemElement.firstChild;
+                this.expandAllButtonElement.__treeElement = item;
+                this.expandAllButtonElement.addEventListener("click", this.handleLoadAllChildren.bind(this), false);
+            } else if (!this.expandAllButtonElement.__treeElement.parent)
+                this.insertChild(this.expandAllButtonElement.__treeElement, targetButtonIndex);
+            this.expandAllButtonElement.textContent = WebInspector.UIString("Show All Nodes (%d More)", childNodeCount - expandedChildCount);
+        } else if (this.expandAllButtonElement)
+            delete this.expandAllButtonElement;
+    },
+
+    handleLoadAllChildren: function()
+    {
+        this.expandedChildrenLimit = Math.max(this.representedObject._childNodeCount, this.expandedChildrenLimit + WebInspector.ElementsTreeElement.InitialChildrenLimit);
     },
 
     onexpand: function()
@@ -1026,6 +1156,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 return;
 
             parentElement.removeChild(self);
+            parentElement.adjustCollapsedRange(true);
         }
 
         var callId = WebInspector.Callback.wrap(removeNodeCallback);
