@@ -1,3 +1,15 @@
+2010-02-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Carlson.
+
+        Buildfix for r54826.
+
+        HTMLMediaElement class defined by HTMLMediaElement.h in #if ENABLE(VIDEO) block,
+        it should be in #if ENABLE(VIDEO) block in rendering/RenderLayerBacking.cpp too.
+
+        * rendering/RenderLayerBacking.cpp: Missing #if ENABLE(VIDEO) guard added.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+
 2010-02-16  Julie Parent  <jparent@chromium.org>
 
         Unreviewed: Chromium build fix.

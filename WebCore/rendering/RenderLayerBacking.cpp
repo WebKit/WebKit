@@ -215,10 +215,13 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     if (renderer()->isEmbeddedObject() && toRenderEmbeddedObject(renderer())->allowsAcceleratedCompositing()) {
         PluginWidget* pluginWidget = static_cast<PluginWidget*>(toRenderEmbeddedObject(renderer())->widget());
         m_graphicsLayer->setContentsToMedia(pluginWidget->platformLayer());
-    } else if (renderer()->isVideo()) {
+    }
+#if ENABLE(VIDEO)
+    else if (renderer()->isVideo()) {
         HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(renderer()->node());
         m_graphicsLayer->setContentsToMedia(mediaElement->platformLayer());
     }
+#endif
 #if ENABLE(3D_CANVAS)    
     else if (is3DCanvas(renderer())) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer()->node());
