@@ -753,8 +753,10 @@ void MediaPlayerPrivate::setUpVideoRendering()
     if (preferredMode == MediaRenderingMovieLayer)
         createLayerForMovie();
 
+#if USE(ACCELERATED_COMPOSITING)
     if (currentMode == MediaRenderingMovieLayer || preferredMode == MediaRenderingMovieLayer)
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+#endif
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()

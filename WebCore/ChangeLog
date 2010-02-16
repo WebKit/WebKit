@@ -1,5 +1,14 @@
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix for platforms without ACCELERATED_COMPOSITING defined.
+
+        mediaPlayerRenderingModeChanged() is only available when ACCELERATED_COMPOSITING is defined.
+        
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Eric Carlson.
 
         Autoplaying video with poster doesn't reliably show up
