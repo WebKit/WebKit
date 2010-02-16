@@ -62,8 +62,6 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
     if (length < maxMarkerLength)
         return 0;
 
-    const unsigned char* uContents = reinterpret_cast<const unsigned char*>(contents);
-
     // GIFs begin with GIF8(7 or 9).
     if (strncmp(contents, "GIF8", 4) == 0)
         return new GIFImageDecoder();

@@ -1,3 +1,12 @@
+2010-02-16  Julie Parent  <jparent@chromium.org>
+
+        Unreviewed: Chromium build fix.
+
+        http://trac.webkit.org/changeset/54823 introduced an unused variable.  Remove it.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+
 2010-02-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Alexey Proskuryakov.
