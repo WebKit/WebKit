@@ -31,13 +31,13 @@
 
 namespace JSC {
 
-void JSString::Rope::destructNonRecursive()
+void Rope::destructNonRecursive()
 {
     Vector<Rope*, 32> workQueue;
     Rope* rope = this;
 
     while (true) {
-        unsigned length = rope->ropeLength();
+        unsigned length = rope->fiberCount();
         for (unsigned i = 0; i < length; ++i) {
             Fiber& fiber = rope->fibers(i);
             if (fiber.isString())
@@ -61,7 +61,7 @@ void JSString::Rope::destructNonRecursive()
     }
 }
 
-JSString::Rope::~Rope()
+Rope::~Rope()
 {
     destructNonRecursive();
 }
@@ -82,36 +82,36 @@ void JSString::resolveRope(ExecState* exec) const
 
     // Allocate the buffer to hold the final string, position initially points to the end.
     UChar* buffer;
-    if (PassRefPtr<UStringImpl> newImpl = UStringImpl::tryCreateUninitialized(m_stringLength, buffer))
+    if (PassRefPtr<UStringImpl> newImpl = UStringImpl::tryCreateUninitialized(m_length, buffer))
         m_value = newImpl;
     else {
-        for (unsigned i = 0; i < m_ropeLength; ++i) {
+        for (unsigned i = 0; i < m_fiberCount; ++i) {
             m_fibers[i].deref();
             m_fibers[i] = static_cast<void*>(0);
         }
-        m_ropeLength = 0;
+        m_fiberCount = 0;
         ASSERT(!isRope());
         ASSERT(m_value == UString());
         throwOutOfMemoryError(exec);
         return;
     }
-    UChar* position = buffer + m_stringLength;
+    UChar* position = buffer + m_length;
 
     // Start with the current Rope.
     Vector<Rope::Fiber, 32> workQueue;
     Rope::Fiber currentFiber;
-    for (unsigned i = 0; i < (m_ropeLength - 1); ++i)
+    for (unsigned i = 0; i < (m_fiberCount - 1); ++i)
         workQueue.append(m_fibers[i]);
-    currentFiber = m_fibers[m_ropeLength - 1];
+    currentFiber = m_fibers[m_fiberCount - 1];
     while (true) {
         if (currentFiber.isRope()) {
             Rope* rope = currentFiber.rope();
             // Copy the contents of the current rope into the workQueue, with the last item in 'currentFiber'
             // (we will be working backwards over the rope).
-            unsigned ropeLengthMinusOne = rope->ropeLength() - 1;
-            for (unsigned i = 0; i < ropeLengthMinusOne; ++i)
+            unsigned fiberCountMinusOne = rope->fiberCount() - 1;
+            for (unsigned i = 0; i < fiberCountMinusOne; ++i)
                 workQueue.append(rope->fibers(i));
-            currentFiber = rope->fibers(ropeLengthMinusOne);
+            currentFiber = rope->fibers(fiberCountMinusOne);
         } else {
             UString::Rep* string = currentFiber.string();
             unsigned length = string->size();
@@ -122,11 +122,11 @@ void JSString::resolveRope(ExecState* exec) const
             if (workQueue.isEmpty()) {
                 // Create a string from the UChar buffer, clear the rope RefPtr.
                 ASSERT(buffer == position);
-                for (unsigned i = 0; i < m_ropeLength; ++i) {
+                for (unsigned i = 0; i < m_fiberCount; ++i) {
                     m_fibers[i].deref();
                     m_fibers[i] = static_cast<void*>(0);
                 }
-                m_ropeLength = 0;
+                m_fiberCount = 0;
 
                 ASSERT(!isRope());
                 return;
@@ -153,7 +153,7 @@ bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
 
 bool JSString::toBoolean(ExecState*) const
 {
-    return m_stringLength;
+    return m_length;
 }
 
 double JSString::toNumber(ExecState* exec) const
@@ -215,13 +215,13 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
 bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(exec, m_stringLength), DontEnum | DontDelete | ReadOnly);
+        descriptor.setDescriptor(jsNumber(exec, m_length), DontEnum | DontDelete | ReadOnly);
         return true;
     }
     
     bool isStrictUInt32;
     unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
-    if (isStrictUInt32 && i < m_stringLength) {
+    if (isStrictUInt32 && i < m_length) {
         descriptor.setDescriptor(jsSingleCharacterSubstring(exec, value(exec), i), DontDelete | ReadOnly);
         return true;
     }

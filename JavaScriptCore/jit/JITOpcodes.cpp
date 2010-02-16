@@ -56,7 +56,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Jump string_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
 
     // Checks out okay! - get the length from the Ustring.
-    load32(Address(regT0, OBJECT_OFFSETOF(JSString, m_stringLength)), regT2);
+    load32(Address(regT0, OBJECT_OFFSETOF(JSString, m_length)), regT2);
 
     Jump string_failureCases3 = branch32(Above, regT2, Imm32(INT_MAX));
     move(regT2, regT0);
@@ -1517,7 +1517,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Jump string_failureCases2 = branchPtr(NotEqual, Address(regT0), ImmPtr(m_globalData->jsStringVPtr));
 
     // Checks out okay! - get the length from the Ustring.
-    load32(Address(regT0, OBJECT_OFFSETOF(JSString, m_stringLength)), regT0);
+    load32(Address(regT0, OBJECT_OFFSETOF(JSString, m_length)), regT0);
 
     Jump string_failureCases3 = branch32(Above, regT0, Imm32(JSImmediate::maxImmediateInt));
 

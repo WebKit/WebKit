@@ -1,5 +1,61 @@
 2010-02-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Some general Rope related refactoring.
+
+        Rename Rope::m_ropeLength to m_fiberCount, to be more descriptive.
+        Rename Rope::m_stringLength to simply m_length (since this is the
+        more conventional name for the length of a string).  Move append
+        behaviour out into a new RopeBuilder class, so that Rope no longer
+        needs any knowledge of the JSString or UString implementation.
+
+        Make Rope no longer be nested within JSString.
+        (Rope now no-longer need reside within JSString.h, but leaving
+        the change of moving this out to a different header as a separate
+        change from these renames).
+
+        * JavaScriptCore.exp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * runtime/JSString.cpp:
+        (JSC::Rope::destructNonRecursive):
+        (JSC::Rope::~Rope):
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::toBoolean):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::Rope::Fiber::Fiber):
+        (JSC::Rope::Fiber::deref):
+        (JSC::Rope::Fiber::ref):
+        (JSC::Rope::Fiber::refAndGetLength):
+        (JSC::Rope::Fiber::isRope):
+        (JSC::Rope::Fiber::rope):
+        (JSC::Rope::Fiber::isString):
+        (JSC::Rope::Fiber::string):
+        (JSC::Rope::Fiber::nonFiber):
+        (JSC::Rope::tryCreateUninitialized):
+        (JSC::Rope::append):
+        (JSC::Rope::fiberCount):
+        (JSC::Rope::length):
+        (JSC::Rope::fibers):
+        (JSC::Rope::Rope):
+        (JSC::Rope::operator new):
+        (JSC::):
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::~JSString):
+        (JSC::RopeBuilder::length):
+        (JSC::RopeBuilder::canGetIndex):
+        (JSC::RopeBuilder::appendStringInConstruct):
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::RopeBuilder::isRope):
+        (JSC::RopeBuilder::fiberCount):
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/Operations.h:
+        (JSC::jsString):
+
+2010-02-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Add missing cast for !YARR (PPC) builds.
