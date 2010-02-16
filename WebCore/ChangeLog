@@ -1,3 +1,26 @@
+2010-02-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: let search iterate over views in Resources
+        and keep the view in Scripts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34968
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.jumpToNextSearchResult):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.Panel.prototype.showSourceLineForURL):
+        (WebInspector.Panel.prototype.searchIteratesOverViews):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.get _resources):
+        (WebInspector.ResourcesPanel.prototype.searchIteratesOverViews):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.showingLastSearchResult):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        (WebInspector.focusSearchField):
+
 2010-02-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.

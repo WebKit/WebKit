@@ -706,6 +706,11 @@ WebInspector.ResourcesPanel.prototype = {
     get _resources()
     {
         return this.items;
+    },
+
+    searchIteratesOverViews: function()
+    {
+        return true;
     }
 }
 

@@ -686,9 +686,7 @@ WebInspector.documentKeyDown = function(event)
                 var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
 
             if (isFindKey) {
-                var searchField = document.getElementById("search");
-                searchField.focus();
-                searchField.select();
+                WebInspector.focusSearchField();
                 event.preventDefault();
             }
 
@@ -876,6 +874,13 @@ WebInspector.updateSearchLabel = function()
         document.getElementById("search").removeAttribute("placeholder");
         document.getElementById("search-toolbar-label").textContent = newLabel;
     }
+}
+
+WebInspector.focusSearchField = function()
+{
+    var searchField = document.getElementById("search");
+    searchField.focus();
+    searchField.select();
 }
 
 WebInspector.toggleAttach = function()
