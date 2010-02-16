@@ -38,28 +38,24 @@ namespace WebCore {
     class JPEGImageDecoder : public ImageDecoder {
     public:
         JPEGImageDecoder();
-        ~JPEGImageDecoder();
+        virtual ~JPEGImageDecoder();
 
+        // ImageDecoder
         virtual String filenameExtension() const { return "jpg"; }
-
-        // Take the data and store it.
         virtual void setData(SharedBuffer* data, bool allDataReceived);
-
-        // Whether or not the size information has been decoded yet.
         virtual bool isSizeAvailable();
-
         virtual bool setSize(unsigned width, unsigned height);
-
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-        
         virtual bool supportsAlpha() const { return false; }
-
-        void decode(bool sizeOnly = false);
 
         bool outputScanlines();
         void jpegComplete();
 
     private:
+        // Decodes the image.  If |onlySize| is true, stops decoding after
+        // calculating the image size.
+        void decode(bool onlySize);
+
         OwnPtr<JPEGImageReader> m_reader;
     };
 

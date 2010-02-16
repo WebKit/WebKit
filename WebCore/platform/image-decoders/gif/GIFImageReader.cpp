@@ -290,7 +290,7 @@ bool GIFImageReader::do_lzw(const unsigned char *q)
       /* Check for explicit end-of-stream code */
       if (code == (clear_code + 1)) {
         /* end-of-stream should only appear after all image data */
-        return rows_remaining == 0;
+        return !rows_remaining;
       }
 
       if (oldcode == -1) {
@@ -494,11 +494,11 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     /* All GIF files begin with "GIF87a" or "GIF89a" */
     case gif_type:
     {
-      if (!strncmp((char*)q, "GIF89a", 6)) {
+      if (!strncmp((char*)q, "GIF89a", 6))
         version = 89;
-      } else if (!strncmp((char*)q, "GIF87a", 6)) {
+      else if (!strncmp((char*)q, "GIF87a", 6))
         version = 87;
-      } else {
+      else {
         state = gif_error;
         break;
       }
@@ -712,9 +712,10 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         // and doesn't do anything, as our streaming/buffering takes care of it all...
         // See: http://semmix.pl/color/exgraf/eeg24.htm
         GETN(1, gif_netscape_extension_block);
-      } else
-        state = gif_error; // 0,3-7 are yet to be defined netscape
-                               // extension codes
+      } else {
+        // 0,3-7 are yet to be defined netscape extension codes
+        state = gif_error;
+      }
 
       break;
     }
@@ -893,8 +894,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
 
         // CALLBACK: The frame is now complete.
         if (clientptr && frame_reader)
-          clientptr->frameComplete(images_decoded - 1, frame_reader->delay_time, 
-                                   frame_reader->disposal_method);
+          clientptr->frameComplete(images_decoded - 1, frame_reader->delay_time, frame_reader->disposal_method);
+          return false;
 
         /* Clear state from this image */
         if (frame_reader) {
@@ -919,7 +920,6 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
 
     // Handle general errors
     case gif_error:
-      // nsGIFDecoder2::EndGIF(gs->clientptr, gs->loop_count);
       return false;
 
     // We shouldn't ever get here.

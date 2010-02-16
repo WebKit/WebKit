@@ -41,6 +41,7 @@ namespace WebCore {
     class ICOImageDecoder : public ImageDecoder {
     public:
         ICOImageDecoder();
+        virtual ~ICOImageDecoder();
 
         // ImageDecoder
         virtual String filenameExtension() const { return "ico"; }
@@ -67,19 +68,16 @@ namespace WebCore {
 
         // Returns true if |a| is a preferable icon entry to |b|.
         // Larger sizes, or greater bitdepths at the same size, are preferable.
-        static bool compareEntries(const IconDirectoryEntry& a,
-                                   const IconDirectoryEntry& b);
+        static bool compareEntries(const IconDirectoryEntry& a, const IconDirectoryEntry& b);
 
         inline uint16_t readUint16(int offset) const
         {
-            return BMPImageReader::readUint16(m_data.get(),
-                                              m_decodedOffset + offset);
+            return BMPImageReader::readUint16(m_data.get(), m_decodedOffset + offset);
         }
 
         inline uint32_t readUint32(int offset) const
         {
-            return BMPImageReader::readUint32(m_data.get(),
-                                              m_decodedOffset + offset);
+            return BMPImageReader::readUint32(m_data.get(), m_decodedOffset + offset);
         }
 
         // If the desired PNGImageDecoder exists, gives it the appropriate data.
@@ -93,7 +91,7 @@ namespace WebCore {
         // decoding, it merely ensures the decoder is created and ready to
         // decode.  The caller will then call a function on the PNGImageDecoder
         // that actually triggers decoding.
-        void decodeWithCheckForDataEnded(size_t index, bool onlySize);
+        void decode(size_t index, bool onlySize);
 
         // Decodes the directory and directory entries at the beginning of the
         // data, and initializes members.  Returns true if all decoding
@@ -119,9 +117,6 @@ namespace WebCore {
         // Determines whether the desired entry is a BMP or PNG.  Returns true
         // if the type could be determined.
         ImageType imageTypeAtIndex(size_t);
-
-        // True if we've seen all the data.
-        bool m_allDataReceived;
 
         // An index into |m_data| representing how much we've already decoded.
         // Note that this only tracks data _this_ class decodes; once the

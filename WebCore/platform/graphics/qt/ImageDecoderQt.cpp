@@ -102,7 +102,7 @@ size_t ImageDecoderQt::frameCount()
             // Fixup for Qt decoders... imageCount() is wrong
             // and jumpToNextImage does not work either... so
             // we will have to parse everything...
-            if (imageCount == 0)
+            if (!imageCount)
                 forceLoadEverything();
             else
                 m_frameBufferCache.resize(imageCount);
@@ -132,13 +132,13 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
     // In case the ImageDecoderQt got recreated we don't know
     // yet how many images we are going to have and need to
     // find that out now.
-    int count = m_frameBufferCache.size();
-    if (!m_failed && count == 0) {
+    size_t count = m_frameBufferCache.size();
+    if (!m_failed && !count) {
         internalDecodeSize();
         count = frameCount();
     }
 
-    if (index >= static_cast<size_t>(count))
+    if (index >= count)
         return 0;
 
     RGBA32Buffer& frame = m_frameBufferCache[index];
@@ -215,7 +215,7 @@ void ImageDecoderQt::forceLoadEverything()
     do {
         m_frameBufferCache.resize(++imageCount);
         internalHandleCurrentImage(imageCount - 1);
-    } while(!m_failed);
+    } while (!m_failed);
 
     // If we failed decoding the first image we actually
     // have no images and need to keep m_failed set to

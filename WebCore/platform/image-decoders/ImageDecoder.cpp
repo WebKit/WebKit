@@ -54,7 +54,8 @@ static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const 
 
 ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 {
-    // We need at least 4 bytes to figure out what kind of image we're dealing with.
+    // We need at least 4 bytes to figure out what kind of image we're dealing
+    // with.
     static const unsigned maxMarkerLength = 4;
     char contents[maxMarkerLength];
     unsigned length = copyFromSharedBuffer(contents, maxMarkerLength, data, 0);
@@ -68,16 +69,11 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
         return new GIFImageDecoder();
 
     // Test for PNG.
-    if (uContents[0]==0x89 &&
-        uContents[1]==0x50 &&
-        uContents[2]==0x4E &&
-        uContents[3]==0x47)
+    if (!memcmp(contents, "\x89\x50\x4E\x47", 4))
         return new PNGImageDecoder();
 
     // JPEG
-    if (uContents[0]==0xFF &&
-        uContents[1]==0xD8 &&
-        uContents[2]==0xFF)
+    if (!memcmp(contents, "\xFF\xD8\xFF", 3))
         return new JPEGImageDecoder();
 
     // BMP
@@ -86,8 +82,7 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 
     // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
     // CURs begin with 2-byte 0 followed by 2-byte 2.
-    if (!memcmp(contents, "\000\000\001\000", 4) ||
-        !memcmp(contents, "\000\000\002\000", 4))
+    if (!memcmp(contents, "\x00\x00\x01\x00", 4) || !memcmp(contents, "\x00\x00\x02\x00", 4))
         return new ICOImageDecoder();
 
     // Give up. We don't know what the heck this is.
@@ -108,10 +103,10 @@ void RGBA32Buffer::clear()
 {
     m_bytes.clear();
     m_status = FrameEmpty;
-    // NOTE: Do not reset other members here; clearFrameBufferCache()
-    // calls this to free the bitmap data, but other functions like
-    // initFrameBuffer() and frameComplete() may still need to read
-    // other metadata out of this frame later.
+    // NOTE: Do not reset other members here; clearFrameBufferCache() calls this
+    // to free the bitmap data, but other functions like initFrameBuffer() and
+    // frameComplete() may still need to read other metadata out of this frame
+    // later.
 }
 
 void RGBA32Buffer::zeroFill()
@@ -132,8 +127,8 @@ void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
 
 bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 {
-    // NOTE: This has no way to check for allocation failure if the
-    // requested size was too big...
+    // NOTE: This has no way to check for allocation failure if the requested
+    // size was too big...
     m_bytes.resize(newWidth * newHeight);
     m_size = IntSize(newWidth, newHeight);
 
@@ -195,13 +190,11 @@ inline void fillScaledValues(Vector<int>& scaledValues, double scaleRate, int le
 {
     double inflateRate = 1. / scaleRate;
     scaledValues.reserveCapacity(static_cast<int>(length * scaleRate + 0.5));
-    for (int scaledIndex = 0;;) {
+    for (int scaledIndex = 0; ; ++scaledIndex) {
         int index = static_cast<int>(scaledIndex * inflateRate + 0.5);
-        if (index < length) {
-            scaledValues.append(index);
-            ++scaledIndex;
-        } else
+        if (index >= length)
             break;
+        scaledValues.append(index);
     }
 }
 

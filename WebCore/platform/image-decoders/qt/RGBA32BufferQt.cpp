@@ -42,14 +42,6 @@ RGBA32Buffer::RGBA32Buffer()
 {
 }
 
-// The image must not have format 8888 pre multiplied...
-void RGBA32Buffer::setDecodedImage(const QImage& image)
-{
-    m_image = image;
-    m_size = image.size();
-    m_hasAlpha = image.hasAlphaChannel();
-}
-
 void RGBA32Buffer::clear()
 {
     m_image = QImage();
@@ -113,6 +105,14 @@ void RGBA32Buffer::setHasAlpha(bool alpha)
 void RGBA32Buffer::setStatus(FrameStatus status)
 {
     m_status = status;
+}
+
+// The image must not have format 8888 pre multiplied...
+void RGBA32Buffer::setDecodedImage(const QImage& image)
+{
+    m_image = image;
+    m_size = image.size();
+    m_hasAlpha = image.hasAlphaChannel();
 }
 
 RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)

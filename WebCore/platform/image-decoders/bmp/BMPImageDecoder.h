@@ -50,28 +50,22 @@ namespace WebCore {
     private:
         inline uint32_t readUint32(int offset) const
         {
-            return BMPImageReader::readUint32(m_data.get(),
-                                              m_decodedOffset + offset);
+            return BMPImageReader::readUint32(m_data.get(), m_decodedOffset + offset);
         }
 
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
-        void decodeWithCheckForDataEnded(bool onlySize);
+        void decode(bool onlySize);
 
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  Returns whether decoding succeeded.
-        // NOTE: Used internally by decodeWithCheckForDataEnded().  Other people
-        // should not call this.
-        bool decode(bool onlySize);
+        bool decodeHelper(bool onlySize);
 
         // Processes the file header at the beginning of the data.  Sets
         // |*imgDataOffset| based on the header contents.  Returns true if the
         // file header could be decoded.
         bool processFileHeader(size_t* imgDataOffset);
-
-        // True if we've seen all the data.
-        bool m_allDataReceived;
 
         // An index into |m_data| representing how much we've already decoded.
         // Note that this only tracks data _this_ class decodes; once the
