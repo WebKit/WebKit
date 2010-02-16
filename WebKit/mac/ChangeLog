@@ -1,3 +1,31 @@
+2010-02-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen and Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34989
+        <rdar://problem/7417965> Cursor disappears on scroll bars that are over plugin content
+
+        This fixes event dispatch for both Cocoa and Carbon event models (mouseEntered/mouseExited
+        in the former case, and adjustCursor in the latter).
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView handleMouseEntered:]):
+        (-[WebHostedNetscapePluginView handleMouseExited:]):
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView handleMouseEntered:]):
+        (-[WebBaseNetscapePluginView handleMouseExited:]):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView handleMouseEntered:]):
+        (-[WebNetscapePluginView handleMouseExited:]):
+        AppKit cannot reliably dispatch events for overlapping views. We are now asking WebCore to
+        notify plug-in views of mouse entered/exited as part of DOM event dispatch.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (NetscapePluginWidget::handleEvent): Besides
+        mouse moved, dispatch plugin mouse entered/exit events in HTMLPlugInElement default event
+        handler. Other mouse events are passed down by EventHandler.
+
 2010-02-15  Alexey Proskuryakov  <ap@apple.com>
 
         More build fixing (for what is actually a 64-bit failure, as 32-bit apparently includes

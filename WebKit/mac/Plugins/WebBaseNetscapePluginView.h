@@ -92,7 +92,10 @@ class WebHaltablePlugin;
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString;
 
 // Subclasses must override these.
+// The "handle" prefix is needed to avoid overriding NSView methods.
 - (void)handleMouseMoved:(NSEvent *)event;
+- (void)handleMouseEntered:(NSEvent *)event;
+- (void)handleMouseExited:(NSEvent *)event;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 - (void)focusChanged;
 

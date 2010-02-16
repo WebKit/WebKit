@@ -232,6 +232,16 @@ String WebHaltablePlugin::pluginName() const
     ASSERT_NOT_REACHED();
 }
 
+- (void)handleMouseEntered:(NSEvent *)event
+{
+    ASSERT_NOT_REACHED();
+}
+
+- (void)handleMouseExited:(NSEvent *)event
+{
+    ASSERT_NOT_REACHED();
+}
+
 - (void)focusChanged
 {
     ASSERT_NOT_REACHED();

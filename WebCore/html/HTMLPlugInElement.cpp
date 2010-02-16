@@ -151,6 +151,12 @@ bool HTMLPlugInElement::checkDTD(const Node* newChild)
 
 void HTMLPlugInElement::defaultEventHandler(Event* event)
 {
+    // Firefox seems to use a fake event listener to dispatch events to plug-in (tested with mouse events only).
+    // This is observable via different order of events - in Firefox, event listeners specified in HTML attributes fires first, then an event
+    // gets dispatched to plug-in, and only then other event listeners fire. Hopefully, this difference does not matter in practice.
+
+    // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
+
     RenderObject* r = renderer();
     if (!r || !r->isWidget())
         return;

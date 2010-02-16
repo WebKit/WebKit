@@ -1493,6 +1493,10 @@ public:
         NSEvent* currentNSEvent = frame->eventHandler()->currentNSEvent();
         if (event->type() == eventNames().mousemoveEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseMoved:currentNSEvent];
+        else if (event->type() == eventNames().mouseoverEvent)
+            [(WebBaseNetscapePluginView *)platformWidget() handleMouseEntered:currentNSEvent];
+        else if (event->type() == eventNames().mouseoutEvent)
+            [(WebBaseNetscapePluginView *)platformWidget() handleMouseExited:currentNSEvent];
     }
     
 };

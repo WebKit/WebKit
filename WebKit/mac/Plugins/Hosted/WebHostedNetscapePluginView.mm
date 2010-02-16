@@ -285,13 +285,13 @@ extern "C" {
         _proxy->mouseEvent(self, event, NPCocoaEventMouseDragged);
 }
 
-- (void)mouseEntered:(NSEvent *)event
+- (void)handleMouseEntered:(NSEvent *)event
 {
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseEntered);
 }
 
-- (void)mouseExited:(NSEvent *)event
+- (void)handleMouseExited:(NSEvent *)event
 {
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
