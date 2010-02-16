@@ -600,7 +600,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ldr r5, [sp, #0x28]" "\n"
     "ldr r4, [sp, #0x24]" "\n"
     "ldr lr, [sp, #0x20]" "\n"
-    "add sp, sp, #0x3c" "\n"
+    "add sp, sp, #0x40" "\n"
     "bx lr" "\n"
 );
 
