@@ -1,5 +1,34 @@
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Eric Carlson.
+
+        With hardware acceleration turned off, video frames never display if poster
+        image is specified
+        https://bugs.webkit.org/show_bug.cgi?id=34965
+        
+        HTMLVideoElement's m_shouldDisplayPosterImage was never updated after
+        the movie supplied its first video frame, so the poster would continue to show.
+        
+        Fixed by calling updatePosterImage() from mediaPlayerRepaint(), which is called
+        each time a new frame is available. updatePosterImage() is cheap.
+        
+        Also made updatePosterImage() virtual on HTMLMediaElement to avoid a number of
+        ugly casts.
+
+        Test: manual-tests/media-elements/video-replaces-poster.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::noneSupported): Call updatePosterImage() without video check.
+        (WebCore::HTMLMediaElement::setNetworkState): Ditto.
+        (WebCore::HTMLMediaElement::setReadyState): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint): Call udpatePosterImage().
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::updatePosterImage): Make this an empty virtual
+        method on the base class.
+        * html/HTMLVideoElement.h: Override updatePosterImage().
+
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix for platforms without ACCELERATED_COMPOSITING defined.
 
         mediaPlayerRenderingModeChanged() is only available when ACCELERATED_COMPOSITING is defined.

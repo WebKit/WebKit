@@ -70,7 +70,6 @@ public:
     bool webkitSupportsFullscreen();
     bool webkitDisplayingFullscreen();
 
-    void updatePosterImage();
     bool shouldDisplayPosterImage() const { return m_shouldDisplayPosterImage; }
 
     void paint(GraphicsContext*, const IntRect&);
@@ -79,6 +78,7 @@ public:
 
 private:
     virtual bool hasAvailableVideoFrame() const;
+    virtual void updatePosterImage();
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
     KURL m_posterURL;
