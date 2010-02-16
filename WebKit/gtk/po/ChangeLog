@@ -1,3 +1,11 @@
+2010-02-16  Gil Osher <gilosher@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Localization of WebKitGTK+ in Hebrew.
+
+        * he.po: Added.
+
 2009-10-19  Daniel Macks  <dmacks@netspace.org>
 
         Reviewed by Adam Barth.
