@@ -1,3 +1,10 @@
+2010-02-15  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Chromium build.
+
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::convertToPaintingRect):
+
 2010-02-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

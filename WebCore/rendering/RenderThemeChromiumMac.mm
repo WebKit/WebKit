@@ -572,7 +572,7 @@ FloatRect RenderThemeChromiumMac::convertToPaintingRect(const RenderObject* inpu
     const RenderObject* renderer = partRenderer;
     while (renderer && renderer != inputRenderer) {
         RenderObject* containingRenderer = renderer->container();
-        offsetFromInputRenderer -= renderer->offsetFromContainer(containingRenderer);
+        offsetFromInputRenderer -= renderer->offsetFromContainer(containingRenderer, IntPoint());
         renderer = containingRenderer;
     }
     // If the input renderer was not a container, something went wrong
