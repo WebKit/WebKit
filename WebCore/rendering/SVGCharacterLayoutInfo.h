@@ -297,13 +297,6 @@ struct SVGTextChunkWalkerBase {
     // Followings methods are only used for painting text chunks
     virtual void start(InlineBox*) = 0;
     virtual void end(InlineBox*) = 0;
-    
-    virtual bool setupBackground(InlineBox*) = 0;
-    virtual bool setupFill(InlineBox*) = 0;
-    virtual bool setupFillSelection(InlineBox*) = 0;
-    virtual bool setupStroke(InlineBox*) = 0;
-    virtual bool setupStrokeSelection(InlineBox*) = 0;
-    virtual bool setupForeground(InlineBox*) = 0;
 };
 
 template<typename CallbackClass>
@@ -319,31 +312,14 @@ public:
     typedef void (CallbackClass::*SVGTextChunkStartCallback)(InlineBox* box);
     typedef void (CallbackClass::*SVGTextChunkEndCallback)(InlineBox* box);
 
-    typedef bool (CallbackClass::*SVGTextChunkSetupBackgroundCallback)(InlineBox* box);
-    typedef bool (CallbackClass::*SVGTextChunkSetupFillCallback)(InlineBox* box);
-    typedef bool (CallbackClass::*SVGTextChunkSetupStrokeCallback)(InlineBox* box);
-    typedef bool (CallbackClass::*SVGTextChunkSetupForegroundCallback)(InlineBox* box);
-
-    SVGTextChunkWalker(CallbackClass* object,
+    SVGTextChunkWalker(CallbackClass* object, 
                        SVGTextChunkWalkerCallback walker,
                        SVGTextChunkStartCallback start = 0,
-                       SVGTextChunkEndCallback end = 0,
-                       SVGTextChunkSetupBackgroundCallback background = 0,
-                       SVGTextChunkSetupFillCallback fill = 0,
-                       SVGTextChunkSetupFillCallback fillSelection = 0,
-                       SVGTextChunkSetupStrokeCallback stroke = 0,
-                       SVGTextChunkSetupStrokeCallback strokeSelection = 0,
-                       SVGTextChunkSetupForegroundCallback foreground = 0)
+                       SVGTextChunkEndCallback end = 0)
         : m_object(object)
         , m_walkerCallback(walker)
         , m_startCallback(start)
         , m_endCallback(end)
-        , m_setupBackgroundCallback(background)
-        , m_setupFillCallback(fill)
-        , m_setupFillSelectionCallback(fillSelection)
-        , m_setupStrokeCallback(stroke)
-        , m_setupStrokeSelectionCallback(strokeSelection)
-        , m_setupForegroundCallback(foreground)
     {
         ASSERT(object);
         ASSERT(walker);
@@ -372,71 +348,11 @@ public:
             ASSERT_NOT_REACHED();
     }
 
-    virtual bool setupBackground(InlineBox* box)
-    {
-        if (m_setupBackgroundCallback)
-            return (*m_object.*m_setupBackgroundCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    virtual bool setupFill(InlineBox* box)
-    {
-        if (m_setupFillCallback)
-            return (*m_object.*m_setupFillCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    virtual bool setupFillSelection(InlineBox* box)
-    {
-        if (m_setupFillSelectionCallback)
-            return (*m_object.*m_setupFillSelectionCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    virtual bool setupStroke(InlineBox* box)
-    {
-        if (m_setupStrokeCallback)
-            return (*m_object.*m_setupStrokeCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    virtual bool setupStrokeSelection(InlineBox* box)
-    {
-        if (m_setupStrokeSelectionCallback)
-            return (*m_object.*m_setupStrokeSelectionCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    virtual bool setupForeground(InlineBox* box)
-    {
-        if (m_setupForegroundCallback)
-            return (*m_object.*m_setupForegroundCallback)(box);
-
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
 private:
     CallbackClass* m_object;
     SVGTextChunkWalkerCallback m_walkerCallback;
     SVGTextChunkStartCallback m_startCallback;
     SVGTextChunkEndCallback m_endCallback;
-    SVGTextChunkSetupBackgroundCallback m_setupBackgroundCallback;
-    SVGTextChunkSetupFillCallback m_setupFillCallback;
-    SVGTextChunkSetupFillCallback m_setupFillSelectionCallback;
-    SVGTextChunkSetupStrokeCallback m_setupStrokeCallback;
-    SVGTextChunkSetupStrokeCallback m_setupStrokeSelectionCallback;
-    SVGTextChunkSetupForegroundCallback m_setupForegroundCallback;
 };
 
 struct SVGTextChunkLayoutInfo {

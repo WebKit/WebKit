@@ -1,3 +1,41 @@
+2010-02-15  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG text refactor: reduce paint specific callbacks on SVGTextChunkWalker
+
+        https://bugs.webkit.org/show_bug.cgi?id=34831
+
+        No new tests, no change of functionality.
+
+        * rendering/SVGCharacterLayoutInfo.h:
+        (WebCore::SVGTextChunkWalker::SVGTextChunkWalker):
+        Removed setupBackground(), setupFill(), setupFillSelection(),
+        setupStroke(), setupStrokeSelection(), setupForeground()
+        and associated member variables.
+        
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::setupBackground):
+        renamed from chunkSetupBackgroundCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::setupFill):
+        renamed from chunkSetupFillCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::setupFillSelection):
+        renamed from chunkSetupFillSelectionCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::setupStroke):
+        renamed from chunkSetupStrokeCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::setupStrokeSelection):
+        renamed from chunkSetupStrokeSelectionCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::setupForeground):
+        renamed from chunkSetupForegroundCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::paintChunk):
+        renamed from chunkPortionCallback.
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
+        extracted from walkTextChunks.
+        (WebCore::SVGRootInlineBox::paint):
+        follow SVGTextChunkWalker change.
+        (WebCore::SVGRootInlineBox::walkTextChunks):
+        moved paint some specific code to SVGRootInlineBoxPaintWalker::chunkPortionCallback().
+        
 2010-02-15  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Chromium build.
