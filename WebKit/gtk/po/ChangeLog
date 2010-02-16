@@ -1,3 +1,23 @@
+2010-02-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Refreshed all localization-related files, so that they are
+        up-to-date with the code.
+
+        * de.po: Updated.
+        * en_GB.po: Updated.
+        * es.po: Updated.
+        * it.po: Updated.
+        * lt.po: Updated.
+        * nl.po: Updated.
+        * pt_BR.po: Updated.
+        * ru.po: Updated.
+        * sr.po: Updated.
+        * sr@latin.po: Updated.
+        * sv.po: Updated.
+        * vi.po: Updated.
+        * webkit.pot: Updated.
+        * zh_CN.po: Updated.
+
 2010-02-16  Gil Osher <gilosher@gmail.com>
 
         Reviewed by Gustavo Noronha.
