@@ -445,12 +445,7 @@ void MediaPlayerPrivate::createQTMovieLayer()
 #ifndef NDEBUG
         [(CALayer *)m_qtVideoLayer.get() setName:@"Video layer"];
 #endif
-
-        // Hang the video layer from the render layer, if we have one yet. If not, we'll do this
-        // later via acceleratedRenderingStateChanged().
-        GraphicsLayer* videoGraphicsLayer = m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player);
-        if (videoGraphicsLayer)
-            videoGraphicsLayer->setContentsToMedia(m_qtVideoLayer.get());
+        // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
     }
 #endif
 }
@@ -522,6 +517,9 @@ void MediaPlayerPrivate::setUpVideoRendering()
         createQTMovieLayer();
         break;
     }
+
+    if (currentMode == MediaRenderingMovieLayer || preferredMode == MediaRenderingMovieLayer)
+        m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()
@@ -575,6 +573,13 @@ PlatformMedia MediaPlayerPrivate::platformMedia() const
     PlatformMedia plaftformMedia = { m_qtMovie.get() };
     return plaftformMedia;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* MediaPlayerPrivate::platformLayer() const
+{
+    return m_qtVideoLayer.get();
+}
+#endif
 
 void MediaPlayerPrivate::play()
 {
@@ -1406,12 +1411,6 @@ void MediaPlayerPrivate::acceleratedRenderingStateChanged()
 {
     // Set up or change the rendering path if necessary.
     setUpVideoRendering();
-
-    if (currentRenderingMode() == MediaRenderingMovieLayer) {
-        GraphicsLayer* videoGraphicsLayer = m_player->mediaPlayerClient()->mediaPlayerGraphicsLayer(m_player);
-        if (videoGraphicsLayer)
-            videoGraphicsLayer->setContentsToMedia(m_qtVideoLayer.get());
-    }
 }
 #endif
 

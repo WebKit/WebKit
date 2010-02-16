@@ -34,9 +34,6 @@ namespace WebCore {
     
 class HTMLMediaElement;
 class HTMLVideoElement;
-#if USE(ACCELERATED_COMPOSITING)
-class GraphicsLayer;
-#endif
 
 class RenderVideo : public RenderMedia {
 public:
@@ -49,7 +46,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool supportsAcceleratedRendering() const;
     void acceleratedRenderingStateChanged();
-    GraphicsLayer* videoGraphicsLayer() const;
 #endif
 
 private:

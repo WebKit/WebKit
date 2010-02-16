@@ -1529,11 +1529,10 @@ bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
     return false;
 }
 
-GraphicsLayer* HTMLMediaElement::mediaPlayerGraphicsLayer(MediaPlayer*)
+void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
 {
-    if (renderer() && renderer()->isVideo())
-        return toRenderVideo(renderer())->videoGraphicsLayer();
-    return 0;
+    // Kick off a fake recalcStyle that will update the compositing tree.
+    setNeedsStyleRecalc(SyntheticStyleChange);
 }
 #endif
 
@@ -1877,6 +1876,13 @@ PlatformMedia HTMLMediaElement::platformMedia() const
 {
     return m_player ? m_player->platformMedia() : NoPlatformMedia;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* HTMLMediaElement::platformLayer() const
+{
+    return m_player ? m_player->platformLayer() : 0;
+}
+#endif
 
 bool HTMLMediaElement::hasClosedCaptions() const
 {

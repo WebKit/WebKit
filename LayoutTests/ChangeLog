@@ -1,3 +1,17 @@
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Autoplaying video with poster doesn't reliably show up
+        https://bugs.webkit.org/show_bug.cgi?id=34966
+        
+        Testcase that has an autoplaying video with a poster.
+
+        * media/video-replaces-poster.html: Added.
+        * platform/mac/media/video-replaces-poster-expected.checksum: Added.
+        * platform/mac/media/video-replaces-poster-expected.png: Added.
+        * platform/mac/media/video-replaces-poster-expected.txt: Added.
+
 2010-02-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

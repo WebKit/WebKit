@@ -45,6 +45,9 @@ public:
     
     virtual void prepareToPlay() { }
     virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual PlatformLayer* platformLayer() const { return 0; }
+#endif
 
     virtual void play() = 0;
     virtual void pause() = 0;    

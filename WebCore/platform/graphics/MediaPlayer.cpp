@@ -67,6 +67,9 @@ public:
     virtual void pause() { }    
 
     virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
+#if USE(ACCELERATED_COMPOSITING)
+    virtual PlatformLayer* platformLayer() const { return 0; }
+#endif
 
     virtual IntSize naturalSize() const { return IntSize(0, 0); }
 
@@ -361,6 +364,13 @@ PlatformMedia MediaPlayer::platformMedia() const
 {
     return m_private->platformMedia();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* MediaPlayer::platformLayer() const
+{
+    return m_private->platformLayer();
+}
+#endif
 
 MediaPlayer::NetworkState MediaPlayer::networkState()
 {

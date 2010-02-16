@@ -76,6 +76,9 @@ private:
 
     virtual bool supportsFullscreen() const;
     virtual PlatformMedia platformMedia() const;
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer() const;
+#endif
 
     IntSize naturalSize() const;
     bool hasVideo() const;

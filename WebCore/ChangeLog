@@ -1,3 +1,58 @@
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Autoplaying video with poster doesn't reliably show up
+        https://bugs.webkit.org/show_bug.cgi?id=34966
+        
+        A timing issue with compositing updates when replacing the poster image
+        with the video could cause the video to not display.
+        
+        Fix by making video layer hook up more similar to WebGL etc, by having the
+        video kick off a recalcStyle() via a SyntheticStyleChange. This requires
+        vending a PlaformLayer* from the media player, up through the element.
+
+        Test: media/video-replaces-poster.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingModeChanged): Use setNeedsStyleRecalc()
+        to kick off a compositing update.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::platformLayer): Export the media engine's layer.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::platformLayer): Method to vend the media layer.
+        (WebCore::MediaPlayer::platformLayer):
+
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerRenderingModeChanged): New client callback
+        to indicate that the rendering mode changed. The element uses this to kick off a
+        recalcStyle.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::platformLayer): Method to vend the media layer.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Ditto
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieLayer): No longer parent the layer directly
+        via setContentsToMedia().
+        (WebCore::MediaPlayerPrivate::acceleratedRenderingStateChanged): Ditto.
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): Tell the client that the
+        rendering mode changed.
+        (WebCore::MediaPlayerPrivate::platformLayer): Method to vend the media layer.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Call setContentsToMedia()
+        here.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h: Add platformLayer().
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::platformLayer): Method to vend the media layer.
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): Call mediaPlayerRenderingModeChanged()
+        (WebCore::MediaPlayerPrivate::createLayerForMovie): Don't parent the layer ourselves any more.
+
+        * rendering/RenderVideo.h: videoGraphicsLayer() is no longer needed.
+        * rendering/RenderVideo.cpp: Ditto.
+
 2010-02-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

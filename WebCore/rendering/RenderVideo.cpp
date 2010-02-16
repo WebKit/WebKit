@@ -275,14 +275,6 @@ void RenderVideo::acceleratedRenderingStateChanged()
     if (p)
         p->acceleratedRenderingStateChanged();
 }
-
-GraphicsLayer* RenderVideo::videoGraphicsLayer() const
-{
-    if (hasLayer() && layer()->isComposited())
-        return layer()->backing()->graphicsLayer();
-
-    return 0;
-}
 #endif  // USE(ACCELERATED_COMPOSITING)
 
 } // namespace WebCore

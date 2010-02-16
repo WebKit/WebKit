@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-paint-test.js"></script>
+    <script src="media-file.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        function doSetup()
+        {
+            var video = document.getElementsByTagName('video')[0];
+            video.src = findMediaFile('video', 'content/test');
+            video.addEventListener("canplaythrough", function () {
+                video.pause();
+                video.currentTime = 1;  // so the snapshot always has the same frame.
+            });
+            init();
+        }
+        window.addEventListener('load', doSetup, false);
+    </script>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34966">https://bugs.webkit.org/show_bug.cgi?id=34966</a>. <br>
+    You should see the video play below.</p>
+
+    <video width="480" height="270" poster="content/abe.png" autoplay></video>
+</body>
+</html>

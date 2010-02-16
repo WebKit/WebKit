@@ -75,6 +75,9 @@ public:
     virtual bool supportsSave() const;
     
     PlatformMedia platformMedia() const;
+#if USE(ACCELERATED_COMPOSITING)
+    PlatformLayer* platformLayer() const;
+#endif
 
     void scheduleLoad();
     
@@ -200,7 +203,7 @@ private: // MediaPlayerClient
     virtual void mediaPlayerSizeChanged(MediaPlayer*);
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*);
-    virtual GraphicsLayer* mediaPlayerGraphicsLayer(MediaPlayer*);
+    virtual void mediaPlayerRenderingModeChanged(MediaPlayer*);
 #endif
 
 private:
