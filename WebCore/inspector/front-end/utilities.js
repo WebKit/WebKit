@@ -870,7 +870,7 @@ function highlightSearchResult(element, offset, length)
         textNode.parentElement.insertBefore(highlightNode, textNode);
         var prefixNode = document.createTextNode(text.substring(0, boundary.offset));
         textNode.parentElement.insertBefore(prefixNode, highlightNode);
-        return;
+        return highlightNode;
     }
 
     var parentElement = textNode.parentElement;
@@ -893,6 +893,7 @@ function highlightSearchResult(element, offset, length)
     }
 
     parentElement.insertBefore(highlightNode, anchorElement);
+    return highlightNode;
 }
 
 function createSearchRegex(query)

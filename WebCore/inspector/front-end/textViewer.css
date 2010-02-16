@@ -4,7 +4,7 @@
     left:0;
     right:0;
     bottom:0;
-    white-space: pre-wrap;
+    white-space: pre;
     overflow: auto;
 }
 
@@ -63,7 +63,6 @@
 .webkit-line-number {
     color: rgb(128, 128, 128);
     text-align: right;
-    white-space: pre;
     word-break: normal;
     -webkit-user-select: none;
     background-color: rgb(240, 240, 240);
@@ -76,7 +75,6 @@
 }
 
 .webkit-line-content {
-    white-space: pre-wrap;
     padding-left: 2px;
 }
 

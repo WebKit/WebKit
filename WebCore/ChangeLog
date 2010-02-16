@@ -2,6 +2,20 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: turn off line wrapping in source view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34935
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.markAndRevealRange):
+        (WebInspector.TextViewer.prototype._paintLine):
+        * inspector/front-end/textViewer.css:
+        * inspector/front-end/utilities.js:
+
+2010-02-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: let search iterate over views in Resources
         and keep the view in Scripts.
 

@@ -98,7 +98,10 @@ WebInspector.TextViewer.prototype = {
             this._rangeToMark = range;
             this.revealLine(range.startLine);
             this._paintLines(range.startLine, range.startLine + 1);
+            if (this._markedRangeElement)
+                this._markedRangeElement.scrollIntoViewIfNeeded();
         }
+        delete this._markedRangeElement;
     },
 
     highlightLine: function(lineNumber)
@@ -327,7 +330,7 @@ WebInspector.TextViewer.prototype = {
 
         if (!highlighterState) {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-                highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
+                this._markedRangeElement = highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             return;
         }
 
@@ -337,6 +340,7 @@ WebInspector.TextViewer.prototype = {
         for (var j = 0; j < line.length;) {
             if (j > 1000) {
                 // This line is too long - do not waste cycles on minified js highlighting.
+                plainTextStart = j;
                 break;
             }
             var attribute = highlighterState && highlighterState.attributes[j];
@@ -356,7 +360,7 @@ WebInspector.TextViewer.prototype = {
         if (plainTextStart !== -1)
             this._appendTextNode(element, line.substring(plainTextStart, line.length));
         if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-            highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
+            this._markedRangeElement = highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
         if (lineRow.decorationsElement)
             element.appendChild(lineRow.decorationsElement);
     },
