@@ -237,9 +237,9 @@ namespace WebCore {
         void resizeTo(float width, float height) const;
 
         // Timers
-        int setTimeout(ScheduledAction*, int timeout, ExceptionCode&);
+        int setTimeout(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearTimeout(int timeoutId);
-        int setInterval(ScheduledAction*, int timeout, ExceptionCode&);
+        int setInterval(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearInterval(int timeoutId);
 
         // Events

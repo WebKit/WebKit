@@ -1,3 +1,34 @@
+2010-02-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 34974: Leak of ScheduledAction during layout tests
+        <https://bugs.webkit.org/show_bug.cgi?id=34974>
+
+        ScheduledAction::create was returning a raw pointer which was threaded down through to an OwnPtr in DOMTimer.
+        If any of the code paths in between hit an error case and returned early the raw pointer would be leaked.  We
+        can avoid this by passing it as a PassOwnPtr.  This will ensure that the ScheduledAction is cleaned up should
+        an error case be hit.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout): Store the newly-created ScheduledAction in an OwnPtr and then hand it off
+        as the function argument.
+        (WebCore::JSDOMWindow::setInterval): Ditto.
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::setTimeout): Ditto.
+        (WebCore::JSWorkerContext::setInterval): Ditto.
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create): Return a PassOwnPtr.
+        * bindings/js/ScheduledAction.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer): Update argument type.
+        (WebCore::DOMTimer::install): Ditto.
+        * page/DOMTimer.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setTimeout): Ditto.
+        (WebCore::DOMWindow::setInterval): Ditto.
+        * page/DOMWindow.h:
+
 2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by David Hyatt.

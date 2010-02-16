@@ -43,7 +43,7 @@ double DOMTimer::s_minTimerInterval = 0.010; // 10 milliseconds
 
 static int timerNestingLevel = 0;
 
-DOMTimer::DOMTimer(ScriptExecutionContext* context, ScheduledAction* action, int timeout, bool singleShot)
+DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int timeout, bool singleShot)
     : ActiveDOMObject(context, this)
     , m_action(action)
     , m_nextFireInterval(0)
@@ -82,7 +82,7 @@ DOMTimer::~DOMTimer()
         scriptExecutionContext()->removeTimeout(m_timeoutId);
 }
 
-int DOMTimer::install(ScriptExecutionContext* context, ScheduledAction* action, int timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int timeout, bool singleShot)
 {
     // DOMTimer constructor links the new timer into a list of ActiveDOMObjects held by the 'context'.
     // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),

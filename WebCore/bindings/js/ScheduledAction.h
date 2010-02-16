@@ -24,6 +24,7 @@
 #include <JSDOMBinding.h>
 #include <runtime/JSCell.h>
 #include <runtime/Protect.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -42,7 +43,7 @@ namespace WebCore {
     */
     class ScheduledAction : public Noncopyable {
     public:
-        static ScheduledAction* create(JSC::ExecState*, const JSC::ArgList&, DOMWrapperWorld* isolatedWorld);
+        static PassOwnPtr<ScheduledAction> create(JSC::ExecState*, const JSC::ArgList&, DOMWrapperWorld* isolatedWorld);
 
         void execute(ScriptExecutionContext*);
 
@@ -56,7 +57,7 @@ namespace WebCore {
 
         void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue);
         void execute(Document*);
-#if ENABLE(WORKERS)        
+#if ENABLE(WORKERS)
         void execute(WorkerContext*);
 #endif
 

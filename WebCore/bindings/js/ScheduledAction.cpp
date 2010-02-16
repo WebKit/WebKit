@@ -47,7 +47,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScheduledAction* ScheduledAction::create(ExecState* exec, const ArgList& args, DOMWrapperWorld* isolatedWorld)
+PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, const ArgList& args, DOMWrapperWorld* isolatedWorld)
 {
     JSValue v = args.at(0);
     CallData callData;
