@@ -342,7 +342,7 @@ SOURCES += \
     bindings/js/JavaScriptProfile.h \
     bindings/js/JavaScriptProfileNode.h \
     bindings/js/JavaScriptProfile.cpp \
-    bindings/js/JavaScriptProfileNode.cpp
+    bindings/js/JavaScriptProfileNode.cpp \
     bindings/js/ScriptArray.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \

@@ -1,3 +1,9 @@
+2010-02-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix.
+
+        * WebCore.pro: Missing backslash added.
+
 2010-02-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
