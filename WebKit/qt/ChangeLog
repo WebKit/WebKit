@@ -1,3 +1,16 @@
+2010-02-16  Ismail Donmez  <ismail@namtrac.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix compilation with inspector disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=32724
+
+        * Api/qwebpage.cpp:
+        (qt_drt_webinspector_executeScript):
+        (qt_drt_webinspector_close):
+        (qt_drt_webinspector_show):
+        (qt_drt_setTimelineProfilingEnabled):
+
 2010-02-16  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausman.
