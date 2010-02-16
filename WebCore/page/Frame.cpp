@@ -670,10 +670,6 @@ bool Frame::shouldApplyTextZoom() const
 {
     if (m_zoomFactor == 1.0f || !isZoomFactorTextOnly())
         return false;
-#if ENABLE(SVG)
-    if (m_doc->isSVGDocument())
-        return false;
-#endif
     return true;
 }
 
@@ -681,10 +677,6 @@ bool Frame::shouldApplyPageZoom() const
 {
     if (m_zoomFactor == 1.0f || isZoomFactorTextOnly())
         return false;
-#if ENABLE(SVG)
-    if (m_doc->isSVGDocument())
-        return false;
-#endif
     return true;
 }
 
@@ -694,16 +686,13 @@ void Frame::setZoomFactor(float percent, bool isTextOnly)
         return;
 
 #if ENABLE(SVG)
-    // SVG doesn't care if the zoom factor is text only.  It will always apply a
-    // zoom to the whole SVG.
+    // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
+    // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.
     if (m_doc->isSVGDocument()) {
         if (!static_cast<SVGDocument*>(m_doc.get())->zoomAndPanEnabled())
             return;
-        m_zoomFactor = percent;
-        m_page->settings()->setZoomsTextOnly(true); // We do this to avoid doing any scaling of CSS pixels, since the SVG has its own notion of zoom.
         if (m_doc->renderer())
-            m_doc->renderer()->repaint();
-        return;
+            m_doc->renderer()->setNeedsLayout(true);
     }
 #endif
 

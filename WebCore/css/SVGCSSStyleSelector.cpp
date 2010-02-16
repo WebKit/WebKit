@@ -534,14 +534,12 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             if (!value->isValueList())
                 return;
 
-            float zoomFactor = m_style->effectiveZoom();
-
             CSSValueList *list = static_cast<CSSValueList*>(value);
             ASSERT(list->length() == 1);
             ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(0));
-            int x = item->x->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
-            int y = item->y->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
-            int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
+            int x = item->x->computeLengthInt(style(), m_rootElementStyle);
+            int y = item->y->computeLengthInt(style(), m_rootElementStyle);
+            int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle) : 0;
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
@@ -564,5 +562,4 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
 
 }
 
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
+#endif

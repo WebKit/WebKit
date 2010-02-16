@@ -50,7 +50,8 @@ private:
     virtual int lineHeight(bool b, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void calcPrefWidths();
-
+    virtual int calcReplacedWidth(bool includeMaxWidth = true) const;
+    virtual int calcReplacedHeight() const;
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 

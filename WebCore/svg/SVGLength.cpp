@@ -280,15 +280,16 @@ float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SV
     float width = 0.0f, height = 0.0f;
     SVGElement* viewportElement = context->viewportElement();
 
+    // PercentageOfViewport() is used to resolve all relative-positioned values within a SVG document (fragment)
     Document* doc = context->document();
     if (doc->documentElement() == context) {
-        // We have to ask the canvas for the full "canvas size"...
-        RenderView* view = toRenderView(doc->renderer());
-        if (view && view->frameView()) {
-            width = view->frameView()->visibleWidth(); // TODO: recheck!
-            height = view->frameView()->visibleHeight(); // TODO: recheck!
+        // Resolve value against outermost <svg> element
+        if (RenderView* view = toRenderView(doc->renderer())) {
+            width = view->viewWidth();
+            height = view->viewHeight();
          }
     } else if (viewportElement && viewportElement->isSVG()) {
+        // Resolve value against nearest viewport element (common case: inner <svg> elements)
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
         if (svg->hasAttribute(SVGNames::viewBoxAttr)) {
             width = svg->viewBox().width();
@@ -298,6 +299,7 @@ float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SV
             height = svg->height().value(svg);
         }
     } else if (context->parent() && !context->parent()->isSVGElement()) {
+        // Resolve value against enclosing non-SVG RenderBox
         if (RenderObject* renderer = context->renderer()) {
             if (renderer->isBox()) {
                 RenderBox* box = toRenderBox(renderer);
@@ -319,6 +321,4 @@ float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SV
 
 }
 
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet
+#endif

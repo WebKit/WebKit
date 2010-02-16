@@ -131,7 +131,7 @@ public:
         void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
 
     private:
-        static float getComputedSizeFromSpecifiedSize(Document*, bool isAbsoluteSize, float specifiedSize, float zoomFactor = 1.0f);
+        static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
 
     public:
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*);

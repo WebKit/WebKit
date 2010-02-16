@@ -1,3 +1,72 @@
+2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by David Hyatt.
+
+        SVG units don't stay consistently sized on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=14004
+
+        Large step towards making WebKit an usable SVG viewer.
+
+        Make zooming into SVG documents work as expected, in both standalone and XHTML/SVG compound documents.
+        SVG applies a global scale to the document, whereas CSS zooms all individual length units (on full-page-zoom).
+        Scaling has to be avoided for all SVG specific CSS properties (already works) and for some selected CSS
+        properties shared between CSS & SVG that explicitely need a different treatment in the context of SVG.
+        To name a few: font-size, letter-spacing, etc. should stay invariant under zoom in SVG document fragments.
+
+        Some new rules regarding zooming:
+        - "Zoom text only" should never affect SVG documents, neither text nor content should zoom.
+          This option doesn't make much sense for SVG, so it's wise to avoid side-effects and disable it.
+          In compound documents the SVG would stay as-is and only text of surrounding XHTML content would zoom.
+
+        - "Full page zoom" is the only zoom mode affecting SVG. (Panning only works in standalone documents.)
+
+        Cover all mentioned cases above by a new set of layout tests.
+
+        Tests: svg/zoom/page/absolute-sized-document-no-scrollbars.svg
+               svg/zoom/page/absolute-sized-document-scrollbars.svg
+               svg/zoom/page/relative-sized-document-scrollbars.svg
+               svg/zoom/page/zoom-coords-viewattr-01-b.svg
+               svg/zoom/page/zoom-foreignObject.svg
+               svg/zoom/page/zoom-hixie-mixed-008.xml
+               svg/zoom/page/zoom-hixie-mixed-009.xml
+               svg/zoom/page/zoom-hixie-rendering-model-004.xhtml
+               svg/zoom/page/zoom-svg-float-border-padding.xml
+               svg/zoom/text/absolute-sized-document-no-scrollbars.svg
+               svg/zoom/text/absolute-sized-document-scrollbars.svg
+               svg/zoom/text/relative-sized-document-scrollbars.svg
+               svg/zoom/text/zoom-coords-viewattr-01-b.svg
+               svg/zoom/text/zoom-foreignObject.svg
+               svg/zoom/text/zoom-hixie-mixed-008.xml
+               svg/zoom/text/zoom-hixie-mixed-009.xml
+               svg/zoom/text/zoom-hixie-rendering-model-004.xhtml
+               svg/zoom/text/zoom-svg-float-border-padding.xml
+
+        * css/CSSStyleSelector.cpp: Blacklist certain properties not to be zoomed for SVG elements.
+        (WebCore::CSSStyleSelector::styleForDocument): Don't zoom font-sizes.
+        (WebCore::CSSStyleSelector::applyProperty): Ditto (+ letter/word-spacing).
+        (WebCore::CSSStyleSelector::setFontSize): Ditto.
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize): Never apply text zoom to SVG.
+        * css/CSSStyleSelector.h:
+        * css/SVGCSSStyleSelector.cpp: -webkit-shadow + SVG was incorrectly respecting zoom factor.
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldApplyTextZoom): Remove SVG special cases.
+        (WebCore::Frame::shouldApplyPageZoom): Ditto.
+        (WebCore::Frame::setZoomFactor): Don't force setZoomsTextOnly() - SVG now uses FPZ as well.
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcReplacedWidth): CSSPropertyWidth is explicitely not scaled by CSSStyleSelector, fix that for outermost <svg> elements.
+        (WebCore::RenderSVGRoot::calcReplacedHeight): Ditto for CSSPropertyHeight.
+        (WebCore::RenderSVGRoot::layout): Simplify & cleanup code, take advantage of new calcWidth/Height functionality, no need to scale anything here.
+        (WebCore::RenderSVGRoot::paint): Use parentOriginToBorderBox() instead of duplicating code.
+        (WebCore::RenderSVGRoot::calcViewport): Simplify code.
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform): Calculate viewBoxToViewTransformation() against unscaled width()/height() values.
+        * rendering/RenderSVGRoot.h:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport): Cleanup & document function.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale): Return pageZoomFactor(), not just the zoomFactor() - as we want to ignore text-only zoom.
+        (WebCore::SVGSVGElement::setCurrentScale): Pass isTextOnly=false to setZoomFactor().
+
 2010-02-16  Julie Parent  <jparent@chromium.org>
 
         Unreviewed: Chromium build fix.

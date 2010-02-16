@@ -77,6 +77,28 @@ void RenderSVGRoot::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
+int RenderSVGRoot::calcReplacedWidth(bool includeMaxWidth) const
+{
+    int replacedWidth = RenderBox::calcReplacedWidth(includeMaxWidth);
+    if (!style()->width().isPercent())
+        return replacedWidth;
+
+    // FIXME: Investigate in size rounding issues
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    return static_cast<int>(roundf(replacedWidth * svg->currentScale()));
+}
+
+int RenderSVGRoot::calcReplacedHeight() const
+{
+    int replacedHeight = RenderBox::calcReplacedHeight();
+    if (!style()->height().isPercent())
+        return replacedHeight;
+
+    // FIXME: Investigate in size rounding issues
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    return static_cast<int>(roundf(replacedHeight * svg->currentScale()));
+}
+
 void RenderSVGRoot::layout()
 {
     ASSERT(needsLayout());
@@ -84,22 +106,19 @@ void RenderSVGRoot::layout()
     // Arbitrary affine transforms are incompatible with LayoutState.
     view()->disableLayoutState();
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
+    bool needsLayout = selfNeedsLayout();
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
 
-    int oldWidth = width();
+    IntSize oldSize(width(), height());
     calcWidth();
-
-    int oldHeight = height();
     calcHeight();
 
-    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    setWidth(static_cast<int>(width() * svg->currentScale()));
-    setHeight(static_cast<int>(height() * svg->currentScale()));
     calcViewport();
 
     // RenderSVGRoot needs to take special care to propagate window size changes to the children,
     // if the outermost <svg> is using relative x/y/width/height values. Hence the additonal parameters.
-    layoutChildren(this, selfNeedsLayout() || (svg->hasRelativeValues() && (width() != oldWidth || height() != oldHeight)));
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    layoutChildren(this, needsLayout || (svg->hasRelativeValues() && oldSize != size()));
     repainter.repaintAfterLayout();
 
     view()->enableLayoutState();
@@ -123,7 +142,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
         return;
 
     IntPoint parentOriginInContainer(parentX, parentY);
-    IntPoint borderBoxOriginInContainer = parentOriginInContainer + IntSize(x(), y());
+    IntPoint borderBoxOriginInContainer = parentOriginInContainer + parentOriginToBorderBox();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, borderBoxOriginInContainer.x(), borderBoxOriginInContainer.y());
@@ -177,15 +196,16 @@ void RenderSVGRoot::calcViewport()
         // In the normal case of <svg> being stand-alone or in a CSSBoxModel object we use
         // RenderBox::width()/height() (which pulls data from RenderStyle)
         m_viewportSize = FloatSize(width(), height());
-    } else {
-        // In the SVGImage case grab the SVGLength values off of SVGSVGElement and use
-        // the special relativeWidthValue accessors which respect the specified containerSize
-        SVGLength width = svg->width();
-        SVGLength height = svg->height();
-        float viewportWidth = (width.unitType() == LengthTypePercentage) ? svg->relativeWidthValue() : width.value(svg);
-        float viewportHeight = (height.unitType() == LengthTypePercentage) ? svg->relativeHeightValue() : height.value(svg);
-        m_viewportSize = FloatSize(viewportWidth, viewportHeight);
+        return;
     }
+
+    // In the SVGImage case grab the SVGLength values off of SVGSVGElement and use
+    // the special relativeWidthValue accessors which respect the specified containerSize
+    // FIXME: Check how SVGImage + zooming is supposed to be handled?
+    SVGLength width = svg->width();
+    SVGLength height = svg->height();
+    m_viewportSize = FloatSize(width.unitType() == LengthTypePercentage ? svg->relativeWidthValue() : width.value(svg),
+                               height.unitType() == LengthTypePercentage ? svg->relativeHeightValue() : height.value(svg));
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
@@ -195,9 +215,9 @@ AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
     IntSize borderAndPadding = borderOriginToContentBox();
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     float scale = svg->currentScale();
-    AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width(), borderAndPadding.height());
-    ctm.translate(svg->currentTranslate().x(), svg->currentTranslate().y());
-    return svg->viewBoxToViewTransform(width(), height()) * ctm;
+    FloatPoint translate = svg->currentTranslate();
+    AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y());
+    return svg->viewBoxToViewTransform(width() / scale, height() / scale) * ctm;
 }
 
 IntSize RenderSVGRoot::parentOriginToBorderBox() const

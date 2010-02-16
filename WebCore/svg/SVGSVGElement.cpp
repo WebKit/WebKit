@@ -187,16 +187,19 @@ SVGViewSpec* SVGSVGElement::currentView() const
 
 float SVGSVGElement::currentScale() const
 {
-    if (document() && parentNode() == document())
-        return document()->frame() ? document()->frame()->zoomFactor() : 1;
+    // Only the page zoom factor is relevant for SVG
+    if (Frame* frame = document()->frame())
+        return frame->pageZoomFactor();
     return m_scale;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    if (document() && parentNode() == document()) {
-        if (document()->frame())
-            document()->frame()->setZoomFactor(scale, true);
+    if (Frame* frame = document()->frame()) {
+        // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
+        // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
+        if (parentNode() == document())
+            frame->setZoomFactor(scale, false);
         return;
     }
 
