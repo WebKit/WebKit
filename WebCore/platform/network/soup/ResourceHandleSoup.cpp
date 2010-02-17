@@ -573,6 +573,11 @@ static bool startHttp(ResourceHandle* handle)
     // balanced by a deref() in finishedCallback, which should always run
     handle->ref();
 
+    // Make sure we have an Accept header for subresources; some sites
+    // want this to serve some of their subresources
+    if (!soup_message_headers_get_one(d->m_msg->request_headers, "Accept"))
+        soup_message_headers_append(d->m_msg->request_headers, "Accept", "*/*");
+
     // Balanced in ResourceHandleInternal's destructor; we need to
     // keep our own ref, because after queueing the message, the
     // session owns the initial reference.
