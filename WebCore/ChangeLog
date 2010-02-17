@@ -1,3 +1,20 @@
+2010-02-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG not rendered as background-image from data URI
+        https://bugs.webkit.org/show_bug.cgi?id=33630
+
+        When the background image is an SVG image, and it is smaller than the area
+        it is supposed to fill, we were using renderSubTreeToImage to draw it.
+        That call was not going through all the drawing phases, and so the SVG itself
+        would not be drawn.
+
+        Test: svg/css/background-image-svg.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+
 2010-02-16  Bryan Yeung  <bryeung@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

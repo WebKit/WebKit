@@ -1,3 +1,17 @@
+2010-02-16  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG not rendered as background-image from data URI
+        https://bugs.webkit.org/show_bug.cgi?id=33630
+
+        * platform/mac/svg/css/background-image-svg-expected.checksum: Added.
+        * platform/mac/svg/css/background-image-svg-expected.png: Added.
+        * platform/qt/svg/css/background-image-svg-expected.checksum: Added.
+        * platform/qt/svg/css/background-image-svg-expected.png: Added.
+        * svg/css/background-image-svg.html: Added.
+        * svg/css/background-image-svg-expected.txt: Added.
+
 2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Correct typo in test name in Skipped list. Should turn SL slave green again.
