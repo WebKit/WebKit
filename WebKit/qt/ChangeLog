@@ -1,3 +1,13 @@
+2010-02-16  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Fix building with Qt < 4.6.
+        https://bugs.webkit.org/show_bug.cgi?id=34885
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::updateResizesToContentsForPage):
+
 2010-02-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Symbian build fix.

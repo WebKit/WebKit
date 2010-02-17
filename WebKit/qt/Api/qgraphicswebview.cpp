@@ -320,8 +320,13 @@ void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
         if (!page->preferredContentsSize().isValid())
             page->setPreferredContentsSize(QSize(960, 800));
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         QObject::connect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
             q, SLOT(_q_contentsSizeChanged(const QSize&)), Qt::UniqueConnection);
+#else
+        QObject::connect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
+            q, SLOT(_q_contentsSizeChanged(const QSize&)));
+#endif
     } else {
         QObject::disconnect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
                          q, SLOT(_q_contentsSizeChanged(const QSize&)));
