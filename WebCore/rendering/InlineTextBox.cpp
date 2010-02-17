@@ -808,7 +808,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, co
     
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, y), h, sPos, ePos));
-    markerRect = root()->block()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
+    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
      
     // Optionally highlight the text
@@ -837,7 +837,7 @@ void InlineTextBox::computeRectForReplacementMarker(int /*tx*/, int /*ty*/, cons
     
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
-    markerRect = root()->block()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
+    markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     renderer()->document()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
 }
     
