@@ -66,6 +66,8 @@ using namespace HTMLNames;
     WebDataSource *dataSource;
     
     BOOL hasSentResponseToPlugin;
+    BOOL includedInWebKitStatistics;
+
     id <WebPluginManualLoader> manualLoader;
     NSView *pluginView;
 }
@@ -117,16 +119,15 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
         return nil;
     
     _private = [[WebHTMLRepresentationPrivate alloc] init];
-    
-    ++WebHTMLRepresentationCount;
-    
+
     return self;
 }
 
 - (void)dealloc
 {
-    --WebHTMLRepresentationCount;
-    
+    if (_private && _private->includedInWebKitStatistics)
+        --WebHTMLRepresentationCount;
+
     [_private release];
 
     [super dealloc];
@@ -134,7 +135,8 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (void)finalize
 {
-    --WebHTMLRepresentationCount;
+    if (_private && _private->includedInWebKitStatistics)
+        --WebHTMLRepresentationCount;
 
     [super finalize];
 }
@@ -148,6 +150,11 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     _private->dataSource = dataSource;
+
+    if (!_private->includedInWebKitStatistics && [[dataSource webFrame] _isIncludedInWebKitStatistics]) {
+        _private->includedInWebKitStatistics = YES;
+        ++WebHTMLRepresentationCount;
+    }
 }
 
 - (BOOL)_isDisplayingWebArchive

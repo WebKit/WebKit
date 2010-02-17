@@ -81,6 +81,7 @@ WebView *getWebView(WebFrame *webFrame);
     WebScriptDebugger* scriptDebugger;
     id internalLoadDelegate;
     BOOL shouldCreateRenderers;
+    BOOL includedInWebKitStatistics;
 }
 @end
 
@@ -95,6 +96,8 @@ WebView *getWebView(WebFrame *webFrame);
 - (id)_initWithWebFrameView:(WebFrameView *)webFrameView webView:(WebView *)webView;
 
 - (void)_clearCoreFrame;
+
+- (BOOL)_isIncludedInWebKitStatistics;
 
 - (void)_updateBackgroundAndUpdatesWhileOffscreen;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;

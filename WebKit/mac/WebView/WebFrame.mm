@@ -269,6 +269,11 @@ WebView *getWebView(WebFrame *webFrame)
     return [self _createFrameWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
 }
 
+- (BOOL)_isIncludedInWebKitStatistics
+{
+    return _private && _private->includedInWebKitStatistics;
+}
+
 - (void)_attachScriptDebugger
 {
     ScriptController* scriptController = _private->coreFrame->script();
@@ -308,14 +313,17 @@ WebView *getWebView(WebFrame *webFrame)
 
     _private = [[WebFramePrivate alloc] init];
 
+    // Set includedInWebKitStatistics before calling WebFrameView _setWebFrame, since
+    // it calls WebFrame _isIncludedInWebKitStatistics.
+    if ((_private->includedInWebKitStatistics = [[v class] shouldIncludeInWebKitStatistics]))
+        ++WebFrameCount;
+
     if (fv) {
         [_private setWebFrameView:fv];
         [fv _setWebFrame:self];
     }
 
     _private->shouldCreateRenderers = YES;
-
-    ++WebFrameCount;
 
     return self;
 }
@@ -1276,14 +1284,19 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)dealloc
 {
+    if (_private && _private->includedInWebKitStatistics)
+        --WebFrameCount;
+
     [_private release];
-    --WebFrameCount;
+
     [super dealloc];
 }
 
 - (void)finalize
 {
-    --WebFrameCount;
+    if (_private && _private->includedInWebKitStatistics)
+        --WebFrameCount;
+
     [super finalize];
 }
 

@@ -1,3 +1,45 @@
+2010-02-17  Timothy Hatcher  <timothy@apple.com>
+
+        Add a way for WebView and its dependancies to be selectively included
+        in WebKitStatistics leak tracking. By default WebView is not included and
+        you need to subclass WebView and implement +isIncludedInWebKitStatistics
+        to be included.
+
+        rdar://problem/7567677&7572900
+        https://webkit.org/b/35045
+
+        Reviewed by Adam Roben.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _initWithDocumentLoader:]): Increment WebDataSourceCount if the WebFrame is included in statistics.
+        (-[WebDataSource dealloc]): Only --WebDataSourceCount if _private->includedInWebKitStatistics is YES.
+        (-[WebDataSource finalize]): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _isIncludedInWebKitStatistics]): Return _private->includedInWebKitStatistics.
+        (-[WebFrame _initWithWebFrameView:webView:]): Increment WebFrameCount if the WebView's class is included in statistics.
+        (-[WebFrame dealloc]): Only --WebFrameCount if _private->includedInWebKitStatistics is YES.
+        (-[WebFrame finalize]): Ditto.
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setWebFrame:]): Increment WebFrameViewCount if the WebFrame is included in statistics.
+        (-[WebFrameView initWithFrame:]): Move ++WebFrameViewCount from here since we don't
+        know what WebFrame we belong to yet.
+        (-[WebFrameView dealloc]): Only --WebFrameViewCount if _private->includedInWebKitStatistics is YES.
+        (-[WebFrameView finalize]): Ditto.
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation init]): Move ++WebHTMLRepresentationCount from here since we don't
+        know what WebFrame we belong to yet.
+        (-[WebHTMLRepresentation dealloc]): Only --WebHTMLRepresentationCount if _private->includedInWebKitStatistics is YES.
+        (-[WebHTMLRepresentation finalize]): Ditto.
+        (-[WebHTMLRepresentation setDataSource:]): Increment WebHTMLRepresentationCount if the WebFrame of the dataSource is
+        included in statistics.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView dealloc]):
+        (+[WebView shouldIncludeInWebKitStatistics]): Return NO, so any WebView wont be included.
+        Subclasses that care can return YES to be included.
+        * WebView/WebViewInternal.h:
+
 2010-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

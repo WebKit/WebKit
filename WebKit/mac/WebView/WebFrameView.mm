@@ -92,6 +92,7 @@ enum {
 @public
     WebFrame *webFrame;
     WebDynamicScrollBarsView *frameScrollView;
+    BOOL includedInWebKitStatistics;
 }
 @end
 
@@ -187,6 +188,11 @@ enum {
 
     // Not retained because the WebView owns the WebFrame, which owns the WebFrameView.
     _private->webFrame = webFrame;    
+
+    if (!_private->includedInWebKitStatistics && [webFrame _isIncludedInWebKitStatistics]) {
+        _private->includedInWebKitStatistics = YES;
+        ++WebFrameViewCount;
+    }
 }
 
 - (WebDynamicScrollBarsView *)_scrollView
@@ -286,15 +292,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 @implementation WebFrameView
 
-- initWithCoder:(NSCoder *)decoder
-{
-    // Older nibs containing WebViews will also contain WebFrameViews. We need to keep track of
-    // their count also to match the decrement in -dealloc.
-    ++WebFrameViewCount;
-    return [super initWithCoder:decoder];
-}
-
-- initWithFrame:(NSRect)frame
+- (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -350,14 +348,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // This works together with our becomeFirstResponder and setNextKeyView overrides.
     [super setNextKeyView:scrollView];
     
-    ++WebFrameViewCount;
-    
     return self;
 }
 
 - (void)dealloc 
 {
-    --WebFrameViewCount;
+    if (_private && _private->includedInWebKitStatistics)
+        --WebFrameViewCount;
     
     [_private release];
     _private = nil;
@@ -367,7 +364,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)finalize 
 {
-    --WebFrameViewCount;
+    if (_private && _private->includedInWebKitStatistics)
+        --WebFrameViewCount;
 
     [super finalize];
 }

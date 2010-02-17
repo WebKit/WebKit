@@ -70,6 +70,7 @@ using namespace WebCore;
     id <WebDocumentRepresentation> representation;
     
     BOOL representationFinishedLoading;
+    BOOL includedInWebKitStatistics;
 }
 @end
 
@@ -372,10 +373,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     _private->loader = loader.releaseRef();
         
     LOG(Loading, "creating datasource for %@", static_cast<NSURL *>(_private->loader->request().url()));
-    
-    ++WebDataSourceCount;
-    
-    return self;    
+
+    if ((_private->includedInWebKitStatistics = [[self webFrame] _isIncludedInWebKitStatistics]))
+        ++WebDataSourceCount;
+
+    return self;
 }
 
 @end
@@ -389,16 +391,18 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)dealloc
 {
-    --WebDataSourceCount;
-    
+    if (_private && _private->includedInWebKitStatistics)
+        --WebDataSourceCount;
+
     [_private release];
-    
+
     [super dealloc];
 }
 
 - (void)finalize
 {
-    --WebDataSourceCount;
+    if (_private && _private->includedInWebKitStatistics)
+        --WebDataSourceCount;
 
     [super finalize];
 }

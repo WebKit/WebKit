@@ -658,7 +658,8 @@ static bool shouldEnableLoadDeferring()
         [frameView setNextKeyView:nextKeyView];
     [super setNextKeyView:frameView];
 
-    ++WebViewCount;
+    if ([[self class] shouldIncludeInWebKitStatistics])
+        ++WebViewCount;
 
     [self _registerDraggedTypes];
 
@@ -2745,8 +2746,9 @@ static bool needsWebViewInitThreadWorkaround()
     // this maintains our old behavior for existing applications
     [self close];
 
-    --WebViewCount;
-    
+    if ([[self class] shouldIncludeInWebKitStatistics])
+        --WebViewCount;
+
     if ([self _needsFrameLoadDelegateRetainQuirk])
         [_private->frameLoadDelegate release];
         
@@ -5340,6 +5342,11 @@ static WebFrameView *containingFrameView(NSView *view)
 @end
 
 @implementation WebView (WebViewInternal)
+
++ (BOOL)shouldIncludeInWebKitStatistics
+{
+    return NO;
+}
 
 - (BOOL)_becomingFirstResponderFromOutside
 {
