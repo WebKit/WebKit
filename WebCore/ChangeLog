@@ -1,3 +1,18 @@
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [Linux] Webkit incompatible with Java plugins
+        https://bugs.webkit.org/show_bug.cgi?id=24912
+
+        Resolve symlinks before trying to load plugins as modules, since
+        GModule won't do it.
+
+        Based on original work by Gustavo Noronha.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::load):
+
 2010-02-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

@@ -35,6 +35,7 @@ typedef struct _GMutex GMutex;
 typedef struct _GPatternSpec GPatternSpec;
 typedef struct _GDir GDir;
 typedef struct _GHashTable GHashTable;
+typedef struct _GFile GFile;
 extern "C" void g_free(void*);
 
 namespace WTF {
@@ -47,6 +48,7 @@ template<> void freeOwnedGPtr<GMutex>(GMutex*);
 template<> void freeOwnedGPtr<GPatternSpec>(GPatternSpec*);
 template<> void freeOwnedGPtr<GDir>(GDir*);
 template<> void freeOwnedGPtr<GHashTable>(GHashTable*);
+template<> void freeOwnedGPtr<GFile>(GFile*);
 
 template <typename T> class GOwnPtr : public Noncopyable {
 public:

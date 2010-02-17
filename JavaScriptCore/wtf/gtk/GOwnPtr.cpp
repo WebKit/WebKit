@@ -19,6 +19,7 @@
 #include "config.h"
 #include "GOwnPtr.h"
 
+#include <gio/gio.h>
 #include <glib.h>
 
 namespace WTF {
@@ -56,5 +57,11 @@ template <> void freeOwnedGPtr<GDir>(GDir* ptr)
 {
     if (ptr)
         g_dir_close(ptr);
+}
+
+template <> void freeOwnedGPtr<GFile>(GFile* ptr)
+{
+    if (ptr)
+        g_object_unref(ptr);
 }
 } // namespace WTF

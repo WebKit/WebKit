@@ -1,3 +1,18 @@
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [Linux] Webkit incompatible with Java plugins
+        https://bugs.webkit.org/show_bug.cgi?id=24912
+
+        Add support for GFile to GOwnPtr.
+
+        Based on original work by Gustavo Noronha.
+
+        * wtf/gtk/GOwnPtr.cpp:
+        (WTF::GFile):
+        * wtf/gtk/GOwnPtr.h:
+
 2010-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Mark Rowe.
