@@ -47,7 +47,7 @@ class WebFormPrivate : public HTMLFormElement {
 };
 
 WebFormElement::WebFormElement(const WTF::PassRefPtr<HTMLFormElement>& e)
-    : WebElement(e.releaseRef())
+    : WebElement(e)
 {
 }
 

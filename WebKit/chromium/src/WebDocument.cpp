@@ -53,7 +53,7 @@ using namespace WebCore;
 namespace WebKit {
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)
-    : WebNode(elem.releaseRef())
+    : WebNode(elem)
 {
 }
 

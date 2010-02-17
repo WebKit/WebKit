@@ -39,7 +39,7 @@ using namespace WebCore;
 namespace WebKit {
 
 WebElement::WebElement(const WTF::PassRefPtr<WebCore::Element>& elem)
-    : WebNode(elem.releaseRef())
+    : WebNode(elem)
 {
 }
 

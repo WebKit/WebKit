@@ -1,3 +1,23 @@
+2010-02-16  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Remove calls to releaseRef when passing PassRefPtrs to base
+        classes.  releaseRef releases the original pointer without decreasing
+        the reference count, and the base class constructor increases the
+        reference count, leading to a leak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35000
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::WebDocument):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::WebElement):
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::WebFormElement):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::WebInputElement):
+
 2010-02-15  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
