@@ -419,6 +419,43 @@ namespace WebCore {
         // like GL_FLOAT, GL_INT, etc.
         int sizeInBytes(int type);
 
+        //----------------------------------------------------------------------
+        // Helpers for texture uploading.
+        //
+
+        // Extracts the contents of the given Image into the passed
+        // Vector, obeying the flipY and premultiplyAlpha flags.
+        // Returns the applicable OpenGL format and internalFormat for
+        // the subsequent glTexImage2D or glTexSubImage2D call.
+        // Returns true upon success.
+        bool extractImageData(Image* image,
+                              bool flipY,
+                              bool premultiplyAlpha,
+                              Vector<uint8_t>& imageData,
+                              unsigned int* format,
+                              unsigned int* internalFormat);
+
+        // Processes the given image data in preparation for uploading
+        // via texImage2D or texSubImage2D. The input data must be in
+        // 4-component format with the alpha channel last (i.e., RGBA
+        // or BGRA), tightly packed, with no space between rows.
+
+        enum AlphaOp {
+            kAlphaDoNothing = 0,
+            kAlphaDoPremultiply = 1,
+            kAlphaDoUnmultiply = 2
+        };
+
+        void processImageData(uint8_t* imageData,
+                              unsigned width,
+                              unsigned height,
+                              bool flipVertically,
+                              AlphaOp alphaOp);
+
+        //----------------------------------------------------------------------
+        // Entry points for WebGL.
+        //
+
         void activeTexture(unsigned long texture);
         void attachShader(WebGLProgram* program, WebGLShader* shader);
         void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name);
@@ -623,6 +660,34 @@ namespace WebCore {
 
     private:        
         GraphicsContext3D(Attributes attrs);
+
+        // Helpers for texture uploading.
+        void premultiplyAlpha(unsigned char* rgbaData, int numPixels);
+        void unmultiplyAlpha(uint8_t* imageData, int numPixels);
+
+        // Each platform must provide an implementation of this method.
+        //
+        // Gets the data for the given Image into outputVector,
+        // without doing any processing of the data (vertical flip or
+        // otherwise).
+        //
+        // premultiplyAlpha indicates whether the user will eventually
+        // want the alpha channel multiplied into the color channels.
+        //
+        // The out parameter hasAlphaChannel indicates whether the
+        // image actually had an alpha channel.
+        //
+        // The out parameter neededAlphaOp should be passed to a
+        // subsequent call of processImageData.
+        //
+        // The out parameter format should be passed to subsequent
+        // invocations of texImage2D and texSubImage2D.
+        bool getImageData(Image* image,
+                          Vector<uint8_t>& outputVector,
+                          bool premultiplyAlpha,
+                          bool* hasAlphaChannel,
+                          AlphaOp* neededAlphaOp,
+                          unsigned int* format);
 
         int m_currentWidth, m_currentHeight;
         

@@ -65,15 +65,10 @@
 #if PLATFORM(CG)
 #include "GraphicsContext.h"
 #include <CoreGraphics/CGContext.h>
-#include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGImage.h>
 #include <OpenGL/OpenGL.h>
 #else
 #define FLIP_FRAMEBUFFER_VERTICALLY
-#endif
-
-#if PLATFORM(SKIA)
-#include "NativeImageSkia.h"
 #endif
 
 #if OS(DARWIN)
@@ -1878,178 +1873,17 @@ int GraphicsContext3D::texImage2D(unsigned target,
     return 0;
 }
 
-// Remove premultiplied alpha from color channels.
-// FIXME: this is lossy. Must retrieve original values from HTMLImageElement.
-static void unmultiplyAlpha(unsigned char* rgbaData, int numPixels)
-{
-    for (int j = 0; j < numPixels; j++) {
-        float b = rgbaData[4*j+0] / 255.0f;
-        float g = rgbaData[4*j+1] / 255.0f;
-        float r = rgbaData[4*j+2] / 255.0f;
-        float a = rgbaData[4*j+3] / 255.0f;
-        if (a > 0.0f) {
-            b /= a;
-            g /= a;
-            r /= a;
-            b = (b > 1.0f) ? 1.0f : b;
-            g = (g > 1.0f) ? 1.0f : g;
-            r = (r > 1.0f) ? 1.0f : r;
-            rgbaData[4*j+0] = (unsigned char) (b * 255.0f);
-            rgbaData[4*j+1] = (unsigned char) (g * 255.0f);
-            rgbaData[4*j+2] = (unsigned char) (r * 255.0f);
-        }
-    }
-}
-
-// FIXME: this must be changed to refer to the original image data
-// rather than unmultiplying the alpha channel.
-static int texImage2DHelper(unsigned target, unsigned level,
-                            int width, int height,
-                            int rowBytes,
-                            bool flipY,
-                            bool premultiplyAlpha,
-                            GLenum format,
-                            bool skipAlpha,
-                            unsigned char* pixels)
-{
-    ASSERT(format == GL_RGBA || format == GL_BGRA);
-    GLint internalFormat = GL_RGBA8;
-    if (skipAlpha) {
-        internalFormat = GL_RGB8;
-        // Ignore the alpha channel
-        premultiplyAlpha = true;
-    }
-    if (flipY) {
-        // Need to flip images vertically. To avoid making a copy of
-        // the entire image, we perform a ton of glTexSubImage2D
-        // calls. FIXME: should rethink this strategy for efficiency.
-        glTexImage2D(target, level, internalFormat,
-                     width,
-                     height,
-                     0,
-                     format,
-                     GL_UNSIGNED_BYTE,
-                     0);
-        unsigned char* row = 0;
-        bool allocatedRow = false;
-        if (!premultiplyAlpha) {
-            row = new unsigned char[rowBytes];
-            allocatedRow = true;
-        }
-        for (int i = 0; i < height; i++) {
-            if (premultiplyAlpha)
-                row = pixels + (rowBytes * i);
-            else {
-                memcpy(row, pixels + (rowBytes * i), rowBytes);
-                unmultiplyAlpha(row, width);
-            }
-            glTexSubImage2D(target, level, 0, height - i - 1,
-                            width, 1,
-                            format,
-                            GL_UNSIGNED_BYTE,
-                            row);
-        }
-        if (allocatedRow)
-            delete[] row;
-    } else {
-        // The pixels of cube maps' faces are defined with a top-down
-        // scanline ordering, unlike GL_TEXTURE_2D, so when uploading
-        // these, the above vertical flip is the wrong thing to do.
-        if (premultiplyAlpha)
-            glTexImage2D(target, level, internalFormat,
-                         width,
-                         height,
-                         0,
-                         format,
-                         GL_UNSIGNED_BYTE,
-                         pixels);
-        else {
-            glTexImage2D(target, level, internalFormat,
-                         width,
-                         height,
-                         0,
-                         format,
-                         GL_UNSIGNED_BYTE,
-                         0);
-            unsigned char* row = new unsigned char[rowBytes];
-            for (int i = 0; i < height; i++) {
-                memcpy(row, pixels + (rowBytes * i), rowBytes);
-                unmultiplyAlpha(row, width);
-                glTexSubImage2D(target, level, 0, i,
-                                width, 1,
-                                format,
-                                GL_UNSIGNED_BYTE,
-                                row);
-            }
-            delete[] row;
-        }
-    }
-    return 0;
-}
-
 int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image,
                                   bool flipY, bool premultiplyAlpha)
 {
-    ASSERT(image);
-
-    int res = -1;
-#if PLATFORM(SKIA)
-    NativeImageSkia* skiaImage = image->nativeImageForCurrentFrame();
-    if (!skiaImage) {
-        ASSERT_NOT_REACHED();
+    Vector<uint8_t> imageData;
+    unsigned int format, internalFormat;
+    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
         return -1;
-    }
-    SkBitmap::Config skiaConfig = skiaImage->config();
-    // FIXME: must support more image configurations.
-    if (skiaConfig != SkBitmap::kARGB_8888_Config) {
-        ASSERT_NOT_REACHED();
-        return -1;
-    }
-    SkBitmap& skiaImageRef = *skiaImage;
-    SkAutoLockPixels lock(skiaImageRef);
-    int width = skiaImage->width();
-    int height = skiaImage->height();
-    unsigned char* pixels =
-        reinterpret_cast<unsigned char*>(skiaImage->getPixels());
-    int rowBytes = skiaImage->rowBytes();
-    res = texImage2DHelper(target, level,
-                           width, height,
-                           rowBytes,
-                           flipY, premultiplyAlpha,
-                           GL_BGRA,
-                           false,
-                           pixels);
-#elif PLATFORM(CG)
-    CGImageRef cgImage = image->nativeImageForCurrentFrame();
-    if (!cgImage) {
-        ASSERT_NOT_REACHED();
-        return -1;
-    }
-    int width = CGImageGetWidth(cgImage);
-    int height = CGImageGetHeight(cgImage);
-    int rowBytes = width * 4;
-    CGImageAlphaInfo info = CGImageGetAlphaInfo(cgImage);
-    bool skipAlpha = (info == kCGImageAlphaNone
-                   || info == kCGImageAlphaNoneSkipLast
-                   || info == kCGImageAlphaNoneSkipFirst);
-    unsigned char* imageData = new unsigned char[height * rowBytes];
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    CGContextRef tmpContext = CGBitmapContextCreate(imageData, width, height, 8, rowBytes,
-                                                    colorSpace,
-                                                    kCGImageAlphaPremultipliedLast);
-    CGColorSpaceRelease(colorSpace);
-    CGContextSetBlendMode(tmpContext, kCGBlendModeCopy);
-    CGContextDrawImage(tmpContext,
-                       CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)),
-                       cgImage);
-    CGContextRelease(tmpContext);
-    res = texImage2DHelper(target, level, width, height, rowBytes,
-                           flipY, premultiplyAlpha, GL_RGBA, skipAlpha, imageData);
-    delete[] imageData;
-#else
-#error Must port to your platform
-#endif
-    return res;
+    glTexImage2D(target, level, internalFormat,
+                 image->width(), image->height(), 0,
+                 format, GL_UNSIGNED_BYTE, imageData.data());
+    return 0;
 }
 
 GL_SAME_METHOD_3(TexParameterf, texParameterf, unsigned, unsigned, float);
@@ -2078,9 +1912,14 @@ int GraphicsContext3D::texSubImage2D(unsigned target,
                                      bool flipY,
                                      bool premultiplyAlpha)
 {
-    // FIXME: implement.
-    notImplemented();
-    return -1;
+    Vector<uint8_t> imageData;
+    unsigned int format, internalFormat;
+    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
+        return -1;
+    glTexSubImage2D(target, level, xoffset, yoffset,
+                    image->width(), image->height(),
+                    format, GL_UNSIGNED_BYTE, imageData.data());
+    return 0;
 }
 
 GL_SAME_METHOD_2(Uniform1f, uniform1f, long, float)

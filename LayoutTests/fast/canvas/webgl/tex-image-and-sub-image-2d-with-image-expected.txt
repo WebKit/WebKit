@@ -1,0 +1,53 @@
+Verify texImage2D and texSubImage2D code paths taking Images, in particular flipY argument
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Regression test for https://bugs.webkit.org/show_bug.cgi?id=34458 : Refactor texImage2D and texSubImage2D taking Image to use common code
+Testing texImage2D with flipY=true
+Checking lower left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Checking upper left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Testing texImage2D with flipY=false
+Checking lower left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Checking upper left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Testing texSubImage2D with flipY=true
+Checking lower left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Checking upper left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Testing texSubImage2D with flipY=false
+Checking lower left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+Checking upper left corner
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS pixel is correctColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

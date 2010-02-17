@@ -1,3 +1,47 @@
+2010-02-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Refactor texImage2D and texSubImage2D taking Image to use common code
+        https://bugs.webkit.org/show_bug.cgi?id=34458
+
+        Merged the Safari and Chromium code which extracts the data from
+        Image objects into common entry points on GraphicsContext3D. This
+        immediately fixes the following three problems:
+          - Chromium not implementing texSubImage2D taking Image.
+          - Safari not obeying the flipY parameter to texImage2D or
+            texSubImage2D taking Image.
+          - Safari not obeying the premultipyAlpha parameter to texImage2D
+            or texSubImage2D taking Image.
+        Added new test verifying the behavior of texImage2D and
+        texSubImage2D and the flipY parameter. The premultiplyAlpha
+        parameter can not be tested yet as the implementation is not yet
+        spec compliant. This will be fixed in a follow-on bug.
+
+        Ran all WebGL demos in demo repository on Safari and Chromium;
+        textures are now the right way up in both browsers, and
+        transparent textures in Particles demo now look correct in Safari.
+
+        Test: fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext3D.cpp: Added.
+        (WebCore::GraphicsContext3D::extractImageData):
+        (WebCore::GraphicsContext3D::processImageData):
+        (WebCore::GraphicsContext3D::premultiplyAlpha):
+        (WebCore::GraphicsContext3D::unmultiplyAlpha):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp: Added.
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp: Added.
+        (WebCore::GraphicsContext3D::getImageData):
+
 2010-02-17  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.

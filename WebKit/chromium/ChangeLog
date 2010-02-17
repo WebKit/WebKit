@@ -1,3 +1,31 @@
+2010-02-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Refactor texImage2D and texSubImage2D taking Image to use common code
+        https://bugs.webkit.org/show_bug.cgi?id=34458
+
+        Merged the Safari and Chromium code which extracts the data from
+        Image objects into common entry points on GraphicsContext3D. This
+        immediately fixes the following three problems:
+          - Chromium not implementing texSubImage2D taking Image.
+          - Safari not obeying the flipY parameter to texImage2D or
+            texSubImage2D taking Image.
+          - Safari not obeying the premultipyAlpha parameter to texImage2D
+            or texSubImage2D taking Image.
+        Added new test verifying the behavior of texImage2D and
+        texSubImage2D and the flipY parameter. The premultiplyAlpha
+        parameter can not be tested yet as the implementation is not yet
+        spec compliant. This will be fixed in a follow-on bug.
+
+        Ran all WebGL demos in demo repository on Safari and Chromium;
+        textures are now the right way up in both browsers, and
+        transparent textures in Particles demo now look correct in Safari.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2010-02-17  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by Ariya Hidayat.

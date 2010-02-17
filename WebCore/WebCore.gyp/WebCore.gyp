@@ -956,6 +956,7 @@
             '../platform/graphics/skia/FloatPointSkia.cpp',
             '../platform/graphics/skia/FloatRectSkia.cpp',
             '../platform/graphics/skia/GradientSkia.cpp',
+            '../platform/graphics/skia/GraphicsContext3DSkia.cpp',
             '../platform/graphics/skia/GraphicsContextSkia.cpp',
             '../platform/graphics/skia/ImageBufferSkia.cpp',
             '../platform/graphics/skia/ImageSkia.cpp',

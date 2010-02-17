@@ -1126,31 +1126,6 @@ long GraphicsContext3D::getVertexAttribOffset(unsigned long index, unsigned long
     return reinterpret_cast<long>(pointer);
 }
 
-// Returned pointer must be freed by fastFree()
-static bool imageToTexture(Image* image, GLubyte*& buffer, size_t& width, size_t& height)
-{
-    if (!image)
-        return false;
-    
-    CGImageRef textureImage = image->getCGImageRef();
-    if (!textureImage)
-        return false;
-    
-    width = CGImageGetWidth(textureImage);
-    height = CGImageGetHeight(textureImage);
-    
-    buffer = (GLubyte*) fastMalloc(width * height * 4);
-    if (!buffer)
-        return false;
-        
-    CGContextRef textureContext = CGBitmapContextCreate(buffer, width, height, 8, width * 4, 
-                                                        CGImageGetColorSpace(textureImage), kCGImageAlphaPremultipliedLast);
-    CGContextSetBlendMode(textureContext, kCGBlendModeCopy);
-    CGContextDrawImage(textureContext, CGRectMake(0, 0, (CGFloat)width, (CGFloat)height), textureImage);
-    CGContextRelease(textureContext);
-    return true;
-}
-
 int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
 {
     // FIXME: Need to do bounds checking on the buffer here.
@@ -1160,20 +1135,12 @@ int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned inte
 
 int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image, bool flipY, bool premultiplyAlpha)
 {
-    // FIXME: need to support flipY and premultiplyAlpha
-    UNUSED_PARAM(flipY);
-    UNUSED_PARAM(premultiplyAlpha);
-    ASSERT(image);
-    
     ensureContext(m_contextObj);
-    GLubyte* buffer;
-    size_t width;
-    size_t height;
-    if (!imageToTexture(image, buffer, width, height))
+    Vector<uint8_t> imageData;
+    unsigned int format, internalFormat;
+    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
         return -1;
-    
-    ::glTexImage2D(target, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-    fastFree(buffer);
+    ::glTexImage2D(target, level, internalFormat, image->width(), image->height(), 0, format, GL_UNSIGNED_BYTE, imageData.data());
     return 0;
 }
     
@@ -1188,20 +1155,12 @@ int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned x
 int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, Image* image, bool flipY, bool premultiplyAlpha)
 {
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size
-    // FIXME: need to support flipY and premultiplyAlpha
-    UNUSED_PARAM(flipY);
-    UNUSED_PARAM(premultiplyAlpha);
-    ASSERT(image);
-    
     ensureContext(m_contextObj);
-    GLubyte* buffer;
-    size_t width;
-    size_t height;
-    if (!imageToTexture(image, buffer, width, height))
+    Vector<uint8_t> imageData;
+    unsigned int format, internalFormat;
+    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
         return -1;
-    
-    ::glTexSubImage2D(target, level, xoff, yoff, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-    fastFree(buffer);
+    ::glTexSubImage2D(target, level, xoff, yoff, image->width(), image->height(), format, GL_UNSIGNED_BYTE, imageData.data());
     return 0;
 }
 
