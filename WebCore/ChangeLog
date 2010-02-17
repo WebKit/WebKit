@@ -1,3 +1,17 @@
+2010-02-16  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector should display Array lengths in the property lists.
+        https://bugs.webkit.org/show_bug.cgi?id=20695
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        For objects of type 'array' (which includes Arrays, NodeLists, and HTMLCollections), make the length of the object available via propertyLength on the proxy object.
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        For properties that have propertyLength defined, append it to the displayed description.
+
 2010-02-16  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Dimitri Glazkov.

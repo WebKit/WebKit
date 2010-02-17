@@ -178,6 +178,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.valueElement = document.createElement("span");
         this.valueElement.className = "value";
         this.valueElement.textContent = this.property.value.description;
+        if (typeof this.property.value.propertyLength !== "undefined")
+            this.valueElement.textContent += " (" + this.property.value.propertyLength + ")";
         if (this.property.isGetter)
             this.valueElement.addStyleClass("dimmed");
         if (this.property.isError)

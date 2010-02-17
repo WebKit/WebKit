@@ -1150,6 +1150,8 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
     result.injectedScriptId = injectedScriptId;
     result.objectId = objectId;
     result.type = InjectedScript._type(object);
+    if (result.type === "array")
+        result.propertyLength = object.length;
 
     var type = typeof object;
     if ((type === "object" && object !== null) || type === "function") {
