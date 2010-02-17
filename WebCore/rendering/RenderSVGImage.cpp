@@ -37,9 +37,6 @@
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderSupport.h"
-#include "SVGResourceClipper.h"
-#include "SVGResourceFilter.h"
-#include "SVGResourceMasker.h"
 
 namespace WebCore {
 
@@ -101,6 +98,12 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
         paintOutline(paintInfo.context, 0, 0, width(), height(), style());
 
     paintInfo.context->restore();
+}
+
+void RenderSVGImage::destroy()
+{
+    SVGRenderBase::deregisterFromResources(this);
+    RenderImage::destroy();
 }
 
 bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest&, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

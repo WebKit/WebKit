@@ -395,6 +395,10 @@ void write(TextStream& ts, const RenderObject& o, int indent)
         write(ts, *toRenderPath(&o), indent);
         return;
     }
+    if (o.isSVGResource()) {
+        writeSVGResource(ts, o, indent);
+        return;
+    }
     if (o.isSVGContainer()) {
         writeSVGContainer(ts, o, indent);
         return;

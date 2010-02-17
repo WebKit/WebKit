@@ -64,6 +64,9 @@
 		082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */; };
 		082341C60FCF3A9500D75BD6 /* WMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */; };
 		082FCAC4110927CE00CC4821 /* JSSVGContextCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 082FCAC3110927CE00CC4821 /* JSSVGContextCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		083192AA112B43050083C3B9 /* RenderSVGResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 083192A7112B43050083C3B9 /* RenderSVGResource.h */; };
+		083192AB112B43050083C3B9 /* RenderSVGResourceMasker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */; };
+		083192AC112B43050083C3B9 /* RenderSVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = 083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */; };
 		08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 08385FF510F0186000BFE07B /* SVGMarkerData.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
@@ -3688,8 +3691,6 @@
 		B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = B25599200D00D8B900BB825C /* SVGResourceListener.h */; };
 		B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */; };
 		B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = B25599220D00D8B900BB825C /* SVGResourceMarker.h */; };
-		B25599BB0D00D8BA00BB825C /* SVGResourceMasker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25599230D00D8B900BB825C /* SVGResourceMasker.cpp */; };
-		B25599BC0D00D8BA00BB825C /* SVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = B25599240D00D8B900BB825C /* SVGResourceMasker.h */; };
 		B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */; };
 		B262B8040D1F32D000158F09 /* SVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B262B8030D1F32D000158F09 /* SVGFont.cpp */; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
@@ -5354,6 +5355,9 @@
 		082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSelectElement.cpp; sourceTree = "<group>"; };
 		082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSelectElement.h; sourceTree = "<group>"; };
 		082FCAC3110927CE00CC4821 /* JSSVGContextCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGContextCache.h; sourceTree = "<group>"; };
+		083192A7112B43050083C3B9 /* RenderSVGResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResource.h; sourceTree = "<group>"; };
+		083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMasker.cpp; sourceTree = "<group>"; };
+		083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMasker.h; sourceTree = "<group>"; };
 		08385FF510F0186000BFE07B /* SVGMarkerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerData.h; sourceTree = "<group>"; };
 		083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlMultiLine.cpp; sourceTree = "<group>"; };
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
@@ -8925,8 +8929,6 @@
 		B25599200D00D8B900BB825C /* SVGResourceListener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceListener.h; sourceTree = "<group>"; };
 		B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceMarker.cpp; sourceTree = "<group>"; };
 		B25599220D00D8B900BB825C /* SVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceMarker.h; sourceTree = "<group>"; };
-		B25599230D00D8B900BB825C /* SVGResourceMasker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceMasker.cpp; sourceTree = "<group>"; };
-		B25599240D00D8B900BB825C /* SVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceMasker.h; sourceTree = "<group>"; };
 		B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMatrixCustom.cpp; sourceTree = "<group>"; };
 		B262B8030D1F32D000158F09 /* SVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFont.cpp; sourceTree = "<group>"; };
 		B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTextPath.cpp; sourceTree = "<group>"; };
@@ -14271,8 +14273,6 @@
 				B25599200D00D8B900BB825C /* SVGResourceListener.h */,
 				B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */,
 				B25599220D00D8B900BB825C /* SVGResourceMarker.h */,
-				B25599230D00D8B900BB825C /* SVGResourceMasker.cpp */,
-				B25599240D00D8B900BB825C /* SVGResourceMasker.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -15718,6 +15718,9 @@
 				853CA9D10AEEC5E9002372DC /* RenderSVGInlineText.h */,
 				A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */,
 				A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */,
+				083192A7112B43050083C3B9 /* RenderSVGResource.h */,
+				083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */,
+				083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */,
 				AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */,
 				AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */,
 				08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */,
@@ -17954,6 +17957,8 @@
 				853CA9DB0AEEC5E9002372DC /* RenderSVGInline.h in Headers */,
 				853CA9DD0AEEC5E9002372DC /* RenderSVGInlineText.h in Headers */,
 				A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */,
+ 				083192AA112B43050083C3B9 /* RenderSVGResource.h in Headers */,
+ 				083192AC112B43050083C3B9 /* RenderSVGResourceMasker.h in Headers */,
 				AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */,
 				08DAB9BB1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h in Headers */,
 				853CA9DF0AEEC5E9002372DC /* RenderSVGText.h in Headers */,
@@ -18278,7 +18283,6 @@
 				B25599B70D00D8BA00BB825C /* SVGResourceFilter.h in Headers */,
 				B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */,
 				B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */,
-				B25599BC0D00D8BA00BB825C /* SVGResourceMasker.h in Headers */,
 				853CA9E90AEEC608002372DC /* SVGRootInlineBox.h in Headers */,
 				B2227AA30D00BF220071B782 /* SVGScriptElement.h in Headers */,
 				B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */,
@@ -20196,6 +20200,7 @@
 				853CA9DA0AEEC5E9002372DC /* RenderSVGInline.cpp in Sources */,
 				853CA9DC0AEEC5E9002372DC /* RenderSVGInlineText.cpp in Sources */,
 				A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */,
+ 				083192AB112B43050083C3B9 /* RenderSVGResourceMasker.cpp in Sources */,
 				AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */,
 				08DAB9BA1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp in Sources */,
 				853CA9DE0AEEC5E9002372DC /* RenderSVGText.cpp in Sources */,
@@ -20496,7 +20501,6 @@
 				B25599B40D00D8BA00BB825C /* SVGResourceClipper.cpp in Sources */,
 				B25599B60D00D8BA00BB825C /* SVGResourceFilter.cpp in Sources */,
 				B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */,
-				B25599BB0D00D8BA00BB825C /* SVGResourceMasker.cpp in Sources */,
 				853CA9E80AEEC608002372DC /* SVGRootInlineBox.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,

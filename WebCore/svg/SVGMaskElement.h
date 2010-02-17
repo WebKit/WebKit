@@ -22,19 +22,15 @@
 
 #if ENABLE(SVG)
 #include "RenderObject.h"
-#include "SVGResourceMasker.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
-#include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
     class SVGLength;
-    class SVGResourceMasker;
 
     class SVGMaskElement : public SVGStyledLocatableElement,
                            public SVGURIReference,
@@ -53,9 +49,6 @@ namespace WebCore {
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        virtual SVGResource* canvasResource(const RenderObject*);
-
-        PassOwnPtr<ImageBuffer> drawMaskerContent(const RenderObject*, FloatRect& maskRect, bool& emptyMask) const;
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::maskUnitsAttr, int, MaskUnits, maskUnits)
@@ -70,13 +63,9 @@ namespace WebCore {
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
-
-        virtual void invalidateCanvasResources();
-
-        HashMap<const RenderObject*, RefPtr<SVGResourceMasker> > m_masker;
     };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG)
+#endif
 #endif

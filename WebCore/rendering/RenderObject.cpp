@@ -66,6 +66,7 @@
 #endif
 
 #if ENABLE(SVG)
+#include "RenderSVGResource.h"
 #include "SVGRenderSupport.h"
 #endif
 
@@ -2525,6 +2526,12 @@ VisiblePosition RenderObject::createVisiblePosition(const Position& position)
 
 #if ENABLE(SVG)
 const SVGRenderBase* RenderObject::toSVGRenderBase() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+RenderSVGResource* RenderObject::toRenderSVGResource()
 {
     ASSERT_NOT_REACHED();
     return 0;

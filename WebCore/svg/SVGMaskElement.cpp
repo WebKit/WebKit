@@ -3,6 +3,7 @@
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2005 Alexander Kellett <lypanov@kde.org>
                   2009 Dirk Schulze <krit@webkit.org>
+    Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,23 +26,13 @@
 #if ENABLE(SVG)
 #include "SVGMaskElement.h"
 
-#include "CanvasPixelArray.h"
 #include "CSSStyleSelector.h"
-#include "GraphicsContext.h"
-#include "Image.h"
-#include "ImageBuffer.h"
-#include "ImageData.h"
 #include "MappedAttribute.h"
-#include "RenderObject.h"
-#include "RenderSVGContainer.h"
+#include "RenderSVGResourceMasker.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGUnitTypes.h"
-#include <math.h>
-#include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/Vector.h>
 
 using namespace std;
 
@@ -167,122 +158,9 @@ FloatRect SVGMaskElement::maskBoundingBox(const FloatRect& objectBoundingBox) co
     return maskBBox;
 }
 
-PassOwnPtr<ImageBuffer> SVGMaskElement::drawMaskerContent(const RenderObject* object, FloatRect& maskDestRect, bool& emptyMask) const
-{    
-    FloatRect objectBoundingBox = object->objectBoundingBox();
-
-    // Mask rect clipped with clippingBoundingBox and filterBoundingBox as long as they are present.
-    maskDestRect = object->repaintRectInLocalCoordinates();
-    if (maskDestRect.isEmpty()) {
-        emptyMask = true;
-        return 0;
-    }
-
-    // Calculate the smallest rect for the mask ImageBuffer.
-    FloatRect repaintRect;
-    Vector<RenderObject*> rendererList;
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !node->renderer())
-            continue;
-
-        rendererList.append(node->renderer());
-        repaintRect.unite(node->renderer()->localToParentTransform().mapRect(node->renderer()->repaintRectInLocalCoordinates()));
-    }
-
-    AffineTransform contextTransform;
-    // We need to scale repaintRect for objectBoundingBox to get the drawing area.
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        contextTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
-        FloatPoint contextAdjustment = repaintRect.location();
-        repaintRect = contextTransform.mapRect(repaintRect);
-        repaintRect.move(objectBoundingBox.x(), objectBoundingBox.y());
-        contextTransform.translate(-contextAdjustment.x(), -contextAdjustment.y());
-    }
-    repaintRect.intersect(maskDestRect);
-    maskDestRect = repaintRect;
-    IntRect maskImageRect = enclosingIntRect(maskDestRect);
-
-    maskImageRect.setLocation(IntPoint());
-
-    // Don't create ImageBuffers with image size of 0
-    if (!maskImageRect.width() || !maskImageRect.height()) {
-        emptyMask = true;
-        return 0;
-    }
-
-    // FIXME: This changes color space to linearRGB, the default color space
-    // for masking operations in SVG. We need a switch for the other color-space
-    // attribute values sRGB, inherit and auto.
-    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskImageRect.size(), LinearRGB);
-    if (!maskImage)
-        return 0;
-
-    GraphicsContext* maskImageContext = maskImage->context();
-    ASSERT(maskImageContext);
-
-    maskImageContext->save();
-
-    if (maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-        maskImageContext->translate(-maskDestRect.x(), -maskDestRect.y());
-    maskImageContext->concatCTM(contextTransform);
-
-    // draw the content into the ImageBuffer
-    Vector<RenderObject*>::iterator end = rendererList.end();
-    for (Vector<RenderObject*>::iterator it = rendererList.begin(); it != end; it++)
-        renderSubtreeToImage(maskImage.get(), *it);
-
-
-    maskImageContext->restore();
-
-    // create the luminance mask
-    RefPtr<ImageData> imageData(maskImage->getUnmultipliedImageData(maskImageRect));
-    CanvasPixelArray* srcPixelArray(imageData->data());
-
-    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset += 4) {
-        unsigned char a = srcPixelArray->get(pixelOffset + 3);
-        if (!a)
-            continue;
-        unsigned char r = srcPixelArray->get(pixelOffset);
-        unsigned char g = srcPixelArray->get(pixelOffset + 1);
-        unsigned char b = srcPixelArray->get(pixelOffset + 2);
-
-        double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
-        srcPixelArray->set(pixelOffset + 3, luma);
-    }
-
-    maskImage->putUnmultipliedImageData(imageData.get(), maskImageRect, IntPoint());
-
-    return maskImage.release();
-}
- 
 RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderSVGContainer* maskContainer = new (arena) RenderSVGContainer(this);
-    maskContainer->setDrawsContents(false);
-    return maskContainer;
-}
-
-SVGResource* SVGMaskElement::canvasResource(const RenderObject* object)
-{
-    ASSERT(object);
-
-    if (m_masker.contains(object))
-        return m_masker.get(object).get();
-
-    RefPtr<SVGResourceMasker> masker = SVGResourceMasker::create(this);
-    SVGResourceMasker* maskerPtr = masker.get();
-    m_masker.set(object, masker.release());
-
-    return maskerPtr;
-}
-
-void SVGMaskElement::invalidateCanvasResources()
-{
-    // Don't call through to the base class since the base class will just
-    // invalidate one item in the HashMap. 
-    HashMap<const RenderObject*, RefPtr<SVGResourceMasker> >::const_iterator end = m_masker.end();
-    for (HashMap<const RenderObject*, RefPtr<SVGResourceMasker> >::const_iterator it = m_masker.begin(); it != end; ++it)
-        it->second->invalidate();
+    return new (arena) RenderSVGResourceMasker(this);
 }
 
 }

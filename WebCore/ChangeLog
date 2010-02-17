@@ -1,3 +1,112 @@
+2010-02-17  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Move SVGResources to Renderers, starting with Masker
+        https://bugs.webkit.org/show_bug.cgi?id=35020
+
+        We have rendering specific code in WebCore/svg/graphics. The goal is to move
+        this code into suitable Renderers. This helps us to clean up the code and makes
+        maintenance easier. It also makes it possible to remove rendering specific code
+        from SVG*Elements into this renderers. So the Renderer contains everything that
+        is needed to use the resource.
+        RenderSVGResource will be the base class for all new resource render classes like
+        RenderSVGResourceMasker, RenderSVGResourceClipper and the other resources.
+
+        This patch starts moving SVGResourceMasker to RenderSVGResourceMasker.
+        Another benefit is the much more useful result in DRT on using masker.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::toRenderSVGResource): Conversion to RenderSVGResource base class.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGResource): Check if renderer is a resource.
+        * rendering/RenderPath.cpp:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::destroy): Renderer gets destroyed, unregister it from it's resources.
+        * rendering/RenderSVGImage.h: Some code clean up according to the webkit style.
+        (WebCore::RenderSVGImage::toSVGRenderBase):
+        (WebCore::RenderSVGImage::renderName):
+        (WebCore::RenderSVGImage::isSVGImage):
+        (WebCore::RenderSVGImage::localToParentTransform):
+        (WebCore::RenderSVGImage::strokeBoundingBox):
+        (WebCore::RenderSVGImage::requiresLayer):
+        (WebCore::RenderSVGImage::localTransform):
+        * rendering/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::objectBoundingBox): Needed for SVGRenderTreeAsText
+        * rendering/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::destroy): Renderer gets destroyed, unregister it from it's resources.
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGResource.h: Added.
+        (WebCore::): Base class for all Resource renderers like masker, clipper and others.
+        (WebCore::RenderSVGResource::RenderSVGResource):
+        (WebCore::RenderSVGResource::cast):
+        (WebCore::RenderSVGResource::toRenderSVGResource):
+        (WebCore::RenderSVGResource::isSVGResource): 
+        (WebCore::RenderSVGResource::drawsContents):
+        (WebCore::getRenderSVGResourceById):
+        * rendering/RenderSVGResourceMasker.cpp: Added.
+        (WebCore::RenderSVGResourceMasker::RenderSVGResourceMasker):
+        (WebCore::RenderSVGResourceMasker::~RenderSVGResourceMasker):
+        (WebCore::RenderSVGResourceMasker::invalidateClients): Status of masker changed, remove all clients.
+        (WebCore::RenderSVGResourceMasker::invalidateClient): Status of an object changed, remove pending client.
+        (WebCore::RenderSVGResourceMasker::applyResource): Apply masker to object.
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox): boundingBox of the resource, depending on the object.
+        (WebCore::RenderSVGResourceMasker::createMaskImage): Creates the mask image, the context gets clipped with.
+        * rendering/RenderSVGResourceMasker.h: Added.
+        (WebCore::MaskerData::MaskerData):
+        (WebCore::RenderSVGResourceMasker::renderName):
+        (WebCore::RenderSVGResourceMasker::maskUnits): Unit of mask for DRT.
+        (WebCore::RenderSVGResourceMasker::maskContentUnits): Unit of childs from mask for DRT.
+        (WebCore::RenderSVGResourceMasker::resourceType):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::destroy): Renderer gets destroyed, unregister it from it's resources.
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::destroy): dito.
+        * rendering/RenderSVGText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::maskerBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::deregisterFromResources): Unregister object from all it's resources after status changed.
+        * rendering/SVGRenderSupport.h:
+        (WebCore::SVGRenderBase::toSVGRenderBase):
+        (WebCore::SVGRenderBase::strokeBoundingBox):
+        (WebCore::SVGRenderBase::markerBoundingBox):
+        * rendering/SVGRenderTreeAsText.cpp: Update TreeAsText to dump maskers correctly.
+        (WebCore::operator<<):
+        (WebCore::writeSVGResource):
+        (WebCore::writeSVGContainer):
+        (WebCore::writeSVGText):
+        (WebCore::writeSVGInlineText):
+        (WebCore::writeSVGImage):
+        (WebCore::write):
+        (WebCore::writeResourcesToObject):
+        * rendering/SVGRenderTreeAsText.h:
+        * svg/SVGMaskElement.cpp: Update Masker to use the new renderer.
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        (WebCore::SVGMaskElement::maskBoundingBox):
+        (WebCore::SVGMaskElement::createRenderer):
+        * svg/SVGMaskElement.h:
+        * svg/SVGStyledElement.cpp: We need to tell the renderer to unregister object, after the status changed.
+        (WebCore::SVGStyledElement::invalidateResources):
+        (WebCore::SVGStyledElement::invalidateResourcesInAncestorChain):
+        * svg/SVGUnitTypes.h: Conversion of integer to SVGUnitType.
+        (WebCore::toUnitType):
+        * svg/graphics/SVGResource.h:
+        (WebCore::):
+        (WebCore::SVGResource::isMarker):
+        * svg/graphics/SVGResourceMasker.cpp: Removed.
+        * svg/graphics/SVGResourceMasker.h: Removed.
+
 2010-02-17  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
