@@ -136,7 +136,9 @@ public:
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
 
     // we manage transforms ourselves because transform-origin acts differently in webkit and in Qt
-    void setBaseTransform(const QTransform&);
+    void setBaseTransform(const TransformationMatrix&);
+    QTransform computeTransform(const TransformationMatrix& baseTransform) const;
+    void updateTransform();
 
     // let the compositor-API tell us which properties were changed
     void notifyChange(ChangeMask);
@@ -145,7 +147,7 @@ public:
     // this is called indirectly from ChromeClientQt::setNeedsOneShotDrawingSynchronization
     // (meaning the sync would happen together with the next draw)
     // or ChromeClientQt::scheduleCompositingLayerSync (meaning the sync will happen ASAP)
-    void flushChanges(bool recursive = true);
+    void flushChanges(bool recursive = true, bool forceTransformUpdate = false);
 
     // optimization: when we have an animation running on an element with no contents, that has child-elements with contents,
     // ALL of them have to have ItemCoordinateCache and not DeviceCoordinateCache
@@ -166,7 +168,7 @@ signals:
 public:
     GraphicsLayerQt* m_layer;
 
-    QTransform m_baseTransform;
+    TransformationMatrix m_baseTransform;
     bool m_transformAnimationRunning;
     bool m_opacityAnimationRunning;
     QWeakPointer<MaskEffectQt> m_maskEffect;
@@ -280,18 +282,54 @@ void GraphicsLayerQtImpl::adjustCachingRecursively(bool animationIsRunning)
     }    
 }
 
-void GraphicsLayerQtImpl::setBaseTransform(const QTransform& transform)
+void GraphicsLayerQtImpl::updateTransform()
+{
+    setBaseTransform(isTransformAnimationRunning() ? m_baseTransform : m_layer->transform());
+}
+
+void GraphicsLayerQtImpl::setBaseTransform(const TransformationMatrix& baseTransform)
+{
+    m_baseTransform = baseTransform;
+    setTransform(computeTransform(baseTransform));
+}
+
+QTransform GraphicsLayerQtImpl::computeTransform(const TransformationMatrix& baseTransform) const
 {
     if (!m_layer)
-        return;
+        return baseTransform;
+
+    TransformationMatrix computedTransform;
+
+    // The origin for childrenTransform is always the center of the ancestor which contains the childrenTransform.
+    // this has to do with how WebCore implements -webkit-perspective and -webkit-perspective-origin, which are the CSS
+    // attribute that call setChildrenTransform
+    QPointF offset = -pos() - boundingRect().bottomRight() / 2;
+    const GraphicsLayerQtImpl* ancestor = this;
+    while ((ancestor = qobject_cast<GraphicsLayerQtImpl*>(ancestor->parentObject()))) {
+        if (!ancestor->m_state.childrenTransform.isIdentity()) {
+            offset += ancestor->boundingRect().bottomRight() / 2;
+            computedTransform
+                .translate(offset.x(), offset.y())
+                .multLeft(ancestor->m_state.childrenTransform)
+                .translate(-offset.x(), -offset.y());
+            break;
+        }
+        offset -= ancestor->pos();
+    }
+
+    computedTransform.multLeft(baseTransform);
+
     // webkit has relative-to-size originPoint, graphics-view has a pixel originPoint, here we convert
     // we have to manage this ourselves because QGraphicsView's transformOrigin is incompatible
-    const qreal x = m_layer->anchorPoint().x() * m_layer->size().width();
-    const qreal y = m_layer->anchorPoint().y() * m_layer->size().height();
-    setTransform(QTransform::fromTranslate(x, y));
-    setTransform(transform, true);
-    translate(-x, -y);
-    m_baseTransform = transform;
+    const qreal originX = m_state.anchorPoint.x() * m_size.width();
+    const qreal originY = m_state.anchorPoint.y() * m_size.height();
+    computedTransform = TransformationMatrix()
+                            .translate(originX, originY)
+                            .multiply(computedTransform)
+                            .translate(-originX, -originY);
+
+    // now we project to 2D
+    return QTransform(computedTransform);
 }
 
 bool GraphicsLayerQtImpl::isTransformAnimationRunning() const
@@ -357,7 +395,7 @@ void GraphicsLayerQtImpl::notifyChange(ChangeMask changeMask)
         m_layer->client()->notifySyncRequired(m_layer);
 }
 
-void GraphicsLayerQtImpl::flushChanges(bool recursive)
+void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform)
 {
     // this is the bulk of the work. understanding what the compositor is trying to achieve,
     // what graphics-view can do, and trying to find a sane common-grounds
@@ -425,12 +463,15 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
         }
     }
 
-    if (m_changeMask & (TransformChange | AnchorPointChange | SizeChange)) {
-        // since we convert a percentage-based origin-point to a pixel-based one,
-        // the anchor-point, transform and size from WebCore all affect the one
-        // that we give Qt
-        if (m_state.transform != m_layer->transform() || m_state.anchorPoint != m_layer->anchorPoint() || m_state.size != m_layer->size())
-            setBaseTransform(m_layer->transform());
+    // FIXME: this is a hack, due to a probable QGraphicsScene bug when rapidly modifying the perspective
+    // but without this line we get graphic artifacts
+    if ((m_changeMask & ChildrenTransformChange) && m_state.childrenTransform != m_layer->childrenTransform())
+        scene()->update();
+
+    if (m_changeMask & (ChildrenTransformChange | Preserves3DChange | TransformChange | AnchorPointChange | SizeChange)) {
+        // due to the differences between the way WebCore handles transforms and the way Qt handles transforms,
+        // all these elements affect the transforms of all the descendants.
+        forceUpdateTransform = true;
     }
 
     if (m_changeMask & (ContentChange | DrawsContentChange | MaskLayerChange)) {
@@ -439,8 +480,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
             update();
             setFlag(ItemHasNoContents, false);
 
-            // we only use ItemUsesExtendedStyleOption for HTML content - pixmap can be handled better with regular clipping
-            setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, false);
             break;
 
         case ColorContentType:
@@ -524,6 +563,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
     m_state.drawsContent = m_layer->drawsContent();
     m_state.contentsOpaque = m_layer->contentsOpaque();
     m_state.backfaceVisibility = m_layer->backfaceVisibility();
+    m_state.childrenTransform = m_layer->childrenTransform();
     m_currentContent.pixmap = m_pendingContent.pixmap;
     m_currentContent.contentType = m_pendingContent.contentType;
     m_currentContent.backgroundColor = m_pendingContent.backgroundColor;
@@ -534,6 +574,9 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive)
 
 
 afterLayerChanges:
+    if (forceUpdateTransform)
+        updateTransform();
+
     if (!recursive)
         return;    
 
@@ -544,7 +587,7 @@ afterLayerChanges:
     for (QList<QGraphicsItem*>::const_iterator it = children.begin(); it != children.end(); ++it) {
         if (QGraphicsItem* item = *it)
             if (GraphicsLayerQtImpl* layer = qobject_cast<GraphicsLayerQtImpl*>(item->toGraphicsObject()))
-                layer->flushChanges(true);
+                layer->flushChanges(true, forceUpdateTransform);
     }
 }
 
@@ -1013,7 +1056,7 @@ public:
         // this came up during the compositing/animation LayoutTests
         // when the animation dies, the transform has to go back to default
         if (m_layer)
-            m_layer.data()->setBaseTransform(m_layer.data()->m_layer->transform());
+            m_layer.data()->updateTransform();
     }
 
     // the idea is that we let WebCore manage the transform-operations

@@ -1,3 +1,12 @@
+2010-02-17  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] GraphicsLayer: support perspective and 3D transforms
+        https://bugs.webkit.org/show_bug.cgi?id=34960
+
+        * WebKit.pri: added appropriate define: ENABLED_3D_RENDERING
+
 2010-02-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

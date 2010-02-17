@@ -50,6 +50,7 @@ building-libs {
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 greaterThan(QT_MINOR_VERSION, 5):DEFINES += WTF_USE_ACCELERATED_COMPOSITING
+greaterThan(QT_MINOR_VERSION, 5):DEFINES += ENABLE_3D_RENDERING=1
 
 !mac:!unix|symbian {
     DEFINES += USE_SYSTEM_MALLOC
