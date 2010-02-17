@@ -1,3 +1,17 @@
+2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix Chromium's bindings for Database.transaction(): a 'null'
+        callback should be treated as no callback.
+
+        Test: storage/null-callbacks.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=35047
+
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::createTransaction):
+
 2010-02-17  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

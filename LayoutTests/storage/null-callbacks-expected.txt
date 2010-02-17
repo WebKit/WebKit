@@ -1,0 +1,2 @@
+This test checks that 'null' can be used wherever we expect an optional callback.
+PASS

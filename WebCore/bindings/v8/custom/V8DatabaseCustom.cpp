@@ -104,7 +104,7 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
     RefPtr<V8CustomSQLTransactionCallback> callback = V8CustomSQLTransactionCallback::create(args[0], frame);
 
     RefPtr<V8CustomSQLTransactionErrorCallback> errorCallback;
-    if (args.Length() > 1) {
+    if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
         if (!args[1]->IsObject())
             return throwError("Transaction error callback must be of valid type.");
 
@@ -112,7 +112,7 @@ static v8::Handle<v8::Value> createTransaction(const v8::Arguments& args, bool r
     }
 
     RefPtr<V8CustomVoidCallback> successCallback;
-    if (args.Length() > 2) {
+    if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
             return throwError("Transaction success callback must be of valid type.");
 
