@@ -1,3 +1,13 @@
+2010-02-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix a handful of leaks seen on the buildbot.
+
+        * runtime/UStringImpl.h:
+        (JSC::UStringOrRopeImpl::deref): Call URopeImpl::destructNonRecursive rather than delete
+        to ensure that the rope's fibers are also destroyed.
+
 2010-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

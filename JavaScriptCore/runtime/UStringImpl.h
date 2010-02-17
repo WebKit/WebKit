@@ -340,6 +340,8 @@ private:
 
     unsigned m_fiberCount;
     Fiber m_fibers[1];
+
+    friend class UStringOrRopeImpl;
 };
 
 inline void UStringOrRopeImpl::deref()
@@ -347,7 +349,7 @@ inline void UStringOrRopeImpl::deref()
     m_refCountAndFlags -= s_refCountIncrement;
     if (!(m_refCountAndFlags & s_refCountMask)) {
         if (isRope())
-            delete static_cast<URopeImpl*>(this);
+            static_cast<URopeImpl*>(this)->destructNonRecursive();
         else if (!s_refCountFlagStatic)
             delete static_cast<UStringImpl*>(this);
     }
