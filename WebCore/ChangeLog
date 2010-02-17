@@ -7,7 +7,7 @@
 
         * platform/chromium/GeolocationServiceChromium.cpp:
 
-22010-02-17  Xan Lopez  <xlopez@igalia.com>
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
 
@@ -34,7 +34,7 @@
         * platform/network/soup/ResourceHandleSoup.cpp:
         (WebCore::parseDataUrl):
 
-010-02-17  Marcus Bulach  <bulach@chromium.org>
+2010-02-17  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
 
