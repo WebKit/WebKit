@@ -68,6 +68,7 @@
         'ENABLE_VIDEO=1',
         'ENABLE_WEB_SOCKETS=1',
         'ENABLE_WORKERS=1',
+        'WTF_USE_ACCELERATED_COMPOSITING=0',
       ],
     },
     'feature_defines%': '<(feature_defines)',

@@ -741,9 +741,6 @@
         '../dom/StaticStringList.cpp',
         '../loader/icon/IconFetcher.cpp',
         '../loader/UserStyleSheetLoader.cpp',
-        '../platform/graphics/GraphicsLayer.cpp',
-        '../platform/graphics/RenderLayerBacking.cpp',
-        '../platform/graphics/RenderLayerCompositor.cpp',
 
         # We use a multi-process version from the WebKit API.
         '../dom/default/PlatformMessagePortChannel.cpp',
