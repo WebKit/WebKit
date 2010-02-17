@@ -768,3 +768,7 @@ fast/text/glyph-reordering.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
+
+# Tests timeout: https://bugs.webkit.org/show_bug.cgi?id=35041
+websocket/tests/frame-lengths.html
+websocket/tests/simple-stress.html
