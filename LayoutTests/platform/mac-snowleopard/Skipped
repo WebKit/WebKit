@@ -15,7 +15,6 @@ plugins/netscape-browser-object-identity.html
 
 # Radar bugs needed for these
 fast/canvas/set-colors.html
-svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
 svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
 svg/W3C-SVG-1.1/render-elems-03-t.svg
 svg/batik/paints/patternRegionA.svg
@@ -26,6 +25,9 @@ svg/custom/viewbox-syntax.svg
 svg/hixie/perf/007.xml
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml
 svg/transforms/text-with-pattern-with-svg-transform.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=35012 (SVG entity parsing broken on SnowLeopard/Windows)
+svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/test/zoom-coords-viewattr-01-b.svg
 

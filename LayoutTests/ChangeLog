@@ -1,3 +1,10 @@
+2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Attempt to fix win slave. Skip same tests failing on SL, add bug references to skipped list.
+
+        * platform/mac-snowleopard/Skipped:
+        * platform/win/Skipped:
+
 2010-02-16  Bryan Yeung  <bryeung@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
