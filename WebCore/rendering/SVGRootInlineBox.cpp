@@ -363,10 +363,10 @@ struct SVGRootInlineBoxPaintWalker {
         ASSERT(!m_chunkStarted);
     }
 
-    bool mayHaveSelection(InlineBox* box) const
+    bool mayHaveSelection(SVGInlineTextBox* box) const
     {
         int selectionStart = 0, selectionEnd = 0;
-        box->renderer()->selectionStartEnd(selectionStart, selectionEnd);
+        box->selectionStartEnd(selectionStart, selectionEnd);
         return selectionStart < selectionEnd;
     }
 
@@ -436,13 +436,13 @@ struct SVGRootInlineBoxPaintWalker {
         m_paintInfo.rect = m_savedInfo.rect;
     }
 
-    bool setupBackground(InlineBox* /*box*/)
+    bool setupBackground(SVGInlineTextBox* /*box*/)
     {
         m_textPaintInfo.subphase = SVGTextPaintSubphaseBackground;
         return true;
     }
 
-    bool setupFill(InlineBox* box)
+    bool setupFill(SVGInlineTextBox* box)
     {
         InlineFlowBox* flowBox = box->parent();
 
@@ -464,7 +464,7 @@ struct SVGRootInlineBoxPaintWalker {
         return false;
     }
 
-    bool setupFillSelection(InlineBox* box)
+    bool setupFillSelection(SVGInlineTextBox* box)
     {
         InlineFlowBox* flowBox = box->parent();
 
@@ -492,7 +492,7 @@ struct SVGRootInlineBoxPaintWalker {
         return false;
     }
 
-    bool setupStroke(InlineBox* box)
+    bool setupStroke(SVGInlineTextBox* box)
     {
         InlineFlowBox* flowBox = box->parent();
 
@@ -516,7 +516,7 @@ struct SVGRootInlineBoxPaintWalker {
         return false;
     }
 
-    bool setupStrokeSelection(InlineBox* box)
+    bool setupStrokeSelection(SVGInlineTextBox* box)
     {
         InlineFlowBox* flowBox = box->parent();
 
@@ -545,7 +545,7 @@ struct SVGRootInlineBoxPaintWalker {
         return false;
     }
 
-    bool setupForeground(InlineBox* /*box*/)
+    bool setupForeground(SVGInlineTextBox* /*box*/)
     {
         teardownFillPaintServer();
         teardownStrokePaintServer();

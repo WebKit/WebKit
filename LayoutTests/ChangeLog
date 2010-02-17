@@ -1,3 +1,19 @@
+2010-02-16  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        REGRESSION: SVG text disappaears after double click
+        https://bugs.webkit.org/show_bug.cgi?id=34880
+        
+        * platform/mac/svg/text/selection-doubleclick-expected.checksum: Added.
+        * platform/mac/svg/text/selection-doubleclick-expected.png: Added.
+        * platform/mac/svg/text/selection-doubleclick-expected.txt: Added.
+        * platform/mac/svg/text/selection-tripleclick-expected.checksum: Added.
+        * platform/mac/svg/text/selection-tripleclick-expected.png: Added.
+        * platform/mac/svg/text/selection-tripleclick-expected.txt: Added.
+        * svg/text/selection-doubleclick.svg: Added.
+        * svg/text/selection-tripleclick.svg: Added.
+
 2010-02-16  Yusuke Sato  <yusukes@chromium.org>
 
         Reviewed by Dimitri Glazkov.

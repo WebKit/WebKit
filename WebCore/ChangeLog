@@ -1,3 +1,21 @@
+2010-02-16  MORITA Hajime  <morrita@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        REGRESSION: SVG text disappaears after double click
+        https://bugs.webkit.org/show_bug.cgi?id=34880
+
+        Tests: svg/text/selection-doubleclick.svg
+               svg/text/selection-tripleclick.svg
+
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::mayHaveSelection):
+        Use InlineTextBox::selectionStartEnd() instead of
+        RenderObject::selectionStartEnd() because latter may span multiple
+        comparing startPos and endPos is irrelevant in some cases.
+        former selectionStartEnd() is for single line and comparing
+        startPos and endPos will make sense.
+
 2010-02-16  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Timothy Hatcher.
