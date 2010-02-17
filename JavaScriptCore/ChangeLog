@@ -1,3 +1,16 @@
+2010-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a handful of other leaks seen on the buildbot.
+
+        * runtime/UStringImpl.h:
+        (JSC::UStringOrRopeImpl::deref): Delegate through to the subclass version of deref to ensure that
+        the correct cleanup takes place.  This function previously featured some code that attempted to
+        skip deletion of static UStringImpl's.  Closer inspection revealed that it was in fact equivalent
+        to "if (false)", meaning that UStringImpl's which had their final deref performed via this function
+        were leaked.
+
 2010-02-16  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Gavin Barraclough.

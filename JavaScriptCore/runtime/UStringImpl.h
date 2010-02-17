@@ -346,13 +346,10 @@ private:
 
 inline void UStringOrRopeImpl::deref()
 {
-    m_refCountAndFlags -= s_refCountIncrement;
-    if (!(m_refCountAndFlags & s_refCountMask)) {
-        if (isRope())
-            static_cast<URopeImpl*>(this)->destructNonRecursive();
-        else if (!s_refCountFlagStatic)
-            delete static_cast<UStringImpl*>(this);
-    }
+    if (isRope())
+        static_cast<URopeImpl*>(this)->deref();
+    else
+        static_cast<UStringImpl*>(this)->deref();
 }
 
 bool equal(const UStringImpl*, const UStringImpl*);
