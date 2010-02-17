@@ -1,5 +1,9 @@
 2010-02-16  Darin Adler  <darin@apple.com>
 
+        * page/MediaCanStartListener.h: Fixed license.
+
+2010-02-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         Generalize delayed plug-in start for background tabs for use for other media
