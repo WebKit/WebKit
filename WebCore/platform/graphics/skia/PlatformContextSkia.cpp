@@ -344,15 +344,6 @@ void PlatformContextSkia::setupPaintForFilling(SkPaint* paint) const
     paint->setShader(m_state->m_fillShader);
 }
 
-static SkScalar scalarBound(SkScalar v, SkScalar min, SkScalar max)
-{
-    if (v < min)
-        return min;
-    if (v > max)
-        return max;
-    return v;
-}
-
 float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, int length) const
 {
     setupPaintCommon(paint);
@@ -361,13 +352,10 @@ float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, i
     paint->setColor(m_state->applyAlpha(m_state->m_strokeColor));
     paint->setShader(m_state->m_strokeShader);
     paint->setStyle(SkPaint::kStroke_Style);
-    // The limits here (512 and 256) were made up but are hopefully large
-    // enough to be reasonable. They are, empirically, small enough not to
-    // cause overflows in Skia.
-    paint->setStrokeWidth(scalarBound(SkFloatToScalar(width), 0, 512));
+    paint->setStrokeWidth(SkFloatToScalar(width));
     paint->setStrokeCap(m_state->m_lineCap);
     paint->setStrokeJoin(m_state->m_lineJoin);
-    paint->setStrokeMiter(scalarBound(SkFloatToScalar(m_state->m_miterLimit), 0, 256));
+    paint->setStrokeMiter(SkFloatToScalar(m_state->m_miterLimit));
 
     if (m_state->m_dash)
         paint->setPathEffect(m_state->m_dash);
