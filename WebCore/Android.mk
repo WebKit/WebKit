@@ -602,7 +602,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderSVGInline.cpp \
 	rendering/RenderSVGInlineText.cpp \
 	rendering/RenderSVGModelObject.cpp \
-	rendering/RenderSVGResourceMasker.cpp \
 	rendering/RenderSVGRoot.cpp \
 	rendering/RenderSVGShadowTreeRootContainer.cpp \
 	rendering/RenderSVGTSpan.cpp \
@@ -858,6 +857,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/graphics/SVGResourceClipper.cpp \
 	svg/graphics/SVGResourceFilter.cpp \
 	svg/graphics/SVGResourceMarker.cpp \
+	svg/graphics/SVGResourceMasker.cpp \
 	\
 	svg/graphics/filters/SVGFEConvolveMatrix.cpp \
 	svg/graphics/filters/SVGFEDiffuseLighting.cpp \

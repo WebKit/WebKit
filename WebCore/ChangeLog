@@ -1,3 +1,7 @@
+2010-02-17  Dirk Schulze  <krit@webkit.org>
+
+        Rolling out r54909. Breaks SL and Win.
+
 2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

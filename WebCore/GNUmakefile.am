@@ -2990,9 +2990,6 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGInlineText.h \
 	WebCore/rendering/RenderSVGModelObject.cpp \
 	WebCore/rendering/RenderSVGModelObject.h \
-	WebCore/rendering/RenderSVGResource.h \
-	WebCore/rendering/RenderSVGResourceMasker.cpp \
-	WebCore/rendering/RenderSVGResourceMasker.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
 	WebCore/rendering/RenderSVGRoot.h \
 	WebCore/rendering/RenderSVGShadowTreeRootContainer.cpp \
@@ -3335,6 +3332,8 @@ webcore_sources += \
 	WebCore/svg/graphics/SVGResourceListener.h \
 	WebCore/svg/graphics/SVGResourceMarker.cpp \
 	WebCore/svg/graphics/SVGResourceMarker.h \
+	WebCore/svg/graphics/SVGResourceMasker.cpp \
+	WebCore/svg/graphics/SVGResourceMasker.h \
 	WebCore/svg/graphics/filters/SVGDistantLightSource.h \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.h \

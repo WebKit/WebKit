@@ -54,7 +54,6 @@ class RenderTheme;
 class TransformState;
 class VisiblePosition;
 #if ENABLE(SVG)
-class RenderSVGResource;
 class SVGRenderBase;
 #endif
 
@@ -333,10 +332,8 @@ public:
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGForeignObject() const { return false; }
-    virtual bool isSVGResource() const { return false; }
 
     virtual const SVGRenderBase* toSVGRenderBase() const;
-    virtual RenderSVGResource* toRenderSVGResource();
 
     // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
     // This is used for all computation of objectBoundingBox relative units and by SVGLocateable::getBBox().

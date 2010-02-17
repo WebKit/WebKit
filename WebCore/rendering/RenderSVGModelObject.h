@@ -60,8 +60,6 @@ public:
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    virtual void destroy();
-
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
 
 private:

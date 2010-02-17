@@ -1656,8 +1656,6 @@ HEADERS += \
     rendering/RenderSVGInline.h \
     rendering/RenderSVGInlineText.h \
     rendering/RenderSVGModelObject.h \
-    rendering/RenderSVGResource.h \
-    rendering/RenderSVGResourceMasker.h \
     rendering/RenderSVGRoot.h \
     rendering/RenderSVGShadowTreeRootContainer.h \
     rendering/RenderSVGText.h \
@@ -1749,6 +1747,7 @@ HEADERS += \
     svg/graphics/SVGResourceFilter.h \
     svg/graphics/SVGResource.h \
     svg/graphics/SVGResourceMarker.h \
+    svg/graphics/SVGResourceMasker.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
@@ -2599,6 +2598,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/SVGResource.cpp \
         svg/graphics/SVGResourceFilter.cpp \
         svg/graphics/SVGResourceMarker.cpp \
+        svg/graphics/SVGResourceMasker.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
@@ -2609,7 +2609,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
         rendering/RenderSVGModelObject.cpp \
-        rendering/RenderSVGResourceMasker.cpp \
         rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGShadowTreeRootContainer.cpp \
         rendering/RenderSVGText.cpp \

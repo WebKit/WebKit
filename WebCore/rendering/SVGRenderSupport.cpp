@@ -28,15 +28,13 @@
 #include "SVGRenderSupport.h"
 
 #include "AffineTransform.h"
-#include "Document.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
-#include "RenderSVGResource.h"
-#include "RenderSVGResourceMasker.h"
 #include "RenderView.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
+#include "SVGResourceMasker.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "TransformState.h"
@@ -129,14 +127,17 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         filter = newFilter;
 #endif
 
-    // apply Masker
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, maskerId)) {
-        if (!masker->applyResource(object, object->objectBoundingBox(), paintInfo.context))
+    SVGResourceClipper* clipper = getClipperById(document, clipperId, object);
+    SVGResourceMasker* masker = getMaskerById(document, maskerId, object);
+
+    if (masker) {
+        masker->addClient(styledElement);
+        if (!masker->applyMask(paintInfo.context, object))
             return false;
-    } else if (!clipperId.isEmpty())
+    } else if (!maskerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
-    if (SVGResourceClipper* clipper = getClipperById(document, clipperId, object)) {
+    if (clipper) {
         clipper->addClient(styledElement);
         clipper->applyClip(paintInfo.context, object->objectBoundingBox());
     } else if (!clipperId.isEmpty())
@@ -296,17 +297,11 @@ FloatRect SVGRenderBase::clipperBoundingBoxForRenderer(const RenderObject* objec
 
 FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object) const
 {
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
-        return masker->resourceBoundingBox(object->objectBoundingBox());
+    SVGResourceMasker* masker = getMaskerById(object->document(), object->style()->svgStyle()->maskElement(), object);
+    if (masker)
+        return masker->maskerBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
-}
-
-void SVGRenderBase::deregisterFromResources(RenderObject* object)
-{
-    // We only have a renderer for masker at the moment.
-    if (RenderSVGResourceMasker* resource = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
-        resource->invalidateClient(object);
 }
 
 void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const AffineTransform& localToAncestorTransform)

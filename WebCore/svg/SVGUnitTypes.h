@@ -38,9 +38,9 @@ private:
     SVGUnitTypes() { }
 };
 
-static inline SVGUnitTypes::SVGUnitType toUnitType(int type) { return static_cast<SVGUnitTypes::SVGUnitType>(type); }
+} // namespace WebCore
 
-}
+#endif // ENABLE(SVG)
+#endif // SVGUnitTypes_h
 
-#endif
-#endif
+// vim:ts=4:noet

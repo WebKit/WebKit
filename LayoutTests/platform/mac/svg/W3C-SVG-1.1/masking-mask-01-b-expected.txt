@@ -1,4 +1,7 @@
+KCanvasResource {id="mask1" [type=MASKER]}
 KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#FFFFFF7F)]] [bounding box mode=0] [start=(60,50)] [end=(60,120)]}
+KCanvasResource {id="mask2" [type=MASKER]}
+KCanvasResource {id="mask3" [type=MASKER]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -9,24 +12,22 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,-13) size 139x16
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 139.00: "Test for mask support"
       RenderPath {rect} at (10,30) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [data="M10.00,30.00 L110.00,30.00 L110.00,290.00 L10.00,290.00 Z"]
-      RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+      RenderSVGContainer {mask} at (60,50) size 100x60
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
             RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderPath {rect} at (60,50) size 100x60 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#FFFFFF7F)]] [bounding box mode=0] [start=(60,50)] [end=(60,120)]}] [data="M60.00,50.00 L160.00,50.00 L160.00,110.00 L60.00,110.00 Z"]
       RenderPath {rect} at (60,50) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [data="M60.00,50.00 L160.00,50.00 L160.00,110.00 L60.00,110.00 Z"]
-        [masker="mask1"] RenderSVGResourceMasker {mask} at (60,50) size 100x60
       RenderSVGText {text} at (200,65) size 163x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 163x14
           chunk 1 text run 1 at (200.00,65.00) startOffset 0 endOffset 30 width 163.00: "Mask with linear gradient from"
       RenderSVGText {text} at (200,80) size 135x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 135x14
           chunk 1 text run 1 at (200.00,80.00) startOffset 0 endOffset 25 width 135.00: "opacity=1 to opactity=0.5"
-      RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+      RenderSVGContainer {mask} at (60,120) size 100x30
         RenderPath {rect} at (60,120) size 100x30 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [data="M60.00,120.00 L160.00,120.00 L160.00,150.00 L60.00,150.00 Z"]
       RenderPath {rect} at (60,120) size 100x30 [fill={[type=SOLID] [color=#00FF00]}] [data="M60.00,120.00 L160.00,120.00 L160.00,150.00 L60.00,150.00 Z"]
-        [masker="mask2"] RenderSVGResourceMasker {mask} at (60,120) size 100x30
       RenderSVGText {text} at (200,135) size 173x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 173x14
           chunk 1 text run 1 at (200.00,135.00) startOffset 0 endOffset 32 width 173.00: "Mask with uniform opacity of 0.5"
@@ -34,15 +35,13 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (200,175) size 200x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 200x14
           chunk 1 text run 1 at (200.00,175.00) startOffset 0 endOffset 37 width 200.00: "Rectangle with uniform opacity of 0.5"
-      RenderSVGResourceMasker {mask} [id="mask3"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+      RenderSVGContainer {mask} at (60,200) size 200x100
         RenderPath {rect} at (60,200) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [data="M60.00,200.00 L260.00,200.00 L260.00,225.00 L60.00,225.00 Z"]
         RenderPath {rect} at (60,225) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [data="M60.00,225.00 L260.00,225.00 L260.00,250.00 L60.00,250.00 Z"]
         RenderPath {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00 L260.00,250.00 L260.00,275.00 L60.00,275.00 Z"]
         RenderPath {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00 L260.00,275.00 L260.00,300.00 L60.00,300.00 Z"]
       RenderSVGText {text} at (60,280) size 162x110 contains 1 chunk(s)
-        [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
         RenderSVGInlineText {#text} at (0,-77) size 162x110
-          [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
           chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 121.33: "SVG"
       RenderSVGText {text} at (200,225) size 200x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 200x14
