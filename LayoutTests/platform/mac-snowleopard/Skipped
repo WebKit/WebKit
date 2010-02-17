@@ -29,7 +29,7 @@ svg/transforms/text-with-pattern-with-svg-transform.svg
 # https://bugs.webkit.org/show_bug.cgi?id=35012 (SVG entity parsing broken on SnowLeopard/Windows)
 svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
-svg/zoom/test/zoom-coords-viewattr-01-b.svg
+svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
 # Disable media tests that depend on controller size/position until
 # <rdar://problem/6502936> Update run-webkit-tests to deal with new media controller look
