@@ -118,4 +118,35 @@ UStringImpl::~UStringImpl()
     }
 }
 
+void URopeImpl::derefFibersNonRecursive(Vector<URopeImpl*, 32>& workQueue)
+{
+    unsigned length = fiberCount();
+    for (unsigned i = 0; i < length; ++i) {
+        Fiber& fiber = fibers(i);
+        if (fiber->isRope()) {
+            URopeImpl* nextRope = static_cast<URopeImpl*>(fiber);
+            if (nextRope->hasOneRef())
+                workQueue.append(nextRope);
+            else
+                nextRope->deref();
+        } else
+            static_cast<UStringImpl*>(fiber)->deref();
+    }
 }
+
+void URopeImpl::destructNonRecursive()
+{
+    Vector<URopeImpl*, 32> workQueue;
+
+    derefFibersNonRecursive(workQueue);
+    delete this;
+
+    while (!workQueue.isEmpty()) {
+        URopeImpl* rope = workQueue.last();
+        workQueue.removeLast();
+        rope->derefFibersNonRecursive(workQueue);
+        delete rope;
+    }
+}
+
+} // namespace JSC

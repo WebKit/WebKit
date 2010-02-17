@@ -495,7 +495,7 @@ uint32_t UString::toStrictUInt32(bool* ok) const
         *ok = false;
 
     // Empty string is not OK.
-    unsigned len = m_rep->size();
+    unsigned len = m_rep->length();
     if (len == 0)
         return 0;
     const UChar* p = m_rep->data();
@@ -712,8 +712,8 @@ int compare(const UString& s1, const UString& s2)
 
 bool equal(const UString::Rep* r, const UString::Rep* b)
 {
-    unsigned length = r->size();
-    if (length != b->size())
+    unsigned length = r->length();
+    if (length != b->length())
         return false;
     const UChar* d = r->data();
     const UChar* s = b->data();

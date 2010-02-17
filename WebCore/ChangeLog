@@ -1,3 +1,19 @@
+2010-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34964
+        Leaks tool reports false memory leaks due to Rope implementation.
+
+        Renamed cUStringImpl::size() to UStringImpl::size()UStringImpl::length()
+        (matches WebCore::StringImpl).
+
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaStringImpl::length):
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::find):
+
 2010-02-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7288853> Message about missing plugin does not specify

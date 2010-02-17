@@ -1,3 +1,85 @@
+2010-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34964
+        Leaks tool reports false memory leaks due to Rope implementation.
+
+        A rope is a recursive data structure where each node in the rope holds a set of
+        pointers, each of which may reference either a string (in UStringImpl form) or
+        another rope node.  A low bit in each pointer is used to distinguish between
+        rope & string elements, in a fashion similar to the recently-removed
+        PtrAndFlags class (see https://bugs.webkit.org/show_bug.cgi?id=33731 ).  Again,
+        this causes a problem for Leaks – refactor to remove the magic pointer
+        mangling.
+
+        Move Rope out from JSString.h and rename to URopeImpl, to match UStringImpl.
+        Give UStringImpl and URopeImpl a common parent class, UStringOrRopeImpl.
+        Repurpose an otherwise invalid permutation to flags (static & should report
+        memory cost) to identify ropes.
+
+        This allows us to change the rope's fibers to interrogate the object rather
+        than storing a bool within the low bits of the pointer (or in some cases the
+        use of a common parent class removes the need to determine the type at all -
+        there is a common interface to ref or get the length of either ropes or strings).
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::keyForCharacterSwitch):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        (JSC::Identifier::addSlowCase):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/JSString.h:
+        (JSC::):
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::~JSString):
+        (JSC::RopeBuilder::appendStringInConstruct):
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::RopeBuilder::JSStringFinalizerStruct::JSStringFinalizerStruct):
+        (JSC::RopeBuilder::JSStringFinalizerStruct::):
+        * runtime/UString.cpp:
+        (JSC::UString::toStrictUInt32):
+        (JSC::equal):
+        * runtime/UString.h:
+        (JSC::UString::isEmpty):
+        (JSC::UString::size):
+        * runtime/UStringImpl.cpp:
+        (JSC::URopeImpl::derefFibersNonRecursive):
+        (JSC::URopeImpl::destructNonRecursive):
+        * runtime/UStringImpl.h:
+        (JSC::UStringOrRopeImpl::isRope):
+        (JSC::UStringOrRopeImpl::length):
+        (JSC::UStringOrRopeImpl::ref):
+        (JSC::UStringOrRopeImpl::):
+        (JSC::UStringOrRopeImpl::operator new):
+        (JSC::UStringOrRopeImpl::UStringOrRopeImpl):
+        (JSC::UStringImpl::adopt):
+        (JSC::UStringImpl::createUninitialized):
+        (JSC::UStringImpl::tryCreateUninitialized):
+        (JSC::UStringImpl::data):
+        (JSC::UStringImpl::cost):
+        (JSC::UStringImpl::deref):
+        (JSC::UStringImpl::UStringImpl):
+        (JSC::UStringImpl::):
+        (JSC::URopeImpl::tryCreateUninitialized):
+        (JSC::URopeImpl::initializeFiber):
+        (JSC::URopeImpl::fiberCount):
+        (JSC::URopeImpl::fibers):
+        (JSC::URopeImpl::deref):
+        (JSC::URopeImpl::URopeImpl):
+        (JSC::URopeImpl::hasOneRef):
+        (JSC::UStringOrRopeImpl::deref):
+
 2010-02-15  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

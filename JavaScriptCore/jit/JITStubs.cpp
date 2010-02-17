@@ -3023,7 +3023,7 @@ DEFINE_STUB_FUNCTION(void*, op_switch_char)
 
     if (scrutinee.isString()) {
         UString::Rep* value = asString(scrutinee)->value(callFrame).rep();
-        if (value->size() == 1)
+        if (value->length() == 1)
             result = codeBlock->characterSwitchJumpTable(tableIndex).ctiForValue(value->data()[0]).executableAddress();
     }
 

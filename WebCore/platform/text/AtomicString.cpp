@@ -248,7 +248,7 @@ PassRefPtr<StringImpl> AtomicString::add(const JSC::Identifier& identifier)
         return 0;
 
     UString::Rep* string = identifier.ustring().rep();
-    unsigned length = string->size();
+    unsigned length = string->length();
     if (!length)
         return StringImpl::empty();
 
@@ -265,7 +265,7 @@ PassRefPtr<StringImpl> AtomicString::add(const JSC::UString& ustring)
         return 0;
 
     UString::Rep* string = ustring.rep();
-    unsigned length = string->size();
+    unsigned length = string->length();
     if (!length)
         return StringImpl::empty();
 
@@ -282,7 +282,7 @@ AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
         return 0;
 
     UString::Rep* string = identifier.ustring().rep();
-    unsigned length = string->size();
+    unsigned length = string->length();
     if (!length)
         return static_cast<AtomicStringImpl*>(StringImpl::empty());
 

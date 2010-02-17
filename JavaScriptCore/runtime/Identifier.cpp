@@ -79,7 +79,7 @@ void deleteIdentifierTable(IdentifierTable* table)
 
 bool Identifier::equal(const UString::Rep* r, const char* s)
 {
-    int length = r->size();
+    int length = r->length();
     const UChar* d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i] != (unsigned char)s[i])
@@ -89,7 +89,7 @@ bool Identifier::equal(const UString::Rep* r, const char* s)
 
 bool Identifier::equal(const UString::Rep* r, const UChar* s, unsigned length)
 {
-    if (r->size() != length)
+    if (r->length() != length)
         return false;
     const UChar* d = r->data();
     for (unsigned i = 0; i != length; ++i)
@@ -209,7 +209,7 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int le
 PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UString::Rep* r)
 {
     ASSERT(!r->isIdentifier());
-    if (r->size() == 1) {
+    if (r->length() == 1) {
         UChar c = r->data()[0];
         if (c <= 0xFF)
             r = globalData->smallStrings.singleCharacterStringRep(c);
@@ -220,7 +220,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UStri
                 return r;
             }
     }
-    if (!r->size()) {
+    if (!r->length()) {
         UString::Rep::empty().hash();
         return &UString::Rep::empty();
     }

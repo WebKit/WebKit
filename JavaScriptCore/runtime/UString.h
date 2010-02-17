@@ -132,11 +132,11 @@ namespace JSC {
         const UChar* data() const { return m_rep->data(); }
 
         bool isNull() const { return m_rep == s_nullRep; }
-        bool isEmpty() const { return !m_rep->size(); }
+        bool isEmpty() const { return !m_rep->length(); }
 
         bool is8Bit() const;
 
-        unsigned size() const { return m_rep->size(); }
+        unsigned size() const { return m_rep->length(); }
 
         UChar operator[](unsigned pos) const;
 

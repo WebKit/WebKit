@@ -32,95 +32,6 @@
 
 namespace JSC {
 
-    // FIXME: this class is on its way out into a different header.
-    class Rope : public RefCounted<Rope> {
-    public:
-        // A Rope is composed from a set of smaller strings called Fibers.
-        // Each Fiber in a rope is either UString::Rep or another Rope.
-        class Fiber {
-        public:
-            Fiber() : m_value(0) {}
-            Fiber(UString::Rep* string) : m_value(reinterpret_cast<intptr_t>(string)) {}
-            Fiber(Rope* rope) : m_value(reinterpret_cast<intptr_t>(rope) | 1) {}
-
-            Fiber(void* nonFiber) : m_value(reinterpret_cast<intptr_t>(nonFiber)) {}
-
-            void deref()
-            {
-                if (isRope())
-                    rope()->deref();
-                else
-                    string()->deref();
-            }
-
-            Fiber& ref()
-            {
-                if (isString())
-                    string()->ref();
-                else
-                    rope()->ref();
-                return *this;
-            }
-
-            unsigned refAndGetLength()
-            {
-                if (isString()) {
-                    UString::Rep* rep = string();
-                    return rep->ref()->size();
-                } else {
-                    Rope* r = rope();
-                    r->ref();
-                    return r->length();
-                }
-            }
-
-            bool isRope() { return m_value & 1; }
-            Rope* rope() { return reinterpret_cast<Rope*>(m_value & ~1); }
-            bool isString() { return !isRope(); }
-            UString::Rep* string() { return reinterpret_cast<UString::Rep*>(m_value); }
-
-            void* nonFiber() { return reinterpret_cast<void*>(m_value); }
-        private:
-            intptr_t m_value;
-        };
-
-        // Creates a Rope comprising of 'fiberCount' Fibers.
-        // The Rope is constructed in an uninitialized state - initialize must be called for each Fiber in the Rope.
-        static PassRefPtr<Rope> tryCreateUninitialized(unsigned fiberCount)
-        {
-            void* allocation;
-            if (tryFastMalloc(sizeof(Rope) + (fiberCount - 1) * sizeof(Fiber)).getValue(allocation))
-                return adoptRef(new (allocation) Rope(fiberCount));
-            return 0;
-        }
-
-        ~Rope();
-        void destructNonRecursive();
-
-        void initializeFiber(unsigned &index, Fiber& fiber)
-        {
-            m_fibers[index++] = fiber;
-            m_length += fiber.refAndGetLength();
-        }
-        void initializeFiber(unsigned &index, UStringImpl* impl)
-        {
-            m_fibers[index++] = Fiber(impl);
-            m_length += impl->ref()->size();
-        }
-
-        unsigned fiberCount() { return m_fiberCount; }
-        unsigned length() { return m_length; }
-        Fiber& fibers(unsigned index) { return m_fibers[index]; }
-
-    private:
-        Rope(unsigned fiberCount) : m_fiberCount(fiberCount), m_length(0) {}
-        void* operator new(size_t, void* inPlace) { return inPlace; }
-        
-        unsigned m_fiberCount;
-        unsigned m_length;
-        Fiber m_fibers[1];
-    };
-
     class JSString;
 
     JSString* jsEmptyString(JSGlobalData*);
@@ -156,6 +67,8 @@ namespace JSC {
         friend class JIT;
         friend class JSGlobalData;
 
+        typedef URopeImpl Rope;
+
         class RopeBuilder {
         public:
             RopeBuilder(unsigned fiberCount)
@@ -180,7 +93,7 @@ namespace JSC {
             {
                 if (jsString->isRope()) {
                     for (unsigned i = 0; i < jsString->m_fiberCount; ++i)
-                        append(jsString->m_fibers[i]);
+                        append(jsString->m_other.m_fibers[i]);
                 } else
                     append(jsString->string());
             }
@@ -215,7 +128,7 @@ namespace JSC {
         }
         JSString(JSGlobalData* globalData, PassRefPtr<UString::Rep> value, HasOtherOwnerType)
             : JSCell(globalData->stringStructure.get())
-            , m_length(value->size())
+            , m_length(value->length())
             , m_value(value)
             , m_fiberCount(0)
         {
@@ -225,7 +138,7 @@ namespace JSC {
             , m_length(rope->length())
             , m_fiberCount(1)
         {
-            m_fibers[0] = rope.releaseRef();
+            m_other.m_fibers[0] = rope.releaseRef();
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
@@ -289,8 +202,8 @@ namespace JSC {
             , m_fiberCount(0)
         {
             // nasty hack because we can't union non-POD types
-            m_fibers[0] = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(finalizer));
-            m_fibers[1] = context;
+            m_other.m_finalizerCallback = finalizer;
+            m_other.m_finalizerContext = context;
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
@@ -298,12 +211,10 @@ namespace JSC {
         {
             ASSERT(vptr() == JSGlobalData::jsStringVPtr);
             for (unsigned i = 0; i < m_fiberCount; ++i)
-                m_fibers[i].deref();
+                m_other.m_fibers[i]->deref();
 
-            if (!m_fiberCount && m_fibers[0].nonFiber()) {
-                JSStringFinalizerCallback finalizer = reinterpret_cast<JSStringFinalizerCallback>(m_fibers[0].nonFiber());
-                finalizer(this, m_fibers[1].nonFiber());
-            }
+            if (!m_fiberCount && m_other.m_finalizerCallback)
+                m_other.m_finalizerCallback(this, m_other.m_finalizerContext);
         }
 
         const UString& value(ExecState* exec) const
@@ -342,14 +253,19 @@ namespace JSC {
 
         void appendStringInConstruct(unsigned& index, const UString& string)
         {
-            m_fibers[index++] = Rope::Fiber(string.rep()->ref());
+            UStringImpl* impl = string.rep();
+            impl->ref();
+            m_other.m_fibers[index++] = impl;
         }
 
         void appendStringInConstruct(unsigned& index, JSString* jsString)
         {
             if (jsString->isRope()) {
-                for (unsigned i = 0; i < jsString->m_fiberCount; ++i)
-                    m_fibers[index++] = jsString->m_fibers[i].ref();
+                for (unsigned i = 0; i < jsString->m_fiberCount; ++i) {
+                    Rope::Fiber fiber = jsString->m_other.m_fibers[i];
+                    fiber->ref();
+                    m_other.m_fibers[index++] = fiber;
+                }
             } else
                 appendStringInConstruct(index, jsString->string());
         }
@@ -364,7 +280,9 @@ namespace JSC {
                 m_length += s->length();
             } else {
                 UString u(v.toString(exec));
-                m_fibers[index++] = Rope::Fiber(u.rep()->ref());
+                UStringImpl* impl = u.rep();
+                impl->ref();
+                m_other.m_fibers[index++] = impl;
                 m_length += u.size();
             }
         }
@@ -391,7 +309,17 @@ namespace JSC {
         unsigned m_length;
         mutable UString m_value;
         mutable unsigned m_fiberCount;
-        mutable Rope::Fiber m_fibers[s_maxInternalRopeLength];
+        // This structure exists to support a temporary workaround for a GC issue.
+        struct JSStringFinalizerStruct {
+            JSStringFinalizerStruct() : m_finalizerCallback(0) {}
+            union {
+                mutable Rope::Fiber m_fibers[s_maxInternalRopeLength];
+                struct {
+                    JSStringFinalizerCallback m_finalizerCallback;
+                    void* m_finalizerContext;
+                };
+            };
+        } m_other;
 
         bool isRope() const { return m_fiberCount; }
         UString& string() { ASSERT(!isRope()); return m_value; }
