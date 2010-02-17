@@ -1,3 +1,15 @@
+2010-02-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Protect the resource loader object from disappearing during
+        parseDataUrl.
+
+        Tested by testdownload API test.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::parseDataUrl):
+
 2010-02-17  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

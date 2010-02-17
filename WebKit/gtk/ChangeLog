@@ -1,3 +1,15 @@
+2010-02-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Test that data URIs that cause downloads to be started do not crash.
+
+        * tests/testdownload.c:
+        (mime_type_policy_decision_requested_cb):
+        (idle_quit_loop_cb):
+        (test_webkit_download_data):
+        (main):
+
 2010-02-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

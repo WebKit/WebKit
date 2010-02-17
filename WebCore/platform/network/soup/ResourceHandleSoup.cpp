@@ -43,6 +43,7 @@
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
+#include "ResourceLoader.h"
 #include "ResourceResponse.h"
 #include "TextEncoding.h"
 
@@ -357,6 +358,11 @@ static gboolean parseDataUrl(gpointer callback_data)
     if (!client)
         return false;
 
+    // Ugly hack to avoid crashing in this function, by having
+    // didReceiveResponse destroy the loader. This condition is
+    // impossible to detect the way data: URLs are handled, currently.
+    RefPtr<ResourceLoader> resourceLoader(reinterpret_cast<ResourceLoader*>(client));
+
     String url = handle->request().url().string();
     ASSERT(url.startsWith("data:", false));
 
@@ -410,10 +416,11 @@ static gboolean parseDataUrl(gpointer callback_data)
 
         if (data.length() > 0)
             client->didReceiveData(handle, reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), 0);
-
-        if (d->m_cancelled)
-            return false;
     }
+
+
+    if (d->m_cancelled || !resourceLoader->frameLoader())
+        return false;
 
     client->didFinishLoading(handle);
 

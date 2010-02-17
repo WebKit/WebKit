@@ -177,6 +177,52 @@ test_webkit_download_asynch(void)
     test_webkit_download_perform(TRUE);
 }
 
+static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebKitWebFrame* frame,
+                                                       WebKitNetworkRequest* request, const char* mime_type,
+                                                       WebKitWebPolicyDecision* decision, gpointer data)
+{
+    webkit_web_policy_decision_download(decision);
+    return TRUE;
+}
+
+static void idle_quit_loop_cb(WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
+{
+    if (webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FINISHED ||
+        webkit_web_view_get_load_status(web_view) == WEBKIT_LOAD_FAILED)
+        g_main_loop_quit(loop);
+}
+
+static void
+test_webkit_download_data(void)
+{
+    gboolean beenThere = FALSE;
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+
+    g_signal_connect(webView, "download-requested",
+                     G_CALLBACK(download_requested_cb),
+                     &beenThere);
+
+    g_signal_connect(webView, "notify::load-status",
+                     G_CALLBACK(idle_quit_loop_cb),
+                     NULL);
+
+    g_signal_connect(webView, "mime-type-policy-decision-requested",
+                     G_CALLBACK(mime_type_policy_decision_requested_cb),
+                     NULL);
+
+    loop = g_main_loop_new(NULL, TRUE);
+
+    /* We're testing for a crash, so just not crashing is a pass */
+    webkit_web_view_load_uri(webView, "data:application/octect-stream,");
+    g_main_loop_run(loop);
+
+    g_assert_cmpint(beenThere, ==, TRUE);
+
+    g_main_loop_unref(loop);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -186,6 +232,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/download/create", test_webkit_download_create);
     g_test_add_func("/webkit/download/synch", test_webkit_download_synch);
     g_test_add_func("/webkit/download/asynch", test_webkit_download_asynch);
+    g_test_add_func("/webkit/download/data", test_webkit_download_data);
     return g_test_run ();
 }
 
