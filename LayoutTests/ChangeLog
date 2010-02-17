@@ -1,3 +1,9 @@
+2010-02-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Skip a number of new tests.
+
+        * platform/gtk/Skipped:
+
 2010-01-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
