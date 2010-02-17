@@ -1,3 +1,18 @@
+2010-02-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Remove some warnings seen when building Qt
+        https://bugs.webkit.org/show_bug.cgi?id=35017
+
+        Using a machine without the needed tools to build WebKit leads to
+        several errors and warnings.
+
+        * Scripts/webkitdirs.pm: Refactored the code testing the command's
+        presence into a commandExists routine. While doing so removed, stderr
+        output as it usually does not give anything more than our message. Also
+        added a Qt check for qmake that was missing.
+
 2010-02-17  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Gustavo Noronha.
