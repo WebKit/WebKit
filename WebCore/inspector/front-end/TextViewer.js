@@ -52,6 +52,7 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this._paintCoalescingLevel = 0;
 
     this.freeCachedElements();
+    this._buildChunks();
 }
 
 WebInspector.TextViewer.prototype = {
@@ -195,7 +196,11 @@ WebInspector.TextViewer.prototype = {
 
     _scroll: function()
     {
-        this._repaintAll();
+        var scrollTop = this.element.scrollTop;
+        setTimeout(function() {
+            if (scrollTop === this.element.scrollTop)
+                this._repaintAll();
+        }.bind(this), 50);
     },
 
     beginUpdates: function(enabled)
@@ -557,7 +562,6 @@ WebInspector.TextChunk = function(textViewer, startLine, endLine)
 
     this._lineNumberElement = document.createElement("td");
     this._lineNumberElement.className = "webkit-line-number";
-    this._lineNumberElement.textContent = this._lineNumberText(this.startLine);
     this.element.appendChild(this._lineNumberElement);
 
     this._lineContentElement = document.createElement("td");
@@ -566,9 +570,13 @@ WebInspector.TextChunk = function(textViewer, startLine, endLine)
 
     this._expanded = false;
 
+    var lineNumbers = [];
     var lines = [];
-    for (var i = this.startLine; i < this.startLine + this.linesCount; ++i)
+    for (var i = startLine; i < endLine; ++i) {
+        lineNumbers.push(i + 1);
         lines.push(this._textModel.line(i));
+    }
+    this._lineNumberElement.textContent = lineNumbers.join("\n");
     this._lineContentElement.textContent = lines.join("\n");
 }
 
@@ -653,18 +661,6 @@ WebInspector.TextChunk.prototype = {
         return result;
     },
 
-    _lineNumberText: function(lineNumber)
-    {
-        var totalDigits = Math.ceil(Math.log(this._textModel.linesCount + 1) / Math.log(10));
-        var digits = Math.ceil(Math.log(lineNumber + 2) / Math.log(10));
-
-        var text = "";
-        for (var i = digits; i < totalDigits; ++i)
-            text += " ";
-        text += lineNumber + 1;
-        return text;
-    },
-
     _createRow: function(lineNumber)
     {
         var cachedRows = this._textViewer._cachedRows;
@@ -685,7 +681,7 @@ WebInspector.TextChunk.prototype = {
             lineRow.appendChild(lineContentElement);        
         }
         lineRow.lineNumber = lineNumber;
-        lineNumberElement.textContent = this._lineNumberText(lineNumber);
+        lineNumberElement.textContent = lineNumber + 1;
         lineContentElement.textContent = this._textModel.line(lineNumber);
         return lineRow;
     }

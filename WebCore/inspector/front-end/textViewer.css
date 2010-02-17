@@ -11,7 +11,6 @@
 .text-editor-lines {
     border: 0;
     width: 100%;
-    vertical-align: baseline;
     -webkit-border-horizontal-spacing: 0;
     -webkit-border-vertical-spacing: 0;
     -webkit-user-select: text;
@@ -69,13 +68,14 @@
     border-right: 1px solid rgb(187, 187, 187) !important;
     padding-left: 2px;
     padding-right: 2px;
-    vertical-align: top;
     background-repeat: no-repeat;
     background-position: right 1px;
+    vertical-align: top;
 }
 
 .webkit-line-content {
     padding-left: 2px;
+    vertical-align: top;
 }
 
 .webkit-execution-line .webkit-line-number {

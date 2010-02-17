@@ -1,3 +1,18 @@
+2010-02-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: prefer smooth scrolling to instant highlight.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34978
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype._scroll):
+        (WebInspector.TextChunk):
+        (WebInspector.TextChunk.prototype._createRow):
+        * inspector/front-end/textViewer.css:
+
 2010-02-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Nikolas Zimmermann.
