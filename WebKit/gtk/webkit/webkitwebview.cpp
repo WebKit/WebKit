@@ -2552,7 +2552,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements,
-        enableSiteSpecificQuirks, usePageCache;
+        enableSiteSpecificQuirks, usePageCache, enableJava;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -2586,6 +2586,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "tab-key-cycles-through-elements", &tabKeyCyclesThroughElements,
                  "enable-site-specific-quirks", &enableSiteSpecificQuirks,
                  "enable-page-cache", &usePageCache,
+                 "enable-java", &enableJava,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2616,6 +2617,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setDOMPasteAllowed(enableDOMPaste);
     settings->setNeedsSiteSpecificQuirks(enableSiteSpecificQuirks);
     settings->setUsesPageCache(usePageCache);
+    settings->setJavaEnabled(enableJava);
 
     Page* page = core(webView);
     if (page)
@@ -2718,6 +2720,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setNeedsSiteSpecificQuirks(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-page-cache"))
         settings->setUsesPageCache(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-java"))
+        settings->setJavaEnabled(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);
