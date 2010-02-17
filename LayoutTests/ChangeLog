@@ -1,3 +1,9 @@
+2010-02-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Skipping new test that does not pass on Qt.
+
+        * platform/qt/Skipped:
+
 2010-02-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
