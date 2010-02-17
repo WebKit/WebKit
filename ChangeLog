@@ -1,3 +1,13 @@
+2010-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] Should handle BUFFERING messages
+        https://bugs.webkit.org/show_bug.cgi?id=30004
+
+        * configure.ac: Bump gstreamer -core/-plugins-base requirements to
+        0.10.25 which is the minimum required version for on-disk buffering.
+
 2010-02-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

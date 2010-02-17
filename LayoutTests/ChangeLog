@@ -1,3 +1,22 @@
+2010-01-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] Should handle BUFFERING messages
+        https://bugs.webkit.org/show_bug.cgi?id=30004
+
+        Draw the buffering status in the media controls. The timebar is
+        now 2 pixels shorter so dragging it at same absolute position than
+        before produces a seek at a new position in the media, this
+        explains the rebaselining of the controls-drag-timebar test.
+
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-drag-timebar-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        Re-baselined due to 1px left/right border added in controls timeline.
+
 2010-02-17  Xan Lopez  <xlopez@igalia.com>
 
         Skip tests requiring new results.

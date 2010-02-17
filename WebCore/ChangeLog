@@ -1,3 +1,50 @@
+2010-01-07  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] Should handle BUFFERING messages
+        https://bugs.webkit.org/show_bug.cgi?id=30004
+
+        Initial support for on-disk buffering of videos. This works only
+        for Quicktime and flv though.
+
+        * css/mediaControlsGtk.css:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack): Draw the
+        buffering status in the media controls.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback): Defer buffering
+        messages handling to processBufferingStats().
+        (WebCore::bufferingTimeoutCallback): Closure called periodically
+        during the on-disk buffering process.
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): New instance
+        variables and create playbin2 here instead of doing it in load().
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate): New instance
+        variables.
+        (WebCore::MediaPlayerPrivate::load): Simply set uri on playbin2
+        instead of creating the pipeline and setting uri all together.
+        (WebCore::MediaPlayerPrivate::processBufferingStats): Start a new
+        timeout source if the player is starting on-disk buffering.
+        (WebCore::MediaPlayerPrivate::queryBufferingStats): Method called
+        200ms during on-disk buffering to update the maxTimeLoaded and few
+        other private variables.
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::bytesLoaded): Fixed implementations
+        regarding buffering.
+        (WebCore::MediaPlayerPrivate::totalBytes): Improved logging.
+        (WebCore::MediaPlayerPrivate::updateStates): Start playback if it
+        was internally paused at beginning of on-disk buffering and set
+        ready/network states depending on the state of the on-disk
+        buffering process.
+        (WebCore::MediaPlayerPrivate::didEnd): Emit durationChanged.
+        (WebCore::MediaPlayerPrivate::setAutobuffer): Edit playbin2 flags
+        property depending on autoBuffer value.
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin): Don't set uri
+        there, it is now done in load().
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h: New methods
+        and instance variables.
+
 2010-02-16  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

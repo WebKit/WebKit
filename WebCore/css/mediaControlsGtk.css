@@ -41,6 +41,8 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     height: 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {

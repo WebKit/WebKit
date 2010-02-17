@@ -27,9 +27,11 @@
 #include "AffineTransform.h"
 #include "CString.h"
 #include "GOwnPtr.h"
+#include "Gradient.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "MediaControlElements.h"
 #include "NotImplemented.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
@@ -686,9 +688,46 @@ bool RenderThemeGtk::paintMediaSeekForwardButton(RenderObject* o, const RenderOb
 
 bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    paintInfo.context->fillRect(FloatRect(r), m_panelColor, DeviceColorSpace);
-    paintInfo.context->fillRect(FloatRect(IntRect(r.x(), r.y() + (r.height() - m_mediaSliderHeight) / 2,
-                                                  r.width(), m_mediaSliderHeight)), m_sliderColor, DeviceColorSpace);
+    GraphicsContext* context = paintInfo.context;
+
+    context->fillRect(FloatRect(r), m_panelColor, DeviceColorSpace);
+    context->fillRect(FloatRect(IntRect(r.x(), r.y() + (r.height() - m_mediaSliderHeight) / 2,
+                                        r.width(), m_mediaSliderHeight)), m_sliderColor, DeviceColorSpace);
+
+    RenderStyle* style = o->style();
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
+
+    if (!mediaElement)
+        return false;
+
+    // Draw the buffered ranges. This code is highly inspired from
+    // Chrome.
+    // FIXME: Draw multiple ranges if there are multiple buffered
+    // ranges. The current implementation of the player is always
+    // buffering a single range anyway.
+    IntRect bufferedRect = r;
+    bufferedRect.inflate(-style->borderLeftWidth());
+    bufferedRect.setWidth((bufferedRect.width() * mediaElement->percentLoaded()));
+
+    // Don't bother drawing an empty area.
+    if (bufferedRect.isEmpty())
+        return false;
+
+    IntPoint sliderTopLeft = bufferedRect.location();
+    IntPoint sliderTopRight = sliderTopLeft;
+    sliderTopRight.move(0, bufferedRect.height());
+
+    RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderTopRight);
+    Color startColor = m_panelColor;
+    gradient->addColorStop(0.0, startColor);
+    gradient->addColorStop(1.0, Color(startColor.red() / 2, startColor.green() / 2, startColor.blue() / 2, startColor.alpha()));
+
+    context->save();
+    context->setStrokeStyle(NoStroke);
+    context->setFillGradient(gradient);
+    context->fillRect(bufferedRect);
+    context->restore();
+
     return false;
 }
 
