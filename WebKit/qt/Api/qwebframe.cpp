@@ -1140,6 +1140,17 @@ void QWebFrame::setScrollPosition(const QPoint &pos)
 }
 
 /*!
+  \since 4.7
+  Scrolls the frame to the given \a anchor name.
+*/
+void QWebFrame::scrollToAnchor(const QString& anchor)
+{
+    FrameView *view = d->frame->view();
+    if (view)
+        view->scrollToAnchor(anchor);
+}
+
+/*!
   \since 4.6
   Render the \a layer of the frame using \a painter clipping to \a clip.
 

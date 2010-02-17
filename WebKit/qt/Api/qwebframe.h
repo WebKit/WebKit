@@ -160,6 +160,8 @@ public:
     QPoint scrollPosition() const;
     void setScrollPosition(const QPoint &pos);
 
+    void scrollToAnchor(const QString& anchor);
+
     enum RenderLayer {
         ContentsLayer = 0x10,
         ScrollBarLayer = 0x20,

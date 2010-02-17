@@ -584,6 +584,7 @@ private slots:
     void hasSetFocus();
     void render();
     void scrollPosition();
+    void scrollToAnchor();
     void evaluateWillCauseRepaint();
     void qObjectWrapperWithSameIdentity();
     void scrollRecursively();
@@ -2762,6 +2763,38 @@ void tst_QWebFrame::scrollPosition()
     int y = frame->evaluateJavaScript("window.scrollY").toInt();
     QCOMPARE(x, 23);
     QCOMPARE(y, 29);
+}
+
+void tst_QWebFrame::scrollToAnchor()
+{
+    QWebPage page;
+    page.setViewportSize(QSize(480, 800));
+    QWebFrame* frame = page.mainFrame();
+
+    QString html("<html><body><p style=\"margin-bottom: 1500px;\">Hello.</p>"
+                 "<p><a id=\"foo\">This</a> is an anchor</p>"
+                 "<p style=\"margin-bottom: 1500px;\"><a id=\"bar\">This</a> is another anchor</p>"
+                 "</body></html>");
+    frame->setHtml(html);
+    frame->setScrollPosition(QPoint(0, 0));
+    QCOMPARE(frame->scrollPosition().x(), 0);
+    QCOMPARE(frame->scrollPosition().y(), 0);
+
+    QWebElement fooAnchor = frame->findFirstElement("a[id=foo]");
+
+    frame->scrollToAnchor("foo");
+    QCOMPARE(frame->scrollPosition().y(), fooAnchor.geometry().top());
+
+    frame->scrollToAnchor("bar");
+    frame->scrollToAnchor("foo");
+    QCOMPARE(frame->scrollPosition().y(), fooAnchor.geometry().top());
+
+    frame->scrollToAnchor("top");
+    QCOMPARE(frame->scrollPosition().y(), 0);
+
+    frame->scrollToAnchor("bar");
+    frame->scrollToAnchor("notexist");
+    QVERIFY(frame->scrollPosition().y() != 0);
 }
 
 void tst_QWebFrame::evaluateWillCauseRepaint()

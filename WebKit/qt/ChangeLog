@@ -1,5 +1,17 @@
 2010-02-16  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
+        Reviewed by Simon Hausmann.
+
+        [Qt] Allow scrolling to an anchor programmatically.
+        https://bugs.webkit.org/show_bug.cgi?id=29856
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::scrollToAnchor): New API function.
+        * Api/qwebframe.h:
+        * tests/qwebframe/tst_qwebframe.cpp: New tests for scrollToAnchor().
+
+2010-02-16  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
         Reviewed by Laszlo Gombos.
 
         Fix building with Qt < 4.6.
