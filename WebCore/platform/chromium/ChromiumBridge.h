@@ -53,6 +53,8 @@ namespace WebCore {
     class Cursor;
     class Document;
     class Frame;
+    class GeolocationServiceBridge;
+    class GeolocationServiceChromium;
     class GraphicsContext;
     class Image;
     class IntRect;
@@ -116,6 +118,9 @@ namespace WebCore {
 
         // Forms --------------------------------------------------------------
         static void notifyFormStateChanged(const Document*);
+
+        // Geolocation --------------------------------------------------------
+        static GeolocationServiceBridge* createGeolocationServiceBridge(GeolocationServiceChromium*);
 
         // HTML5 DB -----------------------------------------------------------
 #if ENABLE(DATABASE)

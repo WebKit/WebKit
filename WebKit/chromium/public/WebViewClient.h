@@ -46,6 +46,7 @@ class WebAccessibilityObject;
 class WebDragData;
 class WebFileChooserCompletion;
 class WebFrame;
+class WebGeolocationServiceInterface;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
@@ -276,6 +277,11 @@ public:
     // its DB.
     virtual void removeAutofillSuggestions(const WebString& name,
                                            const WebString& value) { }
+
+    // Geolocation ---------------------------------------------------------
+
+    // Access the embedder API for geolocation services.
+    virtual WebKit::WebGeolocationServiceInterface* getGeolocationService() { return 0; }
 
 protected:
     ~WebViewClient() { }

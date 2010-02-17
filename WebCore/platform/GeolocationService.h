@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef GeolocationService_h
@@ -46,10 +46,10 @@ class GeolocationService : public Noncopyable {
 public:
     static GeolocationService* create(GeolocationServiceClient*);
     virtual ~GeolocationService() { }
-    
+
     virtual bool startUpdating(PositionOptions*) { return false; }
     virtual void stopUpdating() { }
-    
+
     virtual void suspend() { }
     virtual void resume() { }
 
@@ -63,6 +63,7 @@ public:
 
 protected:
     GeolocationService(GeolocationServiceClient*);
+    GeolocationServiceClient* geolocationServiceClient() const { return m_geolocationServiceClient; }
 
 private:
     GeolocationServiceClient* m_geolocationServiceClient;

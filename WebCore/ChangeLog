@@ -1,3 +1,16 @@
+2010-02-17  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements GeolocationServices for Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=32068
+
+        This is part of implementing Geolocation framework for Chromium. Existing layout tests should pass.
+
+        * WebCore.gypi:
+        * page/Geolocation.h:
+        * platform/GeolocationService.h:
+
 2010-02-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Ariya Hidayat.

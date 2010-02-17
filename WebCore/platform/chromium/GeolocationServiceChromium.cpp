@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,27 +29,79 @@
  */
 
 #include "config.h"
-#include "GeolocationService.h"
+#include "GeolocationServiceChromium.h"
+
+#include "ChromiumBridge.h"
 
 namespace WebCore {
 
-class GeolocationServiceChromium : public GeolocationService {
-public:
-    GeolocationServiceChromium(GeolocationServiceClient* c)
-        : GeolocationService(c)
-    {
-    }
-    // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=32068
-};
+GeolocationServiceChromium::GeolocationServiceChromium(GeolocationServiceClient* c)
+        : GeolocationService(c),
+          m_geolocation(reinterpret_cast<Geolocation*>(c)),
+          m_lastPosition(Geoposition::create(Coordinates::create(0.0, 0.0, false, 0.0, 0.0, false, 0.0, false, 0.0, false, 0.0), 0)),
+          m_lastError(PositionError::create(PositionError::POSITION_UNAVAILABLE, "")),
+          m_geolocationServiceBridge(ChromiumBridge::createGeolocationServiceBridge(this))
+{
+}
 
-// This guard is the counterpart of the one in WebCore/platform/GeolocationService.cpp
-#if ENABLE(GEOLOCATION)
-static GeolocationService* createGeolocationService(GeolocationServiceClient* c)
+void GeolocationServiceChromium::setIsAllowed(bool allowed)
+{
+    m_geolocation->setIsAllowed(allowed);  
+}
+
+void GeolocationServiceChromium::setLastPosition(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, long long timestamp)
+{
+    m_lastPosition = Geoposition::create(Coordinates::create(latitude, longitude, providesAltitude, altitude, accuracy, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed), timestamp);
+    positionChanged();
+}
+
+void GeolocationServiceChromium::setLastError(int errorCode, const String& message)
+{
+    m_lastError = PositionError::create(static_cast<PositionError::ErrorCode>(errorCode), message);
+    errorOccurred();
+}
+
+Frame* GeolocationServiceChromium::frame()
+{
+    return m_geolocation->frame();
+}
+
+bool GeolocationServiceChromium::startUpdating(PositionOptions* options)
+{
+    return m_geolocationServiceBridge->startUpdating(options);
+}
+
+void GeolocationServiceChromium::stopUpdating()
+{
+    return m_geolocationServiceBridge->stopUpdating();
+}
+
+void GeolocationServiceChromium::suspend()
+{
+    return m_geolocationServiceBridge->suspend();
+}
+
+void GeolocationServiceChromium::resume()
+{
+    return m_geolocationServiceBridge->resume();
+}
+
+Geoposition* GeolocationServiceChromium::lastPosition() const
+{
+    return m_lastPosition.get();
+}
+
+PositionError* GeolocationServiceChromium::lastError() const
+{
+    return m_lastError.get();
+}
+
+static GeolocationService* createGeolocationServiceChromium(GeolocationServiceClient* c)
 {
     return new GeolocationServiceChromium(c);
 }
 
-GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &createGeolocationService;
-#endif
+// Sets up the factory function for GeolocationService.
+GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &createGeolocationServiceChromium;
 
 } // namespace WebCore

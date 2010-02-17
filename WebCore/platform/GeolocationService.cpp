@@ -25,12 +25,13 @@
 
 #include "config.h"
 #include "GeolocationService.h"
-#include "Geoposition.h"
+
 #include "GeolocationServiceMock.h"
+#include "Geoposition.h"
 #include "PositionError.h"
 
-#include <wtf/CurrentTime.h>
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

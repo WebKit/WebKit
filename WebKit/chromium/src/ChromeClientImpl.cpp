@@ -43,6 +43,10 @@
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
+#include "Geolocation.h"
+#include "GeolocationService.h"
+#include "GeolocationServiceBridgeChromium.h"
+#include "GeolocationServiceChromium.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "Node.h"
@@ -673,5 +677,11 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
     return m_webView->notificationPresenterImpl();
 }
 #endif
+
+void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
+{
+    GeolocationServiceChromium* geolocationService = reinterpret_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
+    m_webView->client()->getGeolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
+}
 
 } // namespace WebKit
