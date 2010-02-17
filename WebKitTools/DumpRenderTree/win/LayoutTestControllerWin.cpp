@@ -406,6 +406,23 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
     prefsPrivate->setAllowUniversalAccessFromFileURLs(enabled);
 }
 
+void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(webView->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->setAllowFileAccessFromFileURLs(enabled);
+}
+
 void LayoutTestController::setPopupBlockingEnabled(bool enabled)
 {
     COMPtr<IWebView> webView;

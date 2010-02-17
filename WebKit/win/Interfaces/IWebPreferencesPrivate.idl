@@ -100,4 +100,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setCustomDragCursorsEnabled([in] BOOL);
     HRESULT customDragCursorsEnabled([out, retval] BOOL*);
+
+    HRESULT allowFileAccessFromFileURLs([out, retval] BOOL *allowAccess);
+    HRESULT setAllowFileAccessFromFileURLs([in] BOOL allowAccess);
 }

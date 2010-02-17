@@ -75,6 +75,7 @@ Settings::Settings(Page* page)
     , m_isJavaScriptEnabled(false)
     , m_isWebSecurityEnabled(true)
     , m_allowUniversalAccessFromFileURLs(true)
+    , m_allowFileAccessFromFileURLs(true)
     , m_javaScriptCanOpenWindowsAutomatically(false)
     , m_shouldPrintBackgrounds(false)
     , m_textAreasAreResizable(false)
@@ -238,6 +239,11 @@ void Settings::setWebSecurityEnabled(bool isWebSecurityEnabled)
 void Settings::setAllowUniversalAccessFromFileURLs(bool allowUniversalAccessFromFileURLs)
 {
     m_allowUniversalAccessFromFileURLs = allowUniversalAccessFromFileURLs;
+}
+
+void Settings::setAllowFileAccessFromFileURLs(bool allowFileAccessFromFileURLs)
+{
+    m_allowFileAccessFromFileURLs = allowFileAccessFromFileURLs;
 }
 
 void Settings::setJavaEnabled(bool isJavaEnabled)

@@ -787,6 +787,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
         prefsPrivate->setAllowUniversalAccessFromFileURLs(TRUE);
+        prefsPrivate->setAllowFileAccessFromFileURLs(TRUE);
         prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
         prefsPrivate->setDeveloperExtrasEnabled(FALSE);
         prefsPrivate->setExperimentalNotificationsEnabled(TRUE);

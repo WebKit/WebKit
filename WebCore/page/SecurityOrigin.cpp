@@ -286,6 +286,11 @@ void SecurityOrigin::grantUniversalAccess()
     m_universalAccess = true;
 }
 
+void SecurityOrigin::makeUnique()
+{
+    m_isUnique = true;
+}
+
 bool SecurityOrigin::isLocal() const
 {
     return shouldTreatURLSchemeAsLocal(m_protocol);

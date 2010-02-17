@@ -1,3 +1,26 @@
+2010-02-16  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a new setting which gives the option of assigning every file:///
+        to its own unique domain.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34778
+
+        Test: Pending in forthcoming separate change due to non-trivial
+        dependencies.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Place file:/// URI documents
+        into their own unique domains if the new setting requires it.
+        * page/Settings.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setAllowFileAccessFromFileURLs): Simple setter.
+        * page/SecurityOrigin.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::makeUnique): Add simple ability to force an
+        origin to be considered unique.
+
 2010-02-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

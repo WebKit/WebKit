@@ -334,6 +334,11 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
     [[[mainFrame webView] preferences] setAllowUniversalAccessFromFileURLs:enabled];
 }
 
+void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+{
+    [[[mainFrame webView] preferences] setAllowFileAccessFromFileURLs:enabled];
+}
+
 void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];

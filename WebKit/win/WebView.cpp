@@ -4621,6 +4621,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setAllowUniversalAccessFromFileURLs(!!enabled);
 
+    hr = prefsPrivate->allowFileAccessFromFileURLs(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setAllowFileAccessFromFileURLs(!!enabled);
+
     hr = prefsPrivate->isXSSAuditorEnabled(&enabled);
     if (FAILED(hr))
         return hr;

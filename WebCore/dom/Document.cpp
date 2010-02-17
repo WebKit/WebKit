@@ -4417,6 +4417,10 @@ void Document::initSecurityContext()
           // Some clients want file:// URLs to have universal access, but that
           // setting is dangerous for other clients.
           securityOrigin()->grantUniversalAccess();
+        } else if (!settings->allowFileAccessFromFileURLs() && securityOrigin()->isLocal()) {
+          // Some clients want file:// URLs to have even tighter restrictions by
+          // default, and not be able to access other local files.
+          securityOrigin()->makeUnique();
         }
     }
 

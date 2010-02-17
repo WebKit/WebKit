@@ -67,6 +67,7 @@ public:
         LocalStorageDatabaseEnabled = LocalStorageEnabled,
 #endif
         LocalContentCanAccessRemoteUrls,
+        LocalContentCanAccessFileUrls,
         DnsPrefetchEnabled,
         XSSAuditorEnabled,
         AcceleratedCompositingEnabled

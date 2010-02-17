@@ -138,6 +138,9 @@ public:
     // addition, the SandboxOrigin flag is inherited by iframes.
     bool isUnique() const { return m_isUnique; }
 
+    // Marks an origin as being unique.
+    void makeUnique();
+
     // Convert this SecurityOrigin into a string. The string
     // representation of a SecurityOrigin is similar to a URL, except it
     // lacks a path component. The string representation does not encode

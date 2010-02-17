@@ -362,6 +362,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setAllowUniversalAccessFromFileURLs(
     /* [in] */ BOOL allowAccess);
 
+    virtual HRESULT STDMETHODCALLTYPE allowFileAccessFromFileURLs(
+    /* [retval][out] */ BOOL* allowAccess);
+
+    virtual HRESULT STDMETHODCALLTYPE setAllowFileAccessFromFileURLs(
+    /* [in] */ BOOL allowAccess);
+
     virtual HRESULT STDMETHODCALLTYPE isXSSAuditorEnabled(
     /* [retval][out] */ BOOL* enabled);
 
