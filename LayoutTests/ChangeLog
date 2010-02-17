@@ -1,3 +1,13 @@
+2010-02-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Change quota-tracking.html to open databases only as they're
+        needed. Otherwise, open databases end up using more space from
+        this origin than the test expects.
+
+        * storage/quota-tracking.html:
+
 2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Simon Fraser.

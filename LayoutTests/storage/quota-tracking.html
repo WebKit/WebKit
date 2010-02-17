@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-var database1;
-var database2;
-var database3;
+var database1 = null;
+var database2 = null;
+var database3 = null;
 
 function log(message)
 {
@@ -39,13 +39,15 @@ function checkCompletion(db)
 {
     log("Done adding data");
 
-    db.complete = true;
-    if (database1.complete && database2.complete && database3.complete)
+    if (database3) {
         finishTest();
-    else if (database2.complete)
+    } else if (database2) {
+        database3 = openDatabase("QuotaManagementDatabase3", "1.0", "Test for quota management <rdar://5628468>", 1);
         testDatabase(database3);
-    else
+    } else {
+        database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
         testDatabase(database2);
+    }
 }
 
 function addData(db)
@@ -95,12 +97,6 @@ function runTest()
     }
 
     database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);
-    database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
-    database3 = openDatabase("QuotaManagementDatabase3", "1.0", "Test for quota management <rdar://5628468>", 1);
-    database1.complete = false;
-    database2.complete = false;
-    database3.complete = false;
-
     testDatabase(database1);
 }
 
