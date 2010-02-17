@@ -1488,6 +1488,31 @@
         * websockets/WebSocketHandshake.cpp:
         (WebCore::WebSocketHandshake::clientHandshakeMessage): use cookieRequestHeaderFieldValue() instead of cookies() to include HttpOnly cookies.
 
+2010-02-16  Sebastian Dröge  <sebastian.droege@collabora.co.uk>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Notify about size changes in the WebKit GStreamer source.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=34881
+
+        * platform/graphics/gtk/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (StreamingClient::didReceiveResponse):
+        * platform/graphics/gtk/WebKitWebSourceGStreamer.h:
+        This makes sure that other GStreamer elements know about the
+        size and on-disk buffering actually works.
+        Only notify about size changes if gst-plugins-base before
+        0.10.27 is used, because from that version onwards this is
+        automatically handled.
+        
+        If appsrc 0.10.27 or later is used, set the min-percent property
+        to 20% to allow more time to pass between the need-data signal
+        and starvation of the pipeline.
+        
+        Also reset the size when stopping the source and send EOS
+        on seeking failures. 
+
 2010-02-11  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
