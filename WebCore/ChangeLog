@@ -1,3 +1,17 @@
+2010-02-16  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] OpenType font with CFF glyphs is not handled correctly on Windows XP
+        https://bugs.webkit.org/show_bug.cgi?id=34735
+
+        Use 0xFFFF as invalidGlyph when fontData is a OpenType font with CFF glyphs.
+        
+        Test: fast/css/font-face-opentype.html
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+
 2010-02-16  Darin Adler  <darin@apple.com>
 
         * page/MediaCanStartListener.h: Fixed license.

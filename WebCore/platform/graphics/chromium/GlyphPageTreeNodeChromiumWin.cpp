@@ -134,7 +134,8 @@ static bool fillBMPGlyphs(unsigned offset,
     // Copy the output to the GlyphPage
     bool haveGlyphs = false;
     int invalidGlyph = 0xFFFF;
-    if (!isVistaOrNewer() && !(tm.tmPitchAndFamily & TMPF_TRUETYPE))
+    const DWORD cffTableTag = 0x20464643; // 4-byte identifier for OpenType CFF table ('CFF ').
+    if (!isVistaOrNewer() && !(tm.tmPitchAndFamily & TMPF_TRUETYPE) && (GetFontData(dc, cffTableTag, 0, 0, 0) == GDI_ERROR))
         invalidGlyph = 0x1F;
 
     Glyph spaceGlyph = 0;  // Glyph for a space. Lazily filled.

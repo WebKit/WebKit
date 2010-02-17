@@ -1,3 +1,16 @@
+2010-02-16  Yusuke Sato  <yusukes@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] OpenType font with CFF glyphs is not handled correctly on Windows XP
+        https://bugs.webkit.org/show_bug.cgi?id=34735
+
+        * fast/css/font-face-opentype.html: Added.
+        * fast/css/resources/Ahem.otf: Added. Ahem font which has CFF glyphs, converted from Ahem.ttf by FontForge (http://fontforge.sourceforge.net/).
+        * platform/mac/fast/css/font-face-opentype-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-opentype-expected.png: Added.
+        * platform/mac/fast/css/font-face-opentype-expected.txt: Added.
+
 2010-02-16  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Simon Fraser.
