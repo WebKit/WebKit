@@ -2915,7 +2915,9 @@ WEBCORE_COMMAND(yankAndSelect)
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
     [self _cancelUpdateMouseoverTimer];
-    
+
+    // FIXME: This accomplishes the same thing as the call to setCanStartMedia(false) in
+    // WebView. It would be nice to have a single mechanism instead of two.
     [[self _pluginController] stopAllPlugins];
 }
 
@@ -2935,6 +2937,8 @@ WEBCORE_COMMAND(yankAndSelect)
         [self addSuperviewObservers];
         [self addMouseMovedObserver];
 
+        // FIXME: This accomplishes the same thing as the call to setCanStartMedia(true) in
+        // WebView. It would be nice to have a single mechanism instead of two.
         [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;

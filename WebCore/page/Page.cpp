@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -46,6 +46,7 @@
 #include "InspectorController.h"
 #include "InspectorTimelineAgent.h"
 #include "Logging.h"
+#include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
 #include "PageGroup.h"
@@ -144,7 +145,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_debugger(0)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
-    , m_canStartPlugins(true)
+    , m_canStartMedia(true)
 {
 #if !ENABLE(CONTEXT_MENUS)
     UNUSED_PARAM(contextMenuClient);
@@ -395,17 +396,37 @@ PluginData* Page::pluginData() const
     return m_pluginData.get();
 }
 
-void Page::addUnstartedPlugin(PluginView* view)
+void Page::addMediaCanStartListener(MediaCanStartListener* listener)
 {
-    ASSERT(!m_canStartPlugins);
-    m_unstartedPlugins.add(view);
+    ASSERT(!m_canStartMedia);
+    ASSERT(!m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.add(listener);
 }
 
-void Page::removeUnstartedPlugin(PluginView* view)
+void Page::removeMediaCanStartListener(MediaCanStartListener* listener)
 {
-    ASSERT(!m_canStartPlugins);
-    ASSERT(m_unstartedPlugins.contains(view));
-    m_unstartedPlugins.remove(view);
+    ASSERT(!m_canStartMedia);
+    ASSERT(m_mediaCanStartListeners.contains(listener));
+    m_mediaCanStartListeners.remove(listener);
+}
+
+void Page::setCanStartMedia(bool canStartMedia)
+{
+    if (m_canStartMedia == canStartMedia)
+        return;
+
+    m_canStartMedia = canStartMedia;
+
+    if (!m_canStartMedia || m_mediaCanStartListeners.isEmpty())
+        return;
+
+    Vector<MediaCanStartListener*> listeners;
+    copyToVector(m_mediaCanStartListeners, listeners);
+    m_mediaCanStartListeners.clear();
+
+    size_t size = listeners.size();
+    for (size_t i = 0; i < size; ++i)
+        listeners[i]->mediaCanStart();
 }
 
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)

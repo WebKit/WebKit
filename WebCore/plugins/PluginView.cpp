@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,43 +32,44 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
-#include "FrameLoader.h"
-#include "FrameTree.h"
+#include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "Image.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "Image.h"
+#include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "KeyboardEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "FocusController.h"
 #include "PlatformMouseEvent.h"
-#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
-#include "PluginMessageThrottlerWin.h"
-#endif
-#include "PluginPackage.h"
-#include "JSDOMBinding.h"
-#include "ScriptController.h"
-#include "ScriptValue.h"
-#include "SecurityOrigin.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "ScriptController.h"
+#include "ScriptValue.h"
+#include "SecurityOrigin.h"
+#include "Settings.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include "Settings.h"
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>
+
+#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
+#include "PluginMessageThrottlerWin.h"
+#endif
 
 using JSC::ExecState;
 using JSC::JSLock;
@@ -204,8 +205,8 @@ bool PluginView::startOrAddToUnstartedList()
     // We only delay starting the plug-in if we're going to kick off the load
     // ourselves. Otherwise, the loader will try to deliver data before we've
     // started the plug-in.
-    if (!m_loadManually && !m_parentFrame->page()->canStartPlugins()) {
-        m_parentFrame->page()->addUnstartedPlugin(this);
+    if (!m_loadManually && !m_parentFrame->page()->canStartMedia()) {
+        m_parentFrame->page()->addMediaCanStartListener(this);
         m_isWaitingToStart = true;
         return true;
     }
@@ -265,6 +266,13 @@ bool PluginView::start()
     return true;
 }
 
+void PluginView::mediaCanStart()
+{
+    ASSERT(!m_isStarted);
+    if (!start())
+        parentFrame()->loader()->client()->dispatchDidFailToStartPlugin(this);
+}
+
 PluginView::~PluginView()
 {
     LOG(Plugins, "PluginView::~PluginView()");
@@ -298,7 +306,7 @@ void PluginView::removeFromUnstartedListIfNecessary()
     if (!m_parentFrame->page())
         return;
 
-    m_parentFrame->page()->removeUnstartedPlugin(this);
+    m_parentFrame->page()->removeMediaCanStartListener(this);
 }
 
 void PluginView::stop()

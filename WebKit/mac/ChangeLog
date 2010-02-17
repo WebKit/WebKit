@@ -1,3 +1,23 @@
+2010-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Generalize delayed plug-in start for background tabs for use for other media
+        https://bugs.webkit.org/show_bug.cgi?id=34981
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewWillMoveToWindow:]): Added comment.
+        (-[WebHTMLView viewDidMoveToWindow]): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        Call setCanStartMedia right away so that if this view is not in a window, it
+        will not start any media.
+        (-[WebView viewWillMoveToWindow:]): Call setCanStartMedia(false) when moving
+        to a window of nil.
+        (-[WebView viewDidMoveToWindow]): Call setCanStartMedia(true) when moved to
+        a window that is non-nil.
+
 2010-02-16  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

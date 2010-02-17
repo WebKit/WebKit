@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -59,25 +59,26 @@ namespace WebCore {
     class InspectorClient;
     class InspectorController;
     class InspectorTimelineAgent;
+    class MediaCanStartListener;
     class Node;
     class PageGroup;
     class PluginData;
     class PluginHalter;
     class PluginHalterClient;
-    class PluginView;
     class ProgressTracker;
     class RenderTheme;
     class VisibleSelection;
     class SelectionController;
     class Settings;
+
 #if ENABLE(DOM_STORAGE)
     class StorageNamespace;
 #endif
-#if ENABLE(WML)
-    class WMLPageState;
-#endif
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
+#endif
+#if ENABLE(WML)
+    class WMLPageState;
 #endif
 
     typedef uint64_t LinkHash;
@@ -96,10 +97,10 @@ namespace WebCore {
         static void refreshPlugins(bool reload);
         PluginData* pluginData() const;
 
-        void setCanStartPlugins(bool);
-        bool canStartPlugins() const { return m_canStartPlugins; }
-        void addUnstartedPlugin(PluginView*);
-        void removeUnstartedPlugin(PluginView*);
+        void setCanStartMedia(bool);
+        bool canStartMedia() const { return m_canStartMedia; }
+        void addMediaCanStartListener(MediaCanStartListener*);
+        void removeMediaCanStartListener(MediaCanStartListener*);
 
         EditorClient* editorClient() const { return m_editorClient; }
 
@@ -310,8 +311,8 @@ namespace WebCore {
         double m_customHTMLTokenizerTimeDelay;
         int m_customHTMLTokenizerChunkSize;
 
-        bool m_canStartPlugins;
-        HashSet<PluginView*> m_unstartedPlugins;
+        bool m_canStartMedia;
+        HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
         OwnPtr<PluginHalter> m_pluginHalter;
 

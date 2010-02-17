@@ -1,3 +1,52 @@
+2010-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Generalize delayed plug-in start for background tabs for use for other media
+        https://bugs.webkit.org/show_bug.cgi?id=34981
+
+        Also did some simple cleanup of HTMLMediaElement to get ready to make it
+        a client of the same mechanism.
+
+        * WebCore.base.exp: Added Page::setCanStartMedia and resorted.
+        * WebCore.xcodeproj/project.pbxproj: Added MediaCanStartListener.h.
+
+        * html/HTMLAudioElement.h: Added an implementation of isVideo since that
+        is now a pure virtual function in HTMLMediaElement. Also made tagPriority
+        private.
+
+        * html/HTMLMediaElement.h: Made it clearer that HTMLMediaElement is an
+        abstract base class by making its constructor protected and making the
+        isVideo function a pure virtual function.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Updated for name change from m_canStartPlugins
+        to m_canStartMedia.
+        (WebCore::Page::addMediaCanStartListener): Renamed and added an assertion.
+        (WebCore::Page::removeUnstartedMedia): Ditto.
+        (WebCore::Page::setCanStartMedia): Renamed plugin to media and moved
+        the code here from PageWin.cpp. The main change from the one in PageWin.cpp
+        is that this function calls mediaCanStart rather than explicitly calling a
+        combination of start and dispatchDidFailToStartPlugin on a PluginView.
+
+        * page/Page.h: Re-sorted forward class declarations. Renamed the plugin
+        starting functions to media starting names and changed types from
+        PluginView to MediaCanStartListener.
+
+        * page/MediaCanStartListener.h: Added.
+
+        * page/win/PageWin.cpp: Moved setCanStartPlugins to the platform-independent
+        Page.cpp file so it can be used for more than just Windows plug-ins.
+
+        * plugins/PluginView.cpp: Sorted includes.
+        (WebCore::PluginView::startOrAddToUnstartedList): Use addMediaCanStartListener.
+        (WebCore::PluginView::mediaCanStart): Added. Called when the page decides that
+        media can start. Contains the code that used to be in Page::setCanStartPlugins.
+        (WebCore::PluginView::removeFromUnstartedListIfNecessary): Use
+        removeMediaCanStartListener.
+
+        * plugins/PluginView.h: Adopted MediaCanStartListener.
+
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

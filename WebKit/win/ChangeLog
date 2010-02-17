@@ -1,3 +1,15 @@
+2010-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Generalize delayed plug-in start for background tabs for use for other media
+        https://bugs.webkit.org/show_bug.cgi?id=34981
+
+        * WebView.cpp:
+        (WebView::setCanStartPlugins): Change to call setCanStartMedia.
+        In a later patch we can change the of the public function in the IDL file too,
+        but for now this should be enough.
+
 2010-02-15  Adam Roben  <aroben@apple.com>
 
         Add IWebFramePrivate::visibleContentRect

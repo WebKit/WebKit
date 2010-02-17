@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "WebView.h"
 
 #include "CFDictionaryPropertyBag.h"
@@ -5766,7 +5765,7 @@ HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL areAllowed)
 
 HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
 {
-    m_page->setCanStartPlugins(canStartPlugins);
+    m_page->setCanStartMedia(canStartPlugins);
     return S_OK;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLAudioElement_h
-#define HTMLAudioElement_h
-
-#if ENABLE(VIDEO)
-
-#include "HTMLMediaElement.h"
+#ifndef MediaCanStartListener_h
+#define MediaCanStartListener_h
 
 namespace WebCore {
 
-class HTMLAudioElement : public HTMLMediaElement {
+class MediaCanStartListener {
 public:
-    HTMLAudioElement(const QualifiedName&, Document*);
-
-private:
-    virtual bool isVideo() const { return false; }
-    virtual int tagPriority() const { return 5; }
+    virtual void mediaCanStart() = 0;
+protected:
+    virtual ~MediaCanStartListener() { }
 };
 
-} //namespace
+}
 
-#endif
 #endif
