@@ -26,6 +26,8 @@ svg/custom/viewbox-syntax.svg
 svg/hixie/perf/007.xml
 svg/transforms/text-with-pattern-inside-transformed-html.xhtml
 svg/transforms/text-with-pattern-with-svg-transform.svg
+svg/zoom/page/zoom-coords-viewattr-01-b.svg
+svg/zoom/test/zoom-coords-viewattr-01-b.svg
 
 # Disable media tests that depend on controller size/position until
 # <rdar://problem/6502936> Update run-webkit-tests to deal with new media controller look

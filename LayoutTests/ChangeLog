@@ -1,3 +1,12 @@
+2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Skip svg/zoom/(page|text)/zoom-coords-viewattr-01-b.svg on SnowLeopard.
+        svg/W3C-SVG-1.1/coords-viewattr* fail on SL and are already Skipped, seems related to entity parsing, not SVG.
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
