@@ -1,3 +1,9 @@
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
+
+        Skip tests requiring new results.
+
+        * platform/gtk/Skipped:
+
 2010-02-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Nikolas Zimmermann.

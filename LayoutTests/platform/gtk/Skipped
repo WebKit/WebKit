@@ -5776,6 +5776,7 @@ fast/lists/w3-css3-list-styles-alphabetic.html
 fast/repaint/block-no-inflow-children.html
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
+media/video-replaces-poster.html
 svg/css/shadow-and-opacity.svg
 svg/css/shadow-with-large-radius.svg
 svg/css/shadow-with-negative-offset.svg
@@ -5786,12 +5787,14 @@ svg/custom/marker-strokeWidth-changes.svg
 svg/custom/relative-sized-content.xhtml
 svg/custom/relative-sized-deep-shadow-tree-content.xhtml
 svg/custom/relative-sized-shadow-tree-content.xhtml
+svg/custom/stroke-width-large.svg
 svg/custom/text-xy-updates-SVGList.xhtml
 svg/text/selection-background-color.xhtml
 svg/custom/mask-invalidation.svg
 svg/custom/pattern-excessive-malloc.svg
 svg/custom/pattern-size-bigger-than-target-size.svg
 svg/custom/pattern-skew-transformed.svg
+svg/overflow/overflow-on-foreignObject.svg
 svg/overflow/overflow-on-inner-svg-element-defaults.svg
 svg/overflow/overflow-on-inner-svg-element.svg
 svg/overflow/overflow-on-outermost-svg-element-defaults.svg
@@ -5803,8 +5806,20 @@ svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml
 svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml
 svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml
 svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml
+svg/text/foreignObject-text-clipping-bug.xml
+svg/text/selection-doubleclick.svg
 svg/text/selection-styles.xhtml
-
+svg/text/selection-tripleclick.svg
+svg/zoom/page/absolute-sized-document-no-scrollbars.svg
+svg/zoom/page/absolute-sized-document-scrollbars.svg
+svg/zoom/page/relative-sized-document-scrollbars.svg
+svg/zoom/page/zoom-coords-viewattr-01-b.svg
+svg/zoom/page/zoom-foreignObject.svg
+svg/zoom/page/zoom-hixie-mixed-008.xml
+svg/zoom/page/zoom-hixie-mixed-009.xml
+svg/zoom/page/zoom-hixie-rendering-model-004.xhtml
+svg/zoom/page/zoom-svg-float-border-padding.xml
+svg/zoom/text/absolute-sized-document-no-scrollbars.svg
 
 # Only fails on Gtk bot - https://bugs.webkit.org/show_bug.cgi?id=33835
 svg/custom/use-instanceRoot-event-bubbling.xhtml
