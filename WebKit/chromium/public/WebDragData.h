@@ -72,8 +72,6 @@ public:
     WEBKIT_API WebString urlTitle() const;
     WEBKIT_API void setURLTitle(const WebString&);
 
-    WEBKIT_API WebURL downloadURL() const;
-    WEBKIT_API void setDownloadURL(const WebURL&);
     WEBKIT_API WebString downloadMetadata() const;
     WEBKIT_API void setDownloadMetadata(const WebString&);
 

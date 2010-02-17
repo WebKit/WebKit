@@ -59,7 +59,6 @@ namespace WebCore {
         KURL url;
         String urlTitle;
 
-        KURL downloadURL;
         String downloadMetadata;
 
         String fileExtension;
