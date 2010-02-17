@@ -1,5 +1,13 @@
 2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Rubber-stamped by Dirk Schulze.
+
+        Add missing .checksum file in platform/mac/svg/zoom/page. All parts of the original patch for bug 14004 have been landed.
+
+        * platform/mac/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.checksum: Added.
+
+2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by David Hyatt.
 
         SVG units don't stay consistently sized on zoom
