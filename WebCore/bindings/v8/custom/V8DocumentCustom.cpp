@@ -55,6 +55,7 @@
 
 namespace WebCore {
 
+#if ENABLE(XPATH)
 v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Document.evaluate()");
@@ -85,6 +86,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
 
     return toV8(result.release());
 }
+#endif
 
 v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
 {

@@ -2,6 +2,19 @@
 
         Reviewed by Ariya Hidayat.
 
+        Adds missing platform and feature guards to V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=34987
+
+        No new tests, build fix only.
+
+        * bindings/v8/V8Proxy.cpp: Modified. Adds CHROMIUM guards and uses PlatformBridge in place of ChromiumBridge
+        * bindings/v8/V8Proxy.h: Modified. Adds CHROMIUM guards and uses PlatformBridge in place of ChromiumBridge
+        * bindings/v8/custom/V8DocumentCustom.cpp: Modified. Adds XPATH guards
+
+2010-02-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
         Include WebCore's npruntime.h for Android in V8 bindings
         https://bugs.webkit.org/show_bug.cgi?id=35002
 

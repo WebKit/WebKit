@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8Proxy.h"
 
-#include "ChromiumBridge.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DOMObjectsInclude.h"
@@ -40,6 +39,7 @@
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformBridge.h"
 #include "ScriptController.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
@@ -259,7 +259,9 @@ bool V8Proxy::handleOutOfMemory()
         proxy->windowShell()->destroyGlobal();
     }
 
-    ChromiumBridge::notifyJSOutOfMemory(frame);
+#if PLATFORM(CHROMIUM)
+    PlatformBridge::notifyJSOutOfMemory(frame);
+#endif
 
     // Disable JS.
     Settings* settings = frame->settings();
@@ -356,20 +358,26 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 
         // Compile the script.
         v8::Local<v8::String> code = v8ExternalString(source.source());
-        ChromiumBridge::traceEventBegin("v8.compile", node, "");
+#if PLATFORM(CHROMIUM)
+        PlatformBridge::traceEventBegin("v8.compile", node, "");
+#endif
 
         // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
         // 1, whereas v8 starts at 0.
         v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startLine() - 1);
-        ChromiumBridge::traceEventEnd("v8.compile", node, "");
+#if PLATFORM(CHROMIUM)
+        PlatformBridge::traceEventEnd("v8.compile", node, "");
 
-        ChromiumBridge::traceEventBegin("v8.run", node, "");
+        PlatformBridge::traceEventBegin("v8.run", node, "");
+#endif
         // Set inlineCode to true for <a href="javascript:doSomething()">
         // and false for <script>doSomething</script>. We make a rough guess at
         // this based on whether the script source has a URL.
         result = runScript(script, source.url().string().isNull());
     }
-    ChromiumBridge::traceEventEnd("v8.run", node, "");
+#if PLATFORM(CHROMIUM)
+    PlatformBridge::traceEventEnd("v8.run", node, "");
+#endif
 
 #if ENABLE(INSPECTOR)
     if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
