@@ -1,3 +1,12 @@
+2010-02-17  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, build fix.
+
+        Fix crashes due to an omitted line in r54839.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::decodingFailed):
+
 2010-02-17  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by Ariya Hidayat.

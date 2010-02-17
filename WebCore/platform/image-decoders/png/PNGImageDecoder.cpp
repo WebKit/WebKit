@@ -54,6 +54,7 @@ const unsigned long cMaxPNGSize = 1000000UL;
 // Called if the decoding of the image fails.
 static void PNGAPI decodingFailed(png_structp png, png_const_charp)
 {
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->decodingFailed();
     longjmp(png->jmpbuf, 1);
 }
 
