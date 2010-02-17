@@ -30,8 +30,13 @@
 #ifndef V8NPUtils_h
 #define V8NPUtils_h
 
+#if PLATFORM(CHROMIUM)
+#include <bindings/npruntime.h>
+#else
+#include "npruntime.h"
+#endif
+
 #include <v8.h>
-#include "third_party/npapi/bindings/npruntime.h"
 
 // Convert a V8 Value of any type (string, bool, object, etc) to a NPVariant.
 void convertV8ObjectToNPVariant(v8::Local<v8::Value>, NPObject*, NPVariant*);

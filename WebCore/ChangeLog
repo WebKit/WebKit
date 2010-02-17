@@ -1,3 +1,22 @@
+2010-02-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Include WebCore's npruntime.h for Android in V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=35002
+
+        Currently, the V8 bindings include bindings/npruntime.h, which is a
+        Chromium-specific file outside of the WebKit tree.
+
+        No new tests, build fix only.
+
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/NPV8Object.h:
+        * bindings/v8/V8NPObject.h:
+        * bindings/v8/V8NPUtils.h:
+        * bindings/v8/npruntime_impl.h:
+        * bindings/v8/npruntime_priv.h:
+
 2010-01-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

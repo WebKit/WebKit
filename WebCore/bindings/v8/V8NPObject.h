@@ -31,8 +31,13 @@
 #ifndef V8NPObject_h
 #define V8NPObject_h
 
+#if PLATFORM(CHROMIUM)
+#include <bindings/npruntime.h>
+#else
+#include "npruntime.h"
+#endif
+
 #include <v8.h>
-#include "third_party/npapi/bindings/npruntime.h"
 
 // These functions can be replaced by normal JS operation.
 // Getters

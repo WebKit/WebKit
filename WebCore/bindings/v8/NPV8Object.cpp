@@ -39,9 +39,14 @@
 #include "V8Index.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
-#include "bindings/npruntime.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
+
+#if PLATFORM(CHROMIUM)
+#include <bindings/npruntime.h>
+#else
+#include "npruntime.h"
+#endif
 
 #include <stdio.h>
 #include <v8.h>
