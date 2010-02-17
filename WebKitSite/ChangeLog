@@ -1,3 +1,20 @@
+2010-02-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - demo.
+
+        Made some examples of using <details> for table descriptions.
+
+        * demos/hover-summary: Added.
+        * demos/hover-summary/details.css: Added.
+        * demos/hover-summary/details.js: Added.
+        (summaryClickListener):
+        ():
+        (window.onload):
+        * demos/hover-summary/example1.html: Added.
+        * demos/hover-summary/example2.html: Added.
+        * demos/hover-summary/horizontal-triangle.png: Added.
+        * demos/hover-summary/vertical-triangle.png: Added.
+
 2010-02-02  Jens Alfke  <snej@chromium.org>
 
         Reviewed by David Levin.
