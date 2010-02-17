@@ -1,3 +1,20 @@
+2010-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Add platform specific expected files for new tests pass in fast/css.
+
+        Rendertree results compared to Mac expected files with --ignore-metrics,
+        pixel results compared to Mac png files.
+
+        fast/css/font-face-opentype.html introduced in r54855.
+        fast/css/inline-element-line-break.html introduced in r54544.
+        fast/css/pseudo-element-line-break.html introduced in r54544.
+
+        * platform/qt/fast/css/font-face-opentype-expected.txt: Added.
+        * platform/qt/fast/css/inline-element-line-break-expected.txt: Added.
+        * platform/qt/fast/css/pseudo-element-line-break-expected.txt: Added.
+
 2010-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Try to turn SnowLeopard slave green again. Skipping media/video-load-networkState.html - already filed a bug last year.
