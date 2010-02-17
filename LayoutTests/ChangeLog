@@ -9,6 +9,14 @@
 
 2010-02-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Make this test more robust to slow-loading media.
+
+        * media/video-load-networkState.html:
+
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=34999

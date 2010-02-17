@@ -26,9 +26,14 @@
         waitForEventAndFail("playing");
         waitForEvent("canplaythrough", function () { testNetworkState(HTMLMediaElement.NETWORK_LOADING, true, '>=' ); } );
     
-        function someTimeLater()
+        function waitUntilNotLoading()
         {
-            testNetworkState(HTMLMediaElement.NETWORK_NO_SOURCE );
+            if (video.networkState == HTMLMediaElement.NETWORK_LOADING) {
+                setTimeout(waitUntilNotLoading, 100);
+                return;
+            }
+            
+            testNetworkState(HTMLMediaElement.NETWORK_NO_SOURCE);
             consoleWrite("");
 
             // now set a valid url
@@ -40,8 +45,8 @@
         consoleWrite("");
         testNetworkState(HTMLMediaElement.NETWORK_EMPTY);
         run("video.src = 'bogus/movie.mpg'");
-        setTimeout(someTimeLater, 400) 
-    
+        
+        setTimeout(waitUntilNotLoading, 100);
     </script>
 
 </body>
