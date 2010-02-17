@@ -105,7 +105,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_site_specific_quirks;
     gboolean enable_page_cache;
     gboolean auto_resize_window;
-    gboolean enable_java;
+    gboolean enable_java_applet;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -153,7 +153,7 @@ enum {
     PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
     PROP_ENABLE_PAGE_CACHE,
     PROP_AUTO_RESIZE_WINDOW,
-    PROP_ENABLE_JAVA
+    PROP_ENABLE_JAVA_APPLET
 };
 
 // Create a default user agent string
@@ -803,17 +803,19 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                           flags));
 
    /**
-    * WebKitWebSettings:enable-java:
+    * WebKitWebSettings:enable-java-applet:
     *
-    * Enable or disable support for Java plugins.
+    * Enable or disable support for the Java <applet> tag. Keep in
+    * mind that Java content can be still shown in the page through
+    * <object> or <embed>, which are the preferred tags for this task.
     *
     * Since: 1.1.22
     */
     g_object_class_install_property(gobject_class,
-                                    PROP_ENABLE_JAVA,
-                                    g_param_spec_boolean("enable-java",
-                                                         _("Enable Java"),
-                                                         _("Whether Java plugin support should be enabled"),
+                                    PROP_ENABLE_JAVA_APPLET,
+                                    g_param_spec_boolean("enable-java-applet",
+                                                         _("Enable Java Applet"),
+                                                         _("Whether Java Applet support through <applet> should be enabled"),
                                                          TRUE,
                                                          flags));
 
@@ -1031,8 +1033,8 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_AUTO_RESIZE_WINDOW:
         priv->auto_resize_window = g_value_get_boolean(value);
         break;
-    case PROP_ENABLE_JAVA:
-        priv->enable_java = g_value_get_boolean(value);
+    case PROP_ENABLE_JAVA_APPLET:
+        priv->enable_java_applet = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1166,8 +1168,8 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_AUTO_RESIZE_WINDOW:
         g_value_set_boolean(value, priv->auto_resize_window);
         break;
-    case PROP_ENABLE_JAVA:
-        g_value_set_boolean(value, priv->enable_java);
+    case PROP_ENABLE_JAVA_APPLET:
+        g_value_set_boolean(value, priv->enable_java_applet);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1240,7 +1242,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-site-specific-quirks", priv->enable_site_specific_quirks,
                  "enable-page-cache", priv->enable_page_cache,
                  "auto-resize-window", priv->auto_resize_window,
-                 "enable-java", priv->enable_java,
+                 "enable-java-applet", priv->enable_java_applet,
                  NULL));
 
     return copy;

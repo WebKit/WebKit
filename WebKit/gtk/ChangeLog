@@ -2,6 +2,23 @@
 
         Reviewed by Gustavo Noronha.
 
+        Rename 'enable-java' setting to 'enable-java-applet', since it
+        only controls whether <applet> is supported or not instead of
+        whether all Java content is supported or not.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_update_settings):
+        (DNDContentsRequest::webkit_web_view_settings_notify):
+
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         [Linux] Webkit incompatible with Java plugins
         https://bugs.webkit.org/show_bug.cgi?id=24912
 

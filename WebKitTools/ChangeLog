@@ -1,3 +1,12 @@
+2010-02-17  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update to use new property name.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2010-02-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Ariya Hidayat.
