@@ -1,3 +1,12 @@
+2010-02-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Disable warnings preventing use of anonymous structs/onions -
+        don't take all my fun toys away, these are useful & awesome!
+
+        * win/tools/vsprops/common.vsprops:
+
 2010-02-11  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Eric Seidel.
