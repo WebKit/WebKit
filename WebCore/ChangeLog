@@ -1,3 +1,13 @@
+2010-02-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow FloatRect::center() to return fractional coordinates. It was
+        mistakenly converting to integers.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::center):
+
 2010-02-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
