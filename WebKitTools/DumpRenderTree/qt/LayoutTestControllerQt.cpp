@@ -52,6 +52,7 @@ extern void qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const 
 extern QString qt_drt_counterValueForElementById(QWebFrame* qFrame, const QString& id);
 extern int qt_drt_workerThreadCount();
 extern int qt_drt_pageNumberForElementById(QWebFrame* qFrame, const QString& id, float width, float height);
+extern int qt_drt_numberOfPages(QWebFrame* qFrame, float width, float height);
 extern void qt_drt_webinspector_executeScript(QWebPage* page, long callId, const QString& script);
 extern void qt_drt_webinspector_show(QWebPage *page);
 extern void qt_drt_webinspector_close(QWebPage *page);
@@ -493,4 +494,9 @@ int LayoutTestController::pageNumberForElementById(const QString& id, float widt
     }
 
     return qt_drt_pageNumberForElementById(m_drt->webPage()->mainFrame(), id, width, height);
+}
+
+int LayoutTestController::numberOfPages(float width, float height)
+{
+    return qt_drt_numberOfPages(m_drt->webPage()->mainFrame(), width, height);
 }

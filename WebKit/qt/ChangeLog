@@ -1,3 +1,19 @@
+2010-02-17  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Make possible Qt DRT to get total number of pages to be printed
+
+        LayoutTests:
+            printing/numberOfPages.html
+
+        [Qt] DRT: Get total number of pages to be printed
+        https://bugs.webkit.org/show_bug.cgi?id=34955
+
+        * Api/qwebframe.cpp:
+        (qt_drt_numberOfPages):
+        (qt_drt_evaluateScriptInIsolatedWorld):
+
 2010-02-16  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Simon Hausmann.

@@ -233,6 +233,15 @@ int QWEBKIT_EXPORT qt_drt_pageNumberForElementById(QWebFrame* qFrame, const QStr
     return PrintContext::pageNumberForElement(element, FloatSize(width, height));
 }
 
+int QWEBKIT_EXPORT qt_drt_numberOfPages(QWebFrame* qFrame, float width, float height)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    if (!frame)
+        return -1;
+
+    return PrintContext::numberOfPages(frame, FloatSize(width, height));
+}
+
 // Suspend active DOM objects in this frame.
 void QWEBKIT_EXPORT qt_suspendActiveDOMObjects(QWebFrame* qFrame)
 {
@@ -248,6 +257,13 @@ void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* qFrame)
     if (frame->document())
         frame->document()->resumeActiveDOMObjects();
 }                        
+
+void QWEBKIT_EXPORT qt_drt_evaluateScriptInIsolatedWorld(QWebFrame* qFrame, int worldId, const QString& script)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    if (frame)
+        JSC::JSValue result = frame->script()->executeScriptInWorld(mainThreadNormalWorld(), script, true).jsValue();
+}
 
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
                              WebCore::HTMLFrameOwnerElement* ownerFrameElement,
