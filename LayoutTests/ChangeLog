@@ -1,5 +1,11 @@
 2010-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Try to turn SnowLeopard slave green again. Skipping media/video-load-networkState.html - already filed a bug last year.
+
+        * platform/mac-snowleopard/Skipped:
+
+2010-02-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Try to turn Tiger slave green again. Skipping media/video-display-aspect-ratio.html - already skipped on the other mac variants & win.
 
         * platform/mac-tiger/Skipped:

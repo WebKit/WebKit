@@ -92,6 +92,9 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
 
+# Timeout - https://bugs.webkit.org/show_bug.cgi?id=32270
+media/video-load-networkState.html
+
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34933
 media/video-display-aspect-ratio.html
