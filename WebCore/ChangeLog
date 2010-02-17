@@ -2,6 +2,18 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: drosera/demo.js not syntax highlighted correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35008
+
+        * inspector/front-end/SourceTokenizer.js:
+        (WebInspector.SourceTokenizer.Registry):
+        (WebInspector.SourceTokenizer.Registry.prototype.getTokenizer):
+
+2010-02-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: prefer smooth scrolling to instant highlight.
 
         https://bugs.webkit.org/show_bug.cgi?id=34978

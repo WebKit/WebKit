@@ -74,10 +74,11 @@ WebInspector.SourceTokenizer.prototype = {
 WebInspector.SourceTokenizer.Registry = function() {
     this._tokenizers = {};
     this._tokenizerConstructors = {
-        "text/css": WebInspector.SourceCSSTokenizer,
-        "text/html": WebInspector.SourceHTMLTokenizer,
-        "text/javascript": WebInspector.SourceJavaScriptTokenizer,
-        "application/x-javascript": WebInspector.SourceJavaScriptTokenizer
+        "text/css": "SourceCSSTokenizer",
+        "text/html": "SourceHTMLTokenizer",
+        "text/javascript": "SourceJavaScriptTokenizer",
+        "application/javascript": "SourceJavaScriptTokenizer",
+        "application/x-javascript": "SourceJavaScriptTokenizer"
     };
 }
 
@@ -93,9 +94,10 @@ WebInspector.SourceTokenizer.Registry.prototype = {
     {
         if (!this._tokenizerConstructors[mimeType])
             return null;
-        var tokenizer = this._tokenizers[mimeType];
+        var tokenizerClass = this._tokenizerConstructors[mimeType];
+        var tokenizer = this._tokenizers[tokenizerClass];
         if (!tokenizer) {
-            tokenizer = new this._tokenizerConstructors[mimeType]();
+            tokenizer = new WebInspector[tokenizerClass]();
             this._tokenizers[mimeType] = tokenizer;
         }
         return tokenizer;
