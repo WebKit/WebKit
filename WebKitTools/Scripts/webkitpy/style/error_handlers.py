@@ -153,10 +153,13 @@ class PatchStyleErrorHandler(object):
 
         """
         self._diff = diff
-        self._default_error_handler = DefaultStyleErrorHandler(file_path,
-                                          options,
-                                          increment_error_count,
-                                          stderr_write)
+
+        self._default_error_handler = DefaultStyleErrorHandler(
+                                          file_path=file_path,
+                                          increment_error_count=
+                                              increment_error_count,
+                                          options=options,
+                                          stderr_write=stderr_write)
 
         # The line numbers of the modified lines. This is set lazily.
         self._line_numbers = set()

@@ -139,12 +139,8 @@ class FilterConfiguration(object):
                          are appended.  The first substring match takes
                          precedence, i.e. only the first match triggers
                          an append.
-                             The "path_rules" value is the tuple of filter
+                             The "path_rules" value is a list of filter
                          rules that can be appended to the base rules.
-                         The value is a tuple rather than a list so it
-                         can be used as a dictionary key.  The dictionary
-                         is for caching purposes in the implementation of
-                         this class.
 
           user_rules: A list of filter rules that is always appended
                       to the base rules and any path rules.  In other
@@ -210,16 +206,28 @@ class FilterConfiguration(object):
         return self._path_specific_lower
 
     def _path_rules_from_path(self, path):
-        """Determine the path-specific rules to use, and return as a tuple."""
+        """Determine the path-specific rules to use, and return as a tuple.
+
+         This method returns a tuple rather than a list so the return
+         value can be passed to _filter_from_path_rules() without change.
+
+        """
         path = path.lower()
         for (sub_paths, path_rules) in self._get_path_specific_lower():
             for sub_path in sub_paths:
                 if path.find(sub_path) > -1:
-                    return path_rules
+                    return tuple(path_rules)
         return () # Default to the empty tuple.
 
     def _filter_from_path_rules(self, path_rules):
-        """Return the CategoryFilter associated to a path rules tuple."""
+        """Return the CategoryFilter associated to the given path rules.
+
+        Args:
+          path_rules: A tuple of path rules.  We require a tuple rather
+                      than a list so the value can be used as a dictionary
+                      key in self._path_rules_to_filter.
+
+        """
         # We reuse the same CategoryFilter where possible to take
         # advantage of the caching they do.
         if path_rules not in self._path_rules_to_filter:

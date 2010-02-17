@@ -34,46 +34,44 @@ from error_handlers import PatchStyleErrorHandler
 class StyleErrorHandlerTestBase(unittest.TestCase):
 
     def setUp(self):
-        self._error_messages = ""
+        self._error_messages = []
         self._error_count = 0
 
     def _mock_increment_error_count(self):
         self._error_count += 1
 
     def _mock_stderr_write(self, message):
-        self._error_messages += message
+        self._error_messages.append(message)
 
 
 class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
 
     """Tests DefaultStyleErrorHandler class."""
 
-    _file_path = "foo.h"
-
     _category = "whitespace/tab"
+    """The category name for the tests in this class."""
 
-    def _error_handler(self, options):
-        return DefaultStyleErrorHandler(self._file_path,
-                                        options,
-                                        self._mock_increment_error_count,
-                                        self._mock_stderr_write)
+    _file_path = "foo.h"
+    """The file path for the tests in this class."""
 
     def _check_initialized(self):
         """Check that count and error messages are initialized."""
         self.assertEquals(0, self._error_count)
-        self.assertEquals("", self._error_messages)
+        self.assertEquals(0, len(self._error_messages))
 
-    def _call(self, handle_error, options, confidence):
-        """Handle an error with the given error handler."""
-        line_number = 100
-        message = "message"
+    def _error_handler(self, options):
+        return DefaultStyleErrorHandler(file_path=self._file_path,
+                                        increment_error_count=
+                                            self._mock_increment_error_count,
+                                        options=options,
+                                        stderr_write=self._mock_stderr_write)
 
-        handle_error(line_number, self._category, confidence, message)
-
-    def _call_error_handler(self, options, confidence):
-        """Handle an error using a new error handler."""
-        handle_error = self._error_handler(options)
-        self._call(handle_error, options, confidence)
+    def _call_error_handler(self, handle_error, confidence):
+        """Call the given error handler with a test error."""
+        handle_error(line_number=100,
+                     category=self._category,
+                     confidence=confidence,
+                     message="message")
 
     def test_call_non_reportable(self):
         """Test __call__() method with a non-reportable error."""
@@ -86,10 +84,11 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
                                                confidence,
                                                self._file_path))
 
-        self._call_error_handler(options, confidence)
+        error_handler = self._error_handler(options)
+        self._call_error_handler(error_handler, confidence)
 
         self.assertEquals(0, self._error_count)
-        self.assertEquals("", self._error_messages)
+        self.assertEquals([], self._error_messages)
 
     def test_call_reportable_emacs(self):
         """Test __call__() method with a reportable error and emacs format."""
@@ -97,10 +96,11 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         options = ProcessorOptions(verbosity=3, output_format="emacs")
         self._check_initialized()
 
-        self._call_error_handler(options, confidence)
+        error_handler = self._error_handler(options)
+        self._call_error_handler(error_handler, confidence)
 
         self.assertEquals(1, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEquals(self._error_messages[-1],
                           "foo.h:100:  message  [whitespace/tab] [5]\n")
 
     def test_call_reportable_vs7(self):
@@ -109,10 +109,11 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         options = ProcessorOptions(verbosity=3, output_format="vs7")
         self._check_initialized()
 
-        self._call_error_handler(options, confidence)
+        error_handler = self._error_handler(options)
+        self._call_error_handler(error_handler, confidence)
 
         self.assertEquals(1, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEquals(self._error_messages[-1],
                           "foo.h(100):  message  [whitespace/tab] [5]\n")
 
     def test_call_max_reports_per_category(self):
@@ -125,25 +126,25 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         self._check_initialized()
 
         # First call: usual reporting.
-        self._call(error_handler, options, confidence)
+        self._call_error_handler(error_handler, confidence)
         self.assertEquals(1, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEquals(1, len(self._error_messages))
+        self.assertEquals(self._error_messages[-1],
                           "foo.h:100:  message  [whitespace/tab] [5]\n")
 
         # Second call: suppression message reported.
-        self._error_messages = ""
-        self._call(error_handler, options, confidence)
+        self._call_error_handler(error_handler, confidence)
         self.assertEquals(2, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEquals(2, len(self._error_messages))
+        self.assertEquals(self._error_messages[-1],
                           "foo.h:100:  message  [whitespace/tab] [5]\n"
                           "Suppressing further [%s] reports for this file.\n"
                           % self._category)
 
         # Third call: no report.
-        self._error_messages = ""
-        self._call(error_handler, options, confidence)
+        self._call_error_handler(error_handler, confidence)
         self.assertEquals(3, self._error_count)
-        self.assertEquals(self._error_messages, "")
+        self.assertEquals(2, len(self._error_messages))
 
 
 class PatchStyleErrorHandlerTest(StyleErrorHandlerTestBase):

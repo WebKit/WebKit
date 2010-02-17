@@ -1,3 +1,47 @@
+2010-02-15  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Some minor check-webkit-style code clean-ups.  This revision
+        contains no new functionality.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34932
+
+        * Scripts/check-webkit-style:
+          - Replaced the call to webkit_argument_defaults() with a
+            default parameter in the ArgumentParser constructor.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Removed the WEBKIT prefix from the default global variables.
+          - Prefixed several of the global variables with an underscore
+            to reflect that they are used internally.
+          - Renamed _DEFAULT_FILTER_RULES to _BASE_FILTER_RULES.
+          - Addressed a FIXME by changing the _PATH_RULES_SPECIFIER
+            configuration from list-tuple pairs to list-list pairs.
+          - Renamed style_categories() to _all_categories().
+          - Renamed webkit_argument_defaults() to _check_webkit_style_defaults().
+          - Renamed the ArgumentDefaults class to DefaultCommandOptionValues.
+          - In the ArgumentParser class--
+            - Renamed the doc_print attribute to stderr_write.
+            - Other minor updates.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the import statements and unit test classes as necessary.
+          - Added assertions to test _PATH_RULES_SPECIFIER more fully.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Updated the unit test classes as necessary.
+          - Changed StyleErrorHandlerTestBase to store a list of error
+            messages rather than just the last one.
+
+        * Scripts/webkitpy/style/filter.py:
+          - Altered FilterConfiguration._path_rules_from_path()
+            to convert the path_rules list to a tuple.
+
+        * Scripts/webkitpy/style/filter_unittest.py:
+          - Updated the unit tests to reflect the change from tuples to
+            lists in the _PATH_RULES_SPECIFIER configuration variable.
+
 2010-02-16  Mark Rowe  <mrowe@apple.com>
 
         Let's not check garbage in to common build scripts and hose the world now eh guys?

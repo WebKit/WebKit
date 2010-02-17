@@ -45,9 +45,9 @@ from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
 
-# These defaults are used by check-webkit-style.
-WEBKIT_DEFAULT_VERBOSITY = 1
-WEBKIT_DEFAULT_OUTPUT_FORMAT = 'emacs'
+# These are default option values for the command-line option parser.
+_DEFAULT_VERBOSITY = 1
+_DEFAULT_OUTPUT_FORMAT = 'emacs'
 
 
 # FIXME: For style categories we will never want to have, remove them.
@@ -55,14 +55,16 @@ WEBKIT_DEFAULT_OUTPUT_FORMAT = 'emacs'
 #        modify the implementation and enable them.
 #
 # Throughout this module, we use "filter rule" rather than "filter"
-# for an individual boolean filter flag like "+foo". This allows us to
+# for an individual boolean filter flag like "+foo".  This allows us to
 # reserve "filter" for what one gets by collectively applying all of
 # the filter rules.
 #
-# The _WEBKIT_FILTER_RULES are prepended to any user-specified filter
-# rules. Since by default all errors are on, only include rules that
-# begin with a - sign.
-WEBKIT_DEFAULT_FILTER_RULES = [
+# The base filter rules are the filter rules that begin the list of
+# filter rules used to check style.  For example, these rules precede
+# any user-specified filter rules.  Since by default all categories are
+# checked, this list should normally include only rules that begin
+# with a "-" sign.
+_BASE_FILTER_RULES = [
     '-build/endif_comment',
     '-build/include_what_you_use',  # <string> for std::string
     '-build/storage_class',  # const static
@@ -86,26 +88,24 @@ WEBKIT_DEFAULT_FILTER_RULES = [
     ]
 
 
-# FIXME: Change the second value of each tuple from a tuple to a list,
-#        and alter the filter code so it accepts lists instead.  (The
-#        filter code will need to convert incoming values from a list
-#        to a tuple prior to caching).  This will make this
-#        configuration setting a bit simpler since tuples have an
-#        unusual syntax case.
-#
 # The path-specific filter rules.
 #
 # This list is order sensitive.  Only the first path substring match
 # is used.  See the FilterConfiguration documentation in filter.py
 # for more information on this list.
+#
+# Each string appearing in this nested list should have at least
+# one associated unit test assertion.  These assertions are located,
+# for example, in the test_path_rules_specifier() unit test method of
+# checker_unittest.py.
 _PATH_RULES_SPECIFIER = [
     # Files in these directories are consumers of the WebKit
     # API and therefore do not follow the same header including
     # discipline as WebCore.
     (["WebKitTools/WebKitAPITest/",
       "WebKit/qt/QGVLauncher/"],
-     ("-build/include",
-      "-readability/streams")),
+     ["-build/include",
+      "-readability/streams"]),
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
       "WebKit/gtk/webkit/",
@@ -116,13 +116,7 @@ _PATH_RULES_SPECIFIER = [
       # QtTest module.
       "WebKit/qt/tests/",
       "JavaScriptCore/qt/tests"],
-     ("-readability/naming",)),
-    # These are test file patterns.
-    (["_test.cpp",
-      "_unittest.cpp",
-      "_regtest.cpp"],
-     ("-readability/streams",  # Many unit tests use cout.
-      "-runtime/rtti")),
+     ["-readability/naming"]),
 ]
 
 
@@ -131,7 +125,7 @@ _PATH_RULES_SPECIFIER = [
 # future merges.
 #
 # Include a warning for skipped files that are less obvious.
-SKIPPED_FILES_WITH_WARNING = [
+_SKIPPED_FILES_WITH_WARNING = [
     # The Qt API and tests do not follow WebKit style.
     # They follow Qt style. :)
     "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
@@ -145,36 +139,37 @@ SKIPPED_FILES_WITH_WARNING = [
 
 # Don't include a warning for skipped files that are more common
 # and more obvious.
-SKIPPED_FILES_WITHOUT_WARNING = [
+_SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests/"
     ]
 
 
 # The maximum number of errors to report per file, per category.
 # If a category is not a key, then it has no maximum.
-MAX_REPORTS_PER_CATEGORY = {
+_MAX_REPORTS_PER_CATEGORY = {
     "whitespace/carriage_return": 1
 }
 
 
-def style_categories():
+def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
     # Take the union across all processors.
     return CommonCategories.union(CppProcessor.categories)
 
 
-def webkit_argument_defaults():
-    """Return the DefaultArguments instance for use by check-webkit-style."""
-    return ArgumentDefaults(WEBKIT_DEFAULT_OUTPUT_FORMAT,
-                            WEBKIT_DEFAULT_VERBOSITY,
-                            WEBKIT_DEFAULT_FILTER_RULES)
+def _check_webkit_style_defaults():
+    """Return the default command-line options for check-webkit-style."""
+    return DefaultCommandOptionValues(base_filter_rules=_BASE_FILTER_RULES,
+                                      output_format=_DEFAULT_OUTPUT_FORMAT,
+                                      verbosity=_DEFAULT_VERBOSITY)
 
 
-def _create_usage(defaults):
+
+def _create_usage(default_options):
     """Return the usage string to display for command help.
 
     Args:
-      defaults: An ArgumentDefaults instance.
+      default_options: A DefaultCommandOptionValues instance.
 
     """
     usage = """
@@ -236,8 +231,8 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
       the empty filter as follows:
          --filter=
 """ % {'program_name': os.path.basename(sys.argv[0]),
-       'default_verbosity': defaults.verbosity,
-       'default_output_format': defaults.output_format}
+       'default_verbosity': default_options.verbosity,
+       'default_output_format': default_options.output_format}
 
     return usage
 
@@ -255,7 +250,7 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
 # This class should not have knowledge of the flag key names.
 class ProcessorOptions(object):
 
-    """A container to store options passed via the command line.
+    """Stores the option values passed by the user via the command line.
 
     Attributes:
       extra_flag_values: A string-string dictionary of all flag key-value
@@ -359,23 +354,22 @@ class ProcessorOptions(object):
 
 
 # This class should not have knowledge of the flag key names.
-class ArgumentDefaults(object):
+class DefaultCommandOptionValues(object):
 
-    """A container to store default argument values.
+    """Stores the default check-webkit-style command-line options.
 
     Attributes:
+      base_filter_rules: A list of boolean filter rule strings that begin
+                         the list of filter rules used to check style.
       output_format: A string that is the default output format.
       verbosity: An integer that is the default verbosity level.
-      base_filter_rules: A list of strings that are boolean filter rules
-                         to prepend to any user-specified rules.
 
     """
 
-    def __init__(self, default_output_format, default_verbosity,
-                 default_base_filter_rules):
-        self.output_format = default_output_format
-        self.verbosity = default_verbosity
-        self.base_filter_rules = default_base_filter_rules
+    def __init__(self, base_filter_rules, output_format, verbosity):
+        self.base_filter_rules = base_filter_rules
+        self.output_format = output_format
+        self.verbosity = verbosity
 
 
 class ArgumentPrinter(object):
@@ -413,31 +407,40 @@ class ArgumentPrinter(object):
         return flag_string.strip()
 
 
+# FIXME: Replace the use of getopt.getopt() with optparse.OptionParser.
 class ArgumentParser(object):
 
     """Supports the parsing of check-webkit-style command arguments.
 
     Attributes:
-      defaults: An ArgumentDefaults instance.
-      create_usage: A function that accepts an ArgumentDefaults instance
-                    and returns a string of usage instructions.
-                    This defaults to the function used to generate the
-                    usage string for check-webkit-style.
-      doc_print: A function that accepts a string parameter and that is
-                 called to display help messages. This defaults to
-                 sys.stderr.write().
+      create_usage: A function that accepts a DefaultCommandOptionValues
+                    instance and returns a string of usage instructions.
+                    Defaults to the function that generates the usage
+                    string for check-webkit-style.
+      default_options: A DefaultCommandOptionValues instance.  Defaults
+                       to the default command option values used by
+                       check-webkit-style.
+      stderr_write: A function that takes a string as a parameter and
+                    serves as stderr.write.  Defaults to sys.stderr.write.
+                    This parameter should be specified only for unit tests.
 
     """
 
-    def __init__(self, argument_defaults, create_usage=None, doc_print=None):
+    def __init__(self,
+                 create_usage=None,
+                 default_options=None,
+                 stderr_write=None):
         if create_usage is None:
             create_usage = _create_usage
-        if doc_print is None:
-            doc_print = sys.stderr.write
+        if default_options is None:
+            default_options = _check_webkit_style_defaults()
+        if stderr_write is None:
+            stderr_write = sys.stderr.write
 
-        self.defaults = argument_defaults
+        # FIXME: Rename these to reflect that they are internal.
         self.create_usage = create_usage
-        self.doc_print = doc_print
+        self.default_options = default_options
+        self.stderr_write = stderr_write
 
     def _exit_with_usage(self, error_message=''):
         """Exit and print a usage string with an optional error message.
@@ -446,8 +449,8 @@ class ArgumentParser(object):
           error_message: A string that is an error message to print.
 
         """
-        usage = self.create_usage(self.defaults)
-        self.doc_print(usage)
+        usage = self.create_usage(self.default_options)
+        self.stderr_write(usage)
         if error_message:
             sys.exit('\nFATAL ERROR: ' + error_message)
         else:
@@ -455,16 +458,16 @@ class ArgumentParser(object):
 
     def _exit_with_categories(self):
         """Exit and print the style categories and default filter rules."""
-        self.doc_print('\nAll categories:\n')
-        categories = style_categories()
+        self.stderr_write('\nAll categories:\n')
+        categories = _all_categories()
         for category in sorted(categories):
-            self.doc_print('    ' + category + '\n')
+            self.stderr_write('    ' + category + '\n')
 
-        self.doc_print('\nDefault filter rules**:\n')
-        for filter_rule in sorted(self.defaults.base_filter_rules):
-            self.doc_print('    ' + filter_rule + '\n')
-        self.doc_print('\n**The command always evaluates the above rules, '
-                       'and before any --filter flag.\n\n')
+        self.stderr_write('\nDefault filter rules**:\n')
+        for filter_rule in sorted(self.default_options.base_filter_rules):
+            self.stderr_write('    ' + filter_rule + '\n')
+        self.stderr_write('\n**The command always evaluates the above rules, '
+                          'and before any --filter flag.\n\n')
 
         sys.exit(0)
 
@@ -504,9 +507,9 @@ class ArgumentParser(object):
         if extra_flags is None:
             extra_flags = []
 
-        output_format = self.defaults.output_format
-        verbosity = self.defaults.verbosity
-        base_rules = self.defaults.base_filter_rules
+        output_format = self.default_options.output_format
+        verbosity = self.default_options.verbosity
+        base_rules = self.default_options.base_filter_rules
 
         # The flags already supported by the ProcessorOptions class.
         flags = ['help', 'output=', 'verbose=', 'filter=', 'git-commit=']
@@ -558,7 +561,7 @@ class ArgumentParser(object):
                              'allowed output formats are emacs and vs7.' %
                              output_format)
 
-        all_categories = style_categories()
+        all_categories = _all_categories()
         validate_filter_rules(user_rules, all_categories)
 
         verbosity = int(verbosity)
@@ -573,7 +576,7 @@ class ArgumentParser(object):
         options = ProcessorOptions(extra_flag_values=extra_flag_values,
                       filter_configuration=filter_configuration,
                       git_commit=git_commit,
-                      max_reports_per_category=MAX_REPORTS_PER_CATEGORY,
+                      max_reports_per_category=_MAX_REPORTS_PER_CATEGORY,
                       output_format=output_format,
                       verbosity=verbosity)
 
@@ -617,14 +620,14 @@ class ProcessorDispatcher(object):
 
     def should_skip_with_warning(self, file_path):
         """Return whether the given file should be skipped with a warning."""
-        for skipped_file in SKIPPED_FILES_WITH_WARNING:
+        for skipped_file in _SKIPPED_FILES_WITH_WARNING:
             if file_path.find(skipped_file) >= 0:
                 return True
         return False
 
     def should_skip_without_warning(self, file_path):
         """Return whether the given file should be skipped without a warning."""
-        for skipped_file in SKIPPED_FILES_WITHOUT_WARNING:
+        for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if file_path.find(skipped_file) >= 0:
                 return True
         return False
@@ -784,10 +787,11 @@ class StyleChecker(object):
 
         """
         if handle_style_error is None:
-            handle_style_error = DefaultStyleErrorHandler(file_path,
-                                     self.options,
-                                     self._increment_error_count,
-                                     self._stderr_write)
+            handle_style_error = DefaultStyleErrorHandler(file_path=file_path,
+                                     options=self.options,
+                                     increment_error_count=
+                                         self._increment_error_count,
+                                     stderr_write=self._stderr_write)
         if process_file is None:
             process_file = self._process_file
 

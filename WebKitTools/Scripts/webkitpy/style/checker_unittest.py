@@ -37,8 +37,11 @@
 import unittest
 
 import checker as style
+from checker import _BASE_FILTER_RULES
+from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
-from checker import style_categories
+from checker import _all_categories
+from checker import DefaultCommandOptionValues
 from checker import ProcessorDispatcher
 from checker import ProcessorOptions
 from checker import StyleChecker
@@ -138,18 +141,18 @@ class GlobalVariablesTest(unittest.TestCase):
     """Tests validity of the global variables."""
 
     def _all_categories(self):
-        return style.style_categories()
+        return _all_categories()
 
     def defaults(self):
-        return style.webkit_argument_defaults()
+        return style._check_webkit_style_defaults()
 
-    def test_filter_rules(self):
+    def test_webkit_base_filter_rules(self):
+        base_filter_rules = _BASE_FILTER_RULES
         defaults = self.defaults()
         already_seen = []
-        validate_filter_rules(defaults.base_filter_rules,
-                              self._all_categories())
+        validate_filter_rules(base_filter_rules, self._all_categories())
         # Also do some additional checks.
-        for rule in defaults.base_filter_rules:
+        for rule in base_filter_rules:
             # Check no leading or trailing white space.
             self.assertEquals(rule, rule.strip())
             # All categories are on by default, so defaults should
@@ -161,37 +164,60 @@ class GlobalVariablesTest(unittest.TestCase):
 
     def test_defaults(self):
         """Check that default arguments are valid."""
-        defaults = self.defaults()
+        default_options = self.defaults()
 
         # FIXME: We should not need to call parse() to determine
         #        whether the default arguments are valid.
-        parser = style.ArgumentParser(defaults)
+        parser = style.ArgumentParser(default_options=default_options)
         # No need to test the return value here since we test parse()
         # on valid arguments elsewhere.
         parser.parse([]) # arguments valid: no error or SystemExit
 
     def test_path_rules_specifier(self):
-        all_categories = style_categories()
+        all_categories = self._all_categories()
         for (sub_paths, path_rules) in PATH_RULES_SPECIFIER:
-            self.assertTrue(isinstance(path_rules, tuple),
-                            "Checking: " + str(path_rules))
             validate_filter_rules(path_rules, self._all_categories())
 
-        # Try using the path specifier (as an "end-to-end" check).
         config = FilterConfiguration(path_specific=PATH_RULES_SPECIFIER)
-        self.assertTrue(config.should_check("xxx_any_category",
-                                            "xxx_non_matching_path"))
-        self.assertTrue(config.should_check("xxx_any_category",
-                                            "WebKitTools/WebKitAPITest/"))
-        self.assertFalse(config.should_check("build/include",
-                                             "WebKitTools/WebKitAPITest/"))
-        self.assertFalse(config.should_check("readability/naming",
-                             "WebKit/qt/tests/qwebelement/tst_qwebelement.cpp"))
+
+        def assertCheck(path, category):
+            """Assert that the given category should be checked."""
+            message = ('Should check category "%s" for path "%s".'
+                       % (category, path))
+            self.assertTrue(config.should_check(category, path))
+
+        def assertNoCheck(path, category):
+            """Assert that the given category should not be checked."""
+            message = ('Should not check category "%s" for path "%s".'
+                       % (category, path))
+            self.assertFalse(config.should_check(category, path), message)
+
+        assertCheck("random_path.cpp",
+                    "build/include")
+        assertNoCheck("WebKitTools/WebKitAPITest/main.cpp",
+                      "build/include")
+        assertNoCheck("WebKit/qt/QGVLauncher/main.cpp",
+                      "build/include")
+        assertNoCheck("WebKit/qt/QGVLauncher/main.cpp",
+                      "readability/streams")
+
+        assertCheck("random_path.cpp",
+                    "readability/naming")
+        assertNoCheck("WebKit/gtk/webkit/webkit.h",
+                      "readability/naming")
+        assertNoCheck("WebCore/css/CSSParser.cpp",
+                      "readability/naming")
+        assertNoCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
+                      "readability/naming")
+        assertNoCheck(
+            "JavaScriptCore/qt/tests/qscriptengine/tst_qscriptengine.cpp",
+            "readability/naming")
+
 
     def test_max_reports_per_category(self):
-        """Check that MAX_REPORTS_PER_CATEGORY is valid."""
+        """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()
-        for category in style.MAX_REPORTS_PER_CATEGORY.iterkeys():
+        for category in _MAX_REPORTS_PER_CATEGORY.iterkeys():
             self.assertTrue(category in all_categories,
                             'Key "%s" is not a category' % category)
 
@@ -237,29 +263,29 @@ class ArgumentParserTest(unittest.TestCase):
         """Return a default parse() function for testing."""
         return self._create_parser().parse
 
-    def _create_defaults(self, default_output_format='vs7',
-                         default_verbosity=3,
-                         default_filter_rules=['-', '+whitespace']):
-        """Return a default ArgumentDefaults instance for testing."""
-        return style.ArgumentDefaults(default_output_format,
-                                      default_verbosity,
-                                      default_filter_rules)
+    def _create_defaults(self):
+        """Return a DefaultCommandOptionValues instance for testing."""
+        base_filter_rules = ["-", "+whitespace"]
+        return DefaultCommandOptionValues(base_filter_rules=base_filter_rules,
+                                          output_format="vs7",
+                                          verbosity=3)
 
-    def _create_parser(self, defaults=None):
+    def _create_parser(self):
         """Return an ArgumentParser instance for testing."""
-        def create_usage(_defaults):
+        def create_usage(_default_options):
             """Return a usage string for testing."""
             return "usage"
 
-        def doc_print(message):
+        def stderr_write(message):
             # We do not want the usage string or style categories
             # to print during unit tests, so print nothing.
             return
 
-        if defaults is None:
-            defaults = self._create_defaults()
+        default_options = self._create_defaults()
 
-        return style.ArgumentParser(defaults, create_usage, doc_print)
+        return style.ArgumentParser(create_usage=create_usage,
+                                    default_options=default_options,
+                                    stderr_write=stderr_write)
 
     def test_parse_documentation(self):
         parse = self._parse()
