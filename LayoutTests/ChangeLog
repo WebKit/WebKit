@@ -1,3 +1,17 @@
+2010-02-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34999
+        Compositing layers inside overflow:scroll divs are not always updated on scrolling
+        
+        New testcase with specific compositing configuration involving overflow:scroll.
+
+        * compositing/overflow/scroll-ancestor-update.html: Added.
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.checksum: Added.
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.txt: Added.
+
 2010-02-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Dirk Schulze.

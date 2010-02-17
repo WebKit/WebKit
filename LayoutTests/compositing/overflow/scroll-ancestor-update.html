@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+        
+        body {
+            margin: 0;
+        }
+
+        video {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .container {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            height: 200px;
+            width: 200px;
+        }
+        
+        #scroller {
+            overflow-y: scroll;
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+        }
+        
+        .content {
+            height: 500px;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+        }
+
+        .tester {
+            position: relative;
+            margin-top: 50px;
+            background-color: green;
+        }
+        
+        .indicator {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            background-color: red;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        if (window.layoutTestController)
+          layoutTestController.waitUntilDone();
+        
+        function scrollTestDiv()
+        {
+            var scroller = document.getElementById('scroller');
+            scroller.scrollTop = 50;
+        }
+    </script>
+</head>
+<body>
+  
+  <div class="indicator box"></div>
+
+  <div class="container">
+    <div id="scroller">
+        <div class="content">
+            <div class="tester box"></div>
+        </div>
+    </div>
+    <p>The green box should obscure the red box, and move when you drag the scrollbar.</p>
+  </div>
+  
+  <video src="../resources/video.mp4"></video>
+
+  <script type="text/javascript" charset="utf-8">
+    var video = document.getElementsByTagName('video')[0];
+    video.addEventListener('canplaythrough', function() {
+      scrollTestDiv();
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }, false);
+  </script>
+</body>
+</html>
