@@ -134,9 +134,6 @@ static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
 
-const unsigned maxViewHeight = 600;
-const unsigned maxViewWidth = 800;
-
 #if __OBJC2__
 static void swizzleAllMethods(Class imposter, Class original)
 {
@@ -279,7 +276,7 @@ static void activateFonts()
 
 WebView *createWebViewAndOffscreenWindow()
 {
-    NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
+    NSRect rect = NSMakeRect(0, 0, LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight);
     WebView *webView = [[WebView alloc] initWithFrame:rect frameName:nil groupName:@"org.webkit.DumpRenderTree"];
         
     [webView setUIDelegate:uiDelegate];
@@ -1021,7 +1018,7 @@ static void sizeWebViewForCurrentTest()
     if (isSVGW3CTest)
         [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
     else
-        [[mainFrame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
+        [[mainFrame webView] setFrameSize:NSMakeSize(LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight)];
 }
 
 static const char *methodNameStringForFailedTest()

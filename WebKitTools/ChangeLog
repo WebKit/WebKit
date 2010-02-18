@@ -69,6 +69,27 @@
 
         Reviewed by Eric Seidel.
 
+        Share the DRT values maxViewWidth/Height among ports
+        https://bugs.webkit.org/show_bug.cgi?id=34474
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pageNumberForElementByIdCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::maxViewWidth):
+        (LayoutTestController::maxViewHeight):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        (sizeWebViewForCurrentTest):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (createWebViewAndOffscreenWindow):
+
+2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         [Win] Implement test functions for printing
         https://bugs.webkit.org/show_bug.cgi?id=34570
 

@@ -234,6 +234,9 @@ public:
 
     void setPOSIXLocale(JSStringRef locale);
 
+    static const unsigned maxViewWidth;
+    static const unsigned maxViewHeight;
+
 private:
     bool m_dumpAsPDF;
     bool m_dumpAsText;

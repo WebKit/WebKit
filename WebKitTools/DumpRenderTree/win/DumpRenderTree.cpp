@@ -107,9 +107,6 @@ LayoutTestController* gLayoutTestController = 0;
 
 UINT_PTR waitToDumpWatchdog = 0;
 
-const unsigned maxViewWidth = 800;
-const unsigned maxViewHeight = 600;
-
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {
     persistentUserStyleSheetLocation = url;
@@ -667,8 +664,8 @@ void dump()
                 width = 480;
                 height = 360;
             } else {
-                width = maxViewWidth;
-                height = maxViewHeight;
+                width = LayoutTestController::maxViewWidth;
+                height = LayoutTestController::maxViewHeight;
             }
 
             ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
@@ -1098,6 +1095,8 @@ WindowToWebViewMap& windowToWebViewMap()
 
 IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 {
+    unsigned maxViewWidth = LayoutTestController::maxViewWidth;
+    unsigned maxViewHeight = LayoutTestController::maxViewHeight;
     HWND hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
       -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, GetModuleHandle(0), 0);
 
