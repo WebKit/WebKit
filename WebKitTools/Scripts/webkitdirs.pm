@@ -1461,7 +1461,7 @@ sub runSafari
     my ($debugger) = @_;
 
     if (isAppleMacWebKit()) {
-        return system "$FindBin::Bin/gdb-safari", @ARGV if $debugger;
+        return system "$FindBin::Bin/gdb-safari", argumentsForConfiguration() if $debugger;
 
         my $productDir = productDir();
         print "Starting Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
