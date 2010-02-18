@@ -1,3 +1,11 @@
+2010-02-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Unskip glyph-reordering, because now it passes on Windows.
+
+        * platform/win/Skipped:
+
 2010-02-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
