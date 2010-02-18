@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=26937
+        No longer allow span styles to surround block elements like
+        divs when pasting (see paste-text-012 and 5065605 which had divs in
+        spans).  This also causes a few cases of empty spans to be removed
+        (see 19089 and 5245519).
+
+        * editing/execCommand/19089-expected.txt:
+        * editing/pasteboard/5245519-expected.txt:
+        * editing/pasteboard/5245519.html:
+        * platform/mac/editing/pasteboard/5065605-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-012-expected.txt:
+
+2010-02-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=34914
         When pasting absolute font sizes into a content editable area with
         page zoom, adjust the font sizes to be the same after page zoom is

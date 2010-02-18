@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        Copying and pasting into a contenteditable area can create <div>s surrounded by <span>s
+        https://bugs.webkit.org/show_bug.cgi?id=26937
+
+        This happens because of a span added when we copy that is used to
+        preserve styles.  To avoid this, when we paste, make sure to apply
+        the styles to the span's children and then remove the style span.
+
+        This change is covered by existing layout tests.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::ReplaceSelectionCommand::copyStyleToChildren):
+        * editing/ReplaceSelectionCommand.h:
+
+2010-02-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=34914
         When pasting absolute font sizes into a content editable area with
         page zoom, adjust the font sizes to be the same after page zoom is
