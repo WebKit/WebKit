@@ -1,3 +1,15 @@
+2010-02-18  William Chan  <willchan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35071
+        Disable loader limiting of requests per host for the chromium port.
+
+        No tests because we're only changing a constant.
+
+        * platform/network/chromium/ResourceRequest.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+
 2010-02-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.

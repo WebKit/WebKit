@@ -31,7 +31,10 @@ namespace WebCore {
 // This is used by the loader to control the number of issued parallel load requests. 
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
-    return 6;
+    // The chromium network stack already handles limiting the number of
+    // parallel requests per host, so there's no need to do it here.  Therefore,
+    // this is set to a high value that should never be hit in practice.
+    return 10000;
 }
 
 } // namespace WebCore
