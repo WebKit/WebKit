@@ -1,3 +1,21 @@
+2010-02-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port PlatformKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=34794
+
+        Retrieve the type, key code, text and modifiers from BREW's keyboard event.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/brew/PlatformKeyboardEventBrew.cpp: Added.
+        (WebCore::keyIdentifierForBrewKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::singleCharacterString):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+
 2010-02-17  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Eric Seidel.

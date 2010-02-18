@@ -63,6 +63,12 @@ class wxKeyEvent;
 class BMessage;
 #endif
 
+#if PLATFORM(BREWMP)
+typedef unsigned short    uint16;
+typedef unsigned long int uint32;
+#define AEEEvent uint16
+#endif
+
 namespace WebCore {
 
     class PlatformKeyboardEvent : public FastAllocBase {
@@ -155,6 +161,10 @@ namespace WebCore {
 
 #if PLATFORM(HAIKU)
         PlatformKeyboardEvent(BMessage*);
+#endif
+
+#if PLATFORM(BREWMP)
+        PlatformKeyboardEvent(AEEEvent, uint16, uint32, Type);
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(CHROMIUM)
