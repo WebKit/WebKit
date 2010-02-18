@@ -253,7 +253,7 @@ void PluginPackage::initializeBrowserFuncs()
 {
     memset(&m_browserFuncs, 0, sizeof(m_browserFuncs));
     m_browserFuncs.size = sizeof(m_browserFuncs);
-    m_browserFuncs.version = NP_VERSION_MINOR;
+    m_browserFuncs.version = NPVersion();
 
     m_browserFuncs.geturl = NPN_GetURL;
     m_browserFuncs.posturl = NPN_PostURL;

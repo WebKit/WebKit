@@ -1,3 +1,31 @@
+2010-02-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Linux] Webkit incompatible with Java plugins
+        https://bugs.webkit.org/show_bug.cgi?id=24912
+
+        The NP Version supported by WebKit is at the moment hardcoded in
+        PluginPackage.cpp (to 24), but not all backends actually implement
+        the methods needed to claim this. Introduce a new method to be
+        implemented by each backend where the maximum supported version
+        can be specified, and set the GTK+ port NPVersion to 19. This
+        fixes an instantaneous crasher in the Sun Java NPAPI plugin.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::initializeBrowserFuncs):
+        * plugins/PluginPackage.h:
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::NPVersion):
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::NPVersion):
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::NPVersion):
+        * plugins/symbian/PluginPackageSymbian.cpp:
+        (WebCore::PluginPackage::NPVersion):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::NPVersion):
+
 2010-02-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin, Darin Fisher, Simon Hausmann.
