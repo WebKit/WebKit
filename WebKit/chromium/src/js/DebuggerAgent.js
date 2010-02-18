@@ -1364,7 +1364,8 @@ devtools.CallFrame.prototype.evaluate_ = function(expression, callback)
             "frame": this.id,
             "global": false,
             "disable_break": false,
-            "compactFormat": true
+            "compactFormat": true,
+            "maxStringLength": -1
         },
         function(response) {
             var result = {};
