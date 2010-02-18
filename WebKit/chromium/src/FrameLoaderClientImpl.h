@@ -174,6 +174,7 @@ public:
         WebCore::HTMLFrameOwnerElement* ownerElement,
         const WebCore::String& referrer, bool allowsScrolling,
         int marginWidth, int marginHeight);
+    virtual void didTransferChildFrameToNewDocument();
     virtual PassRefPtr<WebCore::Widget> createPlugin(
         const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&,
         const Vector<WebCore::String>&, const Vector<WebCore::String>&,

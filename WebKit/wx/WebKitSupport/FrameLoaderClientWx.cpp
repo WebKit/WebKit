@@ -841,6 +841,10 @@ PassRefPtr<Frame> FrameLoaderClientWx::createFrame(const KURL& url, const String
     return childFrame.release();
 }
 
+void FrameLoaderClientWx::didTransferChildFrameToNewDocument()
+{
+}
+
 ObjectContentType FrameLoaderClientWx::objectContentType(const KURL& url, const String& mimeType)
 {
     notImplemented();

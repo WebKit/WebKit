@@ -1,3 +1,21 @@
+2010-02-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin, Darin Fisher, Simon Hausmann.
+
+        When a live iframe element is moved between pages, it still depends on the old page.
+        https://bugs.webkit.org/show_bug.cgi?id=34382
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::detachedFromParent3):
+        (WebKit::FrameLoaderClientImpl::didTransferChildFrameToNewDocument):
+        Since Chromium's WebFrameClient is destroyed once a window is closed,
+        if Frame moves between Pages, the client of corresponding WebFrame
+        should be replaced as well.
+
+        * src/FrameLoaderClientImpl.h:
+        * src/WebFrameImpl.h:
+        (WebKit::WebFrameImpl::setClient):
+
 2010-02-17  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

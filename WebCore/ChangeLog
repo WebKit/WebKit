@@ -1,3 +1,47 @@
+2010-02-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin, Darin Fisher, Simon Hausmann.
+
+        When a live iframe element is moved between pages, it still depends on the old page.
+        https://bugs.webkit.org/show_bug.cgi?id=34382
+
+        Test: fast/frames/iframe-reparenting-new-page.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setName):
+        Move the code setting the frame name into a separate function.
+
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL):
+        (WebCore::HTMLFrameElementBase::updateOnReparenting):
+        Called on the frame that was just re-parented and inserted into another Document.
+        Simply invoke Frame::transferChildFrameToNewDocument(...);
+
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::setName):
+        Make this a virtual function, to be able to reach it via Frame::m_ownerElement.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::adoptFrame):
+        * loader/FrameLoaderClient.h:
+        Add a new method, didTransferChildFrameToNewDocument().
+        It compliments createFrame() in that a frame which was re-parented
+        in DOM and potentially changes Page, should notify the WebKit
+        implementation about potential ownership change.
+        Many embedders assume that Page owns all the Frames, or at least
+        all Frames are destroyed before 'their' Page is destroyed. Obviously, if Frame
+        can be transferred to another Page, the embedders should be notified.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        Added, makes actual adjustments for Frame - resets the Page,
+        updates the frame tree and frame name, calls to FrameLoaderClient
+        to update external objects and recurses into children.
+        Can only be used on child frames.
+
+        * page/Frame.h:
+
 2010-02-17  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

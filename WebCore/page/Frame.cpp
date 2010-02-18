@@ -1616,6 +1616,54 @@ void Frame::disconnectOwnerElement()
     m_ownerElement = 0;
 }
 
+// The frame is moved in DOM, potentially to another page.
+void Frame::transferChildFrameToNewDocument()
+{
+    ASSERT(m_ownerElement);
+    Frame* newParent = m_ownerElement->document()->frame();
+    bool didTransfer = false;
+
+    // Switch page.
+    Page* newPage = newParent ? newParent->page() : 0;
+    if (m_page != newPage) {
+        if (page()->focusController()->focusedFrame() == this)
+            page()->focusController()->setFocusedFrame(0);
+
+        if (m_page)
+            m_page->decrementFrameCount();
+
+        m_page = newPage;
+
+        if (newPage)
+            newPage->incrementFrameCount();
+
+        didTransfer = true;
+    }
+
+    // Update the frame tree.
+    Frame* oldParent = tree()->parent();
+    if (oldParent != newParent) {
+        if (oldParent)
+            oldParent->tree()->removeChild(this);
+        if (newParent) {
+            newParent->tree()->appendChild(this);
+            m_ownerElement->setName();
+        }
+        didTransfer = true;
+    }
+
+    // Avoid unnecessary calls to client and frame subtree if the frame ended
+    // up on the same page and under the same parent frame.
+    if (didTransfer) {
+        // Let external clients update themselves.
+        loader()->client()->didTransferChildFrameToNewDocument();
+
+        // Do the same for all the children.
+        for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+            child->transferChildFrameToNewDocument();
+    }
+}
+
 String Frame::documentTypeString() const
 {
     if (DocumentType* doctype = document()->doctype())

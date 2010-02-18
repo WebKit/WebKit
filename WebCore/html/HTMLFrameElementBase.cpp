@@ -150,7 +150,7 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }
 
-void HTMLFrameElementBase::setNameAndOpenURL()
+void HTMLFrameElementBase::setName()
 {
     m_frameName = getAttribute(nameAttr);
     if (m_frameName.isNull())
@@ -158,13 +158,25 @@ void HTMLFrameElementBase::setNameAndOpenURL()
     
     if (Frame* parentFrame = document()->frame())
         m_frameName = parentFrame->tree()->uniqueChildName(m_frameName);
-    
+}
+
+void HTMLFrameElementBase::setNameAndOpenURL()
+{
+    setName();
     openURL();
 }
 
 void HTMLFrameElementBase::setNameAndOpenURLCallback(Node* n)
 {
     static_cast<HTMLFrameElementBase*>(n)->setNameAndOpenURL();
+}
+
+void HTMLFrameElementBase::updateOnReparenting()
+{
+    ASSERT(m_remainsAliveOnRemovalFromTree);
+
+    if (Frame* frame = contentFrame())
+        frame->transferChildFrameToNewDocument();
 }
 
 void HTMLFrameElementBase::insertedIntoDocument()
@@ -175,6 +187,9 @@ void HTMLFrameElementBase::insertedIntoDocument()
     // Othewise, a synchronous load that executed JavaScript would see incorrect 
     // (0) values for the frame's renderer-dependent properties, like width.
     m_shouldOpenURLAfterAttach = true;
+
+    if (m_remainsAliveOnRemovalFromTree)
+        updateOnReparenting();
 }
 
 void HTMLFrameElementBase::removedFromDocument()

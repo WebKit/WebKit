@@ -298,6 +298,21 @@ void QWebFramePrivate::init(QWebFrame *qframe, QWebFrameData *frameData)
     frame->init();
 }
 
+void QWebFramePrivate::setPage(QWebPage* newPage)
+{
+    if (page == newPage)
+        return;
+
+    // The QWebFrame is created as a child of QWebPage or a parent QWebFrame.
+    // That adds it to QObject's internal children list and ensures it will be
+    // deleted when parent QWebPage is deleted. Reparent if needed.
+    if (q->parent() == qobject_cast<QObject*>(page))
+        q->setParent(newPage);
+
+    page = newPage;
+    emit q->pageChanged();
+}
+
 WebCore::Scrollbar* QWebFramePrivate::horizontalScrollBar() const
 {
     if (!frame->view())

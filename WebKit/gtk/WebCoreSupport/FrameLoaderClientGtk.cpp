@@ -491,6 +491,10 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     return childFrame.release();
 }
 
+void FrameLoaderClient::didTransferChildFrameToNewDocument()
+{
+}
+
 void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     ASSERT(!m_pluginView);

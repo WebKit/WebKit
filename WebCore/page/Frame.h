@@ -76,6 +76,8 @@ namespace WebCore {
 
         Page* page() const;
         void detachFromPage();
+        void transferChildFrameToNewDocument();
+
         HTMLFrameOwnerElement* ownerElement() const;
 
         void pageDestroyed();

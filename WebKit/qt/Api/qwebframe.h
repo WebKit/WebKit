@@ -219,6 +219,8 @@ Q_SIGNALS:
     void loadStarted();
     void loadFinished(bool ok);
 
+    void pageChanged();
+
 private:
     friend class QWebPage;
     friend class QWebPagePrivate;

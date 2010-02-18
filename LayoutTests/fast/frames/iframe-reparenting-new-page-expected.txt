@@ -1,0 +1,18 @@
+The test verifies that the timer in iframe continues firing after iframe is adopted into a new window and the original window was closed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Loaded iframe in window 1.
+PASS iframe.contentWindow.counter is 1
+PASS Loaded page 2.
+PASS Page 2 adopted the iframe.
+PASS Iframe transferred.
+PASS iframe.contentWindow.counter is 2
+PASS window2.location.href is iframe.contentWindow.parent.location.href
+PASS Page 1 is closed.
+PASS Received the timer beat from the adopted iframe - exiting.
+

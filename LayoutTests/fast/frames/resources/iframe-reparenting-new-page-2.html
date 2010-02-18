@@ -1,0 +1,13 @@
+<html>
+<script>
+window.adoptIframe = function(iframe)
+{
+    document.adoptNode(iframe);
+    document.body.appendChild(iframe);
+    opener.testPassed("Page 2 adopted the iframe.")
+}
+</script>
+<body>
+Page 2<br>
+</body>
+</html>

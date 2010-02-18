@@ -73,6 +73,7 @@ public:
         , marginHeight(-1)
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
+    void setPage(QWebPage*);
 
     inline QWebFrame *parentFrame() { return qobject_cast<QWebFrame*>(q->parent()); }
 

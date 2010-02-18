@@ -64,8 +64,11 @@ private:
     
     virtual bool isURLAttribute(Attribute*) const;
 
+    virtual void setName();
+
     virtual void willRemove();
     void checkAttachedTimerFired(Timer<HTMLFrameElementBase>*);
+    void updateOnReparenting();
 
     bool viewSourceMode() const { return m_viewSource; }
 

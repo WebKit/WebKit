@@ -1352,6 +1352,10 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     return 0;
 }
 
+void WebFrameLoaderClient::didTransferChildFrameToNewDocument()
+{
+}
+
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
