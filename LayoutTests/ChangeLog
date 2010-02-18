@@ -1,5 +1,16 @@
 2010-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [Qt][GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
+        https://bugs.webkit.org/show_bug.cgi?id=35086
+
+        Skip both new tests that fail. It may be a DRT problem, and the
+        file path that is reported in the error message also seems to
+        require tweaking.
+
+        * platform/gtk/Skipped:
+
+2010-02-18  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Fails fast/multicol/client-rects.html
         https://bugs.webkit.org/show_bug.cgi?id=35127
 
