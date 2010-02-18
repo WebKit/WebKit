@@ -171,7 +171,7 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 
     v8::Handle<v8::Object> global = v8Context->Global();
     v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
-    Event* event = (!jsEvent.IsEmpty() && jsEvent->IsObject()) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
+    Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
 
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.
