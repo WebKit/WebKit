@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Actually submitting test for https://bugs.webkit.org/show_bug.cgi?id=34899 this time.
+
+        * fast/dom/Window/window-event-override-no-crash-expected.txt: Added.
+        * fast/dom/Window/window-event-override-no-crash.html: Added.
+
+2010-02-18  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Test for https://bugs.webkit.org/show_bug.cgi?id=34899
 
         * fast/dom/Window/window-event-override-no-crash-expected.txt: Added.
