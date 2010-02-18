@@ -1,3 +1,14 @@
+2010-02-18  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add the promised test for the unique file:// origins support.
+        See https://bugs.webkit.org/show_bug.cgi?id=34778 for more details.
+
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access.html: Added.
+        * fast/xmlhttprequest/resources/xmlhttprequest-no-file-access-real.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt: Added.
+
 2010-02-18  Tony Chang  <tony@chromium.org>
 
         Not reviewed, adding a QT layout test result for a new test
