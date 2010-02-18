@@ -1,3 +1,18 @@
+2010-02-17  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] expose cache-bypass flag in reload() API
+        https://bugs.webkit.org/show_bug.cgi?id=34969
+
+        This flag is used to force a reload to ignore caches.
+        (Aka "shift-reload".)
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::reload):
+        * src/WebFrameImpl.h:
+
 2010-02-17  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

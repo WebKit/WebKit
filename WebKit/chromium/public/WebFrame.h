@@ -241,7 +241,9 @@ public:
     // Navigation ----------------------------------------------------------
 
     // Reload the current document.
-    virtual void reload() = 0;
+    // True |ignoreCache| explicitly bypasses caches.
+    // False |ignoreCache| revalidates any existing cache entries.
+    virtual void reload(bool ignoreCache = false) = 0;
 
     // Load the given URL.
     virtual void loadRequest(const WebURLRequest&) = 0;

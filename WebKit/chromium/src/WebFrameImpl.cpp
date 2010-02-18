@@ -713,12 +713,13 @@ bool WebFrameImpl::insertStyleText(
     return success;
 }
 
-void WebFrameImpl::reload()
+void WebFrameImpl::reload(bool ignoreCache)
 {
     m_frame->loader()->history()->saveDocumentAndScrollState();
 
     stopLoading();  // Make sure existing activity stops.
-    m_frame->loader()->reload();
+
+    m_frame->loader()->reload(ignoreCache);
 }
 
 void WebFrameImpl::loadRequest(const WebURLRequest& request)

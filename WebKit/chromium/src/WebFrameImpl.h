@@ -103,7 +103,7 @@ public:
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
 #endif
     virtual bool insertStyleText(const WebString& css, const WebString& id);
-    virtual void reload();
+    virtual void reload(bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);
     virtual void loadHistoryItem(const WebHistoryItem&);
     virtual void loadData(
