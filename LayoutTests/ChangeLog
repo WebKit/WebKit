@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=34914
+        When pasting absolute font sizes into a content editable area with
+        page zoom, adjust the font sizes to be the same after page zoom is
+        applied.
+
+        * editing/pasteboard/page-zoom-expected.txt: Added.
+        * editing/pasteboard/page-zoom.html: Added.
+
+2010-02-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=34737
         Test to verify that pasting styled list items works
         the same as pasting unstyle list items.
