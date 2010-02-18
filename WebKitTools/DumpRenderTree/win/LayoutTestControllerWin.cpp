@@ -1164,3 +1164,8 @@ int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeigh
         pageNumber = -1;
     return pageNumber;
 }
+
+void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+{
+
+}

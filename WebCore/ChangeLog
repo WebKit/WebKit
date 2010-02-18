@@ -1,3 +1,18 @@
+2010-02-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Particularly constructed WebFrames can try to access a null HistoryItem
+        <rdar://problem/7638892> and https://bugs.webkit.org/show_bug.cgi?id=35063
+
+        Test: fast/loader/api-test-new-window-data-load-base-url.html
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateBackForwardListForFragmentScroll): We have a known case where a fragment scroll
+          might take place with a null m_currentItem. updateBackForwardListClippedAtTarget() will either move m_currentItem 
+          to m_previousItem then create a new m_currentItem...  or it will do nothing. So we either have both an m_currentItem 
+          and m_previousItem, or we have neither.  In the case where we have no m_previousItem, return early.
+
 2010-02-18  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Eric Seidel.

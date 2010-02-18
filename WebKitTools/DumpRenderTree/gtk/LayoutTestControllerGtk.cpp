@@ -595,3 +595,8 @@ void LayoutTestController::removeAllVisitedLinks()
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+{
+
+}

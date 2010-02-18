@@ -109,6 +109,10 @@ void HistoryController::updateBackForwardListForFragmentScroll()
     
     // Since the document isn't changed as a result of a fragment scroll, we should
     // preserve the DocumentSequenceNumber of the previous item.
+    if (!m_previousItem)
+        return;
+
+    ASSERT(m_currentItem);
     m_currentItem->setDocumentSequenceNumber(m_previousItem->documentSequenceNumber());
 }
 

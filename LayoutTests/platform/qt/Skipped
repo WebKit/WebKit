@@ -5087,3 +5087,6 @@ http/tests/misc/image-checks-for-accept.html
 # [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
 # https://bugs.webkit.org/show_bug.cgi?id=35086
 fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+
+# Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
+fast/loader/api-test-new-window-data-load-base-url.html
