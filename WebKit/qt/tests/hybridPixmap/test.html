@@ -9,11 +9,17 @@
                 var obj = myWidget.image;
                 var pxm = myWidget.pixmap;
 
-                var img = obj.toHTMLImageElement();
+                var img = new Image;
+                obj.assignToHTMLImageElement(img);
                 var img1 = document.getElementById("img1");
                 var img2 = document.getElementById("img2");
+                var img3 = document.getElementById("img3");
+                var img4 = document.getElementById("img4");
                 document.body.appendChild(img);
-                document.body.appendChild(pxm.toHTMLImageElement());
+                obj.assignToHTMLImageElement(img3);
+                pxm.assignToHTMLImageElement(img4);
+                myWidget.compare(pxm.width, img4.width);
+                myWidget.compare(obj.width, img3.width);
                 var signalsFired = 0;
                 myWidget.compare(obj.toString(),"[Qt Native Pixmap "+obj.width+","+obj.height+"]");
                 myWidget.compare(String(pxm),"[Qt Native Pixmap "+pxm.width+","+pxm.height+"]");
@@ -53,5 +59,7 @@
     <body onload="startTest()">
         <img id="img1" />
         <img id="img2" />
+        <img id="img3" />
+        <img id="img4" />
     </body>
 </html>
