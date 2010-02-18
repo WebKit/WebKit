@@ -1,3 +1,18 @@
+2010-02-18  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] WebKitDownload documentation is incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=35018
+
+        Concretely the error signal was undocumented. Also two relevant enums
+        were not included.
+
+        * docs/webkitgtk-sections.txt:
+        * docs/webkitgtk.types:
+        * webkit/webkitdownload.cpp:
+        (webkit_download_class_init):
+
 2010-02-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin, Darin Fisher, Simon Hausmann.

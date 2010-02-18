@@ -126,6 +126,8 @@ WebKitWebFrameClass
 
 <SECTION>
 <FILE>webkitdownload</FILE>
+WebKitDownloadError
+WebKitDownloadStatus
 <TITLE>WebKitDownload</TITLE>
 WebKitDownload
 webkit_download_cancel
@@ -157,9 +159,7 @@ WEBKIT_TYPE_DOWNLOAD_STATUS
 webkit_download_get_type
 WebKitDownload
 WebKitDownloadClass
-WebKitDownloadError
 WebKitDownloadPrivate
-WebKitDownloadStatus
 </SECTION>
 
 <SECTION>

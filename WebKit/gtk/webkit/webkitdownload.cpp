@@ -228,10 +228,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     /**
      * WebKitDownload::error:
      * @download: the object on which the signal is emitted
-     * @current_bytes: the current count of bytes downloaded
-     * @total_bytes: the total bytes count in the downloaded file, aka file size.
+     * @error_code: the corresponding error code
+     * @error_detail: detailed error code for the error, see
+     * #WebKitDownloadError
+     * @reason: a string describing the error
      *
-     * Indicates an error in the download.
+     * Emitted when @download is interrupted either by user action or by
+     * network errors, @error_detail will take any value of
+     * #WebKitDownloadError.
      *
      * Since: 1.1.2
      */
