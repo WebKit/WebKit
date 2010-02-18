@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * All rights reserved.
  *
@@ -29,9 +30,14 @@
 #include "FileSystem.h"
 
 #include "CString.h"
+#include "NotImplemented.h"
 #include "PlatformString.h"
 
-#include "NotImplemented.h"
+#include <Directory.h>
+#include <Entry.h>
+#include <File.h>
+#include <FindDirectory.h>
+#include <Path.h>
 
 
 namespace WebCore {
@@ -43,8 +49,11 @@ CString fileSystemRepresentation(const String& string)
 
 String homeDirectoryPath()
 {
-    notImplemented();
-    return String();
+    BPath path;
+    if (find_directory(B_USER_DIRECTORY, &path) != B_OK)
+        return String();
+
+    return String(path.Path());
 }
 
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
@@ -74,7 +83,10 @@ bool unloadModule(PlatformModule)
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
-    notImplemented();
+    BDirectory directory(path.utf8().data());
+    entry_ref ref;
+    while (directory.GetNextRef(&ref) == B_OK)
+        entries.append(ref.name);        
     return entries;
 }
 
