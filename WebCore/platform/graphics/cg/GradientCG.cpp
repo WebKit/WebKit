@@ -36,7 +36,7 @@ namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-#ifdef BUILDING_ON_TIGER
+#if USE_CG_SHADING
     CGShadingRelease(m_gradient);
 #else
     CGGradientRelease(m_gradient);
@@ -44,7 +44,7 @@ void Gradient::platformDestroy()
     m_gradient = 0;
 }
 
-#ifdef BUILDING_ON_TIGER
+#if USE_CG_SHADING
 static void gradientCallback(void* info, const CGFloat* in, CGFloat* out)
 {
     float r, g, b, a;
@@ -114,7 +114,7 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 
 void Gradient::paint(GraphicsContext* context)
 {
-#ifdef BUILDING_ON_TIGER
+#if USE_CG_SHADING
     CGContextDrawShading(context->platformContext(), platformGradient());
 #else
     CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;

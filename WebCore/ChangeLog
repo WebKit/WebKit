@@ -1,3 +1,17 @@
+2010-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7655195> Switch Leopard back to using CGShading to avoid CGGradient leaks
+
+        Define USE_CG_SHADING on for Tiger and Leopard, and use it to toggle the methods
+        used for Core Graphics gradient drawing.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::paint):
+
 2010-02-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -37,7 +37,9 @@
 
 #if PLATFORM(CG)
 
-#ifdef BUILDING_ON_TIGER
+#define USE_CG_SHADING defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+
+#if USE_CG_SHADING
 typedef struct CGShading* CGShadingRef;
 typedef CGShadingRef PlatformGradient;
 #else
