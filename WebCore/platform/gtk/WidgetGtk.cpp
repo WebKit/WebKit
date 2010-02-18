@@ -82,16 +82,18 @@ void Widget::setCursor(const Cursor& cursor)
 
 void Widget::show()
 {
-    if (!platformWidget())
-         return;
-    gtk_widget_show(platformWidget());
+    setSelfVisible(true);
+
+    if (isParentVisible() && platformWidget())
+        gtk_widget_show(platformWidget());
 }
 
 void Widget::hide()
 {
-    if (!platformWidget())
-         return;
-    gtk_widget_hide(platformWidget());
+    setSelfVisible(false);
+
+    if (isParentVisible() && platformWidget())
+        gtk_widget_hide(platformWidget());
 }
 
 void Widget::paint(GraphicsContext* context, const IntRect& rect)

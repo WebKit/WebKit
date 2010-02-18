@@ -158,29 +158,19 @@ void PluginView::updatePluginWidget()
 
 void PluginView::setFocus()
 {
-    if (platformPluginWidget())
-        gtk_widget_grab_focus(platformPluginWidget());
-
+    ASSERT(platformPluginWidget() == platformWidget());
     Widget::setFocus();
 }
 
 void PluginView::show()
 {
-    setSelfVisible(true);
-
-    if (isParentVisible() && platformPluginWidget())
-        gtk_widget_show(platformPluginWidget());
-
+    ASSERT(platformPluginWidget() == platformWidget());
     Widget::show();
 }
 
 void PluginView::hide()
 {
-    setSelfVisible(false);
-
-    if (isParentVisible() && platformPluginWidget())
-        gtk_widget_hide(platformPluginWidget());
-
+    ASSERT(platformPluginWidget() == platformWidget());
     Widget::hide();
 }
 

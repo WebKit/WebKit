@@ -1,3 +1,18 @@
+2010-02-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Remove some duplication between PluginView and Widget methods, and
+        move the setSelfVisible calls to the parent class.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+
 2010-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
