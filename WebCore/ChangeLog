@@ -1,3 +1,16 @@
+2010-02-17  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support CSS page-break-inside with a value of 'avoid'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34080
+
+        Test: printing/page-break-inside.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+
 2010-02-17  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

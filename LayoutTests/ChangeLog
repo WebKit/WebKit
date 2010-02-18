@@ -1,3 +1,17 @@
+2010-02-17  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Support CSS page-break-inside with a value of 'avoid'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34080
+
+        * printing/page-break-inside-expected.txt: Added.
+        * printing/page-break-inside.html: Added.
+        * printing/script-tests/page-break-inside.js: Added.
+        (createParagraph):
+        (pageNumber):
+
 2010-02-17  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
