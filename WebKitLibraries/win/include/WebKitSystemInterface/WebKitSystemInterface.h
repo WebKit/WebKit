@@ -48,11 +48,14 @@ typedef const struct __CFNumber* CFNumberRef;
 typedef struct __CFReadStream* CFReadStreamRef;
 typedef const struct __CFURL* CFURLRef;
 typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
+typedef struct tagLOGFONTW LOGFONTW;
+typedef LOGFONTW LOGFONT;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
 void wkSetFontSmoothingContrast(CGFloat);
 CGFloat wkGetFontSmoothingContrast();
+void wkSystemFontSmoothingChanged();
 uint32_t wkSetFontSmoothingStyle(CGContextRef cg, bool fontAllowsSmoothing);
 void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
 void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);

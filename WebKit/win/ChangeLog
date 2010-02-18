@@ -1,3 +1,16 @@
+2010-02-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit on Windows needs a mechanism to listen for WM_SETTINGCHANGED messages
+        https://bugs.webkit.org/show_bug.cgi?id=35076
+
+        * WebKit.vcproj/WebKit.def: Added WebKitSystemParameterChanged.
+        * WebKit.vcproj/WebKit_debug.def: Added WebKitSystemParameterChanged.
+        * WebKitGraphics.cpp:
+        (WebKitSystemParameterChanged): Call through to wkSystemFontSmoothingChanged for font smoothing changes.
+        * WebKitGraphics.h: Added WebKitSystemParameterChanged.
+
 2010-02-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin, Darin Fisher, Simon Hausmann.
