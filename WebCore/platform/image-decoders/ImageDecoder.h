@@ -69,15 +69,11 @@ namespace WebCore {
 
         RGBA32Buffer();
 
-        // For backends which refcount their data, this constructor doesn't need
-        // to create a new copy of the image data, only increase the ref count.
-        //
-        // This exists because ImageDecoder keeps a Vector<RGBA32Buffer>, and
-        // Vector requires this constructor.
-        RGBA32Buffer(const RGBA32Buffer& other)
-        {
-            operator=(other);
-        }
+        RGBA32Buffer(const RGBA32Buffer& other) { operator=(other); }
+
+        // For backends which refcount their data, this operator doesn't need to
+        // create a new copy of the image data, only increase the ref count.
+        RGBA32Buffer& operator=(const RGBA32Buffer& other);
 
         // Deletes the pixel data entirely; used by ImageDecoder to save memory
         // when we no longer need to display a frame and only need its metadata.
@@ -139,8 +135,6 @@ namespace WebCore {
 #endif
 
     private:
-        RGBA32Buffer& operator=(const RGBA32Buffer& other);
-
         int width() const;
         int height() const;
 

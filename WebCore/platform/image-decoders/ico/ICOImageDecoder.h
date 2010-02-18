@@ -86,11 +86,6 @@ namespace WebCore {
         // Decodes the entry at |index|.  If |onlySize| is true, stops decoding
         // after calculating the image size.  If decoding fails but there is no
         // more data coming, sets the "decode failure" flag.
-        //
-        // NOTE: If the desired entry is a PNG, this doesn't actually trigger
-        // decoding, it merely ensures the decoder is created and ready to
-        // decode.  The caller will then call a function on the PNGImageDecoder
-        // that actually triggers decoding.
         void decode(size_t index, bool onlySize);
 
         // Decodes the directory and directory entries at the beginning of the

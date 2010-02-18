@@ -1,3 +1,24 @@
+2010-02-17  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Rework PNG-in-ICO decoding to copy the decoded framebuffer into the ICO
+        decoder, making the logic less crazy and more like the other decoders.
+        https://bugs.webkit.org/show_bug.cgi?id=28751
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::RGBA32Buffer::operator=):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp:
+        (WebCore::RGBA32Buffer::operator=):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::RGBA32Buffer::operator=):
+
 2010-02-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

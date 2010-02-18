@@ -115,26 +115,10 @@ RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
     if (index >= frameCount())
         return 0;
 
-    // Determine the image type, and if this is a BMP, decode.
-    decode(index, false);
-
-    // PNGs decode into their own framebuffers, so only use our internal cache
-    // for non-PNGs (BMP or unknown).
-    if (!m_pngDecoders[index])
-        return &m_frameBufferCache[index];
-
-    // Fail if the size the PNGImageDecoder calculated does not match the size
-    // in the directory.
-    if (m_pngDecoders[index]->isSizeAvailable()) {
-        const IntSize pngSize(m_pngDecoders[index]->size());
-        const IconDirectoryEntry& dirEntry = m_dirEntries[index];
-        if (pngSize != dirEntry.m_size) {
-            setFailed();
-            m_pngDecoders[index]->setFailed();
-        }
-    }
-
-    return m_pngDecoders[index]->frameBufferAtIndex(0);
+    RGBA32Buffer* buffer = &m_frameBufferCache[index];
+    if (buffer->status() != RGBA32Buffer::FrameComplete)
+        decode(index, false);
+    return buffer;
 }
 
 // static
@@ -184,35 +168,40 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
 {
     ASSERT(index < m_dirEntries.size());
     const IconDirectoryEntry& dirEntry = m_dirEntries[index];
-    if (!m_bmpReaders[index] && !m_pngDecoders[index]) {
-        // Image type unknown.
-        const ImageType imageType = imageTypeAtIndex(index);
-        if (imageType == BMP) {
+    const ImageType imageType = imageTypeAtIndex(index);
+    if (imageType == Unknown)
+        return false; // Not enough data to determine image type yet.
+
+    if (imageType == BMP) {
+        if (!m_bmpReaders[index]) {
             // We need to have already sized m_frameBufferCache before this, and
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
             m_bmpReaders[index].set(new BMPImageReader(this, dirEntry.m_imageOffset, 0, true));
             m_bmpReaders[index]->setData(m_data.get());
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
-        } else if (imageType == PNG) {
-            m_pngDecoders[index].set(new PNGImageDecoder());
-            setDataForPNGDecoderAtIndex(index);
-        } else {
-            // Not enough data to determine image type yet.
-            return false;
         }
-    }
-
-    if (m_bmpReaders[index]) {
         m_frameSize = dirEntry.m_size;
         bool result = m_bmpReaders[index]->decodeBMP(false);
         m_frameSize = IntSize();
         return result;
     }
 
-    // For PNGs, we're now done; further decoding will happen when calling
-    // frameBufferAtIndex() on the PNG decoder.
-    return true;
+    if (!m_pngDecoders[index]) {
+        m_pngDecoders[index].set(new PNGImageDecoder());
+        setDataForPNGDecoderAtIndex(index);
+    }
+    // Fail if the size the PNGImageDecoder calculated does not match the size
+    // in the directory.
+    if (m_pngDecoders[index]->isSizeAvailable() && (m_pngDecoders[index]->size() != dirEntry.m_size)) {
+        setFailed();
+        return false;
+    }
+    m_frameBufferCache[index] = *m_pngDecoders[index]->frameBufferAtIndex(0);
+    if (!m_pngDecoders[index]->failed())
+      return true;
+    setFailed();
+    return false;
 }
 
 bool ICOImageDecoder::processDirectory()

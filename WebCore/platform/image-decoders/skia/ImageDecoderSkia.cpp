@@ -36,6 +36,22 @@ RGBA32Buffer::RGBA32Buffer()
 {
 }
 
+RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
+{
+    if (this == &other)
+        return *this;
+
+    m_bitmap = other.m_bitmap;
+    // Keep the pixels locked since we will be writing directly into the
+    // bitmap throughout this object's lifetime.
+    m_bitmap.lockPixels();
+    setRect(other.rect());
+    setStatus(other.status());
+    setDuration(other.duration());
+    setDisposalMethod(other.disposalMethod());
+    return *this;
+}
+
 void RGBA32Buffer::clear()
 {
     m_bitmap.reset();
@@ -96,22 +112,6 @@ void RGBA32Buffer::setStatus(FrameStatus status)
     m_status = status;
     if (m_status == FrameComplete)
         m_bitmap.setDataComplete();  // Tell the bitmap it's done.
-}
-
-RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
-{
-    if (this == &other)
-        return *this;
-
-    m_bitmap = other.m_bitmap;
-    // Keep the pixels locked since we will be writing directly into the
-    // bitmap throughout this object's lifetime.
-    m_bitmap.lockPixels();
-    setRect(other.rect());
-    setStatus(other.status());
-    setDuration(other.duration());
-    setDisposalMethod(other.disposalMethod());
-    return *this;
 }
 
 int RGBA32Buffer::width() const

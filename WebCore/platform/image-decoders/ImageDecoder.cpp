@@ -97,6 +97,19 @@ RGBA32Buffer::RGBA32Buffer()
 {
 } 
 
+RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
+{
+    if (this == &other)
+        return *this;
+
+    copyBitmapData(other);
+    setRect(other.rect());
+    setStatus(other.status());
+    setDuration(other.duration());
+    setDisposalMethod(other.disposalMethod());
+    return *this;
+}
+
 void RGBA32Buffer::clear()
 {
     m_bytes.clear();
@@ -149,19 +162,6 @@ void RGBA32Buffer::setHasAlpha(bool alpha)
 void RGBA32Buffer::setStatus(FrameStatus status)
 {
     m_status = status;
-}
-
-RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
-{
-    if (this == &other)
-        return *this;
-
-    copyBitmapData(other);
-    setRect(other.rect());
-    setStatus(other.status());
-    setDuration(other.duration());
-    setDisposalMethod(other.disposalMethod());
-    return *this;
 }
 
 int RGBA32Buffer::width() const
