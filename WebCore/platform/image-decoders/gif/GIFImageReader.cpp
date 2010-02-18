@@ -895,7 +895,6 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         // CALLBACK: The frame is now complete.
         if (clientptr && frame_reader)
           clientptr->frameComplete(images_decoded - 1, frame_reader->delay_time, frame_reader->disposal_method);
-          return false;
 
         /* Clear state from this image */
         if (frame_reader) {
