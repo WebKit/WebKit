@@ -1,3 +1,17 @@
+2010-02-18  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Changing forward declaration of TimingFunction in GraphicsLayer.h from
+        class to struct to match its actual definition in TimingFunction.h
+
+        https://bugs.webkit.org/show_bug.cgi?id=35069
+
+
+        * platform/graphics/GraphicsLayer.h:
+           Change forward declaration from: class TimingFunction to:
+           struct TimingFunction
+
 2010-02-18  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

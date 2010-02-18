@@ -74,7 +74,7 @@ class FloatPoint3D;
 class GraphicsContext;
 class Image;
 class TextStream;
-class TimingFunction;
+struct TimingFunction;
 
 // Base class for animation values (also used for transitions). Here to
 // represent values for properties being animated via the GraphicsLayer,
