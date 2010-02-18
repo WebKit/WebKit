@@ -1,3 +1,12 @@
+2010-02-18  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, build fix.
+
+        Provide good expected results for fast/dom/Window/window-event-override-no-crash.html.
+
+        * fast/dom/Window/window-event-override-no-crash-expected.txt:
+        * fast/dom/Window/window-event-override-no-crash.html:
+
 2010-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][Qt] Fails glyph reordering test fast/text/glyph-reordering.html
