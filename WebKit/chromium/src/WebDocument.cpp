@@ -98,6 +98,11 @@ WebElement WebDocument::head()
     return WebElement(unwrap<Document>()->head());
 }
 
+WebString WebDocument::title() const
+{
+    return WebString(constUnwrap<Document>()->title());
+}
+
 WebNodeCollection WebDocument::all()
 {
     return WebNodeCollection(unwrap<Document>()->all());
