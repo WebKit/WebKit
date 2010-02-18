@@ -43,6 +43,11 @@ WebInspector.Popover = function(contentElement)
 WebInspector.Popover.prototype = {
     show: function(anchor, preferredWidth, preferredHeight)
     {
+        // This should not happen, but we hide previous popup to be on the safe side.
+        if (WebInspector.Popover._popoverElement)
+            document.body.removeChild(WebInspector.Popover._popoverElement);
+        WebInspector.Popover._popoverElement = this.element;
+
         // Temporarily attach in order to measure preferred dimensions.
         this.contentElement.positionAt(0, 0);
         document.body.appendChild(this.contentElement);
@@ -57,6 +62,7 @@ WebInspector.Popover.prototype = {
 
     hide: function()
     {
+        delete WebInspector.Popover._popoverElement;
         document.body.removeChild(this.element);
     },
 

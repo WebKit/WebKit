@@ -542,6 +542,10 @@ WebInspector.SourceFrame.prototype = {
             if (this._hidePopupTimer) {
                 clearTimeout(this._hidePopupTimer);
                 delete this._hidePopupTimer;
+
+                // We know that we reached the popup, but we might have moved over other elements.
+                // Discard pending command.
+                this._resetHoverTimer();
             }
         }
 

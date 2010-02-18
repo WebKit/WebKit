@@ -1148,7 +1148,8 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
         result.propertyLength = object.length;
 
     var type = typeof object;
-    result.hasChildren = (type === "object" && object !== null && Object.getOwnPropertyNames(object).length) || type === "function";
+    
+    result.hasChildren = (type === "object" && object !== null && (Object.getOwnPropertyNames(object).length || object.__proto__)) || type === "function";
     try {
         result.description = InjectedScript._describe(object, abbreviate);
     } catch (e) {
