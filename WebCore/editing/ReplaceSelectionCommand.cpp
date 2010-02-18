@@ -871,7 +871,8 @@ void ReplaceSelectionCommand::doApply()
     fragment.removeNode(refNode);
 
     Node* blockStart = enclosingBlock(insertionPos.node());
-    if (isListElement(refNode.get()) && blockStart->renderer()->isListItem())
+    if ((isListElement(refNode.get()) || (isStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
+        && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(refNode, blockStart, insertionPos);
     else
         insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
@@ -1122,15 +1123,15 @@ void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<
 
 // If the user is inserting a list into an existing list, instead of nesting the list,
 // we put the list items into the existing list.
-Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, Node* insertionNode, const Position& p)
+Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, Node* insertionBlock, const Position& insertPos)
 {
     while (listElement->hasChildNodes() && isListElement(listElement->firstChild()) && listElement->childNodeCount() == 1)
         listElement = listElement->firstChild();
 
-    bool isStart = isStartOfParagraph(p);
-    bool isEnd = isEndOfParagraph(p);
+    bool isStart = isStartOfParagraph(insertPos);
+    bool isEnd = isEndOfParagraph(insertPos);
 
-    Node* lastNode = insertionNode;
+    Node* lastNode = insertionBlock;
     while (RefPtr<Node> listItem = listElement->firstChild()) {
         ExceptionCode ec = 0;
         listElement->removeChild(listItem.get(), ec);

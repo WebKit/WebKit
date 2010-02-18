@@ -1,3 +1,22 @@
+2010-02-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34737
+        Copying styled list items then pasting into a list
+        should work the same as copying unstyle list items:
+        it shouldn't indent an extra level, but styles should
+        be copied.
+
+        Small cleanups to insertAsListItems to make variable names
+        more descriptive.
+
+        Test: editing/pasteboard/paste-list-003.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+
 2010-02-17  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
