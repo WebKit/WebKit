@@ -1949,12 +1949,8 @@ sub GenerateToV8Converters
 
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput}) {
   v8::Handle<v8::Object> wrapper;
-END
-    if (!MayBeInWorkerContext($dataNode, $interfaceName)) {
-        push(@implContent, <<END);
   V8Proxy* proxy = 0;
 END
-    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
@@ -1993,15 +1989,9 @@ END
 END
     }
 
-    if (MayBeInWorkerContext($dataNode, $interfaceName)) {
-        push(@implContent, <<END);
-  wrapper = V8DOMWrapper::instantiateV8ObjectInWorkerContext(${wrapperType}, impl);
-END
-    } else {
-        push(@implContent, <<END);
+    push(@implContent, <<END);
   wrapper = V8DOMWrapper::instantiateV8Object(proxy, ${wrapperType}, impl);
 END
-    }
 
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
@@ -2047,35 +2037,6 @@ v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectInput}) {
 }
 END
     }
-}
-
-sub MayBeInWorkerContext {
-    # These objects can be constructed under WorkerContextExecutionProxy. They need special
-    # handling, since if we call V8Proxy::retrieve(), we will crash.
-    # FIXME: websocket?
-    my $dataNode = shift;
-    my $interfaceName = shift;
-    # FIXME: Doing the extra work to handle the WorkerContext case for all Event
-    # types is sad. We can probably be cleverer and only do the extra work for certain types.
-    return 1 if IsEventSubType($dataNode);
-    return 1 if $interfaceName eq "DOMCoreException";
-    return 1 if $interfaceName eq "EventException";
-    return 1 if $interfaceName eq "RangeException";
-    return 1 if $interfaceName eq "XMLHttpRequestException";
-    return 1 if $interfaceName eq "MessagePort";
-    return 1 if $interfaceName eq "DedicatedWorkerContext";
-    return 1 if $interfaceName eq "WorkerContext";
-    return 1 if $interfaceName eq "SharedWorkerContext";
-    return 1 if $interfaceName eq "WorkerLocation";
-    return 1 if $interfaceName eq "WorkerNavigator";
-    return 1 if $interfaceName eq "Notification";
-    return 1 if $interfaceName eq "NotificationCenter";
-    return 1 if $interfaceName eq "XMLHttpRequest";
-    return 1 if $interfaceName eq "WebSocket";
-    return 1 if $interfaceName eq "Worker";
-    return 1 if $interfaceName eq "SharedWorker";
-    return 1 if $interfaceName eq "EventSource";
-    return 0;
 }
 
 sub HasCustomToV8Implementation {

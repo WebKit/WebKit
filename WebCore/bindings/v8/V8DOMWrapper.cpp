@@ -61,6 +61,7 @@
 #include "V8Proxy.h"
 #include "V8SVGElementInstance.h"
 #include "V8SharedWorker.h"
+#include "V8SharedWorkerContext.h"
 #include "V8StyleSheet.h"
 #include "V8WebSocket.h"
 #include "V8Worker.h"
@@ -267,36 +268,49 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(condition);
 }
 
-v8::Local<v8::Object> V8DOMWrapper::instantiateV8ObjectInWorkerContext(V8ClassIndex::V8WrapperType type, void* impl)
+static bool globalObjectPrototypeIsDOMWindow(v8::Handle<v8::Object> objectPrototype)
 {
-    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-    if (!workerContextProxy)
-        return instantiateV8Object(0, type, impl);
-    v8::Local<v8::Object> instance = SafeAllocation::newInstance(getConstructor(type, workerContextProxy->workerContext()));
-    if (!instance.IsEmpty()) {
-        // Avoid setting the DOM wrapper for failed allocations.
-        setDOMWrapper(instance, V8ClassIndex::ToInt(type), impl);
-    }
-    return instance;
+    // We can identify what type of context the global object is wrapping by looking at the
+    // internal field count of its prototype. This assumes WorkerContexts and DOMWindows have different numbers
+    // of internal fields, so a COMPILE_ASSERT is included to warn if this ever changes. DOMWindow has
+    // traditionally had far more internal fields than any other class.
+    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8WorkerContext::internalFieldCount && V8DOMWindow::internalFieldCount != V8SharedWorkerContext::internalFieldCount,
+        DOMWindowAndWorkerContextHaveUnequalFieldCounts);
+    return objectPrototype->InternalFieldCount() == V8DOMWindow::internalFieldCount;
 }
 
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType type, void* impl)
 {
+    WorkerContext* workerContext = 0;
     if (V8IsolatedContext::getEntered()) {
         // This effectively disables the wrapper cache for isolated worlds.
         proxy = 0;
         // FIXME: Do we need a wrapper cache for the isolated world?  We should
         //        see if the performance gains are worth while.
         // We'll get one once we give the isolated context a proper window shell.
-    } else if (!proxy)
-        proxy = V8Proxy::retrieve();
+    } else if (!proxy) {
+        v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+        if (!context.IsEmpty()) {
+            v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
+            if (globalObjectPrototypeIsDOMWindow(globalPrototype))
+                proxy = V8Proxy::retrieve(V8DOMWindow::toNative(globalPrototype)->frame());
+            else
+                workerContext = V8WorkerContext::toNative(globalPrototype);
+        }
+    }
 
     v8::Local<v8::Object> instance;
     if (proxy)
         // FIXME: Fix this to work properly with isolated worlds (see above).
         instance = proxy->windowShell()->createWrapperFromCache(type);
-    else
-        instance = SafeAllocation::newInstance(V8ClassIndex::getTemplate(type)->GetFunction());
+    else {
+        v8::Local<v8::Function> function;
+        if (workerContext)
+            function = getConstructor(type, workerContext);
+        else
+            function = V8ClassIndex::getTemplate(type)->GetFunction();
+        instance = SafeAllocation::newInstance(function);
+    }
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
         setDOMWrapper(instance, V8ClassIndex::ToInt(type), impl);

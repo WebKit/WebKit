@@ -194,7 +194,6 @@ namespace WebCore {
         static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
 
         static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType type, void* impl);
-        static v8::Local<v8::Object> instantiateV8ObjectInWorkerContext(V8ClassIndex::V8WrapperType type, void* impl);
 
         static v8::Handle<v8::Object> getWrapper(Node*);
     };
