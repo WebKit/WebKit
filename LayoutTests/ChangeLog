@@ -1,5 +1,14 @@
 2010-02-17  Tony Chang  <tony@chromium.org>
 
+        Not reviewed, adding a GTK+ layout test result for a new test
+        added in r54932.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34914
+
+        * platform/gtk/editing/pasteboard/page-zoom-expected.txt: Added.
+
+2010-02-17  Tony Chang  <tony@chromium.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26937
