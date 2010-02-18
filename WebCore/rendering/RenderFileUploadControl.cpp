@@ -114,15 +114,27 @@ String RenderFileUploadControl::acceptTypes()
     return static_cast<HTMLInputElement*>(node())->accept();
 }
 
+void RenderFileUploadControl::iconForFiles(const Vector<String>& filenames)
+{
+    if (Chrome* chromePointer = chrome())
+        chromePointer->iconForFiles(filenames, m_fileChooser);
+}
+
 void RenderFileUploadControl::click()
+{
+    if (Chrome* chromePointer = chrome())
+        chromePointer->runOpenPanel(node()->document()->frame(), m_fileChooser);
+}
+
+Chrome* RenderFileUploadControl::chrome() const
 {
     Frame* frame = node()->document()->frame();
     if (!frame)
-        return;
+        return 0;
     Page* page = frame->page();
     if (!page)
-        return;
-    page->chrome()->runOpenPanel(frame, m_fileChooser);
+        return 0;
+    return page->chrome();
 }
 
 void RenderFileUploadControl::updateFromElement()

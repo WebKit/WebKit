@@ -1,3 +1,51 @@
+2010-02-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduces new Icon loading interface in order to support
+        asynchronous loading.
+        https://bugs.webkit.org/show_bug.cgi?id=32054
+
+        It's hard for Chromium port to load an icon inside
+        Icon::createIconForFiles() because of sanbox and multi-process
+        architecture. So this change adds a method to request an icon to
+        Chrome class, and makes FileChooser receives an Icon instance
+        asynchronously.  Synchronous loading also works with the new interface.
+
+        Because all ports don't have implementations of Chrome::iconForFiles()
+        yet, FileChooser tries to load an Icon synchronously with
+        Icon::createIconForFiles(), then tries to load an Icon asynchronously
+        with Chrome::iconForFiles() if Icon::createIconForFiles() returns 0.
+
+        The existing Icon::createIconForFiles() implementations should be
+        moved to Chrome::iconForFiles(). We're going to remove
+        Icon::createIconForFiles().
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::iconForFiles): Add an empty implementation.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::iconForFiles): Delegate to ChromeClient::iconForFiles().
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::iconForFiles): Add a declaration as a pure virtual method.
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::FileChooser): Use loadIcon().
+        (WebCore::FileChooser::chooseFiles): ditto.
+        (WebCore::FileChooser::loadIcon): Added.
+        (WebCore::FileChooser::iconLoaded): Added.
+        * platform/FileChooser.h: Add two methods to FileChooserClient; repaint() and iconForFiles().
+        * platform/graphics/Icon.h: Add a FIXME comment.
+        * platform/graphics/gtk/IconGtk.cpp: ditto.
+        * platform/graphics/mac/IconMac.mm: ditto.
+        * platform/graphics/qt/IconQt.cpp: ditto.
+        * platform/graphics/win/IconWin.cpp: ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::iconForFiles): Delegate to Chrome::iconForFiles().
+        (WebCore::RenderFileUploadControl::click): Use chrome().
+        (WebCore::RenderFileUploadControl::chrome):
+        * rendering/RenderFileUploadControl.h:
+        (WebCore::RenderFileUploadControl::repaint):
+
 2010-02-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

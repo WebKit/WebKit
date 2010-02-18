@@ -87,6 +87,7 @@ static String lookupIconName(String MIMEType)
     return GTK_STOCK_FILE;
 }
 
+// FIXME: Move the code to ChromeClient::iconForFiles().
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())

@@ -431,6 +431,11 @@ void ChromeClientWx::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
+void ChromeClientWx::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+{
+    notImplemented();
+}
+
 bool ChromeClientWx::setCursor(PlatformCursorHandle)
 {
     notImplemented();

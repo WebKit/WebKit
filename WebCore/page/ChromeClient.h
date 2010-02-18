@@ -185,6 +185,9 @@ namespace WebCore {
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) = 0;
             
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
+        // Asynchronous request to load an icon for specified filenames.
+        // This is called only if Icon::createIconForFiles() returns 0.
+        virtual void iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>) = 0;
 
         virtual bool setCursor(PlatformCursorHandle) = 0;
 

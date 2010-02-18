@@ -123,6 +123,7 @@ public:
 #endif
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
+    virtual void iconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
     virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }
     virtual void formStateDidChange(const WebCore::Node*);
     virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }

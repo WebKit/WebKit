@@ -631,6 +631,11 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void WebChromeClient::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+{
+    // FIXME: Move the code of Icon::createIconForFiles() here.
+}
+
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

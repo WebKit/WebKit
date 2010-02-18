@@ -734,6 +734,12 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }
 
+void WebChromeClient::iconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>)
+{
+    // FIXME: Move the code of Icon::createIconForFiles() here.
+    notImplemented();
+}
+
 bool WebChromeClient::setCursor(PlatformCursorHandle cursor)
 {
     if (!cursor)

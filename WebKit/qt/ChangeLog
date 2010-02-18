@@ -1,3 +1,17 @@
+2010-02-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduces new Icon loading interface in order to support
+        asynchronous loading.
+        https://bugs.webkit.org/show_bug.cgi?id=32054
+
+        Add an empty implementation of ChromeClient::iconForFiles().
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::iconForFiles):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2010-02-17  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Ariya Hidayat.

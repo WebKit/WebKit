@@ -51,6 +51,8 @@ class String;
     
 class Icon : public RefCounted<Icon> {
 public:
+    // Deprecated.  This function will be removed.
+    // FIXME: Remove it when all implementations are moved to ChromeClient::iconForFiles().
     static PassRefPtr<Icon> createIconForFiles(const Vector<String>& filenames);
 
     ~Icon();
