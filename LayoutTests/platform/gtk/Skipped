@@ -5863,3 +5863,7 @@ fast/loader/loadInProgress.html
 
 # Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
+
+# Draws squares in a totally wrong fashion
+# See https://bugs.webkit.org/show_bug.cgi?id=35127
+fast/multicol/client-rects.html
