@@ -565,7 +565,7 @@ WebInspector.SourceFrame.prototype = {
                 return;
 
             var popupContentElement = null;
-            if (result.type !== "object") {
+            if (result.type !== "object" && result.type !== "node" && result.type !== "array") {
                 popupContentElement = document.createElement("span");
                 popupContentElement.className = "monospace";
                 popupContentElement.style.whiteSpace = "pre";
