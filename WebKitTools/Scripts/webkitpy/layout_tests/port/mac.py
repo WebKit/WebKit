@@ -67,8 +67,16 @@ class MacPort(base.Port):
         return dirs
 
     def check_sys_deps(self):
-        # FIXME: This should run build-dumprendertree.
-        # This should also validate that all of the tool paths are valid.
+        if executive.run_command([self.script_path("build-dumprendertree")], return_exit_code=True) != 0:
+            return False
+
+        driver_path = self._path_to_driver()
+        if not os.path.exists(driver_path):
+            logging.error("DumpRenderTree was not found at %s" % driver_path)
+            return False
+
+        # This should also validate that the ImageDiff path is valid (once this script knows how to use ImageDiff).
+        # https://bugs.webkit.org/show_bug.cgi?id=34826
         return True
 
     def num_cores(self):
@@ -104,7 +112,7 @@ class MacPort(base.Port):
         return ('mac',)
 
     def _skipped_file_paths(self):
-        # This method will need to be made work for non-mac platforms and moved into base.Port.
+        # FIXME: This method will need to be made work for non-mac platforms and moved into base.Port.
         skipped_files = []
         if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
             skipped_files.append(os.path.join(
@@ -206,7 +214,7 @@ class MacPort(base.Port):
 
     def _build_path(self, *comps):
         if not self._cached_build_root:
-            self._cached_build_root = executive.run_command(["webkit-build-directory", "--top-level"]).rstrip()
+            self._cached_build_root = executive.run_command([self.script_path("webkit-build-directory"), "--top-level"]).rstrip()
         return os.path.join(self._cached_build_root, self._options.target, *comps)
 
     def _kill_process(self, pid):

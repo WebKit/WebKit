@@ -132,7 +132,7 @@ class ChromiumPort(base.Port):
     def test_base_platform_names(self):
         return ('linux', 'mac', 'win')
 
-    def test_expectations(self, options=None):
+    def test_expectations(self):
         """Returns the test expectations for this port.
 
         Basically this string should contain the equivalent of a

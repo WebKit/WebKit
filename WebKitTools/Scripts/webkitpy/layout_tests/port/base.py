@@ -269,6 +269,7 @@ class Port(object):
         used by run-chromium-webkit-tests."""
         raise NotImplementedError('Port.num_cores')
 
+    # FIXME: This could be replaced by functions in webkitpy.scm.
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         WebKit source tree and the list of path components in |*comps|."""
@@ -276,6 +277,10 @@ class Port(object):
             abspath = os.path.abspath(__file__)
             self._webkit_base_dir = abspath[0:abspath.find('WebKitTools')]
         return os.path.join(self._webkit_base_dir, *comps)
+
+    # FIXME: Callers should eventually move to scm.script_path.
+    def script_path(self, script_name):
+        return self.path_from_webkit_base("WebKitTools", "Scripts", script_name)
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
