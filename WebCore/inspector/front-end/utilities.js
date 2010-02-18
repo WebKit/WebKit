@@ -271,7 +271,7 @@ Element.prototype.__defineGetter__("totalOffsetLeft", function()
 {
     var total = 0;
     for (var element = this; element; element = element.offsetParent)
-        total += element.offsetLeft;
+        total += element.offsetLeft + (this !== element ? element.clientLeft : 0);
     return total;
 });
 
@@ -279,7 +279,7 @@ Element.prototype.__defineGetter__("totalOffsetTop", function()
 {
     var total = 0;
     for (var element = this; element; element = element.offsetParent)
-        total += element.offsetTop;
+        total += element.offsetTop + (this !== element ? element.clientTop : 0);
     return total;
 });
 

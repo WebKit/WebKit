@@ -32,36 +32,8 @@
 WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
-
-    this._styles = [];
-
-    this._styles["css-comment"] = "rgb(0, 116, 0)";
-    this._styles["css-params"] = "rgb(7, 144, 154)";
-    this._styles["css-string"] = "rgb(7, 144, 154)";
-    this._styles["css-keyword"] = "rgb(7, 144, 154)";
-    this._styles["css-number"] = "rgb(50, 0, 255)";
-    this._styles["css-property"] = "rgb(200, 0, 0)";
-    this._styles["css-at-rule"] = "rgb(200, 0, 0)";
-    this._styles["css-selector"] = "rgb(0, 0, 0)";
-    this._styles["css-important"] = "rgb(200, 0, 180)";
-
-    /* Keep this in sync with inspector.css and view-source.css */
-    this._styles["html-tag"] = "rgb(136, 18, 128)";
-    this._styles["html-attribute-name"] = "rgb(153, 69, 0)";
-    this._styles["html-attribute-value"] = "rgb(26, 26, 166)";
-    this._styles["html-comment"] = "rgb(35, 110, 37)";
-    this._styles["html-doctype"] = "rgb(192, 192, 192)";
-    this._styles["html-external-link"] = "#00e";
-    this._styles["html-resource-link"] = "#00e";
-
-    this._styles["javascript-comment"] = "rgb(0, 116, 0)";
-    this._styles["javascript-string"] = "rgb(196, 26, 22)";
-    this._styles["javascript-regexp"] = "rgb(196, 26, 22)";
-    this._styles["javascript-keyword"] = "rgb(170, 13, 145)";
-    this._styles["javascript-number"] = "rgb(28, 0, 207)";
-
-    this.mimeType = "text/html";
-    this._damageCallback = damageCallback;    
+    this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
+    this._damageCallback = damageCallback;
 }
 
 WebInspector.TextEditorHighlighter.prototype = {
@@ -190,7 +162,7 @@ WebInspector.TextEditorHighlighter.prototype = {
              var newColumn = this._tokenizer.nextToken(column);
              var tokenType = this._tokenizer.tokenType;
              if (tokenType)
-                 attributes[column] = { length: newColumn - column, tokenType: tokenType, style: this._styles[tokenType] };
+                 attributes[column] = { length: newColumn - column, tokenType: tokenType };
              column = newColumn;
          } while (column < line.length)
     }

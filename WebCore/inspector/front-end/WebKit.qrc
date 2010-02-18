@@ -45,7 +45,7 @@
     <file>Panel.js</file>
     <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
-    <file>Popup.js</file>
+    <file>Popover.js</file>
     <file>ProfileDataGridTree.js</file>
     <file>ProfilesPanel.js</file>
     <file>ProfileView.js</file>
@@ -91,6 +91,7 @@
     <file>audits.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>popover.css</file>
     <file>textViewer.css</file>
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
@@ -125,6 +126,7 @@
     <file>Images/excludeButtonGlyph.png</file>
     <file>Images/focusButtonGlyph.png</file>
     <file>Images/forward.png</file>
+    <file>Images/gearButtonGlyph.png</file>
     <file>Images/glossyHeader.png</file>
     <file>Images/glossyHeaderPressed.png</file>
     <file>Images/glossyHeaderSelected.png</file>
@@ -142,6 +144,8 @@
     <file>Images/paneSettingsButtons.png</file>
     <file>Images/pauseOnExceptionButtonGlyph.png</file>
     <file>Images/percentButtonGlyph.png</file>
+    <file>Images/popoverArrow.png</file>
+    <file>Images/popoverBackground.png</file>
     <file>Images/profileGroupIcon.png</file>
     <file>Images/profileIcon.png</file>
     <file>Images/profilesIcon.png</file>
@@ -185,6 +189,12 @@
     <file>Images/statusbarResizerVertical.png</file>
     <file>Images/storageIcon.png</file>
     <file>Images/successGreenDot.png</file>
+    <file>Images/thumbActiveHoriz.png</file>
+    <file>Images/thumbActiveVert.png</file>
+    <file>Images/thumbHoriz.png</file>
+    <file>Images/thumbVert.png</file>
+    <file>Images/thumbHoverHoriz.png</file>
+    <file>Images/thumbHoverVert.png</file>
     <file>Images/timelineBarBlue.png</file>
     <file>Images/timelineBarGray.png</file>
     <file>Images/timelineBarGreen.png</file>
@@ -210,6 +220,8 @@
     <file>Images/timelinePillRed.png</file>
     <file>Images/timelinePillYellow.png</file>
     <file>Images/toolbarItemSelected.png</file>
+    <file>Images/trackHoriz.png</file>
+    <file>Images/trackVert.png</file>
     <file>Images/treeDownTriangleBlack.png</file>
     <file>Images/treeDownTriangleWhite.png</file>
     <file>Images/treeRightTriangleBlack.png</file>

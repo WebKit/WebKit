@@ -29,8 +29,11 @@
 
 body {
     cursor: default;
-    height: 100%;
-    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
     font-family: Lucida Grande, sans-serif;
     font-size: 10px;
@@ -1348,7 +1351,6 @@ body.inactive .placard.selected {
     margin: 0;
     padding: 2px 6px 3px;
     list-style: none;
-    background-color: white;
     min-height: 18px;
 }
 
@@ -3811,4 +3813,22 @@ ol.breakpoint-list {
     box-shadow: none !important;
     outline: none !important;
     -webkit-user-modify: read-write;
+}
+
+.source-frame-popover-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+    padding-left: 18px;
+}
+
+.source-frame-popover-tree {
+    border-top: 1px solid rgb(190, 190, 190);
+    overflow: auto;
+    position: absolute;
+    top: 15px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }

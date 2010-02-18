@@ -1,3 +1,56 @@
+2010-02-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement evaluate-on-hover for scripts panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35003
+ 
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/Images/gearButtonGlyph.png: Added.
+        * inspector/front-end/Images/popoverArrows.png: Added.
+        * inspector/front-end/Images/popoverBackground.png: Added.
+        * inspector/front-end/Images/thumbActiveHoriz.png: Added.
+        * inspector/front-end/Images/thumbActiveVert.png: Added.
+        * inspector/front-end/Images/thumbHoriz.png: Added.
+        * inspector/front-end/Images/thumbHoverHoriz.png: Added.
+        * inspector/front-end/Images/thumbHoverVert.png: Added.
+        * inspector/front-end/Images/thumbVert.png: Added.
+        * inspector/front-end/Images/trackHoriz.png: Added.
+        * inspector/front-end/Images/trackVert.png: Added.
+        * inspector/front-end/Popup.js:
+        (WebInspector.Popup):
+        (WebInspector.Popup.prototype.show):
+        (WebInspector.Popup.prototype.hide):
+        (WebInspector.Popup.prototype._positionElement):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype._scroll):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._mouseUp):
+        (WebInspector.SourceFrame.prototype._mouseMove):
+        (WebInspector.SourceFrame.prototype._mouseOut):
+        (WebInspector.SourceFrame.prototype._resetHoverTimer):
+        (WebInspector.SourceFrame.prototype._hidePopup):
+        (WebInspector.SourceFrame.prototype._mouseHover):
+        (WebInspector.SourceFrame.prototype._showPopup.showTextPopup):
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup.evaluateCallback):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        (WebInspector.HoverPropertiesSection):
+        (WebInspector.HoverPropertiesSection.prototype.update):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype._lex):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._paintLine):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspectorSyntaxHighlight.css:
+        * inspector/front-end/popover.css: Added.
+
 2010-02-18  Ben Murdoch  <benm@google.com>
 
         Reviewed by Jeremy Orlow.

@@ -349,7 +349,7 @@ WebInspector.TextViewer.prototype = {
                 break;
             }
             var attribute = highlighterState && highlighterState.attributes[j];
-            if (!attribute || !attribute.style) {
+            if (!attribute || !attribute.tokenType) {
                 if (plainTextStart === -1)
                     plainTextStart = j;
                 j++;

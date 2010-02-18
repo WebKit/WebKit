@@ -42884,7 +42884,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Popup.js"
+					RelativePath="..\inspector\front-end\popover.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\Popover.js"
 					>
 				</File>
 				<File

@@ -26,29 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- .webkit-css-comment { 
-     color: rgb(0, 116, 0);
+.webkit-css-comment { 
+    color: rgb(0, 116, 0);
+}
+
+.webkit-css-url, .webkit-css-color, .webkit-css-string, .webkit-css-keyword {
+    color: rgb(7, 144, 154);
  }
 
- .webkit-css-url, .webkit-css-color, .webkit-css-string, .webkit-css-keyword {
-     color: rgb(7, 144, 154);
- }
+.webkit-css-number {
+    color: rgb(50, 0, 255);
+}
 
- .webkit-css-number {
-     color: rgb(50, 0, 255);
- }
+.webkit-css-property, .webkit-css-at-rule {
+    color: rgb(200, 0, 0);
+}
 
- .webkit-css-property, .webkit-css-at-rule {
-     color: rgb(200, 0, 0);
- }
+.webkit-css-selector {
+    color: black;
+}
 
- .webkit-css-selector {
-     rgb(0, 0, 0);
- }
-
- .webkit-css-important {
-     color: rgb(200, 0, 180);
- }
+.webkit-css-important {
+    color: rgb(200, 0, 180);
+}
 
 .webkit-javascript-comment {
     color: rgb(0, 116, 0);
@@ -64,6 +64,10 @@
 
 .webkit-javascript-string, .webkit-javascript-regexp {
     color: rgb(196, 26, 22);
+}
+
+.webkit-javascript-ident {
+    color: black;
 }
 
 .webkit-html-comment {
