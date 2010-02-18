@@ -1,3 +1,10 @@
+2010-02-18  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, adding a QT layout test result for a new test
+        added in r54932.
+
+        * platform/qt/editing/pasteboard/page-zoom-expected.txt: Copied from LayoutTests/platform/gtk/editing/pasteboard/page-zoom-expected.txt.
+
 2010-02-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] editing/pasteboard/page-zoom.html fails
