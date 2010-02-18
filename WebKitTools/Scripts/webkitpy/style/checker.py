@@ -703,6 +703,9 @@ class StyleChecker(object):
                       instance.
          options: A ProcessorOptions instance that controls the behavior
                   of style checking.
+         file_count: An integer that is the total number of processed
+                     files.  Note that the number of skipped files is
+                     included in this value.
 
     """
 
@@ -723,6 +726,7 @@ class StyleChecker(object):
         self._stderr_write = stderr_write
         self.error_count = 0
         self.options = options
+        self.file_count = 0
 
     def _increment_error_count(self):
         """Increment the total count of reported errors."""
@@ -795,6 +799,8 @@ class StyleChecker(object):
         if process_file is None:
             process_file = self._process_file
 
+        self.file_count += 1
+
         dispatcher = ProcessorDispatcher()
 
         if dispatcher.should_skip_without_warning(file_path):
@@ -829,4 +835,3 @@ class StyleChecker(object):
                                       self._stderr_write)
 
             self.check_file(file_path, style_error_handler)
-

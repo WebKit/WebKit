@@ -569,6 +569,7 @@ class StyleCheckerTest(unittest.TestCase):
 
         self.assertEquals(style_checker.error_count, 0)
         self.assertEquals(style_checker.options, options)
+        self.assertEquals(style_checker.file_count, 0)
 
 
 class StyleCheckerCheckFileTest(unittest.TestCase):
@@ -649,6 +650,8 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
                                  self.mock_handle_style_error,
                                  self.mock_process_file)
 
+        self.assertEquals(1, style_checker.file_count)
+
     def test_check_file_on_skip_without_warning(self):
         """Test check_file() for a skipped-without-warning file."""
 
@@ -704,4 +707,3 @@ if __name__ == '__main__':
     import sys
 
     unittest.main()
-

@@ -1,3 +1,14 @@
+2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style should report the number of files checked
+        https://bugs.webkit.org/show_bug.cgi?id=34971
+
+        * Scripts/check-webkit-style:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
 2010-02-17  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Ariya Hidayat.
