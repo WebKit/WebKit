@@ -164,7 +164,7 @@ class FilterConfigurationTest(unittest.TestCase):
 
         self.assertEquals(base_rules, config._base_rules)
         self.assertEquals(path_specific, config._path_specific)
-        self.assertEquals(user_rules, config.user_rules)
+        self.assertEquals(user_rules, config._user_rules)
 
     def test_default_arguments(self):
         # Test that the attributes are getting set correctly to the defaults.
@@ -172,7 +172,7 @@ class FilterConfigurationTest(unittest.TestCase):
 
         self.assertEquals([], config._base_rules)
         self.assertEquals([], config._path_specific)
-        self.assertEquals([], config.user_rules)
+        self.assertEquals([], config._user_rules)
 
     def test_eq(self):
         """Test __eq__ method."""

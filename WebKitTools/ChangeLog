@@ -1,3 +1,70 @@
+2010-02-16  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactored check-webkit-style's ProcessorOptions class into two
+        classes. This revision contains no new functionality.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34674
+
+        Divided the ProcessorOptions class into a CommandOptionValues
+        class (the result of parsing the command-line options) and
+        a StyleCheckerConfiguration class (which configures the main
+        StyleChecker).
+
+        * Scripts/check-webkit-style:
+          - Updated main() to convert the parsed command option values
+            to a StyleCheckConfiguration instance prior to constructing
+            a StyleChecker.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added check_webkit_style_configuration() to convert a
+            CommandOptionValues instance into a StyleCheckerConfiguration
+            instance.
+          - Renamed the ProcessorOptions class to CommandOptionValues.
+          - In the CommandOptionValues class--
+            - Replaced the filter_configuration attribute with the
+              simpler filter_rules attribute.
+            - Removed the max_reports_per_error attribute.
+            - Moved the is_reportable() method to the new
+              StyleCheckerConfiguration class.
+          - Removed the base_filter_rules attribute from the
+            DefaultCommandOptionValues class.
+          - In the ArgumentParser class--
+            - Added base_filter_rules to the constructor.
+            - Changed the parse() method to return a CommandOptionValues
+              instance instead of a ProcessorOptions instance.
+          - Created a StyleCheckerConfiguration class.
+            - Added the data attributes max_reports_per_category,
+              stderr_write, and verbosity.
+            - Added is_reportable() (moved from the ProcessorOptions
+              class) and write_style_error() (moved from the
+              DefaultStyleErrorHandler class).
+          - In the StyleChecker class--
+            - Replaced the ProcessorOptions options attribute with the
+              StyleCheckerConfiguration _configuration attribute.
+            - Removed the _stderr_write attribute.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the existing unit test classes as necessary.
+          - Added a StyleCheckerConfigurationTest class.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Updated the DefaultStyleErrorHandler class to accept a
+            StyleCheckerConfiguration instance instead of a ProcessorOptions
+            instance and an stderr_write method.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Updated the unit test classes as necessary.
+
+        * Scripts/webkitpy/style/filter.py:
+          - Addressed the FIXME in the FilterConfiguration class to change
+            the user_rules attribute to _user_rules (since it is now
+            accessed only internally).
+
+        * Scripts/webkitpy/style/filter_unittest.py:
+          - Updated to reflect the change from user_rules to _user_rules.
+
 2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

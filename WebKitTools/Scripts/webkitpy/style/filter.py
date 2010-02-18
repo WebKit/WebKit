@@ -161,11 +161,7 @@ class FilterConfiguration(object):
         self._path_specific_lower = None
         """The backing store for self._get_path_specific_lower()."""
 
-        # FIXME: Make user rules internal after the FilterConfiguration
-        #        attribute is removed from ProcessorOptions (since at
-        #        that point ArgumentPrinter will no longer need to
-        #        access FilterConfiguration.user_rules).
-        self.user_rules = user_rules
+        self._user_rules = user_rules
 
         self._path_rules_to_filter = {}
         """Cached dictionary of path rules to CategoryFilter instance."""
@@ -184,7 +180,7 @@ class FilterConfiguration(object):
             return False
         if self._path_specific != other._path_specific:
             return False
-        if self.user_rules != other.user_rules:
+        if self._user_rules != other._user_rules:
             return False
 
         return True
@@ -233,7 +229,7 @@ class FilterConfiguration(object):
         if path_rules not in self._path_rules_to_filter:
             rules = list(self._base_rules) # Make a copy
             rules.extend(path_rules)
-            rules.extend(self.user_rules)
+            rules.extend(self._user_rules)
             self._path_rules_to_filter[path_rules] = _CategoryFilter(rules)
 
         return self._path_rules_to_filter[path_rules]

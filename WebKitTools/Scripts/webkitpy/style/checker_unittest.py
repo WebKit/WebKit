@@ -41,10 +41,11 @@ from checker import _BASE_FILTER_RULES
 from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
 from checker import _all_categories
+from checker import CommandOptionValues as ProcessorOptions
 from checker import DefaultCommandOptionValues
 from checker import ProcessorDispatcher
-from checker import ProcessorOptions
 from checker import StyleChecker
+from checker import StyleCheckerConfiguration
 from filter import validate_filter_rules
 from filter import FilterConfiguration
 from processors.cpp import CppProcessor
@@ -60,9 +61,8 @@ class ProcessorOptionsTest(unittest.TestCase):
         # Check default parameters.
         options = ProcessorOptions()
         self.assertEquals(options.extra_flag_values, {})
-        self.assertEquals(options.filter_configuration, FilterConfiguration())
+        self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
-        self.assertEquals(options.max_reports_per_category, {})
         self.assertEquals(options.output_format, "emacs")
         self.assertEquals(options.verbosity, 1)
 
@@ -76,17 +76,14 @@ class ProcessorOptionsTest(unittest.TestCase):
         ProcessorOptions(verbosity=5) # works
 
         # Check attributes.
-        filter_configuration = FilterConfiguration(base_rules=["+"])
         options = ProcessorOptions(extra_flag_values={"extra_value" : 2},
-                                   filter_configuration=filter_configuration,
+                                   filter_rules=["+"],
                                    git_commit="commit",
-                                   max_reports_per_category={"category": 3},
                                    output_format="vs7",
                                    verbosity=3)
         self.assertEquals(options.extra_flag_values, {"extra_value" : 2})
-        self.assertEquals(options.filter_configuration, filter_configuration)
+        self.assertEquals(options.filter_rules, ["+"])
         self.assertEquals(options.git_commit, "commit")
-        self.assertEquals(options.max_reports_per_category, {"category": 3})
         self.assertEquals(options.output_format, "vs7")
         self.assertEquals(options.verbosity, 3)
 
@@ -96,20 +93,15 @@ class ProcessorOptionsTest(unittest.TestCase):
         self.assertTrue(ProcessorOptions() == ProcessorOptions())
 
         # Verify that a difference in any argument causes equality to fail.
-        filter_configuration = FilterConfiguration(base_rules=["+"])
         options = ProcessorOptions(extra_flag_values={"extra_value" : 1},
-                                   filter_configuration=filter_configuration,
+                                   filter_rules=["+"],
                                    git_commit="commit",
-                                   max_reports_per_category={"category": 3},
                                    output_format="vs7",
                                    verbosity=1)
-        self.assertFalse(options == ProcessorOptions(extra_flag_values={"extra_value" : 2}))
-        new_config = FilterConfiguration(base_rules=["-"])
-        self.assertFalse(options ==
-                         ProcessorOptions(filter_configuration=new_config))
+        self.assertFalse(options == ProcessorOptions(extra_flag_values=
+                                                     {"extra_value" : 2}))
+        self.assertFalse(options == ProcessorOptions(filter_rules=["-"]))
         self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
-        self.assertFalse(options == ProcessorOptions(max_reports_per_category=
-                                                     {"category": 2}))
         self.assertFalse(options == ProcessorOptions(output_format="emacs"))
         self.assertFalse(options == ProcessorOptions(verbosity=2))
 
@@ -120,20 +112,6 @@ class ProcessorOptionsTest(unittest.TestCase):
         # Thus, just check the distinguishing case to verify that the
         # code defines __ne__.
         self.assertFalse(ProcessorOptions() != ProcessorOptions())
-
-    def test_is_reportable(self):
-        """Test is_reportable()."""
-        filter_configuration = FilterConfiguration(base_rules=["-xyz"])
-        options = ProcessorOptions(filter_configuration=filter_configuration,
-                                   verbosity=3)
-
-        # Test verbosity
-        self.assertTrue(options.is_reportable("abc", 3, "foo.h"))
-        self.assertFalse(options.is_reportable("abc", 2, "foo.h"))
-
-        # Test filter
-        self.assertTrue(options.is_reportable("xy", 3, "foo.h"))
-        self.assertFalse(options.is_reportable("xyz", 3, "foo.h"))
 
 
 class GlobalVariablesTest(unittest.TestCase):
@@ -231,15 +209,14 @@ class ArgumentPrinterTest(unittest.TestCase):
     def _create_options(self,
                         output_format='emacs',
                         verbosity=3,
-                        user_rules=[],
+                        filter_rules=[],
                         git_commit=None,
                         extra_flag_values={}):
-        filter_configuration = FilterConfiguration(user_rules=user_rules)
-        return style.ProcessorOptions(extra_flag_values=extra_flag_values,
-                                      filter_configuration=filter_configuration,
-                                      git_commit=git_commit,
-                                      output_format=output_format,
-                                      verbosity=verbosity)
+        return ProcessorOptions(extra_flag_values=extra_flag_values,
+                                filter_rules=filter_rules,
+                                git_commit=git_commit,
+                                output_format=output_format,
+                                verbosity=verbosity)
 
     def test_to_flag_string(self):
         options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git',
@@ -266,8 +243,7 @@ class ArgumentParserTest(unittest.TestCase):
     def _create_defaults(self):
         """Return a DefaultCommandOptionValues instance for testing."""
         base_filter_rules = ["-", "+whitespace"]
-        return DefaultCommandOptionValues(base_filter_rules=base_filter_rules,
-                                          output_format="vs7",
+        return DefaultCommandOptionValues(output_format="vs7",
                                           verbosity=3)
 
     def _create_parser(self):
@@ -336,9 +312,7 @@ class ArgumentParserTest(unittest.TestCase):
 
         self.assertEquals(options.output_format, 'vs7')
         self.assertEquals(options.verbosity, 3)
-        self.assertEquals(options.filter_configuration,
-                          FilterConfiguration(base_rules=["-", "+whitespace"],
-                              path_specific=PATH_RULES_SPECIFIER))
+        self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
 
     def test_parse_explicit_arguments(self):
@@ -354,18 +328,13 @@ class ArgumentParserTest(unittest.TestCase):
 
         # Pass user_rules.
         (files, options) = parse(['--filter=+build,-whitespace'])
-        config = options.filter_configuration
-        self.assertEquals(options.filter_configuration,
-                          FilterConfiguration(base_rules=["-", "+whitespace"],
-                              path_specific=PATH_RULES_SPECIFIER,
-                              user_rules=["+build", "-whitespace"]))
+        self.assertEquals(options.filter_rules,
+                          ["+build", "-whitespace"])
 
         # Pass spurious white space in user rules.
         (files, options) = parse(['--filter=+build, -whitespace'])
-        self.assertEquals(options.filter_configuration,
-                          FilterConfiguration(base_rules=["-", "+whitespace"],
-                              path_specific=PATH_RULES_SPECIFIER,
-                              user_rules=["+build", "-whitespace"]))
+        self.assertEquals(options.filter_rules,
+                          ["+build", "-whitespace"])
 
         # Pass extra flag values.
         (files, options) = parse(['--extra'], ['extra'])
@@ -545,30 +514,95 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
             self.assert_processor_none(path)
 
 
+class StyleCheckerConfigurationTest(unittest.TestCase):
+
+    """Tests the StyleCheckerConfiguration class."""
+
+    def setUp(self):
+        self._error_messages = []
+        """The messages written to _mock_stderr_write() of this class."""
+
+    def _mock_stderr_write(self, message):
+        self._error_messages.append(message)
+
+    def _style_checker_configuration(self, output_format="vs7"):
+        """Return a StyleCheckerConfiguration instance for testing."""
+        base_rules = ["-whitespace", "+whitespace/tab"]
+        filter_configuration = FilterConfiguration(base_rules=base_rules)
+
+        return StyleCheckerConfiguration(
+                   filter_configuration=filter_configuration,
+                   max_reports_per_category={"whitespace/newline": 1},
+                   output_format=output_format,
+                   stderr_write=self._mock_stderr_write,
+                   verbosity=3)
+
+    def test_init(self):
+        """Test the __init__() method."""
+        configuration = self._style_checker_configuration()
+
+        # Check that __init__ sets the "public" data attributes correctly.
+        self.assertEquals(configuration.max_reports_per_category,
+                          {"whitespace/newline": 1})
+        self.assertEquals(configuration.stderr_write, self._mock_stderr_write)
+        self.assertEquals(configuration.verbosity, 3)
+
+    def test_is_reportable(self):
+        """Test the is_reportable() method."""
+        config = self._style_checker_configuration()
+
+        self.assertTrue(config.is_reportable("whitespace/tab", 3, "foo.txt"))
+
+        # Test the confidence check code path by varying the confidence.
+        self.assertFalse(config.is_reportable("whitespace/tab", 2, "foo.txt"))
+
+        # Test the category check code path by varying the category.
+        self.assertFalse(config.is_reportable("whitespace/line", 4, "foo.txt"))
+
+    def _call_write_style_error(self, output_format):
+        config = self._style_checker_configuration(output_format=output_format)
+        config.write_style_error(category="whitespace/tab",
+                                 confidence=5,
+                                 file_path="foo.h",
+                                 line_number=100,
+                                 message="message")
+
+    def test_write_style_error_emacs(self):
+        """Test the write_style_error() method."""
+        self._call_write_style_error("emacs")
+        self.assertEquals(self._error_messages,
+                          ["foo.h:100:  message  [whitespace/tab] [5]\n"])
+
+    def test_write_style_error_vs7(self):
+        """Test the write_style_error() method."""
+        self._call_write_style_error("vs7")
+        self.assertEquals(self._error_messages,
+                          ["foo.h(100):  message  [whitespace/tab] [5]\n"])
+
+
 class StyleCheckerTest(unittest.TestCase):
 
-    """Test the StyleChecker class.
-
-    Attributes:
-      error_messages: A string containing all of the warning messages
-                      written to the mock_stderr_write method of
-                      this class.
-
-    """
+    """Test the StyleChecker class."""
 
     def _mock_stderr_write(self, message):
         pass
 
-    def _style_checker(self, options):
-        return StyleChecker(options, self._mock_stderr_write)
+    def _style_checker(self, configuration):
+        return StyleChecker(configuration)
 
     def test_init(self):
         """Test __init__ constructor."""
-        options = ProcessorOptions()
-        style_checker = self._style_checker(options)
+        configuration = StyleCheckerConfiguration(
+                            filter_configuration=FilterConfiguration(),
+                            max_reports_per_category={},
+                            output_format="vs7",
+                            stderr_write=self._mock_stderr_write,
+                            verbosity=3)
 
+        style_checker = self._style_checker(configuration)
+
+        self.assertEquals(style_checker._configuration, configuration)
         self.assertEquals(style_checker.error_count, 0)
-        self.assertEquals(style_checker.options, options)
         self.assertEquals(style_checker.file_count, 0)
 
 
@@ -636,15 +670,14 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
         # Confirm that the attributes are reset.
         self.assert_attributes(None, None, None, "")
 
-        # Create a test StyleChecker instance.
-        #
-        # The verbosity attribute is the only ProcessorOptions
-        # attribute that needs to be checked in this test.
-        # This is because it is the only option is directly
-        # passed to the constructor of a style processor.
-        options = ProcessorOptions(verbosity=3)
+        configuration = StyleCheckerConfiguration(
+                            filter_configuration=FilterConfiguration(),
+                            max_reports_per_category={"whitespace/newline": 1},
+                            output_format="vs7",
+                            stderr_write=self.mock_stderr_write,
+                            verbosity=3)
 
-        style_checker = StyleChecker(options, self.mock_stderr_write)
+        style_checker = StyleChecker(configuration)
 
         style_checker.check_file(file_path,
                                  self.mock_handle_style_error,

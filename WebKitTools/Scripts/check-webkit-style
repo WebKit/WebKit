@@ -61,7 +61,8 @@ def main():
     parser = checker.ArgumentParser()
     (files, options) = parser.parse(sys.argv[1:])
 
-    style_checker = checker.StyleChecker(options)
+    configuration = checker.check_webkit_style_configuration(options)
+    style_checker = checker.StyleChecker(configuration)
 
     if files:
         for filename in files:

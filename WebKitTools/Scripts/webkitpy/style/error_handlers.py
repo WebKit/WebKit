@@ -56,30 +56,21 @@ class DefaultStyleErrorHandler(object):
 
     """The default style error handler."""
 
-    def __init__(self, file_path, options, increment_error_count,
-                 stderr_write=None):
+    def __init__(self, file_path, configuration, increment_error_count):
         """Create a default style error handler.
 
         Args:
           file_path: The path to the file containing the error. This
                      is used for reporting to the user.
-          options: A ProcessorOptions instance.
+          configuration: A StyleCheckerConfiguration instance.
           increment_error_count: A function that takes no arguments and
                                  increments the total count of reportable
                                  errors.
-          stderr_write: A function that takes a string as a parameter
-                        and that is called when a style error occurs.
-                        Defaults to sys.stderr.write. This should be
-                        used only for unit tests.
 
         """
-        if stderr_write is None:
-            stderr_write = sys.stderr.write
-
         self._file_path = file_path
+        self._configuration = configuration
         self._increment_error_count = increment_error_count
-        self._options = options
-        self._stderr_write = stderr_write
 
         # A string to integer dictionary cache of the number of reportable
         # errors per category passed to this instance.
@@ -99,9 +90,9 @@ class DefaultStyleErrorHandler(object):
 
     def _max_reports(self, category):
         """Return the maximum number of errors to report."""
-        if not category in self._options.max_reports_per_category:
+        if not category in self._configuration.max_reports_per_category:
             return None
-        return self._options.max_reports_per_category[category]
+        return self._configuration.max_reports_per_category[category]
 
     def __call__(self, line_number, category, confidence, message):
         """Handle the occurrence of a style error.
@@ -109,9 +100,9 @@ class DefaultStyleErrorHandler(object):
         See the docstring of this module for more information.
 
         """
-        if not self._options.is_reportable(category,
-                                           confidence,
-                                           self._file_path):
+        if not self._configuration.is_reportable(category=category,
+                                                 confidence_in_error=confidence,
+                                                 file_path=self._file_path):
             return
 
         category_total = self._add_reportable_error(category)
@@ -122,28 +113,22 @@ class DefaultStyleErrorHandler(object):
             # Then suppress displaying the error.
             return
 
-        if self._options.output_format == 'vs7':
-            format_string = "%s(%s):  %s  [%s] [%d]\n"
-        else:
-            format_string = "%s:%s:  %s  [%s] [%d]\n"
+        self._configuration.write_style_error(category=category,
+                                              confidence=confidence,
+                                              file_path=self._file_path,
+                                              line_number=line_number,
+                                              message=message)
 
         if category_total == max_reports:
-            format_string += ("Suppressing further [%s] reports for this "
-                              "file.\n" % category)
-
-        self._stderr_write(format_string % (self._file_path,
-                                            line_number,
-                                            message,
-                                            category,
-                                            confidence))
+            self._configuration.stderr_write("Suppressing further [%s] reports "
+                                             "for this file.\n" % category)
 
 
 class PatchStyleErrorHandler(object):
 
     """The style error function for patch files."""
 
-    def __init__(self, diff, file_path, options, increment_error_count,
-                 stderr_write):
+    def __init__(self, diff, file_path, configuration, increment_error_count):
         """Create a patch style error handler for the given path.
 
         Args:
@@ -155,11 +140,10 @@ class PatchStyleErrorHandler(object):
         self._diff = diff
 
         self._default_error_handler = DefaultStyleErrorHandler(
+                                          configuration=configuration,
                                           file_path=file_path,
                                           increment_error_count=
-                                              increment_error_count,
-                                          options=options,
-                                          stderr_write=stderr_write)
+                                              increment_error_count)
 
         # The line numbers of the modified lines. This is set lazily.
         self._line_numbers = set()
