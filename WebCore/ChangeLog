@@ -1,3 +1,17 @@
+2010-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7650652> REGRESSION: Selection painting issue in bug review textbox
+        https://bugs.webkit.org/show_bug.cgi?id=34946
+
+        Test: fast/repaint/selection-gap-overflow-scroll-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintSelection): localToContainerQuad() adjusts for
+        overflow scroll, but RenderLayer::addBlockSelectionGapsBounds() takes
+        non-scrolled coordinates, so account for that.
+
 2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Adler.

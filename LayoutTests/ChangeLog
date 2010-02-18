@@ -1,3 +1,15 @@
+2010-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7650652> REGRESSION: Selection painting issue in bug review textbox
+        https://bugs.webkit.org/show_bug.cgi?id=34946
+
+        * fast/repaint/selection-gap-overflow-scroll-2.html: Copied from LayoutTests/fast/repaint/selection-gap-overflow-scroll.html.
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-2-expected.checksum: Added.
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Added.
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-2-expected.txt: Added.
+
 2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by NOBODY Darin Adler.
