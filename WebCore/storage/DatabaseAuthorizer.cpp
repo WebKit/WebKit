@@ -263,21 +263,29 @@ int DatabaseAuthorizer::dropTempView(const String&)
     return (m_readOnly && m_securityEnabled ? SQLAuthDeny : SQLAuthAllow);
 }
 
-int DatabaseAuthorizer::createVTable(const String&, const String&)
+int DatabaseAuthorizer::createVTable(const String& tableName, const String& moduleName)
 {
     if (m_readOnly && m_securityEnabled)
+        return SQLAuthDeny;
+
+    // fts2 is used in Chromium
+    if (moduleName != "fts2")
         return SQLAuthDeny;
 
     m_lastActionChangedDatabase = true;
-    return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
+    return denyBasedOnTableName(tableName);
 }
 
-int DatabaseAuthorizer::dropVTable(const String&, const String&)
+int DatabaseAuthorizer::dropVTable(const String& tableName, const String& moduleName)
 {
     if (m_readOnly && m_securityEnabled)
         return SQLAuthDeny;
 
-    return m_securityEnabled ? SQLAuthDeny : SQLAuthAllow;
+    // fts2 is used in Chromium
+    if (moduleName != "fts2")
+        return SQLAuthDeny;
+
+    return denyBasedOnTableName(tableName);
 }
 
 int DatabaseAuthorizer::allowDelete(const String& tableName)
