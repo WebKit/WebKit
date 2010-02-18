@@ -3857,7 +3857,7 @@
             'inspector/front-end/Images/paneSettingsButtons.png',
             'inspector/front-end/Images/pauseOnExceptionButtonGlyph.png',
             'inspector/front-end/Images/percentButtonGlyph.png',
-            'inspector/front-end/Images/popoverArrow.png',
+            'inspector/front-end/Images/popoverArrows.png',
             'inspector/front-end/Images/popoverBackground.png',
             'inspector/front-end/Images/profileGroupIcon.png',
             'inspector/front-end/Images/profileIcon.png',
