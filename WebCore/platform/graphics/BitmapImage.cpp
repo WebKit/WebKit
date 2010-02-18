@@ -266,6 +266,18 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
     if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
         return;
 
+    // Don't advance the animation to an incomplete frame.
+    size_t nextFrame = (m_currentFrame + 1) % frameCount();
+    if (!m_allDataReceived && !frameIsCompleteAtIndex(nextFrame))
+        return;
+
+    // Don't advance past the last frame if we haven't decoded the whole image
+    // yet and our repetition count is potentially unset.  The repetition count
+    // in a GIF can potentially come after all the rest of the image data, so
+    // wait on it.
+    if (!m_allDataReceived && repetitionCount(false) == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
+        return;
+
     // Determine time for next frame to start.  By ignoring paint and timer lag
     // in this calculation, we make the animation appear to run at its desired
     // rate regardless of how fast it's being repainted.
@@ -283,18 +295,6 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
         if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
             m_desiredFrameStartTime = time + currentDuration;
     }
-
-    // Don't advance the animation to an incomplete frame.
-    size_t nextFrame = (m_currentFrame + 1) % frameCount();
-    if (!m_allDataReceived && !frameIsCompleteAtIndex(nextFrame))
-        return;
-
-    // Don't advance past the last frame if we haven't decoded the whole image
-    // yet and our repetition count is potentially unset.  The repetition count
-    // in a GIF can potentially come after all the rest of the image data, so
-    // wait on it.
-    if (!m_allDataReceived && repetitionCount(false) == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
-        return;
 
     // The image may load more slowly than it's supposed to animate, so that by
     // the time we reach the end of the first repetition, we're well behind.

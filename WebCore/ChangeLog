@@ -1,3 +1,22 @@
+2010-02-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 35065: Delay between page loading and animated GIF playing
+        <http://webkit.org/b/35065> / <rdar://problem/7109548>
+
+        BitmapImage::startAnimation was adding the current frame duration to the desired start time
+        of the frame for every time it was called.  If the function then bailed out due to not having
+        sufficient data to render the frame, this would lead to the desired start time of the frame
+        being pushed out multiple times.  On an animated GIF that took mulitple seconds to load this
+        could happen many times for a single frame, resulting in the start time of the second frame
+        of the animation being pushed out by as much as five seconds.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startAnimation): Change the order of the code slightly so that the
+        desired start time is only updated after determining that we have sufficient data to handle
+        the next frame.
+
 2010-02-17  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by Eric Seidel.
