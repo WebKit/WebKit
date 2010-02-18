@@ -5863,3 +5863,7 @@ fast/css/font-face-opentype.html
 
 # Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35081
 fast/frames/iframe-reparenting.html
+
+# Crashes on debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35085
+plugins/iframe-shims.html
+fast/loader/loadInProgress.html
