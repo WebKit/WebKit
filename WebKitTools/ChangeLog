@@ -1,3 +1,12 @@
+2010-02-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        websocket/tests/cookies/httponly-cookie.pl fails every time under run-chromium-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=35001
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: add -x flag to run pywebsocket.
+
 2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

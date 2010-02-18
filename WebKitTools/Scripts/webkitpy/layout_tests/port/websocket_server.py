@@ -159,6 +159,7 @@ class PyWebSocket(http_server.Lighttpd):
             '-p', str(self._port),
             '-d', self._layout_tests,
             '-s', self._web_socket_tests,
+            '-x', '/websocket/tests/cookies',
             '-l', error_log,
         ]
 
