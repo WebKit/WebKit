@@ -1,3 +1,12 @@
+2010-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        fast/css/font-face-opentype.html crashing on GTK bots
+        https://bugs.webkit.org/show_bug.cgi?id=35080
+
+        * platform/gtk/Skipped: Skip crashing test.
+
 2010-02-18  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
