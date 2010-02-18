@@ -46,6 +46,7 @@ function privateBrowsingErrorFunction(tx, error)
 {
     ++completed;
     writeMessageToLog("Private browsing statement " + completed + " completed with an error\n" + error.message);
+    return false;
 }
 
 function runSetup(transaction)

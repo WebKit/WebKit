@@ -1,3 +1,22 @@
+2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change the V8 and JSC SQLStatementErrorCallback to interpret
+        'undefined' return values as 'true', as required by the spec.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35048
+
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8CustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallbackHelper):
+        (WebCore::invokeCallback):
+        (WebCore::invokeCallbackTreatUndefinedAsTrue):
+        * bindings/v8/custom/V8CustomVoidCallback.h:
+
 2010-02-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

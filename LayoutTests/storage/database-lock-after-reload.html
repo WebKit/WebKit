@@ -28,7 +28,7 @@ function addData(db)
         // Insert a large amount of data that will take a little while to run. Schedule a timout to run that will load a new page
         // whilst the transaction is still in progress, interrupting the transaction. This should not leave the database locked and on
         // the next page we should be able to insert some more data.
-        tx.executeSql("INSERT INTO DataTest (testData) VALUES (randomBlob(524200 ))", [], function(tx, result) { }, errorFunction);
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (ZEROBLOB(524200))", [], function(tx, result) { }, errorFunction);
         location.href = "./resources/database-lock-after-reload-2.html";
     }, errorFunction, function() { 
         finishTest();

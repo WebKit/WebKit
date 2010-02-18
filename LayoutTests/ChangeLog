@@ -1,3 +1,18 @@
+2010-02-17  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by NOBODY Darin Adler.
+
+        'undefined' return values from statement error callbacks are not
+        treated as 'true'. Fix the tests that did not use this
+        assumption.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35048
+
+        * storage/database-lock-after-reload.html:
+        * storage/private-browsing-readonly.html:
+        * storage/statement-error-callback.html:
+        * storage/statement-error-callback-expected.txt:
+
 2010-02-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

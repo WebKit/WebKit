@@ -1,5 +1,10 @@
-CONSOLE MESSAGE: line 0: Exception in Statement error callback
-This test confirms that if the statement error callback returns true or throws an exception we do not execute any further statements in that transaction and instead execute the transaction error callback immediately.
+CONSOLE MESSAGE: line 0: Exception in statement error callback
+This test confirms that a transaction is immediately rolled back if and only if a statement's error callback throws an exception, returns true, or doesn't return any value.
+PASS - the transaction error callback was invoked.
+PASS - the transaction error callback was invoked.
+PASS - the transaction error callback was invoked.
+PASS - the transaction error callback was invoked.
+PASS - the transaction error callback was invoked.
 PASS - the transaction error callback was invoked.
 PASS - the transaction error callback was invoked.
 Test Complete

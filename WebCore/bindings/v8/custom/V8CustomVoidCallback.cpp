@@ -64,7 +64,7 @@ void V8CustomVoidCallback::handleEvent()
     invokeCallback(m_callback, 0, 0, callbackReturnValue);
 }
 
-bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue)
+static bool invokeCallbackHelper(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], v8::Handle<v8::Value>& returnValue)
 {
     v8::TryCatch exceptionCatcher;
 
@@ -87,9 +87,7 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8
     V8Proxy* proxy = V8Proxy::retrieve();
     ASSERT(proxy);
 
-    v8::Handle<v8::Value> result = proxy->callFunction(callbackFunction, thisObject, argc, argv);
-
-    callbackReturnValue = !result.IsEmpty() && result->IsBoolean() && result->BooleanValue();
+    returnValue = proxy->callFunction(callbackFunction, thisObject, argc, argv);
 
     if (exceptionCatcher.HasCaught()) {
         v8::Local<v8::Message> message = exceptionCatcher.Message();
@@ -98,6 +96,22 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8
     }
 
     return false;
+}
+
+bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue)
+{
+    v8::Handle<v8::Value> returnValue;
+    bool result = invokeCallbackHelper(callback, argc, argv, returnValue);
+    callbackReturnValue = !returnValue.IsEmpty() && returnValue->IsBoolean() && returnValue->BooleanValue();
+    return result;
+}
+
+bool invokeCallbackTreatOnlyExplicitFalseAsFalse(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue)
+{
+    v8::Handle<v8::Value> returnValue;
+    bool result = invokeCallbackHelper(callback, argc, argv, returnValue);
+    callbackReturnValue = !returnValue.IsEmpty() && !returnValue->IsFalse();
+    return result;
 }
 
 } // namespace WebCore

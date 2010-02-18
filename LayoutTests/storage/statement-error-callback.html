@@ -15,7 +15,8 @@ function finishTest()
 }
 
 var txCallbackCount = 0;
-var NUMBER_OF_TRANSACTIONS = 2;
+var NUMBER_OF_TRANSACTIONS = 7;
+var database;
 
 function transactionErrorFunction(error)
 {
@@ -31,6 +32,22 @@ function transactionSuccessFunction(message)
         finishTest();
 }
 
+function runTransactionExpectedToFail(statementErrorCallback)
+{
+    database.transaction(function(tx) {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS StatementErrorCallbackTest (randomData)");
+        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
+        tx.executeSql("THIS STATEMENT WILL FAIL", [],
+            function(tx, data) {
+                log("FAIL - this statement should have failed");
+                finishTest();
+            }, statementErrorCallback);
+        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'],
+            function(error) { log("FAIL - This statement should not have been executed"); },
+            function() { log("FAIL - This statement should not have been executed"); });
+    }, transactionErrorFunction, transactionSuccessFunction);
+}
+
 function runTest()
 {
     if (window.layoutTestController) {
@@ -38,29 +55,36 @@ function runTest()
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }
-    
-    var database = openDatabase("bug-28872", "1.0", "statement error callback test", 1024);
-    
-    database.transaction(function(tx) {
-            tx.executeSql("CREATE TABLE IF NOT EXISTS StatementErrorCallbackTest (randomData)");
-            tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
-            tx.executeSql("THIS STATEMENT WILL FAIL", [], function(message) { log("FAIL - this statement should have failed"); finishTest(); }, function(error) { return true; });
-            tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'], function(message) { log("FAIL - This statement should not have been executed"); }, function(message) { log("FAIL - This statement should not have been executed"); });
-        }, transactionErrorFunction, transactionSuccessFunction);
 
-    database.transaction(function(tx) {        
+    database = openDatabase("bug-28872", "1.0", "statement error callback test", 1024);
+    database.transaction(function(tx) {
         tx.executeSql("CREATE TABLE IF NOT EXISTS StatementErrorCallbackTest (randomData)");
-            tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
-            tx.executeSql("THIS STATEMENT WILL FAIL", [], function(message) { log("FAIL - this statement should have failed"); finishTest(); }, function(error) { throw "Exception in Statement error callback"; return false; });
-            tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'], function(message) { log("FAIL - This statement should not have been executed"); }, function(message) { log("FAIL - This statement should not have been executed"); });
-        }, transactionErrorFunction, transactionSuccessFunction);
+        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
+        tx.executeSql("THIS STATEMENT WILL FAIL", [],
+            function(tx, data) {
+                log("FAIL - this statement should have failed");
+                finishTest();
+            }, function(tx, error) { return false; });
+        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'],
+            function(tx, data) { },
+            function(tx, error) { log("FAIL - This statement should not have caused an error"); });
+    }, function(error) { log("FAIL - The transaction error callback should not have been invoked"); },
+    function() { });
+
+    runTransactionExpectedToFail(function(error) { return true; });
+    runTransactionExpectedToFail(function(error) { throw "Exception in statement error callback"; return false; });
+    runTransactionExpectedToFail(function(error) {});
+    runTransactionExpectedToFail(function(error) { return null; });
+    runTransactionExpectedToFail(function(error) { return "some string"; });
+    runTransactionExpectedToFail(function(error) { return 1234; });
+    runTransactionExpectedToFail(function(error) { return {a: 2, b: "abc"}; });
 }
 
 </script>
 </head>
 
 <body onload="runTest()">
-This test confirms that if the statement error callback returns true or throws an exception we do not execute any further statements in that transaction and instead execute the transaction error callback immediately.
+This test confirms that a transaction is immediately rolled back if and only if a statement's error callback throws an exception, returns true, or doesn't return any value.
 <pre id="console">
 </pre>
 </body>
