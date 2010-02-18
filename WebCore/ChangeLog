@@ -1,3 +1,16 @@
+2010-02-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add WebCore::prefetchDNS
+        https://bugs.webkit.org/show_bug.cgi?id=34873
+
+        DNS prefetching is not implemented because the maximum number
+        of UDP sockets is quite small in most BREW devices.
+
+        * platform/network/brew/DNSBrew.cpp: Added.
+        (WebCore::prefetchDNS):
+
 2010-02-17  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
