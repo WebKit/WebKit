@@ -1,5 +1,14 @@
 2010-02-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+         [Qt] DRT: Get total number of pages to be printed
+         https://bugs.webkit.org/show_bug.cgi?id=34955
+
+         Fix landed in r54902, so we can unskip the test.
+
+        * platform/qt/Skipped: printing/numberOfPages.html unskipped.
+
+2010-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Fails glyph reordering test fast/text/glyph-reordering.html
         https://bugs.webkit.org/show_bug.cgi?id=34918
 

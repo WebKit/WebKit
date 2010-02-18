@@ -5060,9 +5060,6 @@ fast/loader/crash-copying-backforwardlist.html
 # Because ENABLE_DASHBOARD_SUPPORT=0 is the default option. (Apple's dashboard support in OS X)
 fast/css/dashboard-regions-attr-crash.html
 
-# Implement LayoutTestController::numberOfPages().
-printing/numberOfPages.html
-
 # [Qt] perl websocket test(s) time out
 # https://bugs.webkit.org/show_bug.cgi?id=34882
 websocket/tests/cookies/httponly-cookie.pl
