@@ -283,7 +283,7 @@ library WebKit
     coclass WebScriptWorld {
         [default] interface IWebScriptWorld;
     }
-    
+
     [uuid(13C45703-A3B3-8797-276B-75632F6165C3)]
     coclass WebSerializedJSValue {
         [default] interface IWebSerializedJSValue;

@@ -1,5 +1,14 @@
 2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed. Touch WebKit.idl to fix the build.
+
+        [Win] Implement test functions for printing
+        https://bugs.webkit.org/show_bug.cgi?id=34570
+
+        * Interfaces/WebKit.idl:
+
+2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Reviewed by Eric Seidel.
 
         [Win] Implement test functions for printing
