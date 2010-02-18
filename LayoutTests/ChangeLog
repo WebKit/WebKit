@@ -1,3 +1,12 @@
+2010-02-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][Qt] Fails glyph reordering test fast/text/glyph-reordering.html
+        https://bugs.webkit.org/show_bug.cgi?id=34918
+
+        Unskipping that now passes, after r54912.
+
+        * platform/gtk/Skipped:
+
 2010-02-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
