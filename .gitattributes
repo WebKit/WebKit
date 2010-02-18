@@ -1,3 +1,7 @@
+# To enable automatic merging of ChangeLog files, use the following command:
+# git config merge.changelog.driver "resolve-ChangeLogs --merge-driver %O %A %B"
+ChangeLog* merge=changelog
+
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore.sln -crlf
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj -crlf
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCF.vsprops -crlf

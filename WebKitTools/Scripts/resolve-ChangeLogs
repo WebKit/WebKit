@@ -34,6 +34,7 @@ use FindBin;
 use lib $FindBin::Bin;
 
 use File::Basename;
+use File::Copy;
 use File::Path;
 use File::Spec;
 use Getopt::Long;
@@ -64,28 +65,30 @@ my $GIT = "git";
 
 my $fixMerged;
 my $gitRebaseContinue = 0;
+my $mergeDriver = 0;
 my $printWarnings = 1;
 my $showHelp;
 
 my $getOptionsResult = GetOptions(
-    'c|continue!'    => \$gitRebaseContinue,
-    'f|fix-merged:s' => \&parseFixMerged,
-    'h|help'         => \$showHelp,
-    'w|warnings!'    => \$printWarnings,
+    'c|continue!'     => \$gitRebaseContinue,
+    'f|fix-merged:s'  => \&parseFixMerged,
+    'm|merge-driver!' => \$mergeDriver,
+    'h|help'          => \$showHelp,
+    'w|warnings!'     => \$printWarnings,
 );
 
 my $relativePath = isInGitFilterBranch() ? '.' : chdirReturningRelativePath(determineVCSRoot());
 
 my @changeLogFiles = removeChangeLogArguments($relativePath);
 
-if (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
+if (!defined $fixMerged && !$mergeDriver && scalar(@changeLogFiles) == 0) {
     @changeLogFiles = findUnmergedChangeLogs();
 }
 
-if (scalar(@ARGV) > 0) {
+if (!$mergeDriver && scalar(@ARGV) > 0) {
     print STDERR "ERROR: Files listed on command-line that are not ChangeLogs.\n";
     undef $getOptionsResult;
-} elsif (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
+} elsif (!defined $fixMerged && !$mergeDriver && scalar(@changeLogFiles) == 0) {
     print STDERR "ERROR: No ChangeLog files listed on command-line or found unmerged.\n";
     undef $getOptionsResult;
 } elsif ($gitRebaseContinue && !$isGit) {
@@ -93,6 +96,12 @@ if (scalar(@ARGV) > 0) {
     undef $getOptionsResult;
 } elsif (defined $fixMerged && !$isGit) {
     print STDERR "ERROR: --fix-merged may only be used with a git repository\n";
+    undef $getOptionsResult;
+} elsif ($mergeDriver && !$isGit) {
+    print STDERR "ERROR: --merge-driver may only be used with a git repository\n";
+    undef $getOptionsResult;
+} elsif ($mergeDriver && scalar(@ARGV) < 3) {
+    print STDERR "ERROR: --merge-driver expects %O %A %B as arguments\n";
     undef $getOptionsResult;
 }
 
@@ -104,6 +113,7 @@ Usage: @{[ basename($0) ]} [options] [path/to/ChangeLog] [path/to/another/Change
                                    entries (default: --no-continue)
   -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
                                    is specified, run git filter-branch on the range
+  -m|--merge-driver %O %A %B       act as a git merge-driver on files %O %A %B
   -h|--help                        show this help message
   -w|--[no-]warnings               show or suppress warnings (default: show warnings)
 __END__
@@ -118,6 +128,14 @@ if (defined $fixMerged && length($fixMerged) > 0) {
     my $commitRange = $fixMerged;
     $commitRange = $commitRange . "..HEAD" if index($commitRange, "..") < 0;
     fixMergedChangeLogs($commitRange, @changeLogFiles);
+} elsif ($mergeDriver) {
+    my ($base, $theirs, $ours) = @ARGV;
+    if (mergeChanges($ours, $base, $theirs)) {
+        unlink($ours);
+        copy($theirs, $ours) or die $!;
+    } else {
+        exit 1;
+    }
 } elsif (@changeLogFiles) {
     for my $file (@changeLogFiles) {
         if (defined $fixMerged) {
