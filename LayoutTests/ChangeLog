@@ -1,5 +1,12 @@
 2010-02-18  Philippe Normand  <pnormand@igalia.com>
 
+        Not reviewed, adding a GTK layout test result for a new test
+        added in r54926.
+
+        * platform/gtk/fast/css/first-letter-first-line-hover-expected.txt: Added.
+
+2010-02-18  Philippe Normand  <pnormand@igalia.com>
+
         Rubber-stamped by Xan Lopez.
 
         plugins/iframe-shims.html crashing on GTK Debug bots
