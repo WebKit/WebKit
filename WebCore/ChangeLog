@@ -1,3 +1,16 @@
+2010-02-18  Timothy Hatcher  <timothy@apple.com>
+
+        Add "with" to the list of keywords to syntax highlight.
+
+        http://webkit.org/b/35123
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer): Add "width" to _keywords.
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        (WebInspector.SourceJavaScriptTokenizer): Ditto.
+
 2010-02-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.
