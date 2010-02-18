@@ -91,7 +91,7 @@ namespace WebCore {
         // WebSocketChannelClient
         virtual void didConnect();
         virtual void didReceiveMessage(const String& message);
-        virtual void didClose();
+        virtual void didClose(unsigned long unhandledBufferedAmount);
 
     private:
         WebSocket(ScriptExecutionContext*);
@@ -111,6 +111,7 @@ namespace WebCore {
         KURL m_url;
         String m_protocol;
         EventTargetData m_eventTargetData;
+        unsigned long m_bufferedAmountAfterClose;
     };
 
 } // namespace WebCore

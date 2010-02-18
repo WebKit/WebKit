@@ -1,3 +1,40 @@
+2010-02-17  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket bufferedAmount should not be 0 when send after close.
+        https://bugs.webkit.org/show_bug.cgi?id=34633
+
+        Fixed bug in webkit r54694.  check m_client after it calls user
+        callback, because user callback may call close(), which would
+        call onclose event handler.
+        
+        Test: websocket/tests/bufferedAmount-after-close.html
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::bufferedAmount):
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::bufferedAmount):
+        (WebCore::WebSocketChannel::didClose):
+        (WebCore::WebSocketChannel::didReceiveData):
+        * websockets/WebSocketChannel.h:
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didClose):
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerContextDidClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2010-02-17  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.
