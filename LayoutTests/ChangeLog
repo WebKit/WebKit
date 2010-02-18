@@ -1,3 +1,14 @@
+2010-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)
+        https://bugs.webkit.org/show_bug.cgi?id=35086
+
+        fast/xmlhttprequest/xmlhttprequest-no-file-access.html cause
+        this fail indirectly, but both of them pass in separated DRT.
+
+        * platform/qt/Skipped: fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+        skipped until fix to make buildbot happy.
+
 2010-02-18  Philippe Normand  <pnormand@igalia.com>
 
         Not reviewed, adding a GTK layout test result for a new test
