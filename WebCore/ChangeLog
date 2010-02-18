@@ -1,3 +1,16 @@
+2010-02-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port userIdleTime
+        https://bugs.webkit.org/show_bug.cgi?id=34259
+
+        Return an arbitrarily high userIdleTime so that releasing pages from the page
+        cache isn't postponed.
+
+        * platform/brew/SystemTimeBrew.cpp: Added.
+        (WebCore::userIdleTime):
+
 2010-02-17  Dirk Schulze  <krit@webkit.org>
 
         Rolling out r54909. Breaks SL and Win.
