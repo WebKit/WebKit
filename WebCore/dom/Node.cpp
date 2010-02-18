@@ -313,25 +313,20 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
 
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
-    if (ch == NoChange && s1->hasPseudoStyle(BEFORE)) {
-        RenderStyle* ps2 = s2->getCachedPseudoStyle(BEFORE);
-        if (!ps2)
-            ch = NoInherit;
-        else {
-            RenderStyle* ps1 = s1->getCachedPseudoStyle(BEFORE);
-            ch = ps1 && *ps1 == *ps2 ? NoChange : NoInherit;
+    if (ch == NoChange && s1->hasAnyPublicPseudoStyles()) {
+        for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; ch == NoChange && pseudoId < FIRST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
+            if (s1->hasPseudoStyle(pseudoId)) {
+                RenderStyle* ps2 = s2->getCachedPseudoStyle(pseudoId);
+                if (!ps2)
+                    ch = NoInherit;
+                else {
+                    RenderStyle* ps1 = s1->getCachedPseudoStyle(pseudoId);
+                    ch = ps1 && *ps1 == *ps2 ? NoChange : NoInherit;
+                }
+            }
         }
     }
-    if (ch == NoChange && s1->hasPseudoStyle(AFTER)) {
-        RenderStyle* ps2 = s2->getCachedPseudoStyle(AFTER);
-        if (!ps2)
-            ch = NoInherit;
-        else {
-            RenderStyle* ps1 = s1->getCachedPseudoStyle(AFTER);
-            ch = ps2 && *ps1 == *ps2 ? NoChange : NoInherit;
-        }
-    }
-    
+
     return ch;
 }
 

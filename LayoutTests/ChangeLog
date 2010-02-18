@@ -1,3 +1,16 @@
+2010-02-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        In diffing render styles, consider all pseudo style changes.
+        Without this patch, only :before and :after are considered. This is the cause of the following bug.
+        https://bugs.webkit.org/show_bug.cgi?id=32187
+
+        * fast/css/first-letter-first-line-hover.html: Added.
+        * platform/mac/fast/css/first-letter-first-line-hover-expected.checksum: Added.
+        * platform/mac/fast/css/first-letter-first-line-hover-expected.png: Added.
+        * platform/mac/fast/css/first-letter-first-line-hover-expected.txt: Added.
+
 2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

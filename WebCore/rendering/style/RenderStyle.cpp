@@ -192,6 +192,11 @@ static inline int pseudoBit(PseudoId pseudo)
     return 1 << (pseudo - 1);
 }
 
+bool RenderStyle::hasAnyPublicPseudoStyles() const
+{
+    return PUBLIC_PSEUDOID_MASK & noninherited_flags._pseudoBits;
+}
+
 bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 {
     ASSERT(pseudo > NOPSEUDO);

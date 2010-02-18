@@ -1,3 +1,21 @@
+2010-02-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        In diffing render styles, consider all pseudo style changes.
+        Without this patch, only :before and :after are considered. This is the cause of the following bug.
+        https://bugs.webkit.org/show_bug.cgi?id=32187
+
+        Test: fast/css/first-letter-first-line-hover.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hasAnyPublicPseudoStyles):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2010-02-17  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
