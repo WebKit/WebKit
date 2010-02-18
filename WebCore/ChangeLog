@@ -1,3 +1,14 @@
+2010-02-18  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [v8] Complete upstreaming of V8 Touch Event bindings
+        https://bugs.webkit.org/show_bug.cgi?id=35094
+
+        No new tests required.
+
+        * bindings/v8/V8Index.cpp: Add generated touch event headers.
+
 2010-02-18  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
