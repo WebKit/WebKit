@@ -1342,7 +1342,7 @@ WebInspector.log = function(message)
         WebInspector.log.repeatCount = repeatCount;
 
         // ConsoleMessage expects a proxy object
-        message = new WebInspector.ObjectProxy(null, null, [], 0, message, false);
+        message = new WebInspector.ObjectProxy(null, null, [], message, false);
 
         // post the message
         var msg = new WebInspector.ConsoleMessage(

@@ -28,12 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectProxy = function(injectedScriptId, objectId, path, protoDepth, description, hasChildren)
+WebInspector.ObjectProxy = function(injectedScriptId, objectId, path, description, hasChildren)
 {
     this.objectId = objectId;
     this.injectedScriptId = injectedScriptId;
     this.path = path || [];
-    this.protoDepth = protoDepth || 0;
     this.description = description;
     this.hasChildren = hasChildren;
 }

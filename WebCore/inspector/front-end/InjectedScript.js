@@ -485,7 +485,6 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
     var object = InjectedScript._resolveObject(objectProxy);
     if (!InjectedScript._isDefined(object))
         return false;
-
     var properties = [];
     var propertyNames = ignoreHasOwnProperty ? InjectedScript._getPropertyNames(object) : Object.getOwnPropertyNames(object);
     if (!ignoreHasOwnProperty && object.__proto__)
@@ -505,7 +504,6 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
                 var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, abbreviate);
                 childObjectProxy.path = objectProxy.path ? objectProxy.path.slice() : [];
                 childObjectProxy.path.push(propertyName);
-                childObjectProxy.protoDepth = objectProxy.protoDepth || 0;
                 property.value = childObjectProxy;
             } catch(e) {
                 property.value = { description: e.toString() };
@@ -1087,10 +1085,6 @@ InjectedScript._resolveObject = function(objectProxy)
     for (var i = 0; InjectedScript._isDefined(object) && path && i < path.length; ++i)
         object = object[path[i]];
 
-    // Get to the necessary proto layer.
-    for (var i = 0; InjectedScript._isDefined(object) && protoDepth && i < protoDepth; ++i)
-        object = object.__proto__;
-
     return object;
 }
 
@@ -1154,12 +1148,7 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
         result.propertyLength = object.length;
 
     var type = typeof object;
-    if ((type === "object" && object !== null) || type === "function") {
-        for (var subPropertyName in object) {
-            result.hasChildren = true;
-            break;
-        }
-    }
+    result.hasChildren = (type === "object" && object !== null && Object.getOwnPropertyNames(object).length) || type === "function";
     try {
         result.description = InjectedScript._describe(object, abbreviate);
     } catch (e) {

@@ -48,12 +48,14 @@ WebInspector.PropertiesSidebarPane.prototype = {
             body.removeChildren();
             self.sections = [];
 
+            var path = [];
             // Get array of prototype user-friendly names.
             for (var i = 0; i < prototypes.length; ++i) {
-                var prototype = new WebInspector.ObjectProxy(node.injectedScriptId, node.id, [], i);
+                var prototype = new WebInspector.ObjectProxy(node.injectedScriptId, node.id, path.slice());
                 var section = new WebInspector.ObjectPropertiesSection(prototype, prototypes[i], WebInspector.UIString("Prototype"));
                 self.sections.push(section);
                 body.appendChild(section.element);
+                path.push("__proto__");
             }
         };
         InjectedScriptAccess.get(node.injectedScriptId).getPrototypes(node.id, callback);
