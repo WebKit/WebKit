@@ -37,10 +37,14 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
     {
-        if (!s1->length())
+        unsigned length1 = s1->length();
+        if (!length1)
             return s2;
-        if (!s2->length())
+        unsigned length2 = s2->length();
+        if (!length2)
             return s1;
+        if ((length1 + length2) < length1)
+            return throwOutOfMemoryError(exec);
 
         unsigned fiberCount = s1->fiberCount() + s2->fiberCount();
         JSGlobalData* globalData = &exec->globalData();
@@ -58,6 +62,15 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, JSString* s2)
     {
+        unsigned length1 = u1.size();
+        if (!length1)
+            return s2;
+        unsigned length2 = s2->length();
+        if (!length2)
+            return jsString(exec, u1);
+        if ((length1 + length2) < length1)
+            return throwOutOfMemoryError(exec);
+
         unsigned fiberCount = 1 + s2->fiberCount();
         JSGlobalData* globalData = &exec->globalData();
 
@@ -74,6 +87,15 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, const UString& u2)
     {
+        unsigned length1 = s1->length();
+        if (!length1)
+            return jsString(exec, u2);
+        unsigned length2 = u2.size();
+        if (!length2)
+            return s1;
+        if ((length1 + length2) < length1)
+            return throwOutOfMemoryError(exec);
+
         unsigned fiberCount = s1->fiberCount() + 1;
         JSGlobalData* globalData = &exec->globalData();
 
@@ -109,13 +131,24 @@ namespace JSC {
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
 
+        unsigned length = 0;
+        bool overflow = false;
+
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
             if (LIKELY(v.isString()))
                 ropeBuilder.append(asString(v));
             else
                 ropeBuilder.append(v.toString(exec));
+
+            unsigned newLength = ropeBuilder.length();
+            if (newLength < length)
+                overflow = true;
+            length = newLength;
         }
+
+        if (overflow)
+            return throwOutOfMemoryError(exec);
 
         return new (globalData) JSString(globalData, ropeBuilder.release());
     }
@@ -143,13 +176,25 @@ namespace JSC {
             ropeBuilder.append(asString(thisValue));
         else
             ropeBuilder.append(thisValue.toString(exec));
+
+        unsigned length = 0;
+        bool overflow = false;
+
         for (unsigned i = 0; i < args.size(); ++i) {
             JSValue v = args.at(i);
             if (LIKELY(v.isString()))
                 ropeBuilder.append(asString(v));
             else
                 ropeBuilder.append(v.toString(exec));
+
+            unsigned newLength = ropeBuilder.length();
+            if (newLength < length)
+                overflow = true;
+            length = newLength;
         }
+
+        if (overflow)
+            return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
         return new (globalData) JSString(globalData, ropeBuilder.release());

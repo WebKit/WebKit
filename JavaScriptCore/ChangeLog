@@ -1,3 +1,18 @@
+2010-02-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35070
+        Addition of 2 strings of length 2^31 may result in a string of length 0.
+
+        Check for overflow when creating a new JSString as a result of an addition
+        or concatenation, throw an out of memory exception.
+
+        * runtime/JSString.h:
+        (JSC::):
+        * runtime/Operations.h:
+        (JSC::jsString):
+
 2010-02-17  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
