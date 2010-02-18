@@ -1,3 +1,23 @@
+2010-02-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        fast/frames/iframe-reparenting.html crashing on GTK Debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=35081
+
+        Check that the client is alive after every call to it, since any
+        of them could cause the load to be cancelled, and the client to go
+        away.
+
+        This is much better than protecting a specific subclass of
+        ResourceHandleClient (ResourceLoader), which makes us fail when
+        any other client is used.
+
+        Test: fast/frames/iframe-reparenting.html
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::parseDataUrl):
+
 2010-02-18  Ben Murdoch  <benm@google.com>
 
         Reviewed by Nate Chapin.
