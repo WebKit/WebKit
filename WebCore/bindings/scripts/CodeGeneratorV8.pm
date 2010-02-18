@@ -2460,6 +2460,7 @@ my %typeCanFailConversion = (
     "SVGPreserveAspectRatio" => 1,
     "SVGRect" => 1,
     "SVGTransform" => 1,
+    "TouchList" => 0,
     "VoidCallback" => 1,
     "WebKitCSSMatrix" => 0,
     "WebKitPoint" => 0,

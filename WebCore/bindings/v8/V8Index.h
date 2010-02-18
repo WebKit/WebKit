@@ -526,6 +526,15 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
     V(GEOPOSITION, Geoposition)                                         \
     V(POSITIONERROR, PositionError)
 
+#if ENABLE(TOUCH_EVENTS)
+#define DOM_OBJECT_TOUCH_EVENT_TYPES(V)                                 \
+    V(TOUCH, Touch)                                                     \
+    V(TOUCHEVENT, TouchEvent)                                           \
+    V(TOUCHLIST, TouchList)
+#else
+#define DOM_OBJECT_TOUCH_EVENT_TYPES(V)
+#endif
+
 #define DOM_OBJECT_TYPES(V)                                             \
     DOM_OBJECT_TYPES_1(V)                                               \
     DOM_OBJECT_TYPES_2(V)                                               \
@@ -537,7 +546,8 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
     DOM_OBJECT_XPATH_TYPES(V)                                           \
     DOM_OBJECT_XSLT_TYPES(V)                                            \
     DOM_OBJECT_INSPECTOR_TYPES(V)                                       \
-    DOM_OBJECT_GEOLOCATION_TYPES(V)
+    DOM_OBJECT_GEOLOCATION_TYPES(V)                                     \
+    DOM_OBJECT_TOUCH_EVENT_TYPES(V)
 
 #if ENABLE(SVG)
 // SVG_OBJECT_TYPES are svg non-node, non-pod types.

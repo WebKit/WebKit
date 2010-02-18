@@ -282,6 +282,12 @@
 #include "InspectorFrontendHost.h"
 #endif // INSPECTOR
 
+#if ENABLE(TOUCH_EVENTS)
+#include "Touch.h"
+#include "TouchEvent.h"
+#include "TouchList.h"
+#endif
+
 namespace WebCore {
 
     // A helper class for undetectable document.all

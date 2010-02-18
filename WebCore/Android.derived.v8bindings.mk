@@ -113,6 +113,9 @@ GEN := \
     $(intermediates)/bindings/V8RangeException.h \
     $(intermediates)/bindings/V8Text.h \
     $(intermediates)/bindings/V8TextEvent.h \
+    $(intermediates)/bindings/V8Touch.h \
+    $(intermediates)/bindings/V8TouchEvent.h \
+    $(intermediates)/bindings/V8TouchList.h \
     $(intermediates)/bindings/V8TreeWalker.h \
     $(intermediates)/bindings/V8UIEvent.h \
     $(intermediates)/bindings/V8WebKitAnimationEvent.h \

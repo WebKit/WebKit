@@ -132,6 +132,9 @@ GEN := \
     $(intermediates)/dom/JSRangeException.h \
     $(intermediates)/dom/JSText.h \
     $(intermediates)/dom/JSTextEvent.h \
+    $(intermediates)/dom/JSTouch.h \
+    $(intermediates)/dom/JSTouchEvent.h \
+    $(intermediates)/dom/JSTouchList.h \
     $(intermediates)/dom/JSTreeWalker.h \
     $(intermediates)/dom/JSUIEvent.h \
     $(intermediates)/dom/JSWebKitAnimationEvent.h \
