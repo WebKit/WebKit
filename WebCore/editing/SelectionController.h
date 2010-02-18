@@ -140,6 +140,10 @@ private:
 
     TextDirection directionOfEnclosingBlock();
 
+    VisiblePosition positionForPlatform(bool isGetStart) const;
+    VisiblePosition startForPlatform() const;
+    VisiblePosition endForPlatform() const;
+
     VisiblePosition modifyExtendingRight(TextGranularity);
     VisiblePosition modifyExtendingForward(TextGranularity);
     VisiblePosition modifyMovingRight(TextGranularity);

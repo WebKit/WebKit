@@ -1,3 +1,28 @@
+2010-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        keyboard selection sometimes moves the wrong end of the selection for Win/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=35066
+
+        On Windows/Linux keyboard based selections should always move the same
+        end of the seleciton. On Mac, lineboundary and documentboundary changes
+        move different ends of the selection depending on which direction your
+        extending.
+
+        Test: editing/selection/extend-after-mouse-selection.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::positionForPlatform):
+        (WebCore::SelectionController::startForPlatform):
+        (WebCore::SelectionController::endForPlatform):
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingBackward):
+        * editing/SelectionController.h:
+
 2010-02-18  Timothy Hatcher  <timothy@apple.com>
 
         Add "with" to the list of keywords to syntax highlight.

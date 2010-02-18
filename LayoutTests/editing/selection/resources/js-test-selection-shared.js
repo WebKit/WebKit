@@ -7,7 +7,7 @@ function objectAsString(object, properties) {
 
         var value = object[property];
         if (value && value.nodeType) // textNode
-            value = value + "( " + value.nodeValue + " )";
+            value = value + "(" + value.nodeValue + ")";
 
         result += property + ": " + value;
     }
@@ -21,16 +21,20 @@ function selectionAsString(sel)
     return objectAsString(sel, properties);
 }
 
-function assertSelectionAt(node, offset) {
+function assertSelectionAt(anchorNode, anchorOffset, optFocusNode, optFocusOffset) {
+    var focusNode = optFocusNode || anchorNode;
+    var focusOffset = (optFocusOffset === undefined) ? anchorOffset : optFocusOffset;
+
     var sel = window.getSelection();
-    if (sel.anchorNode == node
-        && sel.focusNode == node
-        && sel.anchorOffset == offset
-        && sel.focusOffset == offset
-        && sel.isCollapsed) {
-        testPassed("Selection is at node: " + node + " offset: " + offset);
+    if (sel.anchorNode == anchorNode
+        && sel.focusNode == focusNode
+        && sel.anchorOffset == anchorOffset
+        && sel.focusOffset == focusOffset) {
+        testPassed("Selection is " + selectionAsString(sel));
     } else {
-        testFailed("Selection is " + selectionAsString(sel) + " should be at node: " + node + " offset: " + offset);
+        testFailed("Selection is " + selectionAsString(sel) + 
+            " should be at anchorNode: " + anchorNode + " anchorOffset: " + anchorOffset +
+            " focusNode: " + focusNode + " focusOffset: " + focusOffset);
     }
 }
 

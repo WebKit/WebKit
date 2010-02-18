@@ -1,0 +1,82 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+</style>
+<script src="../editing.js"></script>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+
+<script>
+// FIXME: Expose settings->editingBehavior() and use that here instead.
+var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+
+function editingTest() {
+    var startTarget = document.getElementById('start');
+    var endTarget = document.getElementById('end');
+
+    eventSender.mouseMoveTo(startTarget.offsetLeft, startTarget.offsetTop + 10);
+    // Double-click to select at word-granularity to workaround eventSender bug with selecting text at
+    // character granularity (i.e. that it just doesn't work).
+    eventSender.mouseDown();
+    eventSender.mouseUp();    
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(endTarget.offsetLeft, endTarget.offsetTop + 10);
+    eventSender.mouseUp();    
+
+    assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 2);
+
+    extendSelectionBackwardByCharacterCommand();
+
+    // The first character-granularity selection after a mouse-selection resets the anchor/focus.
+    // FIXME: On Win/Linux the anchor/focus should be fixed after the mouse-selection.
+    assertSelectionAt(endTarget.firstChild, 2, startTarget.previousSibling, 1);
+
+    extendSelectionForwardByCharacterCommand();
+    assertSelectionAt(endTarget.firstChild, 2, startTarget.firstChild, 0);
+    
+    extendSelectionForwardByLineBoundaryCommand();
+    
+    if (onMacPlatform) {
+        // FIXME: This encodes what TextEdit does. Currently WebKit does the wrong thing.
+        // The selection should go from the beginning of startTarget to the end of the line that endTarget is on.
+        assertSelectionAt(endTarget.nextSibling, 1, startTarget.firstChild, 0);
+    } else {
+        // Seleciton goes from the end of "ef" to the first BR element in the contentEditable region.
+        assertSelectionAt(endTarget.firstChild, 2, document.getElementById('test'), 3);
+    }
+    
+    extendSelectionBackwardByLineBoundaryCommand();
+
+    if (onMacPlatform) {
+        // FIXME: This encodes what TextEdit does. Currently WebKit does the wrong thing.
+        // The selection should contain the both entire lines that endTarget and startTarget are on.
+        assertSelectionAt(endTarget.nextSibling, 1, startTarget.previousSibling, 0);
+    } else
+        assertSelectionAt(endTarget.firstChild, 2, startTarget.previousSibling, 0);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+    <span id="test">a <span id="start">bc</span> <br>d <span id="end">ef</span> <br>ghi</span>
+</div>
+
+<div id="console"></div>
+
+<script>
+editingTest();
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

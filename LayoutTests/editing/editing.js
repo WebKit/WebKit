@@ -159,6 +159,36 @@ function extendSelectionForwardByLineCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execMoveSelectionForwardByLineBoundaryCommand() {
+    selection.modify("move", "forward", "lineBoundary");
+}
+function moveSelectionForwardByLineBoundaryCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionForwardByLineBoundaryCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionForwardByLineBoundaryCommand() {
+    selection.modify("extend", "forward", "lineBoundary");
+}
+function extendSelectionForwardByLineBoundaryCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionForwardByLineBoundaryCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionForwardByLineBoundaryCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionBackwardByCharacterCommand() {
     selection.modify("move", "backward", "character");
 }
@@ -274,6 +304,36 @@ function extendSelectionBackwardByLineCommand() {
     }
     else {
         execExtendSelectionBackwardByLineCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionBackwardByLineBoundaryCommand() {
+    selection.modify("extend", "backward", "lineBoundary");
+}
+function extendSelectionBackwardByLineBoundaryCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionBackwardByLineBoundaryCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execMoveSelectionBackwardByLineBoundaryCommand() {
+    selection.modify("move", "backward", "lineBoundary");
+}
+function moveSelectionBackwardByLineBoundaryCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionBackwardByLineBoundaryCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionBackwardByLineBoundaryCommand();
     }
 }
 
