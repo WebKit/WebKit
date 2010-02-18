@@ -2425,7 +2425,9 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
     # Convert "long long", "long double", and "long long int" to
     # simple types, but don't remove simple "long".
     line = sub(r'long (long )?(?=long|double|int)', '', line)
-    line = sub(r'\b(unsigned|signed|inline|using|static|const|volatile|auto|register|extern|typedef|restrict|struct|class|virtual)(?=\W)', '', line)
+    # Convert unsigned/signed types to simple types, too.
+    line = sub(r'(unsigned|signed) (?=char|short|int|long)', '', line)
+    line = sub(r'\b(inline|using|static|const|volatile|auto|register|extern|typedef|restrict|struct|class|virtual)(?=\W)', '', line)
 
     # Remove all template parameters by removing matching < and >.
     # Loop until no templates are removed to remove nested templates.
@@ -2453,8 +2455,9 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
     # Detect variable and functions.
     type_regexp = r'\w([\w]|\s*[*&]\s*|::)+'
     identifier_regexp = r'(?P<identifier>[\w:]+)'
+    maybe_bitfield_regexp = r'(:\s*\d+\s*)?'
     character_after_identifier_regexp = r'(?P<character_after_identifier>[[;()=,])(?!=)'
-    declaration_without_type_regexp = r'\s*' + identifier_regexp + r'\s*' + character_after_identifier_regexp
+    declaration_without_type_regexp = r'\s*' + identifier_regexp + r'\s*' + maybe_bitfield_regexp + character_after_identifier_regexp
     declaration_with_type_regexp = r'\s*' + type_regexp + r'\s' + declaration_without_type_regexp
     is_function_arguments = False
     number_of_identifiers = 0
@@ -2986,4 +2989,3 @@ class CppProcessor(object):
 def process_file_data(filename, file_extension, lines, error, verbosity):
     processor = CppProcessor(filename, file_extension, error, verbosity)
     processor.process(lines)
-

@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        check-webkit-style: Misses variables that contain underscores.
+        https://bugs.webkit.org/show_bug.cgi?id=33724
+
+        - Check identifiers whose types are unsigned.
+        - Check bitfields properly.
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+
+2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         check-webkit-style should report the number of files checked
         https://bugs.webkit.org/show_bug.cgi?id=34971
 
