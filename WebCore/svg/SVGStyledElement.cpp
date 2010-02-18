@@ -32,6 +32,8 @@
 #include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
+#include "RenderSVGResource.h"
+#include "RenderSVGResourceMasker.h"
 #include "SVGElement.h"
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
@@ -39,7 +41,6 @@
 #include "SVGRenderStyle.h"
 #include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
-#include "SVGResourceMasker.h"
 #include "SVGSVGElement.h"
 #include <wtf/Assertions.h>
 
@@ -234,9 +235,8 @@ void SVGStyledElement::invalidateResources()
         filter->invalidate();
 #endif
 
-    SVGResourceMasker* masker = getMaskerById(document, svgStyle->maskElement(), object);
-    if (masker)
-        masker->invalidate();
+    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, svgStyle->maskElement()))
+        masker->invalidateClient(object);
 
     SVGResourceClipper* clipper = getClipperById(document, svgStyle->clipPath(), object);
     if (clipper)
@@ -260,7 +260,15 @@ void SVGStyledElement::invalidateResourcesInAncestorChain() const
 
 void SVGStyledElement::invalidateCanvasResources()
 {
-    if (SVGResource* resource = canvasResource(renderer()))
+    RenderObject* object = renderer();
+    if (!object)
+        return;
+
+    if (object->isSVGResource())
+        object->toRenderSVGResource()->invalidateClients();
+
+    // The following lines will be removed soon, once all resources are handled by renderers.
+    if (SVGResource* resource = canvasResource(object))
         resource->invalidate();
 }
 

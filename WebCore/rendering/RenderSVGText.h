@@ -53,6 +53,8 @@ private:
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
 
+    virtual void destroy();
+
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 

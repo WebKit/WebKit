@@ -39,6 +39,10 @@ private:
         
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
+    // FIXME: We need objectBoundingBox for DRT results and filters at the moment.
+    // This should be fixed to give back the objectBoundingBox of the text root.
+    virtual FloatRect objectBoundingBox() const { return FloatRect(); }
+
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 

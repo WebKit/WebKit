@@ -71,7 +71,7 @@ namespace WebCore {
     protected: 
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
-        virtual void invalidateCanvasResources();
+        void invalidateCanvasResources();
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)

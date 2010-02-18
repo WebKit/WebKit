@@ -55,6 +55,8 @@ private:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
+    virtual void destroy();
+
     virtual const AffineTransform& localToParentTransform() const;
 
     bool fillContains(const FloatPoint&) const;

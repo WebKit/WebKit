@@ -1,3 +1,39 @@
+2010-02-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Move SVGResources to Renderers, starting with Masker
+        https://bugs.webkit.org/show_bug.cgi?id=35020
+
+        With the move from SVGResourceMasker to RenderSVGResourceMasker, I changed
+        the way DRT dumps resources. DRT is now able to dump multi-access
+        of resources.
+        Also the size of a Mask resource (depending of the object) and the access of
+        the resource (togeter with the resource name) is pointed out as an insertion
+        under the object.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/mac/svg/css/mask-with-shadow-expected.txt:
+        * platform/mac/svg/custom/empty-mask-expected.txt:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.txt:
+        * platform/mac/svg/custom/js-late-mask-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-mask-creation-expected.txt:
+        * platform/mac/svg/custom/mask-changes-expected.txt:
+        * platform/mac/svg/custom/mask-child-changes-expected.txt:
+        * platform/mac/svg/custom/mask-excessive-malloc-expected.txt:
+        * platform/mac/svg/custom/mask-inside-defs-expected.txt:
+        * platform/mac/svg/custom/mask-invalidation-expected.txt:
+        * platform/mac/svg/custom/mask-on-multiple-objects-expected.txt:
+        * platform/mac/svg/custom/mask-with-all-units-expected.txt:
+        * platform/mac/svg/custom/mask-with-default-value-expected.txt:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/mac/svg/custom/visibility-override-mask-expected.txt:
+        * platform/mac/svg/filters/filter-clip-expected.txt:
+        * svg/custom/transformedMaskFails-expected.txt:
+
 2010-02-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         [Qt][GTK] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails (DRT sideeffect)

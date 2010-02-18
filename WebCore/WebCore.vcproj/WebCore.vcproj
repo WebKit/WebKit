@@ -27621,6 +27621,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceMasker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceMasker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGRoot.cpp"
 				>
 			</File>
@@ -41769,14 +41781,6 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGResourceMarker.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceMasker.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceMasker.h"
 					>
 				</File>
 				<Filter

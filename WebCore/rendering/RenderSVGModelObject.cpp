@@ -38,10 +38,6 @@
 #include "RenderView.h"
 #include "SVGStyledElement.h"
 
-#if ENABLE(FILTERS)
-#include "SVGResourceFilter.h"
-#endif
-
 namespace WebCore {
 
 RenderSVGModelObject::RenderSVGModelObject(SVGStyledElement* node)
@@ -84,6 +80,12 @@ void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, int, int)
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads)
 {
     quads.append(absoluteClippedOverflowRect());
+}
+
+void RenderSVGModelObject::destroy()
+{
+    deregisterFromResources(this);
+    RenderObject::destroy();
 }
 
 bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)

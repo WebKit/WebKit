@@ -38,6 +38,7 @@
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
@@ -191,6 +192,23 @@ TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
            << ")) t=("
            << transform.e() << "," << transform.f()
            << ")}";
+
+    return ts;
+}
+
+static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& unitType)
+{
+    switch (unitType) {
+    case SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN:
+        ts << "unknown";
+        break;
+    case SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE:
+        ts << "userSpaceOnUse";
+        break;
+    case SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
+        ts << "objectBoundingBox";
+        break;
+    }
 
     return ts;
 }
@@ -464,11 +482,33 @@ static void writeChildren(TextStream& ts, const RenderObject& object, int indent
         write(ts, *child, indent + 1);
 }
 
+void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
+{
+    writeStandardPrefix(ts, object, indent);
+
+    Element* element = static_cast<Element*>(object.node());
+    const AtomicString& id = element->getIDAttribute();
+    writeNameAndQuotedValue(ts, "id", id);    
+
+    RenderSVGResource* resource = const_cast<RenderObject&>(object).toRenderSVGResource();
+    if (resource->resourceType() == MaskerResourceType) {
+        RenderSVGResourceMasker* masker = static_cast<RenderSVGResourceMasker*>(resource);
+        ASSERT(masker);
+        writeNameValuePair(ts, "maskUnits", masker->maskUnits());
+        writeNameValuePair(ts, "maskContentUnits", masker->maskContentUnits());
+    }
+
+    // FIXME: Handle other RenderSVGResource* classes here, after converting them from SVGResource*.
+    ts << "\n";
+    writeChildren(ts, object, indent);
+}
+
 void writeSVGContainer(TextStream& ts, const RenderObject& container, int indent)
 {
     writeStandardPrefix(ts, container, indent);
     writePositionAndStyle(ts, container);
     ts << "\n";
+    writeResources(ts, container, indent);
     writeChildren(ts, container, indent);
 }
 
@@ -484,6 +524,7 @@ void writeSVGText(TextStream& ts, const RenderBlock& text, int indent)
     writeStandardPrefix(ts, text, indent);
     writeRenderSVGTextBox(ts, text);
     ts << "\n";
+    writeResources(ts, text, indent);
     writeChildren(ts, text, indent);
 }
 
@@ -493,13 +534,8 @@ void writeSVGInlineText(TextStream& ts, const RenderText& text, int indent)
 
     // Why not just linesBoundingBox()?
     ts << " " << FloatRect(text.firstRunOrigin(), text.linesBoundingBox().size()) << "\n";
+    writeResources(ts, text, indent);
     writeSVGInlineTextBoxes(ts, text, indent);
-}
-
-void write(TextStream& ts, const RenderPath& path, int indent)
-{
-    writeStandardPrefix(ts, path, indent);
-    ts << path << "\n";
 }
 
 void writeSVGImage(TextStream& ts, const RenderImage& image, int indent)
@@ -507,6 +543,32 @@ void writeSVGImage(TextStream& ts, const RenderImage& image, int indent)
     writeStandardPrefix(ts, image, indent);
     writePositionAndStyle(ts, image);
     ts << "\n";
+    writeResources(ts, image, indent);
+}
+
+void write(TextStream& ts, const RenderPath& path, int indent)
+{
+    writeStandardPrefix(ts, path, indent);
+    ts << path << "\n";
+    writeResources(ts, path, indent);
+}
+
+void writeResources(TextStream& ts, const RenderObject& object, int indent)
+{
+    const RenderStyle* style = object.style();
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+
+    if (!svgStyle->maskElement().isEmpty()) {
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle->maskElement())) {
+            writeIndent(ts, indent);
+            ts << " ";
+            writeNameAndQuotedValue(ts, "masker", svgStyle->maskElement());
+            ts << " ";
+            writeStandardPrefix(ts, *masker, 0);
+            ts << " " << masker->resourceBoundingBox(object.objectBoundingBox()) << "\n";
+        }
+    }
+    // FIXME: Handle other RenderSVGResource* classes here, after converting them from SVGResource*.
 }
 
 void writeRenderResources(TextStream& ts, Node* parent)
