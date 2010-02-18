@@ -1,3 +1,10 @@
+2010-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] editing/pasteboard/page-zoom.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=35077
+
+        * platform/qt/Skipped: editing/pasteboard/page-zoom.html skipped until fix.
+
 2010-02-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin, Darin Fisher, Simon Hausmann.
