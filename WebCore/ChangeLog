@@ -1,5 +1,11 @@
 2010-02-18  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed, Qt build fix.
+
+        * inspector/front-end/WebKit.qrc:
+
+2010-02-18  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: Implement evaluate-on-hover for scripts panel.
