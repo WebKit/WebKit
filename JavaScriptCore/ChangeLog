@@ -1,3 +1,30 @@
+2010-02-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed a portion of:
+        <rdar://problem/7165917> | https://bugs.webkit.org/show_bug.cgi?id=28676
+        Safari 4 does not release memory back to the operating system fast enough (28676)
+        
+        This patch fixes a surprisingly common edge case in which the page heap
+        would have only one free span, but that span would be larger than the
+        minimum free size, so we would decide not to free it, even though it
+        could be as large as 100MB or more!
+        
+        SunSpider reports no change on Mac or Windows.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavenge): Call shouldContinueScavenging() instead
+        of doing the math ourselves. Don't keep a local value for pagesDecommitted
+        because that lets free_committed_pages_ be wrong temporarily. Instead,
+        update free_committed_pages_ as we go. ASSERT that we aren't releasing
+        a span that has already been released, because we think this is impossible.
+        Finally, don't be afraid to release all free memory in the page heap when
+        scavenging. We only scavenge after 5 seconds of the application's working
+        set not growing, and we keep both thread caches and a central cache on
+        top of the page heap, so the extra free pages in the page heap were just
+        overkill.
+
 2010-02-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

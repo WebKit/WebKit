@@ -1248,13 +1248,6 @@ static const int kScavengeTimerDelayInSeconds = 5;
 // Number of free committed pages that we want to keep around.
 static const size_t kMinimumFreeCommittedPageCount = 512;
 
-// During a scavenge, we'll release up to a fraction of the free committed pages.
-#if OS(WINDOWS)
-// We are slightly less aggressive in releasing memory on Windows due to performance reasons.
-static const int kMaxScavengeAmountFactor = 3;
-#else
-static const int kMaxScavengeAmountFactor = 2;
-#endif
 #endif
 
 class TCMalloc_PageHeap {
@@ -1507,39 +1500,35 @@ ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 
 #endif
 
-void TCMalloc_PageHeap::scavenge() 
+void TCMalloc_PageHeap::scavenge()
 {
-    // If we have to commit memory in the last 5 seconds, it means we don't have enough free committed pages
-    // for the amount of allocations that we do.  So hold off on releasing memory back to the system.
+    // If we've recently commited pages, our working set is growing, so now is
+    // not a good time to free pages.
     if (pages_committed_since_last_scavenge_ > 0) {
         pages_committed_since_last_scavenge_ = 0;
         return;
     }
-    Length pagesDecommitted = 0;
-    for (int i = kMaxPages; i >= 0; i--) {
+
+    for (int i = kMaxPages; i >= 0 && shouldContinueScavenging(); i--) {
         SpanList* slist = (static_cast<size_t>(i) == kMaxPages) ? &large_ : &free_[i];
         if (!DLL_IsEmpty(&slist->normal)) {
             // Release the last span on the normal portion of this list
             Span* s = slist->normal.prev; 
-            // Only decommit up to a fraction of the free committed pages if pages_allocated_since_last_scavenge_ > 0.
-            if ((pagesDecommitted + s->length) * kMaxScavengeAmountFactor > free_committed_pages_)
-                continue;
             DLL_Remove(s);
-            TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
-                                   static_cast<size_t>(s->length << kPageShift));
+            ASSERT(!s->decommitted);
             if (!s->decommitted) {
-                pagesDecommitted += s->length;
+                TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
+                                       static_cast<size_t>(s->length << kPageShift));
+                ASSERT(free_committed_pages_ >= s->length);
+                free_committed_pages_ -= s->length;
                 s->decommitted = true;
             }
             DLL_Prepend(&slist->returned, s);
-            // We can stop scavenging if the number of free committed pages left is less than or equal to the minimum number we want to keep around.
-            if (free_committed_pages_ <= kMinimumFreeCommittedPageCount + pagesDecommitted)
-                break;
         }
     }
+
+    ASSERT(!shouldContinueScavenging());
     pages_committed_since_last_scavenge_ = 0;
-    ASSERT(free_committed_pages_ >= pagesDecommitted);
-    free_committed_pages_ -= pagesDecommitted;
 }
 
 ALWAYS_INLINE bool TCMalloc_PageHeap::shouldContinueScavenging() const 
