@@ -1,3 +1,16 @@
+2010-02-17  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Win] Implement test functions for printing
+        https://bugs.webkit.org/show_bug.cgi?id=34570
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::pageNumberForElementById):
+        (WebFrame::numberOfPages):
+        * WebFrame.h:
+
 2010-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
