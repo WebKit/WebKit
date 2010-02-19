@@ -1,3 +1,15 @@
+2010-02-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Update platform specific expected files after r54991.
+
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt: updated.
+        * platform/qt/svg/css/mask-with-shadow-expected.txt: updated.
+        * platform/qt/svg/custom/empty-mask-expected.txt: updated.
+        * platform/qt/svg/custom/mask-with-default-value-expected.txt: updated.
+        * platform/qt/svg/custom/transformedMaskFails-expected.txt: updated.
+
 2010-02-18  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Adler.
