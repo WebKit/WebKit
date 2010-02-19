@@ -1721,6 +1721,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITPropertyAccess32_64.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITStubCall.h"
 				>
 			</File>
