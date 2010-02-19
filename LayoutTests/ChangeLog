@@ -1,3 +1,14 @@
+2010-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35134
+        <rdar://problem/7246280> Crash when a plugin calls NPN_SetStatus(0)
+
+        * plugins/set-status-expected.txt: Added.
+        * plugins/set-status.html: Added.
+        While at it, also test that we process UTF-8.
+
 2010-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

@@ -504,11 +504,12 @@ void NetscapePluginInstanceProxy::stopTimers()
 
 void NetscapePluginInstanceProxy::status(const char* message)
 {
-    RetainPtr<CFStringRef> status(AdoptCF, CFStringCreateWithCString(NULL, message, kCFStringEncodingUTF8));
-    
+    if (!message)
+        return;
+    RetainPtr<CFStringRef> status(AdoptCF, CFStringCreateWithCString(0, message, kCFStringEncodingUTF8));
     if (!status)
         return;
-    
+
     WebView *wv = [m_pluginView webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status.get()];
 }
@@ -525,6 +526,8 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
 
         if (flags & PostDataIsFile) {
             // If we're posting a file, buf is either a file URL or a path to the file.
+            if (!postData)
+                return NPERR_INVALID_PARAM;
             RetainPtr<CFStringRef> bufString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, postData, kCFStringEncodingWindowsLatin1));
             if (!bufString)
                 return NPERR_INVALID_PARAM;
