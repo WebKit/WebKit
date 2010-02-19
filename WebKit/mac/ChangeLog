@@ -1,3 +1,22 @@
+2010-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7535894> Page contents missing from snapshot on Newsweek.com article
+
+        Add logic to determine when painting via the software rendering path will give an equivalent
+        result to the accelerated compositing presentation. This tests for the presence of 3D transforms.
+
+        Also have -[WebFrame _drawRect:contentsOnly:] set the PaintBehaviorFlattenCompositingLayers
+        paint behavior when painting into a bitmap context, so that snapshots contain composited layers.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]): Set the PaintBehaviorFlattenCompositingLayers flag
+        when painting into a bitmap context.
+        * WebView/WebView.mm:
+        (-[WebView _isSoftwareRenderable]): Returns YES if all frames can be software-rendered.
+        * WebView/WebViewPrivate.h: New _isSoftwareRenderable method.
+
 2010-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

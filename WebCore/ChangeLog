@@ -1,3 +1,19 @@
+2010-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7535894> Page contents missing from snapshot on Newsweek.com article
+        
+        Add logic to determine when painting via the software rendering path will give an equivalent
+        result to the accelerated compositing presentation. This tests for the presence of 3D transforms
+        via the existing RenderLayerCompositor::has3DContent() method.
+        
+        * WebCore.base.exp: Export FrameView's isSoftwareRenderable(), paintBehavior() and setPaintBehavior().
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isSoftwareRenderable): New method.
+        (WebCore::FrameView::paintBehavior): Make this non-inline so that we can reliably export it.
+
 2010-02-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

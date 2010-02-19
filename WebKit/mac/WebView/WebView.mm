@@ -2144,19 +2144,32 @@ static inline IMP getMethod(id o, SEL s)
 - (BOOL)_isUsingAcceleratedCompositing
 {
 #if USE(ACCELERATED_COMPOSITING)
-    Frame* coreFrame = [self _mainCoreFrame];
     if (_private->usesDocumentViews) {
+        Frame* coreFrame = [self _mainCoreFrame];
         for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
             NSView *documentView = [[kit(frame) frameView] documentView];
             if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
                 return YES;
         }
     }
-
-    return NO;
-#else
-    return NO;
 #endif
+    return NO;
+}
+
+- (BOOL)_isSoftwareRenderable
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (_private->usesDocumentViews) {
+        Frame* coreFrame = [self _mainCoreFrame];
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+            if (FrameView* view = frame->view()) {
+                if (!view->isSoftwareRenderable())
+                    return NO;
+            }
+        }
+    }
+#endif
+    return YES;
 }
 
 static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)

@@ -487,6 +487,19 @@ bool FrameView::syncCompositingStateRecursive()
 #endif
 }
 
+bool FrameView::isSoftwareRenderable() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return true;
+
+    return !view->compositor()->has3DContent();
+#else
+    return true;
+#endif
+}
+
 void FrameView::didMoveOnscreen()
 {
     RenderView* view = m_frame->contentRenderer();
@@ -1759,7 +1772,12 @@ void FrameView::setPaintBehavior(PaintBehavior behavior)
 {
     m_paintBehavior = behavior;
 }
-    
+
+PaintBehavior FrameView::paintBehavior() const
+{
+    return m_paintBehavior;
+}
+
 bool FrameView::isPainting() const
 {
     return m_isPainting;

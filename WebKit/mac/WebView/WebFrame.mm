@@ -87,6 +87,7 @@
 #import <WebCore/htmlediting.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
+#import <WebKitSystemInterface.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSObject.h>
 #import <runtime/JSValue.h>
@@ -531,14 +532,27 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_drawRect:(NSRect)rect contentsOnly:(BOOL)contentsOnly
 {
-    PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
-    GraphicsContext context(platformContext);
+
+    CGContextRef ctx = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+    GraphicsContext context(ctx);
+
+    FrameView* view = _private->coreFrame->view();
+    
+    bool isBitmapContext = WKCGContextIsBitmapContext(ctx);
+    PaintBehavior oldBehavior = PaintBehaviorNormal;
+    if (isBitmapContext) {
+        oldBehavior = view->paintBehavior();
+        view->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+    }
     
     if (contentsOnly)
         _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
     else
         _private->coreFrame->view()->paint(&context, enclosingIntRect(rect));
+
+    if (isBitmapContext)
+        view->setPaintBehavior(oldBehavior);
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.
