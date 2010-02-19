@@ -126,10 +126,12 @@ bool GeolocationServiceBridgeImpl::startUpdating(PositionOptions* positionOption
 
 void GeolocationServiceBridgeImpl::stopUpdating()
 {
-    WebGeolocationServiceInterface* geolocationService = getWebViewClient()->getGeolocationService();
-    geolocationService->stopUpdating(m_bridgeId);
-    geolocationService->dettachBridge(m_bridgeId);
-    m_bridgeId = 0;
+    if (m_bridgeId) {
+        WebGeolocationServiceInterface* geolocationService = getWebViewClient()->getGeolocationService();
+        geolocationService->stopUpdating(m_bridgeId);
+        geolocationService->dettachBridge(m_bridgeId);
+        m_bridgeId = 0;
+    }
 }
 
 void GeolocationServiceBridgeImpl::suspend()
