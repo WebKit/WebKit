@@ -37,9 +37,7 @@
 #include <qdir.h>
 #include <qdebug.h>
 #include <qfont.h>
-#include <qwebsettings.h>
 #include <qwebdatabase.h>
-#include <qdesktopservices.h>
 #include <qtimer.h>
 #include <qwindowsstyle.h>
 
@@ -161,8 +159,6 @@ int main(int argc, char* argv[])
     if (args.contains(QLatin1String("--pixel-tests")))
         dumper.setDumpPixels(true);
 
-    QString dbDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "qtwebkitdrt";
-    QWebSettings::setOfflineStoragePath(dbDir);
     QWebDatabase::removeAllDatabases();
 
     if (args.contains(QLatin1String("-"))) {

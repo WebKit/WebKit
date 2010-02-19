@@ -1,3 +1,19 @@
+2010-02-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Clean-up the handling of HTML5 persistent data for LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=35004
+
+        DumpRenderTreeQt.cpp calls QWebSettings::enablePersistentStorage which sets up 
+        and enables all HTML5 persistent data. All the other calls for setting the 
+        persistent path or enabling the persistent feature are redundant. 
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage): No need to enable AppCache again.
+        * DumpRenderTree/qt/main.cpp:
+        (main): No need to setup and enable HTML5 LocalStorage again.
+
 2010-02-19  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
