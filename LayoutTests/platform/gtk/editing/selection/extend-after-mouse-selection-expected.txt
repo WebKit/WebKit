@@ -1,0 +1,12 @@
+a bc 
+d ef 
+ghi
+PASS Selection is [anchorNode: [object Text](bc) anchorOffset: 0 focusNode: [object Text](ef) focusOffset: 2 isCollapsed: false]
+PASS Selection is [anchorNode: [object Text](ef) anchorOffset: 2 focusNode: [object Text](a ) focusOffset: 1 isCollapsed: false]
+PASS Selection is [anchorNode: [object Text](ef) anchorOffset: 2 focusNode: [object Text](bc) focusOffset: 0 isCollapsed: false]
+FAIL Selection is [anchorNode: [object Text]( ) anchorOffset: 0 focusNode: [object Text]( ) focusOffset: 1 isCollapsed: false] should be at anchorNode: [object Text] anchorOffset: 2 focusNode: [object HTMLElement] focusOffset: 3
+FAIL Selection is [anchorNode: [object Text](ef) anchorOffset: 2 focusNode: [object Text](d ) focusOffset: 0 isCollapsed: false] should be at anchorNode: [object Text] anchorOffset: 2 focusNode: [object Text] focusOffset: 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

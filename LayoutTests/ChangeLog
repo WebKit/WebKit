@@ -3,6 +3,15 @@
         Rubber-stamped by Xan Lopez.
 
         Adding a GTK layout test result for a new test
+        added in r54980.
+
+        * platform/gtk/editing/selection/extend-after-mouse-selection-expected.txt: Added.
+
+2010-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Adding a GTK layout test result for a new test
         added in r54982.
 
         * platform/gtk/fast/repaint/selection-gap-overflow-scroll-2-expected.txt: Added.
