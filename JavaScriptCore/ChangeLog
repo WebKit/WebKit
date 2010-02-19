@@ -1,3 +1,32 @@
+2010-02-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        JSString::getIndex() calls value() to resolve the string value (is a rope)
+        to a UString, then passes the result to jsSingleCharacterSubstring without
+        checking for an exception.  In case of out-of-memory the returned UString
+        is null(), which may result in an out-of-buounds substring being created.
+        This is bad.
+
+        Simple fix is to be able to get an index from a rope without resolving to
+        UString.  This may be a useful optimization in some test cases.
+
+        The same bug exists in some other methods is JSString, these can be fixed
+        by changing them to call getIndex().
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::JSString::getIndex):
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/UStringImpl.cpp:
+        (JSC::singleCharacterSubstring):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::singleCharacterSubstring):
+
 2010-02-19  Oliver Hunt  <oliver@apple.com>
 
         RS = Gavin Barraclough.
