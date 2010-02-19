@@ -24,6 +24,7 @@
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
+                    { "name": "gtk-linux-slave-4", "platform": "gtk"},
 
                     { "name": "szeged-linux-1", "platform": "qt"},
 
@@ -92,7 +93,7 @@
                       "slavenames": ["apple-windows-4", "apple-windows-3", "test-slave"]
                     },
                     {
-                      "name": "GTK Linux Release", "type": "BuildAndTest", "builddir": "gtk-linux-release",
+                      "name": "GTK Linux 32-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-32-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["gtk-linux-slave-1"]
                     },
@@ -105,6 +106,11 @@
                       "name": "GTK Linux 64-bit Debug", "type": "BuildAndTest", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-3"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-64-release",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["gtk-linux-slave-4"]
                     },
                     {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
@@ -132,7 +138,7 @@
                       "builderNames": ["Tiger Intel Release", "Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
                                        "Windows Release (Build)", "Windows Debug (Build)",
-                                       "GTK Linux Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
+                                       "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release",
                                        "Qt Linux Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release"]
                     },
