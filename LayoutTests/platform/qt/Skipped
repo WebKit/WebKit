@@ -1159,7 +1159,6 @@ fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
 fast/events/access-key-self-destruct.html
 fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
 fast/forms/input-align-image.html

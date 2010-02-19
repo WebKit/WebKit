@@ -324,6 +324,7 @@ DumpRenderTree::DumpRenderTree()
     m_mainView->resize(QSize(maxViewWidth, maxViewHeight));
     m_page = new WebPage(m_mainView, this);
     m_mainView->setPage(m_page);
+    m_mainView->setContextMenuPolicy(Qt::NoContextMenu);
 
     // create our controllers. This has to be done before connectFrame,
     // as it exports there to the JavaScript DOM window.

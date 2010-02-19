@@ -1,3 +1,21 @@
+2010-02-19  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Send the context menu event from contextClick() of EventSender
+        and do not show context menu in DRT.
+
+        LayoutTests:
+            fast/events/contextmenu-scrolled-page-with-frame.html
+
+        [Qt] DRT: Send context menu event from EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=35131
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::contextClick):
+
 2010-02-18  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
