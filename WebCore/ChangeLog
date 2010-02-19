@@ -1,3 +1,14 @@
+2010-02-19  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix Worker crash regression in r54972
+
+        https://bugs.webkit.org/show_bug.cgi?id=35166
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object): Properly unwrap global objects when inside a WorkerContext.
+
 2010-02-19  Steve Block  <steveblock@google.com>
 
         Not reviewed. Reverts r55020 which causes crashes in Chromium LayoutTests

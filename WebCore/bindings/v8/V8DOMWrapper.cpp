@@ -295,7 +295,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
             if (globalObjectPrototypeIsDOMWindow(globalPrototype))
                 proxy = V8Proxy::retrieve(V8DOMWindow::toNative(globalPrototype)->frame());
             else
-                workerContext = V8WorkerContext::toNative(globalPrototype);
+                workerContext = V8WorkerContext::toNative(lookupDOMWrapper(V8WorkerContext::GetTemplate(), context->Global()));
         }
     }
 
