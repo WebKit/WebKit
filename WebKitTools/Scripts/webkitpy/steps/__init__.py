@@ -37,7 +37,6 @@ from webkitpy.steps.closebug import CloseBug
 from webkitpy.steps.closebugforlanddiff import CloseBugForLandDiff
 from webkitpy.steps.closepatch import ClosePatch
 from webkitpy.steps.commit import Commit
-from webkitpy.steps.completerollout import CompleteRollout
 from webkitpy.steps.confirmdiff import ConfirmDiff
 from webkitpy.steps.createbug import CreateBug
 from webkitpy.steps.editchangelog import EditChangeLog
@@ -50,6 +49,7 @@ from webkitpy.steps.postdiffforcommit import PostDiffForCommit
 from webkitpy.steps.preparechangelogforrevert import PrepareChangeLogForRevert
 from webkitpy.steps.preparechangelog import PrepareChangeLog
 from webkitpy.steps.promptforbugortitle import PromptForBugOrTitle
+from webkitpy.steps.reopenbugafterrollout import ReopenBugAfterRollout
 from webkitpy.steps.revertrevision import RevertRevision
 from webkitpy.steps.runtests import RunTests
 from webkitpy.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer

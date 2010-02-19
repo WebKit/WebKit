@@ -42,7 +42,6 @@ class DownloadCommandsTest(CommandsTest):
         options.build = True
         options.test = True
         options.close_bug = True
-        options.complete_rollout = False
         return options
 
     def test_build(self):
@@ -116,12 +115,11 @@ Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patc
 """
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
+    def test_prepare_rollout(self):
+        expected_stderr="Updating working directory\nRunning prepare-ChangeLog\n"
+        self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
+
     def test_rollout(self):
-        expected_stderr = "Updating working directory\nRunning prepare-ChangeLog\n\nNOTE: Rollout support is experimental.\nPlease verify the rollout diff and use \"webkit-patch land 12345\" to commit the rollout.\n"
+        expected_stderr = "Will re-open bug 12345 after rollout.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
-    def test_complete_rollout(self):
-        options = self._default_options()
-        options.complete_rollout = True
-        expected_stderr = "Will re-open bug 12345 after rollout.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
-        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=options, expected_stderr=expected_stderr)

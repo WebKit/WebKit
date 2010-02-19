@@ -1,3 +1,19 @@
+2010-02-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split out "prepare-rollout" from "rollout" and make --complete-rollout default
+        https://bugs.webkit.org/show_bug.cgi?id=33745
+
+        * Scripts/webkitpy/commands/download.py:
+         - Add a new AbstractRolloutPrepCommand to share code between PrepareRollout and Rollout
+         - Add PrepareRollout
+        * Scripts/webkitpy/commands/download_unittest.py: Test PrepareRollout, remove CompleteRollout tests.
+        * Scripts/webkitpy/steps/__init__.py: include ReopenBugAfterRollout step.
+        * Scripts/webkitpy/steps/completerollout.py: Removed.
+        * Scripts/webkitpy/steps/options.py: remove complete_rollout
+        * Scripts/webkitpy/steps/reopenbugafterrollout.py: Added.
+
 2010-02-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

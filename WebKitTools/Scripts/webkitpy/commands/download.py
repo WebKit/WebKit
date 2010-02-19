@@ -240,11 +240,50 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     show_in_main_help = True
 
 
-class Rollout(AbstractSequencedCommand):
+class AbstractRolloutPrepCommand(AbstractSequencedCommand):
+    argument_names = "REVISION REASON"
+
+    def _parse_bug_id_from_revision_diff(self, revision):
+        original_diff = self.tool.scm().diff_for_revision(revision)
+        return parse_bug_id(original_diff)
+
+    def _bug_id_for_revision(self, revision):
+        raise NotImplementedError("subclasses must implement")
+
+    def _prepare_state(self, options, args, tool):
+        revision = args[0]
+        return {
+            "revision" : revision,
+            "bug_id" : self._bug_id_for_revision(revision),
+            "reason" : args[1],
+        }
+
+
+class PrepareRollout(AbstractRolloutPrepCommand):
+    name = "prepare-rollout"
+    help_text = "Revert the given revision in the working copy and prepare ChangeLogs with revert reason"
+    long_help = """Updates the working copy.
+Applies the inverse diff for the provided revision.
+Creates an appropriate rollout ChangeLog, including a trac link and bug link.
+"""
+    steps = [
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.RevertRevision,
+        steps.PrepareChangeLogForRevert,
+    ]
+
+    def _bug_id_for_revision(self, revision):
+        bug_id = self._parse_bug_id_from_revision_diff(revision)
+        if bug_id:
+            return bug_id
+        log("Failed to parse bug number from diff.")
+
+
+class Rollout(AbstractRolloutPrepCommand):
     name = "rollout"
     show_in_main_help = True
     help_text = "Revert the given revision in the working copy and optionally commit the revert and re-open the original bug"
-    argument_names = "REVISION REASON"
     long_help = """Updates the working copy.
 Applies the inverse diff for the provided revision.
 Creates an appropriate rollout ChangeLog, including a trac link and bug link.
@@ -258,27 +297,14 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
         steps.PrepareChangeLogForRevert,
         steps.EditChangeLog,
         steps.ConfirmDiff,
-        steps.CompleteRollout,
+        steps.Build,
+        steps.Commit,
+        steps.ReopenBugAfterRollout,
     ]
 
-    @staticmethod
-    def _parse_bug_id_from_revision_diff(tool, revision):
-        original_diff = tool.scm().diff_for_revision(revision)
-        return parse_bug_id(original_diff)
-
-    def execute(self, options, args, tool):
-        revision = args[0]
-        reason = args[1]
-        bug_id = self._parse_bug_id_from_revision_diff(tool, revision)
-        if options.complete_rollout:
-            if bug_id:
-                log("Will re-open bug %s after rollout." % bug_id)
-            else:
-                log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
-
-        state = {
-            "revision" : revision,
-            "bug_id" : bug_id,
-            "reason" : reason,
-        }
-        self._sequence.run_and_handle_errors(tool, options, state)
+    def _bug_id_for_revision(self, revision):
+        bug_id = self._parse_bug_id_from_revision_diff(revision)
+        if bug_id:
+            log("Will re-open bug %s after rollout." % bug_id)
+            return bug_id
+        log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")
