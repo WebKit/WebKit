@@ -1,3 +1,16 @@
+2010-02-19  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Added additional parameter to create_rvct_stubs 
+        for setting the regularexpression prefix.
+        Renamed it because it now works for other platforms too.
+        https://bugs.webkit.org/show_bug.cgi?id=34951
+
+        * DerivedSources.pro:
+        * create_jit_stubs: Copied from JavaScriptCore/create_rvct_stubs.
+        * create_rvct_stubs: Removed.
+
 2010-02-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

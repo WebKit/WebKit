@@ -77,8 +77,8 @@ addExtraCompiler(jscbison)
 
 # GENERATOR 3: JIT Stub functions for RVCT
 rvctstubs.output = $${JSC_GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Generated${QMAKE_FILE_BASE}_RVCT.h
-rvctstubs.wkScript = $$PWD/create_rvct_stubs
-rvctstubs.commands = perl $$rvctstubs.wkScript ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
+rvctstubs.wkScript = $$PWD/create_jit_stubs
+rvctstubs.commands = perl $$rvctstubs.wkScript --prefix RVCT ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 rvctstubs.depends = ${QMAKE_FILE_NAME}
 rvctstubs.input = RVCT_STUB_FILES
 rvctstubs.CONFIG += no_link

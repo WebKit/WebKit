@@ -22,22 +22,24 @@ use strict;
 use File::Basename;
 use Getopt::Long;
 
-my $usage = basename($0) . " [--offset offset] file";
+my $usage = basename($0) . " --prefix prefix [--offset offset] file";
 
 my $rtype_template = quotemeta("#rtype#");
 my $offset_template = quotemeta("#offset#");
 my $op_template = quotemeta("#op#");
 
+my $prefix;
 my $offset = 32;
 my $file;
 
 my $getOptionsResult = GetOptions(
+    'prefix=s' => \$prefix,
     'offset=i' => \$offset
 );
 
 $file = $ARGV[0];
 
-die "$usage\n" unless ($file);
+die "$usage\n" unless ($prefix and $file);
 
 my $stub_template = "";
 my $stub = "";
@@ -45,11 +47,11 @@ my $stub = "";
 my $rtype = "";
 my $op = "";
 
-print STDERR "Creating RVCT stubs for $file \n";
+print STDERR "Creating JIT stubs for $file \n";
 open(IN, $file) or die "No such file $file";
 
 while ( $_ = <IN> ) {
-    if ( /^RVCT\((.*)\)/ ) {
+    if ( /^$prefix\((.*)\)/ ) {
         $stub_template .= $1 . "\n";
     }
     if ( /^DEFINE_STUB_FUNCTION\((.*), (.*)\)/ ) {
