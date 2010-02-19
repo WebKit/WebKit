@@ -33,15 +33,6 @@
 #include "StringBuilder.h"
 
 
-#ifdef NDEBUG
-#define JS_LOG(formatAndArgs...) ((void)0)
-#else
-#define JS_LOG(formatAndArgs...) { \
-    fprintf(stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
-    fprintf(stderr, formatAndArgs); \
-}
-#endif
-
 using namespace JSC;
 using namespace JSC::Bindings;
 using namespace WebCore;

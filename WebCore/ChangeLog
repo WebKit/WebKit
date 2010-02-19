@@ -1,3 +1,57 @@
+2010-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35178
+        LiveConnect code uses hand-rolled fprintf logging
+
+        Changed to use LOG, LOG_ERROR and ASSERT.
+
+        * platform/Logging.cpp:
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+        * platform/win/LoggingWin.cpp:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+        TextConversion channel was (almost) unused, renamed to LiveConnect.
+
+        * platform/text/gtk/TextCodecGtk.cpp: (WebCore::TextCodecGtk::registerEncodingNames):
+        The only use of this channel was in platform specific code, commandeered it for cross-platform
+        needs.
+
+        * bridge/jni/JNIBridge.cpp:
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::getJavaVM):
+        (JSC::Bindings::getJNIEnv):
+        (JSC::Bindings::getJNIField):
+        * bridge/jni/JNIUtility.h:
+        (JSC::Bindings::callJNIMethodV):
+        (JSC::Bindings::callJNIStaticMethod):
+        * bridge/jni/jni_jsobject.mm:
+        (completedJavaScriptAccess):
+        (dispatchToJavaScriptThread):
+        (performJavaScriptAccess):
+        (JavaJSObject::invoke):
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        (JavaJSObject::toString):
+        (JavaJSObject::createNative):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::valueFromInstance):
+        (JavaField::setValueToInstance):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        (JObjectWrapper::JObjectWrapper):
+        (JObjectWrapper::~JObjectWrapper):
+
 2010-02-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

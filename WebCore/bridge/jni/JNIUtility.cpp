@@ -77,7 +77,7 @@ JavaVM* getJavaVM()
     if (jniError == JNI_OK && nJVMs > 0)
         jvm = jvmArray[0];
     else
-        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %ld\n", __PRETTY_FUNCTION__, static_cast<long>(jniError));
+        LOG_ERROR("JNI_GetCreatedJavaVMs failed, returned %ld", static_cast<long>(jniError));
 
     return jvm;
 }
@@ -93,7 +93,7 @@ JNIEnv* getJNIEnv()
     jniError = getJavaVM()->AttachCurrentThread(&u.dummy, 0);
     if (jniError == JNI_OK)
         return u.env;
-    fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, static_cast<long>(jniError));
+    LOG_ERROR("AttachCurrentThread failed, returned %ld", static_cast<long>(jniError));
     return 0;
 }
 
@@ -319,10 +319,10 @@ jvalue getJNIField(jobject obj, JNIType type, const char* name, const char* sign
                     result.d = env->functions->GetDoubleField(env, obj, field);
                     break;
                 default:
-                    fprintf(stderr, "%s: invalid field type (%d)\n", __PRETTY_FUNCTION__, static_cast<int>(type));
+                    LOG_ERROR("Invalid field type (%d)", static_cast<int>(type));
                 }
             } else {
-                fprintf(stderr, "%s: Could not find field: %s\n", __PRETTY_FUNCTION__, name);
+                LOG_ERROR("Could not find field: %s", name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
                 fprintf(stderr, "\n");
@@ -330,7 +330,7 @@ jvalue getJNIField(jobject obj, JNIType type, const char* name, const char* sign
 
             env->DeleteLocalRef(cls);
         } else
-            fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
+            LOG_ERROR("Could not find class for object");
     }
 
     return result;

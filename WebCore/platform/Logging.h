@@ -42,7 +42,7 @@ namespace WebCore {
     extern WTFLogChannel LogPopupBlocking;
     extern WTFLogChannel LogEvents;
     extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogTextConversion;
+    extern WTFLogChannel LogLiveConnect;
     extern WTFLogChannel LogIconDatabase;
     extern WTFLogChannel LogSQLDatabase;
     extern WTFLogChannel LogSpellingAndGrammar;

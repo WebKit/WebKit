@@ -32,27 +32,16 @@
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaClassJSC.h"
+#include "Logging.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
 
-#if PLATFORM(ANDROID)
-#include <assert.h>
-#endif
-
-#ifdef NDEBUG
-#define JS_LOG(formatAndArgs...) ((void)0)
-#else
-#define JS_LOG(formatAndArgs...) { \
-    fprintf(stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
-    fprintf(stderr, formatAndArgs); \
-}
-#endif
-
 using namespace JSC::Bindings;
 using namespace JSC;
+using namespace WebCore;
 
 JavaInstance::JavaInstance(jobject instance, PassRefPtr<RootObject> rootObject)
     : Instance(rootObject)
@@ -136,12 +125,12 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         }
     }
     if (!method) {
-        JS_LOG("unable to find an appropiate method\n");
+        LOG(LiveConnect, "JavaInstance::invokeMethod unable to find an appropiate method");
         return jsUndefined();
     }
 
     const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
-    JS_LOG("call %s %s on %p\n", UString(jMethod->name()).UTF8String().c_str(), jMethod->signature(), m_instance->m_instance);
+    LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", UString(jMethod->name()).UTF8String().c_str(), jMethod->signature(), m_instance->m_instance);
 
     if (count > 0)
         jArgs = (jvalue*)malloc(count * sizeof(jvalue));
@@ -151,7 +140,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     for (i = 0; i < count; i++) {
         JavaParameter* aParameter = jMethod->parameterAt(i);
         jArgs[i] = convertValueToJValue(exec, args.at(i), aParameter->getJNIType(), aParameter->type());
-        JS_LOG("arg[%d] = %s\n", i, args.at(i).toString(exec).ascii());
+        LOG(LiveConnect, "JavaInstance::invokeMethod arg[%d] = %s", i, args.at(i).toString(exec).ascii());
     }
 
     jvalue result;
@@ -323,7 +312,7 @@ JSValue JavaInstance::valueOf(ExecState* exec) const
 JObjectWrapper::JObjectWrapper(jobject instance)
     : m_refCount(0)
 {
-    assert(instance);
+    ASSERT(instance);
 
     // Cache the JNIEnv used to get the global ref for this java instance.
     // It'll be used to delete the reference.
@@ -331,15 +320,15 @@ JObjectWrapper::JObjectWrapper(jobject instance)
 
     m_instance = m_env->NewGlobalRef(instance);
 
-    JS_LOG("new global ref %p for %p\n", m_instance, instance);
+    LOG(LiveConnect, "JObjectWrapper ctor new global ref %p for %p", m_instance, instance);
 
-    if  (!m_instance)
-        fprintf(stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
+    if (!m_instance)
+        LOG_ERROR("Could not get GlobalRef for %p", instance);
 }
 
 JObjectWrapper::~JObjectWrapper()
 {
-    JS_LOG("deleting global ref %p\n", m_instance);
+    LOG(LiveConnect, "JObjectWrapper dtor deleting global ref %p", m_instance);
     m_env->DeleteGlobalRef(m_instance);
 }
 

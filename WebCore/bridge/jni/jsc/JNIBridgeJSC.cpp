@@ -30,22 +30,14 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "JNIUtilityPrivate.h"
+#include "Logging.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <runtime/Error.h>
 
-#ifdef NDEBUG
-#define JS_LOG(formatAndArgs...) ((void)0)
-#else
-#define JS_LOG(formatAndArgs...) { \
-    fprintf(stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
-    fprintf(stderr, formatAndArgs); \
-}
-#endif
-
 using namespace JSC;
 using namespace JSC::Bindings;
-
+using namespace WebCore;
 
 JavaField::JavaField(JNIEnv* env, jobject aField)
 {
@@ -155,7 +147,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
         break;
     }
 
-    JS_LOG("getting %s = %s\n", UString(name()).UTF8String().c_str(), jsresult.toString(exec).ascii());
+    LOG(LiveConnect, "JavaField::valueFromInstance getting %s = %s", UString(name()).UTF8String().c_str(), jsresult.toString(exec).ascii());
 
     return jsresult;
 }
@@ -191,7 +183,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValue a
     const JavaInstance* instance = static_cast<const JavaInstance*>(i);
     jvalue javaValue = convertValueToJValue(exec, aValue, m_JNIType, type());
 
-    JS_LOG("setting value %s to %s\n", UString(name()).UTF8String().c_str(), aValue.toString(exec).ascii());
+    LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", UString(name()).UTF8String().c_str(), aValue.toString(exec).ascii());
 
     switch (m_JNIType) {
     case array_type:
