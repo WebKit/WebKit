@@ -1,3 +1,26 @@
+2010-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7658811> Multiple style recalcs due to getComputedStyle() on “display: none;” element
+        when there are pending style sheets
+
+        Test: fast/css/getComputedStyle/pending-stylesheet.html
+
+        When querying a property of a computed style declaration for a non-rendered element,
+        CSSStyleSelector::styleForElement() was called, and if there were pending style sheet, it
+        would behave as if the lack of renderer is due to FOUC suppression, and set a flag on
+        the document causing it to recalculate style. On the next computed style property access,
+        style would be recalculated for the document, but then the flag would get set again if the
+        element did not have a renderer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets): Added. Temporarily sets
+        m_ignorePendingStylesheets around the call to CSSStyleSelector::styleForElement().
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle): Use Document::styleForElementIgnoringPendingStylesheets().
+
 2010-02-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

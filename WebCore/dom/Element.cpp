@@ -1359,7 +1359,7 @@ RenderStyle* Element::computedStyle()
 
     ElementRareData* data = ensureRareData();
     if (!data->m_computedStyle)
-        data->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
+        data->m_computedStyle = document()->styleForElementIgnoringPendingStylesheets(this);
     return data->m_computedStyle.get();
 }
 

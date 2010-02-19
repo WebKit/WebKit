@@ -1,3 +1,13 @@
+2010-02-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7658811> Multiple style recalcs due to getComputedStyle() on “display: none;” element
+        when there are pending style sheets
+
+        * fast/css/getComputedStyle/pending-stylesheet-expected.txt: Added.
+        * fast/css/getComputedStyle/pending-stylesheet.html: Added.
+
 2010-02-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

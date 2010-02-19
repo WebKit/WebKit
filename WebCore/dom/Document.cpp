@@ -1462,6 +1462,17 @@ void Document::updateLayoutIgnorePendingStylesheets()
     m_ignorePendingStylesheets = oldIgnore;
 }
 
+PassRefPtr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
+{
+    ASSERT_ARG(element, element->document() == this);
+
+    bool oldIgnore = m_ignorePendingStylesheets;
+    m_ignorePendingStylesheets = true;
+    RefPtr<RenderStyle> style = styleSelector()->styleForElement(element, element->parent() ? element->parent()->computedStyle() : 0);
+    m_ignorePendingStylesheets = oldIgnore;
+    return style.release();
+}
+
 void Document::createStyleSelector()
 {
     bool matchAuthorAndUserStyles = true;
