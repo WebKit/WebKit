@@ -1,3 +1,17 @@
+2010-02-17  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] RTP/RTSP streams playback support
+        https://bugs.webkit.org/show_bug.cgi?id=33662
+
+        Added live pipelines support in updateStates().
+
+        * manual-tests/video-rtsp.html: Added.
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::updateStates):
+
 2010-02-18  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Darin Adler.

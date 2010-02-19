@@ -53,7 +53,6 @@
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>
-#include <webkit/webkitwebview.h>
 #include <wtf/gtk/GOwnPtr.h>
 
 // GstPlayFlags flags from playbin2. It is the policy of GStreamer to
@@ -461,9 +460,6 @@ void MediaPlayerPrivate::seek(float time)
         return;
 
     if (!m_playBin)
-        return;
-
-    if (m_isStreaming)
         return;
 
     if (m_errorOccured)
@@ -891,7 +887,18 @@ void MediaPlayerPrivate::updateStates()
             gst_element_state_get_name(state),
             gst_element_state_get_name(pending));
         // Change in progress
-        return;
+
+        if (!m_isStreaming)
+            return;
+
+        // Resume playback if a seek was performed in a live pipeline.
+        if (m_seeking) {
+            shouldUpdateAfterSeek = true;
+            m_seeking = false;
+            if (m_paused)
+                gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+        }
+        break;
     case GST_STATE_CHANGE_FAILURE:
         LOG_VERBOSE(Media, "Failure: State: %s, pending: %s",
             gst_element_state_get_name(state),
@@ -905,8 +912,25 @@ void MediaPlayerPrivate::updateStates()
 
         if (state == GST_STATE_READY)
             m_readyState = MediaPlayer::HaveNothing;
-        else if (state == GST_STATE_PAUSED)
-            m_readyState = MediaPlayer::HaveCurrentData;
+        else if (state == GST_STATE_PAUSED) {
+            m_readyState = MediaPlayer::HaveEnoughData;
+            m_paused = true;
+            // Live pipelines go in PAUSED without prerolling.
+            m_isStreaming = true;
+        } else if (state == GST_STATE_PLAYING) {
+            m_startedPlaying = true;
+            m_paused = false;
+        }
+
+        if (m_paused && !m_startedPlaying)
+            gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+
+        if (m_seeking) {
+            shouldUpdateAfterSeek = true;
+            m_seeking = false;
+            if (m_paused)
+                gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+        }
 
         m_networkState = MediaPlayer::Loading;
         break;
