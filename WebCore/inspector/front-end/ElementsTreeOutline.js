@@ -59,7 +59,14 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         this._rootDOMNode = x;
 
+        this._isXMLMimeType = !!(WebInspector.mainResource && WebInspector.mainResource.mimeType && WebInspector.mainResource.mimeType.match(/x(?:ht)?ml/i));
+
         this.update();
+    },
+
+    get isXMLMimeType()
+    {
+        return this._isXMLMimeType;
     },
 
     get focusedDOMNode()
@@ -292,9 +299,9 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         var tag = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag");
         var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
-        if (tag)
+        if (tag && listItem.treeElement._populateTagContextMenu)
             listItem.treeElement._populateTagContextMenu(contextMenu, event);
-        else if (textNode)
+        else if (textNode && listItem.treeElement._populateTextContextMenu)
             listItem.treeElement._populateTextContextMenu(contextMenu, textNode);
         contextMenu.show(event);
     }
@@ -316,6 +323,14 @@ WebInspector.ElementsTreeElement = function(node)
 }
 
 WebInspector.ElementsTreeElement.InitialChildrenLimit = 500;
+
+// A union of HTML4 and HTML5-Draft elements that explicitly
+// or implicitly (for HTML5) forbid the closing tag.
+// FIXME: Revise once HTML5 Final is published.
+WebInspector.ElementsTreeElement.ForbiddenClosingTagElements = [
+    "area", "base", "basefont", "br", "canvas", "col", "command", "embed", "frame",
+    "hr", "img", "input", "isindex", "keygen", "link", "meta", "param", "source"
+].keySet();
 
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
@@ -620,11 +635,13 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onexpand: function()
     {
+        this.updateTitle();
         this.treeOutline.updateSelection();
     },
 
     oncollapse: function()
     {
+        this.updateTitle();
         this.treeOutline.updateSelection();
     },
 
@@ -996,7 +1013,7 @@ WebInspector.ElementsTreeElement.prototype = {
         var self = this;
         function callback(tooltipText)
         {
-            var title = self._nodeTitleInfo(self.representedObject, self.hasChildren, WebInspector.linkifyURL, tooltipText).title;
+            var title = self._nodeTitleInfo(WebInspector.linkifyURL, tooltipText).title;
             self.title = "<span class=\"highlight\">" + title + "</span>";
             delete self.selectionElement;
             self.updateSelection();
@@ -1034,9 +1051,10 @@ WebInspector.ElementsTreeElement.prototype = {
         return hrefValue;
     },
 
-    _nodeTitleInfo: function(node, hasChildren, linkify, tooltipText)
+    _nodeTitleInfo: function(linkify, tooltipText)
     {
-        var info = {title: "", hasChildren: hasChildren};
+        var node = this.representedObject;
+        var info = {title: "", hasChildren: this.hasChildren};
         
         switch (node.nodeType) {
             case Node.DOCUMENT_NODE:
@@ -1048,7 +1066,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.ELEMENT_NODE:
-                info.title = "<span class=\"webkit-html-tag\">&lt;" + node.nodeName.toLowerCase().escapeHTML();
+                var tagName = node.nodeName.toLowerCase().escapeHTML();
+                info.title = "<span class=\"webkit-html-tag\">&lt;" + tagName;
                 
                 if (node.hasAttributes()) {
                     for (var i = 0; i < node.attributes.length; ++i) {
@@ -1069,15 +1088,21 @@ WebInspector.ElementsTreeElement.prototype = {
                 }
                 info.title += "&gt;</span>&#8203;";
                 
+                const closingTagHTML = "<span class=\"webkit-html-tag\">&lt;/" + tagName + "&gt;</span>&#8203;";
+                var textChild = onlyTextChild.call(node);
+                var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
+
+                if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
+                    if (this.hasChildren)
+                        info.title += "<span class=\"webkit-html-text-node\">&#8230;</span>&#8203;";
+                    info.title += closingTagHTML;
+                }
+
                 // If this element only has a single child that is a text node,
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
-                
-                var textChild = onlyTextChild.call(node);
-                var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
-                
                 if (showInlineText) {
-                    info.title += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;<span class=\"webkit-html-tag\">&lt;/" + node.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+                    info.title += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;" + closingTagHTML;
                     info.hasChildren = false;
                 }
                 break;

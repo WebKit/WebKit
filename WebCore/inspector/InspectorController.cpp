@@ -654,11 +654,12 @@ void InspectorController::populateScriptObjects()
         return;
 
     m_frontend->populateFrontendSettings(setting(FrontendSettingsSettingName));
-    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
         it->second->updateScriptObject(m_frontend.get());
+
+    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     if (m_expiredConsoleMessageCount)
         m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);

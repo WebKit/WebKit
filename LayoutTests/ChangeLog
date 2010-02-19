@@ -1,3 +1,21 @@
+2010-02-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Elements panel: Correctly show empty elements' ending tags
+        for XML and HTML documents.
+        https://bugs.webkit.org/show_bug.cgi?id=26315
+
+        * inspector/console-dirxml-expected.txt:
+        * inspector/console-format-collections-expected.txt:
+        * inspector/console-format-expected.txt:
+        * inspector/elements-panel-limited-children-expected.txt:
+        * inspector/elements-panel-structure-expected.txt:
+        Re-baselined due to closing tags and ellipses between opening and closing tags
+
+        * inspector/elements-panel-xhtml-structure-expected.txt: Added.
+        * inspector/elements-panel-xhtml-structure.xhtml: Added.
+
 2010-02-19  Andras Becsi  <abecsi@webkit.org>
         Unreviewed Changelog typo fix.
 

@@ -1,3 +1,25 @@
+2010-02-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Elements panel: Correctly show empty elements' ending tags
+        for XML and HTML documents.
+        https://bugs.webkit.org/show_bug.cgi?id=26315
+
+        Test: inspector/elements-panel-xhtml-structure.xhtml
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set rootDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype.get isXMLMimeType):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.ElementsTreeElement.prototype.onexpand):
+        (WebInspector.ElementsTreeElement.prototype.oncollapse):
+        (WebInspector.ElementsTreeElement.prototype.updateTitle.callback):
+        (WebInspector.ElementsTreeElement.prototype.updateTitle):
+        (WebInspector.ElementsTreeElement.prototype._nodeTitleInfo):
+
 2010-02-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium build fix: reverting r54997 and r54998.

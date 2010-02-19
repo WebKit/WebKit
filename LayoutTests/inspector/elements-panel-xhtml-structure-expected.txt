@@ -1,0 +1,28 @@
+Tests that elements panel shows XML dom tree structure with closing tags for all elements.
+
+Paragraph BR test
+Next line
+
+
+application/xhtml+xml 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>…
+</head>
+<body onload="onload()">
+<p>"Tests that elements panel shows XML dom tree structure with closing tags for all elements."
+</p>
+<hr>
+</hr>
+<p>"Paragraph BR test"
+<br>
+</br>"Next line"
+</p>
+<img alt="Random Image">
+</img>
+<pre id="outputPre">
+</pre>
+<div id="output">
+</div>
+</body>
+</html>
+

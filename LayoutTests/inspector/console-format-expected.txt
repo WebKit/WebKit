@@ -55,8 +55,8 @@ console-format.html:53["test named "test""]
 console-format.html:52Error: Unknown error
 console-format.html:53[Error: Unknown error]
 Error: Unknown error
-console-format.html:52<body onload="onload()">
-console-format.html:53[<body onload="onload()">]
+console-format.html:52<body onload="onload()">…</body>
+console-format.html:53[<body onload="onload()">…</body>]
 "HTMLBodyElement"
 console-format.html:52function () { return 1; }
 console-format.html:53[function () { return 1; }]
