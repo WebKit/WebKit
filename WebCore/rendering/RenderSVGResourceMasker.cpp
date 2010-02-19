@@ -64,7 +64,14 @@ void RenderSVGResourceMasker::invalidateClients()
 void RenderSVGResourceMasker::invalidateClient(RenderObject* object)
 {
     ASSERT(object);
-    ASSERT(m_masker.contains(object));
+
+    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
+    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
+    // We return earlier for the moment. This bug should be fixed in:
+    // https://bugs.webkit.org/show_bug.cgi?id=35181
+    if (!m_masker.contains(object))
+        return;
+
     delete m_masker.take(object); 
 }
 

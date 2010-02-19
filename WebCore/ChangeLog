@@ -1,3 +1,20 @@
+2010-02-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        RenderSVGResourceMasker causes an Assert on Wind builds during DRT
+        https://bugs.webkit.org/show_bug.cgi?id=35182
+
+        We remove the Assert for now and return earlier, if the HashMap of the Masker
+        does not contain the RenderObject. The RenderObject is an identifiert to get
+        a already calculated mask.
+        A race condition during parsing can cause the invalidation call, before the mask
+        got calculated (only during DRT on Win build bots).
+        The real bug will be fixed with: https://bugs.webkit.org/show_bug.cgi?id=35181
+
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::invalidateClient):
+
 2010-02-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.
