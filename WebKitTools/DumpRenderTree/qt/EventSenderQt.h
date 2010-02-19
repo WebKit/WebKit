@@ -68,6 +68,8 @@ public slots:
     void touchEnd();
     void zoomPageIn();
     void zoomPageOut();
+    void textZoomIn();
+    void textZoomOut();
     void clearTouchPoints();
     void releaseTouchPoint(int index);
 

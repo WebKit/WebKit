@@ -399,16 +399,26 @@ void EventSender::sendTouchEvent(QEvent::Type type)
 
 void EventSender::zoomPageIn()
 {
-    QWebFrame* frame = m_page->mainFrame();
-    if (frame)
+    if (QWebFrame* frame = m_page->mainFrame())
         frame->setZoomFactor(frame->zoomFactor() * ZOOM_STEP);
 }
 
 void EventSender::zoomPageOut()
 {
-    QWebFrame* frame = m_page->mainFrame();
-    if (frame)
+    if (QWebFrame* frame = m_page->mainFrame())
         frame->setZoomFactor(frame->zoomFactor() / ZOOM_STEP);
+}
+
+void EventSender::textZoomIn()
+{
+    if (QWebFrame* frame = m_page->mainFrame())
+        frame->setTextSizeMultiplier(frame->textSizeMultiplier() * ZOOM_STEP);
+}
+
+void EventSender::textZoomOut()
+{
+    if (QWebFrame* frame = m_page->mainFrame())
+        frame->setTextSizeMultiplier(frame->textSizeMultiplier() / ZOOM_STEP);
 }
 
 QWebFrame* EventSender::frameUnderMouse() const

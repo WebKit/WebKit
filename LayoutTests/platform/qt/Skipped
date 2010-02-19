@@ -224,17 +224,6 @@ http/tests/cache/subresource-failover-to-network.html
 # Missing layoutTestController.setSmartInsertDeleteEnabled()
 editing/selection/doubleclick-beside-cr-span.html
 
-# Missing eventSender.textZoomIn() (and textZoomOut)
-svg/custom/text-zoom.xhtml
-svg/zoom/text/absolute-sized-document-no-scrollbars.svg
-svg/zoom/text/absolute-sized-document-scrollbars.svg
-svg/zoom/text/relative-sized-document-scrollbars.svg
-svg/zoom/text/zoom-foreignObject.svg
-svg/zoom/text/zoom-hixie-mixed-008.xml
-svg/zoom/text/zoom-hixie-mixed-009.xml
-svg/zoom/text/zoom-hixie-rendering-model-004.xhtml
-svg/zoom/text/zoom-svg-float-border-padding.xml
-
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
 # ============================================================================= #

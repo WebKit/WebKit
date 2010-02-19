@@ -1,0 +1,6 @@
+layer at (0,0) size 1355x1009
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 1355x1009
+  RenderSVGRoot {svg} at (0,0) size 1355x1009
+    RenderPath {rect} at (12,8) size 1331x993 [stroke={[type=SOLID] [color=#000000]}] [data="M7.84,5.84 L776.16,5.84 L776.16,578.16 L7.84,578.16 L7.84,5.84"]
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
