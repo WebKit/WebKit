@@ -539,9 +539,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     FrameView* view = _private->coreFrame->view();
     
-    bool isBitmapContext = WKCGContextIsBitmapContext(ctx);
+    bool shouldFlatten = WKCGContextIsBitmapContext(ctx) && [getWebView(self) _includesFlattenedCompositingLayersWhenDrawingToBitmap];
     PaintBehavior oldBehavior = PaintBehaviorNormal;
-    if (isBitmapContext) {
+    if (shouldFlatten) {
         oldBehavior = view->paintBehavior();
         view->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
     }
@@ -551,7 +551,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     else
         _private->coreFrame->view()->paint(&context, enclosingIntRect(rect));
 
-    if (isBitmapContext)
+    if (shouldFlatten)
         view->setPaintBehavior(oldBehavior);
 }
 

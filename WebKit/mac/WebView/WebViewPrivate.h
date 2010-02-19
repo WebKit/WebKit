@@ -472,6 +472,10 @@ Could be worth adding to the API.
 
 // Returns YES if NSView -displayRectIgnoringOpacity:inContext: will produce a faithful representation of the content.
 - (BOOL)_isSoftwareRenderable;
+// When drawing into a bitmap context, we normally flatten compositing layers (and distort 3D transforms).
+// Clients who are able to capture their own copy of the compositing layers need to be able to disable this.
+- (void)_setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:(BOOL)flag;
+- (BOOL)_includesFlattenedCompositingLayersWhenDrawingToBitmap;
 
 // SPI for PluginHalter
 + (BOOL)_isNodeHaltedPlugin:(DOMNode *)node;

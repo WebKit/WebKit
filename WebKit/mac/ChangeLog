@@ -1,3 +1,25 @@
+2010-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7535894> Page contents missing from snapshot on Newsweek.com article
+        
+        Followup to avoid capturing compositing layers twice in snapshots. Add private
+        methods to WebView to specify whether drawing the WebView into an image will
+        include flattened compositing layers (the default behavior) or not.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]): Consult the WebView flag to see if we
+        want flattening.
+        
+        * WebView/WebViewPrivate.h: New methods.
+        * WebView/WebView.mm: Ditto.
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:]):
+        (-[WebView _includesFlattenedCompositingLayersWhenDrawingToBitmap]):
+
+        * WebView/WebViewData.h: New member variable.
+
 2010-02-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

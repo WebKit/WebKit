@@ -600,6 +600,7 @@ static bool shouldEnableLoadDeferring()
     _private->drawsBackground = YES;
     _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
     _private->usesDocumentViews = usesDocumentViews;
+    _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = YES;
 
     WebFrameView *frameView = nil;
     if (_private->usesDocumentViews) {
@@ -2170,6 +2171,16 @@ static inline IMP getMethod(id o, SEL s)
     }
 #endif
     return YES;
+}
+
+- (void)_setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:(BOOL)flag
+{
+    _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = flag;
+}
+
+- (BOOL)_includesFlattenedCompositingLayersWhenDrawingToBitmap
+{
+    return _private->includesFlattenedCompositingLayersWhenDrawingToBitmap;
 }
 
 static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)
