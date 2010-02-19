@@ -66,6 +66,7 @@ protected:
 
 class WebViewGraphicsBased : public QGraphicsView {
     Q_OBJECT
+    Q_PROPERTY(qreal yRotation READ yRotation WRITE setYRotation)
 
 public:
     WebViewGraphicsBased(QWidget* parent);
@@ -76,8 +77,29 @@ public:
     void enableFrameRateMeasurement();
     virtual void paintEvent(QPaintEvent* event);
 
+    void setYRotation(qreal angle)
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+        QRectF r = m_item->boundingRect();
+        m_item->setTransform(QTransform()
+            .translate(r.width() / 2, r.height() / 2)
+            .rotate(angle, Qt::YAxis)
+            .translate(-r.width() / 2, -r.height() / 2));
+#endif
+        m_yRotation = angle;
+    }
+    qreal yRotation() const
+    {
+        return m_yRotation;
+    }
+
 public slots:
     void updateFrameRate();
+    void animatedFlip();
+    void animatedYFlip();
+
+signals:
+    void yFlipRequest();
 
 private:
     GraphicsWebView* m_item;
@@ -86,6 +108,7 @@ private:
     QTime m_startTime;
     QTime m_lastConsultTime;
     bool m_measureFps;
+    qreal m_yRotation;
 };
 
 #endif

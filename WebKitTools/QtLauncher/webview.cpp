@@ -48,6 +48,29 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QStateMachine* machine = new QStateMachine(this);
+    QState* s0 = new QState(machine);
+    s0->assignProperty(this, "yRotation", 0);
+
+    QState* s1 = new QState(machine);
+    s1->assignProperty(this, "yRotation", 90);
+
+    QAbstractTransition* t1 = s0->addTransition(this, SIGNAL(yFlipRequest()), s1);
+    QPropertyAnimation* yRotationAnim = new QPropertyAnimation(this, "yRotation", this);
+    yRotationAnim->setDuration(1000);
+    t1->addAnimation(yRotationAnim);
+
+    QState* s2 = new QState(machine);
+    s2->assignProperty(this, "yRotation", -90);
+    s1->addTransition(s1, SIGNAL(propertiesAssigned()), s2);
+
+    QAbstractTransition* t2 = s2->addTransition(s0);
+    t2->addAnimation(yRotationAnim);
+
+    machine->setInitialState(s0);
+    machine->start();
+#endif
 }
 
 void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
@@ -81,6 +104,30 @@ void WebViewGraphicsBased::updateFrameRate()
 
     m_lastConsultTime = now;
     m_numPaintsSinceLastMeasure = 0;
+}
+
+void WebViewGraphicsBased::animatedFlip()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QSizeF center = m_item->boundingRect().size() / 2;
+    QPointF centerPoint = QPointF(center.width(), center.height());
+    m_item->setTransformOriginPoint(centerPoint);
+
+    QPropertyAnimation* animation = new QPropertyAnimation(m_item, "rotation", this);
+    animation->setDuration(1000);
+
+    int rotation = int(m_item->rotation());
+
+    animation->setStartValue(rotation);
+    animation->setEndValue(rotation + 180 - (rotation % 180));
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+#endif
+}
+
+void WebViewGraphicsBased::animatedYFlip()
+{
+    emit yFlipRequest();
 }
 
 void WebViewGraphicsBased::paintEvent(QPaintEvent* event)

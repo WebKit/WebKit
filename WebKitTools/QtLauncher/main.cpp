@@ -133,6 +133,8 @@ private:
     WebInspector* inspector;
 
     QAction* formatMenuAction;
+    QAction* flipAnimated;
+    QAction* flipYAnimated;
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QList<QTouchEvent::TouchPoint> touchPoints;
@@ -461,6 +463,13 @@ void LauncherWindow::initializeView(bool useGraphicsView)
         if (gShowFrameRate)
             view->enableFrameRateMeasurement();
         page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, gUseCompositing);
+
+        if (flipAnimated)
+            connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+
+        if (flipYAnimated)
+            connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+
         m_view = view;
     }
 
@@ -540,13 +549,26 @@ void LauncherWindow::setupUI()
     touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
 #endif
 
-    QAction* toggleAcceleratedCompositing = toolsMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
-    toggleAcceleratedCompositing->setCheckable(true);
-    toggleAcceleratedCompositing->setChecked(false);
-
-    QAction* toggleGraphicsView = toolsMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
+    QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
+    QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
     toggleGraphicsView->setCheckable(true);
     toggleGraphicsView->setChecked(false);
+
+    QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
+    toggleAcceleratedCompositing->setCheckable(true);
+    toggleAcceleratedCompositing->setChecked(false);
+    toggleAcceleratedCompositing->setEnabled(false);
+    toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+    graphicsViewMenu->addSeparator();
+
+    flipAnimated = graphicsViewMenu->addAction("Animated Flip");
+    flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    flipAnimated->setEnabled(false);
+
+    flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
+    flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    flipYAnimated->setEnabled(false);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
