@@ -57,8 +57,7 @@ def main():
                                            codecs.getreader('utf8'),
                                            codecs.getwriter('utf8'),
                                            'replace')
-
-    parser = checker.ArgumentParser()
+    parser = checker.check_webkit_style_parser()
     (files, options) = parser.parse(sys.argv[1:])
 
     configuration = checker.check_webkit_style_configuration(options)

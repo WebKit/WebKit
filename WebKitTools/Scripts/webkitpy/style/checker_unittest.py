@@ -41,77 +41,17 @@ from checker import _BASE_FILTER_RULES
 from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
 from checker import _all_categories
-from checker import CommandOptionValues as ProcessorOptions
-from checker import DefaultCommandOptionValues
+from checker import check_webkit_style_configuration
+from checker import check_webkit_style_parser
 from checker import ProcessorDispatcher
 from checker import StyleChecker
 from checker import StyleCheckerConfiguration
 from filter import validate_filter_rules
 from filter import FilterConfiguration
+from optparser import ArgumentParser
+from optparser import CommandOptionValues
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
-
-
-class ProcessorOptionsTest(unittest.TestCase):
-
-    """Tests ProcessorOptions class."""
-
-    def test_init(self):
-        """Test __init__ constructor."""
-        # Check default parameters.
-        options = ProcessorOptions()
-        self.assertEquals(options.extra_flag_values, {})
-        self.assertEquals(options.filter_rules, [])
-        self.assertEquals(options.git_commit, None)
-        self.assertEquals(options.output_format, "emacs")
-        self.assertEquals(options.verbosity, 1)
-
-        # Check argument validation.
-        self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
-        ProcessorOptions(output_format="emacs") # No ValueError: works
-        ProcessorOptions(output_format="vs7") # works
-        self.assertRaises(ValueError, ProcessorOptions, verbosity=0)
-        self.assertRaises(ValueError, ProcessorOptions, verbosity=6)
-        ProcessorOptions(verbosity=1) # works
-        ProcessorOptions(verbosity=5) # works
-
-        # Check attributes.
-        options = ProcessorOptions(extra_flag_values={"extra_value" : 2},
-                                   filter_rules=["+"],
-                                   git_commit="commit",
-                                   output_format="vs7",
-                                   verbosity=3)
-        self.assertEquals(options.extra_flag_values, {"extra_value" : 2})
-        self.assertEquals(options.filter_rules, ["+"])
-        self.assertEquals(options.git_commit, "commit")
-        self.assertEquals(options.output_format, "vs7")
-        self.assertEquals(options.verbosity, 3)
-
-    def test_eq(self):
-        """Test __eq__ equality function."""
-        # == calls __eq__.
-        self.assertTrue(ProcessorOptions() == ProcessorOptions())
-
-        # Verify that a difference in any argument causes equality to fail.
-        options = ProcessorOptions(extra_flag_values={"extra_value" : 1},
-                                   filter_rules=["+"],
-                                   git_commit="commit",
-                                   output_format="vs7",
-                                   verbosity=1)
-        self.assertFalse(options == ProcessorOptions(extra_flag_values=
-                                                     {"extra_value" : 2}))
-        self.assertFalse(options == ProcessorOptions(filter_rules=["-"]))
-        self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
-        self.assertFalse(options == ProcessorOptions(output_format="emacs"))
-        self.assertFalse(options == ProcessorOptions(verbosity=2))
-
-    def test_ne(self):
-        """Test __ne__ inequality function."""
-        # != calls __ne__.
-        # By default, __ne__ always returns true on different objects.
-        # Thus, just check the distinguishing case to verify that the
-        # code defines __ne__.
-        self.assertFalse(ProcessorOptions() != ProcessorOptions())
 
 
 class GlobalVariablesTest(unittest.TestCase):
@@ -146,7 +86,9 @@ class GlobalVariablesTest(unittest.TestCase):
 
         # FIXME: We should not need to call parse() to determine
         #        whether the default arguments are valid.
-        parser = style.ArgumentParser(default_options=default_options)
+        parser = ArgumentParser(all_categories=self._all_categories(),
+                                base_filter_rules=[],
+                                default_options=default_options)
         # No need to test the return value here since we test parse()
         # on valid arguments elsewhere.
         parser.parse([]) # arguments valid: no error or SystemExit
@@ -191,7 +133,6 @@ class GlobalVariablesTest(unittest.TestCase):
             "JavaScriptCore/qt/tests/qscriptengine/tst_qscriptengine.cpp",
             "readability/naming")
 
-
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()
@@ -200,159 +141,18 @@ class GlobalVariablesTest(unittest.TestCase):
                             'Key "%s" is not a category' % category)
 
 
-class ArgumentPrinterTest(unittest.TestCase):
+class CheckWebKitStyleFunctionTest(unittest.TestCase):
 
-    """Tests the ArgumentPrinter class."""
+    """Tests the functions with names of the form check_webkit_style_*."""
 
-    _printer = style.ArgumentPrinter()
+    def test_check_webkit_style_configuration(self):
+        # Exercise the code path to make sure the function does not error out.
+        option_values = CommandOptionValues()
+        configuration = check_webkit_style_configuration(option_values)
 
-    def _create_options(self,
-                        output_format='emacs',
-                        verbosity=3,
-                        filter_rules=[],
-                        git_commit=None,
-                        extra_flag_values={}):
-        return ProcessorOptions(extra_flag_values=extra_flag_values,
-                                filter_rules=filter_rules,
-                                git_commit=git_commit,
-                                output_format=output_format,
-                                verbosity=verbosity)
-
-    def test_to_flag_string(self):
-        options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git',
-                                       {'a': 0, 'z': 1})
-        self.assertEquals('--a=0 --filter=+foo,-bar --git-commit=git '
-                          '--output=vs7 --verbose=5 --z=1',
-                          self._printer.to_flag_string(options))
-
-        # This is to check that --filter and --git-commit do not
-        # show up when not user-specified.
-        options = self._create_options()
-        self.assertEquals('--output=emacs --verbose=3',
-                          self._printer.to_flag_string(options))
-
-
-class ArgumentParserTest(unittest.TestCase):
-
-    """Test the ArgumentParser class."""
-
-    def _parse(self):
-        """Return a default parse() function for testing."""
-        return self._create_parser().parse
-
-    def _create_defaults(self):
-        """Return a DefaultCommandOptionValues instance for testing."""
-        base_filter_rules = ["-", "+whitespace"]
-        return DefaultCommandOptionValues(output_format="vs7",
-                                          verbosity=3)
-
-    def _create_parser(self):
-        """Return an ArgumentParser instance for testing."""
-        def create_usage(_default_options):
-            """Return a usage string for testing."""
-            return "usage"
-
-        def stderr_write(message):
-            # We do not want the usage string or style categories
-            # to print during unit tests, so print nothing.
-            return
-
-        default_options = self._create_defaults()
-
-        return style.ArgumentParser(create_usage=create_usage,
-                                    default_options=default_options,
-                                    stderr_write=stderr_write)
-
-    def test_parse_documentation(self):
-        parse = self._parse()
-
-        # FIXME: Test both the printing of the usage string and the
-        #        filter categories help.
-
-        # Request the usage string.
-        self.assertRaises(SystemExit, parse, ['--help'])
-        # Request default filter rules and available style categories.
-        self.assertRaises(SystemExit, parse, ['--filter='])
-
-    def test_parse_bad_values(self):
-        parse = self._parse()
-
-        # Pass an unsupported argument.
-        self.assertRaises(SystemExit, parse, ['--bad'])
-
-        self.assertRaises(ValueError, parse, ['--verbose=bad'])
-        self.assertRaises(ValueError, parse, ['--verbose=0'])
-        self.assertRaises(ValueError, parse, ['--verbose=6'])
-        parse(['--verbose=1']) # works
-        parse(['--verbose=5']) # works
-
-        self.assertRaises(ValueError, parse, ['--output=bad'])
-        parse(['--output=vs7']) # works
-
-        # Pass a filter rule not beginning with + or -.
-        self.assertRaises(ValueError, parse, ['--filter=build'])
-        parse(['--filter=+build']) # works
-        # Pass files and git-commit at the same time.
-        self.assertRaises(SystemExit, parse, ['--git-commit=', 'file.txt'])
-        # Pass an extra flag already supported.
-        self.assertRaises(ValueError, parse, [], ['filter='])
-        parse([], ['extra=']) # works
-        # Pass an extra flag with typo.
-        self.assertRaises(SystemExit, parse, ['--extratypo='], ['extra='])
-        parse(['--extra='], ['extra=']) # works
-        self.assertRaises(ValueError, parse, [], ['extra=', 'extra='])
-
-
-    def test_parse_default_arguments(self):
-        parse = self._parse()
-
-        (files, options) = parse([])
-
-        self.assertEquals(files, [])
-
-        self.assertEquals(options.output_format, 'vs7')
-        self.assertEquals(options.verbosity, 3)
-        self.assertEquals(options.filter_rules, [])
-        self.assertEquals(options.git_commit, None)
-
-    def test_parse_explicit_arguments(self):
-        parse = self._parse()
-
-        # Pass non-default explicit values.
-        (files, options) = parse(['--output=emacs'])
-        self.assertEquals(options.output_format, 'emacs')
-        (files, options) = parse(['--verbose=4'])
-        self.assertEquals(options.verbosity, 4)
-        (files, options) = parse(['--git-commit=commit'])
-        self.assertEquals(options.git_commit, 'commit')
-
-        # Pass user_rules.
-        (files, options) = parse(['--filter=+build,-whitespace'])
-        self.assertEquals(options.filter_rules,
-                          ["+build", "-whitespace"])
-
-        # Pass spurious white space in user rules.
-        (files, options) = parse(['--filter=+build, -whitespace'])
-        self.assertEquals(options.filter_rules,
-                          ["+build", "-whitespace"])
-
-        # Pass extra flag values.
-        (files, options) = parse(['--extra'], ['extra'])
-        self.assertEquals(options.extra_flag_values, {'--extra': ''})
-        (files, options) = parse(['--extra='], ['extra='])
-        self.assertEquals(options.extra_flag_values, {'--extra': ''})
-        (files, options) = parse(['--extra=x'], ['extra='])
-        self.assertEquals(options.extra_flag_values, {'--extra': 'x'})
-
-    def test_parse_files(self):
-        parse = self._parse()
-
-        (files, options) = parse(['foo.cpp'])
-        self.assertEquals(files, ['foo.cpp'])
-
-        # Pass multiple files.
-        (files, options) = parse(['--output=emacs', 'foo.cpp', 'bar.cpp'])
-        self.assertEquals(files, ['foo.cpp', 'bar.cpp'])
+    def test_check_webkit_style_parser(self):
+        # Exercise the code path to make sure the function does not error out.
+        parser = check_webkit_style_parser()
 
 
 class ProcessorDispatcherSkipTest(unittest.TestCase):

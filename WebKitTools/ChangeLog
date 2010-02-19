@@ -1,3 +1,47 @@
+2010-02-18  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Moved parsing-related code to a separate file. Also increased
+        the unit test coverage in some affected areas.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34675
+
+        This revision contains no new functionality.
+
+        * Scripts/check-webkit-style:
+          - Adjusted to call check_webkit_style_parser().
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added check_webkit_style_parser() to pass checker.py
+            configuration settings to optparser.py.
+          - Moved _create_usage() and the CommandOptionValues,
+            DefaultCommandOptionValues, ArgumentPrinter, and
+            ArgumentParser classes to optparser.py.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Moved the ProcessorOptionsTest, ArgumentPrinterTest, and
+            ArgumentParserTest classes to optparser.py.
+          - Added the CheckWebKitStyleFunctionTest class to check
+            the check_webkit_style_configuration() and
+            check_webkit_style_parser() code paths.
+
+        * Scripts/webkitpy/style/optparser.py: Added.
+          - From checker.py, added _create_usage() and the
+            CommandOptionValues, DefaultCommandOptionValues,
+            ArgumentPrinter, and ArgumentParser classes.
+          - In the ArgumentParser constructor--
+            - Added all_categories as a required parameter.
+            - Removed the default value from the default_options parameter.
+
+        * Scripts/webkitpy/style/optparser_unittest.py: Added.
+          - From checker_unittest.py, added the ProcessorOptionsTest,
+            ArgumentPrinterTest, and ArgumentParserTest classes.
+          - Added the CreateUsageTest class to test _create_usage().
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Added optparser_unittest import.
+
 2010-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
