@@ -1,3 +1,15 @@
+2010-02-19  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Sets default values of V8 runtime enabler flags to match behavior with JSC
+        https://bugs.webkit.org/show_bug.cgi?id=35095
+
+        No new tests, modifies a Chromium feature only.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Modified. Sets appcache and geolocation flag defaults to 'on'
+        * storage/Database.cpp: Modified. Sets database flag default to 'on'.
+
 2010-02-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
