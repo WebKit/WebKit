@@ -1,3 +1,9 @@
+2010-02-12  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Fix Chromium build.
+
+        * DEPS: Bump Google URL revision to 123.
+
 2010-02-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
