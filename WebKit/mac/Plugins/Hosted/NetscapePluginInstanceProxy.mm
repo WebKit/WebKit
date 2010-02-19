@@ -504,9 +504,7 @@ void NetscapePluginInstanceProxy::stopTimers()
 
 void NetscapePluginInstanceProxy::status(const char* message)
 {
-    if (!message)
-        return;
-    RetainPtr<CFStringRef> status(AdoptCF, CFStringCreateWithCString(0, message, kCFStringEncodingUTF8));
+    RetainPtr<CFStringRef> status(AdoptCF, CFStringCreateWithCString(0, message ? message : "", kCFStringEncodingUTF8));
     if (!status)
         return;
 

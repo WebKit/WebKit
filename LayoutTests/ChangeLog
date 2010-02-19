@@ -1,3 +1,12 @@
+2010-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35165
+        plugins/set-status.html fails on Windows bot
+
+        * plugins/set-status-expected.txt: The behavior of Windows port was better, changed expectations.
+
 2010-02-19  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

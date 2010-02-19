@@ -1,3 +1,17 @@
+2010-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35165
+        plugins/set-status.html fails on Windows bot
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::status):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView status:]):
+        Match Windows port behavior (and also Firefox one, in a way) - pass null status messages as
+        empty ones to chrome.
+
 2010-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
