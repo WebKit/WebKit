@@ -1,5 +1,11 @@
 2010-02-19  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed. Chromium build fix: reverting r54997 and r54998.
+
+        * DEPS:
+
+2010-02-19  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed. Chromium tests fix: update devtools code to match new
         web inspector object proxy format.
 

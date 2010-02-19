@@ -1,3 +1,13 @@
+2010-02-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Chromium build fix: reverting r54997 and r54998.
+
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::protocolAccessorSetter):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setProtocol):
+        (WebCore::KURL::isHierarchical):
+
 2010-02-17  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
