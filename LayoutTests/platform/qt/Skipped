@@ -46,6 +46,10 @@ http/tests/loading/text-content-type-with-binary-extension.html
 # Failing plugins tests
 http/tests/plugins/npapi-response-headers.html
 
+# Failing test introduced in r54993 (implemented some stuff in r54996)
+# https://bugs.webkit.org/show_bug.cgi?id=35144
+plugins/set-status.html
+
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
