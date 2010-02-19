@@ -1053,7 +1053,7 @@ devtools.DebuggerAgent.prototype.formatCallFrame_ = function(stackFrame)
     for (var i = 0; i < stackFrame.scopes.length; i++) {
         var scope = stackFrame.scopes[i];
         scope.frameNumber = stackFrame.index;
-        var scopeObjectProxy = new WebInspector.ObjectProxy(0, scope, [], 0, "", true);
+        var scopeObjectProxy = new WebInspector.ObjectProxy(0, scope, [], "", true);
         scopeObjectProxy.isScope = true;
         switch(scope.type) {
             case ScopeType.Global:
@@ -1149,7 +1149,7 @@ devtools.DebuggerAgent.formatObjectProxy_ = function(v)
     } else
         description = "<unresolved ref: " + v.ref + ", type: " + v.type + ">";
 
-    var proxy = new WebInspector.ObjectProxy(0, v, [], 0, description, hasChildren);
+    var proxy = new WebInspector.ObjectProxy(0, v, [], description, hasChildren);
     proxy.type = v.type;
     proxy.isV8Ref = true;
     return proxy;
