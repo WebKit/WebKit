@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef HTMLAudioElement_h
@@ -28,14 +29,15 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
 #include "HTMLMediaElement.h"
 
 namespace WebCore {
 
 class HTMLAudioElement : public HTMLMediaElement {
 public:
+    static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document*, const String& src);
     HTMLAudioElement(const QualifiedName&, Document*);
-
 private:
     virtual bool isVideo() const { return false; }
     virtual int tagPriority() const { return 5; }

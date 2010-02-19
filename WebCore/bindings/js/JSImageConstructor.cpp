@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@
 #include "HTMLNames.h"
 #include "JSHTMLImageElement.h"
 #include "JSNode.h"
-#include "ScriptExecutionContext.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -43,35 +42,30 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, JSDOMGlobalObject* globa
 
 static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    bool widthSet = false;
-    bool heightSet = false;
-    int width = 0;
-    int height = 0;
-    if (args.size() > 0) {
-        widthSet = true;
-        width = args.at(0).toInt32(exec);
-    }
-    if (args.size() > 1) {
-        heightSet = true;
-        height = args.at(1).toInt32(exec);
-    }
-
     JSImageConstructor* jsConstructor = static_cast<JSImageConstructor*>(constructor);
     Document* document = jsConstructor->document();
     if (!document)
         return throwError(exec, ReferenceError, "Image constructor associated document is unavailable");
 
     // Calling toJS on the document causes the JS document wrapper to be
-    // added to the window object. This is done to ensure that JSDocument::mark
-    // will be called (which will cause the image element to be marked if necessary).
+    // added to the window object. This is done to ensure that JSDocument::markChildren
+    // will be called, which will cause the image element to be marked if necessary.
     toJS(exec, jsConstructor->globalObject(), document);
+    int width;
+    int height;
+    int* optionalWidth = 0;
+    int* optionalHeight = 0;
+    if (args.size() > 0) {
+        width = args.at(0).toInt32(exec);
+        optionalWidth = &width;
+    }
+    if (args.size() > 1) {
+        height = args.at(1).toInt32(exec);
+        optionalHeight = &height;
+    }
 
-    RefPtr<HTMLImageElement> image = new HTMLImageElement(HTMLNames::imgTag, document);
-    if (widthSet)
-        image->setWidth(width);
-    if (heightSet)
-        image->setHeight(height);
-    return asObject(toJS(exec, jsConstructor->globalObject(), image.release()));
+    return asObject(toJS(exec, jsConstructor->globalObject(),
+        HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight)));
 }
 
 ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)

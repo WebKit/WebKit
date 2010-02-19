@@ -2,8 +2,9 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,11 +42,31 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElement(tagName, doc, f)
+HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
     , m_style(0)
 {
     ASSERT(hasTagName(optionTag));
+}
+
+PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document* document, const String& data, const String& value,
+        bool defaultSelected, bool selected, ExceptionCode& ec)
+{
+    RefPtr<HTMLOptionElement> element = new HTMLOptionElement(optionTag, document);
+
+    RefPtr<Text> text = Text::create(document, data.isNull() ? "" : data);
+
+    ec = 0;
+    element->appendChild(text.release(), ec);
+    if (ec)
+        return 0;
+
+    if (!value.isNull())
+        element->setValue(value);
+    element->setDefaultSelected(defaultSelected);
+    element->setSelected(selected);
+
+    return element.release();
 }
 
 bool HTMLOptionElement::checkDTD(const Node* newChild)
@@ -174,7 +195,7 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 
     if (!select)
         return 0;
-    
+
     return static_cast<HTMLSelectElement*>(select);
 }
 
@@ -203,9 +224,9 @@ void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
     m_style = newStyle;
 }
 
-RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const 
-{ 
-    return m_style.get(); 
+RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
+{
+    return m_style.get();
 }
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
@@ -214,8 +235,8 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 }
 
 bool HTMLOptionElement::disabled() const
-{ 
-    return ownElementDisabled() || (parentNode() && static_cast<HTMLFormControlElement*>(parentNode())->disabled()); 
+{
+    return ownElementDisabled() || (parentNode() && static_cast<HTMLFormControlElement*>(parentNode())->disabled());
 }
 
 void HTMLOptionElement::insertedIntoTree(bool deep)
@@ -227,7 +248,7 @@ void HTMLOptionElement::insertedIntoTree(bool deep)
             select->setSelectedIndex(index(), false);
         select->scrollToSelection();
     }
-    
+
     HTMLFormControlElement::insertedIntoTree(deep);
 }
 

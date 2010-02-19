@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,6 +59,16 @@ HTMLImageElement::~HTMLImageElement()
         m_form->removeImgElement(this);
 }
 
+PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* document, const int* optionalWidth, const int* optionalHeight)
+{
+    RefPtr<HTMLImageElement> image = new HTMLImageElement(imgTag, document);
+    if (optionalWidth)
+        image->setWidth(*optionalWidth);
+    if (optionalHeight > 0)
+        image->setHeight(*optionalHeight);
+    return image.release();
+}
+
 bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr ||
@@ -68,7 +79,7 @@ bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
         result = eUniversal;
         return false;
     }
-    
+
     if (attrName == borderAttr || attrName == alignAttr) {
         result = eReplaced; // Shared with embed and iframe elements.
         return false;
@@ -161,7 +172,7 @@ RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* 
 {
      if (style->contentData())
         return RenderObject::createObject(this, style);
-     
+
      return new (arena) RenderImage(this);
 }
 
@@ -174,7 +185,7 @@ void HTMLImageElement::attach()
         if (imageObj->hasImage())
             return;
         imageObj->setCachedImage(m_imageLoader.image());
-        
+
         // If we have no image at all because we have no src attribute, set
         // image height and width for the alt text instead.
         if (!m_imageLoader.image() && !imageObj->cachedImage())
@@ -241,7 +252,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
         int width = getAttribute(widthAttr).toInt(&ok);
         if (ok)
             return width;
-        
+
         // if the image is available, use its width
         if (m_imageLoader.image()) {
             float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
@@ -265,7 +276,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
         int height = getAttribute(heightAttr).toInt(&ok);
         if (ok)
             return height;
-        
+
         // if the image is available, use its height
         if (m_imageLoader.image()) {
             float zoomFactor = document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
@@ -293,10 +304,10 @@ int HTMLImageElement::naturalHeight() const
 {
     if (!m_imageLoader.image())
         return 0;
-    
+
     return m_imageLoader.image()->imageSize(1.0f).height();
 }
-    
+
 bool HTMLImageElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == srcAttr

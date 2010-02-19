@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -61,15 +61,25 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLImageElement instance
     // may end up being the only node in the map and get garbage-ccollected prematurely.
+    // FIXME: The correct way to do this would be to make HTMLImageElement derive from
+    // ActiveDOMObject and use its interface to keep its wrapper alive. Then we would
+    // remove this code and the special case in isObservableThroughDOM.
     toV8(document);
 
-    RefPtr<HTMLImageElement> image = new HTMLImageElement(HTMLNames::imgTag, document);
+    int width;
+    int height;
+    int* optionalWidth = 0;
+    int* optionalHeight = 0;
     if (args.Length() > 0) {
-        image->setWidth(toInt32(args[0]));
-        if (args.Length() > 1)
-            image->setHeight(toInt32(args[1]));
+        width = toInt32(args[0]);
+        optionalWidth = &width;
+    }
+    if (args.Length() > 1) {
+        height = toInt32(args[1]);
+        optionalHeight = &height;
     }
 
+    RefPtr<HTMLImageElement> image = HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight);
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::IMAGE), image.get());
     image->ref();
     V8DOMWrapper::setJSWrapperForDOMNode(image.get(), v8::Persistent<v8::Object>::New(args.Holder()));

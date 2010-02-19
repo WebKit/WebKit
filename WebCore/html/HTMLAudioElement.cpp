@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -34,10 +35,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document* doc)
-    : HTMLMediaElement(tagName, doc)
+HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document* document)
+    : HTMLMediaElement(tagName, document)
 {
     ASSERT(hasTagName(audioTag));
+}
+
+PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* document, const String& src)
+{
+    RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(audioTag, document);
+    audio->setAutobuffer(true);
+    if (!src.isNull()) {
+        audio->setSrc(src);
+        audio->scheduleLoad();
+    }
+    return audio.release();
 }
 
 }

@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -59,32 +59,24 @@ static v8::Handle<v8::Value> v8HTMLOptionElementConstructorCallback(const v8::Ar
     if (!document)
         return throwError("Option constructor associated document is unavailable", V8Proxy::ReferenceError);
 
-    RefPtr<HTMLOptionElement> option = new HTMLOptionElement(HTMLNames::optionTag, document);
+    String data;
+    String value;
+    bool defaultSelected = false;
+    bool selected = false;
+    if (args.Length() > 0 && !args[0]->IsUndefined())
+        data = toWebCoreString(args[0]);
+    if (args.Length() > 1 && !args[1]->IsUndefined())
+        value = toWebCoreString(args[1]);
+    if (args.Length() > 2)
+        defaultSelected = args[2]->BooleanValue();
+    if (args.Length() > 3)
+        selected = args[3]->BooleanValue();
 
     ExceptionCode ec = 0;
-    RefPtr<Text> text = document->createTextNode("");
-    if (args.Length() > 0) {
-        if (!args[0]->IsUndefined()) {
-            text->setData(toWebCoreString(args[0]), ec);
-            if (ec)
-                throwError(ec);
-        }
+    RefPtr<HTMLOptionElement> option = HTMLOptionElement::createForJSConstructor(document, data, value, defaultSelected, selected, ec);
 
-        option->appendChild(text.release(), ec);
-        if (ec)
-            throwError(ec);
-
-        if (args.Length() > 1) {
-            if (!args[1]->IsUndefined())
-                option->setValue(toWebCoreString(args[1]));
-
-            if (args.Length() > 2) {
-                option->setDefaultSelected(args[2]->BooleanValue());
-                if (args.Length() > 3)
-                    option->setSelected(args[3]->BooleanValue());
-            }
-        }
-    }
+    if (ec)
+        throwError(ec);
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::OPTION), option.get());
     option->ref();

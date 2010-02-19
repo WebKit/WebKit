@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -30,10 +30,7 @@
 #include "JSAudioConstructor.h"
 
 #include "HTMLAudioElement.h"
-#include "HTMLNames.h"
 #include "JSHTMLAudioElement.h"
-#include "ScriptExecutionContext.h"
-#include "Text.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -46,24 +43,30 @@ JSAudioConstructor::JSAudioConstructor(ExecState* exec, JSDOMGlobalObject* globa
     : DOMConstructorWithDocument(JSAudioConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
     putDirect(exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    JSAudioConstructor* jsAudio = static_cast<JSAudioConstructor*>(constructor);
-    // FIXME: Why doesn't this need the call toJS on the document like JSImageConstructor?
-    Document* document = jsAudio->document();
+    JSAudioConstructor* jsConstructor = static_cast<JSAudioConstructor*>(constructor);
+
+    Document* document = jsConstructor->document();
     if (!document)
         return throwError(exec, ReferenceError, "Audio constructor associated document is unavailable");
 
-    RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, document);
-    audio->setAutobuffer(true);
-    if (args.size() > 0) {
-        audio->setSrc(args.at(0).toString(exec));
-        audio->scheduleLoad();
-    }
-    return asObject(toJS(exec, jsAudio->globalObject(), audio.release()));
+    // Calling toJS on the document causes the JS document wrapper to be
+    // added to the window object. This is done to ensure that JSDocument::markChildren
+    // will be called, which will cause the audio element to be marked if necessary.
+    toJS(exec, jsConstructor->globalObject(), document);
+
+    // FIXME: This converts an undefined argument to the string "undefined", but possibly we
+    // should treat it as if no argument was passed instead, by checking the value of args.at
+    // rather than looking at args.size.
+    String src;
+    if (args.size() > 0)
+        src = args.at(0).toString(exec);
+    return asObject(toJS(exec, jsConstructor->globalObject(),
+        HTMLAudioElement::createForJSConstructor(document, src)));
 }
 
 ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)

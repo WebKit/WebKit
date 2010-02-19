@@ -1,3 +1,47 @@
+2010-02-18  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Normalize custom ctors for Image, Option, Audio
+        https://bugs.webkit.org/show_bug.cgi?id=34782
+
+        Test: fast/js/custom-constructors.html
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        (WebCore::constructAudio):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::v8HTMLAudioElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::v8HTMLOptionElementConstructorCallback):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::HTMLAudioElement):
+        (WebCore::HTMLAudioElement::createForJSConstructor):
+        * html/HTMLAudioElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createForJSConstructor):
+        (WebCore::HTMLImageElement::mapToEntry):
+        (WebCore::HTMLImageElement::createRenderer):
+        (WebCore::HTMLImageElement::attach):
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::naturalHeight):
+        * html/HTMLImageElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::createForJSConstructor):
+        (WebCore::HTMLOptionElement::ownerSelectElement):
+        (WebCore::HTMLOptionElement::nonRendererRenderStyle):
+        (WebCore::HTMLOptionElement::disabled):
+        (WebCore::HTMLOptionElement::insertedIntoTree):
+        * html/HTMLOptionElement.h:
+
 2010-02-12  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.
