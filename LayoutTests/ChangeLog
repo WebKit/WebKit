@@ -2,6 +2,15 @@
 
         Rubber-stamped by Xan Lopez.
 
+        [GTK] plugins/set-status.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=35144
+
+        * platform/gtk/Skipped: Skip failing test.
+
+2010-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
         Adding a GTK layout test result for a new test
         added in r54980.
 
