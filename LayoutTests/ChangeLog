@@ -1,3 +1,12 @@
+2010-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        [GTK] fast/forms/restore-selection-after-layout.html fails on 32bits Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=35158
+
+        * platform/gtk/Skipped: Skip failing test
+
 2010-02-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
