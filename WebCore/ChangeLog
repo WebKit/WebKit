@@ -1,5 +1,14 @@
 2010-02-18  Simon Fraser  <simon.fraser@apple.com>
 
+        No Review.
+
+        Remove a couple of extraneous spaces that got added to the project file
+        by hand-ending.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-02-18  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         <rdar://problem/7535894> Page contents missing from snapshot on Newsweek.com article
