@@ -1,3 +1,17 @@
+2010-02-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add an isImageBlocked bool to the WebContextMenuData struct.
+        https://bugs.webkit.org/show_bug.cgi?id=35136
+        
+        This lets us properly enable/disable the "Copy Image" context menu entry
+        (and, in the future, maybe add a "Load Image" function).
+
+        * public/WebContextMenuData.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2010-02-19  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

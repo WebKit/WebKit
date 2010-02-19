@@ -556,14 +556,9 @@ static CachedImage* getCachedImage(Element* element)
 static Image* getImage(Element* element)
 {
     ASSERT(element);
-    RenderObject* renderer = element->renderer();
-    if (!renderer || !renderer->isImage())
-        return 0;
-
-    RenderImage* image = toRenderImage(renderer);
-    if (image->cachedImage() && !image->cachedImage()->errorOccurred())
-        return image->cachedImage()->image();
-    return 0;
+    CachedImage* cachedImage = getCachedImage(element);
+    return (cachedImage && !cachedImage->errorOccurred()) ?
+        cachedImage->image() : 0;
 }
 
 static void prepareClipboardForImageDrag(Frame* src, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)

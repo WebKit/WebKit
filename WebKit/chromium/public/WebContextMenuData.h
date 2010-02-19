@@ -63,6 +63,9 @@ struct WebContextMenuData {
     // The absolute URL of the image/video/audio that is in context.
     WebURL srcURL;
 
+    // Whether the image in context has been blocked.
+    bool isImageBlocked;
+
     // The absolute URL of the page in context.
     WebURL pageURL;
 

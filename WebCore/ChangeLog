@@ -1,3 +1,26 @@
+2010-02-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Make Pasteboard::writeImage() safe against NULL cachedImages, and clean
+        up some code.
+        https://bugs.webkit.org/show_bug.cgi?id=35136
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateRenderer): Shorten some code.
+        * page/DragController.cpp:
+        (WebCore::getImage): Shorten some code.
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage): NULL-check cachedImage().
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage): NULL-check cachedImage().
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): NULL-check cachedImage().
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage): NULL-check cachedImage().
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage): NULL-check cachedImage().
+
 2010-02-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rubberstamped by Noam Rosenthal, who wrote the original code.

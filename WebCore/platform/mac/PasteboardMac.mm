@@ -300,9 +300,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     ASSERT(node->renderer() && node->renderer()->isImage());
     RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = renderer->cachedImage();
-    ASSERT(cachedImage);
-    
-    if (cachedImage->errorOccurred())
+    if (!cachedImage || cachedImage->errorOccurred())
         return;
 
     NSArray* types = writableTypesForImage();
