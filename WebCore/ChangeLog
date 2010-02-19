@@ -1,5 +1,12 @@
 2010-02-19  Steve Block  <steveblock@google.com>
 
+        Not reviewed. Reverts r55020 which causes crashes in Chromium LayoutTests
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * storage/Database.cpp:
+
+2010-02-19  Steve Block  <steveblock@google.com>
+
         Reviewed by David Levin.
 
         Sets default values of V8 runtime enabler flags to match behavior with JSC
