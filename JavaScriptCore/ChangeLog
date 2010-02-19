@@ -1,3 +1,51 @@
+2010-02-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improve interpreter getter performance
+        https://bugs.webkit.org/show_bug.cgi?id=35138
+
+        Improve the performance of getter dispatch by making it possible
+        for the interpreter to cache the GetterSetter object lookup.
+
+        To do this we simply need to make PropertySlot aware of getters
+        as a potentially cacheable property, and record the base and this
+        objects for a getter access.  This allows us to use more-or-less
+        identical code to that used by the normal get_by_id caching, with
+        the dispatch being the only actual difference.
+
+        I'm holding off of implementing this in the JIT until I do some
+        cleanup to try and making coding in the JIT not be as horrible
+        as it is currently.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        * bytecode/Opcode.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::fillGetterPropertySlot):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isGetter):
+        (JSC::PropertySlot::isCacheable):
+        (JSC::PropertySlot::isCacheableValue):
+        (JSC::PropertySlot::setValueSlot):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        (JSC::PropertySlot::clearOffset):
+        (JSC::PropertySlot::thisValue):
+
 2010-02-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

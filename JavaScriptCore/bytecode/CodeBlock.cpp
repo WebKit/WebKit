@@ -765,6 +765,26 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_chain");
             break;
         }
+        case op_get_by_id_getter_self: {
+            printGetByIdOp(exec, location, it, "get_by_id_getter_self");
+            break;
+        }
+        case op_get_by_id_getter_self_list: {
+            printGetByIdOp(exec, location, it, "get_by_id_getter_self_list");
+            break;
+        }
+        case op_get_by_id_getter_proto: {
+            printGetByIdOp(exec, location, it, "get_by_id_getter_proto");
+            break;
+        }
+        case op_get_by_id_getter_proto_list: {
+            printGetByIdOp(exec, location, it, "get_by_id_getter_proto_list");
+            break;
+        }
+        case op_get_by_id_getter_chain: {
+            printGetByIdOp(exec, location, it, "get_by_id_getter_chain");
+            break;
+        }
         case op_get_by_id_generic: {
             printGetByIdOp(exec, location, it, "get_by_id_generic");
             break;
@@ -1355,16 +1375,16 @@ void CodeBlock::derefStructures(Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self)) {
         vPC[4].u.structure->deref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto)) {
         vPC[4].u.structure->deref();
         vPC[5].u.structure->deref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain)) {
         vPC[4].u.structure->deref();
         vPC[5].u.structureChain->deref();
         return;
@@ -1385,7 +1405,9 @@ void CodeBlock::derefStructures(Instruction* vPC) const
         return;
     }
     if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self_list))) {
+        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self_list))
+        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto_list))
+        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self_list))) {
         PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
         polymorphicStructures->derefStructures(vPC[5].u.operand);
         delete polymorphicStructures;
@@ -1400,16 +1422,16 @@ void CodeBlock::refStructures(Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self)) {
         vPC[4].u.structure->ref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto)) {
         vPC[4].u.structure->ref();
         vPC[5].u.structure->ref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain)) {
         vPC[4].u.structure->ref();
         vPC[5].u.structureChain->ref();
         return;
