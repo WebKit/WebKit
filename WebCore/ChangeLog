@@ -1,3 +1,12 @@
+2010-02-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rubberstamped by Noam Rosenthal, who wrote the original code.
+
+        Make mouse wheel scrolling work when using the GraphicsLayer.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+
 2010-02-19  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

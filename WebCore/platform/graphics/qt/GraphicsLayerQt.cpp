@@ -239,7 +239,10 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
 {
     // we use graphics-view for compositing, not for interactivity
     setAcceptedMouseButtons(Qt::NoButton);
-    setEnabled(false);
+    // we need to have the item enabled, or else wheel events are not
+    // passed to the parent class implementation of wheelEvent, where
+    // they are ignored and passed to the item below.
+    setEnabled(true);
 
     // we'll set the cache when we know what's going on
     setCacheMode(NoCache);
