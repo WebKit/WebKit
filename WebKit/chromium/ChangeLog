@@ -1,3 +1,19 @@
+2010-02-19  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Rename EditorClientImpl::onAutofillSuggestionAccepted to
+        onAutocompleteSuggestionAccepted to better match the purpose of the
+        function.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35171
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::onAutocompleteSuggestionAccepted):
+        * src/EditorClientImpl.h:
+        * src/SuggestionsPopupMenuClient.cpp:
+        (WebKit::SuggestionsPopupMenuClient::valueChanged):
+
 2010-02-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.
