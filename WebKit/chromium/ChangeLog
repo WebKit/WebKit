@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        [Chromium] Use the m_suggestionsPopupClient pointer to refer to the
+        popup client, as the Autocomplete popup might not be the current
+        popup.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35172
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::autocompleteHandleKeyEvent):
+        (WebKit::WebViewImpl::refreshSuggestionsPopup):
+
+2010-02-19  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         [Chromium] Rename EditorClientImpl::onAutofillSuggestionAccepted to
         onAutocompleteSuggestionAccepted to better match the purpose of the
         function.

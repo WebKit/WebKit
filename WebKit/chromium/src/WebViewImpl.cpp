@@ -540,11 +540,11 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
         int selectedIndex = m_suggestionsPopup->selectedIndex();
         HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
         WebString name = inputElement->name();
-        WebString value = m_autocompletePopupClient->itemText(selectedIndex);
+        WebString value = m_suggestionsPopupClient->itemText(selectedIndex);
         m_client->removeAutofillSuggestions(name, value);
         // Update the entries in the currently showing popup to reflect the
         // deletion.
-        m_autocompletePopupClient->removeSuggestionAtIndex(selectedIndex);
+        m_suggestionsPopupClient->removeSuggestionAtIndex(selectedIndex);
         refreshSuggestionsPopup();
         return false;
     }
@@ -1871,7 +1871,7 @@ void WebViewImpl::refreshSuggestionsPopup()
     ASSERT(m_suggestionsPopupShowing);
 
     // Hide the popup if it has become empty.
-    if (!m_autocompletePopupClient->listSize()) {
+    if (!m_suggestionsPopupClient->listSize()) {
         hideSuggestionsPopup();
         return;
     }
