@@ -103,6 +103,10 @@ media/video-display-aspect-ratio.html
 # https://bugs.webkit.org/show_bug.cgi?id=31412
 http/tests/xmlhttprequest/logout.html
 
+# Intermittently times out on Tiger bot.
+# https://bugs.webkit.org/show_bug.cgi?id=33310
+editing/pasteboard/4641033.html
+
 # This was flagged as a regression in Leopard and Snow Leopard, but the
 # behaviour is consistent with other platforms. <rdar://problem/5539822>
 svg/custom/stroke-width-click.svg
