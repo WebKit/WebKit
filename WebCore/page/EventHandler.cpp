@@ -1396,8 +1396,18 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (Page* page = m_frame->page()) {
             if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && !page->mainFrame()->eventHandler()->panScrollInProgress()) {
-                if (FrameView* view = m_frame->view())
-                    view->setCursor(selectCursor(mev, scrollbar));
+                // Plugins set cursor on their own. The only case WebKit intervenes is resetting cursor to arrow on mouse enter,
+                // in case the particular plugin doesn't manipulate cursor at all. Thus,  even a CSS cursor set on body has no
+                // effect on plugins (which matches Firefox).
+                bool overPluginElement = false;
+                if (mev.targetNode() && mev.targetNode()->isHTMLElement()) {
+                    HTMLElement* el = static_cast<HTMLElement*>(mev.targetNode());
+                    overPluginElement = el->hasTagName(appletTag) || el->hasTagName(objectTag) || el->hasTagName(embedTag);
+                }
+                if (!overPluginElement) {
+                    if (FrameView* view = m_frame->view())
+                        view->setCursor(selectCursor(mev, scrollbar));
+                }
             }
         }
     }

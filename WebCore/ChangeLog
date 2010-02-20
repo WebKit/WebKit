@@ -1,3 +1,13 @@
+2010-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35132
+        <rdar://problem/7664353> Mouse cursor sometimes flickers over Flash content (35132)
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleMouseMoveEvent): Don't set mouse
+        pointer when above a plug-in or applet to prevent flicker.
+
 2010-02-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

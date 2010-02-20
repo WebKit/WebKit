@@ -754,6 +754,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!_isStarted)
         return;
 
+    // Set cursor to arrow. Plugins often handle cursor internally, but those that don't will just get this default one.
+    [[NSCursor arrowCursor] set];
+
     _eventHandler->mouseEntered(theEvent);
 }
 

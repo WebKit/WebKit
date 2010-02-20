@@ -287,6 +287,9 @@ extern "C" {
 
 - (void)handleMouseEntered:(NSEvent *)event
 {
+    // Set cursor to arrow. Plugins often handle cursor internally, but those that don't will just get this default one.
+    [[NSCursor arrowCursor] set];
+
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseEntered);
 }
@@ -295,6 +298,11 @@ extern "C" {
 {
     if (_isStarted && _proxy)
         _proxy->mouseEvent(self, event, NPCocoaEventMouseExited);
+
+    // Set cursor back to arrow cursor.  Because NSCursor doesn't know about changes that the plugin made, we could get confused about what we think the
+    // current cursor is otherwise.  Therefore we have no choice but to unconditionally reset the cursor when the mouse exits the plugin.
+    // FIXME: This should be job of plugin host, see <rdar://problem/7654434>.
+    [[NSCursor arrowCursor] set];
 }
 
 - (void)scrollWheel:(NSEvent *)event

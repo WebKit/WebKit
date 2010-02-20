@@ -1,3 +1,36 @@
+2010-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35132
+        <rdar://problem/7664353> Mouse cursor sometimes flickers over Flash content (35132)
+
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::mouseMoved): Send adjustCursor events on every mouse
+        move. This matches Firefox, and is actually required for plug-ins to manipulate cursor wihout
+        resorting to techniques such as fast firing timers.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView handleMouseEntered:]): Some plug-ins handle mouse cursor internally,
+        but those that don't just need to get an arrow cursor (matching Firefox). This means that
+        e.g. a plugin inside <A> won't get a finger mouse pointer.
+
+        * Plugins/WebHostedNetscapePluginView.mm:
+        (-[WebNetscapePluginView handleMouseEntered:]):
+        (-[WebNetscapePluginView handleMouseExited:]):
+        Implement this behavior here, too. Also, out of process code didn't reset mouse pointer on
+        mouse exit, which it needed to do.
+
+        * WebView/WebHTMLView.mm:
+        (needsCursorRectsSupportAtPoint):
+        (setCursor):
+        (resetCursorRects):
+        Make sure that the same workaround we have for Web content also applies to Netscape plug-ins,
+        as AppKit would reset the mouse pointer to arrow if given a chance.
+        (+[WebHTMLViewPrivate initialize]): Renamed setCursorIMP on Leopard and higher to prevent
+        confusion - the method we override is completely different.
+        (-[WebHTMLView hitTest:]): Added a FIXME about a likely bug.
+
 2010-02-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -199,8 +199,17 @@ void WebNetscapePluginEventHandlerCarbon::mouseDragged(NSEvent*)
 {
 }
 
-void WebNetscapePluginEventHandlerCarbon::mouseMoved(NSEvent*)
+void WebNetscapePluginEventHandlerCarbon::mouseMoved(NSEvent* theEvent)
 {
+    EventRecord event;
+    
+    getCarbonEvent(&event, theEvent);
+    event.what = adjustCursorEvent;
+    
+    BOOL acceptedEvent;
+    acceptedEvent = sendEvent(&event);
+    
+    LOG(PluginEvents, "NPP_HandleEvent(mouseMoved): %d", acceptedEvent);
 }
 
 void WebNetscapePluginEventHandlerCarbon::keyDown(NSEvent *theEvent)

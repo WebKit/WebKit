@@ -148,26 +148,52 @@ using namespace std;
 - (BOOL)receivedUnhandledCommand;
 @end
 
-static IMP oldSetCursorIMP = NULL;
+// if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
+static BOOL forceNSViewHitTest;
 
-#ifdef BUILDING_ON_TIGER
+// if YES, do the "top WebHTMLView" hit test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
+static BOOL forceWebHTMLViewHitTest;
 
-static IMP oldResetCursorRectsIMP = NULL;
+static WebHTMLView *lastHitView;
+
+static bool needsCursorRectsSupportAtPoint(NSWindow* window, NSPoint point)
+{
+    forceNSViewHitTest = YES;
+    NSView* view = [[window _web_borderView] hitTest:point];
+    forceNSViewHitTest = NO;
+
+    // WebHTMLView doesn't use cursor rects.
+    if ([view isKindOfClass:[WebHTMLView class]])
+        return false;
+
+    // Neither do NPAPI plug-ins.
+    if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
+        return false;
+
+    // Non-Web content, WebPDFView, and WebKit plug-ins use normal cursor handling.
+    return true;
+}
+
+#ifndef BUILDING_ON_TIGER
+
+static IMP oldSetCursorForMouseLocationIMP;
+
+// Overriding an internal method is a hack; <rdar://problem/7662987> tracks finding a better solution.
+static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
+{
+    if (needsCursorRectsSupportAtPoint(self, point))
+        oldSetCursorForMouseLocationIMP(self, cmd, point);
+}
+
+#else
+
+static IMP oldResetCursorRectsIMP;
+static IMP oldSetCursorIMP;
 static BOOL canSetCursor = YES;
 
 static void resetCursorRects(NSWindow* self, SEL cmd)
 {
-    NSPoint point = [self mouseLocationOutsideOfEventStream];
-    NSView* view = [[self _web_borderView] hitTest:point];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView *htmlView = (WebHTMLView*)view;
-        NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
-        NSDictionary *dict = [htmlView elementAtPoint:localPoint allowShadowContent:NO];
-        DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
-        if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
-            ![element isKindOfClass:[DOMHTMLEmbedElement class]])
-            canSetCursor = NO;
-    }
+    canSetCursor = needsCursorRectsSupportAtPoint(self, [self mouseLocationOutsideOfEventStream]);
     oldResetCursorRectsIMP(self, cmd);
     canSetCursor = YES;
 }
@@ -176,23 +202,6 @@ static void setCursor(NSCursor* self, SEL cmd)
 {
     if (canSetCursor)
         oldSetCursorIMP(self, cmd);
-}
-
-#else
-
-static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
-{
-    NSView* view = [[self _web_borderView] hitTest:point];
-    if ([view isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView *htmlView = (WebHTMLView*)view;
-        NSPoint localPoint = [htmlView convertPoint:point fromView:nil];
-        NSDictionary *dict = [htmlView elementAtPoint:localPoint allowShadowContent:NO];
-        DOMElement *element = [dict objectForKey:WebElementDOMNodeKey];
-        if (![element isKindOfClass:[DOMHTMLAppletElement class]] && ![element isKindOfClass:[DOMHTMLObjectElement class]] &&
-            ![element isKindOfClass:[DOMHTMLEmbedElement class]])
-            return;
-    }
-    oldSetCursorIMP(self, cmd, point);
 }
 
 #endif
@@ -293,14 +302,6 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 
 @implementation WebCoreScrollView
 @end
-
-// if YES, do the standard NSView hit test (which can't give the right result when HTML overlaps a view)
-static BOOL forceNSViewHitTest;
-
-// if YES, do the "top WebHTMLView" hit test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
-static BOOL forceWebHTMLViewHitTest;
-
-static WebHTMLView *lastHitView;
 
 // We need this to be able to safely reference the CachedImage for the promised drag data
 static CachedResourceClient* promisedDataClient()
@@ -490,20 +491,21 @@ static NSCellStateValue kit(TriState state)
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
-
-    if (!oldSetCursorIMP) {
-#ifdef BUILDING_ON_TIGER
-        Method setCursorMethod = class_getInstanceMethod([NSCursor class], @selector(set));
-#else
+    
+#ifndef BUILDING_ON_TIGER
+    if (!oldSetCursorForMouseLocationIMP) {
         Method setCursorMethod = class_getInstanceMethod([NSWindow class], @selector(_setCursorForMouseLocation:));
-#endif
         ASSERT(setCursorMethod);
-
+        oldSetCursorForMouseLocationIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
+        ASSERT(oldSetCursorForMouseLocationIMP);
+    }
+#else
+    if (!oldSetCursorIMP) {
+        Method setCursorMethod = class_getInstanceMethod([NSCursor class], @selector(set));
+        ASSERT(setCursorMethod);
         oldSetCursorIMP = method_setImplementation(setCursorMethod, (IMP)setCursor);
         ASSERT(oldSetCursorIMP);
     }
-    
-#ifdef BUILDING_ON_TIGER
     if (!oldResetCursorRectsIMP) {
         Method resetCursorRectsMethod = class_getInstanceMethod([NSWindow class], @selector(resetCursorRects));
         ASSERT(resetCursorRectsMethod);
@@ -1421,6 +1423,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     else if (forceWebHTMLViewHitTest)
         captureHitsOnSubviews = YES;
     else {
+        // FIXME: Why doesn't this include mouse entered/exited events, or other mouse button events?
         NSEvent *event = [[self window] currentEvent];
         captureHitsOnSubviews = !([event type] == NSMouseMoved
             || [event type] == NSRightMouseDown
