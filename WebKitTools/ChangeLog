@@ -1,3 +1,12 @@
+2010-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed, obvious fix for the python failure in our new buildbot
+        step:
+
+        http://build.webkit.org/builders/GTK Linux 32-bit Release/builds/9075/steps/API tests/logs/err.text
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2010-02-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.
