@@ -32,8 +32,11 @@
 #include "AutoFillPopupMenuClient.h"
 
 #include "HTMLInputElement.h"
+#include "WebNode.h"
 #include "WebString.h"
 #include "WebVector.h"
+#include "WebViewClient.h"
+#include "WebViewImpl.h"
 
 using namespace WebCore;
 
@@ -57,6 +60,19 @@ void AutoFillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
     ASSERT(listIndex >= 0 && listIndex < m_names.size());
     m_names.remove(listIndex);
     m_labels.remove(listIndex);
+}
+
+void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
+{
+    ASSERT(listIndex >= 0 && listIndex < m_names.size());
+
+    WebViewImpl* webView = getWebView();
+    if (!webView)
+        return;
+
+    webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
+                                                   m_names[listIndex],
+                                                   m_labels[listIndex]);
 }
 
 void AutoFillPopupMenuClient::initialize(
