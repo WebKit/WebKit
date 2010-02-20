@@ -33,7 +33,7 @@ from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, Committer
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.mock import Mock
 
-from webkitpy.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
 class MockBrowser(object):

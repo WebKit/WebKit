@@ -41,9 +41,9 @@ from webkitpy.committers import CommitterList
 from webkitpy.credentials import Credentials
 from webkitpy.user import User
 
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
+# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
-from .BeautifulSoup import BeautifulSoup, SoupStrainer
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
 from mechanize import Browser
 

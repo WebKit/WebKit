@@ -30,9 +30,9 @@ from webkitpy.networktransaction import NetworkTransaction
 from webkitpy.webkit_logging import log
 from mechanize import Browser
 
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
+# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
-from .BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 import urllib2
 

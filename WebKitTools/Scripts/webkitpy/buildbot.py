@@ -34,9 +34,9 @@ import urllib2
 # Import WebKit-specific modules.
 from webkitpy.webkit_logging import log
 
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
+# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
-from .BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
 class BuildBot:

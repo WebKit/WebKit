@@ -30,7 +30,7 @@ import unittest
 
 from webkitpy.buildbot import BuildBot
 
-from webkitpy.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 class BuildBotTest(unittest.TestCase):
 
