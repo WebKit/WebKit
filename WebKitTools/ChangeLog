@@ -1,3 +1,16 @@
+2010-02-19  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [style-queue] should not complain about identifier names with underscores under WebKit/efl/ewk/
+        https://bugs.webkit.org/show_bug.cgi?id=35091
+
+        White list unix_hacker_style names in WebKit/efl/ewk because these
+        are used in the EFL API.
+
+        * Scripts/webkitpy/style/checker.py:
+         - Filter out readability/naming on WebKit/efl/ewk.
+
 2010-02-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

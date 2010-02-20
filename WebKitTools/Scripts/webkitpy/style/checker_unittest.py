@@ -125,6 +125,8 @@ class GlobalVariablesTest(unittest.TestCase):
                     "readability/naming")
         assertNoCheck("WebKit/gtk/webkit/webkit.h",
                       "readability/naming")
+        assertNoCheck("WebKit/efl/ewk/ewk_view.h",
+                      "readability/naming")
         assertNoCheck("WebCore/css/CSSParser.cpp",
                       "readability/naming")
         assertNoCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
