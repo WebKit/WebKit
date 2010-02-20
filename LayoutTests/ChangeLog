@@ -2,6 +2,18 @@
 
         Reviewed by Dimitri Glazkov.
 
+        fast/forms/search-event-delay.html failed on Snow Leopard Debug Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33543
+
+        * platform/mac-snowleopard/Skipped:
+         - This test prints times and expects 0.1s precision even on Debug bots.
+           That can't work.  Skipping the test to make the bots green until this can be made non-flakey
+           or until we have a layout test system which allows "failure" expectations.
+
+2010-02-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         editing/pasteboard/4641033.html timed out on Tiger Bot
         https://bugs.webkit.org/show_bug.cgi?id=33310
 
