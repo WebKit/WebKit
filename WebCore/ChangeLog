@@ -2,6 +2,20 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: re-creating view in ResourcesPanel confuses ScriptsPanel's visibleView logic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35192
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype.viewRecreated):
+
+2010-02-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: need to highlight the evaluated expression used for popovers.
 
         https://bugs.webkit.org/show_bug.cgi?id=35126

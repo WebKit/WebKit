@@ -450,6 +450,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         if (oldViewParentNode)
             newView.show(oldViewParentNode);
+
+        WebInspector.panels.scripts.viewRecreated(oldView, newView);
     },
 
     canShowSourceLineForURL: function(url)

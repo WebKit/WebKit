@@ -508,6 +508,12 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
+    viewRecreated: function(oldView, newView)
+    {
+        if (this._visibleView === oldView)
+            this._visibleView = newView;
+    },
+
     canShowSourceLineForURL: function(url)
     {
         return InspectorBackend.debuggerEnabled() &&
