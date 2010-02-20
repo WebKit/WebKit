@@ -105,8 +105,8 @@ JSValue JavaInstance::booleanValue() const
 
 JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList &args)
 {
-    int i, count = args.size();
-    jvalue* jArgs;
+    int i;
+    int count = args.size();
     JSValue resultValue;
     Method* method = 0;
     size_t numMethods = methodList.size();
@@ -116,9 +116,8 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     // notion of method overloading and Java does.  We could
     // get a bit more sophisticated and attempt to does some
     // type checking as we as checking the number of parameters.
-    Method* aMethod;
     for (size_t methodIndex = 0; methodIndex < numMethods; methodIndex++) {
-        aMethod = methodList[methodIndex];
+        Method* aMethod = methodList[methodIndex];
         if (aMethod->numParameters() == count) {
             method = aMethod;
             break;
@@ -132,10 +131,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     const JavaMethod* jMethod = static_cast<const JavaMethod*>(method);
     LOG(LiveConnect, "JavaInstance::invokeMethod call %s %s on %p", UString(jMethod->name()).UTF8String().c_str(), jMethod->signature(), m_instance->m_instance);
 
-    if (count > 0)
-        jArgs = (jvalue*)malloc(count * sizeof(jvalue));
-    else
-        jArgs = 0;
+    Vector<jvalue> jArgs(count);
 
     for (i = 0; i < count; i++) {
         JavaParameter* aParameter = jMethod->parameterAt(i);
@@ -157,10 +153,9 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         jobject obj = m_instance->m_instance;
         JSValue exceptionDescription;
         const char *callingURL = 0; // FIXME, need to propagate calling URL to Java
-        handled = dispatchJNICall(exec, rootObject->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
+        handled = dispatchJNICall(exec, rootObject->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs.data(), result, callingURL, exceptionDescription);
         if (exceptionDescription) {
             throwError(exec, GeneralError, exceptionDescription.toString(exec));
-            free(jArgs);
             return jsUndefined();
         }
     }
@@ -171,35 +166,35 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         jobject obj = m_instance->m_instance;
         switch (jMethod->JNIReturnType()) {
         case void_type:
-            callJNIMethodIDA<void>(obj, jMethod->methodID(obj), jArgs);
+            callJNIMethodIDA<void>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case object_type:
-            result.l = callJNIMethodIDA<jobject>(obj, jMethod->methodID(obj), jArgs);
+            result.l = callJNIMethodIDA<jobject>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case boolean_type:
-            result.z = callJNIMethodIDA<jboolean>(obj, jMethod->methodID(obj), jArgs);
+            result.z = callJNIMethodIDA<jboolean>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case byte_type:
-            result.b = callJNIMethodIDA<jbyte>(obj, jMethod->methodID(obj), jArgs);
+            result.b = callJNIMethodIDA<jbyte>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case char_type:
-            result.c = callJNIMethodIDA<jchar>(obj, jMethod->methodID(obj), jArgs);
+            result.c = callJNIMethodIDA<jchar>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case short_type:
-            result.s = callJNIMethodIDA<jshort>(obj, jMethod->methodID(obj), jArgs);
+            result.s = callJNIMethodIDA<jshort>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case int_type:
-            result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs);
+            result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs.data());
             break;
 
         case long_type:
-            result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs);
+            result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case float_type:
-            result.f = callJNIMethodIDA<jfloat>(obj, jMethod->methodID(obj), jArgs);
+            result.f = callJNIMethodIDA<jfloat>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case double_type:
-            result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs);
+            result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs.data());
             break;
         case invalid_type:
         default:
@@ -282,8 +277,6 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         }
         break;
     }
-
-    free(jArgs);
 
     return resultValue;
 }
