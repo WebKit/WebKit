@@ -1,3 +1,11 @@
+2010-02-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Trivial fix - unnecessary variable got added by
+        mistake.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidReceiveResponse):
+
 2010-02-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

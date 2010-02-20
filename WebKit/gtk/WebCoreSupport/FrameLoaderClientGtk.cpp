@@ -278,8 +278,6 @@ void FrameLoaderClient::frameLoaderDestroyed()
 
 void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, unsigned long, const ResourceResponse& response)
 {
-    SoupMessageFlags flags = response.soupMessageFlags();
-
     // Update our knowledge of request soup flags - some are only set
     // after the request is done.
     loader->request().setSoupMessageFlags(response.soupMessageFlags());
