@@ -1,6 +1,6 @@
 # Required for Python to search this directory for module files
 
-import autoinstall
+import thirdparty.autoinstall as autoinstall
 
 # List our third-party library dependencies here and where they can be
 # downloaded.
