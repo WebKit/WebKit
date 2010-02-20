@@ -160,8 +160,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         }
     }
 
-    // The following code can be conditionally removed once we have a Tiger update that
-    // contains the new Java plugin.  It is needed for builds prior to Tiger.
+#ifdef BUILDING_ON_TIGER
     if (!handled) {
         jobject obj = m_instance->m_instance;
         switch (jMethod->JNIReturnType()) {
@@ -186,7 +185,6 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         case int_type:
             result.i = callJNIMethodIDA<jint>(obj, jMethod->methodID(obj), jArgs.data());
             break;
-
         case long_type:
             result.j = callJNIMethodIDA<jlong>(obj, jMethod->methodID(obj), jArgs.data());
             break;
@@ -196,11 +194,12 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         case double_type:
             result.d = callJNIMethodIDA<jdouble>(obj, jMethod->methodID(obj), jArgs.data());
             break;
+        case array_type:
         case invalid_type:
-        default:
             break;
         }
     }
+#endif
 
     switch (jMethod->JNIReturnType()) {
     case void_type:
@@ -212,6 +211,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
     case object_type:
         {
             if (result.l) {
+                // FIXME: array_type return type is handled below, can we actually get an array here?
                 const char* arrayType = jMethod->returnType();
                 if (arrayType[0] == '[')
                     resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
@@ -270,8 +270,15 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
         }
         break;
 
+    case array_type:
+        {
+            const char* arrayType = jMethod->returnType();
+            ASSERT(arrayType[0] == '[');
+            resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
+        }
+        break;
+
     case invalid_type:
-    default:
         {
             resultValue = jsUndefined();
         }

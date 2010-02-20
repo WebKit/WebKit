@@ -1,3 +1,18 @@
+2010-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23742
+        Applet methods can not return arrays to JS
+
+        * bridge/jni/jsc/JNIBridgeJSC.cpp: (JavaArray::JavaArray): Don't accidentally zero out
+        m_rootObject (that's how PassRefPtr works). Without m_rootObject, we crash quickly.
+
+        * bridge/jni/jsc/JavaInstanceJSC.cpp: (JavaInstance::invokeMethod): Do handle returned arrays.
+        Also, added an ifdef around  code that's only needed on Tiger, and removed a comment saying
+        it can be removed when "new" plugin ships. I doubt that anyone can remember what "new"
+        could refer to back then.
+
 2010-02-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
