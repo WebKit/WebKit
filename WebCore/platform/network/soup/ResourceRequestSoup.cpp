@@ -23,8 +23,6 @@
 #include "CString.h"
 #include "GOwnPtr.h"
 #include "GOwnPtrGtk.h"
-#include "HTTPParsers.h"
-#include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 
 #include <libsoup/soup.h>
@@ -54,8 +52,6 @@ SoupMessage* ResourceRequest::toSoupMessage() const
         soup_message_set_first_party(soupMessage, firstParty.get());
     }
 #endif
-
-    soup_message_set_flags(soupMessage, m_soupFlags);
 
     // Body data is only handled at ResourceHandleSoup::startHttp for
     // now; this is because this may not be a good place to go
@@ -89,8 +85,6 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
         m_firstPartyForCookies = KURL(KURL(), String::fromUTF8(firstPartyURI.get()));
     }
 #endif
-
-    m_soupFlags = soup_message_get_flags(soupMessage);
 
     // FIXME: m_allowCookies should probably be handled here and on
     // doUpdatePlatformRequest somehow.
