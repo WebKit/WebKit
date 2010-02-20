@@ -1,3 +1,22 @@
+2010-02-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by David Levin.
+
+        Add an ENABLE flag for sandboxed iframes to make it possible to disable it in releases
+        https://bugs.webkit.org/show_bug.cgi?id=35147
+
+        I made ENABLE(SANDBOX) only control the sandbox attribute itself;
+        I did not ifdef the infrastructure to make sandboxing
+        switchable. This is because the likely concerns about sandboxing
+        are not stability of the infrastructure code, but rather the fact
+        that the security model exposed to authors is still evolving.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.pri:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+
 2010-02-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

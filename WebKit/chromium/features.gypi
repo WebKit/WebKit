@@ -55,6 +55,7 @@
         'ENABLE_OPENTYPE_SANITIZER=1',
         'ENABLE_ORIENTATION_EVENTS=0',
         'ENABLE_RUBY=1',
+        'ENABLE_SANDBOX=1',
         'ENABLE_XHTMLMP=0',
         'ENABLE_XSLT=1',
         'ENABLE_XPATH=1',

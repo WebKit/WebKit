@@ -1,3 +1,12 @@
+2010-02-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by David Levin.
+
+        Add an ENABLE flag for sandboxed iframes to make it possible to disable it in releases
+        https://bugs.webkit.org/show_bug.cgi?id=35147
+
+        * configure.ac:
+
 2010-02-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Seidel.

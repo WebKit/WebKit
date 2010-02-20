@@ -53,7 +53,7 @@ my $startTime = time();
 
 my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $clientBasedGeolocationSupport, $databaseSupport, $datagridSupport, $datalistSupport,
     $domStorageSupport, $eventsourceSupport, $filtersSupport, $geolocationSupport, $iconDatabaseSupport, $indexedDatabaseSupport,
-    $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport,
+    $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
@@ -115,6 +115,9 @@ my @features = (
 
     { option => "ruby", desc => "Toggle HTML5 Ruby support",
       define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
+
+    { option => "sandbox", desc => "Toggle HTML5 Sandboxed iframe support",
+      define => "ENABLE_SANDBOX", default => 1, value => \$sandboxSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },
