@@ -33,6 +33,8 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
                              "webkitpy", "layout_tests"))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
+                             "webkitpy", "thirdparty"))  # For simplejson.
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
 import run_chromium_webkit_tests
 

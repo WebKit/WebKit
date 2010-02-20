@@ -2,6 +2,30 @@
 
         Reviewed by Adam Barth.
 
+        Moved simplejson into webkitpy/thirdparty directory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35196
+
+        * Scripts/run-chromium-webkit-tests:
+          - Added webkitpy/thirdparty to the script's search path.
+
+        * Scripts/webkitpy/thirdparty/simplejson: Copied from WebKitTools/simplejson.
+          - Copied simplejson directory.
+
+        * simplejson: Removed.
+        * simplejson/LICENSE.txt: Removed.
+        * simplejson/README.txt: Removed.
+        * simplejson/__init__.py: Removed.
+        * simplejson/_speedups.c: Removed.
+        * simplejson/decoder.py: Removed.
+        * simplejson/encoder.py: Removed.
+        * simplejson/jsonfilter.py: Removed.
+        * simplejson/scanner.py: Removed.
+
+2010-02-20  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Moved BeautifulSoup to webkitpy/thirdparty directory.
 
         https://bugs.webkit.org/show_bug.cgi?id=35195
