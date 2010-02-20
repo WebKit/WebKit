@@ -160,24 +160,7 @@ static gboolean statusWillBeHandledBySoup(guint statusCode)
 
 static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response)
 {
-    SoupMessageHeadersIter iter;
-    const char* name = 0;
-    const char* value = 0;
-    soup_message_headers_iter_init(&iter, msg->response_headers);
-    while (soup_message_headers_iter_next(&iter, &name, &value))
-        response->setHTTPHeaderField(name, value);
-
-    String contentType = soup_message_headers_get_one(msg->response_headers, "Content-Type");
-    response->setMimeType(extractMIMETypeFromMediaType(contentType));
-
-    char* uri = soup_uri_to_string(soup_message_get_uri(msg), false);
-    response->setURL(KURL(KURL(), uri));
-    g_free(uri);
-    response->setTextEncodingName(extractCharsetFromMediaType(contentType));
-    response->setExpectedContentLength(soup_message_headers_get_content_length(msg->response_headers));
-    response->setHTTPStatusCode(msg->status_code);
-    response->setHTTPStatusText(msg->reason_phrase);
-    response->setSuggestedFilename(filenameFromHTTPContentDisposition(response->httpHeaderField("Content-Disposition")));
+    response->updateFromSoupMessage(msg);
 }
 
 // Called each time the message is going to be sent again except the first time.
