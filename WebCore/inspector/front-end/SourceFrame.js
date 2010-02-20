@@ -454,11 +454,10 @@ WebInspector.SourceFrame.prototype = {
     _mouseMove: function(event)
     {
         // Pretend that nothing has happened.
-        if (this._hoverElement === event.target)
+        if (this._hoverElement === event.target || event.target.hasStyleClass("source-frame-eval-expression"))
             return;
 
         this._resetHoverTimer();
-
         // User has 500ms to reach the popup.
         if (this._popup) {
             var self = this;
@@ -483,7 +482,7 @@ WebInspector.SourceFrame.prototype = {
         } else if (!this._hoverElement.hasStyleClass("webkit-javascript-ident"))
             return;
 
-        const toolTipDelay = 1500;
+        const toolTipDelay = this._popup ? 600 : 1500;
         this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
     },
 
@@ -497,11 +496,22 @@ WebInspector.SourceFrame.prototype = {
 
     _hidePopup: function()
     {
-        if (this._popup) {
-            this._popup.hide();
-            delete this._popup;
-            InspectorBackend.releaseWrapperObjectGroup(0, this._popoverObjectGroup);
+        if (!this._popup)
+            return;
+
+        // Replace higlight element with its contents inplace.
+        var parentElement = this._popup.highlightElement.parentElement;
+        var child = this._popup.highlightElement.firstChild;
+        while (child) {
+            var nextSibling = child.nextSibling;
+            parentElement.insertBefore(child, this._popup.highlightElement);
+            child = nextSibling;
         }
+        parentElement.removeChild(this._popup.highlightElement);
+
+        this._popup.hide();
+        delete this._popup;
+        InspectorBackend.releaseWrapperObjectGroup(0, this._popoverObjectGroup);
     },
 
     _mouseHover: function(element)
@@ -515,27 +525,26 @@ WebInspector.SourceFrame.prototype = {
         if (!lineRow)
             return;
 
-        // Find text offset of the hovered node (iterate over text nodes until we hit ours).
-        var offset = 0;
-        var node = lineRow.lastChild.traverseNextTextNode(lineRow.lastChild);
-        while (node && node !== element.firstChild) {
-            offset += node.nodeValue.length;
-            node = node.traverseNextTextNode(lineRow.lastChild);
+        // Collect tokens belonging to evaluated exression.
+        var tokens = [ element ];
+        var token = element.previousSibling;
+        while (token && (token.className === "webkit-javascript-ident" || token.className === "webkit-javascript-keyword" || token.textContent.trim() === ".")) {
+            tokens.push(token);
+            token = token.previousSibling;
         }
+        tokens.reverse();
 
-        // Imagine that the line is "foo(A.B.C.D)" and we hit C. Following code goes through following steps:
-        // "foo(A.B.C" -> "C.B.A(oof" -> "C.B.A" -> "A.B.C" (target eval expression).
-        var lineNumber = lineRow.lineNumber;
-        var prefix = this._textModel.line(lineNumber).substring(0, offset + element.textContent.length);
-        var reversedPrefix = prefix.split("").reverse().join("");
-        var match = /[a-zA-Z\x80-\xFF\_$0-9.]+/.exec(reversedPrefix);
-        if (!match)
-            return;
-        var expression = match[0].split("").reverse().join("");
-        this._showPopup(element, expression);
+        // Wrap them with highlight element.
+        var parentElement = element.parentElement;
+        var nextElement = element.nextSibling;
+        var container = document.createElement("span");
+        for (var i = 0; i < tokens.length; ++i)
+            container.appendChild(tokens[i]);
+        parentElement.insertBefore(container, nextElement);
+        this._showPopup(container);
     },
 
-    _showPopup: function(element, expression)
+    _showPopup: function(element)
     {
         function killHidePopupTimer()
         {
@@ -547,20 +556,6 @@ WebInspector.SourceFrame.prototype = {
                 // Discard pending command.
                 this._resetHoverTimer();
             }
-        }
-
-        function showTextPopup(text)
-        {
-            if (!WebInspector.panels.scripts.paused)
-                return;
-
-            var popupContentElement = document.createElement("span");
-            popupContentElement.className = "monospace";
-            popupContentElement.style.whiteSpace = "pre";
-            popupContentElement.textContent = text;
-            this._popup = new WebInspector.Popover(popupContentElement);
-            this._popup.show(element);
-            popupContentElement.addEventListener("mousemove", killHidePopupTimer.bind(this), true);
         }
 
         function showObjectPopup(result)
@@ -595,6 +590,8 @@ WebInspector.SourceFrame.prototype = {
                 const popupHeight = 250;
                 this._popup.show(element, popupWidth, popupHeight);
             }
+            this._popup.highlightElement = element;
+            this._popup.highlightElement.addStyleClass("source-frame-eval-expression");
             popupContentElement.addEventListener("mousemove", killHidePopupTimer.bind(this), true);
         }
 
@@ -606,7 +603,7 @@ WebInspector.SourceFrame.prototype = {
                 return;
             showObjectPopup.call(this, result);
         }
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, this._popoverObjectGroup, evaluateCallback.bind(this));
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(element.textContent, false, this._popoverObjectGroup, evaluateCallback.bind(this));
     },
 
     _editBreakpointCondition: function(breakpoint)

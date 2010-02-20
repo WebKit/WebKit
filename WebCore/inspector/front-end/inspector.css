@@ -3824,11 +3824,17 @@ ol.breakpoint-list {
 }
 
 .source-frame-popover-tree {
-    border-top: 1px solid rgb(190, 190, 190);
+    border-top: 1px solid rgb(194, 194, 147);
     overflow: auto;
     position: absolute;
     top: 15px;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.source-frame-eval-expression {
+    border: 1px solid rgb(163, 41, 34);
+    margin: -1px;
+    background-color: rgb(255, 255, 194);
 }
