@@ -53,8 +53,13 @@ public:
     SoupMessage* toSoupMessage() const;
     void updateFromSoupMessage(SoupMessage* soupMessage);
 
+    SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
+    void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
+
 private:
     friend class ResourceResponseBase;
+
+    SoupMessageFlags m_soupFlags;
 
     void doUpdateResourceResponse()
     {
