@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2010 Apple, Inc.  All rights reserved.
  * Copyright 2009, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -199,27 +199,27 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
                 }
             }
 
-            // Now convert value to a string if the target type is a java.lang.string, and we're not
-            // converting from a Null.
-            if (!result.l && !strcmp(javaClassName, "java.lang.String")) {
-#ifdef CONVERT_NULL_TO_EMPTY_STRING
-                if (value->isNull()) {
-                    JNIEnv* env = getJNIEnv();
-                    jchar buf[2];
-                    jobject javaString = env->functions->NewString(env, buf, 0);
-                    result.l = javaString;
+            if (!result.l) {
+                // Convert value to a string if the target type is a java.lang.string, and we're not
+                // converting from a null.
+                if (!strcmp(javaClassName, "java.lang.String")) {
+                    if (!value.isNull()) {
+                        UString stringValue = value.toString(exec);
+                        JNIEnv* env = getJNIEnv();
+                        jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.data(), stringValue.size());
+                        result.l = javaString;
+                    }
+                // JS strings are converted to Java strings if argument type is Object.
+                } else if (!strcmp(javaClassName, "java.lang.Object")) {
+                    if (value.isString()) {
+                        UString stringValue = asString(value)->value(exec);
+                        JNIEnv* env = getJNIEnv();
+                        jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.data(), stringValue.size());
+                        result.l = javaString;
+                    }
                 } else
-#else
-                if (!value.isNull())
-#endif
-                {
-                    UString stringValue = value.toString(exec);
-                    JNIEnv* env = getJNIEnv();
-                    jobject javaString = env->functions->NewString(env, (const jchar *)stringValue.data(), stringValue.size());
-                    result.l = javaString;
-                }
-            } else if (!result.l)
-                bzero(&result, sizeof(jvalue)); // Handle it the same as a void case
+                    bzero(&result, sizeof(jvalue)); // Handle it the same as a void case
+            }
         }
         break;
 

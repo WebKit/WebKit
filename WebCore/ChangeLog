@@ -1,3 +1,15 @@
+2010-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9761
+        LiveConnect string conversion fails for java.lang.Object
+
+        Can't test Java in DRT (I wonder why).
+
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: (JSC::Bindings::convertValueToJValue):
+        Added the necessary conversion. Also, removed CONVERT_NULL_TO_EMPTY_STRING dead code.
+
 2010-02-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.
