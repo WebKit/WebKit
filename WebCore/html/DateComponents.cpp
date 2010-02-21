@@ -145,8 +145,8 @@ bool DateComponents::parseYear(const UChar* src, unsigned length, unsigned start
 static bool beforeGregorianStartDate(int year, int month, int monthDay)
 {
     return year < gregorianStartYear
-        || year == gregorianStartYear && month < gregorianStartMonth
-        || year == gregorianStartYear && month == gregorianStartMonth && monthDay < gregorianStartDay;
+        || (year == gregorianStartYear && month < gregorianStartMonth)
+        || (year == gregorianStartYear && month == gregorianStartMonth && monthDay < gregorianStartDay);
 }
 
 bool DateComponents::addDay(int dayDiff)

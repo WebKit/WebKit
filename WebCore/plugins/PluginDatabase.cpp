@@ -258,7 +258,7 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
                 String extension = filename.substring(extensionPos + 1);
 
                 String mimeTypeForExtension = MIMETypeForExtension(extension);
-                if (plugin = pluginForMIMEType(mimeTypeForExtension))
+                if ((plugin = pluginForMIMEType(mimeTypeForExtension)))
                     mimeType = mimeTypeForExtension;
             }
         }
