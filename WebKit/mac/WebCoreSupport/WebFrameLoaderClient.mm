@@ -1524,8 +1524,11 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
 
     WebView *webView = getWebView(m_webFrame.get());
     SEL selector = @selector(webView:plugInViewWithArguments:);
-    NSURL *URL = url;
 
+    Document* document = core(m_webFrame.get())->document();
+    NSURL *baseURL = document->baseURL();
+    NSURL *pluginURL = url;
+    
     if ([[webView UIDelegate] respondsToSelector:selector]) {
         NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:kit(paramNames)];
         NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -1533,7 +1536,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             kit(element), WebPlugInContainingElementKey,
-            URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
+            baseURL, WebPlugInBaseURLKey,
             nil];
 
         NSView *view = CallUIDelegate(webView, selector, arguments);
@@ -1555,7 +1558,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
         pluginPackage = [webView _pluginForMIMEType:mimeType];
     }
     
-    NSString *extension = [[URL path] pathExtension];
+    NSString *extension = [[pluginURL path] pathExtension];
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // don't allow proxy plug-in selection by file extension
     if (element->hasTagName(videoTag) || element->hasTagName(audioTag))
@@ -1573,8 +1576,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
 
     NSView *view = nil;
 
-    Document* document = core(m_webFrame.get())->document();
-    NSURL *baseURL = document->baseURL();
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
             view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, kit(paramNames), kit(paramValues), baseURL, kit(element), loadManually);
@@ -1584,7 +1585,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
                 initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                URL:URL
+                URL:pluginURL
                 baseURL:baseURL
                 MIMEType:MIMEType
                 attributeKeys:kit(paramNames)
@@ -1606,7 +1607,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
         if (!pluginPageURL.protocolInHTTPFamily())
             pluginPageURL = KURL();
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-            contentURL:URL pluginPageURL:pluginPageURL pluginName:[pluginPackage name] MIMEType:MIMEType];
+            contentURL:pluginURL pluginPageURL:pluginPageURL pluginName:[pluginPackage name] MIMEType:MIMEType];
         WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
             error:error DOMElement:kit(element)] autorelease];
         view = nullView;

@@ -1,3 +1,19 @@
+2010-02-21  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35215
+        <rdar://problem/7673157>
+        
+        The plugInViewWithArguments: API passes a dictionary of plugin arguments. One of the parameters
+        is WebPlugInBaseURLKey, which is a key that represents the base URL of the document containing
+        the plug-in's view. Instead of sending the base URL, code in  WebFrameLoaderClient::createPlugin
+        would incorrectly pass the source URL of the plug-in resource.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): When building the plug-in arguments dictionary, pass the
+        real base URL for the WebPlugInBaseURLKey key.
+
 2010-02-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.
