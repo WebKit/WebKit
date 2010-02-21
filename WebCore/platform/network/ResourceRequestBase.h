@@ -32,7 +32,6 @@
 #include "KURL.h"
 #include "HTTPHeaderMap.h"
 
-#include <memory>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -65,10 +64,10 @@ namespace WebCore {
             TargetIsMedia
         };
 
-        static std::auto_ptr<ResourceRequest> adopt(std::auto_ptr<CrossThreadResourceRequestData>);
+        static PassOwnPtr<ResourceRequest> adopt(PassOwnPtr<CrossThreadResourceRequestData>);
 
         // Gets a copy of the data suitable for passing to another thread.
-        std::auto_ptr<CrossThreadResourceRequestData> copyData() const;
+        PassOwnPtr<CrossThreadResourceRequestData> copyData() const;
 
         bool isNull() const;
         bool isEmpty() const;

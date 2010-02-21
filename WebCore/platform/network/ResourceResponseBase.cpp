@@ -85,9 +85,9 @@ ResourceResponseBase::ResourceResponseBase(const KURL& url, const String& mimeTy
 {
 }
 
-auto_ptr<ResourceResponse> ResourceResponseBase::adopt(auto_ptr<CrossThreadResourceResponseData> data)
+PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadResourceResponseData> data)
 {
-    auto_ptr<ResourceResponse> response(new ResourceResponse());
+    OwnPtr<ResourceResponse> response(new ResourceResponse());
     response->setURL(data->m_url);
     response->setMimeType(data->m_mimeType);
     response->setExpectedContentLength(data->m_expectedContentLength);
@@ -98,15 +98,15 @@ auto_ptr<ResourceResponse> ResourceResponseBase::adopt(auto_ptr<CrossThreadResou
     response->setHTTPStatusText(data->m_httpStatusText);
 
     response->lazyInit();
-    response->m_httpHeaderFields.adopt(std::auto_ptr<CrossThreadHTTPHeaderMapData>(data->m_httpHeaders.release()));
+    response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
     response->setLastModifiedDate(data->m_lastModifiedDate);
 
-    return response;
+    return response.release();
 }
 
-auto_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
+PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
 {
-    auto_ptr<CrossThreadResourceResponseData> data(new CrossThreadResourceResponseData());
+    OwnPtr<CrossThreadResourceResponseData> data(new CrossThreadResourceResponseData());
     data->m_url = url().copy();
     data->m_mimeType = mimeType().crossThreadString();
     data->m_expectedContentLength = expectedContentLength();
@@ -114,9 +114,9 @@ auto_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
     data->m_suggestedFilename = suggestedFilename().crossThreadString();
     data->m_httpStatusCode = httpStatusCode();
     data->m_httpStatusText = httpStatusText().crossThreadString();
-    data->m_httpHeaders.adopt(httpHeaderFields().copyData());
+    data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_lastModifiedDate = lastModifiedDate();
-    return data;
+    return data.release();
 }
 
 bool ResourceResponseBase::isHTTP() const

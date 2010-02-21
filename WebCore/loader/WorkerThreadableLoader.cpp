@@ -42,7 +42,6 @@
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
-#include <memory>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -101,7 +100,7 @@ WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 {
 }
 
-void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, auto_ptr<CrossThreadResourceRequestData> requestData, ThreadableLoaderOptions options)
+void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, PassOwnPtr<CrossThreadResourceRequestData> requestData, ThreadableLoaderOptions options)
 {
     ASSERT(isMainThread());
     ASSERT(context->isDocument());
@@ -174,7 +173,7 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent), m_taskMode);
 }
 
-static void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
+static void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<CrossThreadResourceResponseData> responseData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));
@@ -186,7 +185,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(const Resource
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response), m_taskMode);
 }
 
-static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<Vector<char> > vectorData)
+static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<Vector<char> > vectorData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     workerClientWrapper->didReceiveData(vectorData->data(), vectorData->size());
@@ -194,9 +193,9 @@ static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, int lengthReceived)
 {
-    auto_ptr<Vector<char> > vector(new Vector<char>(lengthReceived)); // needs to be an auto_ptr for usage with createCallbackTask.
+    OwnPtr<Vector<char> > vector(new Vector<char>(lengthReceived)); // needs to be an OwnPtr for usage with createCallbackTask.
     memcpy(vector->data(), data, lengthReceived);
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector.release()), m_taskMode);
 }
 
 static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier)
@@ -232,7 +231,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
 }
 
-static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
+static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<CrossThreadResourceResponseData> responseData)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));

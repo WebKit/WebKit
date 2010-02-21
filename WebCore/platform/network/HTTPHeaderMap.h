@@ -30,9 +30,9 @@
 #include "AtomicString.h"
 #include "AtomicStringHash.h"
 #include "StringHash.h"
-#include <memory>
 #include <utility>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -42,9 +42,9 @@ namespace WebCore {
     class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {
     public:
         // Gets a copy of the data suitable for passing to another thread.
-        std::auto_ptr<CrossThreadHTTPHeaderMapData> copyData() const;
+        PassOwnPtr<CrossThreadHTTPHeaderMapData> copyData() const;
 
-        void adopt(std::auto_ptr<CrossThreadHTTPHeaderMapData>);
+        void adopt(PassOwnPtr<CrossThreadHTTPHeaderMapData>);
         
         String get(const AtomicString& name) const
         {

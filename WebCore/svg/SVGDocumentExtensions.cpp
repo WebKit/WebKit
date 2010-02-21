@@ -135,13 +135,13 @@ bool SVGDocumentExtensions::isPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-std::auto_ptr<HashSet<SVGStyledElement*> > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+PassOwnPtr<HashSet<SVGStyledElement*> > SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
 
-    std::auto_ptr<HashSet<SVGStyledElement*> > set(m_pendingResources.get(id));
+    OwnPtr<HashSet<SVGStyledElement*> > set(m_pendingResources.get(id));
     m_pendingResources.remove(id);
-    return set;
+    return set.release();
 }
 
 }

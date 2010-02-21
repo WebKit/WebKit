@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+
 #include "ResourceRequestBase.h"
 #include "ResourceRequest.h"
 
@@ -36,9 +37,9 @@ inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
     return *static_cast<const ResourceRequest*>(this);
 }
 
-auto_ptr<ResourceRequest> ResourceRequestBase::adopt(auto_ptr<CrossThreadResourceRequestData> data)
+PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadResourceRequestData> data)
 {
-    auto_ptr<ResourceRequest> request(new ResourceRequest());
+    OwnPtr<ResourceRequest> request(new ResourceRequest());
     request->setURL(data->m_url);
     request->setCachePolicy(data->m_cachePolicy);
     request->setTimeoutInterval(data->m_timeoutInterval);
@@ -46,7 +47,7 @@ auto_ptr<ResourceRequest> ResourceRequestBase::adopt(auto_ptr<CrossThreadResourc
     request->setHTTPMethod(data->m_httpMethod);
 
     request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(auto_ptr<CrossThreadHTTPHeaderMapData>(data->m_httpHeaders.release()));
+    request->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
 
     size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
@@ -63,18 +64,18 @@ auto_ptr<ResourceRequest> ResourceRequestBase::adopt(auto_ptr<CrossThreadResourc
     }
     request->setHTTPBody(data->m_httpBody);
     request->setAllowCookies(data->m_allowCookies);
-    return request;
+    return request.release();
 }
 
-auto_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
+PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
 {
-    auto_ptr<CrossThreadResourceRequestData> data(new CrossThreadResourceRequestData());
+    OwnPtr<CrossThreadResourceRequestData> data(new CrossThreadResourceRequestData());
     data->m_url = url().copy();
     data->m_cachePolicy = cachePolicy();
     data->m_timeoutInterval = timeoutInterval();
     data->m_firstPartyForCookies = firstPartyForCookies().copy();
     data->m_httpMethod = httpMethod().crossThreadString();
-    data->m_httpHeaders.adopt(httpHeaderFields().copyData());
+    data->m_httpHeaders = httpHeaderFields().copyData();
 
     data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
@@ -84,7 +85,7 @@ auto_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     if (m_httpBody)
         data->m_httpBody = m_httpBody->deepCopy();
     data->m_allowCookies = m_allowCookies;
-    return data;
+    return data.release();
 }
 
 bool ResourceRequestBase::isEmpty() const

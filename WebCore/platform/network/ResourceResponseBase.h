@@ -30,7 +30,7 @@
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
 
-#include <memory>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -40,10 +40,10 @@ struct CrossThreadResourceResponseData;
 // Do not use this class directly, use the class ResponseResponse instead
 class ResourceResponseBase : public FastAllocBase {
 public:
-    static std::auto_ptr<ResourceResponse> adopt(std::auto_ptr<CrossThreadResourceResponseData>);
+    static PassOwnPtr<ResourceResponse> adopt(PassOwnPtr<CrossThreadResourceResponseData>);
 
     // Gets a copy of the data suitable for passing to another thread.
-    std::auto_ptr<CrossThreadResourceResponseData> copyData() const;
+    PassOwnPtr<CrossThreadResourceResponseData> copyData() const;
 
     bool isNull() const { return m_isNull; }
     bool isHTTP() const;

@@ -49,9 +49,9 @@ IconLoader::IconLoader(Frame* frame)
 {
 }
 
-auto_ptr<IconLoader> IconLoader::create(Frame* frame)
+PassOwnPtr<IconLoader> IconLoader::create(Frame* frame)
 {
-    return auto_ptr<IconLoader>(new IconLoader(frame));
+    return new IconLoader(frame);
 }
 
 IconLoader::~IconLoader()

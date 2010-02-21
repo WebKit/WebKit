@@ -38,7 +38,7 @@
 #include "ThreadableLoaderClient.h"
 #include "ThreadableLoaderClientWrapper.h"
 
-#include <memory>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -109,7 +109,7 @@ namespace WebCore {
             static void mainThreadDestroy(ScriptExecutionContext*, MainThreadBridge*);
             ~MainThreadBridge();
 
-            static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, std::auto_ptr<CrossThreadResourceRequestData>, ThreadableLoaderOptions);
+            static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, PassOwnPtr<CrossThreadResourceRequestData>, ThreadableLoaderOptions);
             static void mainThreadCancel(ScriptExecutionContext*, MainThreadBridge*);
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
             virtual void didReceiveResponse(const ResourceResponse&);

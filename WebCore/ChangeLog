@@ -1,3 +1,55 @@
+2010-02-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove auto_ptr usage in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=35157
+
+        The changes consists of:
+
+        - Changing auto_ptr arguments or return types to PassOwnPtr.
+
+        - Replacing local auto_ptr by OwnPtr.
+
+        - Removing now unneeded <memory> inclusion.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        (WebCore::workerContextDidReceiveResponse):
+        (WebCore::workerContextDidReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::workerContextDidReceiveAuthenticationCancellation):
+        * loader/WorkerThreadableLoader.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::create):
+        * loader/icon/IconLoader.h:
+        * platform/ContextMenu.cpp:
+        (WebCore::separatorItem):
+        * platform/CrossThreadCopier.h:
+        (WebCore::):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        (WebCore::HTTPHeaderMap::adopt):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/network/ResourceResponseBase.h:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument):
+        * workers/GenericWorkerTask.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+
 2010-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

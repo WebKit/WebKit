@@ -58,9 +58,9 @@ unsigned WorkerThread::workerThreadCount()
 
 struct WorkerThreadStartupData : Noncopyable {
 public:
-    static std::auto_ptr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
+    static PassOwnPtr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
     {
-        return std::auto_ptr<WorkerThreadStartupData>(new WorkerThreadStartupData(scriptURL, userAgent, sourceCode));
+        return new WorkerThreadStartupData(scriptURL, userAgent, sourceCode);
     }
 
     KURL m_scriptURL;

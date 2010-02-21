@@ -31,7 +31,6 @@
 #ifndef CrossThreadCopier_h
 #define CrossThreadCopier_h
 
-#include <memory>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -88,14 +87,6 @@ namespace WebCore {
         }
     };
 
-    template<typename T> struct CrossThreadCopierBase<false, false, std::auto_ptr<T> > {
-        typedef std::auto_ptr<T> Type;
-        static Type copy(const std::auto_ptr<T>& autoPtr)
-        {
-            return std::auto_ptr<T>(*const_cast<std::auto_ptr<T>*>(&autoPtr));
-        }
-    };
-
     template<> struct CrossThreadCopierBase<false, false, KURL> {
         typedef KURL Type;
         static Type copy(const KURL&);
@@ -112,12 +103,12 @@ namespace WebCore {
     };
 
     template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
-        typedef std::auto_ptr<CrossThreadResourceRequestData> Type;
+        typedef PassOwnPtr<CrossThreadResourceRequestData> Type;
         static Type copy(const ResourceRequest&);
     };
 
     template<> struct CrossThreadCopierBase<false, false, ResourceResponse> {
-        typedef std::auto_ptr<CrossThreadResourceResponseData> Type;
+        typedef PassOwnPtr<CrossThreadResourceResponseData> Type;
         static Type copy(const ResourceResponse&);
     };
 
