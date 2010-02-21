@@ -1,3 +1,13 @@
+2010-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add sunspider-0.9.1 to the site in preparation for announcing it.
+        https://bugs.webkit.org/show_bug.cgi?id=35206
+
+        * hosted/sunspider.css: Remove tabs, which I noticed where present while
+        copying to the WebKitSite directory.
+
 2010-01-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

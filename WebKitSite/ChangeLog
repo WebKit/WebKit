@@ -1,3 +1,28 @@
+2010-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam Barth.
+
+        Add sunspider-0.9.1 to the site in preparation for announcing it.
+        https://bugs.webkit.org/show_bug.cgi?id=35206
+
+        * perf/sunspider-0.9.1: Added.
+        * perf/sunspider-0.9.1/json2.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/driver.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/results.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/sunspider-test-contents.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/driver.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/results.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/sunspider-test-contents.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9.1/sunspider-analyze-results.js: Added.
+        * perf/sunspider-0.9.1/sunspider-compare-results.js: Added.
+        * perf/sunspider-0.9.1/sunspider.css: Added.
+        * perf/sunspider-0.9.1/sunspider.html: Added.
+        * perf/sunspider-0.9.1/versions.html: Added.
+
 2010-02-17  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed - demo.
