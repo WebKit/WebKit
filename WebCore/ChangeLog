@@ -1,3 +1,22 @@
+2010-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22215
+        Avoid calling absoluteClippedOverflowRect() so many times
+
+        RenderLayer::updateLayerPositions() computes the clipped overflow rect
+        and the outline bounds for repaint, and then calls repaintAfterLayoutIfNeeded()
+        which can compute the same rects all over again. Avoid this by passing
+        these two rects into repaintAfterLayoutIfNeeded() if known. This measurably
+        reduces the time spent in updateLayerPositions() for some content.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderObject.h:
+
 2010-02-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.
