@@ -1292,11 +1292,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // There are known cases where -viewWillDraw is not called on all views being drawn.
     // See <rdar://problem/6964278> for example. Performing layout at this point prevents us from
     // trying to paint without layout (which WebCore now refuses to do, instead bailing out without
-    // drawing at all), but we may still fail to update and regions dirtied by the layout which are
+    // drawing at all), but we may still fail to update any regions dirtied by the layout which are
     // not already dirty. 
     if ([self _needsLayout]) {
-        LOG_ERROR("View needs layout. Either -viewWillDraw wasn't called or layout was invalidated during the display operation. Performing layout now.");
-        [self _web_layoutIfNeededRecursive];
+        NSInteger rectCount;
+        [self getRectsBeingDrawn:0 count:&rectCount];
+        if (rectCount) {
+            LOG_ERROR("View needs layout. Either -viewWillDraw wasn't called or layout was invalidated during the display operation. Performing layout now.");
+            [self _web_layoutIfNeededRecursive];
+        }
     }
 #else
     // Because Tiger does not have viewWillDraw we need to do layout here.

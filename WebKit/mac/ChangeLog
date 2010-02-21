@@ -1,7 +1,21 @@
+2010-02-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        False warnings about needing layout in
+        -[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]
+        https://bugs.webkit.org/show_bug.cgi?id=35218
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        Suppress the warning and the forced layout if the view is not being drawn
+        in this display operation.
+
 2010-02-21  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Sam Weinig.
 
+        plugInViewWithArguments: API sends wrong parameter for WebPlugInBaseURLKey
         https://bugs.webkit.org/show_bug.cgi?id=35215
         <rdar://problem/7673157>
         
