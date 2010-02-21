@@ -1,3 +1,13 @@
+2010-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35202
+        <rdar://problem/4856597> Calling Java method which accepts Object always passes a null argument
+
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: (JSC::Bindings::convertValueToJValue): Add cases for
+        other JS types.
+
 2010-02-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
