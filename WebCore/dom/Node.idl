@@ -21,6 +21,7 @@
 module core {
 
     interface [
+        CustomHeader,
         CustomMarkFunction,
         CustomPushEventHandlerScope,
         CustomToJS,

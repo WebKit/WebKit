@@ -1,3 +1,45 @@
+2010-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cache JavaScript wrappers inline in DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=35226
+        <rdar://problem/7664202>
+
+        8.8% speedup on Dromaeo DOM Core tests.
+        3.3% speedup on Hixie DOM Core tests.
+        
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::forgetDOMNode): Clear wrapper pointer.
+        (WebCore::cacheDOMNodeWrapper): Cache inline too if caching for normal world.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWrapperMapFor): 
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): Remove unneeded argument from getCachedDOMNodeWrapper.
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline): Renamed version of original createWrapper.
+        (WebCore::createWrapper): Call createWrapperInline. Out-of-line version.
+        (WebCore::toJSNewlyCreated): Call createWrapperInline instead of createWrapper.
+        * bindings/js/JSNodeCustom.h: Added.
+        (WebCore::getCachedDOMNodeWrapper): Moved here so it can be inlined.
+        (WebCore::toJS): Moved here so it can be inlined.
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::ScriptWrappable): Implement this in the obvious
+        way for JavaScriptCore.
+        (WebCore::ScriptWrappable::wrapper):
+        (WebCore::ScriptWrappable::setWrapper):
+        (WebCore::ScriptWrappable::clearWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm: Include CustomHeader heaaders
+        in the header, not just the impl file, so they can add inlining.
+        * dom/Node.idl: Add CustomHeader directive.
+        
+        Add new files to build.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2010-02-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: windows build fix.

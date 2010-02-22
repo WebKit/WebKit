@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,7 +172,7 @@ void JSNode::markChildren(MarkStack& markStack)
         markDOMNodeWrapper(markStack, m_impl->document(), nodeToMark);
 }
 
-static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
+static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     ASSERT(node);
     ASSERT(!getCachedDOMNodeWrapper(exec, node->document(), node));
@@ -228,25 +228,18 @@ static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* g
 
     return wrapper;    
 }
+
+JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
+{
+    return createWrapperInline(exec, globalObject, node);
+}
     
 JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     if (!node)
         return jsNull();
     
-    return createWrapper(exec, globalObject, node);
-}
-    
-JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
-{
-    if (!node)
-        return jsNull();
-
-    JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node);
-    if (wrapper)
-        return wrapper;
-
-    return createWrapper(exec, globalObject, node);
+    return createWrapperInline(exec, globalObject, node);
 }
 
 } // namespace WebCore

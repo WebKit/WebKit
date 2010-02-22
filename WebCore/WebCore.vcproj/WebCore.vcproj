@@ -38080,6 +38080,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSNodeCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSNodeFilterCondition.cpp"
 					>
 					<FileConfiguration

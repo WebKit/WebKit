@@ -437,6 +437,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	WebCore/bindings/js/JSNavigatorCustom.cpp \
 	WebCore/bindings/js/JSNodeCustom.cpp \
+	WebCore/bindings/js/JSNodeCustom.h \
 	WebCore/bindings/js/JSNodeFilterCondition.cpp \
 	WebCore/bindings/js/JSNodeFilterCondition.h \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \

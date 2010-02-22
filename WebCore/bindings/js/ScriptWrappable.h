@@ -33,9 +33,27 @@
 
 namespace WebCore {
 
+class DOMObject;
+
 class ScriptWrappable {
 public:
-    ScriptWrappable() { }
+    ScriptWrappable() : m_wrapper() { }
+    
+    DOMObject* wrapper() const
+    {
+        return m_wrapper;
+    }
+    
+    void setWrapper(DOMObject* wrapper)
+    {
+        ASSERT(wrapper);
+        m_wrapper = wrapper;
+    }
+    
+    void clearWrapper() { m_wrapper = 0; }
+    
+private:
+    DOMObject* m_wrapper;
 };
 
 } // namespace WebCore
