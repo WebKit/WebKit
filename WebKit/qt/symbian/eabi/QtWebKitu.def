@@ -698,4 +698,18 @@ EXPORTS
 	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME
 	_ZN16QGraphicsWebView20setResizesToContentsEb @ 698 NONAME
 	_ZNK16QGraphicsWebView17resizesToContentsEv @ 699 NONAME
+	_Z20qt_drt_numberOfPagesP9QWebFrameff @ 700 NONAME
+	_Z24qt_drt_pauseSVGAnimationP9QWebFrameRK7QStringdS3_ @ 701 NONAME
+	_Z24qt_drt_webinspector_showP8QWebPage @ 702 NONAME
+	_Z24qt_drt_workerThreadCountv @ 703 NONAME
+	_Z25qt_drt_hasDocumentElementP9QWebFrame @ 704 NONAME
+	_Z25qt_drt_webinspector_closeP8QWebPage @ 705 NONAME
+	_Z31qt_drt_pageNumberForElementByIdP9QWebFrameRK7QStringff @ 706 NONAME
+	_Z33qt_drt_webinspector_executeScriptP8QWebPagelRK7QString @ 707 NONAME
+	_Z34qt_drt_setTimelineProfilingEnabledP8QWebPageb @ 708 NONAME
+	_Z35qt_drt_setFrameSetFlatteningEnabledP8QWebPageb @ 709 NONAME
+	_Z36qt_drt_evaluateScriptInIsolatedWorldP9QWebFrameiRK7QString @ 710 NONAME
+	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME
+	_ZN9QWebFrame11pageChangedEv @ 712 NONAME
+	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
 
