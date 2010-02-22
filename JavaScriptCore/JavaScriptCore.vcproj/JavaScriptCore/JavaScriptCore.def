@@ -245,7 +245,6 @@ EXPORTS
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
-    ?sharedBuffer@UStringImpl@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
