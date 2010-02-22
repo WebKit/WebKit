@@ -1,3 +1,15 @@
+2010-02-19  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Avoid recursion when trying to get the size of a PNG; it's unnecessary
+        and in the worst case can lead to heap corruption.
+        https://bugs.webkit.org/show_bug.cgi?id=35167
+
+        * fast/images/bad-png-expected.txt: Added.
+        * fast/images/bad-png.html: Added.
+        * fast/images/resources/bad-png.png: Added.
+
 2010-02-22  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Alexey Proskuryakov.

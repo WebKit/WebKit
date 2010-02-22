@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <script>
+      if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    </script>
+
+   </head>
+   <body>
+     <!-- This previously tried to recursively decode the PNG, leading to heap
+          corruption when trying to unwind the stack through a member of a
+          destroyed object. -->
+     <img src="resources/bad-png.png">
+     <p>PASS</p>
+   </body>
+ </html>

@@ -140,7 +140,10 @@ public:
             m_readOffset += segmentLength;
             m_currentBufferSize = m_readOffset;
             png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(segment)), segmentLength);
-            if ((sizeOnly && decoder->isSizeAvailable()) || m_hasFinishedDecoding)
+            // We explicitly specify the superclass isSizeAvailable() because we
+            // merely want to check if we've managed to set the size, not
+            // (recursively) trigger additional decoding if we haven't.
+            if ((sizeOnly && decoder->ImageDecoder::isSizeAvailable()) || m_hasFinishedDecoding)
                 return;
         }
         if (!m_hasFinishedDecoding && decoder->isAllDataReceived())

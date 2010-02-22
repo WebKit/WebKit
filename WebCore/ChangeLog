@@ -1,3 +1,16 @@
+2010-02-19  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Avoid recursion when trying to get the size of a PNG; it's unnecessary
+        and in the worst case can lead to heap corruption.
+        https://bugs.webkit.org/show_bug.cgi?id=35167
+
+        Test: fast/images/bad-png.html
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+
 2010-02-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.
