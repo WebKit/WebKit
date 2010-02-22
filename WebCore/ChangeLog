@@ -1,5 +1,17 @@
 2010-02-22  Steve Block  <steveblock@google.com>
 
+        Reviewed by Nate Chapin.
+
+        Shared worker types used in globalObjectPrototypeIsDOMWindow are not properly guarded
+        https://bugs.webkit.org/show_bug.cgi?id=35238
+
+        No new tests, build fix only.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::globalObjectPrototypeIsDOMWindow):
+
+2010-02-22  Steve Block  <steveblock@google.com>
+
         Reviewed by Simon Fraser.
 
         Simplifies calculation of the transform in RenderLayer::paintLayer
