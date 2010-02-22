@@ -87,6 +87,13 @@ void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect)
 
 void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow)
 {
+    // Bail out if this index is already the selected one, to avoid running unnecessary JavaScript that can mess up
+    // autofill, when there is no actual change (see https://bugs.webkit.org/show_bug.cgi?id=35256 and rdar://7467917 ).
+    // Perhaps this logic could be moved into SelectElement, but some callers of SelectElement::setSelectedIndex()
+    // seem to expect it to fire its change event even when the index was already selected.
+    if (optionIndex == selectedIndex())
+        return;
+    
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, fireOnChangeNow, true);
 }
 

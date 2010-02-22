@@ -1,3 +1,16 @@
+2010-02-22  John Sullivan  <sullivan@apple.com>
+        
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35256
+        HTMLSelectElement::setSelectedIndexByUser() can trigger unnecessary JS when there is no change to the selected index
+
+        No new tests because this code path is not used for JS-initiated changes.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser):
+        Bail out if the to-be-selected index matches the already-selected index.
+
 2010-02-22  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dan Bernstein.
