@@ -569,8 +569,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
         root = box->root()->prevRootBox();
-        if (root)
+        // We want to skip zero height boxes.
+        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        if (root && root->height())
             containingBlock = renderer->containingBlock();
+        else
+            root = 0;
     }
 
     if (!root) {
@@ -671,8 +675,12 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
         root = box->root()->nextRootBox();
-        if (root)
+        // We want to skip zero height boxes.
+        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        if (root && root->height())
             containingBlock = renderer->containingBlock();
+        else
+            root = 0;
     }
 
     if (!root) {

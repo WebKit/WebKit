@@ -1,3 +1,14 @@
+2010-02-22  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Reproducible crash in WebCore::nextLinePosition on Tweeteorites.com
+        <rdar://problem/7615758>
+        https://bugs.webkit.org/show_bug.cgi?id=35060
+
+        * editing/selection/extend-byline-withfloat-expected.txt: Added.
+        * editing/selection/extend-byline-withfloat.html: Added.
+
 2010-02-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
