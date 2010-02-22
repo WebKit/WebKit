@@ -2794,7 +2794,7 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
     case SliderRole:
         return true;
     default:
-        return false;
+        return node->supportsFocus();
     }
 }
     

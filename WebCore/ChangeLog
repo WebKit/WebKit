@@ -1,3 +1,15 @@
+2010-02-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: AXFocused is not writable like it should be on nodes
+        https://bugs.webkit.org/show_bug.cgi?id=35186
+
+        Test: platform/mac/accessibility/element-focus.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+
 2010-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein, Darin Adler.
