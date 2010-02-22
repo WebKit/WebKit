@@ -1,3 +1,19 @@
+2010-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Make UString::m_data be const, and make the UChar owned/ref-counted by CrossThreadRefCounted be const too.
+
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::baseSharedBuffer):
+        (JSC::UStringImpl::~UStringImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::create):
+        (JSC::UStringImpl::data):
+        (JSC::UStringImpl::UStringImpl):
+        * wtf/OwnFastMallocPtr.h:
+        (WTF::OwnFastMallocPtr::~OwnFastMallocPtr):
+
 2010-02-21  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.

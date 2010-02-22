@@ -1031,7 +1031,7 @@ StringImpl::SharedUChar* StringImpl::sharedBuffer()
 
     if (ownership == BufferOwned) {
         ASSERT(!m_sharedBuffer);
-        m_sharedBuffer = SharedUChar::create(new OwnFastMallocPtr<UChar>(const_cast<UChar*>(m_data))).releaseRef();
+        m_sharedBuffer = SharedUChar::create(new SharableUChar(const_cast<UChar*>(m_data))).releaseRef();
         m_refCountAndFlags = (m_refCountAndFlags & ~s_refCountMaskBufferOwnership) | BufferShared;
     }
 

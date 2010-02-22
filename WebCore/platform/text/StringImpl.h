@@ -71,7 +71,8 @@ private:
         BufferShared,
     };
 
-    typedef CrossThreadRefCounted<OwnFastMallocPtr<UChar> > SharedUChar;
+    typedef OwnFastMallocPtr<const UChar> SharableUChar;
+    typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 
     // Used to create the empty string (""), automatically hashes.
     StringImpl();

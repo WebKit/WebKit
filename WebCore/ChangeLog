@@ -1,3 +1,13 @@
+2010-02-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Make the UChar owned/ref-counted by StringImpl::CrossThreadRefCounted be const.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::sharedBuffer):
+        * platform/text/StringImpl.h:
+
 2010-02-07  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.

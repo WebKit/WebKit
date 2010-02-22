@@ -35,7 +35,7 @@ namespace WTF {
 
         ~OwnFastMallocPtr()
         {
-            fastFree(m_ptr);
+            fastFree(const_cast<void*>(static_cast<const void*>(const_cast<const T*>(m_ptr))));
         }
 
         T* get() const { return m_ptr; }
