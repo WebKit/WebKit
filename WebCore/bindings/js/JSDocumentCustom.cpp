@@ -96,7 +96,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     if (!document)
         return jsNull();
 
-    DOMObject* wrapper = getCachedDOMNodeWrapper(exec, document);
+    DOMObject* wrapper = getCachedDOMNodeWrapper(exec, document, document);
     if (wrapper)
         return wrapper;
 

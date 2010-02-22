@@ -32,7 +32,6 @@ my $writeDependencies = 0;
 my @headerContentHeader = ();
 my @headerContent = ();
 my %headerIncludes = ();
-my %headerTrailingIncludes = ();
 
 my @implContentHeader = ();
 my @implContent = ();
@@ -552,9 +551,7 @@ sub GenerateHeader
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
-    $headerTrailingIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"};
-
-    $implIncludes{"${className}Custom.h"} = 1 if !$dataNode->extendedAttributes->{"CustomHeader"} && ($dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"DelegatingPutFunction"});
+    $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"DelegatingPutFunction"};
 
     my $hasGetter = $numAttributes > 0 
                  || !($dataNode->extendedAttributes->{"OmitConstructor"}
@@ -2249,23 +2246,12 @@ sub WriteData
         }
 
         print $HEADER @headerContent;
-
-        @includes = ();
-        foreach my $include (keys %headerTrailingIncludes) {
-            $include = "\"$include\"" unless $include =~ /^["<]/; # "
-            push @includes, $include;
-        }
-        foreach my $include (sort @includes) {
-            print $HEADER "#include $include\n";
-        }
-
         close($HEADER);
         undef($HEADER);
 
         @headerContentHeader = ();
         @headerContent = ();
         %headerIncludes = ();
-        %headerTrailingIncludes = ();
     }
 
     if (defined($DEPS)) {

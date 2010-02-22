@@ -568,7 +568,6 @@
             'bindings/js/JSNamedNodesCollection.h',
             'bindings/js/JSNavigatorCustom.cpp',
             'bindings/js/JSNodeCustom.cpp',
-            'bindings/js/JSNodeCustom.h',
             'bindings/js/JSNodeFilterCondition.cpp',
             'bindings/js/JSNodeFilterCondition.h',
             'bindings/js/JSNodeFilterCustom.cpp',
