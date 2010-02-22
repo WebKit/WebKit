@@ -326,9 +326,14 @@ void WebInspectorClient::inspectorWindowObjectCleared()
 
     _visible = YES;
     
-    // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-    String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
-    _shouldAttach = shouldAttach != "false";
+    if (![_inspectedWebView page]->inspectorController()->canAttachWindow())
+        _shouldAttach = NO;
+    
+    if (_shouldAttach) {
+        // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
+        String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
+        _shouldAttach = shouldAttach != "false";
+    }
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];

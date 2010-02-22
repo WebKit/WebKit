@@ -1,3 +1,14 @@
+2010-02-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Disable WebView docking to views that are too small.
+        <rdar://problem/7248409> and https://bugs.webkit.org/show_bug.cgi?id=35254
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWindow:]): No matter the preference, don't open the inspector 
+          window attached if WebCore says it shouldn't be attached.
+
 2010-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by John Sullivan.

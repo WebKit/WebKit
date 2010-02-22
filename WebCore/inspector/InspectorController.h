@@ -143,6 +143,7 @@ public:
     void clearConsoleMessages();
     const Vector<ConsoleMessage*>& consoleMessages() const { return m_consoleMessages; }
 
+    bool canAttachWindow() const;
     void attachWindow();
     void detachWindow();
 

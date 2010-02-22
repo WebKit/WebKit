@@ -1,3 +1,17 @@
+2010-02-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Disable WebView docking to views that are too small.
+        <rdar://problem/7248409> and https://bugs.webkit.org/show_bug.cgi?id=35254
+
+        * WebCore.base.exp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::canAttachWindow): Provide a utility for WebKits to make a showWindow()
+          decision based on if attachment would be allowed or not.
+        (WebCore::InspectorController::attachWindow): Don't attach if the view is too small to attach to.
+        * inspector/InspectorController.h:
+
 2010-02-22  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
