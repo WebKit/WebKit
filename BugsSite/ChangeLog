@@ -1,3 +1,18 @@
+2010-02-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Don't reset the assignee back to default on component change
+
+        https://bugs.webkit.org/show_bug.cgi?id=35236
+
+        There's a risk of reseting a valid assignee for example when
+        triaging a bug. All components in WebKit have the default 
+        assignee set to webkit-unassigned@webkit.org so this should
+        not cause problems for people relying on this functionality.
+
+        * template/en/custom/bug/edit.html.tmpl:
+
 2010-01-22  Janusz Lewandowski  <lew21@xtreeme.org>
 
         Reviewed by Maciej Stachowiak.
