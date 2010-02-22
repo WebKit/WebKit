@@ -66,6 +66,7 @@
 #include "V8WebSocket.h"
 #include "V8Worker.h"
 #include "V8WorkerContext.h"
+#include "V8WorkerContextEventListener.h"
 #include "V8XMLHttpRequest.h"
 #include "WebGLArray.h"
 #include "WebGLContextAttributes.h"
@@ -464,89 +465,21 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
     return notHandledByInterceptor();
 }
 
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(Node* node, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
+PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
 {
-    return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-}
-
-#if ENABLE(SVG)
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(SVGElementInstance* element, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    return getEventListener(element->correspondingElement(), value, isAttribute, lookup);
-}
-#endif
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(AbstractWorker* worker, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    if (worker->scriptExecutionContext()->isWorkerContext()) {
-        WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-        ASSERT(workerContextProxy);
-        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
-    }
-
-    return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-}
-
-#if ENABLE(NOTIFICATIONS)
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(Notification* notification, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    if (notification->scriptExecutionContext()->isWorkerContext()) {
-        WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-        ASSERT(workerContextProxy);
-        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
-    }
-
-    return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-}
-#endif
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(WorkerContext* workerContext, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    WorkerContextExecutionProxy* workerContextProxy = workerContext->script()->proxy();
-    if (workerContextProxy)
-        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
-
-    return 0;
-}
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(XMLHttpRequestUpload* upload, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    return getEventListener(upload->associatedXMLHttpRequest(), value, isAttribute, lookup);
-}
-
-#if ENABLE(EVENTSOURCE)
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(EventSource* eventSource, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    if (V8Proxy::retrieve(eventSource->scriptExecutionContext()))
-        return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context.IsEmpty())
+        return 0;
+    if (lookup == ListenerFindOnly)
+        return V8EventListenerList::findWrapper(value, isAttribute);
+    v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
+    if (globalObjectPrototypeIsDOMWindow(globalPrototype))
+        return V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
 #if ENABLE(WORKERS)
-    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-    if (workerContextProxy)
-        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
-#endif
-
+    return V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(value, isAttribute);
+#else
     return 0;
-}
 #endif
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(EventTarget* eventTarget, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    if (V8Proxy::retrieve(eventTarget->scriptExecutionContext()))
-        return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
-
-#if ENABLE(WORKERS)
-    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
-    if (workerContextProxy)
-        return workerContextProxy->findOrCreateEventListener(value, isAttribute, lookup == ListenerFindOnly);
-#endif
-
-    return 0;
-}
-
-PassRefPtr<EventListener> V8DOMWrapper::getEventListener(V8Proxy* proxy, v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)
-{
-    return (lookup == ListenerFindOnly) ? V8EventListenerList::findWrapper(value, isAttribute) : V8EventListenerList::findOrCreateWrapper<V8EventListener>(value, isAttribute);
 }
 
 }  // namespace WebCore

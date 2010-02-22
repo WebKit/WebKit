@@ -35,7 +35,6 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptValue.h"
-#include "V8EventListenerList.h"
 #include "V8Index.h"
 #include <v8.h>
 #include <wtf/OwnPtr.h>
@@ -45,8 +44,6 @@ namespace WebCore {
 
     class Event;
     class EventTarget;
-    class V8EventListener;
-    class V8WorkerContextEventListener;
     class WorkerContext;
 
     struct WorkerContextExecutionState {
@@ -63,9 +60,6 @@ namespace WebCore {
     public:
         WorkerContextExecutionProxy(WorkerContext*);
         ~WorkerContextExecutionProxy();
-
-        // Finds/creates event listener wrappers.
-        PassRefPtr<V8EventListener> findOrCreateEventListener(v8::Local<v8::Value> listener, bool isInline, bool findOnly);
 
         // Track the event so that we can detach it from the JS wrapper when a worker
         // terminates. This is needed because we need to be able to dispose these

@@ -948,7 +948,7 @@ END
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::cacheIndex);\n");
-            push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(imp, value, true, ListenerFindOrCreate)");
+            push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
         }
@@ -1010,6 +1010,29 @@ sub GenerateNewFunctionTemplate
     return "v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), $signature)";
 }
 
+sub GenerateNewFunctionTemplatellback
+{
+    my $implClassName = shift;
+    my $functionName = shift;
+    my $lookupType = ($functionName eq "add") ? "OrCreate" : "Only";
+    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
+    my $hiddenDependencyAction = ($functionName eq "add") ? "create" : "remove";
+ 
+    push(@implContentDecls, <<END);
+    static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Arguments& args)
+    {
+        INC_STATS("DOM.${implClassName}.${functionName}EventListener()");
+        RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFind${lookupType});
+        if (listener) {
+            V8${implClassName}::toNative(args.Holder())->${functionName}EventListener(v8ValueToAtomicWebCoreString(args[0]), listener${passRefPtrHandling}, args[2]->BooleanValue());
+            ${hiddenDependencyAction}HiddenDependency(args.Holder(), args[1], V8${implClassName}::cacheIndex);
+        }
+        return v8::Undefined();
+    }
+
+END
+}
+
 sub GenerateFunctionCallback
 {
     my $function = shift;
@@ -1019,6 +1042,17 @@ sub GenerateFunctionCallback
 
     my $interfaceName = $dataNode->name;
     my $name = $function->signature->name;
+
+    # Adding and removing event listeners are not standard callback behavior,
+    # but they are extremely consistent across the various classes that take event listeners,
+    # so we can generate them as a "special case".
+    if ($name eq "addEventListener") {
+        GenerateEventListenerCallback($implClassName, "add");
+        return;
+    } elsif ($name eq "removeEventListener") {
+        GenerateEventListenerCallback($implClassName, "remove");
+        return;
+    }
 
     push(@implContentDecls,
 "  static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args) {\n" .

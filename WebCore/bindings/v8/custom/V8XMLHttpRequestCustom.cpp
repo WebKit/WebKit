@@ -51,39 +51,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseTextAccessorGetter(v8::Local<v8:
     return xmlHttpRequest->responseText().v8StringOrNull();
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::addEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XMLHttpRequest.addEventListener()");
-    XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
-
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(xmlHttpRequest, args[1], false, ListenerFindOrCreate);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        xmlHttpRequest->addEventListener(type, listener, useCapture);
-
-        createHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8XMLHttpRequest::removeEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.XMLHttpRequest.removeEventListener()");
-    XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
-
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(xmlHttpRequest, args[1], false, ListenerFindOnly);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        xmlHttpRequest->removeEventListener(type, listener.get(), useCapture);
-
-        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.XMLHttpRequest.open()");

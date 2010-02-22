@@ -35,15 +35,8 @@
 
 #include "WorkerContextExecutionProxy.h"
 
-#include "DOMCoreException.h"
 #include "DedicatedWorkerContext.h"
 #include "Event.h"
-#include "EventSource.h"
-#include "Notification.h"
-#include "NotificationCenter.h"
-#include "EventException.h"
-#include "MessagePort.h"
-#include "RangeException.h"
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
@@ -51,17 +44,9 @@
 #include "V8Index.h"
 #include "V8Proxy.h"
 #include "V8WorkerContext.h"
-#include "V8WorkerContextEventListener.h"
-#if ENABLE(WEB_SOCKETS)
-#include "WebSocket.h"
-#endif
 #include "Worker.h"
 #include "WorkerContext.h"
-#include "WorkerLocation.h"
-#include "WorkerNavigator.h"
 #include "WorkerScriptController.h"
-#include "XMLHttpRequest.h"
-#include "XMLHttpRequestException.h"
 
 namespace WebCore {
 
@@ -245,11 +230,6 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
         return v8::Local<v8::Value>();
 
     return result;
-}
-
-PassRefPtr<V8EventListener> WorkerContextExecutionProxy::findOrCreateEventListener(v8::Local<v8::Value> object, bool isInline, bool findOnly)
-{
-    return findOnly ? V8EventListenerList::findWrapper(object, isInline) : V8EventListenerList::findOrCreateWrapper<V8WorkerContextEventListener>(object, isInline);
 }
 
 void WorkerContextExecutionProxy::trackEvent(Event* event)

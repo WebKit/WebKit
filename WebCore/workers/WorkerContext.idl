@@ -62,12 +62,12 @@ module threads {
 
 
         // EventTarget interface
-        [Custom] void addEventListener(in DOMString type, 
-                                       in EventListener listener, 
-                                       in boolean useCapture);
-        [Custom] void removeEventListener(in DOMString type, 
+        [JSCCustom] void addEventListener(in DOMString type, 
                                           in EventListener listener, 
                                           in boolean useCapture);
+        [JSCCustom] void removeEventListener(in DOMString type, 
+                                             in EventListener listener, 
+                                             in boolean useCapture);
         boolean dispatchEvent(in Event evt)
             raises(EventException);
 

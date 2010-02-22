@@ -42,37 +42,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MessagePort::addEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.MessagePort.addEventListener()");
-    MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(messagePort, args[1], false, ListenerFindOrCreate);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        messagePort->addEventListener(type, listener, useCapture);
-
-        createHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8MessagePort::removeEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.MessagePort.removeEventListener()");
-    MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(messagePort, args[1], false, ListenerFindOnly);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        messagePort->removeEventListener(type, listener.get(), useCapture);
-
-        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.MessagePort.postMessage");

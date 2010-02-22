@@ -56,40 +56,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Node::addEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.Node.addEventListener()");
-    Node* node = V8Node::toNative(args.Holder());
-
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, ListenerFindOrCreate);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        node->addEventListener(type, listener, useCapture);
-        createHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8Node::removeEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.Node.removeEventListener()");
-    Node* node = V8Node::toNative(args.Holder());
-
-    // It is possbile that the owner document of the node is detached
-    // from the frame.
-    // See issue http://b/878909
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(node, args[1], false, ListenerFindOnly);
-    if (listener) {
-        AtomicString type = v8ValueToAtomicWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        node->removeEventListener(type, listener.get(), useCapture);
-        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-
-    return v8::Undefined();
-}
-
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
 v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 {

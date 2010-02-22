@@ -289,7 +289,7 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(proxy, args[1], false, ListenerFindOrCreate);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
 
     if (listener) {
         imp->addEventListener(eventType, listener, useCapture);
@@ -321,7 +321,7 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(proxy, args[1], false, ListenerFindOnly);
+    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOnly);
 
     if (listener) {
         imp->removeEventListener(eventType, listener.get(), useCapture);

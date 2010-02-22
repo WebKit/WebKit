@@ -45,37 +45,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8WebSocket::addEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.addEventListener()");
-    WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
-
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(webSocket, args[1], false, ListenerFindOrCreate);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        webSocket->addEventListener(type, listener, useCapture);
-
-        createHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8WebSocket::removeEventListenerCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.removeEventListener()");
-    WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
-
-    RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(webSocket, args[1], false, ListenerFindOnly);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        webSocket->removeEventListener(type, listener.get(), useCapture);
-        removeHiddenDependency(args.Holder(), args[1], cacheIndex);
-    }
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.Constructor");

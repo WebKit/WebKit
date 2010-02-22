@@ -86,7 +86,6 @@ LOCAL_SRC_FILES += \
 	\
 	bindings/v8/npruntime.cpp \
 	\
-	bindings/v8/custom/V8AbstractWorkerCustom.cpp \
 	bindings/v8/custom/V8AttrCustom.cpp \
 	bindings/v8/custom/V8BarInfoCustom.cpp \
 	bindings/v8/custom/V8CSSRuleCustom.cpp \
@@ -106,7 +105,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomSQLTransactionCallback.cpp \
 	bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
-	bindings/v8/custom/V8DOMApplicationCacheCustom.cpp \
 	bindings/v8/custom/V8DOMSelectionCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
@@ -117,7 +115,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8ElementCustom.cpp \
 	bindings/v8/custom/V8EventCustom.cpp \
 	bindings/v8/custom/V8EventSourceConstructor.cpp \
-	bindings/v8/custom/V8EventSourceCustom.cpp \
 	bindings/v8/custom/V8FileListCustom.cpp \
 	bindings/v8/custom/V8GeolocationCustom.cpp \
 	bindings/v8/custom/V8HTMLAllCollectionCustom.cpp \
@@ -157,7 +154,6 @@ ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8SVGDocumentCustom.cpp \
 	bindings/v8/custom/V8SVGElementCustom.cpp \
-	bindings/v8/custom/V8SVGElementInstanceCustom.cpp \
 	bindings/v8/custom/V8SVGLengthCustom.cpp \
 	bindings/v8/custom/V8SVGMatrixCustom.cpp
 	bindings/v8/custom/V8SVGPathSegCustom.cpp \
