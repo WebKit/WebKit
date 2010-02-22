@@ -1,5 +1,11 @@
 2010-02-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * WebCore.base.exp: Export Instance::newRuntimeObject, it's virtual!
+
+2010-02-22  Alexey Proskuryakov  <ap@apple.com>
+
         Undo a small part of the previous commit.
 
         * bridge/runtime_method.cpp: (JSC::callRuntimeMethod): Let's keep the instance local
