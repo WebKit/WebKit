@@ -39,6 +39,7 @@
 #include "Font.h"
 #include "FontSelector.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "NotImplemented.h"
@@ -47,6 +48,7 @@
 #include "RenderBox.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "TimeRanges.h"
 #include "ScrollbarThemeQt.h"
 #include "UserAgentStyleSheets.h"
 #include "qwebpage.h"
@@ -882,10 +884,15 @@ HTMLMediaElement* RenderThemeQt::getMediaElementFromRenderObject(RenderObject* o
     return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
+double RenderThemeQt::mediaControlsBaselineOpacity() const
+{
+    return 0.4;
+}
+
 void RenderThemeQt::paintMediaBackground(QPainter* painter, const IntRect& r) const
 {
     painter->setPen(Qt::NoPen);
-    static QColor transparentBlack(0, 0, 0, 100);
+    static QColor transparentBlack(0, 0, 0, mediaControlsBaselineOpacity() * 255);
     painter->setBrush(transparentBlack);
     painter->drawRoundedRect(r.x(), r.y(), r.width(), r.height(), 5.0, 5.0);
 }
@@ -921,13 +928,8 @@ bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const RenderObject::Pa
     const QPointF speakerPolygon[6] = { QPointF(20, 30), QPointF(50, 30), QPointF(80, 0),
             QPointF(80, 100), QPointF(50, 70), QPointF(20, 70)};
 
-    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->setBrush(mediaElement->muted() ? Qt::darkRed : getMediaControlForegroundColor(o));
     p.painter->drawPolygon(speakerPolygon, 6);
-
-    if (mediaElement->muted()) {
-        p.painter->setPen(Qt::red);
-        p.painter->drawLine(0, 100, 100, 0);
-    }
 
     return false;
 }
@@ -971,6 +973,86 @@ bool RenderThemeQt::paintMediaSeekForwardButton(RenderObject*, const RenderObjec
     return false;
 }
 
+bool RenderThemeQt::paintMediaCurrentTime(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    StylePainter p(this, paintInfo);
+    if (!p.isValid())
+        return true;
+
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
+    paintMediaBackground(p.painter, r);
+
+    return false;
+}
+
+String RenderThemeQt::formatMediaControlsCurrentTime(float currentTime, float duration) const
+{
+    return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
+}
+
+String RenderThemeQt::formatMediaControlsRemainingTime(float currentTime, float duration) const
+{
+    return String();
+}
+
+bool RenderThemeQt::paintMediaVolumeSliderTrack(RenderObject *o, const RenderObject::PaintInfo &paintInfo, const IntRect &r)
+{
+    StylePainter p(this, paintInfo);
+    if (!p.isValid())
+        return true;
+
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
+
+    paintMediaBackground(p.painter, r);
+
+    if (!o->isSlider())
+        return false;
+
+    IntRect b = toRenderBox(o)->contentBoxRect();
+
+    // Position the outer rectangle
+    int top = r.y() + b.y();
+    int left = r.x() + b.x();
+    int width = b.width();
+    int height = b.height();
+
+    // Get the scale color from the page client
+    QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
+    const QColor highlightText = pal.brush(QPalette::Active, QPalette::HighlightedText).color();
+    const QColor scaleColor(highlightText.red(), highlightText.green(), highlightText.blue(), mediaControlsBaselineOpacity() * 255);
+
+    // Draw the outer rectangle
+    p.painter->setBrush(scaleColor);
+    p.painter->drawRect(left, top, width, height);
+
+    if (!o->node() || !o->node()->hasTagName(inputTag))
+        return false;
+
+    HTMLInputElement* slider = static_cast<HTMLInputElement*>(o->node());
+
+    // Position the inner rectangle
+    height = height * slider->valueAsNumber();
+    top += b.height() - height;
+
+    // Draw the inner rectangle
+    p.painter->setPen(Qt::NoPen);
+    p.painter->setBrush(getMediaControlForegroundColor(o));
+    p.painter->drawRect(left, top, width, height);
+
+    return false;
+}
+
+bool RenderThemeQt::paintMediaVolumeSliderThumb(RenderObject *o, const RenderObject::PaintInfo &paintInfo, const IntRect &r)
+{
+    StylePainter p(this, paintInfo);
+    if (!p.isValid())
+        return true;
+
+    // Nothing to draw here, this is all done in the track
+    return false;
+}
+
 bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
@@ -985,15 +1067,31 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const RenderObject::P
 
     paintMediaBackground(p.painter, r);
 
+#if QT_VERSION >= 0x040700
+    if (MediaPlayer* player = mediaElement->player()) {
+        // Get the buffered parts of the media
+        PassRefPtr<TimeRanges> buffered = player->buffered();
+        if (buffered->length() > 0 && player->duration() < std::numeric_limits<float>::infinity()) {
+            // Set the transform and brush
+            WorldMatrixTransformer transformer(p.painter, o, r);
+            p.painter->setBrush(getMediaControlForegroundColor());
+
+            // Paint each buffered section
+            ExceptionCode ex;
+            for (int i = 0; i < buffered->length(); i++) {
+                float startX = (buffered->start(i, ex) / player->duration()) * 100;
+                float width = ((buffered->end(i, ex) / player->duration()) * 100) - startX;
+                p.painter->drawRect(startX, 37, width, 26);
+            }
+        }
+    }
+#endif
+
     return false;
 }
 
 bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o->parent());
-    if (!mediaElement)
-        return false;
-
     StylePainter p(this, paintInfo);
     if (!p.isValid())
         return true;
@@ -1019,6 +1117,13 @@ void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
         int parentHeight = parentStyle->height().value();
         o->style()->setWidth(Length(parentHeight / 3, Fixed));
         o->style()->setHeight(Length(parentHeight, Fixed));
+    } else if (part == MediaVolumeSliderThumbPart) {
+        RenderStyle* parentStyle = o->parent()->style();
+        Q_ASSERT(parentStyle);
+
+        int parentWidth = parentStyle->width().value();
+        o->style()->setHeight(Length(parentWidth / 3, Fixed));
+        o->style()->setWidth(Length(parentWidth, Fixed));
     } else if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
         QStyleOptionSlider option;
         if (part == SliderThumbVerticalPart)

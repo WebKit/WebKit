@@ -51,8 +51,6 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
-    left: auto;
-    right: 5px;
     width: 12px;
     height: 12px;
     padding: 6px;
@@ -60,7 +58,6 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    left: 5px;
     width: 9px;
     height: 12px;
     padding: 6px 12px 6px 11px;
@@ -72,7 +69,21 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
-    display: none;
+    -webkit-appearance: media-current-time-display;
+    -webkit-user-select: none;
+    display: inline-block;
+    height: 12px;
+    padding: 6px;
+    margin: 5px 3px;
+
+    overflow: hidden;
+    cursor: default;
+
+    text-align: center;
+    font-size: 10px;
+    font-family: Verdana;
+    font-weight: bold;
+    color: white;
 }
 
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
@@ -80,51 +91,38 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
-    left: 42px;
-    right: 34px;
     height: 12px;
     padding: 6px 8px;
-    margin: 5px 0px;
+    margin: 5px 3px;
 }
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
-    display: none;
+    -webkit-appearance: media-volume-slider-container;
+    position: absolute;
+    height: 103px;
+    width: 24px;
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
-    display: none;
+    -webkit-appearance: media-volume-slider;
+    display: inline;
+    position: absolute;
+
+    width: 12px;
+    padding: 6px;
+    height: 88px;
+    margin: 0 0 3px 0;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
-    /* Since MediaControlElements are always created with a renderer we have to hide
-       the controls we don't use, so they don't mess up activation and event handling */
-    left: 0px;
-    top: 0px;
-    width: 0px;
-    height: 0px;
-
     display: none;
 }
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
-    /* Since MediaControlElements are always created with a renderer we have to hide
-       the controls we don't use, so they don't mess up activation and event handling */
-    left: 0px;
-    top: 0px;
-    width: 0px;
-    height: 0px;
-
     display: none;
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    /* Since MediaControlElements are always created with a renderer we have to hide
-       the controls we don't use, so they don't mess up activation and event handling */
-    left: 0px;
-    top: 0px;
-    width: 0px;
-    height: 0px;
-
     display: none;
 }
 
@@ -133,6 +131,10 @@ audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewin
 }
 
 audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
+    display: none;
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
     display: none;
 }
 

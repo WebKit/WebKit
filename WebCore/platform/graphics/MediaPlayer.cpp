@@ -37,6 +37,10 @@
 #include "Document.h"
 #include "TimeRanges.h"
 
+#if PLATFORM(QT)
+#include <QtGlobal>
+#endif
+
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
 #elif OS(WINCE) && !PLATFORM(QT)
@@ -46,7 +50,11 @@
 #elif PLATFORM(GTK)
 #include "MediaPlayerPrivateGStreamer.h"
 #elif PLATFORM(QT)
+#if QT_VERSION < 0x040700
 #include "MediaPlayerPrivatePhonon.h"
+#else
+#include "MediaPlayerPrivateQt.h"
+#endif
 #elif PLATFORM(CHROMIUM)
 #include "MediaPlayerPrivateChromium.h"
 #endif

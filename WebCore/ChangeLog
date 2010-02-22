@@ -1,3 +1,77 @@
+2010-02-22  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Switching from Phonon to QtMultimedia Backend for Qt 4.7
+
+        https://bugs.webkit.org/show_bug.cgi?id=34631
+
+        No new tests. This patch only affects multimedia backend.
+
+        * WebCore.pro: Build depends on Qt version.
+        * css/mediaControlsQt.css: Updated media controls.
+        * platform/graphics/MediaPlayer.cpp: Different backend included depending on Qt version.
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp: Added new QtMultimedia Backend.
+        (WebCore::MediaPlayerPrivate::create):
+        (WebCore::MediaPlayerPrivate::registerMediaEngine):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::hasAudio):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::buffered):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::supportsMuting):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::mediaStatusChanged):
+        (WebCore::MediaPlayerPrivate::handleError):
+        (WebCore::MediaPlayerPrivate::stateChanged):
+        (WebCore::MediaPlayerPrivate::nativeSizeChanged):
+        (WebCore::MediaPlayerPrivate::queuedSeekTimeout):
+        (WebCore::MediaPlayerPrivate::seekTimeout):
+        (WebCore::MediaPlayerPrivate::positionChanged):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::mutedChanged):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::setSize):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::repaint):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h: Added new QtMultimedia Backend.
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        (WebCore::MediaPlayerPrivate::supportsFullscreen):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::mediaControlsBaselineOpacity): New method.
+        (WebCore::RenderThemeQt::paintMediaBackground): Background depends on baseline opacity.
+        (WebCore::RenderThemeQt::paintMediaMuteButton): Changed styling.
+        (WebCore::RenderThemeQt::paintMediaCurrentTime): Added current time display.
+        (WebCore::RenderThemeQt::formatMediaControlsCurrentTime): Added time formatting.
+        (WebCore::RenderThemeQt::formatMediaControlsRemainingTime): Added time formatting.
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack): Volume slider added.
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderThumb): Volume slider added.
+        (WebCore::RenderThemeQt::paintMediaSliderTrack): Updated for QtMultimedia.
+        (WebCore::RenderThemeQt::paintMediaSliderThumb): Dropped an unnecessary check.
+        (WebCore::RenderThemeQt::adjustSliderThumbSize): Handle a missing case.
+        * platform/qt/RenderThemeQt.h: Reimplemented a few more methods.
+
 2010-02-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Not reviewed: mac build fix
