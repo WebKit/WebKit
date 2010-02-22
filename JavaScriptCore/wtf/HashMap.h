@@ -133,9 +133,10 @@ namespace WTF {
 
         static unsigned hash(const T& key) { return Translator::hash(key); }
         static bool equal(const KeyType& a, const T& b) { return Translator::equal(a, b); }
-        static void translate(ValueType& location, const T& key, const MappedType&, unsigned hashCode)
+        static void translate(ValueType& location, const T& key, const MappedType& mapped, unsigned hashCode)
         {
             Translator::translate(location.first, key, hashCode);
+            location.second = mapped;
         }
     };
 
