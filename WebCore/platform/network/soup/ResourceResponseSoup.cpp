@@ -48,6 +48,8 @@ SoupMessage* ResourceResponse::toSoupMessage() const
             soup_message_headers_append(soupHeaders, it->first.string().utf8().data(), it->second.utf8().data());
     }
 
+    soup_message_set_flags(soupMessage, m_soupFlags);
+
     // Body data is not in the message.
     return soupMessage;
 }
@@ -67,6 +69,8 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     soup_message_headers_iter_init(&headersIter, soupMessage->response_headers);
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
         m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
+
+    m_soupFlags = soup_message_get_flags(soupMessage);
 
     String contentType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
     setMimeType(extractMIMETypeFromMediaType(contentType));

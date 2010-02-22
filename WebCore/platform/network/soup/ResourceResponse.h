@@ -36,6 +36,7 @@ class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
         : ResourceResponseBase()
+        , m_soupFlags(static_cast<SoupMessageFlags>(0))
     {
     }
 
@@ -46,6 +47,7 @@ public:
 
     ResourceResponse(SoupMessage* soupMessage)
         : ResourceResponseBase()
+        , m_soupFlags(static_cast<SoupMessageFlags>(0))
     {
         updateFromSoupMessage(soupMessage);
     }
@@ -53,8 +55,13 @@ public:
     SoupMessage* toSoupMessage() const;
     void updateFromSoupMessage(SoupMessage* soupMessage);
 
+    SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
+    void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
+
 private:
     friend class ResourceResponseBase;
+
+    SoupMessageFlags m_soupFlags;
 
     void doUpdateResourceResponse()
     {

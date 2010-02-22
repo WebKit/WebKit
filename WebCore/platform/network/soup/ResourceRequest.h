@@ -37,27 +37,32 @@ namespace WebCore {
     public:
         ResourceRequest(const String& url)
             : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(const KURL& url)
             : ResourceRequestBase(url, UseProtocolCachePolicy)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
             : ResourceRequestBase(url, policy)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
             setHTTPReferrer(referrer);
         }
 
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(SoupMessage* soupMessage)
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
+            , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
             updateFromSoupMessage(soupMessage);
         }
@@ -65,8 +70,13 @@ namespace WebCore {
         SoupMessage* toSoupMessage() const;
         void updateFromSoupMessage(SoupMessage* soupMessage);
 
+        SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
+        void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
+
     private:
         friend class ResourceRequestBase;
+
+        SoupMessageFlags m_soupFlags;
 
         void doUpdatePlatformRequest() {};
         void doUpdateResourceRequest() {};

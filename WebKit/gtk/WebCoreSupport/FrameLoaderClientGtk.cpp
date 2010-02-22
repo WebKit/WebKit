@@ -276,8 +276,12 @@ void FrameLoaderClient::frameLoaderDestroyed()
     delete this;
 }
 
-void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long, const ResourceResponse& response)
+void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, unsigned long, const ResourceResponse& response)
 {
+    // Update our knowledge of request soup flags - some are only set
+    // after the request is done.
+    loader->request().setSoupMessageFlags(response.soupMessageFlags());
+
     m_response = response;
 }
 

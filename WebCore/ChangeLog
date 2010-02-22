@@ -1,3 +1,30 @@
+2010-02-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [Soup] loses information related to message flags when converting from/to Resource{Request,Response}
+        https://bugs.webkit.org/show_bug.cgi?id=35093
+
+        Store message flags in WebCore objects, and set them on the
+        SoupMessage, when creating one from them.
+
+        No behaviour change.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::fillResponseFromMessage):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::soupMessageFlags):
+        (WebCore::ResourceRequest::setSoupMessageFlags):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::toSoupMessage):
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::soupMessageFlags):
+        (WebCore::ResourceResponse::setSoupMessageFlags):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::toSoupMessage):
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2010-02-22  Steve Block  <steveblock@google.com>
 
         Reviewed by Nate Chapin.
