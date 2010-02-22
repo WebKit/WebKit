@@ -1,3 +1,11 @@
+2010-02-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Bump library versioning for 1.1.22 release.
+
+        * configure.ac:
+
 2010-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

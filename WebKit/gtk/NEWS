@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 1.1.22
+=================
+
+What's new in WebKitGTK+ 1.1.22?
+
+  - Preliminary support for Java plugins. Basic functionality is
+    there, but there are still a few rough edges. Also newly
+    introduced is a new WebKitWebSetting, 'enable-java-applet', which
+    controls whether WebKit will recognize the non-standard <applet>
+    tag.
+  - Add WebKitWebSettings::auto-resize-window; when enabled, WebKit
+    will act upon the DOM methods that change the size and/or position
+    of the window containing a WebView (window.{moveTo, resizeTo,
+    moveBy, resizeBy}).
+  - Add WebKitWebSettings::enable-file-access-from-file-uris; when
+    enabled, each file:// URI will be assigned its own security
+    domain.
+  - Lots of bugfixes, especially in the PageCache support.
+
+=================
 WebKitGTK+ 1.1.21
 =================
 
