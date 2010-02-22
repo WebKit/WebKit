@@ -1,3 +1,29 @@
+2009-02-22  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        fontconfig on Linux can change the render preferences on a per strike
+        basis (a strike a combination of face and size). Because of this, we
+        need to query fontconfig each time a new FontPlatformData is created
+        for a new size.
+
+        This patch adds support for querying this via ChromiumBridge.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33065
+
+        * platform/chromium/ChromiumBridge.h: add getRenderStyleForStrike
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/chromium/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::setupPaint):
+        (WebCore::FontPlatformData::queryStyle):
+          add code to query fontconfig via ChromiumBridge
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+
 2010-02-22  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix for make distcheck.

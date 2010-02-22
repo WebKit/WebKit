@@ -32,6 +32,7 @@
 #define WebFontInfo_h
 
 #include "../WebCString.h"
+#include "../linux/WebFontRenderStyle.h"
 
 #include <string.h>
 #include <unistd.h>
@@ -48,6 +49,19 @@ public:
     // Returns: the font family or an empty string if the request could not be
     // satisfied.
     WEBKIT_API static WebCString familyForChars(const WebUChar* characters, size_t numCharacters);
+
+    // Fill out the given WebFontRenderStyle with the user's preferences for
+    // rendering the given font at the given size.
+    //   family: i.e. "Times New Roman"
+    //   sizeAndStyle:
+    //      3322222222221111111111
+    //      10987654321098765432109876543210
+    //     +--------------------------------+
+    //     |..............Size............IB|
+    //     +--------------------------------+
+    //     I: italic flag
+    //     B: bold flag
+    WEBKIT_API static void renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* result);
 };
 
 } // namespace WebKit

@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "WebFontInfo.h"
+#include "WebFontRenderStyle.h"
 
 #include <fontconfig/fontconfig.h>
 #include <string.h>
@@ -55,11 +56,11 @@ WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCha
     FcValue fcvalue;
     fcvalue.type = FcTypeCharSet;
     fcvalue.u.c = cset;
-    FcPatternAdd(pattern, FC_CHARSET, fcvalue, 0);
+    FcPatternAdd(pattern, FC_CHARSET, fcvalue, FcFalse);
 
     fcvalue.type = FcTypeBool;
     fcvalue.u.b = FcTrue;
-    FcPatternAdd(pattern, FC_SCALABLE, fcvalue, 0);
+    FcPatternAdd(pattern, FC_SCALABLE, fcvalue, FcFalse);
 
     FcConfigSubstitute(0, pattern, FcMatchPattern);
     FcDefaultSubstitute(pattern);
@@ -102,6 +103,70 @@ WebCString WebFontInfo::familyForChars(const WebUChar* characters, size_t numCha
 
     FcFontSetDestroy(fontSet);
     return WebCString();
+}
+
+void WebFontInfo::renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* out)
+{
+    bool isBold = sizeAndStyle & 1;
+    bool isItalic = sizeAndStyle & 2;
+    int pixelSize = sizeAndStyle >> 2;
+
+    FcPattern* pattern = FcPatternCreate();
+    FcValue fcvalue;
+
+    fcvalue.type = FcTypeString;
+    fcvalue.u.s = reinterpret_cast<const FcChar8 *>(family);
+    FcPatternAdd(pattern, FC_FAMILY, fcvalue, FcFalse);
+
+    fcvalue.type = FcTypeInteger;
+    fcvalue.u.i = isBold ? FC_WEIGHT_BOLD : FC_WEIGHT_NORMAL;
+    FcPatternAdd(pattern, FC_WEIGHT, fcvalue, FcFalse);
+
+    fcvalue.type = FcTypeInteger;
+    fcvalue.u.i = isItalic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
+    FcPatternAdd(pattern, FC_SLANT, fcvalue, FcFalse);
+
+    fcvalue.type = FcTypeBool;
+    fcvalue.u.b = FcTrue;
+    FcPatternAdd(pattern, FC_SCALABLE, fcvalue, FcFalse);
+
+    fcvalue.type = FcTypeDouble;
+    fcvalue.u.d = pixelSize;
+    FcPatternAdd(pattern, FC_SIZE, fcvalue, FcFalse);
+
+    FcConfigSubstitute(0, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+
+    FcResult result;
+    // Some versions of fontconfig don't actually write a value into result.
+    // However, it's not clear from the documentation if result should be a
+    // non-0 pointer: future versions might expect to be able to write to
+    // it. So we pass in a valid pointer and ignore it.
+    FcPattern* match = FcFontMatch(0, pattern, &result);
+    FcPatternDestroy(pattern);
+
+    out->setDefaults();
+
+    if (!match) {
+        FcPatternDestroy(match);
+        return;
+    }
+
+    FcBool b;
+    int i;
+
+    if (FcPatternGetBool(match, FC_ANTIALIAS, 0, &b) == FcResultMatch)
+        out->useAntiAlias = b;
+    if (FcPatternGetBool(match, FC_EMBEDDED_BITMAP, 0, &b) == FcResultMatch)
+        out->useBitmaps = b;
+    if (FcPatternGetBool(match, FC_AUTOHINT, 0, &b) == FcResultMatch)
+        out->useAutoHint = b;
+    if (FcPatternGetBool(match, FC_HINTING, 0, &b) == FcResultMatch)
+        out->useHinting = b;
+    if (FcPatternGetInteger(match, FC_HINT_STYLE, 0, &i) == FcResultMatch)
+        out->hintStyle = i;
+
+    FcPatternDestroy(match);
 }
 
 } // namespace WebKit

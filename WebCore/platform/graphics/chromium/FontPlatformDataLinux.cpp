@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "ChromiumBridge.h"
 #include "HarfbuzzSkia.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
@@ -66,31 +67,37 @@ FontPlatformData::RefCountedHarfbuzzFace::~RefCountedHarfbuzzFace()
 
 FontPlatformData::FontPlatformData(const FontPlatformData& src)
     : m_typeface(src.m_typeface)
+    , m_family(src.m_family)
     , m_textSize(src.m_textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
+    , m_style(src.m_style)
     , m_harfbuzzFace(src.m_harfbuzzFace)
 {
     m_typeface->safeRef();
 }
 
-FontPlatformData::FontPlatformData(SkTypeface* tf, float textSize, bool fakeBold, bool fakeItalic)
+FontPlatformData::FontPlatformData(SkTypeface* tf, const char* family, float textSize, bool fakeBold, bool fakeItalic)
     : m_typeface(tf)
+    , m_family(family)
     , m_textSize(textSize)
     , m_fakeBold(fakeBold)
     , m_fakeItalic(fakeItalic)
 {
     m_typeface->safeRef();
+    querySystemForRenderStyle();
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& src, float textSize)
     : m_typeface(src.m_typeface)
+    , m_family(src.m_family)
     , m_textSize(textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
     , m_harfbuzzFace(src.m_harfbuzzFace)
 {
     m_typeface->safeRef();
+    querySystemForRenderStyle();
 }
 
 FontPlatformData::~FontPlatformData()
@@ -102,10 +109,12 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
 {
     SkRefCnt_SafeAssign(m_typeface, src.m_typeface);
 
+    m_family = src.m_family;
     m_textSize = src.m_textSize;
     m_fakeBold = src.m_fakeBold;
     m_fakeItalic = src.m_fakeItalic;
     m_harfbuzzFace = src.m_harfbuzzFace;
+    m_style = src.m_style;
 
     return *this;
 }
@@ -121,13 +130,15 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
 {
     const float ts = m_textSize > 0 ? m_textSize : 12;
 
-    paint->setAntiAlias(isSkiaAntiAlias);
-    paint->setHinting(skiaHinting);
-    paint->setLCDRenderText(isSkiaSubpixelGlyphs);
+    paint->setAntiAlias(m_style.useAntiAlias == FontRenderStyle::NoPreference ? isSkiaAntiAlias : m_style.useAntiAlias);
+    paint->setHinting(m_style.useHinting == FontRenderStyle::NoPreference ? skiaHinting : (SkPaint::Hinting) m_style.hintStyle);
     paint->setTextSize(SkFloatToScalar(ts));
     paint->setTypeface(m_typeface);
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
+
+    if (m_style.useAntiAlias == 1 || m_style.useAntiAlias == FontRenderStyle::NoPreference && isSkiaAntiAlias)
+        paint->setLCDRenderText(m_style.useSubpixel == FontRenderStyle::NoPreference ? isSkiaSubpixelGlyphs : m_style.useSubpixel);
 }
 
 SkFontID FontPlatformData::uniqueID() const
@@ -182,6 +193,23 @@ HB_FaceRec_* FontPlatformData::harfbuzzFace() const
         m_harfbuzzFace = RefCountedHarfbuzzFace::create(HB_NewFace(const_cast<FontPlatformData*>(this), harfbuzzSkiaGetTable));
 
     return m_harfbuzzFace->face();
+}
+
+void FontPlatformData::querySystemForRenderStyle()
+{
+    if (m_family.length()) {
+        // We don't have a family for this. Probably because it's a webfont. We
+        // set all the values to 'no preference' and take the defaults passed
+        // in from XSETTINGS.
+        m_style.useBitmaps = FontRenderStyle::NoPreference;
+        m_style.useAutoHint = FontRenderStyle::NoPreference;
+        m_style.useHinting = FontRenderStyle::NoPreference;
+        m_style.useAntiAlias = FontRenderStyle::NoPreference;
+        m_style.useSubpixel = FontRenderStyle::NoPreference;
+        return;
+    }
+
+    ChromiumBridge::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
 }
 
 }  // namespace WebCore

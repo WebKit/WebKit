@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,32 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSandboxSupport_h
-#define WebSandboxSupport_h
+#include "config.h"
+#include "WebFontRenderStyle.h"
 
-#include "../WebCommon.h"
-#include "../WebString.h"
+#include "FontRenderStyle.h"
+
+using WebCore::FontRenderStyle;
 
 namespace WebKit {
 
-struct WebFontRenderStyle;
+void WebFontRenderStyle::toFontRenderStyle(FontRenderStyle* out)
+{
+    out->useBitmaps = useBitmaps;
+    out->useAutoHint = useAutoHint;
+    out->useHinting = useHinting;
+    out->hintStyle = hintStyle;
+    out->useAntiAlias = useAntiAlias;
+    out->useSubpixel = useSubpixel;
+}
 
-// Put methods here that are required due to sandbox restrictions.
-class WebSandboxSupport {
-public:
-    // Fonts ---------------------------------------------------------------
-
-    // Get a font family which contains glyphs for the given Unicode
-    // code-points.
-    //   characters: a UTF-16 encoded string
-    //   numCharacters: the number of 16-bit words in |characters|
-    //
-    // Returns a string with the font family on an empty string if the
-    // request cannot be satisfied.
-    virtual WebString getFontFamilyForCharacters(const WebUChar* characters, size_t numCharacters) = 0;
-    virtual void getRenderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* style) = 0;
-};
+void WebFontRenderStyle::setDefaults()
+{
+    useBitmaps = 2;
+    useAutoHint = 2;
+    useHinting = 2;
+    hintStyle = 0;
+    useAntiAlias = 2;
+    useSubpixel = 2;
+}
 
 } // namespace WebKit
-
-#endif
