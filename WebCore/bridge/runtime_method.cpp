@@ -94,7 +94,7 @@ static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* functi
     if (method->methods()->isEmpty())
         return jsUndefined();
 
-    Instance* instance = 0;
+    RefPtr<Instance> instance;
 
     if (thisValue.inherits(&RuntimeObjectImp::s_info)) {
         RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
