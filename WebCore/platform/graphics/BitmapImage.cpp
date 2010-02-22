@@ -266,11 +266,6 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
     if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
         return;
 
-    // If we aren't already animating, set now as the animation start time.
-    const double time = currentTime();
-    if (!m_desiredFrameStartTime)
-        m_desiredFrameStartTime = time;
-
     // Don't advance the animation to an incomplete frame.
     size_t nextFrame = (m_currentFrame + 1) % frameCount();
     if (!m_allDataReceived && !frameIsCompleteAtIndex(nextFrame))
@@ -287,14 +282,19 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
     // in this calculation, we make the animation appear to run at its desired
     // rate regardless of how fast it's being repainted.
     const double currentDuration = frameDurationAtIndex(m_currentFrame);
-    m_desiredFrameStartTime += currentDuration;
-
-    // When an animated image is more than five minutes out of date, the
-    // user probably doesn't care about resyncing and we could burn a lot of
-    // time looping through frames below.  Just reset the timings.
-    const double cAnimationResyncCutoff = 5 * 60;
-    if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
+    const double time = currentTime();
+    if (m_desiredFrameStartTime == 0) {
         m_desiredFrameStartTime = time + currentDuration;
+    } else {
+        m_desiredFrameStartTime += currentDuration;
+
+        // When an animated image is more than five minutes out of date, the
+        // user probably doesn't care about resyncing and we could burn a lot of
+        // time looping through frames below.  Just reset the timings.
+        const double cAnimationResyncCutoff = 5 * 60;
+        if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
+            m_desiredFrameStartTime = time + currentDuration;
+    }
 
     // The image may load more slowly than it's supposed to animate, so that by
     // the time we reach the end of the first repetition, we're well behind.

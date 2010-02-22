@@ -1,3 +1,16 @@
+2010-02-22  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig and Maciej Stachowiak.
+
+        REGRESSION (r55039): Animation starts from near end when loaded over slow network
+        <http://webkit.org/b/35222> / <rdar://problem/7673523>
+
+        Roll out r55039 (related to <http://webkit.org/b/35115>) as it causes animated GIFs
+        to skip intermediate frames when loading over a slower network.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startAnimation):
+
 2010-02-22  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.
