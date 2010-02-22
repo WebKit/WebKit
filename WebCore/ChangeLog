@@ -1,5 +1,11 @@
 2010-02-22  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, Chromium build fix.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Compile break due to bad patch merge.
+
+2010-02-22  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [V8] Streamline V8 event listener code. Merge all the variants of

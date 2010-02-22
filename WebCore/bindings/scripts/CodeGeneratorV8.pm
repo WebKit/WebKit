@@ -1010,7 +1010,7 @@ sub GenerateNewFunctionTemplate
     return "v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), $signature)";
 }
 
-sub GenerateNewFunctionTemplatellback
+sub GenerateEventListenerCallback
 {
     my $implClassName = shift;
     my $functionName = shift;
