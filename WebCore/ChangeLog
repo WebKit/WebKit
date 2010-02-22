@@ -1,3 +1,15 @@
+2010-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix compiler warning "suggest parentheses around"
+        https://bugs.webkit.org/show_bug.cgi?id=35197
+
+        No new tests as there is no new functionality.
+
+        * wml/WMLVariables.cpp:
+        (WebCore::substituteVariableReferences):
+
 2010-02-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

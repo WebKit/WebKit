@@ -251,7 +251,7 @@ String substituteVariableReferences(const String& reference, Document* document,
         if (!conversionMode.isEmpty()) {
             // Override default escape mode, if desired
             WMLVariableEscapingMode specifiedEscapeMode = WMLVariableEscapingNone; 
-            if (isValid = isValidVariableEscapingModeString(conversionMode, specifiedEscapeMode))
+            if ((isValid = isValidVariableEscapingModeString(conversionMode, specifiedEscapeMode)))
                 escapeMode = specifiedEscapeMode;
 
             if (!isValid)
