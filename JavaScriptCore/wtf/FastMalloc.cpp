@@ -204,6 +204,10 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 #if FORCE_SYSTEM_MALLOC
 
+#if PLATFORM(BREWMP)
+#include "brew/SystemMallocBrew.h"
+#endif
+
 namespace WTF {
 
 TryMallocReturnValue tryFastMalloc(size_t n) 

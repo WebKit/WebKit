@@ -1,3 +1,21 @@
+2010-02-22  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Map FastMalloc to BREW memory allocator
+        https://bugs.webkit.org/show_bug.cgi?id=33570
+
+        Use MALLOC macro instead of the standard malloc function.
+        Although RVCT provides malloc, we can't use it in BREW
+        because the loader does not initialize the base address properly.
+
+        * wtf/FastMalloc.cpp:
+        * wtf/brew/SystemMallocBrew.h: Added.
+        (mallocBrew):
+        (callocBrew):
+        (freeBrew):
+        (reallocBrew):
+
 2010-02-22  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix for make distcheck.
