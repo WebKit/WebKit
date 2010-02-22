@@ -1226,6 +1226,7 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptCallFrame.cpp \
 	WebCore/inspector/JavaScriptCallFrame.h \
 	WebCore/inspector/ScriptBreakpoint.h \
+	WebCore/inspector/ScriptDebugListener.h \
 	WebCore/inspector/TimelineRecordFactory.cpp \
 	WebCore/inspector/TimelineRecordFactory.h \
 	WebCore/loader/Cache.cpp \

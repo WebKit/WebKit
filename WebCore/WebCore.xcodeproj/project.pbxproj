@@ -1296,6 +1296,7 @@
 		7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */; };
 		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		84224183107E77F400766A87 /* JSSVGFEMorphologyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */; };
 		84224184107E77F400766A87 /* JSSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */; };
 		8422418C107E786F00766A87 /* DOMSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
@@ -6716,6 +6717,7 @@
 		7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
 		7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
+		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEMorphologyElement.cpp; sourceTree = "<group>"; };
 		84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEMorphologyElement.h; sourceTree = "<group>"; };
 		84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEMorphologyElement.h; sourceTree = "<group>"; };
@@ -10642,6 +10644,7 @@
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
 				1C81BA050E97348300266E07 /* JavaScriptCallFrame.idl */,
 				7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */,
+				7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */,
 				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
 				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
 				7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */,
@@ -18533,6 +18536,7 @@
 				9F2A322C1125A0A2003C3056 /* JavaScriptProfile.h in Headers */,
 				9F2A322E1125A0A2003C3056 /* JavaScriptProfileNode.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
+				7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

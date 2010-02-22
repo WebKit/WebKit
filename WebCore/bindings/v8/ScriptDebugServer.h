@@ -42,22 +42,14 @@
 
 namespace WebCore {
 
+class ScriptDebugListener;
+
 class ScriptDebugServer : public Noncopyable {
 public:
-    class Listener {
-    public:
-        virtual ~Listener() { }
-
-        virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int firstLine) = 0;
-        virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
-        virtual void didPause() = 0;
-        virtual void didContinue() = 0;
-    };
-
     static ScriptDebugServer& shared();
 
-    void addListener(Listener*, Page*) { }
-    void removeListener(Listener*, Page*) { }
+    void addListener(ScriptDebugListener*, Page*) { }
+    void removeListener(ScriptDebugListener*, Page*) { }
 
     void setBreakpoint(const String& sourceID, unsigned lineNumber, ScriptBreakpoint breakpoint) { }
     void removeBreakpoint(const String& sourceID, unsigned lineNumber) { }

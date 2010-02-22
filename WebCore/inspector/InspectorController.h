@@ -34,6 +34,7 @@
 #include "InspectorDOMAgent.h"
 #include "PlatformString.h"
 #include "ScriptArray.h"
+#include "ScriptBreakpoint.h"
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
@@ -48,7 +49,7 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-#include "ScriptDebugServer.h"
+#include "ScriptDebugListener.h"
 #endif
 
 namespace WebCore {
@@ -87,7 +88,7 @@ class InspectorResource;
 
 class InspectorController
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-                          : ScriptDebugServer::Listener, public Noncopyable
+                          : ScriptDebugListener, public Noncopyable
 #else
                           : public Noncopyable
 #endif

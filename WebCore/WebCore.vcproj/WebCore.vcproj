@@ -42693,6 +42693,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\ScriptDebugListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\TimelineRecordFactory.cpp"
 				>
 			</File>

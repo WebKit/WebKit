@@ -1615,6 +1615,7 @@
             'inspector/JavaScriptCallFrame.cpp',
             'inspector/JavaScriptCallFrame.h',
             'inspector/ScriptBreakpoint.h',
+            'inspector/ScriptDebugListener.h',
             'inspector/TimelineRecordFactory.cpp',
             'inspector/TimelineRecordFactory.h',
             'loader/appcache/ApplicationCache.cpp',
