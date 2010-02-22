@@ -1,3 +1,24 @@
+2010-02-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        JSStringBuilder should not CRASH if allocation fails, it should throw a JSException.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSStringBuilder.h:
+        (JSC::JSStringBuilder::JSStringBuilder):
+        (JSC::JSStringBuilder::append):
+        (JSC::JSStringBuilder::build):
+        * runtime/StringBuilder.h:
+        (JSC::StringBuilder::build):
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::::tryExpandCapacity):
+        (WTF::::tryReserveCapacity):
+        (WTF::::tryAppend):
+
 2010-02-22  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

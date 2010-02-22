@@ -28,31 +28,59 @@
 
 #include "ExceptionHelpers.h"
 #include "JSString.h"
-#include "StringBuilder.h"
+#include "Vector.h"
 
 namespace JSC {
 
-class JSStringBuilder : public StringBuilder {
+class JSStringBuilder {
 public:
+    JSStringBuilder()
+        : m_okay(true)
+    {
+    }
+
+    void append(const UChar u)
+    {
+        m_okay &= buffer.tryAppend(&u, 1);
+    }
+
+    void append(const char* str)
+    {
+        append(str, strlen(str));
+    }
+
+    void append(const char* str, size_t len)
+    {
+        m_okay &= buffer.tryReserveCapacity(buffer.size() + len);
+        for (size_t i = 0; i < len; i++) {
+            UChar u = static_cast<unsigned char>(str[i]);
+            m_okay &= buffer.tryAppend(&u, 1);
+        }
+    }
+
+    void append(const UChar* str, size_t len)
+    {
+        m_okay &= buffer.tryAppend(str, len);
+    }
+
+    void append(const UString& str)
+    {
+        m_okay &= buffer.tryAppend(str.data(), str.size());
+    }
+
     JSValue build(ExecState* exec)
     {
+        if (!m_okay)
+            return throwOutOfMemoryError(exec);
         buffer.shrinkToFit();
         if (!buffer.data())
             return throwOutOfMemoryError(exec);
         return jsString(exec, UString::adopt(buffer));
     }
 
-private:
-    // Make attempts to call this compile error - if you only wanted a UString,
-    // Why didn't you just use a StringBuilder?!  (This may change, maybe at some
-    // point in the future we'll need to start building a string not knowing whether
-    // we'll want a UString or a JSValue - but until we have this requirement,
-    // block this).
-    UString build()
-    {
-        ASSERT_NOT_REACHED();
-        return StringBuilder::build();
-    }
+protected:
+    Vector<UChar, 64> buffer;
+    bool m_okay;
 };
 
 template<typename StringType1, typename StringType2>
