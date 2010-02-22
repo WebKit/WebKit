@@ -1,3 +1,15 @@
+2010-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7285392> 
+        On Leopard, we have to disable hardware acceleration if we detect that the
+        installed Core Video framework has bug <rdar://problem/7228836>.
+        
+        * WebView/WebView.mm:
+        (coreVideoHas7228836Fix):
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-02-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

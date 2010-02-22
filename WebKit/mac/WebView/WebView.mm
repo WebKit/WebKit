@@ -558,6 +558,16 @@ static bool runningTigerMail()
     return NO;    
 }
 
+static bool coreVideoHas7228836Fix()
+{
+#ifdef BUILDING_ON_LEOPARD
+    NSBundle* coreVideoFrameworkBundle = [NSBundle bundleWithPath:@"/System/Library/Frameworks/CoreVideo.framework"];
+    double version = [[coreVideoFrameworkBundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue];
+    return (version >= 48);
+#endif
+    return true;
+}
+
 static bool shouldEnableLoadDeferring()
 {
     return !applicationIsAdobeInstaller();
@@ -1332,7 +1342,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
-    settings->setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
+    settings->setAcceleratedCompositingEnabled(coreVideoHas7228836Fix() && [preferences acceleratedCompositingEnabled]);
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
