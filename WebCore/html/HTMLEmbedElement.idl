@@ -23,8 +23,7 @@ module html {
     interface [
         DelegatingPutFunction,
         DelegatingGetOwnPropertySlot,
-        CustomCall,
-        HasOverridingNameGetter
+        CustomCall
     ] HTMLEmbedElement : HTMLElement {
                  attribute [ConvertNullToNullString, Reflect] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

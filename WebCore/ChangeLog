@@ -1,3 +1,40 @@
+2010-02-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35260
+        Eliminate __apple_runtime_object
+
+        No change in functionality, so no tests.
+
+        * WebCore.base.exp: Don't export Instance::newRuntimeObject, WebKit doesn't need it.
+
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        These objects no longer need overriding name getters, as they no longer intercept the
+        __apple_runtime_object property.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginInstance): This is no longer static. It was used for callPlugin() in
+        this file, and now it's also used elsewhere when calling plug-in methods.
+        (WebCore::runtimeObjectGetter): Removed. This function was only used by the intercepting
+        name getters.
+
+        * bindings/js/JSPluginElementFunctions.h: Export pluginInstance().
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        Take plug-in element's instance directly, without relying on fake attribute lookup.
+        One change resulting from this is that RuntimeObjectImp may not be created in some cases -
+        this code only needs an instance, but the old code had to pass the instance wrapped into
+        RuntimeObjectImp.
+
 2010-02-22  John Sullivan  <sullivan@apple.com>
         
         Reviewed by Tim Hatcher.

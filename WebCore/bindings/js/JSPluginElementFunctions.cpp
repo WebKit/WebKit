@@ -35,7 +35,7 @@ using namespace HTMLNames;
 
 // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
-static Instance* pluginInstance(Node* node)
+Instance* pluginInstance(Node* node)
 {
     if (!node)
         return 0;
@@ -55,14 +55,6 @@ static RuntimeObjectImp* getRuntimeObject(ExecState* exec, Node* node)
     if (!instance)
         return 0;
     return instance->createRuntimeObject(exec);
-}
-
-JSValue runtimeObjectGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slot.slotBase()));
-    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-    RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element);
-    return runtimeObject ? runtimeObject : jsUndefined();
 }
 
 JSValue runtimeObjectPropertyGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)

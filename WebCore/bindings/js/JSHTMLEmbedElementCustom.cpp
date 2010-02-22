@@ -53,14 +53,4 @@ CallType JSHTMLEmbedElement::getCallData(CallData& callData)
     return runtimeObjectGetCallData(impl(), callData);
 }
 
-bool JSHTMLEmbedElement::canGetItemsForName(ExecState*, HTMLEmbedElement*, const Identifier& propertyName)
-{
-    return propertyName == "__apple_runtime_object";
-}
-
-JSValue JSHTMLEmbedElement::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
-{
-    return runtimeObjectGetter(exec, propertyName, slot);
-}
-
 } // namespace WebCore

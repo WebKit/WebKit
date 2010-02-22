@@ -23,8 +23,7 @@ module html {
     interface [
         DelegatingPutFunction,
         DelegatingGetOwnPropertySlot,
-        CustomCall,
-        HasOverridingNameGetter
+        CustomCall
     ] HTMLAppletElement : HTMLElement {
                  attribute [ConvertNullToNullString, Reflect] DOMString align;
                  attribute [ConvertNullToNullString, Reflect] DOMString alt;

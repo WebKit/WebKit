@@ -27,6 +27,8 @@
 #include "runtime_method.h"
 
 #include "JSDOMBinding.h"
+#include "JSHTMLElement.h"
+#include "JSPluginElementFunctions.h"
 #include "runtime_object.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
@@ -91,25 +93,25 @@ static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* functi
 
     if (method->methods()->isEmpty())
         return jsUndefined();
-    
-    RuntimeObjectImp* imp;
+
+    Instance* instance = 0;
 
     if (thisValue.inherits(&RuntimeObjectImp::s_info)) {
-        imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
+        RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
+        instance = imp->getInternalInstance();
+        if (!instance) 
+            return RuntimeObjectImp::throwInvalidAccessError(exec);
     } else {
-        // If thisObj is the DOM object for a plugin, get the corresponding
-        // runtime object from the DOM object.
-        JSValue value = thisValue.get(exec, Identifier(exec, "__apple_runtime_object"));
-        if (value.inherits(&RuntimeObjectImp::s_info))    
-            imp = static_cast<RuntimeObjectImp*>(asObject(value));
-        else
+        // Calling a runtime object of a plugin element?
+        if (thisValue.inherits(&JSHTMLElement::s_info)) {
+            HTMLElement* element = static_cast<JSHTMLElement*>(asObject(thisValue))->impl();
+            instance = pluginInstance(element);
+        }
+        if (!instance)
             return throwError(exec, TypeError);
     }
+    ASSERT(instance);
 
-    RefPtr<Instance> instance = imp->getInternalInstance();
-    if (!instance) 
-        return RuntimeObjectImp::throwInvalidAccessError(exec);
-        
     instance->begin();
     JSValue result = instance->invokeMethod(exec, *method->methods(), args);
     instance->end();
