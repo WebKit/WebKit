@@ -10,9 +10,8 @@ SUBDIRS += \
 
 !CONFIG(standalone_package) {
     SUBDIRS += JavaScriptCore/jsc.pro \
-        WebKit/qt/tests
-
-    !symbian: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
+        WebKit/qt/tests \
+        WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 
     !win32:!symbian {
         SUBDIRS += WebKitTools/DumpRenderTree/qt/ImageDiff.pro

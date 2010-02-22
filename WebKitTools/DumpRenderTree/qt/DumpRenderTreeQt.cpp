@@ -66,6 +66,7 @@
 #endif
 
 #include <limits.h>
+#include <locale.h>
 
 #ifndef Q_OS_WIN
 #include <unistd.h>
