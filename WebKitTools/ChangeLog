@@ -1,3 +1,11 @@
+2010-02-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Build the DRT in debug on Mac OS X
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2010-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
