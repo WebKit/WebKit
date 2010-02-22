@@ -1,5 +1,12 @@
 2010-02-22  Alexander Pavlov  <apavlov@chromium.org>
 
+        Not reviewed: mac build fix
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+
+2010-02-22  Alexander Pavlov  <apavlov@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: there should be a way to "deactivate" or "skip" all breakpoints while debugging.

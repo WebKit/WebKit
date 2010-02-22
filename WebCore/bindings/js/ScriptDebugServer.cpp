@@ -70,9 +70,9 @@ ScriptDebugServer::ScriptDebugServer()
     , m_pauseOnNextStatement(false)
     , m_paused(false)
     , m_doneProcessingDebuggerEvents(true)
+    , m_breakpointsActivated(true)
     , m_pauseOnCallFrame(0)
     , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctions)
-    , m_breakpointsActivated(true)
 {
 }
 
