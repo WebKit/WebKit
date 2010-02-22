@@ -1,3 +1,15 @@
+2010-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Chromium DevTools: kepp debugger API in sync with inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28799
+
+        * src/js/DebuggerAgent.js:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl.prototype.setBreakpoint):
+
 2010-02-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.

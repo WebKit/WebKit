@@ -1,3 +1,177 @@
+2010-02-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: stop on inline breakpoints on reload.
+        - ScriptBreakpoint struct has been introduced and reused in InspectorController
+          and debug server.
+        - JavaScriptDebugServer was moved to bindings/js and renamed to ScriptDebugServer
+          There were no changes to semantics, only some mechanical changes:
+            - addBreakpoint and updateBreakpoint were merged into setBreakpoint
+            - ScriptDebugServer now operates ScriptBreakpoint instances instead of
+              BreakpointInfo.
+            - It no longer allocates maps and breakpoint info in heap - all done on stack.
+            - JavaScriptDebugListener is now ScriptDebugServer::Listener
+            - Listener methods no longer have ExecState (was unused).
+            - addListener/removeListener pair wuth no page argument removed (was unused).
+        - InspectorController now binds sourceID to url and maintains a map of 'sticky'
+          breakpoints. Whenever script is loaded and there is a sticky breakpoint url matching,
+          breakpoint is being 'restored' synchronously in debug server and pushed to frontend.
+          Front-end no longer stores map of sticky breakpoints.
+            - setBreakpoint/removeBreakpoint/didParseSource trio handle this logic.
+        - A bunch of if(USE_JSC/V8/other) forks removed.
+        - InspectorFrontend now operates primitive types only, got rid of USE_JSC as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=28799
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        (WebCore::JSInjectedScriptHost::isActivation):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::shared):
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::~ScriptDebugServer):
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::removeListener):
+        (WebCore::ScriptDebugServer::pageCreated):
+        (WebCore::ScriptDebugServer::hasListenersInterestedInPage):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::pauseProgram):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::currentCallFrame):
+        (WebCore::ScriptDebugServer::currentCallFrameState):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::dispatchFailedToParseSource):
+        (WebCore::toPage):
+        (WebCore::ScriptDebugServer::detach):
+        (WebCore::ScriptDebugServer::sourceParsed):
+        (WebCore::ScriptDebugServer::dispatchFunctionToListeners):
+        (WebCore::ScriptDebugServer::setJavaScriptPaused):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        (WebCore::ScriptDebugServer::callEvent):
+        (WebCore::ScriptDebugServer::atStatement):
+        (WebCore::ScriptDebugServer::returnEvent):
+        (WebCore::ScriptDebugServer::exception):
+        (WebCore::ScriptDebugServer::willExecuteProgram):
+        (WebCore::ScriptDebugServer::didExecuteProgram):
+        (WebCore::ScriptDebugServer::didReachBreakpoint):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsSoon):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::ScriptDebugServer::didAddListener):
+        (WebCore::ScriptDebugServer::didRemoveListener):
+        (WebCore::ScriptDebugServer::didRemoveLastListener):
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::Listener::~Listener):
+        (WebCore::ScriptDebugServer::):
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::hasListeners):
+        (WebCore::ScriptDebugServer::hasGlobalListeners):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::shared):
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::Listener::~Listener):
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::removeListener):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::):
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::pauseProgram):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsSoon):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::ScriptDebugServer::currentCallFrameState):
+        (WebCore::ScriptDebugServer::pageCreated):
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::~ScriptDebugServer):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+        (WebCore::V8InjectedScriptHost::isActivationCallback):
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::setBreakpoint):
+        (WebCore::InspectorBackend::removeBreakpoint):
+        (WebCore::InspectorBackend::pauseInDebugger):
+        (WebCore::InspectorBackend::stepOverStatementInDebugger):
+        (WebCore::InspectorBackend::stepIntoStatementInDebugger):
+        (WebCore::InspectorBackend::stepOutOfFunctionInDebugger):
+        (WebCore::InspectorBackend::pauseOnExceptionsState):
+        (WebCore::InspectorBackend::setPauseOnExceptionsState):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/ScriptBreakpoint.h: Added.
+        (WebCore::InspectorBreakpoint::InspectorBreakpoint):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::resumeDebugger):
+        (WebCore::InspectorController::setBreakpoint):
+        (WebCore::InspectorController::removeBreakpoint):
+        (WebCore::InspectorController::didParseSource):
+        (WebCore::InspectorController::failedToParseSource):
+        (WebCore::InspectorController::didPause):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        (WebCore::InspectorFrontend::restoredBreakpoint):
+        (WebCore::InspectorFrontend::failedToParseScriptSource):
+        (WebCore::InspectorFrontend::resumedScript):
+        * inspector/InspectorFrontend.h:
+        * inspector/JavaScriptDebugListener.h: Removed.
+        * inspector/JavaScriptDebugServer.cpp: Removed.
+        * inspector/JavaScriptDebugServer.h: Removed.
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.set condition):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.addBreakpoint):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.sourceFrameForResource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.addScript):
+        (WebInspector.ScriptsPanel.prototype.addBreakpoint):
+        (WebInspector.ScriptsPanel.prototype.removeBreakpoint):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.restoredBreakpoint):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * platform/android/TemporaryLinkStubs.cpp:
+
 2010-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

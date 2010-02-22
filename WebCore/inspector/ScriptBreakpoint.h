@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +27,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaScriptDebugListener_h
-#define JavaScriptDebugListener_h
+#ifndef ScriptBreakpoint_h
+#define ScriptBreakpoint_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-
-namespace JSC {
-    class ExecState;
-    class SourceCode;
-    class UString;
-}
+#include "PlatformString.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-    class Frame;
-    class Page;
+struct ScriptBreakpoint {
+    ScriptBreakpoint(bool enabled, const String& condition)
+        : enabled(enabled)
+        , condition(condition)
+    {
+    }
 
-    class JavaScriptDebugListener {
-    public:
-        virtual ~JavaScriptDebugListener() { }
+    ScriptBreakpoint()
+    {
+    }
 
-        virtual void didParseSource(JSC::ExecState*, const JSC::SourceCode& source) = 0;
-        virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceCode& source, int errorLine, const JSC::UString& errorMessage) = 0;
-        virtual void didPause() = 0;
-        virtual void didContinue() = 0;
-    };
+    bool enabled;
+    String condition;
+};
+
+typedef HashMap<int, ScriptBreakpoint> SourceBreakpoints;
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
-
-#endif // JavaScriptDebugListener_h
+#endif // !defined(ScriptBreakpoint_h)

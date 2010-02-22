@@ -31,16 +31,66 @@
 #ifndef ScriptDebugServer_h
 #define ScriptDebugServer_h
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include "PlatformString.h"
+#include "ScriptBreakpoint.h"
+#include "ScriptState.h"
+#include "Timer.h"
+
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class ScriptDebugServer : public Noncopyable {
 public:
-    static void recompileAllJSFunctions();
-    static void recompileAllJSFunctionsSoon();
+    class Listener {
+    public:
+        virtual ~Listener() { }
+
+        virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int firstLine) = 0;
+        virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
+        virtual void didPause() = 0;
+        virtual void didContinue() = 0;
+    };
+
+    static ScriptDebugServer& shared();
+
+    void addListener(Listener*, Page*) { }
+    void removeListener(Listener*, Page*) { }
+
+    void setBreakpoint(const String& sourceID, unsigned lineNumber, ScriptBreakpoint breakpoint) { }
+    void removeBreakpoint(const String& sourceID, unsigned lineNumber) { }
+    void clearBreakpoints() { }
+
+    enum PauseOnExceptionsState {
+        DontPauseOnExceptions,
+        PauseOnAllExceptions,
+        PauseOnUncaughtExceptions
+    };
+    PauseOnExceptionsState pauseOnExceptionsState() const { return DontPauseOnExceptions; }
+    void setPauseOnExceptionsState(PauseOnExceptionsState) { }
+
+    void pauseProgram() { }
+    void continueProgram() { }
+    void stepIntoStatement() { }
+    void stepOverStatement() { }
+    void stepOutOfFunction() { }
+
+    void recompileAllJSFunctionsSoon() { }
+    void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) { }
+
+    ScriptState* currentCallFrameState() { return 0; }
+
+    void pageCreated(Page*) { }
+
+private:
+    ScriptDebugServer() { }
+    ~ScriptDebugServer() { }
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // ScriptDebugServer_h

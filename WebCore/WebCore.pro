@@ -1374,7 +1374,6 @@ HEADERS += \
     inspector/InspectorResource.h \
     inspector/InspectorTimelineAgent.h \
     inspector/JavaScriptCallFrame.h \
-    inspector/JavaScriptDebugServer.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \
@@ -2630,7 +2629,6 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     SOURCES += \
         bindings/js/JSJavaScriptCallFrameCustom.cpp \
         inspector/JavaScriptCallFrame.cpp \
-        inspector/JavaScriptDebugServer.cpp \
 }
 
 contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {

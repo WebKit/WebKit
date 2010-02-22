@@ -309,6 +309,8 @@ devtools.DebuggerAgent.prototype.removeBreakpoint = function(sourceId, line)
     var breakpointInfo;
     if (script.getUrl()) {
         var breakpoints = this.urlToBreakpoints_[script.getUrl()];
+        if (!breakpoints)
+            return;
         breakpointInfo = breakpoints[line];
         delete breakpoints[line];
     } else {
@@ -329,38 +331,6 @@ devtools.DebuggerAgent.prototype.removeBreakpoint = function(sourceId, line)
     // "setbreakpoint" response handler when we learn the id.
     if (id !== -1) {
         this.requestClearBreakpoint_(id);
-    }
-};
-
-
-/**
- * @param {number} sourceId Id of the script for the breakpoint.
- * @param {number} line Number of the line for the breakpoint.
- * @param {?string} condition New breakpoint condition.
- */
-devtools.DebuggerAgent.prototype.updateBreakpoint = function(sourceId, line, condition)
-{
-    var script = this.parsedScripts_[sourceId];
-    if (!script)
-        return;
-
-    line = devtools.DebuggerAgent.webkitToV8LineNumber_(line);
-
-    var breakpointInfo;
-    if (script.getUrl()) {
-        var breakpoints = this.urlToBreakpoints_[script.getUrl()];
-        breakpointInfo = breakpoints[line];
-    } else
-        breakpointInfo = script.getBreakpointInfo(line);
-
-    var id = breakpointInfo.getV8Id();
-
-    // If we don't know id of this breakpoint in the v8 debugger we cannot send
-    // the "changebreakpoint" request.
-    if (id !== -1) {
-        // TODO(apavlov): make use of the real values for "enabled" and
-        // "ignoreCount" when appropriate.
-        this.requestChangeBreakpoint_(id, true, condition, null);
     }
 };
 
@@ -657,25 +627,6 @@ devtools.DebuggerAgent.prototype.requestClearBreakpoint_ = function(breakpointId
 {
     var cmd = new devtools.DebugCommand("clearbreakpoint", {
         "breakpoint": breakpointId
-    });
-    devtools.DebuggerAgent.sendCommand_(cmd);
-};
-
-
-/**
- * Changes breakpoint parameters in the v8 debugger.
- * @param {number} breakpointId Id of the breakpoint in the v8 debugger.
- * @param {boolean} enabled Whether to enable the breakpoint.
- * @param {?string} condition New breakpoint condition.
- * @param {number} ignoreCount New ignore count for the breakpoint.
- */
-devtools.DebuggerAgent.prototype.requestChangeBreakpoint_ = function(breakpointId, enabled, condition, ignoreCount)
-{
-    var cmd = new devtools.DebugCommand("changebreakpoint", {
-        "breakpoint": breakpointId,
-        "enabled": enabled,
-        "condition": condition,
-        "ignoreCount": ignoreCount
     });
     devtools.DebuggerAgent.sendCommand_(cmd);
 };

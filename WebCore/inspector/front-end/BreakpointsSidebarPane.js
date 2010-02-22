@@ -40,6 +40,16 @@ WebInspector.BreakpointsSidebarPane = function()
 }
 
 WebInspector.BreakpointsSidebarPane.prototype = {
+    reset: function()
+    {
+        this.breakpoints = {};
+        this.listElement.removeChildren();
+        if (this.listElement.parentElement) {
+            this.bodyElement.removeChild(this.listElement);
+            this.bodyElement.appendChild(this.emptyElement);
+        }
+    },
+
     addBreakpoint: function(breakpoint)
     {
         if (this.breakpoints[breakpoint.id])
@@ -62,7 +72,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             return;
 
         if (breakpoint.enabled)
-            InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
+            InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 
     _appendBreakpointElement: function(breakpoint)
@@ -151,10 +161,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
-        if (breakpoint.enabled)
-            InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
-        else
-            InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
+        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 
     _breakpointTextChanged: function(event)

@@ -42689,15 +42689,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\JavaScriptDebugListener.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\JavaScriptDebugServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\JavaScriptDebugServer.h"
+				RelativePath="..\inspector\ScriptBreakpoint.h"
 				>
 			</File>
 			<File

@@ -49,16 +49,15 @@
 #include "InspectorResource.h"
 #include "Pasteboard.h"
 #include "ScriptArray.h"
+#include "ScriptBreakpoint.h"
 #include "SerializedScriptValue.h"
 
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-#include "JavaScriptCallFrame.h"
-#include "JavaScriptDebugServer.h"
-using namespace JSC;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "ScriptDebugServer.h"
 #endif
 
 #include "markup.h"
@@ -148,7 +147,7 @@ void InspectorBackend::stopTimelineProfiler()
         m_inspectorController->stopTimelineProfiler();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 bool InspectorBackend::debuggerEnabled() const
 {
     if (m_inspectorController)
@@ -168,27 +167,21 @@ void InspectorBackend::disableDebugger(bool always)
         m_inspectorController->disableDebugger(always);
 }
 
-void InspectorBackend::addBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition)
+void InspectorBackend::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
 {
-    intptr_t sourceIDValue = sourceID.toIntPtr();
-    JavaScriptDebugServer::shared().addBreakpoint(sourceIDValue, lineNumber, condition);
-}
-
-void InspectorBackend::updateBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition)
-{
-    intptr_t sourceIDValue = sourceID.toIntPtr();
-    JavaScriptDebugServer::shared().updateBreakpoint(sourceIDValue, lineNumber, condition);
+    if (m_inspectorController)
+        m_inspectorController->setBreakpoint(sourceID, lineNumber, enabled, condition);
 }
 
 void InspectorBackend::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-    intptr_t sourceIDValue = sourceID.toIntPtr();
-    JavaScriptDebugServer::shared().removeBreakpoint(sourceIDValue, lineNumber);
+    if (m_inspectorController)
+        m_inspectorController->removeBreakpoint(sourceID, lineNumber);
 }
 
 void InspectorBackend::pauseInDebugger()
 {
-    JavaScriptDebugServer::shared().pauseProgram();
+    ScriptDebugServer::shared().pauseProgram();
 }
 
 void InspectorBackend::resumeDebugger()
@@ -199,33 +192,29 @@ void InspectorBackend::resumeDebugger()
 
 void InspectorBackend::stepOverStatementInDebugger()
 {
-    JavaScriptDebugServer::shared().stepOverStatement();
+    ScriptDebugServer::shared().stepOverStatement();
 }
 
 void InspectorBackend::stepIntoStatementInDebugger()
 {
-    JavaScriptDebugServer::shared().stepIntoStatement();
+    ScriptDebugServer::shared().stepIntoStatement();
 }
 
 void InspectorBackend::stepOutOfFunctionInDebugger()
 {
-    JavaScriptDebugServer::shared().stepOutOfFunction();
+    ScriptDebugServer::shared().stepOutOfFunction();
 }
 
 long InspectorBackend::pauseOnExceptionsState()
 {
-    return JavaScriptDebugServer::shared().pauseOnExceptionsState();
+    return ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
 void InspectorBackend::setPauseOnExceptionsState(long pauseState)
 {
-    JavaScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<JavaScriptDebugServer::PauseOnExceptionsState>(pauseState));
+    ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
 }
 
-JavaScriptCallFrame* InspectorBackend::currentCallFrame() const
-{
-    return JavaScriptDebugServer::shared().currentCallFrame();
-}
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

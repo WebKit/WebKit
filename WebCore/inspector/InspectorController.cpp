@@ -70,8 +70,8 @@
 #include "RenderInline.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptBreakpoint.h"
 #include "ScriptCallStack.h"
-#include "ScriptDebugServer.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
@@ -96,17 +96,17 @@
 #include "StorageArea.h"
 #endif
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "ScriptDebugServer.h"
+#endif
+
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-#include "JSJavaScriptCallFrame.h"
-#include "JavaScriptCallFrame.h"
-#include "JavaScriptDebugServer.h"
 #include "JavaScriptProfile.h"
 
 #include <runtime/JSLock.h>
 #include <runtime/UString.h>
-
-using namespace JSC;
 #endif
+
 using namespace std;
 
 namespace WebCore {
@@ -144,7 +144,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_inspectorBackend(InspectorBackend::create(this))
     , m_inspectorFrontendHost(InspectorFrontendHost::create(this, client))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerEnabled(false)
     , m_attachDebuggerWhenShown(false)
 #endif
@@ -305,13 +305,13 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
 
         if (m_nodeToFocus)
             focusNode();
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_attachDebuggerWhenShown)
             enableDebugger();
 #endif
         showPanel(m_showAfterVisible);
     } else {
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         // If the window is being closed with the debugger enabled,
         // remember this state to re-enable debugger on the next window
         // opening.
@@ -527,7 +527,7 @@ void InspectorController::scriptObjectReady()
         return;
     setFrontendProxyObject(m_frontendScriptState, webInspectorObj);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     String debuggerEnabled = setting(debuggerEnabledSettingName);
     if (debuggerEnabled == "true")
         enableDebugger();
@@ -596,7 +596,7 @@ void InspectorController::close()
     if (!enabled())
         return;
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     stopUserInitiatedProfiling();
     disableDebugger();
 #endif
@@ -747,6 +747,9 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         m_times.clear();
         m_counts.clear();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_sourceIDToURL.clear();
+#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profiles.clear();
         m_currentUserInitiatedProfileNumber = 1;
@@ -1357,7 +1360,7 @@ void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsig
 
     if (m_frontend) {
 #if USE(JSC)
-        JSLock lock(SilenceAssertionsOnly);
+        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
 #endif
         m_frontend->addProfileHeader(createProfileHeader(*profile));
     }
@@ -1431,7 +1434,7 @@ void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>
 
     if (!profilerEnabled()) {
         enableProfiler(false, true);
-        ScriptDebugServer::recompileAllJSFunctions();
+        ScriptDebugServer::shared().recompileAllJSFunctions();
     }
 
     m_recordingUserInitiatedProfile = true;
@@ -1439,7 +1442,7 @@ void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>
     String title = getCurrentUserInitiatedProfileName(true);
 
 #if USE(JSC)
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
 #else
     ScriptState* scriptState = 0;
 #endif
@@ -1460,7 +1463,7 @@ void InspectorController::stopUserInitiatedProfiling()
     String title = getCurrentUserInitiatedProfileName();
 
 #if USE(JSC)
-    ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
 #else
     ScriptState* scriptState = 0;
 #endif
@@ -1489,7 +1492,7 @@ void InspectorController::enableProfiler(bool always, bool skipRecompile)
     m_profilerEnabled = true;
 
     if (!skipRecompile)
-        ScriptDebugServer::recompileAllJSFunctionsSoon();
+        ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
 
     if (m_frontend)
         m_frontend->profilerWasEnabled();
@@ -1505,14 +1508,14 @@ void InspectorController::disableProfiler(bool always)
 
     m_profilerEnabled = false;
 
-    ScriptDebugServer::recompileAllJSFunctionsSoon();
+    ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
 
     if (m_frontend)
         m_frontend->profilerWasDisabled();
 }
 #endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableDebuggerFromFrontend(bool always)
 {
     if (always)
@@ -1520,8 +1523,8 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
 
     ASSERT(m_inspectedPage);
 
-    JavaScriptDebugServer::shared().addListener(this, m_inspectedPage);
-    JavaScriptDebugServer::shared().clearBreakpoints();
+    ScriptDebugServer::shared().addListener(this, m_inspectedPage);
+    ScriptDebugServer::shared().clearBreakpoints();
 
     m_debuggerEnabled = true;
     m_frontend->debuggerWasEnabled();
@@ -1553,7 +1556,7 @@ void InspectorController::disableDebugger(bool always)
 
     ASSERT(m_inspectedPage);
 
-    JavaScriptDebugServer::shared().removeListener(this, m_inspectedPage);
+    ScriptDebugServer::shared().removeListener(this, m_inspectedPage);
 
     m_debuggerEnabled = false;
     m_attachDebuggerWhenShown = false;
@@ -1566,25 +1569,66 @@ void InspectorController::resumeDebugger()
 {
     if (!m_debuggerEnabled)
         return;
-    JavaScriptDebugServer::shared().continueProgram();
+    ScriptDebugServer::shared().continueProgram();
+}
+
+void InspectorController::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition)
+{
+    ScriptBreakpoint breakpoint(enabled, condition);
+    ScriptDebugServer::shared().setBreakpoint(sourceID, lineNumber, breakpoint);
+    String url = m_sourceIDToURL.get(sourceID);
+    if (url.isEmpty())
+        return;
+
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    if (it == m_stickyBreakpoints.end())
+        it = m_stickyBreakpoints.set(url, SourceBreakpoints()).first;
+    it->second.set(lineNumber, breakpoint);
+}
+
+void InspectorController::removeBreakpoint(const String& sourceID, unsigned lineNumber)
+{
+    ScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
+ 
+    String url = m_sourceIDToURL.get(sourceID);
+    if (url.isEmpty())
+        return;
+
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    if (it != m_stickyBreakpoints.end())
+        it->second.remove(lineNumber);
 }
 
 // JavaScriptDebugListener functions
 
-void InspectorController::didParseSource(ExecState*, const SourceCode& source)
+void InspectorController::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine)
 {
-    m_frontend->parsedScriptSource(source);
+    m_frontend->parsedScriptSource(sourceID, url, data, firstLine);
+
+    if (url.isEmpty())
+        return;
+
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
+    if (it != m_stickyBreakpoints.end()) {
+        for (SourceBreakpoints::iterator breakpointIt = it->second.begin(); breakpointIt != it->second.end(); ++breakpointIt) {
+            if (firstLine <= breakpointIt->first) {
+                ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->first, breakpointIt->second);
+                m_frontend->restoredBreakpoint(sourceID, url, breakpointIt->first, breakpointIt->second.enabled, breakpointIt->second.condition);
+            }
+        }
+    }
+
+    m_sourceIDToURL.set(sourceID, url);
 }
 
-void InspectorController::failedToParseSource(ExecState*, const SourceCode& source, int errorLine, const UString& errorMessage)
+void InspectorController::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
 {
-    m_frontend->failedToParseScriptSource(source, errorLine, errorMessage);
+    m_frontend->failedToParseScriptSource(url, data, firstLine, errorLine, errorMessage);
 }
 
 void InspectorController::didPause()
 {
-    JavaScriptCallFrame* callFrame = m_injectedScriptHost->currentCallFrame();
-    ScriptState* scriptState = callFrame->scopeChain()->globalObject->globalExec();
+    ScriptState* scriptState = ScriptDebugServer::shared().currentCallFrameState();
     ASSERT(scriptState);
     InjectedScript injectedScript = m_injectedScriptHost->injectedScriptFor(scriptState);
     RefPtr<SerializedScriptValue> callFrames = injectedScript.callFrames();

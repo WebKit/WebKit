@@ -1212,6 +1212,13 @@ WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, starting
     this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine);
 }
 
+WebInspector.restoredBreakpoint = function(sourceID, sourceURL, line, enabled, condition)
+{
+    var breakpoint = new WebInspector.Breakpoint(sourceURL, line, sourceID, condition);
+    breakpoint.enabled = enabled;
+    this.panels.scripts.addBreakpoint(breakpoint);
+}
+
 WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLine, errorLine, errorMessage)
 {
     this.panels.scripts.addScript(null, sourceURL, source, startingLine, errorLine, errorMessage);

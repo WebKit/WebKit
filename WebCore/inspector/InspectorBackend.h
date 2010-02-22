@@ -41,7 +41,6 @@ class CachedResource;
 class Database;
 class InspectorDOMAgent;
 class InspectorFrontend;
-class JavaScriptCallFrame;
 class Node;
 class Storage;
 
@@ -73,13 +72,12 @@ public:
     void startTimelineProfiler();
     void stopTimelineProfiler();
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     bool debuggerEnabled() const;
     void enableDebugger(bool always);
     void disableDebugger(bool always);
 
-    void addBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition);
-    void updateBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition);
+    void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
 
     void pauseInDebugger();
@@ -92,9 +90,6 @@ public:
     void stepIntoStatementInDebugger();
     void stepOutOfFunctionInDebugger();
 
-    JavaScriptCallFrame* currentCallFrame() const;
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
     bool profilerEnabled();
     void enableProfiler(bool always);
     void disableProfiler(bool always);

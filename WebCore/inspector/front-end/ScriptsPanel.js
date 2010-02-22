@@ -157,8 +157,6 @@ WebInspector.ScriptsPanel = function()
     this.pauseOnExceptionButton = new WebInspector.StatusBarButton("", "scripts-pause-on-exceptions-status-bar-item", 3);
     this.pauseOnExceptionButton.addEventListener("click", this._togglePauseOnExceptions.bind(this), false);
 
-    this._breakpointsURLMap = {};
-
     this._shortcuts = {};
     var handler, shortcut;
     var platformSpecificModifier = WebInspector.isMac() ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
@@ -194,7 +192,7 @@ WebInspector.ScriptsPanel = function()
     this.reset();
 }
 
-// Keep these in sync with WebCore::JavaScriptDebugServer
+// Keep these in sync with WebCore::ScriptDebugServer
 WebInspector.ScriptsPanel.PauseOnExceptionsState = {
     DontPauseOnExceptions : 0,
     PauseOnAllExceptions : 1,
@@ -289,25 +287,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (sourceID)
             this._sourceIDMap[sourceID] = (resource || script);
-
-        if (sourceURL in this._breakpointsURLMap && sourceID) {
-            var breakpoints = this._breakpointsURLMap[sourceURL];
-            var breakpointsLength = breakpoints.length;
-            for (var i = 0; i < breakpointsLength; ++i) {
-                var breakpoint = breakpoints[i];
-
-                if (startingLine <= breakpoint.line) {
-                    // remove and add the breakpoint, to clean up things like the sidebar
-                    this.removeBreakpoint(breakpoint);
-                    breakpoint.sourceID = sourceID;
-                    this.addBreakpoint(breakpoint);
-                    
-                    if (breakpoint.enabled)
-                        InspectorBackend.addBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.condition);
-                }
-            }
-        }
-
         this._addScriptToFilesMenu(script);
     },
 
@@ -327,10 +306,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFrame;
         if (breakpoint.url) {
-            if (!(breakpoint.url in this._breakpointsURLMap))
-                this._breakpointsURLMap[breakpoint.url] = [];
-            this._breakpointsURLMap[breakpoint.url].unshift(breakpoint);
-
             if (breakpoint.url in WebInspector.resourceURLMap) {
                 var resource = WebInspector.resourceURLMap[breakpoint.url];
                 sourceFrame = this._sourceFrameForScriptOrResource(resource);
@@ -351,16 +326,9 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.breakpoints.removeBreakpoint(breakpoint);
 
         var sourceFrame;
-        if (breakpoint.url && breakpoint.url in this._breakpointsURLMap) {
-            var breakpoints = this._breakpointsURLMap[breakpoint.url];
-            breakpoints.remove(breakpoint);
-            if (!breakpoints.length)
-                delete this._breakpointsURLMap[breakpoint.url];
-
-            if (breakpoint.url in WebInspector.resourceURLMap) {
-                var resource = WebInspector.resourceURLMap[breakpoint.url];
-                sourceFrame = this._sourceFrameForScriptOrResource(resource);
-            }
+        if (breakpoint.url && breakpoint.url in WebInspector.resourceURLMap) {
+            var resource = WebInspector.resourceURLMap[breakpoint.url];
+            sourceFrame = this._sourceFrameForScriptOrResource(resource);
         }
 
         if (breakpoint.sourceID && !sourceFrame) {
@@ -487,6 +455,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._sourceIDMap = {};
         
         this.sidebarPanes.watchExpressions.refreshExpressions();
+        this.sidebarPanes.breakpoints.reset();
     },
 
     get visibleView()
@@ -616,15 +585,13 @@ WebInspector.ScriptsPanel.prototype = {
             if (!WebInspector.panels.resources)
                 return null;
             view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
-            view.headersVisible = false; 
-
-            if (scriptOrResource.url in this._breakpointsURLMap) {
-                var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
-                if (sourceFrame && !sourceFrame.breakpoints.length) {
-                    var breakpoints = this._breakpointsURLMap[scriptOrResource.url];
-                    var breakpointsLength = breakpoints.length;
-                    for (var i = 0; i < breakpointsLength; ++i)
-                        sourceFrame.addBreakpoint(breakpoints[i]);
+            view.headersVisible = false;
+            var breakpoints = this.sidebarPanes.breakpoints.breakpoints;
+            for (var breakpointId in breakpoints) {
+                var breakpoint = breakpoints[breakpointId];
+                if (breakpoint.url === scriptOrResource.url) {
+                    var sourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
+                    sourceFrame.addBreakpoint(breakpoint);
                 }
             }
         } else if (scriptOrResource instanceof WebInspector.Script)

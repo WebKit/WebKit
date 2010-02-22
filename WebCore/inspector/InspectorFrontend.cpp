@@ -46,12 +46,6 @@
 #include "SerializedScriptValue.h"
 #include <wtf/OwnPtr.h>
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-#include <parser/SourceCode.h>
-#include <runtime/JSValue.h>
-#include <runtime/UString.h>
-#endif
-
 namespace WebCore {
 
 InspectorFrontend::InspectorFrontend(InspectorController* inspectorController, ScriptObject webInspector)
@@ -250,7 +244,7 @@ void InspectorFrontend::addRecordToTimeline(const ScriptObject& record)
     function.call();
 }
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorFrontend::attachDebuggerWhenShown()
 {
     callSimpleFunction("attachDebuggerWhenShown");
@@ -266,24 +260,36 @@ void InspectorFrontend::debuggerWasDisabled()
     callSimpleFunction("debuggerWasDisabled");
 }
 
-void InspectorFrontend::parsedScriptSource(const JSC::SourceCode& source)
+void InspectorFrontend::parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("parsedScriptSource");
-    function.appendArgument(JSC::UString(JSC::UString::from(source.provider()->asID())));
-    function.appendArgument(source.provider()->url());
-    function.appendArgument(JSC::UString(source.data(), source.length()));
-    function.appendArgument(source.firstLine());
+    function.appendArgument(sourceID);
+    function.appendArgument(url);
+    function.appendArgument(data);
+    function.appendArgument(firstLine);
     function.call();
 }
 
-void InspectorFrontend::failedToParseScriptSource(const JSC::SourceCode& source, int errorLine, const JSC::UString& errorMessage)
+void InspectorFrontend::restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("restoredBreakpoint");
+    function.appendArgument(sourceID);
+    function.appendArgument(url);
+    function.appendArgument(line);
+    function.appendArgument(enabled);
+    function.appendArgument(condition);
+    function.call();
+}
+
+void InspectorFrontend::failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("failedToParseScriptSource");
-    function.appendArgument(source.provider()->url());
-    function.appendArgument(JSC::UString(source.data(), source.length()));
-    function.appendArgument(source.firstLine());
+    function.appendArgument(url);
+    function.appendArgument(data);
+    function.appendArgument(firstLine);
     function.appendArgument(errorLine);
     function.appendArgument(errorMessage);
     function.call();
@@ -302,9 +308,7 @@ void InspectorFrontend::resumedScript()
 {
     callSimpleFunction("resumedScript");
 }
-#endif
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorFrontend::profilerWasEnabled()
 {
     callSimpleFunction("profilerWasEnabled");

@@ -29,17 +29,20 @@
  */
 
 #include "config.h"
-
 #include "ScriptDebugServer.h"
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-void ScriptDebugServer::recompileAllJSFunctions()
+ScriptDebugServer& ScriptDebugServer::shared()
 {
-}
-
-void ScriptDebugServer::recompileAllJSFunctionsSoon()
-{
+    DEFINE_STATIC_LOCAL(ScriptDebugServer, server, ());
+    return server;
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)

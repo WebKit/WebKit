@@ -46,10 +46,8 @@
 #include "InspectorResource.h"
 #include "Pasteboard.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-#include "JavaScriptCallFrame.h"
-#include "JavaScriptDebugServer.h"
-using namespace JSC;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "ScriptDebugServer.h"
 #endif
 
 #if ENABLE(DATABASE)
@@ -129,13 +127,6 @@ long InjectedScriptHost::pushNodeByPathToFrontend(const String& path)
 
     return domAgent->pushNodePathToFrontend(node);
 }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-JavaScriptCallFrame* InjectedScriptHost::currentCallFrame() const
-{
-    return JavaScriptDebugServer::shared().currentCallFrame();
-}
-#endif
 
 #if ENABLE(DATABASE)
 Database* InjectedScriptHost::databaseForId(long databaseId)

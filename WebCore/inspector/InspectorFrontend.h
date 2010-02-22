@@ -35,14 +35,6 @@
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-namespace JSC {
-    class JSValue;
-    class SourceCode;
-    class UString;
-}
-#endif
-
 namespace WebCore {
     class ConsoleMessage;
     class Database;
@@ -84,16 +76,17 @@ namespace WebCore {
         void resourceTrackingWasEnabled();
         void resourceTrackingWasDisabled();
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         void attachDebuggerWhenShown();
         void debuggerWasEnabled();
         void debuggerWasDisabled();
-        void parsedScriptSource(const JSC::SourceCode&);
-        void failedToParseScriptSource(const JSC::SourceCode&, int errorLine, const JSC::UString& errorMessage);
+
+        void parsedScriptSource(const String& sourceID, const String& url, const String& data, int firstLine);
+        void restoredBreakpoint(const String& sourceID, const String& url, int line, bool enabled, const String& condition);
+        void failedToParseScriptSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
         void pausedScript(SerializedScriptValue* callFrames);
         void resumedScript();
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
+
         void profilerWasEnabled();
         void profilerWasDisabled();
         void addProfileHeader(const ScriptValue& profile);

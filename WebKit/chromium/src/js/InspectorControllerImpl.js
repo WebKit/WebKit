@@ -102,9 +102,11 @@ devtools.InspectorBackendImpl.prototype.profilerEnabled = function()
 };
 
 
-devtools.InspectorBackendImpl.prototype.addBreakpoint = function(sourceID, line, condition)
+devtools.InspectorBackendImpl.prototype.setBreakpoint = function(sourceID, line, enabled, condition)
 {
-    devtools.tools.getDebuggerAgent().addBreakpoint(sourceID, line, condition);
+    this.removeBreakpoint(sourceID, line);
+    if (enabled)
+        devtools.tools.getDebuggerAgent().addBreakpoint(sourceID, line, condition);
 };
 
 
@@ -113,10 +115,6 @@ devtools.InspectorBackendImpl.prototype.removeBreakpoint = function(sourceID, li
     devtools.tools.getDebuggerAgent().removeBreakpoint(sourceID, line);
 };
 
-devtools.InspectorBackendImpl.prototype.updateBreakpoint = function(sourceID, line, condition)
-{
-    devtools.tools.getDebuggerAgent().updateBreakpoint(sourceID, line, condition);
-};
 
 devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
 {
