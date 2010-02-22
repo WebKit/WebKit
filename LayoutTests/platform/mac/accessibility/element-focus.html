@@ -13,10 +13,7 @@ var successfullyParsed = false;
 
 <div role="text" aria-label="text" tabindex=0>text</div>
 
-<div role="list">
-  <div role="listitem" tabindex="0">foo</div>
-</div>
-
+<div role="alertdialog" tabindex="0">foo</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -36,8 +33,8 @@ var successfullyParsed = false;
           shouldBe("body.childAtIndex(1).role", "'AXRole: AXStaticText'");
           shouldBe("body.childAtIndex(1).isAttributeSettable('AXFocused')", "true");
 
-          shouldBe("body.childAtIndex(2).childAtIndex(0).role", "'AXRole: AXGroup'");
-          shouldBe("body.childAtIndex(2).childAtIndex(0).isAttributeSettable('AXFocused')", "true");
+          shouldBe("body.childAtIndex(2).role", "'AXRole: AXGroup'");
+          shouldBe("body.childAtIndex(2).isAttributeSettable('AXFocused')", "true");
     }
 
     successfullyParsed = true;
