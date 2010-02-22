@@ -11,9 +11,13 @@
 </style>
 </head>
 <body>
-<p>This tests the rendering of invalid UTF-8 sequences.</p>
-<p>The output should be: "т??т" (with black diamonds in place of question marks).</p>
-<hr>
-<p>т��т</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<p>This tests the decoding of invalid UTF-8 sequences.</p>
+The following should be: "т��т ���" or "т��т ��������":
+<p>т��т ���</p>
 </body>
 </html>
+

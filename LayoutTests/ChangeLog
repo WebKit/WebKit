@@ -1,3 +1,26 @@
+2010-02-22  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32937
+        LayoutTests/fast/encoding/invalid-UTF-8.html fails on Qt.
+
+        The test was verifying two things: first, that U+FFFD is rendered by the browser, and second,
+        that ill-formed UTF-8 sequences are turned into U+FFFD. Some aspects of the latter are not
+        precisely defined by the Unicode specification, so different platforms may legitimately
+        have different results.
+
+        Split the test into two: one to test the rendering of invalid UTF-8 sequences, and the other
+        to protect against regressions in each platform's decoding behaviour.
+
+        * fast/encoding/invalid-UTF-8-2-expected.txt: Added.
+        * fast/encoding/invalid-UTF-8-2.html: Added.
+        * fast/encoding/invalid-UTF-8.html:
+        * platform/mac/fast/encoding/invalid-UTF-8-expected.checksum:
+        * platform/mac/fast/encoding/invalid-UTF-8-expected.png:
+        * platform/mac/fast/encoding/invalid-UTF-8-expected.txt:
+        * platform/qt/fast/encoding/invalid-UTF-8-2-expected.txt:
+
 2010-02-22  Chris Fleizach  <cfleizach@apple.com>
 
         Fixing Layout test failure. Not reviewed.
