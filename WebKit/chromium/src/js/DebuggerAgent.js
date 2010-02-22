@@ -117,12 +117,17 @@ devtools.DebuggerAgent = function()
      */
     this.urlToBreakpoints_ = {};
 
-
     /**
      * Exception message that is shown to user while on exception break.
      * @type {WebInspector.ConsoleMessage}
      */
     this.currentExceptionMessage_ = null;
+
+    /**
+     * Whether breakpoints should suspend execution.
+     * @type {boolean}
+     */
+    this.breakpointsActivated_ = true;
 };
 
 
@@ -332,6 +337,15 @@ devtools.DebuggerAgent.prototype.removeBreakpoint = function(sourceId, line)
     if (id !== -1) {
         this.requestClearBreakpoint_(id);
     }
+};
+
+
+/**
+ * @param {boolean} activated Whether breakpoints should be activated.
+ */
+devtools.DebuggerAgent.prototype.setBreakpointsActivated = function(activated)
+{
+    this.breakpointsActivated_ = activated;
 };
 
 
@@ -770,7 +784,12 @@ devtools.DebuggerAgent.prototype.handleDebuggerOutput_ = function(output)
  */
 devtools.DebuggerAgent.prototype.handleBreakEvent_ = function(msg)
 {
-    // Force scrips panel to be shown first.
+    if (!this.breakpointsActivated_) {
+        this.resumeExecution();
+        return;
+    }
+
+    // Force scripts panel to be shown first.
     WebInspector.currentPanel = WebInspector.panels.scripts;
 
     var body = msg.getBody();
@@ -785,7 +804,7 @@ devtools.DebuggerAgent.prototype.handleBreakEvent_ = function(msg)
  */
 devtools.DebuggerAgent.prototype.handleExceptionEvent_ = function(msg)
 {
-    // Force scrips panel to be shown first.
+    // Force scripts panel to be shown first.
     WebInspector.currentPanel = WebInspector.panels.scripts;
 
     var body = msg.getBody();

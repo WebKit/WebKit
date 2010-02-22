@@ -1,3 +1,19 @@
+2010-02-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: there should be a way to "deactivate" or "skip" all breakpoints while debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=33217
+
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent):
+        (devtools.DebuggerAgent.prototype.setBreakpointsActivated):
+        (devtools.DebuggerAgent.prototype.handleBreakEvent_):
+        (devtools.DebuggerAgent.prototype.handleExceptionEvent_):
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl.prototype.activateBreakpoints):
+        (devtools.InspectorBackendImpl.prototype.deactivateBreakpoints):
+
 2010-02-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

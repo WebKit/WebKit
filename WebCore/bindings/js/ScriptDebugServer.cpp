@@ -72,6 +72,7 @@ ScriptDebugServer::ScriptDebugServer()
     , m_doneProcessingDebuggerEvents(true)
     , m_pauseOnCallFrame(0)
     , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctions)
+    , m_breakpointsActivated(true)
 {
 }
 
@@ -154,6 +155,9 @@ void ScriptDebugServer::removeBreakpoint(const String& sourceID, unsigned lineNu
 
 bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const
 {
+    if (!m_breakpointsActivated)
+        return false;
+
     BreakpointsMap::const_iterator it = m_breakpoints.find(sourceID);
     if (it == m_breakpoints.end())
         return false;
@@ -177,6 +181,11 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) co
 void ScriptDebugServer::clearBreakpoints()
 {
     m_breakpoints.clear();
+}
+
+void ScriptDebugServer::setBreakpointsActivated(bool activated)
+{
+    m_breakpointsActivated = activated;
 }
 
 void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pause)

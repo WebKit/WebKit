@@ -116,6 +116,18 @@ devtools.InspectorBackendImpl.prototype.removeBreakpoint = function(sourceID, li
 };
 
 
+devtools.InspectorBackendImpl.prototype.activateBreakpoints = function()
+{
+    devtools.tools.getDebuggerAgent().setBreakpointsActivated(true);
+};
+
+
+devtools.InspectorBackendImpl.prototype.deactivateBreakpoints = function()
+{
+    devtools.tools.getDebuggerAgent().setBreakpointsActivated(false);
+};
+
+
 devtools.InspectorBackendImpl.prototype.pauseInDebugger = function()
 {
     devtools.tools.getDebuggerAgent().pauseExecution();

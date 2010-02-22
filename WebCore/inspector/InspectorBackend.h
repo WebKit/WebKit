@@ -79,6 +79,8 @@ public:
 
     void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition);
     void removeBreakpoint(const String& sourceID, unsigned lineNumber);
+    void activateBreakpoints();
+    void deactivateBreakpoints();
 
     void pauseInDebugger();
     void resumeDebugger();

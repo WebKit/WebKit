@@ -166,6 +166,16 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
+    activateBreakpoints: function()
+    {
+        this._breakpointsActivated = true;
+    },
+
+    deactivateBreakpoints: function()
+    {
+        this._breakpointsActivated = false;
+    },
+
     pauseInDebugger: function()
     {
     },

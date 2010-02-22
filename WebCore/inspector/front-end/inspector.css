@@ -2410,6 +2410,16 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     content: url(Images/debuggerStepOut.png);
 }
 
+.toggle-breakpoints .glyph {
+    -webkit-mask-image: url(Images/deactivateBreakpointsDisabledButtonGlyph.png);
+    background-color: rgb(96, 96, 96);
+}
+
+.toggle-breakpoints.toggled-on .glyph {
+    -webkit-mask-image: url(Images/deactivateBreakpointsButtonGlyph.png);
+    background-color: rgb(1, 142, 217);
+}
+
 #scripts-debugger-status {
     position: absolute;
     line-height: 24px;

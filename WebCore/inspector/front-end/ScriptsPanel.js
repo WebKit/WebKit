@@ -105,6 +105,12 @@ WebInspector.ScriptsPanel = function()
     this.stepOutButton.appendChild(document.createElement("img"));
     this.sidebarButtonsElement.appendChild(this.stepOutButton);
 
+    this.toggleBreakpointsButton = new WebInspector.StatusBarButton("", "toggle-breakpoints");
+    this.toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked.bind(this), false);
+    this.sidebarButtonsElement.appendChild(this.toggleBreakpointsButton.element);
+    // Breakpoints should be activated by default, so emulate a click to toggle on.
+    this._toggleBreakpointsClicked();
+
     this.debuggerStatusElement = document.createElement("div");
     this.debuggerStatusElement.id = "scripts-debugger-status";
     this.sidebarButtonsElement.appendChild(this.debuggerStatusElement);
@@ -274,6 +280,11 @@ WebInspector.ScriptsPanel.prototype = {
         return views;
     },
 
+    get breakpointsActivated()
+    {
+        return this.toggleBreakpointsButton.toggled;
+    },
+
     addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage)
     {
         var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage);
@@ -302,6 +313,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     addBreakpoint: function(breakpoint)
     {
+        if (!this.breakpointsActivated)
+            this._toggleBreakpointsClicked();
+
         this.sidebarPanes.breakpoints.addBreakpoint(breakpoint);
 
         var sourceFrame;
@@ -936,6 +950,20 @@ WebInspector.ScriptsPanel.prototype = {
         this._clearInterface();
 
         InspectorBackend.stepOutOfFunctionInDebugger();
+    },
+
+    _toggleBreakpointsClicked: function()
+    {
+        this.toggleBreakpointsButton.toggled = !this.toggleBreakpointsButton.toggled;
+        if (this.toggleBreakpointsButton.toggled) {
+            InspectorBackend.activateBreakpoints();
+            this.toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
+            document.getElementById("main-panels").removeStyleClass("breakpoints-deactivated");
+        } else {
+            InspectorBackend.deactivateBreakpoints();
+            this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
+            document.getElementById("main-panels").addStyleClass("breakpoints-deactivated");
+        }
     }
 }
 

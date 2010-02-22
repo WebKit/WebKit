@@ -179,6 +179,16 @@ void InspectorBackend::removeBreakpoint(const String& sourceID, unsigned lineNum
         m_inspectorController->removeBreakpoint(sourceID, lineNumber);
 }
 
+void InspectorBackend::activateBreakpoints()
+{
+    ScriptDebugServer::shared().setBreakpointsActivated(true);
+}
+
+void InspectorBackend::deactivateBreakpoints()
+{
+    ScriptDebugServer::shared().setBreakpointsActivated(false);
+}
+
 void InspectorBackend::pauseInDebugger()
 {
     ScriptDebugServer::shared().pauseProgram();

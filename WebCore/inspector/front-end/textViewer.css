@@ -123,6 +123,14 @@
     background-image: -webkit-canvas(breakpoint-disabled-conditional-program-counter);
 }
 
+.breakpoints-deactivated .webkit-breakpoint .webkit-line-number {
+    opacity: 0.5;
+}
+
+.breakpoints-deactivated .webkit-breakpoint-disabled .webkit-line-number {
+    opacity: 0.5;
+}
+
 .webkit-execution-line .webkit-line-content {
     background-color: rgb(171, 191, 254);
     outline: 1px solid rgb(64, 115, 244);
