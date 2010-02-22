@@ -1380,6 +1380,7 @@ webcore_sources += \
 	WebCore/page/History.h \
 	WebCore/page/Location.cpp \
 	WebCore/page/Location.h \
+	WebCore/page/MediaCanStartListener.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \
 	WebCore/page/MouseEventWithHitTestResults.h \
 	WebCore/page/Navigator.cpp \

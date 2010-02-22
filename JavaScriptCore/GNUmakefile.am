@@ -264,7 +264,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/PassRefPtr.h \
 	JavaScriptCore/wtf/Platform.h \
 	JavaScriptCore/wtf/PossiblyNull.h \
-	JavaScriptCore/wtf/PtrAndFlags.h \
 	JavaScriptCore/wtf/RandomNumber.cpp \
 	JavaScriptCore/wtf/RandomNumber.h \
 	JavaScriptCore/wtf/RandomNumberSeed.h \
