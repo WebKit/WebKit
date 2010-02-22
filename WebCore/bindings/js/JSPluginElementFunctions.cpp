@@ -49,7 +49,7 @@ Instance* pluginInstance(Node* node)
     return instance;
 }
 
-static RuntimeObjectImp* getRuntimeObject(ExecState* exec, Node* node)
+static RuntimeObject* getRuntimeObject(ExecState* exec, Node* node)
 {
     Instance* instance = pluginInstance(node);
     if (!instance)
@@ -61,7 +61,7 @@ JSValue runtimeObjectPropertyGetter(ExecState* exec, const Identifier& propertyN
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slot.slotBase()));
     HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
-    RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element);
+    RuntimeObject* runtimeObject = getRuntimeObject(exec, element);
     if (!runtimeObject)
         return jsUndefined();
     return runtimeObject->get(exec, propertyName);
@@ -69,7 +69,7 @@ JSValue runtimeObjectPropertyGetter(ExecState* exec, const Identifier& propertyN
 
 bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* element)
 {
-    RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element->impl());
+    RuntimeObject* runtimeObject = getRuntimeObject(exec, element->impl());
     if (!runtimeObject)
         return false;
     if (!runtimeObject->hasProperty(exec, propertyName))
@@ -80,7 +80,7 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& pr
 
 bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, JSHTMLElement* element)
 {
-    RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element->impl());
+    RuntimeObject* runtimeObject = getRuntimeObject(exec, element->impl());
     if (!runtimeObject)
         return false;
     if (!runtimeObject->hasProperty(exec, propertyName))
@@ -96,7 +96,7 @@ bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifi
 
 bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue value, HTMLElement* element, PutPropertySlot& slot)
 {
-    RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element);
+    RuntimeObject* runtimeObject = getRuntimeObject(exec, element);
     if (!runtimeObject)
         return 0;
     if (!runtimeObject->hasProperty(exec, propertyName))

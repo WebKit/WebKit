@@ -40,7 +40,7 @@ class ArgList;
 class Identifier;
 class JSGlobalObject;
 class PropertyNameArray;
-class RuntimeObjectImp;
+class RuntimeObject;
 
 namespace Bindings {
 
@@ -83,7 +83,7 @@ public:
     void end();
 
     virtual Class* getClass() const = 0;
-    RuntimeObjectImp* createRuntimeObject(ExecState*);
+    RuntimeObject* createRuntimeObject(ExecState*);
     void willInvalidateRuntimeObject();
     void willDestroyRuntimeObject();
 
@@ -115,12 +115,12 @@ public:
 protected:
     virtual void virtualBegin() { }
     virtual void virtualEnd() { }
-    virtual RuntimeObjectImp* newRuntimeObject(ExecState*);
+    virtual RuntimeObject* newRuntimeObject(ExecState*);
 
     RefPtr<RootObject> m_rootObject;
 
 private:
-    RuntimeObjectImp* m_runtimeObject;
+    RuntimeObject* m_runtimeObject;
 };
 
 class Array : public Noncopyable {

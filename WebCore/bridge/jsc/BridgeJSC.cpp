@@ -83,7 +83,7 @@ void Instance::end()
     virtualEnd();
 }
 
-RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
+RuntimeObject* Instance::createRuntimeObject(ExecState* exec)
 {
     ASSERT(m_rootObject);
     ASSERT(m_rootObject->isValid());
@@ -95,10 +95,10 @@ RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
     return m_runtimeObject;
 }
 
-RuntimeObjectImp* Instance::newRuntimeObject(ExecState* exec)
+RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new (exec)RuntimeObjectImp(exec, this);
+    return new (exec)RuntimeObject(exec, this);
 }
 
 void Instance::willDestroyRuntimeObject()

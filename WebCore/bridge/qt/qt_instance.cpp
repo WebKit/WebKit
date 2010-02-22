@@ -44,15 +44,15 @@ typedef QMultiHash<void*, QtInstance*> QObjectInstanceMap;
 static QObjectInstanceMap cachedInstances;
 
 // Derived RuntimeObject
-class QtRuntimeObjectImp : public RuntimeObjectImp {
+class QtRuntimeObject : public RuntimeObject {
 public:
-    QtRuntimeObjectImp(ExecState*, PassRefPtr<Instance>);
+    QtRuntimeObject(ExecState*, PassRefPtr<Instance>);
 
     static const ClassInfo s_info;
 
     virtual void markChildren(MarkStack& markStack)
     {
-        RuntimeObjectImp::markChildren(markStack);
+        RuntimeObject::markChildren(markStack);
         QtInstance* instance = static_cast<QtInstance*>(getInternalInstance());
         if (instance)
             instance->markAggregate(markStack);
@@ -64,16 +64,16 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = RuntimeObjectImp::StructureFlags | OverridesMarkChildren;
+    static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesMarkChildren;
 
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }
 };
 
-const ClassInfo QtRuntimeObjectImp::s_info = { "QtRuntimeObject", &RuntimeObjectImp::s_info, 0, 0 };
+const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
-QtRuntimeObjectImp::QtRuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> instance)
-    : RuntimeObjectImp(exec, WebCore::deprecatedGetDOMStructure<QtRuntimeObjectImp>(exec), instance)
+QtRuntimeObject::QtRuntimeObject(ExecState* exec, PassRefPtr<Instance> instance)
+    : RuntimeObject(exec, WebCore::deprecatedGetDOMStructure<QtRuntimeObject>(exec), instance)
 {
 }
 
@@ -164,9 +164,9 @@ QtInstance* QtInstance::getInstance(JSObject* object)
 {
     if (!object)
         return 0;
-    if (!object->inherits(&QtRuntimeObjectImp::s_info))
+    if (!object->inherits(&QtRuntimeObject::s_info))
         return 0;
-    return static_cast<QtInstance*>(static_cast<RuntimeObjectImp*>(object)->getInternalInstance());
+    return static_cast<QtInstance*>(static_cast<RuntimeObject*>(object)->getInternalInstance());
 }
 
 Class* QtInstance::getClass() const
@@ -176,10 +176,10 @@ Class* QtInstance::getClass() const
     return m_class;
 }
 
-RuntimeObjectImp* QtInstance::newRuntimeObject(ExecState* exec)
+RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return new (exec) QtRuntimeObjectImp(exec, this);
+    return new (exec) QtRuntimeObject(exec, this);
 }
 
 void QtInstance::markAggregate(MarkStack& markStack)

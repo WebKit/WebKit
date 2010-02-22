@@ -154,7 +154,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
             return Date;
         else if (object->inherits(&RegExpObject::info))
             return RegExp;
-        else if (object->inherits(&RuntimeObjectImp::s_info))
+        else if (object->inherits(&RuntimeObject::s_info))
             return QObj;
         return Object;
     }

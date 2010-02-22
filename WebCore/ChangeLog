@@ -1,3 +1,71 @@
+2010-02-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        Rename RuntimeObjectImp to RuntimeObject.
+
+        * WebCore.PluginHostProcess.exp:
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::getRuntimeObject):
+        (WebCore::runtimeObjectPropertyGetter):
+        (WebCore::runtimeObjectCustomGetOwnPropertySlot):
+        (WebCore::runtimeObjectCustomGetOwnPropertyDescriptor):
+        (WebCore::runtimeObjectCustomPut):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertValueToJObject):
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        (JSC::Bindings::Instance::newRuntimeObject):
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::markChildren):
+        (JSC::Bindings::):
+        (JSC::Bindings::QtRuntimeObject::QtRuntimeObject):
+        (JSC::Bindings::QtInstance::getInstance):
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapRuntimeObject::QtPixmapRuntimeObject):
+        (JSC::Bindings::):
+        (JSC::Bindings::QtPixmapInstance::variantFromObject):
+        (JSC::Bindings::QtPixmapInstance::createRuntimeObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::valueRealType):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObject::RuntimeObject):
+        (JSC::RuntimeObject::~RuntimeObject):
+        (JSC::RuntimeObject::invalidate):
+        (JSC::RuntimeObject::fallbackObjectGetter):
+        (JSC::RuntimeObject::fieldGetter):
+        (JSC::RuntimeObject::methodGetter):
+        (JSC::RuntimeObject::getOwnPropertySlot):
+        (JSC::RuntimeObject::getOwnPropertyDescriptor):
+        (JSC::RuntimeObject::put):
+        (JSC::RuntimeObject::deleteProperty):
+        (JSC::RuntimeObject::defaultValue):
+        (JSC::callRuntimeObject):
+        (JSC::RuntimeObject::getCallData):
+        (JSC::callRuntimeConstructor):
+        (JSC::RuntimeObject::getConstructData):
+        (JSC::RuntimeObject::getOwnPropertyNames):
+        (JSC::RuntimeObject::throwInvalidAccessError):
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate):
+        (JSC::Bindings::RootObject::addRuntimeObject):
+        (JSC::Bindings::RootObject::removeRuntimeObject):
+        * bridge/runtime_root.h:
+
 2010-02-19  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

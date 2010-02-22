@@ -184,18 +184,18 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
 
             // First see if we have a Java instance.
             if (value.isObject()) {
-                JSObject* objectImp = asObject(value);
-                if (objectImp->classInfo() == &RuntimeObjectImp::s_info) {
-                    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(objectImp);
-                    JavaInstance* instance = static_cast<JavaInstance*>(imp->getInternalInstance());
+                JSObject* object = asObject(value);
+                if (object->classInfo() == &RuntimeObject::s_info) {
+                    RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
+                    JavaInstance* instance = static_cast<JavaInstance*>(runtimeObject->getInternalInstance());
                     if (instance)
                         result.l = instance->javaInstance();
-                } else if (objectImp->classInfo() == &RuntimeArray::s_info) {
+                } else if (object->classInfo() == &RuntimeArray::s_info) {
                     // Input is a JavaScript Array that was originally created from a Java Array
-                    RuntimeArray* imp = static_cast<RuntimeArray*>(objectImp);
+                    RuntimeArray* imp = static_cast<RuntimeArray*>(object);
                     JavaArray* array = static_cast<JavaArray*>(imp->getConcreteArray());
                     result.l = array->javaArray();
-                } else if (objectImp->classInfo() == &JSArray::info) {
+                } else if (object->classInfo() == &JSArray::info) {
                     // Input is a Javascript Array. We need to create it to a Java Array.
                     result.l = convertArrayInstanceToJavaArray(exec, asArray(value), javaClassName);
                 }

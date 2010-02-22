@@ -512,27 +512,25 @@ jobject JavaJSObject::convertValueToJObject(JSValue value) const
         jlong nativeHandle;
         
         if (value.isObject()) {
-            JSObject* imp = asObject(value);
+            JSObject* object = asObject(value);
             
             // We either have a wrapper around a Java instance or a JavaScript
             // object.  If we have a wrapper around a Java instance, return that
             // instance, otherwise create a new Java JavaJSObject with the JSObject*
             // as its nativeHandle.
-            if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
-                RuntimeObjectImp* runtimeImp = static_cast<RuntimeObjectImp*>(imp);
-                JavaInstance *runtimeInstance = static_cast<JavaInstance *>(runtimeImp->getInternalInstance());
+            if (object->classInfo() && strcmp(object->classInfo()->className, "RuntimeObject") == 0) {
+                RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
+                JavaInstance* runtimeInstance = static_cast<JavaInstance*>(runtimeObject->getInternalInstance());
                 if (!runtimeInstance)
                     return 0;
                 
                 return runtimeInstance->javaInstance();
+            } else {
+                nativeHandle = ptr_to_jlong(object);
+                rootObject->gcProtect(object);
             }
-            else {
-                nativeHandle = ptr_to_jlong(imp);
-                rootObject->gcProtect(imp);
-            }
-        }
+        } else {
         // All other types will result in an undefined object.
-        else {
             nativeHandle = UndefinedHandle;
         }
         

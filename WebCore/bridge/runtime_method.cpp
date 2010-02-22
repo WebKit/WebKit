@@ -96,11 +96,11 @@ static JSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec, JSObject* functi
 
     RefPtr<Instance> instance;
 
-    if (thisValue.inherits(&RuntimeObjectImp::s_info)) {
-        RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
-        instance = imp->getInternalInstance();
+    if (thisValue.inherits(&RuntimeObject::s_info)) {
+        RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
+        instance = runtimeObject->getInternalInstance();
         if (!instance) 
-            return RuntimeObjectImp::throwInvalidAccessError(exec);
+            return RuntimeObject::throwInvalidAccessError(exec);
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits(&JSHTMLElement::s_info)) {

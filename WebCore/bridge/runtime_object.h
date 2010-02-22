@@ -31,10 +31,10 @@
 
 namespace JSC {
 
-class RuntimeObjectImp : public JSObject {
+class RuntimeObject : public JSObject {
 public:
-    RuntimeObjectImp(ExecState*, PassRefPtr<Bindings::Instance>);
-    virtual ~RuntimeObjectImp();
+    RuntimeObject(ExecState*, PassRefPtr<Bindings::Instance>);
+    virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
@@ -66,7 +66,7 @@ public:
 
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
-    RuntimeObjectImp(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
+    RuntimeObject(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
 
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }

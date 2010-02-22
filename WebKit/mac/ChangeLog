@@ -1,3 +1,14 @@
+2010-02-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        Rename RuntimeObjectImp to RuntimeObject.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        (WebKit::NetscapePluginInstanceProxy::retainLocalObject):
+        (WebKit::NetscapePluginInstanceProxy::releaseLocalObject):
+
 2010-02-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.

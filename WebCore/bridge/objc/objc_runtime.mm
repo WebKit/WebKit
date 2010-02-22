@@ -216,16 +216,16 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 
 static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
 {
-    if (!thisValue.inherits(&RuntimeObjectImp::s_info))
+    if (!thisValue.inherits(&RuntimeObject::s_info))
         return throwError(exec, TypeError);
 
     JSValue result = jsUndefined();
 
-    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
-    Instance* instance = imp->getInternalInstance();
+    RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
+    Instance* instance = runtimeObject->getInternalInstance();
 
     if (!instance)
-        return RuntimeObjectImp::throwInvalidAccessError(exec);
+        return RuntimeObject::throwInvalidAccessError(exec);
     
     instance->begin();
 

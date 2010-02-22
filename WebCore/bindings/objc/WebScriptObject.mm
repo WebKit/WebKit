@@ -518,9 +518,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
             ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(el));
             if (instance)
                 return instance->getObject();
-        } else if (object->inherits(&RuntimeObjectImp::s_info)) {
-            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);
-            ObjcInstance* instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
+        } else if (object->inherits(&RuntimeObject::s_info)) {
+            RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
+            ObjcInstance* instance = static_cast<ObjcInstance*>(runtimeObject->getInternalInstance());
             if (instance)
                 return instance->getObject();
             return nil;

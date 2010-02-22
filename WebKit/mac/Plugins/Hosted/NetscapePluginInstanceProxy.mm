@@ -1206,9 +1206,9 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (object->classInfo() == &RuntimeObjectImp::s_info) {
-            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);
-            if (ProxyInstance* instance = static_cast<ProxyInstance*>(imp->getInternalInstance())) {
+        if (object->classInfo() == &RuntimeObject::s_info) {
+            RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
+            if (ProxyInstance* instance = static_cast<ProxyInstance*>(runtimeObject->getInternalInstance())) {
                 [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
                 [array addObject:[NSNumber numberWithInt:instance->objectID()]];
             }
@@ -1339,7 +1339,7 @@ void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
         return;
 
     JSObject* object = asObject(value);
-    if (object->classInfo() == &RuntimeObjectImp::s_info)
+    if (object->classInfo() == &RuntimeObject::s_info)
         return;
 
     m_localObjects.retain(object);
@@ -1351,7 +1351,7 @@ void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
         return;
 
     JSObject* object = asObject(value);
-    if (object->classInfo() == &RuntimeObjectImp::s_info)
+    if (object->classInfo() == &RuntimeObject::s_info)
         return;
 
     m_localObjects.release(object);

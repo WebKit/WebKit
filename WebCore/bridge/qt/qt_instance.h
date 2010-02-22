@@ -40,7 +40,7 @@ public:
     ~QtInstance();
 
     virtual Class* getClass() const;
-    virtual RuntimeObjectImp* newRuntimeObject(ExecState*);
+    virtual RuntimeObject* newRuntimeObject(ExecState*);
 
     virtual void begin();
     virtual void end();
