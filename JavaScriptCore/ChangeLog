@@ -1,3 +1,14 @@
+2010-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        [Qt] Build fix for RVCT.
+
+        Fix after r55024. The "-i" option is for perl not for the
+        script.
+
+        * DerivedSources.pro:
+
 2010-02-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
