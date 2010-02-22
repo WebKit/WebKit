@@ -1,3 +1,18 @@
+2010-02-07  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        When page-break-{after,before} is set to always, force page breaks even for overflow-specified elements.
+        RenderBlock::inRootBlockContext() was introduced by Changeset 5611. Although it is a reasonable criteria for choosing an optional page break location, it is not for a mandatory page break as specified by http://dev.w3.org/csswg/css3-page/#forced-pg-brk. The method is removed because it is not used anywhere else.
+        Note: this patch makes page break work for overflow-specified elements. For tables and floated elements, more work is needed.
+        https://bugs.webkit.org/show_bug.cgi?id=9526
+
+        Test: printing/page-break-always-for-overflow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        * rendering/RenderBlock.h:
+
 2010-02-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.

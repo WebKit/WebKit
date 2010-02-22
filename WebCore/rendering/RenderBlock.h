@@ -317,7 +317,6 @@ private:
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;
-    bool inRootBlockContext() const;
 
     virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
     virtual RenderStyle* outlineStyleForRepaint() const;
