@@ -63,18 +63,17 @@ bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, Hit
 
 VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& point)
 {
-    int contentsX = point.x();
-    int contentsY = point.y();
+    IntPoint contentsPoint(point);
 
     // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
     // into account here.
     if (m_multiLine) {
         RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
         if (renderer->hasOverflowClip())
-            renderer->layer()->addScrolledContentOffset(contentsX, contentsY);
+            contentsPoint += renderer->layer()->scrolledContentOffset();
     }
 
-    return RenderBlock::positionForPoint(IntPoint(contentsX, contentsY));
+    return RenderBlock::positionForPoint(contentsPoint);
 }
 
 TextControlInnerElement::TextControlInnerElement(Document* doc, Node* shadowParent)

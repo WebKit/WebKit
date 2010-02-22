@@ -571,15 +571,20 @@ void RenderLayer::updateLayerPosition()
         RenderLayer* positionedParent = enclosingPositionedAncestor();
 
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
-        positionedParent->subtractScrolledContentOffset(x, y);
+        IntSize offset = positionedParent->scrolledContentOffset();
+        x -= offset.width();
+        y -= offset.height();
         
         if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
             IntSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(toRenderBox(renderer()));
             x += offset.width();
             y += offset.height();
         }
-    } else if (parent())
-        parent()->subtractScrolledContentOffset(x, y);
+    } else if (parent()) {
+        IntSize offset = parent()->scrolledContentOffset();
+        x -= offset.width();
+        y -= offset.height();
+    }
     
     // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
 
@@ -1163,21 +1168,6 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
-}
-
-
-void
-RenderLayer::addScrolledContentOffset(int& x, int& y) const
-{
-    x += scrollXOffset() + m_scrollLeftOverflow;
-    y += scrollYOffset();
-}
-
-void
-RenderLayer::subtractScrolledContentOffset(int& x, int& y) const
-{
-    x -= scrollXOffset() + m_scrollLeftOverflow;
-    y -= scrollYOffset();
 }
 
 void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)

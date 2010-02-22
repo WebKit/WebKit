@@ -1,3 +1,42 @@
+2010-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Darin Adler.
+
+        Remove addScrolledContentOffset/subtractScrolledContentOffset
+        https://bugs.webkit.org/show_bug.cgi?id=35225
+
+        Remove RenderLayer's addScrolledContentOffset() and subtractScrolledContentOffset()
+        methods, and instead use the existing scrolledContentOffset(), and use
+        IntSize and IntPoint instead of lots of x, y variables.
+        
+        Added new IntPoint toPoint(const IntSize&) method as a convenience to convert a size to a point,
+        which is needed in a few places.
+        
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag): Use the new toPoint() convenience.
+        * platform/graphics/IntPoint.h:
+        (WebCore::toPoint): New convenience method to convert an IntSize to an IntPoint.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::size):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+
 2009-02-22  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.

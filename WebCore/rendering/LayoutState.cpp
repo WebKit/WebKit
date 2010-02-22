@@ -62,20 +62,17 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const IntSize& 
     m_clipped = !fixed && prev->m_clipped;
     if (m_clipped)
         m_clipRect = prev->m_clipRect;
+
     if (renderer->hasOverflowClip()) {
-        int x = m_offset.width();
-        int y = m_offset.height();
         RenderLayer* layer = renderer->layer();
-        IntRect clipRect(x, y, layer->width(), layer->height());
-        clipRect.move(renderer->view()->layoutDelta());
+        IntRect clipRect(toPoint(m_offset) + renderer->view()->layoutDelta(), layer->size());
         if (m_clipped)
             m_clipRect.intersect(clipRect);
         else {
             m_clipRect = clipRect;
             m_clipped = true;
         }
-        layer->subtractScrolledContentOffset(x, y);
-        m_offset = IntSize(x, y);
+        m_offset -= layer->scrolledContentOffset();
     }
 
     m_layoutDelta = m_next->m_layoutDelta;

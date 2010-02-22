@@ -599,11 +599,10 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
         // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
         // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
         // anyway if its size does change.
-        int x = r.x();
-        int y = r.y();
+        IntRect repaintRect(r);
+        repaintRect.move(-cb->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
+
         IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
-        cb->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
-        IntRect repaintRect(x, y, r.width(), r.height());
         r = intersection(repaintRect, boxRect);
     }
     

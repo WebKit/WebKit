@@ -811,11 +811,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         
         if (hasOverflowClip()) {
             // Adjust repaint rect for scroll offset
-            int x = repaintRect.x();
-            int y = repaintRect.y();
-            layer()->subtractScrolledContentOffset(x, y);
-            repaintRect.setX(x);
-            repaintRect.setY(y);
+            repaintRect.move(-layer()->scrolledContentOffset());
 
             // Don't allow this rect to spill out of our overflow box.
             repaintRect.intersect(IntRect(0, 0, width(), height()));
@@ -1726,11 +1722,14 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     if (paintPhase == PaintPhaseBlockBackground)
         return;
 
-    // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).s
+    // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     int scrolledX = tx;
     int scrolledY = ty;
-    if (hasOverflowClip())
-        layer()->subtractScrolledContentOffset(scrolledX, scrolledY);
+    if (hasOverflowClip()) {
+        IntSize offset = layer()->scrolledContentOffset();
+        scrolledX -= offset.width();
+        scrolledY -= offset.height();
+    }
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -1942,18 +1941,16 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
     // FIXME: this is broken with transforms
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
     mapLocalToContainer(repaintContainer, false, false, transformState);
-    FloatPoint offsetFromRepaintContainer = transformState.mappedPoint();
-    int x = offsetFromRepaintContainer.x();
-    int y = offsetFromRepaintContainer.y();
+    IntPoint offsetFromRepaintContainer = roundedIntPoint(transformState.mappedPoint());
 
     if (hasOverflowClip())
-        layer()->subtractScrolledContentOffset(x, y);
+        offsetFromRepaintContainer -= layer()->scrolledContentOffset();
 
     int lastTop = 0;
     int lastLeft = leftSelectionOffset(this, lastTop);
     int lastRight = rightSelectionOffset(this, lastTop);
     
-    return fillSelectionGaps(this, x, y, x, y, lastTop, lastLeft, lastRight);
+    return fillSelectionGaps(this, offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), lastTop, lastLeft, lastRight);
 }
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
@@ -3295,8 +3292,11 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Hit test descendants first.
         int scrolledX = tx;
         int scrolledY = ty;
-        if (hasOverflowClip())
-            layer()->subtractScrolledContentOffset(scrolledX, scrolledY);
+        if (hasOverflowClip()) {
+            IntSize offset = layer()->scrolledContentOffset();
+            scrolledX -= offset.width();
+            scrolledY -= offset.height();
+        }
 
         // Hit test contents if we don't have columns.
         if (!hasColumns() && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
@@ -3571,15 +3571,16 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
 
 void RenderBlock::offsetForContents(int& tx, int& ty) const
 {
-    if (hasOverflowClip())
-        layer()->addScrolledContentOffset(tx, ty);
+    IntPoint contentsPoint(tx, ty);
 
-    if (hasColumns()) {
-        IntPoint contentsPoint(tx, ty);
+    if (hasOverflowClip())
+        contentsPoint += layer()->scrolledContentOffset();
+
+    if (hasColumns())
         adjustPointToColumnContents(contentsPoint);
-        tx = contentsPoint.x();
-        ty = contentsPoint.y();
-    }
+
+    tx = contentsPoint.x();
+    ty = contentsPoint.y();
 }
 
 int RenderBlock::availableWidth() const

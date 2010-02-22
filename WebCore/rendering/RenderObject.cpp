@@ -1330,11 +1330,10 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             // anyway if its size does change.
             RenderBox* boxParent = toRenderBox(o);
 
+            IntRect repaintRect(rect);
+            repaintRect.move(-boxParent->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
+
             IntRect boxRect(0, 0, boxParent->layer()->width(), boxParent->layer()->height());
-            int x = rect.x();
-            int y = rect.y();
-            boxParent->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
-            IntRect repaintRect(x, y, rect.width(), rect.height());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())
                 return;
