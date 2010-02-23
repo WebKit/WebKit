@@ -867,6 +867,25 @@ int webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const 
 }
 
 /**
+ * webkit_web_frame_number_of_pages
+ * @frame: a #WebKitWebFrame
+ * @pageWidth: width of a page
+ * @pageHeight: height of a page
+ *
+ * Return value: The number of pages to be printed.
+ */
+int webkit_web_frame_number_of_pages(WebKitWebFrame* frame, float pageWidth, float pageHeight)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return -1;
+
+    return PrintContext::numberOfPages(coreFrame, FloatSize(pageWidth, pageHeight));
+}
+
+/**
  * webkit_web_frame_get_pending_unload_event_count:
  * @frame: a #WebKitWebFrame
  *

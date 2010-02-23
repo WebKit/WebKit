@@ -5851,9 +5851,6 @@ http/tests/incremental/split-hex-entities.pl
 # https://bugs.webkit.org/show_bug.cgi?id=32717
 fast/frames/flattening/
 
-# Implement LayoutTestController::numberOfPages().
-printing/numberOfPages.html
-
 # Crashes on release/debug bots, see https://bugs.webkit.org/show_bug.cgi?id=35080
 fast/css/font-face-opentype.html
 
