@@ -1289,6 +1289,7 @@ void PluginView::keepAlive()
     m_lifeSupportTimer.startOneShot(0);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void PluginView::keepAlive(NPP instance)
 {
     PluginView* view = instanceMap().get(instance);
@@ -1297,5 +1298,6 @@ void PluginView::keepAlive(NPP instance)
 
     view->keepAlive();
 }
+#endif
 
 } // namespace WebCore
