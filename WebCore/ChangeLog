@@ -1,3 +1,15 @@
+2010-02-22  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        Add special case in CodeGeneratorV8.pm for named getters for html plugin-related elements.
+
+        CodeGeneratorV8.pm was relying on HasOverridingNameGetter to hint
+        that a custom named getter was needed. That hint was removed in
+        http://trac.webkit.org/changeset/55104.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2010-02-22  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Geoff Garen.

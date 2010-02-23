@@ -439,7 +439,7 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
         $hasCustomDeleterr = 0;
         $hasEnumerator = 0;
     }
-    if ($interfaceName eq "HTMLSelectElement") {
+    if ($interfaceName eq "HTMLSelectElement" || $interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
         $hasCustomNamedGetter = 1;
     }
     my $isIndexerSpecialCase = exists $indexerSpecialCases{$interfaceName};
@@ -1411,6 +1411,10 @@ sub GenerateImplementationNamedPropertyGetter
     # from HTMLCollection per W3C spec (http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/html.html#HTMLOptionsCollection).
     if ($interfaceName eq "HTMLOptionsCollection") {
         $interfaceName = "HTMLCollection";
+        $hasCustomGetter = 1;
+    }
+
+    if ($interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
         $hasCustomGetter = 1;
     }
 
