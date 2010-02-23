@@ -1,3 +1,14 @@
+2010-02-22  Huahui Wu  <hwu@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Add code that enables SquirrelFish Extreme (a.k.a JSCX, JSC JIT)
+        in Android. It's disabled by default, but is enabled when the 
+        enveronment variable ENABLE_JSC_JIT is set to true.
+        https://bugs.webkit.org/show_bug.cgi?id=34855
+
+        * Android.mk:
+
 2010-02-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

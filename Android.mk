@@ -33,6 +33,8 @@ LOCAL_PATH := $(call my-dir)
 #    To help setup buildbot, a new environment variable, USE_ALT_JS_ENGINE,
 #    can be set to true, so that two builds can be different but without
 #    specifying which JS engine to use.
+# To enable JIT in Android's JSC, please set ENABLE_JSC_JIT environment
+# variable to true.
 
 # Read JS_ENGINE environment variable
 JAVASCRIPT_ENGINE = $(JS_ENGINE)
@@ -198,6 +200,14 @@ LOCAL_CFLAGS += -Wno-endif-labels -Wno-import -Wno-format
 LOCAL_CFLAGS += -fno-strict-aliasing
 LOCAL_CFLAGS += -include "WebCorePrefix.h"
 LOCAL_CFLAGS += -fvisibility=hidden
+
+# Enable JSC JIT if JSC is used and ENABLE_JSC_JIT environment
+# variable is set to true
+ifeq ($(JAVASCRIPT_ENGINE),jsc)
+ifeq ($(ENABLE_JSC_JIT),true)
+LOCAL_CFLAGS += -DENABLE_ANDROID_JSC_JIT=1
+endif
+endif
 
 ifeq ($(TARGET_ARCH),arm)
 LOCAL_CFLAGS += -Darm
