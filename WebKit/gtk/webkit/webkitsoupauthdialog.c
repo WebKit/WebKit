@@ -190,8 +190,12 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     GtkWidget* vbox;
     GtkWidget* icon;
     GtkWidget* table;
-    GtkWidget* messageLabel;
-    char* message;
+    GtkWidget* serverMessageDescriptionLabel;
+    GtkWidget* serverMessageLabel;
+    GtkWidget* descriptionLabel;
+    char* description;
+    const char* realm;
+    gboolean hasRealm;
     SoupURI* uri;
     GtkWidget* rememberBox;
     GtkWidget* checkButton;
@@ -241,12 +245,12 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_box_pack_start(GTK_BOX(hbox), mainVBox, TRUE, TRUE, 0);
 
     uri = soup_message_get_uri(authData->msg);
-    message = g_strdup_printf(_("A username and password are being requested by the site %s"), uri->host);
-    messageLabel = gtk_label_new(message);
-    g_free(message);
-    gtk_misc_set_alignment(GTK_MISC(messageLabel), 0.0, 0.5);
-    gtk_label_set_line_wrap(GTK_LABEL(messageLabel), TRUE);
-    gtk_box_pack_start(GTK_BOX(mainVBox), GTK_WIDGET(messageLabel),
+    description = g_strdup_printf(_("A username and password are being requested by the site %s"), uri->host);
+    descriptionLabel = gtk_label_new(description);
+    g_free(description);
+    gtk_misc_set_alignment(GTK_MISC(descriptionLabel), 0.0, 0.5);
+    gtk_label_set_line_wrap(GTK_LABEL(descriptionLabel), TRUE);
+    gtk_box_pack_start(GTK_BOX(mainVBox), GTK_WIDGET(descriptionLabel),
                        FALSE, FALSE, 0);
 
     vbox = gtk_vbox_new(FALSE, 6);
@@ -261,14 +265,32 @@ static void show_auth_dialog(WebKitAuthData* authData, const char* login, const 
     gtk_box_pack_start(GTK_BOX(vbox), entryContainer,
                        FALSE, FALSE, 0);
 
-    table = gtk_table_new(2, 2, FALSE);
+    realm = soup_auth_get_realm(authData->auth);
+    // Checking that realm is not an empty string
+    hasRealm = (realm && (strlen(realm) > 0));
+
+    table = gtk_table_new(hasRealm ? 3 : 2, 2, FALSE);
     gtk_table_set_col_spacings(GTK_TABLE(table), 12);
     gtk_table_set_row_spacings(GTK_TABLE(table), 6);
     gtk_container_add(GTK_CONTAINER(entryContainer), table);
 
-    authData->loginEntry = table_add_entry(table, 0, _("Username:"),
+    if (hasRealm) {
+        serverMessageDescriptionLabel = gtk_label_new(_("Server message:"));
+        serverMessageLabel = gtk_label_new(realm);
+        gtk_misc_set_alignment(GTK_MISC(serverMessageDescriptionLabel), 0.0, 0.5);
+        gtk_label_set_line_wrap(GTK_LABEL(serverMessageDescriptionLabel), TRUE);
+        gtk_misc_set_alignment(GTK_MISC(serverMessageLabel), 0.0, 0.5);
+        gtk_label_set_line_wrap(GTK_LABEL(serverMessageLabel), TRUE);
+
+        gtk_table_attach_defaults(GTK_TABLE(table), serverMessageDescriptionLabel,
+                                  0, 1, 0, 1);
+        gtk_table_attach_defaults(GTK_TABLE(table), serverMessageLabel,
+                                  1, 2, 0, 1);
+    }
+
+    authData->loginEntry = table_add_entry(table, hasRealm ? 1 : 0, _("Username:"),
                                            login, NULL);
-    authData->passwordEntry = table_add_entry(table, 1, _("Password:"),
+    authData->passwordEntry = table_add_entry(table, hasRealm ? 2 : 1, _("Password:"),
                                               password, NULL);
 
     gtk_entry_set_visibility(GTK_ENTRY(authData->passwordEntry), FALSE);

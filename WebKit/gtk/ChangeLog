@@ -1,3 +1,15 @@
+2010-02-23  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Server message not shown on http authentication
+        https://bugs.webkit.org/show_bug.cgi?id=34219
+
+        * webkit/webkitsoupauthdialog.c:
+        (show_auth_dialog):
+        Server message is displayed, messageLabel and message variables were
+        renamed to avoid confusion.
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
