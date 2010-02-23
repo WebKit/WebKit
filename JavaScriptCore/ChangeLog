@@ -1,3 +1,11 @@
+2010-02-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Dimitri Glazkov.
+
+        Chromium build fix.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
