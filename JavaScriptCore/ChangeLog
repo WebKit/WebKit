@@ -1,5 +1,16 @@
 2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        Changes references of GOwnPtr to reflect their new place.
+        http://webkit.org/b/35084
+
+        * JavaScriptCore/JavaScriptCore.gypi:
+        * JavaScriptCore/wtf/Threading.h:
+        * JavaScriptCore/wtf/unicode/glib/UnicodeGLib.h:
+
+2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Adding the EFL implementation of JavaScriptCore.

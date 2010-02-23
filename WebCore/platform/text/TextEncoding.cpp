@@ -38,7 +38,7 @@
 #include <QString>
 #elif USE(GLIB_UNICODE)
 #include <glib.h>
-#include <wtf/gtk/GOwnPtr.h>
+#include "GOwnPtr.h"
 #endif
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

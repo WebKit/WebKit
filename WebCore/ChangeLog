@@ -1,3 +1,15 @@
+2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Changes references of GOwnPtr to reflect their new place.
+        http://webkit.org/b/35084
+
+        * WebCore/platform/KURL.cpp
+        * WebCore/platform/TextEncoding.cpp:
+        * WebCore/platform/text/gtk/TextBreakIteratorGtk.cpp: 
+        * WebCore/platform/text/gtk/TextCodecGtk.cpp:
+
 2010-02-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.

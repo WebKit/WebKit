@@ -41,7 +41,7 @@
 #include <QUrl>
 #elif USE(GLIB_UNICODE)
 #include <glib.h>
-#include <wtf/gtk/GOwnPtr.h>
+#include "GOwnPtr.h"
 #endif
 
 #include <stdio.h>

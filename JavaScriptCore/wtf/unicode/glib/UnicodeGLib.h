@@ -26,7 +26,7 @@
 #define UnicodeGLib_h
 
 #include "UnicodeMacrosFromICU.h"
-#include <wtf/gtk/GOwnPtr.h>
+#include "GOwnPtr.h"
 
 #include <glib.h>
 #include <pango/pango.h>

@@ -22,10 +22,10 @@
  */
 
 #include "config.h"
+#include "GOwnPtr.h"
 #include "TextBreakIterator.h"
 
 #include <pango/pango.h>
-#include <wtf/gtk/GOwnPtr.h>
 
 namespace WebCore {
 

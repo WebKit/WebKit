@@ -30,11 +30,11 @@
 #include "TextCodecGtk.h"
 
 #include "CString.h"
+#include "GOwnPtr.h"
+#include "Logging.h"
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/gtk/GOwnPtr.h>
-#include "Logging.h"
 
 using std::min;
 
