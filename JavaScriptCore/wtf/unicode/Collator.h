@@ -29,8 +29,8 @@
 #ifndef WTF_Collator_h
 #define WTF_Collator_h
 
-#include <memory>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
 
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
@@ -47,7 +47,7 @@ namespace WTF {
         ~Collator();
         void setOrderLowerFirst(bool);
 
-        static std::auto_ptr<Collator> userDefault();
+        static PassOwnPtr<Collator> userDefault();
 
         Result collate(const ::UChar*, size_t, const ::UChar*, size_t) const;
 

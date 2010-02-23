@@ -80,9 +80,6 @@ namespace WTF {
     template<typename P>
     struct VectorTraits<OwnPtr<P> > : SimpleClassVectorTraits { };
 
-    template<typename P>
-    struct VectorTraits<std::auto_ptr<P> > : SimpleClassVectorTraits { };
-
     template<typename First, typename Second>
     struct VectorTraits<pair<First, Second> >
     {
