@@ -234,7 +234,22 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index)
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
-    return CGImageSourceGetStatusAtIndex(m_decoder, index) == kCGImageStatusComplete;
+    ASSERT(frameCount());
+
+    // CGImageSourceGetStatusAtIndex claims that all frames of a multi-frame image are incomplete
+    // when we've not yet received the complete data for an image that is using an incremental data
+    // source (<rdar://problem/7679174>). We work around this by special-casing all frames except the
+    // last in an image and treating them as complete if they are present and reported as being
+    // incomplete. We do this on the assumption that loading new data can only modify the existing last
+    // frame or append new frames. The last frame is only treated as being complete if the image source
+    // reports it as such. This ensures that it is truly the last frame of the image rather than just
+    // the last that we currently have data for.
+
+    CGImageSourceStatus frameStatus = CGImageSourceGetStatusAtIndex(m_decoder, index);
+    if (index < frameCount() - 1)
+        return frameStatus >= kCGImageStatusIncomplete;
+
+    return frameStatus == kCGImageStatusComplete;
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)
