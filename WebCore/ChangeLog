@@ -1,3 +1,13 @@
+2010-02-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Port ScriptController::createScriptInstanceForWidget
+        https://bugs.webkit.org/show_bug.cgi?id=34413
+
+        * bindings/js/ScriptControllerBrew.cpp: Added.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+
 2010-02-23  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Eric Seidel.
