@@ -996,8 +996,13 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     // coreObject is the unignored object whose offset the caller is requesting.
     // focusedObject is the object with the caret. It is likely ignored -- unless it's a link.
     AccessibilityObject* coreObject = core(text);
-    RenderObject* focusedNode = coreObject->selection().end().node()->renderer();
-    AccessibilityObject* focusedObject = coreObject->document()->axObjectCache()->getOrCreate(focusedNode);
+    Node* focusedNode = coreObject->selection().end().node();
+
+    if (!focusedNode)
+        return 0;
+
+    RenderObject* focusedRenderer = focusedNode->renderer();
+    AccessibilityObject* focusedObject = coreObject->document()->axObjectCache()->getOrCreate(focusedRenderer);
 
     int offset;
     // Don't ignore links if the offset is being requested for a link.

@@ -1,3 +1,16 @@
+2010-02-23  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] Webkit crashes when using orca
+        https://bugs.webkit.org/show_bug.cgi?id=35169
+
+        Made webkit_accessible_text_get_caret_offset check if end selection
+        node is null.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_caret_offset):
+
 2010-02-22  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by Eric Seidel.
