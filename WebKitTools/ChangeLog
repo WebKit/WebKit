@@ -1,3 +1,23 @@
+2010-02-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34439
+
+        Prompts a person for their SVN username if not already cached (by Subversion).
+
+        Currently, webkit-patch is unable to commit to the SVN repo. unless the
+        WebKit SVN username is already cached (from of a prior commit by hand)
+        because "svn commit" (called by webkit-patch) defaults to using the system
+        login name unless the username is already cached or specified on the
+        command line.
+
+        * Scripts/webkitpy/scm.py: Added methods SVN.has_authorization_for_realm and
+        modified SVN.commit_with_message to call it. Added optional username parameter
+        to method SVN.commit_with_message.
+        * Scripts/webkitpy/scm_unittest.py: Added unit test methods: SVNTest.test_commit_with_username,
+        SVNTest.test_has_authorization_for_realm, and SVNTest.test_not_have_authorization_for_realm.
+
 2010-02-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Siedel.

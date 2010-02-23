@@ -36,6 +36,7 @@ import subprocess
 # Import WebKit-specific modules.
 from webkitpy.changelogs import ChangeLog
 from webkitpy.executive import Executive, run_command, ScriptError
+from webkitpy.user import User
 from webkitpy.webkit_logging import error, log
 
 def detect_scm_system(path):
@@ -256,6 +257,10 @@ class SCM:
 
 
 class SVN(SCM):
+    # FIXME: We should move these values to a WebKit-specific config. file.
+    svn_server_host = "svn.webkit.org"
+    svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
+
     def __init__(self, cwd, dryrun=False):
         SCM.__init__(self, cwd, dryrun)
         self.cached_version = None
@@ -298,6 +303,14 @@ class SVN(SCM):
     @staticmethod
     def commit_success_regexp():
         return "^Committed revision (?P<svn_revision>\d+)\.$"
+
+    def has_authorization_for_realm(self, realm=svn_server_realm, home_directory=os.getenv("HOME")):
+        # Assumes find and grep are installed.
+        if not os.path.isdir(os.path.join(home_directory, ".subversion")):
+            return False
+        find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"];
+        find_output = run_command(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
+        return find_output and os.path.isfile(os.path.join(home_directory, find_output))
 
     def svn_version(self):
         if not self.cached_version:
@@ -347,11 +360,19 @@ class SVN(SCM):
     def revert_files(self, file_paths):
         run_command(['svn', 'revert'] + file_paths)
 
-    def commit_with_message(self, message):
+    def commit_with_message(self, message, username):
         if self.dryrun:
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no commit.\nCommitted revision 0."
-        return run_command(['svn', 'commit', '-m', message], error_handler=commit_error_handler)
+        svn_commit_args = ["svn", "commit"]
+        if not username and not self.has_authorization_for_realm():
+            username = User.prompt("%s login: " % self.svn_server_host, repeat=5)
+            if not username:
+                raise Exception("You need to specify the username on %s to perform the commit as." % self.svn_server_host)
+        if username:
+            svn_commit_args.extend(["--username", username])
+        svn_commit_args.extend(["-m", message])
+        return run_command(svn_commit_args, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(str(svn_revision))

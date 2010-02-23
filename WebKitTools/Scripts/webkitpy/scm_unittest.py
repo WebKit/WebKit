@@ -39,7 +39,7 @@ import urllib
 
 from datetime import date
 from webkitpy.executive import Executive, run_command, ScriptError
-from webkitpy.scm import detect_scm_system, SCM, CheckoutNeedsUpdate, commit_error_handler
+from webkitpy.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler
 from webkitpy.bugzilla import Attachment # FIXME: This should not be needed
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
@@ -180,14 +180,14 @@ class SCMTest(unittest.TestCase):
 
     # Tests which both GitTest and SVNTest should run.
     # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses
-    def _shared_test_commit_with_message(self):
+    def _shared_test_commit_with_message(self, username):
         write_into_file_at_path('test_file', 'more test content')
-        commit_text = self.scm.commit_with_message('another test commit')
+        commit_text = self.scm.commit_with_message("another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
 
         self.scm.dryrun = True
         write_into_file_at_path('test_file', 'still more test content')
-        commit_text = self.scm.commit_with_message('yet another test commit')
+        commit_text = self.scm.commit_with_message("yet another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
 
     def _shared_test_reverse_diff(self):
@@ -458,6 +458,30 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_commit_text_parsing(self):
         self._shared_test_commit_with_message()
+
+    def test_commit_with_username(self):
+        self._shared_test_commit_with_message("dbates@webkit.org")
+
+    def test_has_authorization_for_realm(self):
+        scm = detect_scm_system(self.svn_checkout_path)
+        fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
+        svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
+        os.mkdir(svn_config_dir_path)
+        fake_webkit_auth_file = os.path.join(svn_config_dir_path, "fake_webkit_auth_file")
+        write_into_file_at_path(fake_webkit_auth_file, SVN.svn_server_realm)
+        self.assertTrue(scm.has_authorization_for_realm(home_directory=fake_home_dir))
+        os.remove(fake_webkit_auth_file)
+        os.rmdir(svn_config_dir_path)
+        os.rmdir(fake_home_dir)
+
+    def test_not_have_authorization_for_realm(self):
+        scm = detect_scm_system(self.svn_checkout_path)
+        fake_home_dir = tempfile.mkdtemp(suffix="fake_home_dir")
+        svn_config_dir_path = os.path.join(fake_home_dir, ".subversion")
+        os.mkdir(svn_config_dir_path)
+        self.assertFalse(scm.has_authorization_for_realm(home_directory=fake_home_dir))
+        os.rmdir(svn_config_dir_path)
+        os.rmdir(fake_home_dir)
 
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()
