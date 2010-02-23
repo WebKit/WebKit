@@ -47,8 +47,9 @@ CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../JavaScriptCore/generated
 
+    # Qt will set the version for us when building in Qt's tree
     CONFIG(QTDIR_build):include($$QT_SOURCE_TREE/src/qbase.pri)
-    else: VERSION = 4.7.0
+    else: VERSION = $${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
 
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
@@ -2704,19 +2705,15 @@ WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
     QMAKE_EXTRA_TARGETS += install
 }
 
-# Qt will set the version for us when building in Qt's tree
-!CONFIG(QTDIR_build): VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
+!CONFIG(QTDIR_build) {
+    win32-*|wince* {
+        DLLDESTDIR = $$OUTPUT_DIR/bin
+        TARGET = $$qtLibraryTarget($$TARGET)
 
-win32-*|wince* {
-    DLLDESTDIR = $$OUTPUT_DIR/bin
-    TARGET = $$qtLibraryTarget($$TARGET)
-
-    dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
-    dlltarget.CONFIG = no_path
-    INSTALLS += dlltarget
-}
-
-!CONFIG(standalone_package) {
+        dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
+        dlltarget.CONFIG = no_path
+        INSTALLS += dlltarget
+    }
 
     unix {
         CONFIG += create_pc create_prl
