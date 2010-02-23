@@ -1,3 +1,16 @@
+2010-02-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Removes redundant Settings::setGeolocationEnabled and Settings::geolocationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=35242
+
+        This removes Chromium's WebSettings::setGeolocationEnabled
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2010-02-23  Dmitriy Belenko  <dbelenko@google.com>
 
         Reviewed by Darin Fisher.

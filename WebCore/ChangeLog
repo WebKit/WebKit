@@ -1,3 +1,15 @@
+2010-02-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Removes redundant Settings::setGeolocationEnabled and Settings::geolocationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=35242
+
+        No new tests, removing dead code only.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+
 2010-02-23  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.
