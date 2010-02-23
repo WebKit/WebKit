@@ -92,12 +92,14 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _check_wdiff_install(self):
         f = open(os.devnull, 'w')
-        rcode = subprocess.call(['wdiff'], stderr=f)
+        rcode = 0
+        try:
+            rcode = subprocess.call(['wdiff'], stderr=f)
+        except OSError:
+            logging.warning('wdiff not found. Install using MacPorts or some '
+                            'other means')
+            pass
         f.close()
-        if rcode == 127:
-            logging.error('wdiff not found. Install using MacPorts or some '
-                          'other means')
-            return False
         return True
 
     def _lighttpd_path(self, *comps):
