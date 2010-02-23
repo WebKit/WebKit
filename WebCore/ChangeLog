@@ -1,3 +1,31 @@
+2010-02-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Adds cache to store Geolocation positions between browser sessions.
+        https://bugs.webkit.org/show_bug.cgi?id=34084
+
+        This is required to fully implement the Geolocation maximumAge property.
+        See Bug 30676.
+
+        No new tests, will add tests for maximumAge once complete.
+
+        * Android.mk: Modified. Added GeolocationPositionCache.cpp
+        * GNUmakefile.am: Modified. Added GeolocationPositionCache.[cpp|h]
+        * WebCore.gypi: Modified. Added GeolocationPositionCache.[cpp|h]
+        * WebCore.pro: Modified. Added GeolocationPositionCache.[cpp|h]
+        * WebCore.vcproj/WebCore.vcproj: Modified. Added GeolocationPositionCache.[cpp|h]
+        * WebCore.xcodeproj/project.pbxproj: Modified. Added GeolocationPositionCache.[cpp|h]
+        * page/GeolocationPositionCache.cpp: Added.
+        (WebCore::GeolocationPositionCache::GeolocationPositionCache):
+        (WebCore::GeolocationPositionCache::~GeolocationPositionCache):
+        (WebCore::GeolocationPositionCache::setCachedPosition):
+        (WebCore::GeolocationPositionCache::cachedPosition):
+        (WebCore::GeolocationPositionCache::setDatabasePath):
+        (WebCore::GeolocationPositionCache::readFromDB):
+        (WebCore::GeolocationPositionCache::writeToDB):
+        * page/GeolocationPositionCache.h: Added.
+
 2010-02-23  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Dan Bernstein.

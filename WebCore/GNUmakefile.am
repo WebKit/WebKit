@@ -1374,6 +1374,8 @@ webcore_sources += \
 	WebCore/page/GeolocationControllerClient.h \
 	WebCore/page/GeolocationError.h \
 	WebCore/page/GeolocationPosition.h \
+	WebCore/page/GeolocationPositionCache.cpp \
+	WebCore/page/GeolocationPositionCache.h \
 	WebCore/page/Geoposition.h \
 	WebCore/page/HaltablePlugin.h \
 	WebCore/page/History.cpp \

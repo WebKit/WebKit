@@ -1838,6 +1838,8 @@
             'page/GeolocationControllerClient.h'
             'page/GeolocationError.h'
             'page/GeolocationPosition.h'
+            'page/GeolocationPositionCache.cpp'
+            'page/GeolocationPositionCache.h'
             'page/Geoposition.h',
             'page/HaltablePlugin.h',
             'page/History.cpp',

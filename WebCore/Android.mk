@@ -336,6 +336,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/FrameTree.cpp \
 	page/FrameView.cpp \
 	page/Geolocation.cpp \
+	page/GeolocationPositionCache.cpp \
 	page/History.cpp \
 	page/Location.cpp \
 	page/MouseEventWithHitTestResults.cpp \
