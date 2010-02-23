@@ -2,6 +2,43 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Implemented PopupMenu support.
+        https://bugs.webkit.org/show_bug.cgi?id=35078
+
+        Covered by existing tests.
+
+        The implementation is currently very simple: Added a PopupMenuHaiku
+        class that derives from a native BPopUpMenu. It attaches a BHandler
+        derivative to the BApplication (WebCore main thread) which receives
+        the item invokation and menu hidden events and informs the PopupMenuClient
+        accordingly.
+
+        * platform/PopupMenu.h:
+            Changed type of m_menu for Haiku.
+        * platform/haiku/PopupMenuHaiku.cpp:
+        (WebCore::PopupMenuHandler::PopupMenuHandler):
+        (WebCore::PopupMenuHandler::MessageReceived):
+        (WebCore::PopupMenuHaiku::PopupMenuHaiku):
+        (WebCore::PopupMenuHaiku::~PopupMenuHaiku):
+        (WebCore::PopupMenuHaiku::show):
+        (WebCore::PopupMenuHaiku::hide):
+        (WebCore::PopupMenuHaiku::Hide):
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::~PopupMenu):
+            Removed bogus code.
+        (WebCore::PopupMenu::show):
+            Implemented using new PopupMenuHaiku class.
+        (WebCore::PopupMenu::hide):
+            Implemented using new PopupMenuHaiku class.
+        (WebCore::PopupMenu::updateFromElement):
+            Implemented.
+        (WebCore::PopupMenu::itemWritingDirectionIsNatural):
+            Implemented according to Gtk port.
+
+2010-02-22  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
         Fix various issues in PlatformMouseEventHaiku.
         https://bugs.webkit.org/show_bug.cgi?id=34685
 
