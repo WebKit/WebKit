@@ -793,7 +793,8 @@ int RenderBoxModelObject::verticalPosition(bool firstLine) const
             vpos += -static_cast<int>(f.xHeight() / 2) - lineHeight(firstLine) / 2 + baselinePosition(firstLine);
         else if (va == TEXT_BOTTOM) {
             vpos += f.descent();
-            if (!isReplaced()) // lineHeight - baselinePosition is always 0 for replaced elements, so don't bother wasting time in that case.
+            // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
+            if (!isReplaced() || style()->display() == INLINE_BLOCK)
                 vpos -= (lineHeight(firstLine) - baselinePosition(firstLine));
         } else if (va == BASELINE_MIDDLE)
             vpos += -lineHeight(firstLine) / 2 + baselinePosition(firstLine);

@@ -1,3 +1,21 @@
+2010-02-23  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix alignment of vertical-align: text-bottom inside an inline-block.
+        
+        This patch is based on a fix provided by Takahito Hirano.
+
+        display: inline-block + vertical-align: text-bottom causes misalignment.
+        https://bugs.webkit.org/show_bug.cgi?id=30846
+
+        Test: fast/inline-block/inline-block-vertical-align-2.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::verticalPosition): Fixed vpos calculation.
+        We cannot cut corners for inline blocks, since they may have their own
+        text metrics.
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
