@@ -1,3 +1,11 @@
+2010-02-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        [Qt] Prevent the media backend from handling non-audio or -video mime types
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+
 2010-02-23  Evan Martin  <evan@chromium.org>
 
         Reviewed by Jeremy Orlow.
