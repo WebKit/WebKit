@@ -1,3 +1,14 @@
+2010-02-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher and Pavel Feldman.
+
+        Regression (r55107) - WebInspector docking is busted.
+        https://bugs.webkit.org/show_bug.cgi?id=35274
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::showWindowWithoutNotifications): Swap the order of the "should attach?" check
+          to get the expected behavior.
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

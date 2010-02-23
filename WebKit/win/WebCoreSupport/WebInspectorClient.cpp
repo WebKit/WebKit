@@ -349,14 +349,12 @@ void WebInspectorClient::showWindowWithoutNotifications()
     ASSERT(m_webView);
     ASSERT(m_inspectedWebViewHwnd);
 
-    if (!m_inspectedWebView->page()->inspectorController()->canAttachWindow())
+    // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
+    String shouldAttach = m_inspectedWebView->page()->inspectorController()->setting(inspectorStartsAttachedName);
+    m_shouldAttachWhenShown = shouldAttach != "false";
+        
+    if (m_shouldAttachWhenShown && !m_inspectedWebView->page()->inspectorController()->canAttachWindow())
         m_shouldAttachWhenShown = false;
-    
-    if (m_shouldAttachWhenShown) {
-        // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-        String shouldAttach = m_inspectedWebView->page()->inspectorController()->setting(inspectorStartsAttachedName);
-        m_shouldAttachWhenShown = shouldAttach != "false";
-    }
     
     if (!m_shouldAttachWhenShown) {
         // Put the Inspector's WebView inside our window and show it.

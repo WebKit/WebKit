@@ -65,6 +65,7 @@ public:
     void closeWindow();
     void windowUnloading();
 
+    bool canAttachWindow() const;
     void setAttachedWindowHeight(unsigned height);
     void moveWindowBy(float x, float y) const;
 

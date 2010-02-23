@@ -885,6 +885,9 @@ WebInspector.focusSearchField = function()
 
 WebInspector.toggleAttach = function()
 {
+    if (!this.attached && InspectorFrontendHost.canAttachWindow && !InspectorFrontendHost.canAttachWindow())
+            return;
+
     this.attached = !this.attached;
     this.drawer.resize();
 }

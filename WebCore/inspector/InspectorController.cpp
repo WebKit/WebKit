@@ -415,16 +415,11 @@ bool InspectorController::canAttachWindow() const
 {
     if (!enabled())
         return false;
-    
-    String attachedHeight = setting(inspectorAttachedHeightName);
-    bool success = true;
-    int height = attachedHeight.toInt(&success);
-    unsigned preferredHeight = success ? height : defaultAttachedHeight;
         
     unsigned inspectedPageHeight = m_inspectedPage->mainFrame()->view()->visibleHeight();
 
-    // Don't allow the attach if the window is too small to respect what should be the minimum inspector height.
-    return preferredHeight <= inspectedPageHeight * maximumAttachedHeightRatio;
+    // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
+    return minimumAttachedHeight <= inspectedPageHeight * maximumAttachedHeightRatio;
 }
 
 void InspectorController::attachWindow()
@@ -438,10 +433,6 @@ void InspectorController::attachWindow()
     bool success = true;
     int height = attachedHeight.toInt(&success);
     unsigned preferredHeight = success ? height : defaultAttachedHeight;
-    
-    // Don't allow the attach if the window is too small to respect what should be the minimum inspector height.
-    if (preferredHeight > inspectedPageHeight * maximumAttachedHeightRatio)
-        return;
 
     m_client->attachWindow();
 

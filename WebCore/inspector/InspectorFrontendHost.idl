@@ -38,6 +38,7 @@ module core {
         void closeWindow();
         void windowUnloading();
 
+        boolean canAttachWindow();
         void setAttachedWindowHeight(in unsigned long height);
         void moveWindowBy(in float x, in float y);
 
