@@ -20,7 +20,6 @@ EXPORTS
         WebKitSetShouldUseFontSmoothing
         WebKitShouldUseFontSmoothing
         WebKitCreateInstance
-        WebKitSystemParameterChanged
 		
         ; These functions are deprecated
         WebLocalizedString

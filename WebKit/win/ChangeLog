@@ -1,3 +1,18 @@
+2010-02-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit on Windows should pick up system setting changes without requiring explicit API calls
+        https://bugs.webkit.org/show_bug.cgi?id=35269
+
+        * WebKit.vcproj/WebKit.def: Removed WebKitSystemParameterChanged.
+        * WebKit.vcproj/WebKit_debug.def: Removed WebKitSystemParameterChanged.
+        * WebKitGraphics.cpp: Removed WebKitSystemParameterChanged.
+        * WebKitGraphics.h: Removed WebKitSystemParameterChanged.
+        * WebView.cpp:
+        (systemParameterChanged): Call through to wkSystemFontSmoothingChanged for font changes.
+        (WebView::windowReceivedMessage): Pick up WM_SETTINGCHANGE from windowReceivedMessage.
+
 2010-02-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.
