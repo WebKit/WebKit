@@ -28,9 +28,17 @@
 #ifndef utils_h
 #define utils_h
 
-#include <wtf/AlwaysInline.h>
-
 #include <QtCore>
+
+#ifndef NO_RETURN
+#if defined(__CC_ARM) || defined(__ARMCC__)
+#define NO_RETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#define NO_RETURN __attribute((__noreturn__))
+#else
+#define NO_RETURN
+#endif
+#endif
 
 // options handling
 QString takeOptionValue(QStringList* arguments, int index);

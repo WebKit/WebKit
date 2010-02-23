@@ -24,8 +24,6 @@ DESTDIR = ../../bin
 
 include(../../WebKit.pri)
 
-INCLUDEPATH += ../../JavaScriptCore
-
 QT += network
 macx:QT+=xml
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

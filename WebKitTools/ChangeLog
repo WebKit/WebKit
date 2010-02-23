@@ -1,3 +1,13 @@
+2010-02-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QtLauncher should not use internal JavaScriptCore and WebCore interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=35248
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/utils.h:
+
 2010-02-23  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.
