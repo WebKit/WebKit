@@ -29,6 +29,7 @@
 
 """Chromium Mac implementation of the Port interface."""
 
+import logging
 import os
 import platform
 import signal
@@ -52,9 +53,15 @@ class ChromiumMacPort(chromium.ChromiumPort):
                 self._webkit_baseline_path('mac' + self.version()),
                 self._webkit_baseline_path('mac')]
 
-    def check_sys_deps(self):
-        # We have no specific platform dependencies.
-        return True
+    def check_sys_deps(self, needs_http):
+        result = chromium.ChromiumPort.check_sys_deps(self, needs_http)
+        result = self._check_wdiff_install() and result
+        if not result:
+            logging.error('For complete Mac build requirements, please see:')
+            logging.error('')
+            logging.error('    http://code.google.com/p/chromium/wiki/'
+                          'MacBuildInstructions')
+        return result
 
     def num_cores(self):
         return int(subprocess.Popen(['sysctl','-n','hw.ncpu'],
@@ -81,8 +88,17 @@ class ChromiumMacPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        return self.path_from_chromium_base('xcodebuild', self._options.target,
-                                            *comps)
+        return self.path_from_chromium_base('xcodebuild', *comps)
+
+    def _check_wdiff_install(self):
+        f = open(os.devnull, 'w')
+        rcode = subprocess.call(['wdiff'], stderr=f)
+        f.close()
+        if rcode == 127:
+            logging.error('wdiff not found. Install using MacPorts or some '
+                          'other means')
+            return False
+        return True
 
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd',
@@ -124,17 +140,19 @@ class ChromiumMacPort(chromium.ChromiumPort):
     def _path_to_lighttpd_php(self):
         return self._lighttpd_path('bin', 'php-cgi')
 
-    def _path_to_driver(self):
+    def _path_to_driver(self, target=None):
         # TODO(pinkerton): make |target| happy with case-sensitive file
         # systems.
-        return self._build_path('TestShell.app', 'Contents', 'MacOS', 
+        if not target:
+            target = self._options.target
+        return self._build_path(target, 'TestShell.app', 'Contents', 'MacOS',
                                 'TestShell')
 
     def _path_to_helper(self):
-        return self._build_path('layout_test_helper')
+        return self._build_path(self._options.target, 'layout_test_helper')
 
     def _path_to_image_diff(self):
-        return self._build_path('image_diff')
+        return self._build_path(self._options.target, 'image_diff')
 
     def _path_to_wdiff(self):
         return 'wdiff'

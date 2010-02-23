@@ -68,7 +68,7 @@ class Port(object):
         baselines. The directories are searched in order."""
         raise NotImplementedError('Port.baseline_search_path')
 
-    def check_sys_deps(self):
+    def check_sys_deps(self, needs_http):
         """If the port needs to do some runtime checks to ensure that the
         tests can be run successfully, they should be done here.
 
@@ -547,7 +547,7 @@ class Port(object):
         This is needed only by ports that use the apache_http_server module."""
         raise NotImplementedError('Port.path_to_apache_config_file')
 
-    def _path_to_driver(self):
+    def _path_to_driver(self, target=None):
         """Returns the full path to the test driver (DumpRenderTree)."""
         raise NotImplementedError('Port.path_to_driver')
 

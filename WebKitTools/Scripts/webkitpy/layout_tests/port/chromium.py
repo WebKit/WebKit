@@ -42,6 +42,14 @@ import http_server
 import websocket_server
 
 
+def check_file_exists(path_to_file, str):
+    """Verify the executable is present where expected or log an error."""
+    if not os.path.exists(path_to_file):
+        logging.error('Unable to find %s at %s' % (str, path_to_file))
+        return False
+    return True
+
+
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
@@ -52,28 +60,33 @@ class ChromiumPort(base.Port):
     def baseline_path(self):
         return self._chromium_baseline_path(self._name)
 
-    def check_sys_deps(self):
+    def check_sys_deps(self, needs_http):
         result = True
         test_shell_binary_path = self._path_to_driver()
-        if os.path.exists(test_shell_binary_path):
+        result = check_file_exists(test_shell_binary_path,
+                                   'test driver')
+        if result:
+            result = (self._check_build_up_to_date(self._options.target)
+                      and result)
+
             proc = subprocess.Popen([test_shell_binary_path,
                                      '--check-layout-test-sys-deps'])
             if proc.wait() != 0:
-                logging.error("Aborting because system dependencies check "
-                              "failed.")
-                logging.error("To override, invoke with --nocheck-sys-deps")
+                logging.error('System dependencies check failed.')
+                logging.error('To override, invoke with --nocheck-sys-deps')
+                logging.error('')
                 result = False
-        else:
-            logging.error('test driver is not found at %s' %
-                          test_shell_binary_path)
-            result = False
 
-        image_diff_path = self._path_to_image_diff()
-        if (not os.path.exists(image_diff_path) and not
-            self._options.no_pixel_tests):
-            logging.error('image diff not found at %s' % image_diff_path)
-            logging.error("To override, invoke with --no-pixel-tests")
-            result = False
+        else:
+            logging.error('')
+
+
+        if not self._options.no_pixel_tests:
+            image_diff_path = self._path_to_image_diff()
+            if not check_file_exists(image_diff_path, 'image diff exe'):
+                logging.error('To override, invoke with --no-pixel-tests')
+                logging.error('')
+                result = False
 
         return result
 
@@ -151,11 +164,35 @@ class ChromiumPort(base.Port):
     # or any subclasses.
     #
 
+    def _check_build_up_to_date(self, target):
+        if target in ('Debug', 'Release'):
+            try:
+                debug_path = self._path_to_driver('Debug')
+                release_path = self._path_to_driver('Release')
+
+                debug_mtime = os.stat(debug_path).st_mtime
+                release_mtime = os.stat(release_path).st_mtime
+
+                if (debug_mtime > release_mtime and target == 'Release' or
+                    release_mtime > debug_mtime and target == 'Debug'):
+                    logging.warning('You are not running the most '
+                                    'recent test_shell binary. You need to '
+                                    'pass --debug or not to select between '
+                                    'Debug and Release.')
+                    logging.warning('')
+            # This will fail if we don't have both a debug and release binary.
+            # That's fine because, in this case, we must already be running the
+            # most up-to-date one.
+            except OSError:
+                pass
+        return True
+
     def _chromium_baseline_path(self, platform):
         if platform is None:
             platform = self.name()
         return self.path_from_chromium_base('webkit', 'data', 'layout_tests',
             'platform', platform, 'LayoutTests')
+
 
 class ChromiumDriver(base.Driver):
     """Abstract interface for the DumpRenderTree interface."""

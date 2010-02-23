@@ -1,3 +1,18 @@
+2010-02-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        Add more checking for missing binaries and packages to check_sys_deps()
+
+        https://bugs.webkit.org/show_bug.cgi?id=35062
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py:
+
 2010-02-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.

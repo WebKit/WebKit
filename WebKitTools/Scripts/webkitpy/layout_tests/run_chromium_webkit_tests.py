@@ -495,7 +495,7 @@ class TestRunner:
         return test_args, png_path, shell_args
 
     def _contains_tests(self, subdir):
-        for test_file in self._test_files_list:
+        for test_file in self._test_files:
             if test_file.find(subdir) >= 0:
                 return True
         return False
@@ -594,6 +594,10 @@ class TestRunner:
         self.update_summary(result_summary)
         return (thread_timings, test_timings, individual_test_timings)
 
+    def needs_http(self):
+        """Returns whether the test runner needs an HTTP server."""
+        return self._contains_tests(self.HTTP_SUBDIR)
+
     def run(self, result_summary):
         """Run all our tests on all our test files.
 
@@ -614,7 +618,7 @@ class TestRunner:
         if not self._options.no_pixel_tests:
             self._port.start_helper()
 
-        if self._contains_tests(self.HTTP_SUBDIR):
+        if self.needs_http():
             self._port.start_http_server()
 
         if self._contains_tests(self.WEBSOCKET_SUBDIR):
@@ -1458,7 +1462,7 @@ def main(options, args):
 
     # Check that the system dependencies (themes, fonts, ...) are correct.
     if not options.nocheck_sys_deps:
-        if not port_obj.check_sys_deps():
+        if not port_obj.check_sys_deps(test_runner.needs_http()):
             sys.exit(1)
 
     write = create_logging_writer(options, "config")

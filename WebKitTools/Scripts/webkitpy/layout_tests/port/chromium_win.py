@@ -29,6 +29,7 @@
 
 """Chromium Win implementation of the Port interface."""
 
+import logging
 import os
 import platform
 import signal
@@ -59,9 +60,15 @@ class ChromiumWinPort(chromium.ChromiumPort):
         dirs.append(self._webkit_baseline_path('mac'))
         return dirs
 
-    def check_sys_deps(self):
-        # TODO(dpranke): implement this
-        return True
+    def check_sys_deps(self, needs_http):
+        result = chromium.ChromiumPort.check_sys_deps(self, needs_http)
+        if not result:
+            logging.error('For complete Windows build requirements, please '
+                          'see:')
+            logging.error('')
+            logging.error('    http://dev.chromium.org/developers/how-tos/'
+                          'build-instructions-windows')
+        return result
 
     def get_absolute_path(self, filename):
         """Return the absolute path in unix format for the given filename."""
@@ -94,9 +101,10 @@ class ChromiumWinPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        # FIXME(dpranke): allow for builds under 'chrome' as well.
-        return self.path_from_chromium_base('webkit', self._options.target,
-                                            *comps)
+        p = self.path_from_chromium_base('webkit', *comps)
+        if os.path.exists(p):
+            return p
+        return self.path_from_chromium_base('chrome', *comps)
 
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'win',
@@ -129,14 +137,16 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_lighttpd_php(self):
         return self._lighttpd_path('php5', 'php-cgi.exe')
 
-    def _path_to_driver(self):
-        return self._build_path('test_shell.exe')
+    def _path_to_driver(self, target=None):
+        if not target:
+            target = self._options.target
+        return self._build_path(target, 'test_shell.exe')
 
     def _path_to_helper(self):
-        return self._build_path('layout_test_helper.exe')
+        return self._build_path(self._options.target, 'layout_test_helper.exe')
 
     def _path_to_image_diff(self):
-        return self._build_path('image_diff.exe')
+        return self._build_path(self._options.target, 'image_diff.exe')
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',
