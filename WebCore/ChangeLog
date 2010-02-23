@@ -1,3 +1,17 @@
+2010-02-23  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34634
+        Pasting a list into the middle of another list item should split the target
+        list item into two separate list items.  This matches the behavior in other
+        browsers.
+
+        Test: editing/pasteboard/paste-list-004.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+
 2010-02-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Laszlo Gombos.

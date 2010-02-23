@@ -1170,26 +1170,34 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, N
 
     bool isStart = isStartOfParagraph(insertPos);
     bool isEnd = isEndOfParagraph(insertPos);
-
+    bool isMiddle = !isStart && !isEnd;
     Node* lastNode = insertionBlock;
+
+    // If we're in the middle of a list item, we should split it into two separate
+    // list items and insert these nodes between them.
+    if (isMiddle) {
+        int textNodeOffset = insertPos.offsetInContainerNode();
+        if (insertPos.node()->isTextNode() && textNodeOffset > 0)
+            splitTextNode(static_cast<Text*>(insertPos.node()), textNodeOffset);
+        splitTreeToNode(insertPos.node(), lastNode, true);
+    }
+
     while (RefPtr<Node> listItem = listElement->firstChild()) {
         ExceptionCode ec = 0;
         listElement->removeChild(listItem.get(), ec);
         ASSERT(!ec);
-        if (isStart)
+        if (isStart || isMiddle)
             insertNodeBefore(listItem, lastNode);
         else if (isEnd) {
             insertNodeAfter(listItem, lastNode);
             lastNode = listItem.get();
-        } else {
-            // FIXME: If we're in the middle of a list item, we should split it into two separate
-            // list items and insert these nodes between them.  For now, just append the nodes.
-            insertNodeAfter(listItem, lastNode);
-            lastNode = listItem.get();
-        }
+        } else
+            ASSERT_NOT_REACHED();
     }
-    if (isStart)
+    if (isStart || isMiddle)
         lastNode = lastNode->previousSibling();
+    if (isMiddle)
+        insertNodeAfter(createListItemElement(document()), lastNode);
     updateNodesInserted(lastNode);
     return lastNode;
 }
