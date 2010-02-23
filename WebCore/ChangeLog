@@ -2,6 +2,26 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Implement creating and filling platform gradients.
+        https://bugs.webkit.org/show_bug.cgi?id=34683
+
+        Covered by existing tests.
+
+        * platform/graphics/Gradient.h:
+            Typedef PlatformGradient to BGradient
+        * platform/graphics/haiku/GradientHaiku.cpp:
+        (WebCore::Gradient::platformDestroy):
+            Delete the cached BGradient object.
+        (WebCore::Gradient::platformGradient):
+            Create a BGradient object according to the type of Gradient.
+            Return the cached object.
+        (WebCore::Gradient::fill):
+            use BView API to fill with the platform gradient.
+
+2010-02-22  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
         Build fix for debug builds of GlyphPageTreeNode.cpp
         https://bugs.webkit.org/show_bug.cgi?id=34528
 

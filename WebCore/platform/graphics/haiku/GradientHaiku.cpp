@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Kevin Ollivier <kevino@theolliviers.com>  All rights reserved.
  * Copyright (C) 2009 Maxime Simon <simon.maxime@theolliviers.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +28,45 @@
 #include "config.h"
 #include "Gradient.h"
 
-#include "CSSParser.h"
-#include "NotImplemented.h"
+#include "GraphicsContext.h"
+#include <GradientLinear.h>
+#include <GradientRadial.h>
+#include <View.h>
 
 
 namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    notImplemented();
+    delete m_gradient;
 }
 
 PlatformGradient Gradient::platformGradient()
 {
-    notImplemented();
-    return 0;
+    if (m_gradient)
+        return m_gradient;
+
+    if (m_radial) {
+        // TODO: Support m_r0?
+        m_gradient = new BGradientRadial(m_p0, m_r1);
+    } else
+        m_gradient = new BGradientLinear(m_p0, m_p1);
+    size_t size = m_stops.size();
+    for (size_t i = 0; i < size; i++) {
+        const ColorStop& stop = m_stops[i];
+        rgb_color color;
+        color.red = static_cast<uint8>(stop.red * 255);
+        color.green = static_cast<uint8>(stop.green * 255);
+        color.blue = static_cast<uint8>(stop.blue * 255);
+        color.alpha = static_cast<uint8>(stop.alpha * 255);
+        m_gradient->AddColor(color, stop.stop);
+    }
+    return m_gradient;
 }
 
-void Gradient::fill(GraphicsContext*, const FloatRect&)
+void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
-    notImplemented();
+    context->platformContext()->FillRect(rect, *m_gradient);
 }
 
 } // namespace WebCore
