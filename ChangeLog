@@ -1,3 +1,15 @@
+2010-02-23  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk]: testwebview does not work when called with absolute path
+        https://bugs.webkit.org/show_bug.cgi?id=34940
+
+        When testwebview is called as absolute path, chdir to executable
+        directory before searching resource files.
+
+        * GNUmakefile.am:
+
 2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.

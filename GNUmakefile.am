@@ -596,7 +596,7 @@ Programs_unittests_testloading_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testloading_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testloading_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testmimehandling_SOURCES = WebKit/gtk/tests/testmimehandling.c
+Programs_unittests_testmimehandling_SOURCES = WebKit/gtk/tests/testmimehandling.c WebKit/gtk/tests/test_utils.c
 Programs_unittests_testmimehandling_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testmimehandling_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testmimehandling_LDFLAGS = $(webkit_tests_ldflags)
@@ -654,7 +654,7 @@ Programs_unittests_testwebdatasource_SOURCES = WebKit/gtk/tests/testwebdatasourc
 Programs_unittests_testwebdatasource_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebdatasource_LDADD = $(webkit_tests_ldadd)
 
-Programs_unittests_testwebview_SOURCES = WebKit/gtk/tests/testwebview.c
+Programs_unittests_testwebview_SOURCES = WebKit/gtk/tests/testwebview.c WebKit/gtk/tests/test_utils.c
 Programs_unittests_testwebview_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebview_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebview_LDFLAGS = $(webkit_tests_ldflags)
