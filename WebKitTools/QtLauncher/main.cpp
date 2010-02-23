@@ -83,6 +83,7 @@ class LauncherWindow : public MainWindow {
 
 public:
     LauncherWindow(QString url = QString());
+    LauncherWindow(QGraphicsScene* scene);
     virtual ~LauncherWindow();
 
     virtual void keyPressEvent(QKeyEvent* event);
@@ -120,6 +121,7 @@ protected slots:
 
 public slots:
     void newWindow(const QString& url = QString());
+    void cloneWindow();
 
 private:
     // create the status bar, tool bar & menu
@@ -140,12 +142,34 @@ private:
     QList<QTouchEvent::TouchPoint> touchPoints;
     bool touchMocking;
 #endif
+
+    void init(bool useGraphicsView = false);
 };
 
 
 LauncherWindow::LauncherWindow(QString url)
     : MainWindow(url)
     , currentZoom(100)
+{
+    init();
+    load(url);
+}
+
+LauncherWindow::LauncherWindow(QGraphicsScene* scene)
+    : MainWindow()
+    , currentZoom(100)
+{
+    init(true); // use QGraphicsView
+    QGraphicsView* view = static_cast<QGraphicsView*>(m_view);
+    view->setScene(scene);
+}
+
+LauncherWindow::~LauncherWindow()
+{
+    grabZoomKeys(false);
+}
+
+void LauncherWindow::init(bool useGraphicsView)
 {
     QSplitter* splitter = new QSplitter(Qt::Vertical, this);
     setCentralWidget(splitter);
@@ -157,7 +181,8 @@ LauncherWindow::LauncherWindow(QString url)
 #endif
 
     m_view = 0;
-    initializeView();
+
+    initializeView(useGraphicsView);
 
     connect(page(), SIGNAL(loadStarted()), this, SLOT(loadStarted()));
     connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
@@ -177,13 +202,6 @@ LauncherWindow::LauncherWindow(QString url)
     zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
 
     grabZoomKeys(true);
-
-    load(url);
-}
-
-LauncherWindow::~LauncherWindow()
-{
-    grabZoomKeys(false);
 }
 
 void LauncherWindow::keyPressEvent(QKeyEvent* event)
@@ -485,6 +503,14 @@ void LauncherWindow::newWindow(const QString& url)
     mw->show();
 }
 
+void LauncherWindow::cloneWindow()
+{
+    QGraphicsView* view = static_cast<QGraphicsView*>(m_view);
+
+    LauncherWindow* mw = new LauncherWindow(view->scene());
+    mw->show();
+}
+
 void LauncherWindow::setupUI()
 {
     QMenu* fileMenu = menuBar()->addMenu("&File");
@@ -569,6 +595,12 @@ void LauncherWindow::setupUI()
     flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
     flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     flipYAnimated->setEnabled(false);
+
+    graphicsViewMenu->addSeparator();
+
+    QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
+    cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    cloneWindow->setEnabled(false);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
