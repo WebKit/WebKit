@@ -429,6 +429,9 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL exposeInputContext;
 
     NSPoint lastScrollPosition;
+#ifndef BUILDING_ON_TIGER
+    BOOL inScrollPositionChanged;
+#endif
 
     WebPluginController *pluginController;
     
@@ -1171,8 +1174,15 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     NSPoint origin = [[self superview] bounds].origin;
     if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
         if (Frame* coreFrame = core([self _frame])) {
-            if (FrameView* coreView = coreFrame->view())
+            if (FrameView* coreView = coreFrame->view()) {
+#ifndef BUILDING_ON_TIGER
+                _private->inScrollPositionChanged = YES;
+#endif
                 coreView->scrollPositionChanged();
+#ifndef BUILDING_ON_TIGER
+                _private->inScrollPositionChanged = NO;
+#endif
+            }
         }
     
         [_private->completionController endRevertingChange:NO moveLeft:NO];
@@ -3137,11 +3147,29 @@ WEBCORE_COMMAND(yankAndSelect)
     return [[self _webView] drawsBackground];
 }
 
+#if !LOG_DISABLED
 - (void)setNeedsDisplay:(BOOL)flag
 {
     LOG(View, "%@ setNeedsDisplay:%@", self, flag ? @"YES" : @"NO");
     [super setNeedsDisplay:flag];
 }
+#endif
+
+#ifndef BUILDING_ON_TIGER
+- (void)setNeedsDisplayInRect:(NSRect)invalidRect
+{
+    if (_private->inScrollPositionChanged) {
+        // When scrolling, the dirty regions are adjusted for the scroll only
+        // after NSViewBoundsDidChangeNotification is sent. Translate the invalid
+        // rect to pre-scrolled coordinates in order to get the right dirty region
+        // after adjustment. See <rdar://problem/7678927>.
+        NSPoint origin = [[self superview] bounds].origin;
+        invalidRect.origin.x -= _private->lastScrollPosition.x - origin.x;
+        invalidRect.origin.y -= _private->lastScrollPosition.y - origin.y;
+    }
+    [super setNeedsDisplayInRect:invalidRect];
+}
+#endif
 
 - (void)setNeedsLayout: (BOOL)flag
 {

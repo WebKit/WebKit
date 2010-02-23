@@ -1,3 +1,22 @@
+2010-02-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7611158> Incomplete repaint of YouTube timeline thumb while scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=34381
+
+        Test: fast/repaint/repaint-during-scroll.html
+
+        NSClipView offsets any rects marked as needing display during scrolling
+        by the scroll offset. Compensate for this when -setNeedsDisplay: is called
+        during scrolling.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]): Set inScrollPositionChanged to YES
+        around to call to FrameView::scrollPositionChanged().
+        (-[WebHTMLView setNeedsDisplayInRect:]): When called beneath
+        scrollPositionChanged(), adjust the rect by the inverse of the scroll offset.
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
