@@ -43,7 +43,6 @@
 #include <QDebug>
 
 #include <cstdio>
-#include "mainwindow.h"
 #include <qevent.h>
 #include <qwebelement.h>
 #include <qwebframe.h>
@@ -54,6 +53,7 @@
 #include <qx11info_x11.h>
 #endif
 
+#include "mainwindow.h"
 #include "urlloader.h"
 #include "utils.h"
 #include "webinspector.h"
@@ -377,8 +377,8 @@ void LauncherWindow::zoomOut()
 
 void LauncherWindow::resetZoom()
 {
-   currentZoom = 100;
-   page()->mainFrame()->setZoomFactor(1.0);
+    currentZoom = 100;
+    page()->mainFrame()->setZoomFactor(1.0);
 }
 
 void LauncherWindow::toggleZoomTextOnly(bool b)
