@@ -1,3 +1,17 @@
+2010-02-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Adds ChromeClient::cancelGeolocationPermissionRequestForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=34962
+
+        This method is required so that a Geolocation object can cancel an
+        asynchronous permission request. This allows the chrome client to cancel
+        any UI it is showing for the permission request.
+
+        * WebCoreSupport/ChromeClientHaiku.h:
+        (WebCore::ChromeClientHaiku::cancelGeolocationPermissionRequestForFrame):
+
 2010-02-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin, Darin Fisher, Simon Hausmann.

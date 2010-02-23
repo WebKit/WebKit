@@ -147,6 +147,7 @@ public:
     virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const {}
 
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
+    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*) { }
 
 #if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*);

@@ -149,6 +149,7 @@ namespace WebCore {
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
+        virtual void cancelGeolocationPermissionRequestForFrame(Frame*) { }
 
         QtAbstractWebPopup* createSelectPopup();
 

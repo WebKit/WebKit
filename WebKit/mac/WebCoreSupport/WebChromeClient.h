@@ -160,6 +160,7 @@ public:
 #endif
 
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
+    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*) { }
 
 private:
     WebView *m_webView;

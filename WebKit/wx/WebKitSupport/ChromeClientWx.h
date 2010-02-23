@@ -136,6 +136,7 @@ public:
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 
     virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
+    virtual void cancelGeolocationPermissionRequestForFrame(Frame*) { }
 
 private:
     wxWebView* m_webView;
