@@ -1,3 +1,13 @@
+2010-02-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] fix previous SVG-disabling patch
+        https://bugs.webkit.org/show_bug.cgi?id=35298
+
+        * WebCore.gypi: rename variable
+        * WebCore.gyp/WebCore.gyp: actually use the variable
+
 2010-02-23  Michael Lotz <mmlr@mlotz.ch>
 
         Reviewed by David Levin.

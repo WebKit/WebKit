@@ -226,7 +226,7 @@
       'conditions': [
         ['enable_svg!=0', {
           'sources': [
-            '<@(webcore_bindings_idl_files)',
+            '<@(webcore_svg_bindings_idl_files)',
           ],
         }],
       ],

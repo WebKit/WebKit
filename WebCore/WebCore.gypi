@@ -243,7 +243,7 @@
             'xml/XPathResult.idl',
             'xml/XSLTProcessor.idl',
         ],
-        'webcore_bindings_idl_svg_files': [
+        'webcore_svg_bindings_idl_files': [
             'svg/ElementTimeControl.idl',
             'svg/SVGAElement.idl',
             'svg/SVGAltGlyphElement.idl',
