@@ -1367,7 +1367,7 @@ def check_spacing(file_extension, clean_lines, line_number, error):
 
     if file_extension == 'cpp':
         # C++ should have the & or * beside the type not the variable name.
-        matched = match(r'\s*\w+(?<!\breturn)\s+(?P<pointer_operator>\*|\&)\w+', line)
+        matched = match(r'\s*\w+(?<!\breturn|\bdelete)\s+(?P<pointer_operator>\*|\&)\w+', line)
         if matched:
             error(line_number, 'whitespace/declaration', 3,
                   'Declaration has space between type name and %s in %s' % (matched.group('pointer_operator'), matched.group(0).strip()))
