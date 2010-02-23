@@ -1,3 +1,18 @@
+2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Adding the EFL implementation of JavaScriptCore.
+        See https://bugs.webkit.org/show_bug.cgi?id=35084 for details.
+
+        * GNUmakefile.am: Updated to reflect the new location of GOwnPtr and
+                          GRefPtr.
+        * wtf/efl/MainThreadEfl.cpp: Added.
+        * wtf/gobject/GOwnPtr.cpp: Moved from wtf/gtk.
+        * wtf/gobject/GOwnPtr.h: Moved from wtf/gtk.
+        * wtf/gobject/GRefPtr.cpp: Moved from wtf/gtk.
+        * wtf/gobject/GRefPtr.h: Moved from wtf/gtk.
+
 2010-02-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

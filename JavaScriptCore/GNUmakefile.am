@@ -292,10 +292,10 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/ValueCheck.h \
 	JavaScriptCore/wtf/Vector.h \
 	JavaScriptCore/wtf/VectorTraits.h \
-	JavaScriptCore/wtf/gtk/GOwnPtr.cpp \
-	JavaScriptCore/wtf/gtk/GOwnPtr.h \
-	JavaScriptCore/wtf/gtk/GRefPtr.cpp \
-	JavaScriptCore/wtf/gtk/GRefPtr.h \
+	JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
+	JavaScriptCore/wtf/gobject/GOwnPtr.h \
+	JavaScriptCore/wtf/gobject/GRefPtr.cpp \
+	JavaScriptCore/wtf/gobject/GRefPtr.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/unicode/Collator.h \
