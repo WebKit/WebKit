@@ -44,6 +44,7 @@
 #include "WebElement.h"
 #include "WebFrameImpl.h"
 #include "WebNodeCollection.h"
+#include "WebNodeList.h"
 #include "WebURL.h"
 
 #include <wtf/PassRefPtr.h>
@@ -116,6 +117,11 @@ WebURL WebDocument::completeURL(const WebString& partialURL) const
 WebElement WebDocument::getElementById(const WebString& id) const
 {
     return WebElement(constUnwrap<Document>()->getElementById(id));
+}
+
+WebNodeList WebDocument::getElementsByTagName(const WebString& tag)
+{
+    return WebNodeList(unwrap<Document>()->getElementsByTagName(tag));
 }
 
 WebString WebDocument::applicationID() const
