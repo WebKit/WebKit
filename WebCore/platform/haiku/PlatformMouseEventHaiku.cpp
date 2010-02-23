@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
  * Copyright (C) 2009 Maxime Simon <simon.maxime@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * All rights reserved.
  *
@@ -30,36 +31,30 @@
 #include "PlatformMouseEvent.h"
 
 #include <Message.h>
-#include <SupportDefs.h>
-
+#include <View.h>
 
 namespace WebCore {
 
 PlatformMouseEvent::PlatformMouseEvent(const BMessage* message)
-    : m_timestamp(message->FindInt64("when"))
-    , m_position(IntPoint(message->FindPoint("where")))
-    , m_globalPosition(message->FindPoint("globalPosition"))
-    , m_shiftKey(false)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_metaKey(false)
+    : m_position(message->FindPoint("be:view_where"))
+    , m_globalPosition(message->FindPoint("screen_where"))
     , m_clickCount(message->FindInt32("clicks"))
+    , m_timestamp(message->FindInt64("when") / 1000000.0)
 {
-    int32 buttons = message->FindInt32("buttons");
-    switch (buttons) {
-    case 1:
+    int32 buttons = 0;
+    if (message->what == B_MOUSE_UP)
+        message->FindInt32("previous buttons", &buttons);
+    else
+        message->FindInt32("buttons", &buttons);
+
+    if (buttons & B_PRIMARY_MOUSE_BUTTON)
         m_button = LeftButton;
-        break;
-    case 2:
+    else if (buttons & B_SECONDARY_MOUSE_BUTTON)
         m_button = RightButton;
-        break;
-    case 3:
+    else if (buttons & B_TERTIARY_MOUSE_BUTTON)
         m_button = MiddleButton;
-        break;
-    default:
+    else
         m_button = NoButton;
-        break;
-    };
 
     switch (message->what) {
     case B_MOUSE_DOWN:
@@ -67,15 +62,18 @@ PlatformMouseEvent::PlatformMouseEvent(const BMessage* message)
         break;
     case B_MOUSE_UP:
         m_eventType = MouseEventReleased;
-        m_button = LeftButton; // FIXME: Webcore wants to know the button released but we don't know.
         break;
     case B_MOUSE_MOVED:
-        m_eventType = MouseEventMoved;
-        break;
     default:
         m_eventType = MouseEventMoved;
         break;
     };
+
+    int32 modifiers = message->FindInt32("modifiers");
+    m_shiftKey = modifiers & B_SHIFT_KEY;
+    m_ctrlKey = modifiers & B_CONTROL_KEY;
+    m_altKey = modifiers & B_COMMAND_KEY;
+    m_metaKey = modifiers & B_OPTION_KEY;
 }
 
 } // namespace WebCore
