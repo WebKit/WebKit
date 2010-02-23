@@ -1,3 +1,15 @@
+2010-02-22  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Build fix for debug builds of GlyphPageTreeNode.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=34528
+
+        Covered by existing tests.
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+            include <stdio.h> since printf() is used if NDEBUG is not defined.
+
 2010-02-22  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium build fix.
