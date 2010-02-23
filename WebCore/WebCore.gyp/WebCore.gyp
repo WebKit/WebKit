@@ -101,7 +101,11 @@
     # If set to 1, doesn't compile debug symbols into webcore reducing the
     # size of the binary and increasing the speed of gdb.  gcc only.
     'remove_webcore_debug_symbols%': 0,
-  
+
+    # If set to 0, doesn't build SVG support, reducing the size of the
+    # binary and increasing the speed of gdb.
+    'enable_svg%': 1,
+
     'webcore_include_dirs': [
       '../',
       '../accessibility',
@@ -216,8 +220,15 @@
         '../html/HTMLEntityNames.gperf',
         '../platform/ColorData.gperf',
 
-        # idl rule
+        # idl rules except for svg (added below)
         '<@(webcore_bindings_idl_files)',
+      ],
+      'conditions': [
+        ['enable_svg!=0', {
+          'sources': [
+            '<@(webcore_bindings_idl_files)',
+          ],
+        }],
       ],
       'sources!': [
         # Custom bindings in bindings/v8/custom exist for these.
@@ -583,11 +594,8 @@
         # Additional .cpp files from webcore_bindings_sources actions.
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLNames.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNSNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLNames.cpp',
@@ -601,6 +609,13 @@
           'dependencies': [
             '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
           ],
+        }],
+        ['enable_svg!=0', {
+          'sources': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGElementFactory.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8SVGElementWrapperFactory.cpp',
+         ],
         }],
         ['OS=="mac"', {
           'include_dirs': [
@@ -674,10 +689,6 @@
         ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|opentype|posix|qt|soup|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
-        # Exclude everything in svg/ directly but not in subdirectories.
-        # Everything in svg/*.cpp is included in svg/SVGAllInOne.cpp.
-        ['exclude', 'svg/[^/]+\\.cpp$'],
-        ['include', 'svg/SVGAllInOne\\.cpp$'],
 
         # JSC-only.
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
@@ -816,6 +827,20 @@
           ],
           'export_dependent_settings': [
             '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+          ],
+        }],
+        ['enable_svg!=0', {
+          'sources/': [
+            ['exclude', 'svg/[^/]+\\.cpp$'],
+            ['include', 'svg/SVGAllInOne\\.cpp$'],
+          ],
+        }, {  # svg disabled
+          'sources/': [
+            ['exclude', 'svg/'],
+            ['exclude', 'css/svg/'],
+            ['exclude', 'rendering/style/SVG'],
+            ['exclude', 'rendering/RenderSVG'],
+            ['exclude', 'rendering/SVG'],
           ],
         }],
         ['OS=="linux" or OS=="freebsd"', {

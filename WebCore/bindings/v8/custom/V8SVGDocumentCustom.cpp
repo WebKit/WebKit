@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(SVG)
 #include "V8SVGDocument.h"
 
 #include "V8IsolatedContext.h"
@@ -51,3 +53,5 @@ v8::Handle<v8::Value> toV8(SVGDocument* impl, bool forceNewObject)
 }
 
 } // namespace WebCore
+
+#endif

@@ -1,3 +1,14 @@
+2010-02-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] Allow building without SVG
+        https://bugs.webkit.org/show_bug.cgi?id=31522
+
+        * WebCore.gyp/WebCore.gyp, WebCore.gypi: test enable_svg flag.
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp,
+          bindings/v8/custom/V8SVGPathSegCustom.cpp: test ENABLE(SVG).
+
 2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.

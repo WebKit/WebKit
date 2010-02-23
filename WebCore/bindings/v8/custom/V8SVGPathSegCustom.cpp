@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(SVG)
 #include "V8SVGPathSeg.h"
 
 #include "V8DOMWindow.h"
@@ -104,3 +106,5 @@ v8::Handle<v8::Value> toV8(SVGPathSeg* impl)
 }
 
 } // namespace WebCore
+
+#endif
