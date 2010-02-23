@@ -492,6 +492,12 @@ public:
                                          float pageWidthInPixels,
                                          float pageHeightInPixels) const = 0;
 
+    // Returns the bounds rect for current selection. If selection is performed
+    // on transformed text, the rect will still bound the selection but will
+    // not be transformed itself. If no selection is present, the rect will be
+    // empty ((0,0), (0,0)).
+    virtual WebRect selectionBoundsRect() const = 0;
+
 protected:
     ~WebFrame() { }
 };

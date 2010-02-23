@@ -1534,6 +1534,14 @@ int WebFrameImpl::pageNumberForElementById(const WebString& id,
     return PrintContext::pageNumberForElement(element, pageSize);
 }
 
+WebRect WebFrameImpl::selectionBoundsRect() const
+{
+    if (hasSelection())
+        return IntRect(frame()->selectionBounds(false));
+
+    return WebRect();
+}
+
 // WebFrameImpl public ---------------------------------------------------------
 
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)

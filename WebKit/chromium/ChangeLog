@@ -1,3 +1,21 @@
+2010-02-23  Dmitriy Belenko  <dbelenko@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Chromium: Need to be able to get the bounds of selection
+        rectangle(s)
+        https://bugs.webkit.org/show_bug.cgi?id=34915
+
+        This change will enable about 30 test cases to pass in Chromium.
+        All of these test cases are related to selection rect boundaries.
+        This change will enable the test cases to retrieve the selection
+        rect boundary rectangle for the current selection.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectionBoundsRect):
+        * src/WebFrameImpl.h:
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
