@@ -1134,7 +1134,7 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
         return 0;
     }
 
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
+#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
     PlatformContextSkia context(canvas);
     GraphicsContext spool(&context);
 #elif OS(DARWIN)

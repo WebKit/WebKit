@@ -1799,7 +1799,7 @@ bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
                                                  bool alt, bool meta,
                                                  WebNavigationPolicy* policy)
 {
-#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
+#if OS(WINDOWS) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
     const bool newTabModifier = (button == 1) || ctrl;
 #elif OS(DARWIN)
     const bool newTabModifier = (button == 1) || meta;
