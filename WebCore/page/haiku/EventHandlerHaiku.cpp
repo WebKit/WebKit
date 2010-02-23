@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
  * Copyright (C) 2009 Maxime Simon <simon.maxime@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +40,6 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
-#include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
 
@@ -56,7 +56,7 @@ static bool isKeyboardOptionTab(KeyboardEvent* event)
         && (event->type() == eventNames().keydownEvent
             || event->type() == eventNames().keypressEvent)
         && event->altKey()
-        && event->keyIdentifier() == "U+000009";
+        && event->keyIdentifier() == "U+0009";
 }
 
 bool EventHandler::invertSenseOfTabsToLinks(KeyboardEvent* event) const
@@ -74,8 +74,10 @@ bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 void EventHandler::focusDocumentView()
 {
     BView* view = m_frame->view()->platformWidget();
-    if (view)
-        view->MakeFocus();
+    if (view && view->LockLooperWithTimeout(5000) == B_OK) {
+        view->MakeFocus(true);
+        view->UnlockLooper();
+    }
 
     Page* page = m_frame->page();
     if (page)
@@ -102,16 +104,12 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     return false;
 }
 
-bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
+bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
-    notImplemented();
+    // On Haiku, clicks which activate the window in non focus-follows-mouse mode
+    // are not passed to the window, so any event we generate is not the activation
+    // event.
     return false;
-}
-
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframe, HitTestResult*)
-{
-    notImplemented();
-    return true;
 }
 
 bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
@@ -129,21 +127,27 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMousePressEvent(mev.event());
+    return true;
 }
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
 {
-    return passSubframeEventToSubframe(mev, subframe, hoveredNode);
+    subframe->eventHandler()->handleMouseMoveEvent(mev.event(), hoveredNode);
+    return true;
 }
 
 bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
-    return passSubframeEventToSubframe(mev, subframe);
+    subframe->eventHandler()->handleMouseReleaseEvent(mev.event());
+    return true;
 }
 
 unsigned EventHandler::accessKeyModifiers()
 {
+    // NOTE: On Haiku, the user can choose Alt or Ctrl as access key, but
+    // the PlatformKeyboardEvent already takes care of this, internally,
+    // we always use Alt.
     return PlatformKeyboardEvent::AltKey;
 }
 
