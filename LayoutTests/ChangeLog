@@ -1,3 +1,14 @@
+2010-02-22  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add test for https://bugs.webkit.org/show_bug.cgi?id=32842
+        It has been fixed on trunk for a while, but we want to make sure we
+        do not regress.
+
+        * fast/text/find-layout-crash.html: Added.
+        * fast/text/find-layout-crash-expected.txt: Added.
+
 2010-02-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Alexey Proskuryakov.
