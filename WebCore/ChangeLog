@@ -1,3 +1,12 @@
+2010-02-23  Tony Chang  <tony@chromium.org>
+
+        Not reviewed.
+        Revert r55135 because the layout test is failing on all the bots.
+        https://bugs.webkit.org/show_bug.cgi?id=34634
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+
 2010-02-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Ariya Hidayat.
