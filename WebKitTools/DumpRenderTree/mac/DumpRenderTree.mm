@@ -430,20 +430,7 @@ static void resetDefaultsToConsistentValues()
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
-
-#if defined(BUILDING_ON_LEOPARD)
-    // Disable hardware composititing to avoid timeouts and crashes from buggy CoreVideo teardown code.
-    // https://bugs.webkit.org/show_bug.cgi?id=28845 and rdar://problem/7228836
-    SInt32 qtVersion;
-    OSErr err = Gestalt(gestaltQuickTimeVersion, &qtVersion);
-    assert(err == noErr);
-    // Bug 7228836 exists in at least 7.6.3 through 7.6.4, hopefully it will be fixed in 7.6.5.
-    // FIXME: Once we know the exact versions of QuickTime affected, we can update this check.
-    if (qtVersion <= 0x07648000) // 7.6.4, final release (0x8).  See http://developer.apple.com/mac/library/techn
-        [preferences setAcceleratedCompositingEnabled:NO];
-    else
-#endif
-        [preferences setAcceleratedCompositingEnabled:YES];
+    [preferences setAcceleratedCompositingEnabled:YES];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 

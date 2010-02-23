@@ -1,3 +1,16 @@
+2010-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove DRT hack that turns off hardware acceleration with older QuickTimes
+        https://bugs.webkit.org/show_bug.cgi?id=35275
+        
+        Now that WebKit does a version check to avoid a QuickTime-related
+        crash (r55100), DumpRenderTree does not need to.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2010-02-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
