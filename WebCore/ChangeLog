@@ -1,3 +1,19 @@
+2010-02-23  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Fix various issues in PlatformWheelEventHaiku.
+        https://bugs.webkit.org/show_bug.cgi?id=34685
+
+        Covered by existing tests.
+        
+        Fixed coding style violations.
+        Synced extracting the correct coordinates with Haiku WebKit implementation.
+        Added extracting modifier key flags.
+
+        * platform/haiku/PlatformWheelEventHaiku.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2010-02-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

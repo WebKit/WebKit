@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
  * Copyright (C) 2009 Maxime Simon <simon.maxime@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * All rights reserved.
  *
@@ -31,6 +32,7 @@
 
 #include "Scrollbar.h"
 
+#include <InterfaceDefs.h>
 #include <Message.h>
 #include <Point.h>
 
@@ -38,24 +40,23 @@
 namespace WebCore {
 
 PlatformWheelEvent::PlatformWheelEvent(BMessage* message)
-    : m_granularity(ScrollByPixelWheelEvent)
-    , m_shiftKey(false)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_metaKey(false)
+    : m_position(message->FindPoint("be:view_where"))
+    , m_globalPosition(message->FindPoint("screen_where"))
+    , m_deltaX(message->FindFloat("be:wheel_delta_x"))
+    , m_deltaY(message->FindFloat("be:wheel_delta_y"))
+    , m_wheelTicksX(m_deltaX)
+    , m_wheelTicksY(m_deltaY)
+    , m_granularity(ScrollByPixelWheelEvent)
     , m_isAccepted(false)
 {
-    m_position = IntPoint(message->FindPoint("position"));
-    m_globalPosition = IntPoint(message->FindPoint("global_position"));
-
-    m_deltaX = message->FindFloat("be:wheel_delta_x");
-    m_deltaY = message->FindFloat("be:wheel_delta_y");
-
-    m_wheelTicksX = m_deltaX;
-    m_wheelTicksY = m_deltaY;
-
     m_deltaX *= -Scrollbar::pixelsPerLineStep();
     m_deltaY *= -Scrollbar::pixelsPerLineStep();
+
+    int32 modifiers = message->FindInt32("modifiers");
+    m_shiftKey = modifiers & B_SHIFT_KEY;
+    m_ctrlKey = modifiers & B_CONTROL_KEY;
+    m_altKey = modifiers & B_COMMAND_KEY;
+    m_metaKey = modifiers & B_OPTION_KEY;
 }
 
 } // namespace WebCore
