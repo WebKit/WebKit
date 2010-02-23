@@ -1,3 +1,13 @@
+2010-02-23  Crystal Zhang  <haizhang@rim.com>
+
+        Unreviewed build fix.
+
+        Fix build error when enable plugin proxy: 'toRenderEmbeddedObject' identifier not found.
+        As RenderEmbeddedObject inherits RenderPartObject and 'toRenderEmbeddedObject' belongs
+        to former one.
+
+        * html/HTMLMediaElement.cpp:
+
 2010-02-23  Evan Martin  <evan@chromium.org>
 
         Reviewed by Jeremy Orlow.

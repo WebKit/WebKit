@@ -70,7 +70,7 @@
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "RenderPartObject.h"
+#include "RenderEmbeddedObject.h"
 #include "Widget.h"
 #endif
 
