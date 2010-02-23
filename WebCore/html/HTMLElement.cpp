@@ -272,9 +272,9 @@ String HTMLElement::outerHTML() const
     return createMarkup(this);
 }
 
-PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String &html, FragmentScriptingPermission scriptingPermission)
+PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
 {
-    // the following is in accordance with the definition as used by IE
+    // The following is in accordance with the definition as used by IE.
     if (endTagRequirement() == TagStatusForbidden)
         return 0;
 
@@ -282,47 +282,7 @@ PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String 
         hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
-    
-    if (document()->isHTMLDocument())
-         parseHTMLDocumentFragment(html, fragment.get(), scriptingPermission);
-    else {
-        if (!parseXMLDocumentFragment(html, fragment.get(), this, scriptingPermission))
-            // FIXME: We should propagate a syntax error exception out here.
-            return 0;
-    }
-
-    // Exceptions are ignored because none ought to happen here.
-    int ignoredExceptionCode;
-
-    // we need to pop <html> and <body> elements and remove <head> to
-    // accommodate folks passing complete HTML documents to make the
-    // child of an element.
-
-    RefPtr<Node> nextNode;
-    for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
-        nextNode = node->nextSibling();
-        if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
-            Node *firstChild = node->firstChild();
-            if (firstChild)
-                nextNode = firstChild;
-            RefPtr<Node> nextChild;
-            for (RefPtr<Node> child = firstChild; child; child = nextChild) {
-                nextChild = child->nextSibling();
-                node->removeChild(child.get(), ignoredExceptionCode);
-                ASSERT(!ignoredExceptionCode);
-                fragment->insertBefore(child, node.get(), ignoredExceptionCode);
-                ASSERT(!ignoredExceptionCode);
-            }
-            fragment->removeChild(node.get(), ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
-        } else if (node->hasTagName(headTag)) {
-            fragment->removeChild(node.get(), ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
-        }
-    }
-
-    return fragment.release();
+    return Element::createContextualFragment(markup, scriptingPermission);
 }
 
 static inline bool hasOneChild(ContainerNode* node)
@@ -415,7 +375,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 
 void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 {
-    // follow the IE specs about when this is allowed
+    // Follow the IE specs about when this is allowed.
     if (endTagRequirement() == TagStatusForbidden) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
@@ -485,7 +445,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
 {
-    // follow the IE specs about when this is allowed
+    // Follow the IE specs about when this is allowed.
     if (endTagRequirement() == TagStatusForbidden) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
@@ -513,7 +473,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     if (ec)
         return;
 
-    // is previous node a text node? if so, merge into it
+    // Is previous node a text node? If so, merge into it.
     Node* prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
         Text* textPrev = static_cast<Text*>(prev);
@@ -526,7 +486,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         t = textPrev;
     }
 
-    // is next node a text node? if so, merge it in
+    // Is next node a text node? If so, merge it in.
     Node* next = t->nextSibling();
     if (next && next->isTextNode()) {
         Text* textNext = static_cast<Text*>(next);
@@ -566,7 +526,7 @@ Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, Exception
         return 0;
     }
     
-    // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+    // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }
@@ -574,7 +534,7 @@ Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, Exception
 Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChild, ExceptionCode& ec)
 {
     if (!newChild) {
-        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
@@ -611,8 +571,8 @@ void HTMLElement::addHTMLAlignment(MappedAttribute* attr)
 
 void HTMLElement::addHTMLAlignmentToStyledElement(StyledElement* element, MappedAttribute* attr)
 {
-    // vertical alignment with respect to the current baseline of the text
-    // right or left means floating images
+    // Vertical alignment with respect to the current baseline of the text
+    // right or left means floating images.
     int floatValue = CSSValueInvalid;
     int verticalAlignValue = CSSValueInvalid;
 

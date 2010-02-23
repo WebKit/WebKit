@@ -1,3 +1,14 @@
+2010-02-23  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash in createContextualFragment when inserting a list in a non HTML document.
+        <rdar://problem/7666670>
+        https://bugs.webkit.org/show_bug.cgi?id=35305
+
+        * editing/execCommand/insert-list-xml-expected.txt: Added.
+        * editing/execCommand/insert-list-xml.xhtml: Added.
+
 2010-02-23  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.

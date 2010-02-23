@@ -35,6 +35,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "ElementRareData.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
@@ -42,6 +43,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLTokenizer.h"
 #include "InspectorController.h"
 #include "NamedNodeMap.h"
 #include "NodeList.h"
@@ -51,6 +53,7 @@
 #include "RenderWidget.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
+#include "XMLTokenizer.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -92,6 +95,51 @@ inline ElementRareData* Element::ensureRareData()
 NodeRareData* Element::createRareData()
 {
     return new ElementRareData;
+}
+
+PassRefPtr<DocumentFragment> Element::createContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
+{
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
+    
+    if (document()->isHTMLDocument())
+        parseHTMLDocumentFragment(markup, fragment.get(), scriptingPermission);
+    else {
+        if (!parseXMLDocumentFragment(markup, fragment.get(), this, scriptingPermission))
+            // FIXME: We should propagate a syntax error exception out here.
+            return 0;
+    }
+    
+    // Exceptions are ignored because none ought to happen here.
+    ExceptionCode ignoredExceptionCode;
+    
+    // We need to pop <html> and <body> elements and remove <head> to
+    // accommodate folks passing complete HTML documents to make the
+    // child of an element.
+    
+    RefPtr<Node> nextNode;
+    for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
+        nextNode = node->nextSibling();
+        if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
+            Node* firstChild = node->firstChild();
+            if (firstChild)
+                nextNode = firstChild;
+            RefPtr<Node> nextChild;
+            for (RefPtr<Node> child = firstChild; child; child = nextChild) {
+                nextChild = child->nextSibling();
+                node->removeChild(child.get(), ignoredExceptionCode);
+                ASSERT(!ignoredExceptionCode);
+                fragment->insertBefore(child, node.get(), ignoredExceptionCode);
+                ASSERT(!ignoredExceptionCode);
+            }
+            fragment->removeChild(node.get(), ignoredExceptionCode);
+            ASSERT(!ignoredExceptionCode);
+        } else if (node->hasTagName(headTag)) {
+            fragment->removeChild(node.get(), ignoredExceptionCode);
+            ASSERT(!ignoredExceptionCode);
+        }
+    }
+    
+    return fragment.release();
 }
     
 PassRefPtr<Node> Element::cloneNode(bool deep)

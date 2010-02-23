@@ -98,6 +98,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
 
+    virtual PassRefPtr<DocumentFragment> createContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
+
     const AtomicString& getIDAttribute() const;
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
