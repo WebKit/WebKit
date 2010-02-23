@@ -425,6 +425,7 @@ $(WEBKIT_GIRSOURCES): $(JSCORE_GIRSOURCES) $(G_IR_SCANNER) libwebkit-1.0.la
 	     --libtool="$(LIBTOOL)" \
 	     --pkg gobject-2.0 \
 	     --pkg gtk+-2.0 \
+	     --pkg libsoup-2.4 \
 	     --output $@ \
 	     --add-include-path $(top_srcdir)/WebKit/gtk \
 	     -I$(top_srcdir)/WebKit/gtk \

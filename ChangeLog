@@ -1,3 +1,14 @@
+2010-02-23  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [gtk] missing libsoup-2.4 package in gir generation
+        https://bugs.webkit.org/show_bug.cgi?id=35199
+
+        Include libsoup-2.4 package in gobject introspection .gir generation.
+
+        * GNUmakefile.am:
+
 2010-02-22  Huahui Wu  <hwu@google.com>
 
         Reviewed by Eric Seidel.
