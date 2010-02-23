@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -32,18 +32,12 @@
 namespace WebCore {
 
 // String conversions
-String::String(const BString& bstring)
+String::String(const BString& string)
 {
-    const UChar* str = reinterpret_cast<const UChar*>(bstring.String());
-    const size_t size = bstring.Length();
-
-    if (!str)
-        return;
-
-    if (!size)
-        m_impl = StringImpl::empty();
+    if (string.Length())
+        m_impl = String::fromUTF8(string.String(), string.Length()).impl();
     else
-        m_impl = StringImpl::create(str, size);
+        m_impl = StringImpl::empty();
 }
 
 String::operator BString() const

@@ -1,3 +1,19 @@
+2010-02-23  Michael Lotz <mmlr@mlotz.ch>
+
+        Reviewed by David Levin.
+
+        [Haiku] Fix conversion from BString to String
+        https://bugs.webkit.org/show_bug.cgi?id=35082
+
+        The previous patch to this file was broken (sorry). First of all,
+        the conversion from UTF8 was accidentally removed. Second, for
+        empty strings, we need to point the implementation at StringImpl::empty().
+
+        Covered by existing tests.
+
+        * platform/text/haiku/StringHaiku.cpp:
+        (WebCore::String::String):
+
 2010-02-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Carlson.
