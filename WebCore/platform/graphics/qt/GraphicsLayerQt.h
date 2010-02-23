@@ -70,6 +70,7 @@ public:
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
     virtual void setContentsToImage(Image*);
+    virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
     virtual void setGeometryOrientation(CompositingCoordinatesOrientation orientation);
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation);

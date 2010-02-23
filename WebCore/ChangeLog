@@ -1,3 +1,33 @@
+2010-02-23  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Connect video with accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=35276
+
+        MediaControlPrivate and GraphicsLayer are patched together via
+        a shared PlatformLayer (QGraphicsItem). This patch makes sure that the
+        QGraphicsVideoItem from MediaControl becomes part of the scene 
+        associsated with GraphicsLayer
+
+        Test: http://double.co.nz/video_test/test1.html with AC turned on
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::): mediaLayer member
+        (WebCore::GraphicsLayerQtImpl::opaqueArea): video is opaque
+        (WebCore::GraphicsLayerQtImpl::paint): don't paint video
+        (WebCore::GraphicsLayerQtImpl::flushChanges): flush mediaLayer
+        (WebCore::GraphicsLayerQt::setContentsToMedia): notify
+        * platform/graphics/qt/GraphicsLayerQt.h: reimp setContentsToMedia
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): m_compositing
+        (WebCore::MediaPlayerPrivate::paint): don't paint if compositing
+        (WebCore::MediaPlayerPrivate::acceleratedRenderingStateChanged):
+        reimp from MediaPlayerPrivateInterface to support AC
+        (WebCore::MediaPlayerPrivate::platformLayer): ditto
+        * platform/graphics/qt/MediaPlayerPrivateQt.h: 
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering): ditto
+
 2010-02-23  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by Eric Seidel.

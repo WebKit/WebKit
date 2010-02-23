@@ -86,6 +86,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_isVisible(false)
     , m_isSeeking(false)
+    , m_composited(false)
     , m_queuedSeek(-1)
 {
     m_videoItem->setMediaObject(m_mediaPlayer);
@@ -516,6 +517,10 @@ IntSize MediaPlayerPrivate::naturalSize() const
 
 void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_composited)
+        return;
+#endif
     if (context->paintingDisabled())
         return;
 
@@ -533,6 +538,26 @@ void MediaPlayerPrivate::repaint()
 {
     m_player->repaint();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void MediaPlayerPrivate::acceleratedRenderingStateChanged()
+{
+    bool composited = m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player);
+    if (composited == m_composited)
+        return;
+
+    m_composited = composited;
+    if (composited)
+        m_videoScene->removeItem(m_videoItem);
+    else
+        m_videoScene->addItem(m_videoItem);
+}
+
+PlatformLayer* MediaPlayerPrivate::platformLayer() const
+{
+    return m_composited ? m_videoItem : 0;
+}
+#endif
 
 } // namespace WebCore
 

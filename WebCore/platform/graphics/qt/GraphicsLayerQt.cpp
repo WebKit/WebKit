@@ -125,7 +125,7 @@ public:
     };
 
     // the compositor lets us special-case images and colors, so we try to do so
-    enum StaticContentType { HTMLContentType, PixmapContentType, ColorContentType};
+    enum StaticContentType { HTMLContentType, PixmapContentType, ColorContentType, MediaContentType};
 
     GraphicsLayerQtImpl(GraphicsLayerQt* newLayer);
     virtual ~GraphicsLayerQtImpl();
@@ -179,6 +179,7 @@ public:
         bool updateAll;
         QColor contentsBackgroundColor;
         QColor backgroundColor;
+        QWeakPointer<QGraphicsObject> mediaLayer;
         StaticContentType contentType;
         float opacity;
         ContentData()
@@ -353,6 +354,7 @@ QPainterPath GraphicsLayerQtImpl::opaqueArea() const
     else {
         if (m_state.contentsOpaque
             || (m_currentContent.contentType == ColorContentType && m_currentContent.contentsBackgroundColor.alpha() == 0xff)
+            || (m_currentContent.contentType == MediaContentType)
             || (m_currentContent.contentType == PixmapContentType && !m_currentContent.pixmap.hasAlpha())) {
 
             painterPath.addRect(m_state.contentsRect);
@@ -384,6 +386,9 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
         break;
     case ColorContentType:
         painter->fillRect(m_state.contentsRect, m_currentContent.contentsBackgroundColor);
+        break;
+    case MediaContentType:
+        // we don't need to paint anything: we have a QGraphicsItem from the media element
         break;
     }
 }
@@ -433,7 +438,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
                 w->setParentItem(this);
 
         for (QSet<QGraphicsItem*>::const_iterator it = childrenToRemove.begin(); it != childrenToRemove.end(); ++it)
-             if (QGraphicsItem* w = *it)
+             if (GraphicsLayerQtImpl* w = qobject_cast<GraphicsLayerQtImpl*>((*it)->toGraphicsObject()))
                 w->setParentItem(0);
 
         // children are ordered by z-value, let graphics-view know.
@@ -465,7 +470,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
             m_size = QSizeF(m_layer->size().width(), m_layer->size().height());
         }
     }
-
     // FIXME: this is a hack, due to a probable QGraphicsScene bug when rapidly modifying the perspective
     // but without this line we get graphic artifacts
     if ((m_changeMask & ChildrenTransformChange) && m_state.childrenTransform != m_layer->childrenTransform())
@@ -483,6 +487,10 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
             update();
             setFlag(ItemHasNoContents, false);
 
+            break;
+        case MediaContentType:
+            setFlag(ItemHasNoContents, true);
+            m_pendingContent.mediaLayer.data()->setParentItem(this);
             break;
 
         case ColorContentType:
@@ -569,6 +577,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
     m_state.childrenTransform = m_layer->childrenTransform();
     m_currentContent.pixmap = m_pendingContent.pixmap;
     m_currentContent.contentType = m_pendingContent.contentType;
+    m_currentContent.mediaLayer = m_pendingContent.mediaLayer;
     m_currentContent.backgroundColor = m_pendingContent.backgroundColor;
     m_currentContent.regionToUpdate |= m_pendingContent.regionToUpdate;
     m_currentContent.contentsBackgroundColor = m_pendingContent.contentsBackgroundColor;
@@ -844,6 +853,15 @@ void GraphicsLayerQt::setContentsBackgroundColor(const Color& color)
     m_impl->m_pendingContent.contentsBackgroundColor = QColor(color);
     GraphicsLayer::setContentsBackgroundColor(color);
 }
+
+void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
+{
+    m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
+    m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::MediaContentType;
+    m_impl->m_pendingContent.mediaLayer = media->toGraphicsObject();
+    GraphicsLayer::setContentsToMedia(media);
+}
+
 
 // reimp from GraphicsLayer.h
 void GraphicsLayerQt::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
