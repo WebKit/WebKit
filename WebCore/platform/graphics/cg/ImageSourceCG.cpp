@@ -74,7 +74,7 @@ ImageSource::~ImageSource()
 
 void ImageSource::clear(bool destroyAllFrames, size_t, SharedBuffer* data, bool allDataReceived)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     // Recent versions of ImageIO discard previously decoded image frames if the client
     // application no longer holds references to them, so there's no need to throw away
     // the decoder unless we're explicitly asked to destroy all of the frames.
