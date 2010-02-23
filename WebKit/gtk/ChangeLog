@@ -1,3 +1,13 @@
+2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixes references to GOwnPtr and GRefPtr so the GTK+ port builds
+        again.
+        http://webkit.org/b/35084
+
+        * WebKit/gtk/webkit/webkitwebview.cpp:
+
 2010-02-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

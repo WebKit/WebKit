@@ -21,11 +21,11 @@
 
 #include "CString.h"
 #include "FileList.h"
+#include <GRefPtr.h>
 #include "KURL.h"
 #include "Range.h"
 #include "StringHash.h"
 #include <wtf/RefCounted.h>
-#include <wtf/gtk/GRefPtr.h>
 
 typedef struct _GdkPixbuf GdkPixbuf;
 typedef struct _GdkDragContext GdkDragContext;

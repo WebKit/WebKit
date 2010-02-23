@@ -1,3 +1,14 @@
+2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixes references to GOwnPtr and GRefPtr so the GTK+ port builds
+        again.
+        http://webkit.org/b/35084
+
+        * WebCore/platform/gtk/DataObjectGtk.h:
+        * WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+
 2010-02-23  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

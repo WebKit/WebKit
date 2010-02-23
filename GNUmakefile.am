@@ -162,6 +162,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/parser \
 	-I$(srcdir)/JavaScriptCore/wtf \
 	-I$(srcdir)/JavaScriptCore/wtf/gtk \
+	-I$(srcdir)/JavaScriptCore/wtf/gobject \
 	-I$(top_builddir)/DerivedSources
 
 nodist_EXTRA_libJavaScriptCore_la_SOURCES = \
