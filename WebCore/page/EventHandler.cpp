@@ -2589,8 +2589,6 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         if (event.type() == TouchStart && !i) {
             m_touchEventTarget = target;
-            m_firstTouchScreenPos = point.screenPos();
-            m_firstTouchPagePos = pagePoint;
         }
 
         if (point.state() == PlatformTouchPoint::TouchReleased)
@@ -2620,9 +2618,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr<TouchEvent> cancelEv =
             TouchEvent::create(TouchList::create().get(), TouchList::create().get(), cancelTouches.get(),
                                                    *eventName, m_touchEventTarget->document()->defaultView(),
-                                                   m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
-                                                   m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
-                                                   event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
                                                    event.metaKey());
 
         ExceptionCode ec = 0;
@@ -2635,9 +2631,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr<TouchEvent> endEv = 
             TouchEvent::create(touches.get(), targetTouches.get(), releasedTouches.get(),
                                                    *eventName, m_touchEventTarget->document()->defaultView(),
-                                                   m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
-                                                   m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
-                                                   event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
                                                    event.metaKey());
         ExceptionCode ec = 0;
         m_touchEventTarget->dispatchEvent(endEv.get(), ec);
@@ -2655,9 +2649,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr<TouchEvent> startEv = 
             TouchEvent::create(touches.get(), targetTouches.get(), pressedTouches.get(),
                                                    *eventName, m_touchEventTarget->document()->defaultView(),
-                                                   m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
-                                                   m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
-                                                   event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
                                                    event.metaKey());
         ExceptionCode ec = 0;
         m_touchEventTarget->dispatchEvent(startEv.get(), ec);
@@ -2668,9 +2660,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr<TouchEvent> moveEv = 
             TouchEvent::create(touches.get(), targetTouches.get(), movedTouches.get(),
                                                    *eventName, m_touchEventTarget->document()->defaultView(),
-                                                   m_firstTouchScreenPos.x(), m_firstTouchScreenPos.y(),
-                                                   m_firstTouchPagePos.x(), m_firstTouchPagePos.y(),
-                                                   event.ctrlKey(), event.altKey(), event.shiftKey(),
+                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
                                                    event.metaKey());
         ExceptionCode ec = 0;
         m_touchEventTarget->dispatchEvent(moveEv.get(), ec);

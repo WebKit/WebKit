@@ -37,6 +37,8 @@ function verifyTouchEvent(type, totalTouchCount, changedTouchCount, targetTouchC
     shouldBe("lastEvent.touches.length", totalTouchCount.toString());
     shouldBe("lastEvent.changedTouches.length", changedTouchCount.toString());
     shouldBe("lastEvent.targetTouches.length", targetTouchCount.toString());
+    shouldBe("lastEvent.pageX", "0");
+    shouldBe("lastEvent.pageY", "0");
 }
 
 function verifyTouchPoint(list, point, x, y, id)

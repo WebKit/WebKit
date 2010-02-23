@@ -1,3 +1,16 @@
+2010-02-23  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+
+        pageX/Y co-ordinates of TouchEvent should be 0,0
+        https://bugs.webkit.org/show_bug.cgi?id=35239
+
+        The co-ordinates attached to a touch event are not used for tracking touch motion, rather the co-ordinates attached to Touches within the touch event should be used. Set the co-ordinates on the event itself to 0 to avoid confusion and match observed iPhone behavior.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Set the pageX/Y and screenX/Y co-ordinates attached to the touch event to 0,0 to match observed behavior on the iPhone.
+        * page/EventHandler.h: Remove now unused members m_firstTouchScreenPos and m_firstTouchPagePos.
+
 2010-02-23  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by Eric Seidel.

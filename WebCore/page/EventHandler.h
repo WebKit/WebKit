@@ -409,8 +409,6 @@ private:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     RefPtr<Node> m_touchEventTarget;
-    IntPoint m_firstTouchScreenPos;
-    IntPoint m_firstTouchPagePos;
 #endif
 };
 

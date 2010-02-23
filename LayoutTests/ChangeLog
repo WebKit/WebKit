@@ -1,3 +1,19 @@
+2010-02-23  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Eric Seidel.
+
+        pageX/Y co-ordinates of TouchEvent should be 0,0
+        https://bugs.webkit.org/show_bug.cgi?id=35239
+
+        Update layout tests to reflect the WebCore changes in this bug.
+
+        * fast/events/touch/basic-multi-touch-events-expected.txt: Updated.
+        * fast/events/touch/basic-single-touch-events-expected.txt: Updated.
+        * fast/events/touch/script-tests/basic-multi-touch-events.js:
+        (verifyTouchEvent): Add checking of TouchEvent.pageX/Y
+        * fast/events/touch/script-tests/basic-single-touch-events.js:
+        (verifyTouchEvent): ditto.
+
 2010-02-23  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
