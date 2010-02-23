@@ -1,3 +1,26 @@
+2010-02-23  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        [Haiku] Fix various issues in keyboard event generation.
+        https://bugs.webkit.org/show_bug.cgi?id=34685
+
+        Covered by existing tests.
+
+        Fixed backspace keycode.
+        Fixed using the appropriate fields from the Haiku event for mapping
+        to the VK_* codes and added mapping a great deal more codes.
+        Added extraction of modifier key flags.
+        Completed implementation of disambiguateKeyDownEvent()
+        Implemented currentCapsLockState().
+
+        * platform/haiku/PlatformKeyboardEventHaiku.cpp:
+        (WebCore::keyIdentifierForHaikuKeyCode):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.
