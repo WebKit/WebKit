@@ -1,3 +1,18 @@
+2010-02-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not do unnecessary work during size_allocate.
+
+        FrameView::resize will already queue a layout, so there's no need
+        to force one ourselves. On top of that, the layout function
+        already adjusts the view size when needed, so there's no need to
+        do that manually either. No change in the layout tests or unit
+        tests after this.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_size_allocate):
+
 2010-02-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

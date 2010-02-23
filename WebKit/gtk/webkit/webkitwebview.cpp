@@ -632,8 +632,6 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
         return;
 
     frame->view()->resize(allocation->width, allocation->height);
-    frame->view()->forceLayout();
-    frame->view()->adjustViewSize();
 }
 
 static void webkit_web_view_grab_focus(GtkWidget* widget)
