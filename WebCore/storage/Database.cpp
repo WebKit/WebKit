@@ -73,7 +73,7 @@ const String& Database::databaseInfoTableName()
 
 #if ENABLE(DATABASE)
 
-static bool isDatabaseAvailable = false;
+static bool isDatabaseAvailable = true;
 
 void Database::setIsAvailable(bool available)
 {
