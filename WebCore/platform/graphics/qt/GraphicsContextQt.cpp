@@ -312,14 +312,16 @@ void GraphicsContext::drawRect(const IntRect& rect)
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
 
-    IntSize shadowSize;
-    int shadowBlur;
-    Color shadowColor;
-    if (getShadow(shadowSize, shadowBlur, shadowColor)) {
-        IntRect shadowRect = rect;
-        shadowRect.move(shadowSize.width(), shadowSize.height());
-        shadowRect.inflate(static_cast<int>(p->pen().widthF()));
-        p->fillRect(shadowRect, QColor(shadowColor));
+    if (m_common->state.shadowColor.isValid()) {
+        IntSize shadowSize;
+        int shadowBlur;
+        Color shadowColor;
+        if (getShadow(shadowSize, shadowBlur, shadowColor)) {
+            IntRect shadowRect = rect;
+            shadowRect.move(shadowSize.width(), shadowSize.height());
+            shadowRect.inflate(static_cast<int>(p->pen().widthF()));
+            p->fillRect(shadowRect, QColor(shadowColor));
+        }
     }
 
     p->drawRect(rect);
