@@ -1,3 +1,16 @@
+2010-02-18  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        media/video-display-aspect-ratio.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=34933
+
+        Original patch by Eric Carlson.
+
+        * media/content/test-par-16-9.mp4: Change the width of the video
+        track from 426.666 to 426.
+        * platform/mac-leopard/Skipped: Unskip the test, it should pass now.
+
 2010-02-22  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Darin Adler.
