@@ -106,10 +106,7 @@ _PATH_RULES_SPECIFIER = [
       "WebKit/qt/QGVLauncher/"],
      ["-build/include",
       "-readability/streams"]),
-    ([# The GTK+ APIs use GTK+ naming style, which includes
-      # lower-cased, underscore-separated values.
-      "WebKit/gtk/webkit/",
-      # The EFL APIs use EFL naming style, which includes
+    ([# The EFL APIs use EFL naming style, which includes
       # both lower-cased and camel-cased, underscore-sparated
       # values.
       "WebKit/efl/ewk/",
@@ -121,6 +118,13 @@ _PATH_RULES_SPECIFIER = [
       "WebKit/qt/tests/",
       "JavaScriptCore/qt/tests"],
      ["-readability/naming"]),
+    ([# The GTK+ APIs use GTK+ naming style, which includes
+      # lower-cased, underscore-separated values.
+      # Also, GTK+ allows the use of NULL.
+      "WebKit/gtk/webkit/",
+      "WebKitTools/DumpRenderTree/gtk/"],
+     ["-readability/naming",
+      "-readability/null"]),
 ]
 
 
