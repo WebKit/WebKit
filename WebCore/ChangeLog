@@ -1,3 +1,27 @@
+2010-02-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTTP 307 after a 303 after a POST re-sends POST data from the original request.
+        <rdar://problem/7390251> and https://bugs.webkit.org/show_bug.cgi?id=31410
+
+        Test: http/tests/loading/307-after-303-after-post.html
+
+        Remember the last HTTP method send out during a redirect chain for a resource handle:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::lastHTTPMethod):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+
+        Refer to the last HTTP method used instead of the original method:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+
 2010-02-23  Crystal Zhang  <haizhang@rim.com>
 
         Unreviewed build fix.

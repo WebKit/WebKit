@@ -136,11 +136,11 @@ CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfReque
     if (cfRedirectResponse) {
         CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(cfRedirectResponse);
         if (httpMessage && CFHTTPMessageGetResponseStatusCode(httpMessage) == 307) {
-            RetainPtr<CFStringRef> originalMethod(AdoptCF, handle->request().httpMethod().createCFString());
+            RetainPtr<CFStringRef> lastHTTPMethod(AdoptCF, handle->lastHTTPMethod().createCFString());
             RetainPtr<CFStringRef> newMethod(AdoptCF, CFURLRequestCopyHTTPRequestMethod(cfRequest));
-            if (CFStringCompareWithOptions(originalMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(originalMethod.get())), kCFCompareCaseInsensitive)) {
+            if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
                 RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(0, cfRequest));
-                CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), originalMethod.get());
+                CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
                 FormData* body = handle->request().httpBody();
                 if (!equalIgnoringCase(handle->request().httpMethod(), "GET") && body && !body->isEmpty())
@@ -432,6 +432,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     const KURL& url = request.url();
     d->m_user = url.user();
     d->m_pass = url.pass();
+    d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
     client()->willSendRequest(this, request, redirectResponse);

@@ -5876,3 +5876,8 @@ plugins/set-status.html
 
 # Fails on 32bits Debug bot, see https://bugs.webkit.org/show_bug.cgi?id=35158
 fast/forms/restore-selection-after-layout.html
+
+# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
+# See https://bugs.webkit.org/show_bug.cgi?id=35300
+http/tests/loading/307-after-303-after-post.html
+

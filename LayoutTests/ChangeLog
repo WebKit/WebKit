@@ -1,3 +1,17 @@
+2010-02-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTTP 307 after a 303 after a POST re-sends POST data from the original request.
+        <rdar://problem/7390251> and https://bugs.webkit.org/show_bug.cgi?id=31410
+
+        * http/tests/loading/307-after-303-after-post.html: Added.
+        * http/tests/loading/resources/303-to-307-target.php: Added.
+        * http/tests/loading/resources/307-post-output-target.php: Added.
+        * http/tests/loading/resources/post-to-303-target.php: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-02-23  Ben Murdoch  <benm@google.com>
 
         Reviewed by Eric Seidel.

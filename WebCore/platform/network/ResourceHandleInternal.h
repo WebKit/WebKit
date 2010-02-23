@@ -84,6 +84,7 @@ namespace WebCore {
         ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle)
             : m_client(c)
             , m_request(request)
+            , m_lastHTTPMethod(request.httpMethod())
             , status(0)
             , m_defersLoading(defersLoading)
             , m_shouldContentSniff(shouldContentSniff)
@@ -147,6 +148,7 @@ namespace WebCore {
         ResourceHandleClient* m_client;
         
         ResourceRequest m_request;
+        String m_lastHTTPMethod;
 
         // Suggested credentials for the current redirection step.
         String m_user;
