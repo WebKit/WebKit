@@ -735,6 +735,7 @@ editing/deleting/type-delete-after-quote-2.html
 editing/execCommand/4128080-2.html
 editing/execCommand/copy-without-selection.html
 editing/execCommand/createLink.html
+editing/execCommand/delete-image-in-anchor.html
 editing/execCommand/enabling-and-selection-2.html
 editing/execCommand/enabling-and-selection.html
 editing/execCommand/findString-diacriticals.html
