@@ -226,6 +226,9 @@ editing/selection/doubleclick-beside-cr-span.html
 
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
+
+# Missing layoutTestController.execCommand()
+editing/execCommand/delete-image-in-anchor.html 
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

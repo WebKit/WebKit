@@ -1,3 +1,16 @@
+2010-02-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] editing/execCommand/delete-image-in-anchor.html skipped
+        because of missing layoutTestController.execCommand()
+
+        Qt specific expected file added for editing/execCommand/insert-list-xml.xhtml
+        introduced in r55167, because of different font types.
+
+        * platform/qt/Skipped: editing/execCommand/delete-image-in-anchor.html skipped.
+        * platform/qt/editing/execCommand/insert-list-xml-expected.txt: Added.
+
 2010-02-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
