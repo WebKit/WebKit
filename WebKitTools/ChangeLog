@@ -1,3 +1,19 @@
+2010-02-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35357
+        Two editing tests fail after DumpRenderTree run loop changes
+
+        AppKit decided that it wanted to group all editing commands for some reason (and thus undo
+        reverted them all at once).
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Reverted the change that made DumpRenderTree use -[NSApplication run].
+        (runTest): Ditto.
+        (-[DumpRenderTreeApplication isRunning]): Override isRunning with a function that always
+        returns YES. This is another way to make the Java plug-in work.
+
 2010-02-23  Adam Roben  <aroben@apple.com>
 
         Make commit-log-editor find just-added ChangeLog files

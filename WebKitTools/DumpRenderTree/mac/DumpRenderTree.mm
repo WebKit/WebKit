@@ -85,6 +85,9 @@
 
 using namespace std;
 
+@interface DumpRenderTreeApplication : NSApplication
+@end
+
 @interface DumpRenderTreeEvent : NSEvent
 @end
 
@@ -581,14 +584,6 @@ static void runTestingServerLoop()
     }
 }
 
-static void exitApplicationRunLoop()
-{
-    [[NSApplication sharedApplication] stop:nil];
-
-    // -[NSApplication run] is blocked in a run loop waiting for an event, need to wake it up to return.
-    [[NSApplication sharedApplication] postEvent:[NSEvent otherEventWithType:NSApplicationDefined location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0 windowNumber:0 context:0 subtype:0 data1:0 data2:0] atStart:NO];
-}
-
 static void prepareConsistentTestingEnvironment()
 {
     poseAsClass("DumpRenderTreePasteboard", "NSPasteboard");
@@ -681,7 +676,7 @@ void dumpRenderTree(int argc, const char *argv[])
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [NSApplication sharedApplication]; // Force AppKit to init itself
+    [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
     dumpRenderTree(argc, argv);
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts    
@@ -1117,7 +1112,6 @@ void dump()
     fflush(stderr);
 
     done = YES;
-    exitApplicationRunLoop();
 }
 
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
@@ -1235,10 +1229,11 @@ static void runTest(const string& testPathOrURL)
     [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
     [pool release];
 
-    pool = [[NSAutoreleasePool alloc] init];
-    [[NSApplication sharedApplication] run];
-    ASSERT(done);
-    [pool release];
+    while (!done) {
+        pool = [[NSAutoreleasePool alloc] init];
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]; 
+        [pool release];
+    }
 
     pool = [[NSAutoreleasePool alloc] init];
     [EventSendingController clearSavedEvents];
@@ -1300,6 +1295,16 @@ void displayWebView()
 + (NSPoint)mouseLocation
 {
     return [[[mainFrame webView] window] convertBaseToScreen:lastMousePosition];
+}
+
+@end
+
+@implementation DumpRenderTreeApplication
+
+- (BOOL)isRunning
+{
+    // <rdar://problem/7686123> Java plug-in freezes unless NSApplication is running
+    return YES;
 }
 
 @end
