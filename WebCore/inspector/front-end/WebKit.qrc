@@ -102,6 +102,8 @@
     <file>Images/consoleIcon.png</file>
     <file>Images/database.png</file>
     <file>Images/databaseTable.png</file>
+    <file>Images/deactivateBreakpointsButtonGlyph.png</file>
+    <file>Images/deactivateBreakpointsDisabledButtonGlyph.png</file>
     <file>Images/debuggerContinue.png</file>
     <file>Images/debuggerPause.png</file>
     <file>Images/debuggerStepInto.png</file>
