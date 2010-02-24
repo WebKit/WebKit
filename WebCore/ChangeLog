@@ -1,3 +1,19 @@
+2010-02-23  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: WebKit crashes when deleting images on blogger.com (34957)
+        <rdar://problem/7651935>
+        https://bugs.webkit.org/show_bug.cgi?id=34957
+
+        Fixing a regression introduced with revision 53085. Anchor elements should not be considered
+        in editable content when calculating the position in the parent before the node.
+        
+        Test: editing/execCommand/delete-image-in-anchor.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset):
+
 2010-02-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
