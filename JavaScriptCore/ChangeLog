@@ -1,3 +1,19 @@
+2010-02-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Web Inspector: Regression: r55027+: Inspector broken
+        https://bugs.webkit.org/show_bug.cgi?id=35253
+
+        op_get_by_id_getter_chain was not passing the correct this parameter.
+        The bug was caused by incorrect use of baseCell instead of baseValue,
+        baseValue contains the original object for the lookup (and hence the
+        correct this object), baseCell is clobbered as part of walking the
+        prototype chain.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-02-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         Rubber-stamped by Dimitri Glazkov.

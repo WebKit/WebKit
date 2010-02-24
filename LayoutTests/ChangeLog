@@ -1,3 +1,16 @@
+2010-02-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Web Inspector: Regression: r55027+: Inspector broken
+        https://bugs.webkit.org/show_bug.cgi?id=35253
+
+        Add thorough testing of getter access to hit the various
+        possible caching scenarios.
+
+        * fast/js/pic/cached-getter-setter-expected.txt:
+        * fast/js/pic/cached-getter-setter.html:
+
 2010-02-23  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.

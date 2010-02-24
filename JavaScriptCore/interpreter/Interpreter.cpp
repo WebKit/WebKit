@@ -2379,7 +2379,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                             JSObject* getter = getterSetter->getter();
                             CallData callData;
                             CallType callType = getter->getCallData(callData);
-                            JSValue result = call(callFrame, getter, callType, callData, asObject(baseCell), ArgList());
+                            JSValue result = call(callFrame, getter, callType, callData, baseValue, ArgList());
                             CHECK_FOR_EXCEPTION();
                             callFrame->r(dst) = result;
                         } else

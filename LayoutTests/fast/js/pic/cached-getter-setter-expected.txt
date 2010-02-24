@@ -6,6 +6,15 @@ PASS: o.x should be 2 and is.
 PASS: o.y should be 0 and is.
 PASS: o.y should be 1 and is.
 PASS: o.y should be 2 and is.
+PASS: testGetter({__proto__: {count: 'FAIL'}, get getter(){ return ++this.count; }, count: 0}) should be 10 and is.
+PASS: testGetter({__proto__: {count: 'FAIL'}, get getter(){ return ++this.count; }, count: 0, newProperty: 0}) should be 10 and is.
+PASS: testGetter({__proto__: {count: 'FAIL'}, get getter(){ return ++this.count; }, count: 0, newProperty2: 0}) should be 10 and is.
+PASS: testProtoGetter({__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}, count: 0}) should be 10 and is.
+PASS: testProtoGetter({__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}, count: 0, newProperty: 0}) should be 10 and is.
+PASS: testProtoGetter({__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}, count: 0, newProperty2: 0}) should be 10 and is.
+PASS: testProtoChainGetter({__proto__: {__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}}, count: 0}) should be 10 and is.
+PASS: testProtoChainGetter({__proto__: {__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}}, count: 0, newProperty: 0}) should be 10 and is.
+PASS: testProtoChainGetter({__proto__: {__proto__: {count: 'FAIL', get getter(){ return ++this.count; }}}, count: 0, newProperty2: 0}) should be 10 and is.
 PASS: getX(o) should be 3 and is.
 PASS: getX(o) should be 3 and is.
 
