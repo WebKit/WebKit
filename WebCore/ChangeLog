@@ -1,3 +1,13 @@
+2010-02-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Fix regression in calculating an animated image's start time.
+        https://bugs.webkit.org/show_bug.cgi?id=35115
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startAnimation):
+
 2010-02-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
