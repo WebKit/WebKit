@@ -400,7 +400,7 @@ bool HTMLParser::insertNode(Node* n, bool flat)
         n->finishParsingChildren();
     }
 
-    if (localName == htmlTag && m_document->frame())
+    if (localName == htmlTag && m_document->frame() && !m_isParsingFragment)
         m_document->frame()->loader()->dispatchDocumentElementAvailable();
 
     return true;
@@ -446,7 +446,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
             }
         } else if (h->hasLocalName(htmlTag)) {
             if (!m_current->isDocumentNode() ) {
-                if (m_document->documentElement() && m_document->documentElement()->hasTagName(htmlTag)) {
+                if (m_document->documentElement() && m_document->documentElement()->hasTagName(htmlTag) && !m_isParsingFragment) {
                     reportError(RedundantHTMLBodyError, &localName);
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
@@ -489,7 +489,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 return false;
             }
         } else if (h->hasLocalName(bodyTag)) {
-            if (m_inBody && m_document->body()) {
+            if (m_inBody && m_document->body() && !m_isParsingFragment) {
                 // we have another <BODY> element.... apply attributes to existing one
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
@@ -503,8 +503,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         existingBody->setAttribute(it->name(), it->value());
                 }
                 return false;
-            }
-            else if (!m_current->isDocumentNode())
+            } else if (!m_current->isDocumentNode())
                 return false;
         } else if (h->hasLocalName(areaTag)) {
             if (m_currentMapElement) {
@@ -551,7 +550,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 if (!m_haveFrameSet) {
                     // Ensure that head exists.
                     // But not for older versions of Mail, where the implicit <head> isn't expected - <rdar://problem/6863795>
-                    if (shouldCreateImplicitHead(m_document))
+                    if (!m_isParsingFragment && shouldCreateImplicitHead(m_document))
                         createHead();
 
                     popBlock(headTag);
@@ -758,7 +757,7 @@ bool HTMLParser::framesetCreateErrorCheck(Token*, RefPtr<Node>&)
         // we can't implement that behaviour now because it could cause too many
         // regressions and the headaches are not worth the work as long as there is
         // no site actually relying on that detail (Dirk)
-        if (m_document->body())
+        if (m_document->body() && !m_isParsingFragment)
             m_document->body()->setAttribute(styleAttr, "display:none");
         m_inBody = false;
     }
@@ -1590,12 +1589,16 @@ void HTMLParser::createHead()
     if (m_head)
         return;
 
-    if (!m_document->documentElement()) {
+    if (!m_document->documentElement() && !m_isParsingFragment) {
         insertNode(new HTMLHtmlElement(htmlTag, m_document));
-        ASSERT(m_document->documentElement());
+        ASSERT(m_document->documentElement() || m_isParsingFragment);
     }
 
     m_head = new HTMLHeadElement(headTag, m_document);
+
+    if (m_isParsingFragment)
+        return;
+
     HTMLElement* body = m_document->body();
     ExceptionCode ec = 0;
     m_document->documentElement()->insertBefore(m_head.get(), body, ec);

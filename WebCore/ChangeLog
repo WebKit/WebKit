@@ -1,3 +1,25 @@
+2010-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7018611> innerHTML applies meta/link/title tags from a detached html element
+
+        Test: fast/parser/fragment-parser.html
+
+        Ensure that fragment parsing has no side effects on the fragment’s owner
+        document.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::insertNode): Don’t call
+        dispatchDocumentElementAvailable() for fragments.
+        (WebCore::HTMLParser::handleError): Don’t copy attributes to the owner
+        document’s <html> and <body> elements when a redundant <html> or <body>
+        is encountered while parsing a fragment.
+        (WebCore::HTMLParser::framesetCreateErrorCheck): Don’t change the owner
+        document’s <body> element’s style when parsing a fragment.
+        (WebCore::HTMLParser::createHead): Don’t attach the new <head> to the
+        ownder document of a fragment.
+
 2010-02-24  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

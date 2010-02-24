@@ -1,3 +1,13 @@
+2010-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7018611> innerHTML applies meta/link/title tags from a detached html element
+
+        * fast/parser/fragment-parser-expected.txt: Added.
+        * fast/parser/fragment-parser.html: Added.
+        * fast/parser/script-tests/fragment-parser.js: Added.
+
 2010-02-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
