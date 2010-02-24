@@ -1,3 +1,11 @@
+2010-02-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a testcase for an old bug to ensure it doesn't return.
+
+        * svg/custom/animate-use-crash.xhtml: Added.
+
 2010-02-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher and Pavel Feldman.
