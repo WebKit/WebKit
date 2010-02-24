@@ -307,7 +307,7 @@ class JSONResultsGenerator(object):
         # These next two branches test to see which source repos we can
         # pull revisions from.
         if hasattr(self._port, 'path_from_webkit_base'):
-            path_to_webkit = self._port.path_from_webkit_base()
+            path_to_webkit = self._port.path_from_webkit_base('WebCore')
             self._insert_item_into_raw_list(results_for_builder,
                 self._get_svn_revision(path_to_webkit),
                 self.WEBKIT_SVN)

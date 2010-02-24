@@ -1,3 +1,17 @@
+2010-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        Check the proper directory for a WebKit SVN version (Chromium does
+        not check out the entire WebKit tree directly, but rather pulls
+        individual subdirectories. So, checking for the SVN version in
+        WebKit/WebCore rather than just in WebKit works more reliably across
+        different ports).
+
+        http://bugs.webkit.org/show_bug.cgi?id=35321
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+
 2010-02-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
