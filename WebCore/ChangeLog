@@ -1,3 +1,12 @@
+2010-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
+        [Qt] Corrects build break of QtLauncher on Windows.
+        The VERSION variable was not set anymore while building in trunk.
+
+        * WebCore.pro:
+
 2010-02-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

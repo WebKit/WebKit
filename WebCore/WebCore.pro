@@ -47,10 +47,6 @@ CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../JavaScriptCore/generated
 
-    # Qt will set the version for us when building in Qt's tree
-    CONFIG(QTDIR_build):include($$QT_SOURCE_TREE/src/qbase.pri)
-    else: VERSION = $${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
-
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 
@@ -67,7 +63,11 @@ CONFIG(standalone_package) {
 
 }
 
-!CONFIG(QTDIR_build) {
+CONFIG(QTDIR_build) {
+    include($$QT_SOURCE_TREE/src/qbase.pri)
+    # Qt will set the version for us when building in Qt's tree
+} else {
+    VERSION = $${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
     DESTDIR = $$OUTPUT_DIR/lib
     !static: DEFINES += QT_MAKEDLL
 }
