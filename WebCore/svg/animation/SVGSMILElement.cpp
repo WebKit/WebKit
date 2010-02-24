@@ -56,9 +56,9 @@ static const double invalidCachedTime = -1.;
     
 class ConditionEventListener : public EventListener {
 public:
-    static PassRefPtr<ConditionEventListener> create(SVGSMILElement* animation, Element* eventBase, SVGSMILElement::Condition* condition)
+    static PassRefPtr<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {
-        return adoptRef(new ConditionEventListener(animation, eventBase, condition));
+        return adoptRef(new ConditionEventListener(animation, condition));
     }
 
     static const ConditionEventListener* cast(const EventListener* listener)
@@ -69,42 +69,38 @@ public:
     }
 
     virtual bool operator==(const EventListener& other);
-
-    void unregister()
+    
+    void disconnectAnimation()
     {
-        // If this has only one ref then the event base is dead already and we don't need to remove ourself.
-        if (!hasOneRef())
-            m_eventBase->removeEventListener(m_condition->m_name, this, false);
+        m_animation = 0;
     }
 
 private:
-    ConditionEventListener(SVGSMILElement* animation, Element* eventBase, SVGSMILElement::Condition* condition) 
+    ConditionEventListener(SVGSMILElement* animation, SVGSMILElement::Condition* condition) 
         : EventListener(ConditionEventListenerType)
         , m_animation(animation)
         , m_condition(condition) 
-        , m_eventBase(eventBase)
     {
-        m_eventBase->addEventListener(m_condition->m_name, this, false);
     }
 
     virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     SVGSMILElement* m_animation;
     SVGSMILElement::Condition* m_condition;
-    Element* m_eventBase;
 };
 
 bool ConditionEventListener::operator==(const EventListener& listener)
 {
     if (const ConditionEventListener* conditionEventListener = ConditionEventListener::cast(&listener))
-        return m_animation == conditionEventListener->m_animation
-               && m_condition == conditionEventListener->m_condition
-               && m_eventBase == conditionEventListener->m_eventBase;
+        return m_animation == conditionEventListener->m_animation &&
+               m_condition == conditionEventListener->m_condition;
     return false;
 }
 
 void ConditionEventListener::handleEvent(ScriptExecutionContext*, Event* event) 
 {
+    if (!m_animation)
+        return;
     m_animation->handleConditionEvent(event, m_condition);
 }
 
@@ -394,6 +390,11 @@ void SVGSMILElement::attributeChanged(Attribute* attr, bool preserveDecls)
     }
 }
 
+inline Element* SVGSMILElement::eventBaseFor(const Condition& condition) const
+{
+    return condition.m_baseID.isEmpty() ? targetElement() : document()->getElementById(condition.m_baseID);
+}
+
 void SVGSMILElement::connectConditions()
 {
     if (m_conditionsConnected)
@@ -403,11 +404,12 @@ void SVGSMILElement::connectConditions()
         Condition& condition = m_conditions[n];
         if (condition.m_type == Condition::EventBase) {
             ASSERT(!condition.m_syncbase);
-            Element* eventBase = condition.m_baseID.isEmpty() ? targetElement() : document()->getElementById(condition.m_baseID);
+            Element* eventBase = eventBaseFor(condition);
             if (!eventBase)
                 continue;
             ASSERT(!condition.m_eventListener);
-            condition.m_eventListener = ConditionEventListener::create(this, eventBase, &condition);
+            condition.m_eventListener = ConditionEventListener::create(this, &condition);
+            eventBase->addEventListener(condition.m_name, condition.m_eventListener, false);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = document()->getElementById(condition.m_baseID);
@@ -430,10 +432,18 @@ void SVGSMILElement::disconnectConditions()
         Condition& condition = m_conditions[n];
         if (condition.m_type == Condition::EventBase) {
             ASSERT(!condition.m_syncbase);
-            if (condition.m_eventListener) {
-                condition.m_eventListener->unregister();
-                condition.m_eventListener = 0;
-            }
+            if (!condition.m_eventListener)
+                continue;
+            // Note: It's a memory optimization to try to remove our condition
+            // event listener, but it's not guaranteed to work, since we have
+            // no guarantee that eventBaseFor() will be able to find our condition's
+            // original eventBase. So, we also have to disconnect ourselves from
+            // our condition event listener, in case it later fires.
+            Element* eventBase = eventBaseFor(condition);
+            if (eventBase)
+                eventBase->removeEventListener(condition.m_name, condition.m_eventListener.get(), false);
+            condition.m_eventListener->disconnectAnimation();
+            condition.m_eventListener = 0;
         } else if (condition.m_type == Condition::Syncbase) {
             if (condition.m_syncbase) {
                 ASSERT(isSMILElement(condition.m_syncbase.get()));
