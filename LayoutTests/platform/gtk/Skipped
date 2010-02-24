@@ -3400,9 +3400,6 @@ http/tests/appcache/manifest-redirect-2.html
 http/tests/appcache/offline-access.html
 http/tests/appcache/resource-redirect-2.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
-http/tests/cookies/multiple-cookies.html
-http/tests/cookies/simple-cookies-expired.html
-http/tests/cookies/simple-cookies-max-age.html
 http/tests/history/back-to-post.php
 http/tests/history/redirect-200-refresh-2-seconds.pl
 http/tests/history/redirect-js-document-location-0-seconds.html
