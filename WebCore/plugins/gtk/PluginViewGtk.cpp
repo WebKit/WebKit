@@ -129,31 +129,22 @@ void PluginView::updatePluginWidget()
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
-    if (platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect))
-        setNPWindowIfNeeded();
+    if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
+        return;
 
 #if defined(XP_UNIX)
-    if (!m_isWindowed && m_windowRect.size() != oldWindowRect.size()) {
+    if (!m_isWindowed) {
         if (m_drawable)
             XFreePixmap(GDK_DISPLAY(), m_drawable);
-
+            
         m_drawable = XCreatePixmap(GDK_DISPLAY(), getRootWindow(m_parentFrame.get()),
                                    m_windowRect.width(), m_windowRect.height(),
                                    ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
         XSync(GDK_DISPLAY(), False); // make sure that the server knows about the Drawable
     }
-
-    // do not call setNPWindowIfNeeded() immediately, will be called on paint()
-    m_hasPendingGeometryChange = true;
 #endif
 
-    // In order to move/resize the plugin window at the same time as the
-    // rest of frame during e.g. scrolling, we set the window geometry
-    // in the paint() function, but as paint() isn't called when the
-    // plugin window is outside the frame which can be caused by a
-    // scroll, we need to move/resize immediately.
-    if (!m_windowRect.intersects(frameView->frameRect()))
-        setNPWindowIfNeeded();
+    setNPWindowIfNeeded();
 }
 
 void PluginView::setFocus()
@@ -506,12 +497,6 @@ void PluginView::setNPWindowIfNeeded()
     // Check if the platformPluginWidget still exists
     if (m_isWindowed && !platformPluginWidget())
         return;
-
-#if defined(XP_UNIX)
-    if (!m_hasPendingGeometryChange)
-        return;
-    m_hasPendingGeometryChange = false;
-#endif
 
     if (m_isWindowed) {
         m_npWindow.x = m_windowRect.x();

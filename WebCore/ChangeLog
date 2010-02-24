@@ -1,3 +1,23 @@
+2010-02-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Try to sanitize a bit the geometry management of plugins.
+
+        Stop doing contradictory things in updatePluginWidget (we were at
+        the same time pretending the geometry setting was delayed until
+        ::paint and setting the geometry not once but twice) and just set
+        it any time the windowRect or clipRect for the plugin has changed.
+
+        This is closer to what the Mac port does, and fixes instances of
+        the plugins not being drawn until the window is resized or
+        scrolled. Other than that all manual and layout tests seems to
+        still work.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2010-02-23  Geoff Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
