@@ -1,3 +1,12 @@
+2010-02-24  Ariya Hidayat  <ariya.hidayat@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Faster cut-off for rectangle fill without shadow.
+        https://bugs.webkit.org/show_bug.cgi?id=35337
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2010-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.
