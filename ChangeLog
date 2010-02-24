@@ -1,3 +1,12 @@
+2010-02-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Enable SharedWorkers by default, since that's been the default for
+        a long time in our build-webkit configuration.
+
+        * configure.ac:
+
 2010-02-23  James Choi  <jchoi42@pha.jhu.edu>
 
         Add Solaris definitions

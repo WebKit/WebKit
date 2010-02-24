@@ -463,8 +463,8 @@ AC_MSG_RESULT([$enable_wml])
 AC_MSG_CHECKING([whether to enable SharedWorkers support])
 AC_ARG_ENABLE(shared_workers,
               AC_HELP_STRING([--enable-shared-workers],
-                             [enable support for SharedWorkers [default=no]]),
-              [],[enable_shared_workers="no"])
+                             [enable support for SharedWorkers [default=yes]]),
+              [],[enable_shared_workers="yes"])
 AC_MSG_RESULT([$enable_shared_workers])
 
 # check whether to enable Web Workers support
