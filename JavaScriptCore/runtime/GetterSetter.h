@@ -34,6 +34,7 @@ namespace JSC {
     // This is an internal value object which stores getter and setter functions
     // for a property.
     class GetterSetter : public JSCell {
+        friend class JIT;
     public:
         GetterSetter(ExecState* exec)
             : JSCell(exec->globalData().getterSetterStructure.get())

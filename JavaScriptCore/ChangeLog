@@ -1,3 +1,43 @@
+2010-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Speed up getter performance in the jit
+        https://bugs.webkit.org/show_bug.cgi?id=35332
+
+        Implement getter lookup caching in the interpreter.
+        The getter stubs are generated through basically the
+        same code paths as the normal get_by_id caching.
+        Instead of simply loading a property and returning,
+        we load the getter slot, and pass the getter, base value
+        and return address to a shared stub used for getter
+        dispatch.
+
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+        * runtime/GetterSetter.h:
+
 2010-02-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

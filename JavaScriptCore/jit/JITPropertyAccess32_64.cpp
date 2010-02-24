@@ -718,7 +718,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_array_fail));
 }
 
-void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
+void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, bool isGetter, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     
@@ -737,8 +737,16 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
     
-    // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
+    // Checks out okay!
+    if (isGetter) {
+        compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
+        JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else
+        compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
     
     Jump success = jump();
     
@@ -751,7 +759,14 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
-    
+
+    if (isGetter) {
+        for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
+            if (iter->to)
+                patchBuffer.link(iter->from, FunctionPtr(iter->to));
+        }
+    }
+
     // Track the stub we have created so that it will be deleted later.
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
     stubInfo->stubRoutine = entryLabel;
@@ -766,16 +781,29 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 }
 
 
-void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, size_t cachedOffset)
+void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, bool isGetter, size_t cachedOffset)
 {
     // regT0 holds a JSCell*
-    
     Jump failureCase = checkStructure(regT0, structure);
-    compileGetDirectOffset(regT0, regT1, regT0, structure, cachedOffset);
+    if (isGetter) {
+        compileGetDirectOffset(regT0, regT2, regT1, structure, cachedOffset);
+        JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else
+        compileGetDirectOffset(regT0, regT1, regT0, structure, cachedOffset);
+
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    
+    if (isGetter) {
+        for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
+            if (iter->to)
+                patchBuffer.link(iter->from, FunctionPtr(iter->to));
+        }
+    }    
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = polymorphicStructures->list[currentIndex - 1].stubRoutine;
     if (!lastProtoBegin)
@@ -785,7 +813,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
-    
+
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
     
     structure->ref();
@@ -797,7 +825,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, CallFrame* callFrame)
+void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, Structure* prototypeStructure, bool isGetter, size_t cachedOffset, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     
@@ -817,12 +845,25 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
     
-    compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
+    if (isGetter) {
+        compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
+        JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else
+        compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
     
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    
+    if (isGetter) {
+        for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
+            if (iter->to)
+                patchBuffer.link(iter->from, FunctionPtr(iter->to));
+        }
+    }
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = prototypeStructures->list[currentIndex - 1].stubRoutine;
     patchBuffer.link(failureCases1, lastProtoBegin);
@@ -843,10 +884,9 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, CallFrame* callFrame)
+void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, bool isGetter, size_t cachedOffset, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
-    
     ASSERT(count);
     
     JumpList bucketsOfFail;
@@ -872,11 +912,25 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     }
     ASSERT(protoObject);
     
-    compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
+    if (isGetter) {
+        compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
+        JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else
+        compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
+
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    
+    if (isGetter) {
+        for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
+            if (iter->to)
+                patchBuffer.link(iter->from, FunctionPtr(iter->to));
+        }
+    }
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = prototypeStructures->list[currentIndex - 1].stubRoutine;
     
@@ -898,10 +952,9 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
+void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, bool isGetter, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
-    
     ASSERT(count);
     
     JumpList bucketsOfFail;
@@ -927,11 +980,24 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     }
     ASSERT(protoObject);
     
-    compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
+    if (isGetter) {
+        compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
+        JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
+        stubCall.addArgument(regT1);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else
+        compileGetDirectOffset(protoObject, regT2, regT1, regT0, cachedOffset);
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    
+    if (isGetter) {
+        for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
+            if (iter->to)
+                patchBuffer.link(iter->from, FunctionPtr(iter->to));
+        }
+    }
     // Use the patch information to link the failure cases back to the original slow case routine.
     patchBuffer.link(bucketsOfFail, stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall));
     
