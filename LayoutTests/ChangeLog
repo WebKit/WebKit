@@ -1,3 +1,14 @@
+2010-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7682827> Text with :first-letter lingers after being removed
+
+        * fast/css/first-letter-set-text-expected.checksum: Added.
+        * fast/css/first-letter-set-text-expected.png: Added.
+        * fast/css/first-letter-set-text-expected.txt: Added.
+        * fast/css/first-letter-set-text.html: Added.
+
 2010-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Xan Lopez.

@@ -69,6 +69,10 @@ void RenderTextFragment::setTextInternal(PassRefPtr<StringImpl> text)
         m_firstLetter = 0;
         m_start = 0;
         m_end = textLength();
+        if (Node* t = node()) {
+            ASSERT(!t->renderer());
+            t->setRenderer(this);
+        }
     }
 }
 

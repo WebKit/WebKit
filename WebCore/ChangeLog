@@ -1,3 +1,16 @@
+2010-02-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7682827> Text with :first-letter lingers after being removed
+
+        Test: fast/css/first-letter-set-text.html
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::setTextInternal): Set this back as the
+        text node’s renderer, as removing the first letter has resets the node’s
+        renderer.
+
 2010-02-24  Ariya Hidayat  <ariya.hidayat@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
