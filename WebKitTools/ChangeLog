@@ -1,3 +1,11 @@
+2010-02-24  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Provide default username parameter to SVN.commit_with_message().
+
+        * Scripts/webkitpy/scm.py:
+
 2010-02-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Siedel.

@@ -360,7 +360,7 @@ class SVN(SCM):
     def revert_files(self, file_paths):
         run_command(['svn', 'revert'] + file_paths)
 
-    def commit_with_message(self, message, username):
+    def commit_with_message(self, message, username=None):
         if self.dryrun:
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no commit.\nCommitted revision 0."
