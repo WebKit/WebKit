@@ -1,3 +1,16 @@
+2010-02-23  Adam Roben  <aroben@apple.com>
+
+        Make commit-log-editor find just-added ChangeLog files
+
+        Fixes <http://webkit.org/b/35294> commit-log-editor doesn't find
+        just-added ChangeLog files
+
+        Reviewed by Dave Levin.
+
+        * Scripts/commit-log-editor:
+        (top level): Modified the regular expression that's used to find
+        modified ChangeLog files to also look for just-added ChangeLog files.
+
 2010-02-24  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
