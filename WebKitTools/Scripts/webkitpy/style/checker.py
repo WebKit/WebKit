@@ -125,6 +125,10 @@ _PATH_RULES_SPECIFIER = [
       "WebKitTools/DumpRenderTree/gtk/"],
      ["-readability/naming",
       "-readability/null"]),
+    ([# Header files in ForwardingHeaders have no header guards or
+      # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
+      "/ForwardingHeaders/"],
+     ["-build/header_guard"]),
 ]
 
 

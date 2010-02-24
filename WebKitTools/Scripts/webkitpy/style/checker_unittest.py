@@ -136,6 +136,8 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck(
             "JavaScriptCore/qt/tests/qscriptengine/tst_qscriptengine.cpp",
             "readability/naming")
+        assertNoCheck("WebCore/ForwardingHeaders/debugger/Debugger.h",
+                      "build/header_guard")
 
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
