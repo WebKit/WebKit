@@ -17,6 +17,17 @@
 
         Reviewed by Gustavo Noronha.
 
+        Get rid of an extra call to
+        setNPWindowIfNeeded. updatePluginWidget already calls this for us
+        if needed.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformStart):
+
+2010-02-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Try to sanitize a bit the geometry management of plugins.
 
         Stop doing contradictory things in updatePluginWidget (we were at

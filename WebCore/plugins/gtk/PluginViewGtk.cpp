@@ -894,10 +894,8 @@ bool PluginView::platformStart()
 #endif
 
     // TODO remove in favor of null events, like mac port?
-    if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))) {
+    if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
         updatePluginWidget(); // was: setNPWindowIfNeeded(), but this doesn't produce 0x0 rects at first go
-        setNPWindowIfNeeded();
-    }
 
     return true;
 }
