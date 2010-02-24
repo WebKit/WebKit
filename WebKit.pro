@@ -5,8 +5,7 @@ include(WebKit.pri)
 
 SUBDIRS += \
         WebCore \
-        WebKitTools/QtLauncher \
-        WebKit/qt/QGVLauncher
+        WebKitTools/QtLauncher
 
 !CONFIG(standalone_package) {
     SUBDIRS += JavaScriptCore/jsc.pro \
