@@ -1,3 +1,23 @@
+2010-02-24  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Need to create a CanvasSurface base class for HTMLCanvasElement.
+        https://bugs.webkit.org/show_bug.cgi?id=35322
+
+        This is an initial step in making the OffscreenCanvas object.
+
+        No new functionality so no new tests.
+
+        * GNUmakefile.am: Added CanvasSurface to the build.
+        * WebCore.gypi: ditto
+        * WebCore.pro: ditto
+        * WebCore.vcproj/WebCore.vcproj: ditto
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * dom/CanvasSurface.cpp: Added.
+        * dom/CanvasSurface.h: Added.
+        * html/HTMLCanvasElement.h: Made HTMLCanvasElement inherit from CanvasSurface.
+
 2010-02-24  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

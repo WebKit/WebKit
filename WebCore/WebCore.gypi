@@ -1038,6 +1038,8 @@
             'dom/CDATASection.h',
             'dom/CSSMappedAttributeDeclaration.cpp',
             'dom/CSSMappedAttributeDeclaration.h',
+            'dom/CanvasSurface.cpp',
+            'dom/CanvasSurface.h',
             'dom/CharacterData.cpp',
             'dom/CharacterData.h',
             'dom/CheckedRadioButtons.cpp',

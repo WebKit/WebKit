@@ -28,6 +28,7 @@
 #define HTMLCanvasElement_h
 
 #include "AffineTransform.h"
+#include "CanvasSurface.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #if ENABLE(3D_CANVAS)    
@@ -57,7 +58,7 @@ public:
     virtual void canvasDestroyed(HTMLCanvasElement*) = 0;
 };
 
-class HTMLCanvasElement : public HTMLElement {
+class HTMLCanvasElement : public HTMLElement, public CanvasSurface {
 public:
     HTMLCanvasElement(const QualifiedName&, Document*);
     virtual ~HTMLCanvasElement();
