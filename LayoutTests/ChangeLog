@@ -1,3 +1,16 @@
+2010-02-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        [REGRESSION in r55185] EXC_BAD_ACCESS on opening inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=35335
+
+        Add tests for caching getter lookup on large objects (eg. those not
+        using the inline storage array).
+
+        * fast/js/pic/cached-getter-setter-expected.txt:
+        * fast/js/pic/cached-getter-setter.html:
+
 2010-02-24  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

@@ -786,7 +786,11 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     // regT0 holds a JSCell*
     Jump failureCase = checkStructure(regT0, structure);
     if (isGetter) {
-        compileGetDirectOffset(regT0, regT2, regT1, structure, cachedOffset);
+        if (!structure->isUsingInlineStorage()) {
+            move(regT0, regT1);
+            compileGetDirectOffset(regT1, regT2, regT1, structure, cachedOffset);
+        } else
+            compileGetDirectOffset(regT0, regT2, regT1, structure, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);

@@ -1,5 +1,23 @@
 2010-02-24  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        [REGRESSION in r55185] EXC_BAD_ACCESS on opening inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=35335
+
+        compileGetDirectOffset modifies the contents of the object register
+        when the object is not using the inline storage array.  As the object
+        register contains our 'this' pointer we can't allow it to be clobbered.
+        The fix is simply to copy the register into a separate scratch register
+        when we're loading off an object that doesn't use inline storage.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdSelfList):
+
+2010-02-24  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Speed up getter performance in the jit
