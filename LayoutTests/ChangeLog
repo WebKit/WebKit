@@ -1,5 +1,11 @@
 2010-02-23  Oliver Hunt  <oliver@apple.com>
 
+        Add expected result
+
+        * svg/custom/animate-use-crash-expected.txt: Added.
+
+2010-02-23  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Add a testcase for an old bug to ensure it doesn't return.
