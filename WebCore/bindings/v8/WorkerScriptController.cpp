@@ -90,6 +90,7 @@ void WorkerScriptController::forbidExecution()
     // This function is called from another thread.
     MutexLocker lock(m_sharedDataMutex);
     m_executionForbidden = true;
+    v8::V8::TerminateExecution();
 }
 
 void WorkerScriptController::setException(ScriptValue exception)

@@ -1,3 +1,18 @@
+2010-02-23  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium: Use V8::TerminateExecution to actually terminate workers.
+        https://bugs.webkit.org/show_bug.cgi?id=35137
+
+        Test: existing fast/workers/stress-js-execution.html which is currently failing
+        on Mac and Linux bots for Chromium.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::forbidExecution):
+
 2010-02-23  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.
