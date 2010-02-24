@@ -1,3 +1,21 @@
+2010-02-24  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Do not fire focus events while a modal dialog is up.
+        https://bugs.webkit.org/show_bug.cgi?id=33962
+
+        Modifies the FocusController to check the frame's page's defersLoading() flag before firing blur/focus events.
+        This flag is set while a modal dialog (like a window.alert or window.confirm) is up.  Firing the events causes
+        assertion failures, since when the dialog is dismissed the PageGroupLoadDeferrer assumes that no script has run.
+
+        Manual tests only as DumpRenderTree does not support modal dialogs
+
+        * manual-tests/modal-dialog-blur-selfclose.html: Added.
+        * manual-tests/modal-dialog-blur.html: Added.
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedNode):
+
 2010-02-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

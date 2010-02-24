@@ -61,6 +61,10 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
     // If we have a focused node we should dispatch blur on it before we blur the window.
     // If we have a focused node we should dispatch focus on it after we focus the window.
     // https://bugs.webkit.org/show_bug.cgi?id=27105
+  
+    // Do not fire events while modal dialogs are up.  See https://bugs.webkit.org/show_bug.cgi?id=33962
+    if (document->page()->defersLoading())
+        return;
     if (!focused && document->focusedNode())
         document->focusedNode()->dispatchBlurEvent();
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
