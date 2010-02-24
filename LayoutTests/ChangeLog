@@ -1,3 +1,12 @@
+2010-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Adding a GTK layout test result for a new test
+        added in r55159.
+
+        * platform/gtk/fast/repaint/repaint-during-scroll-expected.txt: Added.
+
 2010-02-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
