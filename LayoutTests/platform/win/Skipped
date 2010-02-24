@@ -764,3 +764,6 @@ websocket/tests/simple-stress.html
 
 # Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
+
+# DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
+java

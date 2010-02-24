@@ -5091,3 +5091,6 @@ editing/selection/extend-after-mouse-selection.html
 # Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 # See https://bugs.webkit.org/show_bug.cgi?id=35301
 http/tests/loading/307-after-303-after-post.html
+
+# DumpRenderTree code to enable Java is currently a no-op
+java

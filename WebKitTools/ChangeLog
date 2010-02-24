@@ -1,3 +1,19 @@
+2010-02-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22602
+        Enable Java in DumpRenderTree (on Mac)
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (exitApplicationRunLoop):
+        (dump):
+        (runTest):
+        DumpRenderTree now runs an NSApplication, not just an event loop. This way, the Java plug-in
+        can start without freezing.
+
+        * Scripts/run-webkit-tests: Compile java sources in LayputTests/java.
+
 2010-02-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

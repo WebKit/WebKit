@@ -1,3 +1,34 @@
+2010-02-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22602
+        Enable Java in DumpRenderTree (on Mac)
+
+        * fast/dom/java-applet-calls-expected.txt: Removed.
+        * fast/dom/java-applet-calls.html: Removed.
+        * fast/dom/resources/TestApplet.class: Removed.
+        * fast/dom/resources/TestApplet.java: Removed.
+        This test was added in a failing form, even though it never worked. The new tests cover
+        everything it was meant to cover.
+
+        * java/SharedApplet.java: Added. This class will have methods for simple tests, but it's
+        also possible to just add new source files.
+
+        * java/Makefile: Added. Compile all .java files in the directory.
+
+        * java: Added.
+        * java/argument-to-object-type-expected.txt: Added.
+        * java/argument-to-object-type.html: Added.
+        * java/array-return-expected.txt: Added.
+        * java/array-return.html: Added.
+        Added tests for recently fixed bugs.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Java tests only work on Mac currently.
+
 2010-02-23  Oliver Hunt  <oliver@apple.com>
 
         Add expected result

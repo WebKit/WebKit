@@ -398,6 +398,16 @@ $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitE
 $testResultsDirectory = File::Spec->rel2abs($testResultsDirectory);
 my $testResults = File::Spec->catfile($testResultsDirectory, "results.html");
 
+if (isAppleMacWebKit()) {
+    print STDERR "Compiling Java tests\n";
+    my $javaTestsDirectory = catdir($testDirectory, "java");
+
+    if (system("/usr/bin/make", "-C", "$javaTestsDirectory")) {
+        exit 1;
+    }
+}
+
+
 print "Running tests from $testDirectory\n";
 if ($pixelTests) {
     print "Enabling pixel tests with a tolerance of $tolerance%\n";
