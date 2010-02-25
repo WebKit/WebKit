@@ -60,6 +60,7 @@ void initializeScriptFontMap(ScriptToFontMap& scriptFontMap)
         {USCRIPT_GREEK, L"times new roman"},
         {USCRIPT_CYRILLIC, L"times new roman"},
         {USCRIPT_SIMPLIFIED_HAN, L"simsun"},
+        {USCRIPT_TRADITIONAL_HAN, L"pmingliu"},
         {USCRIPT_HIRAGANA, L"ms pgothic"},
         {USCRIPT_KATAKANA, L"ms pgothic"},
         {USCRIPT_KATAKANA_OR_HIRAGANA, L"ms pgothic"},
@@ -106,14 +107,10 @@ void initializeScriptFontMap(ScriptToFontMap& scriptFontMap)
         localeFamily = scriptFontMap[USCRIPT_HIRAGANA];
     else if (locale == icu::Locale::getKorean())
         localeFamily = scriptFontMap[USCRIPT_HANGUL];
+    else if (locale == icu::Locale::getTraditionalChinese())
+        localeFamily = scriptFontMap[USCRIPT_TRADITIONAL_HAN];
     else {
-        // Use Simplified Chinese font for all other locales including
-        // Traditional Chinese because Simsun (SC font) has a wider
-        // coverage (covering both SC and TC) than PMingLiu (TC font).
-        // Note that |fontMap| does not have a separate entry for
-        // USCRIPT_TRADITIONAL_HAN for that reason.
-        // This also speeds up the TC version of Chrome when rendering SC
-        // pages.
+        // For other locales, use the simplified Chinese font for Han.
         localeFamily = scriptFontMap[USCRIPT_SIMPLIFIED_HAN];
     }
     if (localeFamily)

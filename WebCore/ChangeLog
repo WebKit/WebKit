@@ -1,3 +1,15 @@
+2010-02-24  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Traditional Chinese Chrome on Windows should use PMingLiu instead of Simsun for Han characters
+        https://bugs.webkit.org/show_bug.cgi?id=35319
+
+        No visible change in the layout test.
+
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp:
+        (WebCore::):
+
 2010-02-24  Anthony Ricaud  <rik@webkit.org>
 
         Reviewed by Pavel Feldman.
