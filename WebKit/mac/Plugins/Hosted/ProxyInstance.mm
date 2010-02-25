@@ -28,6 +28,7 @@
 #import "ProxyInstance.h"
 
 #import "NetscapePluginHostProxy.h"
+#import "ProxyRuntimeObject.h"
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/npruntime_impl.h>
@@ -128,7 +129,12 @@ ProxyInstance::~ProxyInstance()
     invalidate();
 }
     
-JSC::Bindings::Class *ProxyInstance::getClass() const
+RuntimeObject* ProxyInstance::newRuntimeObject(ExecState* exec)
+{
+    return new (exec) ProxyRuntimeObject(exec, this);
+}
+
+JSC::Bindings::Class* ProxyInstance::getClass() const
 {
     return proxyClass();
 }

@@ -1,3 +1,25 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35394
+        <rdar://problem/7685262> Make passing objects between Java and plug-ins work
+
+        Added a ProxyInstance implementation of RuntimeObject.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::newRuntimeObject):
+        (WebKit::ProxyInstance::getClass):
+        * Plugins/Hosted/ProxyRuntimeObject.h: Added.
+        (WebKit::ProxyRuntimeObject::classInfo):
+        * Plugins/Hosted/ProxyRuntimeObject.mm: Added.
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+        (WebKit::ProxyRuntimeObject::~ProxyRuntimeObject):
+        (WebKit::ProxyRuntimeObject::getInternalProxyInstance):
+
 2010-02-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

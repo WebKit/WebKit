@@ -1,3 +1,12 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35394
+        <rdar://problem/7685262> Make passing objects between Java and plug-ins work
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files.
+
 2010-02-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Timothy Hatcher.

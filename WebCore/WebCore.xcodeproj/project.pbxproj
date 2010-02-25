@@ -4717,6 +4717,12 @@
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
+		E169803D1133542D00894115 /* CRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169803C1133542D00894115 /* CRuntimeObject.h */; };
+		E16980491133644700894115 /* CRuntimeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E16980481133644700894115 /* CRuntimeObject.cpp */; };
+		E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E16982541134629D00894115 /* ObjCRuntimeObject.h */; };
+		E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169825F1134636A00894115 /* ObjCRuntimeObject.mm */; };
+		E1698264113467F300894115 /* JavaRuntimeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1698263113467F300894115 /* JavaRuntimeObject.cpp */; };
+		E16982681134680700894115 /* JavaRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E16982671134680700894115 /* JavaRuntimeObject.h */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
@@ -10002,6 +10008,12 @@
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
+		E169803C1133542D00894115 /* CRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRuntimeObject.h; sourceTree = "<group>"; };
+		E16980481133644700894115 /* CRuntimeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRuntimeObject.cpp; sourceTree = "<group>"; };
+		E16982541134629D00894115 /* ObjCRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeObject.h; sourceTree = "<group>"; };
+		E169825F1134636A00894115 /* ObjCRuntimeObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCRuntimeObject.mm; sourceTree = "<group>"; };
+		E1698263113467F300894115 /* JavaRuntimeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaRuntimeObject.cpp; path = jsc/JavaRuntimeObject.cpp; sourceTree = "<group>"; };
+		E16982671134680700894115 /* JavaRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaRuntimeObject.h; path = jsc/JavaRuntimeObject.h; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
@@ -10435,6 +10447,8 @@
 		1A569CC50D7E2B82007C3983 /* c */ = {
 			isa = PBXGroup;
 			children = (
+				E16980481133644700894115 /* CRuntimeObject.cpp */,
+				E169803C1133542D00894115 /* CRuntimeObject.h */,
 				1A569CC60D7E2B82007C3983 /* c_class.cpp */,
 				1A569CC70D7E2B82007C3983 /* c_class.h */,
 				1A569CC80D7E2B82007C3983 /* c_instance.cpp */,
@@ -10467,6 +10481,8 @@
 		1A569CE20D7E2B82007C3983 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				E169825F1134636A00894115 /* ObjCRuntimeObject.mm */,
+				E16982541134629D00894115 /* ObjCRuntimeObject.h */,
 				1A569CE30D7E2B82007C3983 /* objc_class.h */,
 				1A569CE40D7E2B82007C3983 /* objc_class.mm */,
 				1A569CE50D7E2B82007C3983 /* objc_header.h */,
@@ -11175,6 +11191,8 @@
 				59E560A61105336600AA1258 /* JavaClassJSC.h */,
 				59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */,
 				59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */,
+				E1698263113467F300894115 /* JavaRuntimeObject.cpp */,
+				E16982671134680700894115 /* JavaRuntimeObject.h */,
 				59BC393E11054A1300FD85DB /* JavaStringJSC.h */,
 				59E842671109E5AE000305AD /* JNIBridgeJSC.cpp */,
 				59E842651109E5A2000305AD /* JNIBridgeJSC.h */,
@@ -18552,6 +18570,9 @@
 				9F2A322E1125A0A2003C3056 /* JavaScriptProfileNode.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
 				7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */,
+				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
+				E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */,
+				E16982681134680700894115 /* JavaRuntimeObject.h in Headers */,
 				65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */,
 				5962297A1133EFE200DC4CBB /* GeolocationPositionCache.h in Headers */,
 				0BC2C7781134A8FC000B2F61 /* CanvasSurface.h in Headers */,
@@ -20737,6 +20758,9 @@
 				9F2A322D1125A0A2003C3056 /* JavaScriptProfileNode.cpp in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
 				6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */,
+				E16980491133644700894115 /* CRuntimeObject.cpp in Sources */,
+				E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */,
+				E1698264113467F300894115 /* JavaRuntimeObject.cpp in Sources */,
 				596229781133EFD700DC4CBB /* GeolocationPositionCache.cpp in Sources */,
 				0BC2C7771134A8FC000B2F61 /* CanvasSurface.cpp in Sources */,
 			);

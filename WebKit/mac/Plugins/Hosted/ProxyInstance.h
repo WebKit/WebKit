@@ -58,8 +58,10 @@ public:
     
 private:
     ProxyInstance(PassRefPtr<JSC::Bindings::RootObject>, NetscapePluginInstanceProxy*, uint32_t objectID);
-    
-    virtual JSC::Bindings::Class *getClass() const;
+
+    virtual JSC::Bindings::RuntimeObject* newRuntimeObject(JSC::ExecState*);
+
+    virtual JSC::Bindings::Class* getClass() const;
 
     virtual JSC::JSValue invokeMethod(JSC::ExecState*, const JSC::Bindings::MethodList&, const JSC::ArgList& args);
 

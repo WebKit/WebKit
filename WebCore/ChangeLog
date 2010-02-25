@@ -1,3 +1,80 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35394
+        <rdar://problem/7685262> Make passing objects between Java and plug-ins work
+
+        * WebCore.PluginHostProcess.exp: WebKit now subclasses RuntimeObject, so it needed more exports.
+
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+        Assert that a runtime object is passed as function.
+
+        * bridge/runtime_object.h: Moved RuntimeObject into Bindings namespace, matching other
+        related classes.
+
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::toString): Pass rootObject to convertValueToJValue(). It's not needed when
+        constructing a string, but this function now takes it for the sake of Object.
+        (JavaJSObject::convertValueToJObject): Check that object class is JavaRuntimeObject, not
+        just RuntimeObject.
+
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::setValueToInstance): Pass rootObject to convertValueToJValue().
+        (JavaArray::setValueAt): Ditto.
+
+        * bridge/jni/jsc/JNIUtilityPrivate.h: convertValueToJValue() now takes a RootObject argument,
+        because one is needed to gcProtect an object ghtat is wrapped into JSObject.
+
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp: (JSC::Bindings::convertValueToJValue): Convert
+        JavaScript objects to Java JSObject ones. This was already happening in other code paths,
+        which we should change to use common code.
+
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::newRuntimeObject): Create an appropriate RuntimeObject subclass,
+        which is JavaRuntimeObject for Java.
+        (JavaInstance::invokeMethod): Unwrap returned JavaObjects that contain JS objects.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/c/CRuntimeObject.cpp: Added.
+        (JSC::Bindings::CRuntimeObject::CRuntimeObject):
+        (JSC::Bindings::CRuntimeObject::~CRuntimeObject):
+        (JSC::Bindings::CRuntimeObject::getInternalCInstance):
+        * bridge/c/CRuntimeObject.h: Added.
+        (JSC::Bindings::CRuntimeObject::classInfo):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::newRuntimeObject):
+        * bridge/c/c_instance.h:
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jni/jsc/JavaRuntimeObject.cpp: Added.
+        (JSC::Bindings::):
+        (JSC::Bindings::JavaRuntimeObject::JavaRuntimeObject):
+        (JSC::Bindings::JavaRuntimeObject::~JavaRuntimeObject):
+        (JSC::Bindings::JavaRuntimeObject::getInternalJavaInstance):
+        * bridge/jni/jsc/JavaRuntimeObject.h: Added.
+        (JSC::Bindings::JavaRuntimeObject::classInfo):
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/objc/ObjCRuntimeObject.h: Added.
+        (JSC::Bindings::ObjCRuntimeObject::classInfo):
+        * bridge/objc/ObjCRuntimeObject.mm: Added.
+        (JSC::Bindings::):
+        (JSC::Bindings::ObjCRuntimeObject::ObjCRuntimeObject):
+        (JSC::Bindings::ObjCRuntimeObject::~ObjCRuntimeObject):
+        (JSC::Bindings::ObjCRuntimeObject::getInternalObjCInstance):
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::newRuntimeObject):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_root.h:
+        Added RuntimeObject subclasses for each instance type, and use them for type casting.
+
 2010-02-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.

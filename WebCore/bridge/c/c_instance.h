@@ -77,6 +77,8 @@ public:
 private:
     CInstance(NPObject*, PassRefPtr<RootObject>);
 
+    virtual RuntimeObject* newRuntimeObject(ExecState*);
+
     mutable CClass *_class;
     NPObject *_object;
 };

@@ -30,6 +30,7 @@
 #import "HostedNetscapePluginStream.h"
 #import "NetscapePluginHostProxy.h"
 #import "ProxyInstance.h"
+#import "ProxyRuntimeObject.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
 #import "WebHostedNetscapePluginView.h"
@@ -1206,9 +1207,9 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (object->classInfo() == &RuntimeObject::s_info) {
-            RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
-            if (ProxyInstance* instance = static_cast<ProxyInstance*>(runtimeObject->getInternalInstance())) {
+        if (object->classInfo() == &ProxyRuntimeObject::s_info) {
+            ProxyRuntimeObject* runtimeObject = static_cast<ProxyRuntimeObject*>(object);
+            if (ProxyInstance* instance = runtimeObject->getInternalProxyInstance()) {
                 [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
                 [array addObject:[NSNumber numberWithInt:instance->objectID()]];
             }

@@ -23,8 +23,22 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+ifeq ($(findstring 10.4, $(shell sw_vers -productVersion)), 10.4)
+	BUILDING_ON_TIGER = 1
+endif
+
+ifeq ($(findstring 10.5, $(shell sw_vers -productVersion)), 10.5)
+	BUILDING_ON_LEOPARD = 1
+endif
+
 JC = javac
-JFLAGS =
+ifeq ($(or $(BUILDING_ON_TIGER), $(BUILDING_ON_LEOPARD)), 1)
+	CLASSPATH = /System/Library/Frameworks/JavaVM.framework/Home/lib/plugin.jar
+else
+	# The above path works on Tiger and Leopard, but is a broken link on SnowLeopard, <rdar://7578937>.
+    CLASSPATH := /System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/Deploy.bundle/Contents/Resources/Java/plugin.jar
+endif
+JFLAGS = -classpath $(CLASSPATH)
 .SUFFIXES: .java .class
 
 .java.class:

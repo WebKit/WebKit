@@ -41,11 +41,11 @@ namespace JSC {
 
 class Interpreter;
 class JSGlobalObject;
-class RuntimeObject;
 
 namespace Bindings {
 
 class RootObject;
+class RuntimeObject;
 
 typedef HashCountedSet<JSObject*> ProtectCountSet;
 

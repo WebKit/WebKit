@@ -40,13 +40,13 @@ class ArgList;
 class Identifier;
 class JSGlobalObject;
 class PropertyNameArray;
-class RuntimeObject;
 
 namespace Bindings {
 
 class Instance;
 class Method;
 class RootObject;
+class RuntimeObject;
 
 typedef Vector<Method*> MethodList;
 

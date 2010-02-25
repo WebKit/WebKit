@@ -1,5 +1,7 @@
 import java.applet.Applet;
+import java.lang.reflect.*;
 import java.util.*;
+import netscape.javascript.*;
 
 public class SharedApplet extends Applet
 {
@@ -18,4 +20,28 @@ public class SharedApplet extends Applet
         result.add("Three");
         return result;
     }
+
+    public Object getSelf() {
+        return this;
+    }
+
+    public Object testGetProperty(JSObject obj, String propertyName) {
+        return obj.getMember(propertyName);
+    }
+
+    public Object testGetMember(JSObject obj, String memberName) {
+        return obj.getMember(memberName);
+    }
+
+    public void remember(Object obj) {
+        rememberedObject = obj;
+    }
+
+    public Object getAndForgetRememberedObject() {
+        Object result = rememberedObject;
+        rememberedObject = null;
+        return result;
+    }
+
+    private Object rememberedObject;
 }

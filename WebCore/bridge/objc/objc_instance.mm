@@ -27,6 +27,7 @@
 #import "objc_instance.h"
 
 #import "FoundationExtras.h"
+#import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
 #import <objc/objc-auto.h>
 #import <runtime/Error.h>
@@ -59,6 +60,11 @@ static NSMapTable *createInstanceWrapperCache()
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
     return [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 #endif
+}
+
+RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
+{
+    return new (exec) ObjCRuntimeObject(exec, this);
 }
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)

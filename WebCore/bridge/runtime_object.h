@@ -30,10 +30,11 @@
 #include <runtime/JSGlobalObject.h>
 
 namespace JSC {
+namespace Bindings {
 
 class RuntimeObject : public JSObject {
 public:
-    RuntimeObject(ExecState*, PassRefPtr<Bindings::Instance>);
+    RuntimeObject(ExecState*, PassRefPtr<Instance>);
     virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -48,7 +49,7 @@ public:
 
     void invalidate();
 
-    Bindings::Instance* getInternalInstance() const { return m_instance.get(); }
+    Instance* getInternalInstance() const { return m_instance.get(); }
 
     static JSObject* throwInvalidAccessError(ExecState*);
 
@@ -66,7 +67,7 @@ public:
 
 protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
-    RuntimeObject(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
+    RuntimeObject(ExecState*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
 
 private:
     virtual const ClassInfo* classInfo() const { return &s_info; }
@@ -75,9 +76,10 @@ private:
     static JSValue fieldGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue methodGetter(ExecState*, const Identifier&, const PropertySlot&);
 
-    RefPtr<Bindings::Instance> m_instance;
+    RefPtr<Instance> m_instance;
 };
     
-} // namespace
+}
+}
 
 #endif

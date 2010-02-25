@@ -29,6 +29,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "JavaRuntimeObject.h"
 #include "JNIBridgeJSC.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
@@ -168,7 +169,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
     return jarray;
 }
 
-jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, const char* javaClassName)
+jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue value, JNIType jniType, const char* javaClassName)
 {
     JSLock lock(SilenceAssertionsOnly);
 
@@ -182,12 +183,12 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
             // FIXME: JavaJSObject::convertValueToJObject functionality is almost exactly the same,
             // these functions should use common code.
 
-            // First see if we have a Java instance.
             if (value.isObject()) {
                 JSObject* object = asObject(value);
-                if (object->classInfo() == &RuntimeObject::s_info) {
-                    RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
-                    JavaInstance* instance = static_cast<JavaInstance*>(runtimeObject->getInternalInstance());
+                if (object->inherits(&JavaRuntimeObject::s_info)) {
+                    // Unwrap a Java instance.
+                    JavaRuntimeObject* runtimeObject = static_cast<JavaRuntimeObject*>(object);
+                    JavaInstance* instance = runtimeObject->getInternalJavaInstance();
                     if (instance)
                         result.l = instance->javaInstance();
                 } else if (object->classInfo() == &RuntimeArray::s_info) {
@@ -198,6 +199,16 @@ jvalue convertValueToJValue(ExecState* exec, JSValue value, JNIType jniType, con
                 } else if (object->classInfo() == &JSArray::info) {
                     // Input is a Javascript Array. We need to create it to a Java Array.
                     result.l = convertArrayInstanceToJavaArray(exec, asArray(value), javaClassName);
+                } else if (!result.l && (!strcmp(javaClassName, "java.lang.Object")) || (!strcmp(javaClassName, "netscape.javascript.JSObject"))) {
+                    // Wrap objects in JSObject instances.
+                    JNIEnv* env = getJNIEnv();
+                    jclass jsObjectClass = env->FindClass("sun/plugin/javascript/webkit/JSObject");
+                    jmethodID constructorID = env->GetMethodID(jsObjectClass, "<init>", "(J)V");
+                    if (constructorID) {
+                        jlong nativeHandle = ptr_to_jlong(object);
+                        rootObject->gcProtect(object);
+                        result.l = env->NewObject(jsObjectClass, constructorID, nativeHandle);
+                    }
                 }
             }
 

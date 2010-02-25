@@ -27,6 +27,7 @@
 #include "objc_runtime.h"
 
 #include "JSDOMBinding.h"
+#include "ObjCRuntimeObject.h"
 #include "WebScriptObject.h"
 #include "objc_instance.h"
 #include "runtime_array.h"
@@ -216,34 +217,33 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 
 static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
 {
-    if (!thisValue.inherits(&RuntimeObject::s_info))
+    if (!thisValue.inherits(&ObjCRuntimeObject::s_info))
         return throwError(exec, TypeError);
 
     JSValue result = jsUndefined();
 
-    RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
-    Instance* instance = runtimeObject->getInternalInstance();
+    ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(asObject(thisValue));
+    ObjcInstance* objcInstance = runtimeObject->getInternalObjCInstance();
 
-    if (!instance)
+    if (!objcInstance)
         return RuntimeObject::throwInvalidAccessError(exec);
     
-    instance->begin();
+    objcInstance->begin();
 
-    ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
-        ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
+        ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
         const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(function)->propertyName();
         RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
         fallbackMethod->setJavaScriptName(name.get());
         MethodList methodList;
         methodList.append(fallbackMethod.get());
-        result = instance->invokeMethod(exec, methodList, args);
+        result = objcInstance->invokeMethod(exec, methodList, args);
     }
             
-    instance->end();
+    objcInstance->end();
 
     return result;
 }

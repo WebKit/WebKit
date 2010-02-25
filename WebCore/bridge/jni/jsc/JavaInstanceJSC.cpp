@@ -28,6 +28,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
+#include "JavaRuntimeObject.h"
 #include "JNIBridgeJSC.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
@@ -53,6 +54,11 @@ JavaInstance::JavaInstance(jobject instance, PassRefPtr<RootObject> rootObject)
 JavaInstance::~JavaInstance()
 {
     delete m_class;
+}
+
+RuntimeObject* JavaInstance::newRuntimeObject(ExecState* exec)
+{
+    return new (exec) JavaRuntimeObject(exec, this);
 }
 
 #define NUM_LOCAL_REFS 64
@@ -135,7 +141,7 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
 
     for (i = 0; i < count; i++) {
         JavaParameter* aParameter = jMethod->parameterAt(i);
-        jArgs[i] = convertValueToJValue(exec, args.at(i), aParameter->getJNIType(), aParameter->type());
+        jArgs[i] = convertValueToJValue(exec, m_rootObject.get(), args.at(i), aParameter->getJNIType(), aParameter->type());
         LOG(LiveConnect, "JavaInstance::invokeMethod arg[%d] = %s", i, args.at(i).toString(exec).ascii());
     }
 
@@ -215,10 +221,24 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList
                 const char* arrayType = jMethod->returnType();
                 if (arrayType[0] == '[')
                     resultValue = JavaArray::convertJObjectToArray(exec, result.l, arrayType, rootObject);
-                else
-                    resultValue = JavaInstance::create(result.l, rootObject)->createRuntimeObject(exec);
+                else {
+                    jobject classOfInstance = callJNIMethod<jobject>(result.l, "getClass", "()Ljava/lang/Class;");
+                    jstring className = static_cast<jstring>(callJNIMethod<jobject>(classOfInstance, "getName", "()Ljava/lang/String;"));
+                    if (!strcmp(JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject")) {
+                        // Pull the nativeJSObject value from the Java instance.  This is a pointer to the JSObject.
+                        JNIEnv* env = getJNIEnv();
+                        jfieldID fieldID = env->GetFieldID(static_cast<jclass>(classOfInstance), "nativeJSObject", "J");
+                        jlong nativeHandle = env->GetLongField(result.l, fieldID);
+                        // FIXME: Handling of undefined values differs between functions in JNIUtilityPrivate.cpp and those in those in jni_jsobject.mm,
+                        // and so it does between different versions of LiveConnect spec. There should not be multiple code paths to do the same work.
+                        if (nativeHandle == 1 /* UndefinedHandle */)
+                            return jsUndefined();
+                        return static_cast<JSObject*>(jlong_to_ptr(nativeHandle));
+                    } else
+                        return JavaInstance::create(result.l, rootObject)->createRuntimeObject(exec);
+                }
             } else
-                resultValue = jsUndefined();
+                return jsUndefined();
         }
         break;
 

@@ -29,6 +29,7 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include "Frame.h"
+#include "JavaRuntimeObject.h"
 #include "JNIBridge.h"
 #include "JNIUtility.h"
 #include "JNIUtilityPrivate.h"
@@ -418,7 +419,7 @@ jstring JavaJSObject::toString() const
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     ExecState* exec = rootObject->globalObject()->globalExec();
     
-    return (jstring)convertValueToJValue (exec, thisObj, object_type, "java.lang.String").l;
+    return static_cast<jstring>(convertValueToJValue(exec, rootObject, thisObj, object_type, "java.lang.String").l);
 }
 
 void JavaJSObject::finalize() const
@@ -518,9 +519,9 @@ jobject JavaJSObject::convertValueToJObject(JSValue value) const
             // object.  If we have a wrapper around a Java instance, return that
             // instance, otherwise create a new Java JavaJSObject with the JSObject*
             // as its nativeHandle.
-            if (object->classInfo() && strcmp(object->classInfo()->className, "RuntimeObject") == 0) {
-                RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(object);
-                JavaInstance* runtimeInstance = static_cast<JavaInstance*>(runtimeObject->getInternalInstance());
+            if (object->inherits(&JavaRuntimeObject::s_info)) {
+                JavaRuntimeObject* runtimeObject = static_cast<JavaRuntimeObject*>(object);
+                JavaInstance* runtimeInstance = runtimeObject->getInternalJavaInstance();
                 if (!runtimeInstance)
                     return 0;
                 

@@ -68,7 +68,9 @@ private:
     static void moveGlobalExceptionToExecState(ExecState*);
 
     ObjcInstance(ObjectStructPtr, PassRefPtr<RootObject>);
-    
+
+    virtual RuntimeObject* newRuntimeObject(ExecState*);
+
     RetainPtr<ObjectStructPtr> _instance;
     mutable ObjcClass *_class;
     ObjectStructPtr _pool;

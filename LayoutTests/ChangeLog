@@ -1,3 +1,23 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35394
+        <rdar://problem/7685262> Make passing objects between Java and plug-ins work
+
+        * java/Makefile: Added plugin.jar to classpath to make JSObject available in test applets.
+
+        * java/java-and-plugins-expected.txt: Added.
+        * java/java-and-plugins.html: Added.
+
+        * java/SharedApplet.java: Added test methods for java-and-plugins.html.
+
+        * java/argument-to-object-type-expected.txt:
+        * java/argument-to-object-type.html:
+        * java/array-return-expected.txt:
+        * java/array-return.html:
+        Removed plug-in element that got here due to a copy/paste mistake.
+
 2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: evaluate-on-hover does not work on HTML files.
