@@ -1,3 +1,14 @@
+2010-02-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Adopt the same string as the one that is expected by
+        fast/parser/fragment-parser.html for the description used by the
+        <isindex> element.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::searchableIndexIntroduction):
+
 2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

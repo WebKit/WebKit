@@ -67,7 +67,7 @@ String resetButtonDefaultLabel()
 
 String searchableIndexIntroduction()
 {
-    return String::fromUTF8(_("_Searchable Index"));
+    return String::fromUTF8(_("This is a searchable index. Enter search keywords: "));
 }
 
 String fileButtonChooseFileLabel()

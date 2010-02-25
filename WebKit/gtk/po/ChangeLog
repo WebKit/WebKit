@@ -1,3 +1,25 @@
+2010-02-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Updated to accomodate the change done to the localized string.
+
+        * de.po:
+        * en_GB.po:
+        * es.po:
+        * gu.po:
+        * he.po:
+        * it.po:
+        * lt.po:
+        * nl.po:
+        * pa.po:
+        * pt_BR.po:
+        * ru.po:
+        * sr.po:
+        * sr@latin.po:
+        * sv.po:
+        * vi.po:
+        * webkit.pot:
+        * zh_CN.po:
+
 2010-02-23  Mario Blättermann  <mariobl@freenet.de>
 
         Reviewed by Gustavo Noronha.
