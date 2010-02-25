@@ -1,3 +1,28 @@
+2010-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Add call to FrameLoaderClient::allowPlugins everywhere arePluginsEnabled is called
+        https://bugs.webkit.org/show_bug.cgi?id=34997
+
+        If we want to let the FrameLoaderClient override arePluginsEnabled,
+        then we need to call out to the FrameLoaderClient every time we read
+        the setting.
+
+        We don't have testing infrustructure for these changes, which is lame.
+        I'm supposed to fix that in Bug 33991.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::substituteMIMETypeFromPluginDatabase):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        * page/Page.cpp:
+        (WebCore::Page::pluginData):
+        * plugins/MimeType.cpp:
+        (WebCore::MimeType::enabledPlugin):
+
 2010-02-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dmitry Titov.
