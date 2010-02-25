@@ -32,6 +32,7 @@
     <file>EventListenersSidebarPane.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
+    <file>InjectedFakeWorker.js</file>
     <file>InjectedScript.js</file>
     <file>InjectedScriptAccess.js</file>
     <file>inspector.js</file>

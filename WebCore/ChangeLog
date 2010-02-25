@@ -1,3 +1,52 @@
+2010-02-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fake workers implementation that simulates workers using iframe and timer,
+        needed to support workers debugging. Also, a facility to inject scripts into
+        inspected page upon load.
+        https://bugs.webkit.org/show_bug.cgi?id=35148
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorBackend::removeAllScriptsToEvaluateOnLoad):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorController::removeAllScriptsToEvaluateOnLoad):
+        * inspector/InspectorController.h:
+        * inspector/front-end/InjectedFakeWorker.js: Added.
+        (InjectedFakeWorker.Worker):
+        (InjectedFakeWorker.FakeWorker):
+        (InjectedFakeWorker.FakeWorker.prototype.postMessage):
+        (InjectedFakeWorker.FakeWorker.prototype.terminate):
+        (InjectedFakeWorker.FakeWorker.prototype._onmessageWrapper):
+        (InjectedFakeWorker.FakeWorker.prototype._dispatchMessage):
+        (InjectedFakeWorker.FakeWorker.prototype._handleException):
+        (InjectedFakeWorker.FakeWorker.prototype._buildWorker):
+        (InjectedFakeWorker.FakeWorker.prototype._setupWorkerContext.handler):
+        (InjectedFakeWorker.FakeWorker.prototype._setupWorkerContext):
+        (InjectedFakeWorker.FakeWorker.prototype._importScripts):
+        (InjectedFakeWorker.FakeWorker.prototype._loadScript):
+        (InjectedFakeWorker.URL):
+        (InjectedFakeWorker.URL.prototype.urlRegEx.split):
+        (InjectedFakeWorker.URL.prototype.mockLocation):
+        (InjectedFakeWorker.URL.prototype.completeWith):
+        (InjectedFakeWorker.URL.prototype.sameOrigin):
+        (InjectedFakeWorker.DOMCoreException.formatError):
+        (InjectedFakeWorker.DOMCoreException):
+        (InjectedFakeWorker.noop):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.setInjectedScriptSource):
+        (.WebInspector.InspectorBackendStub.prototype.addScriptToEvaluateOnLoad):
+        (.WebInspector.InspectorBackendStub.prototype.removeAllScriptsToEvaluateOnLoad):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2010-02-24  Nicholas Young  <nicholas.young@nokia.com>
 
         Reviewed by Eric Carlson.

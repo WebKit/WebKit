@@ -264,6 +264,14 @@ WebInspector.InspectorBackendStub.prototype = {
 
     setInjectedScriptSource: function()
     {
+    },
+    
+    addScriptToEvaluateOnLoad: function()
+    {
+    },
+
+    removeAllScriptsToEvaluateOnLoad: function()
+    {
     }
 }
 

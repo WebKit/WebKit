@@ -469,6 +469,18 @@ Node* InspectorBackend::nodeForId(long nodeId)
     return 0;
 }
 
+void InspectorBackend::addScriptToEvaluateOnLoad(const String& source)
+{
+    if (m_inspectorController)
+        m_inspectorController->addScriptToEvaluateOnLoad(source);
+}
+
+void InspectorBackend::removeAllScriptsToEvaluateOnLoad()
+{
+    if (m_inspectorController)
+        m_inspectorController->removeAllScriptsToEvaluateOnLoad();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

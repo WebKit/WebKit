@@ -3746,6 +3746,7 @@
             'inspector/front-end/ImageView.js',
             'inspector/front-end/InspectorBackendStub.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
+            'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/InjectedScript.js',
             'inspector/front-end/InjectedScriptAccess.js',
             'inspector/front-end/inspector.js',
