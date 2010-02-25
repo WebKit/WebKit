@@ -92,13 +92,12 @@ WebInspector.SourceView.prototype = {
     _addBreakpoint: function(line)
     {
         var sourceID = null;
-        var closestStartingLine = 0;
         var scripts = this.resource.scripts;
         for (var i = 0; i < scripts.length; ++i) {
             var script = scripts[i];
-            if (script.startingLine <= line && script.startingLine >= closestStartingLine) {
-                closestStartingLine = script.startingLine;
+            if (script.startingLine <= line && script.startingLine + script.linesCount > line) {
                 sourceID = script.sourceID;
+                break;
             }
         }
 

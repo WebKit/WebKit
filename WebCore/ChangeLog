@@ -1,3 +1,46 @@
+2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Scripts panel shows blank source when stopping on a breakpoint on refresh.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35232
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.canShowSourceLine):
+        (WebInspector.Panel.prototype.showSourceLine):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.canShowSourceLine):
+        (WebInspector.ResourcesPanel.prototype.showSourceLine):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype.get searchableViews):
+        (WebInspector.ScriptsPanel.prototype.addScript):
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype.addBreakpoint):
+        (WebInspector.ScriptsPanel.prototype.removeBreakpoint):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype.canShowSourceLine):
+        (WebInspector.ScriptsPanel.prototype.showSourceLine):
+        (WebInspector.ScriptsPanel.prototype._scriptOrResourceForURLAndLine):
+        (WebInspector.ScriptsPanel.prototype.showView):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._addBreakpoint):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector._choosePanelToShowSourceLine):
+        (WebInspector.canShowSourceLine):
+        (WebInspector.showSourceLine):
+
 2010-02-25  Ben Murdoch  <benm@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

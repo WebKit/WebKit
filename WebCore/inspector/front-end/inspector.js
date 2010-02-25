@@ -622,17 +622,17 @@ WebInspector.documentClick = function(event)
     function followLink()
     {
         // FIXME: support webkit-html-external-link links here.
-        if (WebInspector.canShowSourceLineForURL(anchor.href, anchor.preferredPanel)) {
+        if (WebInspector.canShowSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel)) {
             if (anchor.hasStyleClass("webkit-html-external-link")) {
                 anchor.removeStyleClass("webkit-html-external-link");
                 anchor.addStyleClass("webkit-html-resource-link");
             }
 
-            WebInspector.showSourceLineForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
+            WebInspector.showSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel);
         } else {
             var profileString = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
             if (profileString)
-                WebInspector.showProfileForURL(anchor.href);
+                WebInspector.showProfile(anchor.href, anchor.lineNumber);
         }
     }
 
@@ -1465,27 +1465,27 @@ WebInspector.resourceForURL = function(url)
     return null;
 }
 
-WebInspector._choosePanelToShowSourceLineForURL = function(url, preferredPanel)
+WebInspector._choosePanelToShowSourceLine = function(url, line, preferredPanel)
 {
     preferredPanel = preferredPanel || "resources";
     var panel = this.panels[preferredPanel];
-    if (panel && panel.canShowSourceLineForURL(url))
+    if (panel && panel.canShowSourceLine(url, line))
         return panel;
     panel = this.panels.resources;
-    return panel.canShowSourceLineForURL(url) ? panel : null;
+    return panel.canShowSourceLine(url, line) ? panel : null;
 }
 
-WebInspector.canShowSourceLineForURL = function(url, preferredPanel)
+WebInspector.canShowSourceLine = function(url, line, preferredPanel)
 {
-    return !!this._choosePanelToShowSourceLineForURL(url, preferredPanel);
+    return !!this._choosePanelToShowSourceLine(url, line, preferredPanel);
 }
 
-WebInspector.showSourceLineForURL = function(url, line, preferredPanel)
+WebInspector.showSourceLine = function(url, line, preferredPanel)
 {
-    this.currentPanel = this._choosePanelToShowSourceLineForURL(url, preferredPanel);
+    this.currentPanel = this._choosePanelToShowSourceLine(url, line, preferredPanel);
     if (!this.currentPanel)
         return false;
-    this.currentPanel.showSourceLineForURL(url, line);
+    this.currentPanel.showSourceLine(url, line);
     return true;
 }
 

@@ -52,7 +52,11 @@ WebInspector.ScriptView.prototype = {
 
         this.attach();
 
-        this.sourceFrame.setContent("text/javascript", this.script.source);
+        var prefix = "";
+        for (var i = 0; i < this.script.startingLine - 1; ++i)
+            prefix += "\n";
+
+        this.sourceFrame.setContent("text/javascript", prefix + this.script.source);
         this._sourceFrameSetup = true;
         delete this._frameNeedsSetup;
     },

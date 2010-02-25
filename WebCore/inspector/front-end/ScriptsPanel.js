@@ -238,16 +238,6 @@ WebInspector.ScriptsPanel.prototype = {
                 this.visibleView.headersVisible = false;
             this.visibleView.show(this.viewsContainerElement);
         }
-        // Hide any views that are visible that are not this panel's current visible view.
-        // This can happen when a ResourceView is visible in the Resources panel then switched
-        // to the this panel.
-        for (var sourceID in this._sourceIDMap) {
-            var scriptOrResource = this._sourceIDMap[sourceID];
-            var view = this._sourceViewForScriptOrResource(scriptOrResource);
-            if (!view || view === this.visibleView)
-                continue;
-            view.visible = false;
-        }
         if (this._attachDebuggerWhenShown) {
             InspectorBackend.enableDebugger(false);
             delete this._attachDebuggerWhenShown;
@@ -256,28 +246,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get searchableViews()
     {
-        var views = [];
-
-        const visibleView = this.visibleView;
-        if (visibleView && visibleView.performSearch) {
-            visibleView.alreadySearching = true;
-            views.push(visibleView);
-        }
-
-        for (var sourceID in this._sourceIDMap) {
-            var scriptOrResource = this._sourceIDMap[sourceID];
-            var view = this._sourceViewForScriptOrResource(scriptOrResource);
-            if (!view || !view.performSearch || view.alreadySearching)
-                continue;
-
-            view.alreadySearching = true;
-            views.push(view);
-        }
-
-        for (var i = 0; i < views.length; ++i)
-            delete views[i].alreadySearching;
-
-        return views;
+        return [ this.visibleView ];
     },
 
     get breakpointsActivated()
@@ -288,27 +257,50 @@ WebInspector.ScriptsPanel.prototype = {
     addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage)
     {
         var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage);
+        this._sourceIDMap[sourceID] = script;
 
-        if (sourceURL in WebInspector.resourceURLMap) {
-            var resource = WebInspector.resourceURLMap[sourceURL];
-            resource.addScript(script);
+        var resource = WebInspector.resourceURLMap[sourceURL];
+        if (resource) {
+            if (resource.finished) {
+                // Resource is finished, bind the script right away.
+                resource.addScript(script);
+                this._sourceIDMap[sourceID] = resource;
+            } else {
+                // Resource is not finished, bind the script later.
+                if (!resource._scriptsPendingResourceLoad) {
+                    resource._scriptsPendingResourceLoad = [];
+                    resource.addEventListener("finished", this._resourceLoadingFinished, this);
+                }
+                resource._scriptsPendingResourceLoad.push(script);
+            }
         }
-
-        sourceURL = script.sourceURL;
-
-        if (sourceID)
-            this._sourceIDMap[sourceID] = (resource || script);
         this._addScriptToFilesMenu(script);
     },
 
-    scriptOrResourceForID: function(id)
+    _resourceLoadingFinished: function(e)
     {
-        return this._sourceIDMap[id];
-    },
+        var resource = e.target;
+        for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
+            // Bind script to resource.
+            var script = resource._scriptsPendingResourceLoad[i];
+            resource.addScript(script);
+            this._sourceIDMap[script.sourceID] = resource;
 
-    scriptForURL: function(url)
-    {
-        return this._scriptsForURLsInFilesSelect[url];
+            // Remove script from the files list.
+            script.filesSelectOption.parentElement.removeChild(script.filesSelectOption);
+            
+            // Move breakpoints to the resource's frame.
+            if (script._scriptView) {
+                var sourceFrame = script._scriptView.sourceFrame;
+                for (var j = 0; j < sourceFrame.breakpoints; ++j) {
+                    var resourceFrame = this._sourceFrameForScriptOrResource(resource);
+                    resourceFrame.addBreakpoint(sourceFrame.breakpoints[j]);
+                }
+            }
+        }
+        // Adding first script will add resource.
+        this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
+        delete resource._scriptsPendingResourceLoad;
     },
 
     addBreakpoint: function(breakpoint)
@@ -320,10 +312,9 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFrame;
         if (breakpoint.url) {
-            if (breakpoint.url in WebInspector.resourceURLMap) {
-                var resource = WebInspector.resourceURLMap[breakpoint.url];
+            var resource = WebInspector.resourceURLMap[breakpoint.url];
+            if (resource && resource.finished)
                 sourceFrame = this._sourceFrameForScriptOrResource(resource);
-            }
         }
 
         if (breakpoint.sourceID && !sourceFrame) {
@@ -340,9 +331,10 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.breakpoints.removeBreakpoint(breakpoint);
 
         var sourceFrame;
-        if (breakpoint.url && breakpoint.url in WebInspector.resourceURLMap) {
+        if (breakpoint.url) {
             var resource = WebInspector.resourceURLMap[breakpoint.url];
-            sourceFrame = this._sourceFrameForScriptOrResource(resource);
+            if (resource && resource.finished)
+                sourceFrame = this._sourceFrameForScriptOrResource(resource);
         }
 
         if (breakpoint.sourceID && !sourceFrame) {
@@ -453,7 +445,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._currentBackForwardIndex = -1;
         this._updateBackAndForwardButtons();
 
-        this._scriptsForURLsInFilesSelect = {};
+        this._resourceForURLInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
@@ -497,36 +489,41 @@ WebInspector.ScriptsPanel.prototype = {
             this._visibleView = newView;
     },
 
-    canShowSourceLineForURL: function(url)
+    canShowSourceLine: function(url, line)
     {
-        return InspectorBackend.debuggerEnabled() &&
-            !!(WebInspector.resourceForURL(url) || this.scriptForURL(url));
+        if (!InspectorBackend.debuggerEnabled())
+            return false;
+        return !!this._scriptOrResourceForURLAndLine(url, line);
     },
 
-    showSourceLineForURL: function(url, line)
+    showSourceLine: function(url, line)
     {
-        var resource = WebInspector.resourceForURL(url);
-        if (resource)
-            this.showResource(resource, line);
-        else
-            this.showScript(this.scriptForURL(url), line);
+        var scriptOrResource = this._scriptOrResourceForURLAndLine(url, line);
+        this._showScriptOrResource(scriptOrResource, {line: line, shouldHighlightLine: true});
     },
 
-    showScript: function(script, line)
+    _scriptOrResourceForURLAndLine: function(url, line) 
     {
-        this._showScriptOrResource(script, {line: line, shouldHighlightLine: true});
-    },
-
-    showResource: function(resource, line)
-    {
-        this._showScriptOrResource(resource, {line: line, shouldHighlightLine: true});
+        for (var sourceID in this._sourceIDMap) {
+            var scriptOrResource = this._sourceIDMap[sourceID];
+            if (scriptOrResource instanceof WebInspector.Script) {
+                var script = scriptOrResource;
+                if (script.startingLine <= line && script.startingLine + script.linesCount > line)
+                    return script;
+            } else {
+                var resource = scriptOrResource;
+                if (resource.url === url)
+                    return resource;
+            }
+        }
+        return null;
     },
 
     showView: function(view)
     {
         if (!view)
             return;
-        this._showScriptOrResource((view.resource || view.script));
+        this._showScriptOrResource(view.resource || view.script);
     },
 
     handleShortcut: function(event)
@@ -576,11 +573,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceFrameForScriptOrResource: function(scriptOrResource)
     {
-        if (scriptOrResource instanceof WebInspector.Resource) {
-            if (!WebInspector.panels.resources)
-                return null;
+        if (scriptOrResource instanceof WebInspector.Resource)
             return WebInspector.panels.resources.sourceFrameForResource(scriptOrResource);
-        }
         if (scriptOrResource instanceof WebInspector.Script)
             return this.sourceFrameForScript(scriptOrResource);
     },
@@ -653,55 +647,50 @@ WebInspector.ScriptsPanel.prototype = {
             // hasn't been added yet - happens for stepping in evals,
             // so use the force option to force the script into the menu.
             if (!option) {
-                this._addScriptToFilesMenu(scriptOrResource, {force: true});
+                this._addScriptToFilesMenu(scriptOrResource, true);
                 option = scriptOrResource.filesSelectOption;
             }
 
             console.assert(option);
-        } else {
-            var script = this.scriptForURL(url);
-            if (script)
-               option = script.filesSelectOption;
-        }
+        } else
+            option = scriptOrResource.filesSelectOption;
 
         if (option)
             this.filesSelectElement.selectedIndex = option.index;
     },
 
-    _addScriptToFilesMenu: function(script, options)
+    _addScriptToFilesMenu: function(script, force)
     {
-        var force = options && options.force;
-
         if (!script.sourceURL && !force)
             return;
 
-        if (script.resource && this._scriptsForURLsInFilesSelect[script.sourceURL])
-            return;
-
-        this._scriptsForURLsInFilesSelect[script.sourceURL] = script;
+        if (script.resource) {
+            if (this._resourceForURLInFilesSelect[script.resource.url])
+                return;
+            this._resourceForURLInFilesSelect[script.resource.url] = script.resource;
+        }
+ 
+        var displayName = script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)");
 
         var select = this.filesSelectElement;
-
         var option = document.createElement("option");
-        option.representedObject = (script.resource || script);
-        option.text = (script.sourceURL ? WebInspector.displayNameForURL(script.sourceURL) : WebInspector.UIString("(program)"));
+        option.representedObject = script.resource || script;
+        option.url = displayName;
+        option.startingLine = script.startingLine;
+        option.text = script.resource ? displayName : String.sprintf("%s (%d - %d)", displayName, script.startingLine, script.startingLine + script.linesCount);
 
         function optionCompare(a, b)
         {
-            var aTitle = a.text.toLowerCase();
-            var bTitle = b.text.toLowerCase();
-            if (aTitle < bTitle)
+            if (a.url < b.url)
                 return -1;
-            else if (aTitle > bTitle)
+            else if (a.url > b.url)
                 return 1;
 
-            var aSourceID = a.representedObject.sourceID;
-            var bSourceID = b.representedObject.sourceID;
-            if (aSourceID < bSourceID)
+            if (typeof a.startingLine !== "number")
                 return -1;
-            else if (aSourceID > bSourceID)
-                return 1;
-            return 0;
+            if (typeof b.startingLine !== "number")
+                return -1;
+            return a.startingLine - b.startingLine;
         }
 
         var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
@@ -710,7 +699,10 @@ WebInspector.ScriptsPanel.prototype = {
         else
             select.insertBefore(option, select.childNodes.item(insertionIndex));
 
-        script.filesSelectOption = option;
+        if (script.resource)
+            script.resource.filesSelectOption = option;
+        else
+            script.filesSelectOption = option;
 
         // Call _showScriptOrResource if the option we just appended ended up being selected.
         // This will happen for the first item added to the menu.

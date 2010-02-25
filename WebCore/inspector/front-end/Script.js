@@ -32,6 +32,13 @@ WebInspector.Script = function(sourceID, sourceURL, source, startingLine, errorL
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
 
+    this.linesCount = 0;
+    var lastIndex = source.indexOf("\n");
+    while (lastIndex !== -1) {
+        lastIndex = source.indexOf("\n", lastIndex + 1) 
+        this.linesCount++;
+    }
+
     // if no URL, look for "//@ sourceURL=" decorator
     // note that this sourceURL comment decorator is behavior that FireBug added
     // in it's 1.1 release as noted in the release notes:

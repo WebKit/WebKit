@@ -454,12 +454,12 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.panels.scripts.viewRecreated(oldView, newView);
     },
 
-    canShowSourceLineForURL: function(url)
+    canShowSourceLine: function(url, line)
     {
         return !!WebInspector.resourceForURL(url);
     },
 
-    showSourceLineForURL: function(url, line)
+    showSourceLine: function(url, line)
     {
         this.showResource(WebInspector.resourceForURL(url), line);
     },

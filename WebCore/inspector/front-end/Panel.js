@@ -373,12 +373,12 @@ WebInspector.Panel.prototype = {
             visibleView.resize();
     },
 
-    canShowSourceLineForURL: function(url)
+    canShowSourceLine: function(url, line)
     {
         return false;
     },
 
-    showSourceLineForURL: function(url, line)
+    showSourceLine: function(url, line)
     {
         return false;
     },
