@@ -1,3 +1,14 @@
+2010-02-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed a regression introduced in r44243, which made the assertion in checkListItems()
+        ineffective.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElementData::checkListItems): Copy the items vector before recomputing it,
+        then assert that the newly-computed vector is equal to the copy.
+
 2010-02-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

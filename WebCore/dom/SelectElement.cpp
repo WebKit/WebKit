@@ -954,7 +954,7 @@ SelectElementData::SelectElementData()
 void SelectElementData::checkListItems(const Element* element) const
 {
 #if !ASSERT_DISABLED
-    const Vector<Element*>& items = m_listItems;
+    Vector<Element*> items = m_listItems;
     SelectElement::recalcListItems(*const_cast<SelectElementData*>(this), element, false);
     ASSERT(items == m_listItems);
 #else
