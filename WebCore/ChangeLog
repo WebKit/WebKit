@@ -1,3 +1,11 @@
+2010-02-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Restrict the optimization flags for Symbian to release builds.
+
+        * WebCore.pro:
+
 2010-02-25  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
 
         Reviewed by Kenneth Rohde Christiansen.
