@@ -703,8 +703,9 @@ bool EditorClientImpl::autofill(HTMLInputElement* inputElement,
 
     // Let's try to trigger autofill for that field, if applicable.
     if (!inputElement->isEnabledFormControl() || !inputElement->isTextField()
-        || inputElement->isPasswordField()
-        || !inputElement->autoComplete())
+        || inputElement->isPasswordField() || !inputElement->autoComplete()
+        || !inputElement->isEnabledFormControl()
+        || inputElement->isReadOnlyFormControl())
         return false;
 
     WebString name = WebInputElement(inputElement).nameForAutofill();

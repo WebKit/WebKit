@@ -1,3 +1,17 @@
+2010-02-24  Jay Campan  <jcampan@google.com>
+
+        Reviewed by David Levin.
+
+        Don't show the autofill popup when the input text is disabled or read only.
+
+        Test: manual-tests/chromium/no-autofill-on-readonly.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=35129
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::autofill):
+        *  manual-tests/chromium/no-autofill-on-readonly.html: Added.
+
 2010-02-24  Dominic Mazzoni  <dmazzoni@chromium.org>
 
         Reviewed by Jeremy Orlow.
