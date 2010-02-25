@@ -1,5 +1,13 @@
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Qt and Gtk build fixes.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        Added CRuntimeObject.{c,cpp}.
+
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
         Windows build fix.
 
         * WebCore.vcproj/WebCore.vcproj: Added CRuntimeObject.{c,cpp}.

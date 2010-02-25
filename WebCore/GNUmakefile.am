@@ -512,6 +512,8 @@ webcore_sources += \
 	WebCore/bridge/IdentifierRep.h \
 	WebCore/bridge/NP_jsobject.cpp \
 	WebCore/bridge/NP_jsobject.h \
+	WebCore/bridge/c/CRuntimeObject.cpp \
+	WebCore/bridge/c/CRuntimeObject.h \
 	WebCore/bridge/c/c_class.cpp \
 	WebCore/bridge/c/c_class.h \
 	WebCore/bridge/c/c_instance.cpp \

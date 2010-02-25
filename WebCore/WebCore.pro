@@ -376,6 +376,7 @@ SOURCES += \
     bridge/runtime_method.cpp \
     bridge/runtime_object.cpp \
     bridge/runtime_root.cpp \
+    bridge/c/CRuntimeObject.cpp \
     bridge/c/c_class.cpp \
     bridge/c/c_instance.cpp \
     bridge/c/c_runtime.cpp \
@@ -1063,6 +1064,7 @@ HEADERS += \
     bindings/js/StringSourceProvider.h \
     bindings/js/WorkerScriptController.h \
     bridge/Bridge.h \
+    bridge/c/CRuntimeObject.h \
     bridge/c/c_class.h \
     bridge/c/c_instance.h \
     bridge/c/c_runtime.h \
