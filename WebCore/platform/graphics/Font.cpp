@@ -267,12 +267,13 @@ FontSelector* Font::fontSelector() const
 
 String Font::normalizeSpaces(const String& string)
 {
+    const UChar* characters = string.characters();
     unsigned length = string.length();
     Vector<UChar, 256> buffer(length);
     bool didReplacement = false;
 
     for (unsigned i = 0; i < length; ++i) {
-        UChar originalCharacter = string[i];
+        UChar originalCharacter = characters[i];
         buffer[i] = normalizeSpaces(originalCharacter);
         if (buffer[i] != originalCharacter)
             didReplacement = true;
