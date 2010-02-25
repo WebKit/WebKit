@@ -1,3 +1,15 @@
+2010-02-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Go back on symlink resolution if we are loading the flash plugin,
+        and the path contains /netscape/, following what Chromium does.
+
+        Thanks to Evan Martin for the help on this!
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::load):
+
 2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
