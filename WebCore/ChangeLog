@@ -1,3 +1,15 @@
+2010-02-25  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Optimize decoding of Latin-1 text by exploiting the fact that most of it will
+        be ASCII-only data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35233
+
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode):
+
 2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

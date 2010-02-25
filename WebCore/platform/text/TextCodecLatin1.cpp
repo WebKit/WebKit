@@ -117,26 +117,76 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     registrar("US-ASCII", newStreamingTextDecoderWindowsLatin1, 0);
 }
 
+template<size_t size> struct NonASCIIMask;
+template<> struct NonASCIIMask<4> {
+    static unsigned value() { return 0x80808080U; }
+};
+template<> struct NonASCIIMask<8> {
+    static unsigned long long value() { return 0x8080808080808080ULL; }
+};
+
+template<size_t size> struct UCharByteFiller;
+template<> struct UCharByteFiller<4> {
+    static void copy(UChar* dest, const unsigned char* src)
+    {
+        dest[0] = src[0];
+        dest[1] = src[1];
+        dest[2] = src[2];
+        dest[3] = src[3];
+    }
+};
+template<> struct UCharByteFiller<8> {
+    static void copy(UChar* dest, const unsigned char* src)
+    {
+        dest[0] = src[0];
+        dest[1] = src[1];
+        dest[2] = src[2];
+        dest[3] = src[3];
+        dest[4] = src[4];
+        dest[5] = src[5];
+        dest[6] = src[6];
+        dest[7] = src[7];
+    }
+};
+
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
     UChar* characters;
     String result = String::createUninitialized(length, characters);
 
-    // Convert the string a fast way and simultaneously do an efficient check to see if it's all ASCII.
-    unsigned char ored = 0;
-    for (size_t i = 0; i < length; ++i) {
-        unsigned char c = bytes[i];
-        characters[i] = c;
-        ored |= c;
-    }
+    const unsigned char* src = reinterpret_cast<const unsigned char*>(bytes);
+    const unsigned char* end = reinterpret_cast<const unsigned char*>(bytes + length);
+    const unsigned char* alignedEnd = reinterpret_cast<const unsigned char*>(reinterpret_cast<ptrdiff_t>(end) & ~(sizeof(uintptr_t) - 1));
+    UChar* dest = characters;
 
-    if (!(ored & 0x80))
-        return result;
+    while (src < end) {
+        if (*src < 0x80) {
+            // Fast path for values < 0x80 (most Latin-1 text will be ASCII)
+            // Wait until we're at a properly aligned address, then read full CPU words.
+            if (!(reinterpret_cast<ptrdiff_t>(src) & (sizeof(uintptr_t) - 1))) {
+                while (src < alignedEnd) {
+                    uintptr_t chunk = *reinterpret_cast<const uintptr_t*>(src);
 
-    // Convert the slightly slower way when there are non-ASCII characters.
-    for (size_t i = 0; i < length; ++i) {
-        unsigned char c = bytes[i];
-        characters[i] = table[c];
+                    if (chunk & NonASCIIMask<sizeof(uintptr_t)>::value())
+                        goto useLookupTable;
+
+                    UCharByteFiller<sizeof(uintptr_t)>::copy(dest, src);
+
+                    src += sizeof(uintptr_t);
+                    dest += sizeof(uintptr_t);
+                }
+
+                if (src == end)
+                    break;
+            }
+            *dest = *src;
+        } else {
+useLookupTable:
+            *dest = table[*src];
+        }
+
+        ++src;
+        ++dest;
     }
 
     return result;
