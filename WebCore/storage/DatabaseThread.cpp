@@ -42,6 +42,7 @@ namespace WebCore {
 
 DatabaseThread::DatabaseThread()
     : m_threadID(0)
+    , m_databaseOfCurrentTask(0)
     , m_transactionClient(new SQLTransactionClient())
     , m_transactionCoordinator(new SQLTransactionCoordinator())
     , m_cleanupSync(0)
@@ -96,7 +97,10 @@ void* DatabaseThread::databaseThread()
 
     AutodrainedPool pool;
     while (OwnPtr<DatabaseTask> task = m_queue.waitForMessage()) {
+        ASSERT(!m_databaseOfCurrentTask);
+        m_databaseOfCurrentTask = task->database();
         task->performTask();
+        m_databaseOfCurrentTask = 0;
         pool.cycle();
     }
 

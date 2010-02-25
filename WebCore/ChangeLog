@@ -1,3 +1,16 @@
+2010-02-24  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Expose Database object of currently active task on the database thread
+        https://bugs.webkit.org/show_bug.cgi?id=35341
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/DatabaseThread.h:
+        (WebCore::DatabaseThread::getDatabaseOfCurrentTask):
+
 2010-02-24  Nicholas Young  <nicholas.young@nokia.com>
 
         Reviewed by Eric Carlson.
