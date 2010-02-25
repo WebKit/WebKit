@@ -1728,7 +1728,7 @@ WebFrameImpl* WebFrameImpl::fromFrameOwnerElement(Element* element)
         static_cast<HTMLFrameOwnerElement*>(element);
     return fromFrame(frameElement->contentFrame());
 }
-    
+
 WebViewImpl* WebFrameImpl::viewImpl() const
 {
     if (!m_frame)
@@ -1803,9 +1803,9 @@ void WebFrameImpl::didFail(const ResourceError& error, bool wasProvisional)
         client()->didFailLoad(this, webError);
 }
 
-void WebFrameImpl::setAllowsScrolling(bool flag)
+void WebFrameImpl::setCanHaveScrollbars(bool canHaveScrollbars)
 {
-    m_frame->view()->setCanHaveScrollbars(flag);
+    m_frame->view()->setCanHaveScrollbars(canHaveScrollbars);
 }
 
 void WebFrameImpl::registerPasswordListener(

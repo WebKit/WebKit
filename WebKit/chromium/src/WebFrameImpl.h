@@ -88,7 +88,7 @@ public:
     virtual WebFrame* findChildByExpression(const WebString&) const;
     virtual WebDocument document() const;
     virtual void forms(WebVector<WebFormElement>&) const;
-    virtual WebAnimationController* animationController(); 
+    virtual WebAnimationController* animationController();
     virtual WebSecurityOrigin securityOrigin() const;
     virtual void grantUniversalAccess();
     virtual NPObject* windowObject() const;
@@ -213,7 +213,7 @@ public:
     // Sets whether the WebFrameImpl allows its document to be scrolled.
     // If the parameter is true, allow the document to be scrolled.
     // Otherwise, disallow scrolling.
-    void setAllowsScrolling(bool);
+    void setCanHaveScrollbars(bool);
 
     // Returns the password autocomplete listener associated with the passed
     // user name input element, or 0 if none available.

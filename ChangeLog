@@ -1,3 +1,22 @@
+2010-02-24  Sam Kerner  <skerner@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose WebFrame::setCanHaveScrollbars().  This allows a view
+        which is being resized to not need scroll bars to ensure that
+        they are not drawn.
+
+        Existing function setAllowsScrolling() was renamed
+        setCanHaveScrollbars(), to be consistant with change 37159:
+        http://trac.webkit.org/changeset/37159
+
+        https://bugs.webkit.org/show_bug.cgi?id=35257
+
+        * WebKit/chromium/public/WebFrame.h:
+        * WebKit/chromium/src/ChromeClientImpl.cpp:
+        * WebKit/chromium/src/WebFrameImpl.cpp:
+        * WebKit/chromium/src/WebFrameImpl.h:
+
 2010-02-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

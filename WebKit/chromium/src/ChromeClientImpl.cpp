@@ -327,7 +327,7 @@ void ChromeClientImpl::setScrollbarsVisible(bool value)
     m_scrollbarsVisible = value;
     WebFrameImpl* web_frame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
     if (web_frame)
-        web_frame->setAllowsScrolling(value);
+        web_frame->setCanHaveScrollbars(value);
 }
 
 bool ChromeClientImpl::scrollbarsVisible()
