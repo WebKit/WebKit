@@ -105,6 +105,10 @@ public:
     int right() const { return x() + width(); }
     int bottom() const { return y() + height(); }
 
+    // NOTE: The result is rounded to integer values, and thus may be not the exact
+    // center point.
+    IntPoint center() const { return IntPoint(x() + width() / 2, y() + height() / 2); }
+
     void move(const IntSize& s) { m_location += s; } 
     void move(int dx, int dy) { m_location.move(dx, dy); } 
 

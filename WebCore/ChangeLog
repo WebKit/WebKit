@@ -1,3 +1,18 @@
+2010-02-24  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Add a convenient center() method to IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=35346
+
+        As it is a convenience method, and implemention is
+        based on FloatRect's one, patch does not provide a
+        layout test.
+
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::center):
+
 2010-02-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
