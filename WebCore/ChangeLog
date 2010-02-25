@@ -1,3 +1,14 @@
+2010-02-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Simple style cleanups.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::plugRemovedCallback):
+        (WebCore::plugAddedCallback):
+        (WebCore::PluginView::platformStart):
+
 2010-02-25  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Darin Adler.

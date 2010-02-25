@@ -753,12 +753,6 @@ static Display* getPluginDisplay()
 #endif
 }
 
-static gboolean
-plug_removed_cb(GtkSocket* socket, gpointer)
-{
-    return TRUE;
-}
-
 #if defined(XP_UNIX)
 static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
 {
@@ -797,7 +791,12 @@ static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
 }
 #endif
 
-void plugAddedCallback(GtkSocket* socket, PluginView* view)
+static gboolean plugRemovedCallback(GtkSocket* socket, gpointer)
+{
+    return TRUE;
+}
+
+static void plugAddedCallback(GtkSocket* socket, PluginView* view)
 {
     if (!socket || !view)
         return;
@@ -833,7 +832,7 @@ bool PluginView::platformStart()
             setPlatformWidget(gtk_socket_new());
             gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
             g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(plugAddedCallback), this);
-            g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
+            g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(plugRemovedCallback), NULL);
         } else
             setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformPageClient()->window, 0));
 #else
