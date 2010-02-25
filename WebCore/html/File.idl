@@ -30,6 +30,7 @@ module html {
         GenerateToJS
     ] File : Blob {
         readonly attribute DOMString name;
+        readonly attribute DOMString type;
 
         // FIXME: obsolete attributes. To be removed.
         readonly attribute DOMString fileName;

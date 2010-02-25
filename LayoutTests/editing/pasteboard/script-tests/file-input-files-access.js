@@ -27,6 +27,7 @@ function fileListShouldBe(fileListString, filesArray)
     for (var x = 0; x < filesArray.length; x++) {
         var fileValueString = fileListString + "[" + x + "]";
         shouldBeEqualToString(fileValueString + ".name", filesArray[x]['name']);
+        shouldBeEqualToString(fileValueString + ".type", filesArray[x]['type']);
         shouldBe(fileValueString + ".size", "" + filesArray[x]['size']);
 
         // FIXME: to be removed after legacy attributes are removed. 
@@ -80,12 +81,12 @@ function runTest()
 
     debug("Dragging a single (non-existant) file to a file input control:");
     testDraggingFiles([
-        { 'path': 'DRTFakeFile', 'name' : 'DRTFakeFile', 'size' : 0 }
+        { 'path': 'DRTFakeFile', 'name' : 'DRTFakeFile', 'size' : 0, 'type' : '' }
     ]);
 
     debug("Dragging a real file to a file input control:");
     testDraggingFiles([
-        { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476 }
+        { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476, 'type' : 'image/gif' }
     ]);
 
     // Directory dragging behavior is covered by
@@ -105,8 +106,8 @@ function runTest()
 
     debug("Dragging two files to a multi-file input control:");
     testDraggingFiles([
-        { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476 },
-        { 'path': 'resources/mozilla.gif', 'name' : 'mozilla.gif', 'size' : 2593 }
+        { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476, 'type' : 'image/gif' },
+        { 'path': 'resources/mozilla.gif', 'name' : 'mozilla.gif', 'size' : 2593, 'type' : 'image/gif' }
     ]);
 
     testOrderedDraggingWithDirectory();

@@ -40,6 +40,7 @@ public:
     }
 
     const String& name() const { return m_name; }
+    const String& type() const { return m_type; }
 
     // FIXME: obsolete attributes. To be removed.
     const String& fileName() const { return m_name; }
@@ -49,6 +50,7 @@ private:
     File(const String& path);
 
     String m_name;
+    String m_type;
 };
 
 } // namespace WebCore
