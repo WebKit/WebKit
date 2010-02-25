@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef MainResourceLoader_h
+#define MainResourceLoader_h
+
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include "SubstituteData.h"
@@ -107,3 +110,5 @@ namespace WebCore {
     };
 
 }
+
+#endif

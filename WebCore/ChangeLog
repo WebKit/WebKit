@@ -1,3 +1,12 @@
+2010-02-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add missing include guards
+
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/MainResourceLoader.h:
+
 2010-02-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
