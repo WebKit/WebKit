@@ -22,7 +22,7 @@
 #ifndef JSDOMWrapper_h
 #define JSDOMWrapper_h
 
-#include <JavaScriptCore/JSObject.h>
+#include <runtime/JSObject.h>
 
 namespace WebCore {
 

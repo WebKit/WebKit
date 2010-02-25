@@ -1,5 +1,16 @@
 2010-02-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Unreviewed build fix.
+
+        Fix gtk build.
+
+        Include JSC headers as runtime/ instead of JavaScriptCore/
+
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/ScriptWrappable.h:
+
+2010-02-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Cache JavaScript wrappers inline in DOM nodes
