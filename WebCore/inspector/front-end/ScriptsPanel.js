@@ -677,7 +677,7 @@ WebInspector.ScriptsPanel.prototype = {
         option.representedObject = script.resource || script;
         option.url = displayName;
         option.startingLine = script.startingLine;
-        option.text = script.resource ? displayName : String.sprintf("%s (%d - %d)", displayName, script.startingLine, script.startingLine + script.linesCount);
+        option.text = script.resource ? displayName : String.sprintf("%s:%d", displayName, script.startingLine);
 
         function optionCompare(a, b)
         {
