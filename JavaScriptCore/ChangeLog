@@ -1,3 +1,22 @@
+2010-02-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reverting to re-submit with better change log.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingNone.cpp:
+        (WTF::isMainThread):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::identifierByPthreadHandle):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::pthreadHandleForIdentifier):
+        (WTF::createThreadInternal):
+        (WTF::currentThread):
+        * wtf/ThreadingWin.cpp:
+        (WTF::threadMap):
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::threadHandleForIdentifier):
+        (WTF::createThreadInternal):
+
 2010-02-25  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.
