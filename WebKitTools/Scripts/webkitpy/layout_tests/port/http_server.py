@@ -40,6 +40,7 @@ import tempfile
 import time
 import urllib
 
+import factory
 import http_server_base
 
 
@@ -261,7 +262,9 @@ if '__main__' == __name__:
             # source of tests. Specifying port but no root does not seem
             # meaningful.
             raise 'Specifying port requires also a root.'
-        httpd = Lighttpd(tempfile.gettempdir(),
+        port_obj = factory.get()
+        httpd = Lighttpd(port_obj,
+                         tempfile.gettempdir(),
                          port=options.port,
                          root=options.root,
                          register_cygwin=options.register_cygwin,

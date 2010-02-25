@@ -134,10 +134,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
                             'apache2-httpd.conf')
 
     def _path_to_lighttpd(self):
-        return self._lighttp_path('bin', 'lighttp')
+        return self._lighttpd_path('bin', 'lighttpd')
 
     def _path_to_lighttpd_modules(self):
-        return self._lighttp_path('lib')
+        return self._lighttpd_path('lib')
 
     def _path_to_lighttpd_php(self):
         return self._lighttpd_path('bin', 'php-cgi')

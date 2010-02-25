@@ -1,3 +1,25 @@
+2010-02-23  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        When the run-chromium-webkit-tests code was landed and the code was
+        refactored into the 'port' package, I accidentally broke using
+        http_server.py or websocket_server.py as command-line scripts
+        (the constructors needed a port object they weren't getting). This
+        change fixes them so that --server start|stop actually works.
+
+        As a part of this, the two files need to be able to call port.get(),
+        but doing that is awkward from a file inside the package, so I moved
+        get() into factory.py and imported that into __init__.py so that
+        http_server.py and websocket_server.py can just import factory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35316
+
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-02-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by David Levin.

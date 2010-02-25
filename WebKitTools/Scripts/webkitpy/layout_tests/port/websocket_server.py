@@ -39,6 +39,7 @@ import tempfile
 import time
 import urllib
 
+import factory
 import http_server
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
@@ -296,7 +297,8 @@ if '__main__' == __name__:
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
-    pywebsocket = PyWebSocket(tempfile.gettempdir(), **kwds)
+    port_obj = factory.get()
+    pywebsocket = PyWebSocket(port_obj, tempfile.gettempdir(), **kwds)
 
     if 'start' == options.server:
         pywebsocket.start()
