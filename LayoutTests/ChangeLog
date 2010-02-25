@@ -1,5 +1,15 @@
 2010-02-24  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Anders Carlsson.
+
+        Keep this test’s behavior the same after r55203.
+
+        * fast/dom/script-tests/prototype-inheritance-2.js: Explicitly set the inner document’s body
+        display property to “none”. Before r55203, this happened as a side effect of parsing the
+        <frameset> tag.
+
+2010-02-24  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/7018611> innerHTML applies meta/link/title tags from a detached html element

@@ -205,6 +205,7 @@ styleContents += "@-webkit-keyframes fade { 0% { opacity: 0; } }\n"; // a WebKit
 htmlToAdd += "<style id='dummyStyle'>" + styleContents + "</style>";
 htmlToAdd += "<span id='styledSpan' style='clip: rect(0, 0, 1, 1); content: counter(dummy, square);'></span>";
 
+inner.document.body.style.display = "none";
 inner.document.body.innerHTML = htmlToAdd;
 
 var crawlStartPaths = [
