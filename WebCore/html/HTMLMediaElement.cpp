@@ -1235,7 +1235,7 @@ void HTMLMediaElement::setMuted(bool muted)
         m_muted = muted;
         // Avoid recursion when the player reports volume changes.
         if (!processingMediaPlayerCallback()) {
-            if (m_player && m_player->supportsMuting()) {
+            if (m_player) {
                 m_player->setMuted(m_muted);
                 if (renderer())
                     renderer()->updateFromElement();
@@ -1639,7 +1639,8 @@ void HTMLMediaElement::updateVolume()
         Page* page = document()->page();
         float volumeMultiplier = page ? page->mediaVolume() : 1;
     
-        m_player->setVolume(m_muted ? 0 : m_volume * volumeMultiplier);
+        m_player->setMuted(m_muted);
+        m_player->setVolume(m_volume * volumeMultiplier);
     }
     
     if (renderer())

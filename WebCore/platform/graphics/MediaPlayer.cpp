@@ -398,7 +398,9 @@ float MediaPlayer::volume() const
 void MediaPlayer::setVolume(float volume)
 {
     m_volume = volume;
-    m_private->setVolume(volume);   
+
+    if (m_private->supportsMuting() || !m_muted)
+        m_private->setVolume(volume);
 }
 
 bool MediaPlayer::muted() const
@@ -406,15 +408,14 @@ bool MediaPlayer::muted() const
     return m_muted;
 }
 
-bool MediaPlayer::supportsMuting() const
-{
-    return m_private->supportsMuting();
-}
-
 void MediaPlayer::setMuted(bool muted)
 {
     m_muted = muted;
-    m_private->setMuted(muted);
+
+    if (m_private->supportsMuting())
+        m_private->setMuted(muted);
+    else
+        m_private->setVolume(muted ? 0 : m_volume);
 }
 
 bool MediaPlayer::hasClosedCaptions() const

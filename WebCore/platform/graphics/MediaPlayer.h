@@ -184,7 +184,6 @@ public:
     float volume() const;
     void setVolume(float);
 
-    bool supportsMuting() const;
     bool muted() const;
     void setMuted(bool);
 

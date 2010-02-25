@@ -1,3 +1,20 @@
+2010-02-24  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        supportsMuting() should be an internal interface between MediaPlayer and MediaPlayerPrivate.
+        https://bugs.webkit.org/show_bug.cgi?id=35327
+
+        No new tests. Refactoring Only.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted): Do not check supportsMuting()
+        (WebCore::HTMLMediaElement::updateVolume): Set volume and muted
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVolume): Check supportsMuting()
+        (WebCore::MediaPlayer::setMuted): Check supportsMuting()
+        * platform/graphics/MediaPlayer.h: Remove supportsMuting()
+
 2010-02-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
