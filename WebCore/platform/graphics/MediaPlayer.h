@@ -32,6 +32,7 @@
 #include "MediaPlayerProxy.h"
 #endif
 
+#include "Document.h"
 #include "IntRect.h"
 #include "StringHash.h"
 #include <wtf/HashSet.h>
@@ -74,6 +75,9 @@ class TimeRanges;
 class MediaPlayerClient {
 public:
     virtual ~MediaPlayerClient() { }
+
+    // Get the document which the media player is owned by
+    virtual Document* mediaPlayerOwningDocument() { return 0; }
 
     // the network state has changed
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) { }

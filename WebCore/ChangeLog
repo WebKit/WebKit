@@ -1,3 +1,18 @@
+2010-02-24  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Add mediaPlayerOwningDocument() to MediaPlayerClient.
+        https://bugs.webkit.org/show_bug.cgi?id=35374
+
+        No new tests. These are interface changes only.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerOwningDocument): Implementation for media element.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerOwningDocument): New virtual method.
+
 2010-02-24  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
