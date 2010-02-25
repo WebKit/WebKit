@@ -127,6 +127,7 @@ ThreadIdentifier currentThread();
 bool isMainThread();
 int waitForThreadCompletion(ThreadIdentifier, void**);
 void detachThread(ThreadIdentifier);
+void* threadContext(ThreadIdentifier);
 
 #if USE(PTHREADS)
 typedef pthread_mutex_t PlatformMutex;

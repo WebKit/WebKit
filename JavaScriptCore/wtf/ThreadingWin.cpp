@@ -118,6 +118,11 @@ typedef struct tagTHREADNAME_INFO {
 } THREADNAME_INFO;
 #pragma pack(pop)
 
+typedef struct {
+    HANDLE handle;
+    void* context;
+} ThreadInfo;
+
 void initializeCurrentThreadInternal(const char* szThreadName)
 {
     THREADNAME_INFO info;
@@ -165,23 +170,32 @@ void initializeThreading()
     }
 }
 
-static HashMap<DWORD, HANDLE>& threadMap()
+static HashMap<DWORD, ThreadInfo>& threadMap()
 {
-    static HashMap<DWORD, HANDLE> map;
+    static HashMap<DWORD, ThreadInfo> map;
     return map;
 }
 
-static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle)
+static void storeThreadHandleByIdentifier(DWORD threadID, HANDLE threadHandle, void* context)
 {
     MutexLocker locker(threadMapMutex());
     ASSERT(!threadMap().contains(threadID));
-    threadMap().add(threadID, threadHandle);
+    ThreadInfo info;
+    info.handle = threadHandle;
+    info.context = context;
+    threadMap().add(threadID, info);
 }
 
 static HANDLE threadHandleForIdentifier(ThreadIdentifier id)
 {
     MutexLocker locker(threadMapMutex());
-    return threadMap().get(id);
+    return threadMap().get(id).handle;
+}
+
+static void* contextForIdentifier(ThreadIdentifier id)
+{
+    MutexLocker locker(threadMapMutex());
+    return threadMap().get(id).context;
 }
 
 static void clearThreadHandleForIdentifier(ThreadIdentifier id)
@@ -237,7 +251,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     }
 
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
-    storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
+    storeThreadHandleByIdentifier(threadIdentifier, threadHandle, data);
 
     return threadID;
 }
@@ -278,6 +292,11 @@ ThreadIdentifier currentThread()
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;
+}
+
+void* threadContext(ThreadIdentifier threadID)
+{
+    return contextForIdentifier(threadID);
 }
 
 Mutex::Mutex()
