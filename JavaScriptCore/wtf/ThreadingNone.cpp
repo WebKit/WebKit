@@ -41,6 +41,7 @@ int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
 ThreadIdentifier currentThread() { return ThreadIdentifier(); }
 bool isMainThread() { return true; }
+void* threadContext(ThreadIdentifier) { return 0; }
 
 Mutex::Mutex() { }
 Mutex::~Mutex() { }
