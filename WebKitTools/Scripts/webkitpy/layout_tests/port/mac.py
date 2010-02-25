@@ -66,7 +66,7 @@ class MacPort(base.Port):
         dirs.append(self._webkit_baseline_path('mac'))
         return dirs
 
-    def check_sys_deps(self):
+    def check_sys_deps(self, needs_http):
         if executive.run_command([self.script_path("build-dumprendertree")], return_exit_code=True) != 0:
             return False
 

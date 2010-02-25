@@ -52,7 +52,7 @@ class TestPort(base.Port):
     def baseline_search_path(self):
         return [self.baseline_path()]
 
-    def check_sys_deps(self):
+    def check_sys_deps(self, needs_http):
         return True
 
     def diff_image(self, actual_filename, expected_filename,

@@ -1,3 +1,18 @@
+2010-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix the function signature for check_sys_deps on the mac port, and
+        fix the ordering of port_obj.check_sys_deps() and
+        port_obj.start_helper() (helper needs to be started before we check
+        the system configuration).
+
+        http://bugs.webkit.org/show_bug.cgi?id=35367
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py:
+
 2010-02-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
