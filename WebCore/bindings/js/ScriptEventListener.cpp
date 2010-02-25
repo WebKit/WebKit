@@ -64,7 +64,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
     // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     if (Frame* frame = node->document()->frame()) {
         ScriptController* scriptController = frame->script();
-        if (!scriptController->canExecuteScripts())
+        if (!scriptController->canExecuteScripts(AboutToExecuteScript))
             return 0;
 
         if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
@@ -96,7 +96,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     String sourceURL;
     
     ScriptController* scriptController = frame->script();
-    if (!scriptController->canExecuteScripts())
+    if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
 
     if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {

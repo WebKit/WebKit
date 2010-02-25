@@ -2,6 +2,80 @@
 
         Reviewed by Darin Fisher.
 
+        [Chromium API] Disambiguate allowJavaScript from didNotAllowScript
+        https://bugs.webkit.org/show_bug.cgi?id=35205
+
+        For clients that want to show a user interface element when JavaScript
+        was blocked on a page, we need to disambiguate between querying the
+        client for whether JavaScript is enabled from actually failing to
+        execute some script.
+
+        This patch adds a new FrameLoaderClient callback for when WebCore would
+        like to execute JavaScript but fails to because JavaScript is disabled.
+
+        This patch also touches every client of canExecuteScripts so they can
+        indicate whether we should make this callback.  I was hoping there was
+        a better choke point, but my first two attempts were wrong in subtle
+        ways.  pkasting points out that this will be easy to screw up in the
+        future, so it's better to make all the clients be explicit.
+
+        * WebCore.PluginHostProcess.exp:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        (WebCore::ScriptController::executeScriptInWorld):
+        * bindings/js/ScriptController.h:
+        (WebCore::):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setJavaScriptPaused):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromNode):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        * bindings/v8/ScriptController.h:
+        (WebCore::):
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::evaluateScript):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::processToken):
+        * inspector/InspectorController.cpp:
+        (WebCore::canPassNodeToJavaScript):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isProcessingUserGesture):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectsInAllWorlds):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::didNotAllowScript):
+
+2010-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
         Add call to FrameLoaderClient::allowPlugins everywhere arePluginsEnabled is called
         https://bugs.webkit.org/show_bug.cgi?id=34997
 

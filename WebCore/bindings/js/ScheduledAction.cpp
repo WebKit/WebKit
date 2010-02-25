@@ -117,7 +117,7 @@ void ScheduledAction::execute(Document* document)
         return;
 
     RefPtr<Frame> frame = window->impl()->frame();
-    if (!frame || !frame->script()->canExecuteScripts())
+    if (!frame || !frame->script()->canExecuteScripts(AboutToExecuteScript))
         return;
 
     frame->script()->setProcessingTimerCallback(true);

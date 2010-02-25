@@ -54,7 +54,7 @@ ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
     Frame* frame = document->frame();
     if (!frame)
         return 0;
-    if (!frame->script()->canExecuteScripts())
+    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return 0;
     return frame->script()->globalObject(world)->globalExec();
 }

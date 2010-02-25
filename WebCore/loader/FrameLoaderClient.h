@@ -260,6 +260,13 @@ namespace WebCore {
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowImages(bool enabledPerSettings) { return enabledPerSettings; }
+
+        // This callback notifies the client that the frame was about to run
+        // JavaScript but did not because allowJavaScript returned false. We
+        // have a separate callback here because there are a number of places
+        // that need to know if JavaScript is enabled but are not necessarily
+        // preparing to execute script.
+        virtual void didNotAllowScript() { }
     };
 
 } // namespace WebCore

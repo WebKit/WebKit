@@ -378,7 +378,7 @@ void ScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 {
     ASSERT_ARG(frame, frame);
 
-    if (!frame->script()->canExecuteScripts())
+    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     frame->script()->setPaused(paused);

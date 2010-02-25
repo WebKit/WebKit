@@ -230,7 +230,7 @@ static bool canPassNodeToJavaScript(Node* node)
     if (!node)
         return false;
     Frame* frame = node->document()->frame();
-    return frame && frame->script()->canExecuteScripts();
+    return frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript);
 }
 
 void InspectorController::inspect(Node* node)

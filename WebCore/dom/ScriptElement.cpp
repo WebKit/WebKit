@@ -177,7 +177,7 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
         return;
 
     if (Frame* frame = m_element->document()->frame()) {
-        if (!frame->script()->canExecuteScripts())
+        if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
             return;
 
         m_evaluated = true;

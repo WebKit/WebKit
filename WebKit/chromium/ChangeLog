@@ -1,3 +1,22 @@
+2010-02-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium API] Disambiguate allowJavaScript from didNotAllowScript
+        https://bugs.webkit.org/show_bug.cgi?id=35205
+
+        Plumb didNotAllowScript through Chromium's WebKit API.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didNotAllowScript):
+        * src/DebuggerAgentImpl.cpp:
+        (WebKit::DebuggerAgentImpl::createUtilityContext):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didNotAllowScript):
+        * src/FrameLoaderClientImpl.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::bindToWindowObject):
+
 2010-02-23  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

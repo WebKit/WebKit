@@ -389,7 +389,7 @@ NPObject* ScriptController::windowScriptNPObject()
     if (m_windowScriptNPObject)
         return m_windowScriptNPObject;
 
-    if (canExecuteScripts()) {
+    if (canExecuteScripts(NotAboutToExecuteScript)) {
         // JavaScript is enabled, so there is a JavaScript window object.
         // Return an NPObject bound to the window object.
         m_windowScriptNPObject = createScriptObject(m_frame);
@@ -406,7 +406,7 @@ NPObject* ScriptController::windowScriptNPObject()
 NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
 {
     // Can't create NPObjects when JavaScript is disabled.
-    if (!canExecuteScripts())
+    if (!canExecuteScripts(NotAboutToExecuteScript))
         return createNoScriptObject();
 
     v8::HandleScope handleScope;

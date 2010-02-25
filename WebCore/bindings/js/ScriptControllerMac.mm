@@ -107,7 +107,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
 
 WebScriptObject* ScriptController::windowScriptObject()
 {
-    if (!canExecuteScripts())
+    if (!canExecuteScripts(NotAboutToExecuteScript))
         return 0;
 
     if (!m_windowScriptObject) {

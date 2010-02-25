@@ -95,7 +95,7 @@ void DebuggerAgentImpl::debuggerOutput(const String& command)
 void DebuggerAgentImpl::createUtilityContext(Frame* frame, v8::Persistent<v8::Context>* context)
 {
     v8::HandleScope scope;
-    bool canExecuteScripts = frame->script()->canExecuteScripts();
+    bool canExecuteScripts = frame->script()->canExecuteScripts(WebCore::NotAboutToExecuteScript);
 
     // Set up the DOM window as the prototype of the new global object.
     v8::Handle<v8::Context> windowContext = V8Proxy::context(frame);

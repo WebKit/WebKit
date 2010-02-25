@@ -62,6 +62,11 @@ class XSSAuditor;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
 
+enum ReasonForCallingCanExecuteScripts {
+    AboutToExecuteScript,
+    NotAboutToExecuteScript
+};
+
 class ScriptController {
     friend class ScriptCachedFrameData;
     typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::ProtectedPtr<JSDOMWindowShell> > ShellMap;
@@ -110,7 +115,7 @@ public:
     bool processingUserGesture(DOMWrapperWorld*) const;
     bool anyPageIsProcessingUserGesture() const;
 
-    bool canExecuteScripts();
+    bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
     // Debugger can be 0 to detach any existing Debugger.
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window shells.

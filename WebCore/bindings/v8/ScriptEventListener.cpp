@@ -56,7 +56,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
 
     if (Frame* frame = node->document()->frame()) {
         ScriptController* scriptController = frame->script();
-        if (!scriptController->canExecuteScripts())
+        if (!scriptController->canExecuteScripts(AboutToExecuteScript))
             return 0;
 
         if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
@@ -89,7 +89,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     String sourceURL;
 
     ScriptController* scriptController = frame->script();
-    if (!scriptController->canExecuteScripts())
+    if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
 
     if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {

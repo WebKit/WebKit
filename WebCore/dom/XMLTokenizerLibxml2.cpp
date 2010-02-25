@@ -786,7 +786,7 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
     }
 
     ScriptController* jsProxy = m_doc->frame() ? m_doc->frame()->script() : 0;
-    if (jsProxy && m_doc->frame()->script()->canExecuteScripts())
+    if (jsProxy && m_doc->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
         jsProxy->setEventHandlerLineNumber(lineNumber());
 
     handleElementAttributes(newElement.get(), libxmlAttributes, nb_attributes, ec, m_scriptingPermission);

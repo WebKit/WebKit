@@ -252,6 +252,9 @@ public:
     // Controls whether scripts are allowed to execute for this frame.
     virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 
+    // Notifies the client that the frame would have executed script if script were enabled.
+    virtual void didNotAllowScript(WebFrame*) { }
+
     // Script in the page tried to allocate too much memory.
     virtual void didExhaustMemoryAvailableForScript(WebFrame*) { }
 

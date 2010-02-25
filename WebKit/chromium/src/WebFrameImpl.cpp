@@ -596,7 +596,7 @@ NPObject* WebFrameImpl::windowObject() const
 void WebFrameImpl::bindToWindowObject(const WebString& name, NPObject* object)
 {
     ASSERT(m_frame);
-    if (!m_frame || !m_frame->script()->canExecuteScripts())
+    if (!m_frame || !m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     String key = name;
