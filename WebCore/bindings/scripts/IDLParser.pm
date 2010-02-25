@@ -64,7 +64,14 @@ sub Parse
     $parentsOnly = shift;
 
     if (!$preprocessor) {
-        $preprocessor = "/usr/bin/gcc -E -P -x c++";
+        require Config;
+        my $gccLocation = "";
+        if (($Config::Config{'osname'}) =~ /solaris/i) {
+            $gccLocation = "/usr/sfw/bin/gcc";
+        } else {
+            $gccLocation = "/usr/bin/gcc";
+        }
+        $preprocessor = $gccLocation . " -E -P -x c++";
     }
 
     if (!$defines) {

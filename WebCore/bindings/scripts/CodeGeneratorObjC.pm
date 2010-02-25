@@ -222,7 +222,13 @@ sub ReadPublicInterfaces
     %publicInterfaces = ();
 
     my $fileName = "WebCore/bindings/objc/PublicDOMInterfaces.h";
-    open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "objective-c", 
+    my $gccLocation = "";
+    if (($Config::Config{'osname'}) =~ /solaris/i) {
+        $gccLocation = "/usr/sfw/bin/gcc";
+    } else {
+        $gccLocation = "/usr/bin/gcc";
+    }
+    open FILE, "-|", $gccLocation, "-E", "-P", "-x", "objective-c",
         (map { "-D$_" } split(/ +/, $defines)), "-DOBJC_CODE_GENERATION", $fileName or die "Could not open $fileName";
     my @documentContent = <FILE>;
     close FILE;

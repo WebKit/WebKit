@@ -47,7 +47,14 @@ my %tags = ();
 my %attrs = ();
 my %parameters = ();
 my $extraDefines = 0;
-my $preprocessor = "/usr/bin/gcc -E -P -x c++";
+require Config;
+my $gccLocation = "";
+if (($Config::Config{'osname'}) =~ /solaris/i) {
+    $gccLocation = "/usr/sfw/bin/gcc";
+} else {
+    $gccLocation = "/usr/bin/gcc";
+}
+my $preprocessor = $gccLocation . " -E -P -x c++";
 
 GetOptions(
     'tags=s' => \$tagsFile, 
