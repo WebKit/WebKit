@@ -215,6 +215,19 @@ WebInspector.ConsoleView.prototype = {
         this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     },
 
+    _scheduleScrollIntoView: function()
+    {
+        if (this._scrollIntoViewTimer)
+            return;
+
+        function scrollIntoView()
+        {
+            this.promptElement.scrollIntoView(false);
+            delete this._scrollIntoViewTimer;
+        }
+        this._scrollIntoViewTimer = setTimeout(scrollIntoView.bind(this), 20);
+    },
+
     addMessage: function(msg)
     {
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
@@ -256,7 +269,7 @@ WebInspector.ConsoleView.prototype = {
             this.currentGroup.addMessage(msg);
         }
 
-        this.promptElement.scrollIntoView(false);
+        this._scheduleScrollIntoView();
     },
 
     updateMessageRepeatCount: function(count)

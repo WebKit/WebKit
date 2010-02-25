@@ -1,3 +1,16 @@
+2010-02-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Javascript console should not attempt to scroll to end of console if console is not visible
+
+        https://bugs.webkit.org/show_bug.cgi?id=22992
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView.scrollIntoView):
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView):
+        (WebInspector.ConsoleView.prototype.addMessage):
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Qt and Gtk build fixes.
