@@ -1,3 +1,12 @@
+2010-02-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Unskip a bunch of (AFAICT) non-flakey HTTP tests that we currently
+        pass.
+
+        * platform/gtk/Skipped:
+
 2010-02-24  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Darin Adler.
