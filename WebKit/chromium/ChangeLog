@@ -1,3 +1,15 @@
+2010-02-24  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add a missing WebString.h include.
+        https://bugs.webkit.org/show_bug.cgi?id=35360
+
+        This is required since some of the methods have implementations that
+        return a WebString.
+
+        * public/WebCookieJar.h:
+
 2010-02-24  Jay Campan  <jcampan@google.com>
 
         Reviewed by David Levin.

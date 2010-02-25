@@ -31,8 +31,9 @@
 #ifndef WebCookieJar_h
 #define WebCookieJar_h
 
+#include "WebString.h"
+
 namespace WebKit {
-class WebString;
 class WebURL;
 struct WebCookie;
 template <typename T> class WebVector;
