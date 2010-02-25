@@ -37,8 +37,6 @@
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
 #include "Notification.h"
-#include "SVGElementInstance.h"
-#include "SVGPathSeg.h"
 #include "ScriptController.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
@@ -59,7 +57,6 @@
 #include "V8NodeList.h"
 #include "V8Notification.h"
 #include "V8Proxy.h"
-#include "V8SVGElementInstance.h"
 #include "V8SharedWorker.h"
 #include "V8SharedWorkerContext.h"
 #include "V8StyleSheet.h"
@@ -72,6 +69,12 @@
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
+
+#if ENABLE(SVG)
+#include "SVGElementInstance.h"
+#include "SVGPathSeg.h"
+#include "V8SVGElementInstance.h"
+#endif
 
 #include <algorithm>
 #include <utility>

@@ -54,10 +54,13 @@
 #include "V8Index.h"
 #include "V8IsolatedContext.h"
 #include "V8RangeException.h"
-#include "V8SVGException.h"
 #include "V8XMLHttpRequestException.h"
 #include "V8XPathException.h"
 #include "WorkerContextExecutionProxy.h"
+
+#if ENABLE(SVG)
+#include "V8SVGException.h"
+#endif
 
 #include <algorithm>
 #include <stdio.h>

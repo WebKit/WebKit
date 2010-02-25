@@ -33,9 +33,12 @@
 
 #include "V8CSSPrimitiveValue.h"
 #include "V8CSSValueList.h"
+#include "V8WebKitCSSTransformValue.h"
+
+#if ENABLE(SVG)
 #include "V8SVGColor.h"
 #include "V8SVGPaint.h"
-#include "V8WebKitCSSTransformValue.h"
+#endif
 
 namespace WebCore {
 

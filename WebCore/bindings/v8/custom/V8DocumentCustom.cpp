@@ -46,10 +46,13 @@
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
-#include "V8SVGDocument.h"
 #include "V8WebGLRenderingContext.h"
 #include "V8XPathNSResolver.h"
 #include "V8XPathResult.h"
+
+#if ENABLE(SVG)
+#include "V8SVGDocument.h"
+#endif
 
 #include <wtf/RefPtr.h>
 

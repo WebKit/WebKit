@@ -48,7 +48,6 @@
 #include "V8PopStateEvent.h"
 #include "V8ProgressEvent.h"
 #include "V8Proxy.h"
-#include "V8SVGZoomEvent.h"
 #include "V8StorageEvent.h"
 #include "V8TextEvent.h"
 #include "V8TouchEvent.h"
@@ -57,6 +56,10 @@
 #include "V8WebKitTransitionEvent.h"
 #include "V8WheelEvent.h"
 #include "V8XMLHttpRequestProgressEvent.h"
+
+#if ENABLE(SVG)
+#include "V8SVGZoomEvent.h"
+#endif
 
 namespace WebCore {
 

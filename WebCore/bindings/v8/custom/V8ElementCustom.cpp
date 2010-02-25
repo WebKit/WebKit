@@ -45,7 +45,10 @@
 #include "V8BindingState.h"
 #include "V8HTMLElement.h"
 #include "V8Proxy.h"
+
+#if ENABLE(SVG)
 #include "V8SVGElement.h"
+#endif
 
 #include <wtf/RefPtr.h>
 
