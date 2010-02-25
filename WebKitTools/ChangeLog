@@ -1,3 +1,15 @@
+2010-02-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QtLauncher has a border when running on QGraphicsView mode
+        https://bugs.webkit.org/show_bug.cgi?id=35352
+
+        Fix 2-pixels frame on each border of QtLauncher when running on QGraphicsView mode.
+
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+
 2010-02-23  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by David Levin.
