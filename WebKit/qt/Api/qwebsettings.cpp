@@ -158,6 +158,13 @@ void QWebSettingsPrivate::apply()
 
         settings->setAcceleratedCompositingEnabled(value);
 #endif
+#if ENABLE(3D_CANVAS)
+        value = attributes.value(QWebSettings::WebGLEnabled,
+                                 global->attributes.value(QWebSettings::WebGLEnabled));
+
+        settings->setWebGLEnabled(value);
+#endif
+ 
         value = attributes.value(QWebSettings::JavascriptCanOpenWindows,
                                       global->attributes.value(QWebSettings::JavascriptCanOpenWindows));
         settings->setJavaScriptCanOpenWindowsAutomatically(value);
@@ -401,6 +408,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, false);
+    d->attributes.insert(QWebSettings::WebGLEnabled, false);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
 }

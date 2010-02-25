@@ -117,6 +117,7 @@ protected slots:
 
     void setTouchMocking(bool on);
     void toggleAcceleratedCompositing(bool toggle);
+    void toggleWebGL(bool toggle);
     void initializeView(bool useGraphicsView = false);
 
 public slots:
@@ -463,6 +464,11 @@ void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
     page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, toggle);
 }
 
+void LauncherWindow::toggleWebGL(bool toggle)
+{
+    page()->settings()->setAttribute(QWebSettings::WebGLEnabled, toggle);
+}
+
 void LauncherWindow::initializeView(bool useGraphicsView)
 {
     delete m_view;
@@ -579,6 +585,10 @@ void LauncherWindow::setupUI()
     QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
     toggleGraphicsView->setCheckable(true);
     toggleGraphicsView->setChecked(false);
+
+    QAction* toggleWebGL = toolsMenu->addAction("Toggle WebGL", this, SLOT(toggleWebGL(bool)));
+    toggleWebGL->setCheckable(true);
+    toggleWebGL->setChecked(false);
 
     QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
     toggleAcceleratedCompositing->setCheckable(true);

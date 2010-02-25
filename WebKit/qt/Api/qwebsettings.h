@@ -70,7 +70,8 @@ public:
         LocalContentCanAccessFileUrls,
         DnsPrefetchEnabled,
         XSSAuditorEnabled,
-        AcceleratedCompositingEnabled
+        AcceleratedCompositingEnabled,
+        WebGLEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

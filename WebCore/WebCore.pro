@@ -2688,6 +2688,87 @@ SOURCES += \
 }
 }
 
+contains(DEFINES, ENABLE_3D_CANVAS=1) {
+QT += opengl
+HEADERS += \
+	bindings/js/JSWebGLArrayBufferConstructor.h \
+	bindings/js/JSWebGLArrayHelper.h \
+	bindings/js/JSWebGLByteArrayConstructor.h \
+	bindings/js/JSWebGLFloatArrayConstructor.h \
+	bindings/js/JSWebGLIntArrayConstructor.h \
+	bindings/js/JSWebGLShortArrayConstructor.h \
+	bindings/js/JSWebGLUnsignedByteArrayConstructor.h \
+	bindings/js/JSWebGLUnsignedIntArrayConstructor.h \
+	bindings/js/JSWebGLUnsignedShortArrayConstructor.h \
+	html/canvas/CanvasContextAttributes.h \
+	html/canvas/CanvasObject.h \
+	html/canvas/WebGLActiveInfo.h \
+	html/canvas/WebGLArrayBuffer.h \
+	html/canvas/WebGLArray.h \
+	html/canvas/WebGLBuffer.h \
+	html/canvas/WebGLByteArray.h \
+	html/canvas/WebGLContextAttributes.h \
+	html/canvas/WebGLFloatArray.h \
+	html/canvas/WebGLFramebuffer.h \
+	html/canvas/WebGLGetInfo.h \
+	html/canvas/WebGLIntArray.h \
+	html/canvas/WebGLProgram.h \
+	html/canvas/WebGLRenderbuffer.h \
+	html/canvas/WebGLRenderingContext.h \
+	html/canvas/WebGLShader.h \
+	html/canvas/WebGLShortArray.h \
+	html/canvas/WebGLTexture.h \
+	html/canvas/WebGLUniformLocation.h \
+	html/canvas/WebGLUnsignedByteArray.h \
+	html/canvas/WebGLUnsignedIntArray.h \
+	html/canvas/WebGLUnsignedShortArray.h \
+    platform/graphics/GraphicsContext3D.h 
+
+SOURCES += \
+	bindings/js/JSWebGLArrayBufferConstructor.cpp \
+	bindings/js/JSWebGLArrayCustom.cpp \
+	bindings/js/JSWebGLByteArrayConstructor.cpp \
+	bindings/js/JSWebGLByteArrayCustom.cpp \
+	bindings/js/JSWebGLFloatArrayConstructor.cpp \
+	bindings/js/JSWebGLFloatArrayCustom.cpp \
+	bindings/js/JSWebGLIntArrayConstructor.cpp \
+	bindings/js/JSWebGLIntArrayCustom.cpp \
+	bindings/js/JSWebGLRenderingContextCustom.cpp \
+	bindings/js/JSWebGLShortArrayConstructor.cpp \
+	bindings/js/JSWebGLShortArrayCustom.cpp \
+	bindings/js/JSWebGLUnsignedByteArrayConstructor.cpp \
+	bindings/js/JSWebGLUnsignedByteArrayCustom.cpp \
+	bindings/js/JSWebGLUnsignedIntArrayConstructor.cpp \
+	bindings/js/JSWebGLUnsignedIntArrayCustom.cpp \
+	bindings/js/JSWebGLUnsignedShortArrayConstructor.cpp \
+	bindings/js/JSWebGLUnsignedShortArrayCustom.cpp \
+	html/canvas/CanvasContextAttributes.cpp \
+    html/canvas/CanvasObject.cpp \
+	html/canvas/WebGLArrayBuffer.cpp \
+	html/canvas/WebGLArray.cpp \
+	html/canvas/WebGLBuffer.cpp \
+	html/canvas/WebGLByteArray.cpp \
+	html/canvas/WebGLContextAttributes.cpp \
+	html/canvas/WebGLFloatArray.cpp \
+	html/canvas/WebGLFramebuffer.cpp \
+	html/canvas/WebGLGetInfo.cpp \
+	html/canvas/WebGLIntArray.cpp \
+	html/canvas/WebGLProgram.cpp \
+	html/canvas/WebGLRenderbuffer.cpp \
+	html/canvas/WebGLRenderingContext.cpp \
+	html/canvas/WebGLShader.cpp \
+	html/canvas/WebGLShortArray.cpp \
+	html/canvas/WebGLTexture.cpp \
+	html/canvas/WebGLUniformLocation.cpp \
+	html/canvas/WebGLUnsignedByteArray.cpp \
+	html/canvas/WebGLUnsignedIntArray.cpp \
+	html/canvas/WebGLUnsignedShortArray.cpp \
+    platform/graphics/GraphicsContext3D.cpp \
+    platform/graphics/qt/GraphicsContext3DQt.cpp \
+
+}
+
+
 include($$PWD/../WebKit/qt/Api/headers.pri)
 include(../include/QtWebKit/classheaders.pri)
 HEADERS += $$WEBKIT_API_HEADERS

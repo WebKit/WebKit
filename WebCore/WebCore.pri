@@ -287,8 +287,17 @@ IDL_BINDINGS += \
     html/canvas/CanvasPattern.idl \
     html/canvas/CanvasRenderingContext.idl \
     html/canvas/CanvasRenderingContext2D.idl \
+    html/canvas/WebGLActiveInfo.idl \
+    html/canvas/WebGLBuffer.idl \
+    html/canvas/WebGLContextAttributes.idl \
+    html/canvas/WebGLFramebuffer.idl \
+    html/canvas/WebGLProgram.idl \
+    html/canvas/WebGLRenderbuffer.idl \
     html/canvas/WebGLRenderingContext.idl \
+    html/canvas/WebGLShader.idl \
     html/canvas/WebGLShortArray.idl \
+    html/canvas/WebGLTexture.idl \
+    html/canvas/WebGLUniformLocation.idl \
     html/canvas/WebGLUnsignedByteArray.idl \
     html/canvas/WebGLUnsignedIntArray.idl \
     html/canvas/WebGLUnsignedShortArray.idl \
