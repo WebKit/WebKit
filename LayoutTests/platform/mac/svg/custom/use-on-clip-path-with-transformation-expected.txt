@@ -1,0 +1,12 @@
+KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [bounding box mode=1] [path=M0.50,0.36 L0.64,0.50 L0.50,0.64 L0.36,0.50 Z]]]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 Z"]
+      RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderSVGContainer {use} at (0,0) size 2x2 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.50,-0.21)}]
+          RenderSVGContainer {g} at (0,0) size 2x3 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.40,0.40)}]
+            RenderPath {rect} at (0,0) size 2x3 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 Z"]
+    RenderPath {rect} at (107,107) size 86x86 [fill={[type=SOLID] [color=#008000]}] [clip path="clip"] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00 Z"]

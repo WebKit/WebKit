@@ -1,3 +1,21 @@
+2010-02-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Use-element doesn't transform clipPath
+        https://bugs.webkit.org/show_bug.cgi?id=35375
+
+        If the use element is a child of clipPath, any settings on x, y or transform does not
+        transform the clipPath it references.
+        The use-element just misses this transformation in toClipPath.
+
+        Test: svg/custom/use-on-clip-path-with-transformation.svg
+
+        * platform/graphics/cairo/PathCairo.cpp: Gtk port translated the path to the wrong direction.
+        (WebCore::Path::translate):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::toClipPath):
+
 2010-02-25  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.

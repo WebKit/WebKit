@@ -89,7 +89,7 @@ bool Path::hasCurrentPoint() const
 void Path::translate(const FloatSize& p)
 {
     cairo_t* cr = platformPath()->m_cr;
-    cairo_translate(cr, p.width(), p.height());
+    cairo_translate(cr, -p.width(), -p.height());
 }
 
 void Path::moveTo(const FloatPoint& p)
