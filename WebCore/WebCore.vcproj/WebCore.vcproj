@@ -35968,6 +35968,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDOMWrapper.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMWindowShell.cpp"
 					>
 					<FileConfiguration
@@ -38094,6 +38098,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSNodeCustom.h"
+					>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSNodeFilterCondition.cpp"

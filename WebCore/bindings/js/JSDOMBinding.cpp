@@ -80,17 +80,6 @@ using namespace HTMLNames;
 typedef Document::JSWrapperCache JSWrapperCache;
 typedef Document::JSWrapperCacheMap JSWrapperCacheMap;
 
-inline JSWrapperCache* Document::getWrapperCache(DOMWrapperWorld* world)
-{
-    if (world->isNormal()) {
-        if (JSWrapperCache* wrapperCache = m_normalWorldWrapperCache)
-            return wrapperCache;
-        ASSERT(!m_wrapperCacheMap.contains(world));
-    } else if (JSWrapperCache* wrapperCache = m_wrapperCacheMap.get(world))
-        return wrapperCache;
-    return createWrapperCache(world);
-}
-
 // For debugging, keep a set of wrappers currently cached, and check that
 // all are uncached before they are destroyed. This helps us catch bugs like:
 //     - wrappers being deleted without being removed from the cache
@@ -221,11 +210,6 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-static inline DOMObjectWrapperMap& DOMObjectWrapperMapFor(JSC::ExecState* exec)
-{
-    return currentWorld(exec)->m_wrappers;
-}
-
 bool hasCachedDOMObjectWrapperUnchecked(JSGlobalData* globalData, void* objectHandle)
 {
     for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
@@ -246,13 +230,13 @@ bool hasCachedDOMObjectWrapper(JSGlobalData* globalData, void* objectHandle)
 
 DOMObject* getCachedDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle) 
 {
-    return DOMObjectWrapperMapFor(exec).get(objectHandle);
+    return domObjectWrapperMapFor(exec).get(objectHandle);
 }
 
 void cacheDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle, DOMObject* wrapper) 
 {
     willCacheWrapper(wrapper);
-    DOMObjectWrapperMapFor(exec).set(objectHandle, wrapper);
+    domObjectWrapperMapFor(exec).set(objectHandle, wrapper);
 }
 
 bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
@@ -266,13 +250,6 @@ bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
             return true;
     }
     return false;
-}
-
-JSNode* getCachedDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node)
-{
-    if (document)
-        return document->getWrapperCache(currentWorld(exec))->get(node);
-    return static_cast<JSNode*>(DOMObjectWrapperMapFor(exec).get(node));
 }
 
 void forgetDOMObject(DOMObject* wrapper, void* objectHandle)
@@ -299,6 +276,8 @@ void forgetDOMObject(DOMObject* wrapper, void* objectHandle)
 
 void forgetDOMNode(JSNode* wrapper, Node* node, Document* document)
 {
+    node->clearWrapper(wrapper);
+
     if (!document) {
         forgetDOMObject(wrapper, node);
         return;
@@ -316,13 +295,15 @@ void forgetDOMNode(JSNode* wrapper, Node* node, Document* document)
 
 void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, JSNode* wrapper)
 {
-    if (!document) {
-        willCacheWrapper(wrapper);
-        DOMObjectWrapperMapFor(exec).set(node, wrapper);
-        return;
-    }
     willCacheWrapper(wrapper);
-    document->getWrapperCache(currentWorld(exec))->set(node, wrapper);
+
+    if (!document)
+        domObjectWrapperMapFor(exec).set(node, wrapper);
+    else
+        document->getWrapperCache(currentWorld(exec))->set(node, wrapper);
+
+    if (currentWorld(exec)->isNormal())
+        node->setWrapper(wrapper);
 }
 
 void forgetAllDOMNodesForDocument(Document* document)

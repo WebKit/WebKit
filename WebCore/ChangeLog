@@ -1,3 +1,61 @@
+2010-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cache JavaScript wrappers inline in DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=35226
+
+        <rdar://problem/7664202>
+        
+        7.4% speedup on Dromaeo DOM Core tests.
+        2.3% speedup on Hixie DOM Core tests.
+
+        This fixes the following things from the last attempt:
+        - Now builds in both debug and release and passes all tests
+        - Properly use a WeakGCPtr, not just a raw pointer, in ScriptWrappable
+        - Properly look in the appropriate per-document or per-world map
+        - Added an assert that would have caught any of the problems I found
+        - Handle clearing the inline cache properly in all cases
+        
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::cacheDOMObjectWrapper): Adjust for name changes.
+        (WebCore::forgetDOMNode): Clear wrapper pointer.
+        (WebCore::cacheDOMNodeWrapper): Cache inline too if caching for normal world.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::Document::getWrapperCache): Inlined.
+        (WebCore::domObjectWrapperMapFor): Renamed to start with lowercase. Moved to header to inline.
+        * bindings/js/JSDOMWrapper.h: Added.
+        (WebCore::DOMObject::DOMObject): Factored this out of JSDOMBinding.h to avoid include
+        cycle. I think the class should be renamed, I picked a forward-looking header name because
+        we already have a DOMObject.h
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline): Renamed version of original createWrapper.
+        (WebCore::createWrapper): Call createWrapperInline. Out-of-line version.
+        (WebCore::toJSNewlyCreated): Call createWrapperInline instead of createWrapper.
+        * bindings/js/JSNodeCustom.h: Added.
+        (WebCore::getCachedDOMNodeWrapper): Moved from JSDOMBinding.cpp and moved here,
+        so it could inline everywhere without creating an include cycle. Consider inline
+        cache.
+        (WebCore::toJS): Moved to header to inline.
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::ScriptWrappable): Implement this in the obvious
+        way for JavaScriptCore. (Using a WeakGCPtr).
+        (WebCore::ScriptWrappable::wrapper):
+        (WebCore::ScriptWrappable::setWrapper):
+        (WebCore::ScriptWrappable::clearWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm: Include CustomHeader heaaders
+        in the header, not just the impl file, so they can add inlining.
+        * dom/Node.idl: Add CustomHeader directive.
+        
+        Add new files to build.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+
 2010-02-24  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.

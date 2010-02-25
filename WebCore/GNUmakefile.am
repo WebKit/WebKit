@@ -380,6 +380,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWindowCustom.h \
 	WebCore/bindings/js/JSDOMWindowShell.cpp \
 	WebCore/bindings/js/JSDOMWindowShell.h \
+	WebCore/bindings/js/JSDOMWrapper.h \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDocumentFragmentCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
@@ -437,6 +438,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	WebCore/bindings/js/JSNavigatorCustom.cpp \
 	WebCore/bindings/js/JSNodeCustom.cpp \
+	WebCore/bindings/js/JSNodeCustom.h \
 	WebCore/bindings/js/JSNodeFilterCondition.cpp \
 	WebCore/bindings/js/JSNodeFilterCondition.h \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \

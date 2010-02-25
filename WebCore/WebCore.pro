@@ -1018,6 +1018,7 @@ HEADERS += \
     bindings/js/JSDOMWindowBase.h \
     bindings/js/JSDOMWindowCustom.h \
     bindings/js/JSDOMWindowShell.h \
+    bindings/js/JSDOMWrapper.h \
     bindings/js/JSEventListener.h \
     bindings/js/JSEventSourceConstructor.h \
     bindings/js/JSEventTarget.h \
@@ -1031,6 +1032,7 @@ HEADERS += \
     bindings/js/JSLazyEventListener.h \
     bindings/js/JSLocationCustom.h \
     bindings/js/JSMessageChannelConstructor.h \
+    bindings/js/JSNodeCustom.h \
     bindings/js/JSNodeFilterCondition.h \
     bindings/js/JSOptionConstructor.h \
     bindings/js/JSPluginElementFunctions.h \
