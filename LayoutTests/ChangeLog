@@ -1,5 +1,11 @@
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Tiger build fix.
+
+        * java/Makefile: I can't get $(or ...) work on Tiger, so changed to use a single condition.
+
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=35394
