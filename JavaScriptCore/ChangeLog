@@ -1,3 +1,40 @@
+2010-02-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Race condition in JSPropertyNameIterator and Structure destruction
+        https://bugs.webkit.org/show_bug.cgi?id=35398
+
+        JSPropertyNameIterator and Structure have a cyclic dependency that they
+        manage by clearing the appropriate reference in each other during their
+        destruction.  However if the Structure is destroyed while the 
+        JSPropertyNameIterator is dead but not yet finalized the Structures
+        WeakGCPtr will return null, and so prevent Structure from clearing
+        the m_cachedStructure pointer of the iterator.  When the iterator is
+        then finalised the m_cachedStructure is invalid, and the attempt to
+        clear the structures back reference fails.
+
+        To fix this we simply make JSPropertyNameIterator keep the Structure
+        alive, using the weak pointer to break the ref cycle.
+
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator):
+          The iterator now keeps m_cachedStructure alive itself, so no longer needs
+          to check for it being cleared
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::setCachedStructure):
+          Add an assertion to ensure correct usage
+        (JSC::JSPropertyNameIterator::cachedStructure):
+          Add .get()
+        * runtime/Structure.cpp:
+        (JSC::Structure::~Structure):
+          Add an assertion that our iterator isn't already dead, and remove
+          the now unnecessary attempt to clear the ref in the iterator
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::hasDeadObject):
+          An assert-only function to allow us to assert correct behaviour
+          in the Structure destructor
+
 2010-02-25  Jochen Eisinger  <jochen@chromium.org>
  
         Reviewed by Jeremy Orlow.

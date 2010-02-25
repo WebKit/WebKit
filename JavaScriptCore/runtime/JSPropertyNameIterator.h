@@ -67,8 +67,13 @@ namespace JSC {
         JSValue get(ExecState*, JSObject*, size_t i);
         size_t size() { return m_jsStringsSize; }
 
-        void setCachedStructure(Structure* structure) { m_cachedStructure = structure; }
-        Structure* cachedStructure() { return m_cachedStructure; }
+        void setCachedStructure(Structure* structure)
+        {
+            ASSERT(!m_cachedStructure);
+            ASSERT(structure);
+            m_cachedStructure = structure;
+        }
+        Structure* cachedStructure() { return m_cachedStructure.get(); }
 
         void setCachedPrototypeChain(NonNullPassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
@@ -76,7 +81,7 @@ namespace JSC {
     private:
         JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);
 
-        Structure* m_cachedStructure;
+        RefPtr<Structure> m_cachedStructure;
         RefPtr<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;

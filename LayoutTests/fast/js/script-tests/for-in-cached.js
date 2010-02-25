@@ -64,5 +64,13 @@ shouldBe("forIn5({get foo() { return 'called getter'} })", "['foo', 'called gett
 shouldBe("forIn5({set foo() { } })", "['foo', undefined]");
 shouldBe("forIn5({get foo() { return 'called getter'}, set foo() { }})", "['foo', 'called getter']");
 
+function cacheClearing() {
+    for(var j=0; j < 10; j++){
+        var o = {a:1,b:2,c:3,d:4,e:5}
+        try {for (i in o) { delete o.a; o = null; throw "" };}finally{continue}
+    }
+}
+
+cacheClearing()
 
 var successfullyParsed = true;
