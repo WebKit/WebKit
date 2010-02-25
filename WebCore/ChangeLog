@@ -1,3 +1,13 @@
+2010-02-24  Anthony Ricaud  <rik@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Reduce the timer to show the eval popover
+        https://bugs.webkit.org/show_bug.cgi?id=35344
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._mouseMove):
+
 2010-02-24  Jay Campan  <jcampan@google.com>
 
         Reviewed by David Levin.

@@ -482,7 +482,7 @@ WebInspector.SourceFrame.prototype = {
         } else if (!this._hoverElement.hasStyleClass("webkit-javascript-ident"))
             return;
 
-        const toolTipDelay = this._popup ? 600 : 1500;
+        const toolTipDelay = this._popup ? 600 : 1000;
         this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
     },
 
