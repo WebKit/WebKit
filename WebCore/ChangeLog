@@ -1,3 +1,17 @@
+2010-02-25  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Workaround Java plugins not drawing themselves properly on first
+        expose by doing a late size-allocate after 'plug-added' has been
+        emitted on the embedding GtkSocket. It's unclear to me if this is
+        a bug in our side or theirs, but this should be pretty safe and
+        fixes the annoyance while we investigate it further.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::plugAddedCallback):
+        (WebCore::PluginView::platformStart):
+
 2010-02-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

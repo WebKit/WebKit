@@ -797,6 +797,22 @@ static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
 }
 #endif
 
+void plugAddedCallback(GtkSocket* socket, PluginView* view)
+{
+    if (!socket || !view)
+        return;
+
+    // FIXME: Java Plugins do not seem to draw themselves properly the
+    // first time unless we do a size-allocate after they have done
+    // the plug operation on their side, which in general does not
+    // happen since we do size-allocates before setting the
+    // NPWindow. Apply this workaround until we figure out a better
+    // solution, if any.
+    IntRect rect = view->frameRect();
+    GtkAllocation allocation = { rect.x(), rect.y(), rect.width(), rect.height() };
+    gtk_widget_size_allocate(GTK_WIDGET(socket), &allocation);
+}
+
 bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
@@ -816,6 +832,7 @@ bool PluginView::platformStart()
         if (m_needsXEmbed) {
             setPlatformWidget(gtk_socket_new());
             gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
+            g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(plugAddedCallback), this);
             g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
         } else
             setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformPageClient()->window, 0));
