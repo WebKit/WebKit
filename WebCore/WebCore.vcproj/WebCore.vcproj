@@ -42497,6 +42497,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\bridge\c\CRuntimeObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\c\CRuntimeObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\bridge\c\c_class.cpp"
 				>
 			</File>

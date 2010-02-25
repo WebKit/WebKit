@@ -1,5 +1,11 @@
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj: Added CRuntimeObject.{c,cpp}.
+
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=35394
