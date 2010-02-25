@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Holger Hans Peter Freyther
- * Copyright (C) 2009 Collabora Ltd.
+ * Copyright (C) 2009, 2010 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -226,6 +226,37 @@ static void test_webkit_web_view_adjustments()
     do_test_webkit_web_view_adjustments(TRUE);
 }
 
+gboolean delayed_destroy(gpointer data)
+{
+    gtk_widget_destroy(GTK_WIDGET(data));
+    g_main_loop_quit(loop);
+    return FALSE;
+}
+
+static void test_webkit_web_view_destroy()
+{
+    GtkWidget* window;
+    GtkWidget* web_view;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    web_view = webkit_web_view_new();
+
+    gtk_container_add(GTK_CONTAINER(window), web_view);
+
+    gtk_widget_show_all(window);
+
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_signal_connect(window, "map-event",
+                     G_CALLBACK(map_event_cb), loop);
+    g_main_loop_run(loop);
+
+    g_idle_add(delayed_destroy, web_view);
+    g_main_loop_run(loop);
+
+    gtk_widget_destroy(window);
+}
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -251,6 +282,7 @@ int main(int argc, char** argv)
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webview/icon-uri", test_webkit_web_view_icon_uri);
     g_test_add_func("/webkit/webview/adjustments", test_webkit_web_view_adjustments);
+    g_test_add_func("/webkit/webview/destroy", test_webkit_web_view_destroy);
 
     return g_test_run ();
 }

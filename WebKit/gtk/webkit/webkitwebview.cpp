@@ -6,7 +6,7 @@
  *  Copyright (C) 2008 Jan Alonzo <jmalonzo@unpluggable.com>
  *  Copyright (C) 2008 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) 2008 Nuanti Ltd.
- *  Copyright (C) 2008, 2009 Collabora Ltd.
+ *  Copyright (C) 2008, 2009, 2010 Collabora Ltd.
  *  Copyright (C) 2009 Igalia S.L.
  *  Copyright (C) 2009 Movial Creative Technologies Inc.
  *  Copyright (C) 2009 Bobby Powers
@@ -676,8 +676,13 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
-    core(webView)->focusController()->setActive(false);
-    core(webView)->focusController()->setFocused(false);
+    // We may hit this code while destroying the widget, and we might
+    // no longer have a page, then.
+    Page* page = core(webView);
+    if (page) {
+        page->focusController()->setActive(false);
+        page->focusController()->setFocused(false);
+    }
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_out_event(widget, event);
 }
