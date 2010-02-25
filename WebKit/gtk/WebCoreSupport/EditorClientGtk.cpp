@@ -571,30 +571,30 @@ void EditorClient::textDidChangeInTextArea(Element*)
 
 void EditorClient::ignoreWordInSpellDocument(const String& text)
 {
-    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
 
-    for (; langs; langs = langs->next) {
-        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+    for (; dicts; dicts = dicts->next) {
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
 
-        enchant_dict_add_to_session(lang->speller, text.utf8().data(), -1);
+        enchant_dict_add_to_session(dict, text.utf8().data(), -1);
     }
 }
 
 void EditorClient::learnWord(const String& text)
 {
-    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
 
-    for (; langs; langs = langs->next) {
-        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+    for (; dicts; dicts = dicts->next) {
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
 
-        enchant_dict_add_to_personal(lang->speller, text.utf8().data(), -1);
+        enchant_dict_add_to_personal(dict, text.utf8().data(), -1);
     }
 }
 
 void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
 {
-    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
-    if (!langs)
+    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
+    if (!dicts)
         return;
 
     gchar* ctext = g_utf16_to_utf8(const_cast<gunichar2*>(text), length, 0, 0, 0);
@@ -623,8 +623,8 @@ void EditorClient::checkSpellingOfString(const UChar* text, int length, int* mis
             // check characters twice.
             i = end;
 
-            for (; langs; langs = langs->next) {
-                SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
+            for (; dicts; dicts = dicts->next) {
+                EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
                 gchar* cstart = g_utf8_offset_to_pointer(ctext, start);
                 gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(ctext, end) - cstart);
                 gchar* word = g_new0(gchar, bytes+1);
@@ -632,7 +632,7 @@ void EditorClient::checkSpellingOfString(const UChar* text, int length, int* mis
 
                 g_utf8_strncpy(word, cstart, end - start);
 
-                result = enchant_dict_check(lang->speller, word, -1);
+                result = enchant_dict_check(dict, word, -1);
                 g_free(word);
                 if (result) {
                     *misspellingLocation = start;
@@ -686,21 +686,21 @@ bool EditorClient::spellingUIIsShowing()
 
 void EditorClient::getGuessesForWord(const String& word, WTF::Vector<String>& guesses)
 {
-    GSList* langs = webkit_web_settings_get_spell_languages(m_webView);
+    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
     guesses.clear();
 
-    for (; langs; langs = langs->next) {
+    for (; dicts; dicts = dicts->next) {
         size_t numberOfSuggestions;
         size_t i;
 
-        SpellLanguage* lang = static_cast<SpellLanguage*>(langs->data);
-        gchar** suggestions = enchant_dict_suggest(lang->speller, word.utf8().data(), -1, &numberOfSuggestions);
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+        gchar** suggestions = enchant_dict_suggest(dict, word.utf8().data(), -1, &numberOfSuggestions);
 
         for (i = 0; i < numberOfSuggestions && i < 10; i++)
             guesses.append(String::fromUTF8(suggestions[i]));
 
         if (numberOfSuggestions > 0)
-            enchant_dict_free_suggestions(lang->speller, suggestions);
+            enchant_dict_free_suggestions(dict, suggestions);
     }
 }
 

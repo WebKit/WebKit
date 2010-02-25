@@ -1,3 +1,29 @@
+2010-02-24  Krzysztof Kotlenga <pocek@users.sf.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] Creation of a WebkitWebView widget is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=30032
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::ignoreWordInSpellDocument): Change 'langs' to 'dicts'
+        to reflect the fact that the list just holds Enchant dictionaries now.
+        (WebKit::EditorClient::learnWord): Ditto.
+        (WebKit::EditorClient::checkSpellingOfString): Ditto.
+        (WebKit::EditorClient::getGuessesForWord): Ditto.
+        * webkit/webkitprivate.h: Remove the now unused SpellLanguage struct.
+        * webkit/webkitwebsettings.cpp: Change function call to reflect new
+        webkit_web_settings_get_enchant_dicts name.
+        (get_enchant_broker): Add this method which returns the enchant broker singleton.
+        (free_spell_checking_language): The list contents have changed, so change
+        the way each element is freed.
+        (webkit_web_settings_finalize): Change to reflect 'spell_checking_languages_list'
+        to 'enchant_dicts' member name change.
+        (webkit_web_settings_set_property): Use the broker singleton here instead of making
+        a new one for each language. The Enchant dictionary is now the list payload.
+        (webkit_web_settings_copy): More name-change updates.
+        (webkit_web_settings_get_enchant_dicts): Ditto.
+
 2010-02-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
