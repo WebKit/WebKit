@@ -57,8 +57,10 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def __init__(self, options=None): # Default values should never be collections (like []) as default values are shared between invocations
         options_list = (options or []) + [
             make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Do not ask the user for confirmation before running the queue.  Dangerous!"),
+            make_option("--exit-after-iteration", action="store", type="int", dest="iterations", default=None, help="Stop running the queue after iterating this number of times."),
         ]
         Command.__init__(self, "Run the %s" % self.name, options=options_list)
+        self._iteration_count = 0
 
     def _cc_watchers(self, bug_id):
         try:
@@ -95,7 +97,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
         log("Running WebKit %s." % self.name)
 
     def should_continue_work_queue(self):
-        return True
+        self._iteration_count += 1
+        return not self.options.iterations or self._iteration_count <= self.options.iterations
 
     def next_work_item(self):
         raise NotImplementedError, "subclasses must implement"

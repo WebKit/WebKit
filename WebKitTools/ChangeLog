@@ -1,3 +1,24 @@
+2010-02-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        EWS leaks memory slowly
+        https://bugs.webkit.org/show_bug.cgi?id=35395
+
+        The EWS bots leak memory very slowly.  If you run them for about a
+        month, each one will take up around 1 GB of virutal memory.  If you run
+        several of them on one machine, you'll eventually exhaust all available
+        memory and grind the bots to a halt.
+
+        This patch introduces a --exit-after-iteration option to the queues so
+        that we run them for a finite amount of time.  Once they exit and
+        restart, they'll reclaim the leaked memory.  I'm not sure how many
+        iterations I'll end up running them for.  I'll need to sort that out
+        operationally, but my initial guess is around 1000.
+
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+
 2010-02-25  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
 
         Reviewed by Kenneth Rohde Christiansen.

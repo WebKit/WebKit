@@ -31,6 +31,7 @@ import os
 from webkitpy.commands.commandtest import CommandsTest
 from webkitpy.commands.queues import *
 from webkitpy.commands.queuestest import QueuesTest
+from webkitpy.mock import Mock
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 
@@ -64,6 +65,23 @@ class AbstractQueueTest(CommandsTest):
     def test_run_webkit_patch(self):
         self._assert_run_webkit_patch([1])
         self._assert_run_webkit_patch(["one", 2])
+
+    def test_iteration_count(self):
+        queue = TestQueue()
+        queue.options = Mock()
+        queue.options.iterations = 3
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertFalse(queue.should_continue_work_queue())
+
+    def test_no_iteration_count(self):
+        queue = TestQueue()
+        queue.options = Mock()
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertTrue(queue.should_continue_work_queue())
+        self.assertTrue(queue.should_continue_work_queue())
 
 
 class AbstractReviewQueueTest(CommandsTest):
