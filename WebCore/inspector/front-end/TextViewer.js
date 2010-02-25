@@ -330,16 +330,15 @@ WebInspector.TextViewer.prototype = {
     _paintLine: function(lineRow, lineNumber)
     {
         var element = lineRow.lastChild;
-        var highlighterState = this._textModel.getAttribute(lineNumber, "highlighter-state");
-        var line = this._textModel.line(lineNumber);
-
-        if (!highlighterState) {
+        var highlight = this._textModel.getAttribute(lineNumber, "highlight");
+        if (!highlight) {
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
                 this._markedRangeElement = highlightSearchResult(element, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             return;
         }
 
         element.removeChildren();
+        var line = this._textModel.line(lineNumber);
 
         var plainTextStart = -1;
         for (var j = 0; j < line.length;) {
@@ -348,7 +347,7 @@ WebInspector.TextViewer.prototype = {
                 plainTextStart = j;
                 break;
             }
-            var attribute = highlighterState && highlighterState.attributes[j];
+            var attribute = highlight[j];
             if (!attribute || !attribute.tokenType) {
                 if (plainTextStart === -1)
                     plainTextStart = j;

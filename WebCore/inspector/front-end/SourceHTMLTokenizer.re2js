@@ -70,31 +70,43 @@ WebInspector.SourceHTMLTokenizer = function()
     };
 
     this.initialCondition = { lexCondition: this._lexConditions.INITIAL, parseCondition: this._parseConditions.INITIAL };
+    this.condition = this.initialCondition;
 }
 
 WebInspector.SourceHTMLTokenizer.prototype = {
+    set line(line) {
+        if (this._internalJavaScriptTokenizer) {
+            var match = /<\/script/i.exec(line);
+            if (match) {
+                this._internalJavaScriptTokenizer.line = line.substring(0, match.index);
+            } else
+                this._internalJavaScriptTokenizer.line = line;
+        }
+        this._line = line;
+    },
+
     _isExpectingAttribute: function()
     {
-        return this._parseCondition & this._parseConditions.ATTRIBUTE;
+        return this._condition.parseCondition & this._parseConditions.ATTRIBUTE;
     },
 
     _isExpectingAttributeValue: function()
     {
-        return this._parseCondition & this._parseConditions.ATTRIBUTE_VALUE;
+        return this._condition.parseCondition & this._parseConditions.ATTRIBUTE_VALUE;
     },
 
     _setExpectingAttribute: function()
     {
         if (this._isExpectingAttributeValue())
-            this._parseCondition ^= this._parseConditions.ATTRIBUTE_VALUE;
-        this._parseCondition |= this._parseConditions.ATTRIBUTE;
+            this._condition.parseCondition ^= this._parseConditions.ATTRIBUTE_VALUE;
+        this._condition.parseCondition |= this._parseConditions.ATTRIBUTE;
     },
 
     _setExpectingAttributeValue: function()
     {
         if (this._isExpectingAttribute())
-            this._parseCondition ^= this._parseConditions.ATTRIBUTE;
-        this._parseCondition |= this._parseConditions.ATTRIBUTE_VALUE;
+            this._condition.parseCondition ^= this._parseConditions.ATTRIBUTE;
+        this._condition.parseCondition |= this._parseConditions.ATTRIBUTE_VALUE;
     },
 
     _stringToken: function(cursor, stringEnds)
@@ -111,8 +123,8 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
     _attrValueTokenType: function()
     {
-        if (this._parseCondition & this._parseConditions.LINKIFY) {
-            if (this._parseCondition & this._parseConditions.A_NODE)
+        if (this._condition.parseCondition & this._parseConditions.LINKIFY) {
+            if (this._condition.parseCondition & this._parseConditions.A_NODE)
                 return "html-external-link";
             return "html-resource-link";
         }
@@ -121,6 +133,20 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
     nextToken: function(cursor)
     {
+        if (this._internalJavaScriptTokenizer) {
+            // Re-set line to force </script> detection first.
+            this.line = this._line;
+            if (cursor !== this._internalJavaScriptTokenizer._line.length) {
+                // Tokenizer is stateless, so restore its condition before tokenizing and save it after.
+                this._internalJavaScriptTokenizer.condition = this._condition.internalJavaScriptTokenizerCondition;
+                var result = this._internalJavaScriptTokenizer.nextToken(cursor);
+                this.tokenType = this._internalJavaScriptTokenizer.tokenType;
+                this._condition.internalJavaScriptTokenizerCondition = this._internalJavaScriptTokenizer.condition;
+                return result;
+            } else if (cursor !== this._line.length)
+                delete this._internalJavaScriptTokenizer;
+        }
+
         var cursorOnEnter = cursor;
         var gotoCase = 1;
         while (1) {
@@ -174,14 +200,14 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <INITIAL> ScriptStart => TAG
                 {
-                    if (this._parseCondition & this._parseConditions.SCRIPT) {
+                    if (this._condition.parseCondition & this._parseConditions.SCRIPT) {
                         // Do not tokenize script tag contents, keep lexer state although processing "<".
                         this.setLexCondition(this._lexConditions.INITIAL);
                         this.tokenType = null;
                         return cursor;
                     }
                     this.tokenType = "html-tag";
-                    this._parseCondition = this._parseConditions.SCRIPT;
+                    this._condition.parseCondition = this._parseConditions.SCRIPT;
                     this._setExpectingAttribute();
                     return cursor;
                 }
@@ -189,34 +215,37 @@ WebInspector.SourceHTMLTokenizer.prototype = {
                 <INITIAL> ScriptEnd => TAG
                 {
                     this.tokenType = "html-tag";
-                    this._parseCondition = this._parseConditions.INITIAL;
+                    this._condition.parseCondition = this._parseConditions.INITIAL;
                     return cursor;
                 }
 
                 <INITIAL> LT => TAG
                 {
-                    if (this._parseCondition & this._parseConditions.SCRIPT) {
+                    if (this._condition.parseCondition & this._parseConditions.SCRIPT) {
                         // Do not tokenize script tag contents, keep lexer state although processing "<".
                         this.setLexCondition(this._lexConditions.INITIAL);
                         this.tokenType = null;
                         return cursor;
                     }
 
-                    this._parseCondition = this._parseConditions.INITIAL;
+                    this._condition.parseCondition = this._parseConditions.INITIAL;
                     this.tokenType = "html-tag";
                     return cursor;
                 }
-
+  
                 <TAG> GT => INITIAL
                 {
-                    if (this._parseCondition & this._parseConditions.SCRIPT) {
+                    this.tokenType = "html-tag";
+                    if (this._condition.parseCondition & this._parseConditions.SCRIPT) {
+                        if (!this._internalJavaScriptTokenizer) {
+                            this._internalJavaScriptTokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/javascript");
+                            this._condition.internalJavaScriptTokenizerCondition = this._internalJavaScriptTokenizer.initialCondition;
+                        }
                         // Do not tokenize script tag contents.
-                        this.tokenType = null;
                         return cursor;
                     }
 
-                    this._parseCondition = this._parseConditions.INITIAL;
-                    this.tokenType = "html-tag";
+                    this._condition.parseCondition = this._parseConditions.INITIAL;
                     return cursor;
                 }
 
@@ -238,26 +267,26 @@ WebInspector.SourceHTMLTokenizer.prototype = {
 
                 <TAG> Identifier
                 {
-                    if (this._parseCondition === this._parseConditions.SCRIPT) {
+                    if (this._condition.parseCondition === this._parseConditions.SCRIPT) {
                         // Fall through if expecting attributes.
                         this.tokenType = null;
                         return cursor;
                     }
 
-                    if (this._parseCondition === this._parseConditions.INITIAL) {
+                    if (this._condition.parseCondition === this._parseConditions.INITIAL) {
                         this.tokenType = "html-tag";
                         this._setExpectingAttribute();
                         var token = this._line.substring(cursorOnEnter, cursor);
                         if (token === "a")
-                            this._parseCondition |= this._parseConditions.A_NODE;
-                        else if (this._parseCondition & this._parseConditions.A_NODE)
-                            this._parseCondition ^= this._parseConditions.A_NODE;
+                            this._condition.parseCondition |= this._parseConditions.A_NODE;
+                        else if (this._condition.parseCondition & this._parseConditions.A_NODE)
+                            this._condition.parseCondition ^= this._parseConditions.A_NODE;
                     } else if (this._isExpectingAttribute()) {
                         var token = this._line.substring(cursorOnEnter, cursor);
                         if (token === "href" || token === "src")
-                            this._parseCondition |= this._parseConditions.LINKIFY;
-                        else if (this._parseCondition |= this._parseConditions.LINKIFY)
-                            this._parseCondition ^= this._parseConditions.LINKIFY;
+                            this._condition.parseCondition |= this._parseConditions.LINKIFY;
+                        else if (this._condition.parseCondition |= this._parseConditions.LINKIFY)
+                            this._condition.parseCondition ^= this._parseConditions.LINKIFY;
                         this.tokenType = "html-attribute-name";
                     } else if (this._isExpectingAttributeValue())
                         this.tokenType = this._attrValueTokenType();

@@ -68,6 +68,7 @@ WebInspector.SourceJavaScriptTokenizer = function()
     this.case_REGEX = 1005;
 
     this.initialCondition = { lexCondition: this._lexConditions.NODIV }
+    this.condition = this.initialCondition;
 }
 
 WebInspector.SourceJavaScriptTokenizer.prototype = {

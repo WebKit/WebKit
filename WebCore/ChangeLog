@@ -1,3 +1,41 @@
+2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: evaluate-on-hover does not work on HTML files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35378
+
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        (WebInspector.SourceHTMLTokenizer):
+        (WebInspector.SourceHTMLTokenizer.prototype.set line):
+        (WebInspector.SourceHTMLTokenizer.prototype._isExpectingAttribute):
+        (WebInspector.SourceHTMLTokenizer.prototype._isExpectingAttributeValue):
+        (WebInspector.SourceHTMLTokenizer.prototype._setExpectingAttribute):
+        (WebInspector.SourceHTMLTokenizer.prototype._setExpectingAttributeValue):
+        (WebInspector.SourceHTMLTokenizer.prototype._attrValueTokenType):
+        (WebInspector.SourceHTMLTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceHTMLTokenizer.re2js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        (WebInspector.SourceJavaScriptTokenizer):
+        * inspector/front-end/SourceJavaScriptTokenizer.re2js:
+        * inspector/front-end/SourceTokenizer.js:
+        (WebInspector.SourceTokenizer.prototype.set condition):
+        (WebInspector.SourceTokenizer.prototype.get condition):
+        (WebInspector.SourceTokenizer.prototype.get subTokenizer):
+        (WebInspector.SourceTokenizer.prototype.getLexCondition):
+        (WebInspector.SourceTokenizer.prototype.setLexCondition):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.set mimeType):
+        (WebInspector.TextEditorHighlighter.prototype.highlight):
+        (WebInspector.TextEditorHighlighter.prototype._highlightInChunks):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLines):
+        (WebInspector.TextEditorHighlighter.prototype._highlightLine):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._paintLine):
+
 2010-02-25  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

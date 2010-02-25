@@ -182,7 +182,7 @@ WebInspector.SourceCSSTokenizer.prototype = {
 
     _isPropertyValue: function()
     {
-        return this._parseCondition === this._parseConditions.PROPERTY_VALUE || this._parseCondition === this._parseConditions.AT_RULE;
+        return this._condition.parseCondition === this._parseConditions.PROPERTY_VALUE || this._condition.parseCondition === this._parseConditions.AT_RULE;
     },
 
     nextToken: function(cursor)
@@ -244,35 +244,35 @@ WebInspector.SourceCSSTokenizer.prototype = {
                 <INITIAL> OpenCurlyBracket
                 {
                     this.tokenType = null;
-                    if (this._parseCondition === this._parseConditions.AT_RULE)
-                        this._parseCondition = this._parseConditions.INITIAL;
+                    if (this._condition.parseCondition === this._parseConditions.AT_RULE)
+                        this._condition.parseCondition = this._parseConditions.INITIAL;
                     else
-                        this._parseCondition = this._parseConditions.PROPERTY;
+                        this._condition.parseCondition = this._parseConditions.PROPERTY;
                     return cursor;
                 }
 
                 <INITIAL> CloseCurlyBracket
                 {
                     this.tokenType = null;
-                    this._parseCondition = this._parseConditions.INITIAL;
+                    this._condition.parseCondition = this._parseConditions.INITIAL;
                     return cursor;
                 }
 
                 <INITIAL> Colon
                 {
                     this.tokenType = null;
-                    if (this._parseCondition === this._parseConditions.PROPERTY)
-                        this._parseCondition = this._parseConditions.PROPERTY_VALUE;
+                    if (this._condition.parseCondition === this._parseConditions.PROPERTY)
+                        this._condition.parseCondition = this._parseConditions.PROPERTY_VALUE;
                     return cursor;
                 }
 
                 <INITIAL> Semicolon
                 {
                     this.tokenType = null;
-                    if (this._parseCondition === this._parseConditions.AT_RULE)
-                        this._parseCondition = this._parseConditions.INITIAL;
+                    if (this._condition.parseCondition === this._parseConditions.AT_RULE)
+                        this._condition.parseCondition = this._parseConditions.INITIAL;
                     else
-                        this._parseCondition = this._parseConditions.PROPERTY;
+                        this._condition.parseCondition = this._parseConditions.PROPERTY;
                     return cursor;
                 }
 
@@ -288,18 +288,18 @@ WebInspector.SourceCSSTokenizer.prototype = {
                 <INITIAL> Identifier
                 {
                     var token = this._line.substring(cursorOnEnter, cursor);
-                    if (this._parseCondition === this._parseConditions.INITIAL) {
+                    if (this._condition.parseCondition === this._parseConditions.INITIAL) {
                         if (token === "@import" || token === "@media") {
                             this.tokenType = "css-at-rule";
-                            this._parseCondition = this._parseConditions.AT_RULE;
+                            this._condition.parseCondition = this._parseConditions.AT_RULE;
                         } else if (token.indexOf("@") === 0)
                             this.tokenType = "css-at-rule";
                         else
                             this.tokenType = "css-selector";
                     }
-                    else if (this._parseCondition === this._parseConditions.AT_RULE && token in this._mediaTypes)
+                    else if (this._condition.parseCondition === this._parseConditions.AT_RULE && token in this._mediaTypes)
                         this.tokenType = "css-keyword";
-                    else if (this._parseCondition === this._parseConditions.PROPERTY && token in this._propertyKeywords)
+                    else if (this._condition.parseCondition === this._parseConditions.PROPERTY && token in this._propertyKeywords)
                         this.tokenType = "css-property";
                     else if (this._isPropertyValue() && token in this._valueKeywords)
                         this.tokenType = "css-keyword";

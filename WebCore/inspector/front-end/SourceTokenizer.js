@@ -40,28 +40,27 @@ WebInspector.SourceTokenizer.prototype = {
 
     set condition(condition)
     {
-        this._lexCondition = condition.lexCondition;
-        this._parseCondition = condition.parseCondition;
+        this._condition = condition;
     },
 
     get condition()
     {
-        return { lexCondition: this._lexCondition, parseCondition: this._parseCondition };
+        return this._condition;
     },
 
-    hasCondition: function(condition)
+    get subTokenizer()
     {
-        return this._lexCondition === condition.lexCondition && this._parseCondition === condition.parseCondition;
+        return this._condition.subTokenizer;
     },
 
     getLexCondition: function()
     {
-        return this._lexCondition;
+        return this.condition.lexCondition;
     },
 
     setLexCondition: function(lexCondition)
     {
-        this._lexCondition = lexCondition;
+        this.condition.lexCondition = lexCondition;
     },
 
     _charAt: function(cursor)
