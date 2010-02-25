@@ -65,6 +65,34 @@ void RenderSVGInline::absoluteRects(Vector<IntRect>& rects, int, int)
     }
 }
 
+FloatRect RenderSVGInline::objectBoundingBox() const
+{
+    if (const RenderObject* object = findTextRootObject(this))
+        return object->objectBoundingBox();
+
+    return FloatRect();
+}
+
+FloatRect RenderSVGInline::strokeBoundingBox() const
+{
+    const RenderObject* object = findTextRootObject(this);
+    ASSERT(object);
+
+    const SVGRenderBase* renderer = object->toSVGRenderBase();
+    if (!renderer)
+        return FloatRect();
+
+    return renderer->strokeBoundingBox();
+}
+
+FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
+{
+    if (const RenderObject* object = findTextRootObject(this))
+        return object->repaintRectInLocalCoordinates();
+
+    return FloatRect();
+}
+
 void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 {
     InlineRunBox* firstBox = firstLineBox();

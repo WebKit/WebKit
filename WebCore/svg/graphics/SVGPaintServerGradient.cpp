@@ -117,16 +117,6 @@ void SVGPaintServerGradient::setGradientTransform(const AffineTransform& transfo
 }
 
 #if PLATFORM(CG)
-static inline const RenderObject* findTextRootObject(const RenderObject* start)
-{
-    while (start && !start->isSVGText())
-        start = start->parent();
-    ASSERT(start);
-    ASSERT(start->isSVGText());
-
-    return start;
-}
-
 static inline AffineTransform absoluteTransformForRenderer(const RenderObject* object)
 {
     AffineTransform absoluteTransform;

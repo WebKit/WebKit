@@ -85,6 +85,8 @@ void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& 
 void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
 void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
+
+const RenderObject* findTextRootObject(const RenderObject* start);
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

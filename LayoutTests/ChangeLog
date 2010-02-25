@@ -2,6 +2,21 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        SVG's tspan is no member of SVGRenderBase, this can cause crashes on filters
+        https://bugs.webkit.org/show_bug.cgi?id=35354
+
+        Check if filters work for tspan according to the SVG Spec. The test shouldn't
+        throw an assert now and a green rect should be visible.
+
+        * platform/mac/svg/filters/filter-on-tspan-expected.checksum: Added.
+        * platform/mac/svg/filters/filter-on-tspan-expected.png: Added.
+        * platform/mac/svg/filters/filter-on-tspan-expected.txt: Added.
+        * svg/filters/filter-on-tspan.svg: Added.
+
+2010-02-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Use-element doesn't transform clipPath
         https://bugs.webkit.org/show_bug.cgi?id=35375
 

@@ -2,6 +2,34 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        SVG's tspan is no member of SVGRenderBase, this can cause crashes on filters
+        https://bugs.webkit.org/show_bug.cgi?id=35354
+
+        This makes the base class RenderSVGInline of RenderSVGTSpan and RenderSVGInlineText
+        dependent on SVGBaseRenderer.
+        The SVG spec want as to use the object bounding box of the text root as the bounding box
+        for text-childs. So we search for the text root and use it's bounding box, stroke rect and
+        repaint rect for further calculations.
+
+        Test: svg/filters/filter-on-tspan.svg
+
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::objectBoundingBox): Find the text root and give back it's bounding box.
+        (WebCore::RenderSVGInline::strokeBoundingBox): same for stroke rect
+        (WebCore::RenderSVGInline::repaintRectInLocalCoordinates): same for repaint rect
+        * rendering/RenderSVGInline.h:
+        (WebCore::RenderSVGInline::toSVGRenderBase): RenderSVGInline is part of SVGRenderBase now.
+        * rendering/RenderSVGTSpan.h:
+        (WebCore::RenderSVGTSpan::renderName): Removed bounding box code. Was just a hack for filters and maskers.
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::findTextRootObject): Search for the text root.
+        * rendering/SVGRenderSupport.h:
+        * svg/graphics/SVGPaintServerGradient.cpp: moved findTextRootObject to SVGRenderSupport
+
+2010-02-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Use-element doesn't transform clipPath
         https://bugs.webkit.org/show_bug.cgi?id=35375
 

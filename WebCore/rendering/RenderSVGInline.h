@@ -31,9 +31,12 @@
 
 namespace WebCore {
 
-class RenderSVGInline : public RenderInline {
+class RenderSVGInline : public RenderInline, protected SVGRenderBase {
 public:
     RenderSVGInline(Node*);
+
+    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
+
     virtual const char* renderName() const { return "RenderSVGInline"; }
     virtual bool requiresLayer() const { return false; }
 
@@ -41,8 +44,14 @@ public:
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
-    virtual FloatRect objectBoundingBox() const { return FloatRect(); }
-    virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
+    // Chapter 10.4 of the SVG Specification say that we should use the
+    // object bounding box of the parent text element.
+    // We search for the root text element and take it's bounding box.
+    // It is also necessary to take the stroke and repaint rect of
+    // this element, since we need it for filters.
+    virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const;
+    virtual FloatRect repaintRectInLocalCoordinates() const;
     
 private:
     virtual InlineFlowBox* createInlineFlowBox();

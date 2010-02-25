@@ -318,6 +318,16 @@ void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const AffineT
     paintInfo.rect = localToAncestorTransform.inverse().mapRect(paintInfo.rect);
 }
 
+const RenderObject* findTextRootObject(const RenderObject* start)
+{
+    while (start && !start->isSVGText())
+        start = start->parent();
+    ASSERT(start);
+    ASSERT(start->isSVGText());
+
+    return start;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
