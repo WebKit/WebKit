@@ -1,3 +1,14 @@
+2010-02-24  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add test for SVG that used to cause crash.
+        It has been fixed on trunk for a while, thanks to the <use> rewrite,
+        but we want to make sure we do not regress.
+
+        * svg/dom/use-transform.svg: Added.
+        * svg/dom/use-transform-expected.txt: Added.
+
 2010-02-24  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Anders Carlsson.
