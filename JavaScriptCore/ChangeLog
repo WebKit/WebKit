@@ -1,5 +1,16 @@
 2010-02-25  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        JSC crashes like crazy in the JSPropertyNameIterator destructor
+
+        Add back null check of m_cachedStructure.  Curse last minute changes.
+
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator):
+
+2010-02-25  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Race condition in JSPropertyNameIterator and Structure destruction

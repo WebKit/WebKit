@@ -49,7 +49,8 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
 
 JSPropertyNameIterator::~JSPropertyNameIterator()
 {
-    m_cachedStructure->clearEnumerationCache(this);
+    if (m_cachedStructure)
+        m_cachedStructure->clearEnumerationCache(this);
 }
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)
