@@ -1,3 +1,15 @@
+2010-02-25  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebLabelElement.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35317
+
+        * WebKit.gyp:
+        * public/WebLabelElement.h: Added.
+        * src/WebLabelElement.cpp: Added.
+
 2010-02-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.
