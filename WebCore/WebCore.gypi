@@ -3810,6 +3810,8 @@
         'webinspector_image_files': [
 
             'inspector/front-end/Images/back.png',
+            'inspector/front-end/Images/breakpointsActivateButtonGlyph.png',
+            'inspector/front-end/Images/breakpointsDeactivateButtonGlyph.png',
             'inspector/front-end/Images/checker.png',
             'inspector/front-end/Images/clearConsoleButtonGlyph.png',
             'inspector/front-end/Images/closeButtons.png',
@@ -3818,8 +3820,6 @@
             'inspector/front-end/Images/cookie.png',
             'inspector/front-end/Images/database.png',
             'inspector/front-end/Images/databaseTable.png',
-            'inspector/front-end/Images/deactivateBreakpointsButtonGlyph.png',
-            'inspector/front-end/Images/deactivateBreakpointsDisabledButtonGlyph.png',
             'inspector/front-end/Images/debuggerContinue.png',
             'inspector/front-end/Images/debuggerPause.png',
             'inspector/front-end/Images/debuggerStepInto.png',

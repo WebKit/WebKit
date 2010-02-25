@@ -2411,12 +2411,12 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .toggle-breakpoints .glyph {
-    -webkit-mask-image: url(Images/deactivateBreakpointsDisabledButtonGlyph.png);
+    -webkit-mask-image: url(Images/breakpointsActivateButtonGlyph.png);
     background-color: rgb(96, 96, 96) !important;
 }
 
 .toggle-breakpoints.toggled-on .glyph {
-    -webkit-mask-image: url(Images/deactivateBreakpointsButtonGlyph.png);
+    -webkit-mask-image: url(Images/breakpointsDeactivateButtonGlyph.png);
 }
 
 #scripts-debugger-status {
