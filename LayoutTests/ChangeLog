@@ -1,3 +1,16 @@
+2010-02-25  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The target element of a Touch should be the target where that touch originated, not where it is now.
+        https://bugs.webkit.org/show_bug.cgi?id=34585
+
+        * fast/events/touch/basic-single-touch-events-expected.txt: Update expected target element.
+        * fast/events/touch/script-tests/basic-single-touch-events.js: ditto.
+        * fast/events/touch/script-tests/touch-target.js: Added.
+        * fast/events/touch/touch-target-expected.txt: Added.
+        * fast/events/touch/touch-target.html: Added.
+
 2010-02-25  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

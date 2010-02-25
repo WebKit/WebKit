@@ -1,0 +1,97 @@
+var div1 = document.createElement("div");
+div1.id = "targetA";
+div1.style.width = "100px";
+div1.style.height = "100px";
+div1.style.backgroundColor = "blue";
+
+var div2 = document.createElement("div");
+div2.id = "targetB";
+div2.style.width = "100px";
+div2.style.height = "100px";
+div2.style.backgroundColor = "green";
+
+var touchStartCount = 0;
+var touchMoveCount = 0;
+
+document.getElementById('targetsDiv').appendChild(div1);
+document.getElementById('targetsDiv').appendChild(document.createElement('br'));
+document.getElementById('targetsDiv').appendChild(div2);
+
+function touchStartHandler()
+{
+    shouldBeEqualToString('event.type', 'touchstart');
+    switch (touchStartCount) {
+        case 0:
+            shouldBeEqualToString('event.touches[0].target.id', div1.id);
+            shouldBeEqualToString('event.touches[1].target.id', div2.id);
+            break;
+        case 1:
+            shouldBeEqualToString('event.touches[0].target.id', div2.id);
+            shouldBeEqualToString('event.touches[1].target.id', div1.id);
+            break;
+    }
+
+    touchStartCount++;
+}
+
+function touchMoveHandler()
+{
+    shouldBeEqualToString('event.type', 'touchmove');
+    switch (touchMoveCount) {
+        case 0:
+        case 1:
+            shouldBeEqualToString('event.touches[0].target.id', div1.id);
+            shouldBeEqualToString('event.touches[1].target.id', div2.id);
+            break;
+        case 2:
+            shouldBeEqualToString('event.touches[0].target.id', div2.id);
+            shouldBeEqualToString('event.touches[1].target.id', div1.id);
+            break;
+    }
+
+    if (++touchMoveCount == 3)
+    {
+        successfullyParsed = true;
+        layoutTestController.notifyDone();
+        isSuccessfullyParsed();
+    }
+}
+
+div1.addEventListener("touchstart", touchStartHandler, false);
+div1.addEventListener("touchmove", touchMoveHandler, false);
+
+div2.addEventListener("touchstart", touchStartHandler, false);
+div2.addEventListener("touchmove", touchMoveHandler, false);
+
+description("Tests that the target of touches match the element where the event originated, not where the touch is currently occurring.");
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+}
+
+if (window.eventSender) {
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(50, 150);
+    eventSender.addTouchPoint(50, 250);
+    eventSender.touchStart();
+
+    eventSender.updateTouchPoint(0, 50, 250);
+    eventSender.updateTouchPoint(1, 50, 150);
+    eventSender.touchMove();
+
+    eventSender.updateTouchPoint(0, 1000, 1000);
+    eventSender.updateTouchPoint(1, 1000, 1000);
+    eventSender.touchMove();
+
+    eventSender.releaseTouchPoint(0);
+    eventSender.touchEnd();
+
+    eventSender.addTouchPoint(50,150);
+    eventSender.touchStart();
+
+    eventSender.updateTouchPoint(0, 500, 500);
+    eventSender.updateTouchPoint(1, 500, 500);
+    eventSender.touchMove();
+} else
+    debug('This test requires DRT.');
+

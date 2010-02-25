@@ -2583,7 +2583,23 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         int adjustedPageX = lroundf(pagePoint.x() / m_frame->pageZoomFactor());
         int adjustedPageY = lroundf(pagePoint.y() / m_frame->pageZoomFactor());
 
-        RefPtr<Touch> touch = Touch::create(doc->frame(), target, point.id(),
+        // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
+        unsigned touchPointTargetKey = point.id() + 1;
+        EventTarget* touchTarget = 0;
+        if (point.state() == PlatformTouchPoint::TouchPressed) {
+            m_originatingTouchPointTargets.set(touchPointTargetKey, target);
+            touchTarget = target;
+        } else if (point.state() == PlatformTouchPoint::TouchReleased || point.state() == PlatformTouchPoint::TouchCancelled) {
+            // The target should be the original target for this touch, so get it from the hashmap. As it's a release or cancel
+            // we also remove it from the map.
+            touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey).get();
+        } else
+            touchTarget = m_originatingTouchPointTargets.get(touchPointTargetKey).get();
+
+        if (!touchTarget)
+            continue;
+
+        RefPtr<Touch> touch = Touch::create(doc->frame(), touchTarget, point.id(),
                                             point.screenPos().x(), point.screenPos().y(),
                                             adjustedPageX, adjustedPageY);
 

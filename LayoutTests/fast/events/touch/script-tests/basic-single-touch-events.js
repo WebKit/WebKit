@@ -80,7 +80,7 @@ function verifyTouch(which) {
         break;
         case 4:
             verifyTouchEvent("touchmove", 1, 1, 0);
-            shouldBeEqualToString("lastEvent.touches[0].target.tagName", "HTML");
+            shouldBeEqualToString("lastEvent.touches[0].target.tagName", "DIV");
         break;
 
         default: testFailed("Wrong number of touch events! (" + which + ")");

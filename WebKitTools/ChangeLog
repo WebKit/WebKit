@@ -1,3 +1,13 @@
+2010-02-25  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The target element of a Touch should be the target where that touch originated, not where it is now.
+        https://bugs.webkit.org/show_bug.cgi?id=34585
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint): Fix a bug where touch points were not being given unique ids.
+
 2010-02-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

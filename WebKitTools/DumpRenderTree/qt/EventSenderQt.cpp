@@ -289,11 +289,15 @@ void EventSender::scheduleAsynchronousClick()
 void EventSender::addTouchPoint(int x, int y)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    int id = m_touchPoints.count();
+    // Use index to refer to the position in the vector that this touch
+    // is stored. We then create a unique id for the touch that will be
+    // passed into WebCore.
+    int index = m_touchPoints.count();
+    int id = m_touchPoints.isEmpty() ? 0 : m_touchPoints.last().id() + 1;
     QTouchEvent::TouchPoint point(id);
     m_touchPoints.append(point);
-    updateTouchPoint(id, x, y);
-    m_touchPoints[id].setState(Qt::TouchPointPressed);
+    updateTouchPoint(index, x, y);
+    m_touchPoints[index].setState(Qt::TouchPointPressed);
 #endif
 }
 

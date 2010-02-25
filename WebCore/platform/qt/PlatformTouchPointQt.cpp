@@ -29,7 +29,8 @@ namespace WebCore {
 
 PlatformTouchPoint::PlatformTouchPoint(const QTouchEvent::TouchPoint& point)
 {
-    m_id = point.id();
+    // The QTouchEvent::TouchPoint API states that ids will be >= 0.
+    m_id = static_cast<unsigned>(point.id());
     switch (point.state()) {
     case Qt::TouchPointReleased: m_state = TouchReleased; break;
     case Qt::TouchPointMoved: m_state = TouchMoved; break;

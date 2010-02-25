@@ -1,3 +1,30 @@
+2010-02-25  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The target element of a Touch should be the target where that touch originated, not where it is now.
+        https://bugs.webkit.org/show_bug.cgi?id=34585
+
+        Currently the target of a touch is set to the resulting node of the hit test where the touch currently
+        is. This does not match the behavior of iPhone or Android. This patch uses a hashmap on the EventHandler
+        to keep track of the target element when a touch is first started. This target is then used as the target
+        for subsequent touches with the same id. This matches observed behavior on iPhone and Android.
+
+        Tests:
+        fast/events/touch/touch-target.html: Added.
+        fast/events/touch/basic-single-touch-events.html: Updated.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Store the originating target element of a touch in a hashmap
+            so that we can reuse that target for future events caused by that touch. This matches observed behavior
+            on iPhone and Android.
+        * page/EventHandler.h: Add hashmap as a member.
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::id): Store the touch point id as unsigned.
+        * platform/qt/PlatformTouchPointQt.cpp: 
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint): Cast platform touch id from signed to unsigned. Qt API
+            docs state that it will always be >= 0.
+
 2010-02-24  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.
