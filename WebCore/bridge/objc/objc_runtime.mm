@@ -238,9 +238,7 @@ static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* f
         const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(function)->propertyName();
         RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
         fallbackMethod->setJavaScriptName(name.get());
-        MethodList methodList;
-        methodList.append(fallbackMethod.get());
-        result = objcInstance->invokeMethod(exec, methodList, args);
+        result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get(), args);
     }
             
     objcInstance->end();

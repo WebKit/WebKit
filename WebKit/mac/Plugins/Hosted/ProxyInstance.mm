@@ -32,6 +32,8 @@
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/npruntime_impl.h>
+#import <WebCore/runtime_method.h>
+#import <runtime/Error.h>
 #import <runtime/PropertyNameArray.h>
 
 extern "C" {
@@ -170,8 +172,33 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
     return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
 }
 
-JSValue ProxyInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
+class ProxyRuntimeMethod : public RuntimeMethod {
+public:
+    ProxyRuntimeMethod(ExecState* exec, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, name, list)
+    {
+    }
+
+    virtual const ClassInfo* classInfo() const { return &s_info; }
+
+    static const ClassInfo s_info;
+};
+
+const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
+
+JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& propertyName)
 {
+    MethodList methodList = getClass()->methodsNamed(propertyName, this);
+    return new (exec) ProxyRuntimeMethod(exec, propertyName, methodList);
+}
+
+JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod, const ArgList& args)
+{
+    if (!asObject(runtimeMethod)->inherits(&ProxyRuntimeMethod::s_info))
+        return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
+
+    const MethodList& methodList = *runtimeMethod->methods();
+
     ASSERT(methodList.size() == 1);
 
     ProxyMethod* method = static_cast<ProxyMethod*>(methodList[0]);

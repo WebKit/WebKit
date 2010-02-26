@@ -35,6 +35,7 @@
 #include "c_runtime.h"
 #include "c_utility.h"
 #include "npruntime_impl.h"
+#include "runtime_method.h"
 #include "runtime_root.h"
 #include <interpreter/CallFrame.h>
 #include <runtime/ArgList.h>
@@ -107,8 +108,33 @@ bool CInstance::supportsInvokeDefaultMethod() const
     return _object->_class->invokeDefault;
 }
 
-JSValue CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
+class CRuntimeMethod : public RuntimeMethod {
+public:
+    CRuntimeMethod(ExecState* exec, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, name, list)
+    {
+    }
+
+    virtual const ClassInfo* classInfo() const { return &s_info; }
+
+    static const ClassInfo s_info;
+};
+
+const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
+
+JSValue CInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
+    MethodList methodList = getClass()->methodsNamed(propertyName, this);
+    return new (exec) CRuntimeMethod(exec, propertyName, methodList);
+}
+
+JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList& args)
+{
+    if (!asObject(runtimeMethod)->inherits(&CRuntimeMethod::s_info))
+        return throwError(exec, TypeError, "Attempt to invoke non-plug-in method on plug-in object.");
+
+    const MethodList& methodList = *runtimeMethod->methods();
+
     // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
     ASSERT(methodList.size() == 1);

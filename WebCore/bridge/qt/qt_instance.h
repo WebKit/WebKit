@@ -50,7 +50,8 @@ public:
 
     void markAggregate(MarkStack&);
 
-    virtual JSValue invokeMethod(ExecState*, const MethodList&, const ArgList&);
+    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
+    virtual JSValue invokeMethod(ExecState*, RuntimeMethod*, const ArgList&);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 

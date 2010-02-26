@@ -33,6 +33,7 @@
 #include <QVariant>
 #include <runtime_object.h>
 #include <runtime_root.h>
+#include <runtime_method.h>
 
 using namespace WebCore;
 namespace JSC {
@@ -177,8 +178,16 @@ Class* QtPixmapInstance::getClass() const
     return &qt_pixmap_metaData.cls;
 }
 
-JSValue QtPixmapInstance::invokeMethod(ExecState* exec, const MethodList& methods, const ArgList& args)
+JSValue QtPixmapInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
+    MethodList methodList = getClass()->methodsNamed(propertyName, this);
+    return new (exec) RuntimeMethod(exec, propertyName, methodList);
+}
+
+JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList& args)
+{
+    const MethodList& methodList = *runtimeMethod->methods();
+
     if (methods.size() == 1) {
         QtPixmapRuntimeMethod* method = static_cast<QtPixmapRuntimeMethod*>(methods[0]);
         return method->invoke(exec, this, args);

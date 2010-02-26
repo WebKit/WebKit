@@ -50,6 +50,8 @@ public:
         return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
     }
 
+    virtual const ClassInfo* classInfo() const { return &s_info; }
+
 private:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | InternalFunction::StructureFlags;
     static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);

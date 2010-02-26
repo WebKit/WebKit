@@ -1,3 +1,42 @@
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 35401 - Fix handling of errors in handling calls over bridge,
+        where base object bridge-type does not match method bridge-type.
+
+        The code assumes users will only attempt to invoke a Java method
+        on a Java base object, etc.
+        Add language specific subclasses of RuntimeMethod, and pass the
+        RuntimeMethod into invokeMethod, so we can typecheck before
+        casting.  Throw an exception on type mismatch.
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::CRuntimeMethod):new class to distinguish this type of RuntimeMethod.
+        (JSC::Bindings::CInstance::getMethod): create an appropriate sublclass of RuntimeMethod.
+        (JSC::Bindings::CInstance::invokeMethod): dynamically check the type of the RuntimeMethod.
+        * bridge/c/c_instance.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaRuntimeMethod::JavaRuntimeMethod): new class to distinguish this type of RuntimeMethod.
+        (JavaInstance::getMethod): create an appropriate sublclass of RuntimeMethod.
+        (JavaInstance::invokeMethod): dynamically check the type of the RuntimeMethod.
+        * bridge/jni/jsc/JavaInstanceJSC.h:
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcRuntimeMethod::ObjcRuntimeMethod): new class to distinguish this type of RuntimeMethod.
+        (ObjcInstance::getMethod): create an appropriate sublclass of RuntimeMethod.
+        (ObjcInstance::invokeMethod): dynamically check the type of the RuntimeMethod.
+        (ObjcInstance::invokeObjcMethod): new method, takes an ObjcMethod* as an argument so that we don't need to dynamically determine the type.
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject): use new invokeObjcMethod method.
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod): pass RuntimeMethod as argument to invokeMethod, rather than its MethodList.
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObject::methodGetter): use new getMethod method.
+
 2010-02-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

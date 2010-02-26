@@ -234,12 +234,17 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
     }
 }
 
-JSValue QtInstance::invokeMethod(ExecState*, const MethodList&, const ArgList&)
+JSValue QtInstance::getMethod(ExecState* exec, const Identifier& propertyName)
+{
+    MethodList methodList = getClass()->methodsNamed(propertyName, this);
+    return new (exec) RuntimeMethod(exec, propertyName, methodList);
+}
+
+JSValue QtInstance::invokeMethod(ExecState*, RuntimeMethod*, const ArgList&)
 {
     // Implemented via fallbackMethod & QtRuntimeMetaMethod::callAsFunction
     return jsUndefined();
 }
-
 
 JSValue QtInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {

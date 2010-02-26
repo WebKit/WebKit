@@ -1,3 +1,18 @@
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 35401 - Fix handling of errors in handling calls over bridge,
+        where base object bridge-type does not match method bridge-type.
+
+        The code assumes users will only attempt to invoke a Java method
+        on a Java base object, etc.
+        Add language specific subclasses of RuntimeMethod, and pass the
+        RuntimeMethod into invokeMethod, so we can typecheck before
+        casting.  Throw an exception on type mismatch.
+
+        * java/java-and-plugins.html: Add tests for passing mismatched this objects to methdods.
+
 2010-02-26  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.

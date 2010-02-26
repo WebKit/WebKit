@@ -1,3 +1,22 @@
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 35401 - Fix handling of errors in handling calls over bridge,
+        where base object bridge-type does not match method bridge-type.
+
+        The code assumes users will only attempt to invoke a Java method
+        on a Java base object, etc.
+        Add language specific subclasses of RuntimeMethod, and pass the
+        RuntimeMethod into invokeMethod, so we can typecheck before
+        casting.  Throw an exception on type mismatch.
+
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::PluginRuntimeMethod::PluginRuntimeMethod): new class to distinguish this type of RuntimeMethod.
+        (WebKit::ProxyInstance::getMethod): create an appropriate sublclass of RuntimeMethod.
+        (WebKit::ProxyInstance::invokeMethod): dynamically check the type of the RuntimeMethod.
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

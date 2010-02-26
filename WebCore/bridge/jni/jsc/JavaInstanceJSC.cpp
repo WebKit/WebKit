@@ -34,6 +34,7 @@
 #include "JNIUtilityPrivate.h"
 #include "JavaClassJSC.h"
 #include "Logging.h"
+#include "runtime_method.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <runtime/ArgList.h>
@@ -109,8 +110,33 @@ JSValue JavaInstance::booleanValue() const
     return jsBoolean(booleanValue);
 }
 
-JSValue JavaInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList &args)
+class JavaRuntimeMethod : public RuntimeMethod {
+public:
+    JavaRuntimeMethod(ExecState* exec, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, name, list)
+    {
+    }
+
+    virtual const ClassInfo* classInfo() const { return &s_info; }
+
+    static const ClassInfo s_info;
+};
+
+const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
+
+JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
+    MethodList methodList = getClass()->methodsNamed(propertyName, this);
+    return new (exec) JavaRuntimeMethod(exec, propertyName, methodList);
+}
+
+JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList &args)
+{
+    if (!asObject(runtimeMethod)->inherits(&JavaRuntimeMethod::s_info))
+        return throwError(exec, TypeError, "Attempt to invoke non-Java method on Java object.");
+
+    const MethodList& methodList = *runtimeMethod->methods();
+
     int i;
     int count = args.size();
     JSValue resultValue;
