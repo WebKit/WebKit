@@ -150,7 +150,13 @@ namespace WebCore {
         Frame* m_frame;
 
         // A state store to help us avoid canonicalizing the same URL repeated.
-        mutable CachingURLCanonicalizer m_cache;
+        // When a page has form data, we need two caches: one to store the
+        // canonicalized URL and another to store the cannonicalized form
+        // data. If we only had one cache, we'd always generate a cache miss
+        // and load some pages extremely slowly.
+        // https://bugs.webkit.org/show_bug.cgi?id=35373
+        mutable CachingURLCanonicalizer m_pageURLCache;
+        mutable CachingURLCanonicalizer m_formDataCache;
     };
 
 } // namespace WebCore

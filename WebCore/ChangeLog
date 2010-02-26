@@ -1,3 +1,20 @@
+2010-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        XSSAuditor is super super super slow
+        https://bugs.webkit.org/show_bug.cgi?id=35373
+
+        In this patch, we separate the decoding cache for the page's URL and
+        form data.  Previously, we used the same cache for both, which caused
+        us miss the cache every time when the page had form data (because the
+        cache only stored one entry).  When the form data is large, we were
+        wasting a lot of time canonicalizing.
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest):
+        * page/XSSAuditor.h:
+
 2010-02-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
