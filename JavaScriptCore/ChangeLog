@@ -1,3 +1,17 @@
+2010-02-26  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Symbian specific getCPUTime implemetation
+        https://bugs.webkit.org/show_bug.cgi?id=34742
+
+        Default implementation doesn't work on Symbian devices.
+        This change adds a proper implementation by
+        asking thread execution time from the current thread.
+
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
