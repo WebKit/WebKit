@@ -47,7 +47,7 @@
 #include "PlatformScreen.h"
 #include <wtf/HashMap.h>
 
-#if ENABLE(3D_RENDERING)
+#if ENABLE(3D_RENDERING) && USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
 #endif
 
@@ -474,8 +474,10 @@ static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
 
 #if ENABLE(3D_RENDERING)
     bool threeDEnabled = false;
+#if USE(ACCELERATED_COMPOSITING)
     if (RenderView* view = frame->contentRenderer())
         threeDEnabled = view->compositor()->hasAcceleratedCompositing();
+#endif
 
     returnValueIfNoParameter = threeDEnabled;
     have3dRendering = threeDEnabled ? 1 : 0;
