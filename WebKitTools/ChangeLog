@@ -1,3 +1,26 @@
+2010-02-26  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        [Gtk] Make DRT EventSender::keyDown to consider 'hardware_keycode' field when synthesizing an event.
+        https://bugs.webkit.org/show_bug.cgi?id=35432
+
+        When a directional key-press event (arrow keys, End, Home, PageUp,
+        PageDown, etc) is synthesized by DRT's EventSender and it targets
+        an editor (e.g. <input type=text>, <textare>, etc), event is processed
+        by WebCore::EventHandler. On the other hand, if event target is not
+        an editor, event is bubbled up to Gtk+ for processing. In such cases,
+        if 'hardware_keycode' is not provided at event synthesize time
+        its processing fails (at some point in gtk_bindings_activate_event),
+        and no scroll action is performed.
+
+        Unskip fast/events/node-event-anchor-lock.html
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (keyDownCallback):
+        * platform/gtk/Skipped:
+
 2010-02-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.
