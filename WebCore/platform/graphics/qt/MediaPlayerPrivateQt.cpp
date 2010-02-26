@@ -537,7 +537,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
     QPainter* painter = context->platformContext();
 
     // Render the video
-    m_videoScene->render(painter, QRectF(QRect(rect)));
+    m_videoScene->render(painter, QRectF(QRect(rect)), m_videoItem->sceneBoundingRect());
 }
 
 void MediaPlayerPrivate::repaint()
