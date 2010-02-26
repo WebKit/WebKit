@@ -1,3 +1,20 @@
+2010-02-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35450
+        Crash when a Java array property accessor raises an exception
+
+        Adding with a FAIL result, because this doesn't raise an exception in Firefox. I don't know
+        what the formally correct behavior is, but it's good to avoid crashing.
+
+        * java/SharedApplet.java:
+        (NonPublicClass):
+        (NonPublicClass.NonPublicClass):
+        (NonPublicClass..SharedApplet.getObjectOfNonPublicClass):
+        * java/inaccessible-class-expected.txt: Added.
+        * java/inaccessible-class.html: Added.
+
 2010-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Alexey Proskuryakov.

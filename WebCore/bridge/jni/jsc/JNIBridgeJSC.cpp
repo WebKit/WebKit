@@ -108,6 +108,9 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
             jvalue result = dispatchValueFromInstance(exec, instance, "get", "(Ljava/lang/Object;)Ljava/lang/Object;", object_type);
             jobject anObject = result.l;
 
+            if (!anObject)
+                return jsNull();
+
             const char* arrayType = type();
             if (arrayType[0] == '[')
                 jsresult = JavaArray::convertJObjectToArray(exec, anObject, arrayType, instance->rootObject());

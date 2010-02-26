@@ -3,6 +3,12 @@ import java.lang.reflect.*;
 import java.util.*;
 import netscape.javascript.*;
 
+class NonPublicClass {
+    NonPublicClass() {
+    }
+    public Object arrayField[] = { 5 };
+}
+
 public class SharedApplet extends Applet
 {
     public String objectToString(Object obj) {
@@ -23,6 +29,10 @@ public class SharedApplet extends Applet
 
     public Object getSelf() {
         return this;
+    }
+
+    public NonPublicClass getObjectOfNonPublicClass() {
+        return new NonPublicClass();
     }
 
     public Object testGetProperty(JSObject obj, String propertyName) {
