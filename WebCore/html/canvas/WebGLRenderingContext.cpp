@@ -108,7 +108,7 @@ WebGLRenderingContext::~WebGLRenderingContext()
 void WebGLRenderingContext::markContextChanged()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (canvas()->renderBox() && canvas()->renderBox()->hasLayer()) {
+    if (canvas()->renderBox() && canvas()->renderBox()->hasLayer() && canvas()->renderBox()->layer()->hasAcceleratedCompositing()) {
         canvas()->renderBox()->layer()->rendererContentChanged();
     } else {
 #endif

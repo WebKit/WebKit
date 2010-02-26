@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        https://bugs.webkit.org/show_bug.cgi?id=35419
+        3D canvas did not update when WTF_USE_ACCELERATED_COMPOSITING
+        was enabled but not from run-time settings. Added run-time 
+        check that compositing is enabled.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::markContextChanged):
+
+2010-02-26  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Compilation failed because functions glSampleCoverage, glBlendEquation
         and glActiveTexture were not available.
         https://bugs.webkit.org/show_bug.cgi?id=35423
