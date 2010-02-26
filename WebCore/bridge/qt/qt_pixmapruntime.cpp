@@ -186,7 +186,7 @@ JSValue QtPixmapInstance::getMethod(ExecState* exec, const Identifier& propertyN
 
 JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod, const ArgList& args)
 {
-    const MethodList& methodList = *runtimeMethod->methods();
+    const MethodList& methods = *runtimeMethod->methods();
 
     if (methods.size() == 1) {
         QtPixmapRuntimeMethod* method = static_cast<QtPixmapRuntimeMethod*>(methods[0]);

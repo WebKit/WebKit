@@ -1,3 +1,10 @@
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (Build fix following r55312).
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::invokeMethod):
+
 2010-02-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
