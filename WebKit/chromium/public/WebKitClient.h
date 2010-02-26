@@ -36,7 +36,6 @@
 #include "WebLocalizedString.h"
 #include "WebString.h"
 #include "WebURL.h"
-#include "WebVector.h"
 
 #include <time.h>
 
@@ -59,8 +58,6 @@ class WebSocketStreamHandle;
 class WebStorageNamespace;
 class WebThemeEngine;
 class WebURLLoader;
-struct WebCookie;
-template <typename T> class WebVector;
 
 class WebKitClient {
 public:
@@ -180,13 +177,6 @@ public:
 
 
     // Network -------------------------------------------------------------
-
-    // These cookie methods are DEPRECATED in favor of cookieJar accessor.
-    virtual void setCookies(const WebURL&, const WebURL& firstPartyForCookies, const WebString& cookies) { }
-    virtual WebString cookies(const WebURL&, const WebURL& firstPartyForCookies) { return WebString(); }
-    virtual bool rawCookies(const WebURL&, const WebURL& firstPartyForCookies, WebVector<WebCookie>*) { return false; }
-    virtual void deleteCookie(const WebURL&, const WebString& cookieName) { }
-    virtual bool cookiesEnabled(const WebURL&, const WebURL& firstPartyForCookies) { return true; }
 
     // A suggestion to prefetch IP information for the given hostname.
     virtual void prefetchHostName(const WebString&) { }

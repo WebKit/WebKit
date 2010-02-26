@@ -1,3 +1,20 @@
+2010-02-25  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove deprecated cookie methods.
+        https://bugs.webkit.org/show_bug.cgi?id=35420
+
+        * public/WebFrameClient.h:
+        * public/WebKitClient.h:
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::setCookies):
+        (WebCore::ChromiumBridge::cookies):
+        (WebCore::ChromiumBridge::cookieRequestHeaderFieldValue):
+        (WebCore::ChromiumBridge::rawCookies):
+        (WebCore::ChromiumBridge::deleteCookie):
+        (WebCore::ChromiumBridge::cookiesEnabled):
+
 2010-02-25  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -193,8 +193,6 @@ void ChromiumBridge::setCookies(const Document* document, const KURL& url,
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         cookieJar->setCookie(url, document->firstPartyForCookies(), value);
-    else
-        webKitClient()->setCookies(url, document->firstPartyForCookies(), value); // DEPRECATED
 }
 
 String ChromiumBridge::cookies(const Document* document, const KURL& url)
@@ -203,8 +201,6 @@ String ChromiumBridge::cookies(const Document* document, const KURL& url)
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         result = cookieJar->cookies(url, document->firstPartyForCookies());
-    else
-        result = webKitClient()->cookies(url, document->firstPartyForCookies()); // DEPRECATED
     return result;
 }
 
@@ -215,10 +211,6 @@ String ChromiumBridge::cookieRequestHeaderFieldValue(const Document* document,
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         result = cookieJar->cookieRequestHeaderFieldValue(url, document->firstPartyForCookies());
-    else {
-        // FIXME: This does not return http-only cookies
-        result = webKitClient()->cookies(url, document->firstPartyForCookies()); // DEPRECATED
-    }
     return result;
 }
 
@@ -230,8 +222,6 @@ bool ChromiumBridge::rawCookies(const Document* document, const KURL& url, Vecto
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         cookieJar->rawCookies(url, document->firstPartyForCookies(), webCookies);
-    else
-        webKitClient()->rawCookies(url, document->firstPartyForCookies(), &webCookies); // DEPRECATED
 
     for (unsigned i = 0; i < webCookies.size(); ++i) {
         const WebCookie& webCookie = webCookies[i];
@@ -253,8 +243,6 @@ void ChromiumBridge::deleteCookie(const Document* document, const KURL& url, con
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         cookieJar->deleteCookie(url, cookieName);
-    else
-        webKitClient()->deleteCookie(url, cookieName); // DEPRECATED
 }
 
 bool ChromiumBridge::cookiesEnabled(const Document* document)
@@ -263,8 +251,6 @@ bool ChromiumBridge::cookiesEnabled(const Document* document)
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         result = cookieJar->cookiesEnabled(document->cookieURL(), document->firstPartyForCookies());
-    else
-        result = webKitClient()->cookiesEnabled(document->cookieURL(), document->firstPartyForCookies()); // DEPRECATED
     return result;
 }
 
