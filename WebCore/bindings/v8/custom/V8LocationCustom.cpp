@@ -190,7 +190,10 @@ void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
         return;
 
     KURL url = frame->loader()->url();
-    url.setProtocol(protocol);
+    if (!url.setProtocol(protocol)) {
+        throwError("Can't set protocol", V8Proxy::SyntaxError);
+        return;
+    }
 
     navigateIfAllowed(frame, url, false, false);
 }

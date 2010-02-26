@@ -1,3 +1,27 @@
+2010-02-12  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update the Google-URL version of KURL and the V8 bindings to the new
+        behavior of KURL.IsStandard.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34859
+
+        This is covered by fast/dom/Window/invalid-protocol.html
+
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::protocolAccessorSetter):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setProtocol):
+        (WebCore::KURL::isHierarchical):
+
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (Build fix following r55312).
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::invokeMethod):
+
 2010-02-26  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Dimitri Glazkov.
@@ -3421,23 +3445,6 @@
         (WebCore::HTMLOptionElement::insertedIntoTree):
         * html/HTMLOptionElement.h:
 
-2010-02-12  Brett Wilson  <brettw@chromium.org>
-
-        Reviewed by Adam Barth.
-
-        Update the Google-URL version of KURL and the V8 bindings to the new
-        behavior of KURL.IsStandard.
-
-        https://bugs.webkit.org/show_bug.cgi?id=34859
-
-        This is covered by fast/dom/Window/invalid-protocol.html
-
-        * bindings/v8/custom/V8LocationCustom.cpp:
-        (WebCore::V8Location::protocolAccessorSetter):
-        * platform/KURLGoogle.cpp:
-        (WebCore::KURL::setProtocol):
-        (WebCore::KURL::isHierarchical):
-
 2010-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         No Review.
@@ -3808,6 +3815,23 @@
         (WebCore::globalObjectPrototypeIsDOMWindow):
         (WebCore::V8DOMWrapper::instantiateV8Object): Merge instantiateV8Object paths.
         * bindings/v8/V8DOMWrapper.h:
+
+2010-02-12  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update the Google-URL version of KURL and the V8 bindings to the new
+        behavior of KURL.IsStandard.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34859
+
+        This is covered by fast/dom/Window/invalid-protocol.html
+
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::protocolAccessorSetter):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setProtocol):
+        (WebCore::KURL::isHierarchical):
 
 2010-02-18  Xan Lopez  <xlopez@igalia.com>
 

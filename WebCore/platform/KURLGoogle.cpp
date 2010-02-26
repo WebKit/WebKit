@@ -572,10 +572,32 @@ String KURL::path() const
 
 bool KURL::setProtocol(const String& protocol)
 {
+    // Firefox and IE remove everything after the first ':'.
+    int separatorPosition = protocol.find(':');
+    String newProtocol = protocol.substring(0, separatorPosition);
+
+    // If KURL is given an invalid scheme, it returns failure without modifying
+    // the URL at all. This is in contrast to most other setters which modify
+    // the URL and set "m_isValid."
+    url_canon::RawCanonOutputT<char> canonProtocol;
+    url_parse::Component protocolComponent;
+    if (!url_canon::CanonicalizeScheme(newProtocol.characters(),
+                                       url_parse::Component(0, newProtocol.length()),
+                                       &canonProtocol, &protocolComponent)
+        || !protocolComponent.is_nonempty())
+        return false;
+
     KURLGooglePrivate::Replacements replacements;
-    replacements.SetScheme(CharactersOrEmpty(protocol),
-                           url_parse::Component(0, protocol.length()));
+    replacements.SetScheme(CharactersOrEmpty(newProtocol),
+                           url_parse::Component(0, newProtocol.length()));
     m_url.replaceComponents(replacements);
+
+    // isValid could be false but we still return true here. This is because
+    // WebCore or JS scripts can build up a URL by setting individual
+    // components, and a JS exception is based on the return value of this
+    // function. We want to throw the exception and stop the script only when
+    // its trying to set a bad protocol, and not when it maybe just hasn't
+    // finished building up its final scheme.
     return true;
 }
 
