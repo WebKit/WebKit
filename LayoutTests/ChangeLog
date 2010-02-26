@@ -1,3 +1,12 @@
+2010-02-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rebaseline of platform-specific results for test.
+
+        SVGResourceClipper needs to be moved to RenderSVGResourceClipper
+        https://bugs.webkit.org/show_bug.cgi?id=35421
+
+        * platform/gtk/svg/custom/use-on-clip-path-with-transformation-expected.txt:
+
 2010-02-26  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed LayoutTest fix.
