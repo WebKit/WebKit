@@ -385,6 +385,11 @@ void CompositeEditCommand::setNodeAttribute(PassRefPtr<Element> element, const Q
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }
 
+static inline bool isWhitespace(UChar c)
+{
+    return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
+}
+
 // FIXME: Doesn't go into text nodes that contribute adjacent text (siblings, cousins, etc).
 void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 {
@@ -393,14 +398,34 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
         return;
     Text* textNode = static_cast<Text*>(node);
     
-    String text = textNode->data();
-    
-    unsigned upstream, downstream;
-    if (!extentOfWhitespaceForRebalancingAt(textNode, position.deprecatedEditingOffset(), upstream, downstream))
+    if (textNode->length() == 0)
         return;
+    RenderObject* renderer = textNode->renderer();
+    if (renderer && !renderer->style()->collapseWhiteSpace())
+        return;
+        
+    String text = textNode->data();
+    ASSERT(!text.isEmpty());
+
+    int offset = position.deprecatedEditingOffset();
+    // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
+    if (!isWhitespace(text[offset])) {
+        offset--;
+        if (offset < 0 || !isWhitespace(text[offset]))
+            return;
+    }
     
-    ASSERT(downstream > upstream);
-    int length = downstream - upstream;
+    // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
+    int upstream = offset;
+    while (upstream > 0 && isWhitespace(text[upstream - 1]))
+        upstream--;
+    
+    int downstream = offset;
+    while ((unsigned)downstream + 1 < text.length() && isWhitespace(text[downstream + 1]))
+        downstream++;
+    
+    int length = downstream - upstream + 1;
+    ASSERT(length > 0);
     
     VisiblePosition visibleUpstreamPos(Position(position.node(), upstream));
     VisiblePosition visibleDownstreamPos(Position(position.node(), downstream + 1));

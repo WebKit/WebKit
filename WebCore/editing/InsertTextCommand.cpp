@@ -106,33 +106,9 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     return true;
 }
 
-void InsertTextCommand::insertTextIntoNodeAndRebalanceWhitespace(const String& textToInsert, Text* node, unsigned offset)
-{
-    unsigned whitespaceStart, whitespaceEnd;
-    if (!extentOfWhitespaceForRebalancingAt(node, offset, whitespaceStart, whitespaceEnd)) {
-        VisiblePosition visiblePosition(Position(node, offset));
-        String rebalancedText = stringWithRebalancedWhitespace(textToInsert, isStartOfParagraph(visiblePosition), isEndOfParagraph(visiblePosition));
-        insertTextIntoNode(node, offset, rebalancedText);
-        return;
-    }
-    
-    ASSERT(whitespaceEnd > whitespaceStart);
-    unsigned length = whitespaceEnd - whitespaceStart;
-    String string = node->data().substring(whitespaceStart, length);
-    
-    // Insert textToInsert into the whitespace we found.
-    string.insert(textToInsert, offset - whitespaceStart);
-    
-    VisiblePosition visibleStart(Position(node, whitespaceStart));
-    VisiblePosition visibleEnd(Position(node, whitespaceEnd + textToInsert.length()));
-    
-    String rebalancedString = stringWithRebalancedWhitespace(string, isStartOfParagraph(visibleStart), isEndOfParagraph(visibleEnd));
-                                                             
-    replaceTextInNode(node, whitespaceStart, length, rebalancedString);
-}
-
 void InsertTextCommand::input(const String& text, bool selectInsertedText)
 {
+    
     ASSERT(text.find('\n') == -1);
 
     if (endingSelection().isNone())
@@ -194,9 +170,14 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
         Text *textNode = static_cast<Text *>(startPosition.node());
         int offset = startPosition.deprecatedEditingOffset();
 
-        insertTextIntoNodeAndRebalanceWhitespace(text, textNode, offset);
-        
+        insertTextIntoNode(textNode, offset, text);
         endPosition = Position(textNode, offset + text.length());
+
+        // The insertion may require adjusting adjacent whitespace, if it is present.
+        rebalanceWhitespaceAt(endPosition);
+        // Rebalancing on both sides isn't necessary if we've inserted a space.
+        if (text != " ") 
+            rebalanceWhitespaceAt(startPosition);
             
         m_charactersAdded += text.length();
     }

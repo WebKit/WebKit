@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 63: "foobarbaz"
         RenderBR {BR} at (63,14) size 0x0
         RenderText {#text} at (0,18) size 71x18
-          text run at (0,18) width 71: "foo bar baz"
+          text run at (0,18) width 71: "foo\x{9}bar\x{9}baz"
         RenderBR {BR} at (71,32) size 0x0
         RenderText {#text} at (0,36) size 63x18
           text run at (0,36) width 63: "foobarbaz"

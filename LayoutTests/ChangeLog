@@ -1,3 +1,30 @@
+2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Roll-out r55263 because it broke fast/forms/textarea-type-spaces-pretty-diff.html.
+        https://bugs.webkit.org/show_bug.cgi?id=30946
+
+        * editing/execCommand/5142012-3-expected.txt:
+        * editing/inserting/rebalance-whitespace-1-expected.txt: Removed.
+        * editing/inserting/rebalance-whitespace-1.html: Removed.
+        * editing/pasteboard/5521237-expected.txt:
+        * platform/mac/editing/execCommand/5482023-expected.checksum:
+        * platform/mac/editing/execCommand/5482023-expected.png: Added.
+        * platform/mac/editing/execCommand/5482023-expected.txt:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.png: Added.
+        * platform/mac/editing/execCommand/remove-formatting-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-expected.png: Added.
+        * platform/mac/editing/execCommand/remove-formatting-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.checksum:
+        * platform/mac/editing/inserting/editable-html-element-expected.png: Added.
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.checksum:
+        * platform/mac/editing/pasteboard/4989774-expected.png: Added.
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.checksum:
+        * platform/mac/editing/selection/4983858-expected.png: Added.
+        * platform/mac/editing/selection/4983858-expected.txt:
+
 2010-02-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

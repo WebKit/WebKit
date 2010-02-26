@@ -52,8 +52,6 @@ private:
     Position insertTab(const Position&);
     
     bool performTrivialReplace(const String&, bool selectInsertedText);
-    
-    void insertTextIntoNodeAndRebalanceWhitespace(const String& text, Text* node, unsigned offset);
 
     unsigned m_charactersAdded;
 };

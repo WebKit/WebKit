@@ -1,3 +1,17 @@
+2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Roll-out r55263 because it broke fast/forms/textarea-type-spaces-pretty-diff.html.
+        https://bugs.webkit.org/show_bug.cgi?id=30946
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::isWhitespace):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/InsertTextCommand.h:
+        * editing/htmlediting.cpp:
+        * editing/htmlediting.h:
+
 2010-02-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Brady Eidson.
