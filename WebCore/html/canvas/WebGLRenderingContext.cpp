@@ -97,6 +97,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     m_context->getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &numVertexAttribs);
     m_maxVertexAttribs = numVertexAttribs;
     m_context->reshape(canvas()->width(), canvas()->height());
+    m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()

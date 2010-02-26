@@ -39,7 +39,6 @@
             }
             
             gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
-            gl.viewport(0, 0, 50, 50);
             
             var vertexObject = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);

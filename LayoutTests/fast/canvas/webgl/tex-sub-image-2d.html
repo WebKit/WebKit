@@ -42,8 +42,6 @@ var gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0
 var textureWidth = 256;
 var textureHeight = 1;
 
-gl.viewport(0, 0, textureWidth, textureHeight);
-
 textureLoc = gl.getUniformLocation(gl.program, "tex");
 
 var vertices = new WebGLFloatArray([

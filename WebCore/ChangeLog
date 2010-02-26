@@ -1,3 +1,15 @@
+2010-02-26  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
+        Set viewport to canvas size upon context creation
+        https://bugs.webkit.org/show_bug.cgi?id=35057
+
+        Covered by existing tests, in particular fast/canvas/webgl/gl-get-calls.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Set the viewport size to match the canvas size.
+
 2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: touch InspectorController to force front-end deployment.

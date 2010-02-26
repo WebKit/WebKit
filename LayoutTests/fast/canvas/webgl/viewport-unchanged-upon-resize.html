@@ -32,8 +32,6 @@ debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=3476
 
 var gl = initWebGL("example", "vshader", "fshader", [ "g_Position" ], [ 0, 0, 1, 1 ], 1);
 
-gl.viewport(0, 0, 4, 4);
-
 var vertices = new WebGLFloatArray([
      1.0,  1.0, 0.0,
     -1.0,  1.0, 0.0,

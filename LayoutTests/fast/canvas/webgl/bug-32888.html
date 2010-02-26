@@ -43,7 +43,6 @@ function init()
     description('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32888">https://bugs.webkit.org/show_bug.cgi?id=32888</a> : <code>Garbage in transparent regions of images uploaded as textures</code>');
 
     gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
-    gl.viewport(0, 0, 32, 32);
 
     textureLoc = gl.getUniformLocation(gl.program, "tex");
 

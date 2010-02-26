@@ -59,7 +59,6 @@
             context2d.fillRect(0,0,64,64);
                         
             gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "vTexCoord0"], [ 1, 0, 1, 1 ], 100);
-            gl.viewport(0, 0, 64, 64);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             
             var vertexObject = gl.createBuffer();
