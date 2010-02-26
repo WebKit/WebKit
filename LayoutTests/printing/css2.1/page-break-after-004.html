@@ -34,17 +34,17 @@
 
     function test()
     {
-        pageNumberShouldBe('test1', 1);
-        pageNumberShouldBe('test2', 1);
+        pageNumberForElementShouldBe('test1', 1);
+        pageNumberForElementShouldBe('test2', 1);
+        numberOfPagesShouldBe(2);
     }
 
 </script>
 </head>
-<body onload="test()">
+<body onload="runPrintingTest(test)">
     <div class="noBreakAuto">This test must produce two pages of output. This sentence must be on the first page.</div>
     <div class="noBreakLeft" id="test1">This sentence must be at the top of the second page.</div>
     <div class="noBreakAlways dummy">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</div>
     <p id="test2">This must be the last sentence on the second and final page.</p>
-    <div id="results"></div>
 </body>
 </html>

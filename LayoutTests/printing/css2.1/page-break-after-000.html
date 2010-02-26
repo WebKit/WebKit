@@ -23,16 +23,16 @@
 
     function test()
     {
-        pageNumberShouldBe('test', 1);
+        pageNumberForElementShouldBe('test', 1);
+        numberOfPagesShouldBe(2);
     }
 
 </script>
 </head>
-<body onload="test()">
+<body onload="runPrintingTest(test)">
     <div class="break">There must be a page break after this paragraph, followed by another line of content. This test should produce two pages of output.</div>
     <div id="test">
         This text should be at the top of the second and final page.
     </div>
-    <div id="results"></div>
 </body>
 </html>

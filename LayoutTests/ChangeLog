@@ -1,3 +1,39 @@
+2010-02-26  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Refine LayoutTests/printing/css2.1 with numberOfPages
+        https://bugs.webkit.org/show_bug.cgi?id=35334
+
+        Small refinements were done in paged-media-test-utils.js.
+
+        Note that WebKit doesn't pass page-break-after-003 for now.
+
+        * printing/css2.1/README.txt:
+        * printing/css2.1/page-break-after-000-expected.txt:
+        * printing/css2.1/page-break-after-000.html:
+        * printing/css2.1/page-break-after-001-expected.txt:
+        * printing/css2.1/page-break-after-001.html:
+        * printing/css2.1/page-break-after-002-expected.txt:
+        * printing/css2.1/page-break-after-002.html:
+        * printing/css2.1/page-break-after-003-expected.txt: Added.
+        * printing/css2.1/page-break-after-003.html: Added.
+        * printing/css2.1/page-break-after-004-expected.txt:
+        * printing/css2.1/page-break-after-004.html:
+        * printing/css2.1/page-break-before-000-expected.txt:
+        * printing/css2.1/page-break-before-000.html:
+        * printing/css2.1/page-break-before-001-expected.txt:
+        * printing/css2.1/page-break-before-001.html:
+        * printing/css2.1/page-break-before-002-expected.txt:
+        * printing/css2.1/page-break-before-002.html:
+        * printing/css2.1/page-break-inside-000-expected.txt:
+        * printing/css2.1/page-break-inside-000.html:
+        * printing/resources/paged-media-test-utils.js:
+        (appendResult):
+        (pageNumberForElementShouldBe):
+        (numberOfPagesShouldBe):
+        (runPrintingTest):
+
 2010-02-26  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Xan Lopez.

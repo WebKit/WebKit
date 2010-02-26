@@ -24,14 +24,14 @@
 
     function test()
     {
-        pageNumberShouldBe('test', 0);
+        pageNumberForElementShouldBe('test', 0);
+        numberOfPagesShouldBe(1);
     }
 
 </script>
 </head>
-<body onload="test()">
+<body onload="runPrintingTest(test)">
     <div>There must <strong>not</strong> be a page break after this line of text.</div>
     <div class="noBreak" id="test">This test should produce only one page of output.</div>
-    <div id="results"></div>
 </body>
 </html>
