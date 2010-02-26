@@ -51,6 +51,18 @@
 
 2010-02-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] Needs proper reporting of frame loader callbacks, in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=32170
+
+        Unskip tests that now pass.
+
+        * LayoutTests/platform/gtk/http/tests/loading/redirect-with-no-location-crash-expected.txt: rebaselined.
+        * platform/gtk/Skipped:
+
+2010-02-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rebaseline of platform-specific results for test.
 
         SVGResourceClipper needs to be moved to RenderSVGResourceClipper

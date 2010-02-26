@@ -788,7 +788,8 @@ void FrameLoaderClient::dispatchDidCommitLoad()
 
 void FrameLoaderClient::dispatchDidFinishDocumentLoad()
 {
-    notImplemented();
+    WebKitWebView* webView = getViewFromFrame(m_frame);
+    g_signal_emit_by_name(webView, "document-load-finished", m_frame);
 }
 
 void FrameLoaderClient::dispatchDidFirstLayout()

@@ -158,6 +158,7 @@ enum {
     REDO,
     DATABASE_QUOTA_EXCEEDED,
     RESOURCE_REQUEST_STARTING,
+    DOCUMENT_LOAD_FINISHED,
     LAST_SIGNAL
 };
 
@@ -2163,6 +2164,30 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             WEBKIT_TYPE_NETWORK_REQUEST,
             WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /*
+     * DOM-related signals. These signals are experimental, for now,
+     * and may change API and ABI. Their comments lack one * on
+     * purpose, to make them not be catched by gtk-doc.
+     */
+
+    /*
+     * WebKitWebView::document-load-finished
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame whose load dispatched this request
+     *
+     * Emitted when the DOM document object load is finished for the
+     * given frame.
+     */
+    webkit_web_view_signals[DOCUMENT_LOAD_FINISHED] = g_signal_new("document-load-finished",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+            0,
+            NULL, NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_FRAME);
+
 
     /*
      * implementations of virtual methods

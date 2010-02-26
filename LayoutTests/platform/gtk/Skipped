@@ -1399,10 +1399,7 @@ fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
 fast/html/text-field-input-types.html
-fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/main-document-url-for-non-http-loads.html
-fast/loader/onunload-form-submit-crash-2.html
-fast/loader/onunload-form-submit-crash.html
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
@@ -5642,8 +5639,6 @@ editing/selection/5825350-2.html
 
 # Need proper frame loader callbacks reporting
 # See https://bugs.webkit.org/show_bug.cgi?id=32170
-fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
-fast/loader/stateobjects/document-destroyed-navigate-back.html
 http/tests/loading/state-object-security-exception.html
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 # Seems to be the same issue as above.
