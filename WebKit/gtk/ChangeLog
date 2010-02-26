@@ -1,3 +1,11 @@
+2010-02-26  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed.
+
+        Reverted last patch (r55295), it causes problems with the frames.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+
 2010-02-19  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -364,10 +364,25 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     // We cannot use gdk_window_scroll here because it is only able to
     // scroll the whole window at once, and we often need to scroll
     // portions of the window only (think frames).
-    GdkRectangle moveRect = clipRect;
-    GdkRegion* moveRegion = gdk_region_rectangle(&moveRect);
-    gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
-    gdk_region_destroy(moveRegion);
+    GdkRectangle area = clipRect;
+    GdkRectangle moveRect;
+
+    GdkRectangle sourceRect = area;
+    sourceRect.x -= delta.width();
+    sourceRect.y -= delta.height();
+
+    GdkRegion* invalidRegion = gdk_region_rectangle(&area);
+
+    if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
+        GdkRegion* moveRegion = gdk_region_rectangle(&moveRect);
+        gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
+        gdk_region_offset(moveRegion, delta.width(), delta.height());
+        gdk_region_subtract(invalidRegion, moveRegion);
+        gdk_region_destroy(moveRegion);
+    }
+
+    gdk_window_invalidate_region(window, invalidRegion, FALSE);
+    gdk_region_destroy(invalidRegion);
 }
 
 // FIXME: this does not take into account the WM decorations
