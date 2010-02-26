@@ -2,6 +2,15 @@
 
         Rubber-stamped by Xan Lopez.
 
+        [GTK] plugins/setProperty.html fails on 64bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=35425
+
+        * platform/gtk/Skipped: Skipping crasher.
+
+2010-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
         Adding two GTK layout test results for a new tests
         added in r55259 and r55260.
 
