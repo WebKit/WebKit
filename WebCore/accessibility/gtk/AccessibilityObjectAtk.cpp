@@ -50,8 +50,14 @@ AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformI
     if (parent->isPasswordField() || parent->isTextControl())
         return IgnoreObject;
 
+    AccessibilityRole role = roleValue();
+
+    // Include all tables, even layout tables. The AT can decide what to do with each.
+    if (role == CellRole || role == TableRole)
+        return IncludeObject;
+
     // The object containing the text should implement AtkText itself.
-    if (roleValue() == StaticTextRole)
+    if (role == StaticTextRole)
         return IgnoreObject;
 
     return DefaultBehavior;

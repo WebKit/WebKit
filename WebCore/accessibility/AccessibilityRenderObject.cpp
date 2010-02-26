@@ -2726,7 +2726,16 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
         return AnnotationRole;
-    
+
+#if PLATFORM(GTK)
+    // Gtk ATs expect all tables, data and layout, to be exposed as tables.
+    if (node && node->hasTagName(tdTag))
+        return CellRole;
+
+    if (node && node->hasTagName(tableTag))
+        return TableRole;
+#endif   
+
     if (m_renderer->isBlockFlow() || (node && node->hasTagName(labelTag)))
         return GroupRole;
     

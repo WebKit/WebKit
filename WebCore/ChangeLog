@@ -1,3 +1,18 @@
+2010-02-26  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35418
+        [Gtk] Every table, including layout tables, should be exposed as a table
+
+        This patch exposes layout tables as tables. (Addressing the problematic table
+        hierarchy remains to be done.)
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::determineAccessibilityRole):
+
 2010-02-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
