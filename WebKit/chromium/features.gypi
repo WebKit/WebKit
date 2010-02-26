@@ -71,7 +71,11 @@
         'ENABLE_WORKERS=1',
         'WTF_USE_ACCELERATED_COMPOSITING=0',
       ],
+      
+      'enable_svg%': 1,
     },
+
     'feature_defines%': '<(feature_defines)',
+    'enable_svg%': '<(enable_svg)',
   },
 }

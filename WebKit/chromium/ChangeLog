@@ -1,5 +1,11 @@
 2010-02-26  Yaar Schnitman  <yaar@chromium.org>
 
+        Chromium build fix.
+
+        * features.gypi: Added missing new variable enable_svg.
+
+2010-02-26  Yaar Schnitman  <yaar@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [V8] Auto-generate and split DerivedSourcesAllInOne.cpp
