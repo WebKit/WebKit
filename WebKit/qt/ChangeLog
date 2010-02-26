@@ -1,3 +1,16 @@
+2010-02-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix documentation of QWebSettings::setUserStyleSheetUrl method
+
+        The base 64 data in the exemple shows a not valid code.
+
+        REGRESSION: QWebSettings::setUserStyleSheetUrl is not working with a data URL (Base64)
+        https://bugs.webkit.org/show_bug.cgi?id=34802
+
+        * Api/qwebsettings.cpp:
+
 2010-02-26  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Laszlo Gombos.

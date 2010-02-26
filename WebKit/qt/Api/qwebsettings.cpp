@@ -478,7 +478,8 @@ void QWebSettings::resetFontSize(FontSize type)
     The \a location must be either a path on the local filesystem, or a data URL
     with UTF-8 and Base64 encoded data, such as:
 
-    "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow==;"
+    "data:text/css;charset=utf-8;base64,cCB7IGJhY2tncm91bmQtY29sb3I6IHJlZCB9Ow=="
+    NOTE: In case the base 64 data is not valid the style will not be applied.
 
     \sa userStyleSheetUrl()
 */
