@@ -1,3 +1,14 @@
+2010-02-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Changed the diff_parser module to log to a module-specific
+        logging.logger rather than the root logger.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35391
+
+        * Scripts/webkitpy/diff_parser.py:
+
 2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

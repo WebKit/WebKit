@@ -31,6 +31,7 @@
 import logging
 import re
 
+_log = logging.getLogger("webkitpy.diff_parser")
 
 _regexp_compile_cache = {}
 
@@ -138,7 +139,8 @@ class DiffParser:
             lines_changed = match(r"^@@ -(?P<OldStartLine>\d+)(,\d+)? \+(?P<NewStartLine>\d+)(,\d+)? @@", line)
             if lines_changed:
                 if state != _DECLARED_FILE_PATH and state != _PROCESSING_CHUNK:
-                    logging.error('Unexpected line change without file path declaration: %r' % line)
+                    _log.error('Unexpected line change without file path '
+                               'declaration: %r' % line)
                 old_diff_line = int(lines_changed.group('OldStartLine'))
                 new_diff_line = int(lines_changed.group('NewStartLine'))
                 state = _PROCESSING_CHUNK
@@ -159,4 +161,5 @@ class DiffParser:
                     # Nothing to do.  We may still have some added lines.
                     pass
                 else:
-                    logging.error('Unexpected diff format when parsing a chunk: %r' % line)
+                    _log.error('Unexpected diff format when parsing a '
+                               'chunk: %r' % line)
