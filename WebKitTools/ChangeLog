@@ -1,3 +1,12 @@
+2010-02-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        new-webkit-run-tests: Extraneous parenthesis in websocket_server.py
+        https://bugs.webkit.org/show_bug.cgi?id=35436
+
+         * Scripts/webkitpy/layout_tests/port/websocket_server.py: Removed extra paren.
+
 2010-02-26  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by David Levin.
