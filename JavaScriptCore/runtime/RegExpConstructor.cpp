@@ -113,17 +113,17 @@ RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate
     memcpy(d->lastOvector().data(), data->lastOvector().data(), offsetVectorSize * sizeof(int));
     // d->multiline is not needed, and remains uninitialized
 
-    setLazyCreationData(d);
+    setSubclassData(d);
 }
 
 RegExpMatchesArray::~RegExpMatchesArray()
 {
-    delete static_cast<RegExpConstructorPrivate*>(lazyCreationData());
+    delete static_cast<RegExpConstructorPrivate*>(subclassData());
 }
 
 void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
 {
-    RegExpConstructorPrivate* d = static_cast<RegExpConstructorPrivate*>(lazyCreationData());
+    RegExpConstructorPrivate* d = static_cast<RegExpConstructorPrivate*>(subclassData());
     ASSERT(d);
 
     unsigned lastNumSubpatterns = d->lastNumSubPatterns;
@@ -141,7 +141,7 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input), slot);
 
     delete d;
-    setLazyCreationData(0);
+    setSubclassData(0);
 }
 
 JSObject* RegExpConstructor::arrayOfMatches(ExecState* exec) const

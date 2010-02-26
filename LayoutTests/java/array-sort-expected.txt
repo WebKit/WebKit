@@ -1,0 +1,21 @@
+Test that Java arrays work with generic JS array methods.
+
+Also test that they work when passed as the second argument to apply(). This may or may not be correct behavior per LiveConnect spec.
+
+call
+PASS array[0] + '' is 'One'
+PASS array[1] + '' is 'Three'
+PASS array[2] + '' is 'Two'
+apply
+PASS array[0] + '' is 'One'
+PASS array[1] + '' is 'Three'
+PASS array[2] + '' is 'Two'
+passing array as function arguments, potentially parser-optimized apply
+PASS concat.apply({}, array) is 'OneTwoThree'
+passing array as function arguments, unoptimized apply
+PASS concat["apply"]({}, array) is 'OneTwoThree'
+PASS array.length = 5 threw exception RangeError: Range error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

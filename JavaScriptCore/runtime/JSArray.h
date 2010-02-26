@@ -31,7 +31,7 @@ namespace JSC {
         unsigned m_length;
         unsigned m_numValuesInVector;
         SparseArrayValueMap* m_sparseValueMap;
-        void* lazyCreationData; // A JSArray subclass can use this to fill the vector lazily.
+        void* subclassData; // A JSArray subclass can use this to fill the vector lazily.
         size_t reportedMapCapacity;
         JSValue m_vector[1];
     };
@@ -101,8 +101,8 @@ namespace JSC {
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         virtual void markChildren(MarkStack&);
 
-        void* lazyCreationData();
-        void setLazyCreationData(void*);
+        void* subclassData() const;
+        void setSubclassData(void*);
 
     private:
         virtual const ClassInfo* classInfo() const { return &info; }

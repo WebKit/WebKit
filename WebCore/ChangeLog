@@ -1,3 +1,21 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35406
+        <rdar://problem/6945502> Make generic array methods work with JavaArray
+
+        Test: java/array-sort.html
+
+        Made RuntimeArray inherit from JSArray, keeping the promise given in ClassInfo.
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::RuntimeArray):
+        (JSC::RuntimeArray::~RuntimeArray):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::classInfo):
+        (JSC::RuntimeArray::getConcreteArray):
+
 2010-02-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1,3 +1,13 @@
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35406
+        <rdar://problem/6945502> Make generic array methods work with JavaArray
+
+        * java/array-sort-expected.txt: Added.
+        * java/array-sort.html: Added.
+
 2010-02-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
