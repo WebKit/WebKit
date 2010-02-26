@@ -1635,12 +1635,10 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, ImageDat
                                        bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     // FIXME: For now we ignore any errors returned
-    // FIXME: Need a form of this call that can take both a pixel buffer and flipY and premultiplyAlpha flags
-    UNUSED_PARAM(flipY);
-    UNUSED_PARAM(premultiplyAlpha);
     ec = 0;
-    m_context->texImage2D(target, level, GraphicsContext3D::RGBA, pixels->width(), pixels->height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels->data()->data()->data());
-    //RLP: m_context->texImage2D(target, level, pixels, flipY, premultiplyAlpha);
+    Vector<uint8_t> data;
+    m_context->extractImageData(pixels, flipY, premultiplyAlpha, data);
+    m_context->texImage2D(target, level, GraphicsContext3D::RGBA, pixels->width(), pixels->height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1725,11 +1723,10 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                                           ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     // FIXME: For now we ignore any errors returned
-    UNUSED_PARAM(flipY);
-    UNUSED_PARAM(premultiplyAlpha);
     ec = 0;
-    m_context->texSubImage2D(target, level, xoffset, yoffset, pixels->width(), pixels->height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels->data()->data()->data());
-    //RLP: m_context->texSubImage2D(target, level, xoffset, yoffset, pixels, flipY, premultiplyAlpha);
+    Vector<uint8_t> data;
+    m_context->extractImageData(pixels, flipY, premultiplyAlpha, data);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, pixels->width(), pixels->height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data());
     cleanupAfterGraphicsCall(false);
 }
 

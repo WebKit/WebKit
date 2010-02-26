@@ -2,6 +2,22 @@
 
         Reviewed by David Levin.
 
+        texImage2D and texSubImage2D taking ImageData ignore flipY and premultiplyAlpha
+        https://bugs.webkit.org/show_bug.cgi?id=34459
+
+        Test: fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D): Apply flipY and premultiplyAlpha to the texture data.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Ditto.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::extractImageData): Extract data from ImageData, applying flipY and premultiplyAlpha.
+        * platform/graphics/GraphicsContext3D.h: Add function extractImageData declaration.
+
+2010-02-26  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by David Levin.
+
         Set viewport to canvas size upon context creation
         https://bugs.webkit.org/show_bug.cgi?id=35057
 

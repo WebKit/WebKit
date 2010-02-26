@@ -1,0 +1,201 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/utils3d.js"> </script>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 g_Position;
+attribute vec2 g_TexCoord0;
+
+varying vec2 texCoord;
+
+void main()
+{
+    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
+    texCoord = g_TexCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+uniform sampler2D tex;
+varying vec2 texCoord;
+
+void main()
+{
+    gl_FragColor = texture2D(tex, texCoord);
+}
+</script>
+
+<script>
+var gl = null;
+var textureLoc = null;
+var successfullyParsed = false;
+var imageData = null;
+
+function init()
+{
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    description('Verify texImage2D and texSubImage2D code paths taking ImageData, in particular flipY and premultiplyAlpha argument');
+
+    debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=34459">https://bugs.webkit.org/show_bug.cgi?id=34459</a> : <code>Refactor texImage2D and texSubImage2D taking ImageData to use common code</code>');
+
+    var canvas2d = document.getElementById("texcanvas");
+    var context2d = canvas2d.getContext("2d");
+    imageData = context2d.createImageData(1, 2);
+    var data = imageData.data;
+    data[0] = 255;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 255;
+    data[4] = 0;
+    data[5] = 255;
+    data[6] = 0;
+    data[7] = 0;
+
+    gl = initWebGL("example", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+    gl.viewport(0, 0, 1, 2);
+    gl.disable(gl.BLEND);
+
+    textureLoc = gl.getUniformLocation(gl.program, "tex");
+
+    var vertices = new WebGLFloatArray([
+         1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0]);
+    var texCoords = new WebGLFloatArray([
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0]);
+    var texCoordOffset = vertices.byteLength;
+
+    var vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER,
+                  texCoordOffset + texCoords.byteLength,
+                  gl.STATIC_DRAW);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
+
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, texCoordOffset);
+
+    runTest();
+}
+
+// These two declarations need to be global for "shouldBe" to see them
+var buf = null;
+var idx = 0;
+var pixel = [0, 0, 0, 1];
+var correctColor = null;
+
+function runOneIteration(useTexSubImage2D, flipY, premultiplyAlpha, topColor, bottomColor)
+{
+    debug('Testing ' + (useTexSubImage2D ? 'texSubImage2D' : 'texImage2D') +
+          ' with flipY=' + flipY + ' and premultiplyAlpha=' + premultiplyAlpha);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // Enable writes to the RGBA channels
+    gl.colorMask(1, 1, 1, 0);
+    var texture = gl.createTexture();
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Set up texture parameters
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // Upload the image into the texture
+    if (useTexSubImage2D) {
+        // Initialize the texture to black first
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 2, 0,
+                      gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, imageData,
+                         flipY, premultiplyAlpha);
+    } else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, imageData,
+                      flipY, premultiplyAlpha);
+    }
+
+    // Point the uniform sampler to texture unit 0
+    gl.uniform1i(textureLoc, 0);
+    // Draw the triangles
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    // Read back the rendering results
+    buf = gl.readPixels(0, 0, 1, 2, gl.RGBA, gl.UNSIGNED_BYTE);
+    // Check the top pixel and bottom pixel and make sure they have
+    // the right color.
+    debug("Checking bottom pixel");
+    correctColor = bottomColor;
+    idx = 0;
+    pixel[0] = buf[idx];
+    pixel[1] = buf[idx + 1];
+    pixel[2] = buf[idx + 2];
+    pixel[3] = buf[idx + 3];
+    shouldBe("pixel", "correctColor");
+    debug("Checking top pixel");
+    correctColor = topColor;
+    idx = 4;
+    pixel[0] = buf[idx];
+    pixel[1] = buf[idx + 1];
+    pixel[2] = buf[idx + 2];
+    pixel[3] = buf[idx + 3];
+    shouldBe("pixel", "correctColor");
+}
+
+function runTest()
+{
+    var red = [255, 0, 0, 255];
+    var green = [0, 255, 0, 255];
+    var redPremultiplyAlpha = [255, 0, 0, 255];
+    var greenPremultiplyAlpha = [0, 0, 0, 255];
+
+    runOneIteration(false, true, false,
+                    red, green);
+    runOneIteration(false, false, false,
+                    green, red);
+    runOneIteration(false, true, true,
+                    redPremultiplyAlpha, greenPremultiplyAlpha);
+    runOneIteration(false, false, true,
+                    greenPremultiplyAlpha, redPremultiplyAlpha);
+    runOneIteration(true, true, false,
+                    red, green);
+    runOneIteration(true, false, false,
+                    green, red);
+    runOneIteration(true, true, true,
+                    redPremultiplyAlpha, greenPremultiplyAlpha);
+    runOneIteration(true, false, true,
+                    greenPremultiplyAlpha, redPremultiplyAlpha);
+
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = finish;
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+function finish() {
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+</script>
+</head>
+<body onload="init()">
+<canvas id="texcanvas" width="1px" height="2px"></canvas>
+<canvas id="example" width="1px" height="2px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

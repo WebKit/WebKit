@@ -31,6 +31,7 @@
 #include "GraphicsContext3D.h"
 
 #include "Image.h"
+#include "ImageData.h"
 
 namespace WebCore {
 
@@ -54,6 +55,28 @@ bool GraphicsContext3D::extractImageData(Image* image,
                      flipY,
                      alphaOp);
     *internalFormat = (hasAlphaChannel ? RGBA : RGB);
+    return true;
+}
+
+bool GraphicsContext3D::extractImageData(ImageData* imageData,
+                                         bool flipY,
+                                         bool premultiplyAlpha,
+                                         Vector<uint8_t>& data)
+{
+    if (!imageData)
+        return false;
+    int width = imageData->width();
+    int height = imageData->height();
+    int dataBytes = width * height * 4;
+    data.resize(dataBytes);
+    uint8_t* dst = data.data();
+    uint8_t* src = imageData->data()->data()->data();
+    memcpy(dst, src, dataBytes);
+    processImageData(dst,
+                     width,
+                     height,
+                     flipY,
+                     premultiplyAlpha ? kAlphaDoPremultiply : kAlphaDoNothing);
     return true;
 }
 
