@@ -5097,3 +5097,12 @@ http/tests/loading/307-after-303-after-post.html
 
 # DumpRenderTree code to enable Java is currently a no-op
 java
+
+# Width and height of layoutTestController.numberOfPages should be optional.
+printing/css2.1/page-break-after-000.html
+printing/css2.1/page-break-after-001.html
+printing/css2.1/page-break-after-003.html
+printing/css2.1/page-break-after-004.html
+printing/css2.1/page-break-before-000.html
+printing/css2.1/page-break-before-001.html
+printing/css2.1/page-break-before-002.html
