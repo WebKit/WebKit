@@ -151,8 +151,7 @@ class PyWebSocket(http_server.Lighttpd):
         python_interp = sys.executable
         pywebsocket_base = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__)))))), 'pywebsocket')
+            os.path.abspath(__file__)))))), 'thirdparty', 'pywebsocket')
         pywebsocket_script = os.path.join(pywebsocket_base, 'mod_pywebsocket',
             'standalone.py')
         start_cmd = [

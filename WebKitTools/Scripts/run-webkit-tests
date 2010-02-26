@@ -1394,7 +1394,7 @@ sub openWebSocketServerIfNeeded()
     return 0 if $failedToStartWebSocketServer;
 
     my $webSocketServerPath = "/usr/bin/python";
-    my $webSocketPythonPath = "WebKitTools/pywebsocket";
+    my $webSocketPythonPath = "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket";
     my $webSocketHandlerDir = "$testDirectory";
     my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
     my $webSocketHandlerMapFile = "$webSocketHandlerScanDir/handler_map.txt";
@@ -1403,7 +1403,7 @@ sub openWebSocketServerIfNeeded()
     my $logFile = "$absTestResultsDirectory/pywebsocket_log.txt";
 
     my @args = (
-        "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+        "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
         "-p", "$webSocketPort",
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
@@ -1414,7 +1414,7 @@ sub openWebSocketServerIfNeeded()
     );
     # wss is disabled until all platforms support pyOpenSSL.
     # my @argsSecure = (
-    #     "WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+    #     "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
     #     "-p", "$webSocketSecurePort",
     #     "-d", "$webSocketHandlerDir",
     #     "-t",

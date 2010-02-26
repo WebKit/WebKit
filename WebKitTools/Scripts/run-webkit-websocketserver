@@ -64,13 +64,13 @@ exit 0;
 sub openWebSocketServer()
 {
     my $webSocketServerPath = "/usr/bin/python";
-    my $webSocketPythonPath = "$srcDir/WebKitTools/pywebsocket";
+    my $webSocketPythonPath = "$srcDir/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket";
     my $webSocketHandlerDir = "$testDirectory";
     my $webSocketHandlerScanDir = "$testDirectory/websocket/tests";
     my $webSocketHandlerMapFile = "$webSocketHandlerScanDir/handler_map.txt";
 
     my @args = (
-        "$srcDir/WebKitTools/pywebsocket/mod_pywebsocket/standalone.py",
+        "$srcDir/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
         "-p", "$webSocketPort",
         "-d", "$webSocketHandlerDir",
         "-s", "$webSocketHandlerScanDir",
