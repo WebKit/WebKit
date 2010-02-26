@@ -23,48 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+
+#ifndef RenderMathMLUnderOver_h
+#define RenderMathMLUnderOver_h
 
 #if ENABLE(MATHML)
 
-#include "MathMLInlineContainerElement.h"
-
-#include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
-#include "RenderMathMLUnderOver.h"
 
 namespace WebCore {
     
-using namespace MathMLNames;
-
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document* document)
-    : MathMLElement(tagName, document)
-{
-}
-
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document* document)
-{
-    return new MathMLInlineContainerElement(tagName, document);
-}
-
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, RenderStyle* style)
-{
-
-    RenderObject* object = 0;
-    if (hasLocalName(MathMLNames::moverTag))
-        object = new (arena) RenderMathMLUnderOver(this);
-    else if (hasLocalName(MathMLNames::munderTag))
-        object = new (arena) RenderMathMLUnderOver(this);
-    else if (hasLocalName(MathMLNames::munderoverTag))
-        object = new (arena) RenderMathMLUnderOver(this);
-    else
-        object = new (arena) RenderMathMLBlock(this);
-    object->setStyle(style);
-    return object;
-}
-    
+class RenderMathMLUnderOver : public RenderMathMLBlock {
+public:
+    RenderMathMLUnderOver(Node* expression);
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
+    virtual void layout();
+    virtual bool hasBase() const { return true; }
+    virtual int nonOperatorHeight() const;
+    virtual int baselinePosition(bool , bool) const;    
+    virtual void stretchToHeight(int pixelHeight);
+private:
+    enum UnderOverType { Under, Over, UnderOver };
+    UnderOverType m_kind;
+};
     
 }
 
 #endif // ENABLE(MATHML)
 
+#endif // RenderMathMLUnderOver_h

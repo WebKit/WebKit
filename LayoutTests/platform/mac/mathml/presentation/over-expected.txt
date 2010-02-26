@@ -1,0 +1,76 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x267
+  RenderBlock {html} at (0,0) size 800x267
+    RenderBody {body} at (8,16) size 784x235
+      RenderBlock {p} at (0,0) size 784x28
+        RenderText {#text} at (0,8) size 36x18
+          text run at (0,8) width 36: "over: "
+        RenderBlock {math} at (36,0) size 10x28
+          RenderBlock {mover} at (0,0) size 10x28
+            RenderBlock {mover} at (0,0) size 10x16
+              RenderInline {mi} at (0,0) size 5x12
+                RenderText {#text} at (2,3) size 5x12
+                  text run at (2,3) width 5: "x"
+            RenderBlock {mover} at (0,11) size 10x17
+              RenderInline {mi} at (0,0) size 10x16
+                RenderText {#text} at (0,1) size 10x16
+                  text run at (0,1) width 10: "B"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,44) size 784x28
+        RenderText {#text} at (0,8) size 36x18
+          text run at (0,8) width 36: "over: "
+        RenderBlock {math} at (36,0) size 10x28
+          RenderBlock {mover} at (0,0) size 10x28
+            RenderBlock {mover} at (0,0) size 10x16
+              RenderInline {mi} at (0,0) size 5x12
+                RenderText {#text} at (2,3) size 5x12
+                  text run at (2,3) width 5: "y"
+            RenderBlock {mover} at (0,11) size 10x17
+              RenderInline {mi} at (0,0) size 10x16
+                RenderText {#text} at (0,1) size 10x16
+                  text run at (0,1) width 10: "B"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,88) size 784x35
+        RenderText {#text} at (0,14) size 36x18
+          text run at (0,14) width 36: "over: "
+        RenderBlock {math} at (36,0) size 15x35
+          RenderBlock {mover} at (0,0) size 15x35
+            RenderBlock {mover} at (0,0) size 15x16
+              RenderInline {mi} at (0,0) size 5x12
+                RenderText {#text} at (5,3) size 5x12
+                  text run at (5,3) width 5: "y"
+            RenderBlock {mover} at (0,11) size 15x24
+              RenderInline {mi} at (0,0) size 15x24
+                RenderText {#text} at (0,0) size 15x24
+                  text run at (0,0) width 15: "B"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,139) size 784x35
+        RenderText {#text} at (0,14) size 36x18
+          text run at (0,14) width 36: "over: "
+        RenderBlock {math} at (36,0) size 19x35
+          RenderBlock {mover} at (0,0) size 19x35
+            RenderBlock {mover} at (0,0) size 19x16
+              RenderInline {mi} at (0,0) size 5x12
+                RenderText {#text} at (7,3) size 5x12
+                  text run at (7,3) width 5: "y"
+            RenderBlock {mover} at (0,11) size 19x24
+              RenderBlock {mo} at (0,0) size 19x24
+                RenderText {#text} at (1,0) size 17x24
+                  text run at (1,0) width 17: "\x{2211}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,190) size 784x45
+        RenderText {#text} at (0,26) size 36x18
+          text run at (0,26) width 36: "over: "
+        RenderBlock {math} at (36,0) size 45x45
+          RenderBlock {mover} at (0,18) size 5x27
+            RenderBlock {mover} at (0,0) size 5x16
+              RenderInline {mi} at (0,0) size 5x12
+                RenderText {#text} at (0,3) size 5x12
+                  text run at (0,3) width 5: "y"
+            RenderBlock {mover} at (0,11) size 5x16
+              RenderBlock {mo} at (0,0) size 4x16
+                RenderText {#text} at (0,0) size 4x16
+                  text run at (0,0) width 4: "\x{222B}"
+          RenderBlock {div} at (5,0) size 40x40
+        RenderText {#text} at (0,0) size 0x0

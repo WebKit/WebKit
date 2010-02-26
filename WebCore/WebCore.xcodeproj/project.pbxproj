@@ -4856,6 +4856,8 @@
 		FA654A6C1108ABED002615E0 /* MathMLTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002615E0 /* MathMLTextElement.h */; };
 		FA654A6F1108ABFF002615E0 /* RenderMathMLBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */; };
 		FA654A701108ABFF002615E0 /* RenderMathMLBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */; };
+		FA7EFB051120D25400CF79C7 /* RenderMathMLUnderOver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */; };
+		FA7EFB061120D25400CF79C7 /* RenderMathMLUnderOver.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */; };
 		FABE72F41059C1EB00D999DD /* MathMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
 		FABE72F61059C1EB00D999DD /* MathMLInlineContainerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */; };
@@ -10189,6 +10191,8 @@
 		FA654A6A1108ABED002615E0 /* MathMLTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLTextElement.h; sourceTree = "<group>"; };
 		FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLBlock.cpp; sourceTree = "<group>"; };
 		FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLBlock.h; sourceTree = "<group>"; };
+		FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLUnderOver.cpp; sourceTree = "<group>"; };
+		FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLUnderOver.h; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D999DD /* MathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElement.h; sourceTree = "<group>"; };
 		FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLInlineContainerElement.cpp; sourceTree = "<group>"; };
@@ -16092,6 +16096,8 @@
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
 				FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */,
 				FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */,
+				FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */,
+				FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */,
 			);
 			path = mathml;
 			sourceTree = "<group>";
@@ -18562,6 +18568,7 @@
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
 				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
+				FA7EFB061120D25400CF79C7 /* RenderMathMLUnderOver.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */,
@@ -20751,6 +20758,7 @@
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */,
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
+				FA7EFB051120D25400CF79C7 /* RenderMathMLUnderOver.cpp in Sources */,
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,
 				76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */,

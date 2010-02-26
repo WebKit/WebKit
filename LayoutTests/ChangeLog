@@ -1,3 +1,22 @@
+2010-02-26  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Basic tests for munder, munderover, and mover elements.
+
+        * mathml/presentation/over.xhtml: Added.
+        * mathml/presentation/under.xhtml: Added.
+        * mathml/presentation/underover.xhtml: Added.
+        * platform/mac/mathml/presentation/over-expected.checksum: Added.
+        * platform/mac/mathml/presentation/over-expected.png: Added.
+        * platform/mac/mathml/presentation/over-expected.txt: Added.
+        * platform/mac/mathml/presentation/under-expected.checksum: Added.
+        * platform/mac/mathml/presentation/under-expected.png: Added.
+        * platform/mac/mathml/presentation/under-expected.txt: Added.
+        * platform/mac/mathml/presentation/underover-expected.checksum: Added.
+        * platform/mac/mathml/presentation/underover-expected.png: Added.
+        * platform/mac/mathml/presentation/underover-expected.txt: Added.
+
 2010-02-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rebaseline of platform-specific results for test.

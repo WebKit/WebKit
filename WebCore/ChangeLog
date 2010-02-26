@@ -1,3 +1,28 @@
+2010-02-26  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added basic support for the munder, munderover, and mover elements.
+
+        Tests: mathml/presentation/over.xhtml
+               mathml/presentation/under.xhtml
+               mathml/presentation/underover.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/RenderMathMLUnderOver.cpp: Added.
+        (WebCore::RenderMathMLUnderOver::RenderMathMLUnderOver):
+        (WebCore::RenderMathMLUnderOver::addChild):
+        (WebCore::getOffsetHeight):
+        (WebCore::RenderMathMLUnderOver::stretchToHeight):
+        (WebCore::RenderMathMLUnderOver::layout):
+        (WebCore::RenderMathMLUnderOver::baselinePosition):
+        (WebCore::RenderMathMLUnderOver::nonOperatorHeight):
+        * mathml/RenderMathMLUnderOver.h: Added.
+        (WebCore::RenderMathMLUnderOver::hasBase):
+        (WebCore::RenderMathMLUnderOver::):
+
 2010-02-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Adler.
