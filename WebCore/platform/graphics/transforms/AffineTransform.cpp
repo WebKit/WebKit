@@ -314,14 +314,28 @@ FloatRect AffineTransform::mapRect(const FloatRect& rect) const
         return mappedRect;
     }
 
-    FloatQuad q(rect);
+    FloatQuad result;
+    result.setP1(mapPoint(rect.location()));
+    result.setP2(mapPoint(FloatPoint(rect.right(), rect.y())));
+    result.setP3(mapPoint(FloatPoint(rect.right(), rect.bottom())));
+    result.setP4(mapPoint(FloatPoint(rect.x(), rect.bottom())));
+    return result.boundingBox();
+}
+
+FloatQuad AffineTransform::mapQuad(const FloatQuad& q) const
+{
+    if (isIdentityOrTranslation()) {
+        FloatQuad mappedQuad(q);
+        mappedQuad.move(narrowPrecisionToFloat(m_transform[4]), narrowPrecisionToFloat(m_transform[5]));
+        return mappedQuad;
+    }
 
     FloatQuad result;
     result.setP1(mapPoint(q.p1()));
     result.setP2(mapPoint(q.p2()));
     result.setP3(mapPoint(q.p3()));
     result.setP4(mapPoint(q.p4()));
-    return result.boundingBox();
+    return result;
 }
 
 void AffineTransform::blend(const AffineTransform& from, double progress)
