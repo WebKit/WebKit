@@ -1,3 +1,24 @@
+2010-02-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Multiple repaints on apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=35409
+
+        apple.com was triggering the fast scaling path for background images due to
+        repeated repaints as more content came in.  This occured due to a two problems
+        in the logic to detect scaling.  The first is that the main context is flipped
+        on mac so fails the identity or translation check.  We work around this by adding
+        an function that allows the scaling for a flipped CTM.  The other problem was that
+        we were looking at the destination rect size instead of the destination tile size
+        when deciding if the size we were drawn at would cause scaling.
+
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::isIdentityOrTranslationOrFlipped):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2010-02-25  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
