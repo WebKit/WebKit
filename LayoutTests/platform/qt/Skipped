@@ -5067,10 +5067,6 @@ fast/css/dashboard-regions-attr-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=34882
 websocket/tests/cookies/httponly-cookie.pl
 
-# [Qt] fast/multicol/client-rects.html fails in QtLauncher
-# https://bugs.webkit.org/show_bug.cgi?id=34959
-fast/multicol/client-rects.html
-
 # [Qt] REGRESSION(r54811) fast/canvas/drawImage-with-negative-source-destination.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=35005
 fast/canvas/drawImage-with-negative-source-destination.html
