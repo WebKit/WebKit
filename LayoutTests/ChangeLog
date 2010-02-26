@@ -1,3 +1,13 @@
+2010-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Adding two GTK layout test results for a new tests
+        added in r55259 and r55260.
+
+        * platform/gtk/svg/custom/use-on-clip-path-with-transformation-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-on-clip-path-with-transformation-expected.txt.
+        * platform/gtk/svg/filters/filter-on-tspan-expected.txt: Added.
+
 2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Roll-out r55263 because it broke fast/forms/textarea-type-spaces-pretty-diff.html.
