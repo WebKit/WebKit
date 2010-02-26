@@ -3847,3 +3847,18 @@ ol.breakpoint-list {
     margin: -1px;
     background-color: rgb(255, 255, 194);
 }
+
+.timeline-details-row-title {
+    font-weight: bold;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.timeline-details-row-data {
+    white-space: nowrap;
+}
+
+.timeline-details-title {
+    font-weight: bold;
+    white-space: nowrap;
+}

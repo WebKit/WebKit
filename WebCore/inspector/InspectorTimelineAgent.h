@@ -63,6 +63,7 @@ namespace WebCore {
         ResourceSendRequestTimelineRecordType = 12,
         ResourceReceiveResponseTimelineRecordType = 13,
         ResourceFinishTimelineRecordType = 14,
+        FunctionCallTimelineRecordType = 15,
     };
 
     class InspectorTimelineAgent : public Noncopyable {
@@ -74,6 +75,9 @@ namespace WebCore {
         void resetFrontendProxyObject(InspectorFrontend*);
 
         // Methods called from WebCore.
+        void willCallFunction(const String& scriptName, int scriptLine);
+        void didCallFunction();
+
         void willDispatchEvent(const Event&);
         void didDispatchEvent();
 
@@ -108,7 +112,9 @@ namespace WebCore {
         void didReceiveResourceResponse(unsigned long, const ResourceResponse&);
         void didFinishLoadingResource(unsigned long, bool didFail);
 
+        static int instanceCount() { return s_instanceCount; }
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
+
     private:
         struct TimelineRecordEntry {
             TimelineRecordEntry(ScriptObject record, ScriptObject data, ScriptArray children, TimelineRecordType type) : record(record), data(data), children(children), type(type) { }
@@ -127,8 +133,9 @@ namespace WebCore {
         void addRecordToTimeline(ScriptObject, TimelineRecordType);
 
         InspectorFrontend* m_frontend;
-        
+
         Vector< TimelineRecordEntry > m_recordStack;
+        static int s_instanceCount;
     };
 
 inline InspectorTimelineAgent* InspectorTimelineAgent::retrieve(ScriptExecutionContext* context)

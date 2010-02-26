@@ -1,3 +1,62 @@
+2010-02-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: While the current timeline view in DevTools provides a great overview of
+        things happening, we should make it easier to locate the cause of an event,
+        e.g., link to JS where relevant.
+        Caller info support for all kind of Timeline events and new Function Call event will be added.
+        JSC can be patched the same way as it will be done for V8.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33995
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+        * bindings/js/ScriptCallStack.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::create):
+        (WebCore::ScriptCallStack::callLocation):
+        * bindings/v8/ScriptCallStack.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::callFunction):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        (WebCore::InspectorTimelineAgent::instanceCount):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype.hideWhenClicked):
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._formatRecord):
+        (WebInspector.TimelinePanel.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype._closeRecordDetails):
+        (WebInspector.TimelinePanel.prototype._onScroll):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineRecordListRow):
+        (WebInspector.TimelineRecordListRow.prototype.update):
+        (WebInspector.TimelineRecordListRow.prototype._createCell):
+        (WebInspector.TimelineRecordListRow.prototype._createRow):
+        (WebInspector.TimelineRecordListRow.prototype._createLinkRow):
+        (WebInspector.TimelineRecordListRow.prototype._generateBubbleContent):
+        (WebInspector.TimelineRecordListRow.prototype._onClick):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyResourceAsNode):
+
 2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Roll-out r55263 because it broke fast/forms/textarea-type-spaces-pretty-diff.html.

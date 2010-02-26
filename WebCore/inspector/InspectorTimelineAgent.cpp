@@ -44,14 +44,29 @@
 
 namespace WebCore {
 
+int InspectorTimelineAgent::s_instanceCount = 0;
+
 InspectorTimelineAgent::InspectorTimelineAgent(InspectorFrontend* frontend)
     : m_frontend(frontend)
 {
+    ++s_instanceCount;
     ASSERT(m_frontend);
 }
 
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
+    ASSERT(s_instanceCount);
+    --s_instanceCount;
+}
+
+void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
+{
+    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(m_frontend, scriptName, scriptLine), FunctionCallTimelineRecordType);
+}
+
+void InspectorTimelineAgent::didCallFunction()
+{
+    didCompleteCurrentRecord(FunctionCallTimelineRecordType);
 }
 
 void InspectorTimelineAgent::willDispatchEvent(const Event& event)
@@ -108,7 +123,7 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
         didCompleteCurrentRecord(ParseHTMLTimelineRecordType);
     }
 }
-   
+
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
 {
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds());
@@ -240,9 +255,9 @@ double InspectorTimelineAgent::currentTimeInMilliseconds()
 
 void InspectorTimelineAgent::pushCurrentRecord(ScriptObject data, TimelineRecordType type)
 {
-    m_recordStack.append(TimelineRecordEntry(TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds()), data, m_frontend->newScriptArray(), type));
+    ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds());
+    m_recordStack.append(TimelineRecordEntry(record, data, m_frontend->newScriptArray(), type));
 }
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

@@ -43,14 +43,17 @@ namespace WebCore {
 ScriptCallStack* ScriptCallStack::create(const v8::Arguments& arguments, unsigned skipArgumentCount) {
     String sourceName;
     int sourceLineNumber;
-    if (!V8Proxy::sourceName(sourceName)) {
-        return 0;
-    }
-    if (!V8Proxy::sourceLineNumber(sourceLineNumber)) {
-        return 0;
-    }
-    sourceLineNumber += 1;
+    if (!callLocation(&sourceName, &sourceLineNumber))
+      return 0;
     return new ScriptCallStack(arguments, skipArgumentCount, sourceName, sourceLineNumber);
+}
+
+bool ScriptCallStack::callLocation(String* sourceName, int* sourceLineNumber)
+{
+    if (!V8Proxy::sourceName(*sourceName) || !V8Proxy::sourceLineNumber(*sourceLineNumber))
+        return false;
+    *sourceLineNumber += 1;
+    return true;
 }
 
 ScriptCallStack::ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber)

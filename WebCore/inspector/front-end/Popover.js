@@ -54,8 +54,10 @@ WebInspector.Popover.prototype = {
         var preferredWidth = preferredWidth || this.contentElement.offsetWidth;
         var preferredHeight = preferredHeight || this.contentElement.offsetHeight;
 
-        this.contentElement.addStyleClass("content");
-        this.element.appendChild(this.contentElement);
+        var contentDiv = document.createElement("div");
+        contentDiv.className = "content";
+        contentDiv.appendChild(this.contentElement);
+        this.element.appendChild(contentDiv);
         document.body.appendChild(this.element);
         this._positionElement(anchor, preferredWidth, preferredHeight);
     },
@@ -66,12 +68,18 @@ WebInspector.Popover.prototype = {
         document.body.removeChild(this.element);
     },
 
+    hideWhenClicked: function()
+    {
+        this.element.addEventListener("click", this.hide.bind(this));
+    },
+
     _positionElement: function(anchorElement, preferredWidth, preferredHeight)
     {
         const borderWidth = 25;
         const scrollerWidth = 11;
-        const arrowHeight = 10;
+        const arrowHeight = 15;
         const arrowOffset = 15;
+        const borderRadius = 10;
         
         // Skinny tooltips are not pretty, their arrow location is not nice.
         preferredWidth = Math.max(preferredWidth, 50);
@@ -87,7 +95,7 @@ WebInspector.Popover.prototype = {
             anchorElement = anchorElement.parentElement;
         }
 
-        var newElementPosition = { x: 0, y: 0, width: preferredWidth + borderWidth * 2, height: preferredHeight + borderWidth * 2 };
+        var newElementPosition = { x: 0, y: 0, width: preferredWidth + scrollerWidth, height: preferredHeight };
 
         var verticalAlignment;
         var roomAbove = anchorBox.y;
@@ -95,53 +103,45 @@ WebInspector.Popover.prototype = {
 
         if (roomAbove > roomBelow) {
             // Positioning above the anchor.
-            if (anchorBox.y > newElementPosition.height)
-                newElementPosition.y = anchorBox.y - newElementPosition.height;
+            if (anchorBox.y > newElementPosition.height + arrowHeight + borderRadius)
+                newElementPosition.y = anchorBox.y - newElementPosition.height - arrowHeight;
             else {
-                newElementPosition.y = 0;
-                newElementPosition.height = anchorBox.y - newElementPosition.y;
-                // Reserve room for vertical scroller anyways.
-                newElementPosition.width += scrollerWidth;
+                newElementPosition.y = borderRadius * 2;
+                newElementPosition.height = anchorBox.y - borderRadius * 2 - arrowHeight;
             }
             verticalAlignment = "bottom";
         } else {
             // Positioning below the anchor.
-            newElementPosition.y = anchorBox.y + anchorBox.height;
-            if (newElementPosition.y + newElementPosition.height >= totalHeight) {
-                newElementPosition.height = totalHeight - anchorBox.y - anchorBox.height;
-                // Reserve room for vertical scroller.
-                newElementPosition.width += scrollerWidth;
-            }
+            newElementPosition.y = anchorBox.y + anchorBox.height + arrowHeight;
+            if (newElementPosition.y + newElementPosition.height + arrowHeight - borderWidth >= totalHeight)
+                newElementPosition.height = totalHeight - anchorBox.y - anchorBox.height - borderRadius * 2 - arrowHeight;
             // Align arrow.
-            newElementPosition.y -= arrowHeight;
             verticalAlignment = "top";
         }
 
         var horizontalAlignment;
         if (anchorBox.x + newElementPosition.width < totalWidth) {
-            newElementPosition.x = Math.max(0, anchorBox.x) - borderWidth - arrowOffset;
+            newElementPosition.x = Math.max(borderRadius, anchorBox.x - arrowOffset);
             horizontalAlignment = "left";
-        } else if (newElementPosition.width < totalWidth) {
-            newElementPosition.x = totalWidth - newElementPosition.width;
+        } else if (newElementPosition.width + borderRadius * 2 < totalWidth) {
+            newElementPosition.x = totalWidth - newElementPosition.width - borderRadius;
             horizontalAlignment = "right";
             // Position arrow accurately.
-            this._popupArrowElement.style.right = totalWidth - anchorBox.x - borderWidth - anchorBox.width + "px";
+            this._popupArrowElement.style.right = totalWidth - anchorBox.x - anchorBox.width - borderRadius + "px";
         } else {
-            newElementPosition.x = 0;
-            newElementPosition.width = totalWidth;
+            newElementPosition.x = borderRadius;
+            newElementPosition.width = totalWidth - scrollerWidth - borderRadius * 2;
+            newElementPosition.height += scrollerWidth;
             horizontalAlignment = "left";
             if (verticalAlignment === "bottom")
                 newElementPosition.y -= scrollerWidth;
             // Position arrow accurately.
-            this._popupArrowElement.style.left = anchorBox.x - borderWidth + "px";
+            this._popupArrowElement.style.left = anchorBox.x + "px";
         }
 
-        // Reserve room for horizontal scroller.
-        newElementPosition.height += scrollerWidth;
-
         this.element.className = "popover " + verticalAlignment + "-" + horizontalAlignment + "-arrow";
-        this.element.positionAt(newElementPosition.x, newElementPosition.y);
-        this.element.style.width = newElementPosition.width  + "px";
-        this.element.style.height = newElementPosition.height  + "px";
+        this.element.positionAt(newElementPosition.x - borderWidth, newElementPosition.y - borderWidth);
+        this.element.style.width = newElementPosition.width + borderWidth * 2 + "px";
+        this.element.style.height = newElementPosition.height + borderWidth * 2 + "px";
     }
 }

@@ -47,6 +47,8 @@ namespace WebCore {
         static ScriptCallStack* create(const v8::Arguments&, unsigned skipArgumentCount = 0);
         ~ScriptCallStack();
 
+        static bool callLocation(String* sourceName, int* sourceLineNumber);
+
         const ScriptCallFrame& at(unsigned) const;
         // FIXME: implement retrieving and storing call stack trace
         unsigned size() const { return 1; }

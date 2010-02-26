@@ -24,20 +24,25 @@ function printTimelineRecords(performActions, typeName, formatter)
     });
 
     evaluateInWebInspector("frontend_getTimelineResults", function(timelineRecords) {
-        if (typeof(timelineRecords) === "string")
-            output("Error fetching Timeline results: " + timelineRecords);
-        else {
-            for (var i = 0; i < timelineRecords.length; ++i) {
-                var record = timelineRecords[i];
-                if (typeName && record.type === timelineAgentRecordType[typeName])
-                    printTimelineRecordProperties(record);
-                if (formatter)
-                    formatter(record);
+        try {
+            if (typeof(timelineRecords) === "string")
+                output("Error fetching Timeline results: " + timelineRecords);
+            else {
+                for (var i = 0; i < timelineRecords.length; ++i) {
+                    var record = timelineRecords[i];
+                    if (typeName && record.type === timelineAgentRecordType[typeName])
+                        printTimelineRecordProperties(record);
+                    if (formatter)
+                        formatter(record);
+                }
             }
+            if (window.layoutTestController)
+                layoutTestController.setTimelineProfilingEnabled(false);
+            notifyDone();
+        } catch (e) {
+            console.log("An exception was caught: " + e.toString());
+            notifyDone(e.toString());
         }
-        if (window.layoutTestController)
-            layoutTestController.setTimelineProfilingEnabled(false);
-        notifyDone();
     });
 }
 
@@ -125,7 +130,7 @@ function frontend_getTimelineResults() {
         if (!records)
             return;
         for (var i = 0; i < records.length; ++i) {
-            result.push(records[i].record);
+            result.push(records[i].originalRecordForTests);
             addRecords(records[i].children);
         }
     }

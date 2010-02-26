@@ -1550,6 +1550,17 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipTe
     return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
 }
 
+WebInspector.linkifyResourceAsNode = function(url, preferredPanel, lineNumber, classes, tooltipText)
+{
+    var linkText = WebInspector.displayNameForURL(url);
+    if (lineNumber)
+        linkText += ":" + lineNumber;
+    var node = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
+    node.lineNumber = lineNumber;
+    node.preferredPanel = preferredPanel;
+    return node;
+}
+
 WebInspector.completeURL = function(baseURL, href)
 {
     var match = baseURL.match(WebInspector.URLRegExp);

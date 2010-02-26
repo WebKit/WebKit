@@ -17,4 +17,5 @@ WebInspector.TimelineAgent.RecordType.MarkTimeline : 11
 WebInspector.TimelineAgent.RecordType.ResourceSendRequest : 12
 WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse : 13
 WebInspector.TimelineAgent.RecordType.ResourceFinish : 14
+WebInspector.TimelineAgent.RecordType.FunctionCall : 15
 

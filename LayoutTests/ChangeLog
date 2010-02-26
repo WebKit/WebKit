@@ -1,3 +1,16 @@
+2010-02-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: While the current timeline view in DevTools provides a great overview of
+        things happening, we should make it easier to locate the cause of an event,
+        e.g., link to JS where relevant.
+        Caller info support for all kind of Timeline events and new Function Call event will be added.
+        https://bugs.webkit.org/show_bug.cgi?id=33995
+
+        * inspector/timeline-enum-stability-expected.txt:
+        * inspector/timeline-test.js
+
 2010-02-26  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. Skip failing tests.

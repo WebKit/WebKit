@@ -53,6 +53,7 @@ namespace WebCore {
         // frame retrieval methods
         const ScriptCallFrame &at(unsigned);
         unsigned size();
+        static bool callLocation(String*, int*);
 
     private:
         void initialize();

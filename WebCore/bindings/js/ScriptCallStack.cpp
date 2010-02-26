@@ -101,4 +101,9 @@ void ScriptCallStack::initialize()
     m_initialized = true;
 }
 
+bool ScriptCallStack::callLocation(String*, int*)
+{
+    return false;
+}
+
 } // namespace WebCore

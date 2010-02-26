@@ -46,6 +46,8 @@ namespace WebCore {
     public:
         static ScriptObject createGenericRecord(InspectorFrontend*, double startTime);
 
+        static ScriptObject createFunctionCallData(InspectorFrontend*, const String& scriptName, int scriptLine);
+
         static ScriptObject createEventDispatchData(InspectorFrontend*, const Event&);
 
         static ScriptObject createGenericTimerData(InspectorFrontend*, int timerId);
