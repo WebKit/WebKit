@@ -1,3 +1,15 @@
+2010-02-26  Nicholas Young  <nicholas.young@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Incorrect handling of MIME types in Media Player
+        https://bugs.webkit.org/show_bug.cgi?id=35413
+
+        No new tests. Bug fix in backend.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType): Corrected logic.
+
 2010-02-26  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
