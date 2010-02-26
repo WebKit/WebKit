@@ -79,7 +79,7 @@ function verifyTouch(which) {
             shouldBeEqualToString("lastEvent.targetTouches[0].target.tagName", "DIV");
         break;
         case 4:
-            verifyTouchEvent("touchmove", 1, 1, 0);
+            verifyTouchEvent("touchmove", 1, 1, 1);
             shouldBeEqualToString("lastEvent.touches[0].target.tagName", "DIV");
         break;
 

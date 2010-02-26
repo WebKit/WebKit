@@ -1,3 +1,34 @@
+2010-02-26  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The element that a touchevent is dispatched to isn't always right
+        https://bugs.webkit.org/show_bug.cgi?id=35431
+
+        The element that touch events are dispatched on is not always the
+        correct one, as the cached m_touchEventTarget member is only updated
+        when the first element of the PlatformTouchEvent touch list is in the
+        TouchPressed state.
+
+        This patch changes this behavior to dispatch the event to the target
+        of the touch that caused the event to be generated and eliminates the
+        m_touchEventTarget in favour of using the touch target hashmap. It also
+        simplifies the way in which the touchTargets list is generated as we
+        no longer have m_touchEventTarget (which was used previously to build
+        the list). The new behavior matches the observed behavior of the
+        iPhone and Android.
+
+        * page/EventHandler.cpp:
+        (WebCore::assembleTargetTouches): Added. new function to build the
+            targetTouches list. Filters a list of touches (passed) about
+            another given touch.
+        (WebCore::EventHandler::handleTouchEvent): Remove the
+            m_touchEventTarget member, and simplify the generation of the
+            TouchLists that are bundled with the TouchEVent object. Dispatch
+            the event to the target of the touch that caused the event to be
+            fired.
+        * page/EventHandler.h: Remove m_touchEventTarget.
+
 2010-02-26  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Darin Fisher.

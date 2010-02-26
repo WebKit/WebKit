@@ -64,7 +64,7 @@ PASS lastEvent.targetTouches[0].target.tagName is "DIV"
 PASS lastEvent.type is "touchmove"
 PASS lastEvent.touches.length is 1
 PASS lastEvent.changedTouches.length is 1
-PASS lastEvent.targetTouches.length is 0
+PASS lastEvent.targetTouches.length is 1
 PASS lastEvent.pageX is 0
 PASS lastEvent.pageY is 0
 PASS lastEvent.touches[0].target.tagName is "DIV"
