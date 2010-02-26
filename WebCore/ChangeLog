@@ -1,3 +1,20 @@
+2010-02-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        This CL implements a simple ad-hoc parser for CSS rgb() values.
+        If it fails, it returns false and the normal lex/yacc parser will
+        be invoked.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=35362
+
+        Covered by fast/canvas/canvas-bg.html, fast/canvas/canvas-bg-zoom.html,
+        and many more.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseInt):
+        (WebCore::CSSParser::parseColor):
+
 2010-02-26  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
 
         Reviewed by Kenneth Rohde Christiansen.

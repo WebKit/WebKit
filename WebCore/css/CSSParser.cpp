@@ -3491,6 +3491,30 @@ bool CSSParser::parseFontFaceUnicodeRange()
     return true;
 }
 
+static inline bool isCSSWhitespace(UChar c)
+{
+    return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';
+}
+
+static inline bool parseInt(const UChar*& string, const UChar* end, UChar terminator, int& value)
+{
+    const UChar* current = string;
+    int localValue = 0;
+    while (current != end && isCSSWhitespace(*current)) 
+        current++;
+    if (current == end || !isASCIIDigit(*current))
+        return false;
+    while (current != end && isASCIIDigit(*current))
+        localValue = localValue * 10 + *current++ - '0';
+    while (current != end && isCSSWhitespace(*current))
+        current++;
+    if (current == end || *current++ != terminator)
+        return false;
+    value = localValue;
+    string = current;
+    return true;
+}
+
 bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 {
     if (!strict && Color::parseHexColor(name, rgb))
@@ -3503,7 +3527,23 @@ bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
         rgb = tc.rgb();
         return true;
     }
-
+    if (name.startsWith("rgb(")) {
+        const UChar* current = name.characters() + 4;
+        const UChar* end = name.characters() + name.length();
+        int red;
+        int green;
+        int blue;
+        if (!parseInt(current, end, ',', red))
+            return false;
+        if (!parseInt(current, end, ',', green))
+            return false;
+        if (!parseInt(current, end, ')', blue))
+            return false;
+        if (current != end)
+            return false;
+        rgb = makeRGB(red, green, blue);
+        return true;
+    }
     return false;
 }
 
@@ -4700,11 +4740,6 @@ int CSSParser::lex(void* yylvalWithoutType)
     }
 
     return token();
-}
-
-static inline bool isCSSWhitespace(UChar c)
-{
-    return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';
 }
 
 void CSSParser::recheckAtKeyword(const UChar* str, int len)
