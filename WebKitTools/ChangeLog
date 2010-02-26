@@ -1,3 +1,14 @@
+2010-02-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename run-chromium-webkit-tests to new-run-webkit-tests to stop confusion
+        https://bugs.webkit.org/show_bug.cgi?id=35408
+
+        * Scripts/new-run-webkit-tests: Added.
+        * Scripts/run-chromium-webkit-tests: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Renamed from WebKitTools/Scripts/webkitpy/layout_tests/run_chromium_webkit_tests.py.
+
 2010-02-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

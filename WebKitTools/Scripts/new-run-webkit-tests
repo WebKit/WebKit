@@ -27,17 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Wrapper around webkitpy/layout_tests/run-chromium-webkit-tests.py"""
+"""Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
-                             "webkitpy", "layout_tests"))
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
-                             "webkitpy", "thirdparty"))  # For simplejson.
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))))
-import run_chromium_webkit_tests
+_scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+_webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
+sys.path.append(os.path.join(_webkitpy_directory, "layout_tests"))
+sys.path.append(os.path.join(_webkitpy_directory, "thirdparty"))  # For simplejson.
+import run_webkit_tests
 
 if __name__ == '__main__':
-    options, args = run_chromium_webkit_tests.parse_args()
-    run_chromium_webkit_tests.main(options, args)
+    options, args = run_webkit_tests.parse_args()
+    run_webkit_tests.main(options, args)
