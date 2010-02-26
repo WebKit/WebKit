@@ -1,3 +1,10 @@
+2010-02-26  Darin Fisher  <darin@chromium.org>
+
+        Fix mac warning (that gets treated as an error in the chromium build).
+
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::cookiesEnabled):
+
 2010-02-25  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.

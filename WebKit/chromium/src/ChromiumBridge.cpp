@@ -247,7 +247,7 @@ void ChromiumBridge::deleteCookie(const Document* document, const KURL& url, con
 
 bool ChromiumBridge::cookiesEnabled(const Document* document)
 {
-    bool result;
+    bool result = false;
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         result = cookieJar->cookiesEnabled(document->cookieURL(), document->firstPartyForCookies());
