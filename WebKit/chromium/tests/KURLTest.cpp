@@ -381,10 +381,11 @@ TEST(KURLTest, ReplaceInvalid)
     EXPECT_FALSE(kurl.isEmpty());
     EXPECT_STREQ("http://www.google.com:8000/favicon.ico", kurl.string().utf8().data());
 
-    // Now let's test that giving an invalid replacement still fails.
+    // Now let's test that giving an invalid replacement fails. Invalid
+    // protocols fail without modifying the URL, which should remain valid.
 #if USE(GOOGLEURL)
-    kurl.setProtocol("f/sj#@");
-    EXPECT_FALSE(kurl.isValid());
+    EXPECT_FALSE(kurl.setProtocol("f/sj#@"));
+    EXPECT_TRUE(kurl.isValid());
 #endif
 }
 

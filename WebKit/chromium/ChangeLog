@@ -1,3 +1,12 @@
+2010-02-26  Brett Wilson  <brettw@chromium.org>
+
+        Fix chromium build. This test's expectation became obsolete with
+        recent changes to KURL which my previous change brings Chromium's
+        port in compliance with.
+
+        * tests/KURLTest.cpp:
+        (ComponentCase::TEST):
+
 2010-02-26  Yaar Schnitman  <yaar@chromium.org>
 
         Chromium build fix.
