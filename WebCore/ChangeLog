@@ -1,4 +1,18 @@
 2010-02-26  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Compilation failed because functions glSampleCoverage, glBlendEquation
+        and glActiveTexture were not available.
+        https://bugs.webkit.org/show_bug.cgi?id=35423
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3D::activeTexture):
+        (WebCore::GraphicsContext3D::blendEquation):
+        (WebCore::GraphicsContext3D::sampleCoverage):
+
+2010-02-26  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
  
          Reviewed by Kenneth Rohde Christiansen.
 

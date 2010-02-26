@@ -59,6 +59,7 @@ typedef void (APIENTRY* glBindBufferType) (GLenum, GLuint);
 typedef void (APIENTRY* glBindFramebufferType) (GLenum, GLuint);
 typedef void (APIENTRY* glBindRenderbufferType) (GLenum, GLuint);
 typedef void (APIENTRY* glBlendColorType) (GLclampf, GLclampf, GLclampf, GLclampf);
+typedef void (APIENTRY* glBlendEquationType) (GLenum);
 typedef void (APIENTRY* glBlendEquationSeparateType)(GLenum, GLenum);
 typedef void (APIENTRY* glBlendFuncSeparateType)(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
 typedef void (APIENTRY* glBufferDataType) (GLenum, GLsizeiptr, const GLvoid*, GLenum);
@@ -105,6 +106,7 @@ typedef GLboolean (APIENTRY* glIsRenderbufferType) (GLuint);
 typedef GLboolean (APIENTRY* glIsShaderType) (GLuint);
 typedef void (APIENTRY* glLinkProgramType) (GLuint);
 typedef void (APIENTRY* glRenderbufferStorageType) (GLenum, GLenum, GLsizei, GLsizei);
+typedef void (APIENTRY* glSampleCoverageType) (GLclampf, GLboolean);
 typedef void (APIENTRY* glShaderSourceType) (GLuint, GLsizei, const char**, const GLint*);
 typedef void (APIENTRY* glStencilFuncSeparateType) (GLenum, GLenum, GLint, GLuint);
 typedef void (APIENTRY* glStencilMaskSeparateType) (GLenum, GLuint);
@@ -154,6 +156,7 @@ public:
     glBindFramebufferType bindFramebuffer;
     glBindRenderbufferType bindRenderbuffer;
     glBlendColorType blendColor;
+    glBlendEquationType blendEquation;
     glBlendEquationSeparateType blendEquationSeparate;
     glBlendFuncSeparateType blendFuncSeparate;
     glBufferDataType bufferData;
@@ -200,6 +203,7 @@ public:
     glIsShaderType isShader;
     glLinkProgramType linkProgram;
     glRenderbufferStorageType renderbufferStorage;
+    glSampleCoverageType sampleCoverage;
     glShaderSourceType shaderSource;
     glStencilFuncSeparateType stencilFuncSeparate;
     glStencilMaskSeparateType stencilMaskSeparate;
@@ -293,6 +297,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     bindFramebuffer = GET_PROC_ADDRESS(glBindFramebuffer);
     bindRenderbuffer = GET_PROC_ADDRESS(glBindRenderbuffer);
     blendColor = GET_PROC_ADDRESS(glBlendColor);
+    blendEquation = GET_PROC_ADDRESS(glBlendEquation);
     blendEquationSeparate = GET_PROC_ADDRESS(glBlendEquationSeparate);
     blendFuncSeparate = GET_PROC_ADDRESS(glBlendFuncSeparate);
     bufferData = GET_PROC_ADDRESS(glBufferData);
@@ -339,6 +344,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     isShader = GET_PROC_ADDRESS(glIsShader);
     linkProgram = GET_PROC_ADDRESS(glLinkProgram);
     renderbufferStorage = GET_PROC_ADDRESS(glRenderbufferStorage);
+    sampleCoverage = GET_PROC_ADDRESS(glSampleCoverage);
     shaderSource = GET_PROC_ADDRESS(glShaderSource);
     stencilFuncSeparate = GET_PROC_ADDRESS(glStencilFuncSeparate);
     stencilMaskSeparate = GET_PROC_ADDRESS(glStencilMaskSeparate);
@@ -531,7 +537,7 @@ void GraphicsContext3D::reshape(int width, int height)
 void GraphicsContext3D::activeTexture(unsigned long texture)
 {
     m_internal->m_glWidget->makeCurrent();
-    glActiveTexture(texture);
+    m_internal->activeTexture(texture);
 }
 
 void GraphicsContext3D::attachShader(WebGLProgram* program, WebGLShader* shader)
@@ -583,7 +589,7 @@ void GraphicsContext3D::blendColor(double red, double green, double blue, double
 void GraphicsContext3D::blendEquation(unsigned long mode)
 {
     m_internal->m_glWidget->makeCurrent();
-    glBlendEquation(mode);
+    m_internal->blendEquation(mode);
 }
 
 void GraphicsContext3D::blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha)
@@ -1004,7 +1010,7 @@ void GraphicsContext3D::renderbufferStorage(unsigned long target, unsigned long 
 void GraphicsContext3D::sampleCoverage(double value, bool invert)
 {
     m_internal->m_glWidget->makeCurrent();
-    glSampleCoverage(static_cast<float>(value), invert);
+    m_internal->sampleCoverage(static_cast<float>(value), invert);
 }
 
 void GraphicsContext3D::scissor(long x, long y, unsigned long width, unsigned long height)
