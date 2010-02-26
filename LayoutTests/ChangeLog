@@ -1,3 +1,15 @@
+2010-02-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Test whether or not we preserve the hash fragments for "about:blank"
+        URLs. (Note that currently WebKit passes this but Chromium doesn't).
+
+        https://bugs.webkit.org/show_bug.cgi?id=35399
+
+        * fast/loader/about-blank-hash-kept-expected.txt: Added.
+        * fast/loader/about-blank-hash-kept.html: Added.
+
 2010-02-25  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Adele Peterson.
