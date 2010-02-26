@@ -70,6 +70,9 @@ public:
 
     void reset();
 
+    static const unsigned int maxViewWidth;
+    static const unsigned int maxViewHeight;
+
 protected:
     void timerEvent(QTimerEvent*);
 
@@ -153,7 +156,7 @@ public slots:
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
     int workerThreadCount();
     int pageNumberForElementById(const QString& id, float width = 0, float height = 0);
-    int numberOfPages(float width, float height);
+    int numberOfPages(float width = maxViewWidth, float height = maxViewHeight);
 
 private slots:
     void processWork();

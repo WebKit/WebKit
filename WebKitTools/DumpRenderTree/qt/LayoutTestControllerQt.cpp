@@ -500,3 +500,6 @@ int LayoutTestController::numberOfPages(float width, float height)
 {
     return qt_drt_numberOfPages(m_drt->webPage()->mainFrame(), width, height);
 }
+
+const unsigned LayoutTestController::maxViewWidth = 800;
+const unsigned LayoutTestController::maxViewHeight = 600;

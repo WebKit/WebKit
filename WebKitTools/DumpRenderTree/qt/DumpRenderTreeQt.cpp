@@ -84,10 +84,6 @@ extern bool qt_drt_hasDocumentElement(QWebFrame* qFrame);
 
 namespace WebCore {
 
-// Choose some default values.
-const unsigned int maxViewWidth = 800;
-const unsigned int maxViewHeight = 600;
-
 NetworkAccessManager::NetworkAccessManager(QObject* parent)
     : QNetworkAccessManager(parent)
 {
@@ -321,7 +317,7 @@ DumpRenderTree::DumpRenderTree()
 
     // create our primary testing page/view.
     m_mainView = new QWebView(0);
-    m_mainView->resize(QSize(maxViewWidth, maxViewHeight));
+    m_mainView->resize(QSize(LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight));
     m_page = new WebPage(m_mainView, this);
     m_mainView->setPage(m_page);
     m_mainView->setContextMenuPolicy(Qt::NoContextMenu);
@@ -432,8 +428,8 @@ void DumpRenderTree::open(const QUrl& url)
 
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
-    int width = isW3CTest ? 480 : maxViewWidth;
-    int height = isW3CTest ? 360 : maxViewHeight;
+    int width = isW3CTest ? 480 : LayoutTestController::maxViewWidth;
+    int height = isW3CTest ? 360 : LayoutTestController::maxViewHeight;
     m_mainView->resize(QSize(width, height));
     m_page->setPreferredContentsSize(QSize());
     m_page->setViewportSize(QSize(width, height));

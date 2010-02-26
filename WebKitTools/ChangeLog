@@ -1,3 +1,19 @@
+2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] LayoutTestController.numberOfPages() should have default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=35428
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp: maxViewWidth and maxViewHeight moved to
+        LayoutTestController to converge to platform independent implementation.
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp: Initialization of maxViewWidth and maxViewHeight added.
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+         - Default parameters for LayoutTestController.numberOfPages() added.
+         - maxViewWidth and maxViewHeight members added.
+
 2010-02-26  Jamey Hicks  <jamey.hicks@nokia.com>
 
         Reviewed by Laszlo Gombos.
