@@ -1,3 +1,17 @@
+2010-02-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/7688455> REGRESSION(r55205): Crash inside dispatchEventsOnWindowAndFocusedNode when clicking link from bookmarks view
+
+        Null-check the document's page to avoid dereferencing a null page.
+
+        No regression test is added as this appears to be dependent on an interaction with Safari's bookmarks view that is
+        not testable from within DumpRenderTree.
+
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedNode):
+
 2010-02-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Simon Fraser.
