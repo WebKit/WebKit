@@ -252,18 +252,21 @@ sub output() {
     foreach my $key (@keys) {
         my $firstValue = "";
         my $secondValue = "";
+        my $castStr = "";
 
         if ($values[$i]{"type"} eq "Function") {
+            $castStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
         } elsif ($values[$i]{"type"} eq "Property") {
+            $castStr = "static_cast<PropertySlot::GetValueFunc>";
             $firstValue = $values[$i]{"get"};
             $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "Lexer") {
             $firstValue = $values[$i]{"value"};
             $secondValue = "0";
         }
-        print "   { \"$key\", $attrs[$i], (intptr_t)$firstValue, (intptr_t)$secondValue },\n";
+        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue },\n";
         $i++;
     }
     print "   { 0, 0, 0, 0 }\n";

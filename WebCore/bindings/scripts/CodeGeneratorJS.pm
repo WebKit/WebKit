@@ -2126,6 +2126,7 @@ tableSizeLoop:
     $i = 0;
     foreach my $key (@{$keys}) {
         my $conditional;
+        my $targetType;
 
         if ($conditionals) {
             $conditional = $conditionals->{$key};
@@ -2134,7 +2135,13 @@ tableSizeLoop:
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
             push(@implContent, "#if ${conditionalString}\n");
         }
-        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)@$value1[$i], (intptr_t)@$value2[$i] },\n");
+        
+        if ("@$specials[$i]" =~ m/Function/) {
+            $targetType = "static_cast<NativeFunction>";
+        } else {
+            $targetType = "static_cast<PropertySlot::GetValueFunc>";
+        }
+        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] },\n");
         if ($conditional) {
             push(@implContent, "#endif\n");
         }

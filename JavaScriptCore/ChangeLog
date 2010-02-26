@@ -1,3 +1,15 @@
+2010-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Make the lookup table generator include an explicit cast to expected
+        type of the function.  We do this because otherwise the blind intptr_t
+        cast that is subsequently applied allows incorrectly typed functions
+        to be inserted into the table, where they will only fail at runtime.
+        This change makes such errors produce a compile time failure.
+
+        * create_hash_table:
+
 2010-02-26  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
