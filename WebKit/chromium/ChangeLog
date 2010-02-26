@@ -1,3 +1,12 @@
+2010-02-26  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Auto-generate and split DerivedSourcesAllInOne.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=33048
+
+        * DEPS: Incremented gyp revision.
+
 2010-02-26  Darin Fisher  <darin@chromium.org>
 
         Fix mac warning (that gets treated as an error in the chromium build).
