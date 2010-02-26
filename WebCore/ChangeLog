@@ -1,3 +1,17 @@
+2010-02-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Pavel Feldman.
+
+        Arrow keys do not scroll source view in Resources pane or Scripts pane.
+        <rdar://problem/7594367> and https://bugs.webkit.org/show_bug.cgi?id=34356
+
+        Handle vertical scrolling in the Text Viewer:
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer): Listen for the keydown event.
+        (WebInspector.TextViewer.prototype._handleKeyDown): If the event has no modifiers and refers
+          to an arrow key, scroll. The horizontal values were ripped from the default "pixels per scroll line"
+          value in ScrollBar.h.
+
 2010-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Alexey Proskuryakov.

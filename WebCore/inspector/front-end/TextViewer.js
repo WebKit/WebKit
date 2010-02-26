@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,6 +40,7 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this.element.tabIndex = 0;
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
+    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 
     this._url = url;
 
@@ -201,6 +203,37 @@ WebInspector.TextViewer.prototype = {
             if (scrollTop === this.element.scrollTop)
                 this._repaintAll();
         }.bind(this), 50);
+    },
+    
+    _handleKeyDown: function()
+    {
+        if (event.metaKey || event.shiftKey || event.ctrlKey || event.altKey)
+            return;
+        
+        var scrollValue = 0;
+        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Up)
+            scrollValue = -1;
+        else if (event.keyCode == WebInspector.KeyboardShortcut.KeyCodes.Down)
+            scrollValue = 1;
+        
+        if (scrollValue) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.element.scrollByLines(scrollValue);
+            return;
+        }
+        
+        scrollValue = 0;
+        if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Left)
+            scrollValue = -40;
+        else if (event.keyCode == WebInspector.KeyboardShortcut.KeyCodes.Right)
+            scrollValue = 40;
+        
+        if (scrollValue) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.element.scrollLeft += scrollValue;
+        }
     },
 
     beginUpdates: function(enabled)
