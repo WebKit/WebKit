@@ -1,3 +1,24 @@
+2010-02-26  Jamey Hicks  <jamey.hicks@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] added QWebSettings::setInspectorUrl() and QWebSettings::inspectorUrl()
+
+        Enables the use of alternate Web Inspector frontends by changing
+        the location of the frontend. The location is specified by providing 
+            -inspector-url url
+        as an argument to QtLauncher.
+
+        This is required so that the Web Inspector may be run from an
+        external process or an external tool such as Eclipse or Aptana may
+        be used instead of the in-process Web Inspector UI.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=35340
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::init):
+        (LauncherApplication::handleUserOptions):
+
 2010-02-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

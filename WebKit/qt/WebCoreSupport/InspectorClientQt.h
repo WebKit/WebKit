@@ -38,45 +38,45 @@ class QWebPage;
 class QWebView;
 
 namespace WebCore {
-    class Node;
-    class Page;
-    class String;
+class Node;
+class Page;
+class String;
 
-    class InspectorClientQt : public InspectorClient {
-    public:
-        InspectorClientQt(QWebPage*);
+class InspectorClientQt : public InspectorClient {
+public:
+    InspectorClientQt(QWebPage*);
 
-        virtual void inspectorDestroyed();
+    virtual void inspectorDestroyed();
 
-        virtual Page* createPage();
+    virtual Page* createPage();
 
-        virtual String localizedStringsURL();
+    virtual String localizedStringsURL();
 
-        virtual String hiddenPanels();
+    virtual String hiddenPanels();
 
-        virtual void showWindow();
-        virtual void closeWindow();
+    virtual void showWindow();
+    virtual void closeWindow();
 
-        virtual void attachWindow();
-        virtual void detachWindow();
+    virtual void attachWindow();
+    virtual void detachWindow();
 
-        virtual void setAttachedWindowHeight(unsigned height);
+    virtual void setAttachedWindowHeight(unsigned height);
 
-        virtual void highlight(Node*);
-        virtual void hideHighlight();
-        virtual void inspectedURLChanged(const String& newURL);
+    virtual void highlight(Node*);
+    virtual void hideHighlight();
+    virtual void inspectedURLChanged(const String& newURL);
 
-        virtual void populateSetting(const String& key, String* value);
-        virtual void storeSetting(const String& key, const String& value);
+    virtual void populateSetting(const String& key, String* value);
+    virtual void storeSetting(const String& key, const String& value);
 
-        virtual void inspectorWindowObjectCleared();
+    virtual void inspectorWindowObjectCleared();
 
-    private:
-        void updateWindowTitle();
-        QWebPage* m_inspectedWebPage;
-        OwnPtr<QWebView> m_inspectorView;
-        QString m_inspectedURL;
-    };
+private:
+    void updateWindowTitle();
+    QWebPage* m_inspectedWebPage;
+    OwnPtr<QWebView> m_inspectorView;
+    QString m_inspectedURL;
+};
 }
 
 #endif

@@ -91,7 +91,10 @@ Page* InspectorClientQt::createPage()
         m_inspectorView.set(inspectorView);
     }
 
-    inspectorView->page()->mainFrame()->load(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
+    QUrl inspectorUrl = m_inspectedWebPage->settings()->inspectorUrl();
+    if (!inspectorUrl.isValid())
+        inspectorUrl = QUrl("qrc:/webkit/inspector/inspector.html");
+    inspectorView->page()->mainFrame()->load(inspectorUrl);
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
     m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(inspectorView);
 

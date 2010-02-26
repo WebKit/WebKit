@@ -76,7 +76,7 @@ static bool gUseCompositing = false;
 static bool gCacheWebView = false;
 static bool gShowFrameRate = false;
 static QGraphicsView::ViewportUpdateMode gViewportUpdateMode = QGraphicsView::MinimalViewportUpdate;
-
+static QUrl gInspectorUrl;
 
 class LauncherWindow : public MainWindow {
     Q_OBJECT
@@ -189,6 +189,9 @@ void LauncherWindow::init(bool useGraphicsView)
     connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
     connect(page(), SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
             this, SLOT(showLinkHover(const QString&, const QString&)));
+
+    if (!gInspectorUrl.isEmpty())
+      page()->settings()->setInspectorUrl(gInspectorUrl);
 
     inspector = new WebInspector(splitter);
     inspector->setPage(page());
@@ -720,6 +723,7 @@ void LauncherApplication::handleUserOptions()
              << "[-cache-webview]"
              << "[-show-fps]"
              << "[-r list]"
+             << "[-inspector-url location]"
              << "URLs";
         appQuit(0);
     }
@@ -756,6 +760,11 @@ void LauncherApplication::handleUserOptions()
 
         gViewportUpdateMode = static_cast<QGraphicsView::ViewportUpdateMode>(idx);
     }
+
+    QString inspectorUrlArg("-inspector-url");
+    int inspectorUrlIndex = args.indexOf(inspectorUrlArg);
+    if (inspectorUrlIndex != -1)
+       gInspectorUrl = takeOptionValue(&args, inspectorUrlIndex);
 
     int robotIndex = args.indexOf("-r");
     if (robotIndex != -1) {
