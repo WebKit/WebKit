@@ -1,3 +1,32 @@
+2010-02-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Extra layout on keypress after a space (problem with rebalanceWhitespaceAt in InsertTextCommand).
+        https://bugs.webkit.org/show_bug.cgi?id=30946
+        <rdar://problem/7639184>
+
+        Do text insertion and whitespace rebalancing around the insertion in one step so that there's only one layout.
+        This patch was originally made by Justin Garcia.
+        
+        Test: editing/inserting/rebalance-whitespace-1.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt): No behavior changes here,
+        just pushed the code that determined the extent of whitespace surrounding a position
+        to its own helper function.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTextIntoNodeAndRebalanceWhitespace): Added.  Find 
+        whitespace surrounding the insertion position, add the text to insert, rebalance that entire
+        string, then insert it into the document.
+        (WebCore::InsertTextCommand::input):
+        * editing/InsertTextCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::isWhitespace): Moved from CompositeEditCommand.cpp.
+        (WebCore::extentOfWhitespaceForRebalancingAt): Moved code from rebalanceWhitespaceAt into this helper
+        function.  Obtains the offset of the start and end of whitespace around a particular position.
+        * editing/htmlediting.h:
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

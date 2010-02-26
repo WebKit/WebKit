@@ -1,0 +1,123 @@
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+</script>
+
+<div contentEditable="true" id="test1">hello world</div>
+<script>
+// Test rebalancing a single space on one side.
+test = document.getElementById("test1");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test2">hello world</div>
+<script>
+// Test rebalancing two spaces on one side.
+test = document.getElementById("test2");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test3">hello world</div>
+<script>
+// Test rebalancing three spaces on one side.
+test = document.getElementById("test3");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test4">hello world</div>
+<script>
+// Test rebalancing one space on either side of the insertion.
+test = document.getElementById("test4");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 6);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test5">hello world</div>
+<script>
+// Test rebalancing two spaces on one side and one space on the other side of the insertion.
+test = document.getElementById("test5");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 7);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test6">hello world</div>
+<script>
+// Test rebalancing two spaces on either side of the insertion.
+test = document.getElementById("test6");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 7);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test7">hello world</div>
+<script>
+// Test rebalancing two spaces on either side of the insertion.
+test = document.getElementById("test7");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 7);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test8">hello world</div>
+<script>
+// Test rebalancing three spaces on one side and two on the other side of the insertion.
+test = document.getElementById("test8");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 8);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<div contentEditable="true" id="test9">hello world</div>
+<script>
+// Test rebalancing three spaces on either side of the insertion.
+test = document.getElementById("test9");
+text = test.firstChild;
+window.getSelection().setPosition(text, 5);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+window.getSelection().setPosition(text, 8);
+document.execCommand("InsertText", false, "x");
+</script>
+
+<script>
+divs = document.getElementsByTagName("div");
+var output = "This tests whitespace rebalancing when inserting characters in and around already balanced sequences. In each div below, 2 or more adjacent whitespace characters should be alternate between regular whitespace and non-breaking spaces (note that editable regions use -webkit-nbsp-mode:space).\n\n";
+for (i = 0; i < divs.length; i++)
+    output += divs[i].innerText + "\n";
+document.body.innerText = output;
+</script>

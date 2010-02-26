@@ -40,6 +40,7 @@ class Node;
 class Position;
 class Range;
 class String;
+class Text;
 class VisiblePosition;
 class VisibleSelection;
 
@@ -229,6 +230,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 // Miscellaneous functions on String
     
 String stringWithRebalancedWhitespace(const String&, bool, bool);
+bool extentOfWhitespaceForRebalancingAt(PassRefPtr<Text> node, unsigned offset, unsigned& start, unsigned& end);
 const String& nonBreakingSpaceString();
 bool validBlockTag(const AtomicString&);
     

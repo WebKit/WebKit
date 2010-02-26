@@ -425,6 +425,43 @@ String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfP
     return rebalancedString;
 }
 
+// FIXME: Move this into PlatformString.h or StringImpl.h and rename it to distinguish it from similar functions.
+static inline bool isWhitespace(UChar c)
+{
+    return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
+}
+
+// Find the extent of whitespace around a particular offset.  If whitespace characters (' ') are preserved, then we don't
+// do whitespace rebalancing and this function returns false.
+bool extentOfWhitespaceForRebalancingAt(PassRefPtr<Text> node, unsigned offset, unsigned& start, unsigned& end)
+{
+    RenderObject* renderer = node->renderer();
+    if (renderer && !renderer->style()->collapseWhiteSpace())
+        return false;
+    
+    String text = node->data();
+    
+    start = offset;
+    end = offset;
+    if (offset == text.length() || !isWhitespace(text[offset])) {
+        if (!offset || !isWhitespace(text[offset - 1]))
+            // If neither text[offset] nor text[offset - 1] are some form of whitespace, no rebalancing is necessary.
+            return false;
+            
+        // text[offset] is not whitespace, but text[offset - 1] is, adjust start and end offsets.
+        start = offset - 1;
+        end = offset;
+    }
+    
+    while (start > 0 && isWhitespace(text[start - 1]))
+        start--;
+        
+    while (end < text.length() && isWhitespace(text[end]))
+        end++;
+    
+    return true;
+}
+
 bool isTableStructureNode(const Node *node)
 {
     RenderObject *r = node->renderer();

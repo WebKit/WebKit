@@ -1,3 +1,37 @@
+2010-02-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Extra layout on keypress after a space (problem with rebalanceWhitespaceAt in InsertTextCommand).
+        https://bugs.webkit.org/show_bug.cgi?id=30946
+        <rdar://problem/7639184>
+
+        There are now regular spaces where nbsps were used unnecessarily before.  Also,
+        multi-character insertions now have their whitespace rebalanced, and this is
+        reflected in a few tests.
+
+        * editing/execCommand/5142012-3-expected.txt:
+        * editing/inserting/rebalance-whitespace-1-expected.txt: Added.
+        * editing/inserting/rebalance-whitespace-1.html: Added.
+        * editing/pasteboard/5521237-expected.txt:
+        * platform/mac/editing/execCommand/5482023-expected.checksum:
+        * platform/mac/editing/execCommand/5482023-expected.png: Removed.
+        * platform/mac/editing/execCommand/5482023-expected.txt:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.png: Removed.
+        * platform/mac/editing/execCommand/remove-formatting-expected.checksum:
+        * platform/mac/editing/execCommand/remove-formatting-expected.png: Removed.
+        * platform/mac/editing/execCommand/remove-formatting-expected.txt:
+        * platform/mac/editing/inserting/editable-html-element-expected.checksum:
+        * platform/mac/editing/inserting/editable-html-element-expected.png: Removed.
+        * platform/mac/editing/inserting/editable-html-element-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.checksum:
+        * platform/mac/editing/pasteboard/4989774-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/selection/4983858-expected.checksum:
+        * platform/mac/editing/selection/4983858-expected.png: Removed.
+        * platform/mac/editing/selection/4983858-expected.txt:
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
