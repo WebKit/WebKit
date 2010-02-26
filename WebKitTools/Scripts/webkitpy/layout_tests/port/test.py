@@ -76,7 +76,7 @@ class TestPort(base.Port):
         return self._options
 
     def results_directory(self):
-        return '/tmp' + self._options.results_directory
+        return '/tmp/' + self._options.results_directory
 
     def setup_test_run(self):
         pass

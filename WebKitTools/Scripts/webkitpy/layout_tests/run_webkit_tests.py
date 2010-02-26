@@ -1468,7 +1468,8 @@ def main(options, args):
     test_runner.parse_expectations(port_obj.test_platform_name(),
                                    options.target == 'Debug')
 
-    port_obj.start_helper()
+    if not options.nostart_helper:
+        port_obj.start_helper()
 
     # Check that the system dependencies (themes, fonts, ...) are correct.
     if (not options.nocheck_sys_deps and
@@ -1490,7 +1491,8 @@ def main(options, args):
     meter.update("Starting ...")
     has_new_failures = test_runner.run(result_summary)
 
-    port_obj.stop_helper()
+    if not options.nostart_helper:
+        port_obj.stop_helper()
 
     logging.debug("Exit status: %d" % has_new_failures)
     sys.exit(has_new_failures)
@@ -1619,6 +1621,9 @@ def parse_args(args=None):
     option_parser.add_option("", "--experimental-fully-parallel",
                              action="store_true", default=False,
                              help="run all tests in parallel")
+    option_parser.add_option("", "--nostart-helper",
+                             action="store_true", default=False,
+                             help="don't run layout_test_helper")
     return option_parser.parse_args(args)
 
 if '__main__' == __name__:
