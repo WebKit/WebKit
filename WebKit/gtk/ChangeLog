@@ -1,5 +1,12 @@
 2010-02-26  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Complementary commit of r55300. Missing "notify::" to signal name.
+
+        * tests/testwebview.c:
+        (test_webkit_web_view_grab_focus):
+
+2010-02-26  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Xan Lopez.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 

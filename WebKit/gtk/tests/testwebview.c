@@ -155,7 +155,7 @@ static void test_webkit_web_view_grab_focus()
 
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_signal_connect(view, "progress", G_CALLBACK(idle_quit_loop_cb), NULL);
+    g_signal_connect(view, "notify::progress", G_CALLBACK (idle_quit_loop_cb), NULL);
 
     /* Wait for window to show up */
     gtk_widget_show_all(window);
