@@ -1,3 +1,14 @@
+2010-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed LayoutTest fix.
+
+        SVGResourceClipper needs to be moved to RenderSVGResourceClipper
+        https://bugs.webkit.org/show_bug.cgi?id=35421
+
+        This corrects a result of a new clip test for SVG.
+
+        * platform/mac/svg/custom/use-on-clip-path-with-transformation-expected.txt:
+
 2010-02-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.
