@@ -37,64 +37,60 @@
 
 namespace WebCore {
 
-    class AtomicString; 
-    class Document;
-    class SVGStyledElement;
-    class TextStream;
+class AtomicString; 
+class Document;
+class SVGStyledElement;
+class TextStream;
 
-    enum SVGResourceType {
-        // Painting mode
-        ClipperResourceType = 0,
-        ImageResourceType,
-        FilterResourceType,
-        MarkerResourceType,
-        PaintServerResourceType,
-        
-        // For resource tracking we need to know how many types of resource there are
-        _ResourceTypeCount
-    };
-
-    // The SVGResource file represent various graphics resources:
-    // - Filter resource
-    // - Clipper resource
-    // - Masker resource
-    // - Marker resource
-    // - Pattern resource
-    // - Linear/Radial gradient resource
-    //
-    // SVG creates/uses these resources.
-
-    class SVGResource : public RefCounted<SVGResource> {
-    public:
-        virtual ~SVGResource();
-      
-        virtual void invalidate();
-
-        void addClient(SVGStyledElement*);
-        virtual SVGResourceType resourceType() const = 0;
-        
-        bool isPaintServer() const { return resourceType() == PaintServerResourceType; }
-        bool isFilter() const { return resourceType() == FilterResourceType; }
-        bool isClipper() const { return resourceType() == ClipperResourceType; }
-        bool isMarker() const { return resourceType() == MarkerResourceType; }
-
-        virtual TextStream& externalRepresentation(TextStream&) const;
-
-        static void invalidateClients(HashSet<SVGStyledElement*>);
-        static void removeClient(SVGStyledElement*);
-
-    protected:
-        SVGResource();
-
-    private:
-        HashSet<SVGStyledElement*> m_clients;
-    };
-
-    SVGResource* getResourceById(Document*, const AtomicString&, const RenderObject*);
+enum SVGResourceType {
+    // Painting mode
+    ImageResourceType,
+    FilterResourceType,
+    MarkerResourceType,
+    PaintServerResourceType,
     
-    TextStream& operator<<(TextStream&, const SVGResource&);
+    // For resource tracking we need to know how many types of resource there are
+    _ResourceTypeCount
+};
 
-} // namespace WebCore
+// The SVGResource file represent various graphics resources:
+// - Filter resource
+// - Marker resource
+// - Pattern resource
+// - Linear/Radial gradient resource
+//
+// SVG creates/uses these resources.
+
+class SVGResource : public RefCounted<SVGResource> {
+public:
+    virtual ~SVGResource();
+  
+    virtual void invalidate();
+
+    void addClient(SVGStyledElement*);
+    virtual SVGResourceType resourceType() const = 0;
+    
+    bool isPaintServer() const { return resourceType() == PaintServerResourceType; }
+    bool isFilter() const { return resourceType() == FilterResourceType; }
+    bool isMarker() const { return resourceType() == MarkerResourceType; }
+
+    virtual TextStream& externalRepresentation(TextStream&) const;
+
+    static void invalidateClients(HashSet<SVGStyledElement*>);
+    static void removeClient(SVGStyledElement*);
+
+protected:
+    SVGResource();
+
+private:
+    HashSet<SVGStyledElement*> m_clients;
+};
+
+SVGResource* getResourceById(Document*, const AtomicString&, const RenderObject*);
+
+TextStream& operator<<(TextStream&, const SVGResource&);
+
+}
 
 #endif
-#endif // SVGResource_h
+#endif

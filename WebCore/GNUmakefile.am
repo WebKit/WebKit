@@ -3009,6 +3009,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGModelObject.cpp \
 	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderSVGResource.h \
+	WebCore/rendering/RenderSVGResourceClipper.cpp \
+	WebCore/rendering/RenderSVGResourceClipper.h \
 	WebCore/rendering/RenderSVGResourceMasker.cpp \
 	WebCore/rendering/RenderSVGResourceMasker.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
@@ -3346,8 +3348,6 @@ webcore_sources += \
 	WebCore/svg/graphics/SVGPaintServerSolid.h \
 	WebCore/svg/graphics/SVGResource.cpp \
 	WebCore/svg/graphics/SVGResource.h \
-	WebCore/svg/graphics/SVGResourceClipper.cpp \
-	WebCore/svg/graphics/SVGResourceClipper.h \
 	WebCore/svg/graphics/SVGResourceFilter.cpp \
 	WebCore/svg/graphics/SVGResourceFilter.h \
 	WebCore/svg/graphics/SVGResourceListener.h \

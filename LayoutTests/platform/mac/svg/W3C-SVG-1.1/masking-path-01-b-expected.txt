@@ -1,21 +1,21 @@
-KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,10.00 L260.00,10.00 L260.00,110.00 L200.00,110.00 Z]]]}
-KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M90.00,150.00 L265.00,150.00 L265.00,250.00 L90.00,250.00 Z], [winding=NON-ZERO] [path=M225.00,160.00 L320.00,160.00 L320.00,235.00 L225.00,235.00 Z]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (20,17) size 325x269
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=userSpaceOnUse]
           RenderPath {rect} at (200,10) size 60x100 [fill={[type=SOLID] [color=#000000]}] [data="M200.00,10.00 L260.00,10.00 L260.00,110.00 L200.00,110.00 Z"]
-        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=userSpaceOnUse]
           RenderPath {rect} at (90,150) size 175x100 [fill={[type=SOLID] [color=#000000]}] [data="M90.00,150.00 L265.00,150.00 L265.00,250.00 L90.00,250.00 Z"]
           RenderPath {rect} at (225,160) size 95x75 [fill={[type=SOLID] [color=#000000]}] [data="M225.00,160.00 L320.00,160.00 L320.00,235.00 L225.00,235.00 Z"]
-      RenderPath {rect} at (200,17) size 60x66 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M20.00,20.00 L460.00,20.00 L460.00,80.00 L20.00,80.00 Z"]
+      RenderPath {rect} at (200,17) size 60x66 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M20.00,20.00 L460.00,20.00 L460.00,80.00 L20.00,80.00 Z"]
+        [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (200,10) size 60x100
       RenderSVGText {text} at (20,130) size 325x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-27) size 325x33
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 23 width 325.00: "Rectangle being clipped"
-      RenderSVGContainer {g} at (112,153) size 208x97 [clip path="clip2"]
+      RenderSVGContainer {g} at (112,153) size 208x97
+        [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (90,150) size 230x100
         RenderPath {rect} at (112,187) size 231x46 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M115.00,190.00 L340.00,190.00 L340.00,230.00 L115.00,230.00 Z"]
         RenderPath {rect} at (112,237) size 231x46 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M115.00,240.00 L340.00,240.00 L340.00,280.00 L115.00,280.00 Z"]
         RenderSVGText {text} at (115,180) size 327x33 contains 1 chunk(s)

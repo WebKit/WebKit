@@ -34,10 +34,12 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "NodeRenderStyle.h"
+#include "Path.h"
 #include "RenderImage.h"
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
@@ -47,7 +49,6 @@
 #include "SVGPaintServerGradient.h"
 #include "SVGPaintServerPattern.h"
 #include "SVGPaintServerSolid.h"
-#include "SVGResourceClipper.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStyledElement.h"
 #include <math.h>
@@ -196,6 +197,20 @@ TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
     return ts;
 }
 
+static TextStream& operator<<(TextStream& ts, const WindRule rule)
+{
+    switch (rule) {
+    case RULE_NONZERO:
+        ts << "NON-ZERO";
+        break;
+    case RULE_EVENODD:
+        ts << "EVEN-ODD";
+        break;
+    }
+
+    return ts;
+}
+
 static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& unitType)
 {
     switch (unitType) {
@@ -316,10 +331,9 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             writeIfNotDefault(ts, "fill rule", svgStyle->fillRule(), RULE_NONZERO);
             ts << "}]";
         }
+        writeIfNotDefault(ts, "clip rule", svgStyle->clipRule(), RULE_NONZERO);
     }
 
-    if (!svgStyle->clipPath().isEmpty())
-        writeNameAndQuotedValue(ts, "clip path", svgStyle->clipPath());
     writeIfNotEmpty(ts, "start marker", svgStyle->startMarker());
     writeIfNotEmpty(ts, "middle marker", svgStyle->midMarker());
     writeIfNotEmpty(ts, "end marker", svgStyle->endMarker());
@@ -496,6 +510,10 @@ void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
         ASSERT(masker);
         writeNameValuePair(ts, "maskUnits", masker->maskUnits());
         writeNameValuePair(ts, "maskContentUnits", masker->maskContentUnits());
+    } else if (resource->resourceType() == ClipperResourceType) {
+        RenderSVGResourceClipper* clipper = static_cast<RenderSVGResourceClipper*>(resource);
+        ASSERT(clipper);
+        writeNameValuePair(ts, "clipPathUnits", clipper->clipPathUnits());
     }
 
     // FIXME: Handle other RenderSVGResource* classes here, after converting them from SVGResource*.
@@ -566,6 +584,16 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
             ts << " ";
             writeStandardPrefix(ts, *masker, 0);
             ts << " " << masker->resourceBoundingBox(object.objectBoundingBox()) << "\n";
+        }
+    }
+    if (!svgStyle->clipPath().isEmpty()) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle->clipPath())) {
+            writeIndent(ts, indent);
+            ts << " ";
+            writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipPath());
+            ts << " ";
+            writeStandardPrefix(ts, *clipper, 0);
+            ts << " " << clipper->resourceBoundingBox(object.objectBoundingBox()) << "\n";
         }
     }
     // FIXME: Handle other RenderSVGResource* classes here, after converting them from SVGResource*.

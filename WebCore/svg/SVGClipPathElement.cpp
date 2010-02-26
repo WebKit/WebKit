@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
+    Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,7 +27,7 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "MappedAttribute.h"
-#include "RenderSVGHiddenContainer.h"
+#include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
 #include "SVGUnitTypes.h"
@@ -68,15 +69,12 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!m_clipper)
-        return;
-
     if (attrName == SVGNames::clipPathUnitsAttr ||
         SVGTests::isKnownAttribute(attrName) || 
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName))
-        m_clipper->invalidate();
+        invalidateCanvasResources();
 }
 
 void SVGClipPathElement::synchronizeProperty(const QualifiedName& attrName)
@@ -98,45 +96,12 @@ void SVGClipPathElement::synchronizeProperty(const QualifiedName& attrName)
 void SVGClipPathElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGStyledTransformableElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
-    if (!m_clipper)
-        return;
-
-    m_clipper->invalidate();
+    invalidateCanvasResources();
 }
 
 RenderObject* SVGClipPathElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGHiddenContainer(this);
-}
-
-SVGResource* SVGClipPathElement::canvasResource(const RenderObject*)
-{
-    if (!m_clipper)
-        m_clipper = SVGResourceClipper::create();
-    else
-        m_clipper->resetClipData();
-
-    bool bbox = clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyledTransformable())
-            continue;
-        SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(node);
-        RenderStyle* style = styled->renderer() ? styled->renderer()->style() : 0;
-        if (!style || style->display() == NONE)
-            continue;
-        Path pathData = styled->toClipPath();
-        if (pathData.isEmpty())
-            continue;
-        m_clipper->addClipData(pathData, style->svgStyle()->clipRule(), bbox);
-    }
-    if (m_clipper->clipData().isEmpty()) {
-        Path pathData;
-        pathData.addRect(FloatRect());
-        m_clipper->addClipData(pathData, RULE_EVENODD, bbox);
-    }
-    return m_clipper.get();
+    return new (arena) RenderSVGResourceClipper(this);
 }
 
 }

@@ -1,3 +1,58 @@
+2010-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGResourceClipper needs to be moved to RenderSVGResourceClipper
+        https://bugs.webkit.org/show_bug.cgi?id=35421
+
+        Move SVGResourceClipper to RenderSVGResourceClipper. This follows the changes
+        of Masker and helps to clean up the SVG code. Code snippets from SVGClipPathElement
+        and SVGResourceClipper got combined in RenderSVGResourceClipper. DRT results are
+        more readable for clipPath's now. It's possible to see the unit type of clipper, as
+        well as it's childs instead of just one path.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderSVGResource.h:
+        (WebCore::):
+        * rendering/RenderSVGResourceClipper.cpp: Added.
+        (WebCore::RenderSVGResourceClipper::RenderSVGResourceClipper):
+        (WebCore::RenderSVGResourceClipper::~RenderSVGResourceClipper):
+        (WebCore::RenderSVGResourceClipper::invalidateClients):
+        (WebCore::RenderSVGResourceClipper::invalidateClient):
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/RenderSVGResourceClipper.h: Added.
+        (WebCore::RenderSVGResourceClipper::renderName):
+        (WebCore::RenderSVGResourceClipper::resourceType):
+        (WebCore::RenderSVGResourceClipper::clipPathUnits):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::clipperBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::deregisterFromResources):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeStyle):
+        (WebCore::writeSVGResource):
+        (WebCore::writeResources):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged):
+        (WebCore::SVGClipPathElement::createRenderer):
+        * svg/SVGClipPathElement.h:
+        (WebCore::SVGClipPathElement::isValid):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResources):
+        * svg/graphics/SVGResource.h:
+        (WebCore::):
+        (WebCore::SVGResource::isPaintServer):
+        (WebCore::SVGResource::isFilter):
+        (WebCore::SVGResource::isMarker):
+        * svg/graphics/SVGResourceClipper.cpp: Removed.
+        * svg/graphics/SVGResourceClipper.h: Removed.
+
 2010-02-26  Ben Murdoch  <benm@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

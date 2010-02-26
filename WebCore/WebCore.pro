@@ -1674,6 +1674,7 @@ HEADERS += \
     rendering/RenderSVGInlineText.h \
     rendering/RenderSVGModelObject.h \
     rendering/RenderSVGResource.h \
+    rendering/RenderSVGResourceClipper.h \
     rendering/RenderSVGResourceMasker.h \
     rendering/RenderSVGRoot.h \
     rendering/RenderSVGShadowTreeRootContainer.h \
@@ -1762,7 +1763,6 @@ HEADERS += \
     svg/graphics/SVGPaintServerPattern.h \
     svg/graphics/SVGPaintServerRadialGradient.h \
     svg/graphics/SVGPaintServerSolid.h \
-    svg/graphics/SVGResourceClipper.h \
     svg/graphics/SVGResourceFilter.h \
     svg/graphics/SVGResource.h \
     svg/graphics/SVGResourceMarker.h \
@@ -2620,7 +2620,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/SVGPaintServerPattern.cpp \
         svg/graphics/SVGPaintServerRadialGradient.cpp \
         svg/graphics/SVGPaintServerSolid.cpp \
-        svg/graphics/SVGResourceClipper.cpp \
         svg/graphics/SVGResource.cpp \
         svg/graphics/SVGResourceFilter.cpp \
         svg/graphics/SVGResourceMarker.cpp \
@@ -2634,6 +2633,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
         rendering/RenderSVGModelObject.cpp \
+        rendering/RenderSVGResourceClipper.cpp \
         rendering/RenderSVGResourceMasker.cpp \
         rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGShadowTreeRootContainer.cpp \

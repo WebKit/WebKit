@@ -1,5 +1,3 @@
-KCanvasResource {id="overflowHiddenClip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00 L2.00,0.00 L2.00,2.00 L0.00,2.00 Z]]]}
-KCanvasResource {id="overflowHiddenClip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00 L4.00,0.00 L4.00,4.00 L0.00,4.00 Z]]]}
 KCanvasResource {id="marker1" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
 KCanvasResource {id="marker2" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}
 KCanvasResource {id="marker3" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}
@@ -10,9 +8,9 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 448x272
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderSVGResourceClipper {clipPath} [id="overflowHiddenClip1"] [clipPathUnits=userSpaceOnUse]
           RenderPath {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L2.00,0.00 L2.00,2.00 L0.00,2.00 Z"]
-        RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+        RenderSVGResourceClipper {clipPath} [id="overflowHiddenClip"] [clipPathUnits=userSpaceOnUse]
           RenderPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L4.00,0.00 L4.00,4.00 L0.00,4.00 Z"]
       RenderSVGText {text} at (125,30) size 184x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-13) size 184x16
@@ -27,15 +25,18 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (142,52) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
           RenderPath {path} at (150,60) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M30.00,60.00 L80.00,60.00 L80.00,110.00 Z"]
           RenderSVGContainer {g} at (142,52) size 16x16 [transform={m=((8.00,0.00)(0.00,8.00)) t=(22.00,52.00)}]
-            RenderSVGContainer {g} at (142,52) size 16x16 [clip path="overflowHiddenClip1"]
+            RenderSVGContainer {g} at (142,52) size 16x16
+              [clipPath="overflowHiddenClip1"] RenderSVGResourceClipper {clipPath} at (0,0) size 2x2
               RenderSVGContainer {g} at (142,52) size 16x16 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (142,52) size 16x16 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
           RenderSVGContainer {g} at (192,52) size 16x16 [transform={m=((8.00,0.00)(0.00,8.00)) t=(72.00,52.00)}]
-            RenderSVGContainer {g} at (192,52) size 16x16 [clip path="overflowHiddenClip1"]
+            RenderSVGContainer {g} at (192,52) size 16x16
+              [clipPath="overflowHiddenClip1"] RenderSVGResourceClipper {clipPath} at (0,0) size 2x2
               RenderSVGContainer {g} at (192,52) size 16x16 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (192,52) size 16x16 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
           RenderSVGContainer {g} at (192,102) size 16x16 [transform={m=((8.00,0.00)(0.00,8.00)) t=(72.00,102.00)}]
-            RenderSVGContainer {g} at (192,102) size 16x16 [clip path="overflowHiddenClip1"]
+            RenderSVGContainer {g} at (192,102) size 16x16
+              [clipPath="overflowHiddenClip1"] RenderSVGResourceClipper {clipPath} at (0,0) size 2x2
               RenderSVGContainer {g} at (192,102) size 16x16 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (192,102) size 16x16 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
       RenderSVGContainer {g} at (0,0) size 448x142
@@ -48,15 +49,18 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (382,52) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
           RenderPath {path} at (385,58) size 57x57 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [data="M270.00,60.00 L320.00,60.00 L320.00,110.00 Z"]
           RenderSVGContainer {g} at (382,52) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(262.00,52.00)}]
-            RenderSVGContainer {g} at (382,52) size 16x16 [clip path="overflowHiddenClip"]
+            RenderSVGContainer {g} at (382,52) size 16x16
+              [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
               RenderSVGContainer {g} at (378,48) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (378,48) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
           RenderSVGContainer {g} at (432,52) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(312.00,52.00)}]
-            RenderSVGContainer {g} at (432,52) size 16x16 [clip path="overflowHiddenClip"]
+            RenderSVGContainer {g} at (432,52) size 16x16
+              [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
               RenderSVGContainer {g} at (428,48) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (428,48) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
           RenderSVGContainer {g} at (432,102) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(312.00,102.00)}]
-            RenderSVGContainer {g} at (432,102) size 16x16 [clip path="overflowHiddenClip"]
+            RenderSVGContainer {g} at (432,102) size 16x16
+              [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
               RenderSVGContainer {g} at (428,98) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                 RenderPath {rect} at (428,98) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
       RenderSVGContainer {g} at (0,0) size 5x5
@@ -73,15 +77,18 @@ layer at (0,0) size 480x360
           RenderPath {path} at (145,188) size 57x57 [stroke={[type=SOLID] [color=#800080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M30.00,190.00 L80.00,190.00 L80.00,240.00 Z"]
           RenderSVGContainer {g} at (142,182) size 66x66
             RenderSVGContainer {g} at (142,182) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(22.00,182.00)}]
-              RenderSVGContainer {g} at (142,182) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (142,182) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (138,178) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                   RenderPath {rect} at (138,178) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
             RenderSVGContainer {g} at (192,182) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(72.00,182.00)}]
-              RenderSVGContainer {g} at (192,182) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (192,182) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (188,178) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                   RenderPath {rect} at (188,178) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
             RenderSVGContainer {g} at (192,232) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(72.00,232.00)}]
-              RenderSVGContainer {g} at (192,232) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (192,232) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (188,228) size 24x24 [transform={m=((0.20,0.00)(0.00,0.20)) t=(0.00,0.00)}]
                   RenderPath {rect} at (188,228) size 24x24 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L20.00,0.00 L20.00,20.00 L0.00,20.00 Z"]
       RenderSVGContainer {g} at (258,178) size 190x94
@@ -93,15 +100,18 @@ layer at (0,0) size 480x360
           RenderPath {path} at (385,188) size 57x57 [stroke={[type=SOLID] [color=#800080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M270.00,190.00 L320.00,190.00 L320.00,240.00 Z"]
           RenderSVGContainer {g} at (382,182) size 66x66
             RenderSVGContainer {g} at (382,182) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(262.00,182.00)}]
-              RenderSVGContainer {g} at (382,182) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (382,182) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (378,178) size 24x24 [transform={m=((0.40,0.00)(0.00,0.40)) t=(0.00,0.00)}]
                   RenderPath {rect} at (378,178) size 24x24 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
             RenderSVGContainer {g} at (432,182) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(312.00,182.00)}]
-              RenderSVGContainer {g} at (432,182) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (432,182) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (428,178) size 24x24 [transform={m=((0.40,0.00)(0.00,0.40)) t=(0.00,0.00)}]
                   RenderPath {rect} at (428,178) size 24x24 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
             RenderSVGContainer {g} at (432,232) size 16x16 [transform={m=((4.00,0.00)(0.00,4.00)) t=(312.00,232.00)}]
-              RenderSVGContainer {g} at (432,232) size 16x16 [clip path="overflowHiddenClip"]
+              RenderSVGContainer {g} at (432,232) size 16x16
+                [clipPath="overflowHiddenClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 4x4
                 RenderSVGContainer {g} at (428,228) size 24x24 [transform={m=((0.40,0.00)(0.00,0.40)) t=(0.00,0.00)}]
                   RenderPath {rect} at (428,228) size 24x24 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)

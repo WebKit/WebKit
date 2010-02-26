@@ -4,6 +4,7 @@
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *           (C) 2009 Google, Inc.  All rights reserved.
  *           (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,9 +34,9 @@
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderView.h"
-#include "SVGResourceClipper.h"
 #include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
@@ -129,17 +130,15 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         filter = newFilter;
 #endif
 
-    // apply Masker
     if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(document, maskerId)) {
         if (!masker->applyResource(object, paintInfo.context))
             return false;
     } else if (!maskerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 
-    if (SVGResourceClipper* clipper = getClipperById(document, clipperId, object)) {
-        clipper->addClient(styledElement);
-        clipper->applyClip(paintInfo.context, object->objectBoundingBox());
-    } else if (!clipperId.isEmpty())
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipperId))
+        clipper->applyResource(object, paintInfo.context);
+    else if (!clipperId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(clipperId, styledElement);
 
 #if ENABLE(FILTERS)
@@ -287,9 +286,8 @@ FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object
 
 FloatRect SVGRenderBase::clipperBoundingBoxForRenderer(const RenderObject* object) const
 {
-    SVGResourceClipper* clipper = getClipperById(object->document(), object->style()->svgStyle()->clipPath(), object);
-    if (clipper)
-        return clipper->clipperBoundingBox(object->objectBoundingBox());
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipPath()))
+        return clipper->resourceBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
 }
@@ -304,9 +302,11 @@ FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object
 
 void SVGRenderBase::deregisterFromResources(RenderObject* object)
 {
-    // We only have a renderer for masker at the moment.
-    if (RenderSVGResourceMasker* resource = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
-        resource->invalidateClient(object);
+    // We only have the renderer for masker and clipper at the moment.
+    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
+        masker->invalidateClient(object);
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipPath()))
+        clipper->invalidateClient(object);
 }
 
 void applyTransformToPaintInfo(RenderObject::PaintInfo& paintInfo, const AffineTransform& localToAncestorTransform)
@@ -328,6 +328,6 @@ const RenderObject* findTextRootObject(const RenderObject* start)
     return start;
 }
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(SVG)
+#endif

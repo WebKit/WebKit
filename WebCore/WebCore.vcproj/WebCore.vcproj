@@ -27633,6 +27633,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGResourceClipper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceClipper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGResourceMasker.cpp"
 				>
 			</File>
@@ -41777,14 +41785,6 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGResource.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceClipper.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceClipper.h"
 					>
 				</File>
 				<File

@@ -1,3 +1,42 @@
+2010-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGResourceClipper needs to be moved to RenderSVGResourceClipper
+        https://bugs.webkit.org/show_bug.cgi?id=35421
+
+        Update results after the move of SVGResourceClipper. Results are better
+        readable and more sensible now.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-05-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/css/clippath-with-shadow-expected.txt:
+        * platform/mac/svg/custom/clip-path-child-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.txt:
+        * platform/mac/svg/custom/clip-path-href-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-referencing-use-expected.txt:
+        * platform/mac/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/mac/svg/custom/clip-path-units-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-with-transform-expected.txt:
+        * platform/mac/svg/custom/empty-clip-path-expected.txt:
+        * platform/mac/svg/custom/focus-ring-expected.txt:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-clipPath-creation-expected.txt:
+        * platform/mac/svg/custom/recursive-clippath-expected.txt:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/mac/svg/custom/text-clip-expected.txt:
+        * platform/mac/svg/custom/visibility-override-clip-expected.txt:
+        * platform/mac/svg/filters/filter-clip-expected.txt:
+        * svg/custom/use-clipped-transform-expected.txt:
+
 2010-02-26  Ben Murdoch  <benm@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

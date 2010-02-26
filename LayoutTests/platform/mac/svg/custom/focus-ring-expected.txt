@@ -1,4 +1,3 @@
-KCanvasResource {id="clip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z]]]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -22,9 +21,12 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,0) size 76x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 76x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 76.00: "focused text"
-    RenderSVGHiddenContainer {clipPath} at (0,0) size 0x0
+    RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
       RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-    RenderSVGImage {image} at (0,0) size 0x0 [clip path="clip"]
-    RenderSVGImage {image} at (150,400) size 137x137 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,400.00)}] [clip path="clip"]
+    RenderSVGImage {image} at (0,0) size 0x0
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
+    RenderSVGImage {image} at (150,400) size 137x137 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,400.00)}]
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
     RenderSVGContainer {g} at (310,400) size 137x137 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,400.00)}]
-      RenderSVGImage {image} at (310,400) size 137x137 [clip path="clip"]
+      RenderSVGImage {image} at (310,400) size 137x137
+        [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
