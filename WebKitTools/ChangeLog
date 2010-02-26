@@ -1,5 +1,14 @@
 2010-02-25  Eric Seidel  <eric@webkit.org>
 
+        Fix typo in my last change.  No review.
+
+        Rename run-chromium-webkit-tests to new-run-webkit-tests to stop confusion
+        https://bugs.webkit.org/show_bug.cgi?id=35408
+
+        * Scripts/new-run-webkit-tests:
+
+2010-02-25  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Rename run-chromium-webkit-tests to new-run-webkit-tests to stop confusion

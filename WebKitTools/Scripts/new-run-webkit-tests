@@ -31,10 +31,11 @@
 import os
 import sys
 
-_scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-_webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(_webkitpy_directory, "layout_tests"))
-sys.path.append(os.path.join(_webkitpy_directory, "thirdparty"))  # For simplejson.
+scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
+webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
+sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
+sys.path.append(os.path.join(webkitpy_directory, "thirdparty"))  # For simplejson.
+
 import run_webkit_tests
 
 if __name__ == '__main__':
