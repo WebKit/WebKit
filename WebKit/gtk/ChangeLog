@@ -1,3 +1,25 @@
+2010-02-26  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Xan Lopez.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        [GTK] Make webkit_web_view_grab_focus to active focus controller.
+        https://bugs.webkit.org/show_bug.cgi?id=35402
+
+        When programatically setting focus to an element in an inner document,
+        calling "hasFocus()" from this document returns FALSE, because
+        document's FocusController is not activated. It does not happen
+        if |document| is the main document.
+
+        Making webkit_web_view_grab_focus to actually activate the FocusController,
+        fixes the issue.
+
+        * tests/testwebview.c:
+        (server_callback):
+        (test_webkit_web_view_grab_focus):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_grab_focus):
+
 2010-02-26  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed.

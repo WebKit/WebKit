@@ -640,6 +640,8 @@ static void webkit_web_view_grab_focus(GtkWidget* widget)
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
         FocusController* focusController = core(webView)->focusController();
 
+        focusController->setActive(true);
+
         if (focusController->focusedFrame())
             focusController->setFocused(true);
         else

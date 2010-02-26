@@ -58,10 +58,10 @@ server_callback(SoupServer* server, SoupMessage* msg,
 
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, length);
     } else if (g_str_equal(path, "/bigdiv.html")) {
-        char* contents = g_strdup("<html><body><div style=\"background-color: green; height: 1200px;\"></div></body></html>");
+        char* contents = g_strdup("<html><body><a id=\"link\" href=\"http://abc.def\">test</a><div style=\"background-color: green; height: 1200px;\"></div></body></html>");
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, strlen(contents));
     } else if (g_str_equal(path, "/iframe.html")) {
-        char* contents = g_strdup("<html><body><div style=\"background-color: green; height: 50px;\"></div><iframe src=\"bigdiv.html\"></iframe></body></html>");
+        char* contents = g_strdup("<html><body id=\"some-content\"><div style=\"background-color: green; height: 50px;\"></div><iframe src=\"bigdiv.html\"></iframe></body></html>");
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, strlen(contents));
     } else {
         char* contents = g_strdup("<html><body>test</body></html>");
@@ -135,6 +135,61 @@ static gboolean map_event_cb(GtkWidget *widget, GdkEvent* event, gpointer data)
     g_main_loop_quit(loop);
 
     return FALSE;
+}
+
+static void test_webkit_web_view_grab_focus()
+{
+    char* uri = g_strconcat(base_uri, "iframe.html", NULL);
+    GtkWidget* window = gtk_window_new(GTK_WINDOW_POPUP);
+    GtkWidget* scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    GtkAdjustment* adjustment;
+
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
+
+    gtk_container_add(GTK_CONTAINER(window), scrolled_window);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(view));
+
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_signal_connect(view, "progress", G_CALLBACK(idle_quit_loop_cb), NULL);
+
+    /* Wait for window to show up */
+    gtk_widget_show_all(window);
+    g_signal_connect(window, "map-event",
+                     G_CALLBACK(map_event_cb), loop);
+    g_main_loop_run(loop);
+
+    /* Load a page with a big div that will cause scrollbars to appear */
+    webkit_web_view_load_uri(view, uri);
+    g_main_loop_run(loop);
+
+    adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0.0);
+
+    /* Since webkit_web_view_execute_script does not return a value,
+       it is impossible to know if an inner document has focus after
+       a node of it was focused via .focus() method.
+       The code below is an workaround: if the node has focus, a scroll
+       action is performed and afterward it is checked if the adjustment
+       has to be different from 0.
+    */
+    char script[] = "var innerDoc = document.defaultView.frames[0].document; \
+                     innerDoc.getElementById(\"link\").focus();              \
+                     if (innerDoc.hasFocus())                                \
+                        window.scrollBy(0, 100);";
+
+    /* Focus an element using JavaScript */
+    webkit_web_view_execute_script(view, script);
+
+    /* Make sure the ScrolledWindow noticed the scroll */
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), !=, 0.0);
+
+    g_free(uri);
+    gtk_widget_destroy(window);
 }
 
 static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
@@ -283,6 +338,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/icon-uri", test_webkit_web_view_icon_uri);
     g_test_add_func("/webkit/webview/adjustments", test_webkit_web_view_adjustments);
     g_test_add_func("/webkit/webview/destroy", test_webkit_web_view_destroy);
+    g_test_add_func("/webkit/webview/grab_focus", test_webkit_web_view_grab_focus);
 
     return g_test_run ();
 }
