@@ -1,3 +1,18 @@
+2010-02-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix the handling of updates to #hash fragments to check for differences
+        post-canonicalization rather than comparing pre- to post-. Chromium
+        had a bug where we would set the #hash on an about:blank URL and generate
+        an onload event because we thought the URL (not just the fragment) was
+        changing.
+
+        http://bugs.webkit.org/show_bug.cgi?id=35180
+
+        * fast/loader/about-blank-hash-change-expected.txt: Added.
+        * fast/loader/about-blank-hash-change.html: Added.
+
 2010-02-26  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by David Levin.
