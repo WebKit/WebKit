@@ -1,3 +1,9 @@
+2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: touch InspectorController to force front-end deployment.
+
+        * inspector/InspectorController.cpp:
+
 2010-02-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
