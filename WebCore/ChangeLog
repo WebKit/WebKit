@@ -2,6 +2,17 @@
 
         Reviewed by NOBODY.
 
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35087
+
+        * platform/efl/CursorEfl.cpp: Added.
+        * platform/efl/LocalizedStringsEfl.cpp: Added.
+        * platform/efl/SearchPopupMenuEfl.cpp: Added.
+
+2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by NOBODY.
+
         Add EFL port files to page/efl.
         http://webkit.org/b/35087
 
