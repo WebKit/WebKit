@@ -2,6 +2,18 @@
 
         Reviewed by NOBODY.
 
+        Add EFL port files to page/efl.
+        http://webkit.org/b/35087
+
+        * WebCore/page/efl/DragControllerEfl.cpp: Added.
+        * WebCore/page/efl/FrameEfl.cpp: Added.
+        * WebCore/page/efl/AccessibilityObjectEfl.cpp: Added.
+        * WebCore/page/efl/EventHandlerEfl.cpp: Added.
+
+2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by NOBODY.
+
         Add EFL port files to platform/efl.
         http://webkit.org/b/35087
 
