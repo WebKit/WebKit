@@ -1,5 +1,11 @@
 2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, fixing the license.
+
+        * pywebsocket/standalone.py:
+
+2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Adam Barth.
 
         Adding pywebsocket/standalone.py back to fix the Chromium webkit
