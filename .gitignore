@@ -19,6 +19,7 @@ WebKit/chromium/WebKit.xcodeproj
 /autotoolsconfig.h.in
 /configure
 /GNUmakefile.in
+/WebKit/gtk/docs/GNUmakefile.in
 /gtk-doc.make
 /INSTALL
 /README
