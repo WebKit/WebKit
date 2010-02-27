@@ -1,3 +1,11 @@
+2010-02-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix
+
+        third time's the charm getting this path right?
+
+        * pywebsocket/mod_pywebsocket/standalone.py:
+
 2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, build fix.
