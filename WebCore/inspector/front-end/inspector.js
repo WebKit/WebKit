@@ -689,7 +689,13 @@ WebInspector.documentKeyDown = function(event)
                 WebInspector.focusSearchField();
                 event.preventDefault();
             }
+            break;
 
+        case "F3":
+            if (!isMac) {
+                WebInspector.focusSearchField();
+                event.preventDefault();
+            }
             break;
 
         case "U+0047": // G key
@@ -758,6 +764,14 @@ WebInspector.documentKeyDown = function(event)
                 this.currentPanel = this.panels.audits;
             }
 
+            break;
+        case "U+0052": // R key
+            if ((event.metaKey && isMac) || (event.ctrlKey && !isMac))
+                InspectorBackend.reloadPage();
+            break;
+        case "F5":
+            if (!isMac)
+                InspectorBackend.reloadPage();
             break;
     }
 }
@@ -885,8 +899,8 @@ WebInspector.focusSearchField = function()
 
 WebInspector.toggleAttach = function()
 {
-    if (!this.attached && InspectorFrontendHost.canAttachWindow && !InspectorFrontendHost.canAttachWindow())
-            return;
+    if (!this.attached && !InspectorFrontendHost.canAttachWindow())
+        return;
 
     this.attached = !this.attached;
     this.drawer.resize();

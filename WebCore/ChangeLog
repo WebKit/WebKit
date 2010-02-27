@@ -1,3 +1,30 @@
+2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: reload inspected page on Cmd+R / Ctrl+R / F5 key event in inspector.
+        Drive-by fix for couple of minor front-end problems.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35434
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::reloadPage):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.reloadPage):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.copyText):
+        (.WebInspector.InspectorFrontendHostStub.prototype.canAttachWindow):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._paintLine):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        (WebInspector.toggleAttach):
+
 2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by NOBODY.

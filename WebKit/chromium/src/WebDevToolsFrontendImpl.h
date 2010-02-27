@@ -144,6 +144,7 @@ private:
     static v8::Handle<v8::Value> jsDebuggerPauseScript(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsWindowUnloading(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsShowContextMenu(const v8::Arguments& args);
+    static v8::Handle<v8::Value> jsCanAttachWindow(const v8::Arguments& args);
 
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;

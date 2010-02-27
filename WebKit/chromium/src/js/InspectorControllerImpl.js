@@ -55,6 +55,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");
     this.installInspectorControllerDelegate_("releaseWrapperObjectGroup");
+    this.installInspectorControllerDelegate_("reloadPage");
     this.installInspectorControllerDelegate_("removeAttribute");
     this.installInspectorControllerDelegate_("removeDOMStorageItem");
     this.installInspectorControllerDelegate_("removeNode");
@@ -79,7 +80,7 @@ devtools.InspectorBackendImpl.prototype.toggleNodeSearch = function()
     this.callInspectorController_.call(this, "toggleNodeSearch");
     if (!this.searchingForNode()) {
         // This is called from ElementsPanel treeOutline's focusNodeChanged().
-        DevToolsHost.activateWindow();
+        InspectorFrontendHost.activateWindow();
     }
 };
 

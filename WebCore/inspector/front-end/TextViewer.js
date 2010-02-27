@@ -377,7 +377,8 @@ WebInspector.TextViewer.prototype = {
         for (var j = 0; j < line.length;) {
             if (j > 1000) {
                 // This line is too long - do not waste cycles on minified js highlighting.
-                plainTextStart = j;
+                if (plainTextStart === -1)
+                    plainTextStart = j;
                 break;
             }
             var attribute = highlight[j];

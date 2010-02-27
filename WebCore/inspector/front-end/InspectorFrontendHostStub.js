@@ -93,6 +93,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     copyText: function()
     {
+    },
+
+    canAttachWindow: function()
+    {
+        return false;
     }
 }
 

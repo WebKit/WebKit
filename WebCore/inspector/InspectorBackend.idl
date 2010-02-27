@@ -43,6 +43,7 @@ module core {
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
         void getResourceContent(in long callId, in unsigned long identifier);
+        void reloadPage();
 
         void startTimelineProfiler();
         void stopTimelineProfiler();

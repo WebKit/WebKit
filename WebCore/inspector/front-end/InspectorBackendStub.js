@@ -148,6 +148,10 @@ WebInspector.InspectorBackendStub.prototype = {
         return this._resourceTrackingEnabled;
     },
 
+    reloadPage: function()
+    {
+    },
+
     enableDebugger: function()
     {
         this._debuggerEnabled = true;

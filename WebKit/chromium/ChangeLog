@@ -1,3 +1,17 @@
+2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: reload inspected page on Cmd+R / Ctrl+R / F5 key event in inspector.
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::jsCanAttachWindow):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+        (devtools.InspectorBackendImpl.prototype.toggleNodeSearch):
+
 2010-02-26  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.
