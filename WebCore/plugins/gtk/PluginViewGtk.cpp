@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2009, 2010 Kakai, Inc. <brian@kakai.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -828,16 +829,25 @@ bool PluginView::platformStart()
 
     if (m_isWindowed) {
 #if defined(XP_UNIX)
+        GtkWidget* pageClient = m_parentFrame->view()->hostWindow()->platformPageClient();
+
         if (m_needsXEmbed) {
+            // If our parent is not anchored the startup process will
+            // fail miserably for XEmbed plugins a bit later on when
+            // we try to get the ID of our window (since realize will
+            // fail), so let's just abort here.
+            if (!gtk_widget_get_parent(pageClient))
+                return false;
+
             setPlatformWidget(gtk_socket_new());
-            gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
+            gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
             g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(plugAddedCallback), this);
             g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(plugRemovedCallback), NULL);
         } else
-            setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformPageClient()->window, 0));
+            setPlatformWidget(gtk_xtbin_new(pageClient->window, 0));
 #else
         setPlatformWidget(gtk_socket_new());
-        gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformPageClient()), platformPluginWidget());
+        gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
 #endif
     } else {
         setPlatformWidget(0);

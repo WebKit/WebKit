@@ -1,3 +1,11 @@
+2010-02-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        We now pass this test, unskip.
+
+        * platform/gtk/Skipped:
+
 2010-02-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

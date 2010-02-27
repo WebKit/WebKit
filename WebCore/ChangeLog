@@ -1,3 +1,15 @@
+2010-02-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Abort XEmbed plugin initialization if our parent is not anchored
+        in a widget hierarchy. This can happen when the browser window is
+        destroyed while the plugin is being loaded, and will lead to a
+        crash.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformStart):
+
 2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
