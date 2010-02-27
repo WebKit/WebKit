@@ -10,7 +10,6 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
 	-I$(srcdir)/JavaScriptCore/runtime \
-	-I$(srcdir)/JavaScriptCore/wrec \
 	-I$(srcdir)/JavaScriptCore/jit \
 	-I$(srcdir)/JavaScriptCore/assembler \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
@@ -215,14 +214,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSTypeInfo.h \
 	JavaScriptCore/runtime/WeakGCMap.h \
 	JavaScriptCore/runtime/WeakGCPtr.h \
-	JavaScriptCore/wrec/CharacterClass.h \
-	JavaScriptCore/wrec/CharacterClassConstructor.h \
-	JavaScriptCore/wrec/Escapes.h \
-	JavaScriptCore/wrec/Quantifier.h \
-	JavaScriptCore/wrec/WREC.h \
-	JavaScriptCore/wrec/WRECFunctors.h \
-	JavaScriptCore/wrec/WRECGenerator.h \
-	JavaScriptCore/wrec/WRECParser.h \
 	JavaScriptCore/wtf/ASCIICType.h \
 	JavaScriptCore/wtf/AVLTree.h \
 	JavaScriptCore/wtf/AlwaysInline.h \

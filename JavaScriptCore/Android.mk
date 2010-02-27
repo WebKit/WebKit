@@ -152,13 +152,6 @@ LOCAL_SRC_FILES := \
 	runtime/TimeoutChecker.cpp \
 	runtime/UString.cpp \
 	\
-	wrec/CharacterClass.cpp \
-	wrec/CharacterClassConstructor.cpp \
-	wrec/WREC.cpp \
-	wrec/WRECFunctors.cpp \
-	wrec/WRECGenerator.cpp \
-	wrec/WRECParser.cpp \
-	\
 	wtf/Assertions.cpp \
 	wtf/ByteArray.cpp \
 	wtf/CurrentTime.cpp \

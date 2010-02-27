@@ -40,19 +40,11 @@
 
 #else
 
-#if ENABLE(WREC)
-#include "JIT.h"
-#include "WRECGenerator.h"
-#endif
 #include <pcre/pcre.h>
 
 #endif
 
 namespace JSC {
-
-#if ENABLE(WREC)
-using namespace WREC;
-#endif
 
 inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern)
     : m_pattern(pattern)
@@ -164,18 +156,9 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
 
 #else
 
-void RegExp::compile(JSGlobalData* globalData)
+void RegExp::compile(JSGlobalData*)
 {
     m_regExp = 0;
-#if ENABLE(WREC)
-    m_wrecFunction = Generator::compileRegExp(globalData, m_pattern, &m_numSubpatterns, &m_constructionError, m_executablePool, ignoreCase(), multiline());
-    if (m_wrecFunction || m_constructionError)
-        return;
-    // Fall through to non-WREC case.
-#else
-    UNUSED_PARAM(globalData);
-#endif
-
     JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase() ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
     JSRegExpMultilineOption multilineOption = multiline() ? JSRegExpMultiline : JSRegExpSingleLine;
     m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(m_pattern.data()), m_pattern.size(), ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
@@ -191,36 +174,6 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
     if (static_cast<unsigned>(startOffset) > s.size() || s.isNull())
         return -1;
 
-#if ENABLE(WREC)
-    if (m_wrecFunction) {
-        int offsetVectorSize = (m_numSubpatterns + 1) * 2;
-        int* offsetVector;
-        Vector<int, 32> nonReturnedOvector;
-        if (ovector) {
-            ovector->resize(offsetVectorSize);
-            offsetVector = ovector->data();
-        } else {
-            nonReturnedOvector.resize(offsetVectorSize);
-            offsetVector = nonReturnedOvector.data();
-        }
-        ASSERT(offsetVector);
-        for (int j = 0; j < offsetVectorSize; ++j)
-            offsetVector[j] = -1;
-
-        int result = m_wrecFunction(s.data(), startOffset, s.size(), offsetVector);
-
-        if (result < 0) {
-#ifndef NDEBUG
-            // TODO: define up a symbol, rather than magic -1
-            if (result != -1)
-                fprintf(stderr, "jsRegExpExecute failed with result %d\n", result);
-#endif
-            if (ovector)
-                ovector->clear();
-        }
-        return result;
-    } else
-#endif
     if (m_regExp) {
         // Set up the offset vector for the result.
         // First 2/3 used for result, the last third used by PCRE.

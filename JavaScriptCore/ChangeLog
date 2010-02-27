@@ -1,3 +1,37 @@
+2010-02-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Geoff Garen.
+
+        Remove wrec.  All builds should have switched to yarr by now.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * wrec: Removed.
+        * wrec/CharacterClass.cpp: Removed.
+        * wrec/CharacterClass.h: Removed.
+        * wrec/CharacterClassConstructor.cpp: Removed.
+        * wrec/CharacterClassConstructor.h: Removed.
+        * wrec/Escapes.h: Removed.
+        * wrec/Quantifier.h: Removed.
+        * wrec/WREC.cpp: Removed.
+        * wrec/WREC.h: Removed.
+        * wrec/WRECFunctors.cpp: Removed.
+        * wrec/WRECFunctors.h: Removed.
+        * wrec/WRECGenerator.cpp: Removed.
+        * wrec/WRECGenerator.h: Removed.
+        * wrec/WRECParser.cpp: Removed.
+        * wrec/WRECParser.h: Removed.
+        * wscript:
+
 2010-02-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

@@ -31,7 +31,6 @@ INCLUDEPATH = \
     $$PWD/pcre \
     $$PWD/profiler \
     $$PWD/runtime \
-    $$PWD/wrec \
     $$PWD/wtf \
     $$PWD/wtf/unicode \
     $$PWD/yarr \

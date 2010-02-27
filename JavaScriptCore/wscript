@@ -78,7 +78,7 @@ def build(bld):
     # 1. A simple program
     jscore = bld.new_task_gen(
         features = 'cxx cstaticlib',
-        includes = '. .. assembler wrec DerivedSources ForwardingHeaders ' + ' '.join(includes),
+        includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
         source = sources,
         target = 'jscore',
         uselib = 'WX ICU ' + get_config(),
@@ -89,7 +89,7 @@ def build(bld):
         
     obj = bld.new_task_gen(
         features = 'cxx cprogram',
-        includes = '. .. assembler wrec DerivedSources ForwardingHeaders ' + ' '.join(includes),
+        includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
         source = 'jsc.cpp',
         target = 'jsc',
         uselib = 'WX ICU ' + get_config(),
