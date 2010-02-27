@@ -1624,6 +1624,9 @@ def parse_args(args=None):
     option_parser.add_option("", "--nostart-helper",
                              action="store_true", default=False,
                              help="don't run layout_test_helper")
+    option_parser.add_option("", "--chromium",
+                             action="store_true", default=False,
+                             help="use the Chromium port")
     return option_parser.parse_args(args)
 
 if '__main__' == __name__:
