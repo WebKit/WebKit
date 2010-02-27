@@ -213,30 +213,4 @@
     bridge between the WebKit and JavaScriptCore APIs.
 */
 - (JSGlobalContextRef)globalContext;
-
-/*!
-    @method setAllowScrollersToOverlapContent:
-    @discussion This method sets whether the scrollbars, if any, should be shown inside
-    the document's border (thus overlapping some content) or outside the webView's border 
-    (default behavior). Changing this flag changes the size of the contentView and maintains
-    the size of the frameView.
-    @param flag YES to allow scrollers to overlap content, NO otherwise.
-*/
-- (void)setAllowScrollersToOverlapContent:(BOOL)flag;
-
-/*!
-    @method setAlwaysHideHorizontalScroller:
-    @discussion This method sets if the horizontal scrollbar is always hidden, regardless of
-    other scrollbar visibility settings. This does not affect the scrollability of the document.
-    @param flag YES to always hide the horizontal scroller, NO otherwise.
-*/
-- (void)setAlwaysHideHorizontalScroller:(BOOL)flag;
-
-/*!
-    @method setAlwaysHideVerticalScroller:
-    @discussion This method sets if the vertical scrollbar is always hidden, regardless of
-    other scrollbar visibility settings. This does not affect the scrollability of the document.
-    @param flag YES to always hide the vertical scroller, NO otherwise.
-*/
-- (void)setAlwaysHideVerticalScroller:(BOOL)flag;
 @end

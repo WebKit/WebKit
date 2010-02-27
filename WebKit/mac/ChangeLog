@@ -1,3 +1,16 @@
+2010-02-27  Jing Jin  <jjin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Move implementation of Bug 35449 into WebFramePrivate.
+
+        * WebView/WebFrame.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame setAllowScrollersToOverlapContent:]):
+        (-[WebFrame setAlwaysHideHorizontalScroller:]):
+        (-[WebFrame setAlwaysHideVerticalScroller:]):
+        * WebView/WebFramePrivate.h:
+
 2010-02-26  Jing Jin  <jjin@apple.com>
 
         Reviewed by Timothy Hatcher.
