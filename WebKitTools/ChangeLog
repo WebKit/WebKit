@@ -1,3 +1,45 @@
+2010-02-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Levin.
+
+        Rewrote autoinstall.py to support unzipping *.zip files after
+        download, unzipping and extracting *.tar.gz files after download,
+        and copying installed files to a destination directory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35163
+
+        These changes will allow us to autoinstall pep8.py from the web
+        and to put our third-party autoinstalled code in an explicit
+        directory like webkitpy/thirdparty/autoinstalled. They should
+        also speed up imports from autoinstalled *.zip packages slightly
+        since *.pyc files cannot be generated when importing from
+        zipped packages.
+
+        * Scripts/webkitpy/__init__.py:
+          - Updated the autoinstall lines to use the new autoinstall methods.
+          - Added pep8.py to the list of auto-installed packages.
+
+        * Scripts/webkitpy/bugzilla.py:
+          - Updated mechanize import path.
+
+        * Scripts/webkitpy/init/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+
+        * Scripts/webkitpy/init/autoinstall.py: Added.
+          - Added AutoInstaller class.
+          - Added sample testing usage to __main__.
+
+        * Scripts/webkitpy/networktransaction.py:
+          - Updated mechanize import path.
+
+        * Scripts/webkitpy/networktransaction_unittest.py:
+          - Updated mechanize import path.
+
+        * Scripts/webkitpy/statusserver.py:
+          - Updated mechanize import path.
+
+        * Scripts/webkitpy/thirdparty/autoinstall.py: Removed.
+          - Replaced with rewritten autoinstall in init/autoinstall.py.
+
 2010-02-26  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

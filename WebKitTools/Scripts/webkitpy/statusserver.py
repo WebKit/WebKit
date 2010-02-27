@@ -28,7 +28,7 @@
 
 from webkitpy.networktransaction import NetworkTransaction
 from webkitpy.webkit_logging import log
-from mechanize import Browser
+from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
