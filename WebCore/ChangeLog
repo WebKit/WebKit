@@ -1,3 +1,22 @@
+2010-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose an API for ports to add schemes to the mixed content whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=35438
+
+        Add a notion of a "secure" scheme that doesn't trigger mixed content
+        warnings.  Let folks register new secure schemes in the same way they
+        can register "local" schemes.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isMixedContent):
+        * page/SecurityOrigin.cpp:
+        (WebCore::secureSchemes):
+        (WebCore::SecurityOrigin::registerURLSchemeAsSecure):
+        (WebCore::SecurityOrigin::shouldTreatURLSchemeAsSecure):
+        * page/SecurityOrigin.h:
+
 2010-02-26  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

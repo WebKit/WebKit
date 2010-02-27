@@ -65,6 +65,19 @@ static URLSchemesMap& localSchemes()
     return localSchemes;
 }
 
+static URLSchemesMap& secureSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, secureSchemes, ());
+
+    if (secureSchemes.isEmpty()) {
+        secureSchemes.add("https");
+        secureSchemes.add("about");
+        secureSchemes.add("data");
+    }
+
+    return secureSchemes;
+}
+
 static URLSchemesMap& schemesWithUniqueOrigins()
 {
     DEFINE_STATIC_LOCAL(URLSchemesMap, schemesWithUniqueOrigins, ());
@@ -475,6 +488,16 @@ void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
 bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
 {
     return schemesWithUniqueOrigins().contains(scheme);
+}
+
+void SecurityOrigin::registerURLSchemeAsSecure(const String& scheme)
+{
+    secureSchemes().add(scheme);
+}
+
+bool SecurityOrigin::shouldTreatURLSchemeAsSecure(const String& scheme)
+{
+    return secureSchemes().contains(scheme);
 }
 
 bool SecurityOrigin::shouldHideReferrer(const KURL& url, const String& referrer)

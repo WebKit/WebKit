@@ -51,6 +51,11 @@ void WebSecurityPolicy::registerURLSchemeAsNoAccess(const WebString& scheme)
     SecurityOrigin::registerURLSchemeAsNoAccess(scheme);
 }
 
+void WebSecurityPolicy::registerURLSchemeAsSecure(const WebString& scheme)
+{
+    SecurityOrigin::registerURLSchemeAsSecure(scheme);
+}
+
 void WebSecurityPolicy::whiteListAccessFromOrigin(const WebURL& sourceOrigin,
     const WebString& destinationProtocol,
     const WebString& destinationHost,

@@ -50,6 +50,10 @@ public:
     // any other URL scheme.
     WEBKIT_API static void registerURLSchemeAsNoAccess(const WebString&);
 
+    // Registers a URL scheme to not generate mixed content warnings when
+    // included by an HTTPS page.
+    WEBKIT_API static void registerURLSchemeAsSecure(const WebString&);
+
     // Support for whitelisting access to origins beyond the same-origin policy.
     WEBKIT_API static void whiteListAccessFromOrigin(
         const WebURL& sourceOrigin, const WebString& destinationProtocol,

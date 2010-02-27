@@ -1,3 +1,16 @@
+2010-02-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose an API for ports to add schemes to the mixed content whitelist
+        https://bugs.webkit.org/show_bug.cgi?id=35438
+
+        Expose registerURLSchemeAsSecure via the WebKit API.
+
+        * public/WebSecurityPolicy.h:
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsSecure):
+
 2010-02-26  Brett Wilson  <brettw@chromium.org>
 
         Fix chromium build. This test's expectation became obsolete with
