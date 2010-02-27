@@ -1,5 +1,13 @@
 2010-02-27  Xan Lopez  <xlopez@igalia.com>
 
+        Rubber-stamped by Gustavo Noronha.
+
+        Unskip test that we seem to pass now.
+
+        * platform/gtk/Skipped:
+
+2010-02-27  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Add platform results for plugin test and unskip it. The filename
