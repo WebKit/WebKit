@@ -1,3 +1,14 @@
+2010-02-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add platform results for plugin test and unskip it. The filename
+        of our test plugin is not the same than the one expected in the
+        default result file.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/plugins/plugin-javascript-access-expected.txt: Added.
+
 2010-02-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new test introduced in r55353 because of missing drag&drop support.
