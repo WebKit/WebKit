@@ -1,3 +1,23 @@
+2010-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7696607> Links do not respect -webkit-user-drag: none
+        https://bugs.webkit.org/show_bug.cgi?id=35475
+
+        Test: fast/css/user-drag-none.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::mayStartDragAtEventLocation): Added a node
+        parameter. The image drag check is done against the node, rather than
+        than against the hit test result. This prevents a non-draggable image
+        with an auto-draggable ancestor from being dragged alone. The link drag
+        check now ignores links that are -webkit-user-drag: none.
+        * page/DragController.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldDragAutoNode): Pass the current node
+        to mayStartDragAtEventLocation().
+
 2010-02-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

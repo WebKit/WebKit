@@ -1,3 +1,13 @@
+2010-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7696607> Links do not respect -webkit-user-drag: none
+        https://bugs.webkit.org/show_bug.cgi?id=35475
+
+        * fast/css/user-drag-none-expected.txt: Added.
+        * fast/css/user-drag-none.html: Added.
+
 2010-02-27  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

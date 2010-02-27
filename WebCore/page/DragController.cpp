@@ -512,7 +512,7 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
     return true;
 }
 
-bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos)
+bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos, Node* node)
 {
     ASSERT(frame);
     ASSERT(frame->settings());
@@ -523,6 +523,8 @@ bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPo
     HitTestResult mouseDownTarget = HitTestResult(framePos);
 
     mouseDownTarget = frame->eventHandler()->hitTestResultAtPoint(framePos, true);
+    if (node)
+        mouseDownTarget.setInnerNonSharedNode(node);
 
     if (mouseDownTarget.image()
         && !mouseDownTarget.absoluteImageURL().isEmpty()
@@ -532,7 +534,8 @@ bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPo
 
     if (!mouseDownTarget.absoluteLinkURL().isEmpty()
         && m_dragSourceAction & DragSourceActionLink
-        && mouseDownTarget.isLiveLink())
+        && mouseDownTarget.isLiveLink()
+        && mouseDownTarget.URLElement()->renderer() && mouseDownTarget.URLElement()->renderer()->style()->userDrag() != DRAG_NONE)
         return true;
 
     if (mouseDownTarget.isSelected()
@@ -540,7 +543,6 @@ bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPo
         return true;
 
     return false;
-
 }
 
 static CachedImage* getCachedImage(Element* element)
