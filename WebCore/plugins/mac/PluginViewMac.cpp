@@ -219,6 +219,12 @@ bool PluginView::platformStart()
 
     show();
 
+    // TODO: Implement null timer throttling depending on plugin activation
+    m_nullEventTimer.set(new Timer<PluginView>(this, &PluginView::nullEventTimerFired));
+    m_nullEventTimer->startRepeating(0.02);
+
+    m_lastMousePos.h = m_lastMousePos.v = 0;
+
     return true;
 }
 
@@ -578,7 +584,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     EventRecord record;
 
     if (event->type() == eventNames().mousemoveEvent) {
-        record.what = nullEvent;
+        // Mouse movement is handled by null timer events
+        m_lastMousePos = mousePosForPlugin(event);
+        return;
     } else if (event->type() == eventNames().mouseoverEvent) {
         record.what = adjustCursorEvent;
     } else if (event->type() == eventNames().mouseoutEvent) {
@@ -594,21 +602,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     } else {
         return;
     }
-
-    if (platformPluginWidget()) {
-        record.where = globalMousePosForPlugin();
-    } else {
-        if (event->button() == 2) {
-            // always pass the global position for right-click since Flash uses it to position the context menu
-            record.where = globalMousePosForPlugin();
-        } else {
-            IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
-            record.where.h = postZoomPos.x() + m_windowRect.x();
-            // The number 22 is the height of the title bar. As to why it figures in the calculation below 
-            // is left as an exercise to the reader :-)
-            record.where.v = postZoomPos.y() + m_windowRect.y() - 22;
-        }
-    }
+    record.where = mousePosForPlugin(event);
     record.modifiers = modifiersForEvent(event);
 
     if (!event->buttonDown())
@@ -700,6 +694,22 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
+void PluginView::nullEventTimerFired(Timer<PluginView>*)
+{
+    EventRecord record;
+
+    record.what = nullEvent;
+    record.message = 0;
+    record.when = TickCount();
+    record.where = m_lastMousePos;
+    record.modifiers = GetCurrentKeyModifiers();
+    if (!Button())
+        record.modifiers |= btnState;
+
+    if (!dispatchNPEvent(record))
+        LOG(Events, "PluginView::nullEventTimerFired(): Null event not accepted");
+}
+
 static int modifiersForEvent(UIEventWithKeyState* event)
 {
     int modifiers = 0;
@@ -753,6 +763,26 @@ Point PluginView::globalMousePosForPlugin() const
     pos.v -= top;
 #endif
 
+    return pos;
+}
+
+Point PluginView::mousePosForPlugin(MouseEvent* event) const
+{
+    ASSERT(event);
+    if (platformPluginWidget())
+        return globalMousePosForPlugin();
+
+    if (event->button() == 2) {
+        // always pass the global position for right-click since Flash uses it to position the context menu
+        return globalMousePosForPlugin();
+    }
+
+    Point pos;
+    IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
+    pos.h = postZoomPos.x() + m_windowRect.x();
+    // The number 22 is the height of the title bar. As to why it figures in the calculation below
+    // is left as an exercise to the reader :-)
+    pos.v = postZoomPos.y() + m_windowRect.y() - 22;
     return pos;
 }
 

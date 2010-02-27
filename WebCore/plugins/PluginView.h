@@ -339,6 +339,7 @@ private:
         void setNPWindowIfNeeded();
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;
+        OwnPtr<Timer<PluginView> > m_nullEventTimer;
         NPDrawingModel m_drawingModel;
         NPEventModel m_eventModel;
         CGContextRef m_contextRef;
@@ -347,8 +348,11 @@ private:
         QPixmap m_pixmap;
 #endif
 
+        Point m_lastMousePos;
         void setNPWindowIfNeeded();
+        void nullEventTimerFired(Timer<PluginView>*);
         Point globalMousePosForPlugin() const;
+        Point mousePosForPlugin(MouseEvent* event = 0) const;
 #endif
 
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
