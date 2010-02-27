@@ -1,3 +1,25 @@
+2010-02-26  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [BREWMP] Port EventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=34796
+
+        Add platform-specific code required to implement EventHandler.
+
+        * page/brew/EventHandlerBrew.cpp: Added.
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::eventActivatedView):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::accessKeyModifiers):
+
 2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by NOBODY.
