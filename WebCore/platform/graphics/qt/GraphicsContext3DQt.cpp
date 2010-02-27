@@ -583,7 +583,7 @@ void GraphicsContext3D::bindTexture(unsigned long target, WebGLTexture* texture)
 void GraphicsContext3D::blendColor(double red, double green, double blue, double alpha)
 {
     m_internal->m_glWidget->makeCurrent();
-    glBlendColor(static_cast<float>(red), static_cast<float>(green), static_cast<float>(blue), static_cast<float>(alpha));
+    m_internal->blendColor(static_cast<float>(red), static_cast<float>(green), static_cast<float>(blue), static_cast<float>(alpha));
 }
 
 void GraphicsContext3D::blendEquation(unsigned long mode)
