@@ -1,3 +1,18 @@
+2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by NOBODY.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35087
+
+        * WebCore/platform/efl/ClipboardEfl.cpp: Added.
+        * WebCore/platform/efl/PopupMenuEfl.cpp: Added.
+        * WebCore/platform/efl/SharedTimerEfl.cpp: Added.
+        * WebCore/platform/efl/RenderThemeEfl.h: Added.
+        * WebCore/platform/efl/Language.cpp: Added.
+        * WebCore/platform/efl/CookieJarEfl.cpp: Added.
+        * WebCore/platform/efl/MIMETypeRegistryEfl.cpp: Added.
+
 2010-02-26  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Nate Chapin
