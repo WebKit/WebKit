@@ -1,3 +1,14 @@
+2010-02-26  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Verify that the Nodes being enumerated are HTML elements.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35463
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::forms):
+
 2010-02-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
