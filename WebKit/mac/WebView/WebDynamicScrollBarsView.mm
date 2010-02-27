@@ -54,9 +54,60 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
     [self updateScrollers];
 }
 
+- (void)setAllowScrollersToOverlapContent:(BOOL)flag
+{
+    if (allowScrollersToOverlapContent == flag)
+        return;
+        
+    allowScrollersToOverlapContent = flag;
+    
+    [[self contentView] setFrame:[self contentViewFrame]];
+    [[self documentView] setNeedsLayout:YES];
+    [[self documentView] layout];
+}
+
+- (void)setAlwaysHideHorizontalScroller:(BOOL)shouldBeVisible
+{
+    if (hideHorizontalScroller == shouldBeVisible)
+        return;
+
+    hideHorizontalScroller = shouldBeVisible;
+    [self updateScrollers];
+}
+
+- (void)setAlwaysHideVerticalScroller:(BOOL)shouldBeVisible
+{
+    if (hideVerticalScroller == shouldBeVisible)
+        return;
+        
+    hideVerticalScroller = shouldBeVisible;
+    [self updateScrollers];
+}
+
 @end
 
 @implementation WebDynamicScrollBarsView (WebInternal)
+
+- (NSRect)contentViewFrame
+{
+    NSRect frame = [[self contentView] frame];
+    
+    if ([self hasHorizontalScroller])
+        frame.size.height = (allowScrollersToOverlapContent ? NSMaxY([[self horizontalScroller] frame]) : NSMinY([[self horizontalScroller] frame]));
+    if ([self hasVerticalScroller])
+        frame.size.width = (allowScrollersToOverlapContent ? NSMaxX([[self verticalScroller] frame]) : NSMinX([[self verticalScroller] frame]));
+    return frame;
+}
+
+- (void)tile
+{
+    [super tile];
+
+    // [super tile] sets the contentView size so that it does not overlap with the scrollers,
+    // we want to re-set the contentView to overlap scrollers before displaying.
+    if (allowScrollersToOverlapContent)
+        [[self contentView] setFrame:[self contentViewFrame]];
+}
 
 - (void)setSuppressLayout:(BOOL)flag;
 {
@@ -112,12 +163,15 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (!documentView) {
         newHasHorizontalScroller = NO;
         newHasVerticalScroller = NO;
-    } 
+    }
 
     if (hScroll != ScrollbarAuto)
         newHasHorizontalScroller = (hScroll == ScrollbarAlwaysOn);
     if (vScroll != ScrollbarAuto)
         newHasVerticalScroller = (vScroll == ScrollbarAlwaysOn);
+        
+    newHasHorizontalScroller &= !hideHorizontalScroller;
+    newHasVerticalScroller &= !hideVerticalScroller;
     
     if (!documentView || suppressLayout || suppressScrollers || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
         inUpdateScrollers = YES;
@@ -158,6 +212,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (!newHasVerticalScroller && hasVerticalScroller && hScroll != ScrollbarAlwaysOn)
         newHasHorizontalScroller = NO;
 
+    newHasHorizontalScroller &= !hideHorizontalScroller;
+    newHasVerticalScroller &= !hideVerticalScroller;
+
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         inUpdateScrollers = YES;
         [self setHasHorizontalScroller:newHasHorizontalScroller];
@@ -192,6 +249,10 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 - (void)reflectScrolledClipView:(NSClipView *)clipView
 {
     if (clipView == [self contentView]) {
+        // Prevent appearance of trails because of overlapping views
+        if (allowScrollersToOverlapContent)
+            [self setDrawsBackground:NO];
+    
         // FIXME: This hack here prevents infinite recursion that takes place when we
         // gyrate between having a vertical scroller and not having one. A reproducible
         // case is clicking on the "the Policy Routing text" link at

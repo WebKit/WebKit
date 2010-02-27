@@ -29,8 +29,6 @@
 // This is a Private header (containing SPI), despite the fact that its name
 // does not contain the word Private.
 
-// This was once used by Safari, but has not been for a long time.
-
 // FIXME: <rdar://problem/5898985> Mail currently expects this header to define WebCoreScrollbarAlwaysOn.
 extern const int WebCoreScrollbarAlwaysOn;
 
@@ -45,9 +43,17 @@ extern const int WebCoreScrollbarAlwaysOn;
     BOOL verticallyPinnedByPreviousWheelEvent;
     BOOL horizontallyPinnedByPreviousWheelEvent;
     unsigned inUpdateScrollersLayoutPass;
+
+    BOOL allowScrollersToOverlapContent;
+    BOOL hideHorizontalScroller;
+    BOOL hideVerticalScroller;
 }
 
 // This was originally added for Safari's benefit, but Safari has not used it for a long time.
 // Perhaps it can be removed.
 - (void)setAllowsHorizontalScrolling:(BOOL)flag;
+
+- (void)setAllowScrollersToOverlapContent:(BOOL)flag;
+- (void)setAlwaysHideHorizontalScroller:(BOOL)flag;
+- (void)setAlwaysHideVerticalScroller:(BOOL)flag;
 @end

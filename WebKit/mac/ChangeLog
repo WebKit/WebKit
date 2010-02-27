@@ -1,3 +1,31 @@
+2010-02-26  Jing Jin  <jjin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35449
+        Add ability to hide WebFrame scrollbars and to allow scrollbars to overlap with content.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setAllowScrollersToOverlapContent:]): Allows scrollbars to 
+        overlap with the document and re-layouts the document.
+        (-[WebDynamicScrollBarsView setAlwaysHideHorizontalScroller:]): Hides the horizontal scrollbar.
+        (-[WebDynamicScrollBarsView setAlwaysHideVerticalScroller:]): Hides the vertical scrollbar.
+        (-[WebDynamicScrollBarsView contentViewFrame]): Calculates the appropriate frame based
+        on allowScrollersToOverlapContent.
+        (-[WebDynamicScrollBarsView tile]): If allowScrollersToOverlapContent is YES, set the
+        contentView's frame so it overlaps with the scrollbar.
+        (-[WebDynamicScrollBarsView updateScrollers]): Take into account hideHorizontalScroller
+        and hideVerticalScroller.
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]): set drawsBackground to NO when
+        scrollbars are overlapping with content, so we don't get trails during scrollbar draw updates.
+        * WebView/WebDynamicScrollBarsViewInternal.h:
+        * WebView/WebFrame.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame setAllowScrollersToOverlapContent:]): Hook for [WebDynamicScrollBarsView setAllowScrollersToOverlapContent:]
+        (-[WebFrame setAlwaysHideHorizontalScroller:]): Hook for [WebDynamicScrollBarsView setAlwaysHideHorizontalScroller:]
+        (-[WebFrame setAlwaysHideVerticalScroller:]): Hook for [WebDynamicScrollBarsView setAlwaysHideVerticalScroller:]
+
 2010-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Alexey Proskuryakov.
