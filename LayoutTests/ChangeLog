@@ -1,3 +1,9 @@
+2010-02-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test introduced in r55353 because of missing drag&drop support.
+
+        * platform/qt/Skipped: fast/css/user-drag-none.html skipped.
+
 2010-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

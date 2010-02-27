@@ -243,6 +243,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html
+fast/css/user-drag-none.html
 fast/images/drag-svg-as-image.html
 fast/forms/slider-delete-while-dragging-thumb.html
 
