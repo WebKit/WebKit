@@ -1,3 +1,17 @@
+2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding pywebsocket/standalone.py back to fix the Chromium webkit
+        canaries. Once all layout tests pass, we can get in the patch that
+        moves this directorty to WebKitTools/Scripts, update all Chromium
+        scripts, and revert this patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35464
+
+        * pywebsocket: Added.
+        * pywebsocket/standalone.py: Added.
+
 2010-02-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
