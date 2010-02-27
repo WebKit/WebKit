@@ -1,5 +1,11 @@
 2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, build fix.
+
+        * pywebsocket/mod_pywebsocket/standalone.py:
+
+2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Moving the script to the right location.

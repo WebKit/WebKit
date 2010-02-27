@@ -36,7 +36,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
                              "..", "Scripts", "webkitpy", "thirdparty",
                              "pywebsocket", "mod_pywebsocket"))
-import standalone.py
+import standalone
 
 if __name__ == '__main__':
     standalone._main()
