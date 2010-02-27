@@ -42,7 +42,7 @@ import os
 
 from diff_parser import DiffParser
 from scm import detect_scm_system
-
+from thirdparty.autoinstalled import pep8
 
 def parse_patch(patch_string):
 

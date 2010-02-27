@@ -42,6 +42,7 @@ from optparser import DefaultCommandOptionValues
 from processors.common import check_no_carriage_return
 from processors.common import categories as CommonCategories
 from processors.cpp import CppProcessor
+from processors.python import PythonProcessor
 from processors.text import TextProcessor
 
 
@@ -209,7 +210,8 @@ class FileType:
     NONE = 1
     # Alphabetize remaining types
     CPP = 2
-    TEXT = 3
+    PYTHON = 3
+    TEXT = 4
 
 
 class ProcessorDispatcher(object):
@@ -230,7 +232,6 @@ class ProcessorDispatcher(object):
         'mm',
         'php',
         'pm',
-        'py',
         'txt',
         )
 
@@ -264,6 +265,8 @@ class ProcessorDispatcher(object):
             # reading from stdin, cpp_style tests should not rely on
             # the extension.
             return FileType.CPP
+        elif file_extension == "py":
+            return FileType.PYTHON
         elif ("ChangeLog" in file_path
               or "WebKitTools/Scripts/" in file_path
               or file_extension in self.text_file_extensions):
@@ -278,6 +281,8 @@ class ProcessorDispatcher(object):
         elif file_type == FileType.CPP:
             file_extension = self._file_extension(file_path)
             processor = CppProcessor(file_path, file_extension, handle_style_error, verbosity)
+        elif file_type == FileType.PYTHON:
+            processor = PythonProcessor(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
             processor = TextProcessor(file_path, handle_style_error)
         else:

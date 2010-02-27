@@ -51,6 +51,7 @@ from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import CommandOptionValues
 from processors.cpp import CppProcessor
+from processors.python import PythonProcessor
 from processors.text import TextProcessor
 
 
@@ -241,6 +242,10 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         """Assert that the dispatched processor is a CppProcessor."""
         self.assert_processor(file_path, CppProcessor)
 
+    def assert_processor_python(self, file_path):
+        """Assert that the dispatched processor is a PythonProcessor."""
+        self.assert_processor(file_path, PythonProcessor)
+
     def assert_processor_text(self, file_path):
         """Assert that the dispatched processor is a TextProcessor."""
         self.assert_processor(file_path, TextProcessor)
@@ -276,6 +281,26 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         self.assertEquals(processor.file_extension, file_extension)
         self.assertEquals(processor.file_path, file_path)
 
+    def test_python_paths(self):
+        """Test paths that should be checked as Python."""
+        paths = [
+           "foo.py",
+           "WebKitTools/Scripts/modules/text_style.py",
+        ]
+
+        for path in paths:
+            self.assert_processor_python(path)
+
+        # Check processor attributes on a typical input.
+        file_base = "foo"
+        file_extension = "css"
+        file_path = file_base + "." + file_extension
+        self.assert_processor_text(file_path)
+        processor = self.dispatch_processor(file_path)
+        self.assertEquals(processor.file_path, file_path)
+        self.assertEquals(processor.handle_style_error,
+                          self.mock_handle_style_error)
+
     def test_text_paths(self):
         """Test paths that should be checked as text."""
         paths = [
@@ -287,14 +312,12 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
            "foo.mm",
            "foo.php",
            "foo.pm",
-           "foo.py",
            "foo.txt",
            "FooChangeLog.bak",
            "WebCore/ChangeLog",
            "WebCore/inspector/front-end/inspector.js",
-           "WebKitTools/Scripts/check-webkit=style",
-           "WebKitTools/Scripts/modules/text_style.py",
-            ]
+           "WebKitTools/Scripts/check-webkit-style",
+        ]
 
         for path in paths:
             self.assert_processor_text(path)
