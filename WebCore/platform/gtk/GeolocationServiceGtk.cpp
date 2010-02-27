@@ -113,11 +113,12 @@ bool GeolocationServiceGtk::startUpdating(PositionOptions* options)
         return false;
     }
 
+    m_geoclueClient = client;
+
+    geoclue_position_get_position_async(m_geocluePosition, (GeocluePositionCallback)getPositionCallback, this);
+
     g_signal_connect(G_OBJECT(m_geocluePosition), "position-changed",
                      G_CALLBACK(position_changed), this);
-
-    m_geoclueClient = client;
-    updateLocationInformation();
 
     return true;
 }
@@ -156,28 +157,6 @@ PositionError* GeolocationServiceGtk::lastError() const
     return m_lastError.get();
 }
 
-void GeolocationServiceGtk::updateLocationInformation()
-{
-    ASSERT(m_geocluePosition);
-
-    GOwnPtr<GError> error;
-    GOwnPtr<GeoclueAccuracy> accuracy;
-
-    GeocluePositionFields fields = geoclue_position_get_position(m_geocluePosition, &m_timestamp,
-                                                                 &m_latitude, &m_longitude,
-                                                                 &m_altitude, &accuracy.outPtr(),
-                                                                 &error.outPtr());
-    if (error) {
-        setError(PositionError::POSITION_UNAVAILABLE, error->message);
-        return;
-    } else if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE && fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-        setError(PositionError::POSITION_UNAVAILABLE, "Position could not be determined.");
-        return;
-    }
-
-
-}
-
 void GeolocationServiceGtk::updatePosition()
 {
     m_lastError = 0;
@@ -187,6 +166,24 @@ void GeolocationServiceGtk::updatePosition()
                                                           true, m_altitudeAccuracy, false, 0.0, false, 0.0);
     m_lastPosition = Geoposition::create(coordinates.release(), m_timestamp * 1000.0);
     positionChanged();
+}
+
+void GeolocationServiceGtk::getPositionCallback(GeocluePosition *position,
+                                                GeocluePositionFields fields,
+                                                int timestamp,
+                                                double latitude,
+                                                double longitude,
+                                                double altitude,
+                                                GeoclueAccuracy* accuracy,
+                                                GError* error,
+                                                GeolocationServiceGtk* that)
+{
+    if (error) {
+        that->setError(PositionError::POSITION_UNAVAILABLE, error->message);
+        g_error_free(error);
+        return;
+    }
+    position_changed(position, fields, timestamp, latitude, longitude, altitude, accuracy, that);
 }
 
 void GeolocationServiceGtk::position_changed(GeocluePosition*, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy, GeolocationServiceGtk* that)

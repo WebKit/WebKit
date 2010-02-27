@@ -46,11 +46,11 @@ namespace WebCore {
     private:
         GeolocationServiceGtk(GeolocationServiceClient*);
 
-        void updateLocationInformation();
         void setError(PositionError::ErrorCode, const char* message);
         void updatePosition();
 
         static void position_changed(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*, GeolocationServiceGtk*);
+        static void getPositionCallback(GeocluePosition*, GeocluePositionFields, int, double, double, double, GeoclueAccuracy*, GError*, GeolocationServiceGtk*);
 
     private:
         RefPtr<Geoposition> m_lastPosition;

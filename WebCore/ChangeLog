@@ -1,3 +1,17 @@
+2010-02-26  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] use geoclue_position_get_position_async to get geolocation position.
+        https://bugs.webkit.org/show_bug.cgi?id=35355
+
+        No new tests, behaviour depends on system.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::startUpdating):
+        (WebCore::GeolocationServiceGtk::get_position):
+        * platform/gtk/GeolocationServiceGtk.h:
+
 2010-02-26  Yaar Schnitman  <yaar@chromium.org>
 
         Chromium Win build fix.
