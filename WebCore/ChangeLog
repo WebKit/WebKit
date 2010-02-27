@@ -5,6 +5,15 @@
         Add EFL port files to platform/efl.
         http://webkit.org/b/35087
 
+        * WebCore/platform/efl/RenderThemeEfl.cpp: Added.
+
+2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by NOBODY.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35087
+
         * WebCore/platform/efl/PlatformWheelEventEfl.cpp: Added.
         * WebCore/platform/efl/FileChooserEfl.cpp: Added.
         * WebCore/platform/efl/ContextMenuEfl.cpp: Added.
