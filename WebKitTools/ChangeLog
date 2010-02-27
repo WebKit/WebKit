@@ -1,5 +1,15 @@
 2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Moving the script to the right location.
+
+        * pywebsocket/mod_pywebsocket: Added.
+        * pywebsocket/mod_pywebsocket/standalone.py: Copied from WebKitTools/pywebsocket/standalone.py.
+        * pywebsocket/standalone.py: Removed.
+
+2010-02-26  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, fixing the license.
 
         * pywebsocket/standalone.py:
