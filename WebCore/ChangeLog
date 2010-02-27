@@ -5,6 +5,20 @@
         Add EFL port files to platform/efl.
         http://webkit.org/b/35087
 
+        * WebCore/platform/efl/LoggingEfl.cpp: Added.
+        * WebCore/platform/efl/ScrollbarThemeEfl.cpp: Added.
+        * WebCore/platform/efl/TemporaryLinkStubs.cpp: Added.
+        * WebCore/platform/efl/ScrollViewEfl.cpp: Added.
+        * WebCore/platform/efl/SharedBufferEfl.cpp: Added.
+        * WebCore/platform/efl/DragDataEfl.cpp: Added.
+
+2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by NOBODY.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35087
+
         * WebCore/platform/efl/RenderThemeEfl.cpp: Added.
 
 2010-02-26  Leandro Pereira  <leandro@profusion.mobi>
