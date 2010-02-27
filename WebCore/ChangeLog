@@ -1,3 +1,20 @@
+2010-02-26  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsLayerQt: artifacts and wrong transformOrigin
+        This was due to wrong way of applying cache-mode and transformation
+        on a graphics-item with HTML. Cache-mode should be updated
+        when the content type updates, even if it was the same cache-mode
+   
+        https://bugs.webkit.org/show_bug.cgi?id=35382
+
+        Test URL attached to the bug now works correctly.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::computeTransform):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-02-26  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

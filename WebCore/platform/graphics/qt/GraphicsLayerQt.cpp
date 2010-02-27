@@ -308,29 +308,26 @@ QTransform GraphicsLayerQtImpl::computeTransform(const TransformationMatrix& bas
     // this has to do with how WebCore implements -webkit-perspective and -webkit-perspective-origin, which are the CSS
     // attribute that call setChildrenTransform
     QPointF offset = -pos() - boundingRect().bottomRight() / 2;
-    const GraphicsLayerQtImpl* ancestor = this;
-    while ((ancestor = qobject_cast<GraphicsLayerQtImpl*>(ancestor->parentObject()))) {
+
+    for (const GraphicsLayerQtImpl* ancestor = this; (ancestor = qobject_cast<GraphicsLayerQtImpl*>(ancestor->parentObject())); ) {
         if (!ancestor->m_state.childrenTransform.isIdentity()) {
-            offset += ancestor->boundingRect().bottomRight() / 2;
+            const QPointF offset = mapFromItem(ancestor, QPointF(ancestor->m_size.width() / 2, ancestor->m_size.height() / 2));
             computedTransform
                 .translate(offset.x(), offset.y())
                 .multLeft(ancestor->m_state.childrenTransform)
                 .translate(-offset.x(), -offset.y());
             break;
         }
-        offset -= ancestor->pos();
     }
-
-    computedTransform.multLeft(baseTransform);
 
     // webkit has relative-to-size originPoint, graphics-view has a pixel originPoint, here we convert
     // we have to manage this ourselves because QGraphicsView's transformOrigin is incompatible
     const qreal originX = m_state.anchorPoint.x() * m_size.width();
     const qreal originY = m_state.anchorPoint.y() * m_size.height();
-    computedTransform = TransformationMatrix()
-                            .translate(originX, originY)
-                            .multiply(computedTransform)
-                            .translate(-originX, -originY);
+    computedTransform
+            .translate3d(originX, originY, m_state.anchorPoint.z())
+            .multLeft(baseTransform)
+            .translate3d(-originX, -originY, -m_state.anchorPoint.z());
 
     // now we project to 2D
     return QTransform(computedTransform);
@@ -511,11 +508,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
             if (!m_state.drawsContent && m_layer->drawsContent())
                 update();
                 if (m_layer->drawsContent() && !m_maskEffect) {
-                    const QGraphicsItem::CacheMode mewCacheMode = isTransformAnimationRunning() ? ItemCoordinateCache : DeviceCoordinateCache;
-
-                    // optimization: QGraphicsItem doesn't always perform this test
-                    if (mewCacheMode != cacheMode())
-                        setCacheMode(mewCacheMode);
+                    setCacheMode(isTransformAnimationRunning() ? ItemCoordinateCache : DeviceCoordinateCache);
 
                     // HTML content: we want to use exposedRect so we don't use WebCore rendering if we don't have to
                     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
