@@ -60,6 +60,12 @@ namespace WebCore {
 
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
 
+        // Needs to return true for all event handlers implemented in JavaScript so that
+        // the SVG code does not add the event handler in both
+        // SVGUseElement::buildShadowTree and again in
+        // SVGUseElement::transferEventListenersToShadowTree
+        virtual bool wasCreatedFromMarkup() const { return true; }
+
         String m_functionName;
         bool m_isSVGEvent;
         String m_code;

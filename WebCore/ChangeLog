@@ -1,3 +1,20 @@
+2010-02-26  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Nate Chapin
+
+        To fire each event handler registered on an SVG node once per
+        event, Chromium needs an implementation of wasCreatedFromMarkup
+        added to V8LazyEventListener.h that matches the one in
+        WebKit/WebCore/bindings/js/JSLazyEventListener.h.
+        
+        This patch adds such a matching implementation of wasCreatedFromMarkup
+        to V8LazyEventListener.h.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=35325
+
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::wasCreatedFromMarkup):
+
 2010-02-26  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.
