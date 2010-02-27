@@ -1,3 +1,9 @@
+2010-02-26  Yaar Schnitman  <yaar@chromium.org>
+
+        Chromium Win build fix.
+
+        * WebCore.gyp/WebCore.gyp: Added missing file to action input.
+
 2010-02-12  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Adam Barth.

@@ -489,6 +489,7 @@
           },
           'inputs': [
             'scripts/action_derivedsourcesallinone.py',
+            '<(idls_list_temp_file)',
             '<!@(cat <(idls_list_temp_file))',
           ],
           'outputs': [
