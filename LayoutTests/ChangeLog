@@ -1,3 +1,31 @@
+2010-02-28  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Support private browsing mode in plugins
+
+        Add support for NPNVprivateModeBool property in plugins.
+
+        See also: https://developer.mozilla.org/En/Supporting_private_browsing_in_plugins
+
+        The NPNVprivateModeBool property is supported as scriptable property privateBrowsingEnabled
+        in the test WebKit plugin. The Mac platform also supports a cachedPrivateBrowsingEnabled
+        property implemented in the test plugin. This allows the Layout test
+        plugins/private-browsing-mode.html to retrieve the previous value of NPNVprivateModeBool
+        in the test plugin. Due to the platform-specific overhead required to support this bespoke
+        property it is not implemented as part of this patch, instead a new test,
+        plugins/private-browsing-mode-2.html, is added to ensure that setting and resetting
+        privateBrowsingEnabled works as expected.
+
+        http://bugs.webkit.org/show_bug.cgi?id=33180
+
+        * platform/gtk/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * plugins/private-browsing-mode-2-expected.txt: Added.
+        * plugins/private-browsing-mode-2.html: Added.
+
 2010-02-27  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Gustavo Noronha.

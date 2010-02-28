@@ -265,9 +265,6 @@ fast/images/favicon-as-image.html
 fast/images/icon-0colors.html
 fast/images/icon-decoding.html
 
-# ------- missing private browsing support?
-plugins/private-browsing-mode.html
-
 # ------- missing ruby annotation support for japanese fonts
 fast/ruby/ruby-empty-rt.html
 fast/ruby/ruby-length.html
@@ -5094,3 +5091,8 @@ http/tests/loading/307-after-303-after-post.html
 
 # DumpRenderTree code to enable Java is currently a no-op
 java
+
+# Skipped pending support for halting plugins when pluginsEnabled is set to false,
+# see https://bugs.webkit.org/show_bug.cgi?id=33180.
+# Core functionality is tested in plugins/private-browsing-mode-2.html
+plugins/private-browsing-mode.html
