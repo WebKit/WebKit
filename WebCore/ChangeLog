@@ -1,3 +1,16 @@
+2010-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35496
+        <rdar://problem/7663444> Opening newsweek.com and youtube.com has become very slow in debug builds
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::getIDRules):
+        (WebCore::CSSRuleSet::getClassRules):
+        (WebCore::CSSRuleSet::getTagRules):
+        Removed consistency checks, as they affect performance too much in this case.
+
 2010-02-28  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
