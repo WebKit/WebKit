@@ -1,3 +1,12 @@
+2010-02-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector shouldn't show a white color box for "-webkit-line-break: after-white-space"
+        https://bugs.webkit.org/show_bug.cgi?id=33478
+
+        * inspector/front-end/StylesSidebarPane.js:
+
 2010-02-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
