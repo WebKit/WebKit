@@ -108,6 +108,17 @@ namespace WebCore {
         return toInt32(value, ok);
     }
 
+    // Convert a value to a 32-bit unsigned integer.  The conversion fails if the
+    // value cannot be converted to an unsigned integer or converts to nan or to an infinity.
+    uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok);
+
+    // Convert a value to a 32-bit unsigned integer assuming the conversion cannot fail.
+    inline uint32_t toUInt32(v8::Handle<v8::Value> value)
+    {
+        bool ok;
+        return toUInt32(value, ok);
+    }
+
     inline float toFloat(v8::Local<v8::Value> value)
     {
         return static_cast<float>(value->NumberValue());

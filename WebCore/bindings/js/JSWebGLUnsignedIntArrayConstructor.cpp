@@ -53,6 +53,10 @@ static JSObject* constructCanvasUnsignedIntArray(ExecState* exec, JSObject* cons
 {
     JSWebGLUnsignedIntArrayConstructor* jsConstructor = static_cast<JSWebGLUnsignedIntArrayConstructor*>(constructor);
     RefPtr<WebGLUnsignedIntArray> array = static_cast<WebGLUnsignedIntArray*>(construct<WebGLUnsignedIntArray, unsigned int>(exec, args).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return 0;
+    }
     return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
 }
 

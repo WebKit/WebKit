@@ -41,7 +41,7 @@ class WebGLIntArray : public WebGLArray {
 
     static PassRefPtr<WebGLIntArray> create(unsigned length);
     static PassRefPtr<WebGLIntArray> create(int* array, unsigned length);
-    static PassRefPtr<WebGLIntArray> create(PassRefPtr<WebGLArrayBuffer> buffer, int byteOffset, unsigned length);
+    static PassRefPtr<WebGLIntArray> create(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
     int* data() { return static_cast<int*>(baseAddress()); }
 
@@ -87,7 +87,7 @@ class WebGLIntArray : public WebGLArray {
 
   private:
     WebGLIntArray(PassRefPtr<WebGLArrayBuffer> buffer,
-                  int byteOffset,
+                  unsigned byteOffset,
                   unsigned length);
     unsigned m_size;
 };

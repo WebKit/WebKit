@@ -43,14 +43,16 @@ JSC::JSValue setWebGLArrayFromArray(JSC::ExecState* exec, T* webGLArray, JSC::Ar
     if (args.at(0).isObject()) {
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
         JSC::JSObject* array = JSC::asObject(args.at(0));
-        unsigned offset = 0;
+        uint32_t offset = 0;
         if (args.size() == 2)
             offset = args.at(1).toInt32(exec);
-        int length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
-        if (offset + length > webGLArray->length())
+        uint32_t length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
+        if (offset > webGLArray->length() ||
+            offset + length > webGLArray->length() ||
+            offset + length < offset)
             setDOMException(exec, INDEX_SIZE_ERR);
         else {
-            for (int i = 0; i < length; i++) {
+            for (uint32_t i = 0; i < length; i++) {
                 JSC::JSValue v = array->get(exec, i);
                 if (exec->hadException())
                     return JSC::jsUndefined();

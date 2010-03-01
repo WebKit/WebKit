@@ -53,6 +53,10 @@ static JSObject* constructCanvasFloatArray(ExecState* exec, JSObject* constructo
 {
     JSWebGLFloatArrayConstructor* jsConstructor = static_cast<JSWebGLFloatArrayConstructor*>(constructor);
     RefPtr<WebGLFloatArray> array = static_cast<WebGLFloatArray*>(construct<WebGLFloatArray, float>(exec, args).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return 0;
+    }
     return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
 }
 

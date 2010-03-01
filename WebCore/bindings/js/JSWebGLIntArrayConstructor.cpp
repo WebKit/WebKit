@@ -53,6 +53,10 @@ static JSObject* constructCanvasIntArray(ExecState* exec, JSObject* constructor,
 {
     JSWebGLIntArrayConstructor* jsConstructor = static_cast<JSWebGLIntArrayConstructor*>(constructor);
     RefPtr<WebGLIntArray> array = static_cast<WebGLIntArray*>(construct<WebGLIntArray, int>(exec, args).get());
+    if (!array.get()) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return 0;
+    }
     return asObject(toJS(exec, jsConstructor->globalObject(), array.get()));
 }
 

@@ -72,7 +72,11 @@ v8::Handle<v8::Value> V8WebGLArrayBuffer::constructorCallback(const v8::Argument
         len = toInt32(args[0]);
     }
 
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(len);
+    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(len, 1);
+    if (!buffer.get()) {
+        V8Proxy::setDOMException(INDEX_SIZE_ERR);
+        return v8::Undefined();
+    }
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBGLARRAYBUFFER), buffer.get());
     return toV8(buffer.release(), args.Holder());

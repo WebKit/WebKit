@@ -33,21 +33,27 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(unsigned sizeInBytes)
+PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(unsigned numElements, unsigned elementByteSize)
 {
-    return adoptRef(new WebGLArrayBuffer(sizeInBytes));
+    void* data = tryAllocate(numElements, elementByteSize);
+    if (!data)
+        return 0;
+    return adoptRef(new WebGLArrayBuffer(data, numElements * elementByteSize));
 }
 
 PassRefPtr<WebGLArrayBuffer> WebGLArrayBuffer::create(WebGLArrayBuffer* other)
 {
-    RefPtr<WebGLArrayBuffer> buffer = adoptRef(new WebGLArrayBuffer(other->byteLength()));
+    void* data = tryAllocate(other->byteLength(), 1);
+    if (!data)
+        return 0;
+    RefPtr<WebGLArrayBuffer> buffer = adoptRef(new WebGLArrayBuffer(data, other->byteLength()));
     memcpy(buffer->data(), other->data(), other->byteLength());
     return buffer.release();
 }
 
-WebGLArrayBuffer::WebGLArrayBuffer(unsigned sizeInBytes) {
-    m_sizeInBytes = sizeInBytes;
-    m_data = WTF::fastZeroedMalloc(sizeInBytes);
+WebGLArrayBuffer::WebGLArrayBuffer(void* data, unsigned sizeInBytes)
+    : m_sizeInBytes(sizeInBytes)
+    , m_data(data) {
 }
 
 void* WebGLArrayBuffer::data() {
@@ -64,6 +70,19 @@ unsigned WebGLArrayBuffer::byteLength() const {
 
 WebGLArrayBuffer::~WebGLArrayBuffer() {
     WTF::fastFree(m_data);
+}
+
+void* WebGLArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize) {
+    void* result;
+    // Do not allow 32-bit overflow of the total size
+    if (numElements) {
+        unsigned totalSize = numElements * elementByteSize;
+        if (totalSize / numElements != elementByteSize)
+            return 0;
+    }
+    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result))
+        return result;
+    return 0;
 }
 
 }

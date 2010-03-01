@@ -30,7 +30,6 @@
 #include "JSWebGLArrayBufferConstructor.h"
 
 #include "Document.h"
-#include "WebGLArrayBuffer.h"
 #include "JSWebGLArrayBuffer.h"
 
 namespace WebCore {
@@ -56,7 +55,12 @@ static JSObject* constructCanvasArrayBuffer(ExecState* exec, JSObject* construct
         if (isnan(size))
             size = 0;
     }
-    return asObject(toJS(exec, jsConstructor->globalObject(), WebGLArrayBuffer::create(size)));
+    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(size, 1);
+    if (!buffer.get()){
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return 0;
+    }
+    return asObject(toJS(exec, jsConstructor->globalObject(), buffer.get()));
 }
 
 JSC::ConstructType JSWebGLArrayBufferConstructor::getConstructData(JSC::ConstructData& constructData)

@@ -30,6 +30,7 @@
 #include "JSDocument.h"
 #include "JSWebGLArrayBuffer.h"
 #include <runtime/Error.h>
+#include "WebGLArrayBuffer.h"
 
 namespace WebCore {
 
@@ -51,24 +52,30 @@ namespace WebCore {
         if (args.size() < 1)
             return C::create(0, 0, 0);
         
+        if (args.size() > 1 && !args.at(0).isObject())
+            // Invalid first argument
+            return 0;
+
         if (args.at(0).isObject()) {
             RefPtr<WebGLArrayBuffer> buffer = toWebGLArrayBuffer(args.at(0));
             if (buffer) {
-                int offset = (args.size() > 1) ? args.at(1).toInt32(exec) : 0;
-                unsigned int length = (args.size() > 2) ? static_cast<unsigned int>(args.at(2).toInt32(exec)) : 0;
+                unsigned offset = (args.size() > 1) ? args.at(1).toUInt32(exec) : 0;
+                unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
+                if (args.size() > 2)
+                    length = args.at(2).toUInt32(exec);
                 return C::create(buffer, offset, length);
             }
             
             JSC::JSObject* array = asObject(args.at(0));
-            int length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
+            unsigned length = array->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
             void* tempValues;
-            if (!tryFastMalloc(length * sizeof(T)).getValue(tempValues)) {
+            if (!tryFastCalloc(length, sizeof(T)).getValue(tempValues)) {
                 throwError(exec, JSC::GeneralError);
                 return 0;
             }
             
             OwnFastMallocPtr<T> values(static_cast<T*>(tempValues));
-            for (int i = 0; i < length; ++i) {
+            for (unsigned i = 0; i < length; ++i) {
                 JSC::JSValue v = array->get(exec, i);
                 if (exec->hadException())
                     return 0;
@@ -78,7 +85,7 @@ namespace WebCore {
             return C::create(values.get(), length);
         }
         
-        unsigned size = static_cast<unsigned>(args.at(0).toInt32(exec));
+        unsigned size = args.at(0).toUInt32(exec);
         return C::create(size);
     }
 

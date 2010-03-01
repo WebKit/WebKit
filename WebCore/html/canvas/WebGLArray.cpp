@@ -46,7 +46,10 @@ WebGLArray::~WebGLArray()
 
 void WebGLArray::setImpl(WebGLArray* array, unsigned byteOffset, ExceptionCode& ec)
 {
-    if (byteOffset + array->byteLength() > byteLength()) {
+    if (byteOffset > byteLength() ||
+        byteOffset + array->byteLength() > byteLength() ||
+        byteOffset + array->byteLength() < byteOffset) {
+        // Out of range offset or overflow
         ec = INDEX_SIZE_ERR;
         return;
     }

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class WebGLArrayBuffer : public RefCounted<WebGLArrayBuffer> {
   public:
-    static PassRefPtr<WebGLArrayBuffer> create(unsigned sizeInBytes);
+    static PassRefPtr<WebGLArrayBuffer> create(unsigned numElements, unsigned elementByteSize);
     static PassRefPtr<WebGLArrayBuffer> create(WebGLArrayBuffer*);
 
     void* data();
@@ -43,7 +43,9 @@ class WebGLArrayBuffer : public RefCounted<WebGLArrayBuffer> {
     ~WebGLArrayBuffer();
 
   private:
-    WebGLArrayBuffer(unsigned sizeInBytes);
+    WebGLArrayBuffer(void* data, unsigned sizeInBytes);
+    WebGLArrayBuffer(unsigned numElements, unsigned elementByteSize);
+    static void* tryAllocate(unsigned numElements, unsigned elementByteSize);
     unsigned m_sizeInBytes;
     void* m_data;
 };

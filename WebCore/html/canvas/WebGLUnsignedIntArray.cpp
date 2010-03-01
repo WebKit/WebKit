@@ -35,7 +35,7 @@ namespace WebCore {
 
 PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(unsigned length)
 {
-    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length * sizeof(unsigned int));
+    RefPtr<WebGLArrayBuffer> buffer = WebGLArrayBuffer::create(length, sizeof(unsigned int));
     return create(buffer, 0, length);
 }
 
@@ -48,25 +48,17 @@ PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(unsigned int* ar
 }
 
 PassRefPtr<WebGLUnsignedIntArray> WebGLUnsignedIntArray::create(PassRefPtr<WebGLArrayBuffer> buffer,
-                                                                int byteOffset,
+                                                                unsigned byteOffset,
                                                                 unsigned length)
 {
-    // Make sure the offset results in valid alignment.
-    if ((byteOffset % sizeof(unsigned int)) != 0) {
-        return NULL;
-    }
+    RefPtr<WebGLArrayBuffer> buf(buffer);
+    if (!verifySubRange<unsigned int>(buf, byteOffset, length))
+        return 0;
 
-    if (buffer) {
-        // Check to make sure we are talking about a valid region of
-        // the given WebGLArrayBuffer's storage.
-        if ((byteOffset + (length * sizeof(unsigned int))) > buffer->byteLength())
-            return NULL;
-    }
-
-    return adoptRef(new WebGLUnsignedIntArray(buffer, byteOffset, length));
+    return adoptRef(new WebGLUnsignedIntArray(buf, byteOffset, length));
 }
 
-WebGLUnsignedIntArray::WebGLUnsignedIntArray(PassRefPtr<WebGLArrayBuffer> buffer, int byteOffset, unsigned length)
+WebGLUnsignedIntArray::WebGLUnsignedIntArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset, unsigned length)
         : WebGLArray(buffer, byteOffset)
         , m_size(length)
 {
@@ -81,14 +73,9 @@ unsigned WebGLUnsignedIntArray::byteLength() const {
 }
 
 PassRefPtr<WebGLArray> WebGLUnsignedIntArray::slice(unsigned offset, unsigned length) {
-    // Check to make sure the specified region is within the bounds of
-    // the WebGLArrayBuffer.
-    unsigned startByte = m_byteOffset + offset * sizeof(unsigned int);
-    unsigned limitByte = startByte + length * sizeof(unsigned int);
-    unsigned bufferLength = buffer()->byteLength();
-    if (startByte >= bufferLength || limitByte > bufferLength)
-        return 0;
-    return create(buffer(), startByte, length);
+    unsigned fullOffset = m_byteOffset + offset * sizeof(unsigned int);
+    clampOffsetAndNumElements<unsigned int>(buffer(), &fullOffset, &length);
+    return create(buffer(), fullOffset, length);
 }
 
 void WebGLUnsignedIntArray::set(WebGLUnsignedIntArray* array, unsigned offset, ExceptionCode& ec) {

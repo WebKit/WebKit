@@ -174,6 +174,53 @@ int toInt32(v8::Handle<v8::Value> value, bool& ok)
     return intValue->Value();
 }
     
+uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
+{
+    ok = true;
+
+    // FIXME: there is currently no Value::IsUint32(). This code does
+    // some contortions to avoid silently converting out-of-range
+    // values to uint32_t.
+
+    // Fast case.  The value is already a 32-bit positive integer.
+    if (value->IsInt32()) {
+        int32_t result = value->Int32Value();
+        if (result >= 0)
+            return result;
+    }
+
+    // Can the value be converted to a number?
+    v8::Local<v8::Number> numberObject = value->ToNumber();
+    if (numberObject.IsEmpty()) {
+        ok = false;
+        return 0;
+    }
+
+    // Does the value convert to nan or to an infinity?
+    double numberValue = numberObject->Value();
+    if (isnan(numberValue) || isinf(numberValue)) {
+        ok = false;
+        return 0;
+    }
+
+    // Can the value be converted to a 32-bit unsigned integer?
+    v8::Local<v8::Uint32> uintValue = value->ToUint32();
+    if (uintValue.IsEmpty()) {
+        ok = false;
+        return 0;
+    }
+
+    // FIXME: v8::Uint32::Value is not defined!
+    // http://code.google.com/p/v8/issues/detail?id=624
+    v8::Local<v8::Int32> intValue = value->ToInt32();
+    if (intValue.IsEmpty()) {
+        ok = false;
+        return 0;
+    }
+
+    return static_cast<uint32_t>(intValue->Value());
+}
+
 String toWebCoreString(const v8::Arguments& args, int index) {
     return v8ValueToWebCoreString(args[index]);
 }

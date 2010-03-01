@@ -26,6 +26,7 @@
 #ifndef WebGLArray_h
 #define WebGLArray_h
 
+#include <algorithm>
 #include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -66,6 +67,35 @@ class WebGLArray : public RefCounted<WebGLArray> {
     WebGLArray(PassRefPtr<WebGLArrayBuffer> buffer, unsigned byteOffset);
 
     void setImpl(WebGLArray* array, unsigned byteOffset, ExceptionCode& ec);
+
+    // Helper to verify that a given sub-range of an ArrayBuffer is
+    // within range.
+    template <typename T>
+    static bool verifySubRange(PassRefPtr<WebGLArrayBuffer> buffer,
+                               unsigned byteOffset,
+                               unsigned numElements)
+    {
+        if (!buffer)
+            return false;
+        if (sizeof(T) > 1 && byteOffset % sizeof(T))
+            return false;
+        if (byteOffset > buffer->byteLength())
+            return false;
+        unsigned remainingElements = (buffer->byteLength() - byteOffset) / sizeof(T);
+        if (numElements > remainingElements)
+            return false;
+        return true;
+    }
+
+    template <typename T>
+    static void clampOffsetAndNumElements(PassRefPtr<WebGLArrayBuffer> buffer,
+                                          unsigned *byteOffset,
+                                          unsigned *numElements)
+    {
+        *byteOffset = std::min(buffer->byteLength(), *byteOffset);
+        unsigned remainingElements = (buffer->byteLength() - *byteOffset) / sizeof(T);
+        *numElements = std::min(remainingElements, *numElements);
+    }
 
     // This is the address of the WebGLArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;
