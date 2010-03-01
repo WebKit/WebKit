@@ -1,3 +1,9 @@
+2010-03-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed, bring English.lproj/locallizedStrings.js back to binary (UTF) mode.
+
+        * English.lproj/localizedStrings.js:
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Nikolas Zimmermann.
