@@ -92,13 +92,14 @@ class ChromiumPort(base.Port):
         return result
 
     def check_sys_deps(self, needs_http):
+        test_shell_binary_path = self._path_to_driver()
         proc = subprocess.Popen([test_shell_binary_path,
                                 '--check-layout-test-sys-deps'])
         if proc.wait():
             logging.error('System dependencies check failed.')
             logging.error('To override, invoke with --nocheck-sys-deps')
             logging.error('')
-            result = False
+            return False
         return True
 
     def path_from_chromium_base(self, *comps):
