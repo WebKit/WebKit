@@ -1,3 +1,16 @@
+2010-03-01  Thatcher Ulrich  <tulrich@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix chromium iframe shims.  Add another test case to the
+        iframes-shims test.  After r53637, the plugin widget doesn't get
+        moved every paint.  This used to hide the bug that if an iframe
+        gets added, the plugin's cutout rectangles don't get updated until
+        a layout happens.
+        https://bugs.webkit.org/show_bug.cgi?id=35184
+
+        * plugins/iframe-shims.html: test case that adds an iframe shim dynamically
+
 2010-03-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

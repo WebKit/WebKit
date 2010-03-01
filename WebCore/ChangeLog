@@ -1,3 +1,24 @@
+2010-03-01  Thatcher Ulrich  <tulrich@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix chromium iframe shims.  Add another test case to the
+        iframes-shims test.  After r53637, the plugin widget doesn't get
+        moved every paint.  This used to hide the bug that if an iframe
+        gets added, the plugin's cutout rectangles don't get updated until
+        a layout happens.
+        https://bugs.webkit.org/show_bug.cgi?id=35184
+
+        * platform/Widget.h:
+        (WebCore::Widget::widgetPositionsUpdated): new virtual method
+            widgetPositionsUpdated() to notify widgets when other widgets on
+            the page have been repositioned.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateWidgetPositions): call widgetPositionsUpdated() on the widgets
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::widgetPositionsUpdated): call widgetPositionsUpdated() on the widget
+        * rendering/RenderWidget.h:
+
 2010-03-01  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Holger Freyther.

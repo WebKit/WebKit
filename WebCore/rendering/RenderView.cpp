@@ -541,6 +541,8 @@ void RenderView::updateWidgetPositions()
     RenderWidgetSet::iterator end = m_widgets.end();
     for (RenderWidgetSet::iterator it = m_widgets.begin(); it != end; ++it)
         (*it)->updateWidgetPosition();
+    for (RenderWidgetSet::iterator it = m_widgets.begin(); it != end; ++it)
+        (*it)->widgetPositionsUpdated();
 }
 
 void RenderView::addWidget(RenderWidget* o)

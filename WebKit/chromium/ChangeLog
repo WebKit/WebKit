@@ -1,3 +1,19 @@
+2010-03-01  Thatcher Ulrich  <tulrich@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Fix chromium iframe shims.  Add another test case to the
+        iframes-shims test.  After r53637, the plugin widget doesn't get
+        moved every paint.  This used to hide the bug that if an iframe
+        gets added, the plugin's cutout rectangles don't get updated until
+        a layout happens.
+        https://bugs.webkit.org/show_bug.cgi?id=35184
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::widgetPositionsUpdated): do reportGeometry() to ensure that
+            the plugin is aware of the positions of cutouts on the page (for iframe shim behavior).
+        * src/WebPluginContainerImpl.h:
+
 2010-02-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

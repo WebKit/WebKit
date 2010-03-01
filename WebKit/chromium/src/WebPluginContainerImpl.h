@@ -73,6 +73,7 @@ public:
     virtual void frameRectsChanged();
     virtual void setParentVisible(bool);
     virtual void setParent(WebCore::ScrollView*);
+    virtual void widgetPositionsUpdated();
 
     // WebPluginContainer methods
     virtual void invalidate();

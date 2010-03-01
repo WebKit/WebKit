@@ -48,6 +48,35 @@
             ');" value="clickme" style="position: absolute; top: 10; left: 10; width: 60px; height: 60px;"/>';
         return o;
     }
+    
+    function appendOverlay(overlayDivZIframe, overlayDivZOverlay, overlayInsideDiv, expectClickable, caseId)
+    {
+        var id = makeIframeDiv();
+        var root = document.getElementById(caseId);
+        if (overlayDivZIframe)
+            id.style.zIndex = overlayDivZIframe;
+
+        var od = makeOverlayDiv(expectClickable ? 'green' : 'red', caseId);
+        od.style.position = 'absolute';
+        if (overlayDivZOverlay)
+            od.style.zIndex = overlayDivZOverlay;
+
+        if (overlayInsideDiv) {
+            var parentdiv = document.createElement('div');
+            if (overlayDivZOverlay)
+                parentdiv.style.zIndex = overlayDivZOverlay;
+
+            parentdiv.style.position = 'absolute';
+            parentdiv.style.top = '0px';
+            parentdiv.style.left = '0px';
+            parentdiv.appendChild(id);
+            parentdiv.appendChild(od);
+            root.appendChild(parentdiv);
+        } else {
+            root.appendChild(id);
+            root.appendChild(od);
+        }
+    };
 
     function addCase(x, y, tags)
     {
@@ -62,6 +91,7 @@
         root.style.position = 'absolute';
         root.style.left = x * (width + 40) + 'px';
         root.style.top = y * (height + 20) + 'px';
+        root.id = caseId;
         container.appendChild(root);
 
         var pluginDivZ;
@@ -102,40 +132,16 @@
             }
         };
 
-        var appendOverlay = function()
-        {
-            var id = makeIframeDiv();
-            if (overlayDivZIframe)
-                id.style.zIndex = overlayDivZIframe;
-
-            var od = makeOverlayDiv(expectClickable ? 'green' : 'red', caseId);
-            od.style.position = 'absolute';
-            if (overlayDivZOverlay)
-                od.style.zIndex = overlayDivZOverlay;
-
-            if (tags.overlayInsideDiv) {
-                var parentdiv = document.createElement('div');
-                if (overlayDivZOverlay)
-                    parentdiv.style.zIndex = overlayDivZOverlay;
-
-                parentdiv.style.position = 'absolute';
-                parentdiv.style.top = '0px';
-                parentdiv.style.left = '0px';
-                parentdiv.appendChild(id);
-                parentdiv.appendChild(od);
-                root.appendChild(parentdiv);
-            } else {
-                root.appendChild(id);
-                root.appendChild(od);
-            }
-        };
-
         if (tags.overlayEarlier) {
-            appendOverlay();
+            appendOverlay(overlayDivZIframe, overlayDivZOverlay, tags.overlayInsideDiv, expectClickable, caseId);
             appendPlugin();
         } else {
             appendPlugin();
-            appendOverlay();
+            if (tags.overlayOnTimeout) {
+                setTimeout('appendOverlay('+overlayDivZIframe+', '+overlayDivZOverlay +', ' + tags.overlayInsideDiv + ', ' + expectClickable + ', ' + caseId + ')', 0);
+            } else {
+                appendOverlay(overlayDivZIframe, overlayDivZOverlay, tags.overlayInsideDiv, expectClickable, caseId);
+            }
         }
      }
 
@@ -177,6 +183,7 @@
         addCase(0, 3, {'pluginNorelative':1, expect:'overlay OVER'});
         addCase(1, 3, {'overlayEarlier':1, 'pluginNorelative':1, 'pluginInsideDiv':1, expect:'overlay OVER'});
         addCase(2, 3, {'pluginNorelative':1, 'pluginInsideDiv':1, expect:'overlay OVER'});
+        addCase(3, 3, {'pluginLowerz':1, 'overlayOnTimeout':1, expect:'overlay OVER'});
 
         runTest();
     }

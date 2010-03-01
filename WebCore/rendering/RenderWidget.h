@@ -39,6 +39,7 @@ public:
     static RenderWidget* find(const Widget*);
 
     void updateWidgetPosition();
+    void widgetPositionsUpdated();
 
     void showSubstituteImage(PassRefPtr<Image>);
 
