@@ -686,3 +686,9 @@ void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data,
     [delegate release];
     [pool release];
 }
+
+void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+{
+    WebView *view = [mainFrame webView];
+    [view goToBackForwardItem:[[view backForwardList] currentItem]];
+}

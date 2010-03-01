@@ -5783,8 +5783,9 @@ fast/css/font-face-opentype.html
 plugins/iframe-shims.html
 fast/loader/loadInProgress.html
 
-# Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
+# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
+fast/loader/api-test-go-to-current-back-forward-item.html
 
 # Draws squares in a totally wrong fashion
 # See https://bugs.webkit.org/show_bug.cgi?id=35127

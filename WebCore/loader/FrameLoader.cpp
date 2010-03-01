@@ -3820,9 +3820,11 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     // - The HistoryItem has a history state object
     // - Navigating to an anchor within the page, with no form data stored on the target item or the current history entry,
     //   and the URLs in the frame tree match the history item for fragment scrolling.
+    // - The HistoryItem is not the same as the current item, because such cases are treated as a new load.
     HistoryItem* currentItem = history()->currentItem();
-    bool sameDocumentNavigation = (!item->formData() && !(currentItem && currentItem->formData()) && history()->urlsMatchItem(item))
-                                  || (currentItem && item->documentSequenceNumber() == currentItem->documentSequenceNumber());
+    bool sameDocumentNavigation = ((!item->formData() && !(currentItem && currentItem->formData()) && history()->urlsMatchItem(item))
+                                  || (currentItem && item->documentSequenceNumber() == currentItem->documentSequenceNumber()))
+                                  && item != currentItem;
 
 #if ENABLE(WML)
     // All WML decks should go through the real load mechanism, not the scroll-to-anchor code

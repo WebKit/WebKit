@@ -600,3 +600,8 @@ void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data,
 {
 
 }
+
+void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+{
+
+}

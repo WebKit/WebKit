@@ -1,3 +1,25 @@
+2010-03-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION: Telling a WebView to go to its current WebHistoryItem is broken.
+        <rdar://problem/7699371> and https://bugs.webkit.org/show_bug.cgi?id=35532
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (apiTestGoToCurrentBackForwardItemCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::apiTestGoToCurrentBackForwardItem):
+
+        Stubs for now:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::apiTestGoToCurrentBackForwardItem):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::apiTestGoToCurrentBackForwardItem):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::apiTestGoToCurrentBackForwardItem):
+
 2010-03-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by David Levin.

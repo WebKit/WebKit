@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -765,7 +765,7 @@ http/tests/misc/image-checks-for-accept.html
 websocket/tests/frame-lengths.html
 websocket/tests/simple-stress.html
 
-# Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
+# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
 
 # DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.

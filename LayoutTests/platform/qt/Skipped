@@ -5077,8 +5077,9 @@ http/tests/misc/image-checks-for-accept.html
 # https://bugs.webkit.org/show_bug.cgi?id=35086
 fast/xmlhttprequest/xmlhttprequest-no-file-access.html
 
-# Needs platform specific API implemented in DRT, probably not relevant for non-Mac and non-Windows ports
+# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
+fast/loader/api-test-go-to-current-back-forward-item.html
 
 # [Qt] editing tests fails after r54980
 # https://bugs.webkit.org/show_bug.cgi?id=35145

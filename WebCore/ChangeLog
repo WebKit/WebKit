@@ -1,3 +1,20 @@
+2010-03-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION: Telling a WebView to go to its current WebHistoryItem is broken.
+        <rdar://problem/7699371> and https://bugs.webkit.org/show_bug.cgi?id=35532
+
+        Test: fast/loader/api-test-go-to-current-back-forward-item.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem): If the current item is the same as the target item, don't
+          consider this to be a same document navigation.
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem): Hard code the "going to the same item as the current item" relationship
+          as a precondition for stopping all loaders, as that will be a new document load.
+
 2010-03-01  Robert Hogan  <robert@webkit.org>
 
         Reviewed by nobody, build fix.
