@@ -54,8 +54,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                 self._webkit_baseline_path('win'),
                 self._webkit_baseline_path('mac')]
 
-    def check_sys_deps(self, needs_http):
-        result = chromium.ChromiumPort.check_sys_deps(self, needs_http)
+    def check_build(self, needs_http):
+        result = chromium.ChromiumPort.check_build(self, needs_http)
         if needs_http:
             if self._options.use_apache:
                 result = self._check_apache_install() and result
@@ -101,7 +101,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         result = chromium.check_file_exists(self._path_to_apache_config_file(),
             "apache2 config file") and result
         if not result:
-            logging.error('Please install using: "sudo apt-get install '
+            logging.error('    Please install using: "sudo apt-get install '
                           'apache2 libapache2-mod-php5"')
             logging.error('')
         return result
@@ -114,7 +114,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         result = chromium.check_file_exists(self._path_to_lighttpd_modules(),
             "LigHTTPd modules") and result
         if not result:
-            logging.error('Please install using: "sudo apt-get install '
+            logging.error('    Please install using: "sudo apt-get install '
                           'lighttpd php5-cgi"')
             logging.error('')
         return result
@@ -122,7 +122,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _check_wdiff_install(self):
         result = chromium.check_file_exists(self._path_to_wdiff(), 'wdiff')
         if not result:
-            logging.error('Please install using: "sudo apt-get install '
+            logging.error('    Please install using: "sudo apt-get install '
                           'wdiff"')
             logging.error('')
         return result

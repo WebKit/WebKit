@@ -53,8 +53,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
                 self._webkit_baseline_path('mac' + self.version()),
                 self._webkit_baseline_path('mac')]
 
-    def check_sys_deps(self, needs_http):
-        result = chromium.ChromiumPort.check_sys_deps(self, needs_http)
+    def check_build(self, needs_http):
+        result = chromium.ChromiumPort.check_build(self, needs_http)
         result = self._check_wdiff_install() and result
         if not result:
             logging.error('For complete Mac build requirements, please see:')

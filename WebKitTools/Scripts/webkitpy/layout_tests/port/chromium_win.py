@@ -60,8 +60,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
         dirs.append(self._webkit_baseline_path('mac'))
         return dirs
 
-    def check_sys_deps(self, needs_http):
-        result = chromium.ChromiumPort.check_sys_deps(self, needs_http)
+    def check_build(self, needs_http):
+        result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:
             logging.error('For complete Windows build requirements, please '
                           'see:')

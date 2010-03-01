@@ -633,11 +633,13 @@ class TestExpectationsFile:
                 build_type = 'DEBUG'
             else:
                 build_type = 'RELEASE'
-            print "\nFAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" \
-                % (self._test_platform_name.upper(), build_type)
+            logging.error('')
+            logging.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
+                          (self._test_platform_name.upper(), build_type))
 
             for error in self._non_fatal_errors:
                 logging.error(error)
+            logging.error('')
             if len(self._errors):
                 raise SyntaxError('\n'.join(map(str, self._errors)))
 

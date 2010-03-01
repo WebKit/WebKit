@@ -38,8 +38,8 @@
 
    Note that because this is really acting as a wrapper around the underlying
    port, you must be able to run the underlying port as well
-   (check_sys_deps() must pass and the layout_test_helper must work). You
-   may be able to get around this with --nocheck-sys-deps and --nostart-helper.
+   (check_build() and check_sys_deps() must pass and auxiliary binaries
+   like layout_test_helper and httpd must work).
 
    This implementation also modifies the test expectations so that all
    tests are either SKIPPED or expected to PASS."""
@@ -60,7 +60,7 @@ class PassingPort(object):
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)
- 
+
     def start_driver(self, image_path, options):
         return PassingDriver(self, image_path, options)
 
@@ -98,13 +98,20 @@ class PassingDriver(base.Driver):
 
         if image_hash:
             image_filename = self._port.expected_filename(test_name, '.png')
-            image = file(image_filename, 'rb').read()
-            output_file = file(self._image_path, 'w')
-            output_file.write(image)
-            output_file.close()
+            try:
+                image = file(image_filename, 'rb').read()
+            except IOError:
+                image = ''
+            if self._image_path:
+                output_file = file(self._image_path, 'w')
+                output_file.write(image)
+                output_file.close()
             hash_filename = self._port.expected_filename(test_name,
                 '.checksum')
-            hash = file(hash_filename, 'r').read()
+            try:
+                hash = file(hash_filename, 'r').read()
+            except IOError:
+                hash = ''
         else:
             hash = None
         return (False, False, hash, text_output, None)

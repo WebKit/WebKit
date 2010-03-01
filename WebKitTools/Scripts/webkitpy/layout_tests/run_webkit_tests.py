@@ -552,6 +552,7 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
+        self._meter.update('Starting test shells ...')
         threads = self._instantiate_test_shell_threads(file_list,
                                                        result_summary)
 
@@ -614,9 +615,11 @@ class TestRunner:
         start_time = time.time()
 
         if self.needs_http():
+            self._meter.update('Starting HTTP server ...')
             self._port.start_http_server()
 
         if self._contains_tests(self.WEBSOCKET_SUBDIR):
+            self._meter.update('Starting WebSocket server ...')
             self._port.start_websocket_server()
             # self._websocket_secure_server.Start()
 
@@ -1468,13 +1471,18 @@ def main(options, args):
     test_runner.parse_expectations(port_obj.test_platform_name(),
                                    options.target == 'Debug')
 
-    if not options.nostart_helper:
-        port_obj.start_helper()
+    meter.update("Checking build ...")
+    if not port_obj.check_build(test_runner.needs_http()):
+        sys.exit(1)
+
+    meter.update("Starting helper ...")
+    port_obj.start_helper()
 
     # Check that the system dependencies (themes, fonts, ...) are correct.
-    if (not options.nocheck_sys_deps and
-         not port_obj.check_sys_deps(test_runner.needs_http())):
-        sys.exit(1)
+    if not options.nocheck_sys_deps:
+        meter.update("Checking system dependencies ...")
+        if not port_obj.check_sys_deps(test_runner.needs_http()):
+            sys.exit(1)
 
     meter.update("Preparing tests ...")
     write = create_logging_writer(options, "expected")
@@ -1488,11 +1496,9 @@ def main(options, args):
         if options.fuzzy_pixel_tests:
             test_runner.add_test_type(fuzzy_image_diff.FuzzyImageDiff)
 
-    meter.update("Starting ...")
     has_new_failures = test_runner.run(result_summary)
 
-    if not options.nostart_helper:
-        port_obj.stop_helper()
+    port_obj.stop_helper()
 
     logging.debug("Exit status: %d" % has_new_failures)
     sys.exit(has_new_failures)
@@ -1621,9 +1627,6 @@ def parse_args(args=None):
     option_parser.add_option("", "--experimental-fully-parallel",
                              action="store_true", default=False,
                              help="run all tests in parallel")
-    option_parser.add_option("", "--nostart-helper",
-                             action="store_true", default=False,
-                             help="don't run layout_test_helper")
     option_parser.add_option("", "--chromium",
                              action="store_true", default=False,
                              help="use the Chromium port")

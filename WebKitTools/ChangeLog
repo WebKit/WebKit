@@ -1,3 +1,38 @@
+2010-03-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        General cleanup of error handling in new-run-webkit-tests.
+
+        Add Port.check_build() call that is separate from Port.check_sys_deps()
+        (and add a --nocheck-build flag to skip). This breaks a circular
+        dependency where you would start the layout test helper before
+        checking sys deps, but checking sys deps was the thing that told
+        you if your binaries where there.
+
+        Also, made Port.check_sys_deps(), start_helper() and stop_helper()
+        optional by providing default implementations in the base class
+        rather than requiring ports to implement the routines regardless
+        of whether or not they were needed.
+
+        Lastly, tweak a bunch of log messages to be cleaner, including
+        changing messages in thirdparty/autoinstall.py to be silent at
+        the default log level.
+
+        http://bugs.webkit.org/show_bug.cgi?id=35416
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/passing.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/thirdparty/autoinstall.py
+
 2010-03-01  Dirk Pranke <dpranke@chromium.org>
 
          Reviewed by David Levin.

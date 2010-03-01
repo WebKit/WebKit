@@ -66,8 +66,9 @@ class MacPort(base.Port):
         dirs.append(self._webkit_baseline_path('mac'))
         return dirs
 
-    def check_sys_deps(self, needs_http):
-        if executive.run_command([self.script_path("build-dumprendertree")], return_exit_code=True) != 0:
+    def check_build(self, needs_http):
+        if executive.run_command([self.script_path("build-dumprendertree")],
+                                 return_exit_code=True):
             return False
 
         driver_path = self._path_to_driver()
@@ -75,7 +76,8 @@ class MacPort(base.Port):
             logging.error("DumpRenderTree was not found at %s" % driver_path)
             return False
 
-        # This should also validate that the ImageDiff path is valid (once this script knows how to use ImageDiff).
+        # This should also validate that the ImageDiff path is valid
+        # (once this script knows how to use ImageDiff).
         # https://bugs.webkit.org/show_bug.cgi?id=34826
         return True
 
@@ -97,14 +99,6 @@ class MacPort(base.Port):
     def start_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
         return MacDriver(self, image_path, options)
-
-    def start_helper(self):
-        # This port doesn't use a helper process.
-        pass
-
-    def stop_helper(self):
-        # This port doesn't use a helper process.
-        pass
 
     def test_base_platform_names(self):
         # At the moment we don't use test platform names, but we have

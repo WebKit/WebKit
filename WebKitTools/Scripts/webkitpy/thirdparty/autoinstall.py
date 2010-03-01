@@ -293,7 +293,8 @@ class Importer(object):
         return None
 
     def bind(self, package_name, url, zip_subpath):
-        _logger.info("binding: %s -> %s subpath: %s" % (package_name, url, zip_subpath))
+        _logger.debug("binding: %s -> %s subpath: %s" %
+                      (package_name, url, zip_subpath))
         self.packages[package_name] = (url, zip_subpath)
 
 

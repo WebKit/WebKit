@@ -42,10 +42,19 @@ import http_server
 import websocket_server
 
 
-def check_file_exists(path_to_file, str):
-    """Verify the executable is present where expected or log an error."""
+def check_file_exists(path_to_file, file_description, override_step=None):
+    """Verify the file is present where expected or log an error.
+
+    Args:
+        file_name: The (human friendly) name or description of the file
+            you're looking for (e.g., "HTTP Server"). Used for error logging.
+        override_step: An optional string to be logged if the check fails."""
     if not os.path.exists(path_to_file):
-        logging.error('Unable to find %s at %s' % (str, path_to_file))
+        logging.error('Unable to find %s' % file_description)
+        logging.error('    at %s' % path_to_file)
+        if override_step:
+            logging.error('    %s' % override_step)
+            logging.error('')
         return False
     return True
 
@@ -60,35 +69,37 @@ class ChromiumPort(base.Port):
     def baseline_path(self):
         return self._chromium_baseline_path(self._name)
 
-    def check_sys_deps(self, needs_http):
+    def check_build(self, needs_http):
         result = True
         test_shell_binary_path = self._path_to_driver()
         result = check_file_exists(test_shell_binary_path,
                                    'test driver')
         if result:
-            result = (self._check_build_up_to_date(self._options.target)
+            result = (self._check_driver_build_up_to_date(self._options.target)
                       and result)
-
-            proc = subprocess.Popen([test_shell_binary_path,
-                                     '--check-layout-test-sys-deps'])
-            if proc.wait() != 0:
-                logging.error('System dependencies check failed.')
-                logging.error('To override, invoke with --nocheck-sys-deps')
-                logging.error('')
-                result = False
-
         else:
             logging.error('')
 
+        helper_path = self._path_to_helper()
+        result = check_file_exists(helper_path,
+                                   'layout test helper') and result
 
         if not self._options.no_pixel_tests:
             image_diff_path = self._path_to_image_diff()
-            if not check_file_exists(image_diff_path, 'image diff exe'):
-                logging.error('To override, invoke with --no-pixel-tests')
-                logging.error('')
-                result = False
+            result = check_file_exists(image_diff_path, 'image diff exe',
+                'To override, invoke with --no-pixel-tests') and result
 
         return result
+
+    def check_sys_deps(self, needs_http):
+        proc = subprocess.Popen([test_shell_binary_path,
+                                '--check-layout-test-sys-deps'])
+        if proc.wait():
+            logging.error('System dependencies check failed.')
+            logging.error('To override, invoke with --nocheck-sys-deps')
+            logging.error('')
+            result = False
+        return True
 
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the
@@ -161,7 +172,7 @@ class ChromiumPort(base.Port):
     # or any subclasses.
     #
 
-    def _check_build_up_to_date(self, target):
+    def _check_driver_build_up_to_date(self, target):
         if target in ('Debug', 'Release'):
             try:
                 debug_path = self._path_to_driver('Debug')
