@@ -16,39 +16,6 @@
         * Scripts/webkitpy/style/checker_unittest.py:
           - Updated the test_path_rules_specifier() unit test.
 
-2010-02-27  Chris Jerdonek  <cjerdonek@webkit.org>
-
-        Reviewed by David Levin.
-
-        Added Python style checking to check-webkit-style using
-        the third-party pep8 module (via autoinstall).
-
-        https://bugs.webkit.org/show_bug.cgi?id=33639
-
-        * Scripts/webkitpy/style/checker.py:
-          - Added PYTHON to FileType.
-          - Updated ProcessorDispatcher to return a PythonProcessor
-            for *.py files.
-
-        * Scripts/webkitpy/style/checker_unittest.py:
-          - Updated the ProcessorDispatcher unit tests for *.py files.
-
-        * Scripts/webkitpy/style/processors/python.py: Added.
-          - Added PythonProcessor class.
-        
-        * Scripts/webkitpy/style/processors/python_unittest.py: Added.
-          - Added PythonProcessor unit tests.
-
-        * Scripts/webkitpy/style/processors/python_unittest_input.py: Added.
-          - Added a sample Python file to test the PythonProcessor.process()
-            code path (since pep8 accepts a file path).
-
-        * Scripts/webkitpy/style/unittests.py:
-          - Updated the style unit test file to import python_unittest.py.
-
-        * Scripts/webkitpy/style_references.py:
-          - Adjusted style references to import pep8.
-
 2010-02-26  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by David Levin.
