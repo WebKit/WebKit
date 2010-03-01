@@ -2762,7 +2762,9 @@ webcore_sources += \
 	WebCore/mathml/MathMLTextElement.cpp \
 	WebCore/mathml/MathMLTextElement.h \
 	WebCore/mathml/RenderMathMLBlock.cpp \
-	WebCore/mathml/RenderMathMLBlock.h
+	WebCore/mathml/RenderMathMLBlock.h \
+	WebCore/mathml/RenderMathMLUnderOver.cpp \
+	WebCore/mathml/RenderMathMLUnderOver.h
 
 webcore_built_sources += \
 	DerivedSources/MathMLElementFactory.cpp \
@@ -3677,6 +3679,7 @@ webcore_dist += \
 	WebCore/css/SVGCSSValueKeywords.in \
 	WebCore/css/makegrammar.pl \
 	WebCore/dom/make_names.pl \
+	WebCore/mathml/mathtags.in \
 	WebCore/platform/text/mac/make-charset-table.pl \
 	WebCore/platform/ColorData.gperf \
 	WebCore/svg/xlinkattrs.in \

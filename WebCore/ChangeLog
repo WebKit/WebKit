@@ -1,3 +1,11 @@
+2010-03-01  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Holger Freyther.
+
+        Dist some mathml related files
+
+        * GNUmakefile.am:
+
 2010-03-01  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.
