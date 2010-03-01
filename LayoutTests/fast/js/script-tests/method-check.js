@@ -1,9 +1,10 @@
 description(
-"This test yields PASS, if malloc does not reuse the memory address for the structure of String prototype"
+"Test method-check related bugs"
 );
 
 function func2() { }
 
+// This test yields PASS, if malloc does not reuse the memory address for the structure of String prototype
 function func()
 {
     String.prototype.a = function() { }
@@ -29,5 +30,27 @@ function func()
 
 func()
 func()
+
+// Test that method caching correctly invalidates (doesn't incorrectly continue to call a previously cached function).
+var total = 0;
+function addOne()
+{
+    ++total;
+}
+function addOneHundred()
+{
+    total+=100;
+}
+var totalizer = {
+    makeCall: function(callback)
+    {
+        this.callback = callback;
+        this.callback();
+    }
+};
+for (var i=0; i<100; ++i)
+    totalizer.makeCall(addOne);
+totalizer.makeCall(addOneHundred);
+shouldBe('total', '200');
 
 var successfullyParsed = true;

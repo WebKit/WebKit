@@ -1,3 +1,18 @@
+2010-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 35537 - put_by_id does will incorrectly cache writes where a specific value exists,
+                    where at the point of caching the same value is being written.
+
+        Add test case.
+
+        * fast/js/method-check-expected.txt:
+        * fast/js/script-tests/method-check.js:
+        (addOne):
+        (addOneHundred):
+        (totalizer.makeCall):
+
 2010-03-01  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Oliver Hunt.

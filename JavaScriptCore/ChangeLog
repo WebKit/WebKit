@@ -1,3 +1,37 @@
+2010-03-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 35537 - put_by_id does will incorrectly cache writes where a specific value exists,
+                    where at the point of caching the same value is being written.
+
+        When performing a put_by_id that is replacing a property already present on the object,
+        there are three interesting cases regarding the state of the specific value:
+
+        (1) No specific value set - nothing to do, leave the structure in it's current state,
+            can cache.
+        (2) A specific value was set, the new put is not of a specified value (i.e. function),
+            or is of a different specific value - in these cases we need to perform a despecifying
+            transition to clear the specific value in the structure, but having done so this is a
+            normal property so as such we can again cache normally.
+        (3) A specific value was set, and we are overwriting with the same value - in these cases
+            leave the structure unchanged, but since a specific value is set we cannot cache this
+            put (we would need the JIT to dynamically check the value being written matched).
+
+        Unfortunately, the current behaviour does not match this.  the checks for a specific value
+        being present & the value matching are combined in such a way that in case (2), above we
+        will unnecessarily prevent the transition being cached, but in case (3) we will incorrectly
+        fail to prevent caching.
+
+        The bug exposes itself if multiple puts of the same specific value are performed to a
+        property, and erroneously the put is allowed to be cached by the JIT.  Method checks may be
+        generated caching calls of this structure.  Subsequent puts performed from JIT code may
+        write different values without triggering a despecify transition, and as such cached method
+        checks will continue to pass, despite the value having changed.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+
 2010-03-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
@@ -685,7 +719,7 @@
         another rope node.  A low bit in each pointer is used to distinguish between
         rope & string elements, in a fashion similar to the recently-removed
         PtrAndFlags class (see https://bugs.webkit.org/show_bug.cgi?id=33731 ).  Again,
-        this causes a problem for Leaks – refactor to remove the magic pointer
+        this causes a problem for Leaks - refactor to remove the magic pointer
         mangling.
 
         Move Rope out from JSString.h and rename to URopeImpl, to match UStringImpl.
@@ -8161,7 +8195,7 @@ The very last cell in the block is not allocated -- should not be marked.
         Fix branchDouble behaviour on ARM THUMB2 JIT.
 
         The ARMv7 JIT is currently using ARMv7Assembler::ConditionEQ to branch
-        for DoubleEqualOrUnordered, however this is incorrect – ConditionEQ won't
+        for DoubleEqualOrUnordered, however this is incorrect - ConditionEQ won't
         branch on unordered operands.  Similarly, DoubleLessThanOrUnordered &
         DoubleLessThanOrEqualOrUnordered use ARMv7Assembler::ConditionLO &
         ARMv7Assembler::ConditionLS, whereas they should be using
