@@ -520,6 +520,11 @@ body.platform-windows .monospace, body.platform-windows .source-code {
     font-family: Consolas, Lucida Console, monospace;
 }
 
+body.platform-linux .monospace, body.platform-linux .source-code {
+    font-size: 11px;
+    font-family: dejavu sans mono, monospace;
+}
+
 #console-messages {
     position: absolute;
     z-index: 0;
