@@ -1,3 +1,12 @@
+2010-02-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: callerScriptName and callerScriptLine should be obfuscated for timeline tests.
+        https://bugs.webkit.org/show_bug.cgi?id=35478
+
+        * ../../LayoutTests/inspector/timeline-test.js:
+
 2010-02-28  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.

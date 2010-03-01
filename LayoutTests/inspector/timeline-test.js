@@ -8,6 +8,8 @@ var timelineNonDeterministicProps = {
     identifier : 1,
     startTime : 1,
     width : 1,
+    callerScriptName: 1,
+    callerScriptLine: 1,
     url : 1
 };
 
