@@ -1,3 +1,21 @@
+2010-02-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Exempted WebKitTools/Scripts/webkitpy/thirdparty from all
+        style checks except for the whitespace/carriage_return check
+        and the pep8 tab and trailing white space checks.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35497
+
+        * Scripts/webkitpy/style/checker.py:
+          - Adjusted the _PATH_RULES_SPECIFIER configuration as necessary.
+          - Added enough pep8 categories to _all_categories() for the
+            unit tests to pass.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the test_path_rules_specifier() unit test.
+
 2010-02-27  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by David Levin.

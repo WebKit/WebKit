@@ -140,6 +140,14 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck("WebCore/ForwardingHeaders/debugger/Debugger.h",
                       "build/header_guard")
 
+        # Third-party Python code: webkitpy/thirdparty
+        path = "WebKitTools/Scripts/webkitpy/thirdparty/mock.py"
+        assertNoCheck(path, "build/include")
+        assertNoCheck(path, "pep8/E401")  # A random pep8 category.
+        assertCheck(path, "pep8/W191")
+        assertCheck(path, "pep8/W291")
+        assertCheck(path, "whitespace/carriage_return")
+
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()

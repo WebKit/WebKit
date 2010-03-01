@@ -130,6 +130,18 @@ _PATH_RULES_SPECIFIER = [
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       "/ForwardingHeaders/"],
      ["-build/header_guard"]),
+
+    # For third-party Python code, keep only the following checks--
+    #
+    #   No tabs: to avoid having to set the SVN allow-tabs property.
+    #   No trailing white space: since this is easy to correct.
+    #   No carriage-return line endings: since this is easy to correct.
+    #
+    (["webkitpy/thirdparty/"],
+     ["-",
+      "+pep8/W191",  # Tabs
+      "+pep8/W291",  # Trailing white space
+      "+whitespace/carriage_return"]),
 ]
 
 
@@ -167,7 +179,16 @@ _MAX_REPORTS_PER_CATEGORY = {
 def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
     # Take the union across all processors.
-    return CommonCategories.union(CppProcessor.categories)
+    categories = CommonCategories.union(CppProcessor.categories)
+
+    # FIXME: Consider adding all of the pep8 categories.  Since they
+    #        are not too meaningful for documentation purposes, for
+    #        now we add only the categories needed for the unit tests
+    #        (which validate the consistency of the configuration
+    #        settings against the known categories, etc).
+    categories = categories.union(["pep8/W191", "pep8/W291"])
+
+    return categories
 
 
 def _check_webkit_style_defaults():
