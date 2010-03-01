@@ -517,7 +517,7 @@ WebInspector.ConsoleView.prototype = {
         var formatter = this._customFormatters[type];
         if (!formatter || !isProxy) {
             formatter = this._formatvalue;
-            output = output.description || output;
+            output = output.description;
         }
 
         var span = document.createElement("span");

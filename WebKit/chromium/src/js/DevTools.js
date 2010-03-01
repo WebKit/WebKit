@@ -206,49 +206,6 @@ WebInspector.loaded = function()
 };
 
 
-(function()
-{
-
-    /**
-     * Handles an F3 keydown event to focus the Inspector search box.
-     * @param {KeyboardEvent} event Event to optionally handle
-     * @return {boolean} whether the event has been handled
-     */
-    function handleF3Keydown(event) {
-        if (event.keyIdentifier === "F3" && !event.altKey && !event.ctrlKey && !event.shiftKey && !event.metaKey) {
-            var searchField = document.getElementById("search");
-            searchField.focus();
-            searchField.select();
-            event.preventDefault();
-            return true;
-        }
-        return false;
-    }
-
-
-    var oldKeyDown = WebInspector.documentKeyDown;
-    /**
-     * This override allows to intercept keydown events we want to handle in a
-     * custom way. Some nested documents (iframes) delegate keydown handling to
-     * WebInspector.documentKeyDown (e.g. SourceFrame).
-     * @param {KeyboardEvent} event
-     * @override
-     */
-    WebInspector.documentKeyDown = function(event) {
-        var isHandled = handleF3Keydown(event);
-        if (!isHandled) {
-            // Mute refresh action.
-            if (event.keyIdentifier === "F5")
-                event.preventDefault();
-            else if (event.keyIdentifier === "U+0052" /* "R" */ && (event.ctrlKey || event.metaKey))
-                event.preventDefault();
-            else
-                oldKeyDown.call(this, event);
-        }
-    };
-})();
-
-
 /**
  * This override is necessary for adding script source asynchronously.
  * @override

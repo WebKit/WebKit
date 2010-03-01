@@ -435,7 +435,7 @@ WebInspector.SourceFrame.prototype = {
     {
         this._resetHoverTimer();
         this._hidePopup();
-        if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+        if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
             return;
         if (event.target.className !== "webkit-line-number")
             return;
@@ -444,9 +444,12 @@ WebInspector.SourceFrame.prototype = {
         var lineNumber = row.lineNumber;
 
         var breakpoint = this._textModel.getAttribute(lineNumber, "breakpoint");
-        if (breakpoint)
-            this._removeBreakpointDelegate(breakpoint);
-        else if (this._addBreakpointDelegate)
+        if (breakpoint) {
+            if (event.shiftKey)
+                breakpoint.enabled = !breakpoint.enabled;
+            else
+                this._removeBreakpointDelegate(breakpoint);
+        } else
             this._addBreakpointDelegate(lineNumber + 1);
         event.preventDefault();
     },

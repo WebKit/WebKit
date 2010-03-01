@@ -10,7 +10,6 @@
 
 .text-editor-lines {
     border: 0;
-    width: 100%;
     -webkit-border-horizontal-spacing: 0;
     -webkit-border-vertical-spacing: 0;
     -webkit-user-select: text;

@@ -1,3 +1,18 @@
+2010-02-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: disable breakpoint upon Shift-click.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35477
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._format):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._mouseMove):
+        * inspector/front-end/textViewer.css:
+
 2010-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

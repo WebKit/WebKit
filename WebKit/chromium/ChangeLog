@@ -1,3 +1,11 @@
+2010-02-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Chromium: remove DevTools part that has been upstreamed.
+
+        * src/js/DevTools.js:
+
 2010-02-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
