@@ -1,3 +1,86 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        [OpenVG] Implement support for paths
+        https://bugs.webkit.org/show_bug.cgi?id=34366
+
+        Adds an implementation of the Path class -
+        *almost* complete, but not quite because OpenVG
+        does not provide access to the points in a VGPath
+        unless one keeps track of all the points by
+        themselves, which we decided not to do.
+
+        Also hooked up to PainterOpenVG and GraphicsContext.
+
+        Further introduced is SharedResourceOpenVG, which is
+        intended as base class for paths and other OpenVG
+        resources (images, fonts) that WebKit creates as
+        long-lived objects. We are at a slight disadvantage
+        here as WebKit doesn't have the concept of resources
+        belonging to a specific (hardware graphics) context,
+        which is the reason why EGLDisplayOpenVG had to
+        provide a current display singleton; this class is
+        what actually requires that functionality.
+
+        Path::addArcTo() uses code by Yong Li <yoli@rim.com>.
+
+        * platform/graphics/Path.cpp:
+        * platform/graphics/Path.h:
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::PainterOpenVG):
+        (WebCore::PainterOpenVG::~PainterOpenVG):
+        (WebCore::PainterOpenVG::transformPath):
+        (WebCore::PainterOpenVG::beginPath):
+        (WebCore::PainterOpenVG::addPath):
+        (WebCore::PainterOpenVG::currentPath):
+        (WebCore::PainterOpenVG::drawPath):
+        * platform/graphics/openvg/PainterOpenVG.h:
+        * platform/graphics/openvg/PathOpenVG.cpp: Added.
+        (WebCore::PlatformPathOpenVG::PlatformPathOpenVG):
+        (WebCore::PlatformPathOpenVG::operator=):
+        (WebCore::PlatformPathOpenVG::~PlatformPathOpenVG):
+        (WebCore::PlatformPathOpenVG::clear):
+        (WebCore::PlatformPathOpenVG::createPath):
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::operator=):
+        (WebCore::Path::contains):
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::hasCurrentPoint):
+        (WebCore::Path::debugString):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        (WebCore::Path::length):
+        (WebCore::Path::pointAtLength):
+        (WebCore::Path::normalAngleAtLength):
+        * platform/graphics/openvg/PlatformPathOpenVG.h: Added.
+        (WebCore::PlatformPathOpenVG::vgPath):
+        * platform/graphics/openvg/SharedResourceOpenVG.cpp: Added.
+        (WebCore::SharedResourceOpenVG::makeSharedContextCurrent):
+        (WebCore::SharedResourceOpenVG::makeCompatibleContextCurrent):
+        * platform/graphics/openvg/SharedResourceOpenVG.h: Added.
+
 2010-03-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed, bring English.lproj/locallizedStrings.js back to binary (UTF) mode.

@@ -39,6 +39,7 @@ static const float QUARTER = 0.552f; // approximation of control point positions
                               // to simulate a quarter of a circle.
 namespace WebCore {
 
+#if !PLATFORM(OPENVG)
 static void pathLengthApplierFunction(void* info, const PathElement* element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
@@ -107,6 +108,7 @@ float Path::normalAngleAtLength(float length, bool& ok)
     ok = traversalState.m_success;
     return traversalState.m_normalAngle;
 }
+#endif
 
 Path Path::createRoundedRectangle(const FloatRect& rectangle, const FloatSize& roundingRadii)
 {
