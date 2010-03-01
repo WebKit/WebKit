@@ -1,3 +1,17 @@
+2010-03-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        EWS can hang for five hours when compile output is too big
+        https://bugs.webkit.org/show_bug.cgi?id=35545
+
+        * Scripts/webkitpy/commands/queues.py: Limit uploads to 1MB instead of
+        5MB.  AppEngine seems to not like 5MB uploads.  I'm not sure what the
+        limit is.  Let's try 1MB for a while and see how it goes.
+        * Scripts/webkitpy/networktransaction.py: Tune the default parameters
+        to our exponential backoff.  I'm not sure why I picked five hours as
+        the retry limit.  That seems way too large.
+
 2010-03-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
