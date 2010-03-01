@@ -26,8 +26,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __LP64__
-
 #include "config.h"
 #include "PluginView.h"
 
@@ -101,7 +99,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#ifndef NP_NO_CARBON
 static int modifiersForEvent(UIEventWithKeyState *event);
+#endif
 
 static inline WindowRef nativeWindowFor(PlatformWidget widget)
 {
@@ -177,22 +177,31 @@ bool PluginView::platformStart()
 
     // Gracefully handle unsupported drawing or event models. We can do this
     // now since the drawing and event model can only be set during NPP_New.
-    NPBool eventModelSupported, drawingModelSupported;
+#ifndef NP_NO_CARBON
+    NPBool eventModelSupported;
     if (getValueStatic(NPNVariable(NPNVsupportsCarbonBool + m_eventModel), &eventModelSupported) != NPERR_NO_ERROR
             || !eventModelSupported) {
+#endif
         m_status = PluginStatusCanNotLoadPlugin;
         LOG(Plugins, "Plug-in '%s' uses unsupported event model %s",
                 m_plugin->name().utf8().data(), prettyNameForEventModel(m_eventModel));
         return false;
+#ifndef NP_NO_CARBON
     }
+#endif
 
+#ifndef NP_NO_QUICKDRAW
+    NPBool drawingModelSupported;
     if (getValueStatic(NPNVariable(NPNVsupportsQuickDrawBool + m_drawingModel), &drawingModelSupported) != NPERR_NO_ERROR
             || !drawingModelSupported) {
+#endif
         m_status = PluginStatusCanNotLoadPlugin;
         LOG(Plugins, "Plug-in '%s' uses unsupported drawing model %s",
                 m_plugin->name().utf8().data(), prettyNameForDrawingModel(m_drawingModel));
         return false;
+#ifndef NP_NO_QUICKDRAW
     }
+#endif
 
 #if PLATFORM(QT)
     // Set the platformPluginWidget only in the case of QWebView so that the context menu appears in the right place.
@@ -209,12 +218,14 @@ bool PluginView::platformStart()
 
     // Create a fake window relative to which all events will be sent when using offscreen rendering
     if (!platformPluginWidget()) {
+#ifndef NP_NO_CARBON
         // Make the default size really big. It is unclear why this is required but with a smaller size, mouse move
         // events don't get processed. Resizing the fake window to flash's size doesn't help.
         ::Rect windowBounds = { 0, 0, 1000, 1000 };
         CreateNewWindow(kDocumentWindowClass, kWindowStandardDocumentAttributes, &windowBounds, &m_fakeWindow);
         // Flash requires the window to be hilited to process mouse move events.
-        HiliteWindow(m_fakeWindow, true); 
+        HiliteWindow(m_fakeWindow, true);
+#endif
     }
 
     show();
@@ -234,8 +245,10 @@ void PluginView::platformDestroy()
         setPlatformPluginWidget(0);
     else {
         CGContextRelease(m_contextRef);
+#ifndef NP_NO_CARBON
         if (m_fakeWindow)
             DisposeWindow(m_fakeWindow);
+#endif
     }
 }
 
@@ -376,6 +389,7 @@ void PluginView::setFocus()
 
     // TODO: Also handle and pass on blur events (focus lost)
 
+#ifndef NP_NO_CARBON
     EventRecord record;
     record.what = getFocusEvent;
     record.message = 0;
@@ -385,6 +399,7 @@ void PluginView::setFocus()
 
     if (!dispatchNPEvent(record))
         LOG(Events, "PluginView::setFocus(): Get-focus event not accepted");
+#endif
 }
 
 void PluginView::setParentVisible(bool visible)
@@ -421,7 +436,9 @@ void PluginView::setNPWindowIfNeeded()
         return;
 
     m_npWindow.window = (void*)&m_npCgContext;
+#ifndef NP_NO_CARBON
     m_npCgContext.window = newWindowRef;
+#endif
     m_npCgContext.context = newContextRef;
 
     m_npWindow.x = m_windowRect.x();
@@ -436,7 +453,7 @@ void PluginView::setNPWindowIfNeeded()
     m_npWindow.clipRect.bottom = m_windowRect.y() + m_windowRect.height();
 
     LOG(Plugins, "PluginView::setNPWindowIfNeeded(): window=%p, context=%p,"
-            " window.x:%ld window.y:%ld window.width:%d window.height:%d window.clipRect size:%dx%d",
+            " window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
             newWindowRef, newContextRef, m_npWindow.x, m_npWindow.y, m_npWindow.width, m_npWindow.height,
             m_npWindow.clipRect.right - m_npWindow.clipRect.left, m_npWindow.clipRect.bottom - m_npWindow.clipRect.top);
 
@@ -522,6 +539,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 #endif
     }
 
+#ifndef NP_NO_CARBON
     EventRecord event;
     event.what = updateEvt;
     event.message = (long unsigned int)m_npCgContext.window;
@@ -532,6 +550,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     if (!dispatchNPEvent(event))
         LOG(Events, "PluginView::paint(): Paint event not accepted");
+#endif
 
     CGContextRestoreGState(cgContext);
 
@@ -581,6 +600,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (!m_isStarted)
         return;
 
+#ifndef NP_NO_CARBON
     EventRecord record;
 
     if (event->type() == eventNames().mousemoveEvent) {
@@ -620,6 +640,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     } else {
         event->setDefaultHandled();
     }
+#endif
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -632,6 +653,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     LOG(Plugins, "PV::hKE(): KE.keyCode: 0x%02X, KE.charCode: %d",
             event->keyCode(), event->charCode());
 
+#ifndef NP_NO_CARBON
     EventRecord record;
 
     if (event->type() == eventNames().keydownEvent) {
@@ -692,8 +714,10 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         LOG(Events, "PluginView::handleKeyboardEvent(): Keyboard event type %d not accepted", record.what);
     else
         event->setDefaultHandled();
+#endif
 }
 
+#ifndef NP_NO_CARBON
 void PluginView::nullEventTimerFired(Timer<PluginView>*)
 {
     EventRecord record;
@@ -709,7 +733,9 @@ void PluginView::nullEventTimerFired(Timer<PluginView>*)
     if (!dispatchNPEvent(record))
         LOG(Events, "PluginView::nullEventTimerFired(): Null event not accepted");
 }
+#endif
 
+#ifndef NP_NO_CARBON
 static int modifiersForEvent(UIEventWithKeyState* event)
 {
     int modifiers = 0;
@@ -728,7 +754,9 @@ static int modifiersForEvent(UIEventWithKeyState* event)
 
      return modifiers;
 }
+#endif
 
+#ifndef NP_NO_CARBON
 static bool tigerOrBetter()
 {
     static SInt32 systemVersion = 0;
@@ -740,7 +768,9 @@ static bool tigerOrBetter()
 
     return systemVersion >= 0x1040;
 }
+#endif
 
+#ifndef NP_NO_CARBON
 Point PluginView::globalMousePosForPlugin() const
 {
     Point pos;
@@ -765,7 +795,9 @@ Point PluginView::globalMousePosForPlugin() const
 
     return pos;
 }
+#endif
 
+#ifndef NP_NO_CARBON
 Point PluginView::mousePosForPlugin(MouseEvent* event) const
 {
     ASSERT(event);
@@ -785,7 +817,9 @@ Point PluginView::mousePosForPlugin(MouseEvent* event) const
     pos.v = postZoomPos.y() + m_windowRect.y() - 22;
     return pos;
 }
+#endif
 
+#ifndef NP_NO_CARBON
 bool PluginView::dispatchNPEvent(NPEvent& event)
 {
     PluginView::setCurrentPluginView(this);
@@ -798,6 +832,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     PluginView::setCurrentPluginView(0);
     return accepted;
 }
+#endif
 
 // ------------------- Miscellaneous  ------------------
 
@@ -835,9 +870,3 @@ void PluginView::restart()
 }
 
 } // namespace WebCore
-
-#else
-
-#include "../PluginViewNone.cpp"
-
-#endif // !__LP64__

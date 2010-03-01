@@ -25,8 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __LP64__
-
 #include "config.h"
 #include "PluginPackage.h"
 
@@ -307,9 +305,3 @@ uint16 PluginPackage::NPVersion() const
     return NP_VERSION_MINOR;
 }
 } // namespace WebCore
-
-#else
-
-#include "../PluginPackageNone.cpp"
-
-#endif // !__LP64__

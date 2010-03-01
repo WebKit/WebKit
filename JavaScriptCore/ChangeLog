@@ -1,3 +1,11 @@
+2010-03-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the Qt build on Mac OS X/Cocoa 64-bit
+
+        * JavaScriptCore.pri: Add missing implementation file to resolve JSC symbols
+
 2010-02-26  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Geoff Garen.
