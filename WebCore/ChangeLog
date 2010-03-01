@@ -2,6 +2,17 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Fix segfault when drawing NPAPI plugins on Mac
+
+        Don't try to get a contexctRef for a null-pixmap. If the pixmap
+        size is 0,0 the private pixmap data has not yet been initialized.
+
+        * plugins/mac/PluginViewMac.cpp:
+
+2010-03-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Fix the Qt build on Mac OS X/Cocoa 64-bit
 
         Use the proper event/drawing-model guards instead of global 64-bit

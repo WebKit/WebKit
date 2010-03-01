@@ -486,7 +486,7 @@ void PluginView::updatePluginWidget()
 #if PLATFORM(QT)
             m_pixmap = QPixmap(m_windowRect.size());
             m_pixmap.fill(Qt::transparent);
-            m_contextRef = qt_mac_cg_context(&m_pixmap);
+            m_contextRef = m_pixmap.isNull() ? 0 : qt_mac_cg_context(&m_pixmap);
 #endif
         }
     }
