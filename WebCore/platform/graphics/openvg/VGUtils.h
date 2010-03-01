@@ -59,14 +59,17 @@ static inline const char* toVGErrorConstant(VGErrorCode error)
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatRect;
 class TransformationMatrix;
 
 class VGMatrix {
 public:
     VGMatrix(const VGfloat data[9]);
+    VGMatrix(const AffineTransform&);
     VGMatrix(const TransformationMatrix&);
     const VGfloat* toVGfloat() const { return m_data; }
+    operator AffineTransform() const;
     operator TransformationMatrix() const;
 private:
     VGfloat m_data[9];

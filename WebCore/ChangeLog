@@ -1,3 +1,42 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [OpenVG] Convert from TransformationMatrix to AffineTransform.
+        https://bugs.webkit.org/show_bug.cgi?id=35445
+
+        Dirk Schulze previously introduced AffineTransform as
+        replacement for most TransformationMatrix occurrences
+        in GraphicsContext & Co., but did not update the OpenVG
+        graphics backend as there's no publicly available way
+        to build it. This commit now takes care of that.
+
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::origin):
+        (WebCore::GraphicsContext::concatCTM):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::isNonRotatedAffineTransformation):
+        (WebCore::PlatformPainterState::PlatformPainterState):
+        (WebCore::PlatformPainterState::applyState):
+        (WebCore::PlatformPainterState::applyTransformation):
+        (WebCore::PainterOpenVG::transformation):
+        (WebCore::PainterOpenVG::concatTransformation):
+        (WebCore::PainterOpenVG::setTransformation):
+        (WebCore::PainterOpenVG::scale):
+        (WebCore::PainterOpenVG::rotate):
+        (WebCore::PainterOpenVG::translate):
+        (WebCore::PainterOpenVG::intersectClipRect):
+        * platform/graphics/openvg/PainterOpenVG.h:
+        * platform/graphics/openvg/VGUtils.cpp:
+        (WebCore::VGMatrix::VGMatrix):
+        (WebCore::VGMatrix::operator AffineTransform):
+        (WebCore::VGMatrix::operator TransformationMatrix):
+        (WebCore::AffineTransform::operator VGMatrix):
+        * platform/graphics/openvg/VGUtils.h:
+        * platform/graphics/transforms/AffineTransform.h:
+
 2010-03-01  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

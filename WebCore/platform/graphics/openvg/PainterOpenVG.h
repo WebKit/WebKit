@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatPoint;
 class FloatRect;
 class IntRect;
 class IntSize;
 class SurfaceOpenVG;
-class TransformationMatrix;
 
 struct PlatformPainterState;
 
@@ -57,9 +57,9 @@ public:
     void begin(SurfaceOpenVG*);
     void end();
 
-    TransformationMatrix transformationMatrix() const;
-    void setTransformationMatrix(const TransformationMatrix&);
-    void concatTransformationMatrix(const TransformationMatrix&);
+    AffineTransform transformation() const;
+    void setTransformation(const AffineTransform&);
+    void concatTransformation(const AffineTransform&);
 
     CompositeOperator compositeOperation() const;
     void setCompositeOperation(CompositeOperator);

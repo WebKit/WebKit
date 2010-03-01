@@ -20,6 +20,7 @@
 #include "config.h"
 #include "VGUtils.h"
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "TransformationMatrix.h"
 
@@ -38,6 +39,19 @@ VGMatrix::VGMatrix(const VGfloat data[9])
     m_data[8] = data[8];
 }
 
+VGMatrix::VGMatrix(const AffineTransform& transformation)
+{
+    m_data[0] = transformation.a();
+    m_data[1] = transformation.b();
+    m_data[2] = 0;
+    m_data[3] = transformation.c();
+    m_data[4] = transformation.d();
+    m_data[5] = 0;
+    m_data[6] = transformation.e();
+    m_data[7] = transformation.f();
+    m_data[8] = 1;
+}
+
 VGMatrix::VGMatrix(const TransformationMatrix& matrix)
 {
     m_data[0] = matrix.m11();
@@ -51,19 +65,28 @@ VGMatrix::VGMatrix(const TransformationMatrix& matrix)
     m_data[8] = matrix.m44();
 }
 
+VGMatrix::operator AffineTransform() const
+{
+    AffineTransform transformation(
+        m_data[0], m_data[1],
+        m_data[3], m_data[4],
+        m_data[6], m_data[7]);
+    return transformation;
+}
+
 VGMatrix::operator TransformationMatrix() const
 {
-    TransformationMatrix matrix;
-    matrix.setM11(m_data[0]);
-    matrix.setM12(m_data[1]);
-    matrix.setM14(m_data[2]);
-    matrix.setM21(m_data[3]);
-    matrix.setM22(m_data[4]);
-    matrix.setM24(m_data[5]);
-    matrix.setM41(m_data[6]);
-    matrix.setM42(m_data[7]);
-    matrix.setM44(m_data[8]);
+    TransformationMatrix matrix(
+        m_data[0], m_data[1], 0, m_data[2],
+        m_data[3], m_data[4], 0, m_data[5],
+        0,         0,         1, 0,
+        m_data[6], m_data[7], 0, m_data[8]);
     return matrix;
+}
+
+AffineTransform::operator VGMatrix() const
+{
+    return VGMatrix(*this);
 }
 
 TransformationMatrix::operator VGMatrix() const
