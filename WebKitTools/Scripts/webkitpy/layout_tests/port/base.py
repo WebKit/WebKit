@@ -75,15 +75,15 @@ class Port(object):
         Returns whether the system is properly configured."""
         raise NotImplementedError('Port.check_sys_deps')
 
-    def compare_text(self, actual_text, expected_text):
+    def compare_text(self, expected_text, actual_text):
         """Return whether or not the two strings are *not* equal. This
         routine is used to diff text output.
 
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""
-        return actual_text != expected_text
+        return expected_text != actual_text
 
-    def diff_image(self, actual_filename, expected_filename,
+    def diff_image(self, expected_filename, actual_filename,
                    diff_filename=None):
         """Compare two image files and produce a delta image file.
 
@@ -94,7 +94,7 @@ class Port(object):
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""
         executable = self._path_to_image_diff()
-        cmd = [executable, '--diff', actual_filename, expected_filename]
+        cmd = [executable, '--diff', expected_filename, actual_filename]
         if diff_filename:
             cmd.append(diff_filename)
         result = 1
@@ -111,8 +111,8 @@ class Port(object):
             pass
         return result
 
-    def diff_text(self, actual_text, expected_text,
-                  actual_filename, expected_filename):
+    def diff_text(self, expected_text, actual_text,
+                  expected_filename, actual_filename):
         """Returns a string containing the diff of the two text strings
         in 'unified diff' format.
 
@@ -476,8 +476,8 @@ class Port(object):
                '--end-delete=##WDIFF_END##',
                '--start-insert=##WDIFF_ADD##',
                '--end-insert=##WDIFF_END##',
-               expected_filename,
-               actual_filename]
+               actual_filename,
+               expected_filename]
         global _wdiff_available
         result = ''
         try:

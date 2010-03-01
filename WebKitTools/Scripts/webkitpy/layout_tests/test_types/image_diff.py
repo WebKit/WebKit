@@ -98,7 +98,7 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         try:
             _compare_available = True
-            result = port.diff_image(actual_filename, expected_filename,
+            result = port.diff_image(expected_filename, actual_filename,
                                      diff_filename)
         except ValueError:
             _compare_available = False

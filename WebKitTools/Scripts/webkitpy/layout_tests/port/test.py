@@ -55,15 +55,15 @@ class TestPort(base.Port):
     def check_sys_deps(self, needs_http):
         return True
 
-    def diff_image(self, actual_filename, expected_filename,
+    def diff_image(self, expected_filename, actual_filename,
                    diff_filename=None):
         return False
 
-    def compare_text(self, actual_text, expected_text):
+    def compare_text(self, expected_text, actual_text):
         return False
 
-    def diff_text(self, actual_text, expected_text,
-                  actual_filename, expected_filename):
+    def diff_text(self, expected_text, actual_text,
+                  expected_filename, actual_filename):
         return ''
 
     def name(self):
@@ -120,7 +120,7 @@ class TestPort(base.Port):
     def version():
         return ''
 
-    def wdiff_text(self, actual_filename, expected_filename):
+    def wdiff_text(self, expected_filename, actual_filename):
         return ''
 
 
