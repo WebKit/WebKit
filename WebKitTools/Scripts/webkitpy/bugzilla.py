@@ -45,7 +45,7 @@ from webkitpy.user import User
 # so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
-from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+from mechanize import Browser
 
 
 def parse_bug_id(message):
