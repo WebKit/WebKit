@@ -1,3 +1,12 @@
+2010-03-01  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by nobody, build fix.
+
+        Fix --minimal build. Add ENABLE(DATABASE) as compile time condition
+        for building file GeolocationPositionCache.cpp.
+
+        * page/GeolocationPositionCache.cpp:
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Dirk Schulze.
