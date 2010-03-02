@@ -2,6 +2,32 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Refactored the StyleChecker class's file-processing method
+        _process_file().  This will make it easier to add new
+        file-processing capabilities to check-webkit-style.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35490
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a _read_lines() method to the StyleChecker class
+            that extracts the lines from a file.
+          - Replaced part of _process_file() with a call to the new
+            _read_lines() method.
+          - Replaced another part of _process_file() with a call
+            to the new CarriageReturnProcessor.process() method.
+
+        * Scripts/webkitpy/style/processors/common.py:
+          - Replaced the check_no_carriage_return() function with a
+            new CarriageReturnProcessor class.
+
+        * Scripts/webkitpy/style/processors/common_unittest.py:
+          - Renamed the CarriageReturnTest class to
+            CarriageReturnProcessorTest and updated it as necessary.
+
+2010-03-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
         Started using the logging module in check-webkit-style.
         This provides more options for debugging and a more flexible,
         uniform way to report messages to the end-user.

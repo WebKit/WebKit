@@ -40,8 +40,8 @@ from error_handlers import PatchStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
-from processors.common import check_no_carriage_return
 from processors.common import categories as CommonCategories
+from processors.common import CarriageReturnProcessor
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
@@ -529,51 +529,48 @@ class StyleChecker(object):
         """Increment the total count of reported errors."""
         self.error_count += 1
 
+    def _read_lines(self, file_path):
+        """Read the file at a path, and return its lines.
+
+        Raises:
+          IOError: if the file does not exist or cannot be read.
+
+        """
+        # Support the UNIX convention of using "-" for stdin.
+        if file_path == '-':
+            file = codecs.StreamReaderWriter(sys.stdin,
+                                             codecs.getreader('utf8'),
+                                             codecs.getwriter('utf8'),
+                                             'replace')
+        else:
+            # We do not open the file with universal newline support
+            # (codecs does not support it anyway), so the resulting
+            # lines contain trailing "\r" characters if we are reading
+            # a file with CRLF endings.
+            file = codecs.open(file_path, 'r', 'utf8', 'replace')
+
+        contents = file.read()
+
+        lines = contents.split("\n")
+        return lines
+
     def _process_file(self, processor, file_path, handle_style_error):
-        """Process the file using the given processor."""
+        """Process the file using the given style processor."""
         try:
-            # Support the UNIX convention of using "-" for stdin.  Note that
-            # we are not opening the file with universal newline support
-            # (which codecs doesn't support anyway), so the resulting lines do
-            # contain trailing '\r' characters if we are reading a file that
-            # has CRLF endings.
-            # If after the split a trailing '\r' is present, it is removed
-            # below. If it is not expected to be present (i.e. os.linesep !=
-            # '\r\n' as in Windows), a warning is issued below if this file
-            # is processed.
-            if file_path == '-':
-                file = codecs.StreamReaderWriter(sys.stdin,
-                                                 codecs.getreader('utf8'),
-                                                 codecs.getwriter('utf8'),
-                                                 'replace')
-            else:
-                file = codecs.open(file_path, 'r', 'utf8', 'replace')
-
-            contents = file.read()
-
+            lines = self._read_lines(file_path)
         except IOError:
             message = 'Could not read file. Skipping: "%s"' % file_path
             _log.warn(message)
             return
 
-        lines = contents.split("\n")
-
-        # FIXME: Make a CarriageReturnProcessor for this logic, and put
-        #        it in processors.common.  The process() method should
-        #        return the lines with the carriage returns stripped.
-        for line_number in range(len(lines)):
-            # FIXME: We should probably use the SVN "eol-style" property
-            #        or a white list to decide whether or not to do
-            #        the carriage-return check. Originally, we did the
-            #        check only if (os.linesep != '\r\n').
-            #
-            # FIXME: As a minor optimization, we can have
-            #        check_no_carriage_return() return whether
-            #        the line ends with "\r".
-            check_no_carriage_return(lines[line_number], line_number,
-                                     handle_style_error)
-            if lines[line_number].endswith("\r"):
-                lines[line_number] = lines[line_number].rstrip("\r")
+        # Check for and remove trailing carriage returns ("\r").
+        #
+        # FIXME: We should probably use the SVN "eol-style" property
+        #        or a white list to decide whether or not to do
+        #        the carriage-return check. Originally, we did the
+        #        check only if (os.linesep != '\r\n').
+        carriage_return_processor = CarriageReturnProcessor(handle_style_error)
+        lines = carriage_return_processor.process(lines)
 
         processor.process(lines)
 

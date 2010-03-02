@@ -20,7 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Supports style checking not specific to any one processor."""
+"""Supports style checking not specific to any one file type."""
 
 
 # FIXME: Test this list in the same way that the list of CppProcessor
@@ -33,27 +33,25 @@ categories = set([
 ])
 
 
-def check_no_carriage_return(line, line_number, error):
-    """Check that a line does not end with a carriage return.
+class CarriageReturnProcessor(object):
 
-    Returns true if the check is successful (i.e. if the line does not
-    end with a carriage return), and false otherwise.
+    """Supports checking for and handling carriage returns."""
 
-    Args:
-      line: A string that is the line to check.
-      line_number: The line number.
-      error: The function to call with any errors found.
+    def __init__(self, handle_style_error):
+        self._handle_style_error = handle_style_error
 
-    """
+    def process(self, lines):
+        """Check for and strip trailing carriage returns from lines."""
+        for line_number in range(len(lines)):
+            if not lines[line_number].endswith("\r"):
+                continue
 
-    if line.endswith("\r"):
-        error(line_number,
-              "whitespace/carriage_return",
-              1,
-              "One or more unexpected \\r (^M) found; "
-              "better to use only a \\n")
-        return False
+            self._handle_style_error(line_number + 1,  # Correct for offset.
+                                     "whitespace/carriage_return",
+                                     1,
+                                     "One or more unexpected \\r (^M) found; "
+                                     "better to use only a \\n")
 
-    return True
+            lines[line_number] = lines[line_number].rstrip("\r")
 
-
+        return lines

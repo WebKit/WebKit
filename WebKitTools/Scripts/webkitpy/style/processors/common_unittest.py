@@ -22,10 +22,9 @@
 
 """Unit tests for common.py."""
 
-
 import unittest
 
-from common import check_no_carriage_return
+from common import CarriageReturnProcessor
 
 
 # FIXME: The unit tests for the cpp, text, and common processors should
@@ -33,13 +32,15 @@ from common import check_no_carriage_return
 #        mock style error handling code and the code to check that all
 #        of a processor's categories are covered by the unit tests.
 #        Such shared code can be located in a shared test file, perhaps
-#        ilke this one.
-class CarriageReturnTest(unittest.TestCase):
+#        even this file.
+class CarriageReturnProcessorTest(unittest.TestCase):
 
     """Tests check_no_carriage_return()."""
 
     _category = "whitespace/carriage_return"
     _confidence = 1
+    _expected_message = ("One or more unexpected \\r (^M) found; "
+                         "better to use only a \\n")
 
     def setUp(self):
         self._style_errors = [] # The list of accumulated style errors.
@@ -50,33 +51,44 @@ class CarriageReturnTest(unittest.TestCase):
         error = (line_number, category, confidence, message)
         self._style_errors.append(error)
 
-    def assert_carriage_return(self, line, is_error):
-        """Call check_no_carriage_return() and assert the result."""
-        line_number = 100
+    def assert_carriage_return(self, input_lines, expected_lines, error_lines):
+        """Process the given line and assert that the result is correct."""
         handle_style_error = self._mock_style_error_handler
 
-        check_no_carriage_return(line, line_number, handle_style_error)
+        processor = CarriageReturnProcessor(handle_style_error)
+        output_lines = processor.process(input_lines)
 
-        expected_message = ("One or more unexpected \\r (^M) found; "
-                            "better to use only a \\n")
+        # Check both the return value and error messages.
+        self.assertEquals(output_lines, expected_lines)
 
-        if is_error:
-            expected_errors = [(line_number, self._category, self._confidence,
-                                expected_message)]
-            self.assertEquals(self._style_errors, expected_errors)
-        else:
-            self.assertEquals(self._style_errors, [])
+        expected_errors = [(line_number, self._category, self._confidence,
+                            self._expected_message)
+                           for line_number in error_lines]
+        self.assertEquals(self._style_errors, expected_errors)
 
     def test_ends_with_carriage(self):
-        self.assert_carriage_return("carriage return\r", is_error=True)
+        self.assert_carriage_return(["carriage return\r"],
+                                    ["carriage return"],
+                                    [1])
 
     def test_ends_with_nothing(self):
-        self.assert_carriage_return("no carriage return", is_error=False)
+        self.assert_carriage_return(["no carriage return"],
+                                    ["no carriage return"],
+                                    [])
 
     def test_ends_with_newline(self):
-        self.assert_carriage_return("no carriage return\n", is_error=False)
+        self.assert_carriage_return(["no carriage return\n"],
+                                    ["no carriage return\n"],
+                                    [])
 
-    def test_ends_with_carriage_newline(self):
-        # Check_no_carriage_return only() checks the final character.
-        self.assert_carriage_return("carriage\r in a string", is_error=False)
+    def test_carriage_in_middle(self):
+        # The CarriageReturnProcessor checks only the final character
+        # of each line.
+        self.assert_carriage_return(["carriage\r in a string"],
+                                    ["carriage\r in a string"],
+                                    [])
 
+    def test_multiple_errors(self):
+        self.assert_carriage_return(["line1", "line2\r", "line3\r"],
+                                    ["line1", "line2", "line3"],
+                                    [2, 3])
