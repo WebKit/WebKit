@@ -3588,10 +3588,6 @@ plugins/mouse-events-fixedpos.html
 # https://bugs.webkit.org/show_bug.cgi?id=30561
 plugins/private-browsing-mode.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=35425
-plugins/setProperty.html
-plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30561
 plugins/private-browsing-mode.html
 # https://bugs.webkit.org/show_bug.cgi?id=33180

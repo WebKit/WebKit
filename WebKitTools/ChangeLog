@@ -1,3 +1,21 @@
+2010-03-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] plugins/setProperty.html fails on 64bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=35425
+
+        Check invoke's return code before releasing the variant, since
+        there's a chance it won't be properly initialized, leading to
+        memory corruption, in some cases.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testCallback):
+        (testEnumerate):
+        (testDocumentOpen):
+        (testWindowOpen):
+        (handleCallback):
+
 2010-03-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by nobody. Build bustage :(
