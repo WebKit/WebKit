@@ -34,6 +34,7 @@ platform/mac/editing/selection/word-thai.html
 platform/mac/accessibility/table-multi-bodies.html
 platform/mac/accessibility/table-updating.html
 platform/mac/accessibility/aria-treegrid.html
+platform/mac/accessibility/stale-table-rows.html
 # Lists are not supported on Leopard.
 platform/mac/accessibility/aria-directory.html
 

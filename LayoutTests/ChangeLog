@@ -1,3 +1,16 @@
+2010-03-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Fixing layout test problems. No review.
+
+        AX: changes to WAI-ARIA grid aren't perceived correctly by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=35514
+
+        AXTable tests crash on Leopard/Tiger because tables don't exist. This test needs to be skipped
+        on those playtforms.
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-tiger/Skipped:
+
 2010-02-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Gustavo Noronha.
