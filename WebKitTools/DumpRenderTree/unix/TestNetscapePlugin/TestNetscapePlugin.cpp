@@ -58,6 +58,7 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
 {
     if (browser->version >= 14) {
         PluginObject* obj = (PluginObject*)browser->createobject(instance, getPluginClass());
+        instance->pdata = obj;
 
         for (int i = 0; i < argc; i++) {
             if (strcasecmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
@@ -86,7 +87,8 @@ webkit_test_plugin_new_instance(NPMIMEType /*mimetype*/,
             else if (strcasecmp(argn[i], "testwindowopen") == 0)
                 obj->testWindowOpen = TRUE;
         }
-        instance->pdata = obj;
+
+        browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
     }
 
     return NPERR_NO_ERROR;
@@ -282,9 +284,17 @@ webkit_test_plugin_get_value(NPP instance, NPPVariable variable, void *value)
 }
 
 static NPError
-webkit_test_plugin_set_value(NPP /*instance*/, NPNVariable /*variable*/, void* /*value*/)
+webkit_test_plugin_set_value(NPP instance, NPNVariable variable, void* value)
 {
-    return NPERR_NO_ERROR;
+    PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
+
+    switch (variable) {
+        case NPNVprivateModeBool:
+            obj->cachedPrivateBrowsingMode = *(NPBool*)value;
+            return NPERR_NO_ERROR;
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
 }
 
 char *

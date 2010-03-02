@@ -1,5 +1,27 @@
 2010-03-02  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Bug 35576: WebKit should tell plug-in instances when private browsing state changes
+        <http://webkit.org/b/35576>
+
+        Notify plug-in instances when the private browsing state changes to match the behavior of the
+        Mac plug-in code.
+
+        * page/Page.cpp:
+        (WebCore::Page::privateBrowsingStateChanged): Walk the frame tree and notify each PluginView that
+        the private browsing state has changed.
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setPrivateBrowsingEnabled): Notify the page that the private browsing state
+        has changed.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::privateBrowsingStateChanged): Notify the plug-in instance of the new private
+        browsing state.
+        * plugins/PluginView.h:
+
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 30348: Implement private mode for plug-ins on Windows

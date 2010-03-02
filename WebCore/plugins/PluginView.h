@@ -156,6 +156,8 @@ namespace WebCore {
 
         void setJavaScriptPaused(bool);
 
+        void privateBrowsingStateChanged(bool);
+
         void disconnectStream(PluginStream*);
         void streamDidFinishLoading(PluginStream* stream) { disconnectStream(stream); }
 

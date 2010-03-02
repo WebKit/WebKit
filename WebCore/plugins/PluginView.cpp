@@ -1373,4 +1373,19 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     }
 }
 
+void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
+{
+    NPP_SetValueProcPtr setValue = m_plugin->pluginFuncs()->setvalue;
+    if (!setValue)
+        return;
+
+    PluginView::setCurrentPluginView(this);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    setCallingPlugin(true);
+    NPBool value = privateBrowsingEnabled;
+    setValue(m_instance, NPNVprivateModeBool, &value);
+    setCallingPlugin(false);
+    PluginView::setCurrentPluginView(0);
+}
+
 } // namespace WebCore

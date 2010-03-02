@@ -277,7 +277,11 @@ void Settings::setLocalStorageQuota(unsigned localStorageQuota)
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
+    if (m_privateBrowsingEnabled == privateBrowsingEnabled)
+        return;
+
     m_privateBrowsingEnabled = privateBrowsingEnabled;
+    m_page->privateBrowsingStateChanged();
 }
 
 void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)

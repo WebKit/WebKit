@@ -1,3 +1,22 @@
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 35576: WebKit should tell plug-in instances when private browsing state changes
+        <http://webkit.org/b/35576>
+
+        TestNetscapePlugin is another bit of plug-in code where copy-paste was heavily used
+        when porting.  Update the Windows and UNIX implementations of NPP_New and NPP_SetValue
+        to provide the expected behavior related to NPNVprivateModeBool.  Hopefully this code
+        duplication can be cleaned up in the future.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_set_value):
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New):
+        (NPP_SetValue):
+
 2010-03-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Alexey Proskuryakov.
