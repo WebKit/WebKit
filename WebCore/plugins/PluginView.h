@@ -244,6 +244,9 @@ namespace WebCore {
         static BOOL WINAPI hookedEndPaint(HWND, const PAINTSTRUCT*);
 #endif
 
+        static bool platformGetValueStatic(NPNVariable variable, void* value, NPError* result);
+        bool platformGetValue(NPNVariable variable, void* value, NPError* result);
+
         RefPtr<Frame> m_parentFrame;
         RefPtr<PluginPackage> m_plugin;
         Element* m_element;

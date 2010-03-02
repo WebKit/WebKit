@@ -1,3 +1,47 @@
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 30348: Implement private mode for plug-ins on Windows
+        <http://webkit.org/b/30348> / <rdar://problem/7562261>
+
+        Rework PluginView::getValue and PluginView::getValueStatic to remove the amount of code that
+        was duplicated across platforms.  getValue and getValueStatic now call in to platform-specific
+        variants that indicate whether they handled the query.  If the query is not handled by the
+        platform-specific variants then the cross-platform handler has a chance to handle it.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::getValueStatic): Give the platform-specific variant a chance to handle the
+        variable lookup.  If it does not handle it, return an error.
+        (WebCore::PluginView::getValue): Give the platform-specific variant and platform-specific static
+        variant a chance to handle the variable lookup.  If they do not handle it, apply the cross-platform
+        handler.  At the moment the cross-platform code handles NPNVWindowNPObject, NPNVPluginElementNPObject,
+        and NPNVprivateModeBool as they have an identical implementation across ports.
+        * plugins/PluginView.h:
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::platformGetValue): PluginViewNone does not handle any lookups.
+        (WebCore::PluginView::platformGetValueStatic): Ditto.
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+        platform-independent implementation.
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue): Fix a bug noticed while updating this code.
+        The Qt implementation of the handler for NPNVToolkit was relying on case fall-through
+        to have some values handled by the static handler.  When NPNVprivateModeBool was added
+        it was placed before the default case, interferring with this fall-through.  It now
+        explicitly indicates in this situation that it was not handled.
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+
 2010-03-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

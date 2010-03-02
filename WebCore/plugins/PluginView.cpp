@@ -1300,4 +1300,77 @@ void PluginView::keepAlive(NPP instance)
 }
 #endif
 
+NPError PluginView::getValueStatic(NPNVariable variable, void* value)
+{
+    LOG(Plugins, "PluginView::getValueStatic(%s)", prettyNameForNPNVariable(variable).data());
+
+    NPError result;
+    if (platformGetValueStatic(variable, value, &result))
+        return result;
+
+    return NPERR_GENERIC_ERROR;
+}
+
+NPError PluginView::getValue(NPNVariable variable, void* value)
+{
+    LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
+
+    NPError result;
+    if (platformGetValue(variable, value, &result))
+        return result;
+
+    if (platformGetValueStatic(variable, value, &result))
+        return result;
+
+    switch (variable) {
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    case NPNVWindowNPObject: {
+        if (m_isJavaScriptPaused)
+            return NPERR_GENERIC_ERROR;
+
+        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
+
+        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+        if (windowScriptObject)
+            _NPN_RetainObject(windowScriptObject);
+
+        void** v = (void**)value;
+        *v = windowScriptObject;
+
+        return NPERR_NO_ERROR;
+    }
+
+    case NPNVPluginElementNPObject: {
+        if (m_isJavaScriptPaused)
+            return NPERR_GENERIC_ERROR;
+
+        NPObject* pluginScriptObject = 0;
+
+        if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
+            pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
+
+        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
+        if (pluginScriptObject)
+            _NPN_RetainObject(pluginScriptObject);
+
+        void** v = (void**)value;
+        *v = pluginScriptObject;
+
+        return NPERR_NO_ERROR;
+    }
+#endif
+
+    case NPNVprivateModeBool: {
+        Page* page = m_parentFrame->page();
+        if (!page)
+            return NPERR_GENERIC_ERROR;
+        *((NPBool*)value) = !page->settings() || page->settings()->privateBrowsingEnabled();
+        return NPERR_NO_ERROR;
+    }
+
+    default:
+        return NPERR_GENERIC_ERROR;
+    }
+}
+
 } // namespace WebCore

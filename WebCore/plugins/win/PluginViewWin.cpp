@@ -26,44 +26,39 @@
  */
 
 #include "config.h"
-
 #include "PluginView.h"
 
 #include "BitmapImage.h"
-#if !PLATFORM(WX)
-#include "BitmapInfo.h"
-#endif
 #include "Bridge.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
 #include "EventNames.h"
-#include "FrameLoader.h"
-#include "FrameLoadRequest.h"
-#include "FrameTree.h"
+#include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoader.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HostWindow.h"
-#include "Image.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HostWindow.h"
+#include "Image.h"
+#include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "KeyboardEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "FocusController.h"
 #include "PlatformMouseEvent.h"
-#include "PluginMessageThrottlerWin.h"
-#include "PluginPackage.h"
-#include "PluginMainThreadScheduler.h"
-#include "RenderWidget.h"
-#include "JSDOMBinding.h"
-#include "ScriptController.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
+#include "PluginMainThreadScheduler.h"
+#include "PluginMessageThrottlerWin.h"
 #include "PluginPackage.h"
+#include "RenderWidget.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
@@ -71,6 +66,10 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>
+
+#if !PLATFORM(WX)
+#include "BitmapInfo.h"
+#endif
 
 #if OS(WINCE)
 #undef LOG_NPERROR
@@ -867,73 +866,30 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
     return NPERR_NO_ERROR;
 }
 
-NPError PluginView::getValueStatic(NPNVariable variable, void* value)
+bool PluginView::platformGetValueStatic(NPNVariable, void*, NPError*)
 {
-    LOG(Plugins, "PluginView::getValueStatic(%s)", prettyNameForNPNVariable(variable).data());
-
-    return NPERR_GENERIC_ERROR;
+    return false;
 }
 
-NPError PluginView::getValue(NPNVariable variable, void* value)
+bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* result)
 {
-    LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
-
     switch (variable) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        case NPNVWindowNPObject: {
-            if (m_isJavaScriptPaused)
-                return NPERR_GENERIC_ERROR;
-
-            NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
-
-            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-            if (windowScriptObject)
-                _NPN_RetainObject(windowScriptObject);
-
-            void** v = (void**)value;
-            *v = windowScriptObject;
-
-            return NPERR_NO_ERROR;
-        }
-
-        case NPNVPluginElementNPObject: {
-            if (m_isJavaScriptPaused)
-                return NPERR_GENERIC_ERROR;
-
-            NPObject* pluginScriptObject = 0;
-
-            if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-                pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
-
-            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-            if (pluginScriptObject)
-                _NPN_RetainObject(pluginScriptObject);
-
-            void** v = (void**)value;
-            *v = pluginScriptObject;
-
-            return NPERR_NO_ERROR;
-        }
-#endif
-
         case NPNVnetscapeWindow: {
             HWND* w = reinterpret_cast<HWND*>(value);
-
             *w = windowHandleForPageClient(parent() ? parent()->hostWindow()->platformPageClient() : 0);
-
-            return NPERR_NO_ERROR;
+            *result = NPERR_NO_ERROR;
+            return true;
         }
 
         case NPNVSupportsWindowless: {
-            NPBool *result = reinterpret_cast<NPBool*>(value);
-
-            *result = TRUE;
-            
-            return NPERR_NO_ERROR;
+            NPBool* flag = reinterpret_cast<NPBool*>(value);
+            *flag = TRUE;
+            *result = NPERR_NO_ERROR;
+            return true;
         }
 
-        default:
-            return NPERR_GENERIC_ERROR;
+    default:
+        return false;
     }
 }
 

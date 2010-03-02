@@ -67,15 +67,15 @@ NPError PluginView::handlePostReadFile(Vector<char>&, uint32, const char*)
     return 0;
 }
 
-NPError PluginView::getValue(NPNVariable, void*)
+bool PluginView::platformGetValue(NPNVariable, void*, NPError*)
 {
-    return 0;
+    return false;
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-NPError PluginView::getValueStatic(NPNVariable, void*)
+bool PluginView::platformGetValueStatic(NPNVariable, void*, NPError*)
 {
-    return 0;
+    return false;
 }
 #endif
 

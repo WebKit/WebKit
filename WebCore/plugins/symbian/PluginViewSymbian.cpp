@@ -307,66 +307,27 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
     return NPERR_NO_ERROR;
 }
 
-NPError PluginView::getValueStatic(NPNVariable variable, void* value)
+bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPError* result)
 {
-    LOG(Plugins, "PluginView::getValueStatic(%s)", prettyNameForNPNVariable(variable).data());
-
     switch (variable) {
     case NPNVjavascriptEnabledBool:
         *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
     case NPNVSupportsWindowless:
         *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
     default:
-        return NPERR_GENERIC_ERROR;
+        return false;
     }
 }
 
-NPError PluginView::getValue(NPNVariable variable, void* value)
+bool PluginView::platformGetValue(NPNVariable, void*, NPError*)
 {
-    LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
-
-    switch (variable) {
-    case NPNVWindowNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
-
-        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
-
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (windowScriptObject)
-            _NPN_RetainObject(windowScriptObject);
-
-        void** v = (void**)value;
-        *v = windowScriptObject;
-            
-        return NPERR_NO_ERROR;
-    }
-
-    case NPNVPluginElementNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
-
-        NPObject* pluginScriptObject = 0;
-
-        if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-            pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
-
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (pluginScriptObject)
-            _NPN_RetainObject(pluginScriptObject);
-
-        void** v = (void**)value;
-        *v = pluginScriptObject;
-
-        return NPERR_NO_ERROR;
-    }        
-    default:
-        return getValueStatic(variable, value);
-    }
+    return false;
 }
 
 void PluginView::invalidateRect(const IntRect& rect)

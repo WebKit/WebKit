@@ -254,33 +254,36 @@ void PluginView::platformDestroy()
 
 // Used before the plugin view has been initialized properly, and as a
 // fallback for variables that do not require a view to resolve.
-NPError PluginView::getValueStatic(NPNVariable variable, void* value)
+bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPError* result)
 {
-    LOG(Plugins, "PluginView::getValueStatic(%s)", prettyNameForNPNVariable(variable).data());
-
     switch (variable) {
     case NPNVToolkit:
         *static_cast<uint32*>(value) = 0;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
     case NPNVjavascriptEnabledBool:
         *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
 #ifndef NP_NO_CARBON
     case NPNVsupportsCarbonBool:
         *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
 #endif
     case NPNVsupportsCocoaBool:
         *static_cast<NPBool*>(value) = false;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
     // CoreGraphics is the only drawing model we support
     case NPNVsupportsCoreGraphicsBool:
         *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
 #ifndef NP_NO_QUICKDRAW
     // QuickDraw is deprecated in 10.5 and not supported on 64-bit
@@ -289,61 +292,20 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
     case NPNVsupportsOpenGLBool:
     case NPNVsupportsCoreAnimationBool:
         *static_cast<NPBool*>(value) = false;
-        return NPERR_NO_ERROR;
+        *result = NPERR_NO_ERROR;
+        return true;
 
     default:
-        return NPERR_GENERIC_ERROR;
+        return false;
     }
 }
 
 // Used only for variables that need a view to resolve
-NPError PluginView::getValue(NPNVariable variable, void* value)
+bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* error)
 {
-    LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
-
-    switch (variable) {
-    case NPNVWindowNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
-
-        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
-
-        // Return value is expected to be retained, as described in
-        // <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (windowScriptObject)
-            _NPN_RetainObject(windowScriptObject);
-
-        void** v = (void**)value;
-        *v = windowScriptObject;
-
-        return NPERR_NO_ERROR;
-    }
-
-    case NPNVPluginElementNPObject: {
-        if (m_isJavaScriptPaused)
-            return NPERR_GENERIC_ERROR;
-
-        NPObject* pluginScriptObject = 0;
-
-        if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-            pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
-
-        // Return value is expected to be retained, as described in
-        // <http://www.mozilla.org/projects/plugin/npruntime.html>
-        if (pluginScriptObject)
-            _NPN_RetainObject(pluginScriptObject);
-
-        void** v = (void**)value;
-        *v = pluginScriptObject;
-
-        return NPERR_NO_ERROR;
-    }
-
-    default:
-        return getValueStatic(variable, value);
-    }
-
+    return false;
 }
+
 void PluginView::setParent(ScrollView* parent)
 {
     LOG(Plugins, "PluginView::setParent(%p)", parent);

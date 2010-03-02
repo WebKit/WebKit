@@ -1,3 +1,12 @@
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 30348: Implement private mode for plug-ins on Windows
+        <http://webkit.org/b/30348> / <rdar://problem/7562261>
+
+        * platform/win/Skipped: Remove plugins/private-browsing-mode-2.html now that it passes.
+
 2010-03-02  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Roben.
