@@ -70,6 +70,11 @@ void WebNode::assign(const WebNode& other)
     assign(p);
 }
 
+bool WebNode::equals(const WebNode& n) const
+{
+    return (m_private == n.m_private);
+}
+
 WebNode::NodeType WebNode::nodeType() const
 {
     return static_cast<NodeType>(m_private->nodeType());

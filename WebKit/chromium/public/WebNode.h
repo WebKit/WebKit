@@ -62,6 +62,8 @@ public:
     WEBKIT_API void reset();
     WEBKIT_API void assign(const WebNode&);
 
+    WEBKIT_API bool equals(const WebNode&) const;
+
     bool isNull() const { return !m_private; }
 
 #if WEBKIT_IMPLEMENTATION
@@ -134,6 +136,16 @@ protected:
         return static_cast<const T*>(m_private);
     }
 };
+
+inline bool operator==(const WebNode& a, const WebNode& b)
+{
+    return a.equals(b);
+}
+
+inline bool operator!=(const WebNode& a, const WebNode& b)
+{
+    return !(a == b);
+}
 
 } // namespace WebKit
 

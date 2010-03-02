@@ -1,3 +1,18 @@
+2010-03-02  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebNode::equals and add inline operators for ==
+        and !=.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35543
+
+        * public/WebNode.h:
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::equals):
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.
