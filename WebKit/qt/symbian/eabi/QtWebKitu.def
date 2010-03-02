@@ -712,4 +712,5 @@ EXPORTS
 	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME
 	_ZN9QWebFrame11pageChangedEv @ 712 NONAME
 	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
+	_ZN12QWebSettings15setInspectorUrlERK4QUrl @ 714 NONAME
 
