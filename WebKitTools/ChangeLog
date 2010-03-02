@@ -1,3 +1,16 @@
+2010-03-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Work around a bug in Python's subprocess.Popen() that keeps us from
+        cleaning up DumpRenderTree / test_shell properly when we finish the
+        tests in new-run-webkit-tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35553
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2010-03-01  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Xan Lopez.

@@ -321,10 +321,14 @@ class MacDriver(base.Driver):
 
     def restart(self):
         self.stop()
+        # We need to pass close_fds=True to work around Python bug #2320
+        # (otherwise we can hang when we kill test_shell when we are running
+        # multiple threads). See http://bugs.python.org/issue2320 .
         self._proc = subprocess.Popen(self._cmd, stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE,
-                                      env=self._env)
+                                      env=self._env,
+                                      close_fds=True)
 
     def returncode(self):
         return self._proc.returncode
@@ -425,13 +429,23 @@ class MacDriver(base.Driver):
             self._proc.stdout.close()
             if self._proc.stderr:
                 self._proc.stderr.close()
-            if (sys.platform not in ('win32', 'cygwin') and
-                not self._proc.poll()):
-                # Closing stdin/stdout/stderr hangs sometimes on OS X.
-                null = open(os.devnull, "w")
-                subprocess.Popen(["kill", "-9",
-                                 str(self._proc.pid)], stderr=null)
-                null.close()
+            if sys.platform not in ('win32', 'cygwin'):
+                # Closing stdin/stdout/stderr hangs sometimes on OS X,
+                # (see restart(), above), and anyway we don't want to hang
+                # the harness if test_shell is buggy, so we wait a couple
+                # seconds to give test_shell a chance to clean up, but then
+                # force-kill the process if necessary.
+                KILL_TIMEOUT = 3.0
+                timeout = time.time() + KILL_TIMEOUT
+                while self._proc.poll() is None and time.time() < timeout:
+                    time.sleep(0.1)
+                if self._proc.poll() is None:
+                    logging.warning('stopping test driver timed out, '
+                                    'killing it')
+                    null = open(os.devnull, "w")
+                    subprocess.Popen(["kill", "-9",
+                                     str(self._proc.pid)], stderr=null)
+                    null.close()                not self._proc.poll()):
 
     def _read_line(self, timeout, stop_time, image_length=0):
         now = time.time()
