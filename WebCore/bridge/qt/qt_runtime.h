@@ -179,9 +179,9 @@ protected:
 private:
     virtual CallType getCallData(CallData&);
     static JSValue JSC_HOST_CALL call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args);
-    static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue connectGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue disconnectGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
+    static JSValue connectGetter(ExecState*, JSValue, const Identifier&);
+    static JSValue disconnectGetter(ExecState*, JSValue, const Identifier&);
 };
 
 class QtConnectionObject;
@@ -200,7 +200,7 @@ protected:
 private:
     virtual CallType getCallData(CallData&);
     static JSValue JSC_HOST_CALL call(ExecState* exec, JSObject* functionObject, JSValue thisValue, const ArgList& args);
-    static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static QMultiMap<QObject *, QtConnectionObject *> connections;
     friend class QtConnectionObject;
 };

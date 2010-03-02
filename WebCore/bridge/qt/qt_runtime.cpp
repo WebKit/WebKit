@@ -1471,15 +1471,15 @@ void QtRuntimeMetaMethod::getOwnPropertyNames(ExecState* exec, PropertyNameArray
     QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-JSValue QtRuntimeMetaMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot&)
+JSValue QtRuntimeMetaMethod::lengthGetter(ExecState* exec, JSValue, const Identifier&)
 {
     // QtScript always returns 0
     return jsNumber(exec, 0);
 }
 
-JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
+JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, const Identifier& ident)
 {
-    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slot.slotBase()));
+    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slotBase));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
@@ -1487,9 +1487,9 @@ JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, const Identifier& id
     return d->m_connect;
 }
 
-JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
+JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase, const Identifier& ident)
 {
-    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slot.slotBase()));
+    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slotBase));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
@@ -1677,7 +1677,7 @@ void QtRuntimeConnectionMethod::getOwnPropertyNames(ExecState* exec, PropertyNam
     QtRuntimeMethod::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot&)
+JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState* exec, JSValue, const Identifier&)
 {
     // we have one formal argument, and one optional
     return jsNumber(exec, 1);

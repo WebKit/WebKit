@@ -1,3 +1,16 @@
+2010-03-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Update Qt bridge to new named getter signature
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::lengthGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        (JSC::Bindings::QtRuntimeConnectionMethod::lengthGetter):
+        * bridge/qt/qt_runtime.h:
+
 2010-03-01  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha.
