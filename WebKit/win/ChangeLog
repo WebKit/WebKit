@@ -1,3 +1,26 @@
+2010-03-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Some WebKit DOMNode API is unimplemented.
+        https://bugs.webkit.org/show_bug.cgi?id=35554
+
+        Reviewed by Alice Liu.
+
+        * DOMCoreClasses.cpp:
+        (DOMNode::nextSibling):
+        Create a DOMNode to wrap m_node's next sibling, and assign it to the
+        out param 'result'.
+        (DOMNode::insertBefore):
+        Query for the DOMNode for newChild, and return early if we fail. Query
+        refChild for DOMNode. Call insertBefore(), passing the newChild's
+        WebCore node and refChild's WebCore node (if refChild is non-null). If
+        we successfully insert the child, fill the result out param with
+        newChild, ref it, and return S_OK. Otherwise, return E_FAIL.
+        (DOMNode::removeChild):
+        Query oldChild for DOMNode. If we fail, return E_FAIL. Call
+        removeChild(), passing the node's WebCore node. If this fails, return
+        E_FAIL. Otherwise, fill the result out param with oldChild, ref it, and
+        return S_OK.
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.
