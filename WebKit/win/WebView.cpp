@@ -2879,9 +2879,9 @@ HRESULT STDMETHODCALLTYPE WebView::setPageSizeMultiplier(
 void WebView::setZoomMultiplier(float multiplier, bool isTextOnly)
 {
     m_zoomMultiplier = multiplier;
-    m_page->settings()->setZoomsTextOnly(isTextOnly);
+    m_page->settings()->setZoomMode(isTextOnly ? ZoomTextOnly : ZoomPage);
     if (Frame* coreFrame = core(m_mainFrame))
-        coreFrame->setZoomFactor(multiplier, isTextOnly);
+        coreFrame->setZoomFactor(multiplier, isTextOnly ? ZoomTextOnly : ZoomPage);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::textSizeMultiplier( 
@@ -2900,7 +2900,8 @@ HRESULT STDMETHODCALLTYPE WebView::pageSizeMultiplier(
 
 float WebView::zoomMultiplier(bool isTextOnly)
 {
-    if (isTextOnly != m_page->settings()->zoomsTextOnly())
+    ZoomMode zoomMode = isTextOnly ? ZoomTextOnly : ZoomPage;
+    if (zoomMode != m_page->settings()->zoomMode())
         return 1.0f;
     return m_zoomMultiplier;
 }
@@ -3680,7 +3681,7 @@ HRESULT STDMETHODCALLTYPE WebView::canMakeTextLarger(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    bool canGrowMore = canZoomIn(m_page->settings()->zoomsTextOnly());
+    bool canGrowMore = canZoomIn(m_page->settings()->zoomMode() == ZoomTextOnly);
     *result = canGrowMore ? TRUE : FALSE;
     return S_OK;
 }
@@ -3702,7 +3703,7 @@ bool WebView::canZoomIn(bool isTextOnly)
 HRESULT STDMETHODCALLTYPE WebView::makeTextLarger( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    return zoomIn(m_page->settings()->zoomsTextOnly());
+    return zoomIn(m_page->settings()->zoomMode() == ZoomTextOnly);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::zoomPageIn( 
@@ -3723,7 +3724,7 @@ HRESULT STDMETHODCALLTYPE WebView::canMakeTextSmaller(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    bool canShrinkMore = canZoomOut(m_page->settings()->zoomsTextOnly());
+    bool canShrinkMore = canZoomOut(m_page->settings()->zoomMode() == ZoomTextOnly);
     *result = canShrinkMore ? TRUE : FALSE;
     return S_OK;
 }
@@ -3745,7 +3746,7 @@ bool WebView::canZoomOut(bool isTextOnly)
 HRESULT STDMETHODCALLTYPE WebView::makeTextSmaller( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    return zoomOut(m_page->settings()->zoomsTextOnly());
+    return zoomOut(m_page->settings()->zoomMode() == ZoomTextOnly);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::zoomPageOut( 
@@ -4576,7 +4577,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->zoomsTextOnly(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setZoomsTextOnly(!!enabled);
+    settings->setZoomMode(enabled ? ZoomTextOnly : ZoomPage);
 
     settings->setShowsURLsInToolTips(false);
     settings->setForceFTPDirectoryListings(true);

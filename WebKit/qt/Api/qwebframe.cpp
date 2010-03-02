@@ -1245,7 +1245,7 @@ void QWebFrame::render(QPainter* painter)
 */
 void QWebFrame::setTextSizeMultiplier(qreal factor)
 {
-    d->frame->setZoomFactor(factor, /*isTextOnly*/true);
+    d->frame->setZoomFactor(factor, ZoomTextOnly);
 }
 
 /*!
@@ -1264,7 +1264,7 @@ qreal QWebFrame::textSizeMultiplier() const
 
 void QWebFrame::setZoomFactor(qreal factor)
 {
-    d->frame->setZoomFactor(factor, d->frame->isZoomFactorTextOnly());
+    d->frame->setZoomFactor(factor, d->frame->zoomMode());
 }
 
 qreal QWebFrame::zoomFactor() const

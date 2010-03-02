@@ -1,3 +1,13 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Adapt to the new ZoomMode enum.
+        https://bugs.webkit.org/show_bug.cgi?id=35347
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setZoomLevel):
+
 2010-03-01  Thatcher Ulrich  <tulrich@google.com>
 
         Reviewed by Darin Fisher.

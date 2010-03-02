@@ -1,3 +1,15 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Adapt to the new ZoomMode enum.
+        https://bugs.webkit.org/show_bug.cgi?id=35347
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        (-[WebView _realZoomMultiplierIsTextOnly]):
+
 2010-02-27  Jing Jin  <jjin@apple.com>
 
         Reviewed by Timothy Hatcher.

@@ -316,7 +316,7 @@ void wxWebFrame::IncreaseTextSize()
 {
     if (CanIncreaseTextSize()) {
         m_textMagnifier = m_textMagnifier*TextSizeMultiplierRatio;
-        m_impl->frame->setZoomFactor(m_textMagnifier, true);
+        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
     }
 }
 
@@ -333,7 +333,7 @@ void wxWebFrame::DecreaseTextSize()
 {        
     if (CanDecreaseTextSize()) {
         m_textMagnifier = m_textMagnifier/TextSizeMultiplierRatio;
-        m_impl->frame->setZoomFactor(m_textMagnifier, true);
+        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
     }
 }
 
@@ -341,7 +341,7 @@ void wxWebFrame::ResetTextSize()
 {
     m_textMagnifier = 1.0;
     if (m_impl->frame)
-        m_impl->frame->setZoomFactor(m_textMagnifier, true);
+        m_impl->frame->setZoomFactor(m_textMagnifier, WebCore::ZoomTextOnly);
 }
 
 void wxWebFrame::MakeEditable(bool enable)

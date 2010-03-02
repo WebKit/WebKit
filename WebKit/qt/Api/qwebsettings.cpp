@@ -201,7 +201,7 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::ZoomTextOnly,
                                  global->attributes.value(QWebSettings::ZoomTextOnly));
-        settings->setZoomsTextOnly(value);
+        settings->setZoomMode(value ? WebCore::ZoomTextOnly : WebCore::ZoomPage);
 
         value = attributes.value(QWebSettings::PrintElementBackgrounds,
                                       global->attributes.value(QWebSettings::PrintElementBackgrounds));

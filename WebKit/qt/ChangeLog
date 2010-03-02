@@ -1,3 +1,16 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Adapt to the new ZoomMode enum.
+        https://bugs.webkit.org/show_bug.cgi?id=35347
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setTextSizeMultiplier):
+        (QWebFrame::setZoomFactor):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2010-02-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Simon Hausmann.

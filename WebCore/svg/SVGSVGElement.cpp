@@ -199,7 +199,7 @@ void SVGSVGElement::setCurrentScale(float scale)
         // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
         // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
         if (parentNode() == document())
-            frame->setZoomFactor(scale, false);
+            frame->setZoomFactor(scale, ZoomPage);
         return;
     }
 

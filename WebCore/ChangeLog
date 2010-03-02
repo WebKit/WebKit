@@ -1,3 +1,34 @@
+2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Convert the zoom mode (page vs. text-only) into a proper enum.
+        https://bugs.webkit.org/show_bug.cgi?id=35347
+
+        * GNUmakefile.am:
+        * WebCore.base.exp: Substituted symbols __ZN7WebCore5Frame13setZoomFactorEfNS_8ZoomModeE
+        and __ZN7WebCore8Settings11setZoomModeENS_8ZoomModeE for __ZN7WebCore5Frame13setZoomFactorEfb
+        and __ZN7WebCore8Settings16setZoomsTextOnlyEb, respectively.
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Frame.cpp:
+        (WebCore::Frame::zoomMode):
+        (WebCore::Frame::shouldApplyTextZoom):
+        (WebCore::Frame::shouldApplyPageZoom):
+        (WebCore::Frame::setZoomFactor):
+        * page/Frame.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setZoomMode):
+        * page/Settings.h:
+        (WebCore::Settings::zoomMode):
+        * page/ZoomMode.h: Added.
+        (WebCore::):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+
 2010-03-01  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.

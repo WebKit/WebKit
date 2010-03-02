@@ -1339,7 +1339,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
-    settings->setZoomsTextOnly([preferences zoomsTextOnly]);
+    settings->setZoomMode([preferences zoomsTextOnly] ? ZoomTextOnly : ZoomPage);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
     settings->setAcceleratedCompositingEnabled(coreVideoHas7228836Fix() && [preferences acceleratedCompositingEnabled]);
@@ -3115,13 +3115,13 @@ static bool needsWebViewInitThreadWorkaround()
     _private->zoomMultiplier = m;
     ASSERT(_private->page);
     if (_private->page)
-        _private->page->settings()->setZoomsTextOnly(isTextOnly);
+        _private->page->settings()->setZoomMode(isTextOnly ? ZoomTextOnly : ZoomPage);
     
     // FIXME: it would be nice to rework this code so that _private->zoomMultiplier doesn't exist and callers
     // all access _private->page->settings().
     Frame* coreFrame = [self _mainCoreFrame];
     if (coreFrame)
-        coreFrame->setZoomFactor(m, isTextOnly);
+        coreFrame->setZoomFactor(m, isTextOnly ? ZoomTextOnly : ZoomPage);
 }
 
 - (float)_zoomMultiplier:(BOOL)isTextOnly
@@ -3141,7 +3141,7 @@ static bool needsWebViewInitThreadWorkaround()
     if (!_private->page)
         return NO;
     
-    return _private->page->settings()->zoomsTextOnly();
+    return _private->page->settings()->zoomMode() == ZoomTextOnly;
 }
 
 #define MinimumZoomMultiplier       0.5f
