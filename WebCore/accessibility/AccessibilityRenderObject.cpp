@@ -2898,15 +2898,25 @@ bool AccessibilityRenderObject::canHaveChildren() const
     }
 }
 
+void AccessibilityRenderObject::clearChildren()
+{
+    AccessibilityObject::clearChildren();
+    m_childrenDirty = false;
+}
+    
+void AccessibilityRenderObject::updateChildrenIfNecessary()
+{
+    if (needsToUpdateChildren())
+        clearChildren();        
+    
+    if (!hasChildren())
+        addChildren();    
+}
+    
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityRenderObject::children()
 {
-    if (m_childrenDirty) {
-        clearChildren();        
-        m_childrenDirty = false;
-    }
+    updateChildrenIfNecessary();
     
-    if (!m_haveChildren)
-        addChildren();
     return m_children;
 }
 

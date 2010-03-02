@@ -1,3 +1,13 @@
+2010-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: changes to WAI-ARIA grid aren't perceived correctly by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=35514
+
+        * platform/mac/accessibility/stale-table-rows-expected.txt: Added.
+        * platform/mac/accessibility/stale-table-rows.html: Added.
+
 2010-03-01  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

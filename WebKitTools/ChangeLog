@@ -1,3 +1,27 @@
+2010-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: changes to WAI-ARIA grid aren't perceived correctly by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=35514
+
+        Add rowCount, columnCount for tables.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (rowCountCallback):
+        (columnCountCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::rowCount):
+        (AccessibilityUIElement::columnCount):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::rowCount):
+        (AccessibilityUIElement::columnCount):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::rowCount):
+        (AccessibilityUIElement::columnCount):
+
 2010-03-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

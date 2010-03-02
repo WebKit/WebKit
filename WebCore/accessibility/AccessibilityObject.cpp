@@ -731,8 +731,8 @@ FrameView* AccessibilityObject::documentFrameView() const
 
 void AccessibilityObject::clearChildren()
 {
-    m_haveChildren = false;
     m_children.clear();
+    m_haveChildren = false;
 }
 
 AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)

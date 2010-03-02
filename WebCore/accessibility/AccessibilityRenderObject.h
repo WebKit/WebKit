@@ -195,6 +195,8 @@ public:
     virtual unsigned hierarchicalLevel() const;
 
     virtual const AccessibilityChildrenVector& children();
+    virtual void clearChildren();
+    void updateChildrenIfNecessary();
     
     virtual void setFocused(bool);
     virtual void setSelectedTextRange(const PlainTextRange&);
@@ -259,6 +261,7 @@ protected:
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     void ariaLabeledByElements(Vector<Element*>& elements) const;
+    bool needsToUpdateChildren() const { return m_childrenDirty; }
     
     virtual bool isDetached() const { return !m_renderer; }
 
@@ -297,7 +300,6 @@ private:
     virtual bool ariaLiveRegionBusy() const;    
     
     void setNeedsToUpdateChildren() const { m_childrenDirty = true; }
-    bool needsToUpdateChildren() const { return m_childrenDirty; }
     
     mutable AccessibilityRole m_roleForMSAA;
 };

@@ -131,8 +131,7 @@ AccessibilityTableCell* AccessibilityARIAGrid::cellForColumnAndRow(unsigned colu
     if (!m_renderer)
         return 0;
     
-    if (!hasChildren())
-        addChildren();
+    updateChildrenIfNecessary();
     
     if (column >= columnCount() || row >= rowCount())
         return 0;

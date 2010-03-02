@@ -1,3 +1,38 @@
+2010-03-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: changes to WAI-ARIA grid aren't perceived correctly by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=35514
+
+        When a table's DOM is changed and an AX Table is not asked first for its children,
+        it would return wrong information. A table needs to make sure children are up to date in
+        all methods that can be called from the outside.
+
+        Test: platform/mac/accessibility/stale-table-rows.html
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::cellForColumnAndRow):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::clearChildren):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::clearChildren):
+        (WebCore::AccessibilityRenderObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityRenderObject::children):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::needsToUpdateChildren):
+        (WebCore::AccessibilityRenderObject::setNeedsToUpdateChildren):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::clearChildren):
+        (WebCore::AccessibilityTable::columns):
+        (WebCore::AccessibilityTable::rows):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::cells):
+        (WebCore::AccessibilityTable::columnCount):
+        (WebCore::AccessibilityTable::rowCount):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.

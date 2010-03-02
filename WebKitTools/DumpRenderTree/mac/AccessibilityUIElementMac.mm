@@ -676,6 +676,16 @@ JSStringRef AccessibilityUIElement::attributesOfHeader()
     return descriptionOfElements(headerVector);
 }
 
+int AccessibilityUIElement::rowCount()
+{
+    return [m_element accessibilityArrayAttributeCount:NSAccessibilityRowsAttribute];
+}
+
+int AccessibilityUIElement::columnCount()
+{
+    return [m_element accessibilityArrayAttributeCount:NSAccessibilityColumnsAttribute];
+}
+
 int AccessibilityUIElement::indexInTable()
 {
     NSNumber* indexNumber = [m_element accessibilityAttributeValue:NSAccessibilityIndexAttribute];

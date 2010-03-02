@@ -75,6 +75,18 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
     }
 }
 
+int AccessibilityUIElement::rowCount()
+{
+    // FIXME: implement
+    return 0;
+}
+
+int AccessibilityUIElement::columnCount()
+{
+    // FIXME: implement
+    return 0;
+}
+
 int AccessibilityUIElement::childrenCount()
 {
     if (!m_element)
