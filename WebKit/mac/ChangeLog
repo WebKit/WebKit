@@ -1,3 +1,17 @@
+2010-03-02  Adam Roben  <aroben@apple.com>
+
+        Add -[WebView _registerURLSchemeAsSecure:]
+
+        Fixes <http://webkit.org/b/35580> <rdar://problem/7706407> Expose
+        SecurityOrigin::registerURLSchemeAsSecure as WebKit SPI
+
+        Reviewed by Tim Hatcher.
+
+        * WebView/WebView.mm:
+        (+[WebView _registerURLSchemeAsSecure:]):
+        * WebView/WebViewPrivate.h:
+        Added. Calls through to SecurityOrigin::registerURLSchemeAsSecure.
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.

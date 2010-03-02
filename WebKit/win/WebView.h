@@ -779,6 +779,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE geolocationDidFailWithError(IWebError* error);
 
     virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(BSTR);
 
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;

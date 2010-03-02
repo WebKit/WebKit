@@ -2388,6 +2388,11 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
 }
 
++ (void)_registerURLSchemeAsSecure:(NSString *)scheme
+{
+    SecurityOrigin::registerURLSchemeAsSecure(scheme);
+}
+
 @end
 
 @implementation _WebSafeForwarder

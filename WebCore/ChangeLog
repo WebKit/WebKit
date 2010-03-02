@@ -1,3 +1,14 @@
+2010-03-02  Adam Roben  <aroben@apple.com>
+
+        Export SecurityOrigin::registerURLSchemeAsSecure
+
+        Fixes <http://webkit.org/b/35580> <rdar://problem/7706407> Expose
+        SecurityOrigin::registerURLSchemeAsSecure as WebKit SPI
+
+        Reviewed by Tim Hatcher.
+
+        * WebCore.base.exp: Added symbol, sorted file.
+
 2010-03-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

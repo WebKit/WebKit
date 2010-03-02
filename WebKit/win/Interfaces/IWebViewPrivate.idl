@@ -226,4 +226,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT geolocationDidFailWithError([in] IWebError* error);
 
     HRESULT setDomainRelaxationForbiddenForURLScheme([in] BOOL forbidden, [in] BSTR scheme);
+
+    HRESULT registerURLSchemeAsSecure([in] BSTR scheme);
 }
