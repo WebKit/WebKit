@@ -776,6 +776,15 @@ InspectorTimelineAgent* Page::inspectorTimelineAgent() const
 }
 #endif
 
+#if PLATFORM(MAC)
+
+// FIXME: Page shouldn't have to know that the Mac plug-in implementation doesn't use PluginView.
+void Page::privateBrowsingStateChanged()
+{
+}
+
+#else
+
 void Page::privateBrowsingStateChanged()
 {
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
@@ -804,6 +813,8 @@ void Page::privateBrowsingStateChanged()
     for (size_t i = 0; i < pluginViews.size(); i++)
         pluginViews[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
 }
+
+#endif
 
 void Page::pluginAllowedRunTimeChanged()
 {

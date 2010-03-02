@@ -1,3 +1,11 @@
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Mac build.
+
+        * page/Page.cpp:
+        (WebCore::Page::privateBrowsingStateChanged): Mac doesn't use WebCore's PluginView class
+        for plug-ins, so provide an empty implementation of privateBrowsingStateChanged for Mac.
+
 2010-03-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.
