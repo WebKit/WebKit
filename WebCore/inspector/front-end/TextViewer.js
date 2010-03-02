@@ -609,7 +609,18 @@ WebInspector.TextChunk = function(textViewer, startLine, endLine)
         lineNumbers.push(i + 1);
         lines.push(this._textModel.line(i));
     }
-    this._lineNumberElement.textContent = lineNumbers.join("\n");
+    if (this.linesCount === 1) {
+        // Single line chunks are typically created for decorations. Host line number in
+        // the sub-element in order to allow flexible border / margin management.
+        var innerSpan = document.createElement("span");
+        innerSpan.className = "webkit-line-number-inner";
+        innerSpan.textContent = startLine + 1;
+        var outerSpan = document.createElement("div");
+        outerSpan.className = "webkit-line-number-outer";
+        outerSpan.appendChild(innerSpan);
+        this._lineNumberElement.appendChild(outerSpan);
+    } else
+        this._lineNumberElement.textContent = lineNumbers.join("\n");
     this._lineContentElement.textContent = lines.join("\n");
 }
 

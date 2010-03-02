@@ -288,8 +288,6 @@ WebInspector.SourceFrame.prototype = {
         if (!this._executionLine)
             return;
 
-        this._drawProgramCounterImageIfNeeded();
-
         if (this._executionLine < this._textModel.linesCount)
             this._textViewer.addDecoration(this._executionLine - 1, "webkit-execution-line");
     },
@@ -369,7 +367,6 @@ WebInspector.SourceFrame.prototype = {
 
         this._textModel.setAttribute(lineNumber, "breakpoint", breakpoint);
         breakpoint.sourceText = this._textModel.line(breakpoint.line - 1);
-        this._drawBreakpointImagesIfNeeded();
 
         this._textViewer.beginUpdates();
         this._textViewer.addDecoration(lineNumber, "webkit-breakpoint");
@@ -393,9 +390,10 @@ WebInspector.SourceFrame.prototype = {
 
     _contextMenu: function(event)
     {
-        if (event.target.className !== "webkit-line-number")
+        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
+        if (!target)
             return;
-        var row = event.target.parentElement;
+        var row = target.parentElement;
 
         var lineNumber = row.lineNumber;
         var contextMenu = new WebInspector.ContextMenu();
@@ -437,9 +435,10 @@ WebInspector.SourceFrame.prototype = {
         this._hidePopup();
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
             return;
-        if (event.target.className !== "webkit-line-number")
+        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
+        if (!target)
             return;
-        var row = event.target.parentElement;
+        var row = target.parentElement;
 
         var lineNumber = row.lineNumber;
 
@@ -695,134 +694,6 @@ WebInspector.SourceFrame.prototype = {
     {
         if (this._textViewer)
             this._textViewer.resize();
-    },
-
-    _drawProgramCounterInContext: function(ctx, glow)
-    {
-        if (glow)
-            ctx.save();
-
-        ctx.beginPath();
-        ctx.moveTo(17, 2);
-        ctx.lineTo(19, 2);
-        ctx.lineTo(19, 0);
-        ctx.lineTo(21, 0);
-        ctx.lineTo(26, 5.5);
-        ctx.lineTo(21, 11);
-        ctx.lineTo(19, 11);
-        ctx.lineTo(19, 9);
-        ctx.lineTo(17, 9);
-        ctx.closePath();
-        ctx.fillStyle = "rgb(142, 5, 4)";
-
-        if (glow) {
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = "rgb(255, 255, 255)";
-            ctx.shadowOffsetX = -1;
-            ctx.shadowOffsetY = 0;
-        }
-
-        ctx.fill();
-        ctx.fill(); // Fill twice to get a good shadow and darker anti-aliased pixels.
-
-        if (glow)
-            ctx.restore();
-    },
-
-    _drawProgramCounterImageIfNeeded: function()
-    {
-        if (!this._needsProgramCounterImage)
-            return;
-
-        var ctx = document.getCSSCanvasContext("2d", "program-counter", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        this._drawProgramCounterInContext(ctx, true);
-
-        delete this._needsProgramCounterImage;
-    },
-
-    _drawBreakpointImagesIfNeeded: function(conditional)
-    {
-        if (!this._needsBreakpointImages)
-            return;
-
-        function drawBreakpoint(ctx, disabled, conditional)
-        {
-            ctx.beginPath();
-            ctx.moveTo(0, 2);
-            ctx.lineTo(2, 0);
-            ctx.lineTo(21, 0);
-            ctx.lineTo(26, 5.5);
-            ctx.lineTo(21, 11);
-            ctx.lineTo(2, 11);
-            ctx.lineTo(0, 9);
-            ctx.closePath();
-            ctx.fillStyle = conditional ? "rgb(217, 142, 1)" : "rgb(1, 142, 217)";
-            ctx.strokeStyle = conditional ? "rgb(205, 103, 0)" : "rgb(0, 103, 205)";
-            ctx.lineWidth = 3;
-            ctx.fill();
-            ctx.save();
-            ctx.clip();
-            ctx.stroke();
-            ctx.restore();
-
-            if (!disabled)
-                return;
-
-            ctx.save();
-            ctx.globalCompositeOperation = "destination-out";
-            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-            ctx.fillRect(0, 0, 26, 11);
-            ctx.restore();
-        }
-
-
-        // Unconditional breakpoints.
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-program-counter", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx);
-        ctx.clearRect(20, 0, 6, 11);
-        this._drawProgramCounterInContext(ctx, true);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, true);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-program-counter", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, true);
-        ctx.clearRect(20, 0, 6, 11);
-        this._drawProgramCounterInContext(ctx, true);
-
-
-        // Conditional breakpoints.
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-conditional", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, false, true);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-conditional-program-counter", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, false, true);
-        ctx.clearRect(20, 0, 6, 11);
-        this._drawProgramCounterInContext(ctx, true);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-conditional", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, true, true);
-
-        var ctx = document.getCSSCanvasContext("2d", "breakpoint-disabled-conditional-program-counter", 26, 11);
-        ctx.clearRect(0, 0, 26, 11);
-        drawBreakpoint(ctx, true, true);
-        ctx.clearRect(20, 0, 6, 11);
-        this._drawProgramCounterInContext(ctx, true);
-
-        delete this._needsBreakpointImages;
     }
 }
 

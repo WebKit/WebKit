@@ -60,74 +60,81 @@
 
 .webkit-line-number {
     color: rgb(128, 128, 128);
+    background-color: rgb(240, 240, 240);
+    border-right: 1px solid rgb(187, 187, 187);
     text-align: right;
     word-break: normal;
     -webkit-user-select: none;
-    background-color: rgb(240, 240, 240);
-    border-right: 1px solid rgb(187, 187, 187) !important;
-    padding-left: 2px;
-    padding-right: 2px;
-    background-repeat: no-repeat;
-    background-position: right 1px;
+	padding-right: 4px;
+	padding-left: 6px;
+}
+
+.webkit-line-number-outer {
+    margin-right: -4px;
+    margin-left: -4px;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 0 0 0px 2px;
     vertical-align: top;
+}
+
+.webkit-line-number-inner {
+    margin-right: 4px;
+}
+
+.webkit-breakpoint .webkit-line-number-inner, .webkit-breakpoint-conditional .webkit-line-number-inner, .webkit-execution-line .webkit-line-number-inner {
+    margin-right: -10px;
 }
 
 .webkit-line-content {
+    width: 100%;
     padding-left: 2px;
     vertical-align: top;
 }
 
-.webkit-execution-line .webkit-line-number {
-    color: transparent;
-    background-image: -webkit-canvas(program-counter);
-}
-
-.webkit-breakpoint .webkit-line-number {
+.webkit-breakpoint .webkit-line-number-outer {
     color: white;
-    background-image: -webkit-canvas(breakpoint);
+    border-width: 0 14px 0px 2px;
+    -webkit-border-image: url(Images/breakpointBorder.png) 0 14 0 2;
 }
 
-.webkit-breakpoint-disabled .webkit-line-number {
+.webkit-breakpoint-conditional .webkit-line-number-outer {
     color: white;
-    background-image: -webkit-canvas(breakpoint-disabled);
+    border-width: 0 14px 0px 2px;
+    -webkit-border-image: url(Images/breakpointConditionalBorder.png) 0 14 0 2;
 }
 
-.webkit-breakpoint.webkit-execution-line .webkit-line-number {
+.webkit-execution-line .webkit-line-number-outer {
     color: transparent;
-    background-image: -webkit-canvas(breakpoint-program-counter);
+    border-width: 0 14px 0px 2px;
+    -webkit-border-image: url(Images/programCounterBorder.png) 0 14 0 2;
 }
 
-.webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number {
-    color: transparent;
-    background-image: -webkit-canvas(breakpoint-disabled-program-counter);
-}
-
-.webkit-breakpoint.webkit-breakpoint-conditional .webkit-line-number {
+.webkit-breakpoint.webkit-execution-line .webkit-line-number-outer {
     color: white;
-    background-image: -webkit-canvas(breakpoint-conditional);
+    -webkit-border-image: url(Images/breakpointCounterBorder.png) 0 14 0 2;
 }
 
-.webkit-breakpoint-disabled.webkit-breakpoint-conditional .webkit-line-number {
-    color: white;
-    background-image: -webkit-canvas(breakpoint-disabled-conditional);
-}
-
-.webkit-breakpoint.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number {
+.webkit-breakpoint.webkit-execution-line .webkit-line-number-outer {
     color: transparent;
-    background-image: -webkit-canvas(breakpoint-conditional-program-counter);
+    -webkit-border-image: url(Images/breakpointCounterBorder.png) 0 14 0 2;
 }
 
-.webkit-breakpoint-disabled.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number {
+.webkit-breakpoint-conditional.webkit-execution-line .webkit-line-number-outer {
     color: transparent;
-    background-image: -webkit-canvas(breakpoint-disabled-conditional-program-counter);
+    -webkit-border-image: url(Images/breakpointConditionalCounterBorder.png) 0 14 0 2;
 }
 
-.breakpoints-deactivated .webkit-breakpoint .webkit-line-number {
+.webkit-breakpoint-disabled .webkit-line-number-outer {
     opacity: 0.5;
 }
 
-.breakpoints-deactivated .webkit-breakpoint-disabled .webkit-line-number {
+.breakpoints-deactivated .webkit-breakpoint .webkit-line-number-outer {
     opacity: 0.5;
+}
+
+.breakpoints-deactivated .webkit-breakpoint-disabled .webkit-line-number-outer {
+    opacity: 0.3;
 }
 
 .webkit-execution-line .webkit-line-content {

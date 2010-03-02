@@ -1,3 +1,24 @@
+2010-03-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: render breakpoints as border images instead of canvas.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35535
+
+        * inspector/front-end/Images/breakpointBorder.png: Added.
+        * inspector/front-end/Images/breakpointConditionalBorder.png: Added.
+        * inspector/front-end/Images/breakpointConditionalCounterBorder.png: Added.
+        * inspector/front-end/Images/breakpointCounterBorder.png: Added.
+        * inspector/front-end/Images/programCounterBorder.png: Added.
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._updateExecutionLine):
+        (WebInspector.SourceFrame.prototype._addBreakpointToSource):
+        (WebInspector.SourceFrame.prototype.resize):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextChunk):
+        * inspector/front-end/textViewer.css:
+
 2010-01-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Ariya Hidayat.
