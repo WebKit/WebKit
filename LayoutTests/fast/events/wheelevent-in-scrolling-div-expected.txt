@@ -1,0 +1,6 @@
+scrollTop=200 (should be 200): PASS
+scrollLeft=100 (should be 100): PASS
+wheelDeltaY=-24000 (should be -24000): PASS
+wheelDeltaX=-12000 (should be -12000): PASS
+wheelDelta=-24000 (should be -24000): PASS
+

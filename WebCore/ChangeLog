@@ -1,3 +1,48 @@
+2010-03-02  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add the capability to create and dispatch a WheelEvent in JavaScript.
+        Ensure the event's default handler is triggered in the same way as it is
+        during a PlatformWheelEvent.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35566
+
+        Test: fast/events/wheelevent-in-scrolling-div.html
+
+        * dom/Node.cpp: Ensure that the default behavior (scrolling) occurs for
+        wheel events originating both from the platform and from
+        JavaScript/ObjC.
+        (WebCore::Node::dispatchWheelEvent): Instantiate new WheelEvent with
+        the graunularity of the PlatformWheelEvent.
+        (WebCore::Node::defaultEventHandler): Add support for mousewheel events.
+        * dom/WheelEvent.cpp: Add three new member variables: m_deltaX, m_deltaY
+        and m_granularity.  m_deltaX and m_deltaY differ from m_wheelDeltaX and
+        m_wheelDeltaY, which are the number of wheel ticks multiplied by 120 for
+        IE compatibility.
+        (WebCore::WheelEvent::WheelEvent): Initialize new member variables.
+        (WebCore::WheelEvent::initWheelEvent): Same.
+        (WebCore::WheelEvent::initWebKitWheelEvent): Same.
+        * dom/WheelEvent.h: See WheelEvent.cpp.
+        (WebCore::WheelEvent::): Add Granularity enum (Pixel, Line, Page).
+        (WebCore::WheelEvent::create): Add new arguments.
+        (WebCore::WheelEvent::deltaX): Amount of scroll in x direction.
+        (WebCore::WheelEvent::deltaY): Amount of scroll in y direction.
+        (WebCore::WheelEvent::granularity): Units of deltaX and deltaY.
+        * dom/WheelEvent.idl: Add initWebKitWheelEvent() to JavaScript.  This is
+        the same as the initWheelEvent ObjC method.  As the DOM Level 3 Events
+        specification is still a working draft and subject to change, prefix
+        'WebKit' to the method signature to indicate experimental support.
+        * page/EventHandler.cpp: Move the scroll handling from
+        handleWheelEvent() to defaultWheelEventHandler(), which is executed on
+        both PlatformWheelEvents and JavaScript WheelEvents.
+        (WebCore::scrollNode): Renamed from scrollAndAcceptEvent().  Remove
+        the PlatformWheelEvent from the argument list and instead return a
+        boolean indicating if the scroll event was accepted.
+        (WebCore::EventHandler::handleWheelEvent): Move scrolling code from here
+        (WebCore::EventHandler::defaultWheelEventHandler): ...to here.
+        * page/EventHandler.h: Add function signature.
+
 2010-03-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

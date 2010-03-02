@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -2902,14 +2902,27 @@ void Node::dispatchWheelEvent(PlatformWheelEvent& e)
         }
     }
     
-    RefPtr<WheelEvent> we = WheelEvent::create(e.wheelTicksX(), e.wheelTicksY(),
+    WheelEvent::Granularity granularity;
+    switch (e.granularity()) {
+    case ScrollByPageWheelEvent:
+        granularity = WheelEvent::Page;
+        break;
+    case ScrollByPixelWheelEvent:
+    default:
+        granularity = WheelEvent::Pixel;
+        break;
+    }
+    
+    RefPtr<WheelEvent> we = WheelEvent::create(e.wheelTicksX(), e.wheelTicksY(), e.deltaX(), e.deltaY(), granularity,
         document()->defaultView(), e.globalX(), e.globalY(), adjustedPageX, adjustedPageY,
         e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
 
     we->setAbsoluteLocation(IntPoint(pos.x(), pos.y()));
 
-    if (!dispatchEvent(we.release()))
+    if (!dispatchEvent(we) || we->defaultHandled())
         e.accept();
+
+    we.release();
 }
 
 void Node::dispatchFocusEvent()
@@ -2966,6 +2979,18 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
+    } else if (eventType == eventNames().mousewheelEvent && event->isWheelEvent()) {
+        WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
+        
+        // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
+        // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
+        Node* startNode = this;
+        while (startNode && !startNode->renderer())
+            startNode = startNode->parent();
+        
+        if (startNode && startNode->renderer())
+            if (Frame* frame = document()->frame())
+                frame->eventHandler()->defaultWheelEventHandler(startNode, wheelEvent);
     }
 }
 

@@ -1,3 +1,13 @@
+2010-03-02  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a test for the patch to https://bugs.webkit.org/show_bug.cgi?id=35566.
+        These can be run manually or from DRT.
+
+        * fast/events/wheelevent-in-scrolling-div-expected.txt: Added.
+        * fast/events/wheelevent-in-scrolling-div.html: Added.
+
 2010-03-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.
