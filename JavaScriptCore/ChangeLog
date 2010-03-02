@@ -1,3 +1,53 @@
+2010-03-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Introduce a new class; QScriptString.
+
+        The QScriptString class should act as a handle to "interned"
+        strings in a QScriptEngine.
+
+        [Qt] QtScript should provide QScriptString
+        https://bugs.webkit.org/show_bug.cgi?id=34843
+
+        * qt/api/QtScript.pro:
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::toStringHandle):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::toStringHandle):
+        * qt/api/qscriptstring.cpp: Added.
+        (QScriptString::QScriptString):
+        (QScriptString::~QScriptString):
+        (QScriptString::operator=):
+        (QScriptString::isValid):
+        (QScriptString::operator==):
+        (QScriptString::operator!=):
+        (QScriptString::toArrayIndex):
+        (QScriptString::toString):
+        (QScriptString::operator QString):
+        (qHash):
+        * qt/api/qscriptstring.h: Added.
+        * qt/api/qscriptstring_p.h: Added.
+        (QScriptStringPrivate::QScriptStringPrivate):
+        (QScriptStringPrivate::~QScriptStringPrivate):
+        (QScriptStringPrivate::get):
+        (QScriptStringPrivate::isValid):
+        (QScriptStringPrivate::operator==):
+        (QScriptStringPrivate::operator!=):
+        (QScriptStringPrivate::toArrayIndex):
+        (QScriptStringPrivate::toString):
+        (QScriptStringPrivate::id):
+        * qt/tests/qscriptstring/qscriptstring.pro: Added.
+        * qt/tests/qscriptstring/tst_qscriptstring.cpp: Added.
+        (tst_QScriptString::tst_QScriptString):
+        (tst_QScriptString::~tst_QScriptString):
+        (tst_QScriptString::test):
+        (tst_QScriptString::hash):
+        (tst_QScriptString::toArrayIndex_data):
+        (tst_QScriptString::toArrayIndex):
+        * qt/tests/tests.pro:
+
 2010-03-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).

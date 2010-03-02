@@ -21,6 +21,7 @@
 #define qscriptconverter_p_h
 
 #include <JavaScriptCore/JavaScript.h>
+#include <QtCore/qnumeric.h>
 #include <QtCore/qstring.h>
 
 /*
@@ -33,6 +34,19 @@
 */
 class QScriptConverter {
 public:
+    static quint32 toArrayIndex(const JSStringRef jsstring)
+    {
+        // FIXME this function should be exported by JSC C API.
+        QString qstring = toString(jsstring);
+
+        bool ok;
+        quint32 idx = qstring.toUInt(&ok);
+        if (!ok || toString(idx) != qstring)
+            idx = 0xffffffff;
+
+        return idx;
+    }
+
     static QString toString(const JSStringRef str)
     {
         return QString(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(str)), JSStringGetLength(str));

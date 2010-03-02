@@ -88,6 +88,19 @@ void QScriptEngine::collectGarbage()
 }
 
 /*!
+  Returns a handle that represents the given string, \a str.
+
+  QScriptString can be used to quickly look up properties, and
+  compare property names, of script objects.
+
+  \sa QScriptValue::property()
+*/
+QScriptString QScriptEngine::toStringHandle(const QString& str)
+{
+    return QScriptStringPrivate::get(d_ptr->toStringHandle(str));
+}
+
+/*!
   Returns a QScriptValue of the primitive type Null.
 
   \sa undefinedValue()

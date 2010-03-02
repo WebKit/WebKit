@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS =   qscriptengine \
-            qscriptvalue
+            qscriptvalue \
+            qscriptstring

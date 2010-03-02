@@ -21,6 +21,7 @@ INCLUDEPATH += $$PWD/../../API
 SOURCES +=  $$PWD/qscriptengine.cpp \
             $$PWD/qscriptengine_p.cpp \
             $$PWD/qscriptvalue.cpp \
+            $$PWD/qscriptstring.cpp \
 
 HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptengine.h \
@@ -28,6 +29,8 @@ HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptvalue.h \
             $$PWD/qscriptvalue_p.h \
             $$PWD/qscriptconverter_p.h \
+            $$PWD/qscriptstring.h \
+            $$PWD/qscriptstring_p.h \
 
 
 !static: DEFINES += QT_MAKEDLL

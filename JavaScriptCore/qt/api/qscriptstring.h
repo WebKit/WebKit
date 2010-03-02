@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,36 +17,42 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef qscriptengine_h
-#define qscriptengine_h
+#ifndef qscriptstring_h
+#define qscriptstring_h
 
-#include "qscriptstring.h"
-#include <QtCore/qobject.h>
+#include "qtscriptglobal.h"
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>
 
-class QScriptValue;
-class QScriptEnginePrivate;
+class QScriptStringPrivate;
+typedef QExplicitlySharedDataPointer<QScriptStringPrivate> QScriptStringPtr;
 
-// Internal typedef
-typedef QExplicitlySharedDataPointer<QScriptEnginePrivate> QScriptEnginePtr;
-
-class QScriptEngine : public QObject {
+class Q_JAVASCRIPT_EXPORT QScriptString {
 public:
-    QScriptEngine();
-    ~QScriptEngine();
+    QScriptString();
+    QScriptString(const QScriptString& other);
+    ~QScriptString();
 
-    QScriptValue evaluate(const QString& program, const QString& fileName = QString(), int lineNumber = 1);
-    void collectGarbage();
+    QScriptString& operator=(const QScriptString& other);
 
-    QScriptString toStringHandle(const QString& str);
+    bool isValid() const;
 
-    QScriptValue nullValue();
-    QScriptValue undefinedValue();
+    bool operator==(const QScriptString& other) const;
+    bool operator!=(const QScriptString& other) const;
+
+    quint32 toArrayIndex(bool* ok = 0) const;
+
+    QString toString() const;
+    operator QString() const;
+
 private:
-    friend class QScriptEnginePrivate;
+    QScriptString(QScriptStringPrivate* d);
 
-    QScriptEnginePtr d_ptr;
+    QScriptStringPtr d_ptr;
+
+    friend class QScriptStringPrivate;
 };
 
-#endif
+uint qHash(const QScriptString& key);
+
+#endif // qscriptstring_h
