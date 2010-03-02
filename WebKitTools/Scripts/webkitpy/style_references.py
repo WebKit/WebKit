@@ -41,6 +41,8 @@
 import os
 
 from diff_parser import DiffParser
+from init.logtesting import UnitTestLog
+from init.logtesting import UnitTestLogStream
 from scm import detect_scm_system
 
 

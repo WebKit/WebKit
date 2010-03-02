@@ -43,6 +43,7 @@ same line, but it is far from perfect (in either direction).
 """
 
 import codecs
+import logging
 import os
 import os.path
 import sys
@@ -50,13 +51,28 @@ import sys
 import webkitpy.style.checker as checker
 from webkitpy.style_references import SimpleScm
 
+_log = logging.getLogger("check-webkit-style")
+
 def main():
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
-    sys.stderr = codecs.StreamReaderWriter(sys.stderr,
-                                           codecs.getreader('utf8'),
-                                           codecs.getwriter('utf8'),
-                                           'replace')
+    stderr = codecs.StreamReaderWriter(sys.stderr,
+                                       codecs.getreader('utf8'),
+                                       codecs.getwriter('utf8'),
+                                       'replace')
+    # Setting an "encoding" attribute on the stream is necessary to
+    # prevent the logging module from raising an error.  See
+    # the checker.configure_logging() function for more information.
+    stderr.encoding = "UTF-8"
+
+    # FIXME: Change webkitpy.style so that we do not need to overwrite
+    #        the global sys.stderr.  This involves updating the code to
+    #        accept a stream parameter where necessary, and not calling
+    #        sys.stderr explicitly anywhere.
+    sys.stderr = stderr
+
+    checker.configure_logging(stderr)
+
     parser = checker.check_webkit_style_parser()
     (files, options) = parser.parse(sys.argv[1:])
 
@@ -78,7 +94,8 @@ def main():
                 # FIXME: If the range is a "...", the code should find the common ancestor and
                 # start there (see git diff --help for information about how ... usually works).
                 commit = commit[:commit.find('..')]
-                print >> sys.stderr, "Warning: Ranges are not supported for --git-commit. Checking all changes since %s.\n" % commit
+                _log.warn("Ranges are not supported for --git-commit. "
+                          "Checking all changes since %s." % commit)
             patch = scm.create_patch_since_local_commit(commit)
         else:
             patch = scm.create_patch()
@@ -86,8 +103,8 @@ def main():
 
     error_count = style_checker.error_count
     file_count = style_checker.file_count
-    sys.stderr.write('Total errors found: %d in %d files\n'
-                     % (error_count, file_count))
+    _log.info("Total errors found: %d in %d files"
+              % (error_count, file_count))
     # We fail when style errors are found or there are no checked files.
     sys.exit(error_count > 0 or file_count == 0)
 

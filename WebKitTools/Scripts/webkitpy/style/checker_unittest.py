@@ -34,15 +34,19 @@
 
 """Unit tests for style.py."""
 
+import logging
 import unittest
 
 import checker as style
+from ..style_references import UnitTestLog
+from ..style_references import UnitTestLogStream
 from checker import _BASE_FILTER_RULES
 from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
 from checker import _all_categories
 from checker import check_webkit_style_configuration
 from checker import check_webkit_style_parser
+from checker import configure_logging
 from checker import ProcessorDispatcher
 from checker import StyleChecker
 from checker import StyleCheckerConfiguration
@@ -52,6 +56,58 @@ from optparser import ArgumentParser
 from optparser import CommandOptionValues
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
+
+
+class ConfigureLoggingTest(unittest.TestCase):
+
+    """Tests the configure_logging() function."""
+
+    def setUp(self):
+        log_stream = UnitTestLogStream()
+
+        self._handlers = configure_logging(log_stream)
+        self._log_stream = log_stream
+
+    def tearDown(self):
+        """Reset logging to its original state.
+
+        This method ensures that the logging configuration set up
+        for a unit test does not affect logging in other unit tests.
+
+        """
+        # This should be the same as the logger configured in the
+        # configure_logging() method.
+        logger = logging.getLogger()
+        for handler in self._handlers:
+            logger.removeHandler(handler)
+
+    def _log(self):
+        return logging.getLogger("webkitpy")
+
+    def assert_log_messages(self, messages):
+        """Assert that the logged messages equal the given messages."""
+        self.assertEquals(messages, self._log_stream.messages)
+
+    def test_warning_message(self):
+        self._log().warn("test message")
+        self.assert_log_messages(["WARNING: test message\n"])
+
+    def test_below_warning_message(self):
+        # We test the boundary case of a logging level equal to 29.
+        # In practice, we will probably only be calling log.info(),
+        # which corresponds to a logging level of 20.
+        level = logging.WARNING - 1  # Equals 29.
+        self._log().log(level, "test message")
+        self.assert_log_messages(["test message\n"])
+
+    def test_debug_message(self):
+        self._log().debug("test message")
+        self.assert_log_messages([])
+
+    def test_two_messages(self):
+        self._log().info("message1")
+        self._log().info("message2")
+        self.assert_log_messages(["message1\n", "message2\n"])
 
 
 class GlobalVariablesTest(unittest.TestCase):
@@ -446,10 +502,14 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
 
     """
     def setUp(self):
+        self._log = UnitTestLog(self)
         self.got_file_path = None
         self.got_handle_style_error = None
         self.got_processor = None
         self.warning_messages = ""
+
+    def tearDown(self):
+        self._log.tearDown()
 
     def mock_stderr_write(self, warning_message):
         self.warning_messages += warning_message
@@ -523,8 +583,9 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
 
         # Check the outcome.
         self.call_check_file(file_path)
-        self.assert_attributes(None, None, None,
-                               'Ignoring "gtk2drawing.c": this file is exempt from the style guide.\n')
+        self.assert_attributes(None, None, None, "")
+        self._log.assertMessages(["WARNING: File exempt from style guide. "
+                                  'Skipping: "gtk2drawing.c"\n'])
 
     def test_check_file_on_non_skipped(self):
 

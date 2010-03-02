@@ -1,3 +1,46 @@
+2010-03-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Started using the logging module in check-webkit-style.
+        This provides more options for debugging and a more flexible,
+        uniform way to report messages to the end-user.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35484
+
+        Also included classes in a central location to facilitate
+        the unit testing of logging code (setUp and tearDown of unit
+        test logging configurations, etc).
+
+        * Scripts/check-webkit-style:
+          - Added a call to configure_logging() in the beginning of main().
+          - Replaced two calls to sys.stderr.write() with appropriate
+            logging calls.
+
+        * Scripts/webkitpy/init/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+
+        * Scripts/webkitpy/init/logtesting.py: Added.
+          - Added a UnitTestLogStream class to capture log output
+            during unit tests.
+          - Added a UnitTestLog class that provides convenience methods
+            for unit-testing logging code.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a configure_logging() method.
+          - Added a _LevelLoggingFilter class to filter out log messages
+            above a certain logging level.
+          - Removed the _stderr_write() method from the StyleChecker class
+            and replaced its use with appropriate logging calls.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added a ConfigureLoggingTest class to unit test the
+            configure_logging() method.
+          - Updated the StyleCheckerCheckFileTest class as necessary.
+
+        * Scripts/webkitpy/style_references.py:
+          - Added references to logtesting.UnitTestLog and
+            logtesting.UnitTestLogStream.
+
 2010-03-01  Chris Fleizach  <cfleizach@apple.com>
 
         Fixing broken DRT on Leopard/Tiger. Second try.
