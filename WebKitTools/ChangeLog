@@ -1,3 +1,12 @@
+2010-03-01  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Xan Lopez.
+
+        webkit-build could pass unknown arguments to autogen.sh
+        https://bugs.webkit.org/show_bug.cgi?id=35454
+
+        * Scripts/build-webkit:
+
 2010-03-01  Dirk Pranke  <dpranke@chromium.org>
 
         Rubber-stamped by Dimitri Glazkov.

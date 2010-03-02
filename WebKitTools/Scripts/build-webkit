@@ -257,6 +257,7 @@ my @options = ();
 
 # enable autotool options accordingly
 if (isGtk()) {
+    @options = @ARGV;
     foreach (@features) {
         push @options, autotoolsFlag(${$_->{value}}, $_->{option});
     }
