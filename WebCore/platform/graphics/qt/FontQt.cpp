@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
-    Copyright (C) 2008 Holger Hans Peter Freyther
+    Copyright (C) 2008, 2010 Holger Hans Peter Freyther
     Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
@@ -173,6 +173,9 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 {
     if (!run.length())
         return 0;
+
+    if (run.length() == 1 && treatAsSpace(run[0]))
+        return QFontMetrics(font()).width(run[0]) - m_wordSpacing + run.padding();
 
     String sanitized = Font::normalizeSpaces(String(run.characters(), run.length()));
     QString string = fromRawDataWithoutRef(sanitized);

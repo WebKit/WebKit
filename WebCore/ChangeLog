@@ -1,3 +1,17 @@
+2010-01-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Special case Font::floatWidthForComplexText for single space
+        https://bugs.webkit.org/show_bug.cgi?id=33876
+
+        For a single space we can go through the QFontMetric::width routine
+        instead of converting the WebCore::String to a QString and then
+        going through the QTextLine.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+
 2010-02-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Gustavo Noronha.
