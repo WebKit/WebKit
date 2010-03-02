@@ -1,3 +1,35 @@
+2010-03-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION(r51097) - Unable to log in to statefarm.com
+        <rdar://problem/7672667> and https://bugs.webkit.org/show_bug.cgi?id=35556
+
+        Test: fast/loader/for-window-event-onload-scripts.html
+
+        Match Gecko's rules for executing "for/event" scripts:
+          -If there's only a 'for' attribute, execute it.
+          -If there's only an 'event' attribute, execute it.
+          -If there's a 'for=window' and 'event=onload', execute it.
+          -If there's a 'for=window' and 'event=onload()', execute it.
+          -If there's any other combination of both 'for' and 'event', don't execute it.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::shouldExecuteAsJavaScript):
+        * dom/ScriptElement.h:
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::eventAttributeValue):
+        * html/HTMLScriptElement.h:
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::eventAttributeValue):
+        * svg/SVGScriptElement.h:
+
+        Add the event attribute name:
+        * html/HTMLAttributeNames.in:
+
+
 2010-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

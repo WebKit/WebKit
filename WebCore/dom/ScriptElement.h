@@ -43,6 +43,7 @@ public:
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
     virtual String forAttributeValue() const = 0;
+    virtual String eventAttributeValue() const = 0;
 
     virtual void dispatchLoadEvent() = 0;
     virtual void dispatchErrorEvent() = 0;

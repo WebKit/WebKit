@@ -220,6 +220,11 @@ String HTMLScriptElement::forAttributeValue() const
     return getAttribute(forAttr).string();
 }
 
+String HTMLScriptElement::eventAttributeValue() const
+{
+    return getAttribute(eventAttr).string();
+}
+
 void HTMLScriptElement::dispatchLoadEvent()
 {
     ASSERT(!m_data.haveFiredLoadEvent());
