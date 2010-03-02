@@ -1,3 +1,149 @@
+2010-03-01  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Move gstreamer-related source files to platform/graphics/gstreamer
+        https://bugs.webkit.org/show_bug.cgi?id=35518
+
+        Moved GStreamer-related files to platform/graphics/gstreamer so
+        other ports could benefit from this media player implementation.
+
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/DataSourceGStreamer.cpp: Renamed from WebCore/platform/graphics/gtk/DataSourceGStreamer.cpp.
+        (_do_init):
+        (webkit_data_src_base_init):
+        (webkit_data_src_class_init):
+        (webkit_data_src_reset):
+        (webkit_data_src_init):
+        (webkit_data_src_finalize):
+        (webkit_data_src_change_state):
+        (webkit_data_src_uri_get_type):
+        (webkit_data_src_uri_get_protocols):
+        (webkit_data_src_uri_get_uri):
+        (webkit_data_src_uri_set_uri):
+        (webkit_data_src_uri_handler_init):
+        * platform/graphics/gstreamer/DataSourceGStreamer.h: Renamed from WebCore/platform/graphics/gtk/DataSourceGStreamer.h.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Renamed from WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp.
+        (WebCore::greatestCommonDivisor):
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback):
+        (WebCore::notifyVolumeIdleCallback):
+        (WebCore::mediaPlayerPrivateMuteChangedCallback):
+        (WebCore::notifyMuteIdleCallback):
+        (WebCore::bufferingTimeoutCallback):
+        (WebCore::playbackPosition):
+        (WebCore::mediaPlayerPrivateRepaintCallback):
+        (WebCore::MediaPlayerPrivate::create):
+        (WebCore::MediaPlayerPrivate::registerMediaEngine):
+        (WebCore::doGstInit):
+        (WebCore::MediaPlayerPrivate::isAvailable):
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::changePipelineState):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::currentTime):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::startEndPointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivate::cancelSeek):
+        (WebCore::MediaPlayerPrivate::endPointTimerFired):
+        (WebCore::MediaPlayerPrivate::paused):
+        (WebCore::MediaPlayerPrivate::seeking):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::hasVideo):
+        (WebCore::MediaPlayerPrivate::hasAudio):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::setRate):
+        (WebCore::MediaPlayerPrivate::networkState):
+        (WebCore::MediaPlayerPrivate::readyState):
+        (WebCore::MediaPlayerPrivate::buffered):
+        (WebCore::MediaPlayerPrivate::processBufferingStats):
+        (WebCore::MediaPlayerPrivate::queryBufferingStats):
+        (WebCore::MediaPlayerPrivate::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+        (WebCore::MediaPlayerPrivate::cancelLoad):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::mediaLocationChanged):
+        (WebCore::MediaPlayerPrivate::loadNextLocation):
+        (WebCore::MediaPlayerPrivate::loadStateChanged):
+        (WebCore::MediaPlayerPrivate::sizeChanged):
+        (WebCore::MediaPlayerPrivate::timeChanged):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        (WebCore::MediaPlayerPrivate::supportsMuting):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::muteChangedCallback):
+        (WebCore::MediaPlayerPrivate::muteChanged):
+        (WebCore::MediaPlayerPrivate::loadingFailed):
+        (WebCore::MediaPlayerPrivate::setSize):
+        (WebCore::MediaPlayerPrivate::setVisible):
+        (WebCore::MediaPlayerPrivate::repaint):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivate::getSupportedTypes):
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::hasSingleSecurityOrigin):
+        (WebCore::MediaPlayerPrivate::supportsFullscreen):
+        (WebCore::MediaPlayerPrivate::setAutobuffer):
+        (WebCore::MediaPlayerPrivate::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Renamed from WebCore/platform/graphics/gtk/MediaPlayerPrivateGStreamer.h.
+        (WebCore::MediaPlayerPrivate::pipelineReset):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp: Renamed from WebCore/platform/graphics/gtk/VideoSinkGStreamer.cpp.
+        (webkit_video_sink_base_init):
+        (webkit_video_sink_init):
+        (webkit_video_sink_timeout_func):
+        (webkit_video_sink_render):
+        (webkit_video_sink_dispose):
+        (unlock_buffer_mutex):
+        (webkit_video_sink_unlock):
+        (webkit_video_sink_unlock_stop):
+        (webkit_video_sink_stop):
+        (webkit_video_sink_start):
+        (marshal_VOID__MINIOBJECT):
+        (webkit_video_sink_class_init):
+        (webkit_video_sink_new):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h: Renamed from WebCore/platform/graphics/gtk/VideoSinkGStreamer.h.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp: Renamed from WebCore/platform/graphics/gtk/WebKitWebSourceGStreamer.cpp.
+        (doInit):
+        (webkit_web_src_base_init):
+        (webkit_web_src_class_init):
+        (webkit_web_src_init):
+        (webKitWebSrcFinalize):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcUriGetType):
+        (webKitWebSrcGetProtocols):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcUriHandlerInit):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcNeedDataCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcEnoughDataCb):
+        (webKitWebSrcSeekMainCb):
+        (webKitWebSrcSeekDataCb):
+        (webKitWebSrcSetFrame):
+        (StreamingClient::StreamingClient):
+        (StreamingClient::~StreamingClient):
+        (StreamingClient::willSendRequest):
+        (StreamingClient::didReceiveResponse):
+        (StreamingClient::didReceiveData):
+        (StreamingClient::didFinishLoading):
+        (StreamingClient::didFail):
+        (StreamingClient::wasBlocked):
+        (StreamingClient::cannotShowURL):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h: Renamed from WebCore/platform/graphics/gtk/WebKitWebSourceGStreamer.h.
+
 2010-03-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
