@@ -95,6 +95,10 @@
     <file>popover.css</file>
     <file>textViewer.css</file>
     <file>Images/back.png</file>
+    <file>Images/breakpointBorder.png</file>
+    <file>Images/breakpointConditionalBorder.png</file>
+    <file>Images/breakpointConditionalCounterBorder.png</file>
+    <file>Images/breakpointCounterBorder.png</file>
     <file>Images/breakpointsActivateButtonGlyph.png</file>
     <file>Images/breakpointsDeactivateButtonGlyph.png</file>
     <file>Images/checker.png</file>
@@ -154,6 +158,7 @@
     <file>Images/profilesIcon.png</file>
     <file>Images/profileSmallIcon.png</file>
     <file>Images/profilesSilhouette.png</file>
+    <file>Images/programCounterBorder.png</file>
     <file>Images/radioDot.png</file>
     <file>Images/recordButtonGlyph.png</file>
     <file>Images/recordToggledButtonGlyph.png</file>

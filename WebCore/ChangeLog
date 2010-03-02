@@ -1,3 +1,10 @@
+2010-03-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: adding missing image files to WebKit.qrc and gypi.
+
+        * WebCore.gypi:
+        * inspector/front-end/WebKit.qrc:
+
 2010-03-02  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Simon Hausmann.

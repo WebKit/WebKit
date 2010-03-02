@@ -3811,6 +3811,10 @@
         'webinspector_image_files': [
 
             'inspector/front-end/Images/back.png',
+            'inspector/front-end/Images/breakpointBorder.png',
+            'inspector/front-end/Images/breakpointConditionalBorder.png',
+            'inspector/front-end/Images/breakpointConditionalCounterBorder.png',
+            'inspector/front-end/Images/breakpointCounterBorder.png',
             'inspector/front-end/Images/breakpointsActivateButtonGlyph.png',
             'inspector/front-end/Images/breakpointsDeactivateButtonGlyph.png',
             'inspector/front-end/Images/checker.png',
@@ -3870,6 +3874,7 @@
             'inspector/front-end/Images/profilesIcon.png',
             'inspector/front-end/Images/profileSmallIcon.png',
             'inspector/front-end/Images/profilesSilhouette.png',
+            'inspector/front-end/Images/programCounterBorder.png',
             'inspector/front-end/Images/radioDot.png',
             'inspector/front-end/Images/recordButtonGlyph.png',
             'inspector/front-end/Images/recordToggledButtonGlyph.png',
