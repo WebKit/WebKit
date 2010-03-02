@@ -11,6 +11,9 @@ JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 WebCore/WebCore.gyp/WebCore.xcodeproj
 WebKit/chromium/WebKit.xcodeproj
 
+# Ignore compiled java tests:
+LayoutTests/java/*.class
+
 # Though the GTK build builds in a subdirectory, autogen.sh still deposits
 # a few files into the source tree.
 /aclocal.m4
