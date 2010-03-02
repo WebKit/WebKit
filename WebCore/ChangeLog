@@ -1,3 +1,13 @@
+2010-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make the default constructor available to all platforms.
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/KeyEventMac.mm:
+
 2010-03-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by David Levin.

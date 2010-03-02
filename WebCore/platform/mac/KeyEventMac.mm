@@ -811,19 +811,6 @@ static inline String unmodifiedTextFromEvent(NSEvent* event)
     return [event charactersIgnoringModifiers];
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent()
-    : m_type(KeyDown)
-    , m_autoRepeat(false)
-    , m_windowsVirtualKeyCode(0)
-    , m_nativeVirtualKeyCode(0)
-    , m_isKeypad(false)
-    , m_shiftKey(false)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_metaKey(false)
-{
-}
-
 PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
     : m_type(isKeyUpEvent(event) ? PlatformKeyboardEvent::KeyUp : PlatformKeyboardEvent::KeyDown)
     , m_text(textFromEvent(event))
