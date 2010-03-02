@@ -711,8 +711,10 @@ bool testDocumentOpen(NPP npp)
 
     NPVariant docVariant;
     browser->getproperty(npp, windowObject, documentId, &docVariant);
-    if (docVariant.type != NPVariantType_Object)
+    if (docVariant.type != NPVariantType_Object) {
+        browser->releaseobject(windowObject);
         return false;
+    }
 
     NPObject *documentObject = NPVARIANT_TO_OBJECT(docVariant);
 
@@ -721,17 +723,25 @@ bool testDocumentOpen(NPP npp)
     STRINGZ_TO_NPVARIANT("_blank", openArgs[1]);
 
     NPVariant result;
-    if (browser->invoke(npp, documentObject, openId, openArgs, 2, &result))
+    if (!browser->invoke(npp, documentObject, openId, openArgs, 2, &result)) {
+        browser->releaseobject(windowObject);
         browser->releaseobject(documentObject);
-
-    if (result.type == NPVariantType_Object) {
-        pluginLogWithWindowObjectVariableArgs(windowObject, npp, "DOCUMENT OPEN SUCCESS");
-        notifyTestCompletion(npp, result.value.objectValue);
-        browser->releaseobject(result.value.objectValue);
-        return true;
+        return false;
     }
 
-    return false;
+    browser->releaseobject(documentObject);
+
+    if (result.type != NPVariantType_Object) {
+        browser->releaseobject(windowObject);
+        browser->releasevariantvalue(&result);
+        return false;
+    }
+
+    pluginLogWithWindowObjectVariableArgs(windowObject, npp, "DOCUMENT OPEN SUCCESS");
+    notifyTestCompletion(npp, result.value.objectValue);
+    browser->releaseobject(result.value.objectValue);
+    browser->releaseobject(windowObject);
+    return true;
 }
 
 bool testWindowOpen(NPP npp)
@@ -748,14 +758,22 @@ bool testWindowOpen(NPP npp)
     STRINGZ_TO_NPVARIANT("_blank", openArgs[1]);
 
     NPVariant result;
-    bool didSucceed = browser->invoke(npp, windowObject, openId, openArgs, 2, &result);
-    if (didSucceed && (result.type == NPVariantType_Object)) {
-        pluginLogWithWindowObjectVariableArgs(windowObject, npp, "WINDOW OPEN SUCCESS");
-        notifyTestCompletion(npp, result.value.objectValue);
-        browser->releaseobject(result.value.objectValue);
-        return true;
+    if (!browser->invoke(npp, windowObject, openId, openArgs, 2, &result)) {
+        browser->releaseobject(windowObject);
+        return false;
     }
-    return false;
+
+    if (result.type != NPVariantType_Object) {
+        browser->releaseobject(windowObject);
+        browser->releasevariantvalue(&result);
+        return false;
+    }
+
+    pluginLogWithWindowObjectVariableArgs(windowObject, npp, "WINDOW OPEN SUCCESS");
+    notifyTestCompletion(npp, result.value.objectValue);
+    browser->releaseobject(result.value.objectValue);
+    browser->releaseobject(windowObject);
+    return true;
 }
 
 static bool testSetStatus(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
