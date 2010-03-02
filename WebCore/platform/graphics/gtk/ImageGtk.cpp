@@ -107,12 +107,12 @@ PassRefPtr<Image> Image::loadPlatformThemeIcon(const char* name, int size)
     return loadImageFromFile(getThemeIconFileName(name, size));
 }
 
-static inline unsigned char* getCairoSurfacePixel(unsigned char* data, uint x, uint y, uint rowStride)
+static inline unsigned char* getCairoSurfacePixel(unsigned char* data, unsigned x, unsigned y, unsigned rowStride)
 {
     return data + (y * rowStride) + x * 4;
 }
 
-static inline guchar* getGdkPixbufPixel(guchar* data, uint x, uint y, uint rowStride)
+static inline guchar* getGdkPixbufPixel(guchar* data, unsigned x, unsigned y, unsigned rowStride)
 {
     return data + (y * rowStride) + x * 4;
 }

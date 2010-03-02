@@ -1,3 +1,14 @@
+2010-03-02  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Xan Lopez.
+
+        Use unsigned instead of uint which does not exist on windows
+        https://bugs.webkit.org/show_bug.cgi?id=35546
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::getCairoSurfacePixel):
+        (WebCore::getGdkPixbufPixel):
+
 2010-03-02  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
