@@ -77,6 +77,19 @@ public:
     static bool openDatabaseEnabled();
 #endif
 
+#if ENABLE(3D_CANVAS)
+    static void setWebGLEnabled(bool isEnabled) { isWebGLEnabled = isEnabled; }
+    static bool webGLRenderingContextEnabled() { return isWebGLEnabled; }
+    static bool webGLArrayBufferEnabled() { return isWebGLEnabled; }
+    static bool webGLByteArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLUnsignedByteArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLShortArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLUnsignedShortArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLIntArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLUnsignedIntArrayEnabled() { return isWebGLEnabled; }
+    static bool webGLFloatArrayEnabled() { return isWebGLEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -87,6 +100,7 @@ private:
     static bool isApplicationCacheEnabled;
     static bool isGeolocationEnabled;
     static bool isIndexedDBEnabled;
+    static bool isWebGLEnabled;
 };
 
 } // namespace WebCore

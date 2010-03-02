@@ -184,4 +184,20 @@ bool WebRuntimeFeatures::isIndexedDatabaseEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableWebGL(bool enable)
+{
+#if ENABLE(3D_CANVAS)
+    RuntimeEnabledFeatures::setWebGLEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isWebGLEnabled()
+{
+#if ENABLE(3D_CANVAS)
+    return RuntimeEnabledFeatures::webGLRenderingContextEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

@@ -1,3 +1,15 @@
+2010-03-02  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add EnabledAtRuntime attribute to WebGLArray constructors
+        https://bugs.webkit.org/show_bug.cgi?id=35558
+
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableWebGL):
+        (WebKit::WebRuntimeFeatures::isWebGLEnabled):
+
 2010-03-02  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Darin Fisher.

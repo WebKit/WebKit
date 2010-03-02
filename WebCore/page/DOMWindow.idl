@@ -442,17 +442,17 @@ module window {
 
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
         attribute ImageDataConstructor ImageData;
-        attribute [Conditional=3D_CANVAS] WebGLRenderingContextConstructor WebGLRenderingContext;
+        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
         attribute TextMetricsConstructor TextMetrics;
 
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLArrayBufferConstructor WebGLArrayBuffer; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLByteArrayConstructor WebGLByteArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLUnsignedByteArrayConstructor WebGLUnsignedByteArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLShortArrayConstructor WebGLShortArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLUnsignedShortArrayConstructor WebGLUnsignedShortArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLIntArrayConstructor WebGLIntArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLUnsignedIntArrayConstructor WebGLUnsignedIntArray; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS] WebGLFloatArrayConstructor WebGLFloatArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLArrayBufferConstructor WebGLArrayBuffer; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLByteArrayConstructor WebGLByteArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLUnsignedByteArrayConstructor WebGLUnsignedByteArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLShortArrayConstructor WebGLShortArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLUnsignedShortArrayConstructor WebGLUnsignedShortArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLIntArrayConstructor WebGLIntArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLUnsignedIntArrayConstructor WebGLUnsignedIntArray; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=3D_CANVAS,EnabledAtRuntime] WebGLFloatArrayConstructor WebGLFloatArray; // Usable with new operator
 
         attribute EventConstructor Event;
         attribute BeforeLoadEventConstructor BeforeLoadEvent;
