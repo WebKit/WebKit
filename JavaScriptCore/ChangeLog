@@ -1,3 +1,19 @@
+2010-03-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        PropertySlot::getValue(ExecState, unsigned) unnecessarily converts index to an Identifier
+        https://bugs.webkit.org/show_bug.cgi?id=35561
+
+        Fix this by defining a separate property getter function for index getters.  This allows
+        us to pass an unsigned number without the conversion to an Identifier.  We then update
+        setCustomIndex to take this new getter type.
+
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCustomIndex):
+
 2010-03-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

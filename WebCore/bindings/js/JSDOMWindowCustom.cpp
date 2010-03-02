@@ -134,9 +134,9 @@ static JSValue childFrameGetter(ExecState* exec, const Identifier& propertyName,
     return toJS(exec, static_cast<JSDOMWindow*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
 }
 
-static JSValue indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
 {
-    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(slot.index())->domWindow());
+    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->child(index)->domWindow());
 }
 
 static JSValue namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
