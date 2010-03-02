@@ -231,10 +231,13 @@ class ChromiumDriver(base.Driver):
         # We need to pass close_fds=True to work around Python bug #2320
         # (otherwise we can hang when we kill test_shell when we are running
         # multiple threads). See http://bugs.python.org/issue2320 .
+        # Note that close_fds isn't supported on Windows, but this bug only
+        # shows up on Mac and Linux.
+        close_flag = sys.platform not in ('win32', 'cygwin')
         self._proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
-                                      close_fds=True)
+                                      close_fds=close_flag)
     def poll(self):
         return self._proc.poll()
 
