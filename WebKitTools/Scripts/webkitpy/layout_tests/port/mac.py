@@ -445,7 +445,7 @@ class MacDriver(base.Driver):
                     null = open(os.devnull, "w")
                     subprocess.Popen(["kill", "-9",
                                      str(self._proc.pid)], stderr=null)
-                    null.close()                not self._proc.poll()):
+                    null.close()
 
     def _read_line(self, timeout, stop_time, image_length=0):
         now = time.time()
