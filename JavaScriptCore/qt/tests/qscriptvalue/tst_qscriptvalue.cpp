@@ -274,7 +274,7 @@ void tst_QScriptValue::ctor()
     QVERIFY(QScriptValue(0, QString("ciao")).isString());
 }
 
-void tst_QScriptValue::toString_data()
+void tst_QScriptValue::toStringSimple_data()
 {
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("result");
@@ -289,7 +289,7 @@ void tst_QScriptValue::toString_data()
 }
 
 /* Test conversion to string from different JSC types */
-void tst_QScriptValue::toString()
+void tst_QScriptValue::toStringSimple()
 {
     QFETCH(QString, code);
     QFETCH(QString, result);

@@ -36,8 +36,8 @@ public:
     virtual ~tst_QScriptValue();
 
 private slots:
-    void toString_data();
-    void toString();
+    void toStringSimple_data();
+    void toStringSimple();
     void copyConstructor_data();
     void copyConstructor();
     void assignOperator_data();
@@ -75,6 +75,9 @@ private slots:
 
     void isValid_data();
     void isValid();
+
+    void toString_data();
+    void toString();
 
     void toNumber_data();
     void toNumber();
@@ -145,6 +148,10 @@ private:
     void isValid_initData();
     void isValid_makeData(const char* expr);
     void isValid_test(const char* expr, const QScriptValue& value);
+
+    void toString_initData();
+    void toString_makeData(const char*);
+    void toString_test(const char*, const QScriptValue&);
 
     void toNumber_initData();
     void toNumber_makeData(const char*);

@@ -455,7 +455,7 @@ QString QScriptValuePrivate::toString() const
     case CString:
         return m_string;
     case CNumber:
-        return QString::number(m_number);
+        return QScriptConverter::toString(m_number);
     case CSpecial:
         return m_number == QScriptValue::NullValue ? QString::fromLatin1("null") : QString::fromLatin1("undefined");
     case JSValue:
