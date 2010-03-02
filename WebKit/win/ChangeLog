@@ -1,5 +1,35 @@
 2010-03-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        Remove Windows line endings from some files.
+
+        Rubber-stamped by Alice Liu.
+
+        * Interfaces/IWebEmbeddedView.idl:
+
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::create):
+        (EmbeddedWidget::~EmbeddedWidget):
+        (EmbeddedWidget::createWindow):
+        (EmbeddedWidget::invalidateRect):
+        (EmbeddedWidget::setFrameRect):
+        (EmbeddedWidget::frameRectsChanged):
+        (EmbeddedWidget::setFocus):
+        (EmbeddedWidget::show):
+        (EmbeddedWidget::hide):
+        (EmbeddedWidget::windowClipRect):
+        (EmbeddedWidget::setParent):
+        (EmbeddedWidget::attachToWindow):
+        (EmbeddedWidget::detachFromWindow):
+        (EmbeddedWidget::didReceiveResponse):
+        (EmbeddedWidget::didReceiveData):
+        (EmbeddedWidget::didFinishLoading):
+        (EmbeddedWidget::didFail):
+
+        * WebCoreSupport/EmbeddedWidget.h:
+        (EmbeddedWidget::EmbeddedWidget):
+
+2010-03-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
         Some WebKit DOMNode API is unimplemented.
         https://bugs.webkit.org/show_bug.cgi?id=35554
 
