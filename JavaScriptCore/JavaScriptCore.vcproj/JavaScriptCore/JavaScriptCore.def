@@ -130,6 +130,7 @@ EXPORTS
     ?from@UString@JSC@@SA?AV12@H@Z
     ?from@UString@JSC@@SA?AV12@I@Z
     ?from@UString@JSC@@SA?AV12@N@Z
+    ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z

@@ -1,3 +1,11 @@
+2010-03-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Export function on windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-03-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
