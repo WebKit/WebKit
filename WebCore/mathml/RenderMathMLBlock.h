@@ -52,6 +52,42 @@ public:
 #endif
     
 protected:
+    int getBoxModelObjectHeight(RenderObject* object) 
+    {
+        if (object && object->isBoxModelObject()) {
+            RenderBoxModelObject* box = toRenderBoxModelObject(object);
+            return box->offsetHeight();
+        }
+        
+        return 0;
+    }
+    int getBoxModelObjectHeight(const RenderObject* object) 
+    {
+        if (object && object->isBoxModelObject()) {
+            const RenderBoxModelObject* box = toRenderBoxModelObject(object);
+            return box->offsetHeight();
+        }
+        
+        return 0;
+    }
+    int getBoxModelObjectWidth(RenderObject* object) 
+    {
+        if (object && object->isBoxModelObject()) {
+            RenderBoxModelObject* box = toRenderBoxModelObject(object);
+            return box->offsetWidth();
+        }
+        
+        return 0;
+    }
+    int getBoxModelObjectWidth(const RenderObject* object) 
+    {
+        if (object && object->isBoxModelObject()) {
+            const RenderBoxModelObject* box = toRenderBoxModelObject(object);
+            return box->offsetWidth();
+        }
+        
+        return 0;
+    }
     virtual PassRefPtr<RenderStyle> makeBlockStyle();
     
 };
@@ -67,7 +103,7 @@ inline const RenderMathMLBlock* toRenderMathMLBlock(const RenderObject* object)
     ASSERT(!object || object->isRenderMathMLBlock());
     return static_cast<const RenderMathMLBlock*>(object);
 }
-    
+
 }
 
 

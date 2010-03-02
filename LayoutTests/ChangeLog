@@ -1,3 +1,14 @@
+2010-03-01  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added test for basic msubsup support.
+
+        * mathml/presentation/subsup.xhtml: Added.
+        * platform/mac/mathml/presentation/subsup-expected.checksum: Added.
+        * platform/mac/mathml/presentation/subsup-expected.png: Added.
+        * platform/mac/mathml/presentation/subsup-expected.txt: Added.
+
 2010-03-01  Thatcher Ulrich  <tulrich@google.com>
 
         Reviewed by Darin Fisher.

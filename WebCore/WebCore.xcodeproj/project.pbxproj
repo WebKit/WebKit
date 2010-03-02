@@ -4866,6 +4866,8 @@
 		FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F21059C1EB00D999DD /* MathMLMathElement.h */; };
 		FABE72FD1059C21100D999DD /* MathMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */; };
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
+		FAC12CC41120DA6900DACC36 /* RenderMathMLSubSup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAC12CC21120DA6900DACC36 /* RenderMathMLSubSup.cpp */; };
+		FAC12CC51120DA6900DACC36 /* RenderMathMLSubSup.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC12CC31120DA6900DACC36 /* RenderMathMLSubSup.h */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
@@ -10202,6 +10204,8 @@
 		FABE72F31059C1EB00D999DD /* mathtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtags.in; sourceTree = "<group>"; };
 		FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElementFactory.cpp; sourceTree = "<group>"; };
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
+		FAC12CC21120DA6900DACC36 /* RenderMathMLSubSup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLSubSup.cpp; sourceTree = "<group>"; };
+		FAC12CC31120DA6900DACC36 /* RenderMathMLSubSup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLSubSup.h; sourceTree = "<group>"; };
 		FE136AE710643BE50078CF6D /* WebCore.OrientationEvents.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.OrientationEvents.exp; sourceTree = "<group>"; };
 		FE49BD301061719100D0E1AE /* WebCore.Inspector.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.Inspector.exp; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
@@ -16096,6 +16100,8 @@
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
 				FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */,
 				FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */,
+				FAC12CC21120DA6900DACC36 /* RenderMathMLSubSup.cpp */,
+				FAC12CC31120DA6900DACC36 /* RenderMathMLSubSup.h */,
 				FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */,
 				FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */,
 			);
@@ -18568,6 +18574,7 @@
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
 				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
+				FAC12CC51120DA6900DACC36 /* RenderMathMLSubSup.h in Headers */,
 				FA7EFB061120D25400CF79C7 /* RenderMathMLUnderOver.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
@@ -20758,6 +20765,7 @@
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */,
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
+				FAC12CC41120DA6900DACC36 /* RenderMathMLSubSup.cpp in Sources */,
 				FA7EFB051120D25400CF79C7 /* RenderMathMLUnderOver.cpp in Sources */,
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,

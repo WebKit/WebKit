@@ -1,3 +1,25 @@
+2010-03-01  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added support for the msubsup element that also handles the msup and msub elements.
+
+        Test: mathml/presentation/subsup.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/RenderMathMLSubSup.cpp: Added.
+        (WebCore::RenderMathMLSubSup::RenderMathMLSubSup):
+        (WebCore::RenderMathMLSubSup::addChild):
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        (WebCore::RenderMathMLSubSup::nonOperatorHeight):
+        (WebCore::RenderMathMLSubSup::layout):
+        (WebCore::RenderMathMLSubSup::baselinePosition):
+        * mathml/RenderMathMLSubSup.h: Added.
+        (WebCore::RenderMathMLSubSup::hasBase):
+        (WebCore::RenderMathMLSubSup::):
+
 2010-03-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
