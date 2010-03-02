@@ -101,6 +101,7 @@ private:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
     virtual String itemText(unsigned listIndex) const;
     virtual String itemToolTip(unsigned) const { return String(); }
+    virtual String itemAccessibilityText(unsigned) const { return String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual PopupMenuStyle menuStyle() const;

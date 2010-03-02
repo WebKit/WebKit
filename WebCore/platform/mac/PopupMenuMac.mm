@@ -20,6 +20,7 @@
 #import "config.h"
 #import "PopupMenu.h"
 
+#import "AXObjectCache.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "EventHandler.h"
@@ -100,6 +101,13 @@ void PopupMenu::populate()
             [menuItem setEnabled:client()->itemIsEnabled(i)];
             [menuItem setToolTip:client()->itemToolTip(i)];
             [string release];
+            
+            // Allow the accessible text of the item to be overriden if necessary.
+            if (AXObjectCache::accessibilityEnabled()) {
+                NSString *accessibilityOverride = client()->itemAccessibilityText(i);
+                if ([accessibilityOverride length])
+                    [menuItem accessibilitySetOverrideValue:accessibilityOverride forAttribute:NSAccessibilityDescriptionAttribute];
+            }
         }
     }
 

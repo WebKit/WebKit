@@ -75,6 +75,7 @@ private:
     // PopupMenuClient methods
     virtual String itemText(unsigned listIndex) const;
     virtual String itemToolTip(unsigned listIndex) const;
+    virtual String itemAccessibilityText(unsigned listIndex) const;
     virtual bool itemIsEnabled(unsigned listIndex) const;
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual PopupMenuStyle menuStyle() const;

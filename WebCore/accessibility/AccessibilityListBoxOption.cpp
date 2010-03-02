@@ -128,6 +128,10 @@ String AccessibilityListBoxOption::stringValue() const
     if (!m_optionElement)
         return String();
     
+    const AtomicString& ariaLabel = getAttribute(m_optionElement, aria_labelAttr);
+    if (!ariaLabel.isNull())
+        return ariaLabel;
+    
     if (m_optionElement->hasTagName(optionTag))
         return static_cast<HTMLOptionElement*>(m_optionElement)->text();
     

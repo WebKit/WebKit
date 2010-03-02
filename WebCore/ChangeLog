@@ -1,3 +1,34 @@
+2010-03-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        aria-label isn't respected on option elements
+        https://bugs.webkit.org/show_bug.cgi?id=35400
+
+        When aria-label is used on an <option> element, it can take three forms.
+        An option in a multi-select list, a popup button and the menu that is displayed 
+        from the popup button. This patches the three requisite locations so that if
+        aria-label is used, the correct accessibility text is returned.
+
+        Test: platform/mac/accessibility/option-with-arialabel.html
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getAttribute):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getAttribute):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        * platform/PopupMenuClient.h:
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::populate):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemAccessibilityText):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlSingleLine::itemAccessibilityText):
+
 2010-03-02  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.
@@ -1345,7 +1376,6 @@
         * WebCore.xcodeproj/project.pbxproj:
         * bindings/scripts/CodeGeneratorJS.pm:
 
->>>>>>> .r55317
 2010-02-26  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.

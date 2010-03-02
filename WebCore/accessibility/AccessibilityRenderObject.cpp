@@ -69,6 +69,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "SelectElement.h"
 #include "SelectionController.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -547,15 +548,7 @@ AccessibilityObject* AccessibilityRenderObject::selectedTabItem()
     
 const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName& attribute) const
 {
-    Node* node = m_renderer->node();
-    if (!node)
-        return nullAtom;
-
-    if (!node->isElementNode())
-        return nullAtom;
-
-    Element* element = static_cast<Element*>(node);
-    return element->getAttribute(attribute);
+    return AccessibilityObject::getAttribute(m_renderer->node(), attribute);
 }
 
 Element* AccessibilityRenderObject::anchorElement() const
@@ -898,8 +891,17 @@ String AccessibilityRenderObject::stringValue() const
     if (m_renderer->isText())
         return textUnderElement();
     
-    if (m_renderer->isMenuList())
+    if (m_renderer->isMenuList()) {
+        // RenderMenuList will go straight to the text() of its selected item.
+        // This has to be overriden in the case where the selected item has an aria label
+        SelectElement* selectNode = toSelectElement(static_cast<Element*>(m_renderer->node()));
+        Element* selectedOption = selectNode->listItems()[selectNode->selectedIndex()];
+        String overridenDescription = AccessibilityObject::getAttribute(selectedOption, aria_labelAttr);
+        if (!overridenDescription.isNull())
+            return overridenDescription;
+        
         return toRenderMenuList(m_renderer)->text();
+    }
     
     if (m_renderer->isListMarker())
         return toRenderListMarker(m_renderer)->text();

@@ -446,7 +446,8 @@ public:
     virtual void handleActiveDescendantChanged() { }
 
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    
+    static const AtomicString& getAttribute(Node*, const QualifiedName&);
+
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }
     

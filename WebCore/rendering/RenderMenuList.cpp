@@ -25,6 +25,7 @@
 #include "RenderMenuList.h"
 
 #include "AXObjectCache.h"
+#include "AccessibilityObject.h"
 #include "CSSStyleSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -334,6 +335,17 @@ String RenderMenuList::itemText(unsigned listIndex) const
     return String();
 }
 
+String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
+{
+    // Allow the accessible name be changed if necessary.
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    const Vector<Element*>& listItems = select->listItems();
+    if (listIndex >= listItems.size())
+        return String();
+
+    return AccessibilityObject::getAttribute(listItems[listIndex], aria_labelAttr); 
+}
+    
 String RenderMenuList::itemToolTip(unsigned listIndex) const
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));

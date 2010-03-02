@@ -63,6 +63,7 @@ public:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
     virtual WebCore::String itemText(unsigned listIndex) const;
     virtual WebCore::String itemToolTip(unsigned lastIndex) const { return WebCore::String(); }
+    virtual WebCore::String itemAccessibilityText(unsigned lastIndex) const { return WebCore::String(); }
     virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
     virtual WebCore::PopupMenuStyle itemStyle(unsigned listIndex) const;
     virtual WebCore::PopupMenuStyle menuStyle() const;

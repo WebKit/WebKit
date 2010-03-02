@@ -1,3 +1,13 @@
+2010-03-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        aria-label isn't respected on option elements
+        https://bugs.webkit.org/show_bug.cgi?id=35400
+
+        * platform/mac/accessibility/option-with-arialabel-expected.txt: Added.
+        * platform/mac/accessibility/option-with-arialabel.html: Added.
+
 2010-03-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
