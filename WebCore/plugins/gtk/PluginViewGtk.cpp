@@ -700,6 +700,14 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
             return NPERR_NO_ERROR;
         }
 
+        case NPNVprivateModeBool: {
+            Page* page = m_parentFrame->page();
+            if (!page)
+                return NPERR_GENERIC_ERROR;
+            *((NPBool*)value) = !page->settings() || page->settings()->privateBrowsingEnabled();
+            return NPERR_NO_ERROR;
+        }
+
         default:
             return getValueStatic(variable, value);
     }

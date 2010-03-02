@@ -1,3 +1,14 @@
+2010-02-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Support private browsing mode in plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=35500
+
+        Unskip test after taking code from PluginViewQt.cpp
+
+        * platform/gtk/Skipped:
+
 2010-02-27  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

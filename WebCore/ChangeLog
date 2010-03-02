@@ -1,3 +1,15 @@
+2010-02-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Support private browsing mode in plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=35500
+
+        Integrate the PluginViewQt.cpp changes from r55358 into Gtk+.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getValue):
+
 2010-03-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
