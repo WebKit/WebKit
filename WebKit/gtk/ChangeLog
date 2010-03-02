@@ -1,3 +1,23 @@
+2010-03-01  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Right click does not activate text entry
+        https://bugs.webkit.org/show_bug.cgi?id=29177
+
+        Makes the frame handle the mouse click event before sending the
+        context menu event.
+
+        * webkit/webkitwebview.cpp:
+        (PopupMenuPositionFunc):
+        Function created to make the popup menu appear in the correct position, especially
+        when invoked from the keyboard.
+        (webkit_web_view_forward_context_menu_event):
+        Mouse click event is sent to frame before creating context menu,
+        PopupMenuPositionFunc used to determine the position where the menu should appear.
+        (webkit_web_view_popup_menu_handler):
+        Improved focused node position detection. Event button set to right button.
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.

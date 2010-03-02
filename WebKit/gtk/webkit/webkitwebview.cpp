@@ -202,33 +202,69 @@ static void destroy_menu_cb(GtkObject* object, gpointer data)
     priv->currentMenu = NULL;
 }
 
+static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
+{
+    WebKitWebView* view = WEBKIT_WEB_VIEW(userData);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(view);
+    GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(view));
+    GtkRequisition menuSize;
+
+    gtk_widget_size_request(GTK_WIDGET(menu), &menuSize);
+
+    *x = priv->lastPopupXPosition;
+    if ((*x + menuSize.width) >= gdk_screen_get_width(screen))
+      *x -= menuSize.width;
+
+    *y = priv->lastPopupYPosition;
+    if ((*y + menuSize.height) >= gdk_screen_get_height(screen))
+      *y -= menuSize.height;
+
+    *pushIn = FALSE;
+}
+
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event)
 {
     Page* page = core(webView);
     page->contextMenuController()->clearContextMenu();
-    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    Frame* focusedFrame;
+    Frame* mainFrame = page->mainFrame();
+    gboolean mousePressEventResult = FALSE;
 
-    if (!focusedFrame->view())
+    if (!mainFrame->view())
         return FALSE;
 
-    focusedFrame->view()->setCursor(pointerCursor());
+    mainFrame->view()->setCursor(pointerCursor());
+    if (page->frameCount()) {
+        HitTestRequest request(HitTestRequest::Active);
+        IntPoint point = mainFrame->view()->windowToContents(event.pos());
+        MouseEventWithHitTestResults mev = mainFrame->document()->prepareMouseEvent(request, point, event);
+
+        Frame* targetFrame = EventHandler::subframeForTargetNode(mev.targetNode());
+        if (!targetFrame)
+            targetFrame = mainFrame;
+
+        focusedFrame = page->focusController()->focusedOrMainFrame();
+        if (targetFrame != focusedFrame) {
+            page->focusController()->setFocusedFrame(targetFrame);
+            focusedFrame = targetFrame;
+        }
+    } else
+        focusedFrame = mainFrame;
+
+    if (focusedFrame->view() && focusedFrame->eventHandler()->handleMousePressEvent(event))
+        mousePressEventResult = TRUE;
+
+
     bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(event);
     if (!handledEvent)
         return FALSE;
 
     // If coreMenu is NULL, this means WebCore decided to not create
-    // the default context menu; this may still mean that the frame
-    // wants to consume the event - this happens when the page is
-    // handling the right-click for reasons other than a context menu,
-    // so we give it to it.
+    // the default context menu; this may happen when the page is
+    // handling the right-click for reasons other than the context menu.
     ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
-    if (!coreMenu) {
-        Frame* frame = core(webView)->mainFrame();
-        if (frame->view() && frame->eventHandler()->handleMousePressEvent(PlatformMouseEvent(event)))
-            return TRUE;
-
-        return FALSE;
-    }
+    if (!coreMenu)
+        return mousePressEventResult;
 
     // If we reach here, it's because WebCore is going to show the
     // default context menu. We check our setting to figure out
@@ -262,8 +298,8 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
                      NULL);
 
     gtk_menu_popup(menu, NULL, NULL,
-                   NULL,
-                   priv, event.button() + 1, gtk_get_current_event_time());
+                   &PopupMenuPositionFunc,
+                   webView, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
 }
 
@@ -273,17 +309,19 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
 
     // The context menu event was generated from the keyboard, so show the context menu by the current selection.
     Page* page = core(WEBKIT_WEB_VIEW(widget));
-    FrameView* view = page->mainFrame()->view();
+    Frame* frame = page->focusController()->focusedOrMainFrame();
+    FrameView* view = frame->view();
     if (!view)
         return FALSE;    
 
-    Position start = page->mainFrame()->selection()->selection().start();
-    Position end = page->mainFrame()->selection()->selection().end();
+    Position start = frame->selection()->selection().start();
+    Position end = frame->selection()->selection().end();
 
     int rightAligned = FALSE;
     IntPoint location;
 
-    if (!start.node() || !end.node())
+    if (!start.node() || !end.node()
+        || (frame->selection()->selection().isCaret() && !frame->selection()->selection().isContentEditable()))
         location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
     else {
         RenderObject* renderer = start.node()->renderer();
@@ -329,8 +367,17 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
     // Ideally we'd have the position of a context menu event be separate from its target node.
     location = view->contentsToWindow(location) + IntSize(0, -1);
+    if (location.y() < 0)
+        location.setY(contextMenuMargin);
+    else if (location.y() > view->height())
+        location.setY(view->height() - contextMenuMargin);
+    if (location.x() < 0)
+        location.setX(contextMenuMargin);
+    else if (location.x() > view->width())
+        location.setX(view->width() - contextMenuMargin);
     IntPoint global = location + IntSize(x, y);
-    PlatformMouseEvent event(location, global, NoButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
+
+    PlatformMouseEvent event(location, global, RightButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
 
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
 }

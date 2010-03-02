@@ -1,3 +1,15 @@
+2010-03-01  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Right click does not activate text entry
+        https://bugs.webkit.org/show_bug.cgi?id=29177
+
+        Stop skipping some tests which where failing because of right click
+        not being correct handled.
+
+        * platform/gtk/Skipped:
+
 2010-03-01  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.
