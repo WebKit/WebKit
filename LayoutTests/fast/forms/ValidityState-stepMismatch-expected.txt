@@ -113,6 +113,58 @@ PASS stepMismatchFor("2010-03", "foo", "2010-02") is false
 Special step value
 PASS stepMismatchFor("2010-03", "any", "2010-02") is false
 
+Number type
+Empty values
+PASS stepMismatchFor("", null, null) is false
+PASS stepMismatchFor("", "1.0", "0.1") is false
+Integers
+PASS stepMismatchFor("1", "2", "0") is true
+PASS stepMismatchFor("-3", "2", "-4") is true
+PASS input.max = "5"; stepMismatchFor("5", "3", "0") is true
+PASS input.value is "5"
+Invalid step values
+PASS stepMismatchFor("-3", "-2", "-4") is false
+PASS stepMismatchFor("-3", null, "-4") is false
+PASS stepMismatchFor("-3", undefined, "-4") is false
+Huge numbers and small step; uncomparable
+PASS stepMismatchFor("1.7976931348623157e+308", "3", "") is false
+PASS stepMismatchFor("1.7976931348623156e+308", "3", "") is false
+PASS stepMismatchFor("1.7976931348623155e+308", "3", "") is false
+Huge numbers and huge step
+PASS stepMismatchFor("1.60e+308", "0.20e+308", "") is false
+PASS stepMismatchFor("1.60e+308", "0.22e+308", "") is true
+Fractional numbers
+PASS stepMismatchFor("0.9", "0.1", "") is false
+PASS stepMismatchFor("0.9", "0.1000001", "") is true
+PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
+PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
+
+Range type
+Empty values
+PASS stepMismatchFor("", null, null) is false
+PASS stepMismatchFor("", "1.0", "0.1") is false
+Integers
+PASS stepMismatchFor("1", "2", "0") is false
+PASS stepMismatchFor("-3", "2", "-4") is false
+PASS input.max = "5"; stepMismatchFor("5", "3", "0") is false
+PASS input.value is "3"
+Invalid step values
+PASS stepMismatchFor("-3", "-2", "-4") is false
+PASS stepMismatchFor("-3", null, "-4") is false
+PASS stepMismatchFor("-3", undefined, "-4") is false
+Huge numbers and small step; uncomparable
+PASS stepMismatchFor("1.7976931348623157e+308", "3", "") is false
+PASS stepMismatchFor("1.7976931348623156e+308", "3", "") is false
+PASS stepMismatchFor("1.7976931348623155e+308", "3", "") is false
+Huge numbers and huge step
+PASS stepMismatchFor("1.60e+308", "0.20e+308", "") is false
+PASS stepMismatchFor("1.60e+308", "0.22e+308", "") is false
+Fractional numbers
+PASS stepMismatchFor("0.9", "0.1", "") is false
+PASS stepMismatchFor("0.9", "0.1000001", "") is false
+PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
+PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
+
 Time type
 Empty values
 PASS stepMismatchFor("", null, null) is false
@@ -169,6 +221,24 @@ PASS stepMismatchFor("2010-W03", "-1", "2010-W02") is false
 PASS stepMismatchFor("2010-W03", "foo", "2010-W02") is false
 Special step value
 PASS stepMismatchFor("2010-W03", "any", "2010-W02") is false
+
+Unsupported types
+PASS input.type = "text"; input.step = "3"; input.min = ""; input.value = "2"; input.validity.stepMismatch is false
+PASS input.type = "button"; input.validity.stepMismatch is false
+PASS input.type = "checkbox"; input.validity.stepMismatch is false
+PASS input.type = "color"; input.validity.stepMismatch is false
+PASS input.type = "email"; input.validity.stepMismatch is false
+PASS input.type = "hidden"; input.validity.stepMismatch is false
+PASS input.type = "image"; input.validity.stepMismatch is false
+PASS input.type = "khtml_isindex"; input.validity.stepMismatch is false
+PASS input.type = "passwd"; input.validity.stepMismatch is false
+PASS input.type = "radio"; input.validity.stepMismatch is false
+PASS input.type = "reset"; input.validity.stepMismatch is false
+PASS input.type = "search"; input.validity.stepMismatch is false
+PASS input.type = "submit"; input.validity.stepMismatch is false
+PASS input.type = "tel"; input.validity.stepMismatch is false
+PASS input.type = "url"; input.validity.stepMismatch is false
+PASS input.type = "file"; input.validity.stepMismatch is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

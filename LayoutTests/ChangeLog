@@ -1,3 +1,38 @@
+2010-03-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Merge ValidityState-stepMismatch-{number,range,unsupported}.html and
+        input-step-{number,range,unsupported}.html to other tests
+        https://bugs.webkit.org/show_bug.cgi?id=35435
+
+        - Merge ValidityState-stepMismatch-{number,range,unsupported}.html to
+        ValidityState-stepMismatch.html
+        - Merge input-step--{number,range,unsupported}.html to input-step.html
+
+        * fast/forms/ValidityState-stepMismatch-expected.txt:
+        * fast/forms/ValidityState-stepMismatch-number-expected.txt: Removed.
+        * fast/forms/ValidityState-stepMismatch-number.html: Removed.
+        * fast/forms/ValidityState-stepMismatch-range-expected.txt: Removed.
+        * fast/forms/ValidityState-stepMismatch-range.html: Removed.
+        * fast/forms/ValidityState-stepMismatch-unsupported-expected.txt: Removed.
+        * fast/forms/ValidityState-stepMismatch-unsupported.html: Removed.
+        * fast/forms/input-step-number-expected.txt: Removed.
+        * fast/forms/input-step-number.html: Removed.
+        * fast/forms/input-step-range-expected.txt: Removed.
+        * fast/forms/input-step-range.html: Removed.
+        * fast/forms/input-step-unsupported-expected.txt: Removed.
+        * fast/forms/input-step-unsupported.html: Removed.
+        * fast/forms/input-stepup-stepdown-expected.txt:
+        * fast/forms/script-tests/ValidityState-stepMismatch-number.js: Removed.
+        * fast/forms/script-tests/ValidityState-stepMismatch-range.js: Removed.
+        * fast/forms/script-tests/ValidityState-stepMismatch-unsupported.js: Removed.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js:
+        * fast/forms/script-tests/input-step-number.js: Removed.
+        * fast/forms/script-tests/input-step-range.js: Removed.
+        * fast/forms/script-tests/input-step-unsupported.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown.js:
+
 2010-03-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
