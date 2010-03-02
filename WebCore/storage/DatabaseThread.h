@@ -64,7 +64,6 @@ public:
     void recordDatabaseOpen(Database*);
     void recordDatabaseClosed(Database*);
     ThreadIdentifier getThreadID() { return m_threadID; }
-    Database* getDatabaseOfCurrentTask() { return m_databaseOfCurrentTask; }
 
     SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
@@ -80,8 +79,6 @@ private:
     RefPtr<DatabaseThread> m_selfRef;
 
     MessageQueue<DatabaseTask> m_queue;
-
-    Database* m_databaseOfCurrentTask;
 
     // This set keeps track of the open databases that have been used on this thread.
     typedef HashSet<RefPtr<Database> > DatabaseSet;

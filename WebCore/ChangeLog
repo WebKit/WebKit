@@ -1,3 +1,21 @@
+2010-03-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by David Levin.
+
+        Revert database thread changes that are no longer required
+        https://bugs.webkit.org/show_bug.cgi?id=35519
+
+        Jochen Eisinger created 55214 and 55247 to track which database
+        owns which thread.  Dmitry suggested that this could also
+        be done via TLS, though.  After exploring the options, Jochen
+        chose to go the TLS route, so these patches are no longer needed.
+
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::databaseThread):
+        * storage/DatabaseThread.h:
+        (WebCore::DatabaseThread::getThreadID):
+
 2010-03-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

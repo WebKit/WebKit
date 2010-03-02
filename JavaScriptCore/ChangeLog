@@ -1,3 +1,30 @@
+2010-03-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by David Levin.
+
+        Revert database thread changes that are no longer required
+        https://bugs.webkit.org/show_bug.cgi?id=35519
+
+        Jochen Eisinger created 55214 and 55247 to track which database
+        owns which thread.  Dmitry suggested that this could also
+        be done via TLS, though.  After exploring the options, Jochen
+        chose to go the TLS route, so these patches are no longer needed.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingNone.cpp:
+        (WTF::isMainThread):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::identifierByPthreadHandle):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::pthreadHandleForIdentifier):
+        (WTF::createThreadInternal):
+        (WTF::currentThread):
+        * wtf/ThreadingWin.cpp:
+        (WTF::threadMap):
+        (WTF::storeThreadHandleByIdentifier):
+        (WTF::threadHandleForIdentifier):
+        (WTF::createThreadInternal):
+
 2010-03-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
