@@ -55,6 +55,7 @@
 #include "V8BindingDOMWindow.h"
 #include "V8BindingState.h"
 #include "V8CustomEventListener.h"
+#include "V8GCForContextDispose.h"
 #include "V8HTMLCollection.h"
 #include "V8MessagePortCustom.h"
 #include "V8Node.h"
@@ -133,6 +134,13 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         id = DOMTimer::install(scriptContext, action, timeout, singleShot);
     } else {
         id = DOMTimer::install(scriptContext, new ScheduledAction(V8Proxy::context(imp->frame()), functionString), timeout, singleShot);
+    }
+
+    // Try to do the idle notification before the timeout expires to get better
+    // use of any idle time. Aim for the middle of the interval for simplicity.
+    if (timeout > 0) {
+        double maximumFireInterval = static_cast<double>(timeout) / 1000 / 2;
+        V8GCForContextDispose::instance().notifyIdleSooner(maximumFireInterval);
     }
 
     return v8::Integer::New(id);

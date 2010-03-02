@@ -51,6 +51,7 @@
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8Document.h"
+#include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
 #include "V8Index.h"
@@ -150,6 +151,11 @@ void V8DOMWindowShell::disposeContextHandles()
         m_frame->loader()->client()->didDestroyScriptContextForFrame();
         m_context.Dispose();
         m_context.Clear();
+
+        // It's likely that disposing the context has created a lot of
+        // garbage. Notify V8 about this so it'll have a chance of cleaning
+        // it up when idle.
+        V8GCForContextDispose::instance().notifyContextDisposed();
     }
 
     if (!m_wrapperBoilerplates.IsEmpty()) {

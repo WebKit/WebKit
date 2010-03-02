@@ -1,3 +1,29 @@
+2010-03-02  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] V8 should be notified of context disposals
+        https://bugs.webkit.org/show_bug.cgi?id=35526
+
+        Notify V8 of context disposals to allow it to clean up memory from those
+        contexts when idle.  When disposing a context, start a timer that will
+        give V8 an idle notification after a while to force cleanup.  Use a timer
+        to avoid performing an idle notification in the middle of navigation where
+        we know we are not idle.
+
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::disposeContextHandles):
+        * bindings/v8/V8GCForContextDispose.cpp: Added.
+        (WebCore::V8GCForContextDispose::V8GCForContextDispose):
+        (WebCore::V8GCForContextDispose::notifyContextDisposed):
+        (WebCore::V8GCForContextDispose::notifyIdleSooner):
+        (WebCore::V8GCForContextDispose::instance):
+        (WebCore::V8GCForContextDispose::pseudoIdleTimerFired):
+        * bindings/v8/V8GCForContextDispose.h: Added.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+
 2010-03-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: adding missing image files to WebKit.qrc and gypi.

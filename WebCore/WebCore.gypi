@@ -857,6 +857,8 @@
             'bindings/v8/V8EventListenerList.h',
             'bindings/v8/V8GCController.cpp',
             'bindings/v8/V8GCController.h',
+            'bindings/v8/V8GCForContextDispose.cpp',
+            'bindings/v8/V8GCForContextDispose.h',
             'bindings/v8/V8Helpers.cpp',
             'bindings/v8/V8Helpers.h',
             'bindings/v8/V8HiddenPropertyName.cpp',
