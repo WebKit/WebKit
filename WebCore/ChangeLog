@@ -1,3 +1,16 @@
+2010-03-02  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fail gracefully if NPN_GetProperty tries to retrieve a property that doesn't exist.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35588
+
+        Required for passing LayoutTests/plugins/netscape-plugin-property-access-exception.html on Chromium.
+
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_GetProperty): If the result is empty, don't try to convert it to an NPVariant and return false.
+
 2010-03-02  Jian Li  <jianli@chromium.org>
 
         Reviewed by Nate Chapin.

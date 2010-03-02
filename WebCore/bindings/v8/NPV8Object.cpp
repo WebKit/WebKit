@@ -299,6 +299,9 @@ bool _NPN_GetProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName, NP
 
         v8::Handle<v8::Object> obj(object->v8Object);
         v8::Local<v8::Value> v8result = obj->Get(npIdentifierToV8Identifier(propertyName));
+        
+        if (v8result.IsEmpty())
+            return false;
 
         convertV8ObjectToNPVariant(v8result, npObject, result);
         return true;
