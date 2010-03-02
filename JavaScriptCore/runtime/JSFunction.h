@@ -90,9 +90,9 @@ namespace JSC {
 
         virtual const ClassInfo* classInfo() const { return &info; }
 
-        static JSValue argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue callerGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
+        static JSValue callerGetter(ExecState*, JSValue, const Identifier&);
+        static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
 
         RefPtr<ExecutableBase> m_executable;
         ScopeChain& scopeChain()

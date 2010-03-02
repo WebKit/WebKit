@@ -29,11 +29,11 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NumberConstructor);
 
-static JSValue numberConstructorNaNValue(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue numberConstructorNegInfinity(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue numberConstructorPosInfinity(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue numberConstructorMaxValue(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue numberConstructorMinValue(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&);
+static JSValue numberConstructorNegInfinity(ExecState*, JSValue, const Identifier&);
+static JSValue numberConstructorPosInfinity(ExecState*, JSValue, const Identifier&);
+static JSValue numberConstructorMaxValue(ExecState*, JSValue, const Identifier&);
+static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&);
 
 } // namespace JSC
 
@@ -73,27 +73,27 @@ bool NumberConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifi
     return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberTable(exec), this, propertyName, descriptor);
 }
 
-static JSValue numberConstructorNaNValue(ExecState* exec, const Identifier&, const PropertySlot&)
+static JSValue numberConstructorNaNValue(ExecState* exec, JSValue, const Identifier&)
 {
     return jsNaN(exec);
 }
 
-static JSValue numberConstructorNegInfinity(ExecState* exec, const Identifier&, const PropertySlot&)
+static JSValue numberConstructorNegInfinity(ExecState* exec, JSValue, const Identifier&)
 {
     return jsNumber(exec, -Inf);
 }
 
-static JSValue numberConstructorPosInfinity(ExecState* exec, const Identifier&, const PropertySlot&)
+static JSValue numberConstructorPosInfinity(ExecState* exec, JSValue, const Identifier&)
 {
     return jsNumber(exec, Inf);
 }
 
-static JSValue numberConstructorMaxValue(ExecState* exec, const Identifier&, const PropertySlot&)
+static JSValue numberConstructorMaxValue(ExecState* exec, JSValue, const Identifier&)
 {
     return jsNumber(exec, 1.7976931348623157E+308);
 }
 
-static JSValue numberConstructorMinValue(ExecState* exec, const Identifier&, const PropertySlot&)
+static JSValue numberConstructorMinValue(ExecState* exec, JSValue, const Identifier&)
 {
     return jsNumber(exec, 5E-324);
 }

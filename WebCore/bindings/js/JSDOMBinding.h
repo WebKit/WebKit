@@ -404,7 +404,7 @@ namespace WebCore {
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*, String& message);
     bool shouldAllowNavigation(JSC::ExecState*, Frame*);
     void printErrorMessageForFrame(Frame*, const String& message);
-    JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, const JSC::Identifier& propertyName, const JSC::PropertySlot&);
+    JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
 
     Frame* toLexicalFrame(JSC::ExecState*);
     Frame* toDynamicFrame(JSC::ExecState*);

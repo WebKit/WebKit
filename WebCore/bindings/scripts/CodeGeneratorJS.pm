@@ -761,7 +761,7 @@ sub GenerateHeader
     if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         push(@headerContent, "private:\n");
         push(@headerContent, "    static bool canGetItemsForName(JSC::ExecState*, $implClassName*, const JSC::Identifier&);\n");
-        push(@headerContent, "    static JSC::JSValue nameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
+        push(@headerContent, "    static JSC::JSValue nameGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
     }
 
     push(@headerContent, "};\n\n");
@@ -862,7 +862,7 @@ sub GenerateHeader
         push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$dataNode->attributes}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
-            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
+            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
             unless ($attribute->type =~ /readonly/) {
                 my $setter = "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                 push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
@@ -871,7 +871,7 @@ sub GenerateHeader
         
         if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
             my $getter = "js" . $interfaceName . "Constructor";
-            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
+            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
         }
     }
 
@@ -879,7 +879,7 @@ sub GenerateHeader
         push(@headerContent,"// Constants\n\n");
         foreach my $constant (@{$dataNode->constants}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
-            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
+            push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
         }
     }
 
@@ -1289,9 +1289,9 @@ sub GenerateImplementation
                     push(@implContent, "#if ${conditionalString}\n");
                 }
 
-                push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
+                push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slot.slotBase()));\n");
+                push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slotBase));\n");
 
                 my $implClassNameForValueConversion = "";
                 if (!$podType and ($codeGenerator->IsSVGAnimatedType($implClassName) or $attribute->type !~ /^readonly/)) {
@@ -1405,9 +1405,9 @@ sub GenerateImplementation
             if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
+                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slot.slotBase()));\n");
+                push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slotBase));\n");
                 push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
                 push(@implContent, "}\n");
             }
@@ -1704,7 +1704,7 @@ sub GenerateImplementation
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
 
             # FIXME: this casts into int to match our previous behavior which turned 0xFFFFFFFF in -1 for NodeFilter.SHOW_ALL
-            push(@implContent, "JSValue ${getter}(ExecState* exec, const Identifier&, const PropertySlot&)\n");
+            push(@implContent, "JSValue ${getter}(ExecState* exec, JSValue, const Identifier&)\n");
             push(@implContent, "{\n");
             push(@implContent, "    return jsNumber(exec, static_cast<int>(" . $constant->value . "));\n");
             push(@implContent, "}\n\n");

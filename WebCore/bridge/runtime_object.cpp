@@ -66,9 +66,9 @@ void RuntimeObject::invalidate()
     m_instance = 0;
 }
 
-JSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slot.slotBase()));
+    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
@@ -84,9 +84,9 @@ JSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, const Identifier& p
     return result;
 }
 
-JSValue RuntimeObject::fieldGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue RuntimeObject::fieldGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {    
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slot.slotBase()));
+    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
@@ -103,9 +103,9 @@ JSValue RuntimeObject::fieldGetter(ExecState* exec, const Identifier& propertyNa
     return result;
 }
 
-JSValue RuntimeObject::methodGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slot.slotBase()));
+    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)

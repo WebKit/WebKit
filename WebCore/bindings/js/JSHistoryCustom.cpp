@@ -38,17 +38,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
     return new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), 0, propertyName, jsHistoryPrototypeFunctionBack);
 }
 
-static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
     return new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), 0, propertyName, jsHistoryPrototypeFunctionForward);
 }
 
-static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
+static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
     return new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), 1, propertyName, jsHistoryPrototypeFunctionGo);
 }

@@ -57,9 +57,9 @@ static RuntimeObject* getRuntimeObject(ExecState* exec, Node* node)
     return instance->createRuntimeObject(exec);
 }
 
-JSValue runtimeObjectPropertyGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slot.slotBase()));
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(asObject(slotBase));
     HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
     RuntimeObject* runtimeObject = getRuntimeObject(exec, element);
     if (!runtimeObject)

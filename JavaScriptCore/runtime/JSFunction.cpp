@@ -122,23 +122,23 @@ JSValue JSFunction::call(ExecState* exec, JSValue thisValue, const ArgList& args
     return exec->interpreter()->execute(jsExecutable(), exec, this, thisValue.toThisObject(exec), args, scopeChain().node(), exec->exceptionSlot());
 }
 
-JSValue JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSFunction* thisObj = asFunction(slot.slotBase());
+    JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
     return exec->interpreter()->retrieveArguments(exec, thisObj);
 }
 
-JSValue JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSFunction* thisObj = asFunction(slot.slotBase());
+    JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
     return exec->interpreter()->retrieveCaller(exec, thisObj);
 }
 
-JSValue JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSFunction::lengthGetter(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSFunction* thisObj = asFunction(slot.slotBase());
+    JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
     return jsNumber(exec, thisObj->jsExecutable()->parameterCount());
 }

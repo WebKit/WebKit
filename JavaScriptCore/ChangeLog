@@ -1,5 +1,71 @@
 2010-03-01  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Refactor named getter function signature to be in line with indexing getter signature
+        https://bugs.webkit.org/show_bug.cgi?id=35563
+
+        This removes the PropertySlot argument from getter functions, and makes them directly
+        pass the slot base.  This makes the semantics for the functions match that of the
+        indexing getters.
+
+        On the down side, this means that we can no longer simply use a proxy function for
+        JS getters, so we now add another marker value to indicate that a getter is present
+        and branch accordingly.
+
+        Against all rationality sunspider reports this as a perf win, but i suspect it's just noise.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::staticValueGetter):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * JavaScriptCore.exp:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        * runtime/JSFunction.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorNaNValue):
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectGlobal):
+        (JSC::regExpObjectIgnoreCase):
+        (JSC::regExpObjectMultiline):
+        (JSC::regExpObjectSource):
+        (JSC::regExpObjectLastIndex):
+
+2010-03-01  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         PropertySlot::getValue(ExecState, unsigned) unnecessarily converts index to an Identifier

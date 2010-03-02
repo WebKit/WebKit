@@ -26,19 +26,19 @@
 
 namespace JSC {
 
-JSValue PropertySlot::functionGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue PropertySlot::functionGetter(ExecState* exec) const
 {
     // Prevent getter functions from observing execution if an exception is pending.
     if (exec->hadException())
         return exec->exception();
 
     CallData callData;
-    CallType callType = slot.m_data.getterFunc->getCallData(callData);
+    CallType callType = m_data.getterFunc->getCallData(callData);
     if (callType == CallTypeHost)
-        return callData.native.function(exec, slot.m_data.getterFunc, slot.thisValue(), exec->emptyList());
+        return callData.native.function(exec, m_data.getterFunc, thisValue(), exec->emptyList());
     ASSERT(callType == CallTypeJS);
     // FIXME: Can this be done more efficiently using the callData?
-    return asFunction(slot.m_data.getterFunc)->call(exec, slot.thisValue(), exec->emptyList());
+    return asFunction(m_data.getterFunc)->call(exec, thisValue(), exec->emptyList());
 }
 
 } // namespace JSC

@@ -139,9 +139,9 @@ bool JSActivation::isDynamicScope() const
     return d()->functionExecutable->usesEval();
 }
 
-JSValue JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue JSActivation::argumentsGetter(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    JSActivation* activation = asActivation(slot.slotBase());
+    JSActivation* activation = asActivation(slotBase);
 
     if (activation->d()->functionExecutable->usesArguments()) {
         PropertySlot slot;

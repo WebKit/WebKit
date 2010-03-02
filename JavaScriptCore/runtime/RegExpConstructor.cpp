@@ -35,21 +35,21 @@
 
 namespace JSC {
 
-static JSValue regExpConstructorInput(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorMultiline(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorLastMatch(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorLastParen(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorLeftContext(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorRightContext(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar1(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar2(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar3(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar4(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar5(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar6(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar7(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar8(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue regExpConstructorDollar9(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue regExpConstructorInput(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorMultiline(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorLastMatch(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorLastParen(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorLeftContext(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorRightContext(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar1(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar2(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar3(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar4(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar5(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar6(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar7(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar8(ExecState*, JSValue, const Identifier&);
+static JSValue regExpConstructorDollar9(ExecState*, JSValue, const Identifier&);
 
 static void setRegExpConstructorInput(ExecState*, JSObject*, JSValue);
 static void setRegExpConstructorMultiline(ExecState*, JSObject*, JSValue);
@@ -195,79 +195,79 @@ bool RegExpConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifi
     return getStaticValueDescriptor<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), this, propertyName, descriptor);
 }
 
-JSValue regExpConstructorDollar1(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar1(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 1);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 1);
 }
 
-JSValue regExpConstructorDollar2(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar2(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 2);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 2);
 }
 
-JSValue regExpConstructorDollar3(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar3(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 3);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 3);
 }
 
-JSValue regExpConstructorDollar4(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar4(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 4);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 4);
 }
 
-JSValue regExpConstructorDollar5(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar5(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 5);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 5);
 }
 
-JSValue regExpConstructorDollar6(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar6(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 6);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 6);
 }
 
-JSValue regExpConstructorDollar7(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar7(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 7);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 7);
 }
 
-JSValue regExpConstructorDollar8(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar8(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 8);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 8);
 }
 
-JSValue regExpConstructorDollar9(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorDollar9(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 9);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 9);
 }
 
-JSValue regExpConstructorInput(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorInput(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return jsString(exec, asRegExpConstructor(slot.slotBase())->input());
+    return jsString(exec, asRegExpConstructor(slotBase)->input());
 }
 
-JSValue regExpConstructorMultiline(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorMultiline(ExecState*, JSValue slotBase, const Identifier&)
 {
-    return jsBoolean(asRegExpConstructor(slot.slotBase())->multiline());
+    return jsBoolean(asRegExpConstructor(slotBase)->multiline());
 }
 
-JSValue regExpConstructorLastMatch(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorLastMatch(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getBackref(exec, 0);
+    return asRegExpConstructor(slotBase)->getBackref(exec, 0);
 }
 
-JSValue regExpConstructorLastParen(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorLastParen(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getLastParen(exec);
+    return asRegExpConstructor(slotBase)->getLastParen(exec);
 }
 
-JSValue regExpConstructorLeftContext(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorLeftContext(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getLeftContext(exec);
+    return asRegExpConstructor(slotBase)->getLeftContext(exec);
 }
 
-JSValue regExpConstructorRightContext(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue regExpConstructorRightContext(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return asRegExpConstructor(slot.slotBase())->getRightContext(exec);
+    return asRegExpConstructor(slotBase)->getRightContext(exec);
 }
 
 void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

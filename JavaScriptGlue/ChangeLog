@@ -1,3 +1,16 @@
+2010-03-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor named getter function signature to be in line with indexing getter signature
+        https://bugs.webkit.org/show_bug.cgi?id=35563
+
+        Fix method signature and update code as appropriate
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::userObjectGetter):
+        * UserObjectImp.h:
+
 2010-02-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.

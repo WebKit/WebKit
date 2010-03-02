@@ -112,9 +112,9 @@ void UserObjectImp::getOwnPropertyNames(ExecState *exec, PropertyNameArray& prop
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
 }
 
-JSValue UserObjectImp::userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue UserObjectImp::userObjectGetter(ExecState*, JSValue slotBase, const Identifier& propertyName)
 {
-    UserObjectImp *thisObj = static_cast<UserObjectImp *>(asObject(slot.slotBase()));
+    UserObjectImp *thisObj = static_cast<UserObjectImp *>(asObject(slotBase));
     // getOwnPropertySlot should have guarded against a null fJSUserObject.
     assert(thisObj->fJSUserObject);
     

@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    static JSValue userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
+    static JSValue userObjectGetter(ExecState*, JSValue, const Identifier& propertyName);
 
     JSUserObject* fJSUserObject;
 };
