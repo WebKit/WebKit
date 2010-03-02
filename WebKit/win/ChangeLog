@@ -1,3 +1,21 @@
+2010-02-26  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7703368> IWebUIDelegatePrivate::embeddedViewWithArguments
+        is passed wrong arguments
+
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        Update copyright strings. Added a new key for the plug-in source URL.
+
+        * Interfaces/WebKit.idl:
+        Update copyright strings.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+        Pass the URL of the plug-in as the source URL. Pass the document's
+        base URI for the base URL.
+
 2010-02-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher and Pavel Feldman.
