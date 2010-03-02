@@ -1,3 +1,19 @@
+2010-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35555
+        QuickTime plugin content can spill outside the <object> tag
+
+        Set -masksToBounds on the layer that is handed to us by plug-ins, to ensure that sublayers
+        of that layer don't spill outside the <object> contents rect.
+        
+        Manual test because it relies on QuickTime, and pixel results depend on movie loading timing.
+
+        * manual-tests/plugins/object-clipping.html: Added.
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setupContentsLayer):
+
 2010-03-02  Adam Roben  <aroben@apple.com>
 
         Export SecurityOrigin::registerURLSchemeAsSecure

@@ -2226,6 +2226,7 @@ void GraphicsLayerCA::setupContentsLayer(CALayer* contentsLayer)
 {
     // Turn off implicit animations on the inner layer.
     [contentsLayer setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
+    [contentsLayer setMasksToBounds:YES];
 
     if (defaultContentsOrientation() == CompositingCoordinatesBottomUp) {
         CATransform3D flipper = {
