@@ -1488,6 +1488,7 @@ sub GenerateImplementation
     my $object = shift;
     my $dataNode = shift;
     my $interfaceName = $dataNode->name;
+    my $visibleInterfaceName = GetVisibleInterfaceName($interfaceName);
     my $className = "V8$interfaceName";
     my $implClassName = $interfaceName;
     my $classIndex = uc($codeGenerator->StripModule($interfaceName));
@@ -1735,7 +1736,7 @@ END
     # Generate the template configuration method
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc) {
-  v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${interfaceName}\",
+  v8::Local<v8::Signature> default_signature = configureTemplate(desc, \"${visibleInterfaceName}\",
       $parentClassTemplate, V8${interfaceName}::internalFieldCount,
 END
     # Set up our attributes if we have them
@@ -2918,6 +2919,15 @@ sub IsSVGListTypeNeedingSpecialHandling
     return 1 if $className eq "SVGTransformList";
 
     return 0;
+}
+
+sub GetVisibleInterfaceName
+{
+    my $interfaceName = shift;
+
+    return "DOMException" if $interfaceName eq "DOMCoreException";
+    return "FormData" if $interfaceName eq "DOMFormData";
+    return $interfaceName;
 }
 
 sub DebugPrint
