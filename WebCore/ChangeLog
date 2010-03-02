@@ -1,3 +1,15 @@
+2010-03-02  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: Video element with 3d transform crashes when AC is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=35516
+
+        No new tests.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQt::setContentsToMedia):
+
 2010-03-02  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Xan Lopez.

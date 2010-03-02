@@ -849,9 +849,13 @@ void GraphicsLayerQt::setContentsBackgroundColor(const Color& color)
 
 void GraphicsLayerQt::setContentsToMedia(PlatformLayer* media)
 {
+    if (media) {
+        m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::MediaContentType;
+        m_impl->m_pendingContent.mediaLayer = media->toGraphicsObject();
+    } else
+        m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::HTMLContentType;
+
     m_impl->notifyChange(GraphicsLayerQtImpl::ContentChange);
-    m_impl->m_pendingContent.contentType = GraphicsLayerQtImpl::MediaContentType;
-    m_impl->m_pendingContent.mediaLayer = media->toGraphicsObject();
     GraphicsLayer::setContentsToMedia(media);
 }
 
