@@ -1,3 +1,14 @@
+2010-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35600
+        shouldBe() fails when comparing an array to null.
+
+        * fast/js/resources/js-test-pre.js: (areArraysEqual): This function is expected to be called
+        with weird arguments, as it's used with array-like objects like WebGLByteArray. Made it
+        resilient against exceptions raised when dealing with those.
+
 2010-03-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

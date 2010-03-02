@@ -37,11 +37,15 @@ function testFailed(msg)
 
 function areArraysEqual(_a, _b)
 {
-    if (_a.length !== _b.length)
-        return false;
-    for (var i = 0; i < _a.length; i++)
-        if (_a[i] !== _b[i])
+    try {
+        if (_a.length !== _b.length)
             return false;
+        for (var i = 0; i < _a.length; i++)
+            if (_a[i] !== _b[i])
+                return false;
+    } catch (ex) {
+        return false;
+    }
     return true;
 }
 
