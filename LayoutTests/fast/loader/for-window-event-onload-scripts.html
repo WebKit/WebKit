@@ -22,3 +22,27 @@ if (window.layoutTestController)
 <script event="BAR">
     alert("This script SHOULD be run because it only has an event attribute.");
 </script>
+
+<script for="   window   " event="onload()">
+alert("This script SHOULD be run because it has both 'for=   window   ' and 'event=onload()' and the whitespace should be irrelevant.");
+</script>
+
+<script for="window" event="   onload()   ">
+alert("This script SHOULD be run because it has both 'for=window' and 'event=   onload()   ' and the whitespace should be irrelevant.");
+</script>
+
+<script for="   window   " event="   onload()   ">
+alert("This script SHOULD be run because it has both 'for=   window   ' and 'event=   onload()   ' and the whitespace should be irrelevant.");
+</script>
+
+<script for="   window   " event="onload">
+alert("This script SHOULD be run because it has both 'for=   window   ' and 'event=onload' and the whitespace should be irrelevant.");
+</script>
+
+<script for="window" event="   onload   ">
+alert("This script SHOULD be run because it has both 'for=window' and 'event=   onload   ' and the whitespace should be irrelevant.");
+</script>
+
+<script for="   window   " event="   onload   ">
+alert("This script SHOULD be run because it has both 'for=   window   ' and 'event=   onload   ' and the whitespace should be irrelevant.");
+</script>

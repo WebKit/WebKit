@@ -250,6 +250,8 @@ bool ScriptElementData::shouldExecuteAsJavaScript() const
     if (forAttribute.isEmpty() || eventAttribute.isEmpty())
         return true;
     
+    forAttribute = forAttribute.stripWhiteSpace();
+    eventAttribute = eventAttribute.stripWhiteSpace();
     return equalIgnoringCase(forAttribute, "window") && (equalIgnoringCase(eventAttribute, "onload") || equalIgnoringCase(eventAttribute, "onload()"));
 }
 
