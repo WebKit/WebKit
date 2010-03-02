@@ -2,6 +2,19 @@
 
         Reviewed by Dimitri Glazkov.
 
+        new-run-webkit-tests on chromium-linux tests to see if
+        layout_test_helper exists, but we don't use layout_test_helper on
+        linux. The test derefences a None object, and we crash. This fixes
+        that.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35602
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+ 2010-03-02  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         r55388 (bug 35553) worked around a bug in Python's subprocess.Popen()
         that was causing DRT to hang on exit in new-run-webkit-tests.
         Unfortunately, that workaround doesn't work on chromium-win

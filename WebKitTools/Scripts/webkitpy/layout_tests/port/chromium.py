@@ -81,8 +81,9 @@ class ChromiumPort(base.Port):
             logging.error('')
 
         helper_path = self._path_to_helper()
-        result = check_file_exists(helper_path,
-                                   'layout test helper') and result
+        if helper_path:
+            result = check_file_exists(helper_path,
+                                       'layout test helper') and result
 
         if not self._options.no_pixel_tests:
             image_diff_path = self._path_to_image_diff()
