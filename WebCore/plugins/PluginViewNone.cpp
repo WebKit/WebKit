@@ -130,4 +130,8 @@ void PluginView::privateBrowsingStateChanged(bool)
 {
 }
 
+void PluginView::setJavaScriptPaused(bool)
+{
+}
+
 } // namespace WebCore

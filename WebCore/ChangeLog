@@ -2,6 +2,16 @@
 
         Rubber-stamped by Jon Honeycutt.
 
+        ScriptDebugServer shouldn't care that Mac does not use PluginView for plug-ins.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::setJavaScriptPaused): Add an empty implementation of setJavaScriptPaused.
+
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
         Clean up the build fix r55437 by adding an empty implementation of privateBrowsingStateChanged in PluginViewNone.cpp
 
         * page/Page.cpp:
