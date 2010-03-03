@@ -690,6 +690,9 @@ void InspectorController::populateScriptObjects()
         it->second->bind(m_frontend.get());
 #endif
 
+    if (m_profilerEnabled)
+        m_frontend->profilerWasEnabled();
+
     m_frontend->populateInterface();
 
     // Dispatch pending frontend commands

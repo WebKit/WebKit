@@ -632,7 +632,7 @@ WebInspector.documentClick = function(event)
         } else {
             var profileString = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
             if (profileString)
-                WebInspector.showProfile(anchor.href, anchor.lineNumber);
+                WebInspector.showProfileForURL(anchor.href);
         }
     }
 

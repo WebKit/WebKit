@@ -200,6 +200,8 @@ WebInspector.loaded = function()
     Preferences.ignoreWhitespace = false;
     Preferences.samplingCPUProfiler = true;
     Preferences.heapProfilerPresent = true;
+    Preferences.debuggerAlwaysEnabled = true;
+    Preferences.profilerAlwaysEnabled = true;
     oldLoaded.call(this);
 
     InspectorFrontendHost.loaded();

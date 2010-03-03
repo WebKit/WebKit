@@ -68,11 +68,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.appendChild(this.listElement);
         }
 
-        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
-            return;
-
-        if (breakpoint.enabled)
-            InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
+        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 
     _appendBreakpointElement: function(breakpoint)
@@ -145,9 +141,6 @@ WebInspector.BreakpointsSidebarPane.prototype = {
             this.bodyElement.appendChild(this.emptyElement);
         }
 
-        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
-            return;
-
         InspectorBackend.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
     },
 
@@ -157,10 +150,6 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         var checkbox = breakpoint._breakpointListElement.firstChild;
         checkbox.checked = breakpoint.enabled;
-
-        if (!InspectorBackend.debuggerEnabled() || !breakpoint.sourceID)
-            return;
-
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition);
     },
 

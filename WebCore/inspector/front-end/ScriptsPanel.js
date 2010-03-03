@@ -195,6 +195,7 @@ WebInspector.ScriptsPanel = function()
     shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier);
     this._shortcuts[shortcut] = handler;
 
+    this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
     this.reset();
 }
 
@@ -418,11 +419,19 @@ WebInspector.ScriptsPanel.prototype = {
 
     debuggerWasEnabled: function()
     {
+        if (this._debuggerEnabled)
+            return;
+
+        this._debuggerEnabled = true;
         this.reset();
     },
 
     debuggerWasDisabled: function()
     {
+        if (!this._debuggerEnabled)
+            return;
+
+        this._debuggerEnabled = false;
         this.reset();
     },
 
@@ -433,7 +442,7 @@ WebInspector.ScriptsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        if (!InspectorBackend.debuggerEnabled()) {
+        if (!this._debuggerEnabled) {
             this._paused = false;
             this._waitingToPause = false;
             this._stepping = false;
@@ -491,7 +500,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        if (!InspectorBackend.debuggerEnabled())
+        if (!this._debuggerEnabled)
             return false;
         return !!this._scriptOrResourceForURLAndLine(url, line);
     },
@@ -797,7 +806,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _updateDebuggerButtons: function()
     {
-        if (InspectorBackend.debuggerEnabled()) {
+        if (this._debuggerEnabled) {
             this.enableToggleButton.title = WebInspector.UIString("Debugging enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             this.pauseOnExceptionButton.visible = true;
@@ -876,7 +885,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _enableDebugging: function()
     {
-        if (InspectorBackend.debuggerEnabled())
+        if (this._debuggerEnabled)
             return;
         this._toggleDebugging(this.panelEnablerView.alwaysEnabled);
     },
@@ -887,7 +896,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._waitingToPause = false;
         this._stepping = false;
 
-        if (InspectorBackend.debuggerEnabled())
+        if (this._debuggerEnabled)
             InspectorBackend.disableDebugger(true);
         else
             InspectorBackend.enableDebugger(!!optionalAlways);

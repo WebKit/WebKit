@@ -155,12 +155,6 @@ void InspectorBackend::stopTimelineProfiler()
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-bool InspectorBackend::debuggerEnabled() const
-{
-    if (m_inspectorController)
-        return m_inspectorController->debuggerEnabled();
-    return false;
-}
 
 void InspectorBackend::enableDebugger(bool always)
 {
@@ -235,12 +229,6 @@ void InspectorBackend::setPauseOnExceptionsState(long pauseState)
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-bool InspectorBackend::profilerEnabled()
-{
-    if (m_inspectorController)
-        return m_inspectorController->profilerEnabled();
-    return false;
-}
 
 void InspectorBackend::enableProfiler(bool always)
 {

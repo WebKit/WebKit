@@ -38,7 +38,9 @@ var Preferences = {
     styleRulesExpandedState: {},
     showMissingLocalizedStrings: false,
     samplingCPUProfiler: false,
-    showColorNicknames: true
+    showColorNicknames: true,
+    debuggerAlwaysEnabled: false,
+    profilerAlwaysEnabled: false
 }
 
 WebInspector.populateFrontendSettings = function(settingsString)

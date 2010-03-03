@@ -74,7 +74,6 @@ public:
     void stopTimelineProfiler();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    bool debuggerEnabled() const;
     void enableDebugger(bool always);
     void disableDebugger(bool always);
 
@@ -93,7 +92,6 @@ public:
     void stepIntoStatementInDebugger();
     void stepOutOfFunctionInDebugger();
 
-    bool profilerEnabled();
     void enableProfiler(bool always);
     void disableProfiler(bool always);
 

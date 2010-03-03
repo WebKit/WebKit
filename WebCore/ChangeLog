@@ -1,3 +1,35 @@
+2010-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Get rid of synchronous debuggerEnabled, profilerEnabled calls.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32331
+
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype.removeBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.profilerWasEnabled):
+        (WebInspector.ProfilesPanel.prototype.profilerWasDisabled):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype._enableProfiling):
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasDisabled):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype.canShowSourceLine):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        (WebInspector.ScriptsPanel.prototype._enableDebugging):
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+
 2010-03-03  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.

@@ -49,7 +49,6 @@ module core {
         void stopTimelineProfiler();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        boolean debuggerEnabled();
         void enableDebugger(in boolean always);
         void disableDebugger(in boolean always);
 
@@ -68,7 +67,6 @@ module core {
         long pauseOnExceptionsState();
         void setPauseOnExceptionsState(in long pauseOnExceptionsState);
 
-        boolean profilerEnabled();
         void enableProfiler(in boolean always);
         void disableProfiler(in boolean always);
 

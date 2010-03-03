@@ -120,6 +120,7 @@ WebInspector.ProfilesPanel = function()
     this.element.appendChild(this.welcomeView.element);
 
     this._profiles = [];
+    this._profilerEnabled = Preferences.profilerAlwaysEnabled;
     this.reset();
 }
 
@@ -171,12 +172,20 @@ WebInspector.ProfilesPanel.prototype = {
 
     profilerWasEnabled: function()
     {
+        if (this._profilerEnabled)
+            return;
+
+        this._profilerEnabled = true;
         this.reset();
         this.populateInterface();
     },
 
     profilerWasDisabled: function()
     {
+        if (!this._profilerEnabled)
+            return;
+
+        this._profilerEnabled = false;
         this.reset();
     },
 
@@ -429,7 +438,7 @@ WebInspector.ProfilesPanel.prototype = {
     _updateInterface: function()
     {
         // FIXME: Replace ProfileType-specific button visibility changes by a single ProfileType-agnostic "combo-button" visibility change.
-        if (InspectorBackend.profilerEnabled()) {
+        if (this._profilerEnabled) {
             this.enableToggleButton.title = WebInspector.UIString("Profiling enabled. Click to disable.");
             this.enableToggleButton.toggled = true;
             for (var typeId in this._profileTypeButtonsByIdMap)
@@ -448,14 +457,14 @@ WebInspector.ProfilesPanel.prototype = {
 
     _enableProfiling: function()
     {
-        if (InspectorBackend.profilerEnabled())
+        if (this._profilerEnabled)
             return;
         this._toggleProfiling(this.panelEnablerView.alwaysEnabled);
     },
 
     _toggleProfiling: function(optionalAlways)
     {
-        if (InspectorBackend.profilerEnabled())
+        if (this._profilerEnabled)
             InspectorBackend.disableProfiler(true);
         else
             InspectorBackend.enableProfiler(!!optionalAlways);
