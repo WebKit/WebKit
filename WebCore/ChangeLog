@@ -1,3 +1,11 @@
+2010-03-02  Darin Fisher  <darin@chromium.org>
+
+        Fix chromium build bustage.
+
+        * page/Page.cpp:
+        (WebCore::Page::privateBrowsingStateChanged): PluginView methods may
+        not be called in the Chromium port.
+
 2010-03-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler and Adam Roben.
