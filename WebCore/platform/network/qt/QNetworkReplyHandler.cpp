@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QNetworkReplyHandler.h"
 
+#include "CString.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceHandle.h"
@@ -151,6 +152,10 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
 #if QT_VERSION >= 0x040600
     else if (r.httpMethod() == "DELETE")
         m_method = QNetworkAccessManager::DeleteOperation;
+#endif
+#if QT_VERSION >= 0x040700
+    else if (r.httpMethod() == "OPTIONS")
+        m_method = QNetworkAccessManager::CustomOperation;
 #endif
     else
         m_method = QNetworkAccessManager::UnknownOperation;
@@ -436,6 +441,11 @@ void QNetworkReplyHandler::start()
             m_reply = manager->deleteResource(m_request);
             break;
         }
+#endif
+#if QT_VERSION >= 0x040700
+        case QNetworkAccessManager::CustomOperation:
+            m_reply = manager->sendCustomRequest(m_request, m_resourceHandle->request().httpMethod().latin1().data());
+            break;
 #endif
         case QNetworkAccessManager::UnknownOperation: {
             m_reply = 0;
