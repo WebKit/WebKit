@@ -1,3 +1,19 @@
+2010-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7682756> Assertion failure when replacing the contents of a <select>
+
+        Test: fast/dom/remove-children-notification-order.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren): Changed to call childrenChanged()
+        before calling removedFromDocument() on each removed child, which matches
+        the order removeChild() does things, and avoids the assertion. This required
+        temporarily storing the removed children in a vector.
+        Also added comments about other discrepancies between this function and
+        removeChild().
+
 2010-03-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

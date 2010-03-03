@@ -396,32 +396,42 @@ bool ContainerNode::removeChildren()
     document()->removeFocusedNodeOfSubtree(this, true);
 
     forbidEventDispatch();
-    int childCountDelta = 0;
+    Vector<RefPtr<Node> > removedChildren;
     while (RefPtr<Node> n = m_firstChild) {
-        childCountDelta--;
-
         Node* next = n->nextSibling();
         
-        // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744)
+        // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744).
+        // removeChild() does this after calling detach(). There is no explanation for
+        // this discrepancy between removeChild() and its optimized version removeChildren().
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-        
+
         m_firstChild = next;
         if (n == m_lastChild)
             m_lastChild = 0;
 
         if (n->attached())
             n->detach();
-        
-        if (n->inDocument())
-            n->removedFromDocument();
+
+        removedChildren.append(n.release());
     }
     allowEventDispatch();
 
+    size_t removedChildrenCount = removedChildren.size();
+
     // Dispatch a single post-removal mutation event denoting a modified subtree.
-    childrenChanged(false, 0, 0, childCountDelta);
+    childrenChanged(false, 0, 0, -removedChildrenCount);
     dispatchSubtreeModifiedEvent();
+
+    for (size_t i = 0; i < removedChildrenCount; ++i) {
+        Node* removedChild = removedChildren[i].get();
+        if (removedChild->inDocument())
+            removedChild->removedFromDocument();
+        // removeChild() calls removedFromTree(true) if the child was not in the
+        // document. There is no explanation for this discrepancy between removeChild()
+        // and its optimized version removeChildren().
+    }
 
     return true;
 }

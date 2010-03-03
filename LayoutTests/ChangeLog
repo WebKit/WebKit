@@ -1,3 +1,12 @@
+2010-03-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7682756> Assertion failure when replacing the contents of a <select>
+
+        * fast/dom/remove-children-notification-order-expected.txt: Added.
+        * fast/dom/remove-children-notification-order.html: Added.
+
 2010-03-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] build slaves need working geoclue service
