@@ -52,8 +52,8 @@ shouldBeNonNull("new Audio()");
 shouldBeEqualToString("new Audio().tagName", "AUDIO");
 
 shouldBeEqualToString("new Audio().src", "");
-shouldBeTrue("new Audio().autobuffer");
+shouldBeEqualToString("new Audio().preload", "auto");
 shouldBeEqualToString("new Audio('http://localhost/someurl').src", "http://localhost/someurl");
-shouldBeTrue("new Audio('http://localhost/someurl').autobuffer");
+shouldBeEqualToString("new Audio('http://localhost/someurl').preload", "auto");
 
 var successfullyParsed = true;

@@ -39,9 +39,9 @@ PASS new Option('somedata', 'somevalue', true).outerHTML.replace(/"/g,"'") is "<
 PASS new Audio() is non-null.
 PASS new Audio().tagName is "AUDIO"
 PASS new Audio().src is ""
-PASS new Audio().autobuffer is true
+PASS new Audio().preload is "auto"
 PASS new Audio('http://localhost/someurl').src is "http://localhost/someurl"
-PASS new Audio('http://localhost/someurl').autobuffer is true
+PASS new Audio('http://localhost/someurl').preload is "auto"
 PASS successfullyParsed is true
 
 TEST COMPLETE
