@@ -1,3 +1,11 @@
+2010-03-03  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed distcheck fix.
+
+        Add new file to the build.
+
+        * GNUmakefile.am:
+
 2010-03-03  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Oliver Hunt.

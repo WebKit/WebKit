@@ -1592,6 +1592,7 @@ webcore_sources += \
 	WebCore/platform/graphics/ImageSource.cpp \
 	WebCore/platform/graphics/ImageSource.h \
 	WebCore/platform/graphics/IntPoint.h \
+	WebCore/platform/graphics/IntPointHash.h \
 	WebCore/platform/graphics/IntRect.cpp \
 	WebCore/platform/graphics/IntRect.h \
 	WebCore/platform/graphics/IntSize.h \
