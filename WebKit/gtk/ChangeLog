@@ -1,3 +1,10 @@
+2010-03-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, build fix after r55452.
+
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_settings_notify): added missing braces.
+
 2010-03-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

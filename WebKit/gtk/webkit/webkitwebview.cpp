@@ -2821,9 +2821,10 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("enable-caret-browsing"))
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
 #if ENABLE(DATABASE)
-    else if (name == g_intern_string("enable-html5-database"))
+    else if (name == g_intern_string("enable-html5-database")) {
         settings->setDatabasesEnabled(g_value_get_boolean(&value));
         Database::setIsAvailable(g_value_get_boolean(&value));
+    }
 #endif
     else if (name == g_intern_string("enable-html5-local-storage"))
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
