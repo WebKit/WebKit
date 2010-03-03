@@ -294,4 +294,3 @@ library WebKit
         [default] interface IWebGeolocationPosition;
     }
 }
-
