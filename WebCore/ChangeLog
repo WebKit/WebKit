@@ -1,3 +1,13 @@
+2010-03-03  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk]: assertion triggered when geolocation getCurrentPosition without an option argument.
+        https://bugs.webkit.org/show_bug.cgi?id=35666
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::startUpdating):
+
 2010-03-03  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Xan Lopez.
