@@ -82,8 +82,7 @@ class LauncherWindow : public MainWindow {
     Q_OBJECT
 
 public:
-    LauncherWindow(QString url = QString());
-    LauncherWindow(QGraphicsScene* scene);
+    LauncherWindow(LauncherWindow* other = 0, bool shareScene = false);
     virtual ~LauncherWindow();
 
     virtual void keyPressEvent(QKeyEvent* event);
@@ -121,12 +120,11 @@ protected slots:
     void initializeView(bool useGraphicsView = false);
 
 public slots:
-    void newWindow(const QString& url = QString());
+    void newWindow();
     void cloneWindow();
 
 private:
-    // create the status bar, tool bar & menu
-    void setupUI();
+    void createChrome();
 
 private:
     QVector<int> zoomLevels;
@@ -145,24 +143,32 @@ private:
 #endif
 
     void init(bool useGraphicsView = false);
+    bool isGraphicsBased() const;
+    void applyPrefs(LauncherWindow* other = 0);
 };
 
-
-LauncherWindow::LauncherWindow(QString url)
-    : MainWindow(url)
-    , currentZoom(100)
-{
-    init();
-    load(url);
-}
-
-LauncherWindow::LauncherWindow(QGraphicsScene* scene)
+LauncherWindow::LauncherWindow(LauncherWindow* other, bool shareScene)
     : MainWindow()
     , currentZoom(100)
+    , m_view(0)
+    , inspector(0)
+    , formatMenuAction(0)
+    , flipAnimated(0)
+    , flipYAnimated(0)
 {
-    init(true); // use QGraphicsView
-    QGraphicsView* view = static_cast<QGraphicsView*>(m_view);
-    view->setScene(scene);
+    if (other) {
+        init(other->isGraphicsBased());
+        applyPrefs(other);
+        if (shareScene && other->isGraphicsBased()) {
+            QGraphicsView* otherView = static_cast<QGraphicsView*>(other->m_view);
+            static_cast<QGraphicsView*>(m_view)->setScene(otherView->scene());
+        }
+    } else {
+        init(gUseGraphicsView);
+        applyPrefs();
+    }
+
+    createChrome();
 }
 
 LauncherWindow::~LauncherWindow()
@@ -181,8 +187,6 @@ void LauncherWindow::init(bool useGraphicsView)
     resize(800, 600);
 #endif
 
-    m_view = 0;
-
     initializeView(useGraphicsView);
 
     connect(page(), SIGNAL(loadStarted()), this, SLOT(loadStarted()));
@@ -198,14 +202,45 @@ void LauncherWindow::init(bool useGraphicsView)
     inspector->hide();
     connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
 
-    setupUI();
-
     // the zoom values are chosen to be like in Mozilla Firefox 3
     zoomLevels << 30 << 50 << 67 << 80 << 90;
     zoomLevels << 100;
     zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
 
     grabZoomKeys(true);
+}
+
+bool LauncherWindow::isGraphicsBased() const
+{
+    return bool(qobject_cast<QGraphicsView*>(m_view));
+}
+
+inline void applySetting(QWebSettings::WebAttribute type, QWebSettings* settings, QWebSettings* other, bool defaultValue)
+{
+    settings->setAttribute(type, other ? other->testAttribute(type) : defaultValue);
+}
+
+void LauncherWindow::applyPrefs(LauncherWindow* source)
+{
+    QWebSettings* other = source ? source->page()->settings() : 0;
+    QWebSettings* settings = page()->settings();
+
+    applySetting(QWebSettings::AcceleratedCompositingEnabled, settings, other, gUseCompositing);
+    applySetting(QWebSettings::WebGLEnabled, settings, other, false);
+
+    if (!isGraphicsBased())
+        return;
+
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    WebViewGraphicsBased* otherView = source ? qobject_cast<WebViewGraphicsBased*>(source->m_view) : 0;
+
+    view->setViewportUpdateMode(otherView ? otherView->viewportUpdateMode() : gViewportUpdateMode);
+    view->setFrameRateMeasurementEnabled(otherView ? otherView->frameRateMeasurementEnabled() : gShowFrameRate);
+
+    if (otherView)
+        view->setItemCacheMode(otherView->itemCacheMode());
+    else
+        view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
 }
 
 void LauncherWindow::keyPressEvent(QKeyEvent* event)
@@ -485,11 +520,6 @@ void LauncherWindow::initializeView(bool useGraphicsView)
     } else {
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
         view->setPage(page());
-        view->setViewportUpdateMode(gViewportUpdateMode);
-        view->setItemCacheMode(gCacheWebView ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
-        if (gShowFrameRate)
-            view->enableFrameRateMeasurement();
-        page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, gUseCompositing);
 
         if (flipAnimated)
             connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
@@ -506,21 +536,19 @@ void LauncherWindow::initializeView(bool useGraphicsView)
 #endif
 }
 
-void LauncherWindow::newWindow(const QString& url)
+void LauncherWindow::newWindow()
 {
-    LauncherWindow* mw = new LauncherWindow(url);
+    LauncherWindow* mw = new LauncherWindow(this, false);
     mw->show();
 }
 
 void LauncherWindow::cloneWindow()
 {
-    QGraphicsView* view = static_cast<QGraphicsView*>(m_view);
-
-    LauncherWindow* mw = new LauncherWindow(view->scene());
+    LauncherWindow* mw = new LauncherWindow(this, true);
     mw->show();
 }
 
-void LauncherWindow::setupUI()
+void LauncherWindow::createChrome()
 {
     QMenu* fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
@@ -584,36 +612,44 @@ void LauncherWindow::setupUI()
     touchMockAction->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_T));
 #endif
 
+    QWebSettings* settings = page()->settings();
+
     QMenu* graphicsViewMenu = toolsMenu->addMenu("QGraphicsView");
     QAction* toggleGraphicsView = graphicsViewMenu->addAction("Toggle use of QGraphicsView", this, SLOT(initializeView(bool)));
     toggleGraphicsView->setCheckable(true);
-    toggleGraphicsView->setChecked(false);
+    toggleGraphicsView->setChecked(isGraphicsBased());
 
     QAction* toggleWebGL = toolsMenu->addAction("Toggle WebGL", this, SLOT(toggleWebGL(bool)));
     toggleWebGL->setCheckable(true);
-    toggleWebGL->setChecked(false);
+    toggleWebGL->setChecked(settings->testAttribute(QWebSettings::WebGLEnabled));
 
     QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
     toggleAcceleratedCompositing->setCheckable(true);
-    toggleAcceleratedCompositing->setChecked(false);
-    toggleAcceleratedCompositing->setEnabled(false);
+    toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
+    toggleAcceleratedCompositing->setEnabled(isGraphicsBased());
     toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
     graphicsViewMenu->addSeparator();
 
     flipAnimated = graphicsViewMenu->addAction("Animated Flip");
     flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    flipAnimated->setEnabled(false);
+    flipAnimated->setEnabled(isGraphicsBased());
 
     flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
     flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    flipYAnimated->setEnabled(false);
+    flipYAnimated->setEnabled(isGraphicsBased());
+
+    if (isGraphicsBased()) {
+        WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+        connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+    }
 
     graphicsViewMenu->addSeparator();
 
     QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
     cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    cloneWindow->setEnabled(false);
+    cloneWindow->setEnabled(isGraphicsBased());
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
@@ -810,9 +846,11 @@ int main(int argc, char **argv)
     LauncherWindow* window = 0;
     foreach (QString url, urls) {
         if (!window)
-            window = new LauncherWindow(url);
+            window = new LauncherWindow();
         else
-            window->newWindow(url);
+            window->newWindow();
+
+        window->load(url);
     }
 
     window->show();

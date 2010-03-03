@@ -73,8 +73,11 @@ public:
     virtual void resizeEvent(QResizeEvent*);
     void setPage(QWebPage* page) { m_item->setPage(page); }
     void setItemCacheMode(QGraphicsItem::CacheMode mode) { m_item->setCacheMode(mode); }
+    QGraphicsItem::CacheMode itemCacheMode() { return m_item->cacheMode(); }
 
-    void enableFrameRateMeasurement();
+    void setFrameRateMeasurementEnabled(bool enabled);
+    bool frameRateMeasurementEnabled() { return m_measureFps; } 
+
     virtual void paintEvent(QPaintEvent* event);
 
     void setYRotation(qreal angle)
@@ -107,6 +110,7 @@ private:
     int m_numPaintsSinceLastMeasure;
     QTime m_startTime;
     QTime m_lastConsultTime;
+    QTimer* m_updateTimer;
     bool m_measureFps;
     qreal m_yRotation;
 };

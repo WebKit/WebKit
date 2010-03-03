@@ -1,3 +1,33 @@
+2010-03-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Refactor QtLauncher so it respects command line arguments
+        and inherits settings when you clone or create a new window.
+
+        Implemented with help of Kenneth Rohde Christiansen.
+
+        [Qt] QtLauncher must be refactored to fix command line arguments usage
+        https://bugs.webkit.org/show_bug.cgi?id=35536
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::init):
+        (LauncherWindow::isGraphicsBased):
+        (applySetting):
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::initializeView):
+        (LauncherWindow::newWindow):
+        (LauncherWindow::cloneWindow):
+        (LauncherWindow::createChrome):
+        (main):
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::setFrameRateMeasurementEnabled):
+        * QtLauncher/webview.h:
+        (WebViewGraphicsBased::itemCacheMode):
+        (WebViewGraphicsBased::frameRateMeasurementEnabled):
+
 2010-03-02  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.
