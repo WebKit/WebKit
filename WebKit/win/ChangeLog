@@ -1,3 +1,16 @@
+2010-03-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler and Adam Roben.
+
+        Tiny WebKit portion of fix for <rdar://problem/7485289> WebKit 
+        crashes on systems that don't support CoreAnimation
+
+        setHostWindow() no longer calls createRenderer(), so now that has 
+        to be called manually.
+
+        * WebView.cpp:
+        (WebView::setAcceleratedCompositing):
+
 2010-03-02  Adam Roben  <aroben@apple.com>
 
         Add IWebViewPrivate::registerURLSchemeAsSecure

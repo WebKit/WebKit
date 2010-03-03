@@ -1,3 +1,28 @@
+2010-03-02  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler and Adam Roben.
+
+        Fix for <rdar://problem/7485289> WebKit crashes on systems that 
+        don't support CoreAnimation
+
+        WKCACFLayerRenderer::acceleratedCompositingAvailable() now creates 
+        a dummy HWND so that it can step through the whole setHostWindow() 
+        and createRenderer() process. createRenderer() also calls a new 
+        function, hardwareCapabilitiesIndicateCoreAnimationSupport() which 
+        can only be called  once we have a d3dDevice.
+
+        setHostWindow() and createRenderer() now both return bools that 
+        indicate whether or not they have succeeded.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::hardwareCapabilitiesIndicateCoreAnimationSupport):
+        (WebCore::CoreAnimationTesterWindowWndProc):
+        (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable):
+        (WebCore::WKCACFLayerRenderer::shared):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        (WebCore::WKCACFLayerRenderer::setHostWindow):
+
 2010-03-02  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Jon Honeycutt.

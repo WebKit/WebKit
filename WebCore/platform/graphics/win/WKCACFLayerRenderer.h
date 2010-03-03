@@ -62,9 +62,9 @@ public:
     void setRootContents(CGImageRef);
     void setRootChildLayer(WebCore::PlatformLayer* layer);
     void setNeedsDisplay();
-    void setHostWindow(HWND window) { m_hostWindow = window; createRenderer(); }
+    void setHostWindow(HWND window) { m_hostWindow = window; }
 
-    void createRenderer();
+    bool createRenderer();
     void destroyRenderer();
     void resize();
     void renderSoon();

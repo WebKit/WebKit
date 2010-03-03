@@ -29,6 +29,7 @@
 
 #include "WKCACFLayerRenderer.h"
 
+#include "Page.h"
 #include "WKCACFContextFlusher.h"
 #include "WKCACFLayer.h"
 #include <CoreGraphics/CGSRegion.h>
@@ -95,6 +96,28 @@ static D3DPRESENT_PARAMETERS initialPresentationParameters()
     return parameters;
 }
 
+// FIXME: <rdar://6507851> Share this code with CoreAnimation.
+static bool hardwareCapabilitiesIndicateCoreAnimationSupport(const D3DCAPS9& caps)
+{
+    // CoreAnimation needs two or more texture units.
+    if (caps.MaxTextureBlendStages < 2)
+        return false;
+
+    // CoreAnimation needs non-power-of-two textures.
+    if ((caps.TextureCaps & D3DPTEXTURECAPS_POW2) && !(caps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL))
+        return false;
+
+    // CoreAnimation needs vertex shader 2.0 or greater.
+    if (D3DSHADER_VERSION_MAJOR(caps.VertexShaderVersion) < 2)
+        return false;
+
+    // CoreAnimation needs pixel shader 2.0 or greater.
+    if (D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion) < 2)
+        return false;
+
+    return true;
+}
+
 bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
 {
     static bool available;
@@ -104,17 +127,46 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
         return available;
 
     tested = true;
+
+    // Initialize available to true since this function will be called from a 
+    // propagation within createRenderer(). We want to be able to return true 
+    // when that happens so that the test can continue.
+    available = true;
+    
     HMODULE library = LoadLibrary(TEXT("d3d9.dll"));
-    if (!library)
-        return false;
+    if (!library) {
+        available = false;
+        return available;
+    }
 
     FreeLibrary(library);
     library = LoadLibrary(TEXT("QuartzCore.dll"));
-    if (!library)
-        return false;
+    if (!library) {
+        available = false;
+        return available;
+    }
 
     FreeLibrary(library);
-    available = true;
+
+    // Make a dummy HWND.
+    WNDCLASSEX wcex = { 0 };
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.lpfnWndProc = DefWindowProc;
+    wcex.hInstance = Page::instanceHandle();
+    wcex.lpszClassName = L"CoreAnimationTesterWindowClass";
+    ::RegisterClassEx(&wcex);
+    HWND testWindow = ::CreateWindow(L"CoreAnimationTesterWindowClass", L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 0, 0, 0, 0, 0, 0);
+
+    if (!testWindow) {
+        available = false;
+        return available;
+    }
+
+    OwnPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create();
+    testLayerRenderer->setHostWindow(testWindow);
+    available = testLayerRenderer->createRenderer();
+    ::DestroyWindow(testWindow);
+
     return available;
 }
 
@@ -194,16 +246,16 @@ void WKCACFLayerRenderer::setNeedsDisplay()
     renderSoon();
 }
 
-void WKCACFLayerRenderer::createRenderer()
+bool WKCACFLayerRenderer::createRenderer()
 {
     if (m_triedToCreateD3DRenderer)
-        return;
+        return m_d3dDevice;
 
     m_triedToCreateD3DRenderer = true;
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
 
     if (!d3d() || !::IsWindow(m_hostWindow))
-        return;
+        return false;
 
     // D3D doesn't like to make back buffers for 0 size windows. We skirt this problem if we make the
     // passed backbuffer width and height non-zero. The window will necessarily get set to a non-zero
@@ -216,8 +268,23 @@ void WKCACFLayerRenderer::createRenderer()
         parameters.BackBufferHeight = 1;
     }
 
-    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &parameters, &m_d3dDevice)))
-        return;
+    COMPtr<IDirect3DDevice9> device;
+    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &parameters, &device)))
+        return false;
+
+    // Now that we've created the IDirect3DDevice9 based on the capabilities we
+    // got from the IDirect3D9 global object, we requery the device for its
+    // actual capabilities. The capabilities returned by the device can
+    // sometimes be more complete, for example when using software vertex
+    // processing.
+    D3DCAPS9 deviceCaps;
+    if (FAILED(device->GetDeviceCaps(&deviceCaps)))
+        return false;
+
+    if (!hardwareCapabilitiesIndicateCoreAnimationSupport(deviceCaps))
+        return false;
+
+    m_d3dDevice = device;
 
     D3DXMATRIXA16 projection;
     D3DXMatrixOrthoOffCenterRH(&projection, rect.left, rect.right, rect.top, rect.bottom, -1.0f, 1.0f);
@@ -251,6 +318,8 @@ void WKCACFLayerRenderer::createRenderer()
 
     if (m_context)
         m_rootLayer->becomeRootLayerForContext(m_context.get());
+
+    return true;
 }
 
 void WKCACFLayerRenderer::destroyRenderer()
