@@ -5796,3 +5796,10 @@ http/tests/loading/307-after-303-after-post.html
 
 # DumpRenderTree code to enable Java is currently a no-op
 java
+
+# We're not quite ready to run these tests, because of slave configuration
+# See https://bugs.webkit.org/show_bug.cgi?id=35674
+fast/dom/Geolocation/permission-denied-already-error.html
+fast/dom/Geolocation/permission-denied-already-success.html
+fast/dom/Geolocation/permission-denied-stops-watches.html
+fast/dom/Geolocation/permission-denied.html
