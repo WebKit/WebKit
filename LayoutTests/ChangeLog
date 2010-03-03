@@ -1,3 +1,12 @@
+2010-03-02  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] implements ChromeClient::requestGeolocationPermissionForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=35210
+
+        * platform/gtk/Skipped:
+
 2010-03-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

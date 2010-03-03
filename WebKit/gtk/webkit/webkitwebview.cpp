@@ -31,6 +31,7 @@
 
 #include "webkitdownload.h"
 #include "webkitenumtypes.h"
+#include "webkitgeolocationpolicydecision.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkresponse.h"
@@ -159,6 +160,8 @@ enum {
     DATABASE_QUOTA_EXCEEDED,
     RESOURCE_REQUEST_STARTING,
     DOCUMENT_LOAD_FINISHED,
+    GEOLOCATION_POLICY_DECISION_REQUESTED,
+    GEOLOCATION_POLICY_DECISION_CANCELLED,
     LAST_SIGNAL
 };
 
@@ -2211,6 +2214,48 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             WEBKIT_TYPE_NETWORK_REQUEST,
             WEBKIT_TYPE_NETWORK_RESPONSE);
+
+    /**
+     * WebKitWebView::geolocation-policy-decision-requested:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the frame that requests permission
+     * @policy_decision: a WebKitGeolocationPolicyDecision
+     *
+     * When a @frame wants to get its geolocation permission.
+     * The receiver must reply with a boolean wether it handled or not the
+     * request. If the request is not handled, default behaviour is to deny
+     * geolocation.
+     *
+     * Since: 1.1.23
+     */
+    webkit_web_view_signals[GEOLOCATION_POLICY_DECISION_REQUESTED] = g_signal_new("geolocation-policy-decision-requested",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST),
+            0,
+            NULL, NULL,
+            webkit_marshal_BOOLEAN__OBJECT_OBJECT,
+            G_TYPE_BOOLEAN, 2,
+            WEBKIT_TYPE_WEB_FRAME,
+            WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION);
+
+    /**
+     * WebKitWebView::geolocation-policy-decision-cancelled:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the frame that cancels geolocation request.
+     *
+     * When a @frame wants to cancel geolocation permission it had requested
+     * before.
+     *
+     * Since: 1.1.23
+     */
+    webkit_web_view_signals[GEOLOCATION_POLICY_DECISION_REQUESTED] = g_signal_new("geolocation-policy-decision-cancelled",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)(G_SIGNAL_RUN_LAST),
+            0,
+            NULL, NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_FRAME);
 
     /*
      * DOM-related signals. These signals are experimental, for now,

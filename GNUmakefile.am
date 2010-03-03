@@ -327,6 +327,7 @@ webkitgtk_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebinspector.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebnavigationaction.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebpolicydecision.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebresource.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebsettings.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
@@ -375,6 +376,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebinspector.cpp \
 	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
 	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
+	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
 	WebKit/gtk/webkit/webkitwebresource.cpp \
 	WebKit/gtk/webkit/webkitwebdatabase.cpp \
 	WebKit/gtk/webkit/webkitsecurityorigin.cpp \

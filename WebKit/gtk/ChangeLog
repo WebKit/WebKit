@@ -1,3 +1,27 @@
+2010-03-02  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [Gtk] implements ChromeClient::requestGeolocationPermissionForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=35210
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/ChromeClientGtk.h:
+        * docs/webkitgtk-sections.txt:
+        * webkit/webkit.h:
+        * webkit/webkitdefines.h:
+        * webkit/webkitgeolocationpolicydecision.cpp: Added.
+        (webkit_geolocation_policy_decision_class_init):
+        (webkit_geolocation_policy_decision_init):
+        (webkit_geolocation_policy_decision_new):
+        (webkit_geolocation_policy_allow):
+        (webkit_geolocation_policy_deny):
+        * webkit/webkitgeolocationpolicydecision.h: Added.
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_class_init):
+        * webkitmarshal.list:
+
 2010-03-01  José Millán Soto  <jmillan@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

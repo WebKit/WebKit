@@ -49,6 +49,7 @@
 #include "CString.h"
 #include <enchant.h>
 #include "GOwnPtr.h"
+#include "Geolocation.h"
 #include "HistoryItem.h"
 #include "Settings.h"
 #include "Page.h"
@@ -270,6 +271,9 @@ extern "C" {
 
     WebKitNetworkResponse*
     webkit_network_response_new_with_core_response(const WebCore::ResourceResponse& resourceResponse);
+
+    WebKitGeolocationPolicyDecision*
+    webkit_geolocation_policy_decision_new(WebKitWebFrame*, WebCore::Geolocation*);
 
     // FIXME: move this to webkitnetworkrequest.h once the API is agreed upon.
     WEBKIT_API SoupMessage*

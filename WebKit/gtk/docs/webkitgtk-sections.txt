@@ -351,6 +351,25 @@ WebKitWebPolicyDecisionPrivate
 </SECTION>
 
 <SECTION>
+<FILE>webkitgeolocationpolicydecision</FILE>
+<TITLE>WebKitGeolocationPolicyDecision</TITLE>
+WebKitGeolocationPolicyDecision
+webkit_geolocation_policy_allow
+webkit_geolocation_policy_deny
+<SUBSECTION Standard>
+WEBKIT_IS_GEOLOCATION_POLICY_DECISION
+WEBKIT_IS_GEOLOCATION_POLICY_DECISION_CLASS
+WEBKIT_TYPE_GEOLOCATION_POLICY_DECISION
+WEBKIT_GEOLOCATION_POLICY_DECISION
+WEBKIT_GEOLOCATION_POLICY_DECISION_CLASS
+WEBKIT_GEOLOCATION_POLICY_DECISION_GET_CLASS
+<SUBSECTION Private>
+WebKitGeolocationPolicyDecision
+WebKitGeolocationPolicyDecisionClass
+WebKitGeolocationPolicyDecisionPrivate
+</SECTION>
+
+<SECTION>
 <FILE>webkitnetworkrequest</FILE>
 <TITLE>WebKitNetworkRequest</TITLE>
 WebKitNetworkRequest

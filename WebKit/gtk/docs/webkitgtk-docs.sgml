@@ -18,6 +18,7 @@
     <xi:include href="xml/webkitwebhistoryitem.xml"/>
     <xi:include href="xml/webkitwebnavigationaction.xml"/>
     <xi:include href="xml/webkitwebpolicydecision.xml"/>
+    <xi:include href="xml/webkitgeolocationpolicydecision.xml"/>
     <xi:include href="xml/webkitnetworkrequest.xml"/>
     <xi:include href="xml/webkitnetworkresponse.xml"/>
     <xi:include href="xml/webkitwebinspector.xml"/>

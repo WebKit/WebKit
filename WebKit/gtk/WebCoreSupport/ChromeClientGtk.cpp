@@ -33,6 +33,7 @@
 #include "CString.h"
 #include "HitTestResult.h"
 #include "KURL.h"
+#include "webkitgeolocationpolicydecision.h"
 #include "webkitwebview.h"
 #include "webkitnetworkrequest.h"
 #include "webkitprivate.h"
@@ -575,10 +576,24 @@ bool ChromeClient::setCursor(PlatformCursorHandle)
     return false;
 }
 
-void ChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+void ChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    // See the comment in WebCore/page/ChromeClient.h
-    notImplemented();
+    WebKitWebFrame* webFrame = kit(frame);
+    WebKitWebView* webView = getViewFromFrame(webFrame);
+
+    WebKitGeolocationPolicyDecision* policyDecision = webkit_geolocation_policy_decision_new(webFrame, geolocation);
+
+    gboolean isHandled = FALSE;
+    g_signal_emit_by_name(webView, "geolocation-policy-decision-requested", webFrame, policyDecision, &isHandled);
+    if (!isHandled)
+        webkit_geolocation_policy_deny(policyDecision);
+}
+
+void ChromeClient::cancelGeolocationPermissionRequestForFrame(WebCore::Frame* frame)
+{
+    WebKitWebFrame* webFrame = kit(frame);
+    WebKitWebView* webView = getViewFromFrame(webFrame);
+    g_signal_emit_by_name(webView, "geolocation-policy-decision-cancelled", webFrame);
 }
 
 }

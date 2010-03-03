@@ -89,6 +89,9 @@ typedef struct _WebKitSecurityOriginClass WebKitSecurityOriginClass;
 typedef struct _WebKitHitTestResult WebKitHitTestResult;
 typedef struct _WebKitHitTestResultClass WebKitHitTestResultClass;
 
+typedef struct _WebKitGeolocationPolicyDecision WebKitGeolocationPolicyDecision;
+typedef struct _WebKitGeolocationPolicyDecisionClass WebKitGeolocationPolicyDecisionClass;
+
 G_END_DECLS
 
 #endif
