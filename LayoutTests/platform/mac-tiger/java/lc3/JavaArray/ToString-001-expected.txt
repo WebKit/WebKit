@@ -1,0 +1,29 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaArray to String
+
+FAIL dt.setStringObject( DT.staticGetByteArray() ); dt.PUB_STRING +'' should be 48,46,52,56,53,57,50,50,48,50,53,53,49,54,54,50,57,50. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetByteArray() ); dt.getStringObject() +'' should be 48,46,52,56,53,57,50,50,48,50,53,53,49,54,54,50,57,50. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetCharArray() ); dt.PUB_STRING +'' should be 74,97,118,97,83,99,114,105,112,116,32,84,101,115,116. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetCharArray() ); dt.getStringObject() +'' should be 74,97,118,97,83,99,114,105,112,116,32,84,101,115,116. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetShortArray() ); dt.PUB_STRING +'' should be -32768,32767. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetShortArray() ); dt.getStringObject() +'' should be -32768,32767. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetLongArray() ); dt.PUB_STRING +'' should be -9223372036854776000,9223372036854776000. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetLongArray() ); dt.getStringObject() +'' should be -9223372036854776000,9223372036854776000. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetIntArray() ); dt.PUB_STRING +'' should be -2147483648,2147483647. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetIntArray() ); dt.getStringObject() +'' should be -2147483648,2147483647. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetFloatArray() ); dt.PUB_STRING +'' should be 1.401298464324817e-45,3.4028234663852886e+38,NaN,-Infinity,Infinity. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetFloatArray() ); dt.getStringObject() +'' should be 1.401298464324817e-45,3.4028234663852886e+38,NaN,-Infinity,Infinity. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetObjectArray() ); dt.PUB_STRING +'' should be [B@9d1714,[C@5660ef,[D@f61bcf,[S@9bc36d,[I@3b5587,[J@6c1857,[F@b1fd9c. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL dt.setStringObject( DT.staticGetObjectArray() ); dt.getStringObject() +'' should be [B@9d1714,[C@5660ef,[D@f61bcf,[S@9bc36d,[I@3b5587,[J@6c1857,[F@b1fd9c. Threw exception Error: java.security.PrivilegedActionException: java.security.PrivilegedActionException: java.lang.reflect.InvocationTargetException
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.PUB_STRING +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.getStringObject() +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+PASS successfullyParsed is true
+
+TEST COMPLETE
