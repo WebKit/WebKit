@@ -454,11 +454,29 @@ if (!$testMedia) {
     $ignoredDirectories{'http/tests/media'} = 1;
 }
 
-if (!checkWebCoreFeatureSupport("Accelerated Compositing", 0)) {
+my $supportedFeaturesResult = "";
+
+if (isCygwin()) {
+    # Collect supported features list
+    my $supportedFeaturesCommand = $dumpTool . " --print-supported-features 2>&1";
+    $supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
+}
+
+# Check for acelerated compositing support
+if (isCygwin()) {
+    if ($supportedFeaturesResult !~ /AcceleratedCompositing/) {
+        $ignoredDirectories{'compositing'} = 1;
+    }
+} elsif (!checkWebCoreFeatureSupport("Accelerated Compositing", 0)) {
     $ignoredDirectories{'compositing'} = 1;
 }
 
-if (!checkWebCoreFeatureSupport("3D Rendering", 0)) {
+if (isCygwin()) {
+    if ($supportedFeaturesResult !~ /3DRendering/) {
+        $ignoredDirectories{'animations/3d'} = 1;
+        $ignoredDirectories{'transforms/3d'} = 1;
+    }
+} elsif (!checkWebCoreFeatureSupport("3D Rendering", 0)) {
     $ignoredDirectories{'animations/3d'} = 1;
     $ignoredDirectories{'transforms/3d'} = 1;
 }

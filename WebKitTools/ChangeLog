@@ -1,3 +1,22 @@
+2010-03-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Added ability to print supported features to console to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=35610
+        
+        This currently only prints whether or not Accelerated Compositing 
+        and 3D Rendering are supported, which is the only way to tell if you 
+        can run the compositing LayoutTests on Windows. But it can be expanded 
+        to give more information as needed. Currently it prints that both
+        AcceleratedCompositing and 3DRendering are available if accelerated compositing
+        is enabled since both have to be turned on together. This allows me to maintain
+        separate checks for them.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:Added --print-supported-features flag
+        (main):
+        * Scripts/run-webkit-tests:Runs DRT and enabled compositing tests if HW comp is available on Windows
+
 2010-03-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Simon Hausmann.

@@ -686,9 +686,19 @@ fast/multicol/single-line.html
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 
-# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-transforms/3d
-compositing
+# ACCELERATED_COMPOSITING tests that crash
+compositing/layers-inside-overflow-scroll.html
+compositing/self-painting-layers.html
+compositing/geometry/clipped-video-controller.html
+compositing/geometry/video-fixed-scrolling.html
+compositing/geometry/video-opacity-overlay.html
+compositing/overflow/scroll-ancestor-update.html
+compositing/reflections/load-video-in-reflection.html
+compositing/video/video-background-color.html
+
+# ACCELERATED_COMPOSITING tests that have incorrect layout
+compositing/webgl/webgl-background-color.html
+compositing/webgl/webgl-reflection.html
 
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html

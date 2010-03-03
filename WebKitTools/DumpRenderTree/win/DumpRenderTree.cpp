@@ -84,6 +84,7 @@ static bool printSeparators;
 static bool leakChecking = false;
 static bool threaded = false;
 static bool forceComplexText = false;
+static bool printSupportedFeatures = false;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 volatile bool done;
@@ -1222,6 +1223,11 @@ int main(int argc, char* argv[])
             continue;
         }
 
+        if (!stricmp(argv[i], "--print-supported-features")) {
+            printSupportedFeatures = true;
+            continue;
+        }
+
         tests.append(argv[i]);
     }
 
@@ -1245,6 +1251,13 @@ int main(int argc, char* argv[])
     standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
+
+    if (printSupportedFeatures) {
+        BOOL acceleratedCompositingAvailable;
+        standardPreferences->acceleratedCompositingEnabled(&acceleratedCompositingAvailable);
+        printf("SupportedFeatures:%s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing, 3DRendering" : "");
+        return 0;
+    }
 
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)

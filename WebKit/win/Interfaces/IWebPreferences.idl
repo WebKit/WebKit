@@ -186,4 +186,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT setZoomsTextOnly(BOOL zoomsTextOnly);
     HRESULT zoomsTextOnly(BOOL *zoomsTextOnly);
+
+    HRESULT setAcceleratedCompositingEnabled(BOOL acceleratedCompositingEnabled);
+    HRESULT acceleratedCompositingEnabled(BOOL *acceleratedCompositingEnabled);
 }
