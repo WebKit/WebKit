@@ -1,3 +1,13 @@
+2010-03-03  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by nobody, build fix.
+
+        Move #include "DatabaseCallback.h" from Database.h to
+        Database.cpp.
+
+        * storage/Database.cpp:
+        * storage/Database.h:
+
 2010-03-03  Darin Adler  <darin@apple.com>
 
         Fixed Mac build.

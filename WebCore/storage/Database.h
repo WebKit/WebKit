@@ -30,7 +30,6 @@
 #define Database_h
 
 #if ENABLE(DATABASE)
-#include "DatabaseCallback.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
