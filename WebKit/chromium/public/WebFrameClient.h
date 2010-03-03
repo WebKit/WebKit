@@ -91,6 +91,9 @@ public:
     // Controls whether plugins are allowed for this frame.
     virtual bool allowPlugins(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 
+    // Notifies the client that the frame would have instantiated a plug-in if plug-ins were enabled.
+    virtual void didNotAllowPlugins(WebFrame*) { }
+
     // Controls whether images are allowed for this frame.
     virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 

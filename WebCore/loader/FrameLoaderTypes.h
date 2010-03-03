@@ -108,6 +108,11 @@ namespace WebCore {
         DoSecurityCheck
     };
 
+    enum ReasonForCallingAllowPlugins {
+        AboutToInstantiatePlugin,
+        NotAboutToInstantiatePlugin
+    };
+
     typedef int SandboxFlags;
 }
 

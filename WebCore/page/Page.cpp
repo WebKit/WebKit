@@ -390,7 +390,7 @@ void Page::refreshPlugins(bool reload)
 
 PluginData* Page::pluginData() const
 {
-    if (!mainFrame()->loader()->client()->allowPlugins(settings()->arePluginsEnabled()))
+    if (!mainFrame()->loader()->allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
     if (!m_pluginData)
         m_pluginData = PluginData::create(this);

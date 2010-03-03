@@ -196,6 +196,7 @@ public:
     virtual bool allowPlugins(bool enabledPerSettings);
     virtual bool allowImages(bool enabledPerSettings);
     virtual void didNotAllowScript();
+    virtual void didNotAllowPlugins();
 
 private:
     void makeDocumentView();
