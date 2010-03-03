@@ -126,4 +126,8 @@ void PluginView::keepAlive(NPP)
 }
 #endif
 
+void PluginView::privateBrowsingStateChanged(bool)
+{
+}
+
 } // namespace WebCore

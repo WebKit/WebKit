@@ -1,5 +1,15 @@
 2010-03-02  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Jon Honeycutt.
+
+        Clean up the build fix r55437 by adding an empty implementation of privateBrowsingStateChanged in PluginViewNone.cpp
+
+        * page/Page.cpp:
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::privateBrowsingStateChanged):
+
+2010-03-02  Mark Rowe  <mrowe@apple.com>
+
         Fix the Mac build.
 
         * page/Page.cpp:
