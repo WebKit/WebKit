@@ -1,3 +1,11 @@
+2010-03-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Adam Roben.
+
+        Fix bogus xcopy that was polluting source tree at build time.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+
 2010-03-02  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Oliver Hunt.
