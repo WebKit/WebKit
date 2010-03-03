@@ -1,3 +1,13 @@
+2010-03-03  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Xan Lopez.
+
+        Miscellaneous little fixes for the windows build of webkit-gtk
+        https://bugs.webkit.org/show_bug.cgi?id=35640
+
+        * webkit/webkitdownload.cpp: Windows headers define ERROR
+        which breaks the build. Undef ERROR if it is defined.
+
 2010-03-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix after r55452.

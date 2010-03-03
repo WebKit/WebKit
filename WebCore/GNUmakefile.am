@@ -2766,6 +2766,8 @@ webcore_sources += \
 	WebCore/mathml/MathMLTextElement.h \
 	WebCore/mathml/RenderMathMLBlock.cpp \
 	WebCore/mathml/RenderMathMLBlock.h \
+	WebCore/mathml/RenderMathMLSubSup.cpp \
+	WebCore/mathml/RenderMathMLSubSup.h \
 	WebCore/mathml/RenderMathMLUnderOver.cpp \
 	WebCore/mathml/RenderMathMLUnderOver.h
 

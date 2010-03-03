@@ -1,3 +1,12 @@
+2010-03-03  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Xan Lopez.
+
+        Miscellaneous little fixes for the windows build of webkit-gtk
+        https://bugs.webkit.org/show_bug.cgi?id=35640
+
+        * GNUmakefile.am: dist two new files concerning mathml support.
+
 2010-03-03  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed distcheck fix.

@@ -1,3 +1,15 @@
+2010-03-03  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Xan Lopez.
+
+        Miscellaneous little fixes for the windows build of webkit-gtk
+        https://bugs.webkit.org/show_bug.cgi?id=35640
+
+        * GNUmakefile.am: On Windows with GCC, presence of
+        __declspec(dllexport) on some symbols disables the autoexport/autoimport
+        feature for all others. Using regex here assures that all symbols that 
+        need to be exported in the dll are actually exported.
+
 2010-03-02  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.

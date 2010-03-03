@@ -37,6 +37,10 @@
 
 #include <glib/gstdio.h>
 
+#ifdef ERROR
+#undef ERROR
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 

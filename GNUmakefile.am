@@ -142,6 +142,7 @@ global_cxxflags += \
 # It breaks the build on other platforms, so we use it conditionally
 if OS_WIN32
 no_undefined = -no-undefined
+version_script = -export-symbols-regex "^(webkit_|JS).*"
 endif
 
 if OS_GNU
