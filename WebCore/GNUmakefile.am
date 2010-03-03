@@ -2228,6 +2228,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomSQLTransactionCallback.h \
 	WebCore/bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
 	WebCore/bindings/js/JSCustomSQLTransactionErrorCallback.h \
+	WebCore/bindings/js/JSDatabaseCallback.cpp \
+	WebCore/bindings/js/JSDatabaseCallback.h \
 	WebCore/bindings/js/JSDatabaseCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionCustom.cpp \
@@ -2248,6 +2250,7 @@ webcore_sources += \
 	WebCore/storage/Database.h \
 	WebCore/storage/DatabaseAuthorizer.cpp \
 	WebCore/storage/DatabaseAuthorizer.h \
+	WebCore/storage/DatabaseCallback.h \
 	WebCore/storage/DatabaseDetails.h \
 	WebCore/storage/DatabaseTask.cpp \
 	WebCore/storage/DatabaseTask.h \

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+This test tests that the openDatabase() creation callback is called in the right world.
+<div id="console"></div>
+<script>
+function done()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function creationCallback(db)
+{
+    alert("FAIL: Visible in isolated world.");
+    done();
+}
+
+document.body.foo = "FAIL: document.body.foo visible in isolated world.";
+
+if (window.layoutTestController) {
+    layoutTestController.clearAllDatabases();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.evaluateScriptInIsolatedWorld(
+        0,
+        "function creationCallback(db)\n" +
+        "{\n" +
+        "    alert(document.body.foo);\n" +
+        "    window.location='javascript:done()';\n" +
+        "}\n" +
+        "var db = openDatabase('OpenDatabaseCreationCallbackIsolatedWorld', '1.0', '', 1, creationCallback);");
+}
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@
 #define Database_h
 
 #if ENABLE(DATABASE)
+#include "DatabaseCallback.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include "SQLiteDatabase.h"
@@ -51,6 +52,7 @@
 namespace WebCore {
 
 class DatabaseAuthorizer;
+class DatabaseCallback;
 class DatabaseThread;
 class ScriptExecutionContext;
 class SQLResultSet;
@@ -73,7 +75,10 @@ public:
     ~Database();
 
 // Direct support for the DOM API
-    static PassRefPtr<Database> openDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, ExceptionCode&);
+    static PassRefPtr<Database> openDatabase(ScriptExecutionContext* context, const String& name,
+                                             const String& expectedVersion, const String& displayName,
+                                             unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
+                                             ExceptionCode&);
     String version() const;
     void changeVersion(const String& oldVersion, const String& newVersion,
                        PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
@@ -111,6 +116,8 @@ public:
     void stop();
     bool stopped() const { return m_stopped; }
 
+    bool isNew() const { return m_new; }
+
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;
 
@@ -121,6 +128,7 @@ public:
     bool performOpenAndVerify(ExceptionCode&);
 
     Vector<String> performGetTableNames();
+    void performCreationCallback();
 
     SQLTransactionClient* transactionClient() const;
     SQLTransactionCoordinator* transactionCoordinator() const;
@@ -128,7 +136,7 @@ public:
 private:
     Database(ScriptExecutionContext* context, const String& name,
              const String& expectedVersion, const String& displayName,
-             unsigned long estimatedSize);
+             unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback);
 
     bool openAndVerifyVersion(ExceptionCode&);
 
@@ -159,8 +167,12 @@ private:
 
     bool m_opened;
 
+    bool m_new;
+
     SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;
+
+    RefPtr<DatabaseCallback> m_creationCallback;
 
 #ifndef NDEBUG
     String databaseDebugName() const { return m_mainThreadSecurityOrigin->toString() + "::" + m_name; }

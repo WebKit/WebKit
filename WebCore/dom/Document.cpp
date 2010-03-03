@@ -4730,12 +4730,7 @@ static void performTask(void* ctx)
 
 void Document::postTask(PassOwnPtr<Task> task)
 {
-    if (isMainThread()) {
-        ScriptExecutionContextTaskTimer* timer = new ScriptExecutionContextTaskTimer(static_cast<Document*>(this), task);
-        timer->startOneShot(0);
-    } else {
-        callOnMainThread(performTask, new PerformTaskContext(m_weakReference, task));
-    }
+    callOnMainThread(performTask, new PerformTaskContext(m_weakReference, task));
 }
 
 Element* Document::findAnchor(const String& name)
