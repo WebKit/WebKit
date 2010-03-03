@@ -1,3 +1,13 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35692
+        <rdar://problem/7703622> Crash when calling abort() on an XHR while in a windowless WebView
+
+        * Panels/WebAuthenticationPanel.m: (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        Retain the challenge, just like it's done for sheet.
+
 2010-03-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

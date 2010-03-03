@@ -218,7 +218,9 @@
 - (void)runAsModalDialogWithChallenge:(NSURLAuthenticationChallenge *)chall
 {
     [self setUpForChallenge:chall];
+
     usingSheet = FALSE;
+    [chall retain];
     NSURLCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
@@ -227,6 +229,7 @@
 
     [callback performSelector:selector withObject:chall withObject:credential];
     [credential release];
+    [chall release];
 }
 
 - (void)runAsSheetOnWindow:(NSWindow *)window withChallenge:(NSURLAuthenticationChallenge *)chall
