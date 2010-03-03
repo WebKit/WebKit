@@ -1,3 +1,17 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35044
+        Crash in XML tokenizer reloading zoom-coords-viewattr-01-b.svg
+
+        I'm often getting a crash even when opening the test for the first time in Safari, but it
+        doesn't seem to crash in DumpRenderTree. Still, I can't think of a stronger way to test for
+        this condition, so no new regression test.
+
+        * dom/XMLTokenizer.cpp: (WebCore::XMLTokenizer::end): Be prepared that parsing remaining
+        input will pause parsing.
+
 2010-03-03  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

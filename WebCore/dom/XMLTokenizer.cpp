@@ -206,7 +206,11 @@ void XMLTokenizer::exitText()
 void XMLTokenizer::end()
 {
     doEnd();
-    
+
+    // doEnd() could process a script tag, thus pausing parsing.
+    if (m_parserPaused)
+        return;
+
     if (m_sawError)
         insertErrorMessageBlock();
     else {
