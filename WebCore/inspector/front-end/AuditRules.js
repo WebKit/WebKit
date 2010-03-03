@@ -107,7 +107,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
             for (var i = 0, length = resources.length; i < length; ++i) {
                 var resource = resources[i];
                 if (this._shouldCompress(resource)) {
-                    var size = resource.contentLength;
+                    var size = resource.resourceSize;
                     candidateSize += size;
                     if (this._isCompressed(resource)) {
                         compressedSize += size;
@@ -145,7 +145,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
 
     _shouldCompress: function(resource)
     {
-        return WebInspector.Resource.Type.isTextType(resource.type) && resource.domain && resource.contentLength !== undefined && resource.contentLength > 150;
+        return WebInspector.Resource.Type.isTextType(resource.type) && resource.domain && resource.resourceSize !== undefined && resource.resourceSize > 150;
     }
 }
 

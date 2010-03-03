@@ -180,7 +180,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
     }
 
     if (m_changes.hasChange(LengthChange)) {
-        jsonObject.set("contentLength", m_length);
+        jsonObject.set("resourceSize", m_length);
         jsonObject.set("didLengthChange", true);
     }
 

@@ -1,3 +1,40 @@
+2010-03-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: resources panel only shows uncompressed resource size.
+        https://bugs.webkit.org/show_bug.cgi?id=35403
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/front-end/AbstractTimelinePanel.js:
+        (WebInspector.AbstractTimelinePanel.prototype.refresh):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.GzipRule.prototype._shouldCompress):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get resourceSize):
+        (WebInspector.Resource.prototype.set resourceSize):
+        (WebInspector.Resource.prototype.get transferSize):
+        (WebInspector.Resource.CompareBySize):
+        (WebInspector.Resource.CompareByTransferSize):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.populateSidebar):
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.ResourceTransferSizeCalculator.prototype.computeBarGraphLabels):
+        (WebInspector.ResourceTransferSizeCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.ResourceTransferSizeCalculator.prototype._value):
+        (WebInspector.ResourceTransferSizeCalculator.prototype._networkBytes):
+        (WebInspector.ResourceSidebarTreeElement.CompareByDescendingTransferSize):
+        (WebInspector.ResourceGraph.prototype.refreshLabelPositions):
+        (WebInspector.ResourceGraph.prototype.refresh):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+
 2010-03-03  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

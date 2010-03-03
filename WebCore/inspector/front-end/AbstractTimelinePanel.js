@@ -308,8 +308,10 @@ WebInspector.AbstractTimelinePanel.prototype = {
             staleItemsLength = this._staleItems.length;
         }
 
+
+        const isBarOpaqueAtLeft = this.sidebarTree.selectedTreeElement && this.sidebarTree.selectedTreeElement.isBarOpaqueAtLeft;
         for (var i = 0; i < staleItemsLength; ++i)
-            this._staleItems[i]._itemsTreeElement._itemGraph.refresh(this.calculator);
+            this._staleItems[i]._itemsTreeElement._itemGraph.refresh(this.calculator, isBarOpaqueAtLeft);
 
         this._staleItems = [];
 

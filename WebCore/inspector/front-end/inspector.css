@@ -2761,6 +2761,10 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     margin-right: 5px;
 }
 
+.resources-graph-label.waiting-right {
+    margin-left: 5px;
+}
+
 .resources-graph-label.before {
     color: rgba(0, 0, 0, 0.7);
     text-shadow: none;
@@ -2829,7 +2833,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     display: block;
 }
 
-.resources-graph-bar.waiting {
+.resources-graph-bar.waiting, .resources-graph-bar.waiting-right {
     opacity: 0.35;
 }
 

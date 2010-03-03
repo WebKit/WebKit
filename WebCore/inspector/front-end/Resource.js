@@ -272,20 +272,26 @@ WebInspector.Resource.prototype = {
         return this._responseReceivedTime - this._startTime;
     },
 
-    get contentLength()
+    get resourceSize()
     {
-        return this._contentLength || 0;
+        return this._resourceSize || 0;
     },
 
-    set contentLength(x)
+    set resourceSize(x)
     {
-        if (this._contentLength === x)
+        if (this._resourceSize === x)
             return;
 
-        this._contentLength = x;
+        this._resourceSize = x;
 
         if (WebInspector.panels.resources)
             WebInspector.panels.resources.refreshResource(this);
+    },
+
+    get transferSize()
+    {
+        // FIXME: this is wrong for chunked-encoding resources.
+        return this.cached ? 0 : Number(this.responseHeaders["Content-Length"] || this.resourceSize || 0);
     },
 
     get expectedContentLength()
@@ -603,8 +609,14 @@ WebInspector.Resource.CompareByLatency = function(a, b)
 
 WebInspector.Resource.CompareBySize = function(a, b)
 {
-    return a.contentLength - b.contentLength;
+    return a.resourceSize - b.resourceSize;
 }
+
+WebInspector.Resource.CompareByTransferSize = function(a, b)
+{
+    return a.transferSize - b.transferSize;
+}
+
 
 WebInspector.Resource.StatusTextForCode = function(code)
 {
