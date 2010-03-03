@@ -1130,12 +1130,11 @@ PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& v
     if (!m_frame)
         return 0;
 
-    Document* document = m_frame->document();
-    if (!document->securityOrigin()->canAccessDatabase())
+    if (!Database::isAvailable())
         return 0;
 
-    Settings* settings = m_frame->settings();
-    if (!settings || !settings->databasesEnabled())
+    Document* document = m_frame->document();
+    if (!document->securityOrigin()->canAccessDatabase())
         return 0;
 
     return Database::openDatabase(document, name, version, displayName, estimatedSize, ec);

@@ -106,6 +106,7 @@
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
+#import <WebCore/Database.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -1305,6 +1306,9 @@ static bool fastDocumentTeardownEnabled()
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
     settings->setDatabasesEnabled([preferences databasesEnabled]);
+#if ENABLE(DATABASE)
+    Database::setIsAvailable([preferences databasesEnabled]);
+#endif
     settings->setLocalStorageEnabled([preferences localStorageEnabled]);
     settings->setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
     settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);

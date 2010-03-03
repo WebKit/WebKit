@@ -1,3 +1,25 @@
+2010-03-02  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Move database enable bit fully out of settings
+        This is stage one of a three-stage commit [webkit, then chromium, then
+        webkit again].  In this change I'm adding calls to
+        Database::setIsAvailable inside Settings::setDatabaseEnabled and
+        anywhere else that called it, and switching webkit fully over to using
+        that flag [added in a previous checkin].  Phase two will remove
+        Chromium's use of Settings for the Database, and phase three will remove
+        the Setting for the Database enable entirely, leaving only
+        Database::isAvailable/setIsAvailable.
+
+        No new tests; tested by existing storage tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35310
+
+        * webkit/webkitwebview.cpp:  Add calls to Database::setIsAvailable
+        (DNDContentsRequest::webkit_web_view_update_settings):
+        (DNDContentsRequest::webkit_web_view_settings_notify):
+
 2010-03-02  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.

@@ -1,3 +1,28 @@
+2010-03-02  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Move database enable bit fully out of settings
+        This is stage one of a three-stage commit [webkit, then chromium, then
+        webkit again].  In this change I'm adding calls to
+        Database::setIsAvailable inside Settings::setDatabaseEnabled and
+        anywhere else that called it, and switching webkit fully over to using
+        that flag [added in a previous checkin].  Phase two will remove
+        Chromium's use of Settings for the Database, and phase three will remove
+        the Setting for the Database enable entirely, leaving only
+        Database::isAvailable/setIsAvailable.
+
+        No new tests; tested by existing storage tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35310
+
+        * WebCore.base.exp: Export Database::setIsAvailable
+        * WebCore.xcodeproj/project.pbxproj: Export needed headers as Private
+        * page/DOMWindow.cpp: Read isAvailable, not Settings::isDatabaseEnabled
+        (WebCore::DOMWindow::openDatabase):
+        * page/Settings.cpp:  Add a call to Database::setIsAvailable.
+        (WebCore::Settings::setDatabasesEnabled):
+
 2010-03-02  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.

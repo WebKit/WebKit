@@ -49,6 +49,7 @@
 #include "ContextMenu.h"
 #include "CString.h"
 #include "Cursor.h"
+#include "Database.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DragClientGtk.h"
@@ -2729,6 +2730,9 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setPrivateBrowsingEnabled(enablePrivateBrowsing);
     settings->setCaretBrowsingEnabled(enableCaretBrowsing);
     settings->setDatabasesEnabled(enableHTML5Database);
+#if ENABLE(DATABASE)
+    Database::setIsAvailable(enableHTML5Database);
+#endif
     settings->setLocalStorageEnabled(enableHTML5LocalStorage);
     settings->setXSSAuditorEnabled(enableXSSAuditor);
     settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
@@ -2816,8 +2820,11 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setPrivateBrowsingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-caret-browsing"))
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
+#if ENABLE(DATABASE)
     else if (name == g_intern_string("enable-html5-database"))
         settings->setDatabasesEnabled(g_value_get_boolean(&value));
+        Database::setIsAvailable(g_value_get_boolean(&value));
+#endif
     else if (name == g_intern_string("enable-html5-local-storage"))
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-xss-auditor"))

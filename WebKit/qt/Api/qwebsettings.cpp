@@ -26,6 +26,7 @@
 
 #include "Cache.h"
 #include "CrossOriginPreflightResultCache.h"
+#include "Database.h"
 #include "FontCache.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -207,9 +208,12 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::PrintElementBackgrounds));
         settings->setShouldPrintBackgrounds(value);
 
+#if ENABLE(DATABASE)
         value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
                                       global->attributes.value(QWebSettings::OfflineStorageDatabaseEnabled));
         settings->setDatabasesEnabled(value);
+        WebCore::Database::setIsAvailable(value);
+#endif
 
         value = attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled,
                                       global->attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled));
