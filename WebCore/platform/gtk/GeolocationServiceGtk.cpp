@@ -98,7 +98,7 @@ bool GeolocationServiceGtk::startUpdating(PositionOptions* options)
     }
 
     gboolean result = geoclue_master_client_set_requirements(client, accuracyLevel, timeout,
-                                                             true, GEOCLUE_RESOURCE_ALL, &error.outPtr());
+                                                             false, GEOCLUE_RESOURCE_ALL, &error.outPtr());
 
     if (!result) {
         setError(PositionError::POSITION_UNAVAILABLE, error->message);
