@@ -1,3 +1,10 @@
+2010-03-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test introduced in r55474, because of
+        missing layoutTestController.evaluateScriptInIsolatedWorld()
+
+        * platform/qt/Skipped: storage/open-database-creation-callback-isolated-world.html skipped.
+
 2010-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Dan Bernstein.

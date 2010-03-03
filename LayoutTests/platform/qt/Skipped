@@ -208,6 +208,7 @@ http/tests/misc/will-send-request-returns-null-on-redirect.html
 
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 http/tests/security/isolatedWorld
+storage/open-database-creation-callback-isolated-world.html
 
 # Evaluate expected results for frame loader callbacks
 # https://bugs.webkit.org/show_bug.cgi?id=34839
