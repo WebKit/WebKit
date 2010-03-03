@@ -1,3 +1,16 @@
+2010-03-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Document cookieURL and firstPartyForCookies
+        https://bugs.webkit.org/show_bug.cgi?id=35613
+
+        Some folks asked what the cookieURL and the firstPartyForCookies were
+        on IRC.  This patch documents these properties in the code so folks
+        don't have to ask on IRC anymore.
+
+        * dom/Document.h:
+
 2010-03-03  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.

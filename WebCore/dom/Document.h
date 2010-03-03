@@ -714,8 +714,28 @@ public:
 
     String lastModified() const;
 
+    // The cookieURL is used to query the cookie database for this document's
+    // cookies. For example, if the cookie URL is http://example.com, we'll
+    // use the non-Secure cookies for example.com when computing
+    // document.cookie.
+    //
+    // Q: How is the cookieURL different from the document's URL?
+    // A: The two URLs are the same almost all the time.  However, if one
+    //    document inherits the security context of another document, it
+    //    inherits its cookieURL but not its URL.
+    //
     const KURL& cookieURL() const { return m_cookieURL; }
 
+    // The firstPartyForCookies is used to compute whether this document
+    // appears in a "third-party" context for the purpose of third-party
+    // cookie blocking.  The document is in a third-party context if the
+    // cookieURL and the firstPartyForCookies are from different hosts.
+    //
+    // Note: Some ports (including possibly Apple's) only consider the
+    //       document in a third-party context if the cookieURL and the
+    //       firstPartyForCookies have a different registry-controlled
+    //       domain.
+    //
     const KURL& firstPartyForCookies() const { return m_firstPartyForCookies; }
     void setFirstPartyForCookies(const KURL& url) { m_firstPartyForCookies = url; }
     
