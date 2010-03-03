@@ -1,0 +1,16 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  undefined
+
+FAIL TEST_CLASS["ambiguous(java.lang.Object)"](1) should be OBJECT. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(java.lang.Object)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(java.lang.String)"](1) should be STRING. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(java.lang.String)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(byte)"](1) should be BYTE. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(byte)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(char)"](1) should be CHAR. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(char)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(short)"](1) should be SHORT. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(short)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(int)"](1) should be INT. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(int)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(long)"](1) should be LONG. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(long)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(float)"](1) should be FLOAT. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(float)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(java.lang.Double)"](1) should be DOUBLE_OBJECT. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(java.lang.Double)"]' [undefined] is not a function.
+FAIL TEST_CLASS["ambiguous(double)"](1) should be DOUBLE. Threw exception TypeError: Result of expression 'TEST_CLASS["ambiguous(double)"]' [undefined] is not a function.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

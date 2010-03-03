@@ -1,3 +1,31 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35617
+        Import Mozilla LiveConnect 3 test suite
+
+        * java/lc3/sources: Added (many files). Sources for Mozilla test applet.
+
+        * java/jstests.jar: Added in compiled form, since it's unlikely that we'll ever need to
+        modify the above sources.
+
+        * java/lc3.java: Added.
+        (lc3): This is a small wrapper around jstests.jar. The latter only adds some classes, but
+        WebKit needs an actual applet to call into Java.
+        (lc3.createQAObject): Instantiate a class defined in jstests.jar by name.
+        (lc3.stringToByteArray): A helper to make a byte array out of string. Tests originally
+        relied on window.java package interface to do this, but it's not available in WebKit. We
+        need more functions like this to work around other uses of window.java, but this is one I
+        wrote for now.
+
+        * java/Makefile: Link test applets to Mozilla's jstests.jar. This is not needed for tests
+        other than ones imported here, but it's also harmless, and I don't know how to write good
+        makefiles.
+
+        * java/lc3: Added (many files). Tests were heavily reworked to run to completion, but PASS/FAIL
+        results should not be generally relied upon. All html wrappers are identical.
+
 2010-03-03  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, build fix.

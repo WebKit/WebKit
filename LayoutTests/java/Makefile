@@ -36,9 +36,9 @@ ifeq ($(USE_NORMAL_PLUGIN_JAR_PATH), 1)
 	CLASSPATH = /System/Library/Frameworks/JavaVM.framework/Home/lib/plugin.jar
 else
 	# The above path works on Tiger and Leopard, but is a broken link on SnowLeopard, <rdar://7578937>.
-    CLASSPATH := /System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/Deploy.bundle/Contents/Resources/Java/plugin.jar
+    CLASSPATH = /System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/Deploy.bundle/Contents/Resources/Java/plugin.jar
 endif
-JFLAGS = -classpath $(CLASSPATH)
+JFLAGS = -classpath $(CLASSPATH):jstests.jar
 .SUFFIXES: .java .class
 
 .java.class:
