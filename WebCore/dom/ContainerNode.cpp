@@ -421,7 +421,7 @@ bool ContainerNode::removeChildren()
     size_t removedChildrenCount = removedChildren.size();
 
     // Dispatch a single post-removal mutation event denoting a modified subtree.
-    childrenChanged(false, 0, 0, -removedChildrenCount);
+    childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
     dispatchSubtreeModifiedEvent();
 
     for (size_t i = 0; i < removedChildrenCount; ++i) {
