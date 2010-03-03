@@ -1,3 +1,18 @@
+2010-03-03  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Oliver Hunt.
+
+        Make IntPoint usable as a hash key
+        
+        https://bugs.webkit.org/show_bug.cgi?id=35586
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/IntPointHash.h: Added.
+        (WTF::IntPointHash::hash):
+        (WTF::IntPointHash::equal):
+        (WTF::):
+
 2010-03-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
