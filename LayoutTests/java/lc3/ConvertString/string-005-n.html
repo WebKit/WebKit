@@ -109,14 +109,8 @@ function onload()
     }
 
     scriptElement = document.createElement("script")
-    scriptElement.src = '../../../fast/js/resources/js-test-post.js'
+    scriptElement.src = '../../../fast/js/resources/js-test-post-async.js'
     document.body.appendChild(scriptElement);
-
-    if (window.layoutTestController) {
-        scriptElement = document.createElement("script")
-        scriptElement.src = 'data:text/plain,layoutTestController.notifyDone()'
-        document.body.appendChild(scriptElement);
-    }
 }
 </script>
 </body>

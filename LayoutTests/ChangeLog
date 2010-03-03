@@ -1,3 +1,17 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35700
+        Some of the newly added Java tests fail randomly on buildbot
+
+        * fast/js/resources/js-test-post-async.js: Added a version that calls notifyDone(). I first
+        wanted to add a notifyDone() call to js-test-post.js, but it turns out that multiple tests
+        dump results after "TEST COMPLETE", and we need to get bots back to green fast.
+
+        * java/lc3: (Many files). Don't load two scripts dynamically, WebKit has issues with order of
+        execution in this case.
+
 2010-03-03  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
