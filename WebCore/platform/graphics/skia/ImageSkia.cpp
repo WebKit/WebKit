@@ -457,7 +457,8 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
 PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const SkBitmap& bitmap)
 {
     RefPtr<BitmapImageSingleFrameSkia> image(adoptRef(new BitmapImageSingleFrameSkia()));
-    bitmap.copyTo(&image->m_nativeImage, bitmap.config());
+    if (!bitmap.copyTo(&image->m_nativeImage, bitmap.config()))
+        return 0;
     return image.release();
 }
 
