@@ -100,8 +100,9 @@ public:
 
     enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_LOADED, NETWORK_NO_SOURCE };
     NetworkState networkState() const;
-    bool autobuffer() const;    
-    void setAutobuffer(bool);
+    
+    String preload() const;    
+    void setPreload(const String&);
 
     PassRefPtr<TimeRanges> buffered() const;
     void load(bool isUserGesture, ExceptionCode&);
@@ -309,11 +310,13 @@ protected:
     OwnPtr<MediaPlayer> m_player;
 
     BehaviorRestrictions m_restrictions;
+    
+    MediaPlayer::Preload m_preload;
 
     bool m_playing;
 
-    // counter incremented while processing a callback from the media player, so we can avoid
-    //  calling the media engine recursively
+    // Counter incremented while processing a callback from the media player, so we can avoid
+    // calling the media engine recursively.
     int m_processingMediaPlayerCallback;
 
     bool m_processingLoad : 1;

@@ -1,3 +1,44 @@
+2010-03-03  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Replace 'autobuffer' attribute with 'preload' to align with spec revision 4811.
+        https://bugs.webkit.org/show_bug.cgi?id=35385
+        rdar://problem/7689602
+
+        Tests: media/audio-constructor-preload.html
+               media/video-dom-preload.html
+
+        * html/HTMLAttributeNames.in: Remove autobuffer, add preload
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForJSConstructor): set preload to 'auto' instead of 
+            autobuffer to true.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_preload.
+        (WebCore::HTMLMediaElement::parseMappedAttribute): Deal with 'preload' attribute.
+        (WebCore::HTMLMediaElement::loadResource): Call setPreload() on the newly created MediaPlayer,
+            before calling load() so it can pass the setting through to the media engine.
+        (WebCore::HTMLMediaElement::preload): New.
+        (WebCore::HTMLMediaElement::setPreload): Ditto
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Initialize m_preload.
+        (WebCore::MediaPlayer::load): Pass m_preload to newly created media engine.
+        (WebCore::MediaPlayer::preload): New, return m_preload.
+        (WebCore::MediaPlayer::setPreload): New, set m_preload.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPreload):
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::setPreload): Renamed from setAutoplay, fix logic for preload.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-03-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

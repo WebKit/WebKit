@@ -1,0 +1,58 @@
+
+++ Test default attribute value
+EXPECTED (video.preload == 'auto') OK
+EXPECTED (video.getAttribute('preload') == 'null') OK
+
+++ Remove attribute, should revert to default
+RUN(video.removeAttribute('preload'))
+EXPECTED (video.preload == 'auto') OK
+
+++ Set to 'none'
+- set via DOM
+RUN(video.removeAttribute('preload'))
+RUN(video.preload = 'none')
+EXPECTED (video.getAttribute('preload') == 'none') OK
+EXPECTED (video.preload == 'none') OK
+- and via attribute
+RUN(video.removeAttribute('preload'))
+RUN(video.setAttribute('preload', 'none'))
+EXPECTED (video.preload == 'none') OK
+EXPECTED (video.getAttribute('preload') == 'none') OK
+
+++ Set to 'auto'
+- set via DOM
+RUN(video.removeAttribute('preload'))
+RUN(video.preload = 'auto')
+EXPECTED (video.getAttribute('preload') == 'auto') OK
+EXPECTED (video.preload == 'auto') OK
+- and via attribute
+RUN(video.removeAttribute('preload'))
+RUN(video.setAttribute('preload', 'auto'))
+EXPECTED (video.preload == 'auto') OK
+EXPECTED (video.getAttribute('preload') == 'auto') OK
+
+++ set to bogus value, should revert to default value
+RUN(video.removeAttribute('preload'))
+- set via DOM
+RUN(video.preload = 'bogus')
+EXPECTED (video.getAttribute('preload') == 'bogus') OK
+EXPECTED (video.preload == 'auto') OK
+- and via attribute
+RUN(video.setAttribute('preload', 'bogus'))
+EXPECTED (video.preload == 'auto') OK
+EXPECTED (video.getAttribute('preload') == 'bogus') OK
+
+++ Set to 'metadata'
+- set via DOM
+RUN(video.removeAttribute('preload'))
+RUN(video.preload = 'metadata')
+EXPECTED (video.getAttribute('preload') == 'metadata') OK
+EXPECTED (video.preload == 'metadata') OK
+- and via attribute
+RUN(video.removeAttribute('preload'))
+RUN(video.setAttribute('preload', 'metadata'))
+EXPECTED (video.preload == 'metadata') OK
+EXPECTED (video.getAttribute('preload') == 'metadata') OK
+
+END OF TEST
+

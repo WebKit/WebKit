@@ -44,7 +44,7 @@ HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document* docum
 PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* document, const String& src)
 {
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(audioTag, document);
-    audio->setAutobuffer(true);
+    audio->setPreload("auto");
     if (!src.isNull()) {
         audio->setSrc(src);
         audio->scheduleLoad();

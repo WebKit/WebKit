@@ -1333,16 +1333,16 @@ bool MediaPlayerPrivate::supportsFullscreen() const
     return true;
 }
 
-void MediaPlayerPrivate::setAutobuffer(bool autoBuffer)
+void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
 {
     ASSERT(m_playBin);
 
     GstPlayFlags flags;
     g_object_get(m_playBin, "flags", &flags, NULL);
-    if (autoBuffer)
-        g_object_set(m_playBin, "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
-    else
+    if (preload == MediaPlayer::None)
         g_object_set(m_playBin, "flags", flags & ~GST_PLAY_FLAG_DOWNLOAD, NULL);
+    else
+        g_object_set(m_playBin, "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
 }
 
 void MediaPlayerPrivate::createGSTPlayBin()

@@ -102,6 +102,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_currentSourceNode(0)
     , m_player(0)
     , m_restrictions(NoRestrictions)
+    , m_preload(MediaPlayer::Auto)
     , m_playing(false)
     , m_processingMediaPlayerCallback(0)
     , m_processingLoad(false)
@@ -178,9 +179,23 @@ void HTMLMediaElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const QualifiedName& attrName = attr->name();
 
-    if (attrName == autobufferAttr) {
-        if (m_player)
-            m_player->setAutobuffer(!attr->isNull());
+    if (attrName == preloadAttr) {
+        String value = attr->value();
+
+        if (equalIgnoringCase(value, "none"))
+            m_preload = MediaPlayer::None;
+        else if (equalIgnoringCase(value, "metadata"))
+            m_preload = MediaPlayer::MetaData;
+        else {
+            // The spec does not define an "invalid value default" but "auto" is suggested as the
+            // "missing value default", so use it for everything except "none" and "metadata"
+            m_preload = MediaPlayer::Auto;
+        }
+
+        // The attribute must be ignored if the autoplay attribute is present
+        if (!autoplay() && m_player)
+            m_player->setPreload(m_preload);
+
     } else if (attrName == onabortAttr)
         setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, attr));
     else if (attrName == onbeforeloadAttr)
@@ -586,7 +601,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_player = MediaPlayer::create(this);
 #endif
 
-    m_player->setAutobuffer(autobuffer());
+    m_player->setPreload(m_preload);
     m_player->setPreservesPitch(m_webkitPreservesPitch);
     updateVolume();
 
@@ -1118,14 +1133,27 @@ void HTMLMediaElement::setAutoplay(bool b)
     setBooleanAttribute(autoplayAttr, b);
 }
 
-bool HTMLMediaElement::autobuffer() const
+String HTMLMediaElement::preload() const
 {
-    return hasAttribute(autobufferAttr);
+    switch (m_preload) {
+    case MediaPlayer::None:
+        return "none";
+        break;
+    case MediaPlayer::MetaData:
+        return "metadata";
+        break;
+    case MediaPlayer::Auto:
+        return "auto";
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
-void HTMLMediaElement::setAutobuffer(bool b)
+void HTMLMediaElement::setPreload(const String& preload)
 {
-    setBooleanAttribute(autobufferAttr, b);
+    setAttribute(preloadAttr, preload);
 }
 
 void HTMLMediaElement::play(bool isUserGesture)

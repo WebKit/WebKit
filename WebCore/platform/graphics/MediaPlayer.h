@@ -194,8 +194,8 @@ public:
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
-    bool autobuffer() const;    
-    void setAutobuffer(bool);
+    bool autoplay() const;    
+    void setAutoplay(bool);
 
     void paint(GraphicsContext*, const IntRect&);
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
@@ -208,6 +208,10 @@ public:
     
     enum MovieLoadType { Unknown, Download, StoredStream, LiveStream };
     MovieLoadType movieLoadType() const;
+
+    enum Preload { None, MetaData, Auto };
+    Preload preload() const;
+    void setPreload(Preload);
 
     void networkStateChanged();
     void readyStateChanged();
@@ -251,12 +255,12 @@ private:
     void* m_currentMediaEngine;
     FrameView* m_frameView;
     IntSize m_size;
+    Preload m_preload;
     bool m_visible;
     float m_rate;
     float m_volume;
     bool m_muted;
     bool m_preservesPitch;
-    bool m_autobuffer;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
 #endif

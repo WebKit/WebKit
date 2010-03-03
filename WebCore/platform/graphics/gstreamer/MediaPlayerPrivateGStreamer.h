@@ -87,7 +87,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             void muteChanged();
             void muteChangedCallback();
 
-            void setAutobuffer(bool);
+            void setPreload(MediaPlayer::Preload);
             bool queryBufferingStats();
 
             MediaPlayer::NetworkState networkState() const;

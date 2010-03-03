@@ -8,8 +8,8 @@
             function canplaythrough()
             {
                 consoleWrite("++ Test after 'canplaythrough' event");
-                testExpected("mediaElement.getAttribute('autobuffer')", null, "!=");
-                testExpected("mediaElement.autobuffer", true);
+                testExpected("mediaElement.getAttribute('preload')", "auto");
+                testExpected("mediaElement.preload", "auto");
                 endTest();
             }
 
@@ -19,8 +19,8 @@
                 consoleWrite("");
 
                 consoleWrite("++ Test initial attribute value");
-                testExpected("mediaElement.getAttribute('autobuffer')", null, "!=");
-                testExpected("mediaElement.autobuffer", true);
+                testExpected("mediaElement.getAttribute('preload')", "auto");
+                testExpected("mediaElement.preload", "auto");
                 consoleWrite("");
 
                 mediaElement.addEventListener("canplaythrough", canplaythrough);
@@ -34,6 +34,6 @@
     </head>
 
     <body onload="start()">
-        <p>Test that Audio() sets 'autobuffer' attribute.</p>
+        <p>Test that Audio() sets 'preload' attribute.</p>
     </body>
 </html>

@@ -97,7 +97,7 @@ public:
 
     virtual void paintCurrentFrameInContext(GraphicsContext* c, const IntRect& r) { paint(c, r); }
 
-    virtual void setAutobuffer(bool) { };
+    virtual void setPreload(MediaPlayer::Preload) { };
 
     virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::HaveCurrentData; }
 

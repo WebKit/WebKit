@@ -42,7 +42,6 @@ aria-valuemax
 aria-valuemin
 aria-valuenow
 aria-valuetext
-autobuffer
 autocomplete
 autofocus
 autoplay
@@ -223,6 +222,7 @@ placeholder
 pluginurl
 poster
 precision
+preload
 primary
 profile
 progress

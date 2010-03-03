@@ -204,12 +204,12 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_private(createNullMediaPlayer(this))
     , m_currentMediaEngine(0)
     , m_frameView(0)
+    , m_preload(Auto)
     , m_visible(false)
     , m_rate(1.0f)
     , m_volume(1.0f)
     , m_muted(false)
     , m_preservesPitch(true)
-    , m_autobuffer(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_playerProxy(0)
 #endif
@@ -260,7 +260,7 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         m_private->setMediaPlayerProxy(m_playerProxy);
 #endif
-        m_private->setAutobuffer(autobuffer());
+        m_private->setPreload(m_preload);
         m_private->setPreservesPitch(preservesPitch());
     }
 
@@ -482,17 +482,14 @@ void MediaPlayer::setVisible(bool b)
     m_private->setVisible(b);
 }
 
-bool MediaPlayer::autobuffer() const
+MediaPlayer::Preload MediaPlayer::preload() const
 {
-    return m_autobuffer;
+    return m_preload;
 }
 
-void MediaPlayer::setAutobuffer(bool b)
+void MediaPlayer::setPreload(MediaPlayer::Preload preload)
 {
-    if (m_autobuffer != b) {
-        m_autobuffer = b;
-        m_private->setAutobuffer(b);
-    }
+    m_private->setPreload(preload);
 }
 
 void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)
