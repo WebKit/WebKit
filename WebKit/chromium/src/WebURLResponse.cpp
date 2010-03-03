@@ -265,6 +265,16 @@ void WebURLResponse::setWasFetchedViaSPDY(bool value)
     m_private->m_resourceResponse->setWasFetchedViaSPDY(value);
 }
 
+bool WebURLResponse::isMultipartPayload() const
+{
+    return m_private->m_resourceResponse->isMultipartPayload();
+}
+
+void WebURLResponse::setIsMultipartPayload(bool value)
+{
+    m_private->m_resourceResponse->setIsMultipartPayload(value);
+}
+
 void WebURLResponse::assign(WebURLResponsePrivate* p)
 {
     // Subclasses may call this directly so a self-assignment check is needed

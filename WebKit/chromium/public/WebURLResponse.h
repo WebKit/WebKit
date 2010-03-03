@@ -123,6 +123,10 @@ public:
     WEBKIT_API bool wasFetchedViaSPDY() const;
     WEBKIT_API void setWasFetchedViaSPDY(bool);
 
+    // Flag whether this request is part of a multipart response.
+    WEBKIT_API bool isMultipartPayload() const;
+    WEBKIT_API void setIsMultipartPayload(bool);
+
 protected:
     void assign(WebURLResponsePrivate*);
 
