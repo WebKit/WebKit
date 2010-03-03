@@ -108,10 +108,10 @@ namespace JSC {
         ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
     };
 #elif CPU(X86)
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || (OS(WINDOWS) && COMPILER(GCC))
 #pragma pack(push)
 #pragma pack(4)
-#endif // COMPILER(MSVC)
+#endif // COMPILER(MSVC) || (OS(WINDOWS) && COMPILER(GCC))
     struct JITStackFrame {
         void* reserved; // Unused
         JITStubArg args[6];
@@ -135,9 +135,9 @@ namespace JSC {
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
         ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
     };
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || (OS(WINDOWS) && COMPILER(GCC))
 #pragma pack(pop)
-#endif // COMPILER(MSVC)
+#endif // COMPILER(MSVC) || (OS(WINDOWS) && COMPILER(GCC))
 #elif CPU(ARM_THUMB2)
     struct JITStackFrame {
         void* reserved; // Unused

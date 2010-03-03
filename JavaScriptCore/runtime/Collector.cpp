@@ -229,7 +229,7 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 #elif OS(WINCE)
     void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #elif OS(WINDOWS)
-#if COMPILER(MINGW)
+#if COMPILER(MINGW) && !defined(__MINGW64_VERSION_MAJOR)
     void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
 #else
     void* address = _aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
@@ -320,7 +320,7 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
 #elif OS(WINCE)
     VirtualFree(block, 0, MEM_RELEASE);
 #elif OS(WINDOWS)
-#if COMPILER(MINGW)
+#if COMPILER(MINGW) && !defined(__MINGW64_VERSION_MAJOR)
     __mingw_aligned_free(block);
 #else
     _aligned_free(block);
@@ -574,10 +574,6 @@ static inline void* currentThreadStackBase()
         MOV pTib, EAX
     }
     return static_cast<void*>(pTib->StackBase);
-#elif OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
-    // FIXME: why only for MSVC?
-    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
-    return reinterpret_cast<void*>(pTib->StackBase);
 #elif OS(WINDOWS) && CPU(X86) && COMPILER(GCC)
     // offset 0x18 from the FS segment register gives a pointer to
     // the thread information block for the current thread
@@ -586,6 +582,9 @@ static inline void* currentThreadStackBase()
           : "=r" (pTib)
         );
     return static_cast<void*>(pTib->StackBase);
+#elif OS(WINDOWS) && CPU(X86_64)
+    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
+    return reinterpret_cast<void*>(pTib->StackBase);
 #elif OS(QNX)
     return currentThreadStackBaseQNX();
 #elif OS(SOLARIS)

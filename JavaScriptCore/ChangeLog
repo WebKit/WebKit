@@ -1,3 +1,16 @@
+2010-03-02  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Oliver Hunt.
+
+        Allow building smoothly on win32 and win64 using GCC
+        https://bugs.webkit.org/show_bug.cgi?id=35607
+
+        * jit/JITStubs.h:
+        * runtime/Collector.cpp:
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlockPtr):
+        (JSC::currentThreadStackBase):
+
 2010-03-02  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by David Levin.
