@@ -1,3 +1,10 @@
+2010-03-03  Darin Adler  <darin@apple.com>
+
+        Fixed Mac build.
+
+        * WebCore.xcodeproj/project.pbxproj: Marked a couple of headers "private" so they can
+        be used in the WebKit project.
+
 2010-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adele Peterson.
