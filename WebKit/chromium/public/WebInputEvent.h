@@ -32,6 +32,7 @@
 #define WebInputEvent_h
 
 #include "WebCommon.h"
+#include "WebTouchPoint.h"
 
 #include <string.h>
 
@@ -96,7 +97,13 @@ public:
         RawKeyDown,
         KeyDown,
         KeyUp,
-        Char
+        Char,
+
+        // WebTouchEvent
+        TouchStart,
+        TouchMove,
+        TouchEnd,
+        TouchCancel,
     };
 
     enum Modifiers {
@@ -128,6 +135,15 @@ public:
             || type == KeyDown
             || type == KeyUp
             || type == Char;
+    }
+
+    // Returns true if the WebInputEvent |type| is a touch event.
+    static bool isTouchEventType(int type)
+    {
+        return type == TouchStart
+            || type == TouchMove
+            || type == TouchEnd
+            || type == TouchCancel;
     }
 };
 
@@ -251,6 +267,22 @@ public:
         , wheelTicksX(0.0f)
         , wheelTicksY(0.0f)
         , scrollByPage(false)
+    {
+    }
+};
+
+// WebTouchEvent --------------------------------------------------------------
+
+class WebTouchEvent : public WebInputEvent {
+public:
+    static const int touchPointsLengthCap = 4;
+
+    int touchPointsLength;
+    WebTouchPoint touchPoints[touchPointsLengthCap];
+
+    WebTouchEvent(unsigned sizeParam = sizeof(WebTouchEvent))
+        : WebInputEvent(sizeParam)
+        , touchPointsLength(0)
     {
     }
 };
