@@ -1,3 +1,16 @@
+2010-03-04  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35261
+        [skia] crash when attempting to render certain SVGs with Skia
+
+        This test passes if it doesn't crash.
+
+        * platform/mac/Skipped: Skip the test on Mac, where it crashes.
+        * svg/custom/tiling-regular-hexagonal-crash-expected.txt: Added.
+        * svg/custom/tiling-regular-hexagonal-crash.svg: Added.
+
 2010-03-03  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

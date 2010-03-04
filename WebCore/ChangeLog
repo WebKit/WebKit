@@ -1,3 +1,19 @@
+2010-03-04  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35261
+        [skia] crash when attempting to render certain SVGs
+
+        This fixes the crash, but the SVG still doesn't render properly.
+
+        Test: svg/custom/tiling-regular-hexagonal-crash.svg
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImageSingleFrameSkia::create): don't return 0 when
+        the copy fails; instead return a blank bitmap. The caller doesn't
+        check for 0 before dereferencing.
+
 2010-03-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Fisher.
