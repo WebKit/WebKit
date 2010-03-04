@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+using namespace std;
+
 static long long spatialDistance(FocusDirection, const IntRect&, const IntRect&);
 static IntRect renderRectRelativeToRootDocument(RenderObject*);
 static RectsAlignment alignmentForRects(FocusDirection, const IntRect&, const IntRect&);

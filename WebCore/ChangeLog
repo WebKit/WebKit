@@ -1,3 +1,11 @@
+2010-03-04  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Attempt to fix Mac build.
+
+        * page/SpatialNavigation.cpp:
+
 2010-03-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Add SpatialNavigation header and cpp to Mac XCode project file.
