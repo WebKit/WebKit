@@ -2,6 +2,21 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Clicking on an error should take me to the error
+
+        https://bugs.webkit.org/show_bug.cgi?id=34860
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView):
+        (WebInspector.ResourceView.prototype._selectTab):
+        (WebInspector.ResourceView.prototype.selectContentTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showResource):
+
+2010-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Remove sync access to resourceTrackingEnabled.
 
         https://bugs.webkit.org/show_bug.cgi?id=35693

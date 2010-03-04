@@ -487,6 +487,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         var view = this.resourceViewForResource(resource);
         view.headersVisible = true;
+        view.selectContentTab();
         view.show(this.viewsContainerElement);
 
         if (line) {
