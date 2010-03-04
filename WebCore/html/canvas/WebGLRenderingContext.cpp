@@ -1399,7 +1399,10 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
         return 0;
     }
     WebGLStateRestorer(this, false);
-    return WebGLUniformLocation::create(program, m_context->getUniformLocation(program, name));
+    long uniformLocation = m_context->getUniformLocation(program, name);
+    if (uniformLocation == -1)
+        return 0;
+    return WebGLUniformLocation::create(program, uniformLocation);
 }
 
 WebGLGetInfo WebGLRenderingContext::getVertexAttrib(unsigned long index, unsigned long pname, ExceptionCode& ec)

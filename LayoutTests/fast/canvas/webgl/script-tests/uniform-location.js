@@ -1,4 +1,4 @@
-description("Tests calling WebGL APIs with objects from other contexts");
+description("Tests WebGL APIs related to shader uniforms");
 
 var contextA = create3DDebugContext();
 var contextB = create3DDebugContext();
@@ -32,5 +32,7 @@ shouldBe("contextA.getUniform(programS, locationArray0)", "4.0");
 shouldBeUndefined("contextA.useProgram(programV)");
 shouldBeUndefined("contextA.uniform4fv(locationVec4, vec)");
 shouldBe("contextA.getUniform(programV, locationVec4)", "vec");
+
+shouldBeNull("contextA.getUniformLocation(programV, \"IDontExist\")");
 
 successfullyParsed = true;
