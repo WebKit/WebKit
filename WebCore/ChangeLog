@@ -1,3 +1,24 @@
+2010-03-04  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Handles setting HTMLSelectElement.length with mutation handlers present
+        https://bugs.webkit.org/show_bug.cgi?id=33983
+
+        When setting an HTMLSelectElement's length attribute, option elements have to be added or removed to the select
+        as appropriate.  This is a little tricky with mutation events since they might add, remove, or reorder elements
+        while option elements are being added or deleted.
+
+        Tests: fast/forms/select-set-length-optgroup.html
+               fast/forms/select-set-length-with-mutation-remove.html
+               fast/forms/select-set-length-with-mutation-reorder.html
+               fast/forms/select-set-length-with-mutation-reparent.html
+               fast/forms/select-set-length-with-mutation.html
+               fast/forms/select-set-length.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength):
+
 2010-03-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r55542 on Windows.

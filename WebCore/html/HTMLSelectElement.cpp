@@ -418,11 +418,21 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
     } else {
         const Vector<Element*>& items = listItems();
 
+        // Removing children fires mutation events, which might mutate the DOM further, so we first copy out a list
+        // of elements that we intend to remove then attempt to remove them one at a time.
+        Vector<RefPtr<Element> > itemsToRemove;
         size_t optionIndex = 0;
-        for (size_t listIndex = 0; listIndex < items.size(); listIndex++) {
-            if (items[listIndex]->hasLocalName(optionTag) && optionIndex++ >= newLen) {
-                Element *item = items[listIndex];
+        for (size_t i = 0; i < items.size(); ++i) {
+            Element* item = items[i];
+            if (item->hasLocalName(optionTag) && optionIndex++ >= newLen) {
                 ASSERT(item->parentNode());
+                itemsToRemove.append(item);
+            }
+        }
+
+        for (size_t i = 0; i < itemsToRemove.size(); ++i) {
+            Element* item = itemsToRemove[i].get();
+            if (item->parentNode()) {
                 item->parentNode()->removeChild(item, ec);
             }
         }

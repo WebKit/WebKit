@@ -1,3 +1,34 @@
+2010-03-04  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests for setting an select's options.length attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=33983
+
+        * fast/forms/script-tests/select-set-length-optgroup.js: Added.
+        * fast/forms/script-tests/select-set-length-with-mutation-remove.js: Added.
+        (gc):
+        (onRemove):
+        * fast/forms/script-tests/select-set-length-with-mutation-reorder.js: Added.
+        (onRemove):
+        * fast/forms/script-tests/select-set-length-with-mutation-reparent.js: Added.
+        (onRemove):
+        * fast/forms/script-tests/select-set-length-with-mutation.js: Added.
+        (sel):
+        * fast/forms/script-tests/select-set-length.js: Added.
+        * fast/forms/select-set-length-expected.txt: Added.
+        * fast/forms/select-set-length-optgroup-expected.txt: Added.
+        * fast/forms/select-set-length-optgroup.html: Added.
+        * fast/forms/select-set-length-with-mutation-expected.txt: Added.
+        * fast/forms/select-set-length-with-mutation-remove-expected.txt: Added.
+        * fast/forms/select-set-length-with-mutation-remove.html: Added.
+        * fast/forms/select-set-length-with-mutation-reorder-expected.txt: Added.
+        * fast/forms/select-set-length-with-mutation-reorder.html: Added.
+        * fast/forms/select-set-length-with-mutation-reparent-expected.txt: Added.
+        * fast/forms/select-set-length-with-mutation-reparent.html: Added.
+        * fast/forms/select-set-length-with-mutation.html: Added.
+        * fast/forms/select-set-length.html: Added.
+
 2010-03-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Kenneth Rohde Christiansen.
