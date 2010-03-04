@@ -1,3 +1,13 @@
+2010-03-04  Andras Becsi  <abecsi@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        [Qt] DRT is failing on new test introduced in r55499
+        Skipping it until fix.
+        https://bugs.webkit.org/show_bug.cgi?id=35729
+
+        * platform/qt/Skipped: fast/events/zoom-dblclick.html skipped
+
 2010-03-04  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Oliver Hunt.
