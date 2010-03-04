@@ -1,3 +1,36 @@
+2010-03-03  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Trottle sync requests sent to the LocalStorage background thread
+        https://bugs.webkit.org/show_bug.cgi?id=34943
+
+        Currently, once a second LocalStorage takes all keys/values which have
+        been changed and sends them to a background thread to sync.  The problem
+        is that this background thread can get overwhelmed and stop being
+        responsive.  This means that if any other page tries to start using
+        LocalStorage (and thus initiates the initial import) that'll block on
+        all the previous syncs completing.
+
+        To mitigate this, I'm adding code so that we never schedule another
+        sync task when another is still running.  In order to keep the sync
+        tasks from growing exponentially when they do take longer than the
+        storage sync interval, I've also added a basic rate limiter.  No effort
+        is made to ensure fairness/ordering of what gets synced nor is there
+        any way for this rate to be changed because most normal uses of
+        LocalStorage really shouldn't be hitting these types of limits anyway.
+
+        The only behavioral change that's observible in JavaScript is time based
+        and thus it's not practical to make new tests that aren't racy.  The
+        existing layout tests cover LocalStorage pretty well, though.
+
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        (WebCore::StorageAreaSync::performSync):
+        * storage/StorageAreaSync.h:
+
 2010-03-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

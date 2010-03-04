@@ -43,6 +43,10 @@ namespace WebCore {
 // Instead, queue up a batch of items to sync and actually do the sync at the following interval.
 static const double StorageSyncInterval = 1.0;
 
+// A sane limit on how many items we'll schedule to sync all at once.  This makes it
+// much harder to starve the rest of LocalStorage and the OS's IO subsystem in general.
+static const int MaxiumItemsToSync = 100;
+
 PassRefPtr<StorageAreaSync> StorageAreaSync::create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea, String databaseIdentifier)
 {
     return adoptRef(new StorageAreaSync(storageSyncManager, storageArea, databaseIdentifier));
@@ -57,6 +61,7 @@ StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManag
     , m_databaseIdentifier(databaseIdentifier.crossThreadString())
     , m_clearItemsWhileSyncing(false)
     , m_syncScheduled(false)
+    , m_syncInProgress(false)
     , m_importComplete(false)
 {
     ASSERT(isMainThread());
@@ -92,8 +97,8 @@ void StorageAreaSync::scheduleFinalSync()
     }
     // FIXME: This is synchronous.  We should do it on the background process, but
     // we should do it safely.
-    syncTimerFired(&m_syncTimer);
     m_finalSyncScheduled = true;
+    syncTimerFired(&m_syncTimer);
 }
 
 void StorageAreaSync::scheduleItemForSync(const String& key, const String& value)
@@ -131,11 +136,17 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
 {
     ASSERT(isMainThread());
 
-    HashMap<String, String>::iterator it = m_changedItems.begin();
-    HashMap<String, String>::iterator end = m_changedItems.end();
-
+    bool partialSync = false;
     {
         MutexLocker locker(m_syncLock);
+
+        // Do not schedule another sync if we're still trying to complete the
+        // previous one.  But, if we're shutting down, schedule it anyway.
+        if (m_syncInProgress && !m_finalSyncScheduled) {
+            ASSERT(!m_syncTimer.isActive());
+            m_syncTimer.startOneShot(StorageSyncInterval);
+            return;
+        }
 
         if (m_itemsCleared) {
             m_itemsPendingSync.clear();
@@ -143,8 +154,25 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
             m_itemsCleared = false;
         }
 
-        for (; it != end; ++it)
-            m_itemsPendingSync.set(it->first.crossThreadString(), it->second.crossThreadString());
+        HashMap<String, String>::iterator changed_it = m_changedItems.begin();
+        HashMap<String, String>::iterator changed_end = m_changedItems.end();
+        for (int count = 0; changed_it != changed_end; ++count, ++changed_it) {
+            if (count >= MaxiumItemsToSync && !m_finalSyncScheduled) {
+                partialSync = true;
+                break;
+            }
+            m_itemsPendingSync.set(changed_it->first.crossThreadString(), changed_it->second.crossThreadString());
+        }
+
+        if (partialSync) {
+            // We can't do the fast path of simply clearing all items, so we'll need to manually
+            // remove them one by one.  Done under lock since m_itemsPendingSync is modified by
+            // the background thread.
+            HashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
+            HashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
+            for (; pending_it != pending_end; ++pending_it)
+                m_changedItems.remove(pending_it->first);
+        }
 
         if (!m_syncScheduled) {
             m_syncScheduled = true;
@@ -157,11 +185,17 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
         }
     }
 
-    // The following is balanced by the calls to disableSuddenTermination in the
-    // scheduleItemForSync, scheduleClear, and scheduleFinalSync functions.
-    enableSuddenTermination();
+    if (partialSync) {
+        // If we didn't finish syncing, then we need to finish the job later.
+        ASSERT(!m_syncTimer.isActive());
+        m_syncTimer.startOneShot(StorageSyncInterval);
+    } else {
+        // The following is balanced by the calls to disableSuddenTermination in the
+        // scheduleItemForSync, scheduleClear, and scheduleFinalSync functions.
+        enableSuddenTermination();
 
-    m_changedItems.clear();
+        m_changedItems.clear();
+    }
 }
 
 void StorageAreaSync::performImport()
@@ -319,9 +353,15 @@ void StorageAreaSync::performSync()
 
         m_clearItemsWhileSyncing = false;
         m_syncScheduled = false;
+        m_syncInProgress = true;
     }
 
     sync(clearItems, items);
+
+    {
+        MutexLocker locker(m_syncLock);
+        m_syncInProgress = false;
+    }
 
     // The following is balanced by the call to disableSuddenTermination in the
     // syncTimerFired function.

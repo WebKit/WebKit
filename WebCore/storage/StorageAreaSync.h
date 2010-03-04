@@ -84,6 +84,7 @@ namespace WebCore {
         HashMap<String, String> m_itemsPendingSync;
         bool m_clearItemsWhileSyncing;
         bool m_syncScheduled;
+        bool m_syncInProgress;
 
         mutable Mutex m_importLock;
         mutable ThreadCondition m_importCondition;
