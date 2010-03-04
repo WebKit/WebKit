@@ -1,3 +1,12 @@
+2010-03-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] storage/open-database-creation-callback-isolated-world.html was removed
+        from tree by r55488, so it should be removed from Qt Skipped list too.
+
+        * platform/qt/Skipped: storage/open-database-creation-callback-isolated-world.html removed.
+
 2010-03-04  Andras Becsi  <abecsi@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.
