@@ -4,6 +4,16 @@
 
         The patch broke fast/frames/sandboxed-iframe-storage.html
 
+        Last one (I hope).
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-03-03  David Levin  <levin@chromium.org>
+
+        No review, rolling out r55474.
+
+        The patch broke fast/frames/sandboxed-iframe-storage.html
+
         Unfortunately, (the webkit-patch rollout and) I missed these in r55485.
 
         * bindings/js/JSDatabaseCallback.cpp: Removed.
