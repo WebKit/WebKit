@@ -1,3 +1,17 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed.
+
+        Try better to fix Java tests on Tiger bot.
+
+        * platform/mac-tiger/Skipped:
+        * platform/mac-tiger/java/lc3/JavaArray/ToString-001-expected.txt: Removed.
+        This test gets different resultson each run when it fails, so it needs to be disabled on
+        Tiger.
+
+        * platform/mac-tiger/java/lc3/JavaObject/JavaObjectToString-001-expected.txt: Added a
+        newline I didn't get when copying actual results from buildbot.
+
 2010-03-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new test introduced in r55474, because of

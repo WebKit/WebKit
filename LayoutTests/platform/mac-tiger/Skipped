@@ -115,3 +115,6 @@ svg/custom/stroke-width-click.svg
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# This test fails on Tiger, and when it fails, it dumps different results each time.
+java/lc3/JavaArray/ToString-001.html
