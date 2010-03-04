@@ -1,3 +1,27 @@
+2010-03-04  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move Cairo-related font code from platform/graphics/gtk to
+        platform/graphics/cairo, so other ports may use them.
+        http://webkit.org/b/35539
+
+        * GNUmakefile.am:
+        * platform/graphics/cairo/FontCacheCairo.cpp: Copied from WebCore/platform/graphics/gtk/FontCacheGtk.cpp.
+        * platform/graphics/cairo/FontCustomPlatformData.cpp: Copied from WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp.
+        * platform/graphics/cairo/FontCustomPlatformData.h: Copied from WebCore/platform/graphics/gtk/FontCustomPlatformData.h.
+        * platform/graphics/cairo/FontPlatformData.h: Copied from WebCore/platform/graphics/gtk/FontPlatformData.h.
+        * platform/graphics/cairo/FontPlatformDataCairo.cpp: Copied from WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp.
+        * platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp: Copied from WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp.
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp: Copied from WebCore/platform/graphics/gtk/SimpleFontDataGtk.cpp.
+        * platform/graphics/gtk/FontCacheGtk.cpp: Removed.
+        * platform/graphics/gtk/FontCustomPlatformData.cpp: Removed.
+        * platform/graphics/gtk/FontCustomPlatformData.h: Removed.
+        * platform/graphics/gtk/FontPlatformData.h: Removed.
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp: Removed.
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp: Removed.
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp: Removed.
+
 2010-03-04  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

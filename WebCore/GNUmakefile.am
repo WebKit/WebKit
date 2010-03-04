@@ -2003,11 +2003,11 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/PathCairo.cpp \
 	WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
+	WebCore/platform/graphics/cairo/FontCacheCairo.cpp \
+	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
+	WebCore/platform/graphics/cairo/FontPlatformData.h \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
-	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
-	WebCore/platform/graphics/gtk/FontCustomPlatformData.h \
 	WebCore/platform/graphics/gtk/FontGtk.cpp \
-	WebCore/platform/graphics/gtk/FontPlatformData.h \
 	WebCore/platform/graphics/gtk/IconGtk.cpp \
 	WebCore/platform/graphics/gtk/ImageGtk.cpp \
 	WebCore/platform/graphics/gtk/IntPointGtk.cpp \
@@ -2129,10 +2129,10 @@ webcoregtk_cppflags += \
 	-DUSE_FREETYPE=1
 
 webcoregtk_sources += \
-	WebCore/platform/graphics/gtk/FontCustomPlatformData.cpp \
-	WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp \
-	WebCore/platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp \
-	WebCore/platform/graphics/gtk/SimpleFontDataGtk.cpp
+	WebCore/platform/graphics/cairo/FontCustomPlatformData.cpp \
+	WebCore/platform/graphics/cairo/FontPlatformDataCairo.cpp \
+	WebCore/platform/graphics/cairo/GlyphPageTreeNodeCairo.cpp \
+	WebCore/platform/graphics/cairo/SimpleFontDataCairo.cpp
 endif # END USE_FREETYPE
 
 # ---
