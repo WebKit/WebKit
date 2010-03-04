@@ -34,7 +34,10 @@ class RenderObject;
 
 using namespace std;
 
-const long long cMaxDistance = numeric_limits<long long>::max();
+inline long long maxDistance()
+{
+    return numeric_limits<long long>::max();
+}
 
 // Spatially speaking, two given elements in a web page can be:
 // 1) Fully aligned: There is a full intersection between the rects, either
@@ -88,8 +91,8 @@ enum RectsAlignment {
 struct FocusCandidate {
     FocusCandidate()
         : node(0)
-        , distance(cMaxDistance)
-        , parentDistance(cMaxDistance)
+        , distance(maxDistance())
+        , parentDistance(maxDistance())
         , alignment(None)
         , parentAlignment(None)
     {

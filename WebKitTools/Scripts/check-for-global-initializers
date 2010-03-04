@@ -118,10 +118,6 @@ for my $file (sort @files) {
                 next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "SVGElementInstance.o";
                 next if $shortName eq "XMLHttpRequest.o";
-
-                #FIXME: check to see if these are legit.
-                next if $shortName eq "FocusController.o";
-                next if $shortName eq "SpatialNavigation.o";
             }
             if ($target eq "WebKit") {
                 next if $shortName eq "HostedNetscapePluginStream.o";
@@ -129,8 +125,7 @@ for my $file (sort @files) {
             }
         }
 
-        print "ERROR: $shortName has a global initializer in it! ($file)\n";
-        print "ERROR: @globals\n";
+        print "ERROR: $shortName has one or more global initializers in it! ($file), near @globals\n";
         $sawError = 1;
     }
 }

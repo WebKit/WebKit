@@ -351,7 +351,7 @@ static void updateFocusCandidateIfCloser(Node* focusedNode, Node* candidate, lon
         && distance < closestFocusCandidate.parentDistance) {
         closestFocusCandidate.node = candidate;
         closestFocusCandidate.distance = distance;
-        closestFocusCandidate.parentDistance = cMaxDistance;
+        closestFocusCandidate.parentDistance = maxDistance();
     } else if (focusedNode->document() != candidate->document()) {
         // If the |focusedNode| is in an inner document and the |candidate| is
         // in a different document, we only consider to change focus if there is

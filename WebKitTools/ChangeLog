@@ -1,5 +1,11 @@
 2010-03-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Revert the exceptions I just added, and make the error clearer.
+
+        * Scripts/check-for-global-initializers:
+
+2010-03-04  Simon Fraser  <simon.fraser@apple.com>
+
         Build fix: add exceptions to the check-for-global-initializers script
         for FocusController and SpatialNavigation, and improve the script
         to actually print out the globals found.

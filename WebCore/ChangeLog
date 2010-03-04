@@ -1,3 +1,18 @@
+2010-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix.
+        
+        const long long cMaxDistance = numeric_limits<long long>::max() created global
+        initializers at the call sites, so replace with an inline function.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfCloser):
+        * page/SpatialNavigation.cpp:
+        (WebCore::distanceInDirection):
+        * page/SpatialNavigation.h:
+        (WebCore::maxDistance):
+        (WebCore::FocusCandidate::FocusCandidate):
+
 2010-03-04  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed attempt to fix Windows build.

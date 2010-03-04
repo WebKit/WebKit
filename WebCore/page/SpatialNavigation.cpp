@@ -51,11 +51,11 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
 {
     RenderObject* startRender = start->renderer();
     if (!startRender)
-        return cMaxDistance;
+        return maxDistance();
 
     RenderObject* destRender = dest->renderer();
     if (!destRender)
-        return cMaxDistance;
+        return maxDistance();
 
     IntRect curRect = renderRectRelativeToRootDocument(startRender);
     IntRect targetRect  = renderRectRelativeToRootDocument(destRender);
@@ -66,10 +66,10 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
 
     if ((curRect.isEmpty() || targetRect.isEmpty())
         || (targetRect.x() < 0 || targetRect.y() < 0))
-        return cMaxDistance;
+        return maxDistance();
 
     if (!isRectInDirection(direction, curRect, targetRect))
-        return cMaxDistance;
+        return maxDistance();
 
     // The distance between two nodes is not to be considered alone when evaluating/looking
     // for the best focus candidate node. Alignment of rects can be also a good point to be
@@ -79,9 +79,9 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
     bool sameDocument = candidate.node && dest->document() == candidate.node->document();
     if (sameDocument) {
         if (candidate.alignment > alignment || (candidate.parentAlignment && alignment > candidate.parentAlignment))
-            return cMaxDistance;
+            return maxDistance();
     } else if (candidate.alignment > alignment && (candidate.parentAlignment && alignment > candidate.parentAlignment))
-        return cMaxDistance;
+        return maxDistance();
 
     // FIXME_tonikitoo: simplify the logic here !
     if (alignment != None
@@ -93,7 +93,7 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
         // |distance| so we force it to be bigger than the result we will get from
         // |spatialDistance| (see below).
         if (candidate.alignment < alignment && candidate.parentAlignment < alignment)
-            candidate.distance = cMaxDistance;
+            candidate.distance = maxDistance();
 
         candidate.alignment = alignment;
     }
