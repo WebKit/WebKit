@@ -2865,7 +2865,7 @@ bool Node::dispatchMouseEvent(const AtomicString& eventType, int button, int det
     if (eventType == eventNames().clickEvent && detail == 2) {
         RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent,
             true, cancelable, document()->defaultView(),
-            detail, screenX, screenY, pageX, pageY,
+            detail, screenX, screenY, adjustedPageX, adjustedPageY,
             ctrlKey, altKey, shiftKey, metaKey, button,
             relatedTarget, 0, isSimulated);
         doubleClickEvent->setUnderlyingEvent(underlyingEvent.get());

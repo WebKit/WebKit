@@ -1,3 +1,16 @@
+2010-03-03  Chad Faragher  <wyck@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Changed the double-click framework code to pass adjusted page
+        coordinates for zoomed pages.  Added a new test to expose
+        mistreatment of mouse click coordinates during a double-click.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35690
+
+        * fast/events/zoom-dblclick-expected.txt: Added.
+        * fast/events/zoom-dblclick.html: Added.
+
 2010-03-03  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
