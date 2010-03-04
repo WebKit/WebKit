@@ -1,3 +1,10 @@
+2010-03-04  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed attempt to (again) fix Mac build.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::spatialDistance):
+
 2010-03-04  Dan Bernstein  <mitz@apple.com>
 
         Based on a patch from Nick Jong.
