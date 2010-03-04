@@ -1,3 +1,39 @@
+2010-03-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        This fixes the layering violation I committed yesterday by moving 
+        Page::instanceHandle into its own file just in the WebCore 
+        namespace.
+
+        Added WebCoreInstanceHandle.h + .cpp and removed PageWin.cpp
+        * WebCore.vcproj/WebCore.vcproj:
+        * page/win/PageWin.cpp: Removed.
+
+        Remove all instance handle code from Page.
+        * page/Page.h:
+
+        New files.
+        * platform/win/WebCoreInstanceHandle.cpp: Added.
+        * platform/win/WebCoreInstanceHandle.h: Added.
+        (WebCore::setInstanceHandle):
+        (WebCore::instanceHandle):
+
+        Switch to WebCore::instanceHandle() instead of 
+        Page::instanceHandle() and include the new header.
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::registerClass):
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::initializeOffScreenTimerWindow):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::registerPluginView):
+        (WebCore::PluginView::platformStart):
+
 2010-03-04  Antonio Gomes  <tonikitoo@webkit.org>
 
         Unreviewed build fix.

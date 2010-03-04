@@ -29,9 +29,9 @@
 
 #include "WKCACFLayerRenderer.h"
 
-#include "Page.h"
 #include "WKCACFContextFlusher.h"
 #include "WKCACFLayer.h"
+#include "WebCoreInstanceHandle.h"
 #include <CoreGraphics/CGSRegion.h>
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARenderOGL.h>
@@ -152,7 +152,7 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
     WNDCLASSEX wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc = DefWindowProc;
-    wcex.hInstance = Page::instanceHandle();
+    wcex.hInstance = WebCore::instanceHandle();
     wcex.lpszClassName = L"CoreAnimationTesterWindowClass";
     ::RegisterClassEx(&wcex);
     HWND testWindow = ::CreateWindow(L"CoreAnimationTesterWindowClass", L"CoreAnimationTesterWindow", WS_POPUP, -500, -500, 0, 0, 0, 0, 0, 0);

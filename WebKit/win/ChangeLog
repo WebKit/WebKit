@@ -1,3 +1,13 @@
+2010-03-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebCore::Page::setInstanceHandle() is now just 
+        WebCore::setInstanceHandle()
+
+        * WebKitDLL.cpp:
+        (DllMain):
+
 2010-03-03  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Jon Honeycutt.

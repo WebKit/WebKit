@@ -40,6 +40,7 @@
 #include "Range.h"
 #include "RenderImage.h"
 #include "TextEncoding.h"
+#include "WebCoreInstanceHandle.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -88,7 +89,7 @@ Pasteboard::Pasteboard()
     WNDCLASSEX wcex = {0};
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.lpfnWndProc    = PasteboardOwnerWndProc;
-    wcex.hInstance      = Page::instanceHandle();
+    wcex.hInstance      = WebCore::instanceHandle();
     wcex.lpszClassName  = L"PasteboardOwnerWindowClass";
     ::RegisterClassEx(&wcex);
 

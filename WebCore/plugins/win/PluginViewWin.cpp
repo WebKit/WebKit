@@ -60,6 +60,7 @@
 #include "RenderWidget.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "WebCoreInstanceHandle.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
@@ -288,10 +289,10 @@ static bool registerPluginView()
     haveRegisteredWindowClass = true;
 
 #if PLATFORM(QT)
-    Page::setInstanceHandle((HINSTANCE)(qWinAppInst()));
+    WebCore::setInstanceHandle((HINSTANCE)(qWinAppInst()));
 #endif
 
-    ASSERT(Page::instanceHandle());
+    ASSERT(WebCore::instanceHandle());
 
 #if OS(WINCE)
     WNDCLASS wcex = { 0 };
@@ -308,7 +309,7 @@ static bool registerPluginView()
     wcex.lpfnWndProc    = DefWindowProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
-    wcex.hInstance      = Page::instanceHandle();
+    wcex.hInstance      = WebCore::instanceHandle();
     wcex.hIcon          = 0;
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)COLOR_WINDOW;
@@ -967,7 +968,7 @@ bool PluginView::platformStart()
 
         HWND parentWindowHandle = windowHandleForPageClient(m_parentFrame->view()->hostWindow()->platformPageClient());
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
-                                       0, 0, 0, 0, parentWindowHandle, 0, Page::instanceHandle(), 0);
+                                       0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
 #if OS(WINDOWS) && (PLATFORM(QT) || PLATFORM(WX))
         m_window = window;

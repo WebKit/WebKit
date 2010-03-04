@@ -36,6 +36,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/RenderThemeWin.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/Widget.h>
 #include <wtf/Vector.h>
 #include <tchar.h>
@@ -60,7 +61,7 @@ STDAPI_(BOOL) DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRe
         case DLL_PROCESS_ATTACH:
             gLockCount = gClassCount = 0;
             gInstance = hModule;
-            WebCore::Page::setInstanceHandle(hModule);
+            WebCore::setInstanceHandle(hModule);
             return TRUE;
 
         case DLL_PROCESS_DETACH:

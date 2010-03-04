@@ -39,6 +39,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SimpleFontData.h"
+#include "WebCoreInstanceHandle.h"
 #include <tchar.h>
 #include <windows.h>
 #include <windowsx.h>
@@ -140,7 +141,7 @@ void PopupMenu::show(const IntRect& r, FrameView* view, int index)
         m_popup = ::CreateWindowEx(exStyle, kPopupWindowClassName, _T("PopupMenu"),
             WS_POPUP | WS_BORDER,
             m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(),
-            hostWindow, 0, Page::instanceHandle(), this);
+            hostWindow, 0, WebCore::instanceHandle(), this);
 
         if (!m_popup)
             return;
@@ -723,7 +724,7 @@ void PopupMenu::registerClass()
     wcex.lpfnWndProc    = PopupMenuWndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = sizeof(PopupMenu*); // For the PopupMenu pointer
-    wcex.hInstance      = Page::instanceHandle();
+    wcex.hInstance      = WebCore::instanceHandle();
     wcex.hIcon          = 0;
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground  = 0;

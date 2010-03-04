@@ -21095,10 +21095,6 @@
 					RelativePath="..\page\win\FrameWin.h"
 					>
 				</File>
-				<File
-					RelativePath="..\page\win\PageWin.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -22267,6 +22263,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\WCDataObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\WebCoreInstanceHandle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\WebCoreInstanceHandle.h"
 					>
 				</File>
 				<File
