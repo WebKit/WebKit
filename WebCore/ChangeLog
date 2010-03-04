@@ -1,3 +1,14 @@
+2010-03-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Holger Freyther.
+
+        Make paths relocatable on runtime on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=32711
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (get_webkit_datadir):
+        (WebCore::Image::loadPlatformResource):
+
 2010-03-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

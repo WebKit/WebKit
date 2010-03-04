@@ -32,6 +32,66 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 
+#ifdef _WIN32
+#  include <mbstring.h>
+#  include <shlobj.h>
+/* search for data relative to where we are installed */
+
+static HMODULE hmodule;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+BOOL WINAPI
+DllMain(HINSTANCE hinstDLL,
+    DWORD     fdwReason,
+    LPVOID    lpvReserved)
+{
+    switch (fdwReason) {
+    case DLL_PROCESS_ATTACH:
+        hmodule = hinstDLL;
+        break;
+    }
+
+    return TRUE;
+}
+#ifdef __cplusplus
+}
+#endif
+
+static char *
+get_webkit_datadir(void)
+{
+    static char retval[1000];
+    static int beenhere = 0;
+
+    unsigned char *p;
+
+    if (beenhere)
+        return retval;
+
+    if (!GetModuleFileName (hmodule, (CHAR *) retval, sizeof(retval) - 10))
+        return DATA_DIR;
+
+    p = _mbsrchr((const unsigned char *) retval, '\\');
+    *p = '\0';
+    p = _mbsrchr((const unsigned char *) retval, '\\');
+    if (p) {
+        if (!stricmp((const char *) (p+1), "bin"))
+            *p = '\0';
+    }
+    strcat(retval, "\\share");
+
+    beenhere = 1;
+
+    return retval;
+}
+
+#undef DATA_DIR
+#define DATA_DIR get_webkit_datadir ()
+#endif
+
+
 namespace WTF {
 
 template <> void freeOwnedGPtr<GtkIconInfo>(GtkIconInfo* info)
@@ -96,8 +156,13 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     CString fileName;
     if (!strcmp("missingImage", name))
         fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
-    if (fileName.isNull())
-        fileName = String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, name).utf8();
+    if (fileName.isNull()) {
+        gchar* imagename = g_strdup_printf("%s.png", name);
+        gchar* glibFileName = g_build_filename(DATA_DIR, "webkit-1.0", "images", imagename, 0);
+        fileName = glib_file_name;
+        g_free(imagename);
+        g_free(glibFileName);
+    }
 
     return loadImageFromFile(fileName);
 }
