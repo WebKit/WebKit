@@ -20,9 +20,11 @@ HEADERS += \
 
 CONFIG -= app_bundle
 CONFIG += uitools
-DESTDIR = ../../bin
 
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include(../../WebKit.pri)
+
+DESTDIR = $$OUTPUT_DIR/bin
 
 QT += network
 macx:QT+=xml

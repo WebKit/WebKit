@@ -1,12 +1,3 @@
-isEmpty(OUTPUT_DIR) {
-    CONFIG(debug, debug|release) {
-        OUTPUT_DIR=$$PWD/WebKitBuild/Debug
-    } else { # Release
-        OUTPUT_DIR=$$PWD/WebKitBuild/Release
-    }
-}
-
-
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
 mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {

@@ -3,6 +3,7 @@ CONFIG  -= app_bundle
 CONFIG += uitools
 
 BASEDIR = $$PWD/../
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 
 include(../../../WebKit.pri)
 INCLUDEPATH += /usr/include/freetype2

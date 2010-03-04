@@ -34,14 +34,13 @@ symbian: {
     CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
 }
 
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
 include($$PWD/../WebKit.pri)
 
 TEMPLATE = lib
 TARGET = QtWebKit
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
-
-isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
 
 CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/generated

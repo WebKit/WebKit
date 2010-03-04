@@ -2,6 +2,7 @@ TEMPLATE = lib
 TARGET = TestNetscapePlugIn
 
 VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn.subproj
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 include(../../../../WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/lib/plugins

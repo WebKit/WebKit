@@ -1,9 +1,10 @@
 TARGET = ImageDiff
 CONFIG  -= app_bundle
 
+isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../WebKit.pri)
 INCLUDEPATH += ../../../JavaScriptCore
-DESTDIR = ../../../bin
+DESTDIR = $$OUTPUT_DIR/bin
 
 QT = core gui
 

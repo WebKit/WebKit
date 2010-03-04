@@ -1,3 +1,13 @@
+2010-03-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Make the OUTPUT_DIR variable in qmake projects independent of build-webkit's logic.
+
+        This also allows shadow builds relying only on qmake to work properly.
+
+        * WebCore.pro:
+
 2010-03-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

@@ -6,19 +6,7 @@
 CONFIG(QTDIR_build): CONFIG += standalone_package
 else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
 
-CONFIG(standalone_package) {
-    OUTPUT_DIR=$$PWD
-}
-
 CONFIG += depend_includepath
-
-isEmpty(OUTPUT_DIR) {
-    CONFIG(debug, debug|release) {
-        OUTPUT_DIR=$$PWD/WebKitBuild/Debug
-    } else { # Release
-        OUTPUT_DIR=$$PWD/WebKitBuild/Release
-    }
-}
 
 DEFINES += BUILDING_QT__=1
 building-libs {

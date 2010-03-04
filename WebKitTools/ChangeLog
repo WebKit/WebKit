@@ -1,3 +1,16 @@
+2010-03-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Make the OUTPUT_DIR variable in qmake projects independent of build-webkit's logic.
+
+        This also allows shadow builds relying only on qmake to work properly.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/ImageDiff.pro:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * QtLauncher/QtLauncher.pro:
+
 2010-03-04  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.
