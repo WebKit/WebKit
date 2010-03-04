@@ -28,6 +28,6 @@
 
 namespace WebCore {
 
-HINSTANCE WebCore::s_instanceHandle;
+HINSTANCE s_instanceHandle;
 
 } // namespace WebCore

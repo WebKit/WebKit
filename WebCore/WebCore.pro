@@ -2148,12 +2148,12 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             INCLUDEPATH += $$PWD/plugins/win \
                            $$PWD/platform/win
     
-            SOURCES += page/win/PageWin.cpp \
-                       plugins/win/PluginDatabaseWin.cpp \
+            SOURCES += plugins/win/PluginDatabaseWin.cpp \
                        plugins/win/PluginPackageWin.cpp \
                        plugins/win/PluginMessageThrottlerWin.cpp \
                        plugins/win/PluginViewWin.cpp \
-                       platform/win/BitmapInfo.cpp
+                       platform/win/BitmapInfo.cpp \
+                       platform/win/WebCoreInstanceHandle.cpp
     
             LIBS += \
                 -ladvapi32 \
