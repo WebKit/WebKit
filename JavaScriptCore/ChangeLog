@@ -1,3 +1,13 @@
+2010-03-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add virtual memory tags for TCMalloc and WebCore's purgeable buffers.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TryMmap): Use the VM tag.
+        * wtf/VMTags.h: Make use of VM_MEMORY_TCMALLOC and VM_MEMORY_WEBCORE_PURGEABLE_BUFFERS.
+
 2010-03-03  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by Adam Roben.

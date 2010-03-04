@@ -31,11 +31,12 @@
 
 #include <mach/mach.h>
 #include <wtf/Assertions.h>
+#include <wtf/VMTags.h>
 
 namespace WebCore {
-    
+
 static const size_t minPurgeableBufferSize = 4096; // one page
-    
+
 PurgeableBuffer::PurgeableBuffer(char* data, size_t size)
     : m_data(data)
     , m_size(size)
@@ -43,7 +44,7 @@ PurgeableBuffer::PurgeableBuffer(char* data, size_t size)
     , m_state(NonVolatile)
 {
 }
-    
+
 PurgeableBuffer::~PurgeableBuffer()
 {
     vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(m_data), m_size);
@@ -53,9 +54,9 @@ PurgeableBuffer* PurgeableBuffer::create(const char* data, size_t size)
 {
     if (size < minPurgeableBufferSize)
         return 0;
-    
+
     vm_address_t buffer = 0;
-    kern_return_t ret = vm_allocate(mach_task_self(), &buffer, size, VM_FLAGS_PURGABLE | VM_FLAGS_ANYWHERE);
+    kern_return_t ret = vm_allocate(mach_task_self(), &buffer, size, VM_FLAGS_PURGABLE | VM_FLAGS_ANYWHERE | VM_TAG_FOR_WEBCORE_PURGEABLE_MEMORY);
 
     ASSERT(ret == KERN_SUCCESS);
     if (ret != KERN_SUCCESS)
