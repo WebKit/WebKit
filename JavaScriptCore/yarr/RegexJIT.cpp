@@ -54,6 +54,16 @@ class RegexGenerator : private MacroAssembler {
     static const RegisterID regT1 = ARMRegisters::r6;
 
     static const RegisterID returnRegister = ARMRegisters::r0;
+#elif CPU(MIPS)
+    static const RegisterID input = MIPSRegisters::a0;
+    static const RegisterID index = MIPSRegisters::a1;
+    static const RegisterID length = MIPSRegisters::a2;
+    static const RegisterID output = MIPSRegisters::a3;
+
+    static const RegisterID regT0 = MIPSRegisters::t4;
+    static const RegisterID regT1 = MIPSRegisters::t5;
+
+    static const RegisterID returnRegister = MIPSRegisters::v0;
 #elif CPU(X86)
     static const RegisterID input = X86Registers::eax;
     static const RegisterID index = X86Registers::edx;
@@ -1313,6 +1323,8 @@ class RegexGenerator : private MacroAssembler {
         push(ARMRegisters::r5);
         push(ARMRegisters::r6);
         move(ARMRegisters::r3, output);
+#elif CPU(MIPS)
+        // Do nothing.
 #endif
     }
 
@@ -1330,6 +1342,8 @@ class RegexGenerator : private MacroAssembler {
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);
         pop(ARMRegisters::r4);
+#elif CPU(MIPS)
+        // Do nothing
 #endif
         ret();
     }

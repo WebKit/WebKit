@@ -38,6 +38,12 @@ namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 #include "MacroAssemblerARM.h"
 namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
 
+#elif CPU(MIPS)
+#include "MacroAssemblerMIPS.h"
+namespace JSC {
+typedef MacroAssemblerMIPS MacroAssemblerBase;
+};
+
 #elif CPU(X86)
 #include "MacroAssemblerX86.h"
 namespace JSC { typedef MacroAssemblerX86 MacroAssemblerBase; };

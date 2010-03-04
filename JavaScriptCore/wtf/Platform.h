@@ -104,6 +104,23 @@
 #define WTF_CPU_IA64 1
 #endif
 
+/* CPU(MIPS) - MIPS 32-bit */
+/* Note: Only O32 ABI is tested, so we enable it for O32 ABI for now.  */
+#if (defined(mips) || defined(__mips__)) \
+    && defined(_ABIO32)
+#define WTF_CPU_MIPS 1
+#if defined(__MIPSEB__)
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+#define WTF_MIPS_PIC (defined __PIC__)
+#define WTF_MIPS_ARCH __mips
+#define WTF_MIPS_ISA(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH == v)
+#define WTF_MIPS_ISA_AT_LEAST(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH >= v)
+#define WTF_MIPS_ARCH_REV __mips_isa_rev
+#define WTF_MIPS_ISA_REV(v) (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == v)
+#define WTF_MIPS_DOUBLE_FLOAT (defined __mips_hard_float && !defined __mips_single_float)
+#endif /* MIPS */
+
 /* CPU(PPC) - PowerPC 32-bit */
 #if   defined(__ppc__)     \
     || defined(__PPC__)     \
@@ -830,7 +847,7 @@
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64)
 #if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) || CPU(IA64) || CPU(ALPHA)
 #define WTF_USE_JSVALUE64 1
-#elif CPU(ARM) || CPU(PPC64)
+#elif CPU(ARM) || CPU(PPC64) || CPU(MIPS)
 #define WTF_USE_JSVALUE32 1
 #elif OS(WINDOWS) && COMPILER(MINGW)
 /* Using JSVALUE32_64 causes padding/alignement issues for JITStubArg
@@ -950,7 +967,8 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
     || (CPU(X86) && OS(WINDOWS) && COMPILER(MSVC)) \
     || (CPU(X86) && OS(LINUX) && GCC_VERSION >= 40100) \
     || (CPU(X86_64) && OS(LINUX) && GCC_VERSION >= 40100) \
-    || (CPU(ARM_TRADITIONAL) && OS(LINUX))
+    || (CPU(ARM_TRADITIONAL) && OS(LINUX)) \
+    || (CPU(MIPS) && OS(LINUX))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif

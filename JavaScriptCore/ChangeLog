@@ -1,3 +1,176 @@
+2010-03-03  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Gavin Barraclough.
+
+        MIPS JIT Supports
+        https://bugs.webkit.org/show_bug.cgi?id=30144
+
+        The following changes enable MIPS YARR and YARR_JIT.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        * assembler/MIPSAssembler.h: Added.
+        (JSC::MIPSRegisters::):
+        (JSC::MIPSAssembler::MIPSAssembler):
+        (JSC::MIPSAssembler::):
+        (JSC::MIPSAssembler::JmpSrc::JmpSrc):
+        (JSC::MIPSAssembler::JmpDst::JmpDst):
+        (JSC::MIPSAssembler::JmpDst::isUsed):
+        (JSC::MIPSAssembler::JmpDst::used):
+        (JSC::MIPSAssembler::emitInst):
+        (JSC::MIPSAssembler::nop):
+        (JSC::MIPSAssembler::loadDelayNop):
+        (JSC::MIPSAssembler::copDelayNop):
+        (JSC::MIPSAssembler::move):
+        (JSC::MIPSAssembler::li):
+        (JSC::MIPSAssembler::lui):
+        (JSC::MIPSAssembler::addiu):
+        (JSC::MIPSAssembler::addu):
+        (JSC::MIPSAssembler::subu):
+        (JSC::MIPSAssembler::mult):
+        (JSC::MIPSAssembler::mfhi):
+        (JSC::MIPSAssembler::mflo):
+        (JSC::MIPSAssembler::mul):
+        (JSC::MIPSAssembler::andInsn):
+        (JSC::MIPSAssembler::andi):
+        (JSC::MIPSAssembler::nor):
+        (JSC::MIPSAssembler::orInsn):
+        (JSC::MIPSAssembler::ori):
+        (JSC::MIPSAssembler::xorInsn):
+        (JSC::MIPSAssembler::xori):
+        (JSC::MIPSAssembler::slt):
+        (JSC::MIPSAssembler::sltu):
+        (JSC::MIPSAssembler::sltiu):
+        (JSC::MIPSAssembler::sll):
+        (JSC::MIPSAssembler::sllv):
+        (JSC::MIPSAssembler::sra):
+        (JSC::MIPSAssembler::srav):
+        (JSC::MIPSAssembler::lw):
+        (JSC::MIPSAssembler::lwl):
+        (JSC::MIPSAssembler::lwr):
+        (JSC::MIPSAssembler::lhu):
+        (JSC::MIPSAssembler::sw):
+        (JSC::MIPSAssembler::jr):
+        (JSC::MIPSAssembler::jalr):
+        (JSC::MIPSAssembler::jal):
+        (JSC::MIPSAssembler::bkpt):
+        (JSC::MIPSAssembler::bgez):
+        (JSC::MIPSAssembler::bltz):
+        (JSC::MIPSAssembler::beq):
+        (JSC::MIPSAssembler::bne):
+        (JSC::MIPSAssembler::bc1t):
+        (JSC::MIPSAssembler::bc1f):
+        (JSC::MIPSAssembler::newJmpSrc):
+        (JSC::MIPSAssembler::appendJump):
+        (JSC::MIPSAssembler::addd):
+        (JSC::MIPSAssembler::subd):
+        (JSC::MIPSAssembler::muld):
+        (JSC::MIPSAssembler::lwc1):
+        (JSC::MIPSAssembler::ldc1):
+        (JSC::MIPSAssembler::swc1):
+        (JSC::MIPSAssembler::sdc1):
+        (JSC::MIPSAssembler::mtc1):
+        (JSC::MIPSAssembler::mfc1):
+        (JSC::MIPSAssembler::truncwd):
+        (JSC::MIPSAssembler::cvtdw):
+        (JSC::MIPSAssembler::ceqd):
+        (JSC::MIPSAssembler::cngtd):
+        (JSC::MIPSAssembler::cnged):
+        (JSC::MIPSAssembler::cltd):
+        (JSC::MIPSAssembler::cled):
+        (JSC::MIPSAssembler::cueqd):
+        (JSC::MIPSAssembler::coled):
+        (JSC::MIPSAssembler::coltd):
+        (JSC::MIPSAssembler::culed):
+        (JSC::MIPSAssembler::cultd):
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::align):
+        (JSC::MIPSAssembler::getRelocatedAddress):
+        (JSC::MIPSAssembler::getDifferenceBetweenLabels):
+        (JSC::MIPSAssembler::size):
+        (JSC::MIPSAssembler::executableCopy):
+        (JSC::MIPSAssembler::getCallReturnOffset):
+        (JSC::MIPSAssembler::linkJump):
+        (JSC::MIPSAssembler::linkCall):
+        (JSC::MIPSAssembler::linkPointer):
+        (JSC::MIPSAssembler::relinkJump):
+        (JSC::MIPSAssembler::relinkCall):
+        (JSC::MIPSAssembler::repatchInt32):
+        (JSC::MIPSAssembler::repatchPointer):
+        (JSC::MIPSAssembler::repatchLoadPtrToLEA):
+        (JSC::MIPSAssembler::relocateJumps):
+        (JSC::MIPSAssembler::linkWithOffset):
+        (JSC::MIPSAssembler::linkCallInternal):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerMIPS.h: Added.
+        (JSC::MacroAssemblerMIPS::MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::):
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::lshift32):
+        (JSC::MacroAssemblerMIPS::mul32):
+        (JSC::MacroAssemblerMIPS::not32):
+        (JSC::MacroAssemblerMIPS::or32):
+        (JSC::MacroAssemblerMIPS::rshift32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::xor32):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerMIPS::loadPtrWithPatchToLEA):
+        (JSC::MacroAssemblerMIPS::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPoint):
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerMIPS::pop):
+        (JSC::MacroAssemblerMIPS::push):
+        (JSC::MacroAssemblerMIPS::move):
+        (JSC::MacroAssemblerMIPS::swap):
+        (JSC::MacroAssemblerMIPS::signExtend32ToPtr):
+        (JSC::MacroAssemblerMIPS::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerMIPS::branch32):
+        (JSC::MacroAssemblerMIPS::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::branch16):
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        (JSC::MacroAssemblerMIPS::jump):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::branchMul32):
+        (JSC::MacroAssemblerMIPS::branchSub32):
+        (JSC::MacroAssemblerMIPS::breakpoint):
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::ret):
+        (JSC::MacroAssemblerMIPS::set32):
+        (JSC::MacroAssemblerMIPS::setTest32):
+        (JSC::MacroAssemblerMIPS::moveWithPatch):
+        (JSC::MacroAssemblerMIPS::branchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::storePtrWithPatch):
+        (JSC::MacroAssemblerMIPS::tailRecursiveCall):
+        (JSC::MacroAssemblerMIPS::makeTailRecursiveCall):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+        (JSC::MacroAssemblerMIPS::addDouble):
+        (JSC::MacroAssemblerMIPS::subDouble):
+        (JSC::MacroAssemblerMIPS::mulDouble):
+        (JSC::MacroAssemblerMIPS::convertInt32ToDouble):
+        (JSC::MacroAssemblerMIPS::insertRelaxationWords):
+        (JSC::MacroAssemblerMIPS::branchTrue):
+        (JSC::MacroAssemblerMIPS::branchFalse):
+        (JSC::MacroAssemblerMIPS::branchEqual):
+        (JSC::MacroAssemblerMIPS::branchNotEqual):
+        (JSC::MacroAssemblerMIPS::branchDouble):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerMIPS::linkCall):
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * wtf/Platform.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+
 2010-03-03  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
