@@ -1,3 +1,10 @@
+2010-03-04  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed attempt to fix Windows build.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::spatialDistance):
+
 2010-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix.
