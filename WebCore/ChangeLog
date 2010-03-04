@@ -1,3 +1,11 @@
+2010-03-04  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Add SpatialNavigation header and cpp to Mac XCode project file.
+
+        Reviewed by Kenneth Christiansen.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser, Eric Seidel and Darin Adler.
