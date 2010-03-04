@@ -1,3 +1,14 @@
+2010-03-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35726
+        Remove orphaned #ifdef WTF_USE_GLIB_ICU_UNICODE_HYBRID
+
+        Removing orphaned #if USE.
+
+        * platform/ThreadGlobalData.h:
+
 2010-03-03  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

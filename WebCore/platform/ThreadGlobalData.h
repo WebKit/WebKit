@@ -55,7 +55,7 @@ namespace WebCore {
         HashSet<StringImpl*>& atomicStringTable() { return *m_atomicStringTable; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
 
-#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
+#if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 #endif
 
@@ -73,7 +73,7 @@ namespace WebCore {
         bool m_isMainThread;
 #endif
 
-#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
+#if USE(ICU_UNICODE)
         ICUConverterWrapper* m_cachedConverterICU;
 #endif
 
