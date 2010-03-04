@@ -2,6 +2,20 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add EFL port files to platform/graphics/efl.
+        http://webkit.org/b/35539
+
+        * platform/graphics/efl/FloatRectEfl.cpp: Added.
+        * platform/graphics/efl/FontEfl.cpp: Added.
+        * platform/graphics/efl/IconEfl.cpp: Added.
+        * platform/graphics/efl/ImageEfl.cpp: Added.
+        * platform/graphics/efl/IntPointEfl.cpp: Added.
+        * platform/graphics/efl/IntRectEfl.cpp: Added.
+
+2010-03-04  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add EFL port files to platform/text/efl.
         http://webkit.org/b/35740
 
