@@ -239,13 +239,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     @try {
         id object = [decoder decodeObjectForKey:WebMainResourceKey];
         if ([object isKindOfClass:[WebResource class]])
-            mainResource = [object retain];
+            mainResource = object;
         object = [decoder decodeObjectForKey:WebSubresourcesKey];
         if (isArrayOfClass(object, [WebResource class]))
-            subresources = [object retain];
+            subresources = object;
         object = [decoder decodeObjectForKey:WebSubframeArchivesKey];
         if (isArrayOfClass(object, [WebArchive class]))
-            subframeArchives = [object retain];
+            subframeArchives = object;
     } @catch(id) {
         [self release];
         return nil;

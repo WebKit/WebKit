@@ -1,3 +1,13 @@
+2010-03-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        REGRESSION (31281): -[WebArchive initWithCoder:] leaks
+        <rdar://problem/7702420> and https://bugs.webkit.org/show_bug.cgi?id=35534
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive initWithCoder:]): Don't retain objects we don't own.
+
 2010-03-03  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Timothy Hatcher.
