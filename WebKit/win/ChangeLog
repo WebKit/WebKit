@@ -1,3 +1,94 @@
+2010-03-03  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add a way to get an iframe's content frame
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::createInstance):
+        Added case for DOMHTMLIFrameElement
+        * DOMHTMLClasses.cpp:
+        Adding the few DOMHTMLIFrameElement functions definitions that have 
+        distinct implementations (all others just call parent implementation)
+        (DOMHTMLIFrameElement::QueryInterface):
+        (DOMHTMLIFrameElement::contentFrame):
+        * DOMHTMLClasses.h:
+        Most of these function declarations have definitions that just call the parent implementation
+        (DOMHTMLIFrameElement::DOMHTMLIFrameElement):
+        (DOMHTMLIFrameElement::AddRef):
+        (DOMHTMLIFrameElement::Release):
+        (DOMHTMLIFrameElement::throwException):
+        (DOMHTMLIFrameElement::callWebScriptMethod):
+        (DOMHTMLIFrameElement::evaluateWebScript):
+        (DOMHTMLIFrameElement::removeWebScriptKey):
+        (DOMHTMLIFrameElement::stringRepresentation):
+        (DOMHTMLIFrameElement::webScriptValueAtIndex):
+        (DOMHTMLIFrameElement::setWebScriptValueAtIndex):
+        (DOMHTMLIFrameElement::setException):
+        (DOMHTMLIFrameElement::nodeName):
+        (DOMHTMLIFrameElement::nodeValue):
+        (DOMHTMLIFrameElement::setNodeValue):
+        (DOMHTMLIFrameElement::nodeType):
+        (DOMHTMLIFrameElement::parentNode):
+        (DOMHTMLIFrameElement::childNodes):
+        (DOMHTMLIFrameElement::firstChild):
+        (DOMHTMLIFrameElement::lastChild):
+        (DOMHTMLIFrameElement::previousSibling):
+        (DOMHTMLIFrameElement::nextSibling):
+        (DOMHTMLIFrameElement::attributes):
+        (DOMHTMLIFrameElement::ownerDocument):
+        (DOMHTMLIFrameElement::insertBefore):
+        (DOMHTMLIFrameElement::replaceChild):
+        (DOMHTMLIFrameElement::removeChild):
+        (DOMHTMLIFrameElement::appendChild):
+        (DOMHTMLIFrameElement::hasChildNodes):
+        (DOMHTMLIFrameElement::cloneNode):
+        (DOMHTMLIFrameElement::normalize):
+        (DOMHTMLIFrameElement::isSupported):
+        (DOMHTMLIFrameElement::namespaceURI):
+        (DOMHTMLIFrameElement::prefix):
+        (DOMHTMLIFrameElement::setPrefix):
+        (DOMHTMLIFrameElement::localName):
+        (DOMHTMLIFrameElement::hasAttributes):
+        (DOMHTMLIFrameElement::isSameNode):
+        (DOMHTMLIFrameElement::isEqualNode):
+        (DOMHTMLIFrameElement::textContent):
+        (DOMHTMLIFrameElement::setTextContent):
+        (DOMHTMLIFrameElement::tagName):
+        (DOMHTMLIFrameElement::getAttribute):
+        (DOMHTMLIFrameElement::setAttribute):
+        (DOMHTMLIFrameElement::removeAttribute):
+        (DOMHTMLIFrameElement::getAttributeNode):
+        (DOMHTMLIFrameElement::setAttributeNode):
+        (DOMHTMLIFrameElement::removeAttributeNode):
+        (DOMHTMLIFrameElement::getElementsByTagName):
+        (DOMHTMLIFrameElement::getAttributeNS):
+        (DOMHTMLIFrameElement::setAttributeNS):
+        (DOMHTMLIFrameElement::removeAttributeNS):
+        (DOMHTMLIFrameElement::getAttributeNodeNS):
+        (DOMHTMLIFrameElement::setAttributeNodeNS):
+        (DOMHTMLIFrameElement::getElementsByTagNameNS):
+        (DOMHTMLIFrameElement::hasAttribute):
+        (DOMHTMLIFrameElement::hasAttributeNS):
+        (DOMHTMLIFrameElement::focus):
+        (DOMHTMLIFrameElement::blur):
+        (DOMHTMLIFrameElement::idName):
+        (DOMHTMLIFrameElement::setIdName):
+        (DOMHTMLIFrameElement::title):
+        (DOMHTMLIFrameElement::setTitle):
+        (DOMHTMLIFrameElement::lang):
+        (DOMHTMLIFrameElement::setLang):
+        (DOMHTMLIFrameElement::dir):
+        (DOMHTMLIFrameElement::setDir):
+        (DOMHTMLIFrameElement::className):
+        (DOMHTMLIFrameElement::setClassName):
+        (DOMHTMLIFrameElement::innerHTML):
+        (DOMHTMLIFrameElement::setInnerHTML):
+        (DOMHTMLIFrameElement::innerText):
+        (DOMHTMLIFrameElement::setInnerText):
+        * Interfaces/DOMHTML.idl:
+        Added IDOMHTMLIFrameElement interface
+
 2010-03-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

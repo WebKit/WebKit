@@ -1336,14 +1336,17 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     if (e->hasTagName(formTag)) {
         DOMHTMLFormElement* newElement = new DOMHTMLFormElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (e->hasTagName(selectTag)) {
-        DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
+    } else if (e->hasTagName(iframeTag)) {
+        DOMHTMLIFrameElement* newElement = new DOMHTMLIFrameElement(e);
+        hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
+    } else if (e->hasTagName(inputTag)) {
+        DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(optionTag)) {
         DOMHTMLOptionElement* newElement = new DOMHTMLOptionElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (e->hasTagName(inputTag)) {
-        DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
+    } else if (e->hasTagName(selectTag)) {
+        DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(textareaTag)) {
         DOMHTMLTextAreaElement* newElement = new DOMHTMLTextAreaElement(e);

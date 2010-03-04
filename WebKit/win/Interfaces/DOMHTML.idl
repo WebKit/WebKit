@@ -37,6 +37,7 @@ interface IDOMDocument;
 interface IDOMElement;
 interface IDOMNode;
 interface IDOMNodeList;
+interface IWebFrame;
 
 /*
     @interface DOMHTMLCollection : DOMObject
@@ -932,4 +933,18 @@ interface IDOMHTMLTextAreaElement : IDOMHTMLElement
         - (void)select;
     */
     HRESULT select();
+}
+
+/*
+    @interface DOMHTMLIFrameElement : DOMHTMLElement
+*/
+[
+    object,
+    oleautomation,
+    uuid(8CFFB1DA-7BA5-4cf7-B7E6-80583354855B),
+    pointer_default(unique)
+]
+interface IDOMHTMLIFrameElement : IDOMHTMLElement
+{
+    HRESULT contentFrame([out, retval] IWebFrame** result);
 }

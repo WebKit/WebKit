@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "DOMHTMLClasses.h"
 #include "COMPtr.h"
+#include "WebFrame.h"
 
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
@@ -36,6 +37,7 @@
 #include <WebCore/HTMLCollection.h>
 #include <WebCore/HTMLDocument.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLOptionElement.h>
@@ -1586,4 +1588,34 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::isUserEdited(
     if (renderer && toRenderTextControl(renderer)->lastChangeWasUserEdit())
         *result = TRUE;
     return S_OK;
+}
+
+// DOMHTMLIFrameElement - IUnknown --------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE DOMHTMLIFrameElement::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IDOMHTMLIFrameElement))
+        *ppvObject = static_cast<IDOMHTMLIFrameElement*>(this);
+    else
+        return DOMHTMLElement::QueryInterface(riid, ppvObject);
+
+    AddRef();
+    return S_OK;
+}
+
+// DOMHTMLIFrameElement -------------------------------------------------------------
+
+HRESULT STDMETHODCALLTYPE DOMHTMLIFrameElement::contentFrame( 
+    /* [retval][out] */ IWebFrame **result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    ASSERT(m_element && m_element->hasTagName(iframeTag));
+    HTMLIFrameElement* iFrameElement = static_cast<HTMLIFrameElement*>(m_element);
+    COMPtr<IWebFrame> webFrame = kit(iFrameElement->contentFrame());
+    if (!webFrame)
+        return E_FAIL;
+    return webFrame.copyRefTo(result);
 }

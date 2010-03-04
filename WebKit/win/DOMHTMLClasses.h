@@ -2356,4 +2356,266 @@ public:
         /* [retval][out] */ BOOL *result);
 };
 
+class DOMHTMLIFrameElement : public DOMHTMLElement, public IDOMHTMLIFrameElement
+{
+protected:
+    DOMHTMLIFrameElement();
+public:
+    DOMHTMLIFrameElement(WebCore::Element* e) : DOMHTMLElement(e) {}
+
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMHTMLElement::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMHTMLElement::Release(); }
+
+    // IWebScriptObject
+    virtual HRESULT STDMETHODCALLTYPE throwException( 
+        /* [in] */ BSTR exceptionMessage,
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::throwException(exceptionMessage, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod( 
+        /* [in] */ BSTR name,
+        /* [size_is][in] */ const VARIANT args[  ],
+        /* [in] */ int cArgs,
+        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::callWebScriptMethod(name, args, cArgs, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript( 
+        /* [in] */ BSTR script,
+        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::evaluateWebScript(script, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey( 
+        /* [in] */ BSTR name) { return DOMHTMLElement::removeWebScriptKey(name); }
+    
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation( 
+        /* [retval][out] */ BSTR* stringRepresentation) { return DOMHTMLElement::stringRepresentation(stringRepresentation); }
+    
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex( 
+        /* [in] */ unsigned int index,
+        /* [retval][out] */ VARIANT *result) { return DOMHTMLElement::webScriptValueAtIndex(index, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex( 
+        /* [in] */ unsigned int index,
+        /* [in] */ VARIANT val) { return DOMHTMLElement::setWebScriptValueAtIndex(index, val); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setException( 
+        /* [in] */ BSTR description) { return DOMHTMLElement::setException(description); }
+
+    // IDOMNode
+    virtual HRESULT STDMETHODCALLTYPE nodeName( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeName(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE nodeValue( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::nodeValue(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setNodeValue( 
+        /* [in] */ BSTR value) { return DOMHTMLElement::setNodeValue(value); }
+    
+    virtual HRESULT STDMETHODCALLTYPE nodeType( 
+        /* [retval][out] */ unsigned short *result) { return DOMHTMLElement::nodeType(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE parentNode( 
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::parentNode(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE childNodes( 
+        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::childNodes(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE firstChild( 
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::firstChild(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE lastChild( 
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::lastChild(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE previousSibling( 
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::previousSibling(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE nextSibling( 
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::nextSibling(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE attributes( 
+        /* [retval][out] */ IDOMNamedNodeMap **result) { return DOMHTMLElement::attributes(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE ownerDocument( 
+        /* [retval][out] */ IDOMDocument **result) { return DOMHTMLElement::ownerDocument(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE insertBefore( 
+        /* [in] */ IDOMNode *newChild,
+        /* [in] */ IDOMNode *refChild,
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::insertBefore(newChild, refChild, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE replaceChild( 
+        /* [in] */ IDOMNode *newChild,
+        /* [in] */ IDOMNode *oldChild,
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::replaceChild(newChild, oldChild, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeChild( 
+        /* [in] */ IDOMNode *oldChild,
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::removeChild(oldChild, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE appendChild( 
+        /* [in] */ IDOMNode *oldChild,
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::appendChild(oldChild, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE hasChildNodes( 
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasChildNodes(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE cloneNode( 
+        /* [in] */ BOOL deep,
+        /* [retval][out] */ IDOMNode **result) { return DOMHTMLElement::cloneNode(deep, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE normalize( void) { return DOMHTMLElement::normalize(); }
+    
+    virtual HRESULT STDMETHODCALLTYPE isSupported( 
+        /* [in] */ BSTR feature,
+        /* [in] */ BSTR version,
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::isSupported(feature, version, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE namespaceURI( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::namespaceURI(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE prefix( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::prefix(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setPrefix( 
+        /* [in] */ BSTR prefix) { return DOMHTMLElement::setPrefix(prefix); }
+    
+    virtual HRESULT STDMETHODCALLTYPE localName( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::localName(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE hasAttributes( 
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributes(result); }
+
+    virtual HRESULT STDMETHODCALLTYPE isSameNode( 
+        /* [in] */ IDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isSameNode(other, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE isEqualNode( 
+        /* [in] */ IDOMNode* other,
+        /* [retval][out] */ BOOL* result) { return DOMHTMLElement::isEqualNode(other, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE textContent( 
+        /* [retval][out] */ BSTR* result) { return DOMHTMLElement::textContent(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setTextContent( 
+        /* [in] */ BSTR text) { return DOMHTMLElement::setTextContent(text); }
+    
+    // IDOMElement
+    virtual HRESULT STDMETHODCALLTYPE tagName( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::tagName(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getAttribute( 
+        /* [in] */ BSTR name,
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttribute(name, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setAttribute( 
+        /* [in] */ BSTR name,
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttribute(name, value); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeAttribute( 
+        /* [in] */ BSTR name) { return DOMHTMLElement::removeAttribute(name); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getAttributeNode( 
+        /* [in] */ BSTR name,
+        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNode(name, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setAttributeNode( 
+        /* [in] */ IDOMAttr *newAttr,
+        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNode(newAttr, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeAttributeNode( 
+        /* [in] */ IDOMAttr *oldAttr,
+        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::removeAttributeNode(oldAttr, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getElementsByTagName( 
+        /* [in] */ BSTR name,
+        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagName(name, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getAttributeNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR localName,
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::getAttributeNS(namespaceURI, localName, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setAttributeNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR qualifiedName,
+        /* [in] */ BSTR value) { return DOMHTMLElement::setAttributeNS(namespaceURI, qualifiedName, value); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeAttributeNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR localName) { return DOMHTMLElement::removeAttributeNS(namespaceURI, localName); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getAttributeNodeNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR localName,
+        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::getAttributeNodeNS(namespaceURI, localName, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setAttributeNodeNS( 
+        /* [in] */ IDOMAttr *newAttr,
+        /* [retval][out] */ IDOMAttr **result) { return DOMHTMLElement::setAttributeNodeNS(newAttr, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE getElementsByTagNameNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR localName,
+        /* [retval][out] */ IDOMNodeList **result) { return DOMHTMLElement::getElementsByTagNameNS(namespaceURI, localName, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE hasAttribute( 
+        /* [in] */ BSTR name,
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttribute(name, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE hasAttributeNS( 
+        /* [in] */ BSTR namespaceURI,
+        /* [in] */ BSTR localName,
+        /* [retval][out] */ BOOL *result) { return DOMHTMLElement::hasAttributeNS(namespaceURI, localName, result); }
+
+    virtual HRESULT STDMETHODCALLTYPE focus( void) { return DOMHTMLElement::focus(); }
+    
+    virtual HRESULT STDMETHODCALLTYPE blur( void) { return DOMHTMLElement::blur(); }
+
+    // IDOMHTMLElement
+    virtual HRESULT STDMETHODCALLTYPE idName( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::idName(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setIdName( 
+        /* [in] */ BSTR idName) { return DOMHTMLElement::setIdName(idName); }
+    
+    virtual HRESULT STDMETHODCALLTYPE title( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::title(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setTitle( 
+        /* [in] */ BSTR title) { return DOMHTMLElement::setTitle(title); }
+    
+    virtual HRESULT STDMETHODCALLTYPE lang( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::lang(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setLang( 
+        /* [in] */ BSTR lang) { return DOMHTMLElement::setLang(lang); }
+    
+    virtual HRESULT STDMETHODCALLTYPE dir( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::dir(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setDir( 
+        /* [in] */ BSTR dir) { return DOMHTMLElement::setDir(dir); }
+    
+    virtual HRESULT STDMETHODCALLTYPE className( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::className(result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setClassName( 
+        /* [in] */ BSTR className) { return DOMHTMLElement::setClassName(className); }
+
+    virtual HRESULT STDMETHODCALLTYPE innerHTML( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerHTML(result); }
+        
+    virtual HRESULT STDMETHODCALLTYPE setInnerHTML( 
+        /* [in] */ BSTR html) { return DOMHTMLElement::setInnerHTML(html); }
+        
+    virtual HRESULT STDMETHODCALLTYPE innerText( 
+        /* [retval][out] */ BSTR *result) { return DOMHTMLElement::innerText(result); }
+        
+    virtual HRESULT STDMETHODCALLTYPE setInnerText( 
+        /* [in] */ BSTR text) { return DOMHTMLElement::setInnerText(text); }
+
+    // IDOMHTMLIFrameElement
+    virtual HRESULT STDMETHODCALLTYPE contentFrame( 
+        /* [retval][out] */ IWebFrame **result);
+};
+
 #endif
