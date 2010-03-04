@@ -1,3 +1,69 @@
+2010-03-03  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QScriptValue::isObject fix.
+
+        Fix broken internal state evaluation from JSValue to JSNative / JSObject.
+        New function was introduced which should take care about promoting
+        JSValue state inside QScriptValuePrivate. It should be used instead of a
+        direct JSC C API call.
+
+        The bug exposed a weakness in autotest suite, as the QScriptValuePrivate
+        is based on state machine with lazy state evaluation, there is a possibility
+        that serial sequencial calls to the same public const function could return
+        different results. The patch fix the issue.
+
+        [Qt] Sometimes QScriptValue::isObject returns an incorrect value
+        https://bugs.webkit.org/show_bug.cgi?id=35387
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isBool):
+        (QScriptValuePrivate::isNumber):
+        (QScriptValuePrivate::isNull):
+        (QScriptValuePrivate::isString):
+        (QScriptValuePrivate::isUndefined):
+        (QScriptValuePrivate::isError):
+        (QScriptValuePrivate::isObject):
+        (QScriptValuePrivate::isFunction):
+        (QScriptValuePrivate::call):
+        (QScriptValuePrivate::refineJSValue):
+        * qt/tests/qscriptvalue/tst_qscriptvalue_generated.cpp:
+        (tst_QScriptValue::initScriptValues):
+        (tst_QScriptValue::isValid_makeData):
+        (tst_QScriptValue::isValid_test):
+        (tst_QScriptValue::isBool_makeData):
+        (tst_QScriptValue::isBool_test):
+        (tst_QScriptValue::isBoolean_makeData):
+        (tst_QScriptValue::isBoolean_test):
+        (tst_QScriptValue::isNumber_makeData):
+        (tst_QScriptValue::isNumber_test):
+        (tst_QScriptValue::isFunction_test):
+        (tst_QScriptValue::isNull_makeData):
+        (tst_QScriptValue::isNull_test):
+        (tst_QScriptValue::isString_makeData):
+        (tst_QScriptValue::isString_test):
+        (tst_QScriptValue::isUndefined_makeData):
+        (tst_QScriptValue::isUndefined_test):
+        (tst_QScriptValue::isObject_makeData):
+        (tst_QScriptValue::isObject_test):
+        (tst_QScriptValue::toString_makeData):
+        (tst_QScriptValue::toString_test):
+        (tst_QScriptValue::toNumber_makeData):
+        (tst_QScriptValue::toNumber_test):
+        (tst_QScriptValue::toBool_makeData):
+        (tst_QScriptValue::toBool_test):
+        (tst_QScriptValue::toBoolean_makeData):
+        (tst_QScriptValue::toBoolean_test):
+        (tst_QScriptValue::toInteger_makeData):
+        (tst_QScriptValue::toInteger_test):
+        (tst_QScriptValue::toInt32_makeData):
+        (tst_QScriptValue::toInt32_test):
+        (tst_QScriptValue::toUInt32_makeData):
+        (tst_QScriptValue::toUInt32_test):
+        (tst_QScriptValue::toUInt16_makeData):
+        (tst_QScriptValue::toUInt16_test):
+
 2010-03-03  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Gavin Barraclough.

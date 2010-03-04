@@ -136,6 +136,7 @@ private:
     inline void setValue(JSValueRef);
 
     inline bool inherits(const char*);
+    inline States refinedJSValue();
 
     inline bool isJSBased() const;
     inline bool isNumberBased() const;
@@ -325,7 +326,7 @@ bool QScriptValuePrivate::isBool()
     case CBool:
         return true;
     case JSValue:
-        if (isObject())
+        if (refinedJSValue() != JSNative)
             return false;
         // Fall-through.
     case JSNative:
@@ -341,7 +342,7 @@ bool QScriptValuePrivate::isNumber()
     case CNumber:
         return true;
     case JSValue:
-        if (isObject())
+        if (refinedJSValue() != JSNative)
             return false;
         // Fall-through.
     case JSNative:
@@ -357,7 +358,7 @@ bool QScriptValuePrivate::isNull()
     case CSpecial:
         return m_number == static_cast<int>(QScriptValue::NullValue);
     case JSValue:
-        if (isObject())
+        if (refinedJSValue() != JSNative)
             return false;
         // Fall-through.
     case JSNative:
@@ -373,7 +374,7 @@ bool QScriptValuePrivate::isString()
     case CString:
         return true;
     case JSValue:
-        if (isObject())
+        if (refinedJSValue() != JSNative)
             return false;
         // Fall-through.
     case JSNative:
@@ -389,7 +390,7 @@ bool QScriptValuePrivate::isUndefined()
     case CSpecial:
         return m_number == static_cast<int>(QScriptValue::UndefinedValue);
     case JSValue:
-        if (isObject())
+        if (refinedJSValue() != JSNative)
             return false;
         // Fall-through.
     case JSNative:
@@ -403,7 +404,7 @@ bool QScriptValuePrivate::isError()
 {
     switch (m_state) {
     case JSValue:
-        if (!isObject())
+        if (refinedJSValue() != JSObject)
             return false;
         // Fall-through.
     case JSObject:
@@ -416,14 +417,11 @@ bool QScriptValuePrivate::isError()
 bool QScriptValuePrivate::isObject()
 {
     switch (m_state) {
+    case JSValue:
+        return refinedJSValue() == JSObject;
     case JSObject:
         return true;
-    case JSValue:
-        m_object = JSValueToObject(context(), value(), /* exception */ 0);
-        if (!m_object)
-            return false;
-        m_state = JSObject;
-        return true;
+
     default:
         return false;
     }
@@ -433,10 +431,8 @@ bool QScriptValuePrivate::isFunction()
 {
     switch (m_state) {
     case JSValue:
-        m_object = JSValueToObject(context(), value(), /* exception */ 0);
-        if (!m_object)
+        if (refinedJSValue() != JSObject)
             return false;
-        m_state = JSObject;
         // Fall-through.
     case JSObject:
         return JSObjectIsFunction(context(), object());
@@ -640,12 +636,8 @@ QScriptValuePrivate* QScriptValuePrivate::call(const QScriptValuePrivate*, const
 {
     switch (m_state) {
     case JSValue:
-        m_object = JSValueToObject(context(), value(), /* exception */ 0);
-        if (!object()) {
-            m_state = JSValue;
+        if (refinedJSValue() != JSObject)
             return new QScriptValuePrivate;
-        }
-        m_state = JSObject;
         // Fall-through.
     case JSObject:
         {
@@ -721,6 +713,24 @@ bool QScriptValuePrivate::inherits(const char* name)
     JSObjectRef globalObject = JSContextGetGlobalObject(context());
     JSValueRef error = JSObjectGetProperty(context(), globalObject, QScriptConverter::toString(name), 0);
     return JSValueIsInstanceOfConstructor(context(), value(), JSValueToObject(context(), error, /* exception */ 0), /* exception */ 0);
+}
+
+/*!
+  \internal
+  Refines the state of this QScriptValuePrivate. Returns the new state.
+*/
+QScriptValuePrivate::States QScriptValuePrivate::refinedJSValue()
+{
+    Q_ASSERT(m_state == JSValue);
+    if (!JSValueIsObject(context(), value())) {
+        m_state = JSNative;
+    } else {
+        m_state = JSObject;
+        // We are sure that value is an JSObject, so we can const_cast safely without
+        // calling JSC C API (JSValueToObject(context(), value(), /* exceptions */ 0)).
+        m_object = const_cast<JSObjectRef>(m_value);
+    }
+    return m_state;
 }
 
 /*!
