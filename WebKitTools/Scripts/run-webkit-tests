@@ -462,21 +462,22 @@ if (isCygwin()) {
     $supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
 }
 
-# Check for acelerated compositing support
+my $hasAcceleratedCompositing = 0;
+my $has3DRendering = 0;
+
 if (isCygwin()) {
-    if ($supportedFeaturesResult !~ /AcceleratedCompositing/) {
-        $ignoredDirectories{'compositing'} = 1;
-    }
-} elsif (!checkWebCoreFeatureSupport("Accelerated Compositing", 0)) {
+    $hasAcceleratedCompositing = $supportedFeaturesResult =~ /AcceleratedCompositing/;
+    $has3DRendering = $supportedFeaturesResult =~ /3DRendering/;
+} else {
+    $hasAcceleratedCompositing = checkWebCoreFeatureSupport("Accelerated Compositing", 0);
+    $has3DRendering = checkWebCoreFeatureSupport("3D Rendering", 0);
+}
+
+if (!$hasAcceleratedCompositing) {
     $ignoredDirectories{'compositing'} = 1;
 }
 
-if (isCygwin()) {
-    if ($supportedFeaturesResult !~ /3DRendering/) {
-        $ignoredDirectories{'animations/3d'} = 1;
-        $ignoredDirectories{'transforms/3d'} = 1;
-    }
-} elsif (!checkWebCoreFeatureSupport("3D Rendering", 0)) {
+if (!$has3DRendering) {
     $ignoredDirectories{'animations/3d'} = 1;
     $ignoredDirectories{'transforms/3d'} = 1;
 }

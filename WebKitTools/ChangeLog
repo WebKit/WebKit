@@ -2,6 +2,21 @@
 
         Reviewed by Simon Fraser.
 
+        Additional change to separate Accelerated Compositing test from 3D Rendering test
+        https://bugs.webkit.org/show_bug.cgi?id=35610
+        
+        I am now using #if ENABLED(3D_RENDERING) to emit the 3DRendering string from
+        DRT or not. This allows these flags to set independently. I also improved
+        the code flow in run-webkit-tests a bit.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * Scripts/run-webkit-tests:
+
+2010-03-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
         Added ability to print supported features to console to DRT
         https://bugs.webkit.org/show_bug.cgi?id=35610
         

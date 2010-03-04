@@ -1255,7 +1255,14 @@ int main(int argc, char* argv[])
     if (printSupportedFeatures) {
         BOOL acceleratedCompositingAvailable;
         standardPreferences->acceleratedCompositingEnabled(&acceleratedCompositingAvailable);
-        printf("SupportedFeatures:%s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing, 3DRendering" : "");
+        BOOL threeDRenderingAvailable = 
+#if ENABLE(3D_RENDERING)
+            true;
+#else
+            false;
+#endif
+
+        printf("SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDRenderingAvailable ? "3DRendering" : "");
         return 0;
     }
 
