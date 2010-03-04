@@ -298,16 +298,16 @@ TestSuite.prototype.testResourceContentLength = function()
             if (resource.url.search("image.html") !== -1) {
               var expectedLength = 87;
               test.assertTrue(
-                  resource.contentLength <= expectedLength,
+                  resource.resourceSize <= expectedLength,
                   "image.html content length is greater thatn expected.");
-              if (expectedLength === resource.contentLength)
+              if (expectedLength === resource.resourceSize)
                   html = true;
             } else if (resource.url.search("image.png") !== -1) {
               var expectedLength = 257796;
               test.assertTrue(
-                  resource.contentLength <= expectedLength,
+                  resource.resourceSize <= expectedLength,
                   "image.png content length is greater than expected.");
-              if (expectedLength === resource.contentLength)
+              if (expectedLength === resource.resourceSize)
                   png = true;
             }
             if (html && png) {
