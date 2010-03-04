@@ -1,3 +1,14 @@
+2010-03-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Making sure that the correct path is set before invoking
+        DumpRenderTree on cygwin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35768
+
+        * Scripts/run-webkit-tests:
+
 2010-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Revert the exceptions I just added, and make the error clearer.
