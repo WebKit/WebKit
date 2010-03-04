@@ -41,9 +41,9 @@ module window {
         [DoNotCheckDomainSecurity] void forward();
         [DoNotCheckDomainSecurity] void go(in long distance);
         
-        [Custom] void pushState(in any data, in DOMString title, in optional DOMString url)
+        [Custom, EnabledAtRuntime] void pushState(in any data, in DOMString title, in optional DOMString url)
             raises(DOMException);
-        [Custom] void replaceState(in any data, in DOMString title, in optional DOMString url)
+        [Custom, EnabledAtRuntime] void replaceState(in any data, in DOMString title, in optional DOMString url)
             raises(DOMException);
     };
 

@@ -45,6 +45,7 @@ bool RuntimeEnabledFeatures::isApplicationCacheEnabled = true;
 bool RuntimeEnabledFeatures::isGeolocationEnabled = true;
 bool RuntimeEnabledFeatures::isIndexedDBEnabled = false;
 bool RuntimeEnabledFeatures::isWebGLEnabled = false;
+bool RuntimeEnabledFeatures::isPushStateEnabled = false;
 
 #if ENABLE(VIDEO)
 
