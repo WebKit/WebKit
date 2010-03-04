@@ -39,6 +39,7 @@ namespace WebCore {
             : m_isContentFiltered(false)
             , m_appCacheID(0)
             , m_wasFetchedViaSPDY(false)
+            , m_isMultipartPayload(false)
         {
         }
 
