@@ -338,7 +338,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     return true;
 }
 
-void updateFocusCandidateIfCloser(Node* focusedNode, Node* candidate, long long distance, FocusCandidate& closestFocusCandidate)
+static void updateFocusCandidateIfCloser(Node* focusedNode, Node* candidate, long long distance, FocusCandidate& closestFocusCandidate)
 {
     // Bail out if |distance| is bigger than the current closest candidate.
     if (distance >= closestFocusCandidate.distance)
