@@ -159,7 +159,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     if (fileName.isNull()) {
         gchar* imagename = g_strdup_printf("%s.png", name);
         gchar* glibFileName = g_build_filename(DATA_DIR, "webkit-1.0", "images", imagename, 0);
-        fileName = glib_file_name;
+        fileName = glibFileName;
         g_free(imagename);
         g_free(glibFileName);
     }
