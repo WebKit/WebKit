@@ -1,3 +1,16 @@
+2010-03-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] qwebelement.h does not include QtCore headers correctly
+        https://bugs.webkit.org/show_bug.cgi?id=35748
+
+        The header files of QtCore must be included as QtCore/foo.h.
+
+        See also http://bugreports.qt.nokia.com/browse/QTBUG-8661
+
+        * Api/qwebelement.h:
+
 2010-03-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

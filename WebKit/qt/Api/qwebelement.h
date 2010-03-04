@@ -20,11 +20,11 @@
 #ifndef QWEBELEMENT_H
 #define QWEBELEMENT_H
 
-#include <QString>
-#include <QStringList>
-#include <QRect>
-#include <QVariant>
-#include <QExplicitlySharedDataPointer>
+#include <QtCore/qstring.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qrect.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qshareddata.h>
 
 #include "qwebkitglobal.h"
 namespace WebCore {
