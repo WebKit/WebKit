@@ -778,7 +778,6 @@ InspectorTimelineAgent* Page::inspectorTimelineAgent() const
 
 void Page::privateBrowsingStateChanged()
 {
-#if !PLATFORM(CHROMIUM)
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
@@ -804,7 +803,6 @@ void Page::privateBrowsingStateChanged()
 
     for (size_t i = 0; i < pluginViews.size(); i++)
         pluginViews[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
-#endif
 }
 
 void Page::pluginAllowedRunTimeChanged()

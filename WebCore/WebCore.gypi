@@ -2916,6 +2916,7 @@
             'plugins/PluginStream.h',
             'plugins/PluginView.cpp',
             'plugins/PluginView.h',
+            'plugins/PluginViewNone.cpp',
             'plugins/npapi.cpp',
             'plugins/npfunctions.h',
             'rendering/style/BindingURI.cpp',
