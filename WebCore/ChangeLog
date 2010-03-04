@@ -1,3 +1,25 @@
+2010-03-04  Antoine Quint  <ml@graougraou.com>
+
+        Reviewed by Darin Adler.
+
+        DOM insertion mutation events should dispatch after a node is attached to the render tree
+        https://bugs.webkit.org/show_bug.cgi?id=35590
+
+        Test: fast/events/domnodeinsertedintodocument-dispatched-post-rendering.html
+
+        Split off the internal-to-WebCore node insertion notification code from the DOM mutation
+        event dispatching, originally in dispatchChildInsertionEvents(), to a new static function
+        called notifyChildInserted(). This allows us to dispatch the mutation events at a later
+        time upon insertion of a child into to the tree, specifically _after_ attachment to the render
+        tree.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::notifyChildInserted):
+        (WebCore::dispatchChildInsertionEvents):
+
 2010-03-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Holger Freyther.

@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+static void notifyChildInserted(Node*);
 static void dispatchChildInsertionEvents(Node*);
 static void dispatchChildRemovalEvents(Node*);
 
@@ -144,9 +145,9 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         child->setNextSibling(next.get());
         allowEventDispatch();
 
-        // Dispatch the mutation events.
+        // Send notification about the children change.
         childrenChanged(false, refChildPreviousSibling.get(), next.get(), 1);
-        dispatchChildInsertionEvents(child.get());
+        notifyChildInserted(child.get());
                 
         // Add child to the rendering tree.
         if (attached() && !child->attached() && child->parent() == this) {
@@ -155,6 +156,10 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
             else
                 child->attach();
         }
+
+        // Now that the child is attached to the render tree, dispatch
+        // the relevant mutation events.
+        dispatchChildInsertionEvents(child.get());
 
         child = nextChild.release();
     }
@@ -256,8 +261,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         child->setNextSibling(next);
         allowEventDispatch();
 
-        // Dispatch the mutation events
-        dispatchChildInsertionEvents(child.get());
+        notifyChildInserted(child.get());
                 
         // Add child to the rendering tree
         if (attached() && !child->attached() && child->parent() == this) {
@@ -266,6 +270,10 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
             else
                 child->attach();
         }
+
+        // Now that the child is attached to the render tree, dispatch
+        // the relevant mutation events.
+        dispatchChildInsertionEvents(child.get());
 
         prev = child;
         child = nextChild.release();
@@ -490,9 +498,9 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         m_lastChild = child.get();
         allowEventDispatch();
 
-        // Dispatch the mutation events
+        // Send notification about the children change.
         childrenChanged(false, prev.get(), 0, 1);
-        dispatchChildInsertionEvents(child.get());
+        notifyChildInserted(child.get());
 
         // Add child to the rendering tree
         if (attached() && !child->attached() && child->parent() == this) {
@@ -501,6 +509,10 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
             else
                 child->attach();
         }
+
+        // Now that the child is attached to the render tree, dispatch
+        // the relevant mutation events.
+        dispatchChildInsertionEvents(child.get());
         
         child = nextChild.release();
     }
@@ -876,7 +888,7 @@ Node *ContainerNode::childNode(unsigned index) const
     return n;
 }
 
-static void dispatchChildInsertionEvents(Node* child)
+static void notifyChildInserted(Node* child)
 {
     ASSERT(!eventDispatchForbidden());
 
@@ -896,6 +908,14 @@ static void dispatchChildInsertionEvents(Node* child)
         c->insertedIntoTree(true);
 
     document->incDOMTreeVersion();
+}
+
+static void dispatchChildInsertionEvents(Node* child)
+{
+    ASSERT(!eventDispatchForbidden());
+
+    RefPtr<Node> c = child;
+    RefPtr<Document> document = child->document();
 
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
         c->dispatchEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, c->parentNode()));
