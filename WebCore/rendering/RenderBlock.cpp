@@ -3836,8 +3836,20 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
         // Add in half the column gap to the left and right of the rect.
         IntRect colRect = colRects->at(i);
         IntRect gapAndColumnRect(colRect.x() - leftGap, colRect.y(), colRect.width() + colGap, colRect.height());
-        
-        if (gapAndColumnRect.contains(point)) {
+
+        if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.right()) {
+            // FIXME: The clamping that follows is not completely right for right-to-left
+            // content.
+            // Clamp everything above the column to its top left.
+            if (point.y() < gapAndColumnRect.y())
+                point = gapAndColumnRect.location();
+            // Clamp everything below the column to the next column's top left. If there is
+            // no next column, this still maps to just after this column.
+            else if (point.y() >= gapAndColumnRect.bottom()) {
+                point = gapAndColumnRect.location();
+                point.move(0, gapAndColumnRect.height());
+            }
+
             // We're inside the column.  Translate the x and y into our column coordinate space.
             point.move(columnPoint.x() - colRect.x(), yOffset);
             return;
