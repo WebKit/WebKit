@@ -156,15 +156,7 @@ devtools.ToolsAgent.prototype.evaluate = function(expr)
  * @param {string} text
  */
 function debugPrint(text) {
-    var console = WebInspector.console;
-    if (console) {
-        console.addMessage(new WebInspector.ConsoleMessage(
-            WebInspector.ConsoleMessage.MessageSource.JS,
-            WebInspector.ConsoleMessage.MessageType.Log,
-            WebInspector.ConsoleMessage.MessageLevel.Log,
-            1, "chrome://devtools/<internal>", undefined, -1, text));
-    } else
-        alert(text);
+    WebInspector.log(text);
 }
 
 
@@ -368,20 +360,6 @@ InjectedScriptAccess.prototype.evaluateInCallFrame = function(callFrameId, code,
 
 (function()
 {
-var orig = WebInspector.ConsoleMessage.prototype.setMessageBody;
-WebInspector.ConsoleMessage.prototype.setMessageBody = function(args)
-{
-    for (var i = 0; i < args.length; ++i) {
-        if (typeof args[i] === "string")
-            args[i] = WebInspector.ObjectProxy.wrapPrimitiveValue(args[i]);
-    }
-    orig.call(this, args);
-};
-})();
-
-
-(function()
-{
 var orig = InjectedScriptAccess.prototype.getCompletions;
 InjectedScriptAccess.prototype.getCompletions = function(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions)
 {
@@ -389,16 +367,6 @@ InjectedScriptAccess.prototype.getCompletions = function(expressionString, inclu
         devtools.tools.getDebuggerAgent().resolveCompletionsOnFrame(expressionString, callFrameId, reportCompletions);
     else
         return orig.apply(this, arguments);
-};
-})();
-
-
-(function()
-{
-WebInspector.ElementsPanel.prototype._nodeSearchButtonClicked = function( event)
-{
-    InspectorBackend.toggleNodeSearch();
-    this.nodeSearchButton.toggled = !this.nodeSearchButton.toggled;
 };
 })();
 

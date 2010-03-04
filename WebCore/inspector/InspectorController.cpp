@@ -322,8 +322,7 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         if (debuggerWasEnabled)
             m_attachDebuggerWhenShown = true;
 #endif
-        if (m_searchingForNode)
-            toggleSearchForNodeInPage();
+        setSearchingForNode(false);
         resetScriptObjects();
         stopTimelineProfiler();
     }
@@ -476,16 +475,6 @@ void InspectorController::storeLastActivePanel(const String& panelName)
     setSetting(lastActivePanelSettingName, panelName);
 }
 
-void InspectorController::toggleSearchForNodeInPage()
-{
-    if (!enabled())
-        return;
-
-    m_searchingForNode = !m_searchingForNode;
-    if (!m_searchingForNode)
-        hideHighlight();
-}
-
 void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
     if (!enabled() || !m_searchingForNode)
@@ -506,7 +495,7 @@ void InspectorController::handleMousePressOnNode(Node* node)
     if (!node)
         return;
 
-    // inspect() will implicitly call ElementsPanel's focusedNodeChanged() and the hover feedback will be stopped there.
+    setSearchingForNode(false);
     inspect(node);
 }
 
@@ -527,6 +516,21 @@ void InspectorController::windowScriptObjectAvailable()
     m_frontendScriptState = scriptStateFromPage(debuggerWorld(), m_page);
     ScriptGlobalObject::set(m_frontendScriptState, "InspectorBackend", m_inspectorBackend.get());
     ScriptGlobalObject::set(m_frontendScriptState, "InspectorFrontendHost", m_inspectorFrontendHost.get());
+}
+
+void InspectorController::setSearchingForNode(bool enabled)
+{
+    if (m_searchingForNode == enabled)
+        return;
+    m_searchingForNode = enabled;
+    if (!m_searchingForNode)
+        hideHighlight();
+    if (m_frontend) {
+        if (enabled)
+            m_frontend->searchingForNodeWasEnabled();
+        else
+            m_frontend->searchingForNodeWasDisabled();
+    }
 }
 
 void InspectorController::scriptObjectReady()
@@ -670,6 +674,12 @@ void InspectorController::populateScriptObjects()
 
     if (m_resourceTrackingEnabled)
         m_frontend->resourceTrackingWasEnabled();
+
+    if (m_searchingForNode)
+        m_frontend->searchingForNodeWasEnabled();
+    else
+        m_frontend->searchingForNodeWasDisabled();
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerEnabled)
         m_frontend->profilerWasEnabled();
@@ -687,6 +697,10 @@ void InspectorController::populateScriptObjects()
     for (unsigned i = 0; i < messageCount; ++i)
         m_consoleMessages[i]->addToConsole(m_frontend.get());
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_debuggerEnabled)
+        m_frontend->updatePauseOnExceptionsState(ScriptDebugServer::shared().pauseOnExceptionsState());
+#endif
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)

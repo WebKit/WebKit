@@ -77,6 +77,11 @@ namespace WebCore {
         void resourceTrackingWasEnabled();
         void resourceTrackingWasDisabled();
 
+        void searchingForNodeWasEnabled();
+        void searchingForNodeWasDisabled();
+
+        void updatePauseOnExceptionsState(long state);
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         void attachDebuggerWhenShown();
         void debuggerWasEnabled();

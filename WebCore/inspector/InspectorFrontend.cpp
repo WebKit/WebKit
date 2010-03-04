@@ -227,6 +227,25 @@ void InspectorFrontend::resourceTrackingWasDisabled()
     callSimpleFunction("resourceTrackingWasDisabled");
 }
 
+
+void InspectorFrontend::searchingForNodeWasEnabled()
+{
+    callSimpleFunction("searchingForNodeWasEnabled");
+}
+
+void InspectorFrontend::searchingForNodeWasDisabled()
+{
+    callSimpleFunction("searchingForNodeWasDisabled");
+}
+
+void InspectorFrontend::updatePauseOnExceptionsState(long state)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("updatePauseOnExceptionsState");
+    function.appendArgument(state);
+    function.call();
+}
+
 void InspectorFrontend::timelineProfilerWasStarted()
 {
     callSimpleFunction("timelineProfilerWasStarted");

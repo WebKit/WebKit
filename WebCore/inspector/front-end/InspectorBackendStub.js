@@ -133,6 +133,17 @@ WebInspector.InspectorBackendStub.prototype = {
         WebInspector.resourceTrackingWasDisabled();
     },
 
+
+    enableSearchingForNode: function()
+    {
+        WebInspector.searchingForNodeWasEnabled();
+    },
+
+    disableSearchingForNode: function()
+    {
+        WebInspector.searchingForNodeWasDisabled();
+    },
+
     reloadPage: function()
     {
     },
@@ -169,13 +180,9 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    pauseOnExceptionsState: function()
-    {
-        return 0;
-    },
-
     setPauseOnExceptionsState: function(value)
     {
+        WebInspector.updatePauseOnExceptionsState(value);
     },
 
     resumeDebugger: function()

@@ -148,7 +148,6 @@ public:
     void attachWindow();
     void detachWindow();
 
-    void toggleSearchForNodeInPage();
     bool searchingForNodeInPage() const { return m_searchingForNode; }
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void handleMousePressOnNode(Node*);
@@ -262,7 +261,11 @@ private:
     friend class InspectorBackend;
     friend class InspectorFrontendHost;
     friend class InjectedScriptHost;
+
     // Following are used from InspectorBackend and internally.
+
+    void setSearchingForNode(bool enabled);
+
     void scriptObjectReady();
     void moveWindowBy(float x, float y) const;
     void setAttachedWindow(bool);

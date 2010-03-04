@@ -58,10 +58,6 @@ WebInspector.ElementsPanel = function()
         this.panel.updateProperties();
         this.panel.updateEventListeners();
 
-        if (InspectorBackend.searchingForNode()) {
-            InspectorBackend.toggleNodeSearch();
-            this.panel.nodeSearchButton.toggled = false;
-        }
         if (this._focusedDOMNode)
             InjectedScriptAccess.get(this._focusedDOMNode.injectedScriptId).addInspectedNode(this._focusedDOMNode.id, function() {});
     };
@@ -102,10 +98,8 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
-    this.nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
-    this.nodeSearchButton.addEventListener("click", this._nodeSearchButtonClicked.bind(this), false);
-
-    this.searchingForNode = false;
+    this._nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
+    this._nodeSearchButton.addEventListener("click", this._nodeSearchButtonClicked.bind(this), false);
 
     this.element.appendChild(this.contentElement);
     this.element.appendChild(this.sidebarElement);
@@ -126,7 +120,7 @@ WebInspector.ElementsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.nodeSearchButton.element, this.crumbsElement];
+        return [this._nodeSearchButton.element, this.crumbsElement];
     },
 
     get defaultFocusedElement()
@@ -154,11 +148,7 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.Panel.prototype.hide.call(this);
 
         WebInspector.hoveredDOMNode = null;
-
-        if (InspectorBackend.searchingForNode()) {
-            InspectorBackend.toggleNodeSearch();
-            this.nodeSearchButton.toggled = false;
-        }
+        InspectorBackend.disableSearchingForNode();
     },
 
     resize: function()
@@ -184,11 +174,6 @@ WebInspector.ElementsPanel.prototype = {
         this.focusedDOMNode = null;
 
         WebInspector.hoveredDOMNode = null;
-
-        if (InspectorBackend.searchingForNode()) {
-            InspectorBackend.toggleNodeSearch();
-            this.nodeSearchButton.toggled = false;
-        }
 
         this.recentlyModifiedNodes = [];
 
@@ -269,6 +254,16 @@ WebInspector.ElementsPanel.prototype = {
         this._searchQuery = query;
 
         InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, function() {});
+    },
+
+    searchingForNodeWasEnabled: function()
+    {
+        this._nodeSearchButton.toggled = true;
+    },
+
+    searchingForNodeWasDisabled: function()
+    {
+        this._nodeSearchButton.toggled = false;
     },
 
     _updateMatchesCount: function()
@@ -1108,9 +1103,10 @@ WebInspector.ElementsPanel.prototype = {
 
     _nodeSearchButtonClicked: function(event)
     {
-        InspectorBackend.toggleNodeSearch();
-
-        this.nodeSearchButton.toggled = InspectorBackend.searchingForNode();
+        if (!this._nodeSearchButton.toggled)
+            InspectorBackend.enableSearchingForNode();
+        else
+            InspectorBackend.disableSearchingForNode();
     }
 }
 

@@ -1309,6 +1309,17 @@ WebInspector.resourceTrackingWasDisabled = function()
     this.panels.resources.resourceTrackingWasDisabled();
 }
 
+
+WebInspector.searchingForNodeWasEnabled = function()
+{
+    this.panels.elements.searchingForNodeWasEnabled();
+}
+
+WebInspector.searchingForNodeWasDisabled = function()
+{
+    this.panels.elements.searchingForNodeWasDisabled();
+}
+
 WebInspector.attachDebuggerWhenShown = function()
 {
     this.panels.scripts.attachDebuggerWhenShown();
@@ -1317,6 +1328,11 @@ WebInspector.attachDebuggerWhenShown = function()
 WebInspector.debuggerWasEnabled = function()
 {
     this.panels.scripts.debuggerWasEnabled();
+}
+
+WebInspector.updatePauseOnExceptionsState = function(pauseOnExceptionsState)
+{
+    this.panels.scripts.updatePauseOnExceptionsState(pauseOnExceptionsState);
 }
 
 WebInspector.debuggerWasDisabled = function()

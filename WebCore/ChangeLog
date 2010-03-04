@@ -2,6 +2,53 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Remove two last synchronous calls from front-end to InspectorBackend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35720
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::enableSearchingForNode):
+        (WebCore::InspectorBackend::disableSearchingForNode):
+        (WebCore::InspectorBackend::setPauseOnExceptionsState):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorContorller::setSearchingForNode):
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::searchingForNodeWasEnabled):
+        (WebCore::InspectorFrontend::searchingForNodeWasDisabled):
+        (WebCore::InspectorFrontend::updatePauseOnExceptionsState):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.get statusBarItems):
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype.searchingForNodeWasEnabled):
+        (WebInspector.ElementsPanel.prototype.searchingForNodeWasDisabled):
+        (WebInspector.ElementsPanel.prototype._nodeSearchButtonClicked):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub.prototype.enableSearchingForNode):
+        (.WebInspector.InspectorBackendStub.prototype.disableSearchingForNode):
+        (.WebInspector.InspectorBackendStub.prototype.setPauseOnExceptionsState):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems):
+        (WebInspector.ScriptsPanel.prototype.updatePauseOnExceptionsState):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        (WebInspector.ScriptsPanel.prototype._togglePauseOnExceptions):
+        * inspector/front-end/inspector.js:
+        (WebInspector.searchingForNodeWasEnabled):
+        (WebInspector.searchingForNodeWasDisabled):
+        (WebInspector.updatePauseOnExceptionsState):
+
+2010-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: Clicking on an error should take me to the error
 
         https://bugs.webkit.org/show_bug.cgi?id=34860

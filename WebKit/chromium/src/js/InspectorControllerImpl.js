@@ -44,8 +44,10 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("deleteCookie");
     this.installInspectorControllerDelegate_("didEvaluateForTestInFrontend");
     this.installInspectorControllerDelegate_("disableResourceTracking");
+    this.installInspectorControllerDelegate_("disableSearchingForNode");
     this.installInspectorControllerDelegate_("disableTimeline");
     this.installInspectorControllerDelegate_("enableResourceTracking");
+    this.installInspectorControllerDelegate_("enableSearchingForNode");
     this.installInspectorControllerDelegate_("enableTimeline");
     this.installInspectorControllerDelegate_("getChildNodes");
     this.installInspectorControllerDelegate_("getCookies");
@@ -71,20 +73,6 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("storeLastActivePanel");
 };
 devtools.InspectorBackendImpl.prototype.__proto__ = WebInspector.InspectorBackendStub.prototype;
-
-
-/**
- * {@inheritDoc}.
- */
-devtools.InspectorBackendImpl.prototype.toggleNodeSearch = function()
-{
-    WebInspector.InspectorBackendStub.prototype.toggleNodeSearch.call(this);
-    this.callInspectorController_.call(this, "toggleNodeSearch");
-    if (!this.searchingForNode()) {
-        // This is called from ElementsPanel treeOutline's focusNodeChanged().
-        InspectorFrontendHost.activateWindow();
-    }
-};
 
 
 /**
@@ -168,16 +156,10 @@ devtools.InspectorBackendImpl.prototype.setPauseOnExceptionsState = function(sta
     this._setPauseOnExceptionsState = state;
     // TODO(yurys): support all three states. See http://crbug.com/32877
     var enabled = (state !== WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
-    return devtools.tools.getDebuggerAgent().setPauseOnExceptions(enabled);
+    WebInspector.updatePauseOnExceptionsState(enabled ? WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions : WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
+    devtools.tools.getDebuggerAgent().setPauseOnExceptions(enabled);
 };
 
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.pauseOnExceptionsState = function()
-{
-    return (this._setPauseOnExceptionsState || WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
-};
 
 /**
  * @override
