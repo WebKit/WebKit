@@ -1,3 +1,48 @@
+2010-03-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Popup for Timeline panel will work in a tooltip mode
+
+        https://bugs.webkit.org/show_bug.cgi?id=35680
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.show):
+        (WebInspector.Popover.prototype.hide):
+        (WebInspector.Popover.prototype._positionElement):
+        (WebInspector.PopoverHelper):
+        (WebInspector.PopoverHelper.prototype._mouseDown):
+        (WebInspector.PopoverHelper.prototype._mouseMove.doHide):
+        (WebInspector.PopoverHelper.prototype._mouseMove):
+        (WebInspector.PopoverHelper.prototype._resetHoverTimer):
+        (WebInspector.PopoverHelper.prototype.hidePopup):
+        (WebInspector.PopoverHelper.prototype._mouseHover):
+        (WebInspector.PopoverHelper.prototype._killHidePopupTimer):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.reset):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.prototype._adjustScrollPosition):
+        (WebInspector.TimelinePanel.prototype._getPopoverAnchor):
+        (WebInspector.TimelinePanel.prototype._showPopover):
+        (WebInspector.TimelinePanel.prototype._closeRecordDetails):
+        (WebInspector.TimelineRecordListRow):
+        (WebInspector.TimelineRecordListRow.prototype.update):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype._onClick):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._createCell):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._createRow):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._createLinkRow):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        * inspector/front-end/inspector.css:
+
 2010-03-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix.

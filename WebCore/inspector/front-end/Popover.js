@@ -38,6 +38,8 @@ WebInspector.Popover = function(contentElement)
     this.element.appendChild(this._popupArrowElement);
 
     this.contentElement = contentElement;
+    this._contentDiv = document.createElement("div");
+    this._contentDiv.className = "content";
 }
 
 WebInspector.Popover.prototype = {
@@ -54,23 +56,18 @@ WebInspector.Popover.prototype = {
         var preferredWidth = preferredWidth || this.contentElement.offsetWidth;
         var preferredHeight = preferredHeight || this.contentElement.offsetHeight;
 
-        var contentDiv = document.createElement("div");
-        contentDiv.className = "content";
-        contentDiv.appendChild(this.contentElement);
-        this.element.appendChild(contentDiv);
+        this._contentDiv.appendChild(this.contentElement);
+        this.element.appendChild(this._contentDiv);
         document.body.appendChild(this.element);
         this._positionElement(anchor, preferredWidth, preferredHeight);
     },
 
     hide: function()
     {
-        delete WebInspector.Popover._popoverElement;
-        document.body.removeChild(this.element);
-    },
-
-    hideWhenClicked: function()
-    {
-        this.element.addEventListener("click", this.hide.bind(this));
+        if (WebInspector.Popover._popoverElement) {
+            delete WebInspector.Popover._popoverElement;
+            document.body.removeChild(this.element);
+        }
     },
 
     _positionElement: function(anchorElement, preferredWidth, preferredHeight)
@@ -78,9 +75,9 @@ WebInspector.Popover.prototype = {
         const borderWidth = 25;
         const scrollerWidth = 11;
         const arrowHeight = 15;
-        const arrowOffset = 15;
+        const arrowOffset = 10;
         const borderRadius = 10;
-        
+
         // Skinny tooltips are not pretty, their arrow location is not nice.
         preferredWidth = Math.max(preferredWidth, 50);
         const totalWidth = window.innerWidth;
@@ -121,27 +118,121 @@ WebInspector.Popover.prototype = {
 
         var horizontalAlignment;
         if (anchorBox.x + newElementPosition.width < totalWidth) {
-            newElementPosition.x = Math.max(borderRadius, anchorBox.x - arrowOffset);
+            newElementPosition.x = Math.max(borderRadius, anchorBox.x - borderRadius - arrowOffset);
             horizontalAlignment = "left";
         } else if (newElementPosition.width + borderRadius * 2 < totalWidth) {
             newElementPosition.x = totalWidth - newElementPosition.width - borderRadius;
             horizontalAlignment = "right";
             // Position arrow accurately.
-            this._popupArrowElement.style.right = totalWidth - anchorBox.x - anchorBox.width - borderRadius + "px";
+            var arrowRightPosition = Math.max(0, totalWidth - anchorBox.x - anchorBox.width - borderRadius - arrowOffset);
+            arrowRightPosition += anchorBox.width / 2;
+            this._popupArrowElement.style.right = arrowRightPosition + "px";
         } else {
             newElementPosition.x = borderRadius;
-            newElementPosition.width = totalWidth - scrollerWidth - borderRadius * 2;
+            newElementPosition.width = totalWidth - borderRadius * 2;
             newElementPosition.height += scrollerWidth;
             horizontalAlignment = "left";
             if (verticalAlignment === "bottom")
                 newElementPosition.y -= scrollerWidth;
             // Position arrow accurately.
-            this._popupArrowElement.style.left = anchorBox.x + "px";
+            this._popupArrowElement.style.left = Math.max(0, anchorBox.x - borderRadius * 2 - arrowOffset) + "px";
+            this._popupArrowElement.style.left += anchorBox.width / 2;
         }
 
         this.element.className = "popover " + verticalAlignment + "-" + horizontalAlignment + "-arrow";
         this.element.positionAt(newElementPosition.x - borderWidth, newElementPosition.y - borderWidth);
         this.element.style.width = newElementPosition.width + borderWidth * 2 + "px";
         this.element.style.height = newElementPosition.height + borderWidth * 2 + "px";
+    }
+}
+
+WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopup, showOnClick, onHide)
+{
+    this._panelElement = panelElement;
+    this._getAnchor = getAnchor;
+    this._showPopup = showPopup;
+    this._showOnClick = showOnClick;
+    this._onHide = onHide;
+    panelElement.addEventListener("mousedown", this._mouseDown.bind(this), false);
+    panelElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
+}
+
+WebInspector.PopoverHelper.prototype = {
+    _mouseDown: function(event)
+    {
+        this._resetHoverTimer();
+        if (this._showOnClick) {
+            var anchor = this._getAnchor(event.target);
+            if (anchor) {
+                this._popup = this._showPopup(anchor);
+                this._killHidePopupTimer();
+            }
+        }
+    },
+
+    _mouseMove: function(event)
+    {
+        // Pretend that nothing has happened.
+        if (this._hoverElement === event.target || (this._hoverElement && this._hoverElement.isAncestor(event.target)))
+            return;
+
+        this._resetHoverTimer();
+        // User has 500ms to reach the popup.
+        if (this._popup) {
+            var self = this;
+            function doHide()
+            {
+                self.hidePopup();
+                delete self._hidePopupTimer;
+            }
+            this._hidePopupTimer = setTimeout(doHide, 500);
+        }
+
+        this._hoverElement = this._getAnchor(event.target);
+        if (!this._hoverElement)
+            return;
+
+        const toolTipDelay = this._popup ? 600 : 1000;
+        this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
+    },
+
+    _resetHoverTimer: function()
+    {
+        if (this._hoverTimer) {
+            clearTimeout(this._hoverTimer);
+            delete this._hoverTimer;
+        }
+    },
+
+    hidePopup: function()
+    {
+        if (!this._popup)
+            return;
+
+        if (this._onHide)
+            this._onHide();
+
+        this._popup.hide();
+        delete this._popup;
+    },
+
+    _mouseHover: function(element)
+    {
+        delete this._hoverTimer;
+
+        this._popup = this._showPopup(element);
+        this._popup.contentElement.addEventListener("mousemove", this._killHidePopupTimer.bind(this), true);
+    },
+
+    _killHidePopupTimer: function()
+    {
+        if (this._hidePopupTimer) {
+            clearTimeout(this._hidePopupTimer);
+            delete this._hidePopupTimer;
+
+            // We know that we reached the popup, but we might have moved over other elements.
+            // Discard pending command.
+            this._resetHoverTimer();
+        }
     }
 }

@@ -3588,7 +3588,8 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     min-width: 5px;
     opacity: 0.8;
     -webkit-border-image: url(Images/timelineBarGray.png) 4 4 5 4;
-    pointer-events: none;
+    z-index: 180;
+    pointer-events: visibleFill;
 }
 
 .timeline-graph-side.even {
@@ -3869,6 +3870,10 @@ ol.breakpoint-list {
     background-color: rgb(255, 255, 194);
 }
 
+.timeline-details {
+    -webkit-user-select: text;
+}
+
 .timeline-details-row-title {
     font-weight: bold;
     text-align: right;
@@ -3882,6 +3887,12 @@ ol.breakpoint-list {
 .timeline-details-title {
     font-weight: bold;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 11px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(194,194,147);
 }
 
 .workers-list {
