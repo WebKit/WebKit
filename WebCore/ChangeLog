@@ -1,5 +1,35 @@
 2010-03-03  David Levin  <levin@chromium.org>
 
+        No review, rolling out r55474.
+        http://trac.webkit.org/changeset/55480
+
+        The patch broke fast/frames/sandboxed-iframe-storage.html
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+        * storage/Database.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        * workers/WorkerContext.h:
+
+2010-03-03  David Levin  <levin@chromium.org>
+
         No review, rolling out r55480.
         http://trac.webkit.org/changeset/55480
 

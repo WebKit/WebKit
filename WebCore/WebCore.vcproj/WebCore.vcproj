@@ -35340,14 +35340,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDatabaseCallback.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDatabaseCallback.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSDatabaseCustom.cpp"
 					>
 					<FileConfiguration
@@ -42282,10 +42274,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\DatabaseAuthorizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DatabaseCallback.h"
 				>
 			</File>
 			<File

@@ -1012,7 +1012,6 @@ HEADERS += \
     bindings/js/JSCustomSQLTransactionErrorCallback.h \
     bindings/js/JSCustomVoidCallback.h \
     bindings/js/JSCustomXPathNSResolver.h \
-    bindings/js/JSDatabaseCallback.h \
     bindings/js/JSDataGridDataSource.h \
     bindings/js/JSDOMBinding.h \
     bindings/js/JSDOMGlobalObject.h \
@@ -2221,7 +2220,6 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
         bindings/js/JSCustomSQLTransactionCallback.cpp \
         bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
-        bindings/js/JSDatabaseCallback.cpp \
         bindings/js/JSDatabaseCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
         bindings/js/JSSQLTransactionCustom.cpp
@@ -2232,7 +2230,6 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/ChangeVersionWrapper.h \
         storage/DatabaseAuthorizer.h \
         storage/Database.h \
-        storage/DatabaseCallback.h \
         storage/DatabaseTask.h \
         storage/DatabaseThread.h \
         storage/DatabaseTracker.h \

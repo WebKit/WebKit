@@ -108,7 +108,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8DOMSelectionCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
-	bindings/v8/custom/V8DatabaseCallback.cpp \
 	bindings/v8/custom/V8DatabaseCustom.cpp \
 	bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp \
 	bindings/v8/custom/V8DocumentCustom.cpp \
