@@ -1,3 +1,14 @@
+2010-03-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        Build fix after r55464.
+
+        No new tests, no new functionality.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+
 2010-03-04  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

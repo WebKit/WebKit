@@ -695,8 +695,10 @@ void InspectorController::populateScriptObjects()
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it)
         m_frontend->didCreateWorker(*it->second);
 #endif
+#if ENABLE(JAVASCRIPT_DEBUGGER) 
     if (m_profilerEnabled)
         m_frontend->profilerWasEnabled();
+#endif
 
     m_frontend->populateInterface();
 
