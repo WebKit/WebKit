@@ -161,15 +161,6 @@ void WebDevToolsAgentImpl::disposeUtilityContext()
     }
 }
 
-void WebDevToolsAgentImpl::unhideResourcesPanelIfNecessary()
-{
-    InspectorController* ic = m_webViewImpl->page()->inspectorController();
-    ic->ensureResourceTrackingSettingsLoaded();
-    String command = String::format("[\"setResourcesPanelEnabled\", %s]",
-        ic->resourceTrackingEnabled() ? "true" : "false");
-    m_toolsAgentDelegateStub->dispatchOnClient(command);
-}
-
 void WebDevToolsAgentImpl::attach()
 {
     if (m_attached)
@@ -179,7 +170,7 @@ void WebDevToolsAgentImpl::attach()
                               m_debuggerAgentDelegateStub.get(),
                               this));
     resetInspectorFrontendProxy();
-    unhideResourcesPanelIfNecessary();
+
     // Allow controller to send messages to the frontend.
     InspectorController* ic = inspectorController();
 
@@ -228,7 +219,6 @@ void WebDevToolsAgentImpl::didCommitProvisionalLoad(WebFrameImpl* webframe, bool
         resetInspectorFrontendProxy();
         m_toolsAgentDelegateStub->frameNavigate(WebCore::KURL(url).string());
         SetApuAgentEnabledInUtilityContext(m_utilityContext, m_apuAgentEnabled);
-        unhideResourcesPanelIfNecessary();
     }
 }
 

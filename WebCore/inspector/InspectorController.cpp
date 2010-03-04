@@ -668,6 +668,13 @@ void InspectorController::populateScriptObjects()
 
     m_frontend->populateFrontendSettings(setting(FrontendSettingsSettingName));
 
+    if (m_resourceTrackingEnabled)
+        m_frontend->resourceTrackingWasEnabled();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_profilerEnabled)
+        m_frontend->profilerWasEnabled();
+#endif
+
     ResourcesMap::iterator resourcesEnd = m_resources.end();
     for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it)
         it->second->updateScriptObject(m_frontend.get());
@@ -694,10 +701,6 @@ void InspectorController::populateScriptObjects()
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it)
         m_frontend->didCreateWorker(*it->second);
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER) 
-    if (m_profilerEnabled)
-        m_frontend->profilerWasEnabled();
 #endif
 
     m_frontend->populateInterface();

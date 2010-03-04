@@ -1,3 +1,13 @@
+2010-03-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Remove sync access to resourceTrackingEnabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35693
+
+        * src/js/DevTools.js:
+
 2010-03-04  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Pavel Feldman.

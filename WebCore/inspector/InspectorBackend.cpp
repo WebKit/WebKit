@@ -104,13 +104,6 @@ bool InspectorBackend::searchingForNode()
     return false;
 }
 
-bool InspectorBackend::resourceTrackingEnabled() const
-{
-    if (m_inspectorController)
-        return m_inspectorController->resourceTrackingEnabled();
-    return false;
-}
-
 void InspectorBackend::enableResourceTracking(bool always)
 {
     if (m_inspectorController)

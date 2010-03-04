@@ -34,9 +34,6 @@ WebInspector.InspectorBackendStub = function()
 {
     this._searchingForNode = false;
     this._attachedWindowHeight = 0;
-    this._debuggerEnabled = true;
-    this._profilerEnabled = true;
-    this._resourceTrackingEnabled = false;
     this._timelineEnabled = false;
 }
 
@@ -126,26 +123,14 @@ WebInspector.InspectorBackendStub.prototype = {
         return "";
     },
 
-    debuggerEnabled: function()
-    {
-        return this._debuggerEnabled;
-    },
-
     enableResourceTracking: function()
     {
-        this._resourceTrackingEnabled = true;
         WebInspector.resourceTrackingWasEnabled();
     },
 
     disableResourceTracking: function()
     {
-        this._resourceTrackingEnabled = false;
         WebInspector.resourceTrackingWasDisabled();
-    },
-
-    resourceTrackingEnabled: function()
-    {
-        return this._resourceTrackingEnabled;
     },
 
     reloadPage: function()
@@ -154,12 +139,12 @@ WebInspector.InspectorBackendStub.prototype = {
 
     enableDebugger: function()
     {
-        this._debuggerEnabled = true;
+        WebInspector.debuggerWasEnabled();
     },
 
     disableDebugger: function()
     {
-        this._debuggerEnabled = false;
+        WebInspector.debuggerWasDisabled();
     },
 
     setBreakpoint: function(sourceID, line, enabled, condition)
@@ -197,19 +182,14 @@ WebInspector.InspectorBackendStub.prototype = {
     {
     },
 
-    profilerEnabled: function()
-    {
-        return true;
-    },
-
     enableProfiler: function()
     {
-        this._profilerEnabled = true;
+        WebInspector.profilerWasEnabled();
     },
 
     disableProfiler: function()
     {
-        this._profilerEnabled = false;
+        WebInspector.profilerWasDisabled();
     },
 
     startProfiling: function()

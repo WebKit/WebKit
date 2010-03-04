@@ -1,3 +1,38 @@
+2010-03-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Remove sync access to resourceTrackingEnabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35693
+
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        (WebInspector.AuditsPanel.prototype.show):
+        * inspector/front-end/InspectorBackendStub.js:
+        (.WebInspector.InspectorBackendStub):
+        (.WebInspector.InspectorBackendStub.prototype.enableResourceTracking):
+        (.WebInspector.InspectorBackendStub.prototype.disableResourceTracking):
+        (.WebInspector.InspectorBackendStub.prototype.enableDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.disableDebugger):
+        (.WebInspector.InspectorBackendStub.prototype.enableProfiler):
+        (.WebInspector.InspectorBackendStub.prototype.disableProfiler):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.get resourceTrackingEnabled):
+        (WebInspector.ResourcesPanel.prototype.get visibleView):
+        (WebInspector.ResourcesPanel.prototype.resourceTrackingWasEnabled):
+        (WebInspector.ResourcesPanel.prototype.resourceTrackingWasDisabled):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        (WebInspector.ResourcesPanel.prototype._enableResourceTracking):
+        (WebInspector.ResourcesPanel.prototype._toggleResourceTracking):
+
 2010-03-04  Antoine Quint  <ml@graougraou.com>
 
         Reviewed by Darin Adler.

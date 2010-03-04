@@ -39,7 +39,6 @@ module core {
         void toggleNodeSearch();
         boolean searchingForNode();
 
-        boolean resourceTrackingEnabled();
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
         void getResourceContent(in long callId, in unsigned long identifier);

@@ -151,17 +151,6 @@ devtools.ToolsAgent.prototype.evaluate = function(expr)
 
 
 /**
- * Enables / disables resources panel in the ui.
- * @param {boolean} enabled New panel status.
- */
-WebInspector.setResourcesPanelEnabled = function(enabled)
-{
-    InspectorBackend._resourceTrackingEnabled = enabled;
-    WebInspector.panels.resources.reset();
-};
-
-
-/**
  * Prints string  to the inspector console or shows alert if the console doesn't
  * exist.
  * @param {string} text
@@ -376,18 +365,6 @@ InjectedScriptAccess.prototype.evaluateInCallFrame = function(callFrameId, code,
 };
 })();
 
-
-WebInspector.resourceTrackingWasEnabled = function()
-{
-      InspectorBackend._resourceTrackingEnabled = true;
-      this.panels.resources.resourceTrackingWasEnabled();
-};
-
-WebInspector.resourceTrackingWasDisabled = function()
-{
-      InspectorBackend._resourceTrackingEnabled = false;
-      this.panels.resources.resourceTrackingWasDisabled();
-};
 
 (function()
 {
