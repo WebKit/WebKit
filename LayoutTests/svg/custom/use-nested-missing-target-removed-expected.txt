@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 7: TypeError: Result of expression 'document.getElementById("myText1")' [null] is not an object.
+PASS
+

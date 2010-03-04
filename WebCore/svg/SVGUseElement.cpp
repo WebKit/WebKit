@@ -414,7 +414,7 @@ void SVGUseElement::buildPendingResource()
     ASSERT(!m_targetElementInstance);
 
     if (!targetElement) {
-        if (m_isPendingResource)
+        if (m_isPendingResource || id.isEmpty())
             return;
 
         m_isPendingResource = true;
@@ -434,7 +434,12 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
 {
     String id = SVGURIReference::getTarget(href());
     Element* targetElement = document()->getElementById(id);
-    ASSERT(targetElement);
+    if (!targetElement) {
+        // The only time we should get here is when the use element has not been
+        // given a resource to target.
+        ASSERT(m_resourceId.isEmpty());
+        return;
+    }
 
     // Do not build the shadow/instance tree for <use> elements living in a shadow tree.
     // The will be expanded soon anyway - see expandUseElementsInShadowTree().
@@ -740,27 +745,15 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
             target = static_cast<SVGElement*>(targetElement);
 
         // Don't ASSERT(target) here, it may be "pending", too.
-        if (target) {
-            // Setup sub-shadow tree root node
-            RefPtr<SVGShadowTreeContainerElement> cloneParent = new SVGShadowTreeContainerElement(document());
+        // Setup sub-shadow tree root node
+        RefPtr<SVGShadowTreeContainerElement> cloneParent = new SVGShadowTreeContainerElement(document());
 
-            // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
-            // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
-            transferUseAttributesToReplacedElement(use, cloneParent.get());
+        // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
+        // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
+        transferUseAttributesToReplacedElement(use, cloneParent.get());
 
-            ExceptionCode ec = 0;
-
-            // For instance <use> on <foreignObject> (direct case).
-            if (isDisallowedElement(target)) {
-                // We still have to setup the <use> replacment (<g>). Otherwhise
-                // associateInstancesWithShadowTreeElements() makes wrong assumptions.
-                // Replace <use> with referenced content.
-                ASSERT(use->parentNode()); 
-                use->parentNode()->replaceChild(cloneParent.release(), use, ec);
-                ASSERT(!ec);
-                return;
-            }
-
+        ExceptionCode ec = 0;
+        if (target && !isDisallowedElement(target)) {
             RefPtr<Element> newChild = target->cloneElementWithChildren();
 
             // We don't walk the target tree element-by-element, and clone each element,
@@ -778,16 +771,16 @@ void SVGUseElement::expandUseElementsInShadowTree(SVGShadowTreeRootElement* shad
 
             cloneParent->appendChild(newChild.release(), ec);
             ASSERT(!ec);
-
-            // Replace <use> with referenced content.
-            ASSERT(use->parentNode()); 
-            use->parentNode()->replaceChild(cloneParent.release(), use, ec);
-            ASSERT(!ec);
-
-            // Immediately stop here, and restart expanding.
-            expandUseElementsInShadowTree(shadowRoot, shadowRoot);
-            return;
         }
+
+        // Replace <use> with referenced content.
+        ASSERT(use->parentNode()); 
+        use->parentNode()->replaceChild(cloneParent.release(), use, ec);
+        ASSERT(!ec);
+
+        // Immediately stop here, and restart expanding.
+        expandUseElementsInShadowTree(shadowRoot, shadowRoot);
+        return;
     }
 
     for (RefPtr<Node> child = element->firstChild(); child; child = child->nextSibling())

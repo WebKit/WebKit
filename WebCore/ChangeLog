@@ -1,3 +1,26 @@
+2010-03-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35603
+        SVG incorrectly allows nested <use> elements in a <use> shadow tree
+
+        Simplify the handling of invalid or missing use-targets by cloning them
+        to empty <g> elements rather than just allowing the <use> element to
+        be copied into the shadow tree, as this violates a number of assumptions
+        in the shadow tree handling code.
+
+        Tests: svg/custom/use-nested-disallowed-target.svg
+               svg/custom/use-nested-missing-target-added.svg
+               svg/custom/use-nested-missing-target-removed.svg
+               svg/custom/use-nested-missing-target.svg
+               svg/custom/use-nested-notarget.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+
 2010-03-04  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
