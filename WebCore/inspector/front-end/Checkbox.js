@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage)
+WebInspector.Checkbox = function(label, callback, checked, className, tooltip)
 {
-    this.sourceID = sourceID;
-    this.sourceURL = sourceURL;
-    this.source = source;
-    this.startingLine = startingLine;
-    this.errorLine = errorLine;
-    this.errorMessage = errorMessage;
+    this.element = document.createElement('label');
+    this._inputElement = document.createElement('input');
 
-    // if no URL, look for "//@ sourceURL=" decorator
-    // note that this sourceURL comment decorator is behavior that FireBug added
-    // in it's 1.1 release as noted in the release notes:
-    // http://fbug.googlecode.com/svn/branches/firebug1.1/docs/ReleaseNotes_1.1.txt
-    if (!sourceURL) {
-        // use of [ \t] rather than \s is to prevent \n from matching
-        var pattern = /^\s*\/\/[ \t]*@[ \t]*sourceURL[ \t]*=[ \t]*(\S+).*$/m;
-        var match = pattern.exec(source);
-
-        if (match)
-            this.sourceURL = match[1];
+    function callbackWrapper(event)
+    {
+        if (callback)
+            callback(event);
+        event.stopPropagation();
+        return true;
     }
+    this._inputElement.type = "checkbox";
+    this._inputElement.checked = checked;
+    this._inputElement.addEventListener("click", callbackWrapper, false);
+
+    this.element.className = className;
+    this.element.appendChild(this._inputElement);
+    this.element.appendChild(document.createTextNode(label));
+    this.element.title = tooltip;
+    this.element.addEventListener("click", callbackWrapper, false);
 }
 
-WebInspector.Script.prototype = {
-    get linesCount()
+WebInspector.Checkbox.prototype = {
+    checked: function()
     {
-        if (!this.source)
-            return 0;
-        this._linesCount = 0;
-        var lastIndex = this.source.indexOf("\n");
-        while (lastIndex !== -1) {
-            lastIndex = this.source.indexOf("\n", lastIndex + 1)
-            this._linesCount++;
-        }
+        return this._inputElement.checked;
     }
 }

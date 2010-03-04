@@ -135,6 +135,7 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.breakpoints = new WebInspector.BreakpointsSidebarPane();
+    this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
     for (var pane in this.sidebarPanes)
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
@@ -260,7 +261,7 @@ WebInspector.ScriptsPanel.prototype = {
         var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage);
         this._sourceIDMap[sourceID] = script;
 
-        var resource = WebInspector.resourceURLMap[sourceURL];
+        var resource = WebInspector.resourceURLMap[script.sourceURL];
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
@@ -423,7 +424,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this._debuggerEnabled = true;
-        this.reset();
+        this.reset(true);
     },
 
     debuggerWasDisabled: function()
@@ -432,10 +433,10 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         this._debuggerEnabled = false;
-        this.reset();
+        this.reset(true);
     },
 
-    reset: function()
+    reset: function(preserveWorkers)
     {
         this.visibleView = null;
 
@@ -471,6 +472,8 @@ WebInspector.ScriptsPanel.prototype = {
         
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.breakpoints.reset();
+        if (!preserveWorkers)
+            this.sidebarPanes.workers.reset();
     },
 
     get visibleView()

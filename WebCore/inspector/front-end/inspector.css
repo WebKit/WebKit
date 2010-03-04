@@ -1721,6 +1721,18 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     height: 5px;
 }
 
+.sidebar-pane-subtitle {
+    float: right;
+    overflow: hidden;
+}
+
+.sidebar-pane-subtitle input {
+    width: 10px;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .metrics {
     padding: 8px;
     font-size: 10px;
@@ -3870,4 +3882,28 @@ ol.breakpoint-list {
 .timeline-details-title {
     font-weight: bold;
     white-space: nowrap;
+}
+
+.workers-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.workers-list > li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 1em;
+    font-size: 12px;
+}
+
+a.worker-item {
+    color: rgb(33%, 33%, 33%);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a.worker-item:hover {
+    color: rgb(15%, 15%, 15%);
 }

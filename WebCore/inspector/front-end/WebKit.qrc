@@ -13,6 +13,7 @@
     <file>Callback.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>ChangesView.js</file>
+    <file>Checkbox.js</file>
     <file>Color.js</file>
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
@@ -89,6 +90,7 @@
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WelcomeView.js</file>
+    <file>WorkersSidebarPane.js</file>
     <file>audits.css</file>
     <file>inspector.css</file>
     <file>inspectorSyntaxHighlight.css</file>

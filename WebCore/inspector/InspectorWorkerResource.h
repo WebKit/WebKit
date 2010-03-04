@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,36 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [Conditional=INSPECTOR] InjectedScriptHost {
-        void clearConsoleMessages();
+#ifndef InspectorWorkerResource_h
+#define InspectorWorkerResource_h
 
-        void copyText(in DOMString text);
-        [Custom] DOMObject nodeForId(in long nodeId);
-        [Custom] int pushNodePathToFrontend(in DOMObject node, in boolean withChildren, in boolean selectInUI);
+#if ENABLE(WORKERS) && ENABLE(INSPECTOR)
 
-        void addNodesToSearchResult(in DOMString nodeIds);
-        long pushNodeByPathToFrontend(in DOMString path);
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [Custom] DOMObject currentCallFrame();
-        [Custom] boolean isActivation(in DOMObject object);
-#endif
+namespace WebCore {
 
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [Custom] DOMObject databaseForId(in long databaseId);
-        [Custom] void selectDatabase(in DOMObject database);
-#endif
+class InspectorWorkerResource : public RefCounted<InspectorWorkerResource> {
+public:
+    static PassRefPtr<InspectorWorkerResource> create(long id, const String& url, bool isSharedWorker)
+    {
+        return adoptRef(new InspectorWorkerResource(id, url, isSharedWorker));
+    }
 
-#if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [Custom] void selectDOMStorage(in DOMObject storage);
-#endif
+    long id() const { return m_id; }
+    const String& url() const { return m_url; }
+    bool isSharedWorker() const { return m_isSharedWorker; }
+private:
+    InspectorWorkerResource(long id, const String& url, bool isSharedWorker)
+        : m_id(id)
+        , m_url(url)
+        , m_isSharedWorker(isSharedWorker)
+    {
+    }
 
-#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        void didCreateWorker(in long id, in DOMString url, in boolean isFakeWorker);
-        void willDestroyWorker(in long id);
-        long nextWorkerId();
-#endif
-        [Custom] void reportDidDispatchOnInjectedScript(in long callId, in DOMObject result, in boolean isException);
-    };
-}
+    int m_id;
+    String m_url;
+    bool m_isSharedWorker;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS) && ENABLE(INSPECTOR)
+
+#endif // InspectorWorkerResource_h

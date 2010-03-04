@@ -1,3 +1,93 @@
+2010-03-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Added support for worker instrumentation in inspector
+        (display list of active workers, allow debugging of workers
+        by injecting fake JS implementation)
+
+        https://bugs.webkit.org/show_bug.cgi?id=35568
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * dom/Document.cpp:
+        (WebCore::Document::inspectorController):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::inspectorController):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::injectScript):
+        (WebCore::InjectedScriptHost::nextWorkerId):
+        (WebCore::InjectedScriptHost::didCreateWorker):
+        (WebCore::InjectedScriptHost::willDestroyWorker):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didCreateWorker):
+        (WebCore::InspectorController::willDestroyWorker):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didCreateWorker):
+        (WebCore::InspectorFrontend::willDestroyWorker):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorWorkerResource.h: Added.
+        (WebCore::InspectorWorkerResource::create):
+        (WebCore::InspectorWorkerResource::id):
+        (WebCore::InspectorWorkerResource::url):
+        (WebCore::InspectorWorkerResource::isSharedWorker):
+        (WebCore::InspectorWorkerResource::InspectorWorkerResource):
+        * inspector/front-end/Checkbox.js: Added.
+        (WebInspector.Checkbox.callbackWrapper):
+        (WebInspector.Checkbox):
+        (WebInspector.Checkbox.prototype.checked):
+        * inspector/front-end/InjectedFakeWorker.js:
+        (InjectedFakeWorker.FakeWorker):
+        (InjectedFakeWorker.FakeWorker.prototype.terminate):
+        (InjectedFakeWorker.FakeWorker.prototype._handleException):
+        (InjectedFakeWorker.FakeWorker.prototype._importScripts):
+        (InjectedFakeWorker.FakeWorker.prototype._loadScript):
+        (InjectedFakeWorker.FakeWorker.prototype._expandURLAndCheckOrigin):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasDisabled):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/WorkersSidebarPane.js: Added.
+        (WebInspector.WorkersSidebarPane):
+        (WebInspector.WorkersSidebarPane.prototype.addWorker):
+        (WebInspector.WorkersSidebarPane.prototype.removeWorker):
+        (WebInspector.WorkersSidebarPane.prototype.setInstrumentation):
+        (WebInspector.WorkersSidebarPane.prototype.reset):
+        (WebInspector.WorkersSidebarPane.prototype._onTriggerInstrument):
+        (WebInspector.Worker):
+        (WebInspector.didCreateWorker):
+        (WebInspector.willDestroyWorker):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::AbstractWorker):
+        (WebCore::AbstractWorker::~AbstractWorker):
+        (WebCore::AbstractWorker::onDestroyWorker):
+        (WebCore::AbstractWorker::contextDestroyed):
+        * workers/AbstractWorker.h:
+        (WebCore::AbstractWorker::id):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::SharedWorker):
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+
 2010-03-04  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

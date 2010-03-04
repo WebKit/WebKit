@@ -45,6 +45,7 @@ namespace WebCore {
     class ScriptString;
     class SerializedScriptValue;
     class Storage;
+    class InspectorWorkerResource;
 
     class InspectorFrontend : public Noncopyable {
     public:
@@ -125,6 +126,11 @@ namespace WebCore {
         void timelineProfilerWasStarted();
         void timelineProfilerWasStopped();
         void addRecordToTimeline(const ScriptObject&);
+
+#if ENABLE(WORKERS)
+        void didCreateWorker(const InspectorWorkerResource&);
+        void willDestroyWorker(const InspectorWorkerResource&);
+#endif // ENABLE(WORKER)
 
         void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);
         void didDispatchOnInjectedScript(int callId, SerializedScriptValue* result, bool isException);
