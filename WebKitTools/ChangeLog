@@ -1,3 +1,11 @@
+2010-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Exclude leaks in Java that build bot complains about.
+
+        * Scripts/run-webkit-tests:
+
 2010-03-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1148,6 +1148,8 @@ sub countAndPrintLeaks($$$)
         push @callStacksToExclude, (
             "readMakerNoteProps", # <rdar://problem/7156432> leak in ImageIO
             "QTKitMovieControllerView completeUISetup", # <rdar://problem/7155156> leak in QTKit
+            "getVMInitArgs", # <rdar://problem/7714444> leak in Java
+            "Java_java_lang_System_initProperties", # <rdar://problem/7714465> leak in Java
         );
     }
 
