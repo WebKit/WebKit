@@ -1,6 +1,6 @@
 2010-03-04  Dan Bernstein  <mitz@apple.com>
 
-        Based on a pacth from Nick Jong.
+        Based on a patch from Nick Jong.
 
         Reviewed by Simon Fraser.
 
@@ -375,7 +375,7 @@
 
         Reviewed by Darin Fisher.
 
-        Trottle sync requests sent to the LocalStorage background thread
+        Throttle sync requests sent to the LocalStorage background thread
         https://bugs.webkit.org/show_bug.cgi?id=34943
 
         Currently, once a second LocalStorage takes all keys/values which have
