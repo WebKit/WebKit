@@ -1,3 +1,12 @@
+2010-03-04  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix incorrect setup of DateExtension.
+        https://bugs.webkit.org/show_bug.cgi?id=35710
+
+        * fast/dom/Window/resources/slow_unload_handler1.html:
+
 2010-03-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

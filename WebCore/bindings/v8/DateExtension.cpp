@@ -88,7 +88,7 @@ void DateExtension::setAllowSleep(bool allow)
         return;
 
     v8::Handle<v8::Value> argv[1];
-    argv[0] = v8::String::New(allow ? "false" : "true");
+    argv[0] = v8::Boolean::New(!allow);
     v8::Handle<v8::Function>::Cast(sleepFunctionHandle)->Call(v8::Object::New(), 1, argv);
 }
 
