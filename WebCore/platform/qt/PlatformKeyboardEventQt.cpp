@@ -127,6 +127,8 @@ static String keyIdentifierForQtKeyCode(int keyCode)
             // Standard says that DEL becomes U+007F.
         case Qt::Key_Delete:
             return "U+007F";
+        case Qt::Key_Backspace:
+            return "U+0008";
         case Qt::Key_Tab:
             return "U+0009";
         case Qt::Key_Backtab:

@@ -1,3 +1,18 @@
+2010-03-03  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make keyIdentifierForQtKeyCode return the unicode backspace value on Qt PlatformKeyboardEvent
+
+        LayoutTests:
+            fast/events/key-events-in-input-text.html
+            fast/events/special-key-events-in-input-text.html
+
+        [Qt] Return the unicode backspace value in keyIdentifierForQtKeyCode on Qt PlatformKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=35694
+
+        * platform/qt/Skipped:
+
 2010-03-03  Chad Faragher  <wyck@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1155,7 +1155,6 @@ fast/encoding/invalid-xml.html
 fast/events/access-key-self-destruct.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/key-events-in-input-button.html
-fast/events/key-events-in-input-text.html
 fast/forms/input-align-image.html
 fast/forms/input-align.html
 fast/forms/input-double-click-selection-gap-bug.html
@@ -4784,7 +4783,6 @@ fast/encoding/hebrew/8859-8-i.html
 fast/encoding/hebrew/logical.html
 fast/events/crash-on-mutate-during-drop.html
 fast/events/pointer-events-2.html
-fast/events/special-key-events-in-input-text.html
 fast/forms/option-mouseevents.html
 fast/forms/search-abs-pos-cancel-button.html
 fast/forms/text-control-intrinsic-widths.html
