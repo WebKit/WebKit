@@ -33,10 +33,12 @@
 
 namespace WebCore {
 
+class Document;
 class Frame;
 class KeyboardEvent;
 class Node;
 class Page;
+struct FocusCandidate;
 
 class FocusController : public Noncopyable {
 public:
@@ -58,6 +60,12 @@ public:
     bool isFocused() const { return m_isFocused; }
 
 private:
+    bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
+    bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
+
+    void findFocusableNodeInDirection(Document*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate&);
+    void deepFindFocusableNodeInDirection(Node*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate&);
+
     Page* m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isActive;

@@ -28,8 +28,13 @@
 
 namespace WebCore {
     enum FocusDirection {
-        FocusDirectionForward = 0,
-        FocusDirectionBackward
+        FocusDirectionNone = 0,
+        FocusDirectionForward,
+        FocusDirectionBackward,
+        FocusDirectionUp,
+        FocusDirectionDown,
+        FocusDirectionLeft,
+        FocusDirectionRight
     };
 }
 

@@ -20973,6 +20973,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\SpatialNavigation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SpatialNavigation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\UserContentURLPattern.cpp"
 				>
 			</File>

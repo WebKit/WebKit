@@ -773,6 +773,7 @@ SOURCES += \
     page/SecurityOrigin.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
+    page/SpatialNavigation.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
     page/XSSAuditor.cpp \
@@ -1479,6 +1480,7 @@ HEADERS += \
     page/Screen.h \
     page/SecurityOrigin.h \
     page/Settings.h \
+    page/SpatialNavigation.h \
     page/WindowFeatures.h \
     page/WorkerNavigator.h \
     page/XSSAuditor.h \

@@ -1,3 +1,78 @@
+2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser, Eric Seidel and Darin Adler.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+        Based on the initial work of Marco Barisione <marco.barisione@collabora.co.uk>
+
+        Extend keyboard navigation to allow directional navigation
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch implements the core logic of the 'Spatial Navigation' feature [1].
+        It improves the accessibility support of WebCore by extending the basic keyboard
+        navigation currently available (based on Tab forward and backward) with the
+        addition of a two-dimensional directional navigation by using Left, Right, Up and
+        Down arrow keys to move to the "nearest" element in the corresponding direction.
+
+        Highlights:
+        * Feature is turned off by default in Settings. Port specific APIs need to be added
+          for toggling it on/off.
+        * Only elements viewed in the current viewport can have focus move to it. If the
+          "nearest" is not in viewport dimensions, then a scroll-in-direction action is
+          performed.
+
+        Known issues (to be covered in follow-up bugs):
+        * Add port specific hooks to each DRT to enable/disable Spatial Navigation.
+        * Support for spatial navigation through form elements (<input>, <select>, etc)
+          is be added.
+        * Make navigation keys customizable. It currently works with arrows keys only
+          (up, down, right and left).
+        * Make it support modifiers (Alt, Ctrl and Shift).
+        * Improve support on scrollable content.
+
+        [1] http://en.wikipedia.org/wiki/Spatial_navigation
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::focusDirectionForKey):
+        (WebCore::EventHandler::defaultArrowEventHandler):
+        * page/EventHandler.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocus):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::advanceFocusDirectionally):
+        (WebCore::updateFocusCandidateIfCloser):
+        (WebCore::FocusController::findFocusableNodeInDirection):
+        (WebCore::FocusController::deepFindFocusableNodeInDirection):
+        * page/FocusController.h:
+        * page/FocusDirection.h:
+        (WebCore::):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSpatialNavigationEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::isSpatialNavigationEnabled):
+        * page/SpatialNavigation.cpp: Added.
+        (WebCore::distanceInDirection):
+        (WebCore::renderRectRelativeToRootDocument):
+        (WebCore::alignmentForRects):
+        (WebCore::isHorizontalMove):
+        (WebCore::areRectsFullyAligned):
+        (WebCore::areRectsPartiallyAligned):
+        (WebCore::spatialDistance):
+        (WebCore::isRectInDirection):
+        (WebCore::hasOffscreenRect):
+        (WebCore::scrollInDirection):
+        (WebCore::isInRootDocument):
+        (WebCore::deflateIfOverlapped):
+        * page/SpatialNavigation.h: Added.
+        (WebCore::):
+        (WebCore::FocusCandidate::FocusCandidate):
+
 2010-03-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

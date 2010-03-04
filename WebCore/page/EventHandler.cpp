@@ -2174,10 +2174,15 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
             return;
         if (event->keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);
+        else {
+            FocusDirection direction = focusDirectionForKey(event->keyIdentifier());
+            if (direction != FocusDirectionNone)
+                defaultArrowEventHandler(direction, event);
+        }
 
-       // provides KB navigation and selection for enhanced accessibility users
-       if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
-           handleKeyboardSelectionMovement(event);       
+        // provides KB navigation and selection for enhanced accessibility users
+        if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
+            handleKeyboardSelectionMovement(event);
     }
     if (event->type() == eventNames().keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
@@ -2186,6 +2191,27 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
         if (event->charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
+}
+
+FocusDirection EventHandler::focusDirectionForKey(const AtomicString& keyIdentifier) const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down"));
+    DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up"));
+    DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left"));
+    DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right"));
+
+    FocusDirection retVal = FocusDirectionNone;
+
+    if (keyIdentifier == Down)
+        retVal = FocusDirectionDown;
+    else if (keyIdentifier == Up)
+        retVal = FocusDirectionUp;
+    else if (keyIdentifier == Left)
+        retVal = FocusDirectionLeft;
+    else if (keyIdentifier == Right)
+        retVal = FocusDirectionRight;
+
+    return retVal;
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -2481,6 +2507,27 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
 }
 
 #endif
+
+void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent* event)
+{
+    if (event->ctrlKey() || event->metaKey() || event->altGraphKey() || event->shiftKey())
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (!page->settings() || !page->settings()->isSpatialNavigationEnabled())
+        return;
+
+    // Arrows and other possible directional navigation keys can be used in design
+    // mode editing.
+    if (m_frame->document()->inDesignMode())
+        return;
+
+    if (page->focusController()->advanceFocus(focusDirection, event))
+        event->setDefaultHandled();
+}
 
 void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 {

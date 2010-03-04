@@ -27,6 +27,7 @@
 #define EventHandler_h
 
 #include "DragActions.h"
+#include "FocusDirection.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
@@ -308,6 +309,7 @@ private:
 
     void defaultSpaceEventHandler(KeyboardEvent*);
     void defaultTabEventHandler(KeyboardEvent*);
+    void defaultArrowEventHandler(FocusDirection, KeyboardEvent*);
 
 #if ENABLE(DRAG_SUPPORT)
     void allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const;
@@ -329,6 +331,8 @@ private:
     void updateLastScrollbarUnderMouse(Scrollbar*, bool);
     
     void setFrameWasScrolledByUser();
+
+    FocusDirection focusDirectionForKey(const AtomicString&) const;
 
     bool capturesDragging() const { return m_capturesDragging; }
 

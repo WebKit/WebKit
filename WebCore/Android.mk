@@ -351,6 +351,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/Screen.cpp \
 	page/SecurityOrigin.cpp \
 	page/Settings.cpp \
+	page/SpatialNavigation.cpp \
 	page/UserContentURLPattern.cpp \
 	page/WindowFeatures.cpp \
 	page/WorkerNavigator.cpp \

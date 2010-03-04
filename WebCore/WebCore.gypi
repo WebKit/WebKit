@@ -1883,6 +1883,8 @@
             'page/SecurityOriginHash.h',
             'page/Settings.cpp',
             'page/Settings.h',
+            'page/SpatialNavigation.h',
+            'page/SpatialNavigation.cpp',
             'page/UserContentURLPattern.cpp',
             'page/UserContentURLPattern.h',
             'page/UserScript.h',
