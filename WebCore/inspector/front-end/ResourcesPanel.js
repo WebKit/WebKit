@@ -459,7 +459,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return !!WebInspector.resourceForURL(url);
+        return !!WebInspector.resourceForURL(url) && InspectorBackend.resourceTrackingEnabled();
     },
 
     showSourceLine: function(url, line)
@@ -700,6 +700,8 @@ WebInspector.ResourcesPanel.prototype = {
         if (InspectorBackend.resourceTrackingEnabled()) {
             this.largerResourcesButton.visible = false;
             this.sortingSelectElement.visible = false;
+            WebInspector.resources = {};
+            WebInspector.resourceURLMap = {};
             InspectorBackend.disableResourceTracking(true);
         } else {
             this.largerResourcesButton.visible = true;

@@ -63,6 +63,7 @@ var WebInspector = {
     // 4 - ?path
     // 5 - ?fragment
     URLRegExp: /^(http[s]?|file):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
+    GenericURLRegExp: /^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
 
     get platform()
     {
@@ -610,6 +611,45 @@ WebInspector.close = function(event)
     InspectorFrontendHost.closeWindow();
 }
 
+WebInspector.documentMouseOver = function(event)
+{
+    if (event.target.tagName !== "A")
+        return;
+
+    const anchor = event.target;
+    if (!anchor.hasStyleClass("webkit-html-external-link") && !anchor.hasStyleClass("webkit-html-resource-link"))
+        return;
+
+    if (WebInspector.canShowSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel) || WebInspector.ProfileType.URLRegExp.exec(anchor.href))
+        return;
+
+    WebInspector._showPopupTimer = setTimeout(WebInspector.showBadLinkPopup.bind(WebInspector, anchor), 250);
+}
+
+WebInspector.documentMouseOut = function(event)
+{
+    if (event.target.tagName !== "A")
+        return;
+
+    if (WebInspector._showPopupTimer) {
+        clearTimeout(WebInspector._showPopupTimer);
+        delete WebInspector._showPopupTimer;
+    } else if (WebInspector._badLinkPopup && !this._mouseOverPopup)
+        WebInspector._hidePopupTimer = setTimeout(WebInspector.hideBadLinkPopupIfNecessary.bind(WebInspector), 750);
+}
+
+WebInspector.hideBadLinkPopupIfNecessary = function()
+{
+    if (!this._badLinkPopup)
+        return;
+    this._badLinkPopup.hide();
+    delete this._badLinkPopup;
+    if (this._hidePopupTimer) {
+        clearTimeout(this._hidePopupTimer);
+        delete this._hidePopupTimer;
+    }
+}
+
 WebInspector.documentClick = function(event)
 {
     var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
@@ -629,11 +669,26 @@ WebInspector.documentClick = function(event)
             }
 
             WebInspector.showSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel);
-        } else {
-            var profileString = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
-            if (profileString)
-                WebInspector.showProfileForURL(anchor.href);
+            return;
         }
+
+        const profileMatch = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
+        if (profileMatch) {
+            WebInspector.showProfileForURL(anchor.href);
+            return;
+        }
+
+        const urlMatch = WebInspector.GenericURLRegExp.exec(anchor.href);
+        if (urlMatch && urlMatch[1] === "webkit-link-action") {
+            if (urlMatch[2] === "show-panel") {
+                const panel = urlMatch[4].substring(1);
+                if (WebInspector.panels[panel])
+                    WebInspector.currentPanel = WebInspector.panels[panel];
+            }
+            return;
+        }
+
+        WebInspector.showBadLinkPopup(anchor);
     }
 
     if (WebInspector.followLinkTimeout)
@@ -648,6 +703,61 @@ WebInspector.documentClick = function(event)
     }
 
     followLink();
+}
+
+WebInspector.showBadLinkPopup = function(anchor)
+{
+    this.hideBadLinkPopupIfNecessary();
+
+    // Show an info popup for a link that cannot be opened right away.
+    var popupContentElement = document.createElement("span");
+    popupContentElement.className = "monospace";
+
+    var message = WebInspector.UIString(
+        "Cannot open this link. Make sure that resource tracking is enabled in the %s panel.");
+    var anchorIndex = message.indexOf("%s");
+    if (anchorIndex < 0) {
+        var leftPart = message;
+        var rightPart = "";
+    } else {
+        var leftPart = message.substring(0, anchorIndex);
+        var panelAnchorElement = document.createElement("a");
+        panelAnchorElement.href = "webkit-link-action://show-panel/resources";
+        panelAnchorElement.textContent = WebInspector.UIString("Resources");
+        var rightPart = message.substring(anchorIndex + 2);
+    }
+    popupContentElement.appendChild(document.createTextNode(leftPart));
+    if (panelAnchorElement)
+        popupContentElement.appendChild(panelAnchorElement);
+    popupContentElement.appendChild(document.createTextNode(rightPart));
+    var popup = new WebInspector.Popover(popupContentElement);
+
+    if (panelAnchorElement)
+        panelAnchorElement.addEventListener("click", this.hideBadLinkPopupIfNecessary.bind(this));
+
+    function popupOverOut(event)
+    {
+        if (event.type === "mouseover") {
+            if (this._mouseOverPopup)
+                return; // Entered from child.
+            clearTimeout(this._hidePopupTimer);
+            delete this._hidePopupTimer;
+            this._mouseOverPopup = true;
+        } else {
+            const relTarget = event.relatedTarget;
+            if (relTarget && relTarget.enclosingNodeOrSelfWithClass("popover"))
+                return; // Leaving to child.
+            delete this._mouseOverPopup;
+            this.hideBadLinkPopupIfNecessary();
+        }
+    }
+    const boundHandler = popupOverOut.bind(this);
+    popupContentElement.addEventListener("mouseover", boundHandler, true);
+    popupContentElement.addEventListener("mouseout", boundHandler, true);
+
+    popup.show(anchor);
+    this._badLinkPopup = popup;
+    delete this._showPopupTimer;
 }
 
 WebInspector.documentKeyDown = function(event)
@@ -1594,6 +1704,8 @@ WebInspector.addMainEventListeners = function(doc)
     doc.defaultView.addEventListener("focus", this.windowFocused.bind(this), false);
     doc.defaultView.addEventListener("blur", this.windowBlurred.bind(this), false);
     doc.addEventListener("click", this.documentClick.bind(this), true);
+    doc.addEventListener("mouseover", this.documentMouseOver.bind(this), true);
+    doc.addEventListener("mouseout", this.documentMouseOut.bind(this), true);
 }
 
 WebInspector._searchFieldManualFocus = function(event)
