@@ -392,6 +392,9 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     // of the DRT.
     m_controller->reset();
 
+    // reset mouse clicks counter
+    m_eventSender->resetClickCount();
+
     closeRemainingWindows();
 
     m_page->resetSettings();

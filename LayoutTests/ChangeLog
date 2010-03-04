@@ -1,3 +1,17 @@
+2010-03-04  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make Qt DumpRenderTree EventSender able to send double click events
+
+        LayoutTests:
+            fast/events/dblclick-addEventListener.html
+
+        [Qt] DRT: Send double click event from EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=35255
+
+        * platform/qt/Skipped:
+
 2010-03-04  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
