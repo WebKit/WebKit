@@ -35,7 +35,6 @@
 #include "ChangeVersionWrapper.h"
 #include "CString.h"
 #include "DatabaseAuthorizer.h"
-#include "DatabaseCallback.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
