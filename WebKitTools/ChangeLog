@@ -1,3 +1,11 @@
+2010-03-04  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable to use built-product-archive on Qt platform.
+
+        * BuildSlaveSupport/built-product-archive:
+
 2010-03-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Simon Hausmann.

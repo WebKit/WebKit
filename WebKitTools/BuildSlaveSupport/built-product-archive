@@ -48,7 +48,7 @@ def main():
 
 
 def archiveBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win')
+    assert platform in ('mac', 'win','qt')
 
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
 
@@ -81,8 +81,30 @@ def archiveBuiltProduct(configuration, platform):
 
         shutil.rmtree(thinDirectory)
 
+    elif platform == 'qt':
+        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+
+        if os.path.isdir(thinDirectory):
+            shutil.rmtree(thinDirectory)
+        os.mkdir(thinDirectory)
+
+        for dirname in ["bin", "lib", "JavaScriptCore"]:
+            fromDir = os.path.join(configurationBuildDirectory, dirname)
+            toDir = os.path.join(thinDirectory, dirname)
+            if subprocess.call(["cp", "-R", fromDir, toDir]):
+                return 1
+
+        for root, dirs, files in os.walk(thinDirectory, topdown=False):
+            for name in files:
+                if name.endswith(".o"):
+                    os.remove(os.path.join(root, name))
+
+        if subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=thinDirectory):
+            return 1
+
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win')
+    assert platform in ('mac', 'win','qt')
 
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
 
@@ -112,7 +134,15 @@ def extractBuiltProduct(configuration, platform):
         if subprocess.call(["unzip", "-o", archiveFile], cwd=buildDirectory):
             return 1
 
-        
+    elif platform == 'qt':
+        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+
+        if os.path.isdir(configurationBuildDirectory):
+            shutil.rmtree(configurationBuildDirectory)
+
+        if subprocess.call(["unzip", "-o", archiveFile, "-d", configurationBuildDirectory], cwd=buildDirectory):
+            return 1
+        os.unlink(archiveFile)
 
 if __name__ == '__main__':
     sys.exit(main())
