@@ -264,7 +264,9 @@ void Settings::setPluginsEnabled(bool arePluginsEnabled)
 void Settings::setDatabasesEnabled(bool databasesEnabled)
 {
     m_databasesEnabled = databasesEnabled;
+#if ENABLE(DATABASE)
     Database::setIsAvailable(databasesEnabled);
+#endif
 }
 
 void Settings::setLocalStorageEnabled(bool localStorageEnabled)

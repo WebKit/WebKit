@@ -1,3 +1,14 @@
+2010-03-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Build fix after r55452.
+
+        No new tests, this is a build fix.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setDatabasesEnabled):
+
 2010-03-03  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
