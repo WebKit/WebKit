@@ -1264,6 +1264,8 @@
 		75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */; };
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
+		7637C541112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */; };
+		7637C543112E7B7E003D6CDC /* WebSocketHandshakeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */; };
 		7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BACE106C2DCA007B0823 /* HaltablePlugin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7693BACF106C2DCA007B0823 /* PluginHalter.cpp */; };
 		7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD0106C2DCA007B0823 /* PluginHalter.h */; };
@@ -6698,6 +6700,8 @@
 		75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEvent.h; sourceTree = "<group>"; };
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
+		7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketHandshakeRequest.cpp; sourceTree = "<group>"; };
+		7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshakeRequest.h; sourceTree = "<group>"; };
 		7693BACE106C2DCA007B0823 /* HaltablePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HaltablePlugin.h; sourceTree = "<group>"; };
 		7693BACF106C2DCA007B0823 /* PluginHalter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginHalter.cpp; sourceTree = "<group>"; };
 		7693BAD0106C2DCA007B0823 /* PluginHalter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalter.h; sourceTree = "<group>"; };
@@ -11179,6 +11183,8 @@
 		518A34BD1026C831001B6896 /* websockets */ = {
 			isa = PBXGroup;
 			children = (
+				7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */,
+				7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */,
 				5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */,
 				5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */,
 				5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */,
@@ -18598,6 +18604,7 @@
 				0BC2C7781134A8FC000B2F61 /* CanvasSurface.h in Headers */,
 				E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				7637C543112E7B7E003D6CDC /* WebSocketHandshakeRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20787,6 +20794,7 @@
 				E1698264113467F300894115 /* JavaRuntimeObject.cpp in Sources */,
 				596229781133EFD700DC4CBB /* GeolocationPositionCache.cpp in Sources */,
 				0BC2C7771134A8FC000B2F61 /* CanvasSurface.cpp in Sources */,
+				7637C541112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

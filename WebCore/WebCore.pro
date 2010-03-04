@@ -2673,24 +2673,35 @@ SOURCES += \
 }
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
-HEADERS += \
-    platform/network/qt/SocketStreamHandlePrivate.h \
+    HEADERS += \
+        websockets/ThreadableWebSocketChannel.h \
+        websockets/ThreadableWebSocketChannelClientWrapper.h \
+        websockets/WebSocket.h \
+        websockets/WebSocketChannel.h \
+        websockets/WebSocketChannelClient.h \
+        websockets/WebSocketHandshake.h \
+        websockets/WebSocketHandshakeRequest.h \
+        platform/network/qt/SocketStreamHandlePrivate.h
 
-SOURCES += \
-    websockets/WebSocket.cpp \
-    websockets/WebSocketChannel.cpp \
-    websockets/WebSocketHandshake.cpp \
-    websockets/ThreadableWebSocketChannel.cpp \
-    platform/network/SocketStreamErrorBase.cpp \
-    platform/network/SocketStreamHandleBase.cpp \
-    platform/network/qt/SocketStreamHandleQt.cpp \
-    bindings/js/JSWebSocketCustom.cpp \
-    bindings/js/JSWebSocketConstructor.cpp
+    SOURCES += \
+        websockets/WebSocket.cpp \
+        websockets/WebSocketChannel.cpp \
+        websockets/WebSocketHandshake.cpp \
+        websockets/WebSocketHandshakeRequest.cpp \
+        websockets/ThreadableWebSocketChannel.cpp \
+        platform/network/SocketStreamErrorBase.cpp \
+        platform/network/SocketStreamHandleBase.cpp \
+        platform/network/qt/SocketStreamHandleQt.cpp \
+        bindings/js/JSWebSocketCustom.cpp \
+        bindings/js/JSWebSocketConstructor.cpp
 
-contains(DEFINES, ENABLE_WORKERS=1) {
-SOURCES += \
-    websockets/WorkerThreadableWebSocketChannel.cpp
-}
+    contains(DEFINES, ENABLE_WORKERS=1) {
+        HEADERS += \
+            websockets/WorkerThreadableWebSocketChannel.h
+
+        SOURCES += \
+            websockets/WorkerThreadableWebSocketChannel.cpp
+    }
 }
 
 contains(DEFINES, ENABLE_3D_CANVAS=1) {

@@ -3624,6 +3624,8 @@
             'websockets/WebSocketChannelClient.h',
             'websockets/WebSocketHandshake.cpp',
             'websockets/WebSocketHandshake.h',
+            'websockets/WebSocketHandshakeRequest.cpp',
+            'websockets/WebSocketHandshakeRequest.h',
             'websockets/WorkerThreadableWebSocketChannel.cpp',
             'websockets/WorkerThreadableWebSocketChannel.h',
             'workers/AbstractWorker.cpp',

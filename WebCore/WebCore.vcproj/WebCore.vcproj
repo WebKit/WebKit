@@ -27049,19 +27049,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\break_lines.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\break_lines.h"
-				>
-			</File>
-                        <File
 				RelativePath="..\rendering\BidiRun.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\rendering\BidiRun.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\break_lines.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\break_lines.h"
 				>
 			</File>
 			<File
@@ -27120,7 +27120,7 @@
 				RelativePath="..\rendering\InlineFlowBox.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\rendering\InlineIterator.h"
 				>
 			</File>
@@ -34256,6 +34256,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JavaScriptProfile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JavaScriptProfile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JavaScriptProfileNode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JavaScriptProfileNode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSAbstractWorkerCustom.cpp"
 					>
 					<FileConfiguration
@@ -39944,22 +39960,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JavaScriptProfile.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfile.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfileNode.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JavaScriptProfileNode.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\ScheduledAction.cpp"
 					>
 					<FileConfiguration
@@ -43056,11 +43056,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TextViewer.js"
+					RelativePath="..\inspector\front-end\textViewer.css"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\textViewer.css"
+					RelativePath="..\inspector\front-end\TextViewer.js"
 					>
 				</File>
 				<File
@@ -43486,6 +43486,14 @@
 			</File>
 			<File
 				RelativePath="..\websockets\WebSocketHandshake.h"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketHandshakeRequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\websockets\WebSocketHandshakeRequest.h"
 				>
 			</File>
 			<File
