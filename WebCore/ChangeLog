@@ -1,3 +1,18 @@
+2010-03-04  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix the case where we do a same document navigation, scroll,
+        then repeat the same document navigation.  Currently, the second
+        navigation does nothing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35547
+
+        Test: fast/loader/repeat-same-document-navigation.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument): Call scrollToFragment() whether or not the hash changed.
+
 2010-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix.

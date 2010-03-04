@@ -1757,11 +1757,11 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
     // It's important to model this as a load that starts and immediately finishes.
     // Otherwise, the parent frame may think we never finished loading.
     started();
-    
-    if (hashChange) {
-        if (FrameView* view = m_frame->view())
-            view->scrollToFragment(m_URL);
-    }
+
+    // We need to scroll to the fragment whether or not a hash change occurred, since
+    // the user might have scrolled since the previous navigation.
+    if (FrameView* view = m_frame->view())
+        view->scrollToFragment(m_URL);
     
     m_isComplete = false;
     checkCompleted();
