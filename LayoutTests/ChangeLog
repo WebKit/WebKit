@@ -1,3 +1,13 @@
+2010-03-03  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Making database-lock-after-reload.html a bit more robust and
+        cleaning up some style issues.
+
+        * storage/database-lock-after-reload.html:
+        * storage/resources/database-lock-after-reload-2.html:
+
 2010-03-03  David Levin  <levin@chromium.org>
 
         No review, rolling out r55474.

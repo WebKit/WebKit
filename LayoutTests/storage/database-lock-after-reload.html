@@ -1,8 +1,6 @@
 <html>
 <head>
 <script>
-var database;
-
 function log(message)
 {
     document.getElementById("console").innerHTML += message + "<br>";
@@ -15,7 +13,7 @@ function finishTest()
         layoutTestController.notifyDone();
 }
 
-function errorFunction(tx, error)
+function errorFunction(error)
 {
     log("Test failed - " + error.message);
     finishTest();
@@ -23,16 +21,16 @@ function errorFunction(tx, error)
 
 function addData(db)
 {
-    db.transaction(function(tx) { 
+    db.transaction(function(tx) {
         log("Inserting some data");
-        // Insert a large amount of data that will take a little while to run. Schedule a timout to run that will load a new page
-        // whilst the transaction is still in progress, interrupting the transaction. This should not leave the database locked and on
-        // the next page we should be able to insert some more data.
-        tx.executeSql("INSERT INTO DataTest (testData) VALUES (ZEROBLOB(524200))", [], function(tx, result) { }, errorFunction);
-        location.href = "./resources/database-lock-after-reload-2.html";
-    }, errorFunction, function() { 
-        finishTest();
-    });
+        // Load a new page while the transaction is still in progress, interrupting the transaction.
+        // This should not leave the database locked and on the next page we should be able to insert
+        // some more data.
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (ZEROBLOB(524200))", [],
+            function(tx, result) { location.href = "./resources/database-lock-after-reload-2.html"; },
+            function(tx, error) { errorFunction(error); });
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (ZEROBLOB(524200))");
+    }, errorFunction, function() { finishTest(); });
 }
 
 function runTest()
@@ -42,20 +40,20 @@ function runTest()
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }
-    
+
+    var database;
     try {
         database = openDatabase("DatabaseLockTest", "1.0", "Test for database locking", 5242880);
     } catch (e) {
         log("Error - could not open database");
         finishTest();
     }
-    
+
     database.transaction(function(tx) {
         log("Adding a table");
-        tx.executeSql("CREATE TABLE DataTest (testData)", [], function(tx, result) { }, errorFunction); 
-    }, errorFunction, function() { 
-        addData(database); 
-    });
+        tx.executeSql("CREATE TABLE DataTest (testData)", [], function(tx, result) { },
+            function(tx, error) { errorFunction(error); });
+    }, errorFunction, function() { addData(database); });
 }
 
 </script>

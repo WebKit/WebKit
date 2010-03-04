@@ -1,8 +1,6 @@
 <html>
 <head>
 <script>
-var database;
-
 function log(message)
 {
     document.getElementById("console").innerHTML += message + "<br>";
@@ -15,7 +13,7 @@ function finishTest()
         layoutTestController.notifyDone();
 }
 
-function errorFunction(tx, error)
+function errorFunction(error)
 {
     log("Test failed - " + error.message);
     finishTest();
@@ -23,13 +21,11 @@ function errorFunction(tx, error)
 
 function addData(db)
 {
-    db.transaction(function(tx) { 
+    db.transaction(function(tx) {
         log("Inserting some data");
-
-        tx.executeSql("INSERT INTO DataTest (testData) VALUES (?)", ["A"], function(tx, result) { }, errorFunction);
-    }, function(){}, function() { 
-        finishTest();
-    });
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (?)", ["A"],
+            function(tx, result) { }, function(tx, error) { errorFunction(error); });
+    }, function() { }, function() { finishTest(); });
 }
 
 function runTest()
@@ -38,9 +34,9 @@ function runTest()
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }
-    
+
     try {
-        database = openDatabase("DatabaseLockTest", "1.0", "Test for database locking", 5242880);
+        var database = openDatabase("DatabaseLockTest", "1.0", "Test for database locking", 5242880);
         addData(database);
     } catch(e) {
         log("Error - could not open database");
