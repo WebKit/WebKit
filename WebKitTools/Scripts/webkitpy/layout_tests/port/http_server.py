@@ -201,7 +201,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                 env['PATH'])
 
         if sys.platform == 'win32' and self._register_cygwin:
-            setup_mount = port.path_from_chromium_base('third_party',
+            setup_mount = self._port_obj.path_from_chromium_base('third_party',
                 'cygwin', 'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 

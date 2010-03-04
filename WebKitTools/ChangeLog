@@ -1,3 +1,12 @@
+2010-03-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix dangling reference to "port" instead of "self._port_obj" that
+        was preventing the http_server from starting on Windows.
+
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+
 2010-03-04  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Simon Hausmann.
