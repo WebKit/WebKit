@@ -32,8 +32,6 @@ regex = ".*\sclass\sQWEBKIT_EXPORT\s(\w+)\s(.*)"
 
 for(HEADER, WEBKIT_API_HEADERS) {
     # 1. Append to QtWebKit header that includes all other header files
-
-    qtheader_module.depends += $$HEADER
     # Quotes need to be escaped once more when placed in eval()
     eval(qtheader_module.commands += echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$basename(HEADER)\\\"$${DOUBLE_ESCAPED_QUOTE} >> $${qtheader_module.target} &&)
 
@@ -53,6 +51,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
     eval($${HEADER_TARGET}.commands = echo $${DOUBLE_ESCAPED_QUOTE}\$${LITERAL_HASH}include \\\"$$PATH_TO_HEADER\\\"$${DOUBLE_ESCAPED_QUOTE} > $$eval($${HEADER_TARGET}.target))
 
     QMAKE_EXTRA_TARGETS += $$HEADER_TARGET
+    qtheader_module.depends += $$eval($${HEADER_TARGET}.target)
 
     # 3. Extract class names of exported classes from the headers and generate
     # the class name header files
@@ -97,7 +96,7 @@ qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}endif // QT_QTWEBKIT_M
 QMAKE_EXTRA_TARGETS += qtheader_module
 
 qtheader_pri.target = $${DESTDIR}/classheaders.pri
-qtheader_pri.depends = $${WEBKIT_API_HEADERS} $${_PRO_FILE_}
+qtheader_pri.depends += $${_PRO_FILE_}
 qtheader_pri.commands = echo $${QUOTE}WEBKIT_CLASS_HEADERS = $${WEBKIT_CLASS_HEADERS}$${QUOTE} > $${qtheader_pri.target}
 QMAKE_EXTRA_TARGETS += qtheader_pri
 

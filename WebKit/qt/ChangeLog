@@ -1,3 +1,18 @@
+2010-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix generation of forwarding headers
+
+        The dependencies were a bit wrong, so we ended up not generating
+        forwarding headers for qwebkitversion.h and qwebkitglobal.h
+
+        The forwarding headers are now the only targets depending on the
+        real headers. All other targets either depend on the generated
+        class headers, or the forwarding headers.
+
+        * Api/DerivedSources.pro:
+
 2010-03-02  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
