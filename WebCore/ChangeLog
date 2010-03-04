@@ -1,3 +1,33 @@
+2010-03-02  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a bug that could lead to a crash. Some parts of
+        SQLTransaction::checkAndHandleClosedDatabase() should only be run
+        when that method is invoked on the DB thread.
+
+        We cannot test this fix with a test, because the crash happens
+        only when all of the following conditions are met:
+        1. A database is closing.
+        2. A transaction on that database is in progress.
+        3. The transaction is in a state where a statement/transaction
+        success/error callback needs to be invoked (so there's a task for
+        this transaction pending on the main thread).
+        4. The DB thread finished processing all its tasks and called
+        SQLTransactionCoordinator::shutdown() before the main thread go to
+        that task.
+
+        The closest thing we have to a test is running
+        LayoutTests/storage/database-lock-after-reload.html 1000 times in
+        a row. Without the patch, the probability of a crash happening in
+        one of the runs is very high. With the patch, the test should
+        reliably run 1000 times in a row without a single crash.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35624
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+
 2010-03-03  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Mark Rowe.

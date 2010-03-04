@@ -158,6 +158,10 @@ void SQLTransaction::checkAndHandleClosedDatabase()
     m_statementQueue.clear();
     m_nextStep = 0;
 
+    // The next steps should be executed only if we're on the DB thread.
+    if (currentThread() != database()->scriptExecutionContext()->databaseThread()->getThreadID())
+        return;
+
     // The current SQLite transaction should be stopped, as well
     if (m_sqliteTransaction) {
         m_sqliteTransaction->stop();
