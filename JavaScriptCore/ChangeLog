@@ -1,3 +1,9 @@
+2010-03-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+
 2010-03-03  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.
