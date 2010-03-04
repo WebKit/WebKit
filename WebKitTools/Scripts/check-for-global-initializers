@@ -37,6 +37,7 @@ use strict;
 use File::Basename;
 
 sub touch($);
+sub demangle($);
 
 my $arch = $ENV{'CURRENT_ARCH'};
 my $configuration = $ENV{'CONFIGURATION'};
@@ -78,9 +79,14 @@ for my $file (sort @files) {
         next;
     }
     my $sawGlobal = 0;
+    my @globals;
     while (<NM>) {
         if (/^STDOUT:/) {
-            $sawGlobal = 1 if /__GLOBAL__I/;
+            my $line = $_;
+            if ($line =~ /__GLOBAL__I(.+)$/) {
+                $sawGlobal = 1;
+                push(@globals, demangle($1));
+            }
         } else {
             print STDERR if $_ ne "nm: no name list\n";
         }
@@ -112,6 +118,10 @@ for my $file (sort @files) {
                 next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "SVGElementInstance.o";
                 next if $shortName eq "XMLHttpRequest.o";
+
+                #FIXME: check to see if these are legit.
+                next if $shortName eq "FocusController.o";
+                next if $shortName eq "SpatialNavigation.o";
             }
             if ($target eq "WebKit") {
                 next if $shortName eq "HostedNetscapePluginStream.o";
@@ -120,6 +130,7 @@ for my $file (sort @files) {
         }
 
         print "ERROR: $shortName has a global initializer in it! ($file)\n";
+        print "ERROR: @globals\n";
         $sawError = 1;
     }
 }
@@ -138,3 +149,17 @@ sub touch($)
     open(TOUCH, ">", $path) or die "$!";
     close(TOUCH);
 }
+
+sub demangle($)
+{
+    my ($symbol) = @_;
+    if (!open FILT, "c++filt $symbol |") {
+        print "ERROR: Could not open c++filt\n";
+        return;
+    }
+    my $result = <FILT>;
+    close FILT;
+    chomp $result;
+    return $result;
+}
+
