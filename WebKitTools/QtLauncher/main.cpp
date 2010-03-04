@@ -127,19 +127,19 @@ private:
     void createChrome();
 
 private:
-    QVector<int> zoomLevels;
-    int currentZoom;
+    QVector<int> m_zoomLevels;
+    int m_currentZoom;
 
     QWidget* m_view;
-    WebInspector* inspector;
+    WebInspector* m_inspector;
 
-    QAction* formatMenuAction;
-    QAction* flipAnimated;
-    QAction* flipYAnimated;
+    QAction* m_formatMenuAction;
+    QAction* m_flipAnimated;
+    QAction* m_flipYAnimated;
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    QList<QTouchEvent::TouchPoint> touchPoints;
-    bool touchMocking;
+    QList<QTouchEvent::TouchPoint> m_touchPoints;
+    bool m_touchMocking;
 #endif
 
     void init(bool useGraphicsView = false);
@@ -149,12 +149,12 @@ private:
 
 LauncherWindow::LauncherWindow(LauncherWindow* other, bool shareScene)
     : MainWindow()
-    , currentZoom(100)
+    , m_currentZoom(100)
     , m_view(0)
-    , inspector(0)
-    , formatMenuAction(0)
-    , flipAnimated(0)
-    , flipYAnimated(0)
+    , m_inspector(0)
+    , m_formatMenuAction(0)
+    , m_flipAnimated(0)
+    , m_flipYAnimated(0)
 {
     if (other) {
         init(other->isGraphicsBased());
@@ -197,15 +197,15 @@ void LauncherWindow::init(bool useGraphicsView)
     if (!gInspectorUrl.isEmpty())
       page()->settings()->setInspectorUrl(gInspectorUrl);
 
-    inspector = new WebInspector(splitter);
-    inspector->setPage(page());
-    inspector->hide();
-    connect(this, SIGNAL(destroyed()), inspector, SLOT(deleteLater()));
+    m_inspector = new WebInspector(splitter);
+    m_inspector->setPage(page());
+    m_inspector->hide();
+    connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));
 
     // the zoom values are chosen to be like in Mozilla Firefox 3
-    zoomLevels << 30 << 50 << 67 << 80 << 90;
-    zoomLevels << 100;
-    zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
+    m_zoomLevels << 30 << 50 << 67 << 80 << 90;
+    m_zoomLevels << 100;
+    m_zoomLevels << 110 << 120 << 133 << 150 << 170 << 200 << 240 << 300;
 
     grabZoomKeys(true);
 }
@@ -282,31 +282,31 @@ void LauncherWindow::grabZoomKeys(bool grab)
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 void LauncherWindow::sendTouchEvent()
 {
-    if (touchPoints.isEmpty())
+    if (m_touchPoints.isEmpty())
         return;
 
     QEvent::Type type = QEvent::TouchUpdate;
-    if (touchPoints.size() == 1) {
-        if (touchPoints[0].state() == Qt::TouchPointReleased)
+    if (m_touchPoints.size() == 1) {
+        if (m_touchPoints[0].state() == Qt::TouchPointReleased)
             type = QEvent::TouchEnd;
-        else if (touchPoints[0].state() == Qt::TouchPointPressed)
+        else if (m_touchPoints[0].state() == Qt::TouchPointPressed)
             type = QEvent::TouchBegin;
     }
 
     QTouchEvent touchEv(type);
-    touchEv.setTouchPoints(touchPoints);
+    touchEv.setTouchPoints(m_touchPoints);
     QCoreApplication::sendEvent(page(), &touchEv);
 
     // After sending the event, remove all touchpoints that were released
-    if (touchPoints[0].state() == Qt::TouchPointReleased)
-        touchPoints.removeAt(0);
-    if (touchPoints.size() > 1 && touchPoints[1].state() == Qt::TouchPointReleased)
-        touchPoints.removeAt(1);
+    if (m_touchPoints[0].state() == Qt::TouchPointReleased)
+        m_touchPoints.removeAt(0);
+    if (m_touchPoints.size() > 1 && m_touchPoints[1].state() == Qt::TouchPointReleased)
+        m_touchPoints.removeAt(1);
 }
 
 bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
 {
-    if (!touchMocking || obj != m_view)
+    if (!m_touchMocking || obj != m_view)
         return QObject::eventFilter(obj, event);
 
     if (event->type() == QEvent::MouseButtonPress
@@ -333,12 +333,12 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
         touchPoint.setPressure(1);
 
         // If the point already exists, update it. Otherwise create it.
-        if (touchPoints.size() > 0 && !touchPoints[0].id())
-            touchPoints[0] = touchPoint;
-        else if (touchPoints.size() > 1 && !touchPoints[1].id())
-            touchPoints[1] = touchPoint;
+        if (m_touchPoints.size() > 0 && !m_touchPoints[0].id())
+            m_touchPoints[0] = touchPoint;
+        else if (m_touchPoints.size() > 1 && !m_touchPoints[1].id())
+            m_touchPoints[1] = touchPoint;
         else
-            touchPoints.append(touchPoint);
+            m_touchPoints.append(touchPoint);
 
         sendTouchEvent();
     } else if (event->type() == QEvent::KeyPress
@@ -346,12 +346,12 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
         && static_cast<QKeyEvent*>(event)->modifiers() == Qt::ControlModifier) {
 
         // If the keyboard point is already pressed, release it.
-        // Otherwise create it and append to touchPoints.
-        if (touchPoints.size() > 0 && touchPoints[0].id() == 1) {
-            touchPoints[0].setState(Qt::TouchPointReleased);
+        // Otherwise create it and append to m_touchPoints.
+        if (m_touchPoints.size() > 0 && m_touchPoints[0].id() == 1) {
+            m_touchPoints[0].setState(Qt::TouchPointReleased);
             sendTouchEvent();
-        } else if (touchPoints.size() > 1 && touchPoints[1].id() == 1) {
-            touchPoints[1].setState(Qt::TouchPointReleased);
+        } else if (m_touchPoints.size() > 1 && m_touchPoints[1].id() == 1) {
+            m_touchPoints[1].setState(Qt::TouchPointReleased);
             sendTouchEvent();
         } else {
             QTouchEvent::TouchPoint touchPoint;
@@ -360,11 +360,11 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
             touchPoint.setScreenPos(QCursor::pos());
             touchPoint.setPos(m_view->mapFromGlobal(QCursor::pos()));
             touchPoint.setPressure(1);
-            touchPoints.append(touchPoint);
+            m_touchPoints.append(touchPoint);
             sendTouchEvent();
 
             // After sending the event, change the touchpoint state to stationary
-            touchPoints.last().setState(Qt::TouchPointStationary);
+            m_touchPoints.last().setState(Qt::TouchPointStationary);
         }
     }
     return false;
@@ -396,27 +396,27 @@ void LauncherWindow::showLinkHover(const QString &link, const QString &toolTip)
 
 void LauncherWindow::zoomIn()
 {
-    int i = zoomLevels.indexOf(currentZoom);
+    int i = m_zoomLevels.indexOf(m_currentZoom);
     Q_ASSERT(i >= 0);
-    if (i < zoomLevels.count() - 1)
-        currentZoom = zoomLevels[i + 1];
+    if (i < m_zoomLevels.count() - 1)
+        m_currentZoom = m_zoomLevels[i + 1];
 
-    page()->mainFrame()->setZoomFactor(qreal(currentZoom) / 100.0);
+    page()->mainFrame()->setZoomFactor(qreal(m_currentZoom) / 100.0);
 }
 
 void LauncherWindow::zoomOut()
 {
-    int i = zoomLevels.indexOf(currentZoom);
+    int i = m_zoomLevels.indexOf(m_currentZoom);
     Q_ASSERT(i >= 0);
     if (i > 0)
-        currentZoom = zoomLevels[i - 1];
+        m_currentZoom = m_zoomLevels[i - 1];
 
-    page()->mainFrame()->setZoomFactor(qreal(currentZoom) / 100.0);
+    page()->mainFrame()->setZoomFactor(qreal(m_currentZoom) / 100.0);
 }
 
 void LauncherWindow::resetZoom()
 {
-    currentZoom = 100;
+    m_currentZoom = 100;
     page()->mainFrame()->setZoomFactor(1.0);
 }
 
@@ -454,7 +454,7 @@ void LauncherWindow::screenshot()
 void LauncherWindow::setEditable(bool on)
 {
     page()->setContentEditable(on);
-    formatMenuAction->setVisible(on);
+    m_formatMenuAction->setVisible(on);
 }
 
 /*
@@ -493,7 +493,7 @@ void LauncherWindow::selectElements()
 void LauncherWindow::setTouchMocking(bool on)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    touchMocking = on;
+    m_touchMocking = on;
 #endif
 }
 
@@ -521,18 +521,18 @@ void LauncherWindow::initializeView(bool useGraphicsView)
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
         view->setPage(page());
 
-        if (flipAnimated)
-            connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        if (m_flipAnimated)
+            connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
 
-        if (flipYAnimated)
-            connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+        if (m_flipYAnimated)
+            connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
 
         m_view = view;
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     m_view->installEventFilter(this);
-    touchMocking = false;
+    m_touchMocking = false;
 #endif
 }
 
@@ -586,8 +586,8 @@ void LauncherWindow::createChrome()
     // viewMenu->addAction("Dump plugins", this, SLOT(dumpPlugins()));
 
     QMenu* formatMenu = new QMenu("F&ormat", this);
-    formatMenuAction = menuBar()->addMenu(formatMenu);
-    formatMenuAction->setVisible(false);
+    m_formatMenuAction = menuBar()->addMenu(formatMenu);
+    m_formatMenuAction->setVisible(false);
     formatMenu->addAction(page()->action(QWebPage::ToggleBold));
     formatMenu->addAction(page()->action(QWebPage::ToggleItalic));
     formatMenu->addAction(page()->action(QWebPage::ToggleUnderline));
@@ -602,9 +602,9 @@ void LauncherWindow::createChrome()
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
-    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
+    QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
     showInspectorAction->setCheckable(true);
-    showInspectorAction->connect(inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
+    showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     QAction* touchMockAction = toolsMenu->addAction("Toggle multitouch mocking", this, SLOT(setTouchMocking(bool)));
@@ -631,18 +631,18 @@ void LauncherWindow::createChrome()
 
     graphicsViewMenu->addSeparator();
 
-    flipAnimated = graphicsViewMenu->addAction("Animated Flip");
-    flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    flipAnimated->setEnabled(isGraphicsBased());
+    m_flipAnimated = graphicsViewMenu->addAction("Animated Flip");
+    m_flipAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipAnimated->setEnabled(isGraphicsBased());
 
-    flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
-    flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    flipYAnimated->setEnabled(isGraphicsBased());
+    m_flipYAnimated = graphicsViewMenu->addAction("Animated Y-Flip");
+    m_flipYAnimated->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    m_flipYAnimated->setEnabled(isGraphicsBased());
 
     if (isGraphicsBased()) {
         WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
-        connect(flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
-        connect(flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
+        connect(m_flipAnimated, SIGNAL(triggered()), view, SLOT(animatedFlip()));
+        connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
     }
 
     graphicsViewMenu->addSeparator();
