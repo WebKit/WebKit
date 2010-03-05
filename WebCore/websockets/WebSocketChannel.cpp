@@ -199,6 +199,9 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             while (p < end) {
                 if (length > std::numeric_limits<int>::max() / 128) {
                     LOG(Network, "frame length overflow %d", length);
+                    m_client->didReceiveMessageError();
+                    if (!m_client)
+                        return;
                     handle->close();
                     return;
                 }
@@ -211,6 +214,9 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             if (p + length < end) {
                 p += length;
                 nextFrame = p;
+                m_client->didReceiveMessageError();
+                if (!m_client)
+                    return;
             } else
                 break;
         } else {
@@ -220,6 +226,8 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             if (p < end && *p == '\xff') {
                 if (frameByte == 0x00)
                     m_client->didReceiveMessage(String::fromUTF8(msgStart, p - msgStart));
+                else
+                    m_client->didReceiveMessageError();
                 if (!m_client)
                     return;
                 ++p;

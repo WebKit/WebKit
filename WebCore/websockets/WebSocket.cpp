@@ -227,10 +227,11 @@ void WebSocket::stop()
 void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect", this);
-    if (m_state != CONNECTING || !scriptExecutionContext()) {
+    if (m_state != CONNECTING) {
         didClose(0);
         return;
     }
+    ASSERT(scriptExecutionContext());
     m_state = OPEN;
     dispatchEvent(Event::create(eventNames().openEvent, false, false));
 }
@@ -238,11 +239,21 @@ void WebSocket::didConnect()
 void WebSocket::didReceiveMessage(const String& msg)
 {
     LOG(Network, "WebSocket %p didReceiveMessage %s", this, msg.utf8().data());
-    if (m_state != OPEN || !scriptExecutionContext())
+    if (m_state != OPEN)
         return;
+    ASSERT(scriptExecutionContext());
     RefPtr<MessageEvent> evt = MessageEvent::create();
     evt->initMessageEvent(eventNames().messageEvent, false, false, SerializedScriptValue::create(msg), "", "", 0, 0);
     dispatchEvent(evt);
+}
+
+void WebSocket::didReceiveMessageError()
+{
+    LOG(Network, "WebSocket %p didReceiveErrorMessage", this);
+    if (m_state != OPEN)
+        return;
+    ASSERT(scriptExecutionContext());
+    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
 void WebSocket::didClose(unsigned long unhandledBufferedAmount)
@@ -250,6 +261,7 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount)
     LOG(Network, "WebSocket %p didClose", this);
     m_state = CLOSED;
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
+    ASSERT(scriptExecutionContext());
     dispatchEvent(Event::create(eventNames().closeEvent, false, false));
     m_channel = 0;
     if (hasPendingActivity())

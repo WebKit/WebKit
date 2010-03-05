@@ -76,6 +76,7 @@ namespace WebCore {
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
         // EventTarget
@@ -91,6 +92,7 @@ namespace WebCore {
         // WebSocketChannelClient
         virtual void didConnect();
         virtual void didReceiveMessage(const String& message);
+        virtual void didReceiveMessageError();
         virtual void didClose(unsigned long unhandledBufferedAmount);
 
     private:
@@ -100,10 +102,6 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
-
-        void dispatchOpenEvent(Event*);
-        void dispatchMessageEvent(Event*);
-        void dispatchCloseEvent(Event*);
 
         RefPtr<ThreadableWebSocketChannel> m_channel;
 

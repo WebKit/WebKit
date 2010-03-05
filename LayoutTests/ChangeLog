@@ -1,3 +1,15 @@
+2010-03-05  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket onmessageerror event handler
+        https://bugs.webkit.org/show_bug.cgi?id=35570
+
+        * websocket/tests/error-detect-expected.txt: Added.
+        * websocket/tests/error-detect.html: Added.
+        * websocket/tests/script-tests/error-detect.js: Added.
+        * websocket/tests/unknown-frame-type_wsh.py: Added.
+
 2010-03-04  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

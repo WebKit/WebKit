@@ -1,3 +1,24 @@
+2010-03-05  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket onmessageerror event handler
+        https://bugs.webkit.org/show_bug.cgi?id=35570
+
+        Test: websocket/tests/error-detect.html
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocketChannel::didConnect): assert scriptExecutionContext.
+        (WebCore::WebSocketChannel::didReceiveMessage): assert scriptExecutionContext.
+        (WebCore::WebSocket::didReceiveMessageError):
+        (WebCore::WebSocket::didClose): assert scriptExecutionContext.
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl: Add onerror event listener
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didReceiveData): call didReceiveMessageError if unknown frame tye is detected, or frame length overflowed.
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didReceiveMessageError):
+
 2010-03-04  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.

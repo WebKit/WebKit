@@ -49,6 +49,7 @@ module websockets {
         // networking
         attribute EventListener onopen;
         attribute EventListener onmessage;
+        attribute EventListener onerror;
         attribute EventListener onclose;
 
         [Custom] boolean send(in DOMString data)
