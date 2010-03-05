@@ -14,7 +14,7 @@ TEST COMPLETE
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-PASS window.openDatabase() == null is true
+PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) == null is true
 PASS window.localStorage == null is true
 PASS window.sessionStorage == null is true
 
@@ -22,7 +22,7 @@ PASS window.sessionStorage == null is true
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
-PASS window.openDatabase() != null is true
+PASS window.openDatabase('SandboxedIframeStorageAllowed', '1.0', '', 1) != null is true
 PASS window.localStorage != null is true
 PASS window.sessionStorage != null is true
 
