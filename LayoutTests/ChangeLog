@@ -1,3 +1,11 @@
+2010-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
+        media/video-preload.html fails on GTK, skip it.
+
+        * platform/gtk/Skipped:
+
 2010-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
