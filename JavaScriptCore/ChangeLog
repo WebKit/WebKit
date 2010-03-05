@@ -1,5 +1,13 @@
 2010-03-05  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (build fix).
+
+        Add enw exports to windows
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-03-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         JSC should cache int to Identifier conversion as it does for ordinary strings

@@ -127,6 +127,8 @@ EXPORTS
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAVJSValue@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
+    ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
+    ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
     ?from@UString@JSC@@SA?AV12@H@Z
     ?from@UString@JSC@@SA?AV12@I@Z
     ?from@UString@JSC@@SA?AV12@N@Z
