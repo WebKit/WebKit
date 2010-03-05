@@ -1,3 +1,21 @@
+2010-03-04  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add CppVariant and CppBoundClass
+        https://bugs.webkit.org/show_bug.cgi?id=35634
+
+        Add CppVariant and CppBoundClass classes, which are going to be
+        used by DumpRenderTree Chromium port. These files are based on:
+        - src/webkit/glue/cpp_variant.{cc,h} and
+        - src/webkit/glue/cpp_bound_class.{cc,h}
+        of Chromium rev.40492.
+
+        * DumpRenderTree/chromium/CppBoundClass.cpp: Added.
+        * DumpRenderTree/chromium/CppBoundClass.h: Added.
+        * DumpRenderTree/chromium/CppVariant.cpp: Added.
+        * DumpRenderTree/chromium/CppVariant.h: Added.
+
 2010-03-04  Mark Rowe  <mrowe@apple.com>
 
         Build fix for older versions of Ruby.
