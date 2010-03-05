@@ -1,3 +1,27 @@
+2010-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        MobileMe movie page is missing playback controls
+        https://bugs.webkit.org/show_bug.cgi?id=35805
+        <rdar://problem/7653169>
+        
+        On pages with video or plug-ins, we run overlap tests to determine which layers
+        need to be composited. There was an ordering dependency bug in
+        RenderLayerCompositor::computeCompositingRequirements() that caused us to fail
+        to detect that a layer needed to be composited, resulting in page content
+        not being visible.
+        
+        Specifically, layer->setHasCompositingDescendant() can change the answer
+        to needsToBeComposited(), when a layer has to clip compositing descendants.
+        So if we change setHasCompositingDescendant(), then we need to re-test
+        clipsCompositingDescendants() and add the layer to the overlap map if so.
+
+        Test: compositing/overflow/overflow-compositing-descendant.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2010-03-04  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
