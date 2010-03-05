@@ -22,6 +22,7 @@
 #include "Identifier.h"
 
 #include "CallFrame.h"
+#include "NumericStrings.h"
 #include <new> // for placement new
 #include <string.h> // for strlen
 #include <wtf/Assertions.h>
@@ -235,6 +236,21 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* 
 void Identifier::remove(UString::Rep* r)
 {
     currentIdentifierTable()->remove(r);
+}
+    
+Identifier Identifier::from(ExecState* exec, unsigned value)
+{
+    return Identifier(exec, exec->globalData().numericStrings.add(value));
+}
+
+Identifier Identifier::from(ExecState* exec, int value)
+{
+    return Identifier(exec, exec->globalData().numericStrings.add(value));
+}
+
+Identifier Identifier::from(ExecState* exec, double value)
+{
+    return Identifier(exec, exec->globalData().numericStrings.add(value));
 }
 
 #ifndef NDEBUG

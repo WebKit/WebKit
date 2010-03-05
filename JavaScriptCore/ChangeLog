@@ -1,3 +1,30 @@
+2010-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        JSC should cache int to Identifier conversion as it does for ordinary strings
+        https://bugs.webkit.org/show_bug.cgi?id=35814
+
+        Make the NumericStrings cache cache unsigned ints in addition to signed.
+        We keep them separate from the int cache as it both simplifies code, and
+        also because the unsigned path is exclusive to property access and therefore
+        seems to have different usage patterns.
+
+        The primary trigger for the unsigned to Identifier propertyName conversion
+        is the construction of array-like objects out of normal objects.  Given these
+        tend to be relative small numbers, and the array-like behaviour lends itself
+        to sequential values this patch also adds a non-colliding cache for all small
+        numbers.
+
+        * JavaScriptCore.exp:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::from):
+        * runtime/Identifier.h:
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add):
+        (JSC::NumericStrings::lookup):
+        (JSC::NumericStrings::lookupSmallString):
+
 2010-03-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -45,6 +45,8 @@ namespace JSC {
 
         UString add(int i)
         {
+            if (static_cast<unsigned>(i) < cacheSize)
+                return lookupSmallString(static_cast<unsigned>(i));
             CacheEntry<int>& entry = lookup(i);
             if (i == entry.key && !entry.value.isNull())
                 return entry.value;
@@ -53,6 +55,17 @@ namespace JSC {
             return entry.value;
         }
 
+        UString add(unsigned i)
+        {
+            if (i < cacheSize)
+                return lookupSmallString(static_cast<unsigned>(i));
+            CacheEntry<unsigned>& entry = lookup(i);
+            if (i == entry.key && !entry.value.isNull())
+                return entry.value;
+            entry.key = i;
+            entry.value = UString::from(i);
+            return entry.value;
+        }
     private:
         static const size_t cacheSize = 64;
 
@@ -64,9 +77,19 @@ namespace JSC {
 
         CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
         CacheEntry<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
+        CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
+        const UString& lookupSmallString(unsigned i)
+        {
+            ASSERT(i < cacheSize);
+            if (smallIntCache[i].isNull())
+                smallIntCache[i] = UString::from(i);
+            return smallIntCache[i];
+        }
 
         CacheEntry<double> doubleCache[cacheSize];
         CacheEntry<int> intCache[cacheSize];
+        CacheEntry<unsigned> unsignedCache[cacheSize];
+        UString smallIntCache[cacheSize];
     };
 
 } // namespace JSC
