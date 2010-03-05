@@ -339,6 +339,11 @@ void LayoutTestController::setFrameSetFlatteningEnabled(bool flag)
     // FIXME: implement
 }
 
+void LayoutTestController::setSpatialNavigationEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);

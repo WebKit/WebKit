@@ -3,6 +3,26 @@
         Reviewed by Kenneth Christiansen.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 
+        Add toggle on/off stub methods for Spatial Navigation in win, gtk and mac LayoutTestController class implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=35699
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setSpatialNavigationEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setSpatialNavigationEnabled):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setSpatialNavigationEnabled):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setSpatialNavigationEnabled):
+
+2010-02-18  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
         Add toggle on/off mechanism for Spatial Navigation in QtLauncher.
 
         * QtLauncher/main.cpp:
