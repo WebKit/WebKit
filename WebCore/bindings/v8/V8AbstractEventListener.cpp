@@ -88,8 +88,6 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
     v8::Handle<v8::Value> jsEvent = toV8(event);
 
     invokeEventHandler(context, event, jsEvent);
-
-    Document::updateStyleForAllDocuments();
 }
 
 void V8AbstractEventListener::disposeListenerObject()
