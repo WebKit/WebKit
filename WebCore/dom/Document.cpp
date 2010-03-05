@@ -4798,11 +4798,6 @@ InspectorTimelineAgent* Document::inspectorTimelineAgent() const
 {
     return page() ? page()->inspectorTimelineAgent() : 0;
 }
-
-InspectorController* Document::inspectorController() const 
-{
-    return page() ? page()->inspectorController() : 0;
-}
 #endif
 
 } // namespace WebCore

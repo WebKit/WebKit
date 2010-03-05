@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,37 +38,18 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
-#include "InspectorController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
 
-long AbstractWorker::s_lastId;
-
 AbstractWorker::AbstractWorker(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
-    , m_id(++s_lastId)
 {
 }
 
 AbstractWorker::~AbstractWorker()
 {
-    onDestroyWorker();
-}
-
-void AbstractWorker::onDestroyWorker()
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = scriptExecutionContext() ? scriptExecutionContext()->inspectorController() : 0)
-        inspector->willDestroyWorker(id());
-#endif
-}
-
-void AbstractWorker::contextDestroyed()
-{
-    onDestroyWorker();
-    ActiveDOMObject::contextDestroyed(); 
 }
 
 KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)

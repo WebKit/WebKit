@@ -49,9 +49,6 @@ namespace WebCore {
     class SecurityOrigin;
     class ScriptString;
     class String;
-#if ENABLE(INSPECTOR)
-    class InspectorController;
-#endif
 
     enum MessageDestination {
 #if ENABLE(INSPECTOR)
@@ -87,9 +84,6 @@ namespace WebCore {
         virtual String userAgent(const KURL&) const = 0;
 
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
-#if ENABLE(INSPECTOR)
-        virtual InspectorController* inspectorController() const { return 0; }
-#endif
 
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
         virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;

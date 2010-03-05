@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var InjectedFakeWorker = function(InjectedScriptHost, inspectedWindow, injectedScriptId)
+var InjectedFakeWorker = function()
 {
 
 Worker = function(url)
@@ -45,13 +45,13 @@ Worker = function(url)
 
 function FakeWorker(worker, url)
 {
-    var scriptURL = this._expandURLAndCheckOrigin(document.baseURI, location.href, url);
+    var scriptURL = new URL(document.baseURI).completeWith(url);
+
+    if (!scriptURL.sameOrigin(location.href))
+        throw new DOMCoreException("SECURITY_ERR",18);
 
     this._worker = worker;
     this._buildWorker(scriptURL);
-    this._id = InjectedScriptHost.nextWorkerId();
-
-    InjectedScriptHost.didCreateWorker(this._id, scriptURL.url, false);
 }
 
 FakeWorker.prototype = {
@@ -63,8 +63,6 @@ FakeWorker.prototype = {
 
     terminate: function()
     {
-        InjectedScriptHost.willDestroyWorker(this._id);
-
         if (this._frame != null) {
             this._frame.onmessage = this._worker.onmessage = noop;
             this._frame.frameElement.parentNode.removeChild(this._frame.frameElement);
@@ -98,7 +96,7 @@ FakeWorker.prototype = {
     _handleException: function(e)
     {
         // NB: it should be an ErrorEvent, but creating it from script is not
-        // currently supported, so emulate it on top of plain vanilla Event.
+        // currently supported, to emulate it on top of plain vanilla Event.
         var errorEvent = this._document.createEvent("Event");
         errorEvent.initEvent("Event", false, false);
         errorEvent.message = "Uncaught exception";
@@ -149,13 +147,10 @@ FakeWorker.prototype = {
         workerFrame.close = bind(this.terminate, this);
     },
 
-    _importScripts: function(targetFrame)
+    _importScripts: function(evalTarget)
     {
-        for (var i = 1; i < arguments.length; ++i) {
-            var workerOrigin = targetFrame.__devtools.location.href;
-            var url = this._expandURLAndCheckOrigin(workerOrigin, workerOrigin, arguments[i]);
-            targetFrame.eval(this._loadScript(url.url) + "\n//@ sourceURL= " + url.url);
-        }
+        for (var i = 1; i < arguments.length; ++i)
+            evalTarget.eval(this._loadScript(arguments[i]));
     },
 
     _loadScript: function(url)
@@ -170,15 +165,6 @@ FakeWorker.prototype = {
             text = ""; // We've got error message, not worker code.
         }
         return text;
-    },
-
-    _expandURLAndCheckOrigin: function(baseURL, origin, url)
-    {
-        var scriptURL = new URL(baseURL).completeWith(url);
-
-        if (!scriptURL.sameOrigin(origin))
-            throw new DOMCoreException("SECURITY_ERR",18);
-        return scriptURL;
     }
 };
 

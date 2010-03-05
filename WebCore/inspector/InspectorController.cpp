@@ -63,7 +63,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorResource.h"
-#include "InspectorWorkerResource.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -711,11 +710,6 @@ void InspectorController::populateScriptObjects()
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
         it->second->bind(m_frontend.get());
 #endif
-#if ENABLE(WORKERS)
-    WorkersMap::iterator workersEnd = m_workers.end();
-    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it)
-        m_frontend->didCreateWorker(*it->second);
-#endif
 
     m_frontend->populateInterface();
 
@@ -744,9 +738,7 @@ void InspectorController::resetScriptObjects()
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
         it->second->unbind();
 #endif
-#if ENABLE(WORKERS)
-    m_workers.clear();
-#endif
+
     if (m_timelineAgent)
         m_timelineAgent->reset();
 
@@ -833,10 +825,10 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         if (ResourcesMap* resourceMap = m_frameResources.get(frame))
             pruneResources(resourceMap, loader);
 
-    ScriptState* scriptState = mainWorldScriptState(loader->frame());
     for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
          it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-        m_injectedScriptHost->injectScript(*it, scriptState);
+        ScriptSourceCode scriptSourceCode(*it);
+        loader->frame()->script()->evaluate(scriptSourceCode);
     }
 }
 
@@ -1178,32 +1170,6 @@ void InspectorController::stopTimelineProfiler()
     if (m_frontend)
         m_frontend->timelineProfilerWasStopped();
 }
-
-#if ENABLE(WORKERS)
-void InspectorController::didCreateWorker(long id, const String& url, bool isSharedWorker)
-{
-    if (!enabled())
-        return;
-
-    RefPtr<InspectorWorkerResource> workerResource(InspectorWorkerResource::create(id, url, isSharedWorker));
-    m_workers.set(id, workerResource);
-    if (m_frontend)
-        m_frontend->didCreateWorker(*workerResource);
-}
-
-void InspectorController::willDestroyWorker(long id)
-{
-    if (!enabled())
-        return;
-
-    WorkersMap::iterator workerResource = m_workers.find(id);
-    if (workerResource == m_workers.end())
-        return;
-    if (m_frontend)
-        m_frontend->willDestroyWorker(*workerResource->second);
-    m_workers.remove(workerResource);
-}
-#endif // ENABLE(WORKERS)
 
 #if ENABLE(DATABASE)
 void InspectorController::selectDatabase(Database* database)

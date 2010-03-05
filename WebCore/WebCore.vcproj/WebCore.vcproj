@@ -42729,10 +42729,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorWorkerResource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\JavaScriptCallFrame.cpp"
 				>
 			</File>
@@ -42809,10 +42805,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ChangesView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\Checkbox.js"
 					>
 				</File>
 				<File
@@ -43121,10 +43113,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\WelcomeView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\WorkersSidebarPane.js"
 					>
 				</File>
 			</Filter>

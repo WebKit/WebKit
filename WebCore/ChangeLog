@@ -1,3 +1,10 @@
+2010-03-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Roll back r55522 since it regreses performance
+        according to chromium's page cycler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35568
+
 2010-03-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser and Chris Marrin.

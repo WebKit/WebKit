@@ -37,7 +37,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
-#include "InspectorWorkerResource.h"
 #include "Node.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
@@ -471,26 +470,6 @@ void InspectorFrontend::didGetEventListenersForNode(int callId, int nodeId, Scri
     function.appendArgument(listenersArray);
     function.call();
 }
-
-#if ENABLE(WORKERS)
-void InspectorFrontend::didCreateWorker(const InspectorWorkerResource& worker)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch");
-    function.appendArgument("didCreateWorker");
-    function.appendArgument(worker.id());
-    function.appendArgument(worker.url());
-    function.appendArgument(worker.isSharedWorker());
-    function.call();
-}
-
-void InspectorFrontend::willDestroyWorker(const InspectorWorkerResource& worker)
-{
-    ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("willDestroyWorker");
-    function.appendArgument(worker.id());
-    function.call();
-}
-#endif // ENABLE(WORKERS)
 
 void InspectorFrontend::didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString)
 {
