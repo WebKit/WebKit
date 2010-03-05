@@ -14,21 +14,18 @@
                 [ 
                     {
                         // should not buffer, 'preload' is 'none'
-                        url : "content/silence.mpg", 
                         preload : "none",
                         shouldBuffer : false,
                         autoPlay : false,
                         description : "until 'play()' is called", 
                     },
                     {
-                        url : "content/silence.mpg", 
                         preload : "metadata",
                         shouldBuffer : true,
                         autoPlay : false,
                         description : "", 
                     },
                     {
-                        url : "content/silence.mpg", 
                         preload : "auto",
                         shouldBuffer : true,
                         autoPlay : false,
@@ -36,7 +33,6 @@
                     },
                     {
                         // should buffer because 'autoplay' is set
-                        url : "content/silence.mpg", 
                         preload : "none",
                         shouldBuffer : true,
                         autoPlay : true,
@@ -86,8 +82,8 @@
                 }
 
                 var movie = movieInfo.movies[movieInfo.current];
-                var desc = "Will load <em>\""+ movie.url + "\"</em>"
-                            + " with <em>'preload=" + movie.preload + "'</em>"
+                var url = findMediaFile("video", "content/test");
+                var desc = "Will load with <em>'preload=" + movie.preload + "'</em>"
                             + ", <b>should" + (movie.shouldBuffer ? "" : " not") + " </b> buffer automatically "
                             + movie.description;
                 consoleWrite(desc);
@@ -95,7 +91,7 @@
                 setupAttribute('preload', movie.preload);
                 setupAttribute('autoplay', movie.autoPlay);
 
-                video.src = movie.url;
+                video.src = url;
                 if (movieInfo.current > 0)
                     video.load();
                 if (!movie.shouldBuffer)

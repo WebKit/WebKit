@@ -2,6 +2,16 @@
 
         Unreviewed, build fix.
 
+        Use a movie that will hopefully fail to open less often on a headless 
+        SnowLeopard buildbot.
+
+        * media/video-preload-expected.txt:
+        * media/video-preload.html: Use test.mp4 instead of silence.mpg.
+
+2010-03-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, build fix.
+
         media/video-preload.html fails on GTK, skip it.
 
         * platform/gtk/Skipped:
