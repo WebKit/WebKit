@@ -37,6 +37,7 @@
 
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 
 namespace WebCore {
@@ -71,6 +72,18 @@ public:
     void setKeyType(Type);
     bool isCharacterKey() const;
 };
+
+#if ENABLE(TOUCH_EVENTS)
+class PlatformTouchPointBuilder : public WebCore::PlatformTouchPoint {
+public:
+    PlatformTouchPointBuilder(WebCore::Widget*, const WebTouchPoint&);
+};
+
+class PlatformTouchEventBuilder : public WebCore::PlatformTouchEvent {
+public:
+    PlatformTouchEventBuilder(WebCore::Widget*, const WebTouchEvent&);
+};
+#endif
 
 // Converts a WebCore::MouseEvent to a corresponding WebMouseEvent. view is
 // the ScrollView corresponding to the event.  Returns true if successful.

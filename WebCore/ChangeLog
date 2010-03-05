@@ -1,3 +1,18 @@
+2010-03-04  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Changing private members from PlatformTouchEvent and PlatformTouchPoint
+        to be protected, so that Chromium's PlatformTouchEventBuilder and
+        PlatformTouchPointBuilder can access them. Exercised by the
+        fast/events/touch tests.
+        https://bugs.webkit.org/show_bug.cgi?id=35760
+
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::~PlatformTouchEvent):
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::~PlatformTouchPoint):
+
 2010-03-04  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

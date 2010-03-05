@@ -55,7 +55,7 @@ public:
     IntPoint screenPos() const { return m_screenPos; }
     IntPoint pos() const { return m_pos; }
     
-private:
+protected:
     unsigned m_id;
     State m_state;
     IntPoint m_screenPos;

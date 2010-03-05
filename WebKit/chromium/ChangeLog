@@ -1,3 +1,19 @@
+2010-03-04  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding PlatformTouchEventBuilder and PlatformTouchPointBuilder for
+        converting Chromium WebTouchEvent and WebTouchPoint types to
+        corresponding WebCore types.
+        https://bugs.webkit.org/show_bug.cgi?id=35760
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformTouchEventType):
+        (WebKit::toPlatformTouchPointState):
+        (WebKit::PlatformTouchPointBuilder::PlatformTouchPointBuilder):
+        (WebKit::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+        * src/WebInputEventConversion.h:
+
 2010-03-04  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Fisher.

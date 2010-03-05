@@ -168,6 +168,63 @@ bool PlatformKeyboardEventBuilder::isCharacterKey() const
     return true;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+static inline TouchEventType toPlatformTouchEventType(const WebInputEvent::Type type)
+{
+    switch (type) {
+    case WebInputEvent::TouchStart:
+        return TouchStart;
+    case WebInputEvent::TouchMove:
+        return TouchMove;
+    case WebInputEvent::TouchEnd:
+        return TouchEnd;
+    case WebInputEvent::TouchCancel:
+        return TouchCancel;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+static inline PlatformTouchPoint::State toPlatformTouchPointState(const WebTouchPoint::State state)
+{
+    switch (state) {
+    case WebTouchPoint::StateReleased:
+        return PlatformTouchPoint::TouchReleased;
+    case WebTouchPoint::StatePressed:
+        return PlatformTouchPoint::TouchPressed;
+    case WebTouchPoint::StateMoved:
+        return PlatformTouchPoint::TouchMoved;
+    case WebTouchPoint::StateStationary:
+        return PlatformTouchPoint::TouchStationary;
+    case WebTouchPoint::StateCancelled:
+        return PlatformTouchPoint::TouchCancelled;
+    case WebTouchPoint::StateUndefined:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+PlatformTouchPointBuilder::PlatformTouchPointBuilder(Widget* widget, const WebTouchPoint& point)
+{
+    m_id = point.id;
+    m_state = toPlatformTouchPointState(point.state);
+    m_pos = widget->convertFromContainingWindow(point.position);
+    m_screenPos = point.screenPosition;
+}
+
+PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTouchEvent& event)
+{
+    m_type = toPlatformTouchEventType(event.type);
+    m_ctrlKey = event.modifiers & WebInputEvent::ControlKey;
+    m_altKey = event.modifiers & WebInputEvent::AltKey;
+    m_shiftKey = event.modifiers & WebInputEvent::ShiftKey;
+    m_metaKey = event.modifiers & WebInputEvent::MetaKey;
+
+    m_touchPoints.resize(event.touchPointsLength);
+    for (int i = 0; i < event.touchPointsLength; ++i)
+        m_touchPoints.append(PlatformTouchPointBuilder(widget, event.touchPoints[i]));
+}
+#endif
+
 static int getWebInputModifiers(const UIEventWithKeyState& event)
 {
     int modifiers = 0;
