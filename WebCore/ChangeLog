@@ -1,3 +1,32 @@
+2010-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7718442> Implement 'preload=none'
+        https://bugs.webkit.org/show_bug.cgi?id=35789
+
+        Don't load any media data when preload is 'none'.
+
+        Test: media/video-preload.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Don't call player's setPreload method
+            when autoplay is set.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setPreload): Set m_preload so we have the correct value when
+            the media engine is created.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate): Initialize m_preload.
+        (WebCore::MediaPlayerPrivate::resumeLoad): New, kick off postponed a load.
+        (WebCore::MediaPlayerPrivate::load): Do nothing if preload is 'none'
+        (WebCore::MediaPlayerPrivate::loadInternal): New, complete loading.
+        (WebCore::MediaPlayerPrivate::prepareToPlay): New, resume a postponed load as someone
+            has called play().
+        (WebCore::MediaPlayerPrivate::setPreload): New, set m_preload.
+
 2010-03-04  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -777,3 +777,6 @@ java
 
 # Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
 fast/events/spatial-navigation
+
+# <rdar://problem/7718442> Implement 'preload=none'
+media/video-preload.html

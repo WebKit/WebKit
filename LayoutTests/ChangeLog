@@ -1,3 +1,16 @@
+2010-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7718442> Implement 'preload=none'
+        https://bugs.webkit.org/show_bug.cgi?id=35789
+
+        Functional test of the 'proload' attribute.
+
+        * media/video-preload-expected.txt: Added.
+        * media/video-preload.html: Added.
+        * platform/win/Skipped: Skip on Windows for now.
+
 2010-03-03  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther

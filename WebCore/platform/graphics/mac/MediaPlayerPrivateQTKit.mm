@@ -211,6 +211,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_reportedDuration(-1)
     , m_cachedDuration(-1)
     , m_timeToRestore(-1)
+    , m_preload(MediaPlayer::Auto)
     , m_startedPlaying(false)
     , m_isStreaming(false)
     , m_visible(false)
@@ -549,7 +550,29 @@ QTTime MediaPlayerPrivate::createQTTime(float time) const
     return QTMakeTime(time * timeScale, timeScale);
 }
 
+void MediaPlayerPrivate::resumeLoad()
+{
+    m_delayingLoad = false;
+
+    if (m_movieURL)
+        loadInternal(m_movieURL);
+}
+
 void MediaPlayerPrivate::load(const String& url)
+{
+    m_movieURL = url;
+
+    // If the element is not supposed to load any data return immediately because QTKit
+    // doesn't have API to throttle loading.
+    if (m_preload == MediaPlayer::None) {
+        m_delayingLoad = true;
+        return;
+    }
+
+    loadInternal(url);
+}
+
+void MediaPlayerPrivate::loadInternal(const String& url)
 {
     if (m_networkState != MediaPlayer::Loading) {
         m_networkState = MediaPlayer::Loading;
@@ -568,6 +591,12 @@ void MediaPlayerPrivate::load(const String& url)
 
     [m_objcObserver.get() loadStateChanged:nil];
     [m_objcObserver.get() setDelayCallbacks:NO];
+}
+
+void MediaPlayerPrivate::prepareToPlay()
+{
+    if (!m_qtMovie || m_delayingLoad)
+        resumeLoad();
 }
 
 PlatformMedia MediaPlayerPrivate::platformMedia() const
@@ -1437,6 +1466,12 @@ MediaPlayer::MovieLoadType MediaPlayerPrivate::movieLoadType() const
     return movieType;
 }
 
+void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
+{
+    m_preload = preload;
+    if (m_delayingLoad && m_preload != MediaPlayer::None)
+        resumeLoad();
+}
 
 } // namespace WebCore
 

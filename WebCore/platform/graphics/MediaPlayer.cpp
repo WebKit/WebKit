@@ -489,6 +489,7 @@ MediaPlayer::Preload MediaPlayer::preload() const
 
 void MediaPlayer::setPreload(MediaPlayer::Preload preload)
 {
+    m_preload = preload;
     m_private->setPreload(preload);
 }
 
