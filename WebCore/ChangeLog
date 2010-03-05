@@ -1,3 +1,9 @@
+2010-03-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r55593. (To fix Qt --minimal build.)
+
+        * bindings/js/JSDOMWindowCustom.cpp: Missing #if ENABLE(DATABASE) guard added.
+
 2010-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

@@ -1020,6 +1020,7 @@ JSValue JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
+#if ENABLE(DATABASE)
 JSValue JSDOMWindow::openDatabase(ExecState* exec, const ArgList& args)
 {
     if (!allowsAccessFrom(exec) || (args.size() < 4))
@@ -1037,6 +1038,7 @@ JSValue JSDOMWindow::openDatabase(ExecState* exec, const ArgList& args)
     setDOMException(exec, ec);
     return result;
 }
+#endif
 
 DOMWindow* toDOMWindow(JSValue value)
 {
