@@ -48,3 +48,8 @@ fast/canvas/webgl/texImage2DImageDataTest.html
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# Thanks to https://bugs.webkit.org/show_bug.cgi?id=35714
+# computed style on HW transforms are wrong in SL, but
+# correct in Leopard.
+animations/fill-mode-transform.html

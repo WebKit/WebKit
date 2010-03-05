@@ -1,3 +1,12 @@
+2010-03-05  Dean Jackson  <dino@apple.com>
+
+        No review.
+
+        Disabling animations/fill-mode-transform.html on Leopard
+        due to https://bugs.webkit.org/show_bug.cgi?id=35714
+
+        * platform/mac-leopard/Skipped:
+
 2010-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
