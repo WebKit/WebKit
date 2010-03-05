@@ -1,5 +1,25 @@
 2010-03-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler.
+
+        ASSERTION FAILED: rootLayer == m_clipRectsRoot at hulu.com
+        https://bugs.webkit.org/show_bug.cgi?id=34065
+        <rdar://problem/7573509>
+        
+        Fix one instance of this assertion (not necessarily the one seen on hulu.com).
+        
+        If the layer that clippingRoot() is being called on is itself compositing,
+        then it acts as the clipping root. Without this, calls to RenderLayer::childrenClipRect()
+        and RenderLayer::selfClipRect() via FrameView::windowClipRectForLayer(), for plug-ins,
+        caused the caching of an incorrect clip rects root.
+
+        Test: compositing/geometry/object-clip-rects-assertion.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clippingRoot):
+
+2010-03-05  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Child clipping compositing layers don't show the blue debug color

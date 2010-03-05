@@ -710,6 +710,11 @@ RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
 
 RenderLayer* RenderLayer::clippingRoot() const
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (isComposited())
+        return const_cast<RenderLayer*>(this);
+#endif
+
     const RenderLayer* current = this;
     while (current) {
         if (current->renderer()->isRenderView())
