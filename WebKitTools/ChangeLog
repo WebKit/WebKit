@@ -1,5 +1,16 @@
 2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Reviewed by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Add toggle on/off mechanism for Spatial Navigation in QtLauncher.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::toggleSpatialNavigation):
+        (LauncherWindow::setupUI):
+
+2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Simon Hausmann.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 
