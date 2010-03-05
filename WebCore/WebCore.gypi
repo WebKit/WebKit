@@ -1839,13 +1839,13 @@
             'page/FrameView.h',
             'page/Geolocation.cpp',
             'page/Geolocation.h',
-            'page/GeolocationController.cpp'
-            'page/GeolocationController.h'
-            'page/GeolocationControllerClient.h'
-            'page/GeolocationError.h'
-            'page/GeolocationPosition.h'
-            'page/GeolocationPositionCache.cpp'
-            'page/GeolocationPositionCache.h'
+            'page/GeolocationController.cpp',
+            'page/GeolocationController.h',
+            'page/GeolocationControllerClient.h',
+            'page/GeolocationError.h',
+            'page/GeolocationPosition.h',
+            'page/GeolocationPositionCache.cpp',
+            'page/GeolocationPositionCache.h',
             'page/Geoposition.h',
             'page/HaltablePlugin.h',
             'page/History.cpp',

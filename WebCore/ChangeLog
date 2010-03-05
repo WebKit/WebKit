@@ -1,3 +1,14 @@
+2010-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Missing commas in WebCore.gypi file make building Geo unpossible.
+        https://bugs.webkit.org/show_bug.cgi?id=35797
+
+        No new tests, this is a latent compile break.
+
+        * WebCore.gypi:
+
 2010-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
