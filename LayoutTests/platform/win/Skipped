@@ -774,3 +774,6 @@ fast/loader/api-test-new-window-data-load-base-url.html
 
 # DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
 java
+
+# Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
+fast/events/spatial-navigation

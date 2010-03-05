@@ -122,3 +122,6 @@ http/tests/misc/image-checks-for-accept.html
 # Crashes in debug
 # https://bugs.webkit.org/show_bug.cgi?id=35631
 svg/custom/tiling-regular-hexagonal-crash.svg
+
+# Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
+fast/events/spatial-navigation

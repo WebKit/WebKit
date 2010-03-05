@@ -1,3 +1,23 @@
+2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Extend keyboard navigation to allow directional navigation (LayoutTests - part I)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch adds support for auto testing the spatial navigation feature by:
+
+        1) Creating the directory where the tests are going to live in, named
+           fast/events/spatial-navigation/.
+        2) Skipping this directory by Mac, Qt, Gtk and Win.
+        3) Adding a JS file drives the test execution by processing, for each test,
+           a given set of arrow key actions and verify if the right expected Element
+           got the focus after each event processed. This file is
+           fast/events/spatial-navigation/resources/spatial-navigation-utils.js
+
+        * LayoutTests/fast/events/spatial-navigation/snav-vertical-superprecedence.html: Added.
+
 2010-03-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser and Chris Marrin.
