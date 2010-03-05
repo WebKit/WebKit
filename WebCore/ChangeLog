@@ -1,3 +1,19 @@
+2010-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Allow static property getters to interact with JSCs caching
+        https://bugs.webkit.org/show_bug.cgi?id=35716
+
+        Update the obviously safe getters to allow caching
+
+        Test: fast/js/pic/cached-named-property-getter.html
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+
 2010-03-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,77 @@
+2010-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Allow static property getters to interact with JSCs caching
+        https://bugs.webkit.org/show_bug.cgi?id=35716
+
+        Add new opcodes for handling cached lookup of static value getters.
+        More or less the same as with JS getters, all that changes is that
+        instead of calling through a JSFunction we always know that we have
+        a C function to call.
+
+        For the patching routines in the JIT we now need to pass a few
+        new parameters to allow us to pass enough information to the stub
+        function to allow us to call the C function correctly.  Logically
+        this shouldn't actually be necessary as all of these functions ignore
+        the identifier, but removing the ident parameter would require
+        somewhat involved changes to the way we implement getOwnPropertySlot,
+        etc.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        (JSC::Instruction::):
+        * bytecode/Opcode.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticValueSlot):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::):
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::cachedPropertyType):
+        (JSC::PropertySlot::isCacheable):
+        (JSC::PropertySlot::isCacheableValue):
+        (JSC::PropertySlot::setValueSlot):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        (JSC::PropertySlot::clearOffset):
+        (JSC::PropertySlot::customGetter):
+
 2010-03-04  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed. Remove a non-ASCII character introduced in the following bug.

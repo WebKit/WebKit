@@ -718,7 +718,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_array_fail));
 }
 
-void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, bool isGetter, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
+void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     
@@ -736,13 +736,22 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 #else
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
-    
+    bool needsStubLink = false;
     // Checks out okay!
-    if (isGetter) {
+    if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        needsStubLink = true;
         compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else if (slot.cachedPropertyType() == PropertySlot::Custom) {
+        needsStubLink = true;
+        JITStubCall stubCall(this, cti_op_get_by_id_custom_stub);
+        stubCall.addArgument(ImmPtr(protoObject));
+        stubCall.addArgument(ImmPtr(FunctionPtr(slot.customGetter()).executableAddress()));
+        stubCall.addArgument(ImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
@@ -760,7 +769,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
 
-    if (isGetter) {
+    if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
             if (iter->to)
                 patchBuffer.link(iter->from, FunctionPtr(iter->to));
@@ -781,11 +790,13 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 }
 
 
-void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, bool isGetter, size_t cachedOffset)
+void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset)
 {
     // regT0 holds a JSCell*
     Jump failureCase = checkStructure(regT0, structure);
-    if (isGetter) {
+    bool needsStubLink = false;
+    if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        needsStubLink = true;
         if (!structure->isUsingInlineStorage()) {
             move(regT0, regT1);
             compileGetDirectOffset(regT1, regT2, regT1, structure, cachedOffset);
@@ -796,13 +807,21 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         stubCall.addArgument(regT0);
         stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
+    } else if (slot.cachedPropertyType() == PropertySlot::Custom) {
+        needsStubLink = true;
+        JITStubCall stubCall(this, cti_op_get_by_id_custom_stub);
+        stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(FunctionPtr(slot.customGetter()).executableAddress()));
+        stubCall.addArgument(ImmPtr(const_cast<Identifier*>(&ident)));
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
     } else
         compileGetDirectOffset(regT0, regT1, regT0, structure, cachedOffset);
 
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    if (isGetter) {
+    if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
             if (iter->to)
                 patchBuffer.link(iter->from, FunctionPtr(iter->to));
@@ -829,7 +848,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, Structure* prototypeStructure, bool isGetter, size_t cachedOffset, CallFrame* callFrame)
+void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     
@@ -849,11 +868,21 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), ImmPtr(prototypeStructure));
 #endif
     
-    if (isGetter) {
+    bool needsStubLink = false;
+    if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        needsStubLink = true;
         compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else if (slot.cachedPropertyType() == PropertySlot::Custom) {
+        needsStubLink = true;
+        JITStubCall stubCall(this, cti_op_get_by_id_custom_stub);
+        stubCall.addArgument(ImmPtr(protoObject));
+        stubCall.addArgument(ImmPtr(FunctionPtr(slot.customGetter()).executableAddress()));
+        stubCall.addArgument(ImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
@@ -862,7 +891,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    if (isGetter) {
+    if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
             if (iter->to)
                 patchBuffer.link(iter->from, FunctionPtr(iter->to));
@@ -888,7 +917,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, bool isGetter, size_t cachedOffset, CallFrame* callFrame)
+void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     ASSERT(count);
@@ -916,11 +945,21 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     }
     ASSERT(protoObject);
     
-    if (isGetter) {
+    bool needsStubLink = false;
+    if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        needsStubLink = true;
         compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else if (slot.cachedPropertyType() == PropertySlot::Custom) {
+        needsStubLink = true;
+        JITStubCall stubCall(this, cti_op_get_by_id_custom_stub);
+        stubCall.addArgument(ImmPtr(protoObject));
+        stubCall.addArgument(ImmPtr(FunctionPtr(slot.customGetter()).executableAddress()));
+        stubCall.addArgument(ImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
@@ -929,7 +968,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    if (isGetter) {
+    if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
             if (iter->to)
                 patchBuffer.link(iter->from, FunctionPtr(iter->to));
@@ -956,7 +995,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
-void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, bool isGetter, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
+void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
 {
     // regT0 holds a JSCell*
     ASSERT(count);
@@ -984,11 +1023,21 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     }
     ASSERT(protoObject);
     
-    if (isGetter) {
+    bool needsStubLink = false;
+    if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        needsStubLink = true;
         compileGetDirectOffset(protoObject, regT2, regT2, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
+        stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
+        stubCall.call();
+    } else if (slot.cachedPropertyType() == PropertySlot::Custom) {
+        needsStubLink = true;
+        JITStubCall stubCall(this, cti_op_get_by_id_custom_stub);
+        stubCall.addArgument(ImmPtr(protoObject));
+        stubCall.addArgument(ImmPtr(FunctionPtr(slot.customGetter()).executableAddress()));
+        stubCall.addArgument(ImmPtr(const_cast<Identifier*>(&ident)));
         stubCall.addArgument(ImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
@@ -996,7 +1045,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     Jump success = jump();
     
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
-    if (isGetter) {
+    if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
             if (iter->to)
                 patchBuffer.link(iter->from, FunctionPtr(iter->to));

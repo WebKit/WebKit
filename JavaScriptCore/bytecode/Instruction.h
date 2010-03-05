@@ -31,6 +31,7 @@
 
 #include "MacroAssembler.h"
 #include "Opcode.h"
+#include "PropertySlot.h"
 #include "Structure.h"
 #include <wtf/VectorTraits.h>
 
@@ -144,6 +145,7 @@ namespace JSC {
         Instruction(StructureChain* structureChain) { u.structureChain = structureChain; }
         Instruction(JSCell* jsCell) { u.jsCell = jsCell; }
         Instruction(PolymorphicAccessStructureList* polymorphicStructures) { u.polymorphicStructures = polymorphicStructures; }
+        Instruction(PropertySlot::GetValueFunc getterFunc) { u.getterFunc = getterFunc; }
 
         union {
             Opcode opcode;
@@ -152,6 +154,7 @@ namespace JSC {
             StructureChain* structureChain;
             JSCell* jsCell;
             PolymorphicAccessStructureList* polymorphicStructures;
+            PropertySlot::GetValueFunc getterFunc;
         } u;
     };
 

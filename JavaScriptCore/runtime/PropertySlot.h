@@ -39,7 +39,15 @@ namespace JSC {
 
     class PropertySlot {
     public:
+        enum CachedPropertyType {
+            Uncacheable,
+            Getter,
+            Custom,
+            Value
+        };
+
         PropertySlot()
+            : m_cachedPropertyType(Uncacheable)
         {
             clearBase();
             clearOffset();
@@ -48,6 +56,7 @@ namespace JSC {
 
         explicit PropertySlot(const JSValue base)
             : m_slotBase(base)
+            , m_cachedPropertyType(Uncacheable)
         {
             clearOffset();
             clearValue();
@@ -82,9 +91,9 @@ namespace JSC {
             return m_getValue(exec, slotBase(), Identifier::from(exec, propertyName));
         }
 
-        bool isGetter() const { return m_isGetter; }
-        bool isCacheable() const { return m_isCacheable; }
-        bool isCacheableValue() const { return m_isCacheable && !m_isGetter; }
+        CachedPropertyType cachedPropertyType() const { return m_cachedPropertyType; }
+        bool isCacheable() const { return m_cachedPropertyType != Uncacheable; }
+        bool isCacheableValue() const { return m_cachedPropertyType == Value; }
         size_t cachedOffset() const
         {
             ASSERT(isCacheable());
@@ -115,8 +124,7 @@ namespace JSC {
             m_slotBase = slotBase;
             m_data.valueSlot = valueSlot;
             m_offset = offset;
-            m_isCacheable = true;
-            m_isGetter = false;
+            m_cachedPropertyType = Value;
         }
         
         void setValue(JSValue value)
@@ -146,6 +154,16 @@ namespace JSC {
             m_getIndexValue = 0;
             m_slotBase = slotBase;
         }
+        
+        void setCacheableCustom(JSValue slotBase, GetValueFunc getValue)
+        {
+            ASSERT(slotBase);
+            ASSERT(getValue);
+            m_getValue = getValue;
+            m_getIndexValue = 0;
+            m_slotBase = slotBase;
+            m_cachedPropertyType = Custom;
+        }
 
         void setCustomIndex(JSValue slotBase, unsigned index, GetIndexValueFunc getIndexValue)
         {
@@ -163,7 +181,6 @@ namespace JSC {
             m_thisValue = m_slotBase;
             m_getValue = GETTER_FUNCTION_MARKER;
             m_data.getterFunc = getterFunc;
-            m_isGetter = true;
         }
 
         void setCacheableGetterSlot(JSValue slotBase, JSObject* getterFunc, unsigned offset)
@@ -174,8 +191,7 @@ namespace JSC {
             m_slotBase = slotBase;
             m_data.getterFunc = getterFunc;
             m_offset = offset;
-            m_isCacheable = true;
-            m_isGetter = true;
+            m_cachedPropertyType = Getter;
         }
 
         void setUndefined()
@@ -214,13 +230,18 @@ namespace JSC {
             // Clear offset even in release builds, in case this PropertySlot has been used before.
             // (For other data members, we don't need to clear anything because reuse would meaningfully overwrite them.)
             m_offset = 0;
-            m_isCacheable = false;
-            m_isGetter = false;
+            m_cachedPropertyType = Uncacheable;
         }
 
         unsigned index() const { return m_data.index; }
 
         JSValue thisValue() const { return m_thisValue; }
+
+        GetValueFunc customGetter() const
+        {
+            ASSERT(m_cachedPropertyType == Custom);
+            return m_getValue;
+        }
     private:
         JSValue functionGetter(ExecState*) const;
 
@@ -239,8 +260,7 @@ namespace JSC {
         JSValue m_thisValue;
 
         size_t m_offset;
-        bool m_isCacheable : 1;
-        bool m_isGetter : 1;
+        CachedPropertyType m_cachedPropertyType;
     };
 
 } // namespace JSC

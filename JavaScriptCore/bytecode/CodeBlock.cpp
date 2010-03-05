@@ -785,6 +785,26 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_getter_chain");
             break;
         }
+        case op_get_by_id_custom_self: {
+            printGetByIdOp(exec, location, it, "get_by_id_custom_self");
+            break;
+        }
+        case op_get_by_id_custom_self_list: {
+            printGetByIdOp(exec, location, it, "get_by_id_custom_self_list");
+            break;
+        }
+        case op_get_by_id_custom_proto: {
+            printGetByIdOp(exec, location, it, "get_by_id_custom_proto");
+            break;
+        }
+        case op_get_by_id_custom_proto_list: {
+            printGetByIdOp(exec, location, it, "get_by_id_custom_proto_list");
+            break;
+        }
+        case op_get_by_id_custom_chain: {
+            printGetByIdOp(exec, location, it, "get_by_id_custom_chain");
+            break;
+        }
         case op_get_by_id_generic: {
             printGetByIdOp(exec, location, it, "get_by_id_generic");
             break;
@@ -1375,7 +1395,7 @@ void CodeBlock::derefStructures(Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
         vPC[4].u.structure->deref();
         return;
     }
@@ -1422,7 +1442,7 @@ void CodeBlock::refStructures(Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
         vPC[4].u.structure->ref();
         return;
     }

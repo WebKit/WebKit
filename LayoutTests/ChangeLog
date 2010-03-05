@@ -1,3 +1,16 @@
+2010-03-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Allow static property getters to interact with JSCs caching
+        https://bugs.webkit.org/show_bug.cgi?id=35716
+
+        Add tests to ensure nothing horrifying happens to static property
+        getters if they're in a path where we end up caching lookups.
+
+        * fast/js/pic/cached-named-property-getter-expected.txt: Added.
+        * fast/js/pic/cached-named-property-getter.html: Added.
+
 2010-03-04  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
