@@ -1,3 +1,21 @@
+2010-03-03  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Extend keyboard navigation to allow directional navigation (LayoutTests - part II)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch adds two LayoutTest to ensure the basic table traversal correctness of
+        Spatial Navigation (SNav) algorithm: focusable elements in a <table> should be accessible.
+
+        * fast/events/spatial-navigation/snav-table-traversal.html: Added.
+          Makes sure all elements in a <table> are accessible via Spatial Navigation.
+        * fast/events/spatial-navigation/snav-tiny-table-traversal.html: Added.
+          Tests the similar table traversal scenario as above, but in this case the elements
+          in the <table> are styled with 'font-size: small'. That way this test also validades
+          that overlapping rects of elements too closed from each other are correctly handled.
+
 2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.

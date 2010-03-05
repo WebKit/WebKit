@@ -1,0 +1,20 @@
+a
+a	a	a
+a	a	a
+a	a	a
+a
+a
+PASS document.activeElement.getAttribute("id") is "1"
+PASS document.activeElement.getAttribute("id") is "4"
+PASS document.activeElement.getAttribute("id") is "7"
+PASS document.activeElement.getAttribute("id") is "end"
+PASS document.activeElement.getAttribute("id") is "7"
+PASS document.activeElement.getAttribute("id") is "8"
+PASS document.activeElement.getAttribute("id") is "9"
+PASS document.activeElement.getAttribute("id") is "6"
+PASS document.activeElement.getAttribute("id") is "right"
+PASS document.activeElement.getAttribute("id") is "6"
+PASS document.activeElement.getAttribute("id") is "3"
+PASS document.activeElement.getAttribute("id") is "2"
+PASS document.activeElement.getAttribute("id") is "1"
+
