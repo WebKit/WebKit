@@ -1,3 +1,30 @@
+2010-03-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        Bug 26869: Add fill modes for CSS Animations
+        https://bugs.webkit.org/show_bug.cgi?id=26869
+
+        Add tests for -webkit-animation-fill-mode property,
+        and update existing computed style tests with the
+        new property.
+
+        * animations/computed-style-expected.txt:
+        * animations/computed-style.html:
+        * animations/fill-mode-expected.txt: Added.
+        * animations/fill-mode-removed-expected.txt: Added.
+        * animations/fill-mode-removed.html: Added.
+        * animations/fill-mode-transform-expected.txt: Added.
+        * animations/fill-mode-transform.html: Added.
+        * animations/fill-mode.html: Added.
+        * animations/fill-unset-properties-expected.txt:
+        * animations/fill-unset-properties.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-03-05  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -235,6 +235,7 @@ public:
         void mapAnimationDelay(Animation*, CSSValue*);
         void mapAnimationDirection(Animation*, CSSValue*);
         void mapAnimationDuration(Animation*, CSSValue*);
+        void mapAnimationFillMode(Animation*, CSSValue*);
         void mapAnimationIterationCount(Animation*, CSSValue*);
         void mapAnimationName(Animation*, CSSValue*);
         void mapAnimationPlayState(Animation*, CSSValue*);

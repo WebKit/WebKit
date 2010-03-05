@@ -32,10 +32,12 @@ Animation::Animation()
     , m_duration(initialAnimationDuration())
     , m_timingFunction(initialAnimationTimingFunction())
     , m_direction(initialAnimationDirection())
+    , m_fillMode(initialAnimationFillMode())
     , m_playState(initialAnimationPlayState())
     , m_delaySet(false)
     , m_directionSet(false)
     , m_durationSet(false)
+    , m_fillModeSet(false)
     , m_iterationCountSet(false)
     , m_nameSet(false)
     , m_playStateSet(false)
@@ -54,10 +56,12 @@ Animation::Animation(const Animation& o)
     , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
     , m_direction(o.m_direction)
+    , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
     , m_delaySet(o.m_delaySet)
     , m_directionSet(o.m_directionSet)
     , m_durationSet(o.m_durationSet)
+    , m_fillModeSet(o.m_fillModeSet)
     , m_iterationCountSet(o.m_iterationCountSet)
     , m_nameSet(o.m_nameSet)
     , m_playStateSet(o.m_playStateSet)
@@ -76,11 +80,13 @@ Animation& Animation::operator=(const Animation& o)
     m_duration = o.m_duration;
     m_timingFunction = o.m_timingFunction;
     m_direction = o.m_direction;
+    m_fillMode = o.m_fillMode;
     m_playState = o.m_playState;
 
     m_delaySet = o.m_delaySet;
     m_directionSet = o.m_directionSet;
     m_durationSet = o.m_durationSet;
+    m_fillModeSet = o.m_fillModeSet;
     m_iterationCountSet = o.m_iterationCountSet;
     m_nameSet = o.m_nameSet;
     m_playStateSet = o.m_playStateSet;
@@ -107,9 +113,11 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
                   m_duration == o->m_duration &&
                   m_timingFunction == o->m_timingFunction &&
                   m_direction == o->m_direction &&
+                  m_fillMode == o->m_fillMode &&
                   m_delaySet == o->m_delaySet &&
                   m_directionSet == o->m_directionSet &&
                   m_durationSet == o->m_durationSet &&
+                  m_fillModeSet == o->m_fillModeSet &&
                   m_iterationCountSet == o->m_iterationCountSet &&
                   m_nameSet == o->m_nameSet &&
                   m_propertySet == o->m_propertySet &&

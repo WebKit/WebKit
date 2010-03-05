@@ -13,6 +13,7 @@
     -webkit-animation-name: a, b, c, d, e;
     -webkit-animation-duration: 10s, 20s;
     -webkit-animation-delay: 1s;
+    -webkit-animation-fill-mode: forwards, backwards;
 }
 @-webkit-keyframes a { }
 @-webkit-keyframes b { }
@@ -32,6 +33,7 @@
       { 'property': 'webkitAnimationName',      'value': 'a, b, c, d, e' },
       { 'property': 'webkitAnimationDuration',  'value': '10s, 20s, 10s, 20s, 10s' },
       { 'property': 'webkitAnimationDelay',     'value': '1s, 1s, 1s, 1s, 1s' },
+      { 'property': 'webkitAnimationFillMode',  'value': 'forwards, backwards, forwards, backwards, forwards' },
     ];
     
     function start()

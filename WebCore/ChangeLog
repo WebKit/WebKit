@@ -1,3 +1,48 @@
+2010-03-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        Bug 26869: Add fill modes for CSS Animations
+        https://bugs.webkit.org/show_bug.cgi?id=26869
+
+        Tests: animations/fill-mode-removed.html
+               animations/fill-mode-transform.html
+               animations/fill-mode.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * css/CSSValueKeywords.in:
+            - parse, assign and retrieve the value of the new
+              -webkit-animation-fill-mode property
+        * page/animation/AnimationBase.cpp:
+        * page/animation/AnimationBase.h:
+            - new state in animation engine for a finished animation
+              that is "filling" forwards in time. This allows the
+              engine to keep the animation around and not revert to the
+              old style.
+            - update the timer code to indicate it doesn't need to
+              keep animating if it is filling
+            - now that animations can extend beyond their elapsed time,
+              make sure progress works correctly with iteration counts
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+            - ensure correct style value is returned at the right
+              time by checking for fill mode
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+            - continue to send the end event, but only remove the
+              animation if it isn't filling forwards
+        * platform/animation/Animation.cpp:
+        * platform/animation/Animation.h:
+            - new fill mode member property
+        * platform/animation/AnimationList.cpp:
+            - ensure the fill mode is propagated to a list of style valus
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+            - make hardware layers use Core Animation's fill mode
+
 2010-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

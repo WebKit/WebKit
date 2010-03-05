@@ -1393,6 +1393,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitAnimationDelay:
     case CSSPropertyWebkitAnimationDirection:
     case CSSPropertyWebkitAnimationDuration:
+    case CSSPropertyWebkitAnimationFillMode:
     case CSSPropertyWebkitAnimationName:
     case CSSPropertyWebkitAnimationPlayState:
     case CSSPropertyWebkitAnimationIterationCount:
@@ -2571,6 +2572,14 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationDuration()
     return 0;
 }
 
+PassRefPtr<CSSValue> CSSParser::parseAnimationFillMode()
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueNone || value->id == CSSValueForwards || value->id == CSSValueBackwards || value->id == CSSValueBoth)
+        return CSSPrimitiveValue::createIdentifier(value->id);
+    return 0;
+}
+
 PassRefPtr<CSSValue> CSSParser::parseAnimationIterationCount()
 {
     CSSParserValue* value = m_valueList->current();
@@ -2710,6 +2719,11 @@ bool CSSParser::parseAnimationProperty(int propId, RefPtr<CSSValue>& result)
                 case CSSPropertyWebkitAnimationDuration:
                 case CSSPropertyWebkitTransitionDuration:
                     currValue = parseAnimationDuration();
+                    if (currValue)
+                        m_valueList->next();
+                    break;
+                case CSSPropertyWebkitAnimationFillMode:
+                    currValue = parseAnimationFillMode();
                     if (currValue)
                         m_valueList->next();
                     break;

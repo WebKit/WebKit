@@ -5,4 +5,5 @@ Testing webkitTransitionTimingFunction: PASS
 Testing webkitAnimationName: PASS
 Testing webkitAnimationDuration: PASS
 Testing webkitAnimationDelay: PASS
+Testing webkitAnimationFillMode: PASS
 

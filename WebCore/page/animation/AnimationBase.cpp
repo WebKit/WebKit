@@ -918,8 +918,8 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
     // Execute state machine
     switch (m_animState) {
         case AnimationStateNew:
-            ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning || input == AnimationStateInputPlayStatePaused);
-            if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning) {
+            ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunning || input == AnimationStateInputPlayStatePaused);
+            if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunning) {
                 m_requestedStartTime = beginAnimationUpdateTime();
                 m_animState = AnimationStateStartWaitTimer;
             }
@@ -1021,6 +1021,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             ASSERT(input == AnimationStateInputEndTimerFired || input == AnimationStateInputPlayStatePaused);
 
             if (input == AnimationStateInputEndTimerFired) {
+
                 ASSERT(param >= 0);
                 // End timer fired, finish up
                 onAnimationEnd(param);
@@ -1028,7 +1029,10 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 m_animState = AnimationStateDone;
                 
                 if (m_object) {
-                    resumeOverriddenAnimations();
+                    if (m_animation->fillsForwards())
+                        m_animState = AnimationStateFillingForwards;
+                    else
+                        resumeOverriddenAnimations();
 
                     // Fire off another style change so we can set the final value
                     m_compAnim->animationController()->addNodeChangeToDispatch(m_object->node());
@@ -1042,7 +1046,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             // |this| may be deleted here
             break;
         case AnimationStatePausedWaitTimer:
-            ASSERT(input == AnimationStateInputPlayStateRunnning);
+            ASSERT(input == AnimationStateInputPlayStateRunning);
             ASSERT(paused());
             // Update the times
             m_startTime += beginAnimationUpdateTime() - m_pauseTime;
@@ -1058,7 +1062,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             // AnimationStatePausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
             // When the AnimationStateInputStartTimeSet comes in and we were in AnimationStatePausedRun, we will notice
             // that we have already set the startTime and will ignore it.
-            ASSERT(input == AnimationStateInputPlayStateRunnning || input == AnimationStateInputStartTimeSet);
+            ASSERT(input == AnimationStateInputPlayStateRunning || input == AnimationStateInputStartTimeSet);
             ASSERT(paused());
             
             // If we are paused, but we get the callback that notifies us that an accelerated animation started,
@@ -1093,6 +1097,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 m_fallbackAnimating = !started;
             }
             break;
+        case AnimationStateFillingForwards:
         case AnimationStateDone:
             // We're done. Stay in this state until we are deleted
             break;
@@ -1152,14 +1157,14 @@ void AnimationBase::fireAnimationEventsIfNeeded()
 void AnimationBase::updatePlayState(bool run)
 {
     if (paused() == run || isNew())
-        updateStateMachine(run ? AnimationStateInputPlayStateRunnning : AnimationStateInputPlayStatePaused, -1);
+        updateStateMachine(run ? AnimationStateInputPlayStateRunning : AnimationStateInputPlayStatePaused, -1);
 }
 
 double AnimationBase::timeToNextService()
 {
     // Returns the time at which next service is required. -1 means no service is required. 0 means 
     // service is required now, and > 0 means service is required that many seconds in the future.
-    if (paused() || isNew())
+    if (paused() || isNew() || m_animState == AnimationStateFillingForwards)
         return -1;
     
     if (m_animState == AnimationStateStartWaitTimer) {
@@ -1184,8 +1189,10 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (m_animation->iterationCount() > 0)
         dur *= m_animation->iterationCount();
 
-    if (postActive() || !m_animation->duration() || (m_animation->iterationCount() > 0 && elapsedTime >= dur))
+    if (postActive() || !m_animation->duration())
         return 1.0;
+    if (m_animation->iterationCount() > 0 && elapsedTime >= dur)
+        return (m_animation->iterationCount() % 2) ? 1.0 : 0.0;
 
     // Compute the fractional time, taking into account direction.
     // There is no need to worry about iterations, we assume that we would have

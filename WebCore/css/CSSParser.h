@@ -95,6 +95,7 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseAnimationDelay();
         PassRefPtr<CSSValue> parseAnimationDirection();
         PassRefPtr<CSSValue> parseAnimationDuration();
+        PassRefPtr<CSSValue> parseAnimationFillMode();
         PassRefPtr<CSSValue> parseAnimationIterationCount();
         PassRefPtr<CSSValue> parseAnimationName();
         PassRefPtr<CSSValue> parseAnimationPlayState();

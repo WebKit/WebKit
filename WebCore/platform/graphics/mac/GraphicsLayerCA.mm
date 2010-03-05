@@ -1859,12 +1859,28 @@ void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const An
     else if (anim->direction() == Animation::AnimationDirectionAlternate)
         repeatCount /= 2;
 
+    NSString* fillMode = 0;
+    switch (anim->fillMode()) {
+    case Animation::AnimationFillModeNone:
+        fillMode = kCAFillModeRemoved;
+        break;
+    case Animation::AnimationFillModeBackwards:
+        fillMode = kCAFillModeBackwards;
+        break;
+    case Animation::AnimationFillModeForwards:
+       fillMode = kCAFillModeForwards;
+       break;
+    case Animation::AnimationFillModeBoth:
+       fillMode = kCAFillModeBoth;
+       break;
+    }
+
     [propertyAnim setDuration:duration];
     [propertyAnim setRepeatCount:repeatCount];
     [propertyAnim setAutoreverses:anim->direction()];
     [propertyAnim setRemovedOnCompletion:NO];
     [propertyAnim setAdditive:additive];
-    [propertyAnim setFillMode:@"extended"];
+    [propertyAnim setFillMode:fillMode];
 
     [propertyAnim setDelegate:m_animationDelegate.get()];
 }

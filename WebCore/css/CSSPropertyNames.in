@@ -151,6 +151,7 @@ zoom
 -webkit-animation-delay
 -webkit-animation-direction
 -webkit-animation-duration
+-webkit-animation-fill-mode
 -webkit-animation-iteration-count
 -webkit-animation-name
 -webkit-animation-play-state

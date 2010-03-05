@@ -5291,6 +5291,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAnimationDuration:
         HANDLE_ANIMATION_VALUE(duration, Duration, value)
         return;
+    case CSSPropertyWebkitAnimationFillMode:
+        HANDLE_ANIMATION_VALUE(fillMode, FillMode, value)
+        return;
     case CSSPropertyWebkitAnimationIterationCount:
         HANDLE_ANIMATION_VALUE(iterationCount, IterationCount, value)
         return;
@@ -5648,6 +5651,30 @@ void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* valu
         animation->setDuration(primitiveValue->getFloatValue());
     else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_MS)
         animation->setDuration(primitiveValue->getFloatValue()/1000.0f);
+}
+
+void CSSStyleSelector::mapAnimationFillMode(Animation* layer, CSSValue* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setFillMode(Animation::initialAnimationFillMode());
+        return;
+    }
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    switch (primitiveValue->getIdent()) {
+    case CSSValueNone:
+        layer->setFillMode(Animation::AnimationFillModeNone);
+        break;
+    case CSSValueForwards:
+        layer->setFillMode(Animation::AnimationFillModeForwards);
+        break;
+    case CSSValueBackwards:
+        layer->setFillMode(Animation::AnimationFillModeBackwards);
+        break;
+    case CSSValueBoth:
+        layer->setFillMode(Animation::AnimationFillModeBoth);
+        break;
+    }
 }
 
 void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue* value)

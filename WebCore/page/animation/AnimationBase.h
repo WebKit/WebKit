@@ -71,7 +71,8 @@ public:
         AnimationStatePausedWaitTimer,      // in pause mode when animation started
         AnimationStatePausedWaitResponse,   // animation paused when in STARTING state
         AnimationStatePausedRun,            // animation paused when in LOOPING or ENDING state
-        AnimationStateDone                  // end timer fired, animation finished and removed
+        AnimationStateDone,                 // end timer fired, animation finished and removed
+        AnimationStateFillingForwards       // animation has ended and is retaining its final value
     };
 
     enum AnimStateInput {
@@ -85,7 +86,7 @@ public:
         AnimationStateInputEndTimerFired,     // end timer fired
         AnimationStateInputPauseOverride,     // pause an animation due to override
         AnimationStateInputResumeOverride,    // resume an overridden animation
-        AnimationStateInputPlayStateRunnning, // play state paused -> running
+        AnimationStateInputPlayStateRunning,  // play state paused -> running
         AnimationStateInputPlayStatePaused,   // play state running -> paused
         AnimationStateInputEndAnimation       // force an end from any state
     };

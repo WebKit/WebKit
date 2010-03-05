@@ -1,0 +1,19 @@
+This test performs an animation of the transform property with four different fill modes. It animates over 0.1 second with a 0.1 second delay. It takes snapshots at document load and the end of the animations.
+None
+Backwards
+Forwards
+Both
+Both Iterate
+Note that due to Bug 35714 the expected values for the start of the animation on elements "a" and "c" are intentionally incorrect. The expected values should be 100, not 200. If this test fails, then it's likely that bug has been fixed and the expected values here should be updated.
+
+PASS - start of animation - id: a expected: 200 actual: 200
+PASS - start of animation - id: b expected: 200 actual: 200
+PASS - start of animation - id: c expected: 200 actual: 200
+PASS - start of animation - id: d expected: 200 actual: 200
+PASS - start of animation - id: e expected: 200 actual: 200
+PASS - end of animation - id: a expected: 100 actual: 100
+PASS - end of animation - id: b expected: 100 actual: 100
+PASS - end of animation - id: c expected: 300 actual: 300
+PASS - end of animation - id: d expected: 300 actual: 300
+PASS - end of animation - id: e expected: 200 actual: 200
+

@@ -639,6 +639,13 @@ lines
 # alternate
 
 #
+# CSS_PROP__WEBKIT_ANIMATION_FILL_MODE
+#
+# forwards
+# backwards
+# both
+
+#
 # CSS_PROP__WEBKIT_ANIMATION_ITERATION_COUNT
 #
 # infinite

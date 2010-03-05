@@ -9,6 +9,7 @@
         position: relative;
         -webkit-animation-name: anim1;
         -webkit-animation-duration: 10s;
+        -webkit-animation-fill-mode: backwards;
         -webkit-animation-iteration-count: 10;
         -webkit-animation-timing-function: linear;
         -webkit-animation-direction: normal;
@@ -20,6 +21,7 @@
         position: relative;
         -webkit-animation-name: anim2, anim3;
         -webkit-animation-duration: 5s, 2500ms;
+        -webkit-animation-fill-mode: forwards, both;
         -webkit-animation-iteration-count: 10, infinite;
         -webkit-animation-timing-function: linear, ease-in-out;
         -webkit-animation-direction: normal, alternate;
@@ -59,6 +61,9 @@ shouldBe("test2Style.webkitAnimationName", "'anim2, anim3'");
 
 shouldBe("test1Style.webkitAnimationDuration", "'10s'");
 shouldBe("test2Style.webkitAnimationDuration", "'5s, 2.5s'");
+
+shouldBe("test1Style.webkitAnimationFillMode", "'backwards'");
+shouldBe("test2Style.webkitAnimationFillMode", "'forwards, both'");
 
 shouldBe("test1Style.webkitAnimationIterationCount", "'10'");
 shouldBe("test2Style.webkitAnimationIterationCount", "'10, infinite'");

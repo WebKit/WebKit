@@ -37,6 +37,7 @@ void AnimationList::fillUnsetProperties()
     FILL_UNSET_PROPERTY(isDelaySet, delay, setDelay);
     FILL_UNSET_PROPERTY(isDirectionSet, direction, setDirection);
     FILL_UNSET_PROPERTY(isDurationSet, duration, setDuration);
+    FILL_UNSET_PROPERTY(isFillModeSet, fillMode, setFillMode);
     FILL_UNSET_PROPERTY(isIterationCountSet, iterationCount, setIterationCount);
     FILL_UNSET_PROPERTY(isPlayStateSet, playState, setPlayState);
     FILL_UNSET_PROPERTY(isNameSet, name, setName);
