@@ -93,6 +93,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_html5_database;
     gboolean enable_html5_local_storage;
     gboolean enable_xss_auditor;
+    gboolean enable_spatial_navigation;
     gchar* user_agent;
     gboolean javascript_can_open_windows_automatically;
     gboolean enable_offline_web_application_cache;
@@ -141,6 +142,7 @@ enum {
     PROP_ENABLE_HTML5_DATABASE,
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
     PROP_ENABLE_XSS_AUDITOR,
+    PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_USER_AGENT,
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
@@ -568,7 +570,25 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether to enable teh XSS auditor"),
                                                          TRUE,
                                                          flags));
-
+    /**
+    * WebKitWebSettings:enable-spatial-navigation
+    *
+    * Whether to enable the Spatial Navigation. This feature consists in the ability
+    * to navigate between focusable elements in a Web page, such as hyperlinks and
+    * form controls, by using Left, Right, Up and Down arrow keys. For example, if
+    * an user presses the Right key, heuristics determine whether there is an element
+    * he might be trying to reach towards the right, and if there are multiple elements,
+    * which element he probably wants.
+    *
+    * Since: 1.1.23
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_SPATIAL_NAVIGATION,
+                                    g_param_spec_boolean("enable-spatial-navigation",
+                                                         _("Enable Spatial Navigation"),
+                                                         _("Whether to enable Spatial Navigation"),
+                                                         FALSE,
+                                                         flags));
     /**
      * WebKitWebSettings:user-agent:
      *
@@ -990,6 +1010,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_XSS_AUDITOR:
         priv->enable_xss_auditor = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_SPATIAL_NAVIGATION:
+        priv->enable_spatial_navigation = g_value_get_boolean(value);
+        break;
     case PROP_USER_AGENT:
         g_free(priv->user_agent);
         if (!g_value_get_string(value) || !strlen(g_value_get_string(value)))
@@ -1129,6 +1152,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_XSS_AUDITOR:
         g_value_set_boolean(value, priv->enable_xss_auditor);
         break;
+    case PROP_ENABLE_SPATIAL_NAVIGATION:
+        g_value_set_boolean(value, priv->enable_spatial_navigation);
+        break;
     case PROP_USER_AGENT:
         g_value_set_string(value, priv->user_agent);
         break;
@@ -1226,6 +1252,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-html5-database", priv->enable_html5_database,
                  "enable-html5-local-storage", priv->enable_html5_local_storage,
                  "enable-xss-auditor", priv->enable_xss_auditor,
+                 "enable-spatial-navigation", priv->enable_spatial_navigation,
                  "user-agent", webkit_web_settings_get_user_agent(web_settings),
                  "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,

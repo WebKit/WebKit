@@ -2672,7 +2672,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
-        enableXSSAuditor, javascriptCanOpenWindows, enableOfflineWebAppCache,
+        enableXSSAuditor, enableSpatialNavigation, javascriptCanOpenWindows, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements,
         enableSiteSpecificQuirks, usePageCache, enableJavaApplet;
@@ -2700,6 +2700,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-html5-database", &enableHTML5Database,
                  "enable-html5-local-storage", &enableHTML5LocalStorage,
                  "enable-xss-auditor", &enableXSSAuditor,
+                 "enable-spatial-navigation", &enableSpatialNavigation,
                  "javascript-can-open-windows-automatically", &javascriptCanOpenWindows,
                  "enable-offline-web-application-cache", &enableOfflineWebAppCache,
                  "editing-behavior", &editingBehavior,
@@ -2735,6 +2736,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
     settings->setLocalStorageEnabled(enableHTML5LocalStorage);
     settings->setXSSAuditorEnabled(enableXSSAuditor);
+    settings->setSpatialNavigationEnabled(enableSpatialNavigation);
     settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
     settings->setOfflineWebApplicationCacheEnabled(enableOfflineWebAppCache);
     settings->setEditingBehavior(core(editingBehavior));
@@ -2830,6 +2832,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-xss-auditor"))
         settings->setXSSAuditorEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-spatial-navigation"))
+        settings->setSpatialNavigationEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("javascript-can-open-windows-automatically"))
         settings->setJavaScriptCanOpenWindowsAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-offline-web-application-cache"))
