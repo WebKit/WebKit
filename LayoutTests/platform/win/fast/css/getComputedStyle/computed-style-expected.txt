@@ -96,6 +96,7 @@ zoom: 1;
 -webkit-animation-delay: 0s;
 -webkit-animation-direction: normal;
 -webkit-animation-duration: 0s;
+-webkit-animation-fill-mode: none;
 -webkit-animation-iteration-count: 1;
 -webkit-animation-name: none;
 -webkit-animation-play-state: running;
