@@ -1,3 +1,11 @@
+2010-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Alice Liu.
+
+        Find the framework relative to TARGET_BUILD_DIR as that has a more obvious value during production builds.
+
+        * Scripts/check-for-webkit-framework-include-consistency:
+
 2010-03-04  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
