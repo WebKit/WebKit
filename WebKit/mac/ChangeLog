@@ -1,3 +1,12 @@
+2010-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use a framework-style include to pull in WebInspector.h for consistency
+        with other parts of WebKit.
+
+        * WebInspector/WebInspectorPrivate.h:
+
 2010-03-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoff Garen.
