@@ -1574,6 +1574,7 @@
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
 				9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
+				5D88EE6C11407DE800BC3ABC /* Check For Framework Include Consistency */,
 				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
 			buildRules = (
@@ -1691,6 +1692,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${PROJECT_DIR}/mac/Info.plist\";\nfi;\n";
+		};
+		5D88EE6C11407DE800BC3ABC /* Check For Framework Include Consistency */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Framework Include Consistency";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-webkit-framework-include-consistency ]; then\n    ../WebKitTools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
 		};
 		5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */ = {
 			isa = PBXShellScriptBuildPhase;

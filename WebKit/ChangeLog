@@ -1,3 +1,12 @@
+2010-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a script to verify that WebKit framework headers are internally consistent.
+
+        * WebKit.xcodeproj/project.pbxproj: Run the script during the build and fail with
+        an error should the consistency check fail.
+
 2010-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoffrey Garen.
