@@ -71,7 +71,8 @@ public:
         DnsPrefetchEnabled,
         XSSAuditorEnabled,
         AcceleratedCompositingEnabled,
-        WebGLEnabled
+        WebGLEnabled,
+        SpatialNavigationEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

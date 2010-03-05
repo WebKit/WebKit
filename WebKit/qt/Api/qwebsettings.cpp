@@ -183,6 +183,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::PrivateBrowsingEnabled));
         settings->setPrivateBrowsingEnabled(value);
 
+        value = attributes.value(QWebSettings::SpatialNavigationEnabled,
+                                      global->attributes.value(QWebSettings::SpatialNavigationEnabled));
+        settings->setSpatialNavigationEnabled(value);
+
         value = attributes.value(QWebSettings::JavascriptCanAccessClipboard,
                                       global->attributes.value(QWebSettings::JavascriptCanAccessClipboard));
         settings->setDOMPasteAllowed(value);
@@ -364,6 +368,13 @@ QWebSettings* QWebSettings::globalSettings()
         Currently this enables the "Inspect" element in the context menu as
         well as the use of QWebInspector which controls the WebKit WebInspector
         for web site debugging.
+    \value SpatialNavigationEnabled Enables or disables the Spatial Navigation
+        feature, which consists in the ability to navigate between focusable
+        elements in a Web page, such as hyperlinks and form controls, by using
+        Left, Right, Up and Down arrow keys. For example, if an user presses the
+        Right key, heuristics determine whether there is an element he might be
+        trying to reach towards the right, and if there are multiple elements,
+        which element he probably wants.
     \value LinksIncludedInFocusChain Specifies whether hyperlinks should be
         included in the keyboard focus chain.
     \value ZoomTextOnly Specifies whether the zoom factor on a frame applies to
@@ -404,6 +415,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::AutoLoadImages, true);
     d->attributes.insert(QWebSettings::DnsPrefetchEnabled, false);
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
+    d->attributes.insert(QWebSettings::SpatialNavigationEnabled, false);
     d->attributes.insert(QWebSettings::LinksIncludedInFocusChain, true);
     d->attributes.insert(QWebSettings::ZoomTextOnly, false);
     d->attributes.insert(QWebSettings::PrintElementBackgrounds, true);

@@ -1,3 +1,17 @@
+2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        [Qt] QWebSettings attribute for toggle Spatial Navigation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=33714 (Qt API part)
+
+        Added 'SpatialNavigationEnabled' attribute to QWebSettings.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
 2010-03-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
