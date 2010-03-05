@@ -1,5 +1,11 @@
 2010-03-04  Mark Rowe  <mrowe@apple.com>
 
+        Build fix for older versions of Ruby.
+
+        * Scripts/check-for-webkit-framework-include-consistency:
+
+2010-03-04  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add a script to verify that WebKit framework headers are internally consistent.
