@@ -467,7 +467,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return !!WebInspector.resourceForURL(url) && InspectorBackend.resourceTrackingEnabled();
+        return this._resourceTrackingEnabled && !!WebInspector.resourceForURL(url);
     },
 
     showSourceLine: function(url, line)

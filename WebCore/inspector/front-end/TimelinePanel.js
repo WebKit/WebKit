@@ -239,6 +239,12 @@ WebInspector.TimelinePanel.prototype = {
             this._refresh();
     },
 
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        this._closeRecordDetails();
+    },
+
     _onScroll: function(event)
     {
         this._closeRecordDetails();

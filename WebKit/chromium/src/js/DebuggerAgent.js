@@ -181,7 +181,7 @@ devtools.DebuggerAgent.prototype.initUI = function()
         // pending addition into the UI.
         for (var scriptId in this.parsedScripts_) {
           var script = this.parsedScripts_[scriptId];
-          WebInspector.parsedScriptSource(scriptId, script.getUrl(), undefined /* script source */, script.getLineOffset());
+          WebInspector.parsedScriptSource(scriptId, script.getUrl(), undefined /* script source */, script.getLineOffset() + 1);
         }
         return;
     }
@@ -926,7 +926,7 @@ devtools.DebuggerAgent.prototype.addScriptInfo_ = function(script, msg)
     this.parsedScripts_[script.id] = new devtools.ScriptInfo(script.id, script.name, script.lineOffset, contextType);
     if (this.scriptsPanelInitialized_) {
         // Only report script as parsed after scripts panel has been shown.
-        WebInspector.parsedScriptSource(script.id, script.name, script.source, script.lineOffset);
+        WebInspector.parsedScriptSource(script.id, script.name, script.source, script.lineOffset + 1);
     }
 };
 

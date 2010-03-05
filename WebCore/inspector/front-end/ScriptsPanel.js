@@ -517,19 +517,22 @@ WebInspector.ScriptsPanel.prototype = {
 
     _scriptOrResourceForURLAndLine: function(url, line) 
     {
+        var scriptWithMatchingUrl = null;
         for (var sourceID in this._sourceIDMap) {
             var scriptOrResource = this._sourceIDMap[sourceID];
             if (scriptOrResource instanceof WebInspector.Script) {
-                var script = scriptOrResource;
-                if (script.startingLine <= line && script.startingLine + script.linesCount > line)
-                    return script;
+                if (scriptOrResource.sourceURL !== url)
+                    continue;
+                scriptWithMatchingUrl = scriptOrResource;
+                if (scriptWithMatchingUrl.startingLine <= line && scriptWithMatchingUrl.startingLine + scriptWithMatchingUrl.linesCount > line)
+                    return scriptWithMatchingUrl;
             } else {
                 var resource = scriptOrResource;
                 if (resource.url === url)
                     return resource;
             }
         }
-        return null;
+        return scriptWithMatchingUrl;
     },
 
     showView: function(view)
@@ -690,7 +693,7 @@ WebInspector.ScriptsPanel.prototype = {
         option.representedObject = script.resource || script;
         option.url = displayName;
         option.startingLine = script.startingLine;
-        option.text = script.resource ? displayName : String.sprintf("%s:%d", displayName, script.startingLine);
+        option.text = script.resource || script.startingLine === 1 ? displayName : String.sprintf("%s:%d", displayName, script.startingLine);
 
         function optionCompare(a, b)
         {

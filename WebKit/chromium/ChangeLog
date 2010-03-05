@@ -1,3 +1,15 @@
+2010-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Do not show link helper in popovers and/or for external resources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35785
+
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent.prototype.initUI):
+        (devtools.DebuggerAgent.prototype.addScriptInfo_):
+
 2010-03-04  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.
