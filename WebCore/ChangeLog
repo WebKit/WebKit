@@ -2,6 +2,19 @@
 
         Reviewed by Dan Bernstein.
 
+        Child clipping compositing layers don't show the blue debug color
+        https://bugs.webkit.org/show_bug.cgi?id=35807
+
+        Set a layer owner on the GraphicsLayers created for clipping children,
+        so that they can get to the debug settings that give them the blue color.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateClippingLayers):
+
+2010-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         MobileMe movie page is missing playback controls
         https://bugs.webkit.org/show_bug.cgi?id=35805
         <rdar://problem/7653169>

@@ -424,7 +424,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     
     if (needsDescendantClip) {
         if (!m_clippingLayer) {
-            m_clippingLayer = GraphicsLayer::create(0);
+            m_clippingLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
             m_clippingLayer->setName("Child clipping Layer");
 #endif
