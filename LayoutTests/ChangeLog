@@ -1,5 +1,15 @@
 2010-03-03  Antonio Gomes  <tonikitoo@webkit.org>
 
+        Reviewed by Holger Freyther
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        [Gtk] Implement setSpatialNavigationEnabled in DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=35705
+
+        * platform/gtk/Skipped:
+
+2010-03-03  Antonio Gomes  <tonikitoo@webkit.org>
+
         Reviewed by Kenneth Christiansen.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 

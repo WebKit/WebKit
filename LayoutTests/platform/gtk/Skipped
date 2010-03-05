@@ -5803,6 +5803,3 @@ fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-already-success.html
 fast/dom/Geolocation/permission-denied-stops-watches.html
 fast/dom/Geolocation/permission-denied.html
-
-# Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
-fast/events/spatial-navigation
