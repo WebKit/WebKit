@@ -291,6 +291,8 @@ all : \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEMergeElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEMergeNodeElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEMergeNodeElementInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMSVGFEMorphologyElement.h \
+    $(INTERNAL_HEADERS_DIR)/DOMSVGFEMorphologyElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEOffsetElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMSVGFEOffsetElementInternal.h \
     $(PRIVATE_HEADERS_DIR)/DOMSVGFEPointLightElement.h \
