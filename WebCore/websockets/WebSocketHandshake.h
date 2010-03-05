@@ -67,6 +67,7 @@ namespace WebCore {
         WebSocketHandshakeRequest clientHandshakeRequest() const;
 
         void reset();
+        void clearScriptExecutionContext();
 
         int readServerHandshake(const char* header, size_t len);
         Mode mode() const;

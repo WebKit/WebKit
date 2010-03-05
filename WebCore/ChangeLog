@@ -1,3 +1,19 @@
+2010-03-04  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket crash bug when reloading the page while the WebSocket is busy
+        https://bugs.webkit.org/show_bug.cgi?id=35732
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::disconnect): clear m_context from WebSocketChannel and WebSocketHandshake.
+        (WebCore::WebSocketChannel::didOpen): check m_context
+        (WebCore::WebSocketChannel::didClose): clear m_context
+        (WebCore::WebSocketChannel::didReceiveData): check m_context, and check m_client early before appending to buffer
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clearScriptExecutionContext): Added.
+        * websockets/WebSocketHandshake.h:
+
 2010-03-04  MORITA Hajime <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.

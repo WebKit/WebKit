@@ -221,6 +221,11 @@ void WebSocketHandshake::reset()
     m_setCookie2 = String();
 }
 
+void WebSocketHandshake::clearScriptExecutionContext()
+{
+    m_context = 0;
+}
+
 int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
 {
     m_mode = Incomplete;

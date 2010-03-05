@@ -1,3 +1,14 @@
+2010-03-04  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket crash bug when reloading the page while the WebSocket is busy
+        https://bugs.webkit.org/show_bug.cgi?id=35732
+
+        * websocket/tests/reload-crash-expected.txt: Added.
+        * websocket/tests/reload-crash.html: Added.
+        * websocket/tests/resoures/reload-crash-iframe.html: Added.
+
 2010-03-04  MORITA Hajime <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.
