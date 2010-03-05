@@ -149,10 +149,9 @@ WebString WebDocument::applicationID() const
         const_cast<Document*>(document)->getElementsByTagName("meta");
     for (unsigned i = 0; i < metaTags->length(); ++i) {
         Element* element = static_cast<Element*>(metaTags->item(i));
-        if (element->getAttribute("http-equiv").lower() ==
-                kChromeApplicationHeader) {
+        if (element->hasAttribute("http-equiv")
+            && element->getAttribute("http-equiv").lower() == kChromeApplicationHeader)
             return element->getAttribute("value");
-        }
     }
 
     return WebString();
