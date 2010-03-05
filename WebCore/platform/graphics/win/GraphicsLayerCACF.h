@@ -91,8 +91,6 @@ public:
 
     virtual void setGeometryOrientation(CompositingCoordinatesOrientation);
 
-    void notifySyncRequired() { if (m_client) m_client->notifySyncRequired(this); }
-
 private:
     void updateOpacityOnLayer();
 

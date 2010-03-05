@@ -47,6 +47,8 @@ typedef struct _CARenderOGLContext CARenderOGLContext;
 
 namespace WebCore {
 
+class WKCACFRootLayer;
+
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
@@ -60,7 +62,7 @@ public:
 
     void setScrollFrame(const IntRect&);
     void setRootContents(CGImageRef);
-    void setRootChildLayer(WebCore::PlatformLayer* layer);
+    void setRootChildLayer(WKCACFLayer* layer);
     void setNeedsDisplay();
     void setHostWindow(HWND window) { m_hostWindow = window; }
 
@@ -70,7 +72,7 @@ public:
     void renderSoon();
 
 protected:
-    WKCACFLayer* rootLayer() const { return m_rootLayer.get(); }
+    WKCACFLayer* rootLayer() const;
 
 private:
     WKCACFLayerRenderer();
@@ -87,7 +89,7 @@ private:
 
     bool m_triedToCreateD3DRenderer;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
-    RefPtr<WKCACFLayer> m_rootLayer;
+    RefPtr<WKCACFRootLayer> m_rootLayer;
     RefPtr<WKCACFLayer> m_viewLayer;
     RefPtr<WKCACFLayer> m_scrollLayer;
     RefPtr<WKCACFLayer> m_rootChildLayer;

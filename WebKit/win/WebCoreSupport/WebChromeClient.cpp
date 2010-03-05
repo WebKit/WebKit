@@ -46,6 +46,9 @@
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/Geolocation.h>
+#if USE(ACCELERATED_COMPOSITING)
+#include <WebCore/GraphicsLayer.h>
+#endif
 #include <WebCore/HTMLNames.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
@@ -783,7 +786,7 @@ void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geoloca
 #if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
-    m_webView->setRootChildLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
+    m_webView->setRootChildLayer(graphicsLayer ? static_cast<WKCACFLayer*>(graphicsLayer->platformLayer()) : 0);
 }
 
 void WebChromeClient::scheduleCompositingLayerSync()

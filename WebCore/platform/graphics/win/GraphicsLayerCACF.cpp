@@ -44,6 +44,82 @@ using namespace std;
 
 namespace WebCore {
 
+class WebLayer : public WKCACFLayer {
+public:
+    static PassRefPtr<WKCACFLayer> create(LayerType layerType, GraphicsLayerCACF* owner)
+    {
+        return adoptRef(new WebLayer(layerType, owner));
+    }
+
+    virtual void drawInContext(PlatformGraphicsContext* context)
+    {
+        if (!m_owner)
+            return;
+
+        CGContextSaveGState(context);
+
+        CGRect layerBounds = bounds();
+        if (m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
+            CGContextScaleCTM(context, 1, -1);
+            CGContextTranslateCTM(context, 0, -layerBounds.size.height);
+        }
+
+        if (m_owner->client()) {
+            GraphicsContext graphicsContext(context);
+
+            // It's important to get the clip from the context, because it may be significantly
+            // smaller than the layer bounds (e.g. tiled layers)
+            CGRect clipBounds = CGContextGetClipBoundingBox(context);
+            IntRect clip(enclosingIntRect(clipBounds));
+            m_owner->paintGraphicsLayerContents(graphicsContext, clip);
+        }
+#ifndef NDEBUG
+        else {
+            ASSERT_NOT_REACHED();
+
+            // FIXME: ideally we'd avoid calling -setNeedsDisplay on a layer that is a plain color,
+            // so CA never makes backing store for it (which is what -setNeedsDisplay will do above).
+            CGContextSetRGBFillColor(context, 0.0f, 1.0f, 0.0f, 1.0f);
+            CGContextFillRect(context, layerBounds);
+        }
+#endif
+
+        if (m_owner->showRepaintCounter()) {
+            char text[16]; // that's a lot of repaints
+            _snprintf(text, sizeof(text), "%d", m_owner->incrementRepaintCount());
+
+            CGContextSaveGState(context);
+            CGContextSetRGBFillColor(context, 1.0f, 0.0f, 0.0f, 0.8f);
+            
+            CGRect aBounds = layerBounds;
+
+            aBounds.size.width = 10 + 12 * strlen(text);
+            aBounds.size.height = 25;
+            CGContextFillRect(context, aBounds);
+            
+            CGContextSetRGBFillColor(context, 0.0f, 0.0f, 0.0f, 1.0f);
+
+            CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0f, -1.0f));
+            CGContextSelectFont(context, "Helvetica", 25, kCGEncodingMacRoman);
+            CGContextShowTextAtPoint(context, aBounds.origin.x + 3.0f, aBounds.origin.y + 20.0f, text, strlen(text));
+            
+            CGContextRestoreGState(context);        
+        }
+
+        CGContextRestoreGState(context);
+    }
+
+protected:
+    WebLayer(LayerType layerType, GraphicsLayerCACF* owner)
+     : WKCACFLayer(layerType)
+     , m_owner(owner)
+    {
+    }
+
+private:
+    GraphicsLayer* m_owner;
+};
+
 static inline void copyTransform(CATransform3D& toT3D, const TransformationMatrix& t)
 {
     toT3D.m11 = narrowPrecisionToFloat(t.m11());
@@ -124,7 +200,7 @@ GraphicsLayerCACF::GraphicsLayerCACF(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
 {
-    m_layer = WKCACFLayer::create(WKCACFLayer::Layer, this);
+    m_layer = WebLayer::create(WKCACFLayer::Layer, this);
     
     updateDebugIndicators();
 }
@@ -331,8 +407,10 @@ void GraphicsLayerCACF::setNeedsDisplay()
 
 void GraphicsLayerCACF::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (drawsContent())
-        m_layer->setNeedsDisplay(rect);
+    if (drawsContent()) {
+        CGRect cgRect = rect;
+        m_layer->setNeedsDisplay(&cgRect);
+    }
 }
 
 void GraphicsLayerCACF::setContentsRect(const IntRect& rect)
@@ -537,7 +615,7 @@ void GraphicsLayerCACF::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
         // Create the transform layer.
-        m_transformLayer = WKCACFLayer::create(WKCACFLayer::TransformLayer, this);
+        m_transformLayer = WebLayer::create(WKCACFLayer::TransformLayer, this);
 
 #ifndef NDEBUG
         m_transformLayer->setName(String().format("Transform Layer CATransformLayer(%p) GraphicsLayer(%p)", m_transformLayer.get(), this));
@@ -610,7 +688,7 @@ void GraphicsLayerCACF::updateContentsImage()
 {
     if (m_pendingContentsImage) {
         if (!m_contentsLayer.get()) {
-            RefPtr<WKCACFLayer> imageLayer = WKCACFLayer::create(WKCACFLayer::Layer, this);
+            RefPtr<WKCACFLayer> imageLayer = WebLayer::create(WKCACFLayer::Layer, this);
 #ifndef NDEBUG
             imageLayer->setName("Image Layer");
 #endif

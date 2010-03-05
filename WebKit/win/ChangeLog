@@ -1,3 +1,20 @@
+2010-03-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Got rid of platformLayer use in WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=35798
+        
+        WKCACFLayer no longer depends on GraphicsLayer, so I got rid of
+        that dependency on WebView. Now WebChromeClient casts platformLayer
+        to WKCACFLayer which will always be the case on Windows.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::attachRootGraphicsLayer):
+        * WebView.cpp:
+        (WebView::setRootChildLayer):
+        * WebView.h:
+
 2010-03-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

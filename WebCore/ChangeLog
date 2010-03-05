@@ -1,3 +1,63 @@
+2010-03-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed infinite recursion of composited video on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=35798
+        
+        Due to a change in the way we get the platformLayer (WKCACFLayer)
+        for video, the mediaplayer was in an infinite loop with WKCACFLayer
+        bouncing notifySyncRequired calls back and forth. After discussion
+        we decided it would be better to avoid notifySyncRequired entirely,
+        which would walk up through WebCore calls and back down through
+        WebKit calls to tell the WKCACFLayerRenderer to kick off a render cycle.
+        
+        I subclassed WKCACFLayer into a WKCACFRootLayer which has a pointer to
+        the WKCACFLayerRenderer. When something changes, we get the rootLayer()
+        by walking up the layers and make a virtual call which WKCACFRootLayer
+        implements to tell WKCACFLayerRenderer to render.
+        
+        I also got rid of GraphicsLayer knowledge from WKCACFLayer. GraphicsLayerCACF
+        now makes a WebLayer subclass which implements the drawInContext()
+        virtual method.
+        
+        I also had to add protection to the platformLayer() call in 
+        MediaPlayerPrivateQuickTimeWin because it gets called earlier than before
+        when the layer is still null.
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp:Implement WebLayer
+        (WebCore::WebLayer::create):
+        (WebCore::WebLayer::drawInContext):
+        (WebCore::WebLayer::WebLayer):
+        (WebCore::GraphicsLayerCACF::GraphicsLayerCACF):
+        (WebCore::GraphicsLayerCACF::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerCACF::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerCACF::updateContentsImage):
+        * platform/graphics/win/GraphicsLayerCACF.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:Protect platformLayer from a null qtLayer
+        (WebCore::MediaPlayerPrivate::platformLayer):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:Got rid of no longer needed method
+        (WebCore::MediaPlayerPrivate::notifyAnimationStarted):
+        * platform/graphics/win/WKCACFLayer.cpp:Got rid of GraphicsLayer dependency. Made virtual.
+        (WebCore::displayCallback):
+        (WebCore::WKCACFLayer::create):
+        (WebCore::WKCACFLayer::WKCACFLayer):
+        (WebCore::WKCACFLayer::setNeedsCommit):
+        (WebCore::WKCACFLayer::setNeedsDisplay):
+        * platform/graphics/win/WKCACFLayer.h:
+        (WebCore::WKCACFLayer::setNeedsRender):
+        (WebCore::WKCACFLayer::drawInContext):
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:Create WKCACFRootLayer which tells WKCACFLayerRenderer to render
+        (WebCore::WKCACFRootLayer::WKCACFRootLayer):
+        (WebCore::WKCACFRootLayer::create):
+        (WebCore::WKCACFRootLayer::setNeedsRender):
+        (WebCore::WKCACFRootLayer::setNeedsDisplay):
+        (WebCore::WKCACFLayerRenderer::rootLayer):
+        (WebCore::WKCACFLayerRenderer::setRootChildLayer):
+        (WebCore::WKCACFLayerRenderer::setNeedsDisplay):
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+
 2010-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

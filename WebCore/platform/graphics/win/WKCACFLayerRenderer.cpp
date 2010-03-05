@@ -38,6 +38,8 @@
 #include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -75,6 +77,33 @@ inline static CGRect winRectToCGRect(RECT rc, RECT relativeToRect)
 }
 
 namespace WebCore {
+
+// Subclass of WKCACFLayer to allow the root layer to have a back pointer to the layer renderer
+// to fire off a draw
+class WKCACFRootLayer : public WKCACFLayer {
+public:
+    WKCACFRootLayer(WKCACFLayerRenderer* renderer)
+        : WKCACFLayer(WKCACFLayer::Layer)
+    {
+        m_renderer = renderer;
+    }
+
+    static PassRefPtr<WKCACFRootLayer> create(WKCACFLayerRenderer* renderer)
+    {
+        if (!WKCACFLayerRenderer::acceleratedCompositingAvailable())
+            return 0;
+        return adoptRef(new WKCACFRootLayer(renderer));
+    }
+
+    virtual void setNeedsRender() { m_renderer->renderSoon(); }
+
+    // Overload this to avoid calling setNeedsDisplay on the layer, which would override the contents
+    // we have placed on the root layer.
+    virtual void setNeedsDisplay(const CGRect* dirtyRect) { setNeedsCommit(); }
+
+private:
+    WKCACFLayerRenderer* m_renderer;
+};
 
 typedef HashMap<CACFContextRef, WKCACFLayerRenderer*> ContextToWindowMap;
 
@@ -205,6 +234,11 @@ WKCACFLayerRenderer::~WKCACFLayerRenderer()
     destroyRenderer();
 }
 
+WKCACFLayer* WKCACFLayerRenderer::rootLayer() const
+{
+    return m_rootLayer.get();
+}
+
 void WKCACFLayerRenderer::setScrollFrame(const IntRect& scrollFrame)
 {
     m_scrollFrame = scrollFrame;
@@ -223,7 +257,7 @@ void WKCACFLayerRenderer::setRootContents(CGImageRef image)
     renderSoon();
 }
 
-void WKCACFLayerRenderer::setRootChildLayer(WebCore::PlatformLayer* layer)
+void WKCACFLayerRenderer::setRootChildLayer(WKCACFLayer* layer)
 {
     if (!m_scrollLayer)
         return;
@@ -242,7 +276,7 @@ void WKCACFLayerRenderer::setRootChildLayer(WebCore::PlatformLayer* layer)
 void WKCACFLayerRenderer::setNeedsDisplay()
 {
     ASSERT(m_rootLayer);
-    m_rootLayer->setNeedsDisplay();
+    m_rootLayer->setNeedsDisplay(0);
     renderSoon();
 }
 
@@ -298,7 +332,7 @@ bool WKCACFLayerRenderer::createRenderer()
     m_renderer = CARenderOGLNew(wkqcCARenderOGLCallbacks(wkqckCARenderDX9Callbacks), m_d3dDevice.get(), 0);
 
     // Create the root hierarchy
-    m_rootLayer = WKCACFLayer::create(WKCACFLayer::Layer);
+    m_rootLayer = WKCACFRootLayer::create(this);
     m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
     m_scrollLayer = WKCACFLayer::create(WKCACFLayer::Layer);
     m_scrollLayer->setName("WKCACFLayerRenderer scrollLayer");

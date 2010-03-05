@@ -6053,7 +6053,7 @@ void WebView::downloadURL(const KURL& url)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebView::setRootChildLayer(WebCore::PlatformLayer* layer)
+void WebView::setRootChildLayer(WebCore::WKCACFLayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
     if (m_layerRenderer)

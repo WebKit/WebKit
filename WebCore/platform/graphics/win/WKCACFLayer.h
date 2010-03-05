@@ -39,7 +39,6 @@
 #include <wtf/Vector.h>
 
 #include "GraphicsContext.h"
-#include "GraphicsLayerCACF.h"
 #include "PlatformString.h"
 #include "TransformationMatrix.h"
 
@@ -55,10 +54,15 @@ public:
     enum ContentsGravityType { Center, Top, Bottom, Left, Right, TopLeft, TopRight, 
                                BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
 
-    static PassRefPtr<WKCACFLayer> create(LayerType, GraphicsLayerCACF* owner = 0);
+    static PassRefPtr<WKCACFLayer> create(LayerType);
     static WKCACFLayer* layer(CACFLayerRef layer) { return static_cast<WKCACFLayer*>(CACFLayerGetUserData(layer)); }
 
-    ~WKCACFLayer();
+    virtual ~WKCACFLayer();
+
+    virtual void setNeedsRender() { }
+    virtual void drawInContext(PlatformGraphicsContext*) { }
+    virtual void setNeedsDisplay(const CGRect* dirtyRect);
+    void setNeedsDisplay();
 
     // Makes this layer the root when the passed context is rendered
     void becomeRootLayerForContext(CACFContextRef);
@@ -105,8 +109,6 @@ public:
     {
         return RetainPtr<CFTypeRef>(AdoptCF, CGColorCreateGenericRGB(color.red(), color.green(), color.blue(), color.alpha()));
     }
-
-    void display(PlatformGraphicsContext*);
 
     bool isTransformLayer() const;
 
@@ -180,9 +182,6 @@ public:
     void setName(const String& name) { CACFLayerSetName(layer(), RetainPtr<CFStringRef>(AdoptCF, name.createCFString()).get()); }
     String name() const { return CACFLayerGetName(layer()); }
 
-    void setNeedsDisplay(const CGRect& dirtyRect);
-    void setNeedsDisplay();
-    
     void setNeedsDisplayOnBoundsChange(bool needsDisplay) { m_needsDisplayOnBoundsChange = needsDisplay; }
 
     void setOpacity(float opacity) { CACFLayerSetOpacity(layer(), opacity); setNeedsCommit(); }
@@ -228,10 +227,12 @@ public:
     void printTree() const;
 #endif
 
-private:
-    WKCACFLayer(LayerType, GraphicsLayerCACF* owner);
+protected:
+    WKCACFLayer(LayerType);
 
     void setNeedsCommit();
+
+private:
     CACFLayerRef layer() const { return m_layer.get(); }
     size_t numSublayers() const
     {
@@ -255,7 +256,6 @@ private:
 
     RetainPtr<CACFLayerRef> m_layer;
     bool m_needsDisplayOnBoundsChange;
-    GraphicsLayerCACF* m_owner;
 };
 
 }

@@ -54,10 +54,10 @@ namespace WebCore {
 
 using namespace std;
 
-static void displayInContext(CACFLayerRef layer, CGContextRef context)
+static void displayCallback(CACFLayerRef layer, CGContextRef context)
 {
     ASSERT_ARG(layer, WKCACFLayer::layer(layer));
-    WKCACFLayer::layer(layer)->display(context);
+    WKCACFLayer::layer(layer)->drawInContext(context);
 }
 
 #define STATIC_CACF_STRING(name) \
@@ -177,23 +177,22 @@ static WKCACFLayer::FilterType fromCACFFilterType(CFStringRef string)
     return WKCACFLayer::Linear;
 }
 
-PassRefPtr<WKCACFLayer> WKCACFLayer::create(LayerType type, GraphicsLayerCACF* owner)
+PassRefPtr<WKCACFLayer> WKCACFLayer::create(LayerType type)
 {
     if (!WKCACFLayerRenderer::acceleratedCompositingAvailable())
         return 0;
-    return adoptRef(new WKCACFLayer(type, owner));
+    return adoptRef(new WKCACFLayer(type));
 }
 
 // FIXME: It might be good to have a way of ensuring that all WKCACFLayers eventually
 // get destroyed in debug builds. A static counter could accomplish this pretty easily.
 
-WKCACFLayer::WKCACFLayer(LayerType type, GraphicsLayerCACF* owner)
+WKCACFLayer::WKCACFLayer(LayerType type)
     : m_layer(AdoptCF, CACFLayerCreate(toCACFLayerType(type)))
     , m_needsDisplayOnBoundsChange(false)
-    , m_owner(owner)
 {
     CACFLayerSetUserData(layer(), this);
-    CACFLayerSetDisplayCallback(layer(), displayInContext);
+    CACFLayerSetDisplayCallback(layer(), displayCallback);
 }
 
 WKCACFLayer::~WKCACFLayer()
@@ -205,64 +204,6 @@ WKCACFLayer::~WKCACFLayer()
     CACFLayerSetDisplayCallback(layer(), 0);
 }
 
-void WKCACFLayer::display(PlatformGraphicsContext* context)
-{
-    if (!m_owner)
-        return;
-
-    CGContextSaveGState(context);
-
-    CGRect layerBounds = bounds();
-    if (m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -layerBounds.size.height);
-    }
-
-    if (m_owner->client()) {
-        GraphicsContext graphicsContext(context);
-
-        // It's important to get the clip from the context, because it may be significantly
-        // smaller than the layer bounds (e.g. tiled layers)
-        CGRect clipBounds = CGContextGetClipBoundingBox(context);
-        IntRect clip(enclosingIntRect(clipBounds));
-        m_owner->paintGraphicsLayerContents(graphicsContext, clip);
-    }
-#ifndef NDEBUG
-    else {
-        ASSERT_NOT_REACHED();
-
-        // FIXME: ideally we'd avoid calling -setNeedsDisplay on a layer that is a plain color,
-        // so CA never makes backing store for it (which is what -setNeedsDisplay will do above).
-        CGContextSetRGBFillColor(context, 0.0f, 1.0f, 0.0f, 1.0f);
-        CGContextFillRect(context, layerBounds);
-    }
-#endif
-
-    if (m_owner->showRepaintCounter()) {
-        char text[16]; // that's a lot of repaints
-        _snprintf(text, sizeof(text), "%d", m_owner->incrementRepaintCount());
-
-        CGContextSaveGState(context);
-        CGContextSetRGBFillColor(context, 1.0f, 0.0f, 0.0f, 0.8f);
-        
-        CGRect aBounds = layerBounds;
-
-        aBounds.size.width = 10 + 12 * strlen(text);
-        aBounds.size.height = 25;
-        CGContextFillRect(context, aBounds);
-        
-        CGContextSetRGBFillColor(context, 0.0f, 0.0f, 0.0f, 1.0f);
-
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0f, -1.0f));
-        CGContextSelectFont(context, "Helvetica", 25, kCGEncodingMacRoman);
-        CGContextShowTextAtPoint(context, aBounds.origin.x + 3.0f, aBounds.origin.y + 20.0f, text, strlen(text));
-        
-        CGContextRestoreGState(context);        
-    }
-
-    CGContextRestoreGState(context);
-}
-
 void WKCACFLayer::becomeRootLayerForContext(CACFContextRef context)
 {
     CACFContextSetLayer(context, layer());
@@ -271,7 +212,9 @@ void WKCACFLayer::becomeRootLayerForContext(CACFContextRef context)
 
 void WKCACFLayer::setNeedsCommit()
 {
-    CACFContextRef context = CACFLayerGetContext(rootLayer()->layer());
+    WKCACFLayer* root = rootLayer();
+
+    CACFContextRef context = CACFLayerGetContext(root->layer());
 
     // The context might now be set yet. This happens if a property gets set
     // before placing the layer in the tree. In this case we don't need to 
@@ -280,11 +223,9 @@ void WKCACFLayer::setNeedsCommit()
     if (context)
         WKCACFContextFlusher::shared().addContext(context);
 
-    // Call notifySyncRequired(), which in this implementation plumbs through to
-    // call setRootLayerNeedsDisplay() on the WebView, which causes the CACFRenderer
-    // to render a frame.
-    if (m_owner)
-        m_owner->notifySyncRequired();
+    // Call setNeedsRender on the root layer, which will cause a render to 
+    // happen in WKCACFLayerRenderer
+    root->setNeedsRender();
 }
 
 bool WKCACFLayer::isTransformLayer() const
@@ -523,18 +464,15 @@ WKCACFLayer* WKCACFLayer::superlayer() const
     return WKCACFLayer::layer(super);
 }
 
-void WKCACFLayer::setNeedsDisplay(const CGRect& dirtyRect)
+void WKCACFLayer::setNeedsDisplay(const CGRect* dirtyRect)
 {
-    if (m_owner)
-        CACFLayerSetNeedsDisplay(layer(), &dirtyRect);
+    CACFLayerSetNeedsDisplay(layer(), dirtyRect);
     setNeedsCommit();
 }
 
 void WKCACFLayer::setNeedsDisplay()
 {
-    if (m_owner)
-        CACFLayerSetNeedsDisplay(layer(), 0);
-    setNeedsCommit();
+    setNeedsDisplay(0);
 }
 
 #ifndef NDEBUG
