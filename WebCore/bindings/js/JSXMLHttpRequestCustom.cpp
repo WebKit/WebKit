@@ -67,21 +67,23 @@ JSValue JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
 
     const KURL& url = impl()->scriptExecutionContext()->completeURL(args.at(1).toString(exec));
     String method = args.at(0).toString(exec);
-    bool async = true;
-    if (args.size() >= 3)
-        async = args.at(2).toBoolean(exec);
 
     ExceptionCode ec = 0;
-    if (args.size() >= 4 && !args.at(3).isUndefined()) {
-        String user = valueToStringWithNullCheck(exec, args.at(3));
+    if (args.size() >= 3) {
+        bool async = args.at(2).toBoolean(exec);
 
-        if (args.size() >= 5 && !args.at(4).isUndefined()) {
-            String password = valueToStringWithNullCheck(exec, args.at(4));
-            impl()->open(method, url, async, user, password, ec);
+        if (args.size() >= 4 && !args.at(3).isUndefined()) {
+            String user = valueToStringWithNullCheck(exec, args.at(3));
+            
+            if (args.size() >= 5 && !args.at(4).isUndefined()) {
+                String password = valueToStringWithNullCheck(exec, args.at(4));
+                impl()->open(method, url, async, user, password, ec);
+            } else
+                impl()->open(method, url, async, user, ec);
         } else
-            impl()->open(method, url, async, user, ec);
+            impl()->open(method, url, async, ec);
     } else
-        impl()->open(method, url, async, ec);
+        impl()->open(method, url, ec);
 
     setDOMException(exec, ec);
     return jsUndefined();

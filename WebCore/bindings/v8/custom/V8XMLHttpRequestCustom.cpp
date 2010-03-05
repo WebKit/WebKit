@@ -73,20 +73,23 @@ v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
 
     KURL url = context->completeURL(urlstring);
 
-    bool async = (args.Length() < 3) ? true : args[2]->BooleanValue();
-
     ExceptionCode ec = 0;
-    String user, passwd;
-    if (args.Length() >= 4 && !args[3]->IsUndefined()) {
-        user = toWebCoreStringWithNullCheck(args[3]);
 
-        if (args.Length() >= 5 && !args[4]->IsUndefined()) {
-            passwd = toWebCoreStringWithNullCheck(args[4]);
-            xmlHttpRequest->open(method, url, async, user, passwd, ec);
+    if (args.Length() >= 3) {
+        bool async = args[2]->BooleanValue();
+
+        if (args.Length() >= 4 && !args[3]->IsUndefined()) {
+            String user = toWebCoreStringWithNullCheck(args[3]);
+            
+            if (args.Length() >= 5 && !args[4]->IsUndefined()) {
+                String passwd = toWebCoreStringWithNullCheck(args[4]);
+                xmlHttpRequest->open(method, url, async, user, passwd, ec);
+            } else
+                xmlHttpRequest->open(method, url, async, user, ec);
         } else
-            xmlHttpRequest->open(method, url, async, user, ec);
+            xmlHttpRequest->open(method, url, async, ec);
     } else
-        xmlHttpRequest->open(method, url, async, ec);
+        xmlHttpRequest->open(method, url, ec);
 
     if (ec)
         return throwError(ec);
