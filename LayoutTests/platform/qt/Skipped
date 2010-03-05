@@ -5095,6 +5095,3 @@ java
 # see https://bugs.webkit.org/show_bug.cgi?id=33180.
 # Core functionality is tested in plugins/private-browsing-mode-2.html
 plugins/private-browsing-mode.html
-
-# Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
-fast/events/spatial-navigation

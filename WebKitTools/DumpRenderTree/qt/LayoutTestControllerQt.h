@@ -128,6 +128,7 @@ public slots:
     void setTimelineProfilingEnabled(bool enable);
     void setFixedContentsSize(int width, int height);
     void setPrivateBrowsingEnabled(bool enable);
+    void setSpatialNavigationEnabled(bool enabled);
     void setPopupBlockingEnabled(bool enable);
     void setPOSIXLocale(const QString& locale);
     void resetLoadFinished() { m_loadFinished = false; }

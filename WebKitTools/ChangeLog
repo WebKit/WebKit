@@ -1,3 +1,20 @@
+2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        [Qt] Add setSpatialNavigationEnabled method DRT
+        https://bugs.webkit.org/show_bug.cgi?id=33715
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setSpatialNavigationEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
+        Unskipped fast/events/spatialnavigation/
+
 2010-03-04  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Alice Liu.

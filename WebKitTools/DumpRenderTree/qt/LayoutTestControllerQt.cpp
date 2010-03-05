@@ -344,6 +344,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, enable);
 }
 
+void LayoutTestController::setSpatialNavigationEnabled(bool enable)
+{
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::SpatialNavigationEnabled, enable);
+}
+
 void LayoutTestController::setPopupBlockingEnabled(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, !enable);

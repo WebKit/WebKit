@@ -132,6 +132,7 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
     globalSettings->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, true);
     globalSettings->setAttribute(QWebSettings::JavascriptEnabled, true);
     globalSettings->setAttribute(QWebSettings::PrivateBrowsingEnabled, false);
+    globalSettings->setAttribute(QWebSettings::SpatialNavigationEnabled, false);
 
     connect(this, SIGNAL(geometryChangeRequested(const QRect &)),
             this, SLOT(setViewGeometry(const QRect & )));
@@ -162,6 +163,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::JavascriptCanOpenWindows);
     settings()->resetAttribute(QWebSettings::JavascriptEnabled);
     settings()->resetAttribute(QWebSettings::PrivateBrowsingEnabled);
+    settings()->resetAttribute(QWebSettings::SpatialNavigationEnabled);
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
     settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
