@@ -1,0 +1,49 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    var frame = frames[0];
+    var doc = frame.document;
+    var body = doc.body;
+    for (var i = 0; i < 10; ++i)
+        body.innerHTML += "<p>line " + i + "</p>\n";
+    frame.focus();
+    frame.getSelection().setPosition(body.firstChild, 0);
+
+    var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+    var modifiers = onMacPlatform ? ["altKey"] : [];
+
+    if (!window.eventSender)
+        return;
+
+    eventSender.keyDown("pageDown", modifiers);
+    var line = frame.getSelection().baseNode.nodeValue;
+    if (line != "line 8")
+        throw "cursor should be at line 8, not " + line;
+
+    eventSender.keyDown("pageDown", modifiers);
+    var line = frame.getSelection().baseNode.nodeValue;
+    if (line != "line 9")
+        throw "cursor should be at line 9, not " + line;
+
+    eventSender.keyDown("pageUp", modifiers);
+    var line = frame.getSelection().baseNode.nodeValue;
+    if (line != "line 1")
+        throw "cursor should be at line 1, not " + line;
+
+    document.getElementById("results").innerText = "PASS";
+
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+</script>
+
+<div>On Mac, option+pagedown should move the mouse cursor and scroll in text areas.  On
+other platforms, pagedown should move the mouse cursor and scroll in text areas.  This
+test requires DRT to pass.</div>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest()"></iframe>
+<div id="results">FAIL</div>

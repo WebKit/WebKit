@@ -1,0 +1,3 @@
+On Mac, option+pagedown should move the mouse cursor and scroll in text areas. On other platforms, pagedown should move the mouse cursor and scroll in text areas. This test requires DRT to pass.
+
+PASS
