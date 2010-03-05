@@ -1,3 +1,14 @@
+2010-03-04  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        maemo spelled as mameo in WebCore.pro
+        https://bugs.webkit.org/show_bug.cgi?id=35765
+
+        Spelling corrected.
+
+        * WebCore.pro:
+
 2010-03-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.
