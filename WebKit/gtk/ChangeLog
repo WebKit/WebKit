@@ -1,3 +1,13 @@
+2010-03-06  Arno Renevier  <arno@renevier.net>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] GEOLOCATION_POLICY_DECISION_CANCELLED unused
+        https://bugs.webkit.org/show_bug.cgi?id=35803
+
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_class_init):
+
 2010-03-03  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Gustavo Noronha.
