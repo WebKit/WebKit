@@ -624,6 +624,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, recordStyles, send
         var sendRequestRecord = sendRequestRecords[record.data.identifier];
         if (sendRequestRecord) { // False if we started instrumentation in the middle of request.
             sendRequestRecord._responseReceivedFormattedTime = this.startTime;
+            record.data.url = sendRequestRecord.data.url;
             this.startTime = sendRequestRecord.startTime;
             this.details = this._getRecordDetails(sendRequestRecord, sendRequestRecords);
             this.callerScriptName = sendRequestRecord.callerScriptName;
@@ -632,6 +633,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, recordStyles, send
     } else if (record.type === recordTypes.ResourceFinish) {
         var sendRequestRecord = sendRequestRecords[record.data.identifier];
         if (sendRequestRecord) {// False for main resource.
+            record.data.url = sendRequestRecord.data.url;
             this.startTime = sendRequestRecord._responseReceivedFormattedTime;
             this.callerScriptName = sendRequestRecord.callerScriptName;
             this.callerScriptLine = sendRequestRecord.callerScriptLine;
@@ -695,10 +697,11 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         calculator.formatValue(this.startTime - calculator.minimumBoundary) + ")";
         recordContentTable.appendChild(this._createRow(WebInspector.UIString("Duration"), text));
 
+        const recordTypes = WebInspector.TimelineAgent.RecordType;
         if (this.details) {
-            if ( this.type == WebInspector.TimelineAgent.RecordType.TimerInstall ||
-                this.type == WebInspector.TimelineAgent.RecordType.TimerFire ||
-                this.type == WebInspector.TimelineAgent.RecordType.TimerRemove) {
+            if (this.type == recordTypes.TimerInstall ||
+                this.type == recordTypes.TimerFire ||
+                this.type == recordTypes.TimerRemove) {
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Timer Id"), this.data.timerId));
                 if (this.timeout) {
                     recordContentTable.appendChild(this._createRow(WebInspector.UIString("Timeout"), this.timeout));
@@ -708,9 +711,12 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     var link = WebInspector.linkifyResourceAsNode(this.callSiteScriptName, "scripts", this.callSiteScriptLine, "timeline-details");
                     recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Call Site"), link));
                 }
-            } else if ( this.type == WebInspector.TimelineAgent.RecordType.FunctionCall ) {
+            } else if (this.type == recordTypes.FunctionCall) {
                 var link = WebInspector.linkifyResourceAsNode(this.data.scriptName, "scripts", this.data.scriptLine, "timeline-details");
                 recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Location"), link));
+            } else if (this.type === recordTypes.ResourceSendRequest || this.type === recordTypes.ResourceReceiveResponse || this.type === recordTypes.ResourceFinish) {
+                var link = WebInspector.linkifyResourceAsNode(this.data.url, "resources", null, "timeline-details");
+                recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Resource"), link));
             } else
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Details"), this.details));
         }
@@ -739,11 +745,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
             case WebInspector.TimelineAgent.RecordType.EvaluateScript:
             case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
-                return WebInspector.displayNameForURL(record.data.url);
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
             case WebInspector.TimelineAgent.RecordType.ResourceFinish:
-                var sendRequestRecord = sendRequestRecords[record.data.identifier];
-                return sendRequestRecord ? WebInspector.displayNameForURL(sendRequestRecord.data.url) : "";
+                return WebInspector.displayNameForURL(record.data.url);
             case WebInspector.TimelineAgent.RecordType.MarkTimeline:
                 return record.data.message;
             default:
