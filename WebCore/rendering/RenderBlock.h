@@ -89,8 +89,6 @@ public:
     bool containsFloats() { return m_floatingObjects && !m_floatingObjects->isEmpty(); }
     bool containsFloat(RenderObject*);
 
-    IntRect floatRect() const;
-
     int lineWidth(int y, bool firstLine) const;
     
     virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;

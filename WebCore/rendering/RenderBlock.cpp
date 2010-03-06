@@ -770,8 +770,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (previousHeight != height())
         relayoutChildren = true;
 
-    // It's weird that we're treating float information as normal flow overflow, but we do this because floatRect() isn't
-    // able to be propagated up the render tree yet.  Overflow information is however.  This check is designed to catch anyone
+    // This check is designed to catch anyone
     // who wasn't going to propagate float information up to the parent and yet could potentially be painted by its ancestor.
     if (isRoot() || expandsToEncloseOverhangingFloats())
         addOverflowFromFloats();
@@ -2631,24 +2630,6 @@ RenderBlock::floatBottom() const
         if (r->m_bottom>bottom)
             bottom = r->m_bottom;
     return bottom;
-}
-
-IntRect RenderBlock::floatRect() const
-{
-    IntRect result;
-    if (!m_floatingObjects || hasOverflowClip() || hasColumns())
-        return result;
-    FloatingObject* r;
-    DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
-    for (; (r = it.current()); ++it) {
-        if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
-            IntRect childRect = r->m_renderer->visibleOverflowRect();
-            childRect.move(r->m_left + r->m_renderer->marginLeft(), r->m_top + r->m_renderer->marginTop());
-            result.unite(childRect);
-        }
-    }
-
-    return result;
 }
 
 int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
