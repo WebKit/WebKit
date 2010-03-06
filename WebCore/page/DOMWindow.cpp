@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "Base64.h"
 #include "BarInfo.h"
 #include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
@@ -825,6 +826,51 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
         return returnValue;
 
     return String();
+}
+
+static bool isSafeToConvertCharList(const String& string)
+{
+    for (unsigned i = 0; i < string.length(); i++) {
+        if (string[i] > 0xFF)
+            return false;
+    }
+
+    return true;
+}
+
+String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
+{
+    if (!isSafeToConvertCharList(stringToEncode)) {
+        ec = INVALID_CHARACTER_ERR;
+        return String();
+    }
+
+    Vector<char> in;
+    in.append(stringToEncode.characters(), stringToEncode.length());
+    Vector<char> out;
+
+    base64Encode(in, out);
+
+    return String(out.data(), out.size());
+}
+
+String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
+{
+    if (!isSafeToConvertCharList(encodedString)) {
+        ec = INVALID_CHARACTER_ERR;
+        return String();
+    }
+
+    Vector<char> in;
+    in.append(encodedString.characters(), encodedString.length());
+    Vector<char> out;
+
+    if (!base64Decode(in, out)) {
+        ec = INVALID_CHARACTER_ERR;
+        return String();
+    }
+
+    return String(out.data(), out.size());
 }
 
 bool DOMWindow::find(const String& string, bool caseSensitive, bool backwards, bool wrap, bool /*wholeWord*/, bool /*searchInFrames*/, bool /*showDialog*/) const

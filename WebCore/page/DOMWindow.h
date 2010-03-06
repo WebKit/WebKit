@@ -140,6 +140,8 @@ namespace WebCore {
         void alert(const String& message);
         bool confirm(const String& message);
         String prompt(const String& message, const String& defaultValue);
+        String btoa(const String& stringToEncode, ExceptionCode&);
+        String atob(const String& encodedString, ExceptionCode&);
 
         bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
 

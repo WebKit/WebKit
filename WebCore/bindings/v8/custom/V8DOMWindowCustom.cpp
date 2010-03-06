@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8DOMWindow.h"
 
-#include "Base64.h"
 #include "Chrome.h"
 #include "Database.h"
 #include "DOMTimer.h"
@@ -146,37 +145,6 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     }
 
     return v8::Integer::New(id);
-}
-
-static bool isAscii(const String& str)
-{
-    for (size_t i = 0; i < str.length(); i++) {
-        if (str[i] > 0xFF)
-            return false;
-    }
-    return true;
-}
-
-static v8::Handle<v8::Value> convertBase64(const String& str, bool encode)
-{
-    if (!isAscii(str)) {
-        V8Proxy::setDOMException(INVALID_CHARACTER_ERR);
-        return notHandledByInterceptor();
-    }
-
-    Vector<char> inputCharacters(str.length());
-    for (size_t i = 0; i < str.length(); i++)
-        inputCharacters[i] = static_cast<char>(str[i]);
-    Vector<char> outputCharacters;
-
-    if (encode)
-        base64Encode(inputCharacters, outputCharacters);
-    else {
-        if (!base64Decode(inputCharacters, outputCharacters))
-            return throwError("Cannot decode base64", V8Proxy::GeneralError);
-    }
-
-    return v8String(String(outputCharacters.data(), outputCharacters.size()));
 }
 
 v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -378,38 +346,34 @@ v8::Handle<v8::Value> V8DOMWindow::atobCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.atob()");
 
-    if (args[0]->IsNull())
-        return v8String("");
-    String str = toWebCoreString(args[0]);
-
-    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
-
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
-        return v8::Undefined();
-
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
+    if (args[0]->IsNull())
+        return v8String("");
 
-    return convertBase64(str, false);
+    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    String result = imp->atob(toWebCoreString(args[0]), ec);
+    throwError(ec);
+
+    return v8String(result);
 }
 
 v8::Handle<v8::Value> V8DOMWindow::btoaCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.btoa()");
 
-    if (args[0]->IsNull())
-        return v8String("");
-    String str = toWebCoreString(args[0]);
-
-    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
-
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
-        return v8::Undefined();
-
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
+    if (args[0]->IsNull())
+        return v8String("");
 
-    return convertBase64(str, true);
+    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    String result = imp->btoa(toWebCoreString(args[0]), ec);
+    throwError(ec);
+
+    return v8String(result);
 }
 
 // FIXME(fqian): returning string is cheating, and we should

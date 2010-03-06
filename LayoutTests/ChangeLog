@@ -1,3 +1,19 @@
+2010-03-06  MORITA Hajime  <morrita@google.com>
+        
+        Reviewed by Darin Adler.
+
+        Moved implementations of window.btoa() and window.atob() from
+        JSDOMWindow to DOMWindow, and make V8DOMWindow use DOMWindow
+        functions instead of having a separate implementation. As a side effect, the
+        error message has changed from "Cannot decode base64" to one that
+        indicates DOM Exception, which is compatible to Firefox.
+        
+        Refactoring: window.btoa() and window.atob() should be implemented on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=35723
+
+        * fast/dom/Window/atob-btoa-expected.txt:
+          Rebaselined expectation due to change of error message.
+        
 2010-03-06  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

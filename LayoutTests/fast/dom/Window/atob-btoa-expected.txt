@@ -24,22 +24,22 @@ PASS typeof window.atob is "function"
 PASS window.atob() threw exception SyntaxError: Not enough arguments.
 PASS window.atob("") is ""
 PASS window.atob(null) is ""
-PASS window.atob(" YQ==") threw exception Error: Cannot decode base64.
-PASS window.atob("YQ==\u000a") threw exception Error: Cannot decode base64.
+PASS window.atob(" YQ==") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("YQ==\u000a") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("6ek=") is "éé"
 PASS window.atob("6ek") is "éé"
 PASS window.atob("gIE=") is ""
 PASS window.atob("тест") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
-PASS window.atob("z") threw exception Error: Cannot decode base64.
+PASS window.atob("z") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("zz") is "Ï"
 PASS window.atob("zzz") is "Ï<"
 PASS window.atob("zzzz") is "Ï<ó"
-PASS window.atob("zzzzz") threw exception Error: Cannot decode base64.
-PASS window.atob("=") threw exception Error: Cannot decode base64.
-PASS window.atob("==") threw exception Error: Cannot decode base64.
-PASS window.atob("===") threw exception Error: Cannot decode base64.
-PASS window.atob("====") threw exception Error: Cannot decode base64.
-PASS window.atob("=====") threw exception Error: Cannot decode base64.
+PASS window.atob("zzzzz") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("=") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("==") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("===") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("====") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("=====") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob is 0
 PASS typeof window.atob is "number"
 PASS successfullyParsed is true

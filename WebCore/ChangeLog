@@ -1,3 +1,37 @@
+2010-03-06  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        Moved implementations of window.btoa() and window.atob() from
+        JSDOMWindow to DOMWindow, and make V8DOMWindow use DOMWindow
+        functions instead of having a separate implementation. As a side effect, the
+        error message has changed from "Cannot decode base64" to one that
+        indicates DOM Exception, which is compatible to Firefox.
+        
+        Refactoring: window.btoa() and window.atob() should be implemented on DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=35723
+
+        No new test. No new functionality.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::atob):
+        (WebCore::JSDOMWindow::btoa):
+        Moved conversion code to DOMWindow and invoke it. Argument
+        checking remains here.
+        
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::atobCallback):
+        (WebCore::V8DOMWindow::btoaCallback):
+        Remove conversion code and call DOMWindow APIs. Although argument
+        checking remains here.
+        
+        * page/DOMWindow.cpp:
+        (WebCore::hasMultibyteCharacters):
+        (WebCore::DOMWindow::btoa):
+        (WebCore::DOMWindow::atob):
+        * page/DOMWindow.h:
+        Moved Conversion code from JSDOMWindow, modifing to fit JSC independent.
+
 2010-03-06  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Eric Seidel.
