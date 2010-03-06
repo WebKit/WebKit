@@ -1,3 +1,16 @@
+2010-03-05  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Take out code hack that flips the result of NPP_HandleEvent.  This needs to move to
+        the NPAPI code so that Pepper plugins don't hit it.
+        https://bugs.webkit.org/show_bug.cgi?id=35779
+
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+
 2010-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
