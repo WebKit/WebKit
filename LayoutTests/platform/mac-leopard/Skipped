@@ -48,3 +48,7 @@ fast/canvas/webgl/texImage2DImageDataTest.html
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# Flakey, times out occasionally.  Seems to be a regression:
+# https://bugs.webkit.org/show_bug.cgi?id=35819
+fast/workers/worker-cloneport.html
