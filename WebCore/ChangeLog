@@ -1,3 +1,30 @@
+2010-03-06  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix decoration position in search input field.
+
+        This patch fixes rendering of input field of "search" type, whose decoration
+        (loupe icon and close button) was wrongly positioned when the input field was
+        contained in a block with -webkit-transform property.
+
+        Chromium bug: http://crbug.com/20439
+
+        [Chromium] Decoration of "search" input field is wrongly rendered
+        https://bugs.webkit.org/show_bug.cgi?id=30245
+
+        No new tests, since this patch fixes an existing test
+        (fast/forms/search-transformed.html) in Chromium layout tests.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::convertToPaintingRect): Added. This method
+        does almost the same thing as RenderThemeMac::convertToPaintingRect.
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton): The position
+        of the icon should not depend on its absolute position.
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration): Ditto.
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton): Ditto.
+        * rendering/RenderThemeChromiumSkia.h: Added new method.
+
 2010-03-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

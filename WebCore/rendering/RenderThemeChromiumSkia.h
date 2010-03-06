@@ -153,6 +153,7 @@ namespace WebCore {
     private:
         int menuListInternalPadding(RenderStyle*, int paddingType) const;
         bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
+        IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
     };
 
 } // namespace WebCore
