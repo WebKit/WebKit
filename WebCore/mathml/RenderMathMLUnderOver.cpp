@@ -36,12 +36,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
     
-/*
-static const double gUnderNormalAdjust = -0.4;
-static const double gFontAdjust = 0.75;
-*/
-
-static const double gOverSpacingAdjustment = 0.667;
+static const double gOverSpacingAdjustment = 0.5;
     
 RenderMathMLUnderOver::RenderMathMLUnderOver(Node* expression) 
     : RenderMathMLBlock(expression) 

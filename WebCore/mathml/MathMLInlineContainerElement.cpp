@@ -31,6 +31,8 @@
 
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
+#include "RenderMathMLMath.h"
+#include "RenderMathMLRow.h"
 #include "RenderMathMLSubSup.h"
 #include "RenderMathMLUnderOver.h"
 
@@ -51,7 +53,11 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
 RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, RenderStyle* style)
 {
     RenderObject* object = 0;
-    if (hasLocalName(MathMLNames::msubTag))
+    if (hasLocalName(MathMLNames::mrowTag))
+        object = new (arena) RenderMathMLRow(this);
+    else if (hasLocalName(MathMLNames::mathTag))
+        object = new (arena) RenderMathMLMath(this);
+    else if (hasLocalName(MathMLNames::msubTag))
         object = new (arena) RenderMathMLSubSup(this);
     else if (hasLocalName(MathMLNames::msupTag))
         object = new (arena) RenderMathMLSubSup(this);

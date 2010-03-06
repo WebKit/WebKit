@@ -12,9 +12,10 @@ munder interfaceName=MathMLInlineContainerElement
 munderover interfaceName=MathMLInlineContainerElement
 msqrt interfaceName=MathMLInlineContainerElement
 mroot interfaceName=MathMLInlineContainerElement
-mi interfaceName=MathMLElement, createWithNew
-mn interfaceName=MathMLElement, createWithNew
-mo interfaceName=MathMLElement, createWithNew
+mi interfaceName=MathMLTextElement
+mn interfaceName=MathMLTextElement
+mo interfaceName=MathMLTextElement
+mtext interfaceName=MathMLTextElement
 msub interfaceName=MathMLElement, createWithNew
 msup interfaceName=MathMLElement, createWithNew
 

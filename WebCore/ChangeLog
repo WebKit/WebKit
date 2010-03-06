@@ -1,3 +1,25 @@
+2010-03-05  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added support for row layout with stretchy operators and
+        adjusted the over spacing for over and underover accordingly.
+
+        Tests: mathml/presentation/mo.xhtml
+               mathml/presentation/row.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * mathml/MathMLInlineContainerElement.cpp:
+        * mathml/MathMLTextElement.cpp:
+        * mathml/RenderMathMLMath.cpp: Added.
+        * mathml/RenderMathMLMath.h: Added.
+        * mathml/RenderMathMLOperator.cpp: Added.
+        * mathml/RenderMathMLOperator.h: Added.
+        * mathml/RenderMathMLRow.cpp: Added.
+        * mathml/RenderMathMLRow.h: Added.
+        * mathml/RenderMathMLUnderOver.cpp:
+        * mathml/mathtags.in:
+
 2010-03-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,26 @@
+2010-03-05  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added tests for row and operator stretching.
+        Updated over, underover, and subsup due to row/operators in use.
+
+        * mathml/presentation/mo.xhtml: Added.
+        * mathml/presentation/row.xhtml: Added.
+        * platform/mac/mathml/presentation/mo-expected.checksum: Added.
+        * platform/mac/mathml/presentation/mo-expected.png: Added.
+        * platform/mac/mathml/presentation/mo-expected.txt: Added.
+        * platform/mac/mathml/presentation/over-expected.checksum:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.checksum: Added.
+        * platform/mac/mathml/presentation/row-expected.png: Added.
+        * platform/mac/mathml/presentation/row-expected.txt: Added.
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.checksum:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2010-03-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
