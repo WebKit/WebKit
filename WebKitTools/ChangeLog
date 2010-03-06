@@ -1,3 +1,15 @@
+2010-03-05  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix Print option on QtLauncher by calling print directly from QWebFrame.
+
+        [Qt] QtLauncher Print option is not working on QGraphicsView mode
+        https://bugs.webkit.org/show_bug.cgi?id=35769
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::print):
+
 2010-03-05  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.
