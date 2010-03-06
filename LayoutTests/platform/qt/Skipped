@@ -2451,7 +2451,6 @@ fast/box-shadow/border-radius-big.html
 fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
-fast/canvas/canvasDrawingIntoSelf.html
 fast/canvas/canvas-incremental-repaint-2.html
 fast/canvas/canvas-incremental-repaint.html
 fast/canvas/canvas-resize-reset.html
