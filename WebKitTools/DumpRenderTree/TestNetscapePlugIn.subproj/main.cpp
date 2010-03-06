@@ -338,7 +338,15 @@ static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* e
             return 1;
 
         case NPCocoaEventKeyDown:
+            if (event->data.key.characters)
+                pluginLog(instance, "keyDown '%c'", CFStringGetCharacterAtIndex(reinterpret_cast<CFStringRef>(event->data.key.characters), 0));
+            return 1;
+
         case NPCocoaEventKeyUp:
+            if (event->data.key.characters)
+                pluginLog(instance, "keyUp '%c'", CFStringGetCharacterAtIndex(reinterpret_cast<CFStringRef>(event->data.key.characters), 0));
+            return 1;
+
         case NPCocoaEventFlagsChanged:
             return 1;
 

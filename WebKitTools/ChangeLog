@@ -1,3 +1,20 @@
+2010-03-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Typing into Flash with wmode = opaque|transparent and
+        non-latin language active outputs as if US keyboard layout active
+
+        https://bugs.webkit.org/show_bug.cgi?id=34936
+
+        To test keyboard events on the test plugin, this change implements
+        NPCocoaEventKeyDown and NPCocoaEventKeyUp handlers so the plugin
+        can write log messages.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (handleEventCocoa): Implemented the event handlers for NPCocoaKeyDown
+        and NPCocoaEventKeyUp.
+
 2010-03-05  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Eric Seidel.

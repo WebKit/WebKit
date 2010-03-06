@@ -1,3 +1,21 @@
+2010-03-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Typing into Flash with wmode = opaque|transparent and
+        non-latin language active outputs as if US keyboard layout active
+
+        https://bugs.webkit.org/show_bug.cgi?id=34936
+
+        Added a layout test that verifies a plugin can receive keyboard events.
+        Unfortunately, this test works only on Mac.
+
+        * platform/gtk/Skipped: Skipped the new test because of the lack of eventSender.
+        * platform/qt/Skipped: ditto.
+        * platform/win/Skipped: Skipped the new test because NPP_HandleEvent() is not implemented.
+        * plugins/keyboard-events-expected.txt: Added.
+        * plugins/keyboard-events.html: Added.
+
 2010-03-06  MORITA Hajime  <morrita@google.com>
         
         Reviewed by Darin Adler.

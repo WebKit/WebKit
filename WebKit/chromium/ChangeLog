@@ -1,3 +1,19 @@
+2010-03-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Typing into Flash with wmode = opaque|transparent and
+        non-latin language active outputs as if US keyboard layout active
+
+        https://bugs.webkit.org/show_bug.cgi?id=34936
+
+        This change is a WebKit-side change for this issue. It dispatches
+        Char events to plug-ins so plug-ins can receive non-ASCII characters
+        as well as ASCII characters.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::keyEvent):
+
 2010-03-06  Kavita Kanetkar  <kkanetkar@chromium.org>
 
         Reviewed by Darin Fisher.

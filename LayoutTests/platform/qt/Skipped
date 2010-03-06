@@ -531,6 +531,7 @@ plugins/get-url-with-blank-target.html
 plugins/mouse-events.html
 plugins/mouse-events-fixedpos.html
 plugins/open-and-close-window-with-plugin.html
+plugins/keyboard-events.html
 
 security/block-test.html
 svg/W3C-SVG-1.1/animate-elem-02-t.svg
