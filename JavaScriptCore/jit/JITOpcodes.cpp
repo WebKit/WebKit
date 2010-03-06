@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -282,6 +283,33 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // r2 - callee
     // stack: this(JSValue) and a pointer to ArgList
 
+#if OS(WINCE)
+    // Setup arg4:
+    push(stackPointerRegister);
+
+    // Setup arg3:
+    // regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
+    load32(Address(regT1, -(int32_t)sizeof(void*) * 2), ARMRegisters::r3);
+    push(ARMRegisters::r3);
+    load32(Address(regT1, -(int32_t)sizeof(void*)), regT3);
+    storePtr(regT3, Address(stackPointerRegister));
+
+    // Setup arg2:
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT2);
+
+    // Setup arg1:
+    move(callFrameRegister, regT1);
+
+    // Setup arg0:
+    move(stackPointerRegister, regT0);
+
+    call(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_data)));
+
+    load32(Address(stackPointerRegister, 0), regT0);
+    load32(Address(stackPointerRegister, 4), regT1);
+
+    addPtr(Imm32(sizeof(ArgList) + 8), stackPointerRegister);
+#else // OS(WINCE)
     move(stackPointerRegister, regT3);
     subPtr(Imm32(8), stackPointerRegister);
     move(stackPointerRegister, regT0);
@@ -290,7 +318,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Setup arg4:
     storePtr(regT3, Address(stackPointerRegister, 8));
 
-    // Setup arg3
+    // Setup arg3:
     // regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
     load32(Address(regT1, -(int32_t)sizeof(void*) * 2), regT3);
     storePtr(regT3, Address(stackPointerRegister, 0));
@@ -310,6 +338,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     load32(Address(stackPointerRegister, 20), regT1);
 
     addPtr(Imm32(sizeof(ArgList) + 16 + 8), stackPointerRegister);
+#endif // OS(WINCE)
+
 #endif
 
     // Check for an exception
@@ -1764,7 +1794,30 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // push pointer to arguments
     storePtr(regT1, Address(stackPointerRegister, OBJECT_OFFSETOF(ArgList, m_args)));
 
-    // Setup arg3: regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
+    // regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
+
+#if OS(WINCE)
+    // Setup arg3:
+    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), ARMRegisters::r3);
+
+    // Setup arg2:
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT2);
+
+    // Setup arg1:
+    move(callFrameRegister, regT1);
+
+    // Setup arg0:
+    move(stackPointerRegister, regT0);
+    subPtr(Imm32(sizeof(Register)), stackPointerRegister);
+    storePtr(regT0, Address(stackPointerRegister));
+
+    call(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_data)));
+
+    loadPtr(Address(regT0), regT0);
+
+    addPtr(Imm32(sizeof(Register) + sizeof(ArgList)), stackPointerRegister);
+#else // OS(WINCE)
+    // Setup arg3:
     loadPtr(Address(regT1, -(int32_t)sizeof(Register)), regT2);
 
     // Setup arg2:
@@ -1779,6 +1832,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     call(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_data)));
 
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
+#endif // OS(WINCE)
 
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
