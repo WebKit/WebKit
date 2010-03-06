@@ -1,3 +1,14 @@
+2010-03-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable resource loading callback while loading worker scripts
+        https://bugs.webkit.org/show_bug.cgi?id=35744
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+
 2010-03-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Eric Seidel.
