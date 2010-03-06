@@ -1861,16 +1861,16 @@ void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const An
 
     NSString* fillMode = 0;
     switch (anim->fillMode()) {
-    case Animation::AnimationFillModeNone:
+    case AnimationFillModeNone:
         fillMode = kCAFillModeRemoved;
         break;
-    case Animation::AnimationFillModeBackwards:
+    case AnimationFillModeBackwards:
         fillMode = kCAFillModeBackwards;
         break;
-    case Animation::AnimationFillModeForwards:
+    case AnimationFillModeForwards:
        fillMode = kCAFillModeForwards;
        break;
-    case Animation::AnimationFillModeBoth:
+    case AnimationFillModeBoth:
        fillMode = kCAFillModeBoth;
        break;
     }

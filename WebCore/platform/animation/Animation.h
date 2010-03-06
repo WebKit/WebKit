@@ -84,8 +84,7 @@ public:
     enum AnimationDirection { AnimationDirectionNormal, AnimationDirectionAlternate };
     AnimationDirection direction() const { return m_direction; }
 
-    enum AnimationFillMode { AnimationFillModeNone, AnimationFillModeForwards, AnimationFillModeBackwards, AnimationFillModeBoth };
-    AnimationFillMode fillMode() const { return m_fillMode; }
+    unsigned fillMode() const { return m_fillMode; }
 
     double duration() const { return m_duration; }
 
@@ -99,7 +98,7 @@ public:
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
-    void setFillMode(AnimationFillMode f) { m_fillMode = f; m_fillModeSet = true; }
+    void setFillMode(unsigned f) { m_fillMode = f; m_fillModeSet = true; }
     void setIterationCount(int c) { m_iterationCount = c; m_iterationCountSet = true; }
     void setName(const String& n) { m_name = n; m_nameSet = true; }
     void setPlayState(unsigned d) { m_playState = d; m_playStateSet = true; }
@@ -131,7 +130,7 @@ private:
     double m_duration;
     TimingFunction m_timingFunction;
     AnimationDirection m_direction : 1;
-    AnimationFillMode m_fillMode : 2;
+    unsigned m_fillMode : 2;
 
     unsigned m_playState     : 2;
 
@@ -151,7 +150,7 @@ public:
     static float initialAnimationDelay() { return 0; }
     static AnimationDirection initialAnimationDirection() { return AnimationDirectionNormal; }
     static double initialAnimationDuration() { return 0; }
-    static AnimationFillMode initialAnimationFillMode() { return AnimationFillModeNone; }
+    static unsigned initialAnimationFillMode() { return AnimationFillModeNone; }
     static int initialAnimationIterationCount() { return 1; }
     static String initialAnimationName() { return String("none"); }
     static unsigned initialAnimationPlayState() { return AnimPlayStatePlaying; }

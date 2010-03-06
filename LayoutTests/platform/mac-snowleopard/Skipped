@@ -103,3 +103,8 @@ media/video-display-aspect-ratio.html
 # Flakey on Snow Leopard Debug builds, skip it until it can be made non-flakey:
 # https://bugs.webkit.org/show_bug.cgi?id=33543
 fast/forms/search-event-delay.html
+
+# Thanks to https://bugs.webkit.org/show_bug.cgi?id=35714
+# computed style on HW transforms are wrong in SL, but
+# correct on other platforms.
+animations/fill-mode-transform.html

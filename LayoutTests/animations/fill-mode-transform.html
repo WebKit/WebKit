@@ -50,9 +50,9 @@
     var animsFinished = 0;
     const allowance = 5;
     const expectedValues = [
-      {id: "a", start: 200, end: 100},
+      {id: "a", start: 100, end: 100},
       {id: "b", start: 200, end: 100},
-      {id: "c", start: 200, end: 300},
+      {id: "c", start: 100, end: 300},
       {id: "d", start: 200, end: 300},
       {id: "e", start: 200, end: 200}
     ];
@@ -127,13 +127,6 @@ It takes snapshots at document load and the end of the animations.
 <div id="e" class="box">
   Both Iterate
 </div>
-<p>
-  Note that due to <a href="https://bugs.webkit.org/show_bug.cgi?id=35714">Bug 35714</a>
-  the expected values for the start of the animation on elements "a" and "c" are
-  intentionally incorrect. The expected values should be 100, not 200. If this
-  test fails, then it's likely that bug has been fixed and the expected values here
-  should be updated.
-</p>
 <div id="result">
 </div>
 </body>

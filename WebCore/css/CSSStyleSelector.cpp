@@ -5663,16 +5663,16 @@ void CSSStyleSelector::mapAnimationFillMode(Animation* layer, CSSValue* value)
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
     case CSSValueNone:
-        layer->setFillMode(Animation::AnimationFillModeNone);
+        layer->setFillMode(AnimationFillModeNone);
         break;
     case CSSValueForwards:
-        layer->setFillMode(Animation::AnimationFillModeForwards);
+        layer->setFillMode(AnimationFillModeForwards);
         break;
     case CSSValueBackwards:
-        layer->setFillMode(Animation::AnimationFillModeBackwards);
+        layer->setFillMode(AnimationFillModeBackwards);
         break;
     case CSSValueBoth:
-        layer->setFillMode(Animation::AnimationFillModeBoth);
+        layer->setFillMode(AnimationFillModeBoth);
         break;
     }
 }

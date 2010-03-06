@@ -1,3 +1,22 @@
+2010-03-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser
+
+        https://bugs.webkit.org/show_bug.cgi?id=35815
+        Animation fill mode tests break on Windows
+
+        * animations/fill-mode-transform-expected.txt:
+        * animations/fill-mode-transform.html:
+            - use the real expected values, rather than
+              try to get the test to pass on Snow Leopard.
+        * platform/mac-leopard/Skipped:
+            - remove the skip entry for the test above
+        * platform/mac-snowleopard/Skipped:
+            - skip this test on Snow Leopard while
+              hardware acceleration gives the wrong
+              value for computed style.
+              See bug 35714.
+
 2010-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
