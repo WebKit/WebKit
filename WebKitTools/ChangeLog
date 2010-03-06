@@ -1,3 +1,26 @@
+2010-03-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        Split the command-line invocation of the Chromium/python LigHTTPd
+        server implementation out into its own top level script to make it
+        a more "public" interface and to resolve some awkward layering
+        issues. This script will be called directly by other test scripts in
+        the Chromium tree.
+
+        At some point this script should be made to work with Apache-based
+        implementations and on other ports. I have filed
+        https://bugs.webkit.org/show_bug.cgi?id=35820 for this.
+
+        Also fix a bug in port/factory where options.chromium could be
+        dereferenced even if it wasn't set, raising an exception.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35812
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/new-run-webkit-httpd: Added
+
 2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther

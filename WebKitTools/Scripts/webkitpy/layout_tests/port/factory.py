@@ -44,7 +44,7 @@ def get(port_name=None, options=None):
         elif sys.platform == 'linux2':
             port_to_use = 'chromium-linux'
         elif sys.platform == 'darwin':
-            if options.chromium:
+            if options and hasattr(options, 'chromium') and options.chromium:
                 port_to_use = 'chromium-mac'
             else:
                 port_to_use = 'mac'
