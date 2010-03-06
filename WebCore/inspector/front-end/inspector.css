@@ -3323,6 +3323,10 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     height: 80px;
 }
 
+#timeline-overview-panel .timeline-graph-bar {
+    pointer-events: none;
+}
+
 .timeline-sidebar-background {
     top: 90px;
     bottom: 0;
