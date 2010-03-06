@@ -40,6 +40,8 @@ import os.path
 from layout_package import test_failures
 from test_types import test_type_base
 
+_log = logging.getLogger("webkitpy.layout_tests.test_types.text_diff")
+
 
 def is_render_tree_dump(data):
     """Returns true if data appears to be a render tree dump as opposed to a
@@ -63,7 +65,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
         # Read the port-specific expected text.
         expected_filename = self._port.expected_filename(filename, '.txt')
         if show_sources:
-            logging.debug('Using %s' % expected_filename)
+            _log.debug('Using %s' % expected_filename)
 
         return self.get_normalized_text(expected_filename)
 

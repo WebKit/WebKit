@@ -38,6 +38,8 @@ import sys
 
 import chromium
 
+_log = logging.getLogger("webkitpy.layout_tests.port.chromium_win")
+
 
 class ChromiumWinPort(chromium.ChromiumPort):
     """Chromium Win implementation of the Port class."""
@@ -63,11 +65,11 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:
-            logging.error('For complete Windows build requirements, please '
-                          'see:')
-            logging.error('')
-            logging.error('    http://dev.chromium.org/developers/how-tos/'
-                          'build-instructions-windows')
+            _log.error('For complete Windows build requirements, please '
+                       'see:')
+            _log.error('')
+            _log.error('    http://dev.chromium.org/developers/how-tos/'
+                       'build-instructions-windows')
         return result
 
     def get_absolute_path(self, filename):

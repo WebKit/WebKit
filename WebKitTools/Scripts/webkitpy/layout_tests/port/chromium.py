@@ -41,6 +41,8 @@ import base
 import http_server
 import websocket_server
 
+_log = logging.getLogger("webkitpy.layout_tests.port.chromium")
+
 
 def check_file_exists(path_to_file, file_description, override_step=None):
     """Verify the file is present where expected or log an error.
@@ -50,11 +52,11 @@ def check_file_exists(path_to_file, file_description, override_step=None):
             you're looking for (e.g., "HTTP Server"). Used for error logging.
         override_step: An optional string to be logged if the check fails."""
     if not os.path.exists(path_to_file):
-        logging.error('Unable to find %s' % file_description)
-        logging.error('    at %s' % path_to_file)
+        _log.error('Unable to find %s' % file_description)
+        _log.error('    at %s' % path_to_file)
         if override_step:
-            logging.error('    %s' % override_step)
-            logging.error('')
+            _log.error('    %s' % override_step)
+            _log.error('')
         return False
     return True
 
@@ -78,7 +80,7 @@ class ChromiumPort(base.Port):
             result = (self._check_driver_build_up_to_date(self._options.target)
                       and result)
         else:
-            logging.error('')
+            _log.error('')
 
         helper_path = self._path_to_helper()
         if helper_path:
@@ -97,9 +99,9 @@ class ChromiumPort(base.Port):
         proc = subprocess.Popen([test_shell_binary_path,
                                 '--check-layout-test-sys-deps'])
         if proc.wait():
-            logging.error('System dependencies check failed.')
-            logging.error('To override, invoke with --nocheck-sys-deps')
-            logging.error('')
+            _log.error('System dependencies check failed.')
+            _log.error('To override, invoke with --nocheck-sys-deps')
+            _log.error('')
             return False
         return True
 
@@ -138,16 +140,16 @@ class ChromiumPort(base.Port):
     def start_helper(self):
         helper_path = self._path_to_helper()
         if helper_path:
-            logging.debug("Starting layout helper %s" % helper_path)
+            _log.debug("Starting layout helper %s" % helper_path)
             self._helper = subprocess.Popen([helper_path],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None)
             is_ready = self._helper.stdout.readline()
             if not is_ready.startswith('ready'):
-                logging.error("layout_test_helper failed to be ready")
+                _log.error("layout_test_helper failed to be ready")
 
     def stop_helper(self):
         if self._helper:
-            logging.debug("Stopping layout test helper")
+            _log.debug("Stopping layout test helper")
             self._helper.stdin.write("x\n")
             self._helper.stdin.close()
             self._helper.wait()
@@ -185,11 +187,11 @@ class ChromiumPort(base.Port):
 
                 if (debug_mtime > release_mtime and target == 'Release' or
                     release_mtime > debug_mtime and target == 'Debug'):
-                    logging.warning('You are not running the most '
-                                    'recent test_shell binary. You need to '
-                                    'pass --debug or not to select between '
-                                    'Debug and Release.')
-                    logging.warning('')
+                    _log.warning('You are not running the most '
+                                 'recent test_shell binary. You need to '
+                                 'pass --debug or not to select between '
+                                 'Debug and Release.')
+                    _log.warning('')
             # This will fail if we don't have both a debug and release binary.
             # That's fine because, in this case, we must already be running the
             # most up-to-date one.
@@ -283,8 +285,8 @@ class ChromiumDriver(base.Driver):
             if line.startswith("#URL:"):
                 actual_uri = line.rstrip()[5:]
                 if uri != actual_uri:
-                    logging.fatal("Test got out of sync:\n|%s|\n|%s|" %
-                                (uri, actual_uri))
+                    _log.fatal("Test got out of sync:\n|%s|\n|%s|" %
+                               (uri, actual_uri))
                     raise AssertionError("test out of sync")
             elif line.startswith("#MD5:"):
                 actual_checksum = line.rstrip()[5:]
@@ -318,8 +320,8 @@ class ChromiumDriver(base.Driver):
                 while self._proc.poll() is None and time.time() < timeout:
                     time.sleep(0.1)
                 if self._proc.poll() is None:
-                    logging.warning('stopping test driver timed out, '
-                                    'killing it')
+                    _log.warning('stopping test driver timed out, '
+                                 'killing it')
                     null = open(os.devnull, "w")
                     subprocess.Popen(["kill", "-9",
                                      str(self._proc.pid)], stderr=null)

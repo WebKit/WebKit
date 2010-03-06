@@ -38,6 +38,9 @@ import sys
 
 import simplejson
 
+_log = logging.getLogger("webkitpy.layout_tests.layout_package."
+                         "test_expectations")
+
 # Test expectation and modifier constants.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, TIMEOUT, CRASH, SKIP, WONTFIX,
  DEFER, SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
@@ -400,20 +403,20 @@ class TestExpectationsFile:
                                                       platform)
             if action == NO_CHANGE:
                 # Save the original line back to the file
-                logging.debug('No change to test: %s', line)
+                _log.debug('No change to test: %s', line)
                 f_new.append(line)
             elif action == REMOVE_TEST:
                 tests_removed += 1
-                logging.info('Test removed: %s', line)
+                _log.info('Test removed: %s', line)
             elif action == REMOVE_PLATFORM:
                 parts = line.split(':')
                 new_options = parts[0].replace(platform.upper() + ' ', '', 1)
                 new_line = ('%s:%s' % (new_options, parts[1]))
                 f_new.append(new_line)
                 tests_updated += 1
-                logging.info('Test updated: ')
-                logging.info('  old: %s', line)
-                logging.info('  new: %s', new_line)
+                _log.info('Test updated: ')
+                _log.info('  old: %s', line)
+                _log.info('  new: %s', new_line)
             elif action == ADD_PLATFORMS_EXCEPT_THIS:
                 parts = line.split(':')
                 new_options = parts[0]
@@ -430,15 +433,15 @@ class TestExpectationsFile:
                 new_line = ('%s:%s' % (new_options, parts[1]))
                 f_new.append(new_line)
                 tests_updated += 1
-                logging.info('Test updated: ')
-                logging.info('  old: %s', line)
-                logging.info('  new: %s', new_line)
+                _log.info('Test updated: ')
+                _log.info('  old: %s', line)
+                _log.info('  new: %s', new_line)
             else:
-                logging.error('Unknown update action: %d; line: %s',
-                              action, line)
+                _log.error('Unknown update action: %d; line: %s',
+                           action, line)
 
-        logging.info('Total tests removed: %d', tests_removed)
-        logging.info('Total tests updated: %d', tests_updated)
+        _log.info('Total tests removed: %d', tests_removed)
+        _log.info('Total tests updated: %d', tests_updated)
 
         return "".join(f_new)
 
@@ -633,13 +636,14 @@ class TestExpectationsFile:
                 build_type = 'DEBUG'
             else:
                 build_type = 'RELEASE'
-            logging.error('')
-            logging.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
-                          (self._test_platform_name.upper(), build_type))
+            _log.error('')
+            _log.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
+                       (self._test_platform_name.upper(), build_type))
 
             for error in self._non_fatal_errors:
-                logging.error(error)
-            logging.error('')
+                _log.error(error)
+            _log.error('')
+
             if len(self._errors):
                 raise SyntaxError('\n'.join(map(str, self._errors)))
 

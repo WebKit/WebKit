@@ -38,6 +38,8 @@ import sys
 
 import http_server_base
 
+_log = logging.getLogger("webkitpy.layout_tests.port.apache_http_server")
+
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
@@ -188,7 +190,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             shell=True)
         err = self._httpd_proc.stderr.read()
         if len(err):
-            logging.debug(err)
+            _log.debug(err)
             return False
         return True
 
@@ -197,21 +199,21 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # Stop any currently running servers.
         self.stop()
 
-        logging.debug("Starting apache http server")
+        _log.debug("Starting apache http server")
         server_started = self.wait_for_action(self._start_httpd_process)
         if server_started:
-            logging.debug("Apache started. Testing ports")
+            _log.debug("Apache started. Testing ports")
             server_started = self.wait_for_action(
                 self.is_server_running_on_all_ports)
 
         if server_started:
-            logging.debug("Server successfully started")
+            _log.debug("Server successfully started")
         else:
             raise Exception('Failed to start http server')
 
     def stop(self):
         """Stops the apache http server."""
-        logging.debug("Shutting down any running http servers")
+        _log.debug("Shutting down any running http servers")
         httpd_pid = None
         if os.path.exists(self._pid_file):
             httpd_pid = int(open(self._pid_file).readline())

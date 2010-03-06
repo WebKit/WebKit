@@ -46,6 +46,8 @@ from test_types import test_type_base
 _compare_available = True
 _compare_msg_printed = False
 
+_log = logging.getLogger("webkitpy.layout_tests.test_types.image_diff")
+
 
 class ImageDiff(test_type_base.TestTypeBase):
 
@@ -133,8 +135,8 @@ class ImageDiff(test_type_base.TestTypeBase):
         expected_png_file = self._port.expected_filename(filename, '.png')
 
         if test_args.show_sources:
-            logging.debug('Using %s' % expected_hash_file)
-            logging.debug('Using %s' % expected_png_file)
+            _log.debug('Using %s' % expected_hash_file)
+            _log.debug('Using %s' % expected_png_file)
 
         try:
             expected_hash = open(expected_hash_file, "r").read()

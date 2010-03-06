@@ -43,6 +43,8 @@ import urllib
 import factory
 import http_server_base
 
+_log = logging.getLogger("webkitpy.layout_tests.port.http_server")
+
 
 class HttpdNotStarted(Exception):
     pass
@@ -205,7 +207,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                 'cygwin', 'setup_mount.bat')
             subprocess.Popen(setup_mount).wait()
 
-        logging.debug('Starting http server')
+        _log.debug('Starting http server')
         self._process = subprocess.Popen(start_cmd, env=env)
 
         # Wait for server to start.
@@ -217,7 +219,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         if not server_started or self._process.returncode != None:
             raise google.httpd_utils.HttpdNotStarted('Failed to start httpd.')
 
-        logging.debug("Server successfully started")
+        _log.debug("Server successfully started")
 
     # TODO(deanm): Find a nicer way to shutdown cleanly.  Our log files are
     # probably not being flushed, etc... why doesn't our python have os.kill ?

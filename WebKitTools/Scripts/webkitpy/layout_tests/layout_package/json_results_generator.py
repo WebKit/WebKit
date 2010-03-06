@@ -38,6 +38,9 @@ import xml.dom.minidom
 
 from layout_package import test_expectations
 
+_log = logging.getLogger("webkitpy.layout_tests.layout_package."
+                         "json_results_generator")
+
 
 class JSONResultsGenerator(object):
 
@@ -154,8 +157,8 @@ class JSONResultsGenerator(object):
             # Check if we have the archived JSON file on the buildbot server.
             results_file_url = (self._builder_base_url +
                 self._build_name + "/" + self.RESULTS_FILENAME)
-            logging.error("Local results.json file does not exist. Grabbing "
-                "it off the archive at " + results_file_url)
+            _log.error("Local results.json file does not exist. Grabbing "
+                       "it off the archive at " + results_file_url)
 
             try:
                 results_file = urllib2.urlopen(results_file_url)
@@ -177,11 +180,11 @@ class JSONResultsGenerator(object):
             try:
                 results_json = simplejson.loads(old_results)
             except:
-                logging.debug("results.json was not valid JSON. Clobbering.")
+                _log.debug("results.json was not valid JSON. Clobbering.")
                 # The JSON file is not valid JSON. Just clobber the results.
                 results_json = {}
         else:
-            logging.debug('Old JSON results do not exist. Starting fresh.')
+            _log.debug('Old JSON results do not exist. Starting fresh.')
             results_json = {}
 
         return results_json, error
@@ -192,14 +195,14 @@ class JSONResultsGenerator(object):
         if error:
             # If there was an error don't write a results.json
             # file at all as it would lose all the information on the bot.
-            logging.error("Archive directory is inaccessible. Not modifying "
-                "or clobbering the results.json file: " + str(error))
+            _log.error("Archive directory is inaccessible. Not modifying "
+                       "or clobbering the results.json file: " + str(error))
             return None
 
         builder_name = self._builder_name
         if results_json and builder_name not in results_json:
-            logging.debug("Builder name (%s) is not in the results.json file."
-                          % builder_name)
+            _log.debug("Builder name (%s) is not in the results.json file."
+                       % builder_name)
 
         self._convert_json_to_current_version(results_json)
 

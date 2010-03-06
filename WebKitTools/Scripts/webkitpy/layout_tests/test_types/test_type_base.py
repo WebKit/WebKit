@@ -37,6 +37,8 @@ import errno
 import logging
 import os.path
 
+_log = logging.getLogger("webkitpy.layout_tests.test_types.test_type_base")
+
 
 class TestArguments(object):
     """Struct-like wrapper for additional arguments needed by
@@ -109,7 +111,7 @@ class TestTypeBase(object):
 
         self._port.maybe_make_directory(output_dir)
         output_path = os.path.join(output_dir, output_file)
-        logging.debug('writing new baseline to "%s"' % (output_path))
+        _log.debug('writing new baseline to "%s"' % (output_path))
         open(output_path, "wb").write(data)
 
     def output_filename(self, filename, modifier):

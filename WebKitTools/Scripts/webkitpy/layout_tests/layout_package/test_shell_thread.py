@@ -47,6 +47,9 @@ import time
 
 import test_failures
 
+_log = logging.getLogger("webkitpy.layout_tests.layout_package."
+                         "test_shell_thread")
+
 
 def process_output(port, test_info, test_types, test_args, target, output_dir,
                    crash, timeout, test_run_time, actual_checksum,
@@ -79,7 +82,7 @@ def process_output(port, test_info, test_types, test_args, target, output_dir,
         failures.append(test_failures.FailureTimeout())
 
     if crash:
-        logging.debug("Stacktrace for %s:\n%s" % (test_info.filename, error))
+        _log.debug("Stacktrace for %s:\n%s" % (test_info.filename, error))
         # Strip off "file://" since RelativeTestFilename expects
         # filesystem paths.
         filename = os.path.join(output_dir, test_info.filename)
@@ -87,8 +90,8 @@ def process_output(port, test_info, test_types, test_args, target, output_dir,
         port.maybe_make_directory(os.path.split(filename)[0])
         open(filename, "wb").write(error)
     elif error:
-        logging.debug("Previous test output extra lines after dump:\n%s" %
-            error)
+        _log.debug("Previous test output extra lines after dump:\n%s" %
+                   error)
 
     # Check the output and save the results.
     start_time = time.time()
@@ -242,17 +245,17 @@ class TestShellThread(threading.Thread):
         self._start_time = time.time()
         self._num_tests = 0
         try:
-            logging.debug('%s starting' % (self.getName()))
+            _log.debug('%s starting' % (self.getName()))
             self._run(test_runner=None, result_summary=None)
-            logging.debug('%s done (%d tests)' % (self.getName(),
-                          self.get_num_tests()))
+            _log.debug('%s done (%d tests)' % (self.getName(),
+                       self.get_num_tests()))
         except:
             # Save the exception for our caller to see.
             self._exception_info = sys.exc_info()
             self._stop_time = time.time()
             # Re-raise it and die.
-            logging.error('%s dying: %s' % (self.getName(),
-                          self._exception_info))
+            _log.error('%s dying: %s' % (self.getName(),
+                       self._exception_info))
             raise
         self._stop_time = time.time()
 
@@ -275,8 +278,8 @@ class TestShellThread(threading.Thread):
             try:
                 batch_size = int(self._options.batch_size)
             except:
-                logging.info("Ignoring invalid batch size '%s'" %
-                             self._options.batch_size)
+                _log.info("Ignoring invalid batch size '%s'" %
+                          self._options.batch_size)
 
         # Append tests we're running to the existing tests_run.txt file.
         # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.
@@ -286,7 +289,7 @@ class TestShellThread(threading.Thread):
 
         while True:
             if self._canceled:
-                logging.info('Testing canceled')
+                _log.info('Testing canceled')
                 tests_run_file.close()
                 return
 
@@ -327,12 +330,12 @@ class TestShellThread(threading.Thread):
                     batch_count = 0
                 # Print the error message(s).
                 error_str = '\n'.join(['  ' + f.message() for f in failures])
-                logging.debug("%s %s failed:\n%s" % (self.getName(),
-                              self._port.relative_test_filename(filename),
-                              error_str))
+                _log.debug("%s %s failed:\n%s" % (self.getName(),
+                           self._port.relative_test_filename(filename),
+                           error_str))
             else:
-                logging.debug("%s %s passed" % (self.getName(),
-                              self._port.relative_test_filename(filename)))
+                _log.debug("%s %s passed" % (self.getName(),
+                           self._port.relative_test_filename(filename)))
             self._result_queue.put((filename, failures))
 
             if batch_size > 0 and batch_count > batch_size:
@@ -379,7 +382,7 @@ class TestShellThread(threading.Thread):
             # test_shells too, introducing spurious crashes. We accept that
             # tradeoff in order to avoid losing the rest of this thread's
             # results.
-            logging.error('Test thread hung: killing all test_shells')
+            _log.error('Test thread hung: killing all test_shells')
             worker._driver.stop()
 
         try:
@@ -388,8 +391,8 @@ class TestShellThread(threading.Thread):
             failures = stats.failures
         except AttributeError, e:
             failures = []
-            logging.error('Cannot get results of test: %s' %
-                          test_info.filename)
+            _log.error('Cannot get results of test: %s' %
+                       test_info.filename)
 
         return failures
 

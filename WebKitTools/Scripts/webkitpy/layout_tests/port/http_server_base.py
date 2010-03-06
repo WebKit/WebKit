@@ -34,6 +34,8 @@ import os
 import time
 import urllib
 
+_log = logging.getLogger("webkitpy.layout_tests.port.http_server_base")
+
 
 class HttpServerBase(object):
 
@@ -63,9 +65,9 @@ class HttpServerBase(object):
 
             try:
                 response = urllib.urlopen(url)
-                logging.debug("Server running at %s" % url)
+                _log.debug("Server running at %s" % url)
             except IOError:
-                logging.debug("Server NOT running at %s" % url)
+                _log.debug("Server NOT running at %s" % url)
                 return False
 
         return True

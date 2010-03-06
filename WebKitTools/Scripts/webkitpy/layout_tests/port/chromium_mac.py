@@ -37,6 +37,8 @@ import subprocess
 
 import chromium
 
+_log = logging.getLogger("webkitpy.layout_tests.port.chromium_mac")
+
 
 class ChromiumMacPort(chromium.ChromiumPort):
     """Chromium Mac implementation of the Port class."""
@@ -57,10 +59,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         result = self._check_wdiff_install() and result
         if not result:
-            logging.error('For complete Mac build requirements, please see:')
-            logging.error('')
-            logging.error('    http://code.google.com/p/chromium/wiki/'
-                          'MacBuildInstructions')
+            _log.error('For complete Mac build requirements, please see:')
+            _log.error('')
+            _log.error('    http://code.google.com/p/chromium/wiki/'
+                       'MacBuildInstructions')
         return result
 
     def num_cores(self):
@@ -96,8 +98,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
         try:
             rcode = subprocess.call(['wdiff'], stderr=f)
         except OSError:
-            logging.warning('wdiff not found. Install using MacPorts or some '
-                            'other means')
+            _log.warning('wdiff not found. Install using MacPorts or some '
+                         'other means')
             pass
         f.close()
         return True

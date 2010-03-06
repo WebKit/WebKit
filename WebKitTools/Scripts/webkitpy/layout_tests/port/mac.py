@@ -46,6 +46,9 @@ import base
 import webkitpy
 from webkitpy import executive
 
+_log = logging.getLogger("webkitpy.layout_tests.port.mac")
+
+
 class MacPort(base.Port):
     """WebKit Mac implementation of the Port class."""
 
@@ -73,7 +76,7 @@ class MacPort(base.Port):
 
         driver_path = self._path_to_driver()
         if not os.path.exists(driver_path):
-            logging.error("DumpRenderTree was not found at %s" % driver_path)
+            _log.error("DumpRenderTree was not found at %s" % driver_path)
             return False
 
         # This should also validate that the ImageDiff path is valid
@@ -158,7 +161,7 @@ class MacPort(base.Port):
         tests_to_skip = []
         for filename in self._skipped_file_paths():
             if not os.path.exists(filename):
-                logging.warn("Failed to open Skipped file: %s" % filename)
+                _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
             skipped_file = file(filename)
             tests_to_skip.extend(self._tests_from_skipped_file(skipped_file))
@@ -304,7 +307,7 @@ class MacDriver(base.Driver):
 
         # FIXME: This is a hack around our lack of ImageDiff support for now.
         if not self._port._options.no_pixel_tests:
-            logging.warn("This port does not yet support pixel tests.")
+            _log.warn("This port does not yet support pixel tests.")
             self._port._options.no_pixel_tests = True
             #cmd.append('--pixel-tests')
 
@@ -440,8 +443,8 @@ class MacDriver(base.Driver):
                 while self._proc.poll() is None and time.time() < timeout:
                     time.sleep(0.1)
                 if self._proc.poll() is None:
-                    logging.warning('stopping test driver timed out, '
-                                    'killing it')
+                    _log.warning('stopping test driver timed out, '
+                                 'killing it')
                     null = open(os.devnull, "w")
                     subprocess.Popen(["kill", "-9",
                                      str(self._proc.pid)], stderr=null)

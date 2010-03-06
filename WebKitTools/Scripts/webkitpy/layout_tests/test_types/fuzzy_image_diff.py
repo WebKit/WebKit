@@ -39,6 +39,8 @@ import shutil
 from layout_package import test_failures
 from test_types import test_type_base
 
+_log = logging.getLogger("webkitpy.layout_tests.test_types.fuzzy_image_diff")
+
 
 class FuzzyImageDiff(test_type_base.TestTypeBase):
 
@@ -55,7 +57,7 @@ class FuzzyImageDiff(test_type_base.TestTypeBase):
         expected_png_file = self._port.expected_filename(filename, '.png')
 
         if test_args.show_sources:
-            logging.debug('Using %s' % expected_png_file)
+            _log.debug('Using %s' % expected_png_file)
 
         # Also report a missing expected PNG file.
         if not os.path.isfile(expected_png_file):

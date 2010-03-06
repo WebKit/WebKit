@@ -37,6 +37,8 @@ import subprocess
 
 import chromium
 
+_log = logging.getLogger("webkitpy.layout_tests.port.chromium_linux")
+
 
 class ChromiumLinuxPort(chromium.ChromiumPort):
     """Chromium Linux implementation of the Port class."""
@@ -64,10 +66,10 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         result = self._check_wdiff_install() and result
 
         if not result:
-            logging.error('For complete Linux build requirements, please see:')
-            logging.error('')
-            logging.error('    http://code.google.com/p/chromium/wiki/'
-                          'LinuxBuildInstructions')
+            _log.error('For complete Linux build requirements, please see:')
+            _log.error('')
+            _log.error('    http://code.google.com/p/chromium/wiki/'
+                       'LinuxBuildInstructions')
         return result
 
     def num_cores(self):
@@ -101,9 +103,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         result = chromium.check_file_exists(self._path_to_apache_config_file(),
             "apache2 config file") and result
         if not result:
-            logging.error('    Please install using: "sudo apt-get install '
-                          'apache2 libapache2-mod-php5"')
-            logging.error('')
+            _log.error('    Please install using: "sudo apt-get install '
+                       'apache2 libapache2-mod-php5"')
+            _log.error('')
         return result
 
     def _check_lighttpd_install(self):
@@ -114,17 +116,17 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         result = chromium.check_file_exists(self._path_to_lighttpd_modules(),
             "LigHTTPd modules") and result
         if not result:
-            logging.error('    Please install using: "sudo apt-get install '
-                          'lighttpd php5-cgi"')
-            logging.error('')
+            _log.error('    Please install using: "sudo apt-get install '
+                       'lighttpd php5-cgi"')
+            _log.error('')
         return result
 
     def _check_wdiff_install(self):
         result = chromium.check_file_exists(self._path_to_wdiff(), 'wdiff')
         if not result:
-            logging.error('    Please install using: "sudo apt-get install '
-                          'wdiff"')
-            logging.error('')
+            _log.error('    Please install using: "sudo apt-get install '
+                       'wdiff"')
+            _log.error('')
         return result
 
 

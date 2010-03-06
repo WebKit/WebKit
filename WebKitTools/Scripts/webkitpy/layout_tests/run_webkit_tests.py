@@ -73,6 +73,8 @@ from test_types import text_diff
 
 import port
 
+_log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
+
 # Indicates that we want detailed progress updates in the output (prints
 # directory-by-directory feedback).
 LOG_DETAILED_PROGRESS = 'detailed-progress'
@@ -198,13 +200,13 @@ class TestRunner:
         self._current_test_number = 0
 
     def __del__(self):
-        logging.debug("flushing stdout")
+        _log.debug("flushing stdout")
         sys.stdout.flush()
-        logging.debug("flushing stderr")
+        _log.debug("flushing stderr")
         sys.stderr.flush()
-        logging.debug("stopping http server")
+        _log.debug("stopping http server")
         self._port.stop_http_server()
-        logging.debug("stopping websocket server")
+        _log.debug("stopping websocket server")
         self._port.stop_websocket_server()
 
     def gather_file_paths(self, paths):
@@ -274,7 +276,7 @@ class TestRunner:
                 test_size = int(chunk_len)
                 assert(test_size > 0)
             except:
-                logging.critical("invalid chunk '%s'" % chunk_value)
+                _log.critical("invalid chunk '%s'" % chunk_value)
                 sys.exit(1)
 
             # Get the number of tests
@@ -633,7 +635,7 @@ class TestRunner:
         retry_summary = result_summary
         while (retries < self.NUM_RETRY_ON_UNEXPECTED_FAILURE and
                len(failures)):
-            logging.debug("Retrying %d unexpected failure(s)" % len(failures))
+            _log.debug("Retrying %d unexpected failure(s)" % len(failures))
             retries += 1
             retry_summary = ResultSummary(self._expectations, failures.keys())
             self._run_tests(failures.keys(), retry_summary)
@@ -871,8 +873,8 @@ class TestRunner:
           individual_test_timings: list of test times (used by the flakiness
             dashboard).
         """
-        logging.debug("Writing JSON files in %s." %
-                      self._options.results_directory)
+        _log.debug("Writing JSON files in %s." %
+                   self._options.results_directory)
         unexpected_file = open(os.path.join(self._options.results_directory,
             "unexpected_results.json"), "w")
         unexpected_file.write(simplejson.dumps(unexpected_results,
@@ -894,7 +896,7 @@ class TestRunner:
             BUILDER_BASE_URL, individual_test_timings,
             self._expectations, result_summary, self._test_files_list)
 
-        logging.debug("Finished writing JSON files.")
+        _log.debug("Finished writing JSON files.")
 
     def _print_expected_results_of_type(self, write, result_summary,
                                         result_type, result_type_str):
@@ -1346,7 +1348,7 @@ def read_test_files(files):
 
 
 def create_logging_writer(options, log_option):
-    """Returns a write() function that will write the string to logging.info()
+    """Returns a write() function that will write the string to _log.info()
     if comp was specified in --log or if --verbose is true. Otherwise the
     message is dropped.
 
@@ -1356,7 +1358,7 @@ def create_logging_writer(options, log_option):
           to be logged (e.g., 'actual' or 'expected')
     """
     if options.verbose or log_option in options.log.split(","):
-        return logging.info
+        return _log.info
     return lambda str: 1
 
 
@@ -1500,7 +1502,7 @@ def main(options, args):
 
     port_obj.stop_helper()
 
-    logging.debug("Exit status: %d" % has_new_failures)
+    _log.debug("Exit status: %d" % has_new_failures)
     sys.exit(has_new_failures)
 
 

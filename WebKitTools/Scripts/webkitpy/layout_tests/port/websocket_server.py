@@ -42,6 +42,8 @@ import urllib
 import factory
 import http_server
 
+_log = logging.getLogger("webkitpy.layout_tests.port.websocket_server")
+
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
 _WSS_LOG_PREFIX = 'pywebsocket.wss.log-'
 
@@ -127,7 +129,7 @@ class PyWebSocket(http_server.Lighttpd):
 
     def start(self):
         if not self._web_socket_tests:
-            logging.info('No need to start %s server.' % self._server_name)
+            _log.info('No need to start %s server.' % self._server_name)
             return
         if self.is_running():
             raise PyWebSocketNotStarted('%s is already running.' %
@@ -166,11 +168,11 @@ class PyWebSocket(http_server.Lighttpd):
         handler_map_file = os.path.join(self._web_socket_tests,
                                         'handler_map.txt')
         if os.path.exists(handler_map_file):
-            logging.debug('Using handler_map_file: %s' % handler_map_file)
+            _log.debug('Using handler_map_file: %s' % handler_map_file)
             start_cmd.append('-m')
             start_cmd.append(handler_map_file)
         else:
-            logging.warning('No handler_map_file found')
+            _log.warning('No handler_map_file found')
 
         if self._use_tls:
             start_cmd.extend(['-t', '-k', self._private_key,
@@ -192,9 +194,9 @@ class PyWebSocket(http_server.Lighttpd):
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +
                              env.get('PYTHONPATH', ''))
 
-        logging.debug('Starting %s server on %d.' % (
-            self._server_name, self._port))
-        logging.debug('cmdline: %s' % ' '.join(start_cmd))
+        _log.debug('Starting %s server on %d.' % (
+                   self._server_name, self._port))
+        _log.debug('cmdline: %s' % ' '.join(start_cmd))
         self._process = subprocess.Popen(start_cmd, stdout=self._wsout,
                                          stderr=subprocess.STDOUT,
                                          env=env)
@@ -211,7 +213,7 @@ class PyWebSocket(http_server.Lighttpd):
             fp = open(output_log)
             try:
                 for line in fp:
-                    logging.error(line)
+                    _log.error(line)
             finally:
                 fp.close()
             raise PyWebSocketNotStarted(
@@ -242,7 +244,7 @@ class PyWebSocket(http_server.Lighttpd):
             raise PyWebSocketNotFound(
                 'Failed to find %s server pid.' % self._server_name)
 
-        logging.debug('Shutting down %s server %d.' % (self._server_name, pid))
+        _log.debug('Shutting down %s server %d.' % (self._server_name, pid))
         self._port_obj._kill_process(pid)
 
         if self._process:
