@@ -1,3 +1,14 @@
+2010-03-06  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Create WebKit API for  WebCore::ImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=35415
+
+        * WebKit.gyp:
+        * public/WebImageDecoder.h: Added.
+        * src/WebImageDecoder.cpp: Added.
+
 2010-03-05  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
