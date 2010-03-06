@@ -579,7 +579,7 @@ void FrameLoaderClientImpl::dispatchDidChangeLocationWithinPage()
     // them for fragment redirection that happens in window.onload handler.
     // See https://bugs.webkit.org/show_bug.cgi?id=31838
     bool loaderCompleted =
-        !m_webFrame->frame()->page()->mainFrame()->loader()->isLoading();
+        !webView->page()->mainFrame()->loader()->activeDocumentLoader()->isLoadingInAPISense();
 
     // Generate didStartLoading if loader is completed.
     if (webView->client() && loaderCompleted)
