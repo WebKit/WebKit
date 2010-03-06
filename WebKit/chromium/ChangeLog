@@ -2,6 +2,19 @@
 
         Reviewed by David Levin.
 
+        [Chromium] Embedder initiated loads should not always stop existing loads
+        https://bugs.webkit.org/show_bug.cgi?id=33862
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::reload):
+        (WebKit::WebFrameImpl::loadRequest):
+        (WebKit::WebFrameImpl::loadHistoryItem):
+        (WebKit::WebFrameImpl::loadData):
+
+2010-03-06  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
         [Chromium] spurious WebViewClient::didStopLoading if changing
         location.hash while a subframe is still loading
 
