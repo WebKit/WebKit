@@ -1,3 +1,18 @@
+2010-03-06  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30895
+        [Gtk] The accessible hierarchy of tables is significantly incorrect for Atk
+
+        This completes the fixing of the Atk table hierarchy which was started
+        in bug #35418.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::determineAccessibilityRole):
+
 2010-03-06  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.

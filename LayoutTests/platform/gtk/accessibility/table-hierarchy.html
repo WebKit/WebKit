@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<table>
+<tr><td>foo</td><td>bar</td></tr>
+</table>
+<table>
+<tr><th>Odd</th><th>Even</th></tr>
+<tr><td>1</td><td>2</td></tr>
+<tr><td>3</td><td>4</td></tr>
+</table>
+<table>
+<tbody>
+<tr><td>hello</td><td>world</td></tr>
+</tbody>
+</table>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the Atk table hierarhy.");
+    if (window.accessibilityController) {
+        layoutTestController.dumpAsText();
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var table1 = webArea.childAtIndex(0);
+        shouldBe("table1.role", "'table'");
+        var table2 = webArea.childAtIndex(1);
+        shouldBe("table2.role", "'table'");
+        var table3 = webArea.childAtIndex(2);
+        shouldBe("table3.role", "'table'");
+
+        var children = table1.childrenCount;
+        shouldBe("children", "2");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table1.childAtIndex(i).role", "'table cell'");
+        }
+        children = table2.childrenCount;
+        shouldBe("children", "6");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table2.childAtIndex(i).role", "'table cell'");
+        }
+        children = table3.childrenCount;
+        shouldBe("children", "2");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table3.childAtIndex(i).role", "'table cell'");
+        }
+    }
+    successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

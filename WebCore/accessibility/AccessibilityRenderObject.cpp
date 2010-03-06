@@ -2735,7 +2735,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
 #if PLATFORM(GTK)
     // Gtk ATs expect all tables, data and layout, to be exposed as tables.
-    if (node && node->hasTagName(tdTag))
+    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
         return CellRole;
 
     if (node && node->hasTagName(tableTag))

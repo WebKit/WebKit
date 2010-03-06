@@ -41,10 +41,17 @@ AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformI
     if (isMenuListPopup() || isMenuListOption())
         return IgnoreObject;
 
-    // When a list item is made up entirely of children (e.g. paragraphs)
-    // the list item gets ignored. We need it.
-    if (isGroup() && parent->isList())
-        return IncludeObject;
+    if (isGroup()) {
+        // When a list item is made up entirely of children (e.g. paragraphs)
+        // the list item gets ignored. We need it.
+        if (parent->isList())
+            return IncludeObject;
+
+        // We expect the parent of a table cell to be a table.
+        AccessibilityObject* child = firstChild();
+        if (child && child->roleValue() == CellRole)
+            return IgnoreObject;
+    }
 
     // Entries and password fields have extraneous children which we want to ignore.
     if (parent->isPasswordField() || parent->isTextControl())

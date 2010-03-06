@@ -1,3 +1,13 @@
+2010-03-06  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30895
+        [Gtk] The accessible hierarchy of tables is significantly incorrect for Atk
+
+        * platform/gtk/accessibility/table-hierarchy.html: Added.
+        * platform/gtk/accessibility/table-hierarchy-expected.txt: Added.
+
 2010-03-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.
