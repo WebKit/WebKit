@@ -98,17 +98,14 @@ namespace WebCore {
     template<typename T>
     void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Persistent<v8::Object> v8Object, T* domObject)
     {
-        ASSERT(WTF::isMainThread());
         DOMDataList& list = DOMDataStore::allStores();
         for (size_t i = 0; i < list.size(); ++i) {
             DOMDataStore* store = list[i];
+            ASSERT(store->domData()->owningThread() == WTF::currentThread());
 
             DOMDataStore::InternalDOMWrapperMap<T>* domMap = static_cast<DOMDataStore::InternalDOMWrapperMap<T>*>(store->getDOMWrapperMap(mapType));
-
-            if (domMap->removeIfPresent(domObject, v8Object)) {
-                ASSERT(store->domData()->owningThread() == WTF::currentThread());
+            if (domMap->removeIfPresent(domObject, v8Object))
                 store->domData()->derefObject(V8DOMWrapper::domWrapperType(v8Object), domObject);
-            }
         }
     }
 

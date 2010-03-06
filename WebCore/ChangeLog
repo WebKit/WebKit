@@ -1,3 +1,15 @@
+2010-03-05  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        [v8] Remove wrong assert in GC callback
+        https://bugs.webkit.org/show_bug.cgi?id=35757
+
+        Test: fast/workers/wrapper-map-gc.html
+
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::handleWeakObject): remove ASSERT(isMainThread()), move another assert up to verify we are on the right thread.
+
 2010-03-05  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.
