@@ -961,6 +961,11 @@ bool AccessibilityObject::isInsideARIALiveRegion() const
     return false;
 }
 
+bool AccessibilityObject::supportsARIAAttributes() const
+{
+    return supportsARIALiveRegion() || supportsARIADragging() || supportsARIADropping() || supportsARIAFlowTo() || supportsARIAOwns();
+}
+    
 bool AccessibilityObject::supportsARIALiveRegion() const
 {
     const AtomicString& liveRegion = ariaLiveRegionStatus();

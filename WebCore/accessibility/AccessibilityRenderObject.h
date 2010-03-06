@@ -227,8 +227,8 @@ public:
     virtual bool supportsARIAFlowTo() const;
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const;
 
-    virtual bool supportsARIADropping();
-    virtual bool supportsARIADragging();
+    virtual bool supportsARIADropping() const;
+    virtual bool supportsARIADragging() const;
     virtual bool isARIAGrabbed();
     virtual void setARIAGrabbed(bool);
     virtual void determineARIADropEffects(Vector<String>&);

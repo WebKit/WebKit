@@ -1,3 +1,13 @@
+2010-03-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        WAI-ARIA live region doesn't appear when <div> only has a <div> child
+        https://bugs.webkit.org/show_bug.cgi?id=35751
+
+        * platform/mac/accessibility/div-containing-div-with-aria-expected.txt: Added.
+        * platform/mac/accessibility/div-containing-div-with-aria.html: Added.
+
 2010-03-05  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
